@@ -22,26 +22,22 @@ class ByteArrayDataSource implements DataSource {
         this.type = type;
     }
 
-    public ByteArrayDataSource(byte[] data) {
-        this.data = data;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
+    @Override
     public String getContentType() {
         return type == null ? "application/octet-stream" : type;
     }
 
+    @Override
     public InputStream getInputStream() throws IOException {
         return new ByteArrayInputStream(data);
     }
 
+    @Override
     public String getName() {
         return "ByteArrayDataSource";
     }
 
+    @Override
     public OutputStream getOutputStream() throws IOException {
         throw new IOException("Not Supported");
     }

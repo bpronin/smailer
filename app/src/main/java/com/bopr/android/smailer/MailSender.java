@@ -12,10 +12,10 @@ import com.bopr.android.smailer.util.mail.GMailSender;
  */
 public class MailSender {
 
-    private static final String LOG_TAG = "bo.MailSender";
+    private static final String TAG = "bo.MailSender";
 
     public void send(MailMessage message) {
-        Log.d(LOG_TAG, "Processing message: " + message);
+        Log.d(TAG, "Processing message: " + message);
         new MailTask().execute(message);
     }
 
@@ -26,15 +26,15 @@ public class MailSender {
     private void sendMail(MailMessage message) {
         String user = "xxxxxxx@gmail.com";
         String password = "xxxxxxx";
+        String recipients = "xxxxxxx@yandex.ru";
         String subject = "SMS";
         String sender = "xxxxxxx@gmail.com";
-        String recipients = "xxxxxxx@yandex.ru";
 
         GMailSender mailSender = new GMailSender(user, password);
         try {
             mailSender.sendMail(subject, formatBody(message), sender, recipients);
         } catch (Exception x) {
-            Log.e(LOG_TAG, "Error sending message: " + message);
+            Log.e(TAG, "Error sending message: " + message);
         }
     }
 
