@@ -4,7 +4,6 @@ package com.bopr.android.smailer.settings;
 import android.annotation.TargetApi;
 import android.content.ComponentName;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
@@ -27,7 +26,7 @@ import static android.content.pm.PackageManager.DONT_KILL_APP;
 /**
  * A {@link PreferenceActivity} that presents a set of application settings.
  */
-public class SettingsActivity extends AppCompatPreferenceActivity {
+public class SettingsActivity extends AppCompatActivity {
 
     private static final String TAG = "bo.SettingsActivity";
 
@@ -36,22 +35,23 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     public static final String PREF_SENDER_EMAIL_PASSWORD = "sender_email_password";
     public static final String PREF_RECIPIENT_EMAIL_ADDRESS = "recipient_email_address";
 
+    private SharedPreferences preferences;
     private PreferenceChangeListener bindPreferenceSummaryToValueListener = new PreferenceChangeListener();
     private SharedPreferenceChangeListener sharedPreferenceChangeListener = new SharedPreferenceChangeListener();
-    private SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        updateSmsReceiver();
-        preferences.registerOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
 
-        GeneralPreferenceFragment preferenceFragment = new GeneralPreferenceFragment();
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        updateSmsReceiver();
+
+        preferences.registerOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
 
         getFragmentManager()
                 .beginTransaction()
-                .replace(android.R.id.content, preferenceFragment)
+                .replace(android.R.id.content, new MainPreferenceFragment())
                 .commit();
     }
 
@@ -61,34 +61,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         super.onDestroy();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean onIsMultiPane() {
-         /* determine if the device has an extra-large screen. For example, 10" tablets are extra-large. */
-        return (this.getResources().getConfiguration().screenLayout
-                & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
-    }
-
-    /**
-     * This method stops fragment injection in malicious applications.
-     * Make sure to deny any unknown fragments here.
-     */
-    protected boolean isValidFragment(String fragmentName) {
-        return PreferenceFragment.class.getName().equals(fragmentName)
-                || GeneralPreferenceFragment.class.getName().equals(fragmentName);
-    }
-
     private void bindPreferenceSummaryToValue(Preference preference) {
         preference.setOnPreferenceChangeListener(bindPreferenceSummaryToValueListener);
 
         bindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                PreferenceManager.getDefaultSharedPreferences(preference.getContext())
-                        .getString(preference.getKey(), "")
-        );
+                preferences.getString(preference.getKey(), ""));
     }
 
+    /**
+     * Set the enabled setting for sms broadcast receiver according to current preference value.
+     */
     private void updateSmsReceiver() {
         ComponentName component = new ComponentName(this, SmsReceiver.class);
         boolean enabled = preferences.getBoolean(PREF_SERVICE_ENABLED, false);
@@ -106,32 +88,32 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
-            String stringValue = value.toString();
-            if (preference instanceof EditTextPreference) {
-                updateTextSummary(preference, stringValue);
+            String s = value.toString();
+
+            if (isPasswordField(preference)) {
+                boolean passwordSet = s != null && !s.isEmpty();
+                preference.setSummary(passwordSet ? R.string.password_asterisk : R.string.not_set);
             } else {
-                preference.setSummary(stringValue);
+                preference.setSummary(s);
             }
+
             return true;
         }
 
-        private void updateTextSummary(Preference preference, String stringValue) {
-            EditText editText = ((EditTextPreference) preference).getEditText();
-            boolean isPasswordField = editText.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-            if (isPasswordField) {
-                boolean isPasswordSet = stringValue != null && !stringValue.isEmpty();
-                if (isPasswordSet) {
-                    preference.setSummary("*****");
-                } else {
-                    preference.setSummary(R.string.not_set);
-                }
+        private boolean isPasswordField(Preference preference) {
+            if (preference instanceof EditTextPreference) {
+                EditText editText = ((EditTextPreference) preference).getEditText();
+                return editText.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
             } else {
-                preference.setSummary(stringValue);
+                return false;
             }
         }
 
     }
 
+    /**
+     * A preference value change listener that updates state of application components.
+     */
     private class SharedPreferenceChangeListener implements SharedPreferences.OnSharedPreferenceChangeListener {
 
         @Override
@@ -144,8 +126,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
     }
 
+    /**
+     * Main activity's fragment.
+     */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class GeneralPreferenceFragment extends PreferenceFragment {
+    public static class MainPreferenceFragment extends PreferenceFragment {
 
         @Override
         public void onCreate(Bundle savedInstanceState) {

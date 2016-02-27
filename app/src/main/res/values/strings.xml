@@ -11,5 +11,6 @@
     <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
 
     <string name="not_set">empty</string>
+    <string name="password_asterisk">*******</string>
 
 </resources>

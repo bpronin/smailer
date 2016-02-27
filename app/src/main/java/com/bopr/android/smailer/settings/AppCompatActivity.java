@@ -1,8 +1,8 @@
 package com.bopr.android.smailer.settings;
 
+import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,12 +14,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * A {@link android.preference.PreferenceActivity} which implements and proxies the necessary calls
+ * A {@link Activity} which implements and proxies the necessary calls
  * to be used with AppCompat.
  */
-abstract class AppCompatPreferenceActivity extends PreferenceActivity {
+abstract class AppCompatActivity extends Activity {
 
-    private AppCompatDelegate mDelegate;
+    private AppCompatDelegate delegate;
 
     public ActionBar getSupportActionBar() {
         return getDelegate().getSupportActionBar();
@@ -104,9 +104,9 @@ abstract class AppCompatPreferenceActivity extends PreferenceActivity {
     }
 
     private AppCompatDelegate getDelegate() {
-        if (mDelegate == null) {
-            mDelegate = AppCompatDelegate.create(this, null);
+        if (delegate == null) {
+            delegate = AppCompatDelegate.create(this, null);
         }
-        return mDelegate;
+        return delegate;
     }
 }
