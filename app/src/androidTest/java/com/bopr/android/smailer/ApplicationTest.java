@@ -11,4 +11,21 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     public ApplicationTest() {
         super(Application.class);
     }
+
+    public void testSmsReceived() throws Exception {
+        //todo: implement
+    }
+
+    public void testEmailSent() throws Exception {
+        //todo: implement
+    }
+
+    public void testServiceEnabled() throws Exception {
+        //todo: implement
+    }
+
+    public void testUnableSendMail() throws Exception {
+        //todo: implement
+    }
+
 }

@@ -16,12 +16,21 @@ import android.text.InputType;
 import android.util.Log;
 import android.widget.EditText;
 
+import com.bopr.android.smailer.MailSender;
+import com.bopr.android.smailer.MailSenderProperties;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.SmsReceiver;
 
 import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
 import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
 import static android.content.pm.PackageManager.DONT_KILL_APP;
+import static com.bopr.android.smailer.settings.Settings.DEFAULT_EMAIL_SUBJECT;
+import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_SUBJECT;
+import static com.bopr.android.smailer.settings.Settings.KEY_PREF_RECIPIENT_EMAIL_ADDRESS;
+import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_EMAIL_ADDRESS;
+import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_EMAIL_PASSWORD;
+import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_NAME;
+import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SERVICE_ENABLED;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings.
@@ -29,11 +38,6 @@ import static android.content.pm.PackageManager.DONT_KILL_APP;
 public class SettingsActivity extends AppCompatActivity {
 
     private static final String TAG = "bo.SettingsActivity";
-
-    public static final String PREF_SERVICE_ENABLED = "service_enabled";
-    public static final String PREF_SENDER_EMAIL_ADDRESS = "sender_email_address";
-    public static final String PREF_SENDER_EMAIL_PASSWORD = "sender_email_password";
-    public static final String PREF_RECIPIENT_EMAIL_ADDRESS = "recipient_email_address";
 
     private SharedPreferences preferences;
     private PreferenceChangeListener bindPreferenceSummaryToValueListener = new PreferenceChangeListener();
@@ -73,11 +77,24 @@ public class SettingsActivity extends AppCompatActivity {
      */
     private void updateSmsReceiver() {
         ComponentName component = new ComponentName(this, SmsReceiver.class);
-        boolean enabled = preferences.getBoolean(PREF_SERVICE_ENABLED, false);
+        boolean enabled = preferences.getBoolean(KEY_PREF_SERVICE_ENABLED, false);
         int state = (enabled ? COMPONENT_ENABLED_STATE_ENABLED : COMPONENT_ENABLED_STATE_DISABLED);
         getPackageManager().setComponentEnabledSetting(component, state, DONT_KILL_APP);
 
-        Log.i(TAG, "SMS broadcast receiver state is: " + (enabled ? "ENABLED" : "DISABLED"));
+        Log.d(TAG, "SMS broadcast receiver state is: " + (enabled ? "ENABLED" : "DISABLED"));
+    }
+
+    private void updateMailSender() {
+        MailSenderProperties properties = new MailSenderProperties();
+
+        String user = preferences.getString(KEY_PREF_SENDER_EMAIL_ADDRESS, "");
+        properties.setUser(user);
+        properties.setPassword(preferences.getString(KEY_PREF_SENDER_EMAIL_PASSWORD, ""));
+        properties.setRecipients(preferences.getString(KEY_PREF_RECIPIENT_EMAIL_ADDRESS, ""));
+        properties.setSender(preferences.getString(KEY_PREF_SENDER_NAME, user));
+        properties.setSubject(preferences.getString(KEY_PREF_EMAIL_SUBJECT, DEFAULT_EMAIL_SUBJECT));
+
+        MailSender.getInstance().setProperties(properties);
     }
 
     /**
@@ -120,10 +137,18 @@ public class SettingsActivity extends AppCompatActivity {
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             Log.d(TAG, "Shared preference changed: " + key);
 
-            if (key.equals(PREF_SERVICE_ENABLED)) {
-                updateSmsReceiver();
+            switch (key) {
+                case KEY_PREF_SERVICE_ENABLED:
+                    updateSmsReceiver();
+                    break;
+                case KEY_PREF_SENDER_EMAIL_ADDRESS:
+                case KEY_PREF_SENDER_EMAIL_PASSWORD:
+                case KEY_PREF_RECIPIENT_EMAIL_ADDRESS:
+                    updateMailSender();
+                    break;
             }
         }
+
     }
 
     /**
@@ -139,9 +164,9 @@ public class SettingsActivity extends AppCompatActivity {
             setHasOptionsMenu(true);
 
             SettingsActivity activity = (SettingsActivity) getActivity();
-            activity.bindPreferenceSummaryToValue(findPreference(PREF_SENDER_EMAIL_ADDRESS));
-            activity.bindPreferenceSummaryToValue(findPreference(PREF_SENDER_EMAIL_PASSWORD));
-            activity.bindPreferenceSummaryToValue(findPreference(PREF_RECIPIENT_EMAIL_ADDRESS));
+            activity.bindPreferenceSummaryToValue(findPreference(KEY_PREF_SENDER_EMAIL_ADDRESS));
+            activity.bindPreferenceSummaryToValue(findPreference(KEY_PREF_SENDER_EMAIL_PASSWORD));
+            activity.bindPreferenceSummaryToValue(findPreference(KEY_PREF_RECIPIENT_EMAIL_ADDRESS));
         }
 
     }

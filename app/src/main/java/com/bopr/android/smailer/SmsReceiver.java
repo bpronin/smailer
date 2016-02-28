@@ -18,41 +18,32 @@ public class SmsReceiver extends BroadcastReceiver {
 
     private static final String TAG = "bo.SmsReceiver";
 
-    private MailSender mailer = new MailSender();
-
-    public SmsReceiver() {
-    }
-
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.i(TAG, "Got SMS intent: " + intent);
 
-//        for (SmsMessage smsMessage : getMessagesFromIntent(intent)) {
-//            mailer.send(new MailMessage(
-//                    smsMessage.getDisplayOriginatingAddress(),
-//                    smsMessage.getDisplayMessageBody()
-//            ));
-//        }
+        for (SmsMessage smsMessage : getMessagesFromIntent(intent)) {
+            MailSender.getInstance().send(context, new MailMessage(
+                    smsMessage.getDisplayOriginatingAddress(),
+                    smsMessage.getDisplayMessageBody()
+            ));
+        }
     }
 
     private SmsMessage[] getMessagesFromIntent(Intent intent) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             return Sms.Intents.getMessagesFromIntent(intent);
         } else {
-            Object[] messages = (Object[]) intent.getSerializableExtra("pdus");
+            Object[] pdus = (Object[]) intent.getSerializableExtra("pdus");
             String format = intent.getStringExtra("format");
 
-//            int subId = intent.getIntExtra(PhoneConstants.SUBSCRIPTION_KEY,
-//                    SubscriptionManager.getDefaultSmsSubId());
-
-            int pduCount = messages.length;
-            SmsMessage[] msgs = new SmsMessage[pduCount];
+            int pduCount = pdus.length;
+            SmsMessage[] messages = new SmsMessage[pduCount];
             for (int i = 0; i < pduCount; i++) {
-                byte[] pdu = (byte[]) messages[i];
-                msgs[i] = SmsMessage.createFromPdu(pdu, format);
-//                msgs[i].setSubId(subId);
+                byte[] pdu = (byte[]) pdus[i];
+                messages[i] = SmsMessage.createFromPdu(pdu, format);
             }
-            return msgs;
+            return messages;
         }
     }
 

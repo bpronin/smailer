@@ -1,8 +1,13 @@
 package com.bopr.android.smailer;
 
+import android.app.NotificationManager;
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
+import com.bopr.android.smailer.settings.SettingsActivity;
 import com.bopr.android.smailer.util.mail.GMailSender;
 
 /**
@@ -13,36 +18,62 @@ import com.bopr.android.smailer.util.mail.GMailSender;
 public class MailSender {
 
     private static final String TAG = "bo.MailSender";
+    private static MailSender instance;
 
-    public void send(MailMessage message) {
+    private MailSenderProperties properties = new MailSenderProperties();
+
+    public static MailSender getInstance() {
+        if (instance == null) {
+            instance = new MailSender();
+        }
+        return instance;
+    }
+
+    private MailSender() {
+    }
+
+    public MailSenderProperties getProperties() {
+        return properties;
+    }
+
+    public void setProperties(MailSenderProperties properties) {
+        this.properties = properties;
+        Log.d(TAG, "Mailer properties changed");
+    }
+
+    public void send(Context context, MailMessage message) {
         Log.d(TAG, "Processing message: " + message);
-        new MailTask().execute(message);
+        new MailTask(context).execute(message);
+    }
+
+    private void sendMail(Context context, MailMessage message) {
+        Log.d(TAG, "Sending mail: " + message);
+
+        GMailSender mailSender = new GMailSender(properties.getUser(), properties.getPassword());
+        try {
+            mailSender.sendMail(properties.getSubject(), formatBody(message),
+                    properties.getSender(), properties.getRecipients());
+        } catch (Exception x) {
+            Log.e(TAG, "Error sending message: " + message, x);
+            Notifications.showMailError(context);
+        }
     }
 
     private String formatBody(MailMessage message) {
         return message.getSender() + " " + message.getBody();
     }
 
-    private void sendMail(MailMessage message) {
-        String user = "xxxxxxx@gmail.com";
-        String password = "xxxxxxx";
-        String recipients = "xxxxxxx@yandex.ru";
-        String subject = "SMS";
-        String sender = "xxxxxxx@gmail.com";
-
-        GMailSender mailSender = new GMailSender(user, password);
-        try {
-            mailSender.sendMail(subject, formatBody(message), sender, recipients);
-        } catch (Exception x) {
-            Log.e(TAG, "Error sending message: " + message);
-        }
-    }
-
     private class MailTask extends AsyncTask<MailMessage, Void, Void> {
+
+        private Context context;
+
+        public MailTask(Context context) {
+            this.context = context;
+        }
 
         @Override
         protected Void doInBackground(MailMessage... messages) {
-            sendMail(messages[0]);
+            sendMail(context, messages[0]);
             return null;
         }
     }
