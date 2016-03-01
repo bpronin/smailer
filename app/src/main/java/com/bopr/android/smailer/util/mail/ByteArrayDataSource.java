@@ -15,16 +15,14 @@ import javax.activation.DataSource;
 class ByteArrayDataSource implements DataSource {
 
     private byte[] data;
-    private String type;
 
-    public ByteArrayDataSource(byte[] data, String type) {
+    public ByteArrayDataSource(byte[] data) {
         this.data = data;
-        this.type = type;
     }
 
     @Override
     public String getContentType() {
-        return type == null ? "application/octet-stream" : type;
+        return "text/plain";
     }
 
     @Override

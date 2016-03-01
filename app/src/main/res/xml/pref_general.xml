@@ -3,26 +3,23 @@
     <SwitchPreference
         android:defaultValue="true"
         android:key="service_enabled"
-        android:summary="@string/pref_description_enable"
         android:title="@string/pref_title_enable" />
 
-    <!--<PreferenceCategory android:title="@string/pref_title_sender">-->
     <EditTextPreference
         android:inputType="textEmailAddress"
-        android:key="sender_email_address"
+        android:key="sender_account"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="@string/pref_title_sender_email" />
+        android:title="@string/pref_title_sender_account" />
 
-    <EditTextPreference
+    <com.bopr.android.smailer.settings.PasswordPreference
         android:inputType="textPassword"
-        android:key="sender_email_password"
+        android:key="sender_password"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:title="@string/pref_title_sender_password" />
-    <!--</PreferenceCategory>-->
 
     <EditTextPreference
         android:inputType="textEmailAddress"
@@ -31,5 +28,9 @@
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:title="@string/pref_title_recipients" />
+
+    <!--<Preference-->
+        <!--android:key="test"-->
+        <!--android:title="Test" />-->
 
 </PreferenceScreen>

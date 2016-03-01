@@ -12,35 +12,37 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-public class GMailSender extends Authenticator {
+public class GMailSender {
 
-    private String user;
-    private String password;
     private Session session;
 
     static {
         Security.addProvider(new JSSEProvider());
     }
 
-    public GMailSender(String user, String password) {
-        this.user = user;
-        this.password = password;
-
+    public GMailSender(String user, String password, String protocol, String host, String port) {
         Properties props = new Properties();
-        props.setProperty("mail.transport.protocol", "smtp");
-        props.setProperty("mail.host", "smtp.gmail.com");
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.port", "465");
-        props.put("mail.smtp.socketFactory.port", "465");
-        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-        props.put("mail.smtp.socketFactory.fallback", "false");
+        props.setProperty("mail.transport.protocol", protocol);
+        props.setProperty("mail.host", host);
+        props.setProperty("mail.smtp.auth", "true");
+        props.setProperty("mail.smtp.port", port);
+        props.setProperty("mail.smtp.socketFactory.port", port);
+        props.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        props.setProperty("mail.smtp.socketFactory.fallback", "false");
         props.setProperty("mail.smtp.quitwait", "false");
 
-        session = Session.getDefaultInstance(props, this);
+        final PasswordAuthentication authentication = new PasswordAuthentication(user, password);
+        session = Session.getDefaultInstance(props, new Authenticator() {
+
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return authentication;
+            }
+        });
     }
 
     public void sendMail(String subject, String body, String sender, String recipients) throws Exception {
-        DataHandler handler = new DataHandler(new ByteArrayDataSource(body.getBytes(), "text/plain"));
+        DataHandler handler = new DataHandler(new ByteArrayDataSource(body.getBytes()));
 
         MimeMessage message = new MimeMessage(session);
         message.setSender(new InternetAddress(sender));
@@ -52,11 +54,6 @@ public class GMailSender extends Authenticator {
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipients));
         }
         Transport.send(message);
-    }
-
-    @Override
-    protected PasswordAuthentication getPasswordAuthentication() {
-        return new PasswordAuthentication(user, password);
     }
 
 }

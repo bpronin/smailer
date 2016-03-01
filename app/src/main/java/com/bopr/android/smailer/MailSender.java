@@ -1,14 +1,12 @@
 package com.bopr.android.smailer;
 
-import android.app.NotificationManager;
 import android.content.Context;
-import android.content.Intent;
+import android.content.res.Resources;
 import android.os.AsyncTask;
-import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
-import com.bopr.android.smailer.settings.SettingsActivity;
 import com.bopr.android.smailer.util.mail.GMailSender;
+
 
 /**
  * Class MailSender.
@@ -17,7 +15,7 @@ import com.bopr.android.smailer.util.mail.GMailSender;
  */
 public class MailSender {
 
-    private static final String TAG = "bo.MailSender";
+    private static final String TAG = "bopr.MailSender";
     private static MailSender instance;
 
     private MailSenderProperties properties = new MailSenderProperties();
@@ -32,13 +30,9 @@ public class MailSender {
     private MailSender() {
     }
 
-    public MailSenderProperties getProperties() {
-        return properties;
-    }
-
     public void setProperties(MailSenderProperties properties) {
         this.properties = properties;
-        Log.d(TAG, "Mailer properties changed");
+        Log.d(TAG, "Mailer properties changed: " + properties);
     }
 
     public void send(Context context, MailMessage message) {
@@ -49,18 +43,30 @@ public class MailSender {
     private void sendMail(Context context, MailMessage message) {
         Log.d(TAG, "Sending mail: " + message);
 
-        GMailSender mailSender = new GMailSender(properties.getUser(), properties.getPassword());
+        GMailSender sender = new GMailSender(properties.getUser(),
+                EncryptUtil.decrypt(context, properties.getPassword()),
+                properties.getProtocol(), properties.getHost(), properties.getPort());
         try {
-            mailSender.sendMail(properties.getSubject(), formatBody(message),
-                    properties.getSender(), properties.getRecipients());
+            sender.sendMail(formatSubject(context, message),
+                    formatBody(message), properties.getUser(),
+                    properties.getRecipients());
+
+            Notifications.removeMailError(context);
         } catch (Exception x) {
             Log.e(TAG, "Error sending message: " + message, x);
             Notifications.showMailError(context);
         }
     }
 
+    private String formatSubject(Context context, MailMessage message) {
+        Resources r = context.getResources();
+        return r.getString(R.string.email_subject_prefix) + " "
+                + String.format(r.getString(R.string.email_subject_incoming_sms_pattern), message.getPhone()
+        );
+    }
+
     private String formatBody(MailMessage message) {
-        return message.getSender() + " " + message.getBody();
+        return message.getBody();
     }
 
     private class MailTask extends AsyncTask<MailMessage, Void, Void> {

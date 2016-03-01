@@ -15,9 +15,15 @@ import com.bopr.android.smailer.settings.SettingsActivity;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public abstract class Notifications {
+class Notifications {
+
+    private static final int ID_MAIL_ERROR = 101;
 
     private Notifications() {
+    }
+
+    private static NotificationManager getNotificationManager(Context context) {
+        return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
     public static void showMailError(Context context) {
@@ -42,8 +48,11 @@ public abstract class Notifications {
         PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendingIntent);
 
-        NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.notify(0, builder.build());
+        getNotificationManager(context).notify(ID_MAIL_ERROR, builder.build());
+    }
+
+    public static void removeMailError(Context context) {
+        getNotificationManager(context).cancel(ID_MAIL_ERROR);
     }
 
 }

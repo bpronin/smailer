@@ -8,12 +8,15 @@ package com.bopr.android.smailer.settings;
 public interface Settings {
 
     String KEY_PREF_SERVICE_ENABLED = "service_enabled";
-    String KEY_PREF_SENDER_EMAIL_ADDRESS = "sender_email_address";
-    String KEY_PREF_SENDER_EMAIL_PASSWORD = "sender_email_password";
+    String KEY_PREF_SENDER_ACCOUNT = "sender_account";
+    String KEY_PREF_SENDER_PASSWORD = "sender_password";
+    String KEY_PREF_EMAIL_PROTOCOL = "sender_protocol";
+    String KEY_PREF_EMAIL_HOST = "sender_host";
+    String KEY_PREF_EMAIL_PORT = "sender_port";
     String KEY_PREF_RECIPIENT_EMAIL_ADDRESS = "recipient_email_address";
-    String KEY_PREF_SENDER_NAME = "sender_name";
-    String KEY_PREF_EMAIL_SUBJECT = "email_subject";
 
-    String DEFAULT_EMAIL_SUBJECT = "[SMailer]";
+    String DEFAULT_EMAIL_PROTOCOL = "smtp";
+    String DEFAULT_EMAIL_HOST = "smtp.gmail.com";
+    String DEFAULT_EMAIL_PORT = "465";
 
 }

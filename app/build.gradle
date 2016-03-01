@@ -42,4 +42,5 @@ dependencies {
     compile 'com.android.support:support-v4:23.2.0'
     compile 'com.sun.mail:android-mail:1.5.5'
     compile 'com.sun.mail:android-activation:1.5.5'
+    compile 'com.scottyab:aes-crypto:0.0.4'
 }

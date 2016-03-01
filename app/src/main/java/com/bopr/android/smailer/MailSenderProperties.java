@@ -1,7 +1,5 @@
 package com.bopr.android.smailer;
 
-import com.bopr.android.smailer.settings.Settings;
-
 /**
  * Class MailSenderProperties.
  *
@@ -12,8 +10,9 @@ public class MailSenderProperties {
     private String user;
     private String password;
     private String recipients;
-    private String sender;
-    private String subject = Settings.DEFAULT_EMAIL_SUBJECT;
+    private String protocol;
+    private String host;
+    private String port;
 
     public MailSenderProperties() {
     }
@@ -34,6 +33,30 @@ public class MailSenderProperties {
         this.password = password;
     }
 
+    public String getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public String getPort() {
+        return port;
+    }
+
+    public void setPort(String port) {
+        this.port = port;
+    }
+
     public String getRecipients() {
         return recipients;
     }
@@ -42,30 +65,4 @@ public class MailSenderProperties {
         this.recipients = recipients;
     }
 
-    public String getSubject() {
-        return subject;
-    }
-
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
-
-    public String getSender() {
-        return sender;
-    }
-
-    public void setSender(String sender) {
-        this.sender = sender;
-    }
-
-    @Override
-    public String toString() {
-        return "MailSenderProperties{" +
-                "user='" + user + '\'' +
-                ", password='" + password + '\'' +
-                ", recipients='" + recipients + '\'' +
-                ", subject='" + subject + '\'' +
-                ", sender='" + sender + '\'' +
-                '}';
-    }
 }

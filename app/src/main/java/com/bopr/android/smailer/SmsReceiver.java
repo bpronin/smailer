@@ -1,12 +1,18 @@
 package com.bopr.android.smailer;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
+import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
+import static android.content.pm.PackageManager.DONT_KILL_APP;
 import static android.provider.Telephony.Sms;
 
 /**
@@ -16,7 +22,7 @@ import static android.provider.Telephony.Sms;
  */
 public class SmsReceiver extends BroadcastReceiver {
 
-    private static final String TAG = "bo.SmsReceiver";
+    private static final String TAG = "bopr.SmsReceiver";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -30,6 +36,7 @@ public class SmsReceiver extends BroadcastReceiver {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private SmsMessage[] getMessagesFromIntent(Intent intent) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             return Sms.Intents.getMessagesFromIntent(intent);
@@ -47,4 +54,14 @@ public class SmsReceiver extends BroadcastReceiver {
         }
     }
 
+    /**
+     * Set the enabled setting for broadcast receiver component.
+     */
+    public static void enableComponent(Activity activity, boolean enabled) {
+        ComponentName component = new ComponentName(activity, SmsReceiver.class);
+        int state = (enabled ? COMPONENT_ENABLED_STATE_ENABLED : COMPONENT_ENABLED_STATE_DISABLED);
+        activity.getPackageManager().setComponentEnabledSetting(component, state, DONT_KILL_APP);
+
+        Log.d(TAG, "SMS broadcast receiver state is: " + (enabled ? "ENABLED" : "DISABLED"));
+    }
 }

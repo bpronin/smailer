@@ -7,16 +7,16 @@ package com.bopr.android.smailer;
  */
 public class MailMessage {
 
-    private final String sender;
+    private final String phone;
     private final String body;
 
-    public MailMessage(String sender, String body) {
-        this.sender = sender;
+    public MailMessage(String phone, String body) {
+        this.phone = phone;
         this.body = body;
     }
 
-    public String getSender() {
-        return sender;
+    public String getPhone() {
+        return phone;
     }
 
     public String getBody() {
@@ -26,7 +26,7 @@ public class MailMessage {
     @Override
     public String toString() {
         return "MailMessage{" +
-                "sender='" + sender + '\'' +
+                "phone='" + phone + '\'' +
                 ", body='" + body + '\'' +
                 '}';
     }

@@ -1,17 +1,24 @@
 <resources>
     <string name="app_name">SMailer</string>
 
-    <!-- Strings related to com.bopr.android.smailer.settings.Settings -->
     <string name="pref_title_enable">Active</string>
-    <string name="pref_description_enable">Enable service</string>
-    <string name="pref_title_sender">Sender</string>
+    <string name="pref_title_sender_account">Account</string>
     <string name="pref_title_recipients">Recipients</string>
-    <string name="pref_title_sender_email">Email address</string>
-    <string name="pref_title_sender_password">Password</string>
-    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
+    <string name="pref_title_sender">Email Sender</string>
+    <string name="pref_title_subject">Email Subject</string>
 
-    <string name="not_set">empty</string>
+    <string name="pref_description_service_on">Service is active</string>
+    <string name="pref_description_service_off">Service is inactive</string>
+
     <string name="password_asterisk">*******</string>
+    <string name="not_set">[not specified]</string>
     <string name="message_error_sending_email">Cannot send email. Please check account settings.</string>
+    <string name="pref_title_sender_password">Password</string>
+    <string name="email_subject_prefix">[SMailer]</string>
+    <string name="email_subject_incoming_sms_pattern">Incoming SMS from %1$s</string>
+    <string name="email_subject_outgoing_sms_pattern">Outgoing SMS to %1$s</string>
+    <string name="email_subject_incoming_call_pattern">Incoming call from %1$s</string>
+    <string name="email_subject_outgoing_call_pattern">Outgoing call to %1$s</string>
+    <string name="email_subject_missed_call_pattern">Missed call from %1$s</string>
 
 </resources>
