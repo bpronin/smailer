@@ -20,7 +20,6 @@
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:title="@string/pref_title_sender_password" />
-
     <EditTextPreference
         android:inputType="textEmailAddress"
         android:key="recipient_email_address"
@@ -29,8 +28,58 @@
         android:singleLine="true"
         android:title="@string/pref_title_recipients" />
 
-    <!--<Preference-->
-        <!--android:key="test"-->
-        <!--android:title="Test" />-->
+    <PreferenceScreen
+        android:key="more"
+        android:title="@string/pref_title_more">
+        <PreferenceCategory
+            android:key="sender_server"
+            android:title="@string/pref_title_outgoing_server">
+            <EditTextPreference
+                android:inputType="text"
+                android:key="sender_protocol"
+                android:maxLines="1"
+                android:selectAllOnFocus="true"
+                android:singleLine="true"
+                android:title="@string/pref_title_protocol" />
+            <EditTextPreference
+                android:inputType="text"
+                android:key="sender_host"
+                android:maxLines="1"
+                android:selectAllOnFocus="true"
+                android:singleLine="true"
+                android:title="@string/pref_title_host" />
+            <EditTextPreference
+                android:inputType="text"
+                android:key="sender_port"
+                android:maxLines="1"
+                android:selectAllOnFocus="true"
+                android:singleLine="true"
+                android:title="@string/pref_title_port" />
+        </PreferenceCategory>
+    </PreferenceScreen>
+
+    <PreferenceScreen
+        android:key="debug"
+        android:persistent="false"
+        android:title="Debug">
+        <Preference
+            android:key="sendDefaultMail"
+            android:title="Send Default Mail" />
+        <Preference
+            android:key="sendMail"
+            android:title="Send Mail" />
+        <Preference
+            android:key="setDefaultPreferences"
+            android:title="Set Default Preferences" />
+        <Preference
+            android:key="clearPreferences"
+            android:title="Clear Preferences" />
+        <Preference
+            android:key="requireReceiveSmsPermission"
+            android:title="Want Sms Permission" />
+        <Preference
+            android:key="requestReceiveSmsPermission"
+            android:title="Request Sms Permission" />
+    </PreferenceScreen>
 
 </PreferenceScreen>

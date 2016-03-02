@@ -10,6 +10,8 @@ import android.os.Build;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
+import java.util.Date;
+
 import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
 import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
 import static android.content.pm.PackageManager.DONT_KILL_APP;
@@ -31,7 +33,8 @@ public class SmsReceiver extends BroadcastReceiver {
         for (SmsMessage smsMessage : getMessagesFromIntent(intent)) {
             MailSender.getInstance().send(context, new MailMessage(
                     smsMessage.getDisplayOriginatingAddress(),
-                    smsMessage.getDisplayMessageBody()
+                    smsMessage.getDisplayMessageBody(),
+                    new Date(smsMessage.getTimestampMillis())
             ));
         }
     }

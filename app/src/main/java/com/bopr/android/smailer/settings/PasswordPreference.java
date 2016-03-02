@@ -6,7 +6,7 @@ import android.os.Build;
 import android.preference.EditTextPreference;
 import android.util.AttributeSet;
 
-import com.bopr.android.smailer.EncryptUtil;
+import com.bopr.android.smailer.util.EncryptUtil;
 
 /**
  * Class PasswordPreference.
@@ -32,14 +32,14 @@ public class PasswordPreference extends EditTextPreference {
         super(context);
     }
 
-    @Override
-    protected boolean persistString(String value) {
-        return super.persistString(EncryptUtil.encrypt(getContext(), value));
-    }
-
-    @Override
-    protected String getPersistedString(String defaultReturnValue) {
-        return EncryptUtil.decrypt(getContext(), super.getPersistedString(defaultReturnValue));
-    }
+//    @Override
+//    protected boolean persistString(String value) {
+//        return super.persistString(EncryptUtil.encrypt(getContext(), value));
+//    }
+//
+//    @Override
+//    protected String getPersistedString(String defaultReturnValue) {
+//        return "";
+//    }
 
 }

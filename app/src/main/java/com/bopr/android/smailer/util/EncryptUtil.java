@@ -1,7 +1,7 @@
-package com.bopr.android.smailer;
+package com.bopr.android.smailer.util;
 
 import android.content.Context;
-import android.content.res.Resources;
+import android.util.Log;
 
 import com.tozny.crypto.android.AesCbcWithIntegrity;
 
@@ -14,15 +14,13 @@ import java.security.GeneralSecurityException;
  */
 public class EncryptUtil {
 
+    private static final String TAG = "bopr.EncryptUtil";
     public static AesCbcWithIntegrity.SecretKeys keys;
 
     private static AesCbcWithIntegrity.SecretKeys keys(Context context) {
         if (keys == null) {
             try {
-                Resources r = context.getResources();
-                keys = AesCbcWithIntegrity.generateKeyFromPassword(
-                        r.getString(R.string.key_passphrase),
-                        r.getString(R.string.key_salt));
+                keys = AesCbcWithIntegrity.generateKeyFromPassword(DeviceUtil.getAndroidId(context), "3216978");
             } catch (GeneralSecurityException x) {
                 throw new Error("Key generation error", x);
             }
@@ -35,11 +33,12 @@ public class EncryptUtil {
             return s;
         }
 
-        AesCbcWithIntegrity.CipherTextIvMac cipherTextIvMac = new AesCbcWithIntegrity.CipherTextIvMac(s);
         try {
+            AesCbcWithIntegrity.CipherTextIvMac cipherTextIvMac = new AesCbcWithIntegrity.CipherTextIvMac(s);
             return AesCbcWithIntegrity.decryptString(cipherTextIvMac, keys(context));
         } catch (Exception x) {
-            throw new Error("Unable decrypt password", x);
+            Log.w(TAG, "Decryption failed", x);
+            return null;
         }
     }
 
@@ -52,7 +51,8 @@ public class EncryptUtil {
             AesCbcWithIntegrity.CipherTextIvMac cipherTextIvMac = AesCbcWithIntegrity.encrypt(s, keys(context));
             return cipherTextIvMac.toString();
         } catch (Exception x) {
-            throw new Error("Unable encrypt password", x);
+            Log.w(TAG, "Encryption failed", x);
+            return null;
         }
     }
 

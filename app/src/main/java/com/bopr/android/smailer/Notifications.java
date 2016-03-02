@@ -1,5 +1,6 @@
 package com.bopr.android.smailer;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -26,33 +27,39 @@ class Notifications {
         return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
-    public static void showMailError(Context context) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-
+    private static void showAlert(Context context, String text) {
         Resources r = context.getResources();
-        builder.setSmallIcon(android.R.drawable.ic_dialog_alert)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        Notification notification = builder
+                .setContentIntent(createIntent(context))
+                .setSmallIcon(android.R.drawable.ic_dialog_alert)
+                .setTicker(r.getString(R.string.app_name))
+                .setAutoCancel(true)
                 .setContentTitle(r.getString(R.string.app_name))
-                .setContentText(r.getString(R.string.message_error_sending_email))
-                .setAutoCancel(true);
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
+                .setContentText(text)
+                .build();
 
+        getNotificationManager(context).notify(ID_MAIL_ERROR, notification);
+    }
+
+    private static PendingIntent createIntent(Context context) {
         Intent intent = new Intent(context, SettingsActivity.class);
-        /* The stack builder object will contain an artificial back stack for the
-         started Activity.This ensures that navigating backward from the Activity leads out of
-         your application to the Home screen.*/
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-        /* Adds the back stack for the Intent (but not the Intent itself)*/
         stackBuilder.addParentStack(SettingsActivity.class);
-        /* Adds the Intent that starts the Activity to the top of the stack*/
         stackBuilder.addNextIntent(intent);
-
-        PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.setContentIntent(pendingIntent);
-
-        getNotificationManager(context).notify(ID_MAIL_ERROR, builder.build());
+        return stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     public static void removeMailError(Context context) {
         getNotificationManager(context).cancel(ID_MAIL_ERROR);
     }
 
+    public static void showMailError(Context context) {
+        showAlert(context, context.getResources().getString(R.string.message_error_sending_email));
+    }
+
+    public static void showMailAuthenticationError(Context context) {
+        showAlert(context, context.getResources().getString(R.string.message_email_authentication));
+    }
 }

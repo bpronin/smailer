@@ -6,9 +6,11 @@ import java.util.Properties;
 import javax.activation.DataHandler;
 import javax.mail.Authenticator;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -20,7 +22,7 @@ public class GMailSender {
         Security.addProvider(new JSSEProvider());
     }
 
-    public GMailSender(String user, String password, String protocol, String host, String port) {
+    public GMailSender(final String user, final String password, String protocol, String host, String port) {
         Properties props = new Properties();
         props.setProperty("mail.transport.protocol", protocol);
         props.setProperty("mail.host", host);
@@ -31,17 +33,16 @@ public class GMailSender {
         props.setProperty("mail.smtp.socketFactory.fallback", "false");
         props.setProperty("mail.smtp.quitwait", "false");
 
-        final PasswordAuthentication authentication = new PasswordAuthentication(user, password);
         session = Session.getDefaultInstance(props, new Authenticator() {
 
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return authentication;
+                return new PasswordAuthentication(user, password);
             }
         });
     }
 
-    public void sendMail(String subject, String body, String sender, String recipients) throws Exception {
+    public void sendMail(String subject, String body, String sender, String recipients) throws MessagingException {
         DataHandler handler = new DataHandler(new ByteArrayDataSource(body.getBytes()));
 
         MimeMessage message = new MimeMessage(session);

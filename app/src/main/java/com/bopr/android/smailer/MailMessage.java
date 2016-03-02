@@ -1,5 +1,7 @@
 package com.bopr.android.smailer;
 
+import java.util.Date;
+
 /**
  * Class MailMessage.
  *
@@ -9,10 +11,12 @@ public class MailMessage {
 
     private final String phone;
     private final String body;
+    private final Date date;
 
-    public MailMessage(String phone, String body) {
+    public MailMessage(String phone, String body, Date date) {
         this.phone = phone;
         this.body = body;
+        this.date = date;
     }
 
     public String getPhone() {
@@ -23,11 +27,16 @@ public class MailMessage {
         return body;
     }
 
+    public Date getDate() {
+        return date;
+    }
+
     @Override
     public String toString() {
         return "MailMessage{" +
                 "phone='" + phone + '\'' +
                 ", body='" + body + '\'' +
+                ", date=" + date +
                 '}';
     }
 }
