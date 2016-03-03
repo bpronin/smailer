@@ -1,7 +1,7 @@
 package com.bopr.android.smailer.settings;
 
 import android.Manifest;
-import android.content.ComponentName;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.AsyncTask;
@@ -20,21 +20,15 @@ import android.widget.Toast;
 import com.bopr.android.smailer.MailMessage;
 import com.bopr.android.smailer.Mailer;
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.SmsReceiver;
 import com.bopr.android.smailer.util.DeviceUtil;
 import com.bopr.android.smailer.util.MailTransport;
 
+import java.io.File;
 import java.util.Map;
 
 import static android.Manifest.permission.RECEIVE_SMS;
-import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
-import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
-import static android.content.pm.PackageManager.DONT_KILL_APP;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.preference.Preference.OnPreferenceChangeListener;
-import static com.bopr.android.smailer.settings.Settings.DEFAULT_EMAIL_HOST;
-import static com.bopr.android.smailer.settings.Settings.DEFAULT_EMAIL_PORT;
-import static com.bopr.android.smailer.settings.Settings.DEFAULT_EMAIL_PROTOCOL;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_HOST;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_PORT;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_PROTOCOL;
@@ -59,7 +53,6 @@ public class SettingsFragment extends PreferenceFragment {
     private EditTextPreference hostPreference;
     private EditTextPreference portPreference;
     private SharedPreferences preferences;
-    private SharedPreferenceChangeListener sharedPreferenceChangeListener = new SharedPreferenceChangeListener();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,8 +63,6 @@ public class SettingsFragment extends PreferenceFragment {
         PreferenceManager preferenceManager = getPreferenceManager();
         preferenceManager.setSharedPreferencesName(Settings.PREFERENCES_STORAGE_NAME);
         preferences = preferenceManager.getSharedPreferences();
-
-        preferences.registerOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
 
         enabledPreference = (SwitchPreference) findPreference(KEY_PREF_SERVICE_ENABLED);
         enabledPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
@@ -116,7 +107,6 @@ public class SettingsFragment extends PreferenceFragment {
         });
 
         protocolPreference = (EditTextPreference) findPreference(KEY_PREF_EMAIL_PROTOCOL);
-        protocolPreference.setDefaultValue(DEFAULT_EMAIL_PROTOCOL);
         protocolPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
             @Override
@@ -127,7 +117,6 @@ public class SettingsFragment extends PreferenceFragment {
         });
 
         hostPreference = (EditTextPreference) findPreference(KEY_PREF_EMAIL_HOST);
-        hostPreference.setDefaultValue(DEFAULT_EMAIL_HOST);
         hostPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
             @Override
@@ -138,7 +127,6 @@ public class SettingsFragment extends PreferenceFragment {
         });
 
         portPreference = (EditTextPreference) findPreference(KEY_PREF_EMAIL_PORT);
-        portPreference.setDefaultValue(Settings.DEFAULT_EMAIL_PORT);
         portPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
             @Override
@@ -150,26 +138,7 @@ public class SettingsFragment extends PreferenceFragment {
 
         bouncePreferencesChangeListener(getPreferenceScreen());
 
-        updateSmsReceiver();
-
         addDebugItems();
-    }
-
-    @Override
-    public void onDestroy() {
-        preferences.unregisterOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
-        super.onDestroy();
-    }
-
-    private void updateSmsReceiver() {
-        boolean enabled = preferences.getBoolean(KEY_PREF_SERVICE_ENABLED, false);
-
-        boolean active = enabled || !smsPermissionDenied();
-        ComponentName component = new ComponentName(getActivity(), SmsReceiver.class);
-        int state = (active ? COMPONENT_ENABLED_STATE_ENABLED : COMPONENT_ENABLED_STATE_DISABLED);
-        getActivity().getPackageManager().setComponentEnabledSetting(component, state, DONT_KILL_APP);
-
-        Log.d(TAG, "SMS broadcast receiver state is: " + (active ? "ENABLED" : "DISABLED"));
     }
 
     private void updateEnabledPreference(boolean value) {
@@ -262,26 +231,6 @@ public class SettingsFragment extends PreferenceFragment {
         }
     }
 
-    /**
-     * A preference value change listener that updates state of application components.
-     */
-    private class SharedPreferenceChangeListener implements SharedPreferences.OnSharedPreferenceChangeListener {
-
-        @Override
-        public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
-            Log.d(TAG, "Shared preference changed: " + key);
-
-            switch (key) {
-                case KEY_PREF_SERVICE_ENABLED:
-                    updateSmsReceiver();
-                    break;
-            }
-        }
-
-    }
-
-    // TODO: DEBUG STUFF BELOW. REMOVE ALL
-
     private void addDebugItems() {
         findPreference("sendDefaultMail").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
@@ -296,9 +245,9 @@ public class SettingsFragment extends PreferenceFragment {
                         MailTransport transport = new MailTransport(
                                 user,
                                 getResources().getString(R.string.default_password),
-                                DEFAULT_EMAIL_PROTOCOL,
-                                DEFAULT_EMAIL_HOST,
-                                DEFAULT_EMAIL_PORT
+                                "smtp",
+                                "smtp.gmail.com",
+                                "465"
                         );
 
                         try {
@@ -348,9 +297,9 @@ public class SettingsFragment extends PreferenceFragment {
 //                        .putString(KEY_PREF_SENDER_PASSWORD, EncryptUtil.encrypt(getActivity(), r.getString(R.string.default_password)))
                         .putString(KEY_PREF_SENDER_PASSWORD, r.getString(R.string.default_password))
                         .putString(KEY_PREF_RECIPIENT_EMAIL_ADDRESS, r.getString(R.string.default_recipient))
-                        .putString(KEY_PREF_EMAIL_PROTOCOL, DEFAULT_EMAIL_PROTOCOL)
-                        .putString(KEY_PREF_EMAIL_HOST, DEFAULT_EMAIL_HOST)
-                        .putString(KEY_PREF_EMAIL_PORT, DEFAULT_EMAIL_PORT)
+                        .putString(KEY_PREF_EMAIL_PROTOCOL, "smtp")
+                        .putString(KEY_PREF_EMAIL_HOST, "smtp.gmail.com")
+                        .putString(KEY_PREF_EMAIL_PORT, "465")
                         .apply();
                 refreshPreferences(getPreferenceScreen());
                 return true;
@@ -361,10 +310,7 @@ public class SettingsFragment extends PreferenceFragment {
 
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                preferences
-                        .edit()
-                        .clear()
-                        .apply();
+                clearPreferences();
                 refreshPreferences(getPreferenceScreen());
                 return true;
             }
@@ -402,6 +348,27 @@ public class SettingsFragment extends PreferenceFragment {
             }
         });
 
+    }
+
+    private void clearPreferences() {
+        preferences.edit().clear().apply();
+
+        File dir = new File(getActivity().getFilesDir().getParent() + "/shared_prefs/");
+        String[] files = dir.list();
+        for (String file : files) {
+            SharedPreferences preferences = getActivity().getSharedPreferences(file.replace(".xml", ""), Context.MODE_PRIVATE);
+            preferences.edit().clear().apply();
+        }
+
+//                try {
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException e) {
+//                    //ok
+//                }
+
+        for (String file : files) {
+            new File(dir, file).delete();
+        }
     }
 
     private void refreshPreferences(PreferenceGroup group) {

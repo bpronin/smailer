@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.util.Log;
 
-import com.bopr.android.smailer.settings.Settings;
 import com.bopr.android.smailer.util.DeviceUtil;
 import com.bopr.android.smailer.util.MailTransport;
 
@@ -14,12 +13,14 @@ import java.util.Locale;
 
 import javax.mail.AuthenticationFailedException;
 
+import static android.content.Context.MODE_PRIVATE;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_HOST;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_PORT;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_PROTOCOL;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_RECIPIENT_EMAIL_ADDRESS;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_PASSWORD;
+import static com.bopr.android.smailer.settings.Settings.PREFERENCES_STORAGE_NAME;
 
 
 /**
@@ -80,7 +81,7 @@ public class Mailer {
     }
 
     private MailerProperties readProperties(Context context) {
-        SharedPreferences preferences = context.getSharedPreferences(Settings.PREFERENCES_STORAGE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_STORAGE_NAME, MODE_PRIVATE);
         MailerProperties properties = new MailerProperties();
 
         properties.setUser(preferences.getString(KEY_PREF_SENDER_ACCOUNT, ""));

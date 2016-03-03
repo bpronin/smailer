@@ -35,6 +35,7 @@
             android:key="sender_server"
             android:title="@string/pref_title_outgoing_server">
             <EditTextPreference
+                android:defaultValue="smtp"
                 android:inputType="text"
                 android:key="sender_protocol"
                 android:maxLines="1"
@@ -44,6 +45,7 @@
             <EditTextPreference
                 android:inputType="text"
                 android:key="sender_host"
+                android:defaultValue="smtp.gmail.com"
                 android:maxLines="1"
                 android:selectAllOnFocus="true"
                 android:singleLine="true"
@@ -51,6 +53,7 @@
             <EditTextPreference
                 android:inputType="text"
                 android:key="sender_port"
+                android:defaultValue="465"
                 android:maxLines="1"
                 android:selectAllOnFocus="true"
                 android:singleLine="true"
