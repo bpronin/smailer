@@ -16,7 +16,6 @@ import javax.mail.AuthenticationFailedException;
 import static android.content.Context.MODE_PRIVATE;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_HOST;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_PORT;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_PROTOCOL;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_RECIPIENT_EMAIL_ADDRESS;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_PASSWORD;
@@ -49,7 +48,7 @@ public class Mailer {
 
         MailTransport transport = new MailTransport(properties.getUser(),
 //                EncryptUtil.decrypt(context, properties.getPassword()),
-                properties.getPassword(), properties.getProtocol(), properties.getHost(),
+                properties.getPassword(),  properties.getHost(),
                 properties.getPort());
 
         try {
@@ -87,7 +86,6 @@ public class Mailer {
         properties.setUser(preferences.getString(KEY_PREF_SENDER_ACCOUNT, ""));
         properties.setPassword(preferences.getString(KEY_PREF_SENDER_PASSWORD, ""));
         properties.setRecipients(preferences.getString(KEY_PREF_RECIPIENT_EMAIL_ADDRESS, ""));
-        properties.setProtocol(preferences.getString(KEY_PREF_EMAIL_PROTOCOL, ""));
         properties.setHost(preferences.getString(KEY_PREF_EMAIL_HOST, ""));
         properties.setPort(preferences.getString(KEY_PREF_EMAIL_PORT, ""));
 

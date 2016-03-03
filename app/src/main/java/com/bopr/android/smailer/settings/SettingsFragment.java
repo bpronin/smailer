@@ -31,7 +31,6 @@ import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.preference.Preference.OnPreferenceChangeListener;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_HOST;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_PORT;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_PROTOCOL;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_RECIPIENT_EMAIL_ADDRESS;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_PASSWORD;
@@ -49,7 +48,6 @@ public class SettingsFragment extends PreferenceFragment {
     private EditTextPreference recipientsPreference;
     private EditTextPreference accountPreference;
     private EditTextPreference passwordPreference;
-    private EditTextPreference protocolPreference;
     private EditTextPreference hostPreference;
     private EditTextPreference portPreference;
     private SharedPreferences preferences;
@@ -106,16 +104,6 @@ public class SettingsFragment extends PreferenceFragment {
             }
         });
 
-        protocolPreference = (EditTextPreference) findPreference(KEY_PREF_EMAIL_PROTOCOL);
-        protocolPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object value) {
-                updateProtocolPreference((String) value);
-                return true;
-            }
-        });
-
         hostPreference = (EditTextPreference) findPreference(KEY_PREF_EMAIL_HOST);
         hostPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
@@ -159,11 +147,6 @@ public class SettingsFragment extends PreferenceFragment {
     private void updateRecipientsPreference(String value) {
         EditTextPreference preference = this.recipientsPreference;
         updateSummary(value, preference);
-    }
-
-    private void updateProtocolPreference(String value) {
-        updateSummary(value, protocolPreference);
-        //TODO: update options summary
     }
 
     private void updateHostPreference(String value) {
@@ -224,7 +207,6 @@ public class SettingsFragment extends PreferenceFragment {
         if (requestCode == PERMISSIONS_REQUEST_RECEIVE_SMS) {
             if (grantResults[0] != PERMISSION_GRANTED) {
                 Toast.makeText(getActivity(), R.string.message_service_disabled_by_permission, Toast.LENGTH_SHORT).show();
-//                enabledPreference.getOnPreferenceChangeListener().onPreferenceChange(enabledPreference, false);
                 enabledPreference.setChecked(false);
                 updateEnabledPreference(false);
             }
@@ -245,7 +227,6 @@ public class SettingsFragment extends PreferenceFragment {
                         MailTransport transport = new MailTransport(
                                 user,
                                 getResources().getString(R.string.default_password),
-                                "smtp",
                                 "smtp.gmail.com",
                                 "465"
                         );
@@ -297,7 +278,6 @@ public class SettingsFragment extends PreferenceFragment {
 //                        .putString(KEY_PREF_SENDER_PASSWORD, EncryptUtil.encrypt(getActivity(), r.getString(R.string.default_password)))
                         .putString(KEY_PREF_SENDER_PASSWORD, r.getString(R.string.default_password))
                         .putString(KEY_PREF_RECIPIENT_EMAIL_ADDRESS, r.getString(R.string.default_recipient))
-                        .putString(KEY_PREF_EMAIL_PROTOCOL, "smtp")
                         .putString(KEY_PREF_EMAIL_HOST, "smtp.gmail.com")
                         .putString(KEY_PREF_EMAIL_PORT, "465")
                         .apply();

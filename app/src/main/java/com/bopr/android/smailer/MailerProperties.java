@@ -10,7 +10,6 @@ public class MailerProperties {
     private String user;
     private String password;
     private String recipients;
-    private String protocol;
     private String host;
     private String port;
 
@@ -31,14 +30,6 @@ public class MailerProperties {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getProtocol() {
-        return protocol;
-    }
-
-    public void setProtocol(String protocol) {
-        this.protocol = protocol;
     }
 
     public String getHost() {
@@ -65,4 +56,14 @@ public class MailerProperties {
         this.recipients = recipients;
     }
 
+    @Override
+    public String toString() {
+        return "MailerProperties{" +
+                "user='" + user + '\'' +
+                ", password='" + password + '\'' +
+                ", recipients='" + recipients + '\'' +
+                ", host='" + host + '\'' +
+                ", port='" + port + '\'' +
+                '}';
+    }
 }

@@ -2,22 +2,11 @@ package com.bopr.android.smailer;
 
 import android.annotation.TargetApi;
 import android.app.IntentService;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.provider.Telephony;
 import android.telephony.SmsMessage;
 import android.util.Log;
-
-import com.bopr.android.smailer.settings.Settings;
-
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_HOST;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_PORT;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_PROTOCOL;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_RECIPIENT_EMAIL_ADDRESS;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_ACCOUNT;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_PASSWORD;
 
 /**
  * Class MailerService.

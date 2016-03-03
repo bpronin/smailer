@@ -29,9 +29,9 @@ public class MailTransport {
         Security.addProvider(new JSSEProvider());
     }
 
-    public MailTransport(final String user, final String password, String protocol, String host, String port) {
+    public MailTransport(String user, String password, String host, String port) {
         Properties props = new Properties();
-        props.setProperty("mail.transport.protocol", protocol);
+        props.setProperty("mail.transport.protocol", "smtp");
         props.setProperty("mail.host", host);
         props.setProperty("mail.smtp.auth", "true");
         props.setProperty("mail.smtp.port", port);
@@ -40,11 +40,12 @@ public class MailTransport {
         props.setProperty("mail.smtp.socketFactory.fallback", "false");
         props.setProperty("mail.smtp.quitwait", "false");
 
-        session = Session.getDefaultInstance(props, new Authenticator() {
+        final PasswordAuthentication authentication = new PasswordAuthentication(user, password);
+        session = Session.getInstance(props, new Authenticator() {
 
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(user, password);
+                return authentication;
             }
         });
     }
