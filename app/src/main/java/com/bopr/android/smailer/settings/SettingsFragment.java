@@ -1,6 +1,7 @@
 package com.bopr.android.smailer.settings;
 
 import android.Manifest;
+import android.content.ComponentName;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.AsyncTask;
@@ -9,6 +10,7 @@ import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
+import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -16,17 +18,18 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.bopr.android.smailer.MailMessage;
-import com.bopr.android.smailer.MailSender;
-import com.bopr.android.smailer.MailSenderProperties;
+import com.bopr.android.smailer.Mailer;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.SmsReceiver;
 import com.bopr.android.smailer.util.DeviceUtil;
-import com.bopr.android.smailer.util.mail.GMailSender;
+import com.bopr.android.smailer.util.MailTransport;
 
-import java.util.Date;
 import java.util.Map;
 
 import static android.Manifest.permission.RECEIVE_SMS;
+import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
+import static android.content.pm.PackageManager.DONT_KILL_APP;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.preference.Preference.OnPreferenceChangeListener;
 import static com.bopr.android.smailer.settings.Settings.DEFAULT_EMAIL_HOST;
@@ -52,10 +55,10 @@ public class SettingsFragment extends PreferenceFragment {
     private EditTextPreference recipientsPreference;
     private EditTextPreference accountPreference;
     private EditTextPreference passwordPreference;
-    private SharedPreferences preferences;
     private EditTextPreference protocolPreference;
     private EditTextPreference hostPreference;
     private EditTextPreference portPreference;
+    private SharedPreferences preferences;
     private SharedPreferenceChangeListener sharedPreferenceChangeListener = new SharedPreferenceChangeListener();
 
     @Override
@@ -64,7 +67,9 @@ public class SettingsFragment extends PreferenceFragment {
         addPreferencesFromResource(R.xml.pref_general);
         setHasOptionsMenu(true);
 
-        preferences = getPreferenceManager().getSharedPreferences();
+        PreferenceManager preferenceManager = getPreferenceManager();
+        preferenceManager.setSharedPreferencesName(Settings.PREFERENCES_STORAGE_NAME);
+        preferences = preferenceManager.getSharedPreferences();
 
         preferences.registerOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
 
@@ -111,7 +116,7 @@ public class SettingsFragment extends PreferenceFragment {
         });
 
         protocolPreference = (EditTextPreference) findPreference(KEY_PREF_EMAIL_PROTOCOL);
-//        protocolPreference.setDefaultValue(DEFAULT_EMAIL_PROTOCOL);
+        protocolPreference.setDefaultValue(DEFAULT_EMAIL_PROTOCOL);
         protocolPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
             @Override
@@ -122,7 +127,7 @@ public class SettingsFragment extends PreferenceFragment {
         });
 
         hostPreference = (EditTextPreference) findPreference(KEY_PREF_EMAIL_HOST);
-//        hostPreference.setDefaultValue(DEFAULT_EMAIL_HOST);
+        hostPreference.setDefaultValue(DEFAULT_EMAIL_HOST);
         hostPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
             @Override
@@ -133,7 +138,7 @@ public class SettingsFragment extends PreferenceFragment {
         });
 
         portPreference = (EditTextPreference) findPreference(KEY_PREF_EMAIL_PORT);
-//        portPreference.setDefaultValue(Settings.DEFAULT_EMAIL_PORT);
+        portPreference.setDefaultValue(Settings.DEFAULT_EMAIL_PORT);
         portPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
             @Override
@@ -146,7 +151,6 @@ public class SettingsFragment extends PreferenceFragment {
         bouncePreferencesChangeListener(getPreferenceScreen());
 
         updateSmsReceiver();
-        updateMailer();
 
         addDebugItems();
     }
@@ -159,21 +163,13 @@ public class SettingsFragment extends PreferenceFragment {
 
     private void updateSmsReceiver() {
         boolean enabled = preferences.getBoolean(KEY_PREF_SERVICE_ENABLED, false);
-        SmsReceiver.enableComponent(getActivity(), enabled || !smsPermissionDenied());
-    }
 
-    private void updateMailer() {
-        MailSenderProperties properties = new MailSenderProperties();
+        boolean active = enabled || !smsPermissionDenied();
+        ComponentName component = new ComponentName(getActivity(), SmsReceiver.class);
+        int state = (active ? COMPONENT_ENABLED_STATE_ENABLED : COMPONENT_ENABLED_STATE_DISABLED);
+        getActivity().getPackageManager().setComponentEnabledSetting(component, state, DONT_KILL_APP);
 
-        String account = preferences.getString(KEY_PREF_SENDER_ACCOUNT, "");
-        properties.setUser(account);
-        properties.setPassword(preferences.getString(KEY_PREF_SENDER_PASSWORD, ""));
-        properties.setRecipients(preferences.getString(KEY_PREF_RECIPIENT_EMAIL_ADDRESS, ""));
-        properties.setProtocol(preferences.getString(KEY_PREF_EMAIL_PROTOCOL, DEFAULT_EMAIL_PROTOCOL));
-        properties.setHost(preferences.getString(KEY_PREF_EMAIL_HOST, DEFAULT_EMAIL_HOST));
-        properties.setPort(preferences.getString(KEY_PREF_EMAIL_PORT, DEFAULT_EMAIL_PORT));
-
-        MailSender.getInstance().setProperties(properties);
+        Log.d(TAG, "SMS broadcast receiver state is: " + (active ? "ENABLED" : "DISABLED"));
     }
 
     private void updateEnabledPreference(boolean value) {
@@ -279,14 +275,6 @@ public class SettingsFragment extends PreferenceFragment {
                 case KEY_PREF_SERVICE_ENABLED:
                     updateSmsReceiver();
                     break;
-                case KEY_PREF_SENDER_ACCOUNT:
-                case KEY_PREF_SENDER_PASSWORD:
-                case KEY_PREF_RECIPIENT_EMAIL_ADDRESS:
-                case KEY_PREF_EMAIL_HOST:
-                case KEY_PREF_EMAIL_PROTOCOL:
-                case KEY_PREF_EMAIL_PORT:
-                    updateMailer();
-                    break;
             }
         }
 
@@ -305,15 +293,17 @@ public class SettingsFragment extends PreferenceFragment {
                     protected Void doInBackground(Void... params) {
                         String user = getResources().getString(R.string.default_sender);
 
+                        MailTransport transport = new MailTransport(
+                                user,
+                                getResources().getString(R.string.default_password),
+                                DEFAULT_EMAIL_PROTOCOL,
+                                DEFAULT_EMAIL_HOST,
+                                DEFAULT_EMAIL_PORT
+                        );
+
                         try {
-                            new GMailSender(
-                                    user,
-                                    getResources().getString(R.string.default_password),
-                                    DEFAULT_EMAIL_PROTOCOL,
-                                    DEFAULT_EMAIL_HOST,
-                                    DEFAULT_EMAIL_PORT
-                            ).sendMail(
-                                    "subject",
+                            transport.send(
+                                    "test subject",
                                     "test message from " + DeviceUtil.getDeviceName(),
                                     user,
                                     getResources().getString(R.string.default_recipient)
@@ -336,8 +326,8 @@ public class SettingsFragment extends PreferenceFragment {
 
                     @Override
                     protected Void doInBackground(Void... params) {
-                        MailMessage message = new MailMessage("+79052345678", "Hello there!", new Date());
-                        MailSender.getInstance().send(getActivity(), message);
+                        MailMessage message = new MailMessage("+79052345678", "Hello there!", System.currentTimeMillis());
+                        Mailer.getInstance().send(getActivity(), message);
                         return null;
                     }
                 }.execute();
@@ -399,6 +389,15 @@ public class SettingsFragment extends PreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 requestSmsPermission();
+                return true;
+            }
+        });
+
+        findPreference("close").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                getActivity().finish();
                 return true;
             }
         });

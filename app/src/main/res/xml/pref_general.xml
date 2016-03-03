@@ -80,6 +80,9 @@
         <Preference
             android:key="requestReceiveSmsPermission"
             android:title="Request Sms Permission" />
+        <Preference
+            android:key="close"
+            android:title="Finish Activity" />
     </PreferenceScreen>
 
 </PreferenceScreen>

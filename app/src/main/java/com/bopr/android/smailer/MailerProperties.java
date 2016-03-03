@@ -1,11 +1,11 @@
 package com.bopr.android.smailer;
 
 /**
- * Class MailSenderProperties.
+ * Class MailerProperties.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class MailSenderProperties {
+public class MailerProperties {
 
     private String user;
     private String password;
@@ -14,7 +14,7 @@ public class MailSenderProperties {
     private String host;
     private String port;
 
-    public MailSenderProperties() {
+    public MailerProperties() {
     }
 
     public String getUser() {

@@ -1,0 +1,5 @@
+<resources >
+    <string name="default_sender">xxx@gmail.com</string>
+    <string name="default_recipient">yyy@gmail.com</string>
+    <string name="default_password">password</string>
+</resources>

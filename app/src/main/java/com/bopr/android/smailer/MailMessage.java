@@ -11,12 +11,12 @@ public class MailMessage {
 
     private final String phone;
     private final String body;
-    private final Date date;
+    private final Date time;
 
-    public MailMessage(String phone, String body, Date date) {
+    public MailMessage(String phone, String body, long timeInMillis) {
         this.phone = phone;
         this.body = body;
-        this.date = date;
+        this.time = new Date(timeInMillis);
     }
 
     public String getPhone() {
@@ -27,8 +27,8 @@ public class MailMessage {
         return body;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getTime() {
+        return time;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class MailMessage {
         return "MailMessage{" +
                 "phone='" + phone + '\'' +
                 ", body='" + body + '\'' +
-                ", date=" + date +
+                ", time=" + time +
                 '}';
     }
 }
