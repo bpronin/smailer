@@ -12,14 +12,12 @@
     <string name="pref_title_protocol">Protocol</string>
     <string name="pref_title_host">Host</string>
     <string name="pref_title_port">Port</string>
-
     <string name="pref_description_service_on">Service is active</string>
     <string name="pref_description_service_off">Service is inactive</string>
+    <string name="pref_title_email_settings">Email</string>
 
     <string name="password_asterisk">*******</string>
     <string name="not_set">[not specified]</string>
-    <string name="message_error_sending_email">Unable to send email. Please check settings.</string>
-    <string name="message_email_authentication">Authentication error. Please check username and password.</string>
 
     <string name="email_subject_prefix">[SMailer]</string>
     <string name="email_subject_incoming_sms_pattern" formatted="false">Incoming SMS from %1$s</string>
@@ -29,6 +27,8 @@
     <string name="email_subject_missed_call_pattern" formatted="false">Missed call from %1$s</string>
     <string name="email_body_pattern" formatted="false">%1$s %n----------%nSent from %2$s %nat %3$s</string>
     <string name="email_time_pattern" formatted="false">yyyy-MM-dd HH:mm</string>
-    <string name="pref_title_email_settings">Email</string>
-    <string name="message_service_disabled_by_permission">\"SMS read permission has been denied. Service will be disabled.\"</string>
+
+    <string name="message_error_sending_email">Unable to send email. Please check settings.</string>
+    <string name="message_email_authentication">Authentication error. Please check username and password.</string>
+    <string name="message_service_disabled_by_permission">SMS read permission has been denied. Service will be disabled.</string>
 </resources>

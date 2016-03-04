@@ -1,0 +1,25 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Preference
+        android:key="sendDefaultMail"
+        android:title="Send Default Mail" />
+    <Preference
+        android:key="sendMail"
+        android:title="Send Mail" />
+    <Preference
+        android:key="setDefaultPreferences"
+        android:title="Set Default Preferences" />
+    <Preference
+        android:key="clearPreferences"
+        android:title="Clear Preferences" />
+    <Preference
+        android:key="requireReceiveSmsPermission"
+        android:title="Want Sms Permission" />
+    <Preference
+        android:key="requestReceiveSmsPermission"
+        android:title="Request Sms Permission" />
+    <Preference
+        android:key="close"
+        android:title="Finish Activity" />
+
+</PreferenceScreen>

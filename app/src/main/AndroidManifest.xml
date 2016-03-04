@@ -21,13 +21,31 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".MailerService" />
+        <activity
+            android:name=".settings.MoreSettingsActivity"
+            android:label="@string/pref_title_more">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="com.bopr.android.smailer.MORE_SETTINGS" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".settings.DebugSettingsActivity"
+            android:label="Debug">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="com.bopr.android.smailer.DEBUG_SETTINGS" />
+            </intent-filter>
+        </activity>
 
         <receiver android:name=".SmsReceiver">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
+
+        <service android:name=".MailerService" />
 
     </application>
 

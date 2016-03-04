@@ -31,53 +31,13 @@
     <PreferenceScreen
         android:key="more"
         android:title="@string/pref_title_more">
-        <PreferenceCategory
-            android:key="sender_server"
-            android:title="@string/pref_title_outgoing_server">
-            <EditTextPreference
-                android:inputType="text"
-                android:key="sender_host"
-                android:defaultValue="smtp.gmail.com"
-                android:maxLines="1"
-                android:selectAllOnFocus="true"
-                android:singleLine="true"
-                android:title="@string/pref_title_host" />
-            <EditTextPreference
-                android:inputType="text"
-                android:key="sender_port"
-                android:defaultValue="465"
-                android:maxLines="1"
-                android:selectAllOnFocus="true"
-                android:singleLine="true"
-                android:title="@string/pref_title_port" />
-        </PreferenceCategory>
+        <intent android:action="com.bopr.android.smailer.MORE_SETTINGS" />
     </PreferenceScreen>
 
     <PreferenceScreen
         android:key="debug"
-        android:persistent="false"
         android:title="Debug">
-        <Preference
-            android:key="sendDefaultMail"
-            android:title="Send Default Mail" />
-        <Preference
-            android:key="sendMail"
-            android:title="Send Mail" />
-        <Preference
-            android:key="setDefaultPreferences"
-            android:title="Set Default Preferences" />
-        <Preference
-            android:key="clearPreferences"
-            android:title="Clear Preferences" />
-        <Preference
-            android:key="requireReceiveSmsPermission"
-            android:title="Want Sms Permission" />
-        <Preference
-            android:key="requestReceiveSmsPermission"
-            android:title="Request Sms Permission" />
-        <Preference
-            android:key="close"
-            android:title="Finish Activity" />
+        <intent android:action="com.bopr.android.smailer.DEBUG_SETTINGS" />
     </PreferenceScreen>
 
 </PreferenceScreen>

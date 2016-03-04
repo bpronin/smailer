@@ -1,6 +1,7 @@
 package com.bopr.android.smailer.util;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.tozny.crypto.android.AesCbcWithIntegrity;
@@ -29,7 +30,7 @@ public class EncryptUtil {
     }
 
     public static String decrypt(Context context, String s) {
-        if (s == null || s.isEmpty()) {
+        if (TextUtils.isEmpty(s)) {
             return s;
         }
 
@@ -43,7 +44,7 @@ public class EncryptUtil {
     }
 
     public static String encrypt(Context context, String s) {
-        if (s == null || s.isEmpty()) {
+        if (TextUtils.isEmpty(s)) {
             return s;
         }
 
