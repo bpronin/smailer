@@ -11,6 +11,8 @@ import android.preference.SwitchPreference;
 
 import com.bopr.android.smailer.R;
 
+import java.util.Map;
+
 /**
  * Class DefaultPreferenceFragment.
  *
@@ -60,18 +62,23 @@ public class DefaultPreferenceFragment extends PreferenceFragment {
      */
     protected void refreshPreferences(PreferenceGroup group) {
         SharedPreferences preferences = getSharedPreferences();
+        Map<String, ?> map = preferences.getAll();
         for (int i = 0; i < group.getPreferenceCount(); i++) {
             Preference preference = group.getPreference(i);
             if (preference instanceof PreferenceGroup) {
                 refreshPreferences((PreferenceGroup) preference);
-            } else if (preference instanceof EditTextPreference) {
-                String value = preferences.getString(preference.getKey(), "");
-                preference.getOnPreferenceChangeListener().onPreferenceChange(preference, value);
-                ((EditTextPreference) preference).setText(value);
-            } else if (preference instanceof SwitchPreference) {
-                Boolean value = preferences.getBoolean(preference.getKey(), false);
-                preference.getOnPreferenceChangeListener().onPreferenceChange(preference, value);
-                ((SwitchPreference) preference).setChecked(value);
+            } else {
+                Object value = map.get(preference.getKey());
+                Preference.OnPreferenceChangeListener listener = preference.getOnPreferenceChangeListener();
+                if (listener != null) {
+                    listener.onPreferenceChange(preference, value);
+                }
+
+                if (preference instanceof EditTextPreference) {
+                    ((EditTextPreference) preference).setText((String) value);
+                } else if (preference instanceof SwitchPreference) {
+                    ((SwitchPreference) preference).setChecked((Boolean) value);
+                }
             }
         }
     }

@@ -21,4 +21,17 @@
             android:title="@string/pref_title_port" />
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:key="email_content"
+        android:title="@string/pref_title_email_content">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="email_content_device_name"
+            android:title="@string/pref_title_device_name" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="email_content_message_time"
+            android:title="@string/pref_title_time" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

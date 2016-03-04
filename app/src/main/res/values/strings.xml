@@ -4,10 +4,10 @@
     <string name="pref_title_enable">Active</string>
     <string name="pref_title_sender_account">Account</string>
     <string name="pref_title_recipients">Recipients</string>
-    <string name="pref_title_sender">Email Sender</string>
-    <string name="pref_title_subject">Email Subject</string>
+    <string name="pref_title_sender">Email sender</string>
+    <string name="pref_title_subject">Email subject</string>
     <string name="pref_title_sender_password">Password</string>
-    <string name="pref_title_outgoing_server">Outgoing Server</string>
+    <string name="pref_title_outgoing_server">Outgoing server</string>
     <string name="pref_title_more">More</string>
     <string name="pref_title_protocol">Protocol</string>
     <string name="pref_title_host">Host</string>
@@ -15,9 +15,17 @@
     <string name="pref_description_service_on">Service is active</string>
     <string name="pref_description_service_off">Service is inactive</string>
     <string name="pref_title_email_settings">Email</string>
+    <string name="pref_title_email_content">Email content</string>
+    <string name="pref_title_location">Location</string>
+    <string name="pref_title_time">Time</string>
+    <string name="pref_title_device_name">Device name</string>
 
     <string name="password_asterisk">*******</string>
     <string name="not_set">[not specified]</string>
+
+    <string name="message_error_sending_email">Unable to send email. Please check settings.</string>
+    <string name="message_email_authentication">Authentication error. Please check username and password.</string>
+    <string name="message_service_disabled_by_permission">SMS read permission has been denied. Service will be disabled.</string>
 
     <string name="email_subject_prefix">[SMailer]</string>
     <string name="email_subject_incoming_sms_pattern" formatted="false">Incoming SMS from %1$s</string>
@@ -25,10 +33,10 @@
     <string name="email_subject_incoming_call_pattern" formatted="false">Incoming call from %1$s</string>
     <string name="email_subject_outgoing_call_pattern" formatted="false">Outgoing call to %1$s</string>
     <string name="email_subject_missed_call_pattern" formatted="false">Missed call from %1$s</string>
-    <string name="email_body_pattern" formatted="false">%1$s %n----------%nSent from %2$s %nat %3$s</string>
-    <string name="email_time_pattern" formatted="false">yyyy-MM-dd HH:mm</string>
 
-    <string name="message_error_sending_email">Unable to send email. Please check settings.</string>
-    <string name="message_email_authentication">Authentication error. Please check username and password.</string>
-    <string name="message_service_disabled_by_permission">SMS read permission has been denied. Service will be disabled.</string>
+    <string name="email_content_body_delimiter">----------</string>
+    <string name="email_content_sent_prefix">Sent</string>
+    <string name="email_content_from_prefix">from</string>
+    <string name="email_content_time_prefix">at</string>
+    <string name="email_content_time_pattern">yyyy-MM-dd HH:mm</string>
 </resources>

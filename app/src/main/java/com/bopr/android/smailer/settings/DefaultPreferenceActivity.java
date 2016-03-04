@@ -49,6 +49,21 @@ public abstract class DefaultPreferenceActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+//    @Override
+//    public void startActivityForResult(Intent intent, int requestCode, Bundle options) {
+//        super.startActivityForResult(intent, requestCode, options);
+//        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+//    }
+//
+// Sliding on finish() looks ugly.
+//
+//    @Override
+//    public void finish() {
+//        super.finish();
+//        overridePendingTransition(android.R.anim.slide_out_right, android.R.anim.slide_in_left);
+//    }
+
     @Override
     @TargetApi(Build.VERSION_CODES.M)
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

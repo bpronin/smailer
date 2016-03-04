@@ -14,11 +14,6 @@ import java.util.Locale;
 import javax.mail.AuthenticationFailedException;
 
 import static android.content.Context.MODE_PRIVATE;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_HOST;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_PORT;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_RECIPIENT_EMAIL_ADDRESS;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_ACCOUNT;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_PASSWORD;
 import static com.bopr.android.smailer.settings.Settings.PREFERENCES_STORAGE_NAME;
 
 
@@ -31,6 +26,7 @@ public class Mailer {
 
     private static final String TAG = "bopr.Mailer";
     private static Mailer instance;
+    private MailerProperties properties;
 
     public static Mailer getInstance() {
         if (instance == null) {
@@ -44,7 +40,9 @@ public class Mailer {
 
     public void send(Context context, MailMessage message) {
         Log.d(TAG, "Sending mail: " + message);
-        MailerProperties properties = readProperties(context);
+
+        SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_STORAGE_NAME, MODE_PRIVATE);
+        properties = new MailerProperties(preferences);
 
         MailTransport transport = new MailTransport(properties.getUser(),
 //                EncryptUtil.decrypt(context, properties.getPassword()),
@@ -73,23 +71,30 @@ public class Mailer {
 
     private String formatBody(Context context, MailMessage message) {
         Resources r = context.getResources();
-        String pattern = r.getString(R.string.email_body_pattern);
-        SimpleDateFormat timeFormat = new SimpleDateFormat(r.getString(R.string.email_time_pattern), Locale.getDefault());
-        String time = timeFormat.format(message.getTime());
-        return String.format(pattern, message.getBody(), DeviceUtil.getDeviceName(), time);
-    }
 
-    private MailerProperties readProperties(Context context) {
-        SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_STORAGE_NAME, MODE_PRIVATE);
-        MailerProperties properties = new MailerProperties();
+        StringBuilder builder = new StringBuilder();
+        builder.append(message.getBody());
+        builder.append("\n");
+        builder.append(r.getString(R.string.email_content_body_delimiter));
+        builder.append("\n");
+        builder.append(r.getString(R.string.email_content_sent_prefix));
 
-        properties.setUser(preferences.getString(KEY_PREF_SENDER_ACCOUNT, ""));
-        properties.setPassword(preferences.getString(KEY_PREF_SENDER_PASSWORD, ""));
-        properties.setRecipients(preferences.getString(KEY_PREF_RECIPIENT_EMAIL_ADDRESS, ""));
-        properties.setHost(preferences.getString(KEY_PREF_EMAIL_HOST, ""));
-        properties.setPort(preferences.getString(KEY_PREF_EMAIL_PORT, ""));
+        if (properties.isContentDeviceName()){
+            builder.append(r.getString(R.string.email_content_from_prefix));
+            builder.append(" ");
+            builder.append(DeviceUtil.getDeviceName());
+            builder.append("\n");
+        }
 
-        return properties;
+        if (properties.isContentTime()){
+            SimpleDateFormat format = new SimpleDateFormat(r.getString(R.string.email_content_time_pattern), Locale.getDefault());
+            builder.append(r.getString(R.string.email_content_time_prefix));
+            builder.append(" ");
+            builder.append(format.format(message.getTime()));
+            builder.append("\n");
+        }
+
+        return builder.toString();
     }
 
 }
