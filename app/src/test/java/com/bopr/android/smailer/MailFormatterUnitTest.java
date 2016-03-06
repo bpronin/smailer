@@ -1,19 +1,30 @@
 package com.bopr.android.smailer;
 
-import android.content.Context;
+import android.Manifest;
+import android.app.Application;
+import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.location.Location;
-import android.os.Build;
-import android.test.mock.MockContext;
+import android.provider.ContactsContract;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
+import org.robolectric.internal.Shadow;
+import org.robolectric.shadows.ShadowApplication;
 
+import java.util.ArrayList;
+
+import static android.provider.ContactsContract.CommonDataKinds.Phone;
+import static android.provider.ContactsContract.CommonDataKinds.StructuredName;
+import static android.provider.ContactsContract.Data;
+import static android.provider.ContactsContract.RawContacts;
 import static org.junit.Assert.assertEquals;
-import static org.robolectric.RuntimeEnvironment.*;
+import static org.robolectric.RuntimeEnvironment.application;
 
 /**
  * To work on unit tests, switch the Test Artifact in the Build Variants view.
@@ -152,6 +163,80 @@ public class MailFormatterUnitTest {
         properties.setContentContactName(false);
 
         HtmlMailFormatter formatter = new HtmlMailFormatter(application, properties, message);
+
+        String text = formatter.getBody();
+        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; " +
+                "charset=utf-8\"></head><body>Email body text<hr style=\"border: none; " +
+                "background-color: #cccccc; height: 1px;\">Sent from location " +
+                "<a href=\"http://maps.google.com/maps/place/60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
+                "<br></body></html>", text);
+    }
+
+    /**
+     * Check email body footer with different options.
+     *
+     * @throws Exception when fails
+     */
+    @Test
+    public void testFooterNoLocation() throws Exception {
+        MailMessage message = new MailMessage("+70123456789", "Email body text", 0, null);
+
+        MailerProperties properties = new MailerProperties();
+        properties.setContentTime(false);
+        properties.setContentDeviceName(false);
+        properties.setContentLocation(true);
+        properties.setContentContactName(false);
+
+        HtmlMailFormatter formatter = new HtmlMailFormatter(application, properties, message);
+
+        String text = formatter.getBody();
+        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; " +
+                "charset=utf-8\"></head><body>Email body text</body></html>", text);
+    }
+
+    /**
+     * Check email body footer with different options.
+     *
+     * @throws Exception when fails
+     */
+    @Test
+    public void testContactName() throws Exception {
+        ShadowApplication app = ShadowApplication.getInstance();
+        app.grantPermissions(Manifest.permission.WRITE_CONTACTS);
+
+        ArrayList<ContentProviderOperation> ops = new ArrayList<>();
+
+        ops.add(ContentProviderOperation.newInsert(
+                RawContacts.CONTENT_URI)
+                .withValue(RawContacts.ACCOUNT_TYPE, null)
+                .withValue(RawContacts.ACCOUNT_NAME, null)
+                .build());
+
+        ops.add(ContentProviderOperation.newInsert(
+                Data.CONTENT_URI)
+                .withValueBackReference(Data.RAW_CONTACT_ID, 0)
+                .withValue(Data.MIMETYPE, StructuredName.CONTENT_ITEM_TYPE)
+                .withValue(StructuredName.DISPLAY_NAME, "The User").build());
+
+        ops.add(ContentProviderOperation.
+                newInsert(Data.CONTENT_URI)
+                .withValueBackReference(Data.RAW_CONTACT_ID, 0)
+                .withValue(Data.MIMETYPE, Phone.CONTENT_ITEM_TYPE)
+                .withValue(Phone.NUMBER, "12345")
+                .withValue(Phone.TYPE, Phone.TYPE_MOBILE)
+                .build());
+
+        ContentProviderResult[] results = app.getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
+
+        MailMessage message = new MailMessage("12345", "Email body text", 0, null);
+
+        MailerProperties properties = new MailerProperties();
+        properties.setContentTime(false);
+        properties.setContentDeviceName(false);
+        properties.setContentLocation(false);
+        properties.setContentContactName(true);
+
+        HtmlMailFormatter formatter = new HtmlMailFormatter(app.getApplicationContext(), properties, message);
 
         String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; " +

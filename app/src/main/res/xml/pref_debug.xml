@@ -17,10 +17,13 @@
         android:title="Want SMS permission" />
     <Preference
         android:key="requestReceiveSmsPermission"
-        android:title="Request Sms Permission" />
+        android:title="Request Sms permission" />
     <Preference
         android:key="get_location"
         android:title="Get location" />
+    <Preference
+        android:key="get_contact"
+        android:title="Get contact" />
     <Preference
         android:key="close"
         android:title="Finish activity" />

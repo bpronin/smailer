@@ -4,11 +4,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
-import android.provider.Settings;
-import android.text.TextUtils;
 
-import static android.os.Build.MANUFACTURER;
-import static android.os.Build.MODEL;
+import static android.provider.ContactsContract.*;
 
 /**
  * Class DeviceUtil.
@@ -19,11 +16,12 @@ public class ContactUtil {
 
     public static String getContactName(Context context, String phoneNumber) {
         String result = null;
-        Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
-        Cursor cursor = context.getContentResolver().query(uri, new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME}, null, null, null);
+        Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
+        Cursor cursor = context.getContentResolver().query(uri,
+                new String[]{PhoneLookup.DISPLAY_NAME}, null, null, null);
         if (cursor != null) {
             if (cursor.moveToFirst()) {
-                result = cursor.getString(cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME));
+                result = cursor.getString(cursor.getColumnIndex(PhoneLookup.DISPLAY_NAME));
             }
             if (!cursor.isClosed()) {
                 cursor.close();

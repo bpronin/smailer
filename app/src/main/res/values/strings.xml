@@ -39,7 +39,6 @@
     <string name="email_content_sent_prefix">Sent</string>
     <string name="email_content_from_prefix">from</string>
     <string name="email_content_time_prefix">at</string>
-    <string name="email_content_time_pattern">yyyy-MM-dd HH:mm</string>
     <string name="email_content_by_prefix">by</string>
     <string name="email_content_location_prefix">from location</string>
     <string name="message_comma_separated_recipient">Separate multiple recipients with comma.</string>

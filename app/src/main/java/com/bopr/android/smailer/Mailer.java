@@ -35,7 +35,7 @@ public class Mailer {
                 properties.getPassword(), properties.getHost(),
                 properties.getPort());
 
-        HtmlMailFormatter formatter = new HtmlMailFormatter(context, properties, message);
+        MailFormatter formatter = new MailFormatter(context, properties, message);
         try {
             transport.send(formatter.getSubject(), formatter.getBody(),
                     properties.getUser(), properties.getRecipients());
