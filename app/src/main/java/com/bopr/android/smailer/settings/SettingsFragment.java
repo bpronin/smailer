@@ -5,26 +5,24 @@ import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.SwitchPreference;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
 import com.bopr.android.smailer.R;
 
-import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.preference.Preference.OnPreferenceChangeListener;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_RECIPIENT_EMAIL_ADDRESS;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_PASSWORD;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SERVICE_ENABLED;
+import static com.bopr.android.smailer.util.PermissionUtil.isSmsPermissionDenied;
+import static com.bopr.android.smailer.util.PermissionUtil.requestSmsPermission;
 
 /**
- * Main activity's fragment.
+ * Main settings fragment.
  */
 public class SettingsFragment extends DefaultPreferenceFragment {
 
-    private static final String TAG = "bopr.SettingsFragment";
     private static final int PERMISSIONS_REQUEST_RECEIVE_SMS = 100;
 
     private SwitchPreference enabledPreference;
@@ -101,27 +99,19 @@ public class SettingsFragment extends DefaultPreferenceFragment {
     }
 
     private void checkSmsPermission(boolean enabled) {
-        if (enabled && smsPermissionDenied()) {
-            requestSmsPermission();
-        }
-    }
-
-    private boolean smsPermissionDenied() {
-        return ContextCompat.checkSelfPermission(getActivity(), RECEIVE_SMS) != PERMISSION_GRANTED;
-    }
-
-    private void requestSmsPermission() {
-        if (smsPermissionDenied()) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{RECEIVE_SMS},
-                    PERMISSIONS_REQUEST_RECEIVE_SMS);
+        if (enabled && isSmsPermissionDenied(getActivity())) {
+            requestSmsPermission(getActivity(), PERMISSIONS_REQUEST_RECEIVE_SMS);
         }
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         if (requestCode == PERMISSIONS_REQUEST_RECEIVE_SMS) {
             if (grantResults[0] != PERMISSION_GRANTED) {
-                Toast.makeText(getActivity(), R.string.message_service_disabled_by_permission, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.message_service_disabled_by_permission,
+                        Toast.LENGTH_LONG).show();
+
                 enabledPreference.setChecked(false);
                 updateEnabledPreference(false);
             }

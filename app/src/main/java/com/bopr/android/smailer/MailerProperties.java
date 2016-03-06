@@ -2,7 +2,9 @@ package com.bopr.android.smailer;
 
 import android.content.SharedPreferences;
 
+import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_CONTENT_CONTACT_NAME;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_CONTENT_DEVICE_NAME;
+import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_CONTENT_LOCATION;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_CONTENT_MESSAGE_TIME;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_HOST;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_PORT;
@@ -24,9 +26,8 @@ public class MailerProperties {
     private String port;
     private boolean contentTime;
     private boolean contentDeviceName;
-
-//    private boolean contentLocation;
-//    private boolean contentContactName;
+    private boolean contentLocation;
+    private boolean contentContactName;
 
     public MailerProperties() {
     }
@@ -39,6 +40,8 @@ public class MailerProperties {
         setPort(preferences.getString(KEY_PREF_EMAIL_PORT, ""));
         setContentTime(preferences.getBoolean(KEY_PREF_EMAIL_CONTENT_MESSAGE_TIME, true));
         setContentDeviceName(preferences.getBoolean(KEY_PREF_EMAIL_CONTENT_DEVICE_NAME, true));
+        setContentLocation(preferences.getBoolean(KEY_PREF_EMAIL_CONTENT_LOCATION, true));
+        setContentContactName(preferences.getBoolean(KEY_PREF_EMAIL_CONTENT_CONTACT_NAME, true));
     }
 
     public String getUser() {
@@ -97,6 +100,22 @@ public class MailerProperties {
         this.contentDeviceName = contentDeviceName;
     }
 
+    public boolean isContentLocation() {
+        return contentLocation;
+    }
+
+    public void setContentLocation(boolean contentLocation) {
+        this.contentLocation = contentLocation;
+    }
+
+    public boolean isContentContactName() {
+        return contentContactName;
+    }
+
+    public void setContentContactName(boolean contentContactName) {
+        this.contentContactName = contentContactName;
+    }
+
     @Override
     public String toString() {
         return "MailerProperties{" +
@@ -107,6 +126,8 @@ public class MailerProperties {
                 ", port='" + port + '\'' +
                 ", contentTime=" + contentTime +
                 ", contentDeviceName=" + contentDeviceName +
+                ", contentLocation=" + contentLocation +
+                ", contentContactName=" + contentContactName +
                 '}';
     }
 }

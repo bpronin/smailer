@@ -8,6 +8,8 @@ import android.provider.Telephony;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
+import com.bopr.android.smailer.util.LocationProvider;
+
 /**
  * Class MailerService.
  *
@@ -16,6 +18,7 @@ import android.util.Log;
 public class MailerService extends IntentService {
 
     private static final String TAG = "bopr.MailerService";
+    private LocationProvider locationProvider;
 
     public MailerService() {
         super(TAG);
@@ -23,34 +26,43 @@ public class MailerService extends IntentService {
 
     @Override
     public void onCreate() {
-        Log.d(TAG, "Service started");
         super.onCreate();
+        locationProvider = new LocationProvider(this);
+    }
+
+    @Override
+    public void onStart(Intent intent, int startId) {
+        locationProvider.start();
+        super.onStart(intent, startId);
+        Log.d(TAG, "Service started");
     }
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "Service destroyed");
+        locationProvider.stop();
         super.onDestroy();
+        Log.d(TAG, "Service destroyed");
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.d(TAG, "Processing mailer service intent");
 
-        Mailer mailer = Mailer.getInstance();
-        for (SmsMessage smsMessage : getSmsMessages(intent)) {
+        Mailer mailer = new Mailer();
+        for (SmsMessage smsMessage : parseSmsMessages(intent)) {
             mailer.send(this,
                     new MailMessage(
                             smsMessage.getDisplayOriginatingAddress(),
                             smsMessage.getDisplayMessageBody(),
-                            smsMessage.getTimestampMillis()
+                            smsMessage.getTimestampMillis(),
+                            locationProvider.getLocation()
                     )
             );
         }
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    private SmsMessage[] getSmsMessages(Intent intent) {
+    private SmsMessage[] parseSmsMessages(Intent intent) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             return Telephony.Sms.Intents.getMessagesFromIntent(intent);
         } else {
@@ -66,5 +78,4 @@ public class MailerService extends IntentService {
             return messages;
         }
     }
-
 }

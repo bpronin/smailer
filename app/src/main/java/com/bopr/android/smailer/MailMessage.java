@@ -1,5 +1,7 @@
 package com.bopr.android.smailer;
 
+import android.location.Location;
+
 import java.util.Date;
 
 /**
@@ -11,11 +13,13 @@ public class MailMessage {
 
     private final String phone;
     private final String body;
+    private final Location location;
     private final Date time;
 
-    public MailMessage(String phone, String body, long timeInMillis) {
+    public MailMessage(String phone, String body, long timeInMillis, Location location) {
         this.phone = phone;
         this.body = body;
+        this.location = location;
         this.time = new Date(timeInMillis);
     }
 
@@ -31,11 +35,16 @@ public class MailMessage {
         return time;
     }
 
+    public Location getLocation() {
+        return location;
+    }
+
     @Override
     public String toString() {
         return "MailMessage{" +
                 "phone='" + phone + '\'' +
                 ", body='" + body + '\'' +
+                ", location=" + location +
                 ", time=" + time +
                 '}';
     }

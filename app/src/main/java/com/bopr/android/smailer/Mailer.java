@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.bopr.android.smailer.util.DeviceUtil;
 import com.bopr.android.smailer.util.MailTransport;
+import com.bopr.android.smailer.util.StringUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -25,17 +26,10 @@ import static com.bopr.android.smailer.settings.Settings.PREFERENCES_STORAGE_NAM
 public class Mailer {
 
     private static final String TAG = "bopr.Mailer";
-    private static Mailer instance;
+
     private MailerProperties properties;
 
-    public static Mailer getInstance() {
-        if (instance == null) {
-            instance = new Mailer();
-        }
-        return instance;
-    }
-
-    private Mailer() {
+    public Mailer() {
     }
 
     public void send(Context context, MailMessage message) {
@@ -46,7 +40,7 @@ public class Mailer {
 
         MailTransport transport = new MailTransport(properties.getUser(),
 //                EncryptUtil.decrypt(context, properties.getPassword()),
-                properties.getPassword(),  properties.getHost(),
+                properties.getPassword(), properties.getHost(),
                 properties.getPort());
 
         try {
@@ -73,25 +67,38 @@ public class Mailer {
         Resources r = context.getResources();
 
         StringBuilder builder = new StringBuilder();
-        builder.append(message.getBody());
-        builder.append("\n");
-        builder.append(r.getString(R.string.email_content_body_delimiter));
-        builder.append("\n");
-        builder.append(r.getString(R.string.email_content_sent_prefix));
+        builder
+                .append(message.getBody())
+                .append("\n")
+                .append(r.getString(R.string.email_content_body_delimiter))
+                .append("\n")
+                .append(r.getString(R.string.email_content_sent_prefix))
+                .append(" ");
 
-        if (properties.isContentDeviceName()){
-            builder.append(r.getString(R.string.email_content_from_prefix));
-            builder.append(" ");
-            builder.append(DeviceUtil.getDeviceName());
-            builder.append("\n");
+
+        if (properties.isContentDeviceName()) {
+            builder
+                    .append(r.getString(R.string.email_content_from_prefix))
+                    .append(" ")
+                    .append(DeviceUtil.getDeviceName())
+                    .append("\n");
         }
 
-        if (properties.isContentTime()){
+        if (properties.isContentTime()) {
             SimpleDateFormat format = new SimpleDateFormat(r.getString(R.string.email_content_time_pattern), Locale.getDefault());
-            builder.append(r.getString(R.string.email_content_time_prefix));
-            builder.append(" ");
-            builder.append(format.format(message.getTime()));
-            builder.append("\n");
+            builder
+                    .append(r.getString(R.string.email_content_time_prefix))
+                    .append(" ")
+                    .append(format.format(message.getTime()))
+                    .append("\n");
+        }
+
+        if (properties.isContentLocation()) {
+            builder
+                    .append(r.getString(R.string.email_content_location_prefix))
+                    .append(" ")
+                    .append(StringUtil.formatLocation(message.getLocation()))
+                    .append("\n");
         }
 
         return builder.toString();

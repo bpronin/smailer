@@ -17,5 +17,7 @@ public interface Settings {
     String KEY_PREF_RECIPIENT_EMAIL_ADDRESS = "recipient_email_address";
     String KEY_PREF_EMAIL_CONTENT_MESSAGE_TIME = "email_content_message_time";
     String KEY_PREF_EMAIL_CONTENT_DEVICE_NAME = "email_content_device_name";
+    String KEY_PREF_EMAIL_CONTENT_LOCATION = "email_content_location";
+    String KEY_PREF_EMAIL_CONTENT_CONTACT_NAME = "email_content_contact_name";
 
 }

@@ -19,6 +19,7 @@
     <string name="pref_title_location">Location</string>
     <string name="pref_title_time">Time</string>
     <string name="pref_title_device_name">Device name</string>
+    <string name="pref_title_contact_name">Sender contact name</string>
 
     <string name="password_asterisk">*******</string>
     <string name="not_set">[not specified]</string>
@@ -26,6 +27,8 @@
     <string name="message_error_sending_email">Unable to send email. Please check settings.</string>
     <string name="message_email_authentication">Authentication error. Please check username and password.</string>
     <string name="message_service_disabled_by_permission">SMS read permission has been denied. Service will be disabled.</string>
+    <string name="message_contact_name_disabled_by_permission">Contacts read permission has been denied. The setting will be disabled.</string>
+    <string name="message_location_disabled_by_permission">Location read permission has been denied. The setting will be disabled.</string>
 
     <string name="email_subject_prefix">[SMailer]</string>
     <string name="email_subject_incoming_sms_pattern" formatted="false">Incoming SMS from %1$s</string>
@@ -39,4 +42,7 @@
     <string name="email_content_from_prefix">from</string>
     <string name="email_content_time_prefix">at</string>
     <string name="email_content_time_pattern">yyyy-MM-dd HH:mm</string>
+    <string name="email_content_by_prefix">by</string>
+    <string name="email_content_location_prefix">from location</string>
+
 </resources>

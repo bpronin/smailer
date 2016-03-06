@@ -1,12 +1,15 @@
 package com.bopr.android.smailer.settings;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.Preference;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -15,7 +18,10 @@ import com.bopr.android.smailer.MailMessage;
 import com.bopr.android.smailer.Mailer;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.DeviceUtil;
+import com.bopr.android.smailer.util.LocationProvider;
 import com.bopr.android.smailer.util.MailTransport;
+import com.bopr.android.smailer.util.PermissionUtil;
+import com.bopr.android.smailer.util.StringUtil;
 
 import java.io.File;
 
@@ -34,11 +40,16 @@ import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SERVICE_ENABLE
 public class DebugFragment extends DefaultPreferenceFragment {
 
     private static final String TAG = "bopr.DebugFragment";
+    private static final int PERMISSIONS_REQUEST_RECEIVE_SMS = 100;
+
+    private LocationProvider locationProvider;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_debug);
+
+        locationProvider = new LocationProvider(getActivity());
 
         findPreference("sendDefaultMail").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
@@ -82,8 +93,8 @@ public class DebugFragment extends DefaultPreferenceFragment {
 
                     @Override
                     protected Void doInBackground(Void... params) {
-                        MailMessage message = new MailMessage("+79052345678", "Hello there!", System.currentTimeMillis());
-                        Mailer.getInstance().send(getActivity(), message);
+                        MailMessage message = new MailMessage("+79052345678", "Hello there!", System.currentTimeMillis(), locationProvider.getLocation());
+                        new Mailer().send(getActivity(), message);
                         return null;
                     }
                 }.execute();
@@ -130,7 +141,7 @@ public class DebugFragment extends DefaultPreferenceFragment {
                     getActivity().enforceCallingOrSelfPermission(
                             Manifest.permission.RECEIVE_SMS, "Testing SMS permission");
                 } else {
-                    Toast.makeText(getActivity(), "SMS PERMISSION DENIED", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "SMS PERMISSION DENIED", Toast.LENGTH_LONG).show();
                 }
                 return true;
             }
@@ -145,6 +156,18 @@ public class DebugFragment extends DefaultPreferenceFragment {
             }
         });
 
+        findPreference("get_location").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Location location = locationProvider.getLocation();
+                Toast.makeText(getActivity(),
+                        location != null ? StringUtil.formatLocation(location) : "No location received",
+                        Toast.LENGTH_LONG).show();
+                return true;
+            }
+        });
+
         findPreference("close").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
             @Override
@@ -154,6 +177,18 @@ public class DebugFragment extends DefaultPreferenceFragment {
             }
         });
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        locationProvider.start();
+    }
+
+    @Override
+    public void onStop() {
+        locationProvider.stop();
+        super.onStop();
     }
 
     private void clearPreferences() {
@@ -182,10 +217,22 @@ public class DebugFragment extends DefaultPreferenceFragment {
     }
 
     public void requestSmsPermission() {
-//        if (smsPermissionDenied()) {
-//            ActivityCompat.requestPermissions(getActivity(), new String[]{RECEIVE_SMS},
-//                    PERMISSIONS_REQUEST_RECEIVE_SMS);
-//        }
+        Activity activity = getActivity();
+        if (PermissionUtil.isSmsPermissionDenied(activity)) {
+            PermissionUtil.requestSmsPermission(activity, PERMISSIONS_REQUEST_RECEIVE_SMS);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == PERMISSIONS_REQUEST_RECEIVE_SMS) {
+            if (grantResults[0] != PERMISSION_GRANTED) {
+                Toast.makeText(getActivity(), "Permission denied", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getActivity(), "Permission granted", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
 }

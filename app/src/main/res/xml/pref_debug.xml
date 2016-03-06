@@ -2,24 +2,27 @@
 
     <Preference
         android:key="sendDefaultMail"
-        android:title="Send Default Mail" />
+        android:title="Send default mail" />
     <Preference
         android:key="sendMail"
-        android:title="Send Mail" />
+        android:title="Send mail" />
     <Preference
         android:key="setDefaultPreferences"
-        android:title="Set Default Preferences" />
+        android:title="Set default preferences" />
     <Preference
         android:key="clearPreferences"
-        android:title="Clear Preferences" />
+        android:title="Clear preferences" />
     <Preference
         android:key="requireReceiveSmsPermission"
-        android:title="Want Sms Permission" />
+        android:title="Want SMS permission" />
     <Preference
         android:key="requestReceiveSmsPermission"
         android:title="Request Sms Permission" />
     <Preference
+        android:key="get_location"
+        android:title="Get location" />
+    <Preference
         android:key="close"
-        android:title="Finish Activity" />
+        android:title="Finish activity" />
 
 </PreferenceScreen>

@@ -2,7 +2,6 @@ package com.bopr.android.smailer.util;
 
 import android.content.Context;
 import android.provider.Settings;
-import android.text.TextUtils;
 
 import static android.os.Build.MANUFACTURER;
 import static android.os.Build.MODEL;
@@ -32,14 +31,7 @@ public class DeviceUtil {
 */
 
     public static String getDeviceName() {
-        return capitalize(MANUFACTURER) + " " + MODEL;
-    }
-
-    private static String capitalize(String text) {
-        if (TextUtils.isEmpty(text)) {
-            return text;
-        }
-        return text.substring(0, 1).toUpperCase() + text.substring(1);
+        return StringUtil.capitalize(MANUFACTURER) + " " + MODEL;
     }
 
 }
