@@ -1,16 +1,20 @@
 package com.bopr.android.smailer.settings;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.SwitchPreference;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.bopr.android.smailer.R;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.preference.Preference.OnPreferenceChangeListener;
+import static com.bopr.android.smailer.settings.Settings.*;
+import static com.bopr.android.smailer.settings.Settings.KEY_PREF_OUTGOING_SERVER;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_RECIPIENT_EMAIL_ADDRESS;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_PASSWORD;
@@ -41,7 +45,7 @@ public class SettingsFragment extends DefaultPreferenceFragment {
 
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
-                boolean enabled = (boolean) value;
+                boolean enabled = value != null && (boolean) value;
                 checkSmsPermission(enabled);
                 updateEnabledPreference(enabled);
                 return true;
@@ -79,6 +83,12 @@ public class SettingsFragment extends DefaultPreferenceFragment {
         });
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateServerPreference();
+    }
+
     private void updateEnabledPreference(boolean value) {
         enabledPreference.setSummary(value
                 ? R.string.pref_description_service_on
@@ -96,6 +106,17 @@ public class SettingsFragment extends DefaultPreferenceFragment {
 
     private void updateRecipientsPreference(String value) {
         updateSummary(value, recipientsPreference);
+    }
+
+    private void updateServerPreference() {
+        SharedPreferences preferences = getSharedPreferences();
+        String host = preferences.getString(KEY_PREF_EMAIL_HOST, "");
+        String port = preferences.getString(KEY_PREF_EMAIL_PORT, "");
+        String value = null;
+        if (!TextUtils.isEmpty(host) || !TextUtils.isEmpty(port)) {
+            value = host + ":" + port;
+        }
+        updateSummary(value, findPreference(KEY_PREF_OUTGOING_SERVER));
     }
 
     private void checkSmsPermission(boolean enabled) {

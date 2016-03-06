@@ -5,15 +5,15 @@ import android.app.Fragment;
 import android.support.annotation.NonNull;
 
 /**
- * An activity that presents a set of application settings.
+ * Email content activity.
  */
-public class MoreSettingsActivity extends DefaultPreferenceActivity {
+public class EmailContentSettingsActivity extends DefaultPreferenceActivity {
 
     @NonNull
     @Override
     protected Fragment createFragment() {
         setClosable(true);
-        return new MoreSettingsFragment();
+        return new EmailContentSettingsFragment();
     }
 
 }

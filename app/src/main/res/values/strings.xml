@@ -3,17 +3,15 @@
 
     <string name="pref_title_enable">Active</string>
     <string name="pref_title_sender_account">Account</string>
-    <string name="pref_title_recipients">Recipients</string>
+    <string name="pref_title_recipients">Email recipients</string>
     <string name="pref_title_sender">Email sender</string>
     <string name="pref_title_subject">Email subject</string>
     <string name="pref_title_sender_password">Password</string>
     <string name="pref_title_outgoing_server">Outgoing server</string>
-    <string name="pref_title_more">More</string>
-    <string name="pref_title_protocol">Protocol</string>
     <string name="pref_title_host">Host</string>
     <string name="pref_title_port">Port</string>
-    <string name="pref_description_service_on">Service is active</string>
-    <string name="pref_description_service_off">Service is inactive</string>
+    <string name="pref_description_service_on">Service is turned ON</string>
+    <string name="pref_description_service_off">Service is turned OFF</string>
     <string name="pref_title_email_settings">Email</string>
     <string name="pref_title_email_content">Email content</string>
     <string name="pref_title_location">Location</string>
@@ -22,7 +20,7 @@
     <string name="pref_title_contact_name">Sender contact name</string>
 
     <string name="password_asterisk">*******</string>
-    <string name="not_set">[not specified]</string>
+    <string name="not_set">[ not specified ]</string>
 
     <string name="message_error_sending_email">Unable to send email. Please check settings.</string>
     <string name="message_email_authentication">Authentication error. Please check username and password.</string>
@@ -44,5 +42,8 @@
     <string name="email_content_time_pattern">yyyy-MM-dd HH:mm</string>
     <string name="email_content_by_prefix">by</string>
     <string name="email_content_location_prefix">from location</string>
+    <string name="message_comma_separated_recipient">Separate multiple recipients with comma.</string>
+    <string name="message_password_stored_encrypted">Password is stored encrypted only on the device.</string>
+    <string name="message_account_hint">Email address to send emails from (i.e. Google account email).</string>
 
 </resources>

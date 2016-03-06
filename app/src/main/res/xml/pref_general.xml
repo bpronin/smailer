@@ -8,6 +8,7 @@
     <EditTextPreference
         android:inputType="textEmailAddress"
         android:key="sender_account"
+        android:dialogMessage="@string/message_account_hint"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
@@ -15,23 +16,32 @@
 
     <com.bopr.android.smailer.settings.PasswordPreference
         android:inputType="textPassword"
+        android:dialogMessage="@string/message_password_stored_encrypted"
         android:key="sender_password"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:title="@string/pref_title_sender_password" />
+
+    <PreferenceScreen
+        android:key="outgoing_server"
+        android:title="@string/pref_title_outgoing_server">
+        <intent android:action="com.bopr.android.smailer.SERVER_SETTINGS" />
+    </PreferenceScreen>
+
     <EditTextPreference
         android:inputType="textEmailAddress"
         android:key="recipient_email_address"
+        android:dialogMessage="@string/message_comma_separated_recipient"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:title="@string/pref_title_recipients" />
 
     <PreferenceScreen
-        android:key="more"
-        android:title="@string/pref_title_more">
-        <intent android:action="com.bopr.android.smailer.MORE_SETTINGS" />
+        android:key="email_content"
+        android:title="@string/pref_title_email_content">
+        <intent android:action="com.bopr.android.smailer.EMAIL_CONTENT_SETTINGS" />
     </PreferenceScreen>
 
     <PreferenceScreen

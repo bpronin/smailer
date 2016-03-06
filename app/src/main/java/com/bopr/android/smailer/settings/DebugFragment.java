@@ -194,22 +194,22 @@ public class DebugFragment extends DefaultPreferenceFragment {
     private void clearPreferences() {
         getSharedPreferences().edit().clear().apply();
 
-        File dir = new File(getActivity().getFilesDir().getParent() + "/shared_prefs/");
-        String[] files = dir.list();
-        for (String file : files) {
-            SharedPreferences preferences = getActivity().getSharedPreferences(file.replace(".xml", ""), Context.MODE_PRIVATE);
-            preferences.edit().clear().apply();
-        }
-
-//                try {
-//                    Thread.sleep(1000);
-//                } catch (InterruptedException e) {
-//                    //ok
-//                }
-
-        for (String file : files) {
-            new File(dir, file).delete();
-        }
+//        File dir = new File(getActivity().getFilesDir().getParent() + "/shared_prefs/");
+//        String[] files = dir.list();
+//        for (String file : files) {
+//            SharedPreferences preferences = getActivity().getSharedPreferences(file.replace(".xml", ""), Context.MODE_PRIVATE);
+//            preferences.edit().clear().apply();
+//        }
+//
+////                try {
+////                    Thread.sleep(1000);
+////                } catch (InterruptedException e) {
+////                    //ok
+////                }
+//
+//        for (String file : files) {
+//            new File(dir, file).delete();
+//        }
     }
 
     private boolean smsPermissionDenied() {

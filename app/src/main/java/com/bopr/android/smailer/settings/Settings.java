@@ -19,5 +19,7 @@ public interface Settings {
     String KEY_PREF_EMAIL_CONTENT_DEVICE_NAME = "email_content_device_name";
     String KEY_PREF_EMAIL_CONTENT_LOCATION = "email_content_location";
     String KEY_PREF_EMAIL_CONTENT_CONTACT_NAME = "email_content_contact_name";
+    String KEY_PREF_OUTGOING_SERVER = "outgoing_server";
+    String KEY_PREF_EMAIL_CONTENT = "email_content";
 
 }

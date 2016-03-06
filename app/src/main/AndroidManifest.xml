@@ -25,11 +25,20 @@
         </activity>
 
         <activity
-            android:name=".settings.MoreSettingsActivity"
-            android:label="@string/pref_title_more">
+            android:name=".settings.ServerSettingsActivity"
+            android:label="@string/pref_title_outgoing_server">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
-                <action android:name="com.bopr.android.smailer.MORE_SETTINGS" />
+                <action android:name="com.bopr.android.smailer.SERVER_SETTINGS" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".settings.EmailContentSettingsActivity"
+            android:label="@string/pref_title_email_content">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="com.bopr.android.smailer.EMAIL_CONTENT_SETTINGS" />
             </intent-filter>
         </activity>
 

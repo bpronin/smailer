@@ -42,12 +42,12 @@ public class DefaultPreferenceFragment extends PreferenceFragment {
     }
 
     /**
-     * Updates summary of {@link EditTextPreference}.
+     * Updates summary of {@link Preference}.
      *
      * @param value      value
      * @param preference preference
      */
-    protected void updateSummary(String value, EditTextPreference preference) {
+    protected void updateSummary(String value, Preference preference) {
         if (value == null || value.isEmpty()) {
             preference.setSummary(R.string.not_set);
         } else {
@@ -77,7 +77,7 @@ public class DefaultPreferenceFragment extends PreferenceFragment {
                 if (preference instanceof EditTextPreference) {
                     ((EditTextPreference) preference).setText((String) value);
                 } else if (preference instanceof SwitchPreference) {
-                    ((SwitchPreference) preference).setChecked((Boolean) value);
+                    ((SwitchPreference) preference).setChecked(value != null && (boolean) value);
                 }
             }
         }
