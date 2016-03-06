@@ -10,14 +10,26 @@ import android.text.TextUtils;
  */
 public class StringUtil {
 
-    public static String formatLocation(Location location) {
+    public static String formatLocation(Location location, String degreeSymbol,
+                                        String minuteSymbol, String secondSymbol,
+                                        String northSymbol, String southSymbol,
+                                        String westSymbol, String eastSymbol) {
         double lt = location.getLatitude();
         double lg = location.getLongitude();
-        return decimalToDMS(lt) + (lt > 0 ? "N" : "S") + ", " +
-                decimalToDMS(lg) + (lg > 0 ? "W" : "E");
+
+        return decimalToDMS(lt, degreeSymbol, minuteSymbol, secondSymbol)
+                + (lt > 0 ? northSymbol : southSymbol)
+                + ", " +
+                decimalToDMS(lg, degreeSymbol, minuteSymbol, secondSymbol)
+                + (lg > 0 ? westSymbol : eastSymbol);
     }
 
-    public static String decimalToDMS(double coordinate) {
+    public static String formatLocation(Location location) {
+        return formatLocation(location , "°", "\'", "\"", "N", "S", "W", "E");
+    }
+
+    public static String decimalToDMS(double coordinate, String degreeSymbol,
+                                      String minuteSymbol, String secondSymbol) {
         double mod = coordinate % 1;
         int intPart = (int) coordinate;
         int degrees = intPart;
@@ -31,7 +43,7 @@ public class StringUtil {
         intPart = (int) coordinate;
         int seconds = intPart;
 
-        return degrees + "°" + minutes + "'" + seconds + "\" ";
+        return degrees + degreeSymbol + minutes + minuteSymbol + seconds + secondSymbol;
     }
 
     public static String capitalize(String text) {
@@ -40,4 +52,6 @@ public class StringUtil {
         }
         return text.substring(0, 1).toUpperCase() + text.substring(1);
     }
+
+
 }

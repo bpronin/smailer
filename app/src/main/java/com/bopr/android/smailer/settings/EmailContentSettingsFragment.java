@@ -11,6 +11,7 @@ import com.bopr.android.smailer.R;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.preference.Preference.OnPreferenceChangeListener;
+import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_CONTENT_CONTACT_NAME;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_CONTENT_LOCATION;
 import static com.bopr.android.smailer.util.PermissionUtil.isLocationPermissionDenied;
 import static com.bopr.android.smailer.util.PermissionUtil.isReadContactPermissionDenied;
@@ -32,7 +33,7 @@ public class EmailContentSettingsFragment extends DefaultPreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_email_content);
-/*
+
         contactNamePreference = (CheckBoxPreference) findPreference(KEY_PREF_EMAIL_CONTENT_CONTACT_NAME);
         contactNamePreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
@@ -41,7 +42,6 @@ public class EmailContentSettingsFragment extends DefaultPreferenceFragment {
                 return true;
             }
         });
-*/
 
         locationPreference = (CheckBoxPreference) findPreference(KEY_PREF_EMAIL_CONTENT_LOCATION);
         locationPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {

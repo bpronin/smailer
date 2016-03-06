@@ -2,8 +2,6 @@ package com.bopr.android.smailer.settings;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.location.Location;
 import android.os.AsyncTask;
@@ -22,8 +20,6 @@ import com.bopr.android.smailer.util.LocationProvider;
 import com.bopr.android.smailer.util.MailTransport;
 import com.bopr.android.smailer.util.PermissionUtil;
 import com.bopr.android.smailer.util.StringUtil;
-
-import java.io.File;
 
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;

@@ -51,7 +51,7 @@ public class MailTransport {
     }
 
     public void send(String subject, String body, String sender, String recipients) throws MessagingException {
-        DataHandler handler = new DataHandler(new ByteArrayDataSource(body.getBytes()));
+        DataHandler handler = new DataHandler(new ByteArrayDataSource(body.getBytes(), false));
 
         MimeMessage message = new MimeMessage(session);
         message.setSender(new InternetAddress(sender));
@@ -86,15 +86,17 @@ public class MailTransport {
 
     private static class ByteArrayDataSource implements DataSource {
 
+        private final String contentType;
         private byte[] data;
 
-        public ByteArrayDataSource(byte[] data) {
+        public ByteArrayDataSource(byte[] data, boolean html) {
             this.data = data;
+            contentType = html ? "text/plain" : "text/html";
         }
 
         @Override
         public String getContentType() {
-            return "text/plain";
+            return contentType;
         }
 
         @Override
