@@ -18,7 +18,8 @@
     <string name="pref_title_time">Time</string>
     <string name="pref_title_device_name">Device name</string>
     <string name="pref_title_contact_name">Sender contact name</string>
-
+    <string name="pref_title_when_send">When to send email</string>
+    
     <string name="password_asterisk">*******</string>
     <string name="not_set">[ not specified ]</string>
 
@@ -43,6 +44,6 @@
     <string name="email_content_location_prefix">from location</string>
     <string name="message_comma_separated_recipient">Separate multiple recipients with comma.</string>
     <string name="message_password_stored_encrypted">Password is stored encrypted only on the device.</string>
-    <string name="message_account_hint">Email address to send emails from (i.e. Google account).</string>
+    <string name="message_account_hint">Email address to send emails from (e.g. Google account).</string>
 
 </resources>
