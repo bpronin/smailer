@@ -1,4 +1,4 @@
-/app/src/main/res/values/secure.xml
+/app/src/debug/assets/debug.properties
 *.iml
 .gradle
 /local.properties
@@ -6,4 +6,5 @@
 /.idea/libraries
 .DS_Store
 /build
+/app/build
 /captures

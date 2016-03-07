@@ -3,7 +3,7 @@ package com.bopr.android.smailer.settings;
 import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
-import android.content.res.Resources;
+import android.content.res.AssetManager;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -25,6 +25,10 @@ import com.bopr.android.smailer.util.LocationProvider;
 import com.bopr.android.smailer.util.MailTransport;
 import com.bopr.android.smailer.util.PermissionUtil;
 import com.bopr.android.smailer.util.StringUtil;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
@@ -146,6 +150,18 @@ public class DebugFragment extends DefaultPreferenceFragment {
         super.onStop();
     }
 
+    @NonNull
+    private Properties getDebugProperties() {
+        Properties properties = new Properties();
+        try {
+            InputStream stream = getActivity().getAssets().open("debug.properties");
+            properties.load(stream);
+        } catch (IOException x) {
+            Log.e(TAG, "Cannot read debug properties", x);
+        }
+        return properties;
+    }
+
     private boolean smsPermissionDenied() {
         return ContextCompat.checkSelfPermission(getActivity(), RECEIVE_SMS) != PERMISSION_GRANTED;
     }
@@ -158,14 +174,15 @@ public class DebugFragment extends DefaultPreferenceFragment {
     }
 
     private void onRestorePreferences() {
-        Resources r = getResources();
+        Properties properties = getDebugProperties();
+
         getSharedPreferences()
                 .edit()
                 .putBoolean(KEY_PREF_SERVICE_ENABLED, true)
-                .putString(KEY_PREF_SENDER_ACCOUNT, r.getString(R.string.default_sender))
+                .putString(KEY_PREF_SENDER_ACCOUNT, properties.getProperty("default_sender"))
 //                        .putString(KEY_PREF_SENDER_PASSWORD, EncryptUtil.encrypt(getActivity(), r.getString(R.string.default_password)))
-                .putString(KEY_PREF_SENDER_PASSWORD, r.getString(R.string.default_password))
-                .putString(KEY_PREF_RECIPIENT_EMAIL_ADDRESS, r.getString(R.string.default_recipient))
+                .putString(KEY_PREF_SENDER_PASSWORD, properties.getProperty("default_password"))
+                .putString(KEY_PREF_RECIPIENT_EMAIL_ADDRESS, properties.getProperty("default_recipient"))
                 .putString(KEY_PREF_EMAIL_HOST, "smtp.gmail.com")
                 .putString(KEY_PREF_EMAIL_PORT, "465")
                 .apply();
@@ -237,21 +254,22 @@ public class DebugFragment extends DefaultPreferenceFragment {
 
             @Override
             protected Void doInBackground(Void... params) {
-                String user = getResources().getString(R.string.default_sender);
+                Properties properties = getDebugProperties();
+                String user = properties.getProperty("default_sender");
 
                 MailTransport transport = new MailTransport(
                         user,
-                        getResources().getString(R.string.default_password),
-                        "smtp.gmail.com",
-                        "465"
-                );
+                        properties.getProperty("default_password"),
+                                "smtp.gmail.com",
+                                "465"
+                        );
 
                 try {
                     transport.send(
                             "test subject",
                             "test message from " + DeviceUtil.getDeviceName(),
                             user,
-                            getResources().getString(R.string.default_recipient)
+                            properties.getProperty("default_recipient")
                     );
                 } catch (Exception x) {
                     Log.e(TAG, "FAILED: ", x);

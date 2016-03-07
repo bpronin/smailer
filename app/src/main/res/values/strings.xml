@@ -43,6 +43,6 @@
     <string name="email_content_location_prefix">from location</string>
     <string name="message_comma_separated_recipient">Separate multiple recipients with comma.</string>
     <string name="message_password_stored_encrypted">Password is stored encrypted only on the device.</string>
-    <string name="message_account_hint">Email address to send emails from (i.e. Google account email).</string>
+    <string name="message_account_hint">Email address to send emails from (i.e. Google account).</string>
 
 </resources>

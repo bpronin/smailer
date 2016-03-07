@@ -1,30 +1,30 @@
 package com.bopr.android.smailer;
 
-import android.Manifest;
-import android.app.Application;
 import android.content.ContentProviderOperation;
-import android.content.ContentProviderResult;
+import android.content.Context;
 import android.location.Location;
-import android.provider.ContactsContract;
 
+import com.bopr.android.smailer.util.ContactUtil;
+import com.bopr.android.smailer.util.DeviceUtil;
+
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
-import org.robolectric.internal.Shadow;
-import org.robolectric.shadows.ShadowApplication;
 
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Locale;
 
+import static android.provider.ContactsContract.AUTHORITY;
 import static android.provider.ContactsContract.CommonDataKinds.Phone;
 import static android.provider.ContactsContract.CommonDataKinds.StructuredName;
 import static android.provider.ContactsContract.Data;
 import static android.provider.ContactsContract.RawContacts;
 import static org.junit.Assert.assertEquals;
-import static org.robolectric.RuntimeEnvironment.application;
 
 /**
  * To work on unit tests, switch the Test Artifact in the Build Variants view.
@@ -32,6 +32,15 @@ import static org.robolectric.RuntimeEnvironment.application;
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
 public class MailFormatterUnitTest {
+
+    public Context getContext() {
+        return RuntimeEnvironment.application;
+    }
+
+    @BeforeClass
+    public static void startUpTest() {
+        Locale.setDefault(Locale.US);
+    }
 
     /**
      * Check formatting incoming sms email subject.
@@ -43,7 +52,7 @@ public class MailFormatterUnitTest {
         MailMessage message = new MailMessage("+70123456789", "Email body text", 0, null);
         MailerProperties properties = new MailerProperties();
 
-        HtmlMailFormatter formatter = new HtmlMailFormatter(application, properties, message);
+        MailFormatter formatter = new MailFormatter(getContext(), properties, message);
 
         String text = formatter.getSubject();
         assertEquals("[SMailer] Incoming SMS from +70123456789", text);
@@ -64,7 +73,7 @@ public class MailFormatterUnitTest {
         properties.setContentLocation(false);
         properties.setContentContactName(false);
 
-        HtmlMailFormatter formatter = new HtmlMailFormatter(application, properties, message);
+        MailFormatter formatter = new MailFormatter(getContext(), properties, message);
 
         String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; " +
@@ -79,7 +88,8 @@ public class MailFormatterUnitTest {
      */
     @Test
     public void testFooterTimeOption() throws Exception {
-        MailMessage message = new MailMessage("+70123456789", "Email body text", 0, null);
+        long time = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
+        MailMessage message = new MailMessage("+70123456789", "Email body text", time, null);
 
         MailerProperties properties = new MailerProperties();
         properties.setContentTime(true);
@@ -87,12 +97,12 @@ public class MailFormatterUnitTest {
         properties.setContentLocation(false);
         properties.setContentContactName(false);
 
-        HtmlMailFormatter formatter = new HtmlMailFormatter(application, properties, message);
+        MailFormatter formatter = new MailFormatter(getContext(), properties, message);
 
         String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; " +
                 "charset=utf-8\"></head><body>Email body text<hr style=\"border: none; " +
-                "background-color: #cccccc; height: 1px;\">Sent at 1970-01-01 03:00<br>" +
+                "background-color: #cccccc; height: 1px;\">Sent at Feb 2, 2016 3:04:05 AM<br>" +
                 "</body></html>", text);
     }
 
@@ -111,12 +121,13 @@ public class MailFormatterUnitTest {
         properties.setContentLocation(false);
         properties.setContentContactName(false);
 
-        HtmlMailFormatter formatter = new HtmlMailFormatter(application, properties, message);
+        MailFormatter formatter = new MailFormatter(getContext(), properties, message);
 
         String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; " +
                 "charset=utf-8\"></head><body>Email body text<hr style=\"border: none; " +
-                "background-color: #cccccc; height: 1px;\">Sent from Unknown unknown<br>" +
+                "background-color: #cccccc; height: 1px;\">Sent from "
+                + DeviceUtil.getDeviceName() + "<br>" +
                 "</body></html>", text);
     }
 
@@ -127,7 +138,8 @@ public class MailFormatterUnitTest {
      */
     @Test
     public void testFooterDeviceNameTimeOption() throws Exception {
-        MailMessage message = new MailMessage("+70123456789", "Email body text", 0, null);
+        long time = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
+        MailMessage message = new MailMessage("+70123456789", "Email body text", time, null);
 
         MailerProperties properties = new MailerProperties();
         properties.setContentTime(true);
@@ -135,13 +147,14 @@ public class MailFormatterUnitTest {
         properties.setContentLocation(false);
         properties.setContentContactName(false);
 
-        HtmlMailFormatter formatter = new HtmlMailFormatter(application, properties, message);
+        MailFormatter formatter = new MailFormatter(getContext(), properties, message);
 
         String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; " +
                 "charset=utf-8\"></head><body>Email body text<hr style=\"border: none; " +
-                "background-color: #cccccc; height: 1px;\">Sent from Unknown unknown<br>" +
-                "at 1970-01-01 03:00<br></body></html>", text);
+                "background-color: #cccccc; height: 1px;\">Sent from "
+                + DeviceUtil.getDeviceName() + "<br>" +
+                "at Feb 2, 2016 3:04:05 AM<br></body></html>", text);
     }
 
     /**
@@ -162,7 +175,7 @@ public class MailFormatterUnitTest {
         properties.setContentLocation(true);
         properties.setContentContactName(false);
 
-        HtmlMailFormatter formatter = new HtmlMailFormatter(application, properties, message);
+        MailFormatter formatter = new MailFormatter(getContext(), properties, message);
 
         String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; " +
@@ -187,7 +200,7 @@ public class MailFormatterUnitTest {
         properties.setContentLocation(true);
         properties.setContentContactName(false);
 
-        HtmlMailFormatter formatter = new HtmlMailFormatter(application, properties, message);
+        MailFormatter formatter = new MailFormatter(getContext(), properties, message);
 
         String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; " +
@@ -199,36 +212,39 @@ public class MailFormatterUnitTest {
      *
      * @throws Exception when fails
      */
-    @Test
+//    @Test
     public void testContactName() throws Exception {
-        ShadowApplication app = ShadowApplication.getInstance();
-        app.grantPermissions(Manifest.permission.WRITE_CONTACTS);
+//        ShadowApplication app = ShadowApplication.getInstance();
+//        app.grantPermissions(Manifest.permission.WRITE_CONTACTS);
+//        app.grantPermissions(Manifest.permission.READ_CONTACTS);
 
         ArrayList<ContentProviderOperation> ops = new ArrayList<>();
 
-        ops.add(ContentProviderOperation.newInsert(
-                RawContacts.CONTENT_URI)
+        ops.add(ContentProviderOperation.newInsert(RawContacts.CONTENT_URI)
                 .withValue(RawContacts.ACCOUNT_TYPE, null)
                 .withValue(RawContacts.ACCOUNT_NAME, null)
                 .build());
 
-        ops.add(ContentProviderOperation.newInsert(
-                Data.CONTENT_URI)
+        ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)
                 .withValueBackReference(Data.RAW_CONTACT_ID, 0)
                 .withValue(Data.MIMETYPE, StructuredName.CONTENT_ITEM_TYPE)
-                .withValue(StructuredName.DISPLAY_NAME, "The User").build());
+                .withValue(StructuredName.DISPLAY_NAME, "John Dou")
+                .build());
 
-        ops.add(ContentProviderOperation.
-                newInsert(Data.CONTENT_URI)
+        ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)
                 .withValueBackReference(Data.RAW_CONTACT_ID, 0)
                 .withValue(Data.MIMETYPE, Phone.CONTENT_ITEM_TYPE)
                 .withValue(Phone.NUMBER, "12345")
                 .withValue(Phone.TYPE, Phone.TYPE_MOBILE)
                 .build());
 
-        ContentProviderResult[] results = app.getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
+//        getContext().getContentResolver().applyBatch(AUTHORITY, ops);
+//        List<String> contactNames = ContactUtil.getContactNames(getContext());
+//        System.out.println(contactNames);
+//        String contactName = ContactUtil.getContactName(app.getApplicationContext(), "12345");
+//        System.out.println(contactName);
 
-        MailMessage message = new MailMessage("12345", "Email body text", 0, null);
+        MailMessage message = new MailMessage("+12345678901", "Email body text", 0, null);
 
         MailerProperties properties = new MailerProperties();
         properties.setContentTime(false);
@@ -236,14 +252,28 @@ public class MailFormatterUnitTest {
         properties.setContentLocation(false);
         properties.setContentContactName(true);
 
-        HtmlMailFormatter formatter = new HtmlMailFormatter(app.getApplicationContext(), properties, message);
+        MailFormatter formatter = new MailFormatter(getContext(), properties, message);
 
         String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; " +
                 "charset=utf-8\"></head><body>Email body text<hr style=\"border: none; " +
-                "background-color: #cccccc; height: 1px;\">Sent from location " +
-                "<a href=\"http://maps.google.com/maps/place/60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
+                "background-color: #cccccc; height: 1px;\">Sent by John Dou" +
                 "<br></body></html>", text);
     }
+
+//    public static List<String> getContactNames(Context context) {
+//        Cursor cursor = context.getContentResolver().query(ContactsContract.Contacts.CONTENT_URI,
+//                null, null, null, null);
+//        List<String> result = new ArrayList<>();
+//        if (cursor != null) {
+//            if (cursor.moveToFirst()) {
+//                result.add(cursor.getString(cursor.getColumnIndex(PhoneLookup.DISPLAY_NAME)));
+//            }
+//            if (!cursor.isClosed()) {
+//                cursor.close();
+//            }
+//        }
+//        return result;
+//    }
 
 }

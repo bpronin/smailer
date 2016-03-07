@@ -5,11 +5,12 @@ import android.content.ContentProviderOperation;
 import android.location.Location;
 import android.test.ApplicationTestCase;
 
+import com.bopr.android.smailer.util.ContactUtil;
 import com.bopr.android.smailer.util.DeviceUtil;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 import static android.provider.ContactsContract.AUTHORITY;
 import static android.provider.ContactsContract.CommonDataKinds.Phone;
@@ -24,6 +25,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
 
     public MailFormatterTest() {
         super(Application.class);
+        Locale.setDefault(Locale.US);
     }
 
     /**
@@ -190,31 +192,33 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      * @throws Exception when fails
      */
     public void testContactName() throws Exception {
-        ArrayList<ContentProviderOperation> ops = new ArrayList<>();
+        String phone = "+12345678901";
 
-        ops.add(ContentProviderOperation.newInsert(
-                RawContacts.CONTENT_URI)
-                .withValue(RawContacts.ACCOUNT_TYPE, null)
-                .withValue(RawContacts.ACCOUNT_NAME, null)
-                .build());
+        if (ContactUtil.getContactName(getContext(), phone) == null) {
+            ArrayList<ContentProviderOperation> ops = new ArrayList<>();
 
-        ops.add(ContentProviderOperation.newInsert(
-                Data.CONTENT_URI)
-                .withValueBackReference(Data.RAW_CONTACT_ID, 0)
-                .withValue(Data.MIMETYPE, StructuredName.CONTENT_ITEM_TYPE)
-                .withValue(StructuredName.DISPLAY_NAME, "John Dou").build());
+            ops.add(ContentProviderOperation.newInsert(RawContacts.CONTENT_URI)
+                    .withValue(RawContacts.ACCOUNT_TYPE, null)
+                    .withValue(RawContacts.ACCOUNT_NAME, null)
+                    .build());
 
-        ops.add(ContentProviderOperation.
-                newInsert(Data.CONTENT_URI)
-                .withValueBackReference(Data.RAW_CONTACT_ID, 0)
-                .withValue(Data.MIMETYPE, Phone.CONTENT_ITEM_TYPE)
-                .withValue(Phone.NUMBER, "+12345678901")
-                .withValue(Phone.TYPE, Phone.TYPE_MOBILE)
-                .build());
+            ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)
+                    .withValueBackReference(Data.RAW_CONTACT_ID, 0)
+                    .withValue(Data.MIMETYPE, StructuredName.CONTENT_ITEM_TYPE)
+                    .withValue(StructuredName.DISPLAY_NAME, "John Dou")
+                    .build());
 
-        getContext().getContentResolver().applyBatch(AUTHORITY, ops);
+            ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)
+                    .withValueBackReference(Data.RAW_CONTACT_ID, 0)
+                    .withValue(Data.MIMETYPE, Phone.CONTENT_ITEM_TYPE)
+                    .withValue(Phone.NUMBER, phone)
+                    .withValue(Phone.TYPE, Phone.TYPE_MOBILE)
+                    .build());
 
-        MailMessage message = new MailMessage("+12345678901", "Email body text", 0, null);
+            getContext().getContentResolver().applyBatch(AUTHORITY, ops);
+        }
+
+        MailMessage message = new MailMessage(phone, "Email body text", 0, null);
 
         MailerProperties properties = new MailerProperties();
         properties.setContentTime(false);
