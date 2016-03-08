@@ -3,7 +3,6 @@ package com.bopr.android.smailer.settings;
 import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
-import android.content.res.AssetManager;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -28,12 +27,15 @@ import com.bopr.android.smailer.util.StringUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Properties;
 
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_HOST;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_PORT;
+import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_SOURCE;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_RECIPIENT_EMAIL_ADDRESS;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_PASSWORD;
@@ -185,6 +187,8 @@ public class DebugFragment extends DefaultPreferenceFragment {
                 .putString(KEY_PREF_RECIPIENT_EMAIL_ADDRESS, properties.getProperty("default_recipient"))
                 .putString(KEY_PREF_EMAIL_HOST, "smtp.gmail.com")
                 .putString(KEY_PREF_EMAIL_PORT, "465")
+                .putStringSet(KEY_PREF_EMAIL_SOURCE,
+                        new HashSet<>(Arrays.asList(Settings.VAL_SOURCE_IN_SMS, Settings.VAL_SOURCE_MISSED_CALLS)))
                 .apply();
         refreshPreferences(getPreferenceScreen());
     }
@@ -260,9 +264,9 @@ public class DebugFragment extends DefaultPreferenceFragment {
                 MailTransport transport = new MailTransport(
                         user,
                         properties.getProperty("default_password"),
-                                "smtp.gmail.com",
-                                "465"
-                        );
+                        "smtp.gmail.com",
+                        "465"
+                );
 
                 try {
                     transport.send(
@@ -284,7 +288,8 @@ public class DebugFragment extends DefaultPreferenceFragment {
 
             @Override
             protected Void doInBackground(Void... params) {
-                MailMessage message = new MailMessage("+79052345678", "Hello there!", System.currentTimeMillis(), locationProvider.getLocation());
+                MailMessage message = new MailMessage("+79052345678", true, System.currentTimeMillis(),
+                        0, false, true, "Hello there!", locationProvider.getLocation());
                 new Mailer().send(getActivity(), message);
                 return null;
             }

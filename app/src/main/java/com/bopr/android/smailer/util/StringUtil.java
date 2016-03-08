@@ -25,7 +25,7 @@ public class StringUtil {
     }
 
     public static String formatLocation(Location location) {
-        return formatLocation(location , "°", "\'", "\"", "N", "S", "W", "E");
+        return formatLocation(location, "°", "\'", "\"", "N", "S", "W", "E");
     }
 
     public static String decimalToDMS(double coordinate, String degreeSymbol,
@@ -54,4 +54,8 @@ public class StringUtil {
     }
 
 
+    public static String formatDuration(long duration) {
+        long seconds = duration / 1000;
+        return String.format("%d:%02d:%02d", seconds / 3600, (seconds % 3600) / 60, seconds % 60);
+    }
 }

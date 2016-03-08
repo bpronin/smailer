@@ -47,7 +47,6 @@ public class SettingsFragment extends DefaultPreferenceFragment {
             public boolean onPreferenceChange(Preference preference, Object value) {
                 boolean enabled = value != null && (boolean) value;
                 checkSmsPermission(enabled);
-                updateEnabledPreference(enabled);
                 return true;
             }
         });
@@ -89,19 +88,13 @@ public class SettingsFragment extends DefaultPreferenceFragment {
         updateServerPreference();
     }
 
-    private void updateEnabledPreference(boolean value) {
-        enabledPreference.setSummary(value
-                ? R.string.pref_description_service_on
-                : R.string.pref_description_service_off);
-    }
-
     private void updateAccountPreference(String value) {
         updateSummary(value, accountPreference);
     }
 
     private void updatePasswordPreference(String value) {
         passwordPreference.setSummary(value != null && !value.isEmpty()
-                ? R.string.password_asterisk : R.string.not_set);
+                ? R.string.pref_description_password_asterisk : R.string.pref_description_not_set);
     }
 
     private void updateRecipientsPreference(String value) {
@@ -134,7 +127,6 @@ public class SettingsFragment extends DefaultPreferenceFragment {
                         Toast.LENGTH_LONG).show();
 
                 enabledPreference.setChecked(false);
-                updateEnabledPreference(false);
             }
         }
     }

@@ -11,41 +11,79 @@ import java.util.Date;
  */
 public class MailMessage {
 
-    private final String phone;
-    private final String body;
-    private final Location location;
-    private final Date time;
+    private boolean sms;
+    private boolean incoming;
+    private boolean missed;
+    private String phone;
+    private Location location;
+    private Date startTime;
+    private Date endTime;
+    private String body;
 
-    public MailMessage(String phone, String body, long timeInMillis, Location location) {
-        this.phone = phone;
+    public MailMessage(String phone, boolean incoming, long startTime, long endTime,
+                       boolean missed, boolean sms, String body, Location location) {
         this.body = body;
+        this.endTime = new Date(endTime);
+        this.startTime = new Date(startTime);
         this.location = location;
-        this.time = new Date(timeInMillis);
+        this.phone = phone;
+        this.missed = missed;
+        this.incoming = incoming;
+        this.sms = sms;
+    }
+
+    public boolean isSms() {
+        return sms;
+    }
+
+    public boolean isIncoming() {
+        return incoming;
+    }
+
+    public boolean isMissed() {
+        return missed;
     }
 
     public String getPhone() {
         return phone;
     }
 
-    public String getBody() {
-        return body;
-    }
-
-    public Date getTime() {
-        return time;
-    }
-
     public Location getLocation() {
         return location;
+    }
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public long getCallDuration() {
+        if (startTime != null && endTime != null) {
+            return endTime.getTime() - startTime.getTime();
+        } else {
+            return 0;
+        }
+    }
+
+    public String getBody() {
+        return body;
     }
 
     @Override
     public String toString() {
         return "MailMessage{" +
-                "phone='" + phone + '\'' +
-                ", body='" + body + '\'' +
+                "sms=" + sms +
+                ", incoming=" + incoming +
+                ", missed=" + missed +
+                ", phone='" + phone + '\'' +
                 ", location=" + location +
-                ", time=" + time +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", body='" + body + '\'' +
                 '}';
     }
+
 }

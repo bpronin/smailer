@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--android:tag=""-->
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="in_sms_enabled"
+        android:title="@string/pref_title_incoming_sms" />
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="in_call_enabled"
+        android:title="@string/pref_title_incoming_calls" />
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="out_call_enabled"
+        android:title="@string/pref_title_outgoing_calls" />
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="missed_call_enabled"
+        android:title="@string/pref_title_missed_calls" />
+
+</PreferenceScreen>

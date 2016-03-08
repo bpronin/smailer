@@ -1,11 +1,15 @@
 package com.bopr.android.smailer;
 
 import android.content.SharedPreferences;
+import android.util.ArraySet;
 
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_CONTENT_CONTACT_NAME;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_CONTENT_DEVICE_NAME;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_CONTENT_LOCATION;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_CONTENT_MESSAGE_TIME;
+import com.bopr.android.smailer.settings.Settings;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_HOST;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_PORT;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_RECIPIENT_EMAIL_ADDRESS;
@@ -24,10 +28,7 @@ public class MailerProperties {
     private String recipients;
     private String host;
     private String port;
-    private boolean contentTime;
-    private boolean contentDeviceName;
-    private boolean contentLocation;
-    private boolean contentContactName;
+    private Set<String> contentOptions;
 
     public MailerProperties() {
     }
@@ -38,10 +39,7 @@ public class MailerProperties {
         setRecipients(preferences.getString(KEY_PREF_RECIPIENT_EMAIL_ADDRESS, ""));
         setHost(preferences.getString(KEY_PREF_EMAIL_HOST, ""));
         setPort(preferences.getString(KEY_PREF_EMAIL_PORT, ""));
-        setContentTime(preferences.getBoolean(KEY_PREF_EMAIL_CONTENT_MESSAGE_TIME, true));
-        setContentDeviceName(preferences.getBoolean(KEY_PREF_EMAIL_CONTENT_DEVICE_NAME, true));
-        setContentLocation(preferences.getBoolean(KEY_PREF_EMAIL_CONTENT_LOCATION, true));
-        setContentContactName(preferences.getBoolean(KEY_PREF_EMAIL_CONTENT_CONTACT_NAME, true));
+        setContentOptions(preferences.getStringSet(Settings.KEY_PREF_EMAIL_CONTENT, null));
     }
 
     public String getUser() {
@@ -84,36 +82,16 @@ public class MailerProperties {
         this.recipients = recipients;
     }
 
-    public boolean isContentTime() {
-        return contentTime;
+    public Set<String> getContentOptions() {
+        return contentOptions;
     }
 
-    public void setContentTime(boolean contentTime) {
-        this.contentTime = contentTime;
+    public void setContentOptions(String ... options) {
+        setContentOptions(new HashSet<>(Arrays.asList(options)));
     }
 
-    public boolean isContentDeviceName() {
-        return contentDeviceName;
-    }
-
-    public void setContentDeviceName(boolean contentDeviceName) {
-        this.contentDeviceName = contentDeviceName;
-    }
-
-    public boolean isContentLocation() {
-        return contentLocation;
-    }
-
-    public void setContentLocation(boolean contentLocation) {
-        this.contentLocation = contentLocation;
-    }
-
-    public boolean isContentContactName() {
-        return contentContactName;
-    }
-
-    public void setContentContactName(boolean contentContactName) {
-        this.contentContactName = contentContactName;
+    public void setContentOptions(Set<String> contentOptions) {
+        this.contentOptions = contentOptions;
     }
 
     @Override
@@ -124,10 +102,7 @@ public class MailerProperties {
                 ", recipients='" + recipients + '\'' +
                 ", host='" + host + '\'' +
                 ", port='" + port + '\'' +
-                ", contentTime=" + contentTime +
-                ", contentDeviceName=" + contentDeviceName +
-                ", contentLocation=" + contentLocation +
-                ", contentContactName=" + contentContactName +
+                ", contentOptions=" + contentOptions +
                 '}';
     }
 }

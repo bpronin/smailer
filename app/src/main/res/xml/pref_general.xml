@@ -1,22 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <SwitchPreference
         android:defaultValue="true"
         android:key="service_enabled"
+        android:summaryOff="@string/pref_description_service_off"
+        android:summaryOn="@string/pref_description_service_on"
         android:title="@string/pref_title_enable" />
 
     <EditTextPreference
+        android:dialogMessage="@string/message_account_hint"
         android:inputType="textEmailAddress"
         android:key="sender_account"
-        android:dialogMessage="@string/message_account_hint"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:title="@string/pref_title_sender_account" />
 
     <com.bopr.android.smailer.settings.PasswordPreference
-        android:inputType="textPassword"
         android:dialogMessage="@string/message_password_stored_encrypted"
+        android:inputType="textPassword"
         android:key="sender_password"
         android:maxLines="1"
         android:selectAllOnFocus="true"
@@ -25,24 +28,43 @@
 
     <PreferenceScreen
         android:key="outgoing_server"
-        android:title="@string/pref_title_outgoing_server">
+        android:title="@string/pref_title_server">
         <intent android:action="com.bopr.android.smailer.SERVER_SETTINGS" />
     </PreferenceScreen>
 
     <EditTextPreference
+        android:dialogMessage="@string/message_comma_separated_recipient"
         android:inputType="textEmailAddress"
         android:key="recipient_email_address"
-        android:dialogMessage="@string/message_comma_separated_recipient"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:title="@string/pref_title_recipients" />
 
-    <PreferenceScreen
+    <MultiSelectListPreference
+        android:entries="@array/email_sources"
+        android:entryValues="@array/email_source_values"
+        android:defaultValue="@array/default_email_source_values"
+        android:key="email_source"
+        android:summary="@string/pref_description_when_to_send"
+        android:title="@string/pref_title_source" />
+
+    <MultiSelectListPreference
+        android:entries="@array/email_contents"
+        android:entryValues="@array/email_content_values"
+        android:defaultValue="@array/default_email_content_values"
         android:key="email_content"
-        android:title="@string/pref_title_email_content">
-        <intent android:action="com.bopr.android.smailer.EMAIL_CONTENT_SETTINGS" />
-    </PreferenceScreen>
+        android:summary="@string/pref_description_what_email_contain"
+        android:title="@string/pref_title_email_content" />
+
+    <!--
+        <PreferenceScreen
+            android:key="email_content"
+            android:summary="@string/pref_description_what_email_contain"
+            android:title="@string/pref_title_email_content">
+            <intent android:action="com.bopr.android.smailer.EMAIL_CONTENT_SETTINGS" />
+        </PreferenceScreen>
+    -->
 
     <PreferenceScreen
         android:key="debug"

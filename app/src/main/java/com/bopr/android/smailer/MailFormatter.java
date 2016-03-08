@@ -7,10 +7,16 @@ import android.text.TextUtils;
 
 import com.bopr.android.smailer.util.ContactUtil;
 import com.bopr.android.smailer.util.DeviceUtil;
+import com.bopr.android.smailer.util.StringUtil;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.Set;
 
+import static com.bopr.android.smailer.settings.Settings.VAL_EMAIL_CONTENT_CONTACT_NAME;
+import static com.bopr.android.smailer.settings.Settings.VAL_EMAIL_CONTENT_DEVICE_NAME;
+import static com.bopr.android.smailer.settings.Settings.VAL_EMAIL_CONTENT_LOCATION;
+import static com.bopr.android.smailer.settings.Settings.VAL_EMAIL_CONTENT_MESSAGE_TIME;
 import static com.bopr.android.smailer.util.StringUtil.formatLocation;
 
 
@@ -34,8 +40,26 @@ public class MailFormatter {
     }
 
     public String getSubject() {
+        int resId;
+
+        if (message.isMissed()) {
+            resId = R.string.email_subject_missed_call_pattern;
+        } else if (message.isSms()) {
+            if (message.isIncoming()) {
+                resId = R.string.email_subject_incoming_sms_pattern;
+            } else {
+                resId = R.string.email_subject_outgoing_sms_pattern;
+            }
+        } else {
+            if (message.isIncoming()) {
+                resId = R.string.email_subject_incoming_call_pattern;
+            } else {
+                resId = R.string.email_subject_outgoing_call_pattern;
+            }
+        }
+
         return resources.getString(R.string.email_subject_prefix) + " "
-                + String.format(resources.getString(R.string.email_subject_incoming_sms_pattern), message.getPhone());
+                + String.format(resources.getString(resId), message.getPhone());
     }
 
     public String getBody() {
@@ -46,7 +70,7 @@ public class MailFormatter {
                 .append("<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">")
                 .append("</head>")
                 .append("<body>")
-                .append(message.getBody());
+                .append(getBodyText());
 
         StringBuilder footer = getBodyFooter();
         if (!TextUtils.isEmpty(footer)) {
@@ -64,19 +88,39 @@ public class MailFormatter {
         return builder.toString();
     }
 
+    private String getBodyText() {
+        if (message.isMissed()) {
+            return resources.getString(R.string.email_body_missed_call);
+        } else if (message.isSms()) {
+            return message.getBody();
+        } else {
+            String pattern;
+            if (message.isIncoming()) {
+                pattern = resources.getString(R.string.email_body_incoming_call_pattern);
+            } else {
+                pattern = resources.getString(R.string.email_body_outgoing_call_pattern);
+            }
+            String duration = StringUtil.formatDuration(message.getCallDuration());
+            return String.format(pattern, duration);
+        }
+    }
+
     private StringBuilder getBodyFooter() {
         StringBuilder builder = new StringBuilder();
-        if (properties.isContentDeviceName()) {
-            appendDeviceName(builder);
-        }
-        if (properties.isContentContactName()) {
-            appendContactName(builder);
-        }
-        if (properties.isContentTime()) {
-            appendTime(builder);
-        }
-        if (properties.isContentLocation()) {
-            appendLocation(builder);
+        Set<String> options = properties.getContentOptions();
+        if (options != null) {
+            if (options.contains(VAL_EMAIL_CONTENT_DEVICE_NAME)) {
+                appendDeviceName(builder);
+            }
+            if (options.contains(VAL_EMAIL_CONTENT_CONTACT_NAME)) {
+                appendContactName(builder);
+            }
+            if (options.contains(VAL_EMAIL_CONTENT_MESSAGE_TIME)) {
+                appendTime(builder);
+            }
+            if (options.contains(VAL_EMAIL_CONTENT_LOCATION)) {
+                appendLocation(builder);
+            }
         }
         return builder;
     }
@@ -101,7 +145,7 @@ public class MailFormatter {
     }
 
     private void appendTime(StringBuilder builder) {
-        Date time = message.getTime();
+        Date time = message.getStartTime();
         if (time != null) {
             builder
                     .append(resources.getString(R.string.email_content_time_prefix))

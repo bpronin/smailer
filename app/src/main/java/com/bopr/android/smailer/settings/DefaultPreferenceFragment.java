@@ -49,7 +49,7 @@ public class DefaultPreferenceFragment extends PreferenceFragment {
      */
     protected void updateSummary(String value, Preference preference) {
         if (value == null || value.isEmpty()) {
-            preference.setSummary(R.string.not_set);
+            preference.setSummary(R.string.pref_description_not_set);
         } else {
             preference.setSummary(value);
         }

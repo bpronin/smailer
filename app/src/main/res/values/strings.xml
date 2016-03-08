@@ -1,33 +1,45 @@
 <resources>
     <string name="app_name">SMailer</string>
 
-    <string name="pref_title_enable">Active</string>
+    <string name="pref_title_enable">Enabled</string>
     <string name="pref_title_sender_account">Account</string>
-    <string name="pref_title_recipients">Email recipients</string>
-    <string name="pref_title_sender">Email sender</string>
-    <string name="pref_title_subject">Email subject</string>
+    <string name="pref_title_recipients">Recipients</string>
     <string name="pref_title_sender_password">Password</string>
+    <string name="pref_title_server">Server</string>
     <string name="pref_title_outgoing_server">Outgoing server</string>
     <string name="pref_title_host">Host</string>
     <string name="pref_title_port">Port</string>
-    <string name="pref_description_service_on">Service is turned ON</string>
-    <string name="pref_description_service_off">Service is turned OFF</string>
-    <string name="pref_title_email_settings">Email</string>
-    <string name="pref_title_email_content">Email content</string>
+    <string name="pref_title_email_content">Content</string>
+    <string name="pref_title_source">React on</string>
     <string name="pref_title_location">Location</string>
     <string name="pref_title_time">Time</string>
     <string name="pref_title_device_name">Device name</string>
     <string name="pref_title_contact_name">Sender contact name</string>
     <string name="pref_title_when_send">When to send email</string>
-    
-    <string name="password_asterisk">*******</string>
-    <string name="not_set">[ not specified ]</string>
+    <string name="pref_title_incoming_sms">Incoming SMS</string>
+    <string name="pref_title_outgoing_sms">Outgoing SMS</string>
+    <string name="pref_title_incoming_calls">Incoming calls</string>
+    <string name="pref_title_outgoing_calls">Outgoing calls</string>
+    <string name="pref_title_missed_calls">Missed calls</string>
+
+    <!--<string name="pref_description_service_on">The service is turned ON</string>-->
+    <!--<string name="pref_description_service_off">The service is turned OFF</string>-->
+    <string name="pref_description_service_on">Email will be sent out</string>
+    <string name="pref_description_service_off">No email will be sent out</string>
+    <string name="pref_description_password_asterisk">*******</string>
+    <string name="pref_description_not_set">[ not specified ]</string>
+    <string name="pref_description_when_to_send">When to send email</string>
+    <string name="pref_description_what_email_contain">What should the email contain</string>
 
     <string name="message_error_sending_email">Unable to send email. Please check settings.</string>
     <string name="message_email_authentication">Authentication error. Please check username and password.</string>
     <string name="message_service_disabled_by_permission">SMS read permission has been denied. Service will be disabled.</string>
     <string name="message_contact_name_disabled_by_permission">Contacts read permission has been denied. The setting will be disabled.</string>
     <string name="message_location_disabled_by_permission">Location read permission has been denied. The setting will be disabled.</string>
+    <string name="message_comma_separated_recipient">Separate multiple recipients with comma.</string>
+    <string name="message_password_stored_encrypted">Password is stored encrypted only on the device.</string>
+    <string name="message_account_hint">Email address to send emails from (e.g. Google account).</string>
+    <string name="message_at_least_one_source_checked">At least one item should be selected.</string>
 
     <string name="email_subject_prefix">[SMailer]</string>
     <string name="email_subject_incoming_sms_pattern" formatted="false">Incoming SMS from %1$s</string>
@@ -42,8 +54,48 @@
     <string name="email_content_time_prefix">at</string>
     <string name="email_content_by_prefix">by</string>
     <string name="email_content_location_prefix">from location</string>
-    <string name="message_comma_separated_recipient">Separate multiple recipients with comma.</string>
-    <string name="message_password_stored_encrypted">Password is stored encrypted only on the device.</string>
-    <string name="message_account_hint">Email address to send emails from (e.g. Google account).</string>
+    <string name="email_body_missed_call" formatted="false">You had missed call.</string>
+    <string name="email_body_incoming_call_pattern" formatted="false">You had incoming call. Duration: %1$s.</string>
+    <string name="email_body_outgoing_call_pattern" formatted="false">You had outgoing call. Duration: %1$s.</string>
+
+    <string-array name="email_sources">
+        <item>Incoming SMS</item>
+        <item>Incoming calls</item>
+        <item>Outgoing calls</item>
+        <item>Missed calls</item>
+    </string-array>
+
+    <string-array name="email_source_values">
+        <item>in_sms</item>
+        <item>in_calls</item>
+        <item>out_calls</item>
+        <item>missed_calls</item>
+    </string-array>
+
+    <string-array name="default_email_source_values">
+        <item>0</item>
+        <item>4</item>
+    </string-array>
+
+    <string-array name="email_contents">
+        <item>Location</item>
+        <item>Time</item>
+        <item>Device name</item>
+        <item>Sender contact name</item>
+    </string-array>
+
+    <string-array name="email_content_values">
+        <item>location</item>
+        <item>time</item>
+        <item>device_name</item>
+        <item>contact_name</item>
+    </string-array>
+
+    <string-array name="default_email_content_values">
+        <item>location</item>
+        <item>time</item>
+        <item>device_name</item>
+        <item>contact_name</item>
+    </string-array>
 
 </resources>

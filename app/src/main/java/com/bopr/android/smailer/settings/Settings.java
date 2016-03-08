@@ -15,11 +15,27 @@ public interface Settings {
     String KEY_PREF_EMAIL_HOST = "sender_host";
     String KEY_PREF_EMAIL_PORT = "sender_port";
     String KEY_PREF_RECIPIENT_EMAIL_ADDRESS = "recipient_email_address";
-    String KEY_PREF_EMAIL_CONTENT_MESSAGE_TIME = "email_content_message_time";
-    String KEY_PREF_EMAIL_CONTENT_DEVICE_NAME = "email_content_device_name";
-    String KEY_PREF_EMAIL_CONTENT_LOCATION = "email_content_location";
-    String KEY_PREF_EMAIL_CONTENT_CONTACT_NAME = "email_content_contact_name";
+//    String KEY_PREF_EMAIL_CONTENT_MESSAGE_TIME = "email_content_message_time";
+//    String KEY_PREF_EMAIL_CONTENT_DEVICE_NAME = "email_content_device_name";
+//    String KEY_PREF_EMAIL_CONTENT_LOCATION = "email_content_location";
+//    String KEY_PREF_EMAIL_CONTENT_CONTACT_NAME = "email_content_contact_name";
     String KEY_PREF_OUTGOING_SERVER = "outgoing_server";
     String KEY_PREF_EMAIL_CONTENT = "email_content";
+    String KEY_PREF_EMAIL_SOURCE = "email_source";
+//    String KEY_PREF_IN_SMS_ENABLED = "in_sms_enabled";
+//    String KEY_PREF_OUT_SMS_ENABLED = "out_sms_enabled";
+//    String KEY_PREF_IN_CALL_ENABLED = "in_call_enabled";
+//    String KEY_PREF_OUT_CALL_ENABLED = "out_call_enabled";
+//    String KEY_PREF_MISSED_CALL_ENABLED = "missed_call_enabled";
+
+    String VAL_EMAIL_CONTENT_MESSAGE_TIME = "email_content_message_time";
+    String VAL_EMAIL_CONTENT_DEVICE_NAME = "email_content_device_name";
+    String VAL_EMAIL_CONTENT_LOCATION = "email_content_location";
+    String VAL_EMAIL_CONTENT_CONTACT_NAME = "email_content_contact_name";
+
+    String VAL_SOURCE_IN_SMS = "in_sms";
+    String VAL_SOURCE_IN_CALLS = "in_calls";
+    String VAL_SOURCE_OUT_CALLS = "out_calls";
+    String VAL_SOURCE_MISSED_CALLS = "missed_calls";
 
 }
