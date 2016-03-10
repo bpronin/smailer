@@ -227,7 +227,8 @@ public class DebugFragment extends DefaultPreferenceFragment {
     private void onGetLocation() {
         Location location = locationProvider.getLocation();
         Toast.makeText(getActivity(),
-                location != null ? StringUtil.formatLocation(location) : "No location received",
+                location != null ? StringUtil.formatLocation(location.getLatitude(), location.getLongitude())
+                        : "No location received",
                 Toast.LENGTH_LONG).show();
     }
 

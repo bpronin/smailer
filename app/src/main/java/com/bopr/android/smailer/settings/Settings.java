@@ -31,7 +31,7 @@ public interface Settings {
     String VAL_EMAIL_CONTENT_MESSAGE_TIME = "email_content_message_time";
     String VAL_EMAIL_CONTENT_DEVICE_NAME = "email_content_device_name";
     String VAL_EMAIL_CONTENT_LOCATION = "email_content_location";
-    String VAL_EMAIL_CONTENT_CONTACT_NAME = "email_content_contact_name";
+    String VAL_EMAIL_CONTENT_CALLER = "email_content_contact_name";
 
     String VAL_SOURCE_IN_SMS = "in_sms";
     String VAL_SOURCE_IN_CALLS = "in_calls";

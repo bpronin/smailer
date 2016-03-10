@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.bopr.android.smailer.util.ContactUtil;
+import com.bopr.android.smailer.util.DeviceUtil;
 import com.bopr.android.smailer.util.MailTransport;
 
 import javax.mail.AuthenticationFailedException;
@@ -35,7 +37,10 @@ public class Mailer {
                 properties.getPassword(), properties.getHost(),
                 properties.getPort());
 
-        MailFormatter formatter = new MailFormatter(context, properties, message);
+        MailFormatter formatter = new MailFormatter(message, context.getResources(),
+                properties, ContactUtil.getContactName(context, message.getPhone()),
+                DeviceUtil.getDeviceName());
+
         try {
             transport.send(formatter.getSubject(), formatter.getBody(),
                     properties.getUser(), properties.getRecipients());

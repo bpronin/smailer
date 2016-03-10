@@ -30,7 +30,7 @@ public class EncryptUtil {
     }
 
     public static String decrypt(Context context, String s) {
-        if (TextUtils.isEmpty(s)) {
+        if (StringUtil.isEmpty(s)) {
             return s;
         }
 
@@ -44,7 +44,7 @@ public class EncryptUtil {
     }
 
     public static String encrypt(Context context, String s) {
-        if (TextUtils.isEmpty(s)) {
+        if (StringUtil.isEmpty(s)) {
             return s;
         }
 

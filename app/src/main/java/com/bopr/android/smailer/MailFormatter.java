@@ -1,23 +1,21 @@
 package com.bopr.android.smailer;
 
-import android.content.Context;
 import android.content.res.Resources;
-import android.location.Location;
-import android.text.TextUtils;
 
-import com.bopr.android.smailer.util.ContactUtil;
-import com.bopr.android.smailer.util.DeviceUtil;
-import com.bopr.android.smailer.util.StringUtil;
+import com.bopr.android.smailer.util.TagFormatter;
 
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Set;
 
-import static com.bopr.android.smailer.settings.Settings.VAL_EMAIL_CONTENT_CONTACT_NAME;
+import static com.bopr.android.smailer.settings.Settings.VAL_EMAIL_CONTENT_CALLER;
 import static com.bopr.android.smailer.settings.Settings.VAL_EMAIL_CONTENT_DEVICE_NAME;
 import static com.bopr.android.smailer.settings.Settings.VAL_EMAIL_CONTENT_LOCATION;
 import static com.bopr.android.smailer.settings.Settings.VAL_EMAIL_CONTENT_MESSAGE_TIME;
+import static com.bopr.android.smailer.util.StringUtil.formatDuration;
 import static com.bopr.android.smailer.util.StringUtil.formatLocation;
+import static com.bopr.android.smailer.util.StringUtil.isEmpty;
+import static com.bopr.android.smailer.util.TagFormatter.from;
 
 
 /**
@@ -27,149 +25,199 @@ import static com.bopr.android.smailer.util.StringUtil.formatLocation;
  */
 public class MailFormatter {
 
-    private Context context;
+    private static final String SUBJECT_PATTERN = "[{app_name}] {source} {phone}";
+    private static final String BODY_PATTERN = "<html>" +
+            "<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
+            "<body>{message}{line}{footer}</body></html>";
+    private static final String LINE = "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">";
+    private static final String GOOGLE_MAP_LINK_PATTERN = "<a href=\"http://maps.google.com/maps/place/{latitude},{longitude}\">{location}</a>";
+    private static final String PHONE_LINK_PATTERN = "<a href=\"tel:{phone}\">{phone}{name}</a>";
+
+    private Resources resources;
     private MailerProperties properties;
     private MailMessage message;
-    private Resources resources;
+    private String contactName;
+    private String deviceName;
 
-    public MailFormatter(Context context, MailerProperties properties, MailMessage message) {
-        this.context = context;
-        this.resources = context.getResources();
+    public MailFormatter() {
+    }
+
+    public MailFormatter(MailMessage message, Resources resources, MailerProperties properties,
+                         String contactName, String deviceName
+    ) {
+        this.resources = resources;
+        this.message = message;
         this.properties = properties;
+        this.contactName = contactName;
+        this.deviceName = deviceName;
+    }
+
+    public void setResources(Resources resources) {
+        this.resources = resources;
+    }
+
+    public void setProperties(MailerProperties properties) {
+        this.properties = properties;
+    }
+
+    public void setMessage(MailMessage message) {
         this.message = message;
     }
 
+    public void setContactName(String contactName) {
+        this.contactName = contactName;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
+    }
+
     public String getSubject() {
-        int resId;
+        return from(SUBJECT_PATTERN, resources)
+                .putResource("app_name", R.string.app_name)
+                .put("source", getSourceText())
+                .put("phone", message.getPhone())
+                .format();
+    }
+
+    private String getSourceText() {
+        int resourceId;
 
         if (message.isMissed()) {
-            resId = R.string.email_subject_missed_call_pattern;
+            resourceId = R.string.email_subject_missed_call;
         } else if (message.isSms()) {
             if (message.isIncoming()) {
-                resId = R.string.email_subject_incoming_sms_pattern;
+                resourceId = R.string.email_subject_incoming_sms;
             } else {
-                resId = R.string.email_subject_outgoing_sms_pattern;
+                resourceId = R.string.email_subject_outgoing_sms;
             }
         } else {
             if (message.isIncoming()) {
-                resId = R.string.email_subject_incoming_call_pattern;
+                resourceId = R.string.email_subject_incoming_call;
             } else {
-                resId = R.string.email_subject_outgoing_call_pattern;
+                resourceId = R.string.email_subject_outgoing_call;
             }
         }
 
-        return resources.getString(R.string.email_subject_prefix) + " "
-                + String.format(resources.getString(resId), message.getPhone());
+        return resources.getString(resourceId);
     }
 
-    public String getBody() {
-        StringBuilder builder = new StringBuilder();
-        builder
-                .append("<html>")
-                .append("<head>")
-                .append("<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">")
-                .append("</head>")
-                .append("<body>")
-                .append(getBodyText());
-
-        StringBuilder footer = getBodyFooter();
-        if (!TextUtils.isEmpty(footer)) {
-            builder
-                    .append("<hr style=\"border: none; background-color: #cccccc; height: 1px;\">")
-                    .append(resources.getString(R.string.email_content_sent_prefix))
-                    .append(" ")
-                    .append(footer);
-        }
-
-        builder
-                .append("</body>")
-                .append("</html>");
-
-        return builder.toString();
-    }
-
-    private String getBodyText() {
+    private String getMessageText() {
         if (message.isMissed()) {
             return resources.getString(R.string.email_body_missed_call);
         } else if (message.isSms()) {
             return message.getBody();
         } else {
-            String pattern;
+            int pattern;
             if (message.isIncoming()) {
-                pattern = resources.getString(R.string.email_body_incoming_call_pattern);
+                pattern = R.string.email_body_incoming_call;
             } else {
-                pattern = resources.getString(R.string.email_body_outgoing_call_pattern);
+                pattern = R.string.email_body_outgoing_call;
             }
-            String duration = StringUtil.formatDuration(message.getCallDuration());
-            return String.format(pattern, duration);
+            return from(pattern, resources)
+                    .put("duration", formatDuration(message.getCallDuration()))
+                    .format();
         }
     }
 
-    private StringBuilder getBodyFooter() {
-        StringBuilder builder = new StringBuilder();
+    public String getBody() {
+        String footerText = getFooterText();
+        TagFormatter formatter = from(BODY_PATTERN)
+                .put("message", getMessageText())
+                .put("footer", footerText);
+        if (!isEmpty(footerText)) {
+            formatter.put("line", LINE);
+        }
+        return formatter.format();
+    }
+
+    private String getFooterText() {
         Set<String> options = properties.getContentOptions();
         if (options != null) {
-            if (options.contains(VAL_EMAIL_CONTENT_DEVICE_NAME)) {
-                appendDeviceName(builder);
+            String callerText = options.contains(VAL_EMAIL_CONTENT_CALLER) ? getCallerText() : null;
+            String deviceNameText = options.contains(VAL_EMAIL_CONTENT_DEVICE_NAME) ? getDeviceNameText() : null;
+            String timeText = options.contains(VAL_EMAIL_CONTENT_MESSAGE_TIME) ? getTimeText() : null;
+            String locationText = options.contains(VAL_EMAIL_CONTENT_LOCATION) ? getLocationText() : null;
+
+            StringBuilder text = new StringBuilder();
+
+            if (!isEmpty(callerText)) {
+                text.append(callerText);
             }
-            if (options.contains(VAL_EMAIL_CONTENT_CONTACT_NAME)) {
-                appendContactName(builder);
+
+            if (!isEmpty(locationText)) {
+                if (!isEmpty(callerText)) {
+                    text.append("<br>");
+                }
+                text.append(locationText);
             }
-            if (options.contains(VAL_EMAIL_CONTENT_MESSAGE_TIME)) {
-                appendTime(builder);
+
+            if (!isEmpty(deviceNameText) || !isEmpty(timeText)) {
+                if (!isEmpty(callerText) || !isEmpty(locationText)) {
+                    text.append("<br>");
+                }
+                text.append(from(R.string.email_body_sent, resources)
+                        .put("device_name", deviceNameText)
+                        .put("time", timeText));
             }
-            if (options.contains(VAL_EMAIL_CONTENT_LOCATION)) {
-                appendLocation(builder);
+
+            return text.toString();
+        }
+        return null;
+    }
+
+    private String getCallerText() {
+
+        int resourceId;
+        if (message.isSms()) {
+            resourceId = R.string.email_body_sender;
+        } else {
+            if (message.isIncoming()) {
+                resourceId = R.string.email_body_caller;
+            } else {
+                resourceId = R.string.email_body_called;
             }
         }
-        return builder;
+
+        return from(resourceId, resources)
+                .put("phone", from(PHONE_LINK_PATTERN)
+                        .put("phone", message.getPhone())
+                        .put("name", !isEmpty(contactName) ? " (" + contactName + ")" : null))
+                .format();
     }
 
-    private void appendContactName(StringBuilder builder) {
-        String contactName = ContactUtil.getContactName(context, message.getPhone());
-        if (!TextUtils.isEmpty(contactName)) {
-            builder
-                    .append(resources.getString(R.string.email_content_by_prefix))
-                    .append(" ")
-                    .append(contactName)
-                    .append("<br>");
+    private String getDeviceNameText() {
+        if (!isEmpty(deviceName)) {
+            return " " + from(R.string.email_body_from, resources)
+                    .put("device_name", deviceName)
+                    .format();
         }
+        return null;
     }
 
-    private void appendDeviceName(StringBuilder builder) {
-        builder
-                .append(resources.getString(R.string.email_content_from_prefix))
-                .append(" ")
-                .append(DeviceUtil.getDeviceName())
-                .append("<br>");
-    }
-
-    private void appendTime(StringBuilder builder) {
+    private String getTimeText() {
         Date time = message.getStartTime();
         if (time != null) {
-            builder
-                    .append(resources.getString(R.string.email_content_time_prefix))
-                    .append(" ")
-                    .append(DateFormat.getDateTimeInstance().format(time))
-                    .append("<br>");
+            return " " + from(R.string.email_body_time, resources)
+                    .put("time", DateFormat.getDateTimeInstance().format(time))
+                    .format();
         }
+        return null;
     }
 
-    private void appendLocation(StringBuilder builder) {
-        Location location = message.getLocation();
-        if (location != null) {
-            builder
-                    .append(resources.getString(R.string.email_content_location_prefix))
-                    .append(" ")
-                    .append("<a href=\"http://maps.google.com/maps/place/")
-                    .append(location.getLatitude())
-                    .append(",")
-                    .append(location.getLongitude())
-                    .append("\">")
-                    .append(formatLocation(location, "&#176;", "\'", "\"", "N", "S", "W", "E"))
-                    .append("</a>")
-                    .append("<br>");
+    private String getLocationText() {
+        Double latitude = message.getLatitude();
+        Double longitude = message.getLongitude();
+        if (latitude != null && longitude != null) {
+            return from(R.string.email_body_location, resources)
+                    .put("location", from(GOOGLE_MAP_LINK_PATTERN)
+                            .put("latitude", latitude)
+                            .put("longitude", longitude)
+                            .put("location", formatLocation(latitude, longitude, "&#176;", "\'", "\"", "N", "S", "W", "E"))
+                            .format())
+                    .format();
         }
+        return null;
     }
 
 }

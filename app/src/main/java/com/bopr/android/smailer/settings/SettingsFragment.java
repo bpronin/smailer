@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.util.StringUtil;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.preference.Preference.OnPreferenceChangeListener;
@@ -106,7 +107,7 @@ public class SettingsFragment extends DefaultPreferenceFragment {
         String host = preferences.getString(KEY_PREF_EMAIL_HOST, "");
         String port = preferences.getString(KEY_PREF_EMAIL_PORT, "");
         String value = null;
-        if (!TextUtils.isEmpty(host) || !TextUtils.isEmpty(port)) {
+        if (!StringUtil.isEmpty(host) || !StringUtil.isEmpty(port)) {
             value = host + ":" + port;
         }
         updateSummary(value, findPreference(KEY_PREF_OUTGOING_SERVER));

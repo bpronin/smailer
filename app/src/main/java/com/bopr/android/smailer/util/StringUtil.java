@@ -1,6 +1,5 @@
 package com.bopr.android.smailer.util;
 
-import android.location.Location;
 import android.text.TextUtils;
 
 /**
@@ -10,26 +9,25 @@ import android.text.TextUtils;
  */
 public class StringUtil {
 
-    public static String formatLocation(Location location, String degreeSymbol,
+    public static String formatLocation(double latitude, double longitude, String degreeSymbol,
                                         String minuteSymbol, String secondSymbol,
                                         String northSymbol, String southSymbol,
-                                        String westSymbol, String eastSymbol) {
-        double lt = location.getLatitude();
-        double lg = location.getLongitude();
-
-        return decimalToDMS(lt, degreeSymbol, minuteSymbol, secondSymbol)
-                + (lt > 0 ? northSymbol : southSymbol)
+                                        String westSymbol, String eastSymbol
+    ) {
+        return decimalToDMS(latitude, degreeSymbol, minuteSymbol, secondSymbol)
+                + (latitude > 0 ? northSymbol : southSymbol)
                 + ", " +
-                decimalToDMS(lg, degreeSymbol, minuteSymbol, secondSymbol)
-                + (lg > 0 ? westSymbol : eastSymbol);
+                decimalToDMS(longitude, degreeSymbol, minuteSymbol, secondSymbol)
+                + (longitude > 0 ? westSymbol : eastSymbol);
     }
 
-    public static String formatLocation(Location location) {
-        return formatLocation(location, "°", "\'", "\"", "N", "S", "W", "E");
+    public static String formatLocation(double latitude, double longitude) {
+        return formatLocation(latitude, longitude, "°", "\'", "\"", "N", "S", "W", "E");
     }
 
     public static String decimalToDMS(double coordinate, String degreeSymbol,
-                                      String minuteSymbol, String secondSymbol) {
+                                      String minuteSymbol, String secondSymbol
+    ) {
         double mod = coordinate % 1;
         int intPart = (int) coordinate;
         int degrees = intPart;
@@ -47,7 +45,7 @@ public class StringUtil {
     }
 
     public static String capitalize(String text) {
-        if (TextUtils.isEmpty(text)) {
+        if (StringUtil.isEmpty(text)) {
             return text;
         }
         return text.substring(0, 1).toUpperCase() + text.substring(1);
@@ -57,5 +55,9 @@ public class StringUtil {
     public static String formatDuration(long duration) {
         long seconds = duration / 1000;
         return String.format("%d:%02d:%02d", seconds / 3600, (seconds % 3600) / 60, seconds % 60);
+    }
+
+    public static boolean isEmpty(String s) {
+        return s == null || s.length() == 0;
     }
 }
