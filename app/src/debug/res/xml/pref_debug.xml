@@ -26,6 +26,9 @@
         android:key="get_contact"
         android:title="Get contact" />
     <Preference
+        android:key="save_log"
+        android:title="Save log" />
+    <Preference
         android:key="close"
         android:title="Finish activity" />
 

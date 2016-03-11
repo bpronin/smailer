@@ -3,6 +3,7 @@ package com.bopr.android.smailer.settings;
 import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -25,15 +26,16 @@ import com.bopr.android.smailer.util.MailTransport;
 import com.bopr.android.smailer.util.PermissionUtil;
 import com.bopr.android.smailer.util.StringUtil;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Properties;
 
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-import static com.bopr.android.smailer.settings.Settings.*;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_HOST;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_PORT;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_SOURCE;
@@ -41,6 +43,8 @@ import static com.bopr.android.smailer.settings.Settings.KEY_PREF_RECIPIENT_EMAI
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_PASSWORD;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SERVICE_ENABLED;
+import static com.bopr.android.smailer.settings.Settings.VAL_PREF_SOURCE_IN_SMS;
+import static com.bopr.android.smailer.settings.Settings.VAL_PREF_SOURCE_MISSED_CALLS;
 
 /**
  * For debug purposes.
@@ -127,6 +131,15 @@ public class DebugFragment extends DefaultPreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 onGetContact();
+                return true;
+            }
+        });
+
+        findPreference("save_log").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                onSaveLog();
                 return true;
             }
         });
@@ -291,7 +304,7 @@ public class DebugFragment extends DefaultPreferenceFragment {
             @Override
             protected Void doInBackground(Void... params) {
                 MailMessage message = new MailMessage("+79052345678", true, System.currentTimeMillis(),
-                        0, false, true, "Hello there!", locationProvider.getLocation());
+                        0, false, true, "Debug message", locationProvider.getLocation());
                 new Mailer().send(getActivity(), message);
                 return null;
             }
@@ -307,9 +320,34 @@ public class DebugFragment extends DefaultPreferenceFragment {
         }
     }
 
+    public void onSaveLog() {
+        try {
+            Process process = Runtime.getRuntime().exec("logcat -d");
+//            Process process = Runtime.getRuntime().exec("logcat com.bopr.android.smailer:D -d");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+            StringBuilder log = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                log.append(line).append("\n");
+            }
+
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"boprsoft.dev@gmail.com"});
+            intent.putExtra(Intent.EXTRA_SUBJECT, "SMailer log");
+            intent.putExtra(Intent.EXTRA_TEXT, log.toString());
+
+            startActivity(Intent.createChooser(intent, "Send Email"));
+        } catch (IOException x) {
+            Log.e(TAG, "Save log failed", x);
+        }
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
+                                           @NonNull int[] grantResults
+    ) {
         if (requestCode == PERMISSIONS_REQUEST_RECEIVE_SMS) {
             if (grantResults[0] != PERMISSION_GRANTED) {
                 Toast.makeText(getActivity(), "Permission denied", Toast.LENGTH_LONG).show();
