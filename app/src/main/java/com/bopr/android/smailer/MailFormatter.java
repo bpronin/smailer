@@ -8,10 +8,10 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.Set;
 
-import static com.bopr.android.smailer.settings.Settings.VAL_EMAIL_CONTENT_CALLER;
-import static com.bopr.android.smailer.settings.Settings.VAL_EMAIL_CONTENT_DEVICE_NAME;
-import static com.bopr.android.smailer.settings.Settings.VAL_EMAIL_CONTENT_LOCATION;
-import static com.bopr.android.smailer.settings.Settings.VAL_EMAIL_CONTENT_MESSAGE_TIME;
+import static com.bopr.android.smailer.settings.Settings.VAL_PREF_EMAIL_CONTENT_CALLER;
+import static com.bopr.android.smailer.settings.Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME;
+import static com.bopr.android.smailer.settings.Settings.VAL_PREF_EMAIL_CONTENT_LOCATION;
+import static com.bopr.android.smailer.settings.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME;
 import static com.bopr.android.smailer.util.StringUtil.formatDuration;
 import static com.bopr.android.smailer.util.StringUtil.formatLocation;
 import static com.bopr.android.smailer.util.StringUtil.isEmpty;
@@ -33,14 +33,11 @@ public class MailFormatter {
     private static final String GOOGLE_MAP_LINK_PATTERN = "<a href=\"http://maps.google.com/maps/place/{latitude},{longitude}\">{location}</a>";
     private static final String PHONE_LINK_PATTERN = "<a href=\"tel:{phone}\">{phone}{name}</a>";
 
-    private Resources resources;
-    private MailerProperties properties;
-    private MailMessage message;
-    private String contactName;
-    private String deviceName;
-
-    public MailFormatter() {
-    }
+    private final Resources resources;
+    private final MailerProperties properties;
+    private final MailMessage message;
+    private final String contactName;
+    private final String deviceName;
 
     public MailFormatter(MailMessage message, Resources resources, MailerProperties properties,
                          String contactName, String deviceName
@@ -49,26 +46,6 @@ public class MailFormatter {
         this.message = message;
         this.properties = properties;
         this.contactName = contactName;
-        this.deviceName = deviceName;
-    }
-
-    public void setResources(Resources resources) {
-        this.resources = resources;
-    }
-
-    public void setProperties(MailerProperties properties) {
-        this.properties = properties;
-    }
-
-    public void setMessage(MailMessage message) {
-        this.message = message;
-    }
-
-    public void setContactName(String contactName) {
-        this.contactName = contactName;
-    }
-
-    public void setDeviceName(String deviceName) {
         this.deviceName = deviceName;
     }
 
@@ -134,10 +111,10 @@ public class MailFormatter {
     private String getFooterText() {
         Set<String> options = properties.getContentOptions();
         if (options != null) {
-            String callerText = options.contains(VAL_EMAIL_CONTENT_CALLER) ? getCallerText() : null;
-            String deviceNameText = options.contains(VAL_EMAIL_CONTENT_DEVICE_NAME) ? getDeviceNameText() : null;
-            String timeText = options.contains(VAL_EMAIL_CONTENT_MESSAGE_TIME) ? getTimeText() : null;
-            String locationText = options.contains(VAL_EMAIL_CONTENT_LOCATION) ? getLocationText() : null;
+            String callerText = options.contains(VAL_PREF_EMAIL_CONTENT_CALLER) ? getCallerText() : null;
+            String deviceNameText = options.contains(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME) ? getDeviceNameText() : null;
+            String timeText = options.contains(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME) ? getTimeText() : null;
+            String locationText = options.contains(VAL_PREF_EMAIL_CONTENT_LOCATION) ? getLocationText() : null;
 
             StringBuilder text = new StringBuilder();
 

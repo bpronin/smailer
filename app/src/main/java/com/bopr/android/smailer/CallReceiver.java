@@ -32,10 +32,10 @@ import static com.bopr.android.smailer.MailerService.SOURCE_SMS;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_SOURCE;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SERVICE_ENABLED;
 import static com.bopr.android.smailer.settings.Settings.PREFERENCES_STORAGE_NAME;
-import static com.bopr.android.smailer.settings.Settings.VAL_SOURCE_IN_CALLS;
-import static com.bopr.android.smailer.settings.Settings.VAL_SOURCE_IN_SMS;
-import static com.bopr.android.smailer.settings.Settings.VAL_SOURCE_MISSED_CALLS;
-import static com.bopr.android.smailer.settings.Settings.VAL_SOURCE_OUT_CALLS;
+import static com.bopr.android.smailer.settings.Settings.VAL_PREF_SOURCE_IN_CALLS;
+import static com.bopr.android.smailer.settings.Settings.VAL_PREF_SOURCE_IN_SMS;
+import static com.bopr.android.smailer.settings.Settings.VAL_PREF_SOURCE_MISSED_CALLS;
+import static com.bopr.android.smailer.settings.Settings.VAL_PREF_SOURCE_OUT_CALLS;
 
 /**
  * Receives SMS and phone call intents and starts mailer service.
@@ -48,7 +48,7 @@ public class CallReceiver extends BroadcastReceiver {
 
     private static String lastCallState = EXTRA_STATE_IDLE;
     private static long callStartTime;
-    private static boolean isIncoming;
+    private static boolean isIncomingCall;
     private static String lastCallNumber;
 
     @Override
@@ -61,10 +61,10 @@ public class CallReceiver extends BroadcastReceiver {
                     onIncomingSms(context, intent);
                     break;
                 case Intent.ACTION_NEW_OUTGOING_CALL:
-                    lastCallNumber = intent.getExtras().getString(EXTRA_PHONE_NUMBER);
+                    lastCallNumber = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
                     break;
                 case TelephonyManager.ACTION_PHONE_STATE_CHANGED:
-                    onCall(context, intent);
+                    onCallStateChanged(context, intent);
                     break;
             }
         }
@@ -78,26 +78,27 @@ public class CallReceiver extends BroadcastReceiver {
      * @param context context
      * @param intent  call state intent
      */
-    private void onCall(Context context, Intent intent) {
-        String callState = intent.getExtras().getString(EXTRA_STATE);
-        if (callState != null && !lastCallState.equals(callState)) {
+    private void onCallStateChanged(Context context, Intent intent) {
+        String callState = intent.getStringExtra(EXTRA_STATE);
+        if (!lastCallState.equals(callState)) {
             if (callState.equals(EXTRA_STATE_RINGING)) {
-                isIncoming = true;
+                isIncomingCall = true;
                 callStartTime = System.currentTimeMillis();
-                lastCallNumber = intent.getExtras().getString(EXTRA_INCOMING_NUMBER);
+                lastCallNumber = intent.getStringExtra(EXTRA_INCOMING_NUMBER);
                 Log.d(TAG, "Call received");
             } else if (callState.equals(EXTRA_STATE_OFFHOOK)) {
-                isIncoming = lastCallState.equals(EXTRA_STATE_RINGING);
+                isIncomingCall = lastCallState.equals(EXTRA_STATE_RINGING);
                 callStartTime = System.currentTimeMillis();
-                Log.d(TAG, ("Started " + (isIncoming ? "incoming" : "outgoing") + " call"));
+                Log.d(TAG, ("Started " + (isIncomingCall ? "incoming" : "outgoing") + " call"));
             } else if (callState.equals(EXTRA_STATE_IDLE)) {
                 if (lastCallState.equals(EXTRA_STATE_RINGING)) {
                     onMissedCall(context, lastCallNumber, callStartTime);
-                } else if (isIncoming) {
+                } else if (isIncomingCall) {
                     onIncomingCall(context, lastCallNumber, callStartTime, System.currentTimeMillis());
                 } else {
                     onOutgoingCall(context, lastCallNumber, callStartTime, System.currentTimeMillis());
                 }
+                lastCallNumber = null;
             }
 
             lastCallState = callState;
@@ -106,7 +107,7 @@ public class CallReceiver extends BroadcastReceiver {
 
     private void onIncomingCall(Context context, String number, long start, long end) {
         Log.d(TAG, "Processing incoming call");
-        if (isSourceEnabled(context, VAL_SOURCE_IN_CALLS)) {
+        if (isSourceEnabled(context, VAL_PREF_SOURCE_IN_CALLS)) {
             Intent intent = new Intent(context, MailerService.class);
             intent.putExtra(EXTRA_SOURCE, SOURCE_CALL);
             intent.putExtra(EXTRA_PHONE_NUMBER, number);
@@ -120,7 +121,7 @@ public class CallReceiver extends BroadcastReceiver {
 
     private void onOutgoingCall(Context context, String number, long start, long end) {
         Log.d(TAG, "Processing outgoing call");
-        if (isSourceEnabled(context, VAL_SOURCE_OUT_CALLS)) {
+        if (isSourceEnabled(context, VAL_PREF_SOURCE_OUT_CALLS)) {
             Intent intent = new Intent(context, MailerService.class);
             intent.putExtra(EXTRA_SOURCE, SOURCE_CALL);
             intent.putExtra(EXTRA_PHONE_NUMBER, number);
@@ -134,7 +135,7 @@ public class CallReceiver extends BroadcastReceiver {
 
     private void onMissedCall(Context context, String number, long start) {
         Log.d(TAG, "Processing missed call from");
-        if (isSourceEnabled(context, VAL_SOURCE_MISSED_CALLS)) {
+        if (isSourceEnabled(context, VAL_PREF_SOURCE_MISSED_CALLS)) {
             Intent intent = new Intent(context, MailerService.class);
             intent.putExtra(EXTRA_SOURCE, SOURCE_CALL);
             intent.putExtra(EXTRA_MISSED, true);
@@ -147,7 +148,7 @@ public class CallReceiver extends BroadcastReceiver {
 
     private void onIncomingSms(Context context, Intent smsIntent) {
         Log.d(TAG, "Processing incoming sms");
-        if (isSourceEnabled(context, VAL_SOURCE_IN_SMS)) {
+        if (isSourceEnabled(context, VAL_PREF_SOURCE_IN_SMS)) {
             for (SmsMessage message : parseSmsMessages(smsIntent)) {
                 Intent intent = new Intent(context, MailerService.class);
                 intent.putExtra(EXTRA_SOURCE, SOURCE_SMS);

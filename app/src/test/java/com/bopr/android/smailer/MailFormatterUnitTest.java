@@ -11,10 +11,10 @@ import org.mockito.MockitoAnnotations;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-import static com.bopr.android.smailer.settings.Settings.VAL_EMAIL_CONTENT_CALLER;
-import static com.bopr.android.smailer.settings.Settings.VAL_EMAIL_CONTENT_DEVICE_NAME;
-import static com.bopr.android.smailer.settings.Settings.VAL_EMAIL_CONTENT_LOCATION;
-import static com.bopr.android.smailer.settings.Settings.VAL_EMAIL_CONTENT_MESSAGE_TIME;
+import static com.bopr.android.smailer.settings.Settings.VAL_PREF_EMAIL_CONTENT_CALLER;
+import static com.bopr.android.smailer.settings.Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME;
+import static com.bopr.android.smailer.settings.Settings.VAL_PREF_EMAIL_CONTENT_LOCATION;
+import static com.bopr.android.smailer.settings.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -60,11 +60,9 @@ public class MailFormatterUnitTest {
      */
     @Test
     public void testIncomingSmsSubject() throws Exception {
-        MailFormatter formatter = new MailFormatter();
-        formatter.setMessage(new MailMessage("+70123456789", true, 0, 0, false, true, "Email body text", null));
-        formatter.setProperties(new MailerProperties());
-        formatter.setContactName("John Dou");
-        formatter.setResources(resources);
+        MailFormatter formatter = new MailFormatter(
+                new MailMessage("+70123456789", true, 0, 0, false, true, "Email body text", null),
+                resources, new MailerProperties(), "John Dou", "The Device");
 
         String text = formatter.getSubject();
         assertEquals("[SMailer] Incoming SMS from +70123456789", text);
@@ -80,11 +78,7 @@ public class MailFormatterUnitTest {
         MailMessage message = new MailMessage("+70123456789", true, 0, 0, false, false, null, null);
         MailerProperties properties = new MailerProperties();
 
-        MailFormatter formatter = new MailFormatter();
-        formatter.setMessage(message);
-        formatter.setProperties(properties);
-        formatter.setContactName("John Dou");
-        formatter.setResources(resources);
+        MailFormatter formatter = new MailFormatter(message, resources, properties, "John Dou", "The Device");
 
         String text = formatter.getSubject();
         assertEquals("[SMailer] Incoming call from +70123456789", text);
@@ -100,11 +94,7 @@ public class MailFormatterUnitTest {
         MailMessage message = new MailMessage("+70123456789", false, 0, 0, false, false, null, null);
         MailerProperties properties = new MailerProperties();
 
-        MailFormatter formatter = new MailFormatter();
-        formatter.setMessage(message);
-        formatter.setProperties(properties);
-        formatter.setContactName("John Dou");
-        formatter.setResources(resources);
+        MailFormatter formatter = new MailFormatter(message, resources, properties, "John Dou", "The Device");
 
         String text = formatter.getSubject();
         assertEquals("[SMailer] Outgoing call to +70123456789", text);
@@ -120,11 +110,7 @@ public class MailFormatterUnitTest {
         MailMessage message = new MailMessage("+70123456789", false, 0, 0, true, false, null, null);
         MailerProperties properties = new MailerProperties();
 
-        MailFormatter formatter = new MailFormatter();
-        formatter.setMessage(message);
-        formatter.setProperties(properties);
-        formatter.setContactName("John Dou");
-        formatter.setResources(resources);
+        MailFormatter formatter = new MailFormatter(message, resources, properties, "John Dou", "The Device");
 
         String text = formatter.getSubject();
         assertEquals("[SMailer] Missed call from +70123456789", text);
@@ -142,11 +128,7 @@ public class MailFormatterUnitTest {
 
         MailerProperties properties = new MailerProperties();
 
-        MailFormatter formatter = new MailFormatter();
-        formatter.setMessage(message);
-        formatter.setProperties(properties);
-        formatter.setContactName("John Dou");
-        formatter.setResources(resources);
+        MailFormatter formatter = new MailFormatter(message, resources, properties, "John Dou", "The Device");
 
         String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; " +
@@ -165,13 +147,9 @@ public class MailFormatterUnitTest {
                 "Email body text", null);
 
         MailerProperties properties = new MailerProperties();
-        properties.setContentOptions(VAL_EMAIL_CONTENT_MESSAGE_TIME);
+        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME);
 
-        MailFormatter formatter = new MailFormatter();
-        formatter.setMessage(message);
-        formatter.setProperties(properties);
-        formatter.setContactName("John Dou");
-        formatter.setResources(resources);
+        MailFormatter formatter = new MailFormatter(message, resources, properties, "John Dou", "The Device");
 
         String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; " +
@@ -193,13 +171,9 @@ public class MailFormatterUnitTest {
                 "Email body text", null);
 
         MailerProperties properties = new MailerProperties();
-        properties.setContentOptions(VAL_EMAIL_CONTENT_CALLER, VAL_EMAIL_CONTENT_MESSAGE_TIME);
+        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_CALLER, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME);
 
-        MailFormatter formatter = new MailFormatter();
-        formatter.setMessage(message);
-        formatter.setProperties(properties);
-        formatter.setContactName(null);
-        formatter.setResources(resources);
+        MailFormatter formatter = new MailFormatter(message, resources, properties, null, "The Device");
 
         String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
@@ -223,14 +197,9 @@ public class MailFormatterUnitTest {
                 "Email body text", null);
 
         MailerProperties properties = new MailerProperties();
-        properties.setContentOptions(VAL_EMAIL_CONTENT_DEVICE_NAME);
+        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME);
 
-        MailFormatter formatter = new MailFormatter();
-        formatter.setMessage(message);
-        formatter.setProperties(properties);
-        formatter.setContactName("John Dou");
-        formatter.setDeviceName("The Device");
-        formatter.setResources(resources);
+        MailFormatter formatter = new MailFormatter(message, resources, properties, "John Dou", "The Device");
 
         String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; " +
@@ -251,14 +220,9 @@ public class MailFormatterUnitTest {
                 "Email body text", null);
 
         MailerProperties properties = new MailerProperties();
-        properties.setContentOptions(VAL_EMAIL_CONTENT_DEVICE_NAME, VAL_EMAIL_CONTENT_MESSAGE_TIME);
+        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME);
 
-        MailFormatter formatter = new MailFormatter();
-        formatter.setMessage(message);
-        formatter.setProperties(properties);
-        formatter.setContactName("John Dou");
-        formatter.setDeviceName("The Device");
-        formatter.setResources(resources);
+        MailFormatter formatter = new MailFormatter(message, resources, properties, "John Dou", "The Device");
 
         String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; " +
@@ -278,14 +242,9 @@ public class MailFormatterUnitTest {
                 "Email body text", 60.555, 30.555);
 
         MailerProperties properties = new MailerProperties();
-        properties.setContentOptions(VAL_EMAIL_CONTENT_LOCATION);
+        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_LOCATION);
 
-        MailFormatter formatter = new MailFormatter();
-        formatter.setMessage(message);
-        formatter.setProperties(properties);
-        formatter.setContactName("John Dou");
-        formatter.setDeviceName("The Device");
-        formatter.setResources(resources);
+        MailFormatter formatter = new MailFormatter(message, resources, properties, "John Dou", "The Device");
 
         String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; " +
@@ -306,14 +265,9 @@ public class MailFormatterUnitTest {
                 "Email body text", null);
 
         MailerProperties properties = new MailerProperties();
-        properties.setContentOptions(VAL_EMAIL_CONTENT_LOCATION);
+        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_LOCATION);
 
-        MailFormatter formatter = new MailFormatter();
-        formatter.setMessage(message);
-        formatter.setProperties(properties);
-        formatter.setContactName("John Dou");
-        formatter.setDeviceName("The Device");
-        formatter.setResources(resources);
+        MailFormatter formatter = new MailFormatter(message, resources, properties, "John Dou", "The Device");
 
         String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; " +
@@ -331,14 +285,9 @@ public class MailFormatterUnitTest {
                 "Email body text", null);
 
         MailerProperties properties = new MailerProperties();
-        properties.setContentOptions(VAL_EMAIL_CONTENT_CALLER);
+        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_CALLER);
 
-        MailFormatter formatter = new MailFormatter();
-        formatter.setMessage(message);
-        formatter.setProperties(properties);
-        formatter.setContactName("John Dou");
-        formatter.setDeviceName("The Device");
-        formatter.setResources(resources);
+        MailFormatter formatter = new MailFormatter(message, resources, properties, "John Dou", "The Device");
 
         String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
@@ -361,12 +310,7 @@ public class MailFormatterUnitTest {
 
         MailerProperties properties = new MailerProperties();
 
-        MailFormatter formatter = new MailFormatter();
-        formatter.setMessage(message);
-        formatter.setProperties(properties);
-        formatter.setContactName("John Dou");
-        formatter.setDeviceName("The Device");
-        formatter.setResources(resources);
+        MailFormatter formatter = new MailFormatter(message, resources, properties, "John Dou", "The Device");
 
         String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; " +
@@ -387,12 +331,7 @@ public class MailFormatterUnitTest {
 
         MailerProperties properties = new MailerProperties();
 
-        MailFormatter formatter = new MailFormatter();
-        formatter.setMessage(message);
-        formatter.setProperties(properties);
-        formatter.setContactName("John Dou");
-        formatter.setDeviceName("The Device");
-        formatter.setResources(resources);
+        MailFormatter formatter = new MailFormatter(message, resources, properties, "John Dou", "The Device");
 
         String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; " +
@@ -412,12 +351,7 @@ public class MailFormatterUnitTest {
 
         MailerProperties properties = new MailerProperties();
 
-        MailFormatter formatter = new MailFormatter();
-        formatter.setMessage(message);
-        formatter.setProperties(properties);
-        formatter.setContactName("John Dou");
-        formatter.setDeviceName("The Device");
-        formatter.setResources(resources);
+        MailFormatter formatter = new MailFormatter(message, resources, properties, "John Dou", "The Device");
 
         String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; " +
@@ -437,15 +371,10 @@ public class MailFormatterUnitTest {
                 "Email body text.", 60.555, 30.555);
 
         MailerProperties properties = new MailerProperties();
-        properties.setContentOptions(VAL_EMAIL_CONTENT_CALLER, VAL_EMAIL_CONTENT_LOCATION,
-                VAL_EMAIL_CONTENT_DEVICE_NAME, VAL_EMAIL_CONTENT_MESSAGE_TIME);
+        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_CALLER, VAL_PREF_EMAIL_CONTENT_LOCATION,
+                VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME);
 
-        MailFormatter formatter = new MailFormatter();
-        formatter.setMessage(message);
-        formatter.setProperties(properties);
-        formatter.setContactName("John Dou");
-        formatter.setDeviceName("The Device");
-        formatter.setResources(resources);
+        MailFormatter formatter = new MailFormatter(message, resources, properties, "John Dou", "The Device");
 
         String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
@@ -473,15 +402,10 @@ public class MailFormatterUnitTest {
         MailMessage message = new MailMessage("+12345678901", true, start, end, false, false, null, 60.555, 30.555);
 
         MailerProperties properties = new MailerProperties();
-        properties.setContentOptions(VAL_EMAIL_CONTENT_CALLER, VAL_EMAIL_CONTENT_LOCATION,
-                VAL_EMAIL_CONTENT_DEVICE_NAME, VAL_EMAIL_CONTENT_MESSAGE_TIME);
+        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_CALLER, VAL_PREF_EMAIL_CONTENT_LOCATION,
+                VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME);
 
-        MailFormatter formatter = new MailFormatter();
-        formatter.setMessage(message);
-        formatter.setProperties(properties);
-        formatter.setContactName("John Dou");
-        formatter.setDeviceName("The Device");
-        formatter.setResources(resources);
+        MailFormatter formatter = new MailFormatter(message, resources, properties, "John Dou", "The Device");
 
         String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
@@ -509,15 +433,10 @@ public class MailFormatterUnitTest {
         MailMessage message = new MailMessage("+12345678901", false, start, end, false, false, null, 60.555, 30.555);
 
         MailerProperties properties = new MailerProperties();
-        properties.setContentOptions(VAL_EMAIL_CONTENT_CALLER, VAL_EMAIL_CONTENT_LOCATION,
-                VAL_EMAIL_CONTENT_DEVICE_NAME, VAL_EMAIL_CONTENT_MESSAGE_TIME);
+        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_CALLER, VAL_PREF_EMAIL_CONTENT_LOCATION,
+                VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME);
 
-        MailFormatter formatter = new MailFormatter();
-        formatter.setMessage(message);
-        formatter.setProperties(properties);
-        formatter.setContactName("John Dou");
-        formatter.setDeviceName("The Device");
-        formatter.setResources(resources);
+        MailFormatter formatter = new MailFormatter(message, resources, properties, "John Dou", "The Device");
 
         String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
@@ -545,14 +464,10 @@ public class MailFormatterUnitTest {
         MailMessage message = new MailMessage("+12345678901", true, start, end, true, false, null, 60.555, 30.555);
 
         MailerProperties properties = new MailerProperties();
-        properties.setContentOptions(VAL_EMAIL_CONTENT_CALLER, VAL_EMAIL_CONTENT_LOCATION,
-                VAL_EMAIL_CONTENT_DEVICE_NAME, VAL_EMAIL_CONTENT_MESSAGE_TIME);
+        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_CALLER, VAL_PREF_EMAIL_CONTENT_LOCATION,
+                VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME);
 
-        MailFormatter formatter = new MailFormatter();
-        formatter.setMessage(message);
-        formatter.setProperties(properties);
-        formatter.setDeviceName("The Device");
-        formatter.setResources(resources);
+        MailFormatter formatter = new MailFormatter(message, resources, properties, null, null);
 
         String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
@@ -563,7 +478,7 @@ public class MailFormatterUnitTest {
                 "<br>" +
                 "Last known device location: <a href=\"http://maps.google.com/maps/place/60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "<br>" +
-                "Sent from The Device at Feb 2, 2016 3:04:05 AM" +
+                "Sent at Feb 2, 2016 3:04:05 AM" +
                 "</body></html>", text);
     }
 

@@ -33,6 +33,7 @@ import java.util.Properties;
 
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+import static com.bopr.android.smailer.settings.Settings.*;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_HOST;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_PORT;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_SOURCE;
@@ -188,7 +189,7 @@ public class DebugFragment extends DefaultPreferenceFragment {
                 .putString(KEY_PREF_EMAIL_HOST, "smtp.gmail.com")
                 .putString(KEY_PREF_EMAIL_PORT, "465")
                 .putStringSet(KEY_PREF_EMAIL_SOURCE,
-                        new HashSet<>(Arrays.asList(Settings.VAL_SOURCE_IN_SMS, Settings.VAL_SOURCE_MISSED_CALLS)))
+                        new HashSet<>(Arrays.asList(VAL_PREF_SOURCE_IN_SMS, VAL_PREF_SOURCE_MISSED_CALLS)))
                 .apply();
         refreshPreferences(getPreferenceScreen());
     }

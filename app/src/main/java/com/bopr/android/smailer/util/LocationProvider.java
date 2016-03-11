@@ -25,8 +25,10 @@ public class LocationProvider {
     private static final String TAG = "bopr.LocationProvider";
 
     private GoogleApiClient client;
+    private Context context;
 
     public LocationProvider(Context context) {
+        this.context = context;
         ClientListener listener = new ClientListener();
         client = new GoogleApiClient.Builder(context)
                 .addConnectionCallbacks(listener)
@@ -43,35 +45,41 @@ public class LocationProvider {
         client.disconnect();
     }
 
+    @SuppressWarnings("ResourceType")
     public Location getLocation() {
         Location location = null;
-        if (client.isConnected()) {
-            location = LocationServices.FusedLocationApi.getLastLocation(client);
-        }
-
-        if (location == null) {
-            LocationManager lm = (LocationManager) client.getContext().getSystemService(Context.LOCATION_SERVICE);
-
-            if (lm.getProvider(GPS_PROVIDER) != null) {
-                location = lm.getLastKnownLocation(GPS_PROVIDER);
-            } else {
-                Log.d(TAG, "Using GPS_PROVIDER location");
+        if (!PermissionUtil.isLocationPermissionDenied(context)) {
+            if (client.isConnected()) {
+                location = LocationServices.FusedLocationApi.getLastLocation(client);
             }
 
-            if (location == null && lm.getProvider(NETWORK_PROVIDER) != null) {
-                location = lm.getLastKnownLocation(NETWORK_PROVIDER);
-            } else {
-                Log.d(TAG, "Using NETWORK_PROVIDER location");
-            }
+            if (location == null) {
+                LocationManager lm = (LocationManager) client.getContext().getSystemService(Context.LOCATION_SERVICE);
 
-            if (location == null && lm.getProvider(PASSIVE_PROVIDER) != null) {
-                location = lm.getLastKnownLocation(PASSIVE_PROVIDER);
-            } else {
-                Log.d(TAG, "Using PASSIVE_PROVIDER location");
-            }
+                if (lm.getProvider(GPS_PROVIDER) != null) {
+                    location = lm.getLastKnownLocation(GPS_PROVIDER);
+                } else {
+                    Log.d(TAG, "Using GPS_PROVIDER location");
+                }
 
-        } else {
-            Log.d(TAG, "Using Google API location");
+                if (location == null && lm.getProvider(NETWORK_PROVIDER) != null) {
+                    location = lm.getLastKnownLocation(NETWORK_PROVIDER);
+                } else {
+                    Log.d(TAG, "Using NETWORK_PROVIDER location");
+                }
+
+                if (location == null && lm.getProvider(PASSIVE_PROVIDER) != null) {
+                    location = lm.getLastKnownLocation(PASSIVE_PROVIDER);
+                } else {
+                    Log.d(TAG, "Using PASSIVE_PROVIDER location");
+                }
+
+                if (location == null) {
+                    Log.d(TAG, "Unable to retrieve location");
+                }
+            } else {
+                Log.d(TAG, "Using Google API location");
+            }
         }
 
         return location;
