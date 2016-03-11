@@ -58,6 +58,8 @@
     <string name="email_body_caller">Caller: {phone}{name}</string>
     <string name="email_body_called">Called: {phone}{name}</string>
 
+    <string name="unknown_contact">Unknown</string>
+
     <string-array name="email_sources">
         <item>Incoming SMS</item>
         <item>Incoming calls</item>

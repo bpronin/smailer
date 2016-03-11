@@ -19,7 +19,7 @@ import static com.bopr.android.smailer.util.TagFormatter.from;
 
 
 /**
- * Formats email parts.
+ * Formats email subject and body.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
@@ -28,10 +28,10 @@ public class MailFormatter {
     private static final String SUBJECT_PATTERN = "[{app_name}] {source} {phone}";
     private static final String BODY_PATTERN = "<html>" +
             "<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
-            "<body>{message} {line} {footer}</body></html>";
+            "<body>{message} {line} {footer}</body></html>"; /* with spaces between parts it looks better in mobile email notifications */
     private static final String LINE = "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">";
     private static final String GOOGLE_MAP_LINK_PATTERN = "<a href=\"http://maps.google.com/maps/place/{latitude},{longitude}\">{location}</a>";
-    private static final String PHONE_LINK_PATTERN = "<a href=\"tel:{phone}\">{phone}{name}</a>";
+    private static final String PHONE_LINK_PATTERN = "<a href=\"tel:{phone}\">{phone} ({name})</a>";
 
     private final Resources resources;
     private final MailerProperties properties;
@@ -49,12 +49,33 @@ public class MailFormatter {
         this.deviceName = deviceName;
     }
 
+    /**
+     * Returns formatted email subject.
+     *
+     * @return email subject
+     */
     public String getSubject() {
         return from(SUBJECT_PATTERN, resources)
                 .putResource("app_name", R.string.app_name)
                 .put("source", getSourceText())
                 .put("phone", message.getPhone())
                 .format();
+    }
+
+    /**
+     * Returns formatted email body.
+     *
+     * @return email body
+     */
+    public String getBody() {
+        String footerText = getFooterText();
+        TagFormatter formatter = from(BODY_PATTERN)
+                .put("message", getMessageText())
+                .put("footer", footerText);
+        if (!isEmpty(footerText)) {
+            formatter.put("line", LINE);
+        }
+        return formatter.format();
     }
 
     private String getSourceText() {
@@ -97,17 +118,6 @@ public class MailFormatter {
         }
     }
 
-    public String getBody() {
-        String footerText = getFooterText();
-        TagFormatter formatter = from(BODY_PATTERN)
-                .put("message", getMessageText())
-                .put("footer", footerText);
-        if (!isEmpty(footerText)) {
-            formatter.put("line", LINE);
-        }
-        return formatter.format();
-    }
-
     private String getFooterText() {
         Set<String> options = properties.getContentOptions();
         if (options != null) {
@@ -144,7 +154,6 @@ public class MailFormatter {
     }
 
     private String getCallerText() {
-
         int resourceId;
         if (message.isSms()) {
             resourceId = R.string.email_body_sender;
@@ -156,10 +165,11 @@ public class MailFormatter {
             }
         }
 
+        String name = !isEmpty(this.contactName) ? this.contactName : resources.getString(R.string.unknown_contact);
         return from(resourceId, resources)
                 .put("phone", from(PHONE_LINK_PATTERN)
                         .put("phone", message.getPhone())
-                        .put("name", !isEmpty(contactName) ? " (" + contactName + ")" : null))
+                        .put("name", name))
                 .format();
     }
 

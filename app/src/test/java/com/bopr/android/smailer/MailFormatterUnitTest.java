@@ -51,6 +51,7 @@ public class MailFormatterUnitTest {
         when(resources.getString(R.string.email_body_caller)).thenReturn("Caller: {phone}{name}");
         when(resources.getString(R.string.email_body_called)).thenReturn("Called: {phone}{name}");
         when(resources.getString(R.string.email_body_location)).thenReturn("Last known device location: {location}");
+        when(resources.getString(R.string.unknown_contact)).thenReturn("Unknown");
     }
 
     /**
@@ -131,8 +132,9 @@ public class MailFormatterUnitTest {
         MailFormatter formatter = new MailFormatter(message, resources, properties, "John Dou", "The Device");
 
         String text = formatter.getBody();
-        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; " +
-                "charset=utf-8\"></head><body>Email body text</body></html>", text);
+        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
+                "Email body text" +
+                "  </body></html>", text);
     }
 
     /**
@@ -152,10 +154,11 @@ public class MailFormatterUnitTest {
         MailFormatter formatter = new MailFormatter(message, resources, properties, "John Dou", "The Device");
 
         String text = formatter.getBody();
-        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; " +
-                "charset=utf-8\"></head><body>Email body text<hr style=\"border: none; " +
-                "background-color: #cccccc; height: 1px;\">Sent " +
-                "at Feb 2, 2016 3:04:05 AM</body></html>", text);
+        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
+                "Email body text" +
+                " <hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                " Sent at Feb 2, 2016 3:04:05 AM" +
+                "</body></html>", text);
     }
 
     /**
@@ -178,8 +181,8 @@ public class MailFormatterUnitTest {
         String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                         "Email body text" +
-                        "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                        "Sender: <a href=\"tel:+12345678901\">+12345678901</a>" +
+                        " <hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                        " Sender: <a href=\"tel:+12345678901\">+12345678901 (Unknown)</a>" +
                         "<br>" +
                         "Sent at Feb 2, 2016 3:04:05 AM" +
                         "</body></html>",
@@ -202,10 +205,11 @@ public class MailFormatterUnitTest {
         MailFormatter formatter = new MailFormatter(message, resources, properties, "John Dou", "The Device");
 
         String text = formatter.getBody();
-        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; " +
-                "charset=utf-8\"></head><body>Email body text<hr style=\"border: none; " +
-                "background-color: #cccccc; height: 1px;\">Sent from " +
-                "The Device</body></html>", text);
+        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
+                "Email body text" +
+                " <hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                " Sent from The Device" +
+                "</body></html>", text);
     }
 
     /**
@@ -225,10 +229,11 @@ public class MailFormatterUnitTest {
         MailFormatter formatter = new MailFormatter(message, resources, properties, "John Dou", "The Device");
 
         String text = formatter.getBody();
-        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; " +
-                "charset=utf-8\"></head><body>Email body text<hr style=\"border: none; " +
-                "background-color: #cccccc; height: 1px;\">Sent from " +
-                "The Device at Feb 2, 2016 3:04:05 AM</body></html>", text);
+        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
+                "Email body text" +
+                " <hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                " Sent from The Device at Feb 2, 2016 3:04:05 AM" +
+                "</body></html>", text);
     }
 
     /**
@@ -248,9 +253,11 @@ public class MailFormatterUnitTest {
 
         String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; " +
-                "charset=utf-8\"></head><body>Email body text<hr style=\"border: none; " +
-                "background-color: #cccccc; height: 1px;\">Last known device location: " +
-                "<a href=\"http://maps.google.com/maps/place/60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
+                "charset=utf-8\"></head><body>" +
+                "Email body text" +
+                " <hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                " Last known device location: <a href=\"http://maps.google.com/maps/place/60.555,30.555\">" +
+                "60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "</body></html>", text);
     }
 
@@ -270,8 +277,9 @@ public class MailFormatterUnitTest {
         MailFormatter formatter = new MailFormatter(message, resources, properties, "John Dou", "The Device");
 
         String text = formatter.getBody();
-        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; " +
-                "charset=utf-8\"></head><body>Email body text</body></html>", text);
+        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
+                "Email body text" +
+                "  </body></html>", text);
     }
 
     /**
@@ -292,8 +300,31 @@ public class MailFormatterUnitTest {
         String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
-                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                "Sender: <a href=\"tel:+12345678901\">+12345678901 (John Dou)</a>" +
+                " <hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                " Sender: <a href=\"tel:+12345678901\">+12345678901 (John Dou)</a>" +
+                "</body></html>", text);
+    }
+
+    /**
+     * Check email body footer with different options.
+     *
+     * @throws Exception when fails
+     */
+    @Test
+    public void testUnknownContactName() throws Exception {
+        MailMessage message = new MailMessage("+12345678901", true, 0, 0, false, true,
+                "Email body text", null);
+
+        MailerProperties properties = new MailerProperties();
+        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_CALLER);
+
+        MailFormatter formatter = new MailFormatter(message, resources, properties, null, "The Device");
+
+        String text = formatter.getBody();
+        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
+                "Email body text" +
+                " <hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                " Sender: <a href=\"tel:+12345678901\">+12345678901 (Unknown)</a>" +
                 "</body></html>", text);
     }
 
@@ -313,9 +344,9 @@ public class MailFormatterUnitTest {
         MailFormatter formatter = new MailFormatter(message, resources, properties, "John Dou", "The Device");
 
         String text = formatter.getBody();
-        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; " +
-                "charset=utf-8\"></head><body>You had an incoming call of 1:01:05 duration." +
-                "</body></html>", text);
+        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
+                "You had an incoming call of 1:01:05 duration." +
+                "  </body></html>", text);
     }
 
     /**
@@ -334,9 +365,9 @@ public class MailFormatterUnitTest {
         MailFormatter formatter = new MailFormatter(message, resources, properties, "John Dou", "The Device");
 
         String text = formatter.getBody();
-        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; " +
-                "charset=utf-8\"></head><body>You had an outgoing call of 1:01:10 duration." +
-                "</body></html>", text);
+        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
+                "You had an outgoing call of 1:01:10 duration." +
+                "  </body></html>", text);
     }
 
     /**
@@ -354,9 +385,9 @@ public class MailFormatterUnitTest {
         MailFormatter formatter = new MailFormatter(message, resources, properties, "John Dou", "The Device");
 
         String text = formatter.getBody();
-        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; " +
-                "charset=utf-8\"></head><body>You had a missed call." +
-                "</body></html>", text);
+        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
+                "You had a missed call." +
+                "  </body></html>", text);
     }
 
     /**
@@ -380,10 +411,11 @@ public class MailFormatterUnitTest {
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
                 "<body>" +
                 "Email body text." +
-                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                "Sender: <a href=\"tel:+12345678901\">+12345678901 (John Dou)</a>" +
+                " <hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                " Sender: <a href=\"tel:+12345678901\">+12345678901 (John Dou)</a>" +
                 "<br>" +
-                "Last known device location: <a href=\"http://maps.google.com/maps/place/60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
+                "Last known device location: <a href=\"http://maps.google.com/maps/place/60.555,30.555\">" +
+                "60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "<br>" +
                 "Sent from The Device at Feb 2, 2016 3:04:05 AM" +
                 "</body></html>", text);
@@ -411,8 +443,8 @@ public class MailFormatterUnitTest {
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
                 "<body>" +
                 "You had an incoming call of 1:01:05 duration." +
-                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                "Caller: <a href=\"tel:+12345678901\">+12345678901 (John Dou)</a>" +
+                " <hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                " Caller: <a href=\"tel:+12345678901\">+12345678901 (John Dou)</a>" +
                 "<br>" +
                 "Last known device location: <a href=\"http://maps.google.com/maps/place/60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "<br>" +
@@ -442,8 +474,8 @@ public class MailFormatterUnitTest {
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
                 "<body>" +
                 "You had an outgoing call of 1:01:05 duration." +
-                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                "Called: <a href=\"tel:+12345678901\">+12345678901 (John Dou)</a>" +
+                " <hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                " Called: <a href=\"tel:+12345678901\">+12345678901 (John Dou)</a>" +
                 "<br>" +
                 "Last known device location: <a href=\"http://maps.google.com/maps/place/60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "<br>" +
@@ -473,10 +505,11 @@ public class MailFormatterUnitTest {
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
                 "<body>" +
                 "You had a missed call." +
-                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                "Caller: <a href=\"tel:+12345678901\">+12345678901</a>" +
+                " <hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                " Caller: <a href=\"tel:+12345678901\">+12345678901 (Unknown)</a>" +
                 "<br>" +
-                "Last known device location: <a href=\"http://maps.google.com/maps/place/60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
+                "Last known device location: <a href=\"http://maps.google.com/maps/place/60.555,30.555\">" +
+                "60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "<br>" +
                 "Sent at Feb 2, 2016 3:04:05 AM" +
                 "</body></html>", text);
