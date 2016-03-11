@@ -5,7 +5,7 @@ android {
         config {
             keyAlias 'SMailerKey'
             keyPassword 'blue88cofe'
-            storeFile file('C:/Projects/.keystore/keystore.jks')
+            storeFile file('keystore.jks')
             storePassword 'blue88cofe'
         }
     }
