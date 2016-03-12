@@ -13,6 +13,8 @@ import com.bopr.android.smailer.R;
 
 import java.util.Map;
 
+import static com.bopr.android.smailer.settings.Settings.PREFERENCES_STORAGE_NAME;
+
 /**
  * Class DefaultPreferenceFragment.
  *
@@ -27,7 +29,7 @@ public class DefaultPreferenceFragment extends PreferenceFragment {
         super.onCreate(savedInstanceState);
 
         PreferenceManager preferenceManager = getPreferenceManager();
-        preferenceManager.setSharedPreferencesName(Settings.PREFERENCES_STORAGE_NAME);
+        preferenceManager.setSharedPreferencesName(PREFERENCES_STORAGE_NAME);
         sharedPreferences = preferenceManager.getSharedPreferences();
     }
 

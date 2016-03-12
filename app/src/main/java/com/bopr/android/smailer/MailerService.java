@@ -2,6 +2,9 @@ package com.bopr.android.smailer;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.os.Build;
+import android.provider.Telephony;
+import android.telephony.SmsMessage;
 import android.util.Log;
 
 import com.bopr.android.smailer.util.LocationProvider;
@@ -15,19 +18,14 @@ public class MailerService extends IntentService {
 
     private static final String TAG = "bopr.MailerService";
 
-    public static final String EXTRA_SOURCE = "source";
-    public static final String EXTRA_DIRECTION = "direction";
+    public static final String EXTRA_INCOMING = "direction";
     public static final String EXTRA_MISSED = "missed";
     public static final String EXTRA_PHONE_NUMBER = "phone_number";
     public static final String EXTRA_START_TIME = "start_time";
     public static final String EXTRA_END_TIME = "end_time";
-    public static final String EXTRA_SMS_TEXT = "sms_text";
 
-    public static final int SOURCE_SMS = 0;
-    public static final int SOURCE_CALL = 1;
-
-    public static final int DIRECTION_INCOMING = 0;
-    public static final int DIRECTION_OUTGOING = 1;
+    public static final String ACTION_SMS = "sms";
+    public static final String ACTION_CALL = "call";
 
     private LocationProvider locationProvider;
 
@@ -59,18 +57,65 @@ public class MailerService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         Log.d(TAG, "Processing mailer service intent");
 
-        MailMessage message = new MailMessage(
+        MailMessage message;
+        if (intent.getAction().equals(ACTION_SMS)) {
+            message = parseSmsIntent(intent);
+        } else {
+            message = parseCallIntent(intent);
+        }
+
+        if (message != null) {
+            new Mailer().send(this, message);
+        } else {
+            Log.e(TAG, "Null message");
+        }
+    }
+
+    private MailMessage parseCallIntent(Intent intent) {
+        return new MailMessage(
                 intent.getStringExtra(EXTRA_PHONE_NUMBER),
-                intent.getIntExtra(EXTRA_DIRECTION, 0) == DIRECTION_INCOMING,
+                intent.getBooleanExtra(EXTRA_INCOMING, true),
                 intent.getLongExtra(EXTRA_START_TIME, 0),
                 intent.getLongExtra(EXTRA_END_TIME, 0),
                 intent.getBooleanExtra(EXTRA_MISSED, false),
-                intent.getIntExtra(EXTRA_SOURCE, 0) == SOURCE_SMS,
-                intent.getStringExtra(EXTRA_SMS_TEXT),
+                false,
+                null,
                 locationProvider.getLocation()
         );
+    }
 
-        new Mailer().send(this, message);
+    private MailMessage parseSmsIntent(Intent intent) {
+        SmsMessage[] messages;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            messages = Telephony.Sms.Intents.getMessagesFromIntent(intent);
+        } else {
+            Object[] pdus = (Object[]) intent.getSerializableExtra("pdus");
+            messages = new SmsMessage[pdus.length];
+            for (int i = 0; i < pdus.length; i++) {
+                byte[] pdu = (byte[]) pdus[i];
+                //noinspection deprecation
+                messages[i] = SmsMessage.createFromPdu(pdu);
+            }
+        }
+
+        if (messages.length > 0) {
+            String text = "";
+            for (SmsMessage message : messages) {
+                text += message.getDisplayMessageBody();
+            }
+
+            return new MailMessage(
+                    messages[0].getDisplayOriginatingAddress(),
+                    true,
+                    messages[0].getTimestampMillis(),
+                    0,
+                    false,
+                    true,
+                    text,
+                    locationProvider.getLocation()
+            );
+        }
+        return null;
     }
 
 }

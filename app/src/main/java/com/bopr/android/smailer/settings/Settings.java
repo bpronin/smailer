@@ -1,5 +1,9 @@
 package com.bopr.android.smailer.settings;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Settings.
  *
@@ -26,4 +30,14 @@ public interface Settings {
     String VAL_PREF_SOURCE_OUT_CALLS = "out_calls";
     String VAL_PREF_SOURCE_MISSED_CALLS = "missed_calls";
 
+    String DEFAULT_HOST = "smtp.gmail.com";
+    String DEFAULT_PORT = "465";
+    Set<String> DEFAULT_CONTENT = new HashSet<>(Arrays.asList(
+            VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
+            VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
+            VAL_PREF_EMAIL_CONTENT_LOCATION,
+            VAL_PREF_EMAIL_CONTENT_CALLER));
+    Set<String> DEFAULT_SOURCES = new HashSet<>(Arrays.asList(
+            VAL_PREF_SOURCE_IN_SMS,
+            VAL_PREF_SOURCE_MISSED_CALLS));
 }

@@ -36,6 +36,7 @@ import java.util.Properties;
 
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_HOST;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_PORT;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_SOURCE;
@@ -199,10 +200,10 @@ public class DebugFragment extends DefaultPreferenceFragment {
 //                        .putString(KEY_PREF_SENDER_PASSWORD, EncryptUtil.encrypt(getActivity(), r.getString(R.string.default_password)))
                 .putString(KEY_PREF_SENDER_PASSWORD, properties.getProperty("default_password"))
                 .putString(KEY_PREF_RECIPIENT_EMAIL_ADDRESS, properties.getProperty("default_recipient"))
-                .putString(KEY_PREF_EMAIL_HOST, "smtp.gmail.com")
-                .putString(KEY_PREF_EMAIL_PORT, "465")
-                .putStringSet(KEY_PREF_EMAIL_SOURCE,
-                        new HashSet<>(Arrays.asList(VAL_PREF_SOURCE_IN_SMS, VAL_PREF_SOURCE_MISSED_CALLS)))
+                .putString(KEY_PREF_EMAIL_HOST, Settings.DEFAULT_HOST)
+                .putString(KEY_PREF_EMAIL_PORT, Settings.DEFAULT_PORT)
+                .putStringSet(KEY_PREF_EMAIL_SOURCE, Settings.DEFAULT_SOURCES)
+                .putStringSet(KEY_PREF_EMAIL_CONTENT,Settings.DEFAULT_CONTENT)
                 .apply();
         refreshPreferences(getPreferenceScreen());
     }

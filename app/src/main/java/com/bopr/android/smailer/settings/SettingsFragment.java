@@ -1,20 +1,35 @@
 package com.bopr.android.smailer.settings;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.SwitchPreference;
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
+import android.support.v7.app.AlertDialog;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.util.DeviceUtil;
 import com.bopr.android.smailer.util.StringUtil;
+import com.bopr.android.smailer.util.TagFormatter;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.preference.Preference.OnPreferenceChangeListener;
-import static com.bopr.android.smailer.settings.Settings.*;
+import static android.preference.PreferenceManager.KEY_HAS_SET_DEFAULT_VALUES;
+import static com.bopr.android.smailer.settings.Settings.DEFAULT_CONTENT;
+import static com.bopr.android.smailer.settings.Settings.DEFAULT_HOST;
+import static com.bopr.android.smailer.settings.Settings.DEFAULT_PORT;
+import static com.bopr.android.smailer.settings.Settings.DEFAULT_SOURCES;
+import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_CONTENT;
+import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_HOST;
+import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_PORT;
+import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_SOURCE;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_OUTGOING_SERVER;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_RECIPIENT_EMAIL_ADDRESS;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_ACCOUNT;
@@ -38,6 +53,7 @@ public class SettingsFragment extends DefaultPreferenceFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loadDefaultPreferences();
         addPreferencesFromResource(R.xml.pref_general);
         setHasOptionsMenu(true);
 
@@ -81,12 +97,34 @@ public class SettingsFragment extends DefaultPreferenceFragment {
                 return true;
             }
         });
+
+        findPreference(KEY_PREF_OUTGOING_SERVER).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                startActivity(new Intent(getActivity(), ServerSettingsActivity.class));
+                return true;
+            }
+        });
     }
 
     @Override
     public void onStart() {
         super.onStart();
         updateServerPreference();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_main, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_about) {
+            showAboutDialog();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void updateAccountPreference(String value) {
@@ -121,7 +159,8 @@ public class SettingsFragment extends DefaultPreferenceFragment {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
+                                           @NonNull int[] grantResults
+    ) {
         if (requestCode == PERMISSIONS_REQUEST_RECEIVE_SMS) {
             if (grantResults[0] != PERMISSION_GRANTED) {
                 Toast.makeText(getActivity(), R.string.message_service_disabled_by_permission,
@@ -130,6 +169,50 @@ public class SettingsFragment extends DefaultPreferenceFragment {
                 enabledPreference.setChecked(false);
             }
         }
+    }
+
+    /**
+     * Sets default preferences values.
+     * We are using multi-activity preferences so some values
+     * won't be read at startup until we start activity that owns these prefs.
+     */
+    private void loadDefaultPreferences() {
+        final SharedPreferences defaultValueSp = getActivity().getSharedPreferences(
+                KEY_HAS_SET_DEFAULT_VALUES, Context.MODE_PRIVATE);
+
+        if (!defaultValueSp.getBoolean(KEY_HAS_SET_DEFAULT_VALUES, false)) {
+            getSharedPreferences()
+                    .edit()
+                    .putBoolean(KEY_PREF_SERVICE_ENABLED, true)
+                    .putString(KEY_PREF_EMAIL_HOST, DEFAULT_HOST)
+                    .putString(KEY_PREF_EMAIL_PORT, DEFAULT_PORT)
+                    .putStringSet(KEY_PREF_EMAIL_SOURCE, DEFAULT_SOURCES)
+                    .putStringSet(KEY_PREF_EMAIL_CONTENT, DEFAULT_CONTENT)
+                    .apply();
+
+            defaultValueSp
+                    .edit().putBoolean(KEY_HAS_SET_DEFAULT_VALUES, true)
+                    .apply();
+        }
+
+    }
+
+    private void showAboutDialog() {
+//        Log.i("Application", "Version: " + DeviceUtil.getReleaseVersion(getActivity()));
+
+        new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.action_about)
+                .setMessage(TagFormatter.from("{label} {version}", getResources())
+                        .putResource("label", R.string.title_version)
+                        .put("version", DeviceUtil.getReleaseVersion(getActivity()))
+                        .format())
+                .show();
+
+        // todo: add "rate us on the play store"
+        // todo: add "open source libs"
+//        final EditText input = new EditText(getActivity());
+//        input.setInputType(InputType.TYPE_CLASS_PHONE);
+//        builder.setView(input);
     }
 
 }

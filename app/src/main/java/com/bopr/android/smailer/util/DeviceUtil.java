@@ -1,6 +1,9 @@
 package com.bopr.android.smailer.util;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.provider.Settings;
 
 import static android.os.Build.MANUFACTURER;
@@ -34,4 +37,11 @@ public class DeviceUtil {
         return StringUtil.capitalize(MANUFACTURER) + " " + MODEL;
     }
 
+    public static String getReleaseVersion(Activity context) {
+        try {
+            return context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException x) {
+            throw new Error(x);
+        }
+    }
 }

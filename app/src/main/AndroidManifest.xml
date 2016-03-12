@@ -30,19 +30,6 @@
         <activity
             android:name=".settings.ServerSettingsActivity"
             android:label="@string/pref_title_outgoing_server">
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-                <action android:name="com.bopr.android.smailer.SERVER_SETTINGS" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".settings.DebugSettingsActivity"
-            android:label="Debug">
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-                <action android:name="com.bopr.android.smailer.DEBUG_SETTINGS" />
-            </intent-filter>
         </activity>
 
         <receiver

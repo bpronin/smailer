@@ -58,7 +58,10 @@
     <string name="email_body_caller">Caller: {phone}{name}</string>
     <string name="email_body_called">Called: {phone}{name}</string>
 
-    <string name="unknown_contact">Unknown</string>
+    <string name="action_about">About SMailer</string>
+
+    <string name="unknown_contact">Unknown contact</string>
+    <string name="title_version">Application version:</string>
 
     <string-array name="email_sources">
         <item>Incoming SMS</item>

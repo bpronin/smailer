@@ -4,9 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.provider.Telephony;
-import android.telephony.SmsMessage;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
@@ -18,17 +16,13 @@ import static android.telephony.TelephonyManager.EXTRA_STATE;
 import static android.telephony.TelephonyManager.EXTRA_STATE_IDLE;
 import static android.telephony.TelephonyManager.EXTRA_STATE_OFFHOOK;
 import static android.telephony.TelephonyManager.EXTRA_STATE_RINGING;
-import static com.bopr.android.smailer.MailerService.DIRECTION_INCOMING;
-import static com.bopr.android.smailer.MailerService.DIRECTION_OUTGOING;
-import static com.bopr.android.smailer.MailerService.EXTRA_DIRECTION;
+import static com.bopr.android.smailer.MailerService.ACTION_CALL;
+import static com.bopr.android.smailer.MailerService.ACTION_SMS;
 import static com.bopr.android.smailer.MailerService.EXTRA_END_TIME;
+import static com.bopr.android.smailer.MailerService.EXTRA_INCOMING;
 import static com.bopr.android.smailer.MailerService.EXTRA_MISSED;
 import static com.bopr.android.smailer.MailerService.EXTRA_PHONE_NUMBER;
-import static com.bopr.android.smailer.MailerService.EXTRA_SMS_TEXT;
-import static com.bopr.android.smailer.MailerService.EXTRA_SOURCE;
 import static com.bopr.android.smailer.MailerService.EXTRA_START_TIME;
-import static com.bopr.android.smailer.MailerService.SOURCE_CALL;
-import static com.bopr.android.smailer.MailerService.SOURCE_SMS;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_SOURCE;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SERVICE_ENABLED;
 import static com.bopr.android.smailer.settings.Settings.PREFERENCES_STORAGE_NAME;
@@ -109,9 +103,9 @@ public class CallReceiver extends BroadcastReceiver {
         Log.d(TAG, "Processing incoming call");
         if (isSourceEnabled(context, VAL_PREF_SOURCE_IN_CALLS)) {
             Intent intent = new Intent(context, MailerService.class);
-            intent.putExtra(EXTRA_SOURCE, SOURCE_CALL);
+            intent.setAction(ACTION_CALL);
             intent.putExtra(EXTRA_PHONE_NUMBER, number);
-            intent.putExtra(EXTRA_DIRECTION, DIRECTION_INCOMING);
+            intent.putExtra(EXTRA_INCOMING, true);
             intent.putExtra(EXTRA_START_TIME, start);
             intent.putExtra(EXTRA_END_TIME, end);
 
@@ -123,9 +117,9 @@ public class CallReceiver extends BroadcastReceiver {
         Log.d(TAG, "Processing outgoing call");
         if (isSourceEnabled(context, VAL_PREF_SOURCE_OUT_CALLS)) {
             Intent intent = new Intent(context, MailerService.class);
-            intent.putExtra(EXTRA_SOURCE, SOURCE_CALL);
+            intent.setAction(ACTION_CALL);
             intent.putExtra(EXTRA_PHONE_NUMBER, number);
-            intent.putExtra(EXTRA_DIRECTION, DIRECTION_OUTGOING);
+            intent.putExtra(EXTRA_INCOMING, false);
             intent.putExtra(EXTRA_START_TIME, start);
             intent.putExtra(EXTRA_END_TIME, end);
 
@@ -134,10 +128,10 @@ public class CallReceiver extends BroadcastReceiver {
     }
 
     private void onMissedCall(Context context, String number, long start) {
-        Log.d(TAG, "Processing missed call from");
+        Log.d(TAG, "Processing missed call");
         if (isSourceEnabled(context, VAL_PREF_SOURCE_MISSED_CALLS)) {
             Intent intent = new Intent(context, MailerService.class);
-            intent.putExtra(EXTRA_SOURCE, SOURCE_CALL);
+            intent.setAction(ACTION_CALL);
             intent.putExtra(EXTRA_MISSED, true);
             intent.putExtra(EXTRA_PHONE_NUMBER, number);
             intent.putExtra(EXTRA_START_TIME, start);
@@ -149,33 +143,10 @@ public class CallReceiver extends BroadcastReceiver {
     private void onIncomingSms(Context context, Intent smsIntent) {
         Log.d(TAG, "Processing incoming sms");
         if (isSourceEnabled(context, VAL_PREF_SOURCE_IN_SMS)) {
-            for (SmsMessage message : parseSmsMessages(smsIntent)) {
-                Intent intent = new Intent(context, MailerService.class);
-                intent.putExtra(EXTRA_SOURCE, SOURCE_SMS);
-                intent.putExtra(EXTRA_DIRECTION, DIRECTION_INCOMING);
-                intent.putExtra(EXTRA_PHONE_NUMBER, message.getDisplayOriginatingAddress());
-                intent.putExtra(EXTRA_START_TIME, message.getTimestampMillis());
-                intent.putExtra(EXTRA_SMS_TEXT, message.getDisplayMessageBody());
-
-                context.startService(intent);
-            }
-        }
-    }
-
-    private SmsMessage[] parseSmsMessages(Intent intent) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            return Telephony.Sms.Intents.getMessagesFromIntent(intent);
-        } else {
-            Object[] pdus = (Object[]) intent.getSerializableExtra("pdus");
-            String format = intent.getStringExtra("format");
-
-            int pduCount = pdus.length;
-            SmsMessage[] messages = new SmsMessage[pduCount];
-            for (int i = 0; i < pduCount; i++) {
-                byte[] pdu = (byte[]) pdus[i];
-                messages[i] = SmsMessage.createFromPdu(pdu, format);
-            }
-            return messages;
+            Intent intent = new Intent(context, MailerService.class);
+            intent.setAction(ACTION_SMS);
+            intent.fillIn(smsIntent, Intent.FILL_IN_DATA);
+            context.startService(intent);
         }
     }
 

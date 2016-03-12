@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.bopr.android.smailer">
+<manifest package="com.bopr.android.smailer"
+          xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
-    <uses-permission android:name="android.permission.READ_LOGS" />
+    <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
+    <uses-permission android:name="android.permission.READ_LOGS"/>
+
+    <!-- todo: see inspection message - android:fullBackupContent="false" -->
+    <application>
+        <activity
+            android:name=".settings.DebugSettingsActivity"
+            android:label="Debug">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="com.bopr.android.smailer.DEBUG"/>
+            </intent-filter>
+        </activity>
+    </application>
 
 </manifest>
 
