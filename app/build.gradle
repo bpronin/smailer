@@ -1,14 +1,6 @@
 apply plugin: 'com.android.application'
 
 android {
-    signingConfigs {
-        config {
-            keyAlias 'SMailerKey'
-            keyPassword 'blue88cofe'
-            storeFile file('keystore.jks')
-            storePassword 'blue88cofe'
-        }
-    }
     compileSdkVersion 23
     buildToolsVersion '23.0.2'
     defaultConfig {
