@@ -27,7 +27,7 @@
     <string name="pref_description_service_on">Email will be sent out</string>
     <string name="pref_description_service_off">No email will be sent out</string>
     <string name="pref_description_password_asterisk">*******</string>
-    <string name="pref_description_not_set">[ not specified ]</string>
+    <string name="pref_description_not_set">not specified</string>
     <string name="pref_description_when_to_send">When to send email</string>
     <string name="pref_description_what_email_contain">What should the email contain</string>
 

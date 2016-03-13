@@ -18,7 +18,7 @@
         android:title="Want SMS permission" />
     <Preference
         android:key="requestReceiveSmsPermission"
-        android:title="Request Sms permission" />
+        android:title="Request SMS permission" />
     <Preference
         android:key="get_location"
         android:title="Get location" />
@@ -31,5 +31,8 @@
     <Preference
         android:key="close"
         android:title="Finish activity" />
+    <Preference
+        android:key="show_password"
+        android:title="Show password" />
 
 </PreferenceScreen>

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.bopr.android.smailer.util.ContactUtil;
+import com.bopr.android.smailer.util.Cryptor;
 import com.bopr.android.smailer.util.DeviceUtil;
 import com.bopr.android.smailer.util.MailTransport;
 
@@ -22,20 +23,21 @@ import static com.bopr.android.smailer.settings.Settings.PREFERENCES_STORAGE_NAM
 public class Mailer {
 
     private static final String TAG = "bopr.Mailer";
+    private final Context context;
 
-    public Mailer() {
+    public Mailer(Context context) {
+        this.context = context;
     }
 
-    public void send(Context context, MailMessage message) {
+    public void send(MailMessage message) {
         Log.d(TAG, "Sending mail: " + message);
 
         SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_STORAGE_NAME, MODE_PRIVATE);
         MailerProperties properties = new MailerProperties(preferences);
 
         MailTransport transport = new MailTransport(properties.getUser(),
-//                EncryptUtil.decrypt(context, properties.getPassword()),
-                properties.getPassword(), properties.getHost(),
-                properties.getPort());
+                Cryptor.decrypt(properties.getPassword(), context),
+                properties.getHost(), properties.getPort());
 
         MailFormatter formatter = new MailFormatter(message, context.getResources(),
                 properties, ContactUtil.getContactName(context, message.getPhone()),

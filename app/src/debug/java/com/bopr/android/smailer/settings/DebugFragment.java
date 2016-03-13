@@ -24,14 +24,13 @@ import com.bopr.android.smailer.util.DeviceUtil;
 import com.bopr.android.smailer.util.LocationProvider;
 import com.bopr.android.smailer.util.MailTransport;
 import com.bopr.android.smailer.util.PermissionUtil;
+import com.bopr.android.smailer.util.Cryptor;
 import com.bopr.android.smailer.util.StringUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Properties;
 
 import static android.Manifest.permission.RECEIVE_SMS;
@@ -44,8 +43,6 @@ import static com.bopr.android.smailer.settings.Settings.KEY_PREF_RECIPIENT_EMAI
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_PASSWORD;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SERVICE_ENABLED;
-import static com.bopr.android.smailer.settings.Settings.VAL_PREF_SOURCE_IN_SMS;
-import static com.bopr.android.smailer.settings.Settings.VAL_PREF_SOURCE_MISSED_CALLS;
 
 /**
  * For debug purposes.
@@ -153,6 +150,15 @@ public class DebugFragment extends DefaultPreferenceFragment {
                 return true;
             }
         });
+
+        findPreference("show_password").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                onShowPassword();
+                return true;
+            }
+        });
     }
 
     @Override
@@ -197,13 +203,12 @@ public class DebugFragment extends DefaultPreferenceFragment {
                 .edit()
                 .putBoolean(KEY_PREF_SERVICE_ENABLED, true)
                 .putString(KEY_PREF_SENDER_ACCOUNT, properties.getProperty("default_sender"))
-//                        .putString(KEY_PREF_SENDER_PASSWORD, EncryptUtil.encrypt(getActivity(), r.getString(R.string.default_password)))
-                .putString(KEY_PREF_SENDER_PASSWORD, properties.getProperty("default_password"))
+                .putString(KEY_PREF_SENDER_PASSWORD, Cryptor.encrypt(properties.getProperty("default_password"), getActivity()))
                 .putString(KEY_PREF_RECIPIENT_EMAIL_ADDRESS, properties.getProperty("default_recipient"))
                 .putString(KEY_PREF_EMAIL_HOST, Settings.DEFAULT_HOST)
                 .putString(KEY_PREF_EMAIL_PORT, Settings.DEFAULT_PORT)
                 .putStringSet(KEY_PREF_EMAIL_SOURCE, Settings.DEFAULT_SOURCES)
-                .putStringSet(KEY_PREF_EMAIL_CONTENT,Settings.DEFAULT_CONTENT)
+                .putStringSet(KEY_PREF_EMAIL_CONTENT, Settings.DEFAULT_CONTENT)
                 .apply();
         refreshPreferences(getPreferenceScreen());
     }
@@ -249,23 +254,6 @@ public class DebugFragment extends DefaultPreferenceFragment {
 
     private void onClearPreferences() {
         getSharedPreferences().edit().clear().apply();
-
-//        File dir = new File(getActivity().getFilesDir().getParent() + "/shared_prefs/");
-//        String[] files = dir.list();
-//        for (String file : files) {
-//            SharedPreferences preferences = getActivity().getSharedPreferences(file.replace(".xml", ""), Context.MODE_PRIVATE);
-//            preferences.edit().clear().apply();
-//        }
-//
-////                try {
-////                    Thread.sleep(1000);
-////                } catch (InterruptedException e) {
-////                    //ok
-////                }
-//
-//        for (String file : files) {
-//            new File(dir, file).delete();
-//        }
         refreshPreferences(getPreferenceScreen());
     }
 
@@ -306,7 +294,7 @@ public class DebugFragment extends DefaultPreferenceFragment {
             protected Void doInBackground(Void... params) {
                 MailMessage message = new MailMessage("+79052345678", true, System.currentTimeMillis(),
                         0, false, true, "Debug message", locationProvider.getLocation());
-                new Mailer().send(getActivity(), message);
+                new Mailer(getActivity()).send(message);
                 return null;
             }
         }.execute();
@@ -356,6 +344,11 @@ public class DebugFragment extends DefaultPreferenceFragment {
                 Toast.makeText(getActivity(), "Permission granted", Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    private void onShowPassword() {
+        String text = Cryptor.decrypt(getSharedPreferences().getString(KEY_PREF_SENDER_PASSWORD, null), getActivity());
+        Toast.makeText(getActivity(), text, Toast.LENGTH_LONG).show();
     }
 
 }

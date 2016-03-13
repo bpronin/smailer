@@ -18,7 +18,6 @@
 
     <com.bopr.android.smailer.settings.PasswordPreference
         android:dialogMessage="@string/message_password_stored_encrypted"
-        android:inputType="textPassword"
         android:key="sender_password"
         android:maxLines="1"
         android:selectAllOnFocus="true"

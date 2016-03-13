@@ -1,13 +1,23 @@
 package com.bopr.android.smailer;
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.provider.Telephony;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
+import com.bopr.android.smailer.util.ContactUtil;
+import com.bopr.android.smailer.util.Cryptor;
+import com.bopr.android.smailer.util.DeviceUtil;
 import com.bopr.android.smailer.util.LocationProvider;
+import com.bopr.android.smailer.util.MailTransport;
+
+import javax.mail.AuthenticationFailedException;
+
+import static com.bopr.android.smailer.settings.Settings.PREFERENCES_STORAGE_NAME;
 
 /**
  * Class MailerService.
@@ -28,6 +38,7 @@ public class MailerService extends IntentService {
     public static final String ACTION_CALL = "call";
 
     private LocationProvider locationProvider;
+    private Mailer mailer;
 
     public MailerService() {
         super(TAG);
@@ -36,6 +47,7 @@ public class MailerService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
+        mailer = new Mailer(this);
         locationProvider = new LocationProvider(this);
     }
 
@@ -65,7 +77,7 @@ public class MailerService extends IntentService {
         }
 
         if (message != null) {
-            new Mailer().send(this, message);
+            mailer.send(message);
         } else {
             Log.e(TAG, "Null message");
         }

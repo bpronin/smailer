@@ -132,8 +132,11 @@ public class SettingsFragment extends DefaultPreferenceFragment {
     }
 
     private void updatePasswordPreference(String value) {
-        passwordPreference.setSummary(value != null && !value.isEmpty()
-                ? R.string.pref_description_password_asterisk : R.string.pref_description_not_set);
+        if (value != null && !value.isEmpty()) {
+            passwordPreference.setSummary(R.string.pref_description_password_asterisk);
+        } else {
+            passwordPreference.setSummary(getNotSpecifiedSummary());
+        }
     }
 
     private void updateRecipientsPreference(String value) {
@@ -198,15 +201,16 @@ public class SettingsFragment extends DefaultPreferenceFragment {
     }
 
     private void showAboutDialog() {
-//        Log.i("Application", "Version: " + DeviceUtil.getReleaseVersion(getActivity()));
-
-        new AlertDialog.Builder(getActivity())
+        AlertDialog dialog = new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.action_about)
                 .setMessage(TagFormatter.from("{label} {version}", getResources())
                         .putResource("label", R.string.title_version)
                         .put("version", DeviceUtil.getReleaseVersion(getActivity()))
                         .format())
-                .show();
+                .create();
+
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.show();
 
         // todo: add "rate us on the play store"
         // todo: add "open source libs"

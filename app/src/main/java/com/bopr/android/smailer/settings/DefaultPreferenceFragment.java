@@ -8,6 +8,10 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
+import android.support.annotation.NonNull;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 
 import com.bopr.android.smailer.R;
 
@@ -51,10 +55,17 @@ public class DefaultPreferenceFragment extends PreferenceFragment {
      */
     protected void updateSummary(String value, Preference preference) {
         if (value == null || value.isEmpty()) {
-            preference.setSummary(R.string.pref_description_not_set);
+            preference.setSummary(getNotSpecifiedSummary());
         } else {
             preference.setSummary(value);
         }
+    }
+
+    @NonNull
+    protected Spannable getNotSpecifiedSummary() {
+        Spannable summary = new SpannableString(getResources().getString(R.string.pref_description_not_set));
+        summary.setSpan(new ForegroundColorSpan(0xff872e3d), 0, summary.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return summary;
     }
 
     /**
