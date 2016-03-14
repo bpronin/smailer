@@ -12,32 +12,43 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.EditText;
 
-import com.bopr.android.smailer.util.Cryptor;
+import com.bopr.android.smailer.Cryptor;
 
-import static android.text.InputType.*;
+import static android.text.InputType.TYPE_CLASS_TEXT;
+import static android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD;
 
 /**
  * A {@link Preference} for password input.
  * <p/>
- * This preference will store a encrypted string into the SharedPreferences.
+ * This preference will store a encrypted string into the {@link android.content.SharedPreferences}.
  */
 public class PasswordPreference extends EditTextPreference {
+
+    private Cryptor cryptor;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public PasswordPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        init();
     }
 
     public PasswordPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init();
     }
 
     public PasswordPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
     public PasswordPreference(Context context) {
         super(context);
+        init();
+    }
+
+    private void init() {
+        cryptor = new Cryptor(getContext());
     }
 
     @Override
@@ -46,7 +57,7 @@ public class PasswordPreference extends EditTextPreference {
 
         EditText editText = getEditText();
         editText.setInputType(TYPE_CLASS_TEXT | TYPE_TEXT_VARIATION_PASSWORD);
-        editText.setText(null); /* do not show length of current password */
+        editText.setText(null); /* do not show anything. even the length of current password */
 
         ViewParent oldParent = editText.getParent();
         if (oldParent != view) {
@@ -62,7 +73,7 @@ public class PasswordPreference extends EditTextPreference {
         super.onDialogClosed(positiveResult);
 
         if (positiveResult) {
-            String value = Cryptor.encrypt(getEditText().getText().toString(), getContext());
+            String value = cryptor.encrypt(getEditText().getText().toString());
             if (callChangeListener(value)) {
                 setText(value);
             }

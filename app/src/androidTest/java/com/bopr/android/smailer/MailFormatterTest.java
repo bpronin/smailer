@@ -5,8 +5,7 @@ import android.content.ContentProviderOperation;
 import android.location.Location;
 import android.test.ApplicationTestCase;
 
-import com.bopr.android.smailer.util.ContactUtil;
-import com.bopr.android.smailer.util.DeviceUtil;
+import com.bopr.android.smailer.settings.Settings;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -23,7 +22,7 @@ import static com.bopr.android.smailer.settings.Settings.VAL_PREF_EMAIL_CONTENT_
 import static com.bopr.android.smailer.settings.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME;
 
 /**
- * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
+ * {@link MailFormatter} tester.
  */
 public class MailFormatterTest extends ApplicationTestCase<Application> {
 
@@ -36,7 +35,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
     public void setUp() throws Exception {
         super.setUp();
 
-        if (ContactUtil.getContactName(getContext(), "+12345678901") == null) {
+        if (Contacts.getContactName(getContext(), "+12345678901") == null) {
             ArrayList<ContentProviderOperation> ops = new ArrayList<>();
 
             ops.add(ContentProviderOperation.newInsert(RawContacts.CONTENT_URI)
@@ -170,7 +169,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      * @throws Exception when fails
      */
     public void testFooterDeviceNameOption() throws Exception {
-        String deviceName = DeviceUtil.getDeviceName();
+        String deviceName = Settings.getDeviceName();
         MailMessage message = new MailMessage("+70123456789", true, 0, 0, false, true,
                 "Email body text", null);
 
@@ -193,7 +192,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      * @throws Exception when fails
      */
     public void testFooterDeviceNameTimeOption() throws Exception {
-        String deviceName = DeviceUtil.getDeviceName();
+        String deviceName = Settings.getDeviceName();
         long time = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         MailMessage message = new MailMessage("+70123456789", true, time, 0, false, true,
                 "Email body text", null);
@@ -272,7 +271,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_CALLER);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(),
-                properties, ContactUtil.getContactName(getContext(), "+12345678901"), null);
+                properties, Contacts.getContactName(getContext(), "+12345678901"), null);
 
         String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
@@ -302,7 +301,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
                 " <hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                " Sender: <a href=\"tel:+12345678901\">+12345678901 (Unknown)</a>" +
+                " Sender: <a href=\"tel:+12345678901\">+12345678901 (Unknown contact)</a>" +
                 "</body></html>", text);
     }
 
@@ -371,7 +370,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      * @throws Exception when fails
      */
     public void testAllIncomingContentCall() throws Exception {
-        String deviceName = DeviceUtil.getDeviceName();
+        String deviceName = Settings.getDeviceName();
         long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
 
@@ -382,7 +381,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
                 VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties,
-                ContactUtil.getContactName(getContext(), "+12345678901"), deviceName);
+                Contacts.getContactName(getContext(), "+12345678901"), deviceName);
 
         String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
@@ -403,7 +402,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      * @throws Exception when fails
      */
     public void testAllOutgoingContentCall() throws Exception {
-        String deviceName = DeviceUtil.getDeviceName();
+        String deviceName = Settings.getDeviceName();
         long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
 
@@ -414,7 +413,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
                 VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties,
-                ContactUtil.getContactName(getContext(), "+12345678901"), deviceName);
+                Contacts.getContactName(getContext(), "+12345678901"), deviceName);
 
         String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
@@ -435,7 +434,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      * @throws Exception when fails
      */
     public void testAllContentMissedCall() throws Exception {
-        String deviceName = DeviceUtil.getDeviceName();
+        String deviceName = Settings.getDeviceName();
         long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
 
@@ -453,7 +452,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
                 "<body>" +
                 "You had a missed call." +
                 " <hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                " Caller: <a href=\"tel:+12345678901\">+12345678901 (Unknown)</a>" +
+                " Caller: <a href=\"tel:+12345678901\">+12345678901 (Unknown contact)</a>" +
                 "<br>" +
                 "Last known device location: <a href=\"http://maps.google.com/maps/place/60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "<br>" +

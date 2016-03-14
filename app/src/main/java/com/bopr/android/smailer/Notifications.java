@@ -12,22 +12,30 @@ import android.support.v7.app.NotificationCompat;
 import com.bopr.android.smailer.settings.SettingsActivity;
 
 /**
- * Class Notifications.
+ * Creates and shows specific notifications.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-class Notifications {
+public class Notifications {
 
     private static final int ID_MAIL_ERROR = 101;
 
-    private Notifications() {
+    public Notifications() {
     }
 
-    private static NotificationManager getNotificationManager(Context context) {
+    public void removeMailError(Context context) {
+        getNotificationManager(context).cancel(ID_MAIL_ERROR);
+    }
+
+    public void showMailError(Context context, int messageResource) {
+        showAlert(context, context.getResources().getString(messageResource));
+    }
+
+    private NotificationManager getNotificationManager(Context context) {
         return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
-    private static void showAlert(Context context, String text) {
+    private void showAlert(Context context, String text) {
         Resources r = context.getResources();
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         Notification notification = builder
@@ -43,7 +51,7 @@ class Notifications {
         getNotificationManager(context).notify(ID_MAIL_ERROR, notification);
     }
 
-    private static PendingIntent createIntent(Context context) {
+    private PendingIntent createIntent(Context context) {
         Intent intent = new Intent(context, SettingsActivity.class);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addParentStack(SettingsActivity.class);
@@ -51,15 +59,4 @@ class Notifications {
         return stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
-    public static void removeMailError(Context context) {
-        getNotificationManager(context).cancel(ID_MAIL_ERROR);
-    }
-
-    public static void showMailError(Context context) {
-        showAlert(context, context.getResources().getString(R.string.message_error_sending_email));
-    }
-
-    public static void showMailAuthenticationError(Context context) {
-        showAlert(context, context.getResources().getString(R.string.message_email_authentication));
-    }
 }

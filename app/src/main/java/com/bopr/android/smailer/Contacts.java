@@ -1,18 +1,17 @@
-package com.bopr.android.smailer.util;
+package com.bopr.android.smailer;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.ContactsContract;
 
-import static android.provider.ContactsContract.*;
+import static android.provider.ContactsContract.PhoneLookup;
 
 /**
- * Class DeviceUtil.
+ * Operations with contacts.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class ContactUtil {
+public class Contacts {
 
     public static String getContactName(Context context, String phoneNumber) {
         String result = null;

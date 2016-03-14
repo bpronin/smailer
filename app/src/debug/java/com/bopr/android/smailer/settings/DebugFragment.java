@@ -19,12 +19,11 @@ import android.widget.Toast;
 import com.bopr.android.smailer.MailMessage;
 import com.bopr.android.smailer.Mailer;
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.util.ContactUtil;
-import com.bopr.android.smailer.util.DeviceUtil;
-import com.bopr.android.smailer.util.LocationProvider;
+import com.bopr.android.smailer.Contacts;
+import com.bopr.android.smailer.Cryptor;
+import com.bopr.android.smailer.LocationProvider;
 import com.bopr.android.smailer.util.MailTransport;
-import com.bopr.android.smailer.util.PermissionUtil;
-import com.bopr.android.smailer.util.Cryptor;
+import com.bopr.android.smailer.Permissions;
 import com.bopr.android.smailer.util.StringUtil;
 
 import java.io.BufferedReader;
@@ -49,10 +48,11 @@ import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SERVICE_ENABLE
  */
 public class DebugFragment extends DefaultPreferenceFragment {
 
-    private static final String TAG = "bopr.DebugFragment";
+    private static final String TAG = "DebugFragment";
     private static final int PERMISSIONS_REQUEST_RECEIVE_SMS = 100;
 
     private LocationProvider locationProvider;
+    private Cryptor cryptor;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,6 +60,7 @@ public class DebugFragment extends DefaultPreferenceFragment {
         addPreferencesFromResource(R.xml.pref_debug);
 
         locationProvider = new LocationProvider(getActivity());
+        cryptor = new Cryptor(getActivity());
 
         findPreference("sendDefaultMail").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
@@ -191,8 +192,8 @@ public class DebugFragment extends DefaultPreferenceFragment {
 
     public void requestSmsPermission() {
         Activity activity = getActivity();
-        if (PermissionUtil.isSmsPermissionDenied(activity)) {
-            PermissionUtil.requestSmsPermission(activity, PERMISSIONS_REQUEST_RECEIVE_SMS);
+        if (Permissions.isSmsPermissionDenied(activity)) {
+            Permissions.requestSmsPermission(activity, PERMISSIONS_REQUEST_RECEIVE_SMS);
         }
     }
 
@@ -203,7 +204,7 @@ public class DebugFragment extends DefaultPreferenceFragment {
                 .edit()
                 .putBoolean(KEY_PREF_SERVICE_ENABLED, true)
                 .putString(KEY_PREF_SENDER_ACCOUNT, properties.getProperty("default_sender"))
-                .putString(KEY_PREF_SENDER_PASSWORD, Cryptor.encrypt(properties.getProperty("default_password"), getActivity()))
+                .putString(KEY_PREF_SENDER_PASSWORD, cryptor.encrypt(properties.getProperty("default_password")))
                 .putString(KEY_PREF_RECIPIENT_EMAIL_ADDRESS, properties.getProperty("default_recipient"))
                 .putString(KEY_PREF_EMAIL_HOST, Settings.DEFAULT_HOST)
                 .putString(KEY_PREF_EMAIL_PORT, Settings.DEFAULT_PORT)
@@ -226,7 +227,7 @@ public class DebugFragment extends DefaultPreferenceFragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String phone = input.getText().toString();
-                String contact = ContactUtil.getContactName(getActivity(), phone);
+                String contact = Contacts.getContactName(getActivity(), phone);
                 String text = contact != null ? (phone + ": " + contact) : "Contact not found";
 
                 Toast.makeText(getActivity(), text, Toast.LENGTH_LONG).show();
@@ -265,17 +266,16 @@ public class DebugFragment extends DefaultPreferenceFragment {
                 Properties properties = getDebugProperties();
                 String user = properties.getProperty("default_sender");
 
-                MailTransport transport = new MailTransport(
-                        user,
+                MailTransport transport = new MailTransport();
+                transport.init(user,
                         properties.getProperty("default_password"),
                         "smtp.gmail.com",
-                        "465"
-                );
+                        "465");
 
                 try {
                     transport.send(
                             "test subject",
-                            "test message from " + DeviceUtil.getDeviceName(),
+                            "test message from " + Settings.getDeviceName(),
                             user,
                             properties.getProperty("default_recipient")
                     );
@@ -347,7 +347,7 @@ public class DebugFragment extends DefaultPreferenceFragment {
     }
 
     private void onShowPassword() {
-        String text = Cryptor.decrypt(getSharedPreferences().getString(KEY_PREF_SENDER_PASSWORD, null), getActivity());
+        String text = cryptor.decrypt(getSharedPreferences().getString(KEY_PREF_SENDER_PASSWORD, null));
         Toast.makeText(getActivity(), text, Toast.LENGTH_LONG).show();
     }
 

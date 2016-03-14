@@ -21,6 +21,9 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+/**
+ * An utility class that sends email using SMTP transport.
+ */
 public class MailTransport {
 
     private Session session;
@@ -29,12 +32,15 @@ public class MailTransport {
         Security.addProvider(new JSSEProvider());
     }
 
-    public MailTransport(String user, String password, String host, String port) {
+    public MailTransport() {
+    }
+
+    public void init(String user, String password, String host, String port) {
         Properties props = new Properties();
         props.setProperty("mail.transport.protocol", "smtp");
         props.setProperty("mail.host", host);
-        props.setProperty("mail.smtp.auth", "true");
         props.setProperty("mail.smtp.port", port);
+        props.setProperty("mail.smtp.auth", "true");
         props.setProperty("mail.smtp.socketFactory.port", port);
         props.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
         props.setProperty("mail.smtp.socketFactory.fallback", "false");

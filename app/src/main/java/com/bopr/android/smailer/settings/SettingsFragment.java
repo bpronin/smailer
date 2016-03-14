@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.util.DeviceUtil;
 import com.bopr.android.smailer.util.StringUtil;
 import com.bopr.android.smailer.util.TagFormatter;
 
@@ -35,8 +34,8 @@ import static com.bopr.android.smailer.settings.Settings.KEY_PREF_RECIPIENT_EMAI
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_PASSWORD;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SERVICE_ENABLED;
-import static com.bopr.android.smailer.util.PermissionUtil.isSmsPermissionDenied;
-import static com.bopr.android.smailer.util.PermissionUtil.requestSmsPermission;
+import static com.bopr.android.smailer.Permissions.isSmsPermissionDenied;
+import static com.bopr.android.smailer.Permissions.requestSmsPermission;
 
 /**
  * Main settings fragment.
@@ -205,7 +204,7 @@ public class SettingsFragment extends DefaultPreferenceFragment {
                 .setTitle(R.string.action_about)
                 .setMessage(TagFormatter.from("{label} {version}", getResources())
                         .putResource("label", R.string.title_version)
-                        .put("version", DeviceUtil.getReleaseVersion(getActivity()))
+                        .put("version", Settings.getReleaseVersion(getActivity()))
                         .format())
                 .create();
 

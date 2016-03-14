@@ -1,12 +1,10 @@
 package com.bopr.android.smailer;
 
 import android.content.SharedPreferences;
-import android.util.ArraySet;
 
 import com.bopr.android.smailer.settings.Settings;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -86,7 +84,7 @@ public class MailerProperties {
         return contentOptions;
     }
 
-    public void setContentOptions(String ... options) {
+    public void setContentOptions(String... options) {
         setContentOptions(new HashSet<>(Arrays.asList(options)));
     }
 

@@ -1,8 +1,10 @@
-package com.bopr.android.smailer.util;
+package com.bopr.android.smailer;
 
 import android.content.Context;
 import android.security.KeyPairGeneratorSpec;
 import android.util.Base64;
+
+import com.bopr.android.smailer.util.StringUtil;
 
 import java.math.BigInteger;
 import java.security.KeyPair;
@@ -23,17 +25,20 @@ public class Cryptor {
     private static final String KEY_ALIAS = "smailer";
     private static final String CIPHER_TRANSFORMATION = "RSA/ECB/PKCS1Padding";
 
-    private Cryptor() {
+    private final Context context;
+
+    public Cryptor(Context context) {
+        this.context = context;
     }
 
-    public static String encrypt(String s, Context context) {
+    public String encrypt(String s) {
         if (StringUtil.isEmpty(s)) {
             return s;
         }
 
         try {
             Cipher cipher = Cipher.getInstance(CIPHER_TRANSFORMATION);
-            cipher.init(Cipher.ENCRYPT_MODE, getKeys(context).getPublic());
+            cipher.init(Cipher.ENCRYPT_MODE, getKeys().getPublic());
             byte[] bytes = cipher.doFinal(s.getBytes());
             return Base64.encodeToString(bytes, Base64.NO_WRAP);
         } catch (Exception x) {
@@ -41,14 +46,14 @@ public class Cryptor {
         }
     }
 
-    public static String decrypt(String s, Context context) {
+    public String decrypt(String s) {
         if (StringUtil.isEmpty(s)) {
             return s;
         }
 
         try {
             Cipher cipher = Cipher.getInstance(CIPHER_TRANSFORMATION);
-            cipher.init(Cipher.DECRYPT_MODE, getKeys(context).getPrivate());
+            cipher.init(Cipher.DECRYPT_MODE, getKeys().getPrivate());
             byte[] bytes = cipher.doFinal(Base64.decode(s, Base64.NO_WRAP));
             return new String(bytes);
         } catch (Exception x) {
@@ -56,19 +61,19 @@ public class Cryptor {
         }
     }
 
-    private static KeyPair getKeys(Context context) throws Exception {
+    private KeyPair getKeys() throws Exception {
         KeyStore ks = KeyStore.getInstance("AndroidKeyStore");
         ks.load(null);
 
         if (!ks.containsAlias(KEY_ALIAS)) {
-            generateKeys(context);
+            generateKeys();
         }
         KeyStore.PrivateKeyEntry entry = (KeyStore.PrivateKeyEntry) ks.getEntry(KEY_ALIAS, null);
         return new KeyPair(entry.getCertificate().getPublicKey(), entry.getPrivateKey());
     }
 
     @SuppressWarnings("deprecation")
-    private static KeyPair generateKeys(Context context) throws Exception {
+    private KeyPair generateKeys() throws Exception {
         Calendar start = Calendar.getInstance();
         Calendar end = Calendar.getInstance();
         end.add(Calendar.YEAR, 100);

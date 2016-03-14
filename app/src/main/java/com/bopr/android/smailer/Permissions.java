@@ -1,4 +1,4 @@
-package com.bopr.android.smailer.util;
+package com.bopr.android.smailer;
 
 import android.app.Activity;
 import android.content.Context;
@@ -12,13 +12,13 @@ import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 /**
- * Class PermissionUtil.
+ * Operations with permissions.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class PermissionUtil {
+public class Permissions {
 
-    private PermissionUtil() {
+    private Permissions() {
     }
 
     public static boolean isReadContactPermissionDenied(Context context) {

@@ -31,8 +31,9 @@
     <string name="pref_description_when_to_send">When to send email</string>
     <string name="pref_description_what_email_contain">What should the email contain</string>
 
-    <string name="message_error_sending_email">Unable to send email. Please check settings.</string>
-    <string name="message_email_authentication">Authentication error. Please check username and password.</string>
+    <string name="message_error_no_parameters">Some required parameters are not specified.</string>
+    <string name="message_error_authentication">Username or password is incorrect.</string>
+    <string name="message_error_sending_email">Unable to send email.</string>
     <string name="message_service_disabled_by_permission">SMS read permission has been denied. Service will be disabled.</string>
     <string name="message_contact_name_disabled_by_permission">Contacts read permission has been denied. The setting will be disabled.</string>
     <string name="message_location_disabled_by_permission">Location read permission has been denied. The setting will be disabled.</string>
@@ -77,10 +78,10 @@
         <item>missed_calls</item>
     </string-array>
 
-    <string-array name="default_email_source_values">
-        <item>in_sms</item>
-        <item>missed_calls</item>
-    </string-array>
+    <!--<string-array name="default_email_source_values">-->
+        <!--<item>in_sms</item>-->
+        <!--<item>missed_calls</item>-->
+    <!--</string-array>-->
 
     <string-array name="email_contents">
         <item>Location</item>
@@ -96,11 +97,11 @@
         <item>contact_name</item>
     </string-array>
 
-    <string-array name="default_email_content_values">
-        <item>location</item>
-        <item>time</item>
-        <item>device_name</item>
-        <item>contact_name</item>
-    </string-array>
+    <!--<string-array name="default_email_content_values">-->
+        <!--<item>location</item>-->
+        <!--<item>time</item>-->
+        <!--<item>device_name</item>-->
+        <!--<item>contact_name</item>-->
+    <!--</string-array>-->
 
 </resources>

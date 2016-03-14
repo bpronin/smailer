@@ -1,4 +1,4 @@
-package com.bopr.android.smailer.util;
+package com.bopr.android.smailer;
 
 import android.content.Context;
 import android.location.Location;
@@ -16,13 +16,13 @@ import static android.location.LocationManager.NETWORK_PROVIDER;
 import static android.location.LocationManager.PASSIVE_PROVIDER;
 
 /**
- * Provides device location.
+ * Provides last device location.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 public class LocationProvider {
 
-    private static final String TAG = "bopr.LocationProvider";
+    private static final String TAG = "LocationProvider";
 
     private GoogleApiClient client;
     private Context context;
@@ -37,18 +37,29 @@ public class LocationProvider {
                 .build();
     }
 
+    /**
+     * Starts google API client.
+     */
     public void start() {
         client.connect();
     }
 
+    /**
+     * Stops google API client.
+     */
     public void stop() {
         client.disconnect();
     }
 
+    /**
+     * Tries to retrieve last known device location from different providers.
+     *
+     * @return last known device location or null when it cannot be found
+     */
     @SuppressWarnings("ResourceType")
     public Location getLocation() {
         Location location = null;
-        if (!PermissionUtil.isLocationPermissionDenied(context)) {
+        if (!Permissions.isLocationPermissionDenied(context)) {
             if (client.isConnected()) {
                 location = LocationServices.FusedLocationApi.getLastLocation(client);
             }

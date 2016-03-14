@@ -1,19 +1,19 @@
 package com.bopr.android.smailer.util;
 
-import android.text.TextUtils;
+import android.content.Context;
+
+import java.util.List;
 
 /**
- * Class StringUtil.
+ * Utility class to handle strings.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 public class StringUtil {
 
-    public static String formatLocation(double latitude, double longitude, String degreeSymbol,
-                                        String minuteSymbol, String secondSymbol,
-                                        String northSymbol, String southSymbol,
-                                        String westSymbol, String eastSymbol
-    ) {
+    public static String formatLocation(double latitude, double longitude, String degreeSymbol, String minuteSymbol,
+                                        String secondSymbol, String northSymbol, String southSymbol, String westSymbol,
+                                        String eastSymbol) {
         return decimalToDMS(latitude, degreeSymbol, minuteSymbol, secondSymbol)
                 + (latitude > 0 ? northSymbol : southSymbol)
                 + ", " +
@@ -25,9 +25,8 @@ public class StringUtil {
         return formatLocation(latitude, longitude, "°", "\'", "\"", "N", "S", "W", "E");
     }
 
-    public static String decimalToDMS(double coordinate, String degreeSymbol,
-                                      String minuteSymbol, String secondSymbol
-    ) {
+    public static String decimalToDMS(double coordinate, String degreeSymbol, String minuteSymbol,
+                                      String secondSymbol) {
         double mod = coordinate % 1;
         int intPart = (int) coordinate;
         int degrees = intPart;
@@ -59,5 +58,16 @@ public class StringUtil {
 
     public static boolean isEmpty(String s) {
         return s == null || s.length() == 0;
+    }
+
+    public static String listOf(List<Integer> resources, Context context, String divider) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0, size = resources.size(); i < size; i++) {
+            builder.append(context.getResources().getString(resources.get(i)));
+            if (i < size) {
+                builder.append(divider);
+            }
+        }
+        return builder.toString();
     }
 }

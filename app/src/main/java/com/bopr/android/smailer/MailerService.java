@@ -1,23 +1,11 @@
 package com.bopr.android.smailer;
 
 import android.app.IntentService;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.provider.Telephony;
 import android.telephony.SmsMessage;
 import android.util.Log;
-
-import com.bopr.android.smailer.util.ContactUtil;
-import com.bopr.android.smailer.util.Cryptor;
-import com.bopr.android.smailer.util.DeviceUtil;
-import com.bopr.android.smailer.util.LocationProvider;
-import com.bopr.android.smailer.util.MailTransport;
-
-import javax.mail.AuthenticationFailedException;
-
-import static com.bopr.android.smailer.settings.Settings.PREFERENCES_STORAGE_NAME;
 
 /**
  * Class MailerService.
@@ -26,7 +14,7 @@ import static com.bopr.android.smailer.settings.Settings.PREFERENCES_STORAGE_NAM
  */
 public class MailerService extends IntentService {
 
-    private static final String TAG = "bopr.MailerService";
+    private static final String TAG = "MailerService";
 
     public static final String EXTRA_INCOMING = "direction";
     public static final String EXTRA_MISSED = "missed";

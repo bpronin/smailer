@@ -3,10 +3,8 @@ package com.bopr.android.smailer;
 import android.app.Application;
 import android.test.ApplicationTestCase;
 
-import com.bopr.android.smailer.util.Cryptor;
-
 /**
- * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
+ * {@link Cryptor} tester.
  */
 public class CryptorTest extends ApplicationTestCase<Application> {
 
@@ -14,14 +12,19 @@ public class CryptorTest extends ApplicationTestCase<Application> {
         super(Application.class);
     }
 
-    public void testRsaEncryptDecryptPassword() throws Exception {
-        String password = "the password";
+    public void testEncryptDecrypt() throws Exception {
+        Cryptor cryptor = new Cryptor(getContext());
+        String text = "the text";
 
-        String encrypted = Cryptor.encrypt(password, getContext());
+        String encrypted = cryptor.encrypt(text);
         assertNotNull(encrypted);
 
-        String decrypted = Cryptor.decrypt(encrypted, getContext());
-        assertEquals(password, decrypted);
+        String decrypted = cryptor.decrypt(encrypted);
+        assertEquals(text, decrypted);
+    }
+
+    public void testInvalidInput() throws Exception {
+        //todo: implement test
     }
 
 }

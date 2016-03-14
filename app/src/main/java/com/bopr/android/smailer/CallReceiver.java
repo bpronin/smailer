@@ -3,14 +3,14 @@ package com.bopr.android.smailer;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.provider.Telephony;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import com.bopr.android.smailer.settings.Settings;
+
 import java.util.Set;
 
-import static android.content.Context.MODE_PRIVATE;
 import static android.telephony.TelephonyManager.EXTRA_INCOMING_NUMBER;
 import static android.telephony.TelephonyManager.EXTRA_STATE;
 import static android.telephony.TelephonyManager.EXTRA_STATE_IDLE;
@@ -25,7 +25,6 @@ import static com.bopr.android.smailer.MailerService.EXTRA_PHONE_NUMBER;
 import static com.bopr.android.smailer.MailerService.EXTRA_START_TIME;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_SOURCE;
 import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SERVICE_ENABLED;
-import static com.bopr.android.smailer.settings.Settings.PREFERENCES_STORAGE_NAME;
 import static com.bopr.android.smailer.settings.Settings.VAL_PREF_SOURCE_IN_CALLS;
 import static com.bopr.android.smailer.settings.Settings.VAL_PREF_SOURCE_IN_SMS;
 import static com.bopr.android.smailer.settings.Settings.VAL_PREF_SOURCE_MISSED_CALLS;
@@ -38,7 +37,7 @@ import static com.bopr.android.smailer.settings.Settings.VAL_PREF_SOURCE_OUT_CAL
  */
 public class CallReceiver extends BroadcastReceiver {
 
-    private static final String TAG = "bopr.CallReceiver";
+    private static final String TAG = "CallReceiver";
 
     private static String lastCallState = EXTRA_STATE_IDLE;
     private static long callStartTime;
@@ -49,7 +48,7 @@ public class CallReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "Received telephony intent: " + intent);
 
-        if (getPreferences(context).getBoolean(KEY_PREF_SERVICE_ENABLED, false)) {
+        if (Settings.getPreferences(context).getBoolean(KEY_PREF_SERVICE_ENABLED, false)) {
             switch (intent.getAction()) {
                 case Telephony.Sms.Intents.SMS_RECEIVED_ACTION:
                     onIncomingSms(context, intent);
@@ -150,12 +149,8 @@ public class CallReceiver extends BroadcastReceiver {
         }
     }
 
-    private SharedPreferences getPreferences(Context context) {
-        return context.getSharedPreferences(PREFERENCES_STORAGE_NAME, MODE_PRIVATE);
-    }
-
     private boolean isSourceEnabled(Context context, String source) {
-        Set<String> options = getPreferences(context).getStringSet(KEY_PREF_EMAIL_SOURCE, null);
+        Set<String> options = Settings.getPreferences(context).getStringSet(KEY_PREF_EMAIL_SOURCE, null);
         return options != null && options.contains(source);
     }
 
