@@ -28,7 +28,7 @@ public class TagFormatterUnitTest {
     @Before
     public void startUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        Mockito.when(resources.getString(PATTERN_ONE)).thenReturn("{one}, {two} and three}");
+        Mockito.when(resources.getString(PATTERN_ONE)).thenReturn("{one}, {two} and {three}");
         Mockito.when(resources.getString(THREE)).thenReturn("THREE");
     }
 
