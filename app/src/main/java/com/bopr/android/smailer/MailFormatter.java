@@ -203,8 +203,11 @@ public class MailFormatter {
                             .put("location", formatLocation(latitude, longitude, "&#176;", "\'", "\"", "N", "S", "W", "E"))
                             .format())
                     .format();
+        } else {
+            return from(R.string.email_body_location, resources)
+                    .putResource("location", R.string.unknown_location)
+                    .format();
         }
-        return null;
     }
 
 }

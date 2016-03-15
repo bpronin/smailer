@@ -251,9 +251,10 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, null);
 
         String text = formatter.getBody();
-        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; " +
-                "charset=utf-8\"></head><body>" +
-                "Email body text  " +
+        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
+                "Email body text " +
+                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\"> " +
+                "Last known device location: unknown" +
                 "</body></html>", text);
     }
 

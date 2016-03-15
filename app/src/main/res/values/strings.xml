@@ -63,6 +63,7 @@
 
     <string name="unknown_contact">Unknown contact</string>
     <string name="title_version">Application version:</string>
+    <string name="unknown_location">unknown</string>
 
     <string-array name="email_sources">
         <item>Incoming SMS</item>
