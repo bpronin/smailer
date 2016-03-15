@@ -203,7 +203,7 @@ public class SettingsFragment extends DefaultPreferenceFragment {
         AlertDialog dialog = new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.action_about)
                 .setMessage(TagFormatter.from("{label} {version}", getResources())
-                        .putResource("label", R.string.title_version)
+                        .putResource("label", R.string.about_dialog_title_version)
                         .put("version", Settings.getReleaseVersion(getActivity()))
                         .format())
                 .create();

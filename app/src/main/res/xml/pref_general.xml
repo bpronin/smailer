@@ -9,6 +9,7 @@
 
     <EditTextPreference
         android:dialogMessage="@string/message_account_hint"
+        android:dialogTitle="@string/pref_title_outgoing_email"
         android:inputType="textEmailAddress"
         android:key="sender_account"
         android:maxLines="1"
@@ -18,6 +19,7 @@
 
     <com.bopr.android.smailer.settings.PasswordPreference
         android:dialogMessage="@string/message_password_stored_encrypted"
+        android:dialogTitle="@string/pref_title_outgoing_password"
         android:key="sender_password"
         android:maxLines="1"
         android:selectAllOnFocus="true"
@@ -40,17 +42,18 @@
     </PreferenceScreen>
 
     <MultiSelectListPreference
-        android:entries="@array/email_sources"
+        android:entries="@array/email_triggers"
         android:entryValues="@array/email_source_values"
         android:key="email_source"
         android:summary="@string/pref_description_when_to_send"
-        android:title="@string/pref_title_source"/>
+        android:title="@string/pref_title_trigger"/>
 
     <MultiSelectListPreference
+        android:dialogTitle="@string/pref_title_email_content"
         android:entries="@array/email_contents"
         android:entryValues="@array/email_content_values"
         android:key="email_content"
         android:summary="@string/pref_description_what_email_contain"
-        android:title="@string/pref_title_email_content"/>
+        android:title="@string/pref_title_content"/>
 
 </PreferenceScreen>

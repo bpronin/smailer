@@ -1,9 +1,9 @@
 <resources>
 
-    <string name="google_app_id">376904884028</string>
-    <string name="app_name">SMailer</string>
+    <string name="app_name" translatable="false">SMailer</string>
+    <string name="google_app_id" translatable="false">376904884028</string>
 
-    <string name="pref_title_enable">Enabled</string>
+    <string name="pref_title_enable">Activity</string>
     <string name="pref_title_sender_account">Account</string>
     <string name="pref_title_recipients">Recipients</string>
     <string name="pref_title_sender_password">Password</string>
@@ -11,25 +11,18 @@
     <string name="pref_title_outgoing_server">Outgoing server</string>
     <string name="pref_title_host">Host</string>
     <string name="pref_title_port">Port</string>
-    <string name="pref_title_email_content">Content</string>
-    <string name="pref_title_source">React on</string>
-    <string name="pref_title_location">Location</string>
-    <string name="pref_title_time">Time</string>
-    <string name="pref_title_device_name">Device name</string>
-    <string name="pref_title_contact_name">Caller name</string>
-    <string name="pref_title_when_send">When to send email</string>
-    <string name="pref_title_incoming_sms">Incoming SMS</string>
-    <string name="pref_title_outgoing_sms">Outgoing SMS</string>
-    <string name="pref_title_incoming_calls">Incoming calls</string>
-    <string name="pref_title_outgoing_calls">Outgoing calls</string>
-    <string name="pref_title_missed_calls">Missed calls</string>
+    <string name="pref_title_email_content">Email message content</string>
+    <string name="pref_title_trigger">Triggers</string>
+    <string name="pref_title_outgoing_email">Outgoing email address</string>
+    <string name="pref_title_outgoing_password">Outgoing email password</string>
+    <string name="pref_title_content">Content</string>
 
     <string name="pref_description_service_on">Email will be sent out</string>
     <string name="pref_description_service_off">No email will be sent out</string>
-    <string name="pref_description_password_asterisk">*******</string>
+    <string name="pref_description_password_asterisk" translatable="false">*******</string>
     <string name="pref_description_not_set">not specified</string>
     <string name="pref_description_when_to_send">When to send email</string>
-    <string name="pref_description_what_email_contain">What should the email contain</string>
+    <string name="pref_description_what_email_contain">What should the email include</string>
 
     <string name="message_error_no_parameters">Some required parameters are not specified.</string>
     <string name="message_error_authentication">Username or password is incorrect.</string>
@@ -39,7 +32,7 @@
     <string name="message_location_disabled_by_permission">Location read permission has been denied. The setting will be disabled.</string>
     <string name="message_comma_separated_recipient">Separate multiple recipients with comma.</string>
     <string name="message_password_stored_encrypted">Password is stored encrypted only on the device.</string>
-    <string name="message_account_hint">Email address to send emails from (e.g. Google account).</string>
+    <string name="message_account_hint">Email address to send email from.</string>
     <string name="message_at_least_one_source_checked">At least one item should be selected.</string>
 
     <string name="email_subject_incoming_sms">Incoming SMS from</string>
@@ -61,48 +54,36 @@
 
     <string name="action_about">About SMailer</string>
 
-    <string name="unknown_contact">Unknown contact</string>
-    <string name="title_version">Application version:</string>
-    <string name="unknown_location">unknown</string>
+    <string name="email_body_unknown_contact">Unknown contact</string>
+    <string name="about_dialog_title_version">Application version:</string>
+    <string name="email_body_unknown_location">unknown</string>
 
-    <string-array name="email_sources">
+    <string-array name="email_triggers">
         <item>Incoming SMS</item>
         <item>Incoming calls</item>
         <item>Outgoing calls</item>
         <item>Missed calls</item>
     </string-array>
 
-    <string-array name="email_source_values">
+    <string-array name="email_source_values" translatable="false">
         <item>in_sms</item>
         <item>in_calls</item>
         <item>out_calls</item>
         <item>missed_calls</item>
     </string-array>
 
-    <!--<string-array name="default_email_source_values">-->
-        <!--<item>in_sms</item>-->
-        <!--<item>missed_calls</item>-->
-    <!--</string-array>-->
-
     <string-array name="email_contents">
-        <item>Location</item>
+        <item>Device location</item>
         <item>Time</item>
         <item>Device name</item>
         <item>Sender contact name</item>
     </string-array>
 
-    <string-array name="email_content_values">
+    <string-array name="email_content_values" translatable="false">
         <item>location</item>
         <item>time</item>
         <item>device_name</item>
         <item>contact_name</item>
     </string-array>
-
-    <!--<string-array name="default_email_content_values">-->
-        <!--<item>location</item>-->
-        <!--<item>time</item>-->
-        <!--<item>device_name</item>-->
-        <!--<item>contact_name</item>-->
-    <!--</string-array>-->
 
 </resources>

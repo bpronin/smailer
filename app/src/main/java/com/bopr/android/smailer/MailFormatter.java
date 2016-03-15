@@ -165,7 +165,7 @@ public class MailFormatter {
             }
         }
 
-        String name = !isEmpty(this.contactName) ? this.contactName : resources.getString(R.string.unknown_contact);
+        String name = !isEmpty(this.contactName) ? this.contactName : resources.getString(R.string.email_body_unknown_contact);
         return from(resourceId, resources)
                 .put("phone", from(PHONE_LINK_PATTERN)
                         .put("phone", message.getPhone())
@@ -205,7 +205,7 @@ public class MailFormatter {
                     .format();
         } else {
             return from(R.string.email_body_location, resources)
-                    .putResource("location", R.string.unknown_location)
+                    .putResource("location", R.string.email_body_unknown_location)
                     .format();
         }
     }

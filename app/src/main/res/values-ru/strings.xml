@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="pref_title_enable">Активность</string>
+    <string name="pref_title_sender_account">Акаунт</string>
+    <string name="pref_title_recipients">Получатели</string>
+    <string name="pref_title_sender_password">Пароль</string>
+    <string name="pref_title_server">Сервер</string>
+    <string name="pref_title_outgoing_email">Адрес исходящей почты</string>
+    <string name="pref_title_outgoing_password">Пароль исходящей почты</string>
+    <string name="pref_title_outgoing_server">Сервер исходящей почты</string>
+    <string name="pref_title_host">Сервер</string>
+    <string name="pref_title_port">Порт</string>
+    <string name="pref_title_content">Содержание</string>
+    <string name="pref_title_email_content">Влючать в почтовое сообщение</string>
+    <string name="pref_title_trigger">Условия</string>
+
+    <string name="pref_description_service_on">Приложение будет отправлять почту</string>
+    <string name="pref_description_service_off">Приложение не будет отправлять почту</string>
+    <string name="pref_description_not_set">не указано</string>
+    <string name="pref_description_when_to_send">Когда отправлять почту</string>
+    <string name="pref_description_what_email_contain">Что должно включать почтовое сообщение</string>
+
+    <string name="message_error_no_parameters">Некоторые обязательные параметры не указаны.</string>
+    <string name="message_error_authentication">Неверный пароль или имя пользователя.</string>
+    <string name="message_error_sending_email">Невозможно отправить почту.</string>
+    <string name="message_service_disabled_by_permission">Разрешение на чтение SMS снято. Приложение будет отключено.</string>
+    <string name="message_contact_name_disabled_by_permission">Разрешение на чтение контактов снято. Данная настройка будет отключен.</string>
+    <string name="message_location_disabled_by_permission">Разрешение на чтение местоположения снято. Данная настройка будет отключен.</string>
+    <string name="message_comma_separated_recipient">Если получателей несколько, разделяйте их запятой.</string>
+    <string name="message_password_stored_encrypted">Пароль хранится зашифрованным только на данном устройстве.</string>
+    <string name="message_account_hint">Адрес, с которого будет отправляться почта.</string>
+    <string name="message_at_least_one_source_checked">Хотябы один пункт должен быть отмечен.</string>
+
+    <string name="email_subject_incoming_sms">Входящее SMS от</string>
+    <string name="email_subject_outgoing_sms">Исходящее SMS</string>
+    <string name="email_subject_incoming_call">Входящий звонок от</string>
+    <string name="email_subject_outgoing_call">Исходящий звонок на</string>
+    <string name="email_subject_missed_call">Пропущенный звонок от</string>
+
+    <string name="email_body_sent">Отправлено{device_name}{time}</string>
+    <string name="email_body_time">в {time}</string>
+    <string name="email_body_called">Вы звонили: {phone}{name}</string>
+    <string name="email_body_caller">Вам звонил: {phone}{name}</string>
+    <string name="email_body_from">с {device_name}</string>
+    <string name="email_body_incoming_call">Входящий звонок длительностью {duration}.</string>
+    <string name="email_body_location">Последнее известное местоположение: {location}</string>
+    <string name="email_body_missed_call">Пропущенный звонок.</string>
+    <string name="email_body_outgoing_call">Исходящий звонок длительностью {duration}.</string>
+    <string name="email_body_sender">Отправитель: {phone}{name}</string>
+    <string name="email_body_unknown_contact">Неизвестный контакт</string>
+    <string name="email_body_unknown_location">неизвестно</string>
+
+    <string name="action_about">О приложении</string>
+
+    <string name="about_dialog_title_version">Версия приложения:</string>
+
+    <string-array name="email_triggers">
+        <item>Входящие SMS</item>
+        <item>Входящие звонки</item>
+        <item>Исходящие звонки</item>
+        <item>Пропущенные звонки</item>
+    </string-array>
+
+    <string-array name="email_contents">
+        <item>Местоположение устройства</item>
+        <item>Время</item>
+        <item>Название устройства</item>
+        <item>Имя отправителя</item>
+    </string-array>
+
+</resources>

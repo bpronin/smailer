@@ -60,13 +60,19 @@ public class Settings {
         return StringUtil.capitalize(MANUFACTURER) + " " + MODEL;
     }
 
-    public static String getReleaseVersion(Activity context) {
+    public static String getReleaseVersion(Context context) {
         try {
             return context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
         } catch (PackageManager.NameNotFoundException x) {
             throw new Error(x);
         }
     }
+
+/*
+    public String getLocaleName(Context context){
+        return context.getResources().getConfiguration().locale.getDisplayName();
+    }
+*/
 
 /*
     public static String getAndroidId(Context context) {
