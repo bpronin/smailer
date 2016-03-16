@@ -55,6 +55,8 @@
 
     <string name="about_dialog_title_version">Версия приложения:</string>
 
+    <string name="validator_invalid_email">Неверный формат почтового адреса</string>
+
     <string-array name="email_triggers">
         <item>Входящие SMS</item>
         <item>Входящие звонки</item>
@@ -63,10 +65,10 @@
     </string-array>
 
     <string-array name="email_contents">
-        <item>Местоположение устройства</item>
         <item>Время</item>
         <item>Название устройства</item>
-        <item>Имя отправителя</item>
+        <item>Имя звонившего</item>
+        <item>Местоположение устройства</item>
     </string-array>
 
 </resources>

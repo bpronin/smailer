@@ -11,13 +11,13 @@ import android.preference.SwitchPreference;
 import android.support.annotation.NonNull;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
 
 import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.util.draw.WavyUnderlineSpan;
 
 import java.util.Map;
 
-import static com.bopr.android.smailer.settings.Settings.PREFERENCES_STORAGE_NAME;
+import static com.bopr.android.smailer.Settings.PREFERENCES_STORAGE_NAME;
 
 /**
  * Class DefaultPreferenceFragment.
@@ -43,6 +43,9 @@ public class DefaultPreferenceFragment extends PreferenceFragment {
         refreshPreferences(getPreferenceScreen());
     }
 
+    /**
+     * Returns application's shared preferences.
+     */
     protected SharedPreferences getSharedPreferences() {
         return sharedPreferences;
     }
@@ -62,9 +65,10 @@ public class DefaultPreferenceFragment extends PreferenceFragment {
     }
 
     @NonNull
-    protected Spannable getNotSpecifiedSummary() {
+    protected CharSequence getNotSpecifiedSummary() {
         Spannable summary = new SpannableString(getResources().getString(R.string.pref_description_not_set));
-        summary.setSpan(new ForegroundColorSpan(0xff872e3d), 0, summary.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        WavyUnderlineSpan span = new WavyUnderlineSpan();
+        summary.setSpan(span, 0, summary.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         return summary;
     }
 

@@ -2,17 +2,15 @@ package com.bopr.android.smailer;
 
 import android.content.SharedPreferences;
 
-import com.bopr.android.smailer.settings.Settings;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_HOST;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_PORT;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_RECIPIENT_EMAIL_ADDRESS;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_ACCOUNT;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_PASSWORD;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
+import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENT_EMAIL_ADDRESS;
+import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
+import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
 
 /**
  * Class MailerProperties.

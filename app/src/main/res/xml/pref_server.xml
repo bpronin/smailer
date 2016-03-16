@@ -11,6 +11,7 @@
 
     <EditTextPreference
         android:inputType="text"
+        android:digits="0123456789"
         android:key="sender_port"
         android:maxLines="1"
         android:selectAllOnFocus="true"

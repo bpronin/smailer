@@ -1,6 +1,5 @@
 <resources>
 
     <string name="action_debug" translatable="false">Debug</string>
-    <!--<string name="action_debug">Отладка</string>-->
 
 </resources>

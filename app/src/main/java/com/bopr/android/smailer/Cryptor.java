@@ -94,7 +94,7 @@ public class Cryptor {
 
 /*
     @TargetApi(Build.VERSION_CODES.M)
-    private static KeyPair generateKeyApi() throws Exception {
+    private static KeyPair generateKeyApi23() throws Exception {
         KeyPairGenerator generator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA, "AndroidKeyStore");
         KeyGenParameterSpec spec = new KeyGenParameterSpec.Builder(KEY_ALIAS,
                 KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)

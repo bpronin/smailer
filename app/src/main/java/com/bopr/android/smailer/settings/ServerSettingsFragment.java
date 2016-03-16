@@ -7,8 +7,8 @@ import android.preference.Preference;
 import com.bopr.android.smailer.R;
 
 import static android.preference.Preference.OnPreferenceChangeListener;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_HOST;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_PORT;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
 
 /**
  * Outgoing server settings activity's fragment.

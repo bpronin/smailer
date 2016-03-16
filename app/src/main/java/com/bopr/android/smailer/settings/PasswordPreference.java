@@ -20,7 +20,7 @@ import static android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD;
 /**
  * A {@link Preference} for password input.
  * <p/>
- * This preference will store a encrypted string into the {@link android.content.SharedPreferences}.
+ * This preference will store an encrypted string into the {@link android.content.SharedPreferences}.
  */
 public class PasswordPreference extends EditTextPreference {
 

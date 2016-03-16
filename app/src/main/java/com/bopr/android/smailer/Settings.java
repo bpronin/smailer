@@ -1,4 +1,4 @@
-package com.bopr.android.smailer.settings;
+package com.bopr.android.smailer;
 
 import android.app.Activity;
 import android.content.Context;

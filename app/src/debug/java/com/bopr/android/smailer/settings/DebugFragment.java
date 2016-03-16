@@ -22,7 +22,8 @@ import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.Contacts;
 import com.bopr.android.smailer.Cryptor;
 import com.bopr.android.smailer.LocationProvider;
-import com.bopr.android.smailer.util.MailTransport;
+import com.bopr.android.smailer.Settings;
+import com.bopr.android.smailer.MailTransport;
 import com.bopr.android.smailer.Permissions;
 import com.bopr.android.smailer.util.StringUtil;
 
@@ -34,14 +35,14 @@ import java.util.Properties;
 
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_CONTENT;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_HOST;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_PORT;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_SOURCE;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_RECIPIENT_EMAIL_ADDRESS;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_ACCOUNT;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_PASSWORD;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SERVICE_ENABLED;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_SOURCE;
+import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENT_EMAIL_ADDRESS;
+import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
+import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
+import static com.bopr.android.smailer.Settings.KEY_PREF_SERVICE_ENABLED;
 
 /**
  * For debug purposes.

@@ -1,4 +1,4 @@
-package com.bopr.android.smailer.util;
+package com.bopr.android.smailer;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

@@ -19,7 +19,7 @@
 
     <string name="pref_description_service_on">Email will be sent out</string>
     <string name="pref_description_service_off">No email will be sent out</string>
-    <string name="pref_description_password_asterisk" translatable="false">*******</string>
+    <string name="pref_description_password_asterisk" translatable="false">**********</string>
     <string name="pref_description_not_set">not specified</string>
     <string name="pref_description_when_to_send">When to send email</string>
     <string name="pref_description_what_email_contain">What should the email include</string>
@@ -57,6 +57,7 @@
     <string name="email_body_unknown_contact">Unknown contact</string>
     <string name="about_dialog_title_version">Application version:</string>
     <string name="email_body_unknown_location">unknown</string>
+    <string name="validator_invalid_email">Invalid email address</string>
 
     <string-array name="email_triggers">
         <item>Incoming SMS</item>
@@ -73,17 +74,17 @@
     </string-array>
 
     <string-array name="email_contents">
-        <item>Device location</item>
         <item>Time</item>
         <item>Device name</item>
-        <item>Sender contact name</item>
+        <item>Caller contact name</item>
+        <item>Device location</item>
     </string-array>
 
     <string-array name="email_content_values" translatable="false">
-        <item>location</item>
         <item>time</item>
         <item>device_name</item>
         <item>contact_name</item>
+        <item>location</item>
     </string-array>
 
 </resources>

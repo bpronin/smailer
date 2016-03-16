@@ -5,8 +5,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.test.ApplicationTestCase;
 
-import com.bopr.android.smailer.util.MailTransport;
-
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -15,19 +13,19 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.mail.AuthenticationFailedException;
 import javax.mail.MessagingException;
 
-import static com.bopr.android.smailer.settings.Settings.DEFAULT_CONTENT;
-import static com.bopr.android.smailer.settings.Settings.DEFAULT_HOST;
-import static com.bopr.android.smailer.settings.Settings.DEFAULT_PORT;
-import static com.bopr.android.smailer.settings.Settings.DEFAULT_SOURCES;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_CONTENT;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_HOST;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_PORT;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_SOURCE;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_RECIPIENT_EMAIL_ADDRESS;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_ACCOUNT;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_PASSWORD;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SERVICE_ENABLED;
-import static com.bopr.android.smailer.settings.Settings.getPreferences;
+import static com.bopr.android.smailer.Settings.DEFAULT_CONTENT;
+import static com.bopr.android.smailer.Settings.DEFAULT_HOST;
+import static com.bopr.android.smailer.Settings.DEFAULT_PORT;
+import static com.bopr.android.smailer.Settings.DEFAULT_SOURCES;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_SOURCE;
+import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENT_EMAIL_ADDRESS;
+import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
+import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
+import static com.bopr.android.smailer.Settings.KEY_PREF_SERVICE_ENABLED;
+import static com.bopr.android.smailer.Settings.getPreferences;
 import static org.junit.Assert.assertArrayEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;

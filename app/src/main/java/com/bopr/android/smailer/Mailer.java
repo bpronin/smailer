@@ -3,16 +3,13 @@ package com.bopr.android.smailer;
 import android.content.Context;
 import android.util.Log;
 
-import com.bopr.android.smailer.settings.Settings;
-import com.bopr.android.smailer.util.MailTransport;
-
 import javax.mail.AuthenticationFailedException;
 
 import static com.bopr.android.smailer.util.StringUtil.isEmpty;
 
 
 /**
- * Sends email messages.
+ * Sends out {@link MailMessage}.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */

@@ -15,25 +15,28 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.Settings;
 import com.bopr.android.smailer.util.StringUtil;
 import com.bopr.android.smailer.util.TagFormatter;
+import com.bopr.android.smailer.util.validator.EmailListTextValidator;
+import com.bopr.android.smailer.util.validator.EmailTextValidator;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.preference.Preference.OnPreferenceChangeListener;
 import static android.preference.PreferenceManager.KEY_HAS_SET_DEFAULT_VALUES;
-import static com.bopr.android.smailer.settings.Settings.DEFAULT_CONTENT;
-import static com.bopr.android.smailer.settings.Settings.DEFAULT_HOST;
-import static com.bopr.android.smailer.settings.Settings.DEFAULT_PORT;
-import static com.bopr.android.smailer.settings.Settings.DEFAULT_SOURCES;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_CONTENT;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_HOST;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_PORT;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_SOURCE;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_OUTGOING_SERVER;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_RECIPIENT_EMAIL_ADDRESS;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_ACCOUNT;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SENDER_PASSWORD;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SERVICE_ENABLED;
+import static com.bopr.android.smailer.Settings.DEFAULT_CONTENT;
+import static com.bopr.android.smailer.Settings.DEFAULT_HOST;
+import static com.bopr.android.smailer.Settings.DEFAULT_PORT;
+import static com.bopr.android.smailer.Settings.DEFAULT_SOURCES;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_SOURCE;
+import static com.bopr.android.smailer.Settings.KEY_PREF_OUTGOING_SERVER;
+import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENT_EMAIL_ADDRESS;
+import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
+import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
+import static com.bopr.android.smailer.Settings.KEY_PREF_SERVICE_ENABLED;
 import static com.bopr.android.smailer.Permissions.isSmsPermissionDenied;
 import static com.bopr.android.smailer.Permissions.requestSmsPermission;
 
@@ -68,6 +71,7 @@ public class SettingsFragment extends DefaultPreferenceFragment {
         });
 
         accountPreference = (EditTextPreference) findPreference(KEY_PREF_SENDER_ACCOUNT);
+        accountPreference.getEditText().addTextChangedListener(new EmailTextValidator(accountPreference.getEditText()));
         accountPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
             @Override
@@ -88,6 +92,7 @@ public class SettingsFragment extends DefaultPreferenceFragment {
         });
 
         recipientsPreference = (EditTextPreference) findPreference(KEY_PREF_RECIPIENT_EMAIL_ADDRESS);
+        recipientsPreference.getEditText().addTextChangedListener(new EmailListTextValidator(recipientsPreference.getEditText()));
         recipientsPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
             @Override
@@ -213,9 +218,6 @@ public class SettingsFragment extends DefaultPreferenceFragment {
 
         // todo: add "rate us on the play store"
         // todo: add "open source libs"
-//        final EditText input = new EditText(getActivity());
-//        input.setInputType(InputType.TYPE_CLASS_PHONE);
-//        builder.setView(input);
     }
 
 }

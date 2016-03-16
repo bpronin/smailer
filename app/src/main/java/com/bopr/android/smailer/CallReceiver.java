@@ -7,8 +7,6 @@ import android.provider.Telephony;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
-import com.bopr.android.smailer.settings.Settings;
-
 import java.util.Set;
 
 import static android.telephony.TelephonyManager.EXTRA_INCOMING_NUMBER;
@@ -23,12 +21,12 @@ import static com.bopr.android.smailer.MailerService.EXTRA_INCOMING;
 import static com.bopr.android.smailer.MailerService.EXTRA_MISSED;
 import static com.bopr.android.smailer.MailerService.EXTRA_PHONE_NUMBER;
 import static com.bopr.android.smailer.MailerService.EXTRA_START_TIME;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_EMAIL_SOURCE;
-import static com.bopr.android.smailer.settings.Settings.KEY_PREF_SERVICE_ENABLED;
-import static com.bopr.android.smailer.settings.Settings.VAL_PREF_SOURCE_IN_CALLS;
-import static com.bopr.android.smailer.settings.Settings.VAL_PREF_SOURCE_IN_SMS;
-import static com.bopr.android.smailer.settings.Settings.VAL_PREF_SOURCE_MISSED_CALLS;
-import static com.bopr.android.smailer.settings.Settings.VAL_PREF_SOURCE_OUT_CALLS;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_SOURCE;
+import static com.bopr.android.smailer.Settings.KEY_PREF_SERVICE_ENABLED;
+import static com.bopr.android.smailer.Settings.VAL_PREF_SOURCE_IN_CALLS;
+import static com.bopr.android.smailer.Settings.VAL_PREF_SOURCE_IN_SMS;
+import static com.bopr.android.smailer.Settings.VAL_PREF_SOURCE_MISSED_CALLS;
+import static com.bopr.android.smailer.Settings.VAL_PREF_SOURCE_OUT_CALLS;
 
 /**
  * Receives SMS and phone call intents and starts mailer service.

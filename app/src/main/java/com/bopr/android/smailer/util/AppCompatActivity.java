@@ -1,4 +1,4 @@
-package com.bopr.android.smailer.settings;
+package com.bopr.android.smailer.util;
 
 import android.app.Activity;
 import android.content.res.Configuration;
@@ -17,7 +17,7 @@ import android.view.ViewGroup;
  * A {@link Activity} which implements and proxies the necessary calls
  * to be used with AppCompat.
  */
-abstract class AppCompatActivity extends Activity {
+public abstract class AppCompatActivity extends Activity {
 
     private AppCompatDelegate delegate;
 
