@@ -7,11 +7,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-import com.bopr.android.smailer.util.AppCompatActivity;
-
-public abstract class DefaultPreferenceActivity extends AppCompatActivity {
+public abstract class DefaultActivity extends AppCompatActivity {
 
     private Fragment fragment;
     private boolean closable;
@@ -19,6 +18,7 @@ public abstract class DefaultPreferenceActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         fragment = createFragment();
         getFragmentManager()
@@ -54,7 +54,8 @@ public abstract class DefaultPreferenceActivity extends AppCompatActivity {
 
     @Override
     @TargetApi(Build.VERSION_CODES.M)
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 

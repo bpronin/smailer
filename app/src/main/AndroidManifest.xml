@@ -32,6 +32,11 @@
             android:label="@string/pref_title_outgoing_server">
         </activity>
 
+        <activity
+            android:name=".settings.LogActivity"
+            android:label="@string/activity_log_title">
+        </activity>
+
         <receiver
             android:name=".CallReceiver"
             android:permission="android.permission.BROADCAST_SMS">

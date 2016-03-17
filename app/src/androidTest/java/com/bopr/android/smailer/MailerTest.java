@@ -148,12 +148,13 @@ public class MailerTest extends ApplicationTestCase<Application> {
         Cryptor cryptor = createCryptor();
         Notifications notifications = createNotifications(null, null);
         MailTransport transport = createMailTransport(initArgs, sendArgs);
+        ActivityLog log = mock(ActivityLog.class);
 
         populatePreferences();
 
         /* test start */
 
-        Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications);
+        Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, log);
         mailer.send(new MailMessage("+12345678901", false, 0, 0, false, false, null, 0, 0));
 
         assertNull(errorArgs.get());
@@ -182,13 +183,14 @@ public class MailerTest extends ApplicationTestCase<Application> {
         Cryptor cryptor = createCryptor();
         Notifications notifications = createNotifications(errorArgs, null);
         MailTransport transport = createMailTransport(initArgs, sendArgs);
+        ActivityLog log = mock(ActivityLog.class);
 
         populatePreferences();
         getPreferences(getContext()).edit().putString(KEY_PREF_SENDER_ACCOUNT, null).commit();
 
         /* test start */
 
-        Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications);
+        Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, log);
         mailer.send(new MailMessage("+12345678901", false, 0, 0, false, false, null, 0, 0));
 
         assertNull(initArgs.get());
@@ -209,13 +211,15 @@ public class MailerTest extends ApplicationTestCase<Application> {
         Cryptor cryptor = createCryptor();
         Notifications notifications = createNotifications(errorArgs, null);
         MailTransport transport = createMailTransport(initArgs, sendArgs);
+        ActivityLog log = mock(ActivityLog.class);
+
 
         populatePreferences();
         getPreferences(getContext()).edit().putString(KEY_PREF_RECIPIENT_EMAIL_ADDRESS, null).commit();
 
         /* test start */
 
-        Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications);
+        Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, log);
         mailer.send(new MailMessage("+12345678901", false, 0, 0, false, false, null, 0, 0));
 
         assertNull(initArgs.get());
@@ -236,13 +240,14 @@ public class MailerTest extends ApplicationTestCase<Application> {
         Cryptor cryptor = createCryptor();
         Notifications notifications = createNotifications(errorArgs, null);
         MailTransport transport = createMailTransport(initArgs, sendArgs);
+        ActivityLog log = mock(ActivityLog.class);
 
         populatePreferences();
         getPreferences(getContext()).edit().putString(KEY_PREF_EMAIL_HOST, null).commit();
 
         /* test start */
 
-        Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications);
+        Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, log);
         mailer.send(new MailMessage("+12345678901", false, 0, 0, false, false, null, 0, 0));
 
         assertNull(initArgs.get());
@@ -263,13 +268,14 @@ public class MailerTest extends ApplicationTestCase<Application> {
         Cryptor cryptor = createCryptor();
         Notifications notifications = createNotifications(errorArgs, null);
         MailTransport transport = createMailTransport(initArgs, sendArgs);
+        ActivityLog log = mock(ActivityLog.class);
 
         populatePreferences();
         getPreferences(getContext()).edit().putString(KEY_PREF_EMAIL_PORT, null).commit();
 
         /* test start */
 
-        Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications);
+        Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, log);
         mailer.send(new MailMessage("+12345678901", false, 0, 0, false, false, null, 0, 0));
 
         assertNull(initArgs.get());
@@ -291,12 +297,13 @@ public class MailerTest extends ApplicationTestCase<Application> {
         Notifications notifications = createNotifications(errorArgs, null);
         MailTransport transport = createMailTransport(initArgs, sendArgs);
         doThrow(AuthenticationFailedException.class).when(transport).send(anyString(), anyString(), anyString(), anyString());
+        ActivityLog log = mock(ActivityLog.class);
 
         populatePreferences();
 
         /* test start */
 
-        Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications);
+        Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, log);
         mailer.send(new MailMessage("+12345678901", false, 0, 0, false, false, null, 0, 0));
 
         assertNotNull(initArgs.get());
@@ -318,12 +325,13 @@ public class MailerTest extends ApplicationTestCase<Application> {
         Notifications notifications = createNotifications(errorArgs, null);
         MailTransport transport = createMailTransport(initArgs, sendArgs);
         doThrow(Exception.class).when(transport).send(anyString(), anyString(), anyString(), anyString());
+        ActivityLog log = mock(ActivityLog.class);
 
         populatePreferences();
 
         /* test start */
 
-        Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications);
+        Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, log);
         mailer.send(new MailMessage("+12345678901", false, 0, 0, false, false, null, 0, 0));
 
         assertNotNull(initArgs.get());
@@ -356,13 +364,14 @@ public class MailerTest extends ApplicationTestCase<Application> {
                 return null;
             }
         }).when(transport).send(anyString(), anyString(), anyString(), anyString());
+        ActivityLog log = mock(ActivityLog.class);
 
         populatePreferences();
         getPreferences(getContext()).edit().putString(KEY_PREF_EMAIL_HOST, "good host").commit();
 
         /* bad_phone produces notification */
 
-        Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications);
+        Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, log);
 
         mailer.send(new MailMessage("bad_phone", false, 0, 0, false, false, null, 0, 0));
         assertEquals(R.string.message_error_sending_email, errorArgs.get()[1]);

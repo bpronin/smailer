@@ -34,5 +34,11 @@
     <Preference
         android:key="show_password"
         android:title="Show password" />
+    <Preference
+        android:key="populate_log"
+        android:title="Populate log" />
+    <Preference
+        android:key="clear_log"
+        android:title="Clear log" />
 
 </PreferenceScreen>

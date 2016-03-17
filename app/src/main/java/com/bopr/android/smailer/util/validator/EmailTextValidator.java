@@ -14,8 +14,8 @@ import javax.mail.internet.InternetAddress;
  */
 public class EmailTextValidator extends TextValidator {
 
-    public EmailTextValidator(TextView view) {
-        super(view);
+    public EmailTextValidator(TextView view, int errorColor) {
+        super(view, errorColor);
     }
 
     @Override

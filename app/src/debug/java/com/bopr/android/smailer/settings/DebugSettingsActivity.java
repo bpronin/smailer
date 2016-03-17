@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 /**
  * For debug purposes.
  */
-public class DebugSettingsActivity extends DefaultPreferenceActivity {
+public class DebugSettingsActivity extends DefaultActivity {
 
     @NonNull
     @Override

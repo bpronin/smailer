@@ -16,15 +16,16 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.bopr.android.smailer.MailMessage;
-import com.bopr.android.smailer.Mailer;
-import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.ActivityLog;
 import com.bopr.android.smailer.Contacts;
 import com.bopr.android.smailer.Cryptor;
 import com.bopr.android.smailer.LocationProvider;
-import com.bopr.android.smailer.Settings;
+import com.bopr.android.smailer.MailMessage;
 import com.bopr.android.smailer.MailTransport;
+import com.bopr.android.smailer.Mailer;
 import com.bopr.android.smailer.Permissions;
+import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.Settings;
 import com.bopr.android.smailer.util.StringUtil;
 
 import java.io.BufferedReader;
@@ -158,6 +159,24 @@ public class DebugFragment extends DefaultPreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 onShowPassword();
+                return true;
+            }
+        });
+
+        findPreference("populate_log").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                onPopulateLog();
+                return true;
+            }
+        });
+
+        findPreference("clear_log").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                onClearLog();
                 return true;
             }
         });
@@ -350,6 +369,28 @@ public class DebugFragment extends DefaultPreferenceFragment {
     private void onShowPassword() {
         String text = cryptor.decrypt(getSharedPreferences().getString(KEY_PREF_SENDER_PASSWORD, null));
         Toast.makeText(getActivity(), text, Toast.LENGTH_LONG).show();
+    }
+
+    private void onPopulateLog() {
+        ActivityLog log = new ActivityLog(getActivity());
+        long time = System.currentTimeMillis();
+        log.success(new MailMessage("+79052345671", true, time, 0, false, true, "Debug message", null));
+        log.success(new MailMessage("+79052345672", false, time += 1000, 0, false, true, "Debug message", null));
+        log.success(new MailMessage("+79052345673", true, time += 1000, time + 10000, false, false, null, null));
+        log.success(new MailMessage("+79052345674", false, time += 1000, time + 10000, false, false, null, null));
+        log.success(new MailMessage("+79052345675", true, time += 1000, time + 10000, true, false, null, null));
+
+
+        log.error(new MailMessage("+79052345671", true, time += 1000, 0, false, true, "Debug message", null), new Exception("Test exception +79052345671"));
+        log.error(new MailMessage("+79052345672", false, time += 1000, 0, false, true, "Debug message", null), new Exception("Test exception +79052345672"));
+        log.error(new MailMessage("+79052345673", true, time += 1000, time + 10000, false, false, null, null), new Exception("Test exception +79052345673"));
+        log.error(new MailMessage("+79052345674", false, time += 1000, time + 10000, false, false, null, null), new Exception("Test exception +79052345674"));
+        log.error(new MailMessage("+79052345675", true, time += 1000, time + 10000, true, false, null, null), new Exception("Test exception +79052345675"));
+    }
+
+    private void onClearLog() {
+        ActivityLog log = new ActivityLog(getActivity());
+        log.clear();
     }
 
 }

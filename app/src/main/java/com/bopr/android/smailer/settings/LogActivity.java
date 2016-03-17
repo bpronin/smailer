@@ -5,15 +5,15 @@ import android.app.Fragment;
 import android.support.annotation.NonNull;
 
 /**
- * Server settings activity.
+ * An activity that presents an application activity log.
  */
-public class ServerSettingsActivity extends DefaultActivity {
+public class LogActivity extends DefaultActivity {
 
     @NonNull
     @Override
     protected Fragment createFragment() {
         setClosable(true);
-        return new ServerSettingsFragment();
+        return new LogFragment();
     }
 
 }

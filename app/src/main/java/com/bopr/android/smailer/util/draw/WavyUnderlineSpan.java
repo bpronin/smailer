@@ -17,7 +17,11 @@ public class WavyUnderlineSpan implements LineBackgroundSpan {
     private int waveSize;
 
     public WavyUnderlineSpan() {
-        this(Color.RED, 1, 3);
+        this(Color.RED);
+    }
+
+    public WavyUnderlineSpan(int color) {
+        this(color, 1, 3);
     }
 
     public WavyUnderlineSpan(int color, int lineWidth, int waveSize) {

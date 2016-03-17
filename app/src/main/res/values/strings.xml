@@ -53,11 +53,20 @@
     <string name="email_body_called">Called: {phone}{name}</string>
 
     <string name="action_about">About SMailer</string>
+    <string name="action_log">Activity log</string>
 
     <string name="email_body_unknown_contact">Unknown contact</string>
     <string name="about_dialog_title_version">Application version:</string>
     <string name="email_body_unknown_location">unknown</string>
     <string name="validator_invalid_email">Invalid email address</string>
+
+    <string name="activity_log_title">Activity log</string>
+    <string name="activity_log_title_refresh">Refresh</string>
+    <string name="activity_log_message_empty_log">Log is empty</string>
+    <string name="activity_log_message">{message} {phone}.\n{result}</string>
+    <string name="activity_log_message_send_email_failed">Send failed.</string>
+    <string name="activity_log_message_send_email_success">Send success.</string>
+    <string name="activity_log_title_details">Details</string>
 
     <string-array name="email_triggers">
         <item>Incoming SMS</item>

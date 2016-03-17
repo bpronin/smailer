@@ -9,6 +9,7 @@ import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.SpannableString;
 
@@ -67,7 +68,7 @@ public class DefaultPreferenceFragment extends PreferenceFragment {
     @NonNull
     protected CharSequence getNotSpecifiedSummary() {
         Spannable summary = new SpannableString(getResources().getString(R.string.pref_description_not_set));
-        WavyUnderlineSpan span = new WavyUnderlineSpan();
+        WavyUnderlineSpan span = new WavyUnderlineSpan(ContextCompat.getColor(getActivity(), R.color.errorForeground));
         summary.setSpan(span, 0, summary.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         return summary;
     }

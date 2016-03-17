@@ -52,6 +52,7 @@
     <string name="email_body_unknown_location">неизвестно</string>
 
     <string name="action_about">О приложении</string>
+    <string name="action_log">Журнал активности</string>
 
     <string name="about_dialog_title_version">Версия приложения:</string>
 

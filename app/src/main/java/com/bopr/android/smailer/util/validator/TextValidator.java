@@ -1,10 +1,12 @@
 package com.bopr.android.smailer.util.validator;
 
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.draw.WavyUnderlineSpan;
 
 /**
@@ -17,9 +19,9 @@ public abstract class TextValidator implements TextWatcher {
     private final TextView view;
     private Object span;
 
-    public TextValidator(TextView view) {
+    public TextValidator(TextView view, int errorColor) {
         this.view = view;
-        span = new WavyUnderlineSpan();
+        span = new WavyUnderlineSpan(errorColor);
     }
 
     /**

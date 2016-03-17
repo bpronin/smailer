@@ -20,16 +20,20 @@ public class Mailer {
     private final MailTransport transport;
     private final Cryptor cryptor;
     private final Notifications notifications;
+    private final ActivityLog log;
 
-    public Mailer(Context context, MailTransport transport, Cryptor cryptor, Notifications notifications) {
+    public Mailer(Context context, MailTransport transport, Cryptor cryptor, Notifications notifications,
+                  ActivityLog log) {
         this.context = context;
         this.transport = transport;
         this.cryptor = cryptor;
         this.notifications = notifications;
+        this.log = log;
     }
 
     public Mailer(Context context) {
-        this(context, new MailTransport(), new Cryptor(context), new Notifications());
+        this(context, new MailTransport(), new Cryptor(context), new Notifications(),
+                new ActivityLog(context));
     }
 
     /**
@@ -55,13 +59,15 @@ public class Mailer {
             try {
                 transport.send(formatter.getSubject(), formatter.getBody(), properties.getUser(),
                         properties.getRecipients());
-
+                log.success(message);
                 notifications.removeMailError(context);
             } catch (AuthenticationFailedException x) {
                 Log.e(TAG, "Error sending message: " + message, x);
+                log.error(message, x);
                 notifications.showMailError(context, R.string.message_error_authentication);
             } catch (Exception x) {
                 Log.e(TAG, "Error sending message: " + message, x);
+                log.error(message, x);
                 notifications.showMailError(context, R.string.message_error_sending_email);
             }
         }

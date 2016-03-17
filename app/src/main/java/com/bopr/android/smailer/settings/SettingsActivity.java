@@ -9,7 +9,7 @@ import android.view.MenuItem;
 /**
  * An activity that presents a set of application settings.
  */
-public class SettingsActivity extends DefaultPreferenceActivity {
+public class SettingsActivity extends DefaultActivity {
 
     @NonNull
     @Override

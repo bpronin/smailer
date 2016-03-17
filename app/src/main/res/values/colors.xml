@@ -5,4 +5,7 @@
     <color name="colorAccent">#872E3D</color>
     <!--<color name="colorAccent">#95878D</color>-->
     <!--<color name="colorAccent">#E2CEC0</color>-->
+
+    <color name="errorForeground">#e7291f</color>
+    <color name="errorBackground">#f9eaea</color>
 </resources>

@@ -2,6 +2,8 @@ package com.bopr.android.smailer.util;
 
 import android.content.Context;
 
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.List;
 
 /**

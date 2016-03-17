@@ -8,6 +8,7 @@ import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.SwitchPreference;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,6 +25,8 @@ import com.bopr.android.smailer.util.validator.EmailTextValidator;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.preference.Preference.OnPreferenceChangeListener;
 import static android.preference.PreferenceManager.KEY_HAS_SET_DEFAULT_VALUES;
+import static com.bopr.android.smailer.Permissions.isSmsPermissionDenied;
+import static com.bopr.android.smailer.Permissions.requestSmsPermission;
 import static com.bopr.android.smailer.Settings.DEFAULT_CONTENT;
 import static com.bopr.android.smailer.Settings.DEFAULT_HOST;
 import static com.bopr.android.smailer.Settings.DEFAULT_PORT;
@@ -37,8 +40,6 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENT_EMAIL_ADDRESS
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SERVICE_ENABLED;
-import static com.bopr.android.smailer.Permissions.isSmsPermissionDenied;
-import static com.bopr.android.smailer.Permissions.requestSmsPermission;
 
 /**
  * Main settings fragment.
@@ -59,6 +60,8 @@ public class SettingsFragment extends DefaultPreferenceFragment {
         addPreferencesFromResource(R.xml.pref_general);
         setHasOptionsMenu(true);
 
+        int errorColor = ContextCompat.getColor(getActivity(), R.color.errorForeground);
+
         enabledPreference = (SwitchPreference) findPreference(KEY_PREF_SERVICE_ENABLED);
         enabledPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
@@ -71,7 +74,7 @@ public class SettingsFragment extends DefaultPreferenceFragment {
         });
 
         accountPreference = (EditTextPreference) findPreference(KEY_PREF_SENDER_ACCOUNT);
-        accountPreference.getEditText().addTextChangedListener(new EmailTextValidator(accountPreference.getEditText()));
+        accountPreference.getEditText().addTextChangedListener(new EmailTextValidator(accountPreference.getEditText(), errorColor));
         accountPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
             @Override
@@ -92,7 +95,7 @@ public class SettingsFragment extends DefaultPreferenceFragment {
         });
 
         recipientsPreference = (EditTextPreference) findPreference(KEY_PREF_RECIPIENT_EMAIL_ADDRESS);
-        recipientsPreference.getEditText().addTextChangedListener(new EmailListTextValidator(recipientsPreference.getEditText()));
+        recipientsPreference.getEditText().addTextChangedListener(new EmailListTextValidator(recipientsPreference.getEditText(), errorColor));
         recipientsPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
             @Override
@@ -127,7 +130,10 @@ public class SettingsFragment extends DefaultPreferenceFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_about) {
             showAboutDialog();
+        } else if (item.getItemId() == R.id.action_log) {
+            startActivity(new Intent(getActivity(), LogActivity.class));
         }
+
         return super.onOptionsItemSelected(item);
     }
 
