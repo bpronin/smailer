@@ -26,7 +26,9 @@
 
     <string name="message_error_no_parameters">Some required parameters are not specified.</string>
     <string name="message_error_authentication">Username or password is incorrect.</string>
-    <string name="message_error_sending_email">Unable to send email.</string>
+    <string name="message_error_sending_email">Unable to send email.\n({error}).</string>
+    <string name="message_error_connect">Unable to connect to server</string>
+    <string name="message_error_general">Unable to send email.</string>
     <string name="message_service_disabled_by_permission">SMS read permission has been denied. Service will be disabled.</string>
     <string name="message_contact_name_disabled_by_permission">Contacts read permission has been denied. The setting will be disabled.</string>
     <string name="message_location_disabled_by_permission">Location read permission has been denied. The setting will be disabled.</string>
@@ -63,10 +65,11 @@
     <string name="activity_log_title">Activity log</string>
     <string name="activity_log_title_refresh">Refresh</string>
     <string name="activity_log_message_empty_log">Log is empty</string>
-    <string name="activity_log_message">{message} {phone}.\n{result}</string>
-    <string name="activity_log_message_send_email_failed">Send failed.</string>
-    <string name="activity_log_message_send_email_success">Send success.</string>
+    <string name="activity_log_message" translatable="false">{message} {phone}.\n{result}</string>
+    <string name="activity_log_message_send_email_failed" translatable="false">Send failed.</string>
+    <string name="activity_log_message_send_email_success" translatable="false">Send success.</string>
     <string name="activity_log_title_details">Details</string>
+    <string name="activity_log_title_clear">Clear</string>
 
     <string-array name="email_triggers">
         <item>Incoming SMS</item>

@@ -19,11 +19,15 @@ import java.util.Date;
  */
 public class ActivityLog {
 
+    private static final String TAG = "ActivityLog";
+
     public static final int LEVEL_ERROR = Log.ERROR;
     public static final int LEVEL_INFO = Log.INFO;
 
+    public static ActivityLog instance;
+
     private static final int DB_VERSION = 1;
-    private static final String DB_NAME = "smailer.sqlite";
+    public static final String DB_NAME = "smailer.sqlite";
     private static final String TABLE_LOG = "activity_log";
     private static final String COLUMN_ID = "_id";
     private static final String COLUMN_LOG_TIMESTAMP = "timestamp";
@@ -34,7 +38,18 @@ public class ActivityLog {
     private final Context context;
     private final DbHelper helper;
 
-    public ActivityLog(Context context) {
+    public static ActivityLog getInstance(Context context) {
+        if (instance == null) {
+            instance = new ActivityLog(context);
+        } else {
+            if (instance.context != context) {
+                Log.w(TAG, "Accessing getInstance from different context");
+            }
+        }
+        return instance;
+    }
+
+    private ActivityLog(Context context) {
         this.context = context;
         helper = new DbHelper(context);
     }
@@ -64,7 +79,7 @@ public class ActivityLog {
     }
 
     public void clear() {
-        context.deleteDatabase(DB_NAME);
+        helper.getWritableDatabase().execSQL("delete from " + TABLE_LOG);
     }
 
     private void add(ActivityLogItem item) {
@@ -153,4 +168,5 @@ public class ActivityLog {
             return item;
         }
     }
+
 }

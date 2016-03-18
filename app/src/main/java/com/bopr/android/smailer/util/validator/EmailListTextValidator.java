@@ -20,6 +20,10 @@ public class EmailListTextValidator extends TextValidator {
 
     @Override
     public boolean isValidInput(TextView textView, Editable editable, String text) {
+        return isValidValue(text);
+    }
+
+    public static boolean isValidValue(String text) {
         try {
             for (InternetAddress address : InternetAddress.parse(text)) {
                 address.validate();

@@ -235,34 +235,31 @@ public class DebugFragment extends DefaultPreferenceFragment {
     }
 
     private void onGetContact() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Phone number");
-
         final EditText input = new EditText(getActivity());
         input.setInputType(InputType.TYPE_CLASS_PHONE);
-        builder.setView(input);
 
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        new AlertDialog.Builder(getActivity())
+                .setTitle("Phone number")
+                .setView(input)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
 
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String phone = input.getText().toString();
-                String contact = Contacts.getContactName(getActivity(), phone);
-                String text = contact != null ? (phone + ": " + contact) : "Contact not found";
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String phone = input.getText().toString();
+                        String contact = Contacts.getContactName(getActivity(), phone);
+                        String text = contact != null ? (phone + ": " + contact) : "Contact not found";
 
-                Toast.makeText(getActivity(), text, Toast.LENGTH_LONG).show();
-            }
-        });
+                        Toast.makeText(getActivity(), text, Toast.LENGTH_LONG).show();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        builder.show();
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .show();
     }
 
     private void onGetLocation() {
@@ -372,7 +369,7 @@ public class DebugFragment extends DefaultPreferenceFragment {
     }
 
     private void onPopulateLog() {
-        ActivityLog log = new ActivityLog(getActivity());
+        ActivityLog log = ActivityLog.getInstance(getActivity());
         long time = System.currentTimeMillis();
         log.success(new MailMessage("+79052345671", true, time, 0, false, true, "Debug message", null));
         log.success(new MailMessage("+79052345672", false, time += 1000, 0, false, true, "Debug message", null));
@@ -389,8 +386,7 @@ public class DebugFragment extends DefaultPreferenceFragment {
     }
 
     private void onClearLog() {
-        ActivityLog log = new ActivityLog(getActivity());
-        log.clear();
+        getActivity().deleteDatabase(ActivityLog.DB_NAME);
     }
 
 }

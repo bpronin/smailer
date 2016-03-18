@@ -20,6 +20,10 @@ public class EmailTextValidator extends TextValidator {
 
     @Override
     public boolean isValidInput(TextView textView, Editable editable, String text) {
+        return isValidValue(text);
+    }
+
+    public static boolean isValidValue(String text) {
         try {
             new InternetAddress(text).validate();
             return true;

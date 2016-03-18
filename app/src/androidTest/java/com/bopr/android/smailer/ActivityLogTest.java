@@ -22,7 +22,7 @@ public class ActivityLogTest extends ApplicationTestCase<Application> {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        log = new ActivityLog(getContext());
+        log = ActivityLog.getInstance(getContext());
         log.clear();
     }
 

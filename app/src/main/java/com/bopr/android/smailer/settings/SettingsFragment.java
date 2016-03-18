@@ -138,19 +138,27 @@ public class SettingsFragment extends DefaultPreferenceFragment {
     }
 
     private void updateAccountPreference(String value) {
-        updateSummary(value, accountPreference);
+        if (StringUtil.isEmpty(value)) {
+            updateSummary(R.string.pref_description_not_set, accountPreference, false);
+        } else {
+            updateSummary(value, accountPreference, EmailTextValidator.isValidValue(value));
+        }
     }
 
     private void updatePasswordPreference(String value) {
-        if (value != null && !value.isEmpty()) {
-            passwordPreference.setSummary(R.string.pref_description_password_asterisk);
+        if (StringUtil.isEmpty(value)) {
+            updateSummary(R.string.pref_description_not_set, passwordPreference, false);
         } else {
-            passwordPreference.setSummary(getNotSpecifiedSummary());
+            updateSummary(R.string.pref_description_password_asterisk, passwordPreference, true);
         }
     }
 
     private void updateRecipientsPreference(String value) {
-        updateSummary(value, recipientsPreference);
+        if (StringUtil.isEmpty(value)) {
+            updateSummary(R.string.pref_description_not_set, recipientsPreference, false);
+        } else {
+            updateSummary(value, recipientsPreference, EmailListTextValidator.isValidValue(value));
+        }
     }
 
     private void updateServerPreference() {
@@ -161,7 +169,13 @@ public class SettingsFragment extends DefaultPreferenceFragment {
         if (!StringUtil.isEmpty(host) || !StringUtil.isEmpty(port)) {
             value = host + ":" + port;
         }
-        updateSummary(value, findPreference(KEY_PREF_OUTGOING_SERVER));
+
+        Preference preference = findPreference(KEY_PREF_OUTGOING_SERVER);
+        if (StringUtil.isEmpty(value)) {
+            updateSummary(R.string.pref_description_not_set, preference, false);
+        } else {
+            updateSummary(value, preference, true);
+        }
     }
 
     private void checkSmsPermission(boolean enabled) {

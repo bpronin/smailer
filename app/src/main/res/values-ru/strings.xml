@@ -23,7 +23,7 @@
 
     <string name="message_error_no_parameters">Некоторые обязательные параметры не указаны.</string>
     <string name="message_error_authentication">Неверный пароль или имя пользователя.</string>
-    <string name="message_error_sending_email">Невозможно отправить почту.</string>
+    <string name="message_error_sending_email">Невозможно отправить почту.\n({error}).</string>
     <string name="message_service_disabled_by_permission">Разрешение на чтение SMS снято. Приложение будет отключено.</string>
     <string name="message_contact_name_disabled_by_permission">Разрешение на чтение контактов снято. Данная настройка будет отключен.</string>
     <string name="message_location_disabled_by_permission">Разрешение на чтение местоположения снято. Данная настройка будет отключен.</string>
@@ -71,5 +71,12 @@
         <item>Имя звонившего</item>
         <item>Местоположение устройства</item>
     </string-array>
+    <string name="activity_log_title_refresh">Обновить</string>
+    <string name="activity_log_title_details">Детали</string>
+    <string name="activity_log_title">Журнал </string>
+    <string name="activity_log_message_empty_log">Журнал пуст</string>
+    <string name="message_error_connect">Невозможно соединиться с почтовым сервером.</string>
+    <string name="message_error_general">Невозможно отправить почту.</string>
+    <string name="activity_log_title_clear">Очистить</string>
 
 </resources>

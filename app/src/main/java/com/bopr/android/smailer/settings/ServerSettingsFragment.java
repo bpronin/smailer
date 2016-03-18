@@ -5,6 +5,7 @@ import android.preference.EditTextPreference;
 import android.preference.Preference;
 
 import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.util.StringUtil;
 
 import static android.preference.Preference.OnPreferenceChangeListener;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
@@ -46,11 +47,19 @@ public class ServerSettingsFragment extends DefaultPreferenceFragment {
     }
 
     private void updateHostPreference(String value) {
-        updateSummary(value, hostPreference);
+        if (StringUtil.isEmpty(value)) {
+            updateSummary(R.string.pref_description_not_set, hostPreference, false);
+        } else {
+            updateSummary(value, hostPreference, true);
+        }
     }
 
     private void updatePortPreference(String value) {
-        updateSummary(value, portPreference);
+        if (StringUtil.isEmpty(value)) {
+            updateSummary(R.string.pref_description_not_set, portPreference, false);
+        } else {
+            updateSummary(value, portPreference, true);
+        }
     }
 
 }

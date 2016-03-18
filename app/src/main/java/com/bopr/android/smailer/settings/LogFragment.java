@@ -2,6 +2,7 @@ package com.bopr.android.smailer.settings;
 
 
 import android.app.ListFragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -23,10 +24,16 @@ public class LogFragment extends ListFragment {
     private ActivityLog log;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        log = new ActivityLog(getActivity());
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        log = ActivityLog.getInstance(getActivity());
         setHasOptionsMenu(true);
         return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
     }
 
     @Override
@@ -45,6 +52,8 @@ public class LogFragment extends ListFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_log_refresh) {
             refreshData();
+        } else if (item.getItemId() == R.id.action_log_clear) {
+            clearData();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -70,6 +79,28 @@ public class LogFragment extends ListFragment {
 
     private void refreshData() {
         setListAdapter(new LogListAdapter(getActivity(), log.getAll()));
+    }
+
+    private void clearData() {
+        new AlertDialog.Builder(getActivity())
+                .setMessage("Clear log?")
+
+                .setPositiveButton("Clear", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        log.clear();
+                        refreshData();
+                    }
+                })
+
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .show();
     }
 
 }

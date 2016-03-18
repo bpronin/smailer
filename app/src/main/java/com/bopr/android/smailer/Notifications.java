@@ -35,7 +35,7 @@ public class Notifications {
         return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
-    private void showAlert(Context context, String text) {
+    public void showAlert(Context context, String text) {
         Resources r = context.getResources();
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         Notification notification = builder

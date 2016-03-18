@@ -8,7 +8,6 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
-import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -57,20 +56,25 @@ public class DefaultPreferenceFragment extends PreferenceFragment {
      * @param value      value
      * @param preference preference
      */
-    protected void updateSummary(String value, Preference preference) {
-        if (value == null || value.isEmpty()) {
-            preference.setSummary(getNotSpecifiedSummary());
+    protected void updateSummary(String value, Preference preference, boolean valid) {
+        if (!valid) {
+            Spannable summary = new SpannableString(value);
+            WavyUnderlineSpan span = new WavyUnderlineSpan(ContextCompat.getColor(getActivity(), R.color.errorForeground));
+            summary.setSpan(span, 0, summary.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            preference.setSummary(summary);
         } else {
             preference.setSummary(value);
         }
     }
 
-    @NonNull
-    protected CharSequence getNotSpecifiedSummary() {
-        Spannable summary = new SpannableString(getResources().getString(R.string.pref_description_not_set));
-        WavyUnderlineSpan span = new WavyUnderlineSpan(ContextCompat.getColor(getActivity(), R.color.errorForeground));
-        summary.setSpan(span, 0, summary.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        return summary;
+    /**
+     * Updates summary of {@link Preference}.
+     *
+     * @param valueResource value resource ID
+     * @param preference    preference
+     */
+    protected void updateSummary(int valueResource, Preference preference, boolean valid) {
+        updateSummary(getString(valueResource), preference, valid);
     }
 
     /**
