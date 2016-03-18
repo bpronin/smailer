@@ -24,13 +24,16 @@
     <string name="message_error_no_parameters">Некоторые обязательные параметры не указаны.</string>
     <string name="message_error_authentication">Неверный пароль или имя пользователя.</string>
     <string name="message_error_sending_email">Невозможно отправить почту.\n({error}).</string>
-    <string name="message_service_disabled_by_permission">Разрешение на чтение SMS снято. Приложение будет отключено.</string>
-    <string name="message_contact_name_disabled_by_permission">Разрешение на чтение контактов снято. Данная настройка будет отключен.</string>
-    <string name="message_location_disabled_by_permission">Разрешение на чтение местоположения снято. Данная настройка будет отключен.</string>
+    <string name="message_error_connect">Невозможно соединиться с почтовым сервером.</string>
+    <string name="message_error_general">Невозможно отправить почту.</string>
+
+    <string name="message_permission_denied_service_disabled">Разрешение на чтение SMS снято. Приложение будет отключено.</string>
+    <string name="message_permission_denied_contact_name_disabled">Разрешение на чтение контактов снято. Данная настройка будет отключен.</string>
+    <string name="message_permission_denied_location_disabled">Разрешение на чтение местоположения снято. Данная настройка будет отключен.</string>
     <string name="message_comma_separated_recipient">Если получателей несколько, разделяйте их запятой.</string>
     <string name="message_password_stored_encrypted">Пароль хранится зашифрованным только на данном устройстве.</string>
     <string name="message_account_hint">Адрес, с которого будет отправляться почта.</string>
-    <string name="message_at_least_one_source_checked">Хотябы один пункт должен быть отмечен.</string>
+    <string name="message_at_least_one_item_checked">Хотябы один пункт должен быть отмечен.</string>
 
     <string name="email_subject_incoming_sms">Входящее SMS от</string>
     <string name="email_subject_outgoing_sms">Исходящее SMS</string>
@@ -52,11 +55,15 @@
     <string name="email_body_unknown_location">неизвестно</string>
 
     <string name="action_about">О приложении</string>
-    <string name="action_log">Журнал активности</string>
+    <string name="action_activity_log">Журнал активности</string>
+
+    <string name="activity_log_title_refresh">Обновить</string>
+    <string name="activity_log_title_details">Детали</string>
+    <string name="activity_log_title">Журнал </string>
+    <string name="activity_log_message_empty_log">Журнал пуст</string>
+    <string name="activity_log_title_clear">Очистить</string>
 
     <string name="about_dialog_title_version">Версия приложения:</string>
-
-    <string name="validator_invalid_email">Неверный формат почтового адреса</string>
 
     <string-array name="email_triggers">
         <item>Входящие SMS</item>
@@ -71,12 +78,5 @@
         <item>Имя звонившего</item>
         <item>Местоположение устройства</item>
     </string-array>
-    <string name="activity_log_title_refresh">Обновить</string>
-    <string name="activity_log_title_details">Детали</string>
-    <string name="activity_log_title">Журнал </string>
-    <string name="activity_log_message_empty_log">Журнал пуст</string>
-    <string name="message_error_connect">Невозможно соединиться с почтовым сервером.</string>
-    <string name="message_error_general">Невозможно отправить почту.</string>
-    <string name="activity_log_title_clear">Очистить</string>
 
 </resources>

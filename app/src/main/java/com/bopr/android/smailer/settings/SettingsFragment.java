@@ -190,7 +190,7 @@ public class SettingsFragment extends DefaultPreferenceFragment {
     ) {
         if (requestCode == PERMISSIONS_REQUEST_RECEIVE_SMS) {
             if (grantResults[0] != PERMISSION_GRANTED) {
-                Toast.makeText(getActivity(), R.string.message_service_disabled_by_permission,
+                Toast.makeText(getActivity(), R.string.message_permission_denied_service_disabled,
                         Toast.LENGTH_LONG).show();
 
                 enabledPreference.setChecked(false);
