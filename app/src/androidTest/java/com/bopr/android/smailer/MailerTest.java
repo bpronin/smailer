@@ -16,11 +16,11 @@ import javax.mail.MessagingException;
 import static com.bopr.android.smailer.Settings.DEFAULT_CONTENT;
 import static com.bopr.android.smailer.Settings.DEFAULT_HOST;
 import static com.bopr.android.smailer.Settings.DEFAULT_PORT;
-import static com.bopr.android.smailer.Settings.DEFAULT_SOURCES;
+import static com.bopr.android.smailer.Settings.DEFAULT_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_SOURCE;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENT_EMAIL_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
@@ -66,7 +66,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
                 .putString(KEY_PREF_RECIPIENT_EMAIL_ADDRESS, "recipient")
                 .putString(KEY_PREF_EMAIL_HOST, DEFAULT_HOST)
                 .putString(KEY_PREF_EMAIL_PORT, DEFAULT_PORT)
-                .putStringSet(KEY_PREF_EMAIL_SOURCE, DEFAULT_SOURCES)
+                .putStringSet(KEY_PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS)
                 .putStringSet(KEY_PREF_EMAIL_CONTENT, DEFAULT_CONTENT)
                 .commit();
     }

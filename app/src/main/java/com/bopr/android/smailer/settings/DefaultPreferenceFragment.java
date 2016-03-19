@@ -3,6 +3,7 @@ package com.bopr.android.smailer.settings;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
+import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
@@ -15,7 +16,9 @@ import android.text.SpannableString;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.draw.WavyUnderlineSpan;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 import static com.bopr.android.smailer.Settings.PREFERENCES_STORAGE_NAME;
 
@@ -100,6 +103,10 @@ public class DefaultPreferenceFragment extends PreferenceFragment {
                     ((EditTextPreference) preference).setText((String) value);
                 } else if (preference instanceof SwitchPreference) {
                     ((SwitchPreference) preference).setChecked(value != null && (boolean) value);
+                } else if (preference instanceof MultiSelectListPreference) {
+                    //noinspection unchecked
+                    Set<String> set = value == null ? Collections.<String>emptySet() : (Set<String>) value;
+                    ((MultiSelectListPreference) preference).setValues(set);
                 }
             }
         }

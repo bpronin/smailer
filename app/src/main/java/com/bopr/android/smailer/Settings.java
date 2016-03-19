@@ -1,6 +1,5 @@
 package com.bopr.android.smailer;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -31,15 +30,15 @@ public class Settings {
     public static final String KEY_PREF_RECIPIENT_EMAIL_ADDRESS = "recipient_email_address";
     public static final String KEY_PREF_OUTGOING_SERVER = "outgoing_server";
     public static final String KEY_PREF_EMAIL_CONTENT = "email_content";
-    public static final String KEY_PREF_EMAIL_SOURCE = "email_source";
+    public static final String KEY_PREF_EMAIL_TRIGGERS = "email_source";
     public static final String VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME = "time";
     public static final String VAL_PREF_EMAIL_CONTENT_DEVICE_NAME = "device_name";
     public static final String VAL_PREF_EMAIL_CONTENT_LOCATION = "location";
-    public static final String VAL_PREF_EMAIL_CONTENT_CALLER = "contact_name";
-    public static final String VAL_PREF_SOURCE_IN_SMS = "in_sms";
-    public static final String VAL_PREF_SOURCE_IN_CALLS = "in_calls";
-    public static final String VAL_PREF_SOURCE_OUT_CALLS = "out_calls";
-    public static final String VAL_PREF_SOURCE_MISSED_CALLS = "missed_calls";
+    public static final String VAL_PREF_EMAIL_CONTENT_CONTACT = "contact_name";
+    public static final String VAL_PREF_TRIGGER_IN_SMS = "in_sms";
+    public static final String VAL_PREF_TRIGGER_IN_CALLS = "in_calls";
+    public static final String VAL_PREF_TRIGGER_OUT_CALLS = "out_calls";
+    public static final String VAL_PREF_TRIGGER_MISSED_CALLS = "missed_calls";
 
     public static final String DEFAULT_HOST = "smtp.gmail.com";
     public static final String DEFAULT_PORT = "465";
@@ -47,10 +46,10 @@ public class Settings {
             VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
             VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
             VAL_PREF_EMAIL_CONTENT_LOCATION,
-            VAL_PREF_EMAIL_CONTENT_CALLER));
-    public static final Set<String> DEFAULT_SOURCES = new HashSet<>(Arrays.asList(
-            VAL_PREF_SOURCE_IN_SMS,
-            VAL_PREF_SOURCE_MISSED_CALLS));
+            VAL_PREF_EMAIL_CONTENT_CONTACT));
+    public static final Set<String> DEFAULT_TRIGGERS = new HashSet<>(Arrays.asList(
+            VAL_PREF_TRIGGER_IN_SMS,
+            VAL_PREF_TRIGGER_MISSED_CALLS));
 
     public static SharedPreferences getPreferences(Context context) {
         return context.getSharedPreferences(PREFERENCES_STORAGE_NAME, MODE_PRIVATE);

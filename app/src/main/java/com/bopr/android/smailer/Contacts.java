@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
+import static android.Manifest.permission.READ_CONTACTS;
 import static android.provider.ContactsContract.PhoneLookup;
 
 /**
@@ -14,13 +15,13 @@ import static android.provider.ContactsContract.PhoneLookup;
  */
 public class Contacts {
 
-//    private static final String TAG = "Contacts";
+    private static final String TAG = "Contacts";
 
     public static String getContactName(Context context, String phoneNumber) {
-//        if (Permissions.isReadContactPermissionDenied(context)) {
-//            Log.w(TAG, "Unable read contact. Permission denied.");
-//            return null;
-//        }
+        if (PermissionsChecker.isPermissionsDenied(context, READ_CONTACTS)) {
+            Log.w(TAG, "Unable read contact. Permission denied.");
+            return null;
+        }
 
         String result = null;
         Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));

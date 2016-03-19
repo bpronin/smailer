@@ -14,7 +14,7 @@ import static android.provider.ContactsContract.CommonDataKinds.Phone;
 import static android.provider.ContactsContract.CommonDataKinds.StructuredName;
 import static android.provider.ContactsContract.Data;
 import static android.provider.ContactsContract.RawContacts;
-import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CALLER;
+import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CONTACT;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_LOCATION;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME;
@@ -267,7 +267,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
                 "Email body text", null);
 
         MailerProperties properties = new MailerProperties();
-        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_CALLER);
+        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_CONTACT);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(),
                 properties, Contacts.getContactName(getContext(), "+12345678901"), null);
@@ -291,7 +291,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
                 "Email body text", null);
 
         MailerProperties properties = new MailerProperties();
-        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_CALLER);
+        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_CONTACT);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(),
                 properties, null, null);
@@ -376,7 +376,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         MailMessage message = new MailMessage("+12345678901", true, start, end, false, false, null, 60.555, 30.555);
 
         MailerProperties properties = new MailerProperties();
-        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_CALLER, VAL_PREF_EMAIL_CONTENT_LOCATION,
+        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
                 VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties,
@@ -408,7 +408,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         MailMessage message = new MailMessage("+12345678901", false, start, end, false, false, null, 60.555, 30.555);
 
         MailerProperties properties = new MailerProperties();
-        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_CALLER, VAL_PREF_EMAIL_CONTENT_LOCATION,
+        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
                 VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties,
@@ -440,7 +440,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         MailMessage message = new MailMessage("+12345678901", true, start, end, true, false, null, 60.555, 30.555);
 
         MailerProperties properties = new MailerProperties();
-        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_CALLER, VAL_PREF_EMAIL_CONTENT_LOCATION,
+        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
                 VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties,

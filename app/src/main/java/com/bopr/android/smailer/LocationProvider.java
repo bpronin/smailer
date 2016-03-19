@@ -5,12 +5,15 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.PermissionChecker;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
 import static android.location.LocationManager.PASSIVE_PROVIDER;
@@ -58,39 +61,42 @@ public class LocationProvider {
      */
     @SuppressWarnings("ResourceType")
     public Location getLocation() {
+        if (PermissionsChecker.isPermissionsDenied(context, ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION)) {
+            Log.w(TAG, "Unable read location. Permission denied.");
+            return null;
+        }
+
         Location location = null;
-        if (!Permissions.isLocationPermissionDenied(context)) {
-            if (client.isConnected()) {
-                location = LocationServices.FusedLocationApi.getLastLocation(client);
+        if (client.isConnected()) {
+            location = LocationServices.FusedLocationApi.getLastLocation(client);
+        }
+
+        if (location == null) {
+            LocationManager lm = (LocationManager) client.getContext().getSystemService(Context.LOCATION_SERVICE);
+
+            if (lm.getProvider(GPS_PROVIDER) != null) {
+                location = lm.getLastKnownLocation(GPS_PROVIDER);
+            } else {
+                Log.d(TAG, "Using GPS_PROVIDER location");
+            }
+
+            if (location == null && lm.getProvider(NETWORK_PROVIDER) != null) {
+                location = lm.getLastKnownLocation(NETWORK_PROVIDER);
+            } else {
+                Log.d(TAG, "Using NETWORK_PROVIDER location");
+            }
+
+            if (location == null && lm.getProvider(PASSIVE_PROVIDER) != null) {
+                location = lm.getLastKnownLocation(PASSIVE_PROVIDER);
+            } else {
+                Log.d(TAG, "Using PASSIVE_PROVIDER location");
             }
 
             if (location == null) {
-                LocationManager lm = (LocationManager) client.getContext().getSystemService(Context.LOCATION_SERVICE);
-
-                if (lm.getProvider(GPS_PROVIDER) != null) {
-                    location = lm.getLastKnownLocation(GPS_PROVIDER);
-                } else {
-                    Log.d(TAG, "Using GPS_PROVIDER location");
-                }
-
-                if (location == null && lm.getProvider(NETWORK_PROVIDER) != null) {
-                    location = lm.getLastKnownLocation(NETWORK_PROVIDER);
-                } else {
-                    Log.d(TAG, "Using NETWORK_PROVIDER location");
-                }
-
-                if (location == null && lm.getProvider(PASSIVE_PROVIDER) != null) {
-                    location = lm.getLastKnownLocation(PASSIVE_PROVIDER);
-                } else {
-                    Log.d(TAG, "Using PASSIVE_PROVIDER location");
-                }
-
-                if (location == null) {
-                    Log.d(TAG, "Unable to retrieve location");
-                }
-            } else {
-                Log.d(TAG, "Using Google API location");
+                Log.d(TAG, "Unable to retrieve location");
             }
+        } else {
+            Log.d(TAG, "Using Google API location");
         }
 
         return location;

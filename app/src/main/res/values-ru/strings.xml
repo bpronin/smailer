@@ -27,9 +27,18 @@
     <string name="message_error_connect">Невозможно соединиться с почтовым сервером.</string>
     <string name="message_error_general">Невозможно отправить почту.</string>
 
-    <string name="message_permission_denied_service_disabled">Разрешение на чтение SMS снято. Приложение будет отключено.</string>
-    <string name="message_permission_denied_contact_name_disabled">Разрешение на чтение контактов снято. Данная настройка будет отключен.</string>
-    <string name="message_permission_denied_location_disabled">Разрешение на чтение местоположения снято. Данная настройка будет отключен.</string>
+    <string name="message_permission_denied_receive_sms">Чтение SMS запрещено. Настройка будет отключена.</string>
+    <string name="message_permission_denied_phone_state">Чтение состояния телефона запрещено. Настройка будет отключена.</string>
+    <string name="message_permission_denied_outgoing_call">Обработка исходящих звонков запрещена. Настройка будет отключена.</string>
+    <string name="message_permission_denied_read_contacts">Чтение контактов запрещено. Настройка будет отключена.</string>
+    <string name="message_permission_denied_location">Чтение местоположения запрещено. Настройка будет отключена.</string>
+
+    <string name="message_permission_rationale_receive_sms">Разрешение на чтение SMS необходимо, чтобы отправлять почтовое сообщение, когда приходит SMS.</string>
+    <string name="message_permission_rationale_phone_state">Разрешение на чтение состояния телефона необходимо, чтобы отправлять почтовое сообщение при входящих и исходящих вызовах.</string>
+    <string name="message_permission_rationale_outgoing_call">Разрешение на обработку исходящих звонков необходимо, чтобы отправлять почтовое сообщение при исходящих вызовах.</string>
+    <string name="message_permission_rationale_read_contacts">Разрешение на чтение контактов необходимо, чтобы отображать имя звонившего в почтовом сообщении.</string>
+    <string name="message_permission_rationale_location">Разрешение на чтение местоположения необходимо, чтобы отображать местоположение устройства в почтовом сообщении.</string>
+
     <string name="message_comma_separated_recipient">Если получателей несколько, разделяйте их запятой.</string>
     <string name="message_password_stored_encrypted">Пароль хранится зашифрованным только на данном устройстве.</string>
     <string name="message_account_hint">Адрес, с которого будет отправляться почта.</string>

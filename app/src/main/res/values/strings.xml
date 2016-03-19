@@ -29,9 +29,19 @@
     <string name="message_error_sending_email">Unable to send email.\n({error}).</string>
     <string name="message_error_connect">Unable to connect to server</string>
     <string name="message_error_general">Unable to send email.</string>
-    <string name="message_permission_denied_service_disabled">SMS read permission has been denied. Service will be disabled.</string>
-    <string name="message_permission_denied_contact_name_disabled">Contacts read permission has been denied. The setting will be disabled.</string>
-    <string name="message_permission_denied_location_disabled">Location read permission has been denied. The setting will be disabled.</string>
+
+    <string name="message_permission_denied_receive_sms">SMS read permission is denied. Trigger will be disabled.</string>
+    <string name="message_permission_denied_phone_state">Read phone state permission is denied. Trigger will be disabled.</string>
+    <string name="message_permission_denied_outgoing_call">Outgoing calls processing permission is denied. Trigger will be disabled.</string>
+    <string name="message_permission_denied_read_contacts">Contacts read permission is denied. Option will be disabled.</string>
+    <string name="message_permission_denied_location">Location read permission is denied. Option will be disabled.</string>
+
+    <string name="message_permission_rationale_receive_sms">SMS read permission is needed to send out email when SMS is received.</string>
+    <string name="message_permission_rationale_phone_state">Read phone state permission is needed to send out email when phone calls are received or made.</string>
+    <string name="message_permission_rationale_outgoing_call">Outgoing calls processing permission is needed to send out email when phone calls are made.</string>
+    <string name="message_permission_rationale_read_contacts">Contacts read permission is needed to add contact name into email message.</string>
+    <string name="message_permission_rationale_location">Location read permission is needed to add device location into email message.</string>
+
     <string name="message_comma_separated_recipient">Separate multiple recipients with comma.</string>
     <string name="message_password_stored_encrypted">Password is stored encrypted only on the device.</string>
     <string name="message_account_hint">Email address to send email from.</string>
@@ -53,14 +63,11 @@
     <string name="email_body_sender">Sender: {phone}{name}</string>
     <string name="email_body_caller">Caller: {phone}{name}</string>
     <string name="email_body_called">Called: {phone}{name}</string>
+    <string name="email_body_unknown_contact">Unknown contact</string>
+    <string name="email_body_unknown_location">unknown</string>
 
     <string name="action_about">About SMailer</string>
     <string name="action_activity_log">Activity log</string>
-
-    <string name="email_body_unknown_contact">Unknown contact</string>
-    <string name="about_dialog_title_version">Application version:</string>
-    <string name="email_body_unknown_location">unknown</string>
-    <string name="validator_invalid_email">Invalid email address</string>
 
     <string name="activity_log_title">Activity log</string>
     <string name="activity_log_title_refresh">Refresh</string>
@@ -70,6 +77,8 @@
     <string name="activity_log_message_send_email_success" translatable="false">Send success.</string>
     <string name="activity_log_title_details">Details</string>
     <string name="activity_log_title_clear">Clear</string>
+
+    <string name="about_dialog_title_version">Application version:</string>
 
     <string-array name="email_triggers">
         <item>Incoming SMS</item>

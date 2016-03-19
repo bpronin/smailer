@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
@@ -23,7 +24,7 @@ import com.bopr.android.smailer.LocationProvider;
 import com.bopr.android.smailer.MailMessage;
 import com.bopr.android.smailer.MailTransport;
 import com.bopr.android.smailer.Mailer;
-import com.bopr.android.smailer.Permissions;
+import com.bopr.android.smailer.PermissionsChecker;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.Settings;
 import com.bopr.android.smailer.util.StringUtil;
@@ -39,7 +40,7 @@ import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_SOURCE;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENT_EMAIL_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
@@ -211,9 +212,9 @@ public class DebugFragment extends DefaultPreferenceFragment {
     }
 
     public void requestSmsPermission() {
-        Activity activity = getActivity();
-        if (Permissions.isSmsPermissionDenied(activity)) {
-            Permissions.requestSmsPermission(activity, PERMISSIONS_REQUEST_RECEIVE_SMS);
+        if (PermissionsChecker.isPermissionsDenied(getActivity(), RECEIVE_SMS)) {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{RECEIVE_SMS},
+                    PERMISSIONS_REQUEST_RECEIVE_SMS);
         }
     }
 
@@ -228,7 +229,7 @@ public class DebugFragment extends DefaultPreferenceFragment {
                 .putString(KEY_PREF_RECIPIENT_EMAIL_ADDRESS, properties.getProperty("default_recipient"))
                 .putString(KEY_PREF_EMAIL_HOST, Settings.DEFAULT_HOST)
                 .putString(KEY_PREF_EMAIL_PORT, Settings.DEFAULT_PORT)
-                .putStringSet(KEY_PREF_EMAIL_SOURCE, Settings.DEFAULT_SOURCES)
+                .putStringSet(KEY_PREF_EMAIL_TRIGGERS, Settings.DEFAULT_TRIGGERS)
                 .putStringSet(KEY_PREF_EMAIL_CONTENT, Settings.DEFAULT_CONTENT)
                 .apply();
         refreshPreferences(getPreferenceScreen());

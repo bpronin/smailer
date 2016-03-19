@@ -8,7 +8,7 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.Set;
 
-import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CALLER;
+import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CONTACT;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_LOCATION;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME;
@@ -121,7 +121,7 @@ public class MailFormatter {
     private String getFooterText() {
         Set<String> options = properties.getContentOptions();
         if (options != null) {
-            String callerText = options.contains(VAL_PREF_EMAIL_CONTENT_CALLER) ? getCallerText() : null;
+            String callerText = options.contains(VAL_PREF_EMAIL_CONTENT_CONTACT) ? getCallerText() : null;
             String deviceNameText = options.contains(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME) ? getDeviceNameText() : null;
             String timeText = options.contains(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME) ? getTimeText() : null;
             String locationText = options.contains(VAL_PREF_EMAIL_CONTENT_LOCATION) ? getLocationText() : null;

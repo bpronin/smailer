@@ -21,12 +21,12 @@ import static com.bopr.android.smailer.MailerService.EXTRA_INCOMING;
 import static com.bopr.android.smailer.MailerService.EXTRA_MISSED;
 import static com.bopr.android.smailer.MailerService.EXTRA_PHONE_NUMBER;
 import static com.bopr.android.smailer.MailerService.EXTRA_START_TIME;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_SOURCE;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SERVICE_ENABLED;
-import static com.bopr.android.smailer.Settings.VAL_PREF_SOURCE_IN_CALLS;
-import static com.bopr.android.smailer.Settings.VAL_PREF_SOURCE_IN_SMS;
-import static com.bopr.android.smailer.Settings.VAL_PREF_SOURCE_MISSED_CALLS;
-import static com.bopr.android.smailer.Settings.VAL_PREF_SOURCE_OUT_CALLS;
+import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_CALLS;
+import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
+import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS;
+import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
 
 /**
  * Receives SMS and phone call intents and starts mailer service.
@@ -98,7 +98,7 @@ public class CallReceiver extends BroadcastReceiver {
 
     private void onIncomingCall(Context context, String number, long start, long end) {
         Log.d(TAG, "Processing incoming call");
-        if (isSourceEnabled(context, VAL_PREF_SOURCE_IN_CALLS)) {
+        if (isSourceEnabled(context, VAL_PREF_TRIGGER_IN_CALLS)) {
             Intent intent = new Intent(context, MailerService.class);
             intent.setAction(ACTION_CALL);
             intent.putExtra(EXTRA_PHONE_NUMBER, number);
@@ -112,7 +112,7 @@ public class CallReceiver extends BroadcastReceiver {
 
     private void onOutgoingCall(Context context, String number, long start, long end) {
         Log.d(TAG, "Processing outgoing call");
-        if (isSourceEnabled(context, VAL_PREF_SOURCE_OUT_CALLS)) {
+        if (isSourceEnabled(context, VAL_PREF_TRIGGER_OUT_CALLS)) {
             Intent intent = new Intent(context, MailerService.class);
             intent.setAction(ACTION_CALL);
             intent.putExtra(EXTRA_PHONE_NUMBER, number);
@@ -126,7 +126,7 @@ public class CallReceiver extends BroadcastReceiver {
 
     private void onMissedCall(Context context, String number, long start) {
         Log.d(TAG, "Processing missed call");
-        if (isSourceEnabled(context, VAL_PREF_SOURCE_MISSED_CALLS)) {
+        if (isSourceEnabled(context, VAL_PREF_TRIGGER_MISSED_CALLS)) {
             Intent intent = new Intent(context, MailerService.class);
             intent.setAction(ACTION_CALL);
             intent.putExtra(EXTRA_MISSED, true);
@@ -138,8 +138,9 @@ public class CallReceiver extends BroadcastReceiver {
     }
 
     private void onIncomingSms(Context context, Intent smsIntent) {
+
         Log.d(TAG, "Processing incoming sms");
-        if (isSourceEnabled(context, VAL_PREF_SOURCE_IN_SMS)) {
+        if (isSourceEnabled(context, VAL_PREF_TRIGGER_IN_SMS)) {
             Intent intent = new Intent(context, MailerService.class);
             intent.setAction(ACTION_SMS);
             intent.fillIn(smsIntent, Intent.FILL_IN_DATA);
@@ -148,7 +149,7 @@ public class CallReceiver extends BroadcastReceiver {
     }
 
     private boolean isSourceEnabled(Context context, String source) {
-        Set<String> options = Settings.getPreferences(context).getStringSet(KEY_PREF_EMAIL_SOURCE, null);
+        Set<String> options = Settings.getPreferences(context).getStringSet(KEY_PREF_EMAIL_TRIGGERS, null);
         return options != null && options.contains(source);
     }
 
