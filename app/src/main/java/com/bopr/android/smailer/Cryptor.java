@@ -1,7 +1,9 @@
 package com.bopr.android.smailer;
 
 import android.content.Context;
+import android.os.Build;
 import android.security.KeyPairGeneratorSpec;
+import android.security.keystore.KeyGenParameterSpec;
 import android.util.Base64;
 
 import com.bopr.android.smailer.util.StringUtil;
@@ -10,10 +12,17 @@ import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
+import java.security.spec.AlgorithmParameterSpec;
 import java.util.Calendar;
 
 import javax.crypto.Cipher;
 import javax.security.auth.x500.X500Principal;
+
+import static android.security.keystore.KeyProperties.DIGEST_SHA256;
+import static android.security.keystore.KeyProperties.DIGEST_SHA512;
+import static android.security.keystore.KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1;
+import static android.security.keystore.KeyProperties.PURPOSE_DECRYPT;
+import static android.security.keystore.KeyProperties.PURPOSE_ENCRYPT;
 
 /**
  * RSA encryption operations.
@@ -24,7 +33,7 @@ public class Cryptor {
 
     private static final String KEY_ALIAS = "smailer";
     private static final String CIPHER_TRANSFORMATION = "RSA/ECB/PKCS1Padding";
-
+    //    private static final String CIPHER_TRANSFORMATION = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding";
     private final Context context;
 
     public Cryptor(Context context) {
@@ -73,36 +82,31 @@ public class Cryptor {
     }
 
     @SuppressWarnings("deprecation")
-    private KeyPair generateKeys() throws Exception {
-        Calendar start = Calendar.getInstance();
-        Calendar end = Calendar.getInstance();
-        end.add(Calendar.YEAR, 100);
+    private void generateKeys() throws Exception {
+        AlgorithmParameterSpec spec;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            spec = new KeyGenParameterSpec.Builder(
+                    KEY_ALIAS, PURPOSE_ENCRYPT | PURPOSE_DECRYPT)
+                    .setDigests(DIGEST_SHA256, DIGEST_SHA512)
+                    .setEncryptionPaddings(ENCRYPTION_PADDING_RSA_PKCS1)
+                    .build();
 
-        KeyPairGeneratorSpec spec = new KeyPairGeneratorSpec.Builder(context)
-                .setAlias(KEY_ALIAS)
-                .setSubject(new X500Principal("CN=" + KEY_ALIAS + ", O=Android Authority"))
-                .setSerialNumber(BigInteger.ONE)
-                .setStartDate(start.getTime())
-                .setEndDate(end.getTime())
-                .build();
+        } else {
+            Calendar start = Calendar.getInstance();
+            Calendar end = Calendar.getInstance();
+            end.add(Calendar.YEAR, 100);
+            spec = new KeyPairGeneratorSpec.Builder(context)
+                    .setAlias(KEY_ALIAS)
+                    .setSubject(new X500Principal("CN=" + KEY_ALIAS + ", O=Android Authority"))
+                    .setSerialNumber(BigInteger.ONE)
+                    .setStartDate(start.getTime())
+                    .setEndDate(end.getTime())
+                    .build();
+        }
 
         KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA", "AndroidKeyStore");
         generator.initialize(spec);
-
-        return generator.generateKeyPair();
+        generator.generateKeyPair();
     }
-
-/*
-    @TargetApi(Build.VERSION_CODES.M)
-    private static KeyPair generateKeyApi23() throws Exception {
-        KeyPairGenerator generator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA, "AndroidKeyStore");
-        KeyGenParameterSpec spec = new KeyGenParameterSpec.Builder(KEY_ALIAS,
-                KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
-                .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
-                .build();
-        generator.initialize(spec);
-        return generator.generateKeyPair();
-    }
-*/
 
 }
