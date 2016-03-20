@@ -2,8 +2,6 @@ package com.bopr.android.smailer.util;
 
 import android.content.Context;
 
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.List;
 
 /**
@@ -13,8 +11,10 @@ import java.util.List;
  */
 public class StringUtil {
 
-    public static String formatLocation(double latitude, double longitude, String degreeSymbol, String minuteSymbol,
-                                        String secondSymbol, String northSymbol, String southSymbol, String westSymbol,
+    public static String formatLocation(double latitude, double longitude, String degreeSymbol,
+                                        String minuteSymbol,
+                                        String secondSymbol, String northSymbol, String southSymbol,
+                                        String westSymbol,
                                         String eastSymbol) {
         return decimalToDMS(latitude, degreeSymbol, minuteSymbol, secondSymbol)
                 + (latitude > 0 ? northSymbol : southSymbol)
@@ -52,12 +52,14 @@ public class StringUtil {
         return text.substring(0, 1).toUpperCase() + text.substring(1);
     }
 
-
     public static String formatDuration(long duration) {
         long seconds = duration / 1000;
         return String.format("%d:%02d:%02d", seconds / 3600, (seconds % 3600) / 60, seconds % 60);
     }
 
+    /**
+     * Returns true if string is empty or null.
+     */
     public static boolean isEmpty(String s) {
         return s == null || s.length() == 0;
     }

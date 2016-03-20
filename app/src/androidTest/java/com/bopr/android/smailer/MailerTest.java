@@ -85,7 +85,8 @@ public class MailerTest extends ApplicationTestCase<Application> {
     }
 
     @NonNull
-    private MailTransport createMailTransport(final AtomicReference<Object[]> initArgs, final AtomicReference<Object[]> sendArgs) throws MessagingException {
+    private MailTransport createMailTransport(final AtomicReference<Object[]> initArgs,
+                                              final AtomicReference<Object[]> sendArgs) throws MessagingException {
         MailTransport transport = mock(MailTransport.class);
         doAnswer(new Answer<Void>() {
 
@@ -108,7 +109,8 @@ public class MailerTest extends ApplicationTestCase<Application> {
     }
 
     @NonNull
-    private Notifications createNotifications(final AtomicReference<Object[]> errorArgs, final AtomicReference<Object[]> clearArgs) {
+    private Notifications createNotifications(final AtomicReference<Object[]> errorArgs,
+                                              final AtomicReference<Object[]> clearArgs) {
         Notifications notifications = mock(Notifications.class);
         doAnswer(new Answer<Void>() {
 
@@ -336,7 +338,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
 
         assertNotNull(initArgs.get());
         assertNull(sendArgs.get());
-        assertEquals(R.string.message_error_sending_email, errorArgs.get()[1]);
+        assertEquals(R.string.message_error_general, errorArgs.get()[1]);
     }
 
     /**
@@ -358,7 +360,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 String subject = invocation.getArgumentAt(0, String.class);
-                if (subject.equals("[SMailer] Outgoing call to bad_phone")){
+                if (subject.equals("[SMailer] Outgoing call to bad_phone")) {
                     throw new Exception("bad_phone");
                 }
                 return null;
@@ -374,7 +376,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
         Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, log);
 
         mailer.send(new MailMessage("bad_phone", false, 0, 0, false, false, null, 0, 0));
-        assertEquals(R.string.message_error_sending_email, errorArgs.get()[1]);
+        assertEquals(R.string.message_error_general, errorArgs.get()[1]);
         assertNull(clearArgs.get());
 
         /* good_phone removes it */

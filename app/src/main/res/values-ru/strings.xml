@@ -23,7 +23,6 @@
 
     <string name="message_error_no_parameters">Некоторые обязательные параметры не указаны.</string>
     <string name="message_error_authentication">Неверный пароль или имя пользователя.</string>
-    <string name="message_error_sending_email">Невозможно отправить почту.\n({error}).</string>
     <string name="message_error_connect">Невозможно соединиться с почтовым сервером.</string>
     <string name="message_error_general">Невозможно отправить почту.</string>
 
@@ -69,7 +68,7 @@
     <string name="activity_log_title_refresh">Обновить</string>
     <string name="activity_log_title_details">Детали</string>
     <string name="activity_log_title">Журнал </string>
-    <string name="activity_log_message_empty_log">Журнал пуст</string>
+    <string name="activity_log_empty_log">Журнал пуст</string>
     <string name="activity_log_title_clear">Очистить</string>
 
     <string name="about_dialog_title_version">Версия приложения:</string>

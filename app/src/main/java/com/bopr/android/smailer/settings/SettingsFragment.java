@@ -340,7 +340,7 @@ public class SettingsFragment extends DefaultPreferenceFragment {
     /**
      * Sets default preferences values.
      * We are using multi-activity preferences so some values
-     * won't be read at startup until we start activity that owns these prefs.
+     * won't be read at startup until we start activity that owns these preferences.
      */
     private void loadDefaultPreferences() {
         final SharedPreferences defaultValueSp = getActivity().getSharedPreferences(

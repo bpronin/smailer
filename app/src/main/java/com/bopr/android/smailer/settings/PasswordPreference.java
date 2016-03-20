@@ -27,7 +27,8 @@ public class PasswordPreference extends EditTextPreference {
     private Cryptor cryptor;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public PasswordPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public PasswordPreference(Context context, AttributeSet attrs, int defStyleAttr,
+                              int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init();
     }

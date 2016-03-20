@@ -13,7 +13,7 @@ import com.bopr.android.smailer.util.TagFormatter;
 import java.util.Date;
 
 /**
- * Class ActivityLog.
+ * Application activity log.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
@@ -23,9 +23,7 @@ public class ActivityLog {
 
     public static final int LEVEL_ERROR = Log.ERROR;
     public static final int LEVEL_INFO = Log.INFO;
-
-    public static ActivityLog instance;
-
+    public static final int DEFAULT_CAPACITY = 10000;
     private static final int DB_VERSION = 1;
     public static final String DB_NAME = "smailer.sqlite";
     private static final String TABLE_LOG = "activity_log";
@@ -35,8 +33,11 @@ public class ActivityLog {
     private static final String COLUMN_LOG_LEVEL = "level";
     private static final String COLUMN_LOG_DETAILS = "details";
 
+    public static ActivityLog instance;
+
     private final Context context;
     private final DbHelper helper;
+    private int capacity = DEFAULT_CAPACITY;
 
     public static ActivityLog getInstance(Context context) {
         if (instance == null) {
@@ -54,12 +55,42 @@ public class ActivityLog {
         helper = new DbHelper(context);
     }
 
+    /**
+     * Returns current maximum amount of records that the log may contain.
+     *
+     * @return maximum amount of records
+     */
+    public int getCapacity() {
+        return capacity;
+    }
+
+    /**
+     * Set maximum amount of records that the log may contain.
+     * All records that exceeds this value will be removed.
+     *
+     * @param capacity maximum amount of records
+     */
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+        purge();
+    }
+
+    /**
+     * Adds success record.
+     *
+     * @param message log message
+     */
     public void success(MailMessage message) {
         ActivityLogItem item = new ActivityLogItem(ActivityLog.LEVEL_INFO);
         item.setMessage(formatMessage(message, R.string.activity_log_message_send_email_success));
         add(item);
     }
 
+    /**
+     * Adds error record.
+     *
+     * @param message log message
+     */
     public void error(MailMessage message, Exception error) {
         ActivityLogItem item = new ActivityLogItem(ActivityLog.LEVEL_ERROR);
         item.setMessage(formatMessage(message, R.string.activity_log_message_send_email_failed));
@@ -67,6 +98,11 @@ public class ActivityLog {
         add(item);
     }
 
+    /**
+     * Returns all records as a cursor.
+     *
+     * @return cursor for all records
+     */
     public Cursor getAll() {
         return new Cursor(helper.getReadableDatabase().query(TABLE_LOG,
                 null,
@@ -78,8 +114,25 @@ public class ActivityLog {
         );
     }
 
+    /**
+     * Removes all older records that exceeds specified capacity.
+     */
+    public void purge() {
+//        String sql = "delete from " + TABLE_LOG +
+//                " where " + COLUMN_ID + " not in " +
+//                "(" +
+//                "select " + COLUMN_ID + " from " + TABLE_LOG +
+//                " order by " + COLUMN_ID + " desc " +
+//                "limit " + capacity +
+//                ")";
+//        helper.getWritableDatabase().execSQL(sql);
+    }
+
+    /**
+     * Removes all records from log.
+     */
     public void clear() {
-        helper.getWritableDatabase().execSQL("delete from " + TABLE_LOG);
+        helper.getWritableDatabase().delete(TABLE_LOG, null, null);
     }
 
     private void add(ActivityLogItem item) {
@@ -98,18 +151,18 @@ public class ActivityLog {
         int messageText;
 
         if (message.isMissed()) {
-            messageText = R.string.email_subject_missed_call;
+            messageText = R.string.activity_log_message_missed_call;
         } else if (message.isSms()) {
             if (message.isIncoming()) {
-                messageText = R.string.email_subject_incoming_sms;
+                messageText = R.string.activity_log_message_incoming_sms;
             } else {
-                messageText = R.string.email_subject_outgoing_sms;
+                messageText = R.string.activity_log_message_outgoing_sms;
             }
         } else {
             if (message.isIncoming()) {
-                messageText = R.string.email_subject_incoming_call;
+                messageText = R.string.activity_log_message_incoming_call;
             } else {
-                messageText = R.string.email_subject_outgoing_call;
+                messageText = R.string.activity_log_message_outgoing_call;
             }
         }
 
@@ -143,6 +196,9 @@ public class ActivityLog {
         }
     }
 
+    /**
+     * Cursor that returns values of {@link ActivityLogItem}.
+     */
     public class Cursor extends CursorWrapper {
 
         public Cursor(android.database.Cursor cursor) {

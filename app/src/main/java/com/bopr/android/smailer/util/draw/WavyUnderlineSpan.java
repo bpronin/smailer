@@ -31,7 +31,8 @@ public class WavyUnderlineSpan implements LineBackgroundSpan {
     }
 
     @Override
-    public void drawBackground(Canvas canvas, Paint paint, int left, int right, int top, int baseline, int bottom,
+    public void drawBackground(Canvas canvas, Paint paint, int left, int right, int top,
+                               int baseline, int bottom,
                                CharSequence text, int start, int end, int lnum) {
         Paint p = new Paint(paint);
         p.setColor(color);

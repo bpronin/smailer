@@ -36,8 +36,8 @@ public class TagFormatterUnitTest {
     public void testPut() throws Exception {
         String text = TagFormatter.from("{one}, {two} and {three}")
                 .put("one", "ONE")
-                .put("two","TWO")
-                .put("three","THREE")
+                .put("two", "TWO")
+                .put("three", "THREE")
                 .format();
 
         Assert.assertEquals("ONE, TWO and THREE", text);
@@ -47,21 +47,21 @@ public class TagFormatterUnitTest {
     public void testPutRemoveAbsent() throws Exception {
         String text = TagFormatter.from("{one}, {two} and {three}")
                 .put("one", "ONE")
-                .put("three","THREE")
+                .put("three", "THREE")
                 .format();
 
-        Assert.assertEquals("ONE,  and THREE" ,text);
+        Assert.assertEquals("ONE,  and THREE", text);
     }
 
     @Test
     public void testPutRemoveBlank() throws Exception {
         String text = TagFormatter.from("{one}, {two} and {three}")
                 .put("one", "ONE")
-                .put("two","")
-                .put("three","THREE")
+                .put("two", "")
+                .put("three", "THREE")
                 .format();
 
-        Assert.assertEquals("ONE,  and THREE" ,text);
+        Assert.assertEquals("ONE,  and THREE", text);
     }
 
     @Test
@@ -70,7 +70,7 @@ public class TagFormatterUnitTest {
                 .putList("list", " ", "ONE", "TWO", "THREE")
                 .format();
 
-        Assert.assertEquals("ONE TWO THREE" ,text);
+        Assert.assertEquals("ONE TWO THREE", text);
     }
 
     @Test
@@ -79,7 +79,7 @@ public class TagFormatterUnitTest {
                 .putList("list", " ", "ONE", "TWO", null, "THREE")
                 .format();
 
-        Assert.assertEquals("ONE TWO THREE" ,text);
+        Assert.assertEquals("ONE TWO THREE", text);
     }
 
     @Test
@@ -90,7 +90,7 @@ public class TagFormatterUnitTest {
                 .put("three", "THREE")
                 .format();
 
-        Assert.assertEquals("ONE, TWO and THREE" ,text);
+        Assert.assertEquals("ONE, TWO and THREE", text);
     }
 
     @Test
@@ -101,7 +101,7 @@ public class TagFormatterUnitTest {
                 .putResource("three", THREE)
                 .format();
 
-        Assert.assertEquals("ONE, TWO and THREE" ,text);
+        Assert.assertEquals("ONE, TWO and THREE", text);
     }
 
 }

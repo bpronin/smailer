@@ -26,7 +26,6 @@
 
     <string name="message_error_no_parameters">Some required parameters are not specified.</string>
     <string name="message_error_authentication">Username or password is incorrect.</string>
-    <string name="message_error_sending_email">Unable to send email.\n({error}).</string>
     <string name="message_error_connect">Unable to connect to server</string>
     <string name="message_error_general">Unable to send email.</string>
 
@@ -71,12 +70,17 @@
 
     <string name="activity_log_title">Activity log</string>
     <string name="activity_log_title_refresh">Refresh</string>
-    <string name="activity_log_message_empty_log">Log is empty</string>
+    <string name="activity_log_title_details">Details</string>
+    <string name="activity_log_title_clear">Clear</string>
+    <string name="activity_log_empty_log">Log is empty</string>
     <string name="activity_log_message" translatable="false">{message} {phone}.\n{result}</string>
     <string name="activity_log_message_send_email_failed" translatable="false">Send failed.</string>
     <string name="activity_log_message_send_email_success" translatable="false">Send success.</string>
-    <string name="activity_log_title_details">Details</string>
-    <string name="activity_log_title_clear">Clear</string>
+    <string name="activity_log_message_incoming_sms" translatable="false">Incoming SMS from</string>
+    <string name="activity_log_message_outgoing_sms" translatable="false">Outgoing SMS to</string>
+    <string name="activity_log_message_incoming_call" translatable="false">Incoming call from</string>
+    <string name="activity_log_message_outgoing_call" translatable="false">Outgoing call to</string>
+    <string name="activity_log_message_missed_call" translatable="false">Missed call from</string>
 
     <string name="about_dialog_title_version">Application version:</string>
 

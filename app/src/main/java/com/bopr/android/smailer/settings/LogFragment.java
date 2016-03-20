@@ -39,7 +39,7 @@ public class LogFragment extends ListFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setEmptyText(getResources().getString(R.string.activity_log_message_empty_log));
+        setEmptyText(getResources().getString(R.string.activity_log_empty_log));
     }
 
     @Override

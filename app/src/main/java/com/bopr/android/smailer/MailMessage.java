@@ -21,7 +21,8 @@ public class MailMessage {
     private Double latitude;
     private Double longitude;
 
-    public MailMessage(String phone, boolean incoming, long startTime, long endTime, boolean missed, boolean sms,
+    public MailMessage(String phone, boolean incoming, long startTime, long endTime, boolean missed,
+                       boolean sms,
                        String body, double latitude, double longitude
     ) {
         this.body = body;
@@ -35,7 +36,8 @@ public class MailMessage {
         this.sms = sms;
     }
 
-    public MailMessage(String phone, boolean incoming, long startTime, long endTime, boolean missed, boolean sms,
+    public MailMessage(String phone, boolean incoming, long startTime, long endTime, boolean missed,
+                       boolean sms,
                        String body, Location location
     ) {
         this.body = body;

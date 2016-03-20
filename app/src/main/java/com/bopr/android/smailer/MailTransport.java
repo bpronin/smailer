@@ -35,6 +35,9 @@ public class MailTransport {
     public MailTransport() {
     }
 
+    /**
+     * Initialize transport with specified properties.
+     */
     public void init(String user, String password, String host, String port) {
         Properties props = new Properties();
         props.setProperty("mail.transport.protocol", "smtp");
@@ -56,7 +59,11 @@ public class MailTransport {
         });
     }
 
-    public void send(String subject, String body, String sender, String recipients) throws MessagingException {
+    /**
+     * Sends email.
+     */
+    public void send(String subject, String body, String sender,
+                     String recipients) throws MessagingException {
         DataHandler handler = new DataHandler(new ByteArrayDataSource(body.getBytes(), false));
 
         MimeMessage message = new MimeMessage(session);

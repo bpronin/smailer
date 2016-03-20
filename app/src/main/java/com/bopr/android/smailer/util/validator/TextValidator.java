@@ -1,12 +1,10 @@
 package com.bopr.android.smailer.util.validator;
 
-import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.draw.WavyUnderlineSpan;
 
 /**
@@ -39,7 +37,8 @@ public abstract class TextValidator implements TextWatcher {
     }
 
     @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) { /* do nothing */ }
+    public void beforeTextChanged(CharSequence s, int start, int count,
+                                  int after) { /* do nothing */ }
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) { /* do nothing */ }
