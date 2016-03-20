@@ -50,15 +50,15 @@
     <string name="email_subject_missed_call">Пропущенный звонок от</string>
 
     <string name="email_body_sent">Отправлено{device_name}{time}</string>
-    <string name="email_body_time">в {time}</string>
+    <string name="email_body_time"> {time}</string>
     <string name="email_body_called">Вы звонили: {phone}{name}</string>
     <string name="email_body_caller">Вам звонил: {phone}{name}</string>
+    <string name="email_body_sender">Отправитель: {phone}{name}</string>
     <string name="email_body_from">с {device_name}</string>
     <string name="email_body_incoming_call">Входящий звонок длительностью {duration}.</string>
     <string name="email_body_location">Последнее известное местоположение: {location}</string>
     <string name="email_body_missed_call">Пропущенный звонок.</string>
     <string name="email_body_outgoing_call">Исходящий звонок длительностью {duration}.</string>
-    <string name="email_body_sender">Отправитель: {phone}{name}</string>
     <string name="email_body_unknown_contact">Неизвестный контакт</string>
     <string name="email_body_unknown_location">неизвестно</string>
 
