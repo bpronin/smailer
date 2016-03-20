@@ -23,21 +23,23 @@ public class ActivityLog {
 
     public static final int LEVEL_ERROR = Log.ERROR;
     public static final int LEVEL_INFO = Log.INFO;
-    public static final int DEFAULT_CAPACITY = 10000;
     private static final int DB_VERSION = 1;
     public static final String DB_NAME = "smailer.sqlite";
     private static final String TABLE_LOG = "activity_log";
+    private static final String TABLE_SYSTEM = "system_data";
     private static final String COLUMN_ID = "_id";
     private static final String COLUMN_LOG_TIMESTAMP = "timestamp";
     private static final String COLUMN_LOG_MESSAGE = "message";
     private static final String COLUMN_LOG_LEVEL = "level";
     private static final String COLUMN_LOG_DETAILS = "details";
+    private static final String COLUMN_PURGE_TIME = "purge_time";
 
     public static ActivityLog instance;
 
     private final Context context;
     private final DbHelper helper;
-    private int capacity = DEFAULT_CAPACITY;
+    private int capacity = 10000;
+    private long purgePeriod = 86400000;
 
     public static ActivityLog getInstance(Context context) {
         if (instance == null) {
@@ -50,15 +52,13 @@ public class ActivityLog {
         return instance;
     }
 
-    private ActivityLog(Context context) {
+    protected ActivityLog(Context context) {
         this.context = context;
         helper = new DbHelper(context);
     }
 
     /**
-     * Returns current maximum amount of records that the log may contain.
-     *
-     * @return maximum amount of records
+     * Returns maximum amount of records that the log may contain.
      */
     public int getCapacity() {
         return capacity;
@@ -72,7 +72,22 @@ public class ActivityLog {
      */
     public void setCapacity(int capacity) {
         this.capacity = capacity;
-        purge();
+    }
+
+    /**
+     * Returns time period that should exceed until addition of new record triggers purge process
+     * that removes stale records.
+     */
+    public long getPurgePeriod() {
+        return purgePeriod;
+    }
+
+    /**
+     * Sets time period that should exceed until addition of new record triggers purge process
+     * that removes stale records.
+     */
+    public void setPurgePeriod(long purgePeriod) {
+        this.purgePeriod = purgePeriod;
     }
 
     /**
@@ -80,7 +95,7 @@ public class ActivityLog {
      *
      * @param message log message
      */
-    public void success(MailMessage message) {
+    public synchronized void success(MailMessage message) {
         ActivityLogItem item = new ActivityLogItem(ActivityLog.LEVEL_INFO);
         item.setMessage(formatMessage(message, R.string.activity_log_message_send_email_success));
         add(item);
@@ -91,7 +106,7 @@ public class ActivityLog {
      *
      * @param message log message
      */
-    public void error(MailMessage message, Exception error) {
+    public synchronized void error(MailMessage message, Exception error) {
         ActivityLogItem item = new ActivityLogItem(ActivityLog.LEVEL_ERROR);
         item.setMessage(formatMessage(message, R.string.activity_log_message_send_email_failed));
         item.setDetails(error.toString());
@@ -103,7 +118,7 @@ public class ActivityLog {
      *
      * @return cursor for all records
      */
-    public Cursor getAll() {
+    public synchronized Cursor getAll() {
         return new Cursor(helper.getReadableDatabase().query(TABLE_LOG,
                 null,
                 null,
@@ -115,24 +130,75 @@ public class ActivityLog {
     }
 
     /**
-     * Removes all older records that exceeds specified capacity.
+     * Removes all records from log.
      */
-    public void purge() {
-//        String sql = "delete from " + TABLE_LOG +
-//                " where " + COLUMN_ID + " not in " +
-//                "(" +
-//                "select " + COLUMN_ID + " from " + TABLE_LOG +
-//                " order by " + COLUMN_ID + " desc " +
-//                "limit " + capacity +
-//                ")";
-//        helper.getWritableDatabase().execSQL(sql);
+    public synchronized void clear() {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            db.delete(TABLE_LOG, null, null);
+            updateLastPurgeTime(db);
+
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
     }
 
     /**
-     * Removes all records from log.
+     * Removes all stale records that exceeds specified capacity if given
+     * period of time has elapsed.
      */
-    public void clear() {
-        helper.getWritableDatabase().delete(TABLE_LOG, null, null);
+    private void purge() {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            if (getCurrentSize(db) >= capacity
+                    && System.currentTimeMillis() - getLastPurgeTime(db) >= purgePeriod) {
+                db.execSQL("delete from " + TABLE_LOG +
+                        " where " + COLUMN_ID + " not in " +
+                        "(" +
+                        "select " + COLUMN_ID + " from " + TABLE_LOG +
+                        " order by " + COLUMN_ID + " desc " +
+                        "limit " + capacity +
+                        ")");
+
+                updateLastPurgeTime(db);
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    private long getCurrentSize(SQLiteDatabase db) {
+        android.database.Cursor cursor = db.query(TABLE_LOG,
+                new String[]{"COUNT(*)"}, null, null, null, null, null);
+        cursor.moveToFirst();
+        try {
+            return cursor.getLong(0);
+        } finally {
+            cursor.close();
+        }
+    }
+
+    private long getLastPurgeTime(SQLiteDatabase db) {
+        android.database.Cursor cursor = db.query(TABLE_SYSTEM,
+                new String[]{COLUMN_PURGE_TIME}, COLUMN_ID + "=0", null, null, null, null);
+        cursor.moveToFirst();
+        try {
+            return cursor.getLong(cursor.getColumnIndex(COLUMN_PURGE_TIME));
+        } finally {
+            cursor.close();
+        }
+    }
+
+    private void updateLastPurgeTime(SQLiteDatabase db) {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_ID, 0);
+        long value = System.currentTimeMillis();
+        values.put(COLUMN_PURGE_TIME, value);
+        db.replace(TABLE_SYSTEM, null, values);
     }
 
     private void add(ActivityLogItem item) {
@@ -144,6 +210,8 @@ public class ActivityLog {
 
         long id = helper.getWritableDatabase().insert(TABLE_LOG, null, values);
         item.setId(id);
+
+        purge();
     }
 
     @NonNull
@@ -188,6 +256,11 @@ public class ActivityLog {
                     COLUMN_LOG_MESSAGE + " varchar(100)," +
                     COLUMN_LOG_DETAILS + " varchar(200)" +
                     ")");
+            db.execSQL("create table " + TABLE_SYSTEM + " (" +
+                    COLUMN_ID + " integer primary key, " +
+                    COLUMN_PURGE_TIME + " integer" +
+                    ")");
+            updateLastPurgeTime(db);
         }
 
         @Override
