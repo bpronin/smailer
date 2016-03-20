@@ -51,17 +51,17 @@ public class ActivityLogTest extends ApplicationTestCase<Application> {
         assertEquals(10, items.size());
 
         /* Descending order! */
-        assertEquals("Missed call from +79052345675.\nSend failed.", items.get(0).getMessage());
-        assertEquals("Outgoing call to +79052345674.\nSend failed.", items.get(1).getMessage());
-        assertEquals("Incoming call from +79052345673.\nSend failed.", items.get(2).getMessage());
-        assertEquals("Outgoing SMS to +79052345672.\nSend failed.", items.get(3).getMessage());
-        assertEquals("Incoming SMS from +79052345671.\nSend failed.", items.get(4).getMessage());
+        assertEquals("Missed call from +79052345675. Send failed.", items.get(0).getMessage());
+        assertEquals("Outgoing call to +79052345674. Send failed.", items.get(1).getMessage());
+        assertEquals("Incoming call from +79052345673. Send failed.", items.get(2).getMessage());
+        assertEquals("Outgoing SMS to +79052345672. Send failed.", items.get(3).getMessage());
+        assertEquals("Incoming SMS from +79052345671. Send failed.", items.get(4).getMessage());
 
-        assertEquals("Missed call from +79052345675.\nSend success.", items.get(5).getMessage());
-        assertEquals("Outgoing call to +79052345674.\nSend success.", items.get(6).getMessage());
-        assertEquals("Incoming call from +79052345673.\nSend success.", items.get(7).getMessage());
-        assertEquals("Outgoing SMS to +79052345672.\nSend success.", items.get(8).getMessage());
-        assertEquals("Incoming SMS from +79052345671.\nSend success.", items.get(9).getMessage());
+        assertEquals("Missed call from +79052345675. Send success.", items.get(5).getMessage());
+        assertEquals("Outgoing call to +79052345674. Send success.", items.get(6).getMessage());
+        assertEquals("Incoming call from +79052345673. Send success.", items.get(7).getMessage());
+        assertEquals("Outgoing SMS to +79052345672. Send success.", items.get(8).getMessage());
+        assertEquals("Incoming SMS from +79052345671. Send success.", items.get(9).getMessage());
 
         assertEquals("java.lang.Exception: Test 5", items.get(0).getDetails());
         assertEquals("java.lang.Exception: Test 4", items.get(1).getDetails());

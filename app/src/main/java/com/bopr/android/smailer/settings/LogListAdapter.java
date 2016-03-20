@@ -20,7 +20,6 @@ import com.bopr.android.smailer.R;
  */
 class LogListAdapter extends CursorAdapter {
 
-    private static final String DATE_PATTERN = "yyyy-MM-dd\nHH:mm:ss";
     private final LayoutInflater inflater;
     private final int errorColor;
     private int defaultColor;
@@ -58,7 +57,7 @@ class LogListAdapter extends CursorAdapter {
 //            android.R.drawable.stat_notify_missed_call;
 //            android.R.drawable.ic_menu_call;
 
-        timeView.setText(DateFormat.format(DATE_PATTERN, item.getTime()));
+        timeView.setText(DateFormat.format(context.getString(R.string.activity_log_time_pattern), item.getTime()));
         messageView.setText(item.getMessage());
     }
 

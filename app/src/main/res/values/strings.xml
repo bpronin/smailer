@@ -8,14 +8,15 @@
     <string name="pref_title_recipients">Recipients</string>
     <string name="pref_title_sender_password">Password</string>
     <string name="pref_title_server">Server</string>
-    <string name="pref_title_outgoing_server">Outgoing server</string>
+    <string name="pref_title_outgoing_server">Outgoing email server</string>
     <string name="pref_title_host">Host</string>
     <string name="pref_title_port">Port</string>
-    <string name="pref_title_email_content">Email message content</string>
     <string name="pref_title_trigger">Triggers</string>
-    <string name="pref_title_outgoing_email">Outgoing email address</string>
-    <string name="pref_title_outgoing_password">Outgoing email password</string>
     <string name="pref_title_content">Content</string>
+    <string name="pref_dialog_title_email">Outgoing email address</string>
+    <string name="pref_dialog_title_password">Outgoing email password</string>
+    <string name="pref_dialog_title_email_content">Email message content</string>
+    <string name="pref_dialog_title_trigger">Triggers</string>
 
     <string name="pref_description_service_on">Email will be sent out</string>
     <string name="pref_description_service_off">No email will be sent out</string>
@@ -42,8 +43,8 @@
     <string name="message_permission_rationale_location">Location read permission is needed to add device location into email message.</string>
 
     <string name="message_comma_separated_recipient">Separate multiple recipients with comma.</string>
-    <string name="message_password_stored_encrypted">Password is stored encrypted only on the device.</string>
     <string name="message_account_hint">Email address to send email from.</string>
+    <string name="message_password_hint">Password of account to send email from.</string>
     <string name="message_at_least_one_item_checked">At least one item should be selected.</string>
 
     <string name="email_subject_incoming_sms">Incoming SMS from</string>
@@ -73,7 +74,8 @@
     <string name="activity_log_title_details">Details</string>
     <string name="activity_log_title_clear">Clear</string>
     <string name="activity_log_empty_log">Log is empty</string>
-    <string name="activity_log_message" translatable="false">{message} {phone}.\n{result}</string>
+    <string name="activity_log_time_pattern" translatable="false">yyyy-MM-dd HH:mm:ss</string>
+    <string name="activity_log_message" translatable="false">{message} {phone}. {result}</string>
     <string name="activity_log_message_send_email_failed" translatable="false">Send failed.</string>
     <string name="activity_log_message_send_email_success" translatable="false">Send success.</string>
     <string name="activity_log_message_incoming_sms" translatable="false">Incoming SMS from</string>
