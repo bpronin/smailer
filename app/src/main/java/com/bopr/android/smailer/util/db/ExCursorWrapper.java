@@ -49,7 +49,7 @@ public class ExCursorWrapper extends CursorWrapper {
         try {
             moveToFirst();
             if (!isBeforeFirst() && !isAfterLast()) {
-                return reader.read(columnName, this);
+                return reader.read(columnName);
             }
             return null;
         } finally {
@@ -61,14 +61,24 @@ public class ExCursorWrapper extends CursorWrapper {
         return getAndClose(columnName, new ValueReader<String>() {
 
             @Override
-            public String read(String columnName, ExCursorWrapper cursor) {
+            public String read(String columnName) {
                 return getString(columnName);
             }
         });
     }
 
+    public long getLongAndClose(String columnName) {
+        return getAndClose(columnName, new ValueReader<Long>() {
+
+            @Override
+            public Long read(String columnName) {
+                return getLong(columnName);
+            }
+        });
+    }
+
     private interface ValueReader<T> {
-        T read(String columnName, ExCursorWrapper cursor);
+        T read(String columnName);
     }
 
 }

@@ -26,6 +26,7 @@ public class Database {
     private static final String TABLE_MESSAGES = "messages";
     private static final String TABLE_MESSAGE_TEXT = "message_text";
     private static final String TABLE_MESSAGE_DETAILS = "message_details";
+    private static final String COLUMN_COUNT = "COUNT(*)";
     private static final String COLUMN_ID = "_id";
     private static final String COLUMN_MESSAGE_ID = "message_id";
     private static final String COLUMN_PURGE_TIME = "messages_purge_time";
@@ -133,7 +134,7 @@ public class Database {
                 db.insert(TABLE_MESSAGE_TEXT, null, values);
             }
 
-            if (error!= null) {
+            if (error != null) {
                 values = new ContentValues();
                 values.put(COLUMN_MESSAGE_ID, id);
                 values.put(COLUMN_DETAILS, error.toString());
@@ -145,6 +146,12 @@ public class Database {
         } finally {
             db.endTransaction();
         }
+    }
+
+    public boolean hasUnsent() {
+        return new ExCursorWrapper(helper.getReadableDatabase().query(TABLE_MESSAGES,
+                new String[]{COLUMN_COUNT}, COLUMN_IS_SENT + "=0", null, null, null, null)
+        ).getLongAndClose(COLUMN_COUNT) > 0;
     }
 
     /**
@@ -191,25 +198,15 @@ public class Database {
     }
 
     private long getCurrentSize(SQLiteDatabase db) {
-        Cursor cursor = db.query(TABLE_MESSAGES,
-                new String[]{"COUNT(*)"}, null, null, null, null, null);
-        cursor.moveToFirst();
-        try {
-            return cursor.getLong(0);
-        } finally {
-            cursor.close();
-        }
+        return new ExCursorWrapper(db.query(TABLE_MESSAGES,
+                new String[]{COLUMN_COUNT}, null, null, null, null, null)
+        ).getLongAndClose(COLUMN_COUNT);
     }
 
     private long getLastPurgeTime(SQLiteDatabase db) {
-        Cursor cursor = db.query(TABLE_SYSTEM,
-                new String[]{COLUMN_PURGE_TIME}, COLUMN_ID + "=0", null, null, null, null);
-        cursor.moveToFirst();
-        try {
-            return cursor.getLong(cursor.getColumnIndex(COLUMN_PURGE_TIME));
-        } finally {
-            cursor.close();
-        }
+        return new ExCursorWrapper(db.query(TABLE_SYSTEM,
+                new String[]{COLUMN_PURGE_TIME}, COLUMN_ID + "=0", null, null, null, null)
+        ).getLongAndClose(COLUMN_PURGE_TIME);
     }
 
     private void updateLastPurgeTime(SQLiteDatabase db) {
@@ -232,32 +229,36 @@ public class Database {
         }
 
         @Override
+        public void onOpen(SQLiteDatabase db) {
+            super.onOpen(db);
+            db.execSQL("PRAGMA foreign_keys = ON");
+        }
+
+        @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL("create table " + TABLE_MESSAGES + " (" +
-                    COLUMN_ID + " integer primary key autoincrement, " +
-                    COLUMN_IS_SENT + " integer, " +
-                    COLUMN_IS_INCOMING + " integer, " +
-                    COLUMN_IS_MISSED + " integer, " +
-                    COLUMN_IS_SMS + " integer, " +
-                    COLUMN_START_TIME + " integer, " +
-                    COLUMN_END_TIME + " integer, " +
-                    COLUMN_LATITUDE + " real, " +
-                    COLUMN_LONGITUDE + " real, " +
-                    COLUMN_PHONE + " text(25)" +
+            db.execSQL("CREATE TABLE " + TABLE_MESSAGES + " (" +
+                    COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    COLUMN_IS_SENT + " INTEGER, " +
+                    COLUMN_IS_INCOMING + " INTEGER, " +
+                    COLUMN_IS_MISSED + " INTEGER, " +
+                    COLUMN_IS_SMS + " INTEGER, " +
+                    COLUMN_START_TIME + " INTEGER, " +
+                    COLUMN_END_TIME + " INTEGER, " +
+                    COLUMN_LATITUDE + " REAL, " +
+                    COLUMN_LONGITUDE + " REAL, " +
+                    COLUMN_PHONE + " TEXT(25)" +
                     ")");
-            db.execSQL("create table " + TABLE_MESSAGE_TEXT + " (" +
-                    COLUMN_ID + " integer primary key autoincrement, " +
-                    COLUMN_MESSAGE_ID + " integer references " + TABLE_MESSAGES + "(" + COLUMN_ID + ") on delete cascade, " +
-                    COLUMN_TEXT + " text(256)" +
+            db.execSQL("CREATE TABLE " + TABLE_MESSAGE_TEXT + " (" +
+                    COLUMN_MESSAGE_ID + " INTEGER REFERENCES " + TABLE_MESSAGES + "(" + COLUMN_ID + ") ON DELETE CASCADE, " +
+                    COLUMN_TEXT + " TEXT(256)" +
                     ")");
-            db.execSQL("create table " + TABLE_MESSAGE_DETAILS + " (" +
-                    COLUMN_ID + " integer primary key autoincrement, " +
-                    COLUMN_MESSAGE_ID + " integer references " + TABLE_MESSAGES + "(" + COLUMN_ID + ") on delete cascade, " +
-                    COLUMN_DETAILS + " text(256)" +
+            db.execSQL("CREATE TABLE " + TABLE_MESSAGE_DETAILS + " (" +
+                    COLUMN_MESSAGE_ID + " INTEGER REFERENCES " + TABLE_MESSAGES + "(" + COLUMN_ID + ") ON DELETE CASCADE, " +
+                    COLUMN_DETAILS + " TEXT(256)" +
                     ")");
-            db.execSQL("create table " + TABLE_SYSTEM + " (" +
-                    COLUMN_ID + " integer primary key, " +
-                    COLUMN_PURGE_TIME + " integer" +
+            db.execSQL("CREATE TABLE " + TABLE_SYSTEM + " (" +
+                    COLUMN_ID + " INTEGER PRIMARY KEY, " +
+                    COLUMN_PURGE_TIME + " INTEGER" +
                     ")");
             updateLastPurgeTime(db);
         }

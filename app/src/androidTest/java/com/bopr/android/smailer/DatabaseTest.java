@@ -157,13 +157,22 @@ public class DatabaseTest extends ApplicationTestCase<Application> {
 
         /* last addition should trigger purge process cause total elapsed time exceeds purge period */
         assertEquals(5, database.getMessages().getCount());
+    }
 
-//        List<MailMessage> items = asList(database.getMessages());
-//        assertEquals("Incoming SMS from 11. Send success.", items.get(0).getMessage());
-//        assertEquals("Missed call from 10. Send failed.", items.get(1).getMessage());
-//        assertEquals("Outgoing call to 9. Send failed.", items.get(2).getMessage());
-//        assertEquals("Incoming call from 8. Send failed.", items.get(3).getMessage());
-//        assertEquals("Outgoing SMS to 7. Send failed.", items.get(4).getMessage());
+    /**
+     * Check {@link Database#hasUnsent()} method.
+     *
+     * @throws Exception when failed
+     */
+    public void testHasUnsent() throws Exception {
+        database.addMessage(new MailMessage("+79052345671", true, 1000, 2000, false, true, "SMS text", 10.5, 20.5, true), new Exception("Test 1"));
+        assertFalse(database.hasUnsent());
+
+        database.addMessage(new MailMessage("+79052345672", false, 2000, 0, false, true, null, 0, 0, false), null);
+        assertTrue(database.hasUnsent());
+
+        database.clear();
+        assertFalse(database.hasUnsent());
     }
 
 }
