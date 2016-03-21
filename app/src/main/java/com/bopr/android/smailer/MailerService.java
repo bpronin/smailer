@@ -72,16 +72,16 @@ public class MailerService extends IntentService {
     }
 
     private MailMessage parseCallIntent(Intent intent) {
-        return new MailMessage(
-                intent.getStringExtra(EXTRA_PHONE_NUMBER),
-                intent.getBooleanExtra(EXTRA_INCOMING, true),
-                intent.getLongExtra(EXTRA_START_TIME, 0),
-                intent.getLongExtra(EXTRA_END_TIME, 0),
-                intent.getBooleanExtra(EXTRA_MISSED, false),
-                false,
-                null,
-                locationProvider.getLocation()
-        );
+        MailMessage message = new MailMessage();
+        message.setPhone(intent.getStringExtra(EXTRA_PHONE_NUMBER));
+        message.setIncoming(intent.getBooleanExtra(EXTRA_INCOMING, true));
+        message.setStartTime(intent.getLongExtra(EXTRA_START_TIME, 0));
+        message.setEndTime(intent.getLongExtra(EXTRA_END_TIME, 0));
+        message.setMissed(intent.getBooleanExtra(EXTRA_MISSED, false));
+        message.setSms(false);
+        message.setLocation(locationProvider.getLocation());
+
+        return message;
     }
 
     private MailMessage parseSmsIntent(Intent intent) {
@@ -104,16 +104,15 @@ public class MailerService extends IntentService {
                 text += message.getDisplayMessageBody();
             }
 
-            return new MailMessage(
-                    messages[0].getDisplayOriginatingAddress(),
-                    true,
-                    messages[0].getTimestampMillis(),
-                    0,
-                    false,
-                    true,
-                    text,
-                    locationProvider.getLocation()
-            );
+            MailMessage message = new MailMessage();
+            message.setPhone(messages[0].getDisplayOriginatingAddress());
+            message.setIncoming(true);
+            message.setStartTime(messages[0].getTimestampMillis());
+            message.setSms(true);
+            message.setText(text);
+            message.setLocation(locationProvider.getLocation());
+
+            return message;
         }
         return null;
     }

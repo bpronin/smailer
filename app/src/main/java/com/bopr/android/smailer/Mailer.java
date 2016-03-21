@@ -22,21 +22,21 @@ public class Mailer {
     private final MailTransport transport;
     private final Cryptor cryptor;
     private final Notifications notifications;
-    private final ActivityLog log;
+    private final Database database;
 
     public Mailer(Context context, MailTransport transport, Cryptor cryptor,
                   Notifications notifications,
-                  ActivityLog log) {
+                  Database database) {
         this.context = context;
         this.transport = transport;
         this.cryptor = cryptor;
         this.notifications = notifications;
-        this.log = log;
+        this.database = database;
     }
 
     public Mailer(Context context) {
         this(context, new MailTransport(), new Cryptor(context), new Notifications(),
-                ActivityLog.getInstance(context));
+                new Database(context));
     }
 
     /**
@@ -62,22 +62,24 @@ public class Mailer {
             try {
                 transport.send(formatter.getSubject(), formatter.getBody(), properties.getUser(),
                         properties.getRecipients());
-                log.success(message);
+
+                message.setSent(true);
+                database.addMessage(message, null);
                 notifications.removeMailError(context);
             } catch (AuthenticationFailedException x) {
-                Log.e(TAG, "Error sending message: " + message, x);
-                log.error(message, x);
-                notifications.showMailError(context, R.string.message_error_authentication);
+                handleError(message, x, R.string.message_error_authentication);
             } catch (MailConnectException x) {
-                Log.e(TAG, "Error sending message: " + message, x);
-                log.error(message, x);
-                notifications.showMailError(context, R.string.message_error_connect);
+                handleError(message, x, R.string.message_error_connect);
             } catch (Exception x) {
-                Log.e(TAG, "Error sending message: " + message, x);
-                log.error(message, x);
-                notifications.showMailError(context, R.string.message_error_general);
+                handleError(message, x, R.string.message_error_general);
             }
         }
+    }
+
+    private void handleError(MailMessage message, Exception x, int notificationMessage) {
+        Log.e(TAG, "Error sending message: " + message, x);
+        database.addMessage(message, x);
+        notifications.showMailError(context, notificationMessage);
     }
 
 }

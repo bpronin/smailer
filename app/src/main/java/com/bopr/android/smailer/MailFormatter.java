@@ -104,7 +104,7 @@ public class MailFormatter {
         if (message.isMissed()) {
             return resources.getString(R.string.email_body_missed_call);
         } else if (message.isSms()) {
-            return message.getBody();
+            return message.getText();
         } else {
             int pattern;
             if (message.isIncoming()) {
@@ -183,10 +183,9 @@ public class MailFormatter {
     }
 
     private String getTimeText() {
-        Date time = message.getStartTime();
-        if (time != null) {
+        if (message.getStartTime() != 0) {
             return " " + from(R.string.email_body_time, resources)
-                    .put("time", DateFormat.getDateTimeInstance().format(time))
+                    .put("time", DateFormat.getDateTimeInstance().format(new Date(message.getStartTime())))
                     .format();
         }
         return null;

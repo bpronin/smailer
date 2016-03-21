@@ -2,8 +2,6 @@ package com.bopr.android.smailer;
 
 import android.location.Location;
 
-import java.util.Date;
-
 /**
  * Class MailMessage.
  *
@@ -11,43 +9,41 @@ import java.util.Date;
  */
 public class MailMessage {
 
+    private long id = -1;
+    private boolean sent;
     private boolean sms;
     private boolean incoming;
     private boolean missed;
     private String phone;
-    private Date startTime;
-    private Date endTime;
-    private String body;
+    private long startTime;
+    private long endTime;
+    private String text;
     private Double latitude;
     private Double longitude;
 
-    public MailMessage(String phone, boolean incoming, long startTime, long endTime, boolean missed,
-                       boolean sms,
-                       String body, double latitude, double longitude
-    ) {
-        this.body = body;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.endTime = new Date(endTime);
-        this.startTime = new Date(startTime);
-        this.phone = phone;
-        this.missed = missed;
-        this.incoming = incoming;
-        this.sms = sms;
+    public MailMessage() {
     }
 
     public MailMessage(String phone, boolean incoming, long startTime, long endTime, boolean missed,
-                       boolean sms,
-                       String body, Location location
-    ) {
-        this.body = body;
-        this.endTime = new Date(endTime);
-        this.startTime = new Date(startTime);
+                       boolean sms, String text, double latitude, double longitude, boolean sent) {
+        this.text = text;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.endTime = endTime;
+        this.startTime = startTime;
         this.phone = phone;
         this.missed = missed;
         this.incoming = incoming;
         this.sms = sms;
-        setLocation(location);
+        this.sent = sent;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public boolean isSms() {
@@ -82,31 +78,31 @@ public class MailMessage {
         this.phone = phone;
     }
 
-    public Date getStartTime() {
+    public long getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Date startTime) {
+    public void setStartTime(long startTime) {
         this.startTime = startTime;
     }
 
-    public Date getEndTime() {
+    public long getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Date endTime) {
+    public void setEndTime(long endTime) {
         this.endTime = endTime;
     }
 
-    public String getBody() {
-        return body;
+    public String getText() {
+        return text;
     }
 
-    public void setBody(String body) {
-        this.body = body;
+    public void setText(String text) {
+        this.text = text;
     }
 
-    private void setLocation(Location location) {
+    public void setLocation(Location location) {
         if (location != null) {
             this.latitude = location.getLatitude();
             this.longitude = location.getLongitude();
@@ -130,24 +126,31 @@ public class MailMessage {
     }
 
     public long getCallDuration() {
-        if (startTime != null && endTime != null) {
-            return endTime.getTime() - startTime.getTime();
-        }
-        return 0;
+        return endTime - startTime;
+    }
+
+    public void setSent(boolean sent) {
+        this.sent = sent;
+    }
+
+    public boolean isSent() {
+        return sent;
     }
 
     @Override
     public String toString() {
         return "MailMessage{" +
-                "sms=" + sms +
+                "id=" + id +
+                ", sms=" + sms +
                 ", incoming=" + incoming +
                 ", missed=" + missed +
                 ", phone='" + phone + '\'' +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
-                ", body='" + body + '\'' +
+                ", text='" + text + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
+                ", sent=" + sent +
                 '}';
     }
 }

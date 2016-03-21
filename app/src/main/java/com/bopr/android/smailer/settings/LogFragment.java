@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.bopr.android.smailer.ActivityLog;
+import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.R;
 
 /**
@@ -21,12 +21,12 @@ import com.bopr.android.smailer.R;
  */
 public class LogFragment extends ListFragment {
 
-    private ActivityLog log;
+    private Database database;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        log = ActivityLog.getInstance(getActivity());
+        database = new Database(getActivity());
         setHasOptionsMenu(true);
         return super.onCreateView(inflater, container, savedInstanceState);
     }
@@ -67,8 +67,7 @@ public class LogFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView list, View v, int position, long id) {
         super.onListItemClick(list, v, position, id);
-        ActivityLog.Cursor cursor = (ActivityLog.Cursor) list.getAdapter().getItem(position);
-        String details = cursor.get().getDetails();
+        String details = database.getMessageDetails(id);
         if (details != null) {
             new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.activity_log_title_details)
@@ -78,7 +77,7 @@ public class LogFragment extends ListFragment {
     }
 
     private void refreshData() {
-        setListAdapter(new LogListAdapter(getActivity(), log.getAll()));
+        setListAdapter(new LogListAdapter(getActivity(), database.getMessages()));
     }
 
     private void clearData() {
@@ -88,7 +87,7 @@ public class LogFragment extends ListFragment {
                 .setPositiveButton("Clear", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        log.clear();
+                        database.clear();
                         refreshData();
                     }
                 })
