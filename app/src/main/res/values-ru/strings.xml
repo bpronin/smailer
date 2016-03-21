@@ -51,9 +51,9 @@
 
     <string name="email_body_sent">Отправлено{device_name}{time}</string>
     <string name="email_body_time"> {time}</string>
-    <string name="email_body_called">Вы звонили: {phone}{name}</string>
-    <string name="email_body_caller">Вам звонил: {phone}{name}</string>
-    <string name="email_body_sender">Отправитель: {phone}{name}</string>
+    <string name="email_body_called">Вы звонили: {phone} ({name})</string>
+    <string name="email_body_caller">Вам звонил: {phone} ({name})</string>
+    <string name="email_body_sender">Отправитель: {phone} ({name})</string>
     <string name="email_body_from">с {device_name}</string>
     <string name="email_body_incoming_call">Входящий звонок длительностью {duration}.</string>
     <string name="email_body_location">Последнее известное местоположение: {location}</string>

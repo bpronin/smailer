@@ -157,7 +157,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
         /* test start */
 
         Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, database);
-        mailer.send(new MailMessage("+12345678901", false, 0, 0, false, false, null, 0, 0, true));
+        mailer.send(new MailMessage("+12345678901", false, 0, 0, false, false, null, 30.0, 60.0, true));
 
         assertNull(errorArgs.get());
         assertArrayEquals(new Object[]{"user", "decrypted password", "smtp.gmail.com", "465"}, initArgs.get());
@@ -165,8 +165,8 @@ public class MailerTest extends ApplicationTestCase<Application> {
                 "<html><head>" +
                         "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                         "You had an outgoing call of 0:00:00 duration. <hr style=\"border: none; background-color: #cccccc; height: 1px;\"> " +
-                        "Called: <a href=\"tel:+12345678901\">+12345678901 (John Dou)</a><br>" +
-                        "Last known device location: <a href=\"http://maps.google.com/maps/place/0.0,0.0\">0&#176;0'0\"S, 0&#176;0'0\"E</a><br>" +
+                        "Called: <a href=\"tel:+12345678901\">+12345678901</a> (John Dou)<br>" +
+                        "Last known device location: <a href=\"http://maps.google.com/maps/place/30.0,60.0\">30&#176;0'0\"N, 60&#176;0'0\"W</a><br>" +
                         "Sent from Unknown Custom Phone - 5.1.0 - API 22 - 768x1280 at Dec 31, 1969 7:00:00 PM" +
                         "</body></html>",
                 "user", "recipient"}, sendArgs.get());
@@ -193,7 +193,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
         /* test start */
 
         Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, database);
-        mailer.send(new MailMessage("+12345678901", false, 0, 0, false, false, null, 0, 0, true));
+        mailer.send(new MailMessage("+12345678901", false, 0, 0, false, false, null, null, null, true));
 
         assertNull(initArgs.get());
         assertNull(sendArgs.get());
@@ -222,7 +222,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
         /* test start */
 
         Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, database);
-        mailer.send(new MailMessage("+12345678901", false, 0, 0, false, false, null, 0, 0, true));
+        mailer.send(new MailMessage("+12345678901", false, 0, 0, false, false, null, null, null, true));
 
         assertNull(initArgs.get());
         assertNull(sendArgs.get());
@@ -250,7 +250,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
         /* test start */
 
         Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, database);
-        mailer.send(new MailMessage("+12345678901", false, 0, 0, false, false, null, 0, 0, true));
+        mailer.send(new MailMessage("+12345678901", false, 0, 0, false, false, null, null, null, true));
 
         assertNull(initArgs.get());
         assertNull(sendArgs.get());
@@ -278,7 +278,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
         /* test start */
 
         Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, database);
-        mailer.send(new MailMessage("+12345678901", false, 0, 0, false, false, null, 0, 0, true));
+        mailer.send(new MailMessage("+12345678901", false, 0, 0, false, false, null, null, null, true));
 
         assertNull(initArgs.get());
         assertNull(sendArgs.get());
@@ -306,7 +306,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
         /* test start */
 
         Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, database);
-        mailer.send(new MailMessage("+12345678901", false, 0, 0, false, false, null, 0, 0, true));
+        mailer.send(new MailMessage("+12345678901", false, 0, 0, false, false, null, null, null, true));
 
         assertNotNull(initArgs.get());
         assertNull(sendArgs.get());
@@ -334,7 +334,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
         /* test start */
 
         Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, database);
-        mailer.send(new MailMessage("+12345678901", false, 0, 0, false, false, null, 0, 0, true));
+        mailer.send(new MailMessage("+12345678901", false, 0, 0, false, false, null, null, null, true));
 
         assertNotNull(initArgs.get());
         assertNull(sendArgs.get());
@@ -375,7 +375,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
 
         Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, database);
 
-        mailer.send(new MailMessage("bad_phone", false, 0, 0, false, false, null, 0, 0, true));
+        mailer.send(new MailMessage("bad_phone", false, 0, 0, false, false, null, null, null, true));
         assertEquals(R.string.message_error_general, errorArgs.get()[1]);
         assertNull(clearArgs.get());
 
@@ -384,7 +384,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
         errorArgs.set(null);
         clearArgs.set(null);
 
-        mailer.send(new MailMessage("good_phone", false, 0, 0, false, false, null, 0, 0, true));
+        mailer.send(new MailMessage("good_phone", false, 0, 0, false, false, null, null, null, true));
 
         assertNull(errorArgs.get());
         assertNotNull(clearArgs.get());

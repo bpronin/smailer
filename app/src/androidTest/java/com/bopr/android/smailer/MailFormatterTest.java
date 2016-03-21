@@ -65,7 +65,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      */
     public void testIncomingSmsSubject() throws Exception {
         MailMessage message = new MailMessage("+70123456789", true, 0, 0, false,
-                true, "Email body text", 0, 0, false);
+                true, "Email body text", null, null, false);
         MailerProperties properties = new MailerProperties();
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, null);
@@ -81,7 +81,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      */
     public void testIncomingCallSubject() throws Exception {
         MailMessage message = new MailMessage("+70123456789", true, 0, 0, false,
-                false, null, 0, 0, false);
+                false, null, null, null, false);
         MailerProperties properties = new MailerProperties();
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, null);
@@ -97,7 +97,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      */
     public void testOutgoingCallSubject() throws Exception {
         MailMessage message = new MailMessage("+70123456789", false, 0, 0, false,
-                false, null, 0, 0, false);
+                false, null, null, null, false);
         MailerProperties properties = new MailerProperties();
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, null);
@@ -113,7 +113,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      */
     public void testMissedCallSubject() throws Exception {
         MailMessage message = new MailMessage("+70123456789", false, 0, 0, true,
-                false, null, 0, 0, false);
+                false, null, null, null, false);
         MailerProperties properties = new MailerProperties();
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, null);
@@ -129,7 +129,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      */
     public void testNoBodyFooter() throws Exception {
         MailMessage message = new MailMessage("+70123456789", true, 0, 0, false,
-                true, "Email body text", 0, 0, false);
+                true, "Email body text", null, null, false);
 
         MailerProperties properties = new MailerProperties();
 
@@ -149,7 +149,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
     public void testFooterTimeOption() throws Exception {
         long time = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         MailMessage message = new MailMessage("+70123456789", true, time, 0, false,
-                true, "Email body text", 0, 0, false);
+                true, "Email body text", null, null, false);
 
         MailerProperties properties = new MailerProperties();
         properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME);
@@ -172,7 +172,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
     public void testFooterDeviceNameOption() throws Exception {
         String deviceName = Settings.getDeviceName();
         MailMessage message = new MailMessage("+70123456789", true, 0, 0, false,
-                true, "Email body text", 0, 0, false);
+                true, "Email body text", null, null, false);
 
         MailerProperties properties = new MailerProperties();
         properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME);
@@ -196,7 +196,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         String deviceName = Settings.getDeviceName();
         long time = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         MailMessage message = new MailMessage("+70123456789", true, time, 0, false,
-                true, "Email body text", 0, 0, false);
+                true, "Email body text", null, null, false);
 
         MailerProperties properties = new MailerProperties();
         properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME);
@@ -244,7 +244,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      */
     public void testFooterNoLocation() throws Exception {
         MailMessage message = new MailMessage("+70123456789", true, 0, 0, false,
-                true, "Email body text", 0, 0, false);
+                true, "Email body text", null, null, false);
 
         MailerProperties properties = new MailerProperties();
         properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_LOCATION);
@@ -267,7 +267,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
     public void testContactName() throws Exception {
 
         MailMessage message = new MailMessage("+12345678901", true, 0, 0, false,
-                true, "Email body text", 0, 0, false);
+                true, "Email body text", null, null, false);
 
         MailerProperties properties = new MailerProperties();
         properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_CONTACT);
@@ -279,7 +279,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
                 " <hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                " Sender: <a href=\"tel:+12345678901\">+12345678901 (John Dou)</a>" +
+                " Sender: <a href=\"tel:+12345678901\">+12345678901</a> (John Dou)" +
                 "</body></html>", text);
     }
 
@@ -291,7 +291,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
     public void testUnknownContactName() throws Exception {
 
         MailMessage message = new MailMessage("+12345678901", true, 0, 0, false,
-                true, "Email body text", 0, 0, false);
+                true, "Email body text", null, null, false);
 
         MailerProperties properties = new MailerProperties();
         properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_CONTACT);
@@ -303,7 +303,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
                 " <hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                " Sender: <a href=\"tel:+12345678901\">+12345678901 (Unknown contact)</a>" +
+                " Sender: <a href=\"tel:+12345678901\">+12345678901</a> (Unknown contact)" +
                 "</body></html>", text);
     }
 
@@ -316,7 +316,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
         MailMessage message = new MailMessage("+70123456789", true, start, end, false,
-                false, null, 0, 0, false);
+                false, null, null, null, false);
 
         MailerProperties properties = new MailerProperties();
 
@@ -337,7 +337,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 15).getTime().getTime();
         MailMessage message = new MailMessage("+70123456789", false, start, end, false,
-                false, null, 0, 0, false);
+                false, null, null, null, false);
 
         MailerProperties properties = new MailerProperties();
 
@@ -357,7 +357,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
     public void testMissedCallBody() throws Exception {
         long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         MailMessage message = new MailMessage("+70123456789", false, start, 0, true,
-                false, null, 0, 0, false);
+                false, null, null, null, false);
 
         MailerProperties properties = new MailerProperties();
 
@@ -393,7 +393,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
                 "<body>" +
                 "You had an incoming call of 1:01:05 duration." +
                 " <hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                " Caller: <a href=\"tel:+12345678901\">+12345678901 (John Dou)</a>" +
+                " Caller: <a href=\"tel:+12345678901\">+12345678901</a> (John Dou)" +
                 "<br>" +
                 "Last known device location: <a href=\"http://maps.google.com/maps/place/60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "<br>" +
@@ -425,7 +425,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
                 "<body>" +
                 "You had an outgoing call of 1:01:05 duration." +
                 " <hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                " Called: <a href=\"tel:+12345678901\">+12345678901 (John Dou)</a>" +
+                " Called: <a href=\"tel:+12345678901\">+12345678901</a> (John Dou)" +
                 "<br>" +
                 "Last known device location: <a href=\"http://maps.google.com/maps/place/60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "<br>" +
@@ -457,7 +457,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
                 "<body>" +
                 "You had a missed call." +
                 " <hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                " Caller: <a href=\"tel:+12345678901\">+12345678901 (Unknown contact)</a>" +
+                " Caller: <a href=\"tel:+12345678901\">+12345678901</a> (Unknown contact)" +
                 "<br>" +
                 "Last known device location: <a href=\"http://maps.google.com/maps/place/60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "<br>" +

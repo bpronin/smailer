@@ -60,9 +60,9 @@
     <string name="email_body_missed_call">You had a missed call.</string>
     <string name="email_body_incoming_call">You had an incoming call of {duration} duration.</string>
     <string name="email_body_outgoing_call">You had an outgoing call of {duration} duration.</string>
-    <string name="email_body_sender">Sender: {phone}{name}</string>
-    <string name="email_body_caller">Caller: {phone}{name}</string>
-    <string name="email_body_called">Called: {phone}{name}</string>
+    <string name="email_body_sender">Sender: {phone} ({name})</string>
+    <string name="email_body_caller">Caller: {phone} ({name})</string>
+    <string name="email_body_called">Called: {phone} ({name})</string>
     <string name="email_body_unknown_contact">Unknown contact</string>
     <string name="email_body_unknown_location">unknown</string>
 

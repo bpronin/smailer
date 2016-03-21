@@ -31,7 +31,7 @@ public class MailFormatter {
             "<body>{message} {line} {footer}</body></html>"; /* with spaces between parts it looks better in mobile email notifications */
     private static final String LINE = "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">";
     private static final String GOOGLE_MAP_LINK_PATTERN = "<a href=\"http://maps.google.com/maps/place/{latitude},{longitude}\">{location}</a>";
-    private static final String PHONE_LINK_PATTERN = "<a href=\"tel:{phone}\">{phone} ({name})</a>";
+    private static final String PHONE_LINK_PATTERN = "<a href=\"tel:{phone}\">{phone}</a>";
 
     private final Resources resources;
     private final MailerProperties properties;
@@ -168,8 +168,8 @@ public class MailFormatter {
         String name = !isEmpty(this.contactName) ? this.contactName : resources.getString(R.string.email_body_unknown_contact);
         return from(resourceId, resources)
                 .put("phone", from(PHONE_LINK_PATTERN)
-                        .put("phone", message.getPhone())
-                        .put("name", name))
+                        .put("phone", message.getPhone()))
+                .put("name", name)
                 .format();
     }
 

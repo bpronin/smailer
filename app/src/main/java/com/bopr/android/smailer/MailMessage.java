@@ -25,7 +25,7 @@ public class MailMessage {
     }
 
     public MailMessage(String phone, boolean incoming, long startTime, long endTime, boolean missed,
-                       boolean sms, String text, double latitude, double longitude, boolean sent) {
+                       boolean sms, String text, Double latitude, Double longitude, boolean sent) {
         this.text = text;
         this.latitude = latitude;
         this.longitude = longitude;
