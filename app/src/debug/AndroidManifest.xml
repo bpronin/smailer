@@ -9,7 +9,7 @@
     <!-- todo: see inspection message - android:fullBackupContent="false" -->
     <application>
         <activity
-            android:name=".settings.DebugSettingsActivity"
+            android:name=".ui.DebugSettingsActivity"
             android:label="Debug">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT"/>

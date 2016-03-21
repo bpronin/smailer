@@ -47,7 +47,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.android.support:support-v4:23.2.1'
     compile 'com.sun.mail:android-mail:1.5.5'
-    compile 'com.sun.mail:android-activation:1.5.5'
     compile 'com.google.android.gms:play-services:8.4.0'
 
     testCompile 'junit:junit:4.12'

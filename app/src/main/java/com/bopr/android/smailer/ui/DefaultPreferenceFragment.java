@@ -1,4 +1,4 @@
-package com.bopr.android.smailer.settings;
+package com.bopr.android.smailer.ui;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;

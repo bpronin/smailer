@@ -9,7 +9,7 @@ import android.content.res.Resources;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.NotificationCompat;
 
-import com.bopr.android.smailer.settings.SettingsActivity;
+import com.bopr.android.smailer.ui.SettingsActivity;
 
 /**
  * Creates and shows specific notifications.

@@ -1,4 +1,4 @@
-package com.bopr.android.smailer.settings;
+package com.bopr.android.smailer.ui;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,17 +8,15 @@ import android.preference.EditTextPreference;
 import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.bopr.android.smailer.PermissionsChecker;
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.Settings;
 import com.bopr.android.smailer.util.StringUtil;
-import com.bopr.android.smailer.util.TagFormatter;
 import com.bopr.android.smailer.util.validator.EmailListTextValidator;
 import com.bopr.android.smailer.util.validator.EmailTextValidator;
 
@@ -363,20 +361,9 @@ public class SettingsFragment extends DefaultPreferenceFragment {
 
     }
 
-    private void showAboutDialog() {
-        AlertDialog dialog = new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.action_about)
-                .setMessage(TagFormatter.from("{label} {version}", getResources())
-                        .putResource("label", R.string.about_dialog_title_version)
-                        .put("version", Settings.getReleaseVersion(getActivity()))
-                        .format())
-                .create();
-
-        dialog.setCanceledOnTouchOutside(true);
-        dialog.show();
-
-        // todo: add "rate us on the play store"
-        // todo: add "open source libs"
+    public void showAboutDialog() {
+        FragmentManager fm = ((SettingsActivity) getActivity()).getSupportFragmentManager();
+        new AboutDialogFragment().show(fm, "about_dialog");
     }
 
 }
