@@ -380,15 +380,15 @@ public class DebugFragment extends DefaultPreferenceFragment {
 
     private void onPopulateLog() {
         long time = System.currentTimeMillis();
-        database.addMessage(new MailMessage("+79052345671", true, time, 0, false, true, "Debug message", null, null, true), null);
-        database.addMessage(new MailMessage("+79052345672", false, time += 1000, 0, false, true, "Debug message", null, null, true), null);
+        database.addMessage(new MailMessage("+79052345671", true, time, null, false, true, "Debug message", null, null, true), null);
+        database.addMessage(new MailMessage("+79052345672", false, time += 1000, null, false, true, "Debug message", null, null, true), null);
         database.addMessage(new MailMessage("+79052345673", true, time += 1000, time + 10000, false, false, null, null, null, true), null);
         database.addMessage(new MailMessage("+79052345674", false, time += 1000, time + 10000, false, false, null, null, null, true), null);
         database.addMessage(new MailMessage("+79052345675", true, time += 1000, time + 10000, true, false, null, null, null, true), null);
 
 
-        database.addMessage(new MailMessage("+79052345671", true, time += 1000, 0, false, true, "Debug message", null, null, false), new Exception("Test exception +79052345671"));
-        database.addMessage(new MailMessage("+79052345672", false, time += 1000, 0, false, true, "Debug message", null, null, false), new Exception("Test exception +79052345672"));
+        database.addMessage(new MailMessage("+79052345671", true, time += 1000, null, false, true, "Debug message", null, null, false), new Exception("Test exception +79052345671"));
+        database.addMessage(new MailMessage("+79052345672", false, time += 1000, null, false, true, "Debug message", null, null, false), new Exception("Test exception +79052345672"));
         database.addMessage(new MailMessage("+79052345673", true, time += 1000, time + 10000, false, false, null, null, null, false), new Exception("Test exception +79052345673"));
         database.addMessage(new MailMessage("+79052345674", false, time += 1000, time + 10000, false, false, null, null, null, false), new Exception("Test exception +79052345674"));
         database.addMessage(new MailMessage("+79052345675", true, time += 1000, time + 10000, true, false, null, null, null, false), new Exception("Test exception +79052345675"));

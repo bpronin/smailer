@@ -64,14 +64,13 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      * @throws Exception when fails
      */
     public void testIncomingSmsSubject() throws Exception {
-        MailMessage message = new MailMessage("+70123456789", true, 0, 0, false,
+        MailMessage message = new MailMessage("+70123456789", true, null, null, false,
                 true, "Email body text", null, null, false);
         MailerProperties properties = new MailerProperties();
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, null);
 
-        String text = formatter.getSubject();
-        assertEquals("[SMailer] Incoming SMS from +70123456789", text);
+        assertEquals("[SMailer] Incoming SMS from +70123456789", formatter.getSubject());
     }
 
     /**
@@ -80,14 +79,13 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      * @throws Exception when fails
      */
     public void testIncomingCallSubject() throws Exception {
-        MailMessage message = new MailMessage("+70123456789", true, 0, 0, false,
+        MailMessage message = new MailMessage("+70123456789", true, null, null, false,
                 false, null, null, null, false);
         MailerProperties properties = new MailerProperties();
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, null);
 
-        String text = formatter.getSubject();
-        assertEquals("[SMailer] Incoming call from +70123456789", text);
+        assertEquals("[SMailer] Incoming call from +70123456789", formatter.getSubject());
     }
 
     /**
@@ -96,14 +94,13 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      * @throws Exception when fails
      */
     public void testOutgoingCallSubject() throws Exception {
-        MailMessage message = new MailMessage("+70123456789", false, 0, 0, false,
+        MailMessage message = new MailMessage("+70123456789", false, null, null, false,
                 false, null, null, null, false);
         MailerProperties properties = new MailerProperties();
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, null);
 
-        String text = formatter.getSubject();
-        assertEquals("[SMailer] Outgoing call to +70123456789", text);
+        assertEquals("[SMailer] Outgoing call to +70123456789", formatter.getSubject());
     }
 
     /**
@@ -112,14 +109,13 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      * @throws Exception when fails
      */
     public void testMissedCallSubject() throws Exception {
-        MailMessage message = new MailMessage("+70123456789", false, 0, 0, true,
+        MailMessage message = new MailMessage("+70123456789", false, null, null, true,
                 false, null, null, null, false);
         MailerProperties properties = new MailerProperties();
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, null);
 
-        String text = formatter.getSubject();
-        assertEquals("[SMailer] Missed call from +70123456789", text);
+        assertEquals("[SMailer] Missed call from +70123456789", formatter.getSubject());
     }
 
     /**
@@ -128,17 +124,16 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      * @throws Exception when fails
      */
     public void testNoBodyFooter() throws Exception {
-        MailMessage message = new MailMessage("+70123456789", true, 0, 0, false,
+        MailMessage message = new MailMessage("+70123456789", true, null, null, false,
                 true, "Email body text", null, null, false);
 
         MailerProperties properties = new MailerProperties();
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, null);
 
-        String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
-                "  </body></html>", text);
+                "</body></html>", formatter.getBody());
     }
 
     /**
@@ -148,7 +143,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      */
     public void testFooterTimeOption() throws Exception {
         long time = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
-        MailMessage message = new MailMessage("+70123456789", true, time, 0, false,
+        MailMessage message = new MailMessage("+70123456789", true, time, null, false,
                 true, "Email body text", null, null, false);
 
         MailerProperties properties = new MailerProperties();
@@ -156,12 +151,31 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, null);
 
-        String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
-                " <hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                " Sent at Feb 2, 2016 3:04:05 AM" +
-                "</body></html>", text);
+                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                "Sent at February 2, 2016 3:04:05 AM EST" +
+                "</body></html>", formatter.getBody());
+    }
+
+    /**
+     * Check email body footer with different options.
+     *
+     * @throws Exception when fails
+     */
+    public void testFooterNoTime() throws Exception {
+        MailMessage message = new MailMessage("+70123456789", true, null, null, false,
+                true, "Email body text", null, null, false);
+
+        MailerProperties properties = new MailerProperties();
+        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME);
+
+        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, null);
+
+        String body = formatter.getBody();
+        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
+                "Email body text" +
+                "</body></html>", body);
     }
 
     /**
@@ -171,7 +185,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      */
     public void testFooterDeviceNameOption() throws Exception {
         String deviceName = Settings.getDeviceName();
-        MailMessage message = new MailMessage("+70123456789", true, 0, 0, false,
+        MailMessage message = new MailMessage("+70123456789", true, null, null, false,
                 true, "Email body text", null, null, false);
 
         MailerProperties properties = new MailerProperties();
@@ -179,12 +193,11 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, deviceName);
 
-        String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
-                " <hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                " Sent from " + deviceName +
-                "</body></html>", text);
+                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                "Sent from " + deviceName +
+                "</body></html>", formatter.getBody());
     }
 
     /**
@@ -195,7 +208,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
     public void testFooterDeviceNameTimeOption() throws Exception {
         String deviceName = Settings.getDeviceName();
         long time = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
-        MailMessage message = new MailMessage("+70123456789", true, time, 0, false,
+        MailMessage message = new MailMessage("+70123456789", true, time, null, false,
                 true, "Email body text", null, null, false);
 
         MailerProperties properties = new MailerProperties();
@@ -203,12 +216,11 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, deviceName);
 
-        String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
-                " <hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                " Sent from " + deviceName + " at Feb 2, 2016 3:04:05 AM" +
-                "</body></html>", text);
+                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                "Sent from " + deviceName + " at February 2, 2016 3:04:05 AM EST" +
+                "</body></html>", formatter.getBody());
     }
 
     /**
@@ -220,7 +232,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         Location location = new Location("provider");
         location.setLatitude(60.555);
         location.setLongitude(30.555);
-        MailMessage message = new MailMessage("+70123456789", true, 0, 0, false,
+        MailMessage message = new MailMessage("+70123456789", true, null, null, false,
                 true, "Email body text", location.getLatitude(), location.getLongitude(), false);
 
         MailerProperties properties = new MailerProperties();
@@ -228,13 +240,12 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, null);
 
-        String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
-                " <hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                " Last known device location: <a href=\"http://maps.google.com/maps/place/60.555,30.555\">" +
+                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                "Last known device location: <a href=\"http://maps.google.com/maps/place/60.555,30.555\">" +
                 "60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
-                "</body></html>", text);
+                "</body></html>", formatter.getBody());
     }
 
     /**
@@ -243,7 +254,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      * @throws Exception when fails
      */
     public void testFooterNoLocation() throws Exception {
-        MailMessage message = new MailMessage("+70123456789", true, 0, 0, false,
+        MailMessage message = new MailMessage("+70123456789", true, null, null, false,
                 true, "Email body text", null, null, false);
 
         MailerProperties properties = new MailerProperties();
@@ -251,12 +262,11 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, null);
 
-        String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
-                "Email body text " +
-                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\"> " +
+                "Email body text" +
+                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
                 "Last known device location: unknown" +
-                "</body></html>", text);
+                "</body></html>", formatter.getBody());
     }
 
     /**
@@ -266,7 +276,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      */
     public void testContactName() throws Exception {
 
-        MailMessage message = new MailMessage("+12345678901", true, 0, 0, false,
+        MailMessage message = new MailMessage("+12345678901", true, null, null, false,
                 true, "Email body text", null, null, false);
 
         MailerProperties properties = new MailerProperties();
@@ -275,12 +285,11 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(),
                 properties, Contacts.getContactName(getContext(), "+12345678901"), null);
 
-        String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
-                " <hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                " Sender: <a href=\"tel:+12345678901\">+12345678901</a> (John Dou)" +
-                "</body></html>", text);
+                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                "Sender: <a href=\"tel:+12345678901\">+12345678901</a> (John Dou)" +
+                "</body></html>", formatter.getBody());
     }
 
     /**
@@ -290,7 +299,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      */
     public void testUnknownContactName() throws Exception {
 
-        MailMessage message = new MailMessage("+12345678901", true, 0, 0, false,
+        MailMessage message = new MailMessage("+12345678901", true, null, null, false,
                 true, "Email body text", null, null, false);
 
         MailerProperties properties = new MailerProperties();
@@ -299,12 +308,11 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(),
                 properties, null, null);
 
-        String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
-                " <hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                " Sender: <a href=\"tel:+12345678901\">+12345678901</a> (Unknown contact)" +
-                "</body></html>", text);
+                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                "Sender: <a href=\"tel:+12345678901\">+12345678901</a> (Unknown contact)" +
+                "</body></html>", formatter.getBody());
     }
 
     /**
@@ -322,10 +330,9 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, null);
 
-        String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "You had an incoming call of 1:01:05 duration." +
-                "  </body></html>", text);
+                "</body></html>", formatter.getBody());
     }
 
     /**
@@ -343,10 +350,9 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, null);
 
-        String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "You had an outgoing call of 1:01:10 duration." +
-                "  </body></html>", text);
+                "</body></html>", formatter.getBody());
     }
 
     /**
@@ -356,17 +362,16 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      */
     public void testMissedCallBody() throws Exception {
         long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
-        MailMessage message = new MailMessage("+70123456789", false, start, 0, true,
+        MailMessage message = new MailMessage("+70123456789", false, start, null, true,
                 false, null, null, null, false);
 
         MailerProperties properties = new MailerProperties();
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, null);
 
-        String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "You had a missed call." +
-                "  </body></html>", text);
+                "</body></html>", formatter.getBody());
     }
 
     /**
@@ -388,17 +393,16 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties,
                 Contacts.getContactName(getContext(), "+12345678901"), deviceName);
 
-        String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
                 "<body>" +
                 "You had an incoming call of 1:01:05 duration." +
-                " <hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                " Caller: <a href=\"tel:+12345678901\">+12345678901</a> (John Dou)" +
+                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                "Caller: <a href=\"tel:+12345678901\">+12345678901</a> (John Dou)" +
                 "<br>" +
                 "Last known device location: <a href=\"http://maps.google.com/maps/place/60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "<br>" +
-                "Sent from " + deviceName + " at Feb 2, 2016 3:04:05 AM" +
-                "</body></html>", text);
+                "Sent from " + deviceName + " at February 2, 2016 3:04:05 AM EST" +
+                "</body></html>", formatter.getBody());
     }
 
     /**
@@ -420,17 +424,16 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties,
                 Contacts.getContactName(getContext(), "+12345678901"), deviceName);
 
-        String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
                 "<body>" +
                 "You had an outgoing call of 1:01:05 duration." +
-                " <hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                " Called: <a href=\"tel:+12345678901\">+12345678901</a> (John Dou)" +
+                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                "Called: <a href=\"tel:+12345678901\">+12345678901</a> (John Dou)" +
                 "<br>" +
                 "Last known device location: <a href=\"http://maps.google.com/maps/place/60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "<br>" +
-                "Sent from " + deviceName + " at Feb 2, 2016 3:04:05 AM" +
-                "</body></html>", text);
+                "Sent from " + deviceName + " at February 2, 2016 3:04:05 AM EST" +
+                "</body></html>", formatter.getBody());
     }
 
     /**
@@ -452,17 +455,59 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties,
                 null, deviceName);
 
-        String text = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
                 "<body>" +
                 "You had a missed call." +
-                " <hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                " Caller: <a href=\"tel:+12345678901\">+12345678901</a> (Unknown contact)" +
+                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                "Caller: <a href=\"tel:+12345678901\">+12345678901</a> (Unknown contact)" +
                 "<br>" +
                 "Last known device location: <a href=\"http://maps.google.com/maps/place/60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "<br>" +
-                "Sent from " + deviceName + " at Feb 2, 2016 3:04:05 AM" +
-                "</body></html>", text);
+                "Sent from " + deviceName + " at February 2, 2016 3:04:05 AM EST" +
+                "</body></html>", formatter.getBody());
+    }
+
+    /**
+     * Check email body footer with different options.
+     *
+     * @throws Exception when fails
+     */
+    public void testNonDefaultLocale() throws Exception {
+        String deviceName = Settings.getDeviceName();
+        long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
+        long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
+
+        MailMessage message = new MailMessage("+12345678901", true, start, end, true, false, null, 60.555, 30.555, true);
+
+        MailerProperties properties = new MailerProperties();
+        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
+                VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME);
+
+        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties,
+                null, deviceName);
+        formatter.setLocale(new Locale("ru", "RU"));
+
+        assertEquals("[SMailer] Пропущенный звонок от +12345678901", formatter.getSubject());
+        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">" +
+                "</head><body>" +
+                "Пропущенный звонок." +
+                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                "Вам звонил: <a href=\"tel:+12345678901\">+12345678901</a> (Неизвестный контакт)<br>" +
+                "Последнее известное местоположение: <a href=\"http://maps.google.com/maps/place/60.555,30.555\">" +
+                "60&#176;33'17\"N, 30&#176;33'17\"W</a><br>" +
+                "Отправлено с " + deviceName + " 2 февраля 2016 г. 3:04:05 GMT-05:00" +
+                "</body></html>", formatter.getBody());
+
+        formatter.setLocale(Locale.getDefault());
+        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">" +
+                "</head><body>" +
+                "You had a missed call." +
+                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                "Caller: <a href=\"tel:+12345678901\">+12345678901</a> (Unknown contact)<br>" +
+                "Last known device location: <a href=\"http://maps.google.com/maps/place/60.555,30.555\">" +
+                "60&#176;33'17\"N, 30&#176;33'17\"W</a><br>" +
+                "Sent from " + deviceName + " at February 2, 2016 3:04:05 AM EST" +
+                "</body></html>", formatter.getBody());
     }
 
 }

@@ -48,7 +48,7 @@ public class DatabaseTest extends ApplicationTestCase<Application> {
      * @throws Exception when failed
      */
     public void testDefaults() throws Exception {
-        assertEquals(10000, database.getCapacity());
+        assertEquals(10000L, database.getCapacity());
         assertEquals(TimeUnit.DAYS.toMillis(7), database.getPurgePeriod());
     }
 
@@ -58,16 +58,16 @@ public class DatabaseTest extends ApplicationTestCase<Application> {
      * @throws Exception when failed
      */
     public void testAddGet() throws Exception {
-        database.addMessage(new MailMessage("1", true, 1000, 2000, false, true, "SMS text", 10.5, 20.5, true), new Exception("Test 1"));
-        database.addMessage(new MailMessage("2", false, 2000, 0, false, true, null, null, null, false), null);
-        database.addMessage(new MailMessage("3", true, 3000, 0, false, false, null, null, null, false), null);
-        database.addMessage(new MailMessage("4", false, 4000, 0, false, false, null, null, null, false), null);
-        database.addMessage(new MailMessage("5", true, 5000, 0, true, false, null, null, null, false), null);
-        database.addMessage(new MailMessage("6", true, 6000, 7000, false, true, null, null, null, false), new Exception("Test 1"));
-        database.addMessage(new MailMessage("7", false, 7000, 0, false, true, null, null, null, false), new Exception("Test 2"));
-        database.addMessage(new MailMessage("8", true, 8000, 0, false, false, null, null, null, false), new Exception("Test 3"));
-        database.addMessage(new MailMessage("9", false, 9000, 0, false, false, null, null, null, false), new Exception("Test 4"));
-        database.addMessage(new MailMessage("10", true, 10000, 0, true, false, null, null, null, false), new Exception("Test 5"));
+        database.addMessage(new MailMessage("1", true, 1000L, 2000L, false, true, "SMS text", 10.5, 20.5, true), new Exception("Test 1"));
+        database.addMessage(new MailMessage("2", false, 2000L, 0L, false, true, null, null, null, false), null);
+        database.addMessage(new MailMessage("3", true, 3000L, 0L, false, false, null, null, null, false), null);
+        database.addMessage(new MailMessage("4", false, 4000L, 0L, false, false, null, null, null, false), null);
+        database.addMessage(new MailMessage("5", true, 5000L, 0L, true, false, null, null, null, false), null);
+        database.addMessage(new MailMessage("6", true, 6000L, 7000L, false, true, null, null, null, false), new Exception("Test 1"));
+        database.addMessage(new MailMessage("7", false, 7000L, 0L, false, true, null, null, null, false), new Exception("Test 2"));
+        database.addMessage(new MailMessage("8", true, 8000L, 0L, false, false, null, null, null, false), new Exception("Test 3"));
+        database.addMessage(new MailMessage("9", false, 9000L, 0L, false, false, null, null, null, false), new Exception("Test 4"));
+        database.addMessage(new MailMessage("10", true, 10000L, 0L, true, false, null, null, null, false), new Exception("Test 5"));
 
         List<MailMessage> items = asList(database.getMessages());
 
@@ -78,8 +78,8 @@ public class DatabaseTest extends ApplicationTestCase<Application> {
         assertEquals(true, message.isSent());
         assertEquals("1", message.getPhone());
         assertEquals(true, message.isIncoming());
-        assertEquals(1000, message.getStartTime());
-        assertEquals(2000, message.getEndTime());
+        assertEquals(1000L, message.getStartTime().longValue());
+        assertEquals(2000L, message.getEndTime().longValue());
         assertEquals(false, message.isMissed());
         assertEquals(true, message.isSms());
         assertEquals(10.5, message.getLatitude());
@@ -100,16 +100,16 @@ public class DatabaseTest extends ApplicationTestCase<Application> {
      * @throws Exception when failed
      */
     public void testClear() throws Exception {
-        database.addMessage(new MailMessage("+79052345671", true, 1000, 2000, false, true, "SMS text", 10.5, 20.5, true), new Exception("Test 1"));
-        database.addMessage(new MailMessage("+79052345672", false, 2000, 0, false, true, null, null, null, false), null);
-        database.addMessage(new MailMessage("+79052345673", true, 3000, 0, false, false, null, null, null, false), null);
-        database.addMessage(new MailMessage("+79052345674", false, 4000, 0, false, false, null, null, null, false), null);
-        database.addMessage(new MailMessage("+79052345675", true, 5000, 0, true, false, null, null, null, false), null);
-        database.addMessage(new MailMessage("+79052345671", true, 6000, 7000, false, true, null, null, null, false), new Exception("Test 1"));
-        database.addMessage(new MailMessage("+79052345672", false, 7000, 0, false, true, null, null, null, false), new Exception("Test 2"));
-        database.addMessage(new MailMessage("+79052345673", true, 8000, 0, false, false, null, null, null, false), new Exception("Test 3"));
-        database.addMessage(new MailMessage("+79052345674", false, 9000, 0, false, false, null, null, null, false), new Exception("Test 4"));
-        database.addMessage(new MailMessage("+79052345675", true, 10000, 0, true, false, null, null, null, false), new Exception("Test 5"));
+        database.addMessage(new MailMessage("+79052345671", true, 1000L, 2000L, false, true, "SMS text", 10.5, 20.5, true), new Exception("Test 1"));
+        database.addMessage(new MailMessage("+79052345672", false, 2000L, null, false, true, null, null, null, false), null);
+        database.addMessage(new MailMessage("+79052345673", true, 3000L, null, false, false, null, null, null, false), null);
+        database.addMessage(new MailMessage("+79052345674", false, 4000L, null, false, false, null, null, null, false), null);
+        database.addMessage(new MailMessage("+79052345675", true, 5000L, null, true, false, null, null, null, false), null);
+        database.addMessage(new MailMessage("+79052345671", true, 6000L, 7000L, false, true, null, null, null, false), new Exception("Test 1"));
+        database.addMessage(new MailMessage("+79052345672", false, 7000L, null, false, true, null, null, null, false), new Exception("Test 2"));
+        database.addMessage(new MailMessage("+79052345673", true, 8000L, null, false, false, null, null, null, false), new Exception("Test 3"));
+        database.addMessage(new MailMessage("+79052345674", false, 9000L, null, false, false, null, null, null, false), new Exception("Test 4"));
+        database.addMessage(new MailMessage("+79052345675", true, 10000L, null, true, false, null, null, null, false), new Exception("Test 5"));
 
         assertEquals(10, database.getMessages().getCount());
 
@@ -124,16 +124,16 @@ public class DatabaseTest extends ApplicationTestCase<Application> {
      * @throws Exception when failed
      */
     public void testPurge() throws Exception {
-        database.addMessage(new MailMessage("+79052345671", true, 1000, 2000, false, true, "SMS text", 10.5, 20.5, true), new Exception("Test 1"));
-        database.addMessage(new MailMessage("+79052345672", false, 2000, 0, false, true, null, null, null, false), null);
-        database.addMessage(new MailMessage("+79052345673", true, 3000, 0, false, false, null, null, null, false), null);
-        database.addMessage(new MailMessage("+79052345674", false, 4000, 0, false, false, null, null, null, false), null);
-        database.addMessage(new MailMessage("+79052345675", true, 5000, 0, true, false, null, null, null, false), null);
-        database.addMessage(new MailMessage("+79052345671", true, 6000, 7000, false, true, null, null, null, false), new Exception("Test 1"));
-        database.addMessage(new MailMessage("+79052345672", false, 7000, 0, false, true, null, null, null, false), new Exception("Test 2"));
-        database.addMessage(new MailMessage("+79052345673", true, 8000, 0, false, false, null, null, null, false), new Exception("Test 3"));
-        database.addMessage(new MailMessage("+79052345674", false, 9000, 0, false, false, null, null, null, false), new Exception("Test 4"));
-        database.addMessage(new MailMessage("+79052345674", false, 9000, 0, false, false, null, null, null, false), new Exception("Test 4"));
+        database.addMessage(new MailMessage("+79052345671", true, 1000L, 2000L, false, true, "SMS text", 10.5, 20.5, true), new Exception("Test 1"));
+        database.addMessage(new MailMessage("+79052345672", false, 2000L, null, false, true, null, null, null, false), null);
+        database.addMessage(new MailMessage("+79052345673", true, 3000L, null, false, false, null, null, null, false), null);
+        database.addMessage(new MailMessage("+79052345674", false, 4000L, null, false, false, null, null, null, false), null);
+        database.addMessage(new MailMessage("+79052345675", true, 5000L, null, true, false, null, null, null, false), null);
+        database.addMessage(new MailMessage("+79052345671", true, 6000L, 7000L, false, true, null, null, null, false), new Exception("Test 1"));
+        database.addMessage(new MailMessage("+79052345672", false, 7000L, null, false, true, null, null, null, false), new Exception("Test 2"));
+        database.addMessage(new MailMessage("+79052345673", true, 8000L, null, false, false, null, null, null, false), new Exception("Test 3"));
+        database.addMessage(new MailMessage("+79052345674", false, 9000L, null, false, false, null, null, null, false), new Exception("Test 4"));
+        database.addMessage(new MailMessage("+79052345674", false, 9000L, null, false, false, null, null, null, false), new Exception("Test 4"));
 
         /* first we have 9 records */
         assertEquals(10, database.getMessages().getCount());
@@ -165,10 +165,10 @@ public class DatabaseTest extends ApplicationTestCase<Application> {
      * @throws Exception when failed
      */
     public void testHasUnsent() throws Exception {
-        database.addMessage(new MailMessage("+79052345671", true, 1000, 2000, false, true, "SMS text", 10.5, 20.5, true), new Exception("Test 1"));
+        database.addMessage(new MailMessage("+79052345671", true, 1000L, 2000L, false, true, "SMS text", 10.5, 20.5, true), new Exception("Test 1"));
         assertFalse(database.hasUnsent());
 
-        database.addMessage(new MailMessage("+79052345672", false, 2000, 0, false, true, null, null, null, false), null);
+        database.addMessage(new MailMessage("+79052345672", false, 2000L, null, false, true, null, null, null, false), null);
         assertTrue(database.hasUnsent());
 
         database.clear();

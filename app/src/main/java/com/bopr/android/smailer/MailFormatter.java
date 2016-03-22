@@ -1,11 +1,13 @@
 package com.bopr.android.smailer;
 
+import android.content.res.Configuration;
 import android.content.res.Resources;
 
 import com.bopr.android.smailer.util.TagFormatter;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Set;
 
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CONTACT;
@@ -28,7 +30,7 @@ public class MailFormatter {
     private static final String SUBJECT_PATTERN = "[{app_name}] {source} {phone}";
     private static final String BODY_PATTERN = "<html>" +
             "<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
-            "<body>{message} {line} {footer}</body></html>"; /* with spaces between parts it looks better in mobile email notifications */
+            "<body>{message}{line}{footer}</body></html>";
     private static final String LINE = "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">";
     private static final String GOOGLE_MAP_LINK_PATTERN = "<a href=\"http://maps.google.com/maps/place/{latitude},{longitude}\">{location}</a>";
     private static final String PHONE_LINK_PATTERN = "<a href=\"tel:{phone}\">{phone}</a>";
@@ -38,15 +40,19 @@ public class MailFormatter {
     private final MailMessage message;
     private final String contactName;
     private final String deviceName;
+    private Locale locale = Locale.getDefault();
 
     public MailFormatter(MailMessage message, Resources resources, MailerProperties properties,
-                         String contactName, String deviceName
-    ) {
+                         String contactName, String deviceName) {
         this.resources = resources;
         this.message = message;
         this.properties = properties;
         this.contactName = contactName;
         this.deviceName = deviceName;
+    }
+
+    public void setLocale(Locale locale) {
+        this.locale = locale;
     }
 
     /**
@@ -55,11 +61,16 @@ public class MailFormatter {
      * @return email subject
      */
     public String getSubject() {
-        return from(SUBJECT_PATTERN, resources)
-                .putResource("app_name", R.string.app_name)
-                .put("source", getSourceText())
-                .put("phone", message.getPhone())
-                .format();
+        Locale currentLocale = setupLocale();
+        try {
+            return from(SUBJECT_PATTERN, resources)
+                    .putResource("app_name", R.string.app_name)
+                    .put("source", getSourceText())
+                    .put("phone", message.getPhone())
+                    .format();
+        } finally {
+            restoreLocale(currentLocale);
+        }
     }
 
     /**
@@ -68,14 +79,19 @@ public class MailFormatter {
      * @return email body
      */
     public String getBody() {
-        String footerText = getFooterText();
-        TagFormatter formatter = from(BODY_PATTERN)
-                .put("message", getMessageText())
-                .put("footer", footerText);
-        if (!isEmpty(footerText)) {
-            formatter.put("line", LINE);
+        Locale currentLocale = setupLocale();
+        try {
+            String footerText = getFooterText();
+            TagFormatter formatter = from(BODY_PATTERN)
+                    .put("message", getMessageText())
+                    .put("footer", footerText);
+            if (!isEmpty(footerText)) {
+                formatter.put("line", LINE);
+            }
+            return formatter.format();
+        } finally {
+            restoreLocale(currentLocale);
         }
-        return formatter.format();
     }
 
     private String getSourceText() {
@@ -183,9 +199,10 @@ public class MailFormatter {
     }
 
     private String getTimeText() {
-        if (message.getStartTime() != 0) {
+        if (message.getStartTime() != null) {
+            DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
             return " " + from(R.string.email_body_time, resources)
-                    .put("time", DateFormat.getDateTimeInstance().format(new Date(message.getStartTime())))
+                    .put("time", df.format(new Date(message.getStartTime())))
                     .format();
         }
         return null;
@@ -207,6 +224,19 @@ public class MailFormatter {
                     .putResource("location", R.string.email_body_unknown_location)
                     .format();
         }
+    }
+
+    private Locale setupLocale() {
+        Configuration configuration = resources.getConfiguration();
+        Locale locale = configuration.locale;
+        restoreLocale(this.locale);
+        return locale;
+    }
+
+    private void restoreLocale(Locale locale) {
+        Configuration configuration = resources.getConfiguration();
+        configuration.locale = locale;
+        resources.updateConfiguration(configuration, null);
     }
 
 }

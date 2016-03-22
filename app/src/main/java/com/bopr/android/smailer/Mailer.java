@@ -6,6 +6,7 @@ import android.util.Log;
 import com.sun.mail.util.MailConnectException;
 
 import javax.mail.AuthenticationFailedException;
+import javax.mail.MessagingException;
 
 import static com.bopr.android.smailer.util.StringUtil.isEmpty;
 
@@ -70,7 +71,7 @@ public class Mailer {
                 handleError(message, x, R.string.message_error_authentication);
             } catch (MailConnectException x) {
                 handleError(message, x, R.string.message_error_connect);
-            } catch (Exception x) {
+            } catch (MessagingException x) {
                 handleError(message, x, R.string.message_error_general);
             }
         }

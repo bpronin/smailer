@@ -15,8 +15,8 @@ public class MailMessage {
     private boolean incoming;
     private boolean missed;
     private String phone;
-    private long startTime;
-    private long endTime;
+    private Long startTime;
+    private Long endTime;
     private String text;
     private Double latitude;
     private Double longitude;
@@ -24,7 +24,7 @@ public class MailMessage {
     public MailMessage() {
     }
 
-    public MailMessage(String phone, boolean incoming, long startTime, long endTime, boolean missed,
+    public MailMessage(String phone, boolean incoming, Long startTime, Long endTime, boolean missed,
                        boolean sms, String text, Double latitude, Double longitude, boolean sent) {
         this.text = text;
         this.latitude = latitude;
@@ -78,19 +78,19 @@ public class MailMessage {
         this.phone = phone;
     }
 
-    public long getStartTime() {
+    public Long getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(long startTime) {
+    public void setStartTime(Long startTime) {
         this.startTime = startTime;
     }
 
-    public long getEndTime() {
+    public Long getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(long endTime) {
+    public void setEndTime(Long endTime) {
         this.endTime = endTime;
     }
 
@@ -126,7 +126,10 @@ public class MailMessage {
     }
 
     public long getCallDuration() {
-        return endTime - startTime;
+        if (startTime != null && endTime != null) {
+            return endTime - startTime;
+        }
+        return 0;
     }
 
     public void setSent(boolean sent) {
