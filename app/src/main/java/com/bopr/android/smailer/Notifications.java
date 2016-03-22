@@ -23,24 +23,24 @@ public class Notifications {
     public Notifications() {
     }
 
+    private NotificationManager getNotificationManager(Context context) {
+        return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+    }
+
     public void removeMailError(Context context) {
         getNotificationManager(context).cancel(ID_MAIL_ERROR);
     }
 
     public void showMailError(Context context, int messageResource) {
-        showAlert(context, context.getResources().getString(messageResource));
+        showMailError(context, context.getResources().getString(messageResource));
     }
 
-    private NotificationManager getNotificationManager(Context context) {
-        return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-    }
-
-    public void showAlert(Context context, String text) {
+    public void showMailError(Context context, String text) {
         Resources r = context.getResources();
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         Notification notification = builder
-                .setContentIntent(createIntent(context))
-                .setSmallIcon(android.R.drawable.ic_dialog_alert)
+                .setContentIntent(createMailIntent(context))
+                .setSmallIcon(android.R.drawable.stat_notify_error)
                 .setTicker(r.getString(R.string.app_name))
                 .setAutoCancel(true)
                 .setContentTitle(r.getString(R.string.app_name))
@@ -51,7 +51,7 @@ public class Notifications {
         getNotificationManager(context).notify(ID_MAIL_ERROR, notification);
     }
 
-    private PendingIntent createIntent(Context context) {
+    private PendingIntent createMailIntent(Context context) {
         Intent intent = new Intent(context, SettingsActivity.class);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addParentStack(SettingsActivity.class);

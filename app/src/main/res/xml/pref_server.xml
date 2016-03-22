@@ -2,7 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <EditTextPreference
-        android:inputType="text"
+        android:inputType="textNoSuggestions"
         android:key="sender_host"
         android:maxLines="1"
         android:selectAllOnFocus="true"
@@ -10,7 +10,7 @@
         android:title="@string/pref_title_host"/>
 
     <EditTextPreference
-        android:inputType="text"
+        android:inputType="textNoSuggestions"
         android:digits="0123456789"
         android:key="sender_port"
         android:maxLines="1"

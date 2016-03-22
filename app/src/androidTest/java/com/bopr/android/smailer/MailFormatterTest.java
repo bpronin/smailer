@@ -5,6 +5,8 @@ import android.content.ContentProviderOperation;
 import android.location.Location;
 import android.test.ApplicationTestCase;
 
+import com.bopr.android.smailer.util.Util;
+
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Locale;
@@ -65,10 +67,9 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      */
     public void testIncomingSmsSubject() throws Exception {
         MailMessage message = new MailMessage("+70123456789", true, null, null, false,
-                true, "Email body text", null, null, false);
-        MailerProperties properties = new MailerProperties();
+                true, "Email body text", null, null, false, null);
 
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, null);
+        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
 
         assertEquals("[SMailer] Incoming SMS from +70123456789", formatter.getSubject());
     }
@@ -80,10 +81,9 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      */
     public void testIncomingCallSubject() throws Exception {
         MailMessage message = new MailMessage("+70123456789", true, null, null, false,
-                false, null, null, null, false);
-        MailerProperties properties = new MailerProperties();
+                false, null, null, null, false, null);
 
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, null);
+        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
 
         assertEquals("[SMailer] Incoming call from +70123456789", formatter.getSubject());
     }
@@ -95,10 +95,9 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      */
     public void testOutgoingCallSubject() throws Exception {
         MailMessage message = new MailMessage("+70123456789", false, null, null, false,
-                false, null, null, null, false);
-        MailerProperties properties = new MailerProperties();
+                false, null, null, null, false, null);
 
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, null);
+        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
 
         assertEquals("[SMailer] Outgoing call to +70123456789", formatter.getSubject());
     }
@@ -110,10 +109,9 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      */
     public void testMissedCallSubject() throws Exception {
         MailMessage message = new MailMessage("+70123456789", false, null, null, true,
-                false, null, null, null, false);
-        MailerProperties properties = new MailerProperties();
+                false, null, null, null, false, null);
 
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, null);
+        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
 
         assertEquals("[SMailer] Missed call from +70123456789", formatter.getSubject());
     }
@@ -125,11 +123,9 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      */
     public void testNoBodyFooter() throws Exception {
         MailMessage message = new MailMessage("+70123456789", true, null, null, false,
-                true, "Email body text", null, null, false);
+                true, "Email body text", null, null, false, null);
 
-        MailerProperties properties = new MailerProperties();
-
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, null);
+        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
@@ -144,12 +140,10 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
     public void testFooterTimeOption() throws Exception {
         long time = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         MailMessage message = new MailMessage("+70123456789", true, time, null, false,
-                true, "Email body text", null, null, false);
+                true, "Email body text", null, null, false, null);
 
-        MailerProperties properties = new MailerProperties();
-        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME);
-
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, null);
+        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
+        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
@@ -165,12 +159,10 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      */
     public void testFooterNoTime() throws Exception {
         MailMessage message = new MailMessage("+70123456789", true, null, null, false,
-                true, "Email body text", null, null, false);
+                true, "Email body text", null, null, false, null);
 
-        MailerProperties properties = new MailerProperties();
-        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME);
-
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, null);
+        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
+        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
 
         String body = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
@@ -186,12 +178,10 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
     public void testFooterDeviceNameOption() throws Exception {
         String deviceName = Settings.getDeviceName();
         MailMessage message = new MailMessage("+70123456789", true, null, null, false,
-                true, "Email body text", null, null, false);
+                true, "Email body text", null, null, false, null);
 
-        MailerProperties properties = new MailerProperties();
-        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME);
-
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, deviceName);
+        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, deviceName);
+        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME));
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
@@ -209,12 +199,11 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         String deviceName = Settings.getDeviceName();
         long time = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         MailMessage message = new MailMessage("+70123456789", true, time, null, false,
-                true, "Email body text", null, null, false);
+                true, "Email body text", null, null, false, null);
 
-        MailerProperties properties = new MailerProperties();
-        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME);
+        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, deviceName);
+        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
 
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, deviceName);
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
@@ -233,12 +222,10 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         location.setLatitude(60.555);
         location.setLongitude(30.555);
         MailMessage message = new MailMessage("+70123456789", true, null, null, false,
-                true, "Email body text", location.getLatitude(), location.getLongitude(), false);
+                true, "Email body text", location.getLatitude(), location.getLongitude(), false, null);
 
-        MailerProperties properties = new MailerProperties();
-        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_LOCATION);
-
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, null);
+        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
+        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_LOCATION));
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
@@ -255,12 +242,10 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      */
     public void testFooterNoLocation() throws Exception {
         MailMessage message = new MailMessage("+70123456789", true, null, null, false,
-                true, "Email body text", null, null, false);
+                true, "Email body text", null, null, false, null);
 
-        MailerProperties properties = new MailerProperties();
-        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_LOCATION);
-
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, null);
+        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
+        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_LOCATION));
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
@@ -277,13 +262,11 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
     public void testContactName() throws Exception {
 
         MailMessage message = new MailMessage("+12345678901", true, null, null, false,
-                true, "Email body text", null, null, false);
-
-        MailerProperties properties = new MailerProperties();
-        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_CONTACT);
+                true, "Email body text", null, null, false, null);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(),
-                properties, Contacts.getContactName(getContext(), "+12345678901"), null);
+                Contacts.getContactName(getContext(), "+12345678901"), null);
+        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_CONTACT));
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
@@ -300,13 +283,11 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
     public void testUnknownContactName() throws Exception {
 
         MailMessage message = new MailMessage("+12345678901", true, null, null, false,
-                true, "Email body text", null, null, false);
-
-        MailerProperties properties = new MailerProperties();
-        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_CONTACT);
+                true, "Email body text", null, null, false, null);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(),
-                properties, null, null);
+                null, null);
+        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_CONTACT));
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
@@ -324,11 +305,9 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
         MailMessage message = new MailMessage("+70123456789", true, start, end, false,
-                false, null, null, null, false);
+                false, null, null, null, false, null);
 
-        MailerProperties properties = new MailerProperties();
-
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, null);
+        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "You had an incoming call of 1:01:05 duration." +
@@ -344,11 +323,9 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 15).getTime().getTime();
         MailMessage message = new MailMessage("+70123456789", false, start, end, false,
-                false, null, null, null, false);
+                false, null, null, null, false, null);
 
-        MailerProperties properties = new MailerProperties();
-
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, null);
+        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "You had an outgoing call of 1:01:10 duration." +
@@ -363,11 +340,9 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
     public void testMissedCallBody() throws Exception {
         long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         MailMessage message = new MailMessage("+70123456789", false, start, null, true,
-                false, null, null, null, false);
+                false, null, null, null, false, null);
 
-        MailerProperties properties = new MailerProperties();
-
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties, null, null);
+        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "You had a missed call." +
@@ -384,14 +359,13 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
 
-        MailMessage message = new MailMessage("+12345678901", true, start, end, false, false, null, 60.555, 30.555, true);
+        MailMessage message = new MailMessage("+12345678901", true, start, end, false, false, null,
+                60.555, 30.555, true, null);
 
-        MailerProperties properties = new MailerProperties();
-        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
-                VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME);
-
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties,
+        MailFormatter formatter = new MailFormatter(message, getContext().getResources(),
                 Contacts.getContactName(getContext(), "+12345678901"), deviceName);
+        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
+                VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
                 "<body>" +
@@ -415,14 +389,13 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
 
-        MailMessage message = new MailMessage("+12345678901", false, start, end, false, false, null, 60.555, 30.555, true);
+        MailMessage message = new MailMessage("+12345678901", false, start, end, false, false, null,
+                60.555, 30.555, true, null);
 
-        MailerProperties properties = new MailerProperties();
-        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
-                VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME);
-
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties,
+        MailFormatter formatter = new MailFormatter(message, getContext().getResources(),
                 Contacts.getContactName(getContext(), "+12345678901"), deviceName);
+        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
+                VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
                 "<body>" +
@@ -446,14 +419,13 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
 
-        MailMessage message = new MailMessage("+12345678901", true, start, end, true, false, null, 60.555, 30.555, true);
+        MailMessage message = new MailMessage("+12345678901", true, start, end, true, false, null,
+                60.555, 30.555, true, null);
 
-        MailerProperties properties = new MailerProperties();
-        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
-                VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME);
-
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties,
+        MailFormatter formatter = new MailFormatter(message, getContext().getResources(),
                 null, deviceName);
+        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
+                VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
                 "<body>" +
@@ -477,15 +449,14 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
 
-        MailMessage message = new MailMessage("+12345678901", true, start, end, true, false, null, 60.555, 30.555, true);
+        MailMessage message = new MailMessage("+12345678901", true, start, end, true, false, null,
+                60.555, 30.555, true, null);
 
-        MailerProperties properties = new MailerProperties();
-        properties.setContentOptions(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
-                VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME);
-
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), properties,
+        MailFormatter formatter = new MailFormatter(message, getContext().getResources(),
                 null, deviceName);
-        formatter.setLocale(new Locale("ru", "RU"));
+        formatter.setLocale("ru_RU");
+        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
+                VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
 
         assertEquals("[SMailer] Пропущенный звонок от +12345678901", formatter.getSubject());
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">" +
@@ -498,7 +469,38 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
                 "Отправлено с " + deviceName + " 2 февраля 2016 г. 3:04:05 GMT-05:00" +
                 "</body></html>", formatter.getBody());
 
-        formatter.setLocale(Locale.getDefault());
+        formatter.setLocale(null);
+        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">" +
+                "</head><body>" +
+                "You had a missed call." +
+                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                "Caller: <a href=\"tel:+12345678901\">+12345678901</a> (Unknown contact)<br>" +
+                "Last known device location: <a href=\"http://maps.google.com/maps/place/60.555,30.555\">" +
+                "60&#176;33'17\"N, 30&#176;33'17\"W</a><br>" +
+                "Sent from " + deviceName + " at February 2, 2016 3:04:05 AM EST" +
+                "</body></html>", formatter.getBody());
+    }
+
+    /**
+     * Check email body footer with different options.
+     *
+     * @throws Exception when fails
+     */
+    public void testInvalidLocale() throws Exception {
+        String deviceName = Settings.getDeviceName();
+        long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
+        long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
+
+        MailMessage message = new MailMessage("+12345678901", true, start, end, true, false, null,
+                60.555, 30.555, true, null);
+
+        MailFormatter formatter = new MailFormatter(message, getContext().getResources(),
+                null, deviceName);
+        formatter.setLocale("as;lmfai");
+
+        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
+                VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
+
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">" +
                 "</head><body>" +
                 "You had a missed call." +

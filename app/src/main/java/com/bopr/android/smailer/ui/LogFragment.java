@@ -67,7 +67,9 @@ public class LogFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView list, View v, int position, long id) {
         super.onListItemClick(list, v, position, id);
-        String details = database.getMessageDetails(id);
+
+        Database.MailMessageCursor cursor = (Database.MailMessageCursor) list.getAdapter().getItem(position);
+        String details = cursor.get().getDetails();
         if (details != null) {
             new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.activity_log_title_details)

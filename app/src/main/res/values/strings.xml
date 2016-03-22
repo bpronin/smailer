@@ -27,8 +27,9 @@
 
     <string name="message_error_no_parameters">Some required parameters are not specified.</string>
     <string name="message_error_authentication">Username or password is incorrect.</string>
-    <string name="message_error_connect">Unable to connect to server</string>
-    <string name="message_error_general">Unable to send email.</string>
+    <string name="message_error_connect">Unable to connect to mail server.</string>
+    <string name="message_error_mail_general">Unable to send email.</string>
+    <string name="message_error_internal">Internal error.</string>
 
     <string name="message_permission_denied_receive_sms">SMS read permission is denied. Trigger will be disabled.</string>
     <string name="message_permission_denied_phone_state">Read phone state permission is denied. Trigger will be disabled.</string>

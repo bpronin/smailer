@@ -1,6 +1,7 @@
 package com.bopr.android.smailer;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.sun.mail.util.MailConnectException;
@@ -8,7 +9,10 @@ import com.sun.mail.util.MailConnectException;
 import javax.mail.AuthenticationFailedException;
 import javax.mail.MessagingException;
 
-import static com.bopr.android.smailer.util.StringUtil.isEmpty;
+import static com.bopr.android.smailer.Contacts.getContactName;
+import static com.bopr.android.smailer.Settings.getDeviceName;
+import static com.bopr.android.smailer.Settings.getPreferences;
+import static com.bopr.android.smailer.util.Util.isAnyEmpty;
 
 
 /**
@@ -48,39 +52,61 @@ public class Mailer {
     public void send(MailMessage message) {
         Log.d(TAG, "Sending mail: " + message);
 
-        MailerProperties properties = new MailerProperties(Settings.getPreferences(context));
-        if (isEmpty(properties.getHost()) || isEmpty(properties.getPort()) ||
-                isEmpty(properties.getUser()) || isEmpty(properties.getRecipients())) {
-            notifications.showMailError(context, R.string.message_error_no_parameters);
+        MailerProperties mp = new MailerProperties(getPreferences(context));
+        if (isAnyEmpty(mp.getHost(), mp.getPort(), mp.getUser(), mp.getRecipients())) {
+            logError(null);
+            failed(message, "Invalid parameters", R.string.message_error_no_parameters);
         } else {
-            transport.init(properties.getUser(), cryptor.decrypt(properties.getPassword()),
-                    properties.getHost(), properties.getPort());
-
-            MailFormatter formatter = new MailFormatter(message, context.getResources(),
-                    properties, Contacts.getContactName(context, message.getPhone()),
-                    Settings.getDeviceName());
-
+            MailFormatter formatter = createFormatter(message, mp);
+            transport.init(mp.getUser(), cryptor.decrypt(mp.getPassword()), mp.getHost(), mp.getPort());
             try {
-                transport.send(formatter.getSubject(), formatter.getBody(), properties.getUser(),
-                        properties.getRecipients());
+                transport.send(formatter.getSubject(), formatter.getBody(), mp.getUser(),
+                        mp.getRecipients());
 
-                message.setSent(true);
-                database.addMessage(message, null);
-                notifications.removeMailError(context);
+                success(message);
             } catch (AuthenticationFailedException x) {
-                handleError(message, x, R.string.message_error_authentication);
+                logError(x);
+                failed(message, x.toString(), R.string.message_error_authentication);
             } catch (MailConnectException x) {
-                handleError(message, x, R.string.message_error_connect);
+                logError(x);
+                failed(message, x.toString(), R.string.message_error_connect);
             } catch (MessagingException x) {
-                handleError(message, x, R.string.message_error_general);
+                logError(x);
+                failed(message, x.toString(), R.string.message_error_mail_general);
+            } catch (Throwable x) {
+                logError(x);
+                failed(message, x.toString(), R.string.message_error_internal);
             }
         }
     }
 
-    private void handleError(MailMessage message, Exception x, int notificationMessage) {
-        Log.e(TAG, "Error sending message: " + message, x);
-        database.addMessage(message, x);
+    @NonNull
+    private MailFormatter createFormatter(MailMessage message, MailerProperties mp) {
+        MailFormatter formatter = new MailFormatter(message, context.getResources(),
+                getContactName(context, message.getPhone()), getDeviceName());
+        formatter.setContentOptions(mp.getContentOptions());
+        if (mp.getMessageLocale() != null) {
+            formatter.setLocale(mp.getMessageLocale());
+        }
+        return formatter;
+    }
+
+    private void success(MailMessage message) {
+        message.setSent(true);
+        message.setDetails(null);
+        database.updateMessage(message);
+        notifications.removeMailError(context);
+    }
+
+    private void failed(MailMessage message, String details, int notificationMessage) {
+        message.setSent(false);
+        message.setDetails(details);
+        database.updateMessage(message);
         notifications.showMailError(context, notificationMessage);
+    }
+
+    private void logError(Throwable x) {
+        Log.e(TAG, "Send failed", x);
     }
 
 }

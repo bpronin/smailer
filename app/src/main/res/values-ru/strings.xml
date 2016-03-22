@@ -24,7 +24,8 @@
     <string name="message_error_no_parameters">Некоторые обязательные параметры не указаны.</string>
     <string name="message_error_authentication">Неверный пароль или имя пользователя.</string>
     <string name="message_error_connect">Невозможно соединиться с почтовым сервером.</string>
-    <string name="message_error_general">Невозможно отправить почту.</string>
+    <string name="message_error_mail_general">Невозможно отправить почту.</string>
+    <string name="message_error_internal">Внутренняя ошибка.</string>
 
     <string name="message_permission_denied_receive_sms">Чтение SMS запрещено. Настройка будет отключена.</string>
     <string name="message_permission_denied_phone_state">Чтение состояния телефона запрещено. Настройка будет отключена.</string>

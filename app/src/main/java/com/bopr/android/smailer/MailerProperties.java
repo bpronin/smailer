@@ -6,7 +6,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENT_EMAIL_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
@@ -25,6 +27,7 @@ public class MailerProperties {
     private String host;
     private String port;
     private Set<String> contentOptions;
+    private String messageLocale;
 
     public MailerProperties() {
     }
@@ -35,7 +38,8 @@ public class MailerProperties {
         setRecipients(preferences.getString(KEY_PREF_RECIPIENT_EMAIL_ADDRESS, ""));
         setHost(preferences.getString(KEY_PREF_EMAIL_HOST, ""));
         setPort(preferences.getString(KEY_PREF_EMAIL_PORT, ""));
-        setContentOptions(preferences.getStringSet(Settings.KEY_PREF_EMAIL_CONTENT, null));
+        setContentOptions(preferences.getStringSet(KEY_PREF_EMAIL_CONTENT, null));
+        setMessageLocale(preferences.getString(KEY_PREF_EMAIL_LOCALE, null));
     }
 
     public String getUser() {
@@ -90,6 +94,14 @@ public class MailerProperties {
         this.contentOptions = contentOptions;
     }
 
+    public String getMessageLocale() {
+        return messageLocale;
+    }
+
+    public void setMessageLocale(String messageLocale) {
+        this.messageLocale = messageLocale;
+    }
+
     @Override
     public String toString() {
         return "MailerProperties{" +
@@ -99,6 +111,7 @@ public class MailerProperties {
                 ", host='" + host + '\'' +
                 ", port='" + port + '\'' +
                 ", contentOptions=" + contentOptions +
+                ", messageLocale='" + messageLocale + '\'' +
                 '}';
     }
 }

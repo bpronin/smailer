@@ -4,6 +4,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 
 import com.bopr.android.smailer.util.TagFormatter;
+import com.bopr.android.smailer.util.Util;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -14,10 +15,10 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CONTACT;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_LOCATION;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME;
-import static com.bopr.android.smailer.util.StringUtil.formatDuration;
-import static com.bopr.android.smailer.util.StringUtil.formatLocation;
-import static com.bopr.android.smailer.util.StringUtil.isEmpty;
 import static com.bopr.android.smailer.util.TagFormatter.from;
+import static com.bopr.android.smailer.util.Util.formatDuration;
+import static com.bopr.android.smailer.util.Util.formatLocation;
+import static com.bopr.android.smailer.util.Util.isEmpty;
 
 
 /**
@@ -36,23 +37,31 @@ public class MailFormatter {
     private static final String PHONE_LINK_PATTERN = "<a href=\"tel:{phone}\">{phone}</a>";
 
     private final Resources resources;
-    private final MailerProperties properties;
     private final MailMessage message;
     private final String contactName;
     private final String deviceName;
+    private Set<String> contentOptions;
     private Locale locale = Locale.getDefault();
 
-    public MailFormatter(MailMessage message, Resources resources, MailerProperties properties,
-                         String contactName, String deviceName) {
+    public MailFormatter(MailMessage message, Resources resources, String contactName,
+                         String deviceName) {
         this.resources = resources;
         this.message = message;
-        this.properties = properties;
         this.contactName = contactName;
         this.deviceName = deviceName;
     }
 
-    public void setLocale(Locale locale) {
-        this.locale = locale;
+    public void setContentOptions(Set<String> contentOptions) {
+        this.contentOptions = contentOptions;
+    }
+
+    public void setLocale(String code) {
+        Locale locale = Util.stringToLocale(code);
+        if (locale != null) {
+            this.locale = locale;
+        } else {
+            this.locale = Locale.getDefault();
+        }
     }
 
     /**
@@ -135,12 +144,11 @@ public class MailFormatter {
     }
 
     private String getFooterText() {
-        Set<String> options = properties.getContentOptions();
-        if (options != null) {
-            String callerText = options.contains(VAL_PREF_EMAIL_CONTENT_CONTACT) ? getCallerText() : null;
-            String deviceNameText = options.contains(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME) ? getDeviceNameText() : null;
-            String timeText = options.contains(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME) ? getTimeText() : null;
-            String locationText = options.contains(VAL_PREF_EMAIL_CONTENT_LOCATION) ? getLocationText() : null;
+        if (contentOptions != null) {
+            String callerText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_CONTACT) ? getCallerText() : null;
+            String deviceNameText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME) ? getDeviceNameText() : null;
+            String timeText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME) ? getTimeText() : null;
+            String locationText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_LOCATION) ? getLocationText() : null;
 
             StringBuilder text = new StringBuilder();
 

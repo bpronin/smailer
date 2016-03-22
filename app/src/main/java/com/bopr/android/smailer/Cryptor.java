@@ -6,7 +6,7 @@ import android.security.KeyPairGeneratorSpec;
 import android.security.keystore.KeyGenParameterSpec;
 import android.util.Base64;
 
-import com.bopr.android.smailer.util.StringUtil;
+import com.bopr.android.smailer.util.Util;
 
 import java.math.BigInteger;
 import java.security.KeyPair;
@@ -41,7 +41,7 @@ public class Cryptor {
     }
 
     public String encrypt(String s) {
-        if (StringUtil.isEmpty(s)) {
+        if (Util.isEmpty(s)) {
             return s;
         }
 
@@ -56,7 +56,7 @@ public class Cryptor {
     }
 
     public String decrypt(String s) {
-        if (StringUtil.isEmpty(s)) {
+        if (Util.isEmpty(s)) {
             return s;
         }
 

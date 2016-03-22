@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.bopr.android.smailer.util.StringUtil;
 import com.bopr.android.smailer.util.db.ExCursorWrapper;
 
 import java.util.concurrent.TimeUnit;
@@ -24,11 +23,8 @@ public class Database {
     public static final String DB_NAME = "smailer.sqlite";
     private static final String TABLE_SYSTEM = "system_data";
     private static final String TABLE_MESSAGES = "messages";
-    private static final String TABLE_MESSAGE_TEXT = "message_text";
-    private static final String TABLE_MESSAGE_DETAILS = "message_details";
     private static final String COLUMN_COUNT = "COUNT(*)";
     private static final String COLUMN_ID = "_id";
-    private static final String COLUMN_MESSAGE_ID = "message_id";
     private static final String COLUMN_PURGE_TIME = "messages_purge_time";
     private static final String COLUMN_IS_INCOMING = "is_incoming";
     private static final String COLUMN_IS_MISSED = "is_missed";
@@ -86,66 +82,32 @@ public class Database {
     }
 
     public MailMessageCursor getMessages() {
-        return new MailMessageCursor(helper.getReadableDatabase().query(TABLE_MESSAGES,
-                null, null, null, null, null, null));
+        return new MailMessageCursor(helper.getReadableDatabase().query(
+                TABLE_MESSAGES,
+                null, null, null, null, null,
+                COLUMN_START_TIME + " DESC")
+        );
     }
 
-    public String getMessageText(long messageId) {
-        return new ExCursorWrapper(helper.getReadableDatabase().query(TABLE_MESSAGE_TEXT,
-                new String[]{COLUMN_TEXT},
-                COLUMN_MESSAGE_ID + "=" + messageId,
-                null, null, null, null)
-        ).getStringAndClose(COLUMN_TEXT);
-    }
-
-    public String getMessageDetails(long messageId) {
-        return new ExCursorWrapper(helper.getReadableDatabase().query(TABLE_MESSAGE_DETAILS,
-                new String[]{COLUMN_DETAILS},
-                COLUMN_MESSAGE_ID + "=" + messageId,
-                null, null, null, null)
-        ).getStringAndClose(COLUMN_DETAILS);
-    }
-
-    public void addMessage(MailMessage item, Throwable error) {
+    public void updateMessage(MailMessage message) {
         SQLiteDatabase db = helper.getWritableDatabase();
-        db.beginTransaction();
-        try {
-            ContentValues values = new ContentValues();
+        ContentValues values = new ContentValues();
 
-            values.put(COLUMN_IS_SENT, item.isSent());
-            values.put(COLUMN_IS_INCOMING, item.isIncoming());
-            values.put(COLUMN_IS_MISSED, item.isMissed());
-            values.put(COLUMN_IS_SMS, item.isSms());
-            values.put(COLUMN_PHONE, item.getPhone());
-            values.put(COLUMN_LATITUDE, item.getLatitude());
-            values.put(COLUMN_LONGITUDE, item.getLongitude());
-            values.put(COLUMN_START_TIME, item.getStartTime());
-            values.put(COLUMN_END_TIME, item.getEndTime());
+        values.put(COLUMN_ID, message.getId());
+        values.put(COLUMN_IS_SENT, message.isSent());
+        values.put(COLUMN_IS_INCOMING, message.isIncoming());
+        values.put(COLUMN_IS_MISSED, message.isMissed());
+        values.put(COLUMN_IS_SMS, message.isSms());
+        values.put(COLUMN_PHONE, message.getPhone());
+        values.put(COLUMN_LATITUDE, message.getLatitude());
+        values.put(COLUMN_LONGITUDE, message.getLongitude());
+        values.put(COLUMN_START_TIME, message.getStartTime());
+        values.put(COLUMN_END_TIME, message.getEndTime());
+        values.put(COLUMN_TEXT, message.getText());
+        values.put(COLUMN_DETAILS, message.getDetails());
 
-            long id = db.insert(TABLE_MESSAGES, null, values);
-            item.setId(id);
-
-            String text = item.getText();
-            if (!StringUtil.isEmpty(text)) {
-                values = new ContentValues();
-                values.put(COLUMN_MESSAGE_ID, id);
-                values.put(COLUMN_TEXT, text);
-
-                db.insert(TABLE_MESSAGE_TEXT, null, values);
-            }
-
-            if (error != null) {
-                values = new ContentValues();
-                values.put(COLUMN_MESSAGE_ID, id);
-                values.put(COLUMN_DETAILS, error.toString());
-
-                db.insert(TABLE_MESSAGE_DETAILS, null, values);
-            }
-
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
+        long id = db.replace(TABLE_MESSAGES, null, values);
+        message.setId(id);
     }
 
     public boolean hasUnsent() {
@@ -246,14 +208,8 @@ public class Database {
                     COLUMN_END_TIME + " INTEGER, " +
                     COLUMN_LATITUDE + " REAL, " +
                     COLUMN_LONGITUDE + " REAL, " +
-                    COLUMN_PHONE + " TEXT(25)" +
-                    ")");
-            db.execSQL("CREATE TABLE " + TABLE_MESSAGE_TEXT + " (" +
-                    COLUMN_MESSAGE_ID + " INTEGER REFERENCES " + TABLE_MESSAGES + "(" + COLUMN_ID + ") ON DELETE CASCADE, " +
-                    COLUMN_TEXT + " TEXT(256)" +
-                    ")");
-            db.execSQL("CREATE TABLE " + TABLE_MESSAGE_DETAILS + " (" +
-                    COLUMN_MESSAGE_ID + " INTEGER REFERENCES " + TABLE_MESSAGES + "(" + COLUMN_ID + ") ON DELETE CASCADE, " +
+                    COLUMN_PHONE + " TEXT(25)," +
+                    COLUMN_TEXT + " TEXT(256)," +
                     COLUMN_DETAILS + " TEXT(256)" +
                     ")");
             db.execSQL("CREATE TABLE " + TABLE_SYSTEM + " (" +
@@ -292,6 +248,8 @@ public class Database {
                 message.setSms(getBoolean(COLUMN_IS_SMS));
                 message.setLatitude(getDouble(COLUMN_LATITUDE));
                 message.setLongitude(getDouble(COLUMN_LONGITUDE));
+                message.setText(getString(COLUMN_TEXT));
+                message.setDetails(getString(COLUMN_DETAILS));
             }
             return message;
         }

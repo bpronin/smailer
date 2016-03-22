@@ -9,7 +9,9 @@ import android.location.Location;
  */
 public class MailMessage {
 
-    private long id = -1;
+    public static final int NEW = -1;
+
+    private Long id;
     private boolean sent;
     private boolean sms;
     private boolean incoming;
@@ -20,12 +22,13 @@ public class MailMessage {
     private String text;
     private Double latitude;
     private Double longitude;
+    private String details;
 
     public MailMessage() {
     }
 
     public MailMessage(String phone, boolean incoming, Long startTime, Long endTime, boolean missed,
-                       boolean sms, String text, Double latitude, Double longitude, boolean sent) {
+                       boolean sms, String text, Double latitude, Double longitude, boolean sent, String details) {
         this.text = text;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -36,13 +39,14 @@ public class MailMessage {
         this.incoming = incoming;
         this.sms = sms;
         this.sent = sent;
+        this.details = details;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -140,10 +144,19 @@ public class MailMessage {
         return sent;
     }
 
+    public void setDetails(String details) {
+        this.details = details;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
     @Override
     public String toString() {
         return "MailMessage{" +
                 "id=" + id +
+                ", sent=" + sent +
                 ", sms=" + sms +
                 ", incoming=" + incoming +
                 ", missed=" + missed +
@@ -153,7 +166,7 @@ public class MailMessage {
                 ", text='" + text + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
-                ", sent=" + sent +
+                ", details='" + details + '\'' +
                 '}';
     }
 }

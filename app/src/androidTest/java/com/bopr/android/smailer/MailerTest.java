@@ -19,6 +19,7 @@ import static com.bopr.android.smailer.Settings.DEFAULT_PORT;
 import static com.bopr.android.smailer.Settings.DEFAULT_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENT_EMAIL_ADDRESS;
@@ -157,17 +158,59 @@ public class MailerTest extends ApplicationTestCase<Application> {
         /* test start */
 
         Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, database);
-        mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, 30.0, 60.0, true));
+        mailer.send(new MailMessage("+12345678901", false, 0L, 0L, false, false, null, 30.0, 60.0, true, null));
 
         assertNull(errorArgs.get());
         assertArrayEquals(new Object[]{"user", "decrypted password", "smtp.gmail.com", "465"}, initArgs.get());
         assertArrayEquals(new Object[]{"[SMailer] Outgoing call to +12345678901",
                 "<html><head>" +
                         "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
-                        "You had an outgoing call of 0:00:00 duration. <hr style=\"border: none; background-color: #cccccc; height: 1px;\"> " +
+                        "You had an outgoing call of 0:00:00 duration." +
+                        "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
                         "Called: <a href=\"tel:+12345678901\">+12345678901</a> (John Dou)<br>" +
                         "Last known device location: <a href=\"http://maps.google.com/maps/place/30.0,60.0\">30&#176;0'0\"N, 60&#176;0'0\"W</a><br>" +
-                        "Sent from Unknown Custom Phone - 5.1.0 - API 22 - 768x1280 at Dec 31, 1969 7:00:00 PM" +
+                        "Sent from Unknown Custom Phone - 5.1.0 - API 22 - 768x1280 at December 31, 1969 7:00:00 PM EST" +
+                        "</body></html>",
+                "user", "recipient"}, sendArgs.get());
+    }
+
+    /**
+     * Tests normal mailer behaviour with non-default locale.
+     *
+     * @throws Exception when fails
+     */
+    public void testSendLocalized() throws Exception {
+        AtomicReference<Object[]> initArgs = new AtomicReference<>();
+        AtomicReference<Object[]> sendArgs = new AtomicReference<>();
+        AtomicReference<Object[]> errorArgs = new AtomicReference<>();
+
+        Cryptor cryptor = createCryptor();
+        Notifications notifications = createNotifications(null, null);
+        MailTransport transport = createMailTransport(initArgs, sendArgs);
+        Database database = mock(Database.class);
+
+        populatePreferences();
+        getPreferences(getContext())
+                .edit()
+                .putString(KEY_PREF_EMAIL_LOCALE, "ru_RU")
+                .commit();
+
+
+        /* test start */
+
+        Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, database);
+        mailer.send(new MailMessage("+12345678901", false, 0L, 0L, false, false, null, 30.0, 60.0, true, null));
+
+        assertNull(errorArgs.get());
+        assertArrayEquals(new Object[]{"user", "decrypted password", "smtp.gmail.com", "465"}, initArgs.get());
+        assertArrayEquals(new Object[]{"[SMailer] Исходящий звонок на +12345678901",
+                "<html><head>" +
+                        "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
+                        "Исходящий звонок длительностью 0:00:00." +
+                        "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                        "Вы звонили: <a href=\"tel:+12345678901\">+12345678901</a> (John Dou)<br>" +
+                        "Последнее известное местоположение: <a href=\"http://maps.google.com/maps/place/30.0,60.0\">30&#176;0'0\"N, 60&#176;0'0\"W</a><br>" +
+                        "Отправлено с Unknown Custom Phone - 5.1.0 - API 22 - 768x1280 31 декабря 1969 г. 19:00:00 GMT-05:00" +
                         "</body></html>",
                 "user", "recipient"}, sendArgs.get());
     }
@@ -193,7 +236,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
         /* test start */
 
         Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, database);
-        mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, null, null, true));
+        mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, null, null, true, null));
 
         assertNull(initArgs.get());
         assertNull(sendArgs.get());
@@ -222,7 +265,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
         /* test start */
 
         Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, database);
-        mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, null, null, true));
+        mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, null, null, true, null));
 
         assertNull(initArgs.get());
         assertNull(sendArgs.get());
@@ -250,7 +293,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
         /* test start */
 
         Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, database);
-        mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, null, null, true));
+        mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, null, null, true, null));
 
         assertNull(initArgs.get());
         assertNull(sendArgs.get());
@@ -278,7 +321,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
         /* test start */
 
         Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, database);
-        mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, null, null, true));
+        mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, null, null, true, null));
 
         assertNull(initArgs.get());
         assertNull(sendArgs.get());
@@ -306,7 +349,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
         /* test start */
 
         Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, database);
-        mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, null, null, true));
+        mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, null, null, true, null));
 
         assertNotNull(initArgs.get());
         assertNull(sendArgs.get());
@@ -326,7 +369,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
         Cryptor cryptor = createCryptor();
         Notifications notifications = createNotifications(errorArgs, null);
         MailTransport transport = createMailTransport(initArgs, sendArgs);
-        doThrow(Exception.class).when(transport).send(anyString(), anyString(), anyString(), anyString());
+        doThrow(MessagingException.class).when(transport).send(anyString(), anyString(), anyString(), anyString());
         Database database = mock(Database.class);
 
         populatePreferences();
@@ -334,11 +377,11 @@ public class MailerTest extends ApplicationTestCase<Application> {
         /* test start */
 
         Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, database);
-        mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, null, null, true));
+        mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, null, null, true, null));
 
         assertNotNull(initArgs.get());
         assertNull(sendArgs.get());
-        assertEquals(R.string.message_error_general, errorArgs.get()[1]);
+        assertEquals(R.string.message_error_mail_general, errorArgs.get()[1]);
     }
 
     /**
@@ -361,7 +404,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 String subject = invocation.getArgumentAt(0, String.class);
                 if (subject.equals("[SMailer] Outgoing call to bad_phone")) {
-                    throw new Exception("bad_phone");
+                    throw new MessagingException("bad_phone");
                 }
                 return null;
             }
@@ -375,8 +418,8 @@ public class MailerTest extends ApplicationTestCase<Application> {
 
         Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, database);
 
-        mailer.send(new MailMessage("bad_phone", false, null, null, false, false, null, null, null, true));
-        assertEquals(R.string.message_error_general, errorArgs.get()[1]);
+        mailer.send(new MailMessage("bad_phone", false, null, null, false, false, null, null, null, true, null));
+        assertEquals(R.string.message_error_mail_general, errorArgs.get()[1]);
         assertNull(clearArgs.get());
 
         /* good_phone removes it */
@@ -384,7 +427,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
         errorArgs.set(null);
         clearArgs.set(null);
 
-        mailer.send(new MailMessage("good_phone", false, null, null, false, false, null, null, null, true));
+        mailer.send(new MailMessage("good_phone", false, null, null, false, false, null, null, null, true, null));
 
         assertNull(errorArgs.get());
         assertNotNull(clearArgs.get());

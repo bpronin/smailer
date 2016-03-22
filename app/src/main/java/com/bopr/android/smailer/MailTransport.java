@@ -40,14 +40,16 @@ public class MailTransport {
      */
     public void init(String user, String password, String host, String port) {
         Properties props = new Properties();
-        props.setProperty("mail.transport.protocol", "smtp");
-        props.setProperty("mail.host", host);
-        props.setProperty("mail.smtp.port", port);
-        props.setProperty("mail.smtp.auth", "true");
-        props.setProperty("mail.smtp.socketFactory.port", port);
-        props.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-        props.setProperty("mail.smtp.socketFactory.fallback", "false");
-        props.setProperty("mail.smtp.quitwait", "false");
+        props.put("mail.transport.protocol", "smtp");
+        props.put("mail.host", host);
+        props.put("mail.smtp.port", port);
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.socketFactory.port", port);
+        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        props.put("mail.smtp.socketFactory.fallback", false);
+        props.put("mail.smtp.quitwait", false);
+        props.put("mail.smtp.connectiontimeout", 10000);
+//        props.put("mail.smtp.timeout", 10000);
 
         final PasswordAuthentication authentication = new PasswordAuthentication(user, password);
         session = Session.getInstance(props, new Authenticator() {

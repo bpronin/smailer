@@ -4,10 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 
-import com.bopr.android.smailer.util.StringUtil;
+import com.bopr.android.smailer.util.Util;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -31,6 +29,7 @@ public class Settings {
     public static final String KEY_PREF_OUTGOING_SERVER = "outgoing_server";
     public static final String KEY_PREF_EMAIL_CONTENT = "email_content";
     public static final String KEY_PREF_EMAIL_TRIGGERS = "email_source";
+    public static final String KEY_PREF_EMAIL_LOCALE = "email_locale";
     public static final String VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME = "time";
     public static final String VAL_PREF_EMAIL_CONTENT_DEVICE_NAME = "device_name";
     public static final String VAL_PREF_EMAIL_CONTENT_LOCATION = "location";
@@ -38,25 +37,25 @@ public class Settings {
     public static final String VAL_PREF_TRIGGER_IN_SMS = "in_sms";
     public static final String VAL_PREF_TRIGGER_IN_CALLS = "in_calls";
     public static final String VAL_PREF_TRIGGER_OUT_CALLS = "out_calls";
-    public static final String VAL_PREF_TRIGGER_MISSED_CALLS = "missed_calls";
 
+    public static final String VAL_PREF_TRIGGER_MISSED_CALLS = "missed_calls";
     public static final String DEFAULT_HOST = "smtp.gmail.com";
     public static final String DEFAULT_PORT = "465";
-    public static final Set<String> DEFAULT_CONTENT = new HashSet<>(Arrays.asList(
+    public static final Set<String> DEFAULT_CONTENT = Util.asSet(
             VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
             VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
             VAL_PREF_EMAIL_CONTENT_LOCATION,
-            VAL_PREF_EMAIL_CONTENT_CONTACT));
-    public static final Set<String> DEFAULT_TRIGGERS = new HashSet<>(Arrays.asList(
+            VAL_PREF_EMAIL_CONTENT_CONTACT);
+    public static final Set<String> DEFAULT_TRIGGERS = Util.asSet(
             VAL_PREF_TRIGGER_IN_SMS,
-            VAL_PREF_TRIGGER_MISSED_CALLS));
+            VAL_PREF_TRIGGER_MISSED_CALLS);
 
     public static SharedPreferences getPreferences(Context context) {
         return context.getSharedPreferences(PREFERENCES_STORAGE_NAME, MODE_PRIVATE);
     }
 
     public static String getDeviceName() {
-        return StringUtil.capitalize(MANUFACTURER) + " " + MODEL;
+        return Util.capitalize(MANUFACTURER) + " " + MODEL;
     }
 
     public static String getReleaseVersion(Context context) {

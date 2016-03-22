@@ -16,7 +16,6 @@ import android.view.MenuItem;
 
 import com.bopr.android.smailer.PermissionsChecker;
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.util.StringUtil;
 import com.bopr.android.smailer.util.validator.EmailListTextValidator;
 import com.bopr.android.smailer.util.validator.EmailTextValidator;
 
@@ -50,6 +49,7 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
+import static com.bopr.android.smailer.util.Util.isEmpty;
 
 /**
  * Main settings fragment.
@@ -295,7 +295,7 @@ public class SettingsFragment extends DefaultPreferenceFragment {
     }
 
     private void updateAccountPreference(String value) {
-        if (StringUtil.isEmpty(value)) {
+        if (isEmpty(value)) {
             updateSummary(R.string.pref_description_not_set, accountPreference, false);
         } else {
             updateSummary(value, accountPreference, EmailTextValidator.isValidValue(value));
@@ -303,7 +303,7 @@ public class SettingsFragment extends DefaultPreferenceFragment {
     }
 
     private void updatePasswordPreference(String value) {
-        if (StringUtil.isEmpty(value)) {
+        if (isEmpty(value)) {
             updateSummary(R.string.pref_description_not_set, passwordPreference, false);
         } else {
             updateSummary(R.string.pref_description_password_asterisk, passwordPreference, true);
@@ -311,7 +311,7 @@ public class SettingsFragment extends DefaultPreferenceFragment {
     }
 
     private void updateRecipientsPreference(String value) {
-        if (StringUtil.isEmpty(value)) {
+        if (isEmpty(value)) {
             updateSummary(R.string.pref_description_not_set, recipientsPreference, false);
         } else {
             updateSummary(value, recipientsPreference, EmailListTextValidator.isValidValue(value));
@@ -322,16 +322,18 @@ public class SettingsFragment extends DefaultPreferenceFragment {
         SharedPreferences preferences = getSharedPreferences();
         String host = preferences.getString(KEY_PREF_EMAIL_HOST, "");
         String port = preferences.getString(KEY_PREF_EMAIL_PORT, "");
-        String value = null;
-        if (!StringUtil.isEmpty(host) || !StringUtil.isEmpty(port)) {
-            value = host + ":" + port;
-        }
 
         Preference preference = findPreference(KEY_PREF_OUTGOING_SERVER);
-        if (StringUtil.isEmpty(value)) {
+
+        if (isEmpty(host) && isEmpty(port)) {
             updateSummary(R.string.pref_description_not_set, preference, false);
         } else {
-            updateSummary(value, preference, true);
+            String value = host + ":" + port;
+            if (isEmpty(host) || isEmpty(port)) {
+                updateSummary(value, preference, false);
+            } else {
+                updateSummary(value, preference, true);
+            }
         }
     }
 
