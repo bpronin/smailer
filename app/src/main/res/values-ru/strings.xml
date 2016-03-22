@@ -6,14 +6,18 @@
     <string name="pref_title_recipients">Получатели</string>
     <string name="pref_title_sender_password">Пароль</string>
     <string name="pref_title_server">Сервер</string>
-    <string name="pref_dialog_title_email">Адрес исходящей почты</string>
-    <string name="pref_dialog_title_password">Пароль исходящей почты</string>
     <string name="pref_title_outgoing_server">Сервер исходящей почты</string>
     <string name="pref_title_host">Сервер</string>
     <string name="pref_title_port">Порт</string>
     <string name="pref_title_content">Содержание</string>
-    <string name="pref_dialog_title_email_content">Влючать в почтовое сообщение</string>
     <string name="pref_title_trigger">Условия</string>
+    <string name="pref_title_email_locale">Язык почтового сообщения</string>
+
+    <string name="pref_dialog_title_email">Адрес исходящей почты</string>
+    <string name="pref_dialog_title_password">Пароль исходящей почты</string>
+    <string name="pref_dialog_title_email_content">Влючать в почтовое сообщение</string>
+    <string name="pref_dialog_title_trigger">Условия отправки почты</string>
+    <string name="pref_dialog_title_email_locale">Язык почтового сообщения</string>
 
     <string name="pref_description_service_on">Приложение будет отправлять почту</string>
     <string name="pref_description_service_off">Приложение не будет отправлять почту</string>
@@ -73,6 +77,8 @@
     <string name="activity_log_title_clear">Очистить</string>
 
     <string name="about_dialog_title_version">Версия приложения: {version}</string>
+    <string name="about_dialog_title_open_source">Открытый исходный код и ПО сторонних производителей</string>
+    <string name="open_source_title">Открытый исходный код</string>
 
     <string-array name="email_trigger_titles">
         <item>Входящие SMS</item>
@@ -88,8 +94,10 @@
         <item>Местоположение устройства</item>
     </string-array>
 
-    <string name="pref_dialog_title_trigger">Условия отправки почты</string>
-    <string name="about_dialog_title_open_source">Открытый исходный код и ПО сторонних производителей</string>
-    <string name="open_source_title">Открытый исходный код</string>
+    <string-array name="email_locale_titles">
+        <item>По умолчанию</item>
+        <item>Английский</item>
+        <item>Русский</item>
+    </string-array>
 
 </resources>
