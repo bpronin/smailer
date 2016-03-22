@@ -13,6 +13,8 @@ import java.util.Set;
  */
 public class Util {
 
+    public static final String DEFAULT = "default";
+
     public static String formatLocation(double latitude, double longitude, String degreeSymbol,
                                         String minuteSymbol,
                                         String secondSymbol, String northSymbol, String southSymbol,
@@ -101,15 +103,23 @@ public class Util {
     }
 
     public static String localeToString(Locale locale) {
-        return locale.getLanguage() + "_" + locale.getCountry();
+        if (locale == null) {
+            return null;
+        } else if (locale == Locale.getDefault()) {
+            return DEFAULT;
+        } else {
+            return locale.getLanguage() + "_" + locale.getCountry();
+        }
     }
 
     public static Locale stringToLocale(String s) {
-        try {
+        if (isEmpty(s)) {
+            return null;
+        } else if (s.equals(DEFAULT)) {
+            return Locale.getDefault();
+        } else {
             String[] ss = s.split("_");
             return new Locale(ss[0], ss[1]);
-        } catch (Exception e) {
-            return null;
         }
     }
 

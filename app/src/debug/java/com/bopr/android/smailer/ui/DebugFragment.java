@@ -25,7 +25,6 @@ import com.bopr.android.smailer.MailTransport;
 import com.bopr.android.smailer.Mailer;
 import com.bopr.android.smailer.PermissionsChecker;
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.Settings;
 import com.bopr.android.smailer.util.Util;
 
 import java.io.BufferedReader;
@@ -36,14 +35,21 @@ import java.util.Properties;
 
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+import static com.bopr.android.smailer.Settings.DEFAULT_CONTENT;
+import static com.bopr.android.smailer.Settings.DEFAULT_HOST;
+import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
+import static com.bopr.android.smailer.Settings.DEFAULT_PORT;
+import static com.bopr.android.smailer.Settings.DEFAULT_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENT_EMAIL_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SERVICE_ENABLED;
+import static com.bopr.android.smailer.Settings.getDeviceName;
 
 /**
  * For debug purposes.
@@ -228,10 +234,11 @@ public class DebugFragment extends DefaultPreferenceFragment {
                 .putString(KEY_PREF_SENDER_ACCOUNT, properties.getProperty("default_sender"))
                 .putString(KEY_PREF_SENDER_PASSWORD, cryptor.encrypt(properties.getProperty("default_password")))
                 .putString(KEY_PREF_RECIPIENT_EMAIL_ADDRESS, properties.getProperty("default_recipient"))
-                .putString(KEY_PREF_EMAIL_HOST, Settings.DEFAULT_HOST)
-                .putString(KEY_PREF_EMAIL_PORT, Settings.DEFAULT_PORT)
-                .putStringSet(KEY_PREF_EMAIL_TRIGGERS, Settings.DEFAULT_TRIGGERS)
-                .putStringSet(KEY_PREF_EMAIL_CONTENT, Settings.DEFAULT_CONTENT)
+                .putString(KEY_PREF_EMAIL_HOST, DEFAULT_HOST)
+                .putString(KEY_PREF_EMAIL_PORT, DEFAULT_PORT)
+                .putStringSet(KEY_PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS)
+                .putStringSet(KEY_PREF_EMAIL_CONTENT, DEFAULT_CONTENT)
+                .putString(KEY_PREF_EMAIL_LOCALE, DEFAULT_LOCALE)
                 .apply();
         refreshPreferences(getPreferenceScreen());
     }
@@ -294,7 +301,7 @@ public class DebugFragment extends DefaultPreferenceFragment {
                 try {
                     transport.send(
                             "test subject",
-                            "test message from " + Settings.getDeviceName(),
+                            "test message from " + getDeviceName(),
                             user,
                             properties.getProperty("default_recipient")
                     );

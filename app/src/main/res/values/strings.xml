@@ -12,11 +12,14 @@
     <string name="pref_title_host">Host</string>
     <string name="pref_title_port">Port</string>
     <string name="pref_title_trigger">Triggers</string>
-    <string name="pref_title_content">Content</string>
+    <string name="pref_title_content">Email content</string>
+    <string name="pref_title_email_locale">Email message language</string>
+
     <string name="pref_dialog_title_email">Outgoing email address</string>
     <string name="pref_dialog_title_password">Outgoing email password</string>
     <string name="pref_dialog_title_email_content">Email message content</string>
     <string name="pref_dialog_title_trigger">Triggers</string>
+    <string name="pref_dialog_title_email_locale">Email language</string>
 
     <string name="pref_description_service_on">Email will be sent out</string>
     <string name="pref_description_service_off">No email will be sent out</string>
@@ -91,21 +94,21 @@
 
     <string name="open_source_title">Open source</string>
 
-    <string-array name="email_triggers">
+    <string-array name="email_trigger_titles">
         <item>Incoming SMS</item>
         <item>Incoming calls</item>
         <item>Outgoing calls</item>
         <item>Missed calls</item>
     </string-array>
 
-    <string-array name="email_source_values" translatable="false">
+    <string-array name="email_trigger_values" translatable="false">
         <item>in_sms</item>
         <item>in_calls</item>
         <item>out_calls</item>
         <item>missed_calls</item>
     </string-array>
 
-    <string-array name="email_contents">
+    <string-array name="email_content_titles">
         <item>Time</item>
         <item>Device name</item>
         <item>Caller contact name</item>
@@ -117,6 +120,18 @@
         <item>device_name</item>
         <item>contact_name</item>
         <item>location</item>
+    </string-array>
+
+    <string-array name="email_locale_titles">
+        <item>Default</item>
+        <item>English</item>
+        <item>Russian</item>
+    </string-array>
+
+    <string-array name="email_locale_values" translatable="false">
+        <item>default</item>
+        <item>en_US</item>
+        <item>ru_RU</item>
     </string-array>
 
 </resources>

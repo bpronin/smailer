@@ -74,14 +74,14 @@
 
     <string name="about_dialog_title_version">Версия приложения: {version}</string>
 
-    <string-array name="email_triggers">
+    <string-array name="email_trigger_titles">
         <item>Входящие SMS</item>
         <item>Входящие звонки</item>
         <item>Исходящие звонки</item>
         <item>Пропущенные звонки</item>
     </string-array>
 
-    <string-array name="email_contents">
+    <string-array name="email_content_titles">
         <item>Время</item>
         <item>Название устройства</item>
         <item>Имя звонившего</item>

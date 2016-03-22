@@ -28,7 +28,7 @@ public class Settings {
     public static final String KEY_PREF_RECIPIENT_EMAIL_ADDRESS = "recipient_email_address";
     public static final String KEY_PREF_OUTGOING_SERVER = "outgoing_server";
     public static final String KEY_PREF_EMAIL_CONTENT = "email_content";
-    public static final String KEY_PREF_EMAIL_TRIGGERS = "email_source";
+    public static final String KEY_PREF_EMAIL_TRIGGERS = "email_triggers";
     public static final String KEY_PREF_EMAIL_LOCALE = "email_locale";
     public static final String VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME = "time";
     public static final String VAL_PREF_EMAIL_CONTENT_DEVICE_NAME = "device_name";
@@ -41,6 +41,7 @@ public class Settings {
     public static final String VAL_PREF_TRIGGER_MISSED_CALLS = "missed_calls";
     public static final String DEFAULT_HOST = "smtp.gmail.com";
     public static final String DEFAULT_PORT = "465";
+    public static final String DEFAULT_LOCALE = "default";
     public static final Set<String> DEFAULT_CONTENT = Util.asSet(
             VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
             VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,

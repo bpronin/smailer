@@ -43,18 +43,25 @@
 
     <MultiSelectListPreference
         android:dialogTitle="@string/pref_dialog_title_trigger"
-        android:entries="@array/email_triggers"
-        android:entryValues="@array/email_source_values"
-        android:key="email_source"
+        android:entries="@array/email_trigger_titles"
+        android:entryValues="@array/email_trigger_values"
+        android:key="email_triggers"
         android:summary="@string/pref_description_when_to_send"
         android:title="@string/pref_title_trigger"/>
 
     <MultiSelectListPreference
         android:dialogTitle="@string/pref_dialog_title_email_content"
-        android:entries="@array/email_contents"
+        android:entries="@array/email_content_titles"
         android:entryValues="@array/email_content_values"
         android:key="email_content"
         android:summary="@string/pref_description_what_email_contain"
         android:title="@string/pref_title_content"/>
+
+    <ListPreference
+        android:dialogTitle="@string/pref_dialog_title_email_locale"
+        android:entries="@array/email_locale_titles"
+        android:entryValues="@array/email_locale_values"
+        android:key="email_locale"
+        android:title="@string/pref_title_email_locale"/>
 
 </PreferenceScreen>

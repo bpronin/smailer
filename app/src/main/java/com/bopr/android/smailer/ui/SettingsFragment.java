@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
+import android.preference.ListPreference;
 import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.support.annotation.NonNull;
@@ -32,10 +33,12 @@ import static android.preference.Preference.OnPreferenceChangeListener;
 import static android.preference.PreferenceManager.KEY_HAS_SET_DEFAULT_VALUES;
 import static com.bopr.android.smailer.Settings.DEFAULT_CONTENT;
 import static com.bopr.android.smailer.Settings.DEFAULT_HOST;
+import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
 import static com.bopr.android.smailer.Settings.DEFAULT_PORT;
 import static com.bopr.android.smailer.Settings.DEFAULT_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_OUTGOING_SERVER;
@@ -61,7 +64,7 @@ public class SettingsFragment extends DefaultPreferenceFragment {
     private EditTextPreference passwordPreference;
     private MultiSelectListPreference contentPreference;
     private MultiSelectListPreference triggersPreference;
-
+    private ListPreference localePreference;
     private PermissionsChecker outCallsPermissionsChecker;
     private PermissionsChecker inSmsPermissionsChecker;
     private PermissionsChecker inCallsPermissionsChecker;
@@ -130,6 +133,15 @@ public class SettingsFragment extends DefaultPreferenceFragment {
             public boolean onPreferenceChange(Preference preference, Object value) {
                 contactsPermissionsChecker.check(value);
                 locationPermissionsChecker.check(value);
+                return true;
+            }
+        });
+
+        localePreference = (ListPreference) findPreference(KEY_PREF_EMAIL_LOCALE);
+        localePreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object value) {
+                updateLocalePreference((String) value);
                 return true;
             }
         });
@@ -337,6 +349,16 @@ public class SettingsFragment extends DefaultPreferenceFragment {
         }
     }
 
+    private void updateLocalePreference(String value) {
+        int index = localePreference.findIndexOfValue(value);
+        if (index < 0) {
+            updateSummary(R.string.pref_description_not_set, localePreference, false);
+        }else {
+            CharSequence cs = localePreference.getEntries()[index];
+            updateSummary(cs.toString(), localePreference, true);
+        }
+    }
+
     /**
      * Sets default preferences values.
      * We are using multi-activity preferences so some values
@@ -354,6 +376,7 @@ public class SettingsFragment extends DefaultPreferenceFragment {
                     .putString(KEY_PREF_EMAIL_PORT, DEFAULT_PORT)
                     .putStringSet(KEY_PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS)
                     .putStringSet(KEY_PREF_EMAIL_CONTENT, DEFAULT_CONTENT)
+                    .putString(KEY_PREF_EMAIL_LOCALE, DEFAULT_LOCALE)
                     .apply();
 
             defaultValueSp
