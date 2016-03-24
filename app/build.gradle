@@ -1,16 +1,16 @@
 apply plugin: 'com.android.application'
 
 android {
+    compileSdkVersion 23
+    buildToolsVersion '23.0.3'
     signingConfigs {
         config {
-            storeFile file('keystore.jks')
             keyAlias 'SMailer'
+            storeFile file(System.getenv("ANDROID_DEV_KSTORE_FILE"))
             storePassword System.getenv("ANDROID_DEV_KSTORE_PWD")
             keyPassword System.getenv("ANDROID_DEV_KEY_PWD")
         }
     }
-    compileSdkVersion 23
-    buildToolsVersion '23.0.2'
     defaultConfig {
         applicationId "com.bopr.android.smailer"
         minSdkVersion 18
