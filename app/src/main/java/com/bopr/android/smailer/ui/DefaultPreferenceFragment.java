@@ -9,12 +9,8 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
-import android.support.v4.content.ContextCompat;
-import android.text.Spannable;
-import android.text.SpannableString;
 
-import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.util.draw.WavyUnderlineSpan;
+import com.bopr.android.smailer.util.Util;
 
 import java.util.Collections;
 import java.util.Map;
@@ -60,14 +56,7 @@ public class DefaultPreferenceFragment extends PreferenceFragment {
      * @param preference preference
      */
     protected void updateSummary(String value, Preference preference, boolean valid) {
-        if (!valid) {
-            Spannable summary = new SpannableString(value);
-            WavyUnderlineSpan span = new WavyUnderlineSpan(ContextCompat.getColor(getActivity(), R.color.errorForeground));
-            summary.setSpan(span, 0, summary.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            preference.setSummary(summary);
-        } else {
-            preference.setSummary(value);
-        }
+       preference.setSummary(Util.validatedText(getActivity(), value, valid));
     }
 
     /**

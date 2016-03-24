@@ -20,6 +20,7 @@
     <string name="pref_dialog_title_email_content">Email message content</string>
     <string name="pref_dialog_title_trigger">Triggers</string>
     <string name="pref_dialog_title_email_locale">Email language</string>
+    <string name="pref_dialog_title_recipient">Recipient</string>
 
     <string name="pref_description_service_on">Email will be sent out</string>
     <string name="pref_description_service_off">No email will be sent out</string>
@@ -28,6 +29,7 @@
     <string name="pref_description_when_to_send">When to send email</string>
     <string name="pref_description_what_email_contain">What should the email include</string>
 
+    <string name="message_recipient_already_exists">Recipient already exists</string>
     <string name="message_error_no_parameters">Some required parameters are not specified.</string>
     <string name="message_error_authentication">Username or password is incorrect.</string>
     <string name="message_error_connect">Unable to connect to mail server.</string>

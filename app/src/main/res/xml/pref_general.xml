@@ -26,19 +26,15 @@
         android:singleLine="true"
         android:title="@string/pref_title_sender_password"/>
 
-    <EditTextPreference
-        android:dialogMessage="@string/message_comma_separated_recipient"
-        android:inputType="textEmailAddress"
+
+    <PreferenceScreen
         android:key="recipient_email_address"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/pref_title_recipients"/>
+        android:title="@string/pref_title_recipients">
+    </PreferenceScreen>
 
     <PreferenceScreen
         android:key="outgoing_server"
         android:title="@string/pref_title_server">
-        <intent android:action="com.bopr.android.smailer.SERVER_SETTINGS"/>
     </PreferenceScreen>
 
     <MultiSelectListPreference

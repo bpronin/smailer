@@ -34,6 +34,11 @@
         </activity>
 
         <activity
+            android:name=".ui.RecipientsSettingsActivity"
+            android:label="@string/pref_title_recipients">
+        </activity>
+
+        <activity
             android:name=".ui.LogActivity"
             android:label="@string/activity_log_title">
         </activity>

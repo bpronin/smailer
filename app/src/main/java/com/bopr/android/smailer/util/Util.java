@@ -1,8 +1,17 @@
 package com.bopr.android.smailer.util;
 
+import android.content.Context;
+import android.text.Spannable;
+import android.text.SpannableString;
+
+import com.bopr.android.smailer.util.draw.WavyUnderlineSpan;
+
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -68,6 +77,10 @@ public class Util {
         return s == null || s.length() == 0;
     }
 
+    public static boolean isTrimEmpty(String s) {
+        return isEmpty(s) || isEmpty(s.trim());
+    }
+
     public static boolean isAllEmpty(String... ss) {
         for (String s : ss) {
             if (!isEmpty(s)) {
@@ -86,15 +99,27 @@ public class Util {
         return false;
     }
 
-    public static String listOf(String divider, Object... values) {
+    public static String stringOf(String divider, Collection values) {
         StringBuilder builder = new StringBuilder();
-        for (int i = 0, end = values.length - 1; i < values.length; i++) {
-            builder.append(values[i]);
-            if (i < end) {
+        for (Iterator iterator = values.iterator(); iterator.hasNext(); ) {
+            builder.append(iterator.next());
+            if (iterator.hasNext()) {
                 builder.append(divider);
             }
         }
         return builder.toString();
+    }
+
+    public static String stringOf(String divider, Object... values) {
+        return stringOf(divider, Arrays.asList(values));
+    }
+
+    public static List<String> listOf(String value, String divider, boolean trim) {
+        String s = value;
+        if (trim) {
+            s = value.replaceAll(" ", "");
+        }
+        return Arrays.asList(s.split(divider));
     }
 
     @SafeVarargs
@@ -123,4 +148,12 @@ public class Util {
         }
     }
 
+    public static Spannable validatedText(Context context, String value, boolean valid) {
+        Spannable result = new SpannableString(value);
+        if (!valid) {
+            WavyUnderlineSpan span = new WavyUnderlineSpan(context);
+            result.setSpan(span, 0, result.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        return result;
+    }
 }

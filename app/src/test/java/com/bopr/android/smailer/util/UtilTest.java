@@ -77,7 +77,7 @@ public class UtilTest {
 
     @Test
     public void testListOf() throws Exception {
-        assertEquals("1, 2, 3", Util.listOf(", ", 1, 2, 3));
+        assertEquals("1, 2, 3", Util.stringOf(", ", 1, 2, 3));
     }
 
     @Test

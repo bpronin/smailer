@@ -10,7 +10,6 @@ import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -59,7 +58,7 @@ import static com.bopr.android.smailer.util.Util.isEmpty;
  */
 public class SettingsFragment extends DefaultPreferenceFragment {
 
-    private EditTextPreference recipientsPreference;
+    private Preference recipientsPreference;
     private EditTextPreference accountPreference;
     private EditTextPreference passwordPreference;
     private MultiSelectListPreference contentPreference;
@@ -70,6 +69,7 @@ public class SettingsFragment extends DefaultPreferenceFragment {
     private PermissionsChecker inCallsPermissionsChecker;
     private PermissionsChecker contactsPermissionsChecker;
     private PermissionsChecker locationPermissionsChecker;
+    private Preference serverPreference;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,10 +78,8 @@ public class SettingsFragment extends DefaultPreferenceFragment {
         addPreferencesFromResource(R.xml.pref_general);
         setHasOptionsMenu(true);
 
-        int errorColor = ContextCompat.getColor(getActivity(), R.color.errorForeground);
-
         accountPreference = (EditTextPreference) findPreference(KEY_PREF_SENDER_ACCOUNT);
-        accountPreference.getEditText().addTextChangedListener(new EmailTextValidator(accountPreference.getEditText(), errorColor));
+        accountPreference.getEditText().addTextChangedListener(new EmailTextValidator(accountPreference.getEditText()));
         accountPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
             @Override
@@ -101,13 +99,11 @@ public class SettingsFragment extends DefaultPreferenceFragment {
             }
         });
 
-        recipientsPreference = (EditTextPreference) findPreference(KEY_PREF_RECIPIENT_EMAIL_ADDRESS);
-        recipientsPreference.getEditText().addTextChangedListener(new EmailListTextValidator(recipientsPreference.getEditText(), errorColor));
-        recipientsPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-
+        recipientsPreference = findPreference(KEY_PREF_RECIPIENT_EMAIL_ADDRESS);
+        recipientsPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
-            public boolean onPreferenceChange(Preference preference, Object value) {
-                updateRecipientsPreference((String) value);
+            public boolean onPreferenceClick(Preference preference) {
+                startActivity(new Intent(getActivity(), RecipientsSettingsActivity.class));
                 return true;
             }
         });
@@ -146,7 +142,8 @@ public class SettingsFragment extends DefaultPreferenceFragment {
             }
         });
 
-        findPreference(KEY_PREF_OUTGOING_SERVER).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        serverPreference = findPreference(KEY_PREF_OUTGOING_SERVER);
+        serverPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 startActivity(new Intent(getActivity(), ServerSettingsActivity.class));
@@ -277,6 +274,7 @@ public class SettingsFragment extends DefaultPreferenceFragment {
     public void onStart() {
         super.onStart();
         updateServerPreference();
+        updateRecipientsPreference();
     }
 
     @Override
@@ -322,7 +320,9 @@ public class SettingsFragment extends DefaultPreferenceFragment {
         }
     }
 
-    private void updateRecipientsPreference(String value) {
+    private void updateRecipientsPreference() {
+        SharedPreferences preferences = getSharedPreferences();
+        String value = preferences.getString(KEY_PREF_RECIPIENT_EMAIL_ADDRESS, null);
         if (isEmpty(value)) {
             updateSummary(R.string.pref_description_not_set, recipientsPreference, false);
         } else {
@@ -335,16 +335,14 @@ public class SettingsFragment extends DefaultPreferenceFragment {
         String host = preferences.getString(KEY_PREF_EMAIL_HOST, "");
         String port = preferences.getString(KEY_PREF_EMAIL_PORT, "");
 
-        Preference preference = findPreference(KEY_PREF_OUTGOING_SERVER);
-
         if (isEmpty(host) && isEmpty(port)) {
-            updateSummary(R.string.pref_description_not_set, preference, false);
+            updateSummary(R.string.pref_description_not_set, serverPreference, false);
         } else {
             String value = host + ":" + port;
             if (isEmpty(host) || isEmpty(port)) {
-                updateSummary(value, preference, false);
+                updateSummary(value, serverPreference, false);
             } else {
-                updateSummary(value, preference, true);
+                updateSummary(value, serverPreference, true);
             }
         }
     }

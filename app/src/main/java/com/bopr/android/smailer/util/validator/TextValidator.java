@@ -17,9 +17,9 @@ public abstract class TextValidator implements TextWatcher {
     private final TextView view;
     private Object span;
 
-    public TextValidator(TextView view, int errorColor) {
+    public TextValidator(TextView view) {
         this.view = view;
-        span = new WavyUnderlineSpan(errorColor);
+        span = new WavyUnderlineSpan(view.getContext());
     }
 
     /**
