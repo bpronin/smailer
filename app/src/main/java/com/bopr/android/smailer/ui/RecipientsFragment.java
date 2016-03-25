@@ -185,7 +185,7 @@ public class RecipientsFragment extends ListFragment {
 
         new AlertDialog.Builder(getActivity())
                 .setTitle(initialValue == null ? R.string.pref_dialog_title_add_recipient : R.string.pref_dialog_title_edit_recipient)
-                .setMessage(" ")
+                .setMessage(R.string.pref_dialog_message_recipient)
                 .setView(editText)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
 

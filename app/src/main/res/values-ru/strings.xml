@@ -18,6 +18,7 @@
     <string name="pref_dialog_title_email_content">Влючать в почтовое сообщение</string>
     <string name="pref_dialog_title_trigger">Условия отправки почты</string>
     <string name="pref_dialog_title_email_locale">Язык почтового сообщения</string>
+    <string name="pref_dialog_message_recipient">Почтовый адрес</string>
     <string name="pref_dialog_title_add_recipient">Добавление получателя</string>
     <string name="pref_dialog_title_edit_recipient">Редактирование получателя</string>
 
