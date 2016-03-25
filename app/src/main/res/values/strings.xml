@@ -20,7 +20,8 @@
     <string name="pref_dialog_title_email_content">Email message content</string>
     <string name="pref_dialog_title_trigger">Triggers</string>
     <string name="pref_dialog_title_email_locale">Email language</string>
-    <string name="pref_dialog_title_recipient">Recipient</string>
+    <string name="pref_dialog_title_add_recipient">Add recipient</string>
+    <string name="pref_dialog_title_edit_recipient">Edit recipient</string>
 
     <string name="pref_description_service_on">Email will be sent out</string>
     <string name="pref_description_service_off">No email will be sent out</string>

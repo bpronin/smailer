@@ -6,6 +6,7 @@ import android.app.ListFragment;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -79,13 +80,15 @@ public class RecipientsFragment extends ListFragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
         loadItems();
     }
 
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
+        FloatingActionButton button = (FloatingActionButton) getView().findViewById(R.id.button_add);
+        button.show();
         editItem((String) listView.getItemAtPosition(position));
     }
 
@@ -110,7 +113,6 @@ public class RecipientsFragment extends ListFragment {
         if (preference != null) {
             items.addAll(Util.listOf(preference, ",", true));
         }
-
 
         setListAdapter(createListAdapter(items));
     }
@@ -182,7 +184,8 @@ public class RecipientsFragment extends ListFragment {
         editText.setText(initialValue);
 
         new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.pref_dialog_title_recipient)
+                .setTitle(initialValue == null ? R.string.pref_dialog_title_add_recipient : R.string.pref_dialog_title_edit_recipient)
+                .setMessage(" ")
                 .setView(editText)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
 
