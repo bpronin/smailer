@@ -1,6 +1,7 @@
 package com.bopr.android.smailer.util;
 
 import org.junit.Test;
+import org.mockito.internal.matchers.Null;
 
 import java.util.Locale;
 import java.util.Set;
@@ -8,6 +9,7 @@ import java.util.Set;
 import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -76,8 +78,26 @@ public class UtilTest {
     }
 
     @Test
-    public void testListOf() throws Exception {
+    public void testStringOf() throws Exception {
         assertEquals("1, 2, 3", Util.stringOf(", ", 1, 2, 3));
+        assertEquals("1, null, null", Util.stringOf(", ", 1, null, null));
+        assertEquals("", Util.stringOf(", "));
+    }
+
+    @Test
+    public void testListOf() throws Exception {
+        assertArrayEquals(new String[]{"1", " 2", "3 "}, Util.listOf("1, 2,3 ", ",", false).toArray());
+        assertArrayEquals(new String[]{"1", "2", "3"}, Util.listOf("1, 2, 3 ", ",", true).toArray());
+        assertArrayEquals(new String[]{" "}, Util.listOf(" ", ",", false).toArray());
+        assertArrayEquals(new String[]{}, Util.listOf("", ",", true).toArray());
+        assertArrayEquals(new String[]{}, Util.listOf(" ", ",", true).toArray());
+
+        try {
+            assertArrayEquals(new String[]{}, Util.listOf(null, ",", true).toArray());
+            fail("No exception");
+        } catch (NullPointerException x) {
+            /* ok */
+        }
     }
 
     @Test
@@ -91,7 +111,7 @@ public class UtilTest {
 
         try {
             set.add("D");
-            fail();
+            fail("No exception");
         } catch (UnsupportedOperationException x) {
             /* ok */
         }

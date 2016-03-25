@@ -111,7 +111,8 @@ public class MailerTest extends ApplicationTestCase<Application> {
 
     @NonNull
     private Notifications createNotifications(final AtomicReference<Object[]> errorArgs,
-                                              final AtomicReference<Object[]> clearArgs) {
+                                              final AtomicReference<Object[]> clearArgs,
+                                              final AtomicReference<Object[]> successArgs) {
         Notifications notifications = mock(Notifications.class);
         doAnswer(new Answer<Void>() {
 
@@ -133,7 +134,18 @@ public class MailerTest extends ApplicationTestCase<Application> {
                 }
                 return null;
             }
-        }).when(notifications).removeMailError(any(Context.class));
+        }).when(notifications).hideMailError(any(Context.class));
+
+        doAnswer(new Answer<Void>() {
+
+            @Override
+            public Void answer(InvocationOnMock invocation) throws Throwable {
+                if (successArgs != null) {
+                    successArgs.set(invocation.getArguments());
+                }
+                return null;
+            }
+        }).when(notifications).showMailSuccess(any(Context.class));
 
         return notifications;
     }
@@ -149,7 +161,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
         AtomicReference<Object[]> errorArgs = new AtomicReference<>();
 
         Cryptor cryptor = createCryptor();
-        Notifications notifications = createNotifications(null, null);
+        Notifications notifications = createNotifications(null, null, null);
         MailTransport transport = createMailTransport(initArgs, sendArgs);
         Database database = mock(Database.class);
 
@@ -185,7 +197,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
         AtomicReference<Object[]> errorArgs = new AtomicReference<>();
 
         Cryptor cryptor = createCryptor();
-        Notifications notifications = createNotifications(null, null);
+        Notifications notifications = createNotifications(null, null, null);
         MailTransport transport = createMailTransport(initArgs, sendArgs);
         Database database = mock(Database.class);
 
@@ -226,7 +238,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
         AtomicReference<Object[]> errorArgs = new AtomicReference<>();
 
         Cryptor cryptor = createCryptor();
-        Notifications notifications = createNotifications(errorArgs, null);
+        Notifications notifications = createNotifications(errorArgs, null, null);
         MailTransport transport = createMailTransport(initArgs, sendArgs);
         Database database = mock(Database.class);
 
@@ -254,7 +266,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
         AtomicReference<Object[]> errorArgs = new AtomicReference<>();
 
         Cryptor cryptor = createCryptor();
-        Notifications notifications = createNotifications(errorArgs, null);
+        Notifications notifications = createNotifications(errorArgs, null, null);
         MailTransport transport = createMailTransport(initArgs, sendArgs);
         Database database = mock(Database.class);
 
@@ -283,7 +295,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
         AtomicReference<Object[]> errorArgs = new AtomicReference<>();
 
         Cryptor cryptor = createCryptor();
-        Notifications notifications = createNotifications(errorArgs, null);
+        Notifications notifications = createNotifications(errorArgs, null, null);
         MailTransport transport = createMailTransport(initArgs, sendArgs);
         Database database = mock(Database.class);
 
@@ -311,7 +323,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
         AtomicReference<Object[]> errorArgs = new AtomicReference<>();
 
         Cryptor cryptor = createCryptor();
-        Notifications notifications = createNotifications(errorArgs, null);
+        Notifications notifications = createNotifications(errorArgs, null, null);
         MailTransport transport = createMailTransport(initArgs, sendArgs);
         Database database = mock(Database.class);
 
@@ -339,7 +351,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
         AtomicReference<Object[]> errorArgs = new AtomicReference<>();
 
         Cryptor cryptor = createCryptor();
-        Notifications notifications = createNotifications(errorArgs, null);
+        Notifications notifications = createNotifications(errorArgs, null, null);
         MailTransport transport = createMailTransport(initArgs, sendArgs);
         doThrow(AuthenticationFailedException.class).when(transport).send(anyString(), anyString(), anyString(), anyString());
         Database database = mock(Database.class);
@@ -367,7 +379,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
         AtomicReference<Object[]> errorArgs = new AtomicReference<>();
 
         Cryptor cryptor = createCryptor();
-        Notifications notifications = createNotifications(errorArgs, null);
+        Notifications notifications = createNotifications(errorArgs, null, null);
         MailTransport transport = createMailTransport(initArgs, sendArgs);
         doThrow(MessagingException.class).when(transport).send(anyString(), anyString(), anyString(), anyString());
         Database database = mock(Database.class);
@@ -396,7 +408,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
         AtomicReference<Object[]> clearArgs = new AtomicReference<>();
 
         Cryptor cryptor = createCryptor();
-        Notifications notifications = createNotifications(errorArgs, clearArgs);
+        Notifications notifications = createNotifications(errorArgs, clearArgs, null);
 
         MailTransport transport = createMailTransport(initArgs, sendArgs);
         doAnswer(new Answer() {
@@ -414,9 +426,9 @@ public class MailerTest extends ApplicationTestCase<Application> {
         populatePreferences();
         getPreferences(getContext()).edit().putString(KEY_PREF_EMAIL_HOST, "good host").commit();
 
-        /* bad_phone produces notification */
-
         Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, database);
+
+        /* bad_phone produces notification */
 
         mailer.send(new MailMessage("bad_phone", false, null, null, false, false, null, null, null, true, null));
         assertEquals(R.string.message_error_mail_general, errorArgs.get()[1]);
@@ -431,6 +443,41 @@ public class MailerTest extends ApplicationTestCase<Application> {
 
         assertNull(errorArgs.get());
         assertNotNull(clearArgs.get());
+    }
+
+    /**
+     * When {@link Settings#KEY_PREF_NOTIFY_SEND_SUCCESS} set to true success notification should be shown.
+     *
+     * @throws Exception when fails
+     */
+    public void testSuccessNotification() throws Exception {
+        AtomicReference<Object[]> initArgs = new AtomicReference<>();
+        AtomicReference<Object[]> sendArgs = new AtomicReference<>();
+        AtomicReference<Object[]> errorArgs = new AtomicReference<>();
+        AtomicReference<Object[]> successArgs = new AtomicReference<>();
+
+        Cryptor cryptor = createCryptor();
+        Notifications notifications = createNotifications(errorArgs, null, successArgs);
+
+        MailTransport transport = createMailTransport(initArgs, sendArgs);
+        Database database = mock(Database.class);
+
+        populatePreferences();
+        Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, database);
+
+        /* settings is on */
+        getPreferences(getContext()).edit().putBoolean(Settings.KEY_PREF_NOTIFY_SEND_SUCCESS, false).commit();
+        mailer.send(new MailMessage("1", false, null, null, false, false, null, null, null, true, null));
+
+        assertNull(errorArgs.get());
+        assertNull(successArgs.get());
+
+        /* settings is off */
+        getPreferences(getContext()).edit().putBoolean(Settings.KEY_PREF_NOTIFY_SEND_SUCCESS, true).commit();
+        mailer.send(new MailMessage("1", false, null, null, false, false, null, null, null, true, null));
+
+        assertNull(errorArgs.get());
+        assertNotNull(successArgs.get());
     }
 
 }

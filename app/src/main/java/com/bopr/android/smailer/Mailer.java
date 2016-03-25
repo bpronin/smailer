@@ -10,6 +10,7 @@ import javax.mail.AuthenticationFailedException;
 import javax.mail.MessagingException;
 
 import static com.bopr.android.smailer.Contacts.getContactName;
+import static com.bopr.android.smailer.Settings.KEY_PREF_NOTIFY_SEND_SUCCESS;
 import static com.bopr.android.smailer.Settings.getDeviceName;
 import static com.bopr.android.smailer.Settings.getPreferences;
 import static com.bopr.android.smailer.util.Util.isAnyEmpty;
@@ -95,7 +96,10 @@ public class Mailer {
         message.setSent(true);
         message.setDetails(null);
         database.updateMessage(message);
-        notifications.removeMailError(context);
+        notifications.hideMailError(context);
+        if (getPreferences(context).getBoolean(KEY_PREF_NOTIFY_SEND_SUCCESS, false)) {
+            notifications.showMailSuccess(context);
+        }
     }
 
     private void failed(MailMessage message, String details, int notificationMessage) {

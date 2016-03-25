@@ -119,7 +119,10 @@ public class Util {
         if (trim) {
             s = value.replaceAll(" ", "");
         }
-        return Arrays.asList(s.split(divider));
+        if (!isEmpty(s)) {
+            return Arrays.asList(s.split(divider));
+        }
+        return Collections.emptyList();
     }
 
     @SafeVarargs

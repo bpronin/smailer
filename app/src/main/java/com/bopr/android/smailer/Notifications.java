@@ -18,6 +18,7 @@ import com.bopr.android.smailer.ui.SettingsActivity;
  */
 public class Notifications {
 
+    private static final int ID_MAIL_SUCCESS = 100;
     private static final int ID_MAIL_ERROR = 101;
 
     public Notifications() {
@@ -27,7 +28,7 @@ public class Notifications {
         return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
-    public void removeMailError(Context context) {
+    public void hideMailError(Context context) {
         getNotificationManager(context).cancel(ID_MAIL_ERROR);
     }
 
@@ -39,8 +40,8 @@ public class Notifications {
         Resources r = context.getResources();
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         Notification notification = builder
-                .setContentIntent(createMailIntent(context))
-                .setSmallIcon(android.R.drawable.stat_notify_error)
+                .setContentIntent(createIntent(context))
+                .setSmallIcon(R.drawable.alert)
                 .setTicker(r.getString(R.string.app_name))
                 .setAutoCancel(true)
                 .setContentTitle(r.getString(R.string.app_name))
@@ -51,12 +52,27 @@ public class Notifications {
         getNotificationManager(context).notify(ID_MAIL_ERROR, notification);
     }
 
-    private PendingIntent createMailIntent(Context context) {
+    public void showMailSuccess(Context context) {
+        Resources r = context.getResources();
+        String text = r.getString(R.string.notification_email_send_successfully);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        Notification notification = builder
+                .setSmallIcon(R.drawable.file_send)
+                .setTicker(r.getString(R.string.app_name))
+                .setAutoCancel(true)
+                .setContentTitle(r.getString(R.string.app_name))
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
+                .setContentText(text)
+                .build();
+
+        getNotificationManager(context).notify(ID_MAIL_SUCCESS, notification);
+    }
+
+    private PendingIntent createIntent(Context context) {
         Intent intent = new Intent(context, SettingsActivity.class);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addParentStack(SettingsActivity.class);
         stackBuilder.addNextIntent(intent);
         return stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
     }
-
 }

@@ -2,7 +2,7 @@
 <resources>
 
     <string name="pref_title_enable">Активность</string>
-    <string name="pref_title_sender_account">Акаунт</string>
+    <string name="pref_title_sender_account">Учетная запись</string>
     <string name="pref_title_recipients">Получатели</string>
     <string name="pref_title_sender_password">Пароль</string>
     <string name="pref_title_server">Сервер</string>
@@ -12,6 +12,7 @@
     <string name="pref_title_content">Содержание</string>
     <string name="pref_title_trigger">Условия</string>
     <string name="pref_title_email_locale">Язык почтового сообщения</string>
+    <string name="pref_title_notify_send_success">Уведомлять об отправке</string>
 
     <string name="pref_dialog_title_email">Адрес исходящей почты</string>
     <string name="pref_dialog_title_password">Пароль исходящей почты</string>
@@ -27,8 +28,9 @@
     <string name="pref_description_not_set">не указано</string>
     <string name="pref_description_when_to_send">Когда отправлять почту</string>
     <string name="pref_description_what_email_contain">Что должно включать почтовое сообщение</string>
+    <string name="pref_description_notify_send_success">Показывать уведомление, когда почта успешно отправлена</string>
 
-    <string name="message_recipient_already_exists">Получатель уже существует</string>
+    <string name="message_recipient_already_exists">Получатель {name} уже существует</string>
     <string name="message_error_no_parameters">Некоторые обязательные параметры не указаны.</string>
     <string name="message_error_authentication">Неверный пароль или имя пользователя.</string>
     <string name="message_error_connect">Невозможно соединиться с почтовым сервером.</string>
@@ -51,6 +53,10 @@
     <string name="message_password_hint">Пароль аккаунта, с которого будет отправляться почта.</string>
     <string name="message_account_hint">Адрес, с которого будет отправляться почта.</string>
     <string name="message_at_least_one_item_checked">Хотябы один пункт должен быть отмечен.</string>
+    <string name="message_item_removed">Запись удалена</string>
+    <string name="message_items_removed">{count} записей удалено</string>
+
+    <string name="notification_email_send_successfully">Почта устешно отправлена</string>
 
     <string name="email_subject_incoming_sms">Входящее SMS от</string>
     <string name="email_subject_outgoing_sms">Исходящее SMS</string>
@@ -103,5 +109,6 @@
         <item>Английский</item>
         <item>Русский</item>
     </string-array>
+    <string name="action_undo">Отмена</string>
 
 </resources>

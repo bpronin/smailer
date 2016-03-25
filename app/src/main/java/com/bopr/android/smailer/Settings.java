@@ -30,6 +30,8 @@ public class Settings {
     public static final String KEY_PREF_EMAIL_CONTENT = "email_content";
     public static final String KEY_PREF_EMAIL_TRIGGERS = "email_triggers";
     public static final String KEY_PREF_EMAIL_LOCALE = "email_locale";
+    public static final String KEY_PREF_NOTIFY_SEND_SUCCESS = "notify_send_success";
+
     public static final String VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME = "time";
     public static final String VAL_PREF_EMAIL_CONTENT_DEVICE_NAME = "device_name";
     public static final String VAL_PREF_EMAIL_CONTENT_LOCATION = "location";

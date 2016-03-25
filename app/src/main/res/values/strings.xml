@@ -14,6 +14,7 @@
     <string name="pref_title_trigger">Triggers</string>
     <string name="pref_title_content">Email content</string>
     <string name="pref_title_email_locale">Email message language</string>
+    <string name="pref_title_notify_send_success">Notify of send</string>
 
     <string name="pref_dialog_title_email">Outgoing email address</string>
     <string name="pref_dialog_title_password">Outgoing email password</string>
@@ -30,8 +31,9 @@
     <string name="pref_description_not_set">not specified</string>
     <string name="pref_description_when_to_send">When to send email</string>
     <string name="pref_description_what_email_contain">What should the email include</string>
+    <string name="pref_description_notify_send_success">Display message when email successfully sent</string>
 
-    <string name="message_recipient_already_exists">Recipient already exists</string>
+    <string name="message_recipient_already_exists">Recipient {name} already exists</string>
     <string name="message_error_no_parameters">Some required parameters are not specified.</string>
     <string name="message_error_authentication">Username or password is incorrect.</string>
     <string name="message_error_connect">Unable to connect to mail server.</string>
@@ -54,6 +56,8 @@
     <string name="message_account_hint">Email address to send email from.</string>
     <string name="message_password_hint">Password of account to send email from.</string>
     <string name="message_at_least_one_item_checked">At least one item should be selected.</string>
+    <string name="message_item_removed">Item removed</string>
+    <string name="message_items_removed">{count} item removed</string>
 
     <string name="email_subject_incoming_sms">Incoming SMS from</string>
     <string name="email_subject_outgoing_sms">Outgoing SMS to</string>
@@ -97,6 +101,8 @@
     <string name="about_dialog_title_open_source">Open source &amp; third party software</string>
 
     <string name="open_source_title">Open source</string>
+    <string name="notification_email_send_successfully">Email successfully sent</string>
+    <string name="action_undo">Undo</string>
 
     <string-array name="email_trigger_titles">
         <item>Incoming SMS</item>
