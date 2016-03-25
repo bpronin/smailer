@@ -25,7 +25,8 @@ public class Settings {
     public static final String KEY_PREF_SENDER_PASSWORD = "sender_password";
     public static final String KEY_PREF_EMAIL_HOST = "sender_host";
     public static final String KEY_PREF_EMAIL_PORT = "sender_port";
-    public static final String KEY_PREF_RECIPIENT_EMAIL_ADDRESS = "recipient_email_address";
+    public static final String KEY_PREF_AVAILABLE_RECIPIENTS_ADDRESS = "available_recipients_address";
+    public static final String KEY_PREF_RECIPIENTS_ADDRESS = "recipients_address";
     public static final String KEY_PREF_OUTGOING_SERVER = "outgoing_server";
     public static final String KEY_PREF_EMAIL_CONTENT = "email_content";
     public static final String KEY_PREF_EMAIL_TRIGGERS = "email_triggers";

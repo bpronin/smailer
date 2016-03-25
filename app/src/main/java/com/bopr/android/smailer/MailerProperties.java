@@ -10,7 +10,7 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENT_EMAIL_ADDRESS;
+import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
 
@@ -35,7 +35,7 @@ public class MailerProperties {
     public MailerProperties(SharedPreferences preferences) {
         setUser(preferences.getString(KEY_PREF_SENDER_ACCOUNT, ""));
         setPassword(preferences.getString(KEY_PREF_SENDER_PASSWORD, ""));
-        setRecipients(preferences.getString(KEY_PREF_RECIPIENT_EMAIL_ADDRESS, ""));
+        setRecipients(preferences.getString(KEY_PREF_RECIPIENTS_ADDRESS, ""));
         setHost(preferences.getString(KEY_PREF_EMAIL_HOST, ""));
         setPort(preferences.getString(KEY_PREF_EMAIL_PORT, ""));
         setContentOptions(preferences.getStringSet(KEY_PREF_EMAIL_CONTENT, null));

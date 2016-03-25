@@ -22,7 +22,7 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENT_EMAIL_ADDRESS;
+import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SERVICE_ENABLED;
@@ -64,7 +64,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
                 .putBoolean(KEY_PREF_SERVICE_ENABLED, true)
                 .putString(KEY_PREF_SENDER_ACCOUNT, "user")
                 .putString(KEY_PREF_SENDER_PASSWORD, "password")
-                .putString(KEY_PREF_RECIPIENT_EMAIL_ADDRESS, "recipient")
+                .putString(KEY_PREF_RECIPIENTS_ADDRESS, "recipient")
                 .putString(KEY_PREF_EMAIL_HOST, DEFAULT_HOST)
                 .putString(KEY_PREF_EMAIL_PORT, DEFAULT_PORT)
                 .putStringSet(KEY_PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS)
@@ -272,7 +272,7 @@ public class MailerTest extends ApplicationTestCase<Application> {
 
 
         populatePreferences();
-        getPreferences(getContext()).edit().putString(KEY_PREF_RECIPIENT_EMAIL_ADDRESS, null).commit();
+        getPreferences(getContext()).edit().putString(KEY_PREF_RECIPIENTS_ADDRESS, null).commit();
 
         /* test start */
 

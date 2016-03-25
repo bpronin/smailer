@@ -41,7 +41,7 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_OUTGOING_SERVER;
-import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENT_EMAIL_ADDRESS;
+import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SERVICE_ENABLED;
@@ -99,7 +99,7 @@ public class SettingsFragment extends DefaultPreferenceFragment {
             }
         });
 
-        recipientsPreference = findPreference(KEY_PREF_RECIPIENT_EMAIL_ADDRESS);
+        recipientsPreference = findPreference(KEY_PREF_RECIPIENTS_ADDRESS);
         recipientsPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -322,7 +322,7 @@ public class SettingsFragment extends DefaultPreferenceFragment {
 
     private void updateRecipientsPreference() {
         SharedPreferences preferences = getSharedPreferences();
-        String value = preferences.getString(KEY_PREF_RECIPIENT_EMAIL_ADDRESS, null);
+        String value = preferences.getString(KEY_PREF_RECIPIENTS_ADDRESS, null);
         if (isEmpty(value)) {
             updateSummary(R.string.pref_description_not_set, recipientsPreference, false);
         } else {

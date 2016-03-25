@@ -28,7 +28,7 @@
 
 
     <PreferenceScreen
-        android:key="recipient_email_address"
+        android:key="recipients_address"
         android:title="@string/pref_title_recipients">
     </PreferenceScreen>
 

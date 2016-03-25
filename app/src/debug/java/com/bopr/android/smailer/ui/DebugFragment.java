@@ -40,12 +40,13 @@ import static com.bopr.android.smailer.Settings.DEFAULT_HOST;
 import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
 import static com.bopr.android.smailer.Settings.DEFAULT_PORT;
 import static com.bopr.android.smailer.Settings.DEFAULT_TRIGGERS;
+import static com.bopr.android.smailer.Settings.KEY_PREF_AVAILABLE_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENT_EMAIL_ADDRESS;
+import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SERVICE_ENABLED;
@@ -233,7 +234,8 @@ public class DebugFragment extends DefaultPreferenceFragment {
                 .putBoolean(KEY_PREF_SERVICE_ENABLED, true)
                 .putString(KEY_PREF_SENDER_ACCOUNT, properties.getProperty("default_sender"))
                 .putString(KEY_PREF_SENDER_PASSWORD, cryptor.encrypt(properties.getProperty("default_password")))
-                .putString(KEY_PREF_RECIPIENT_EMAIL_ADDRESS, properties.getProperty("default_recipient"))
+                .putString(KEY_PREF_AVAILABLE_RECIPIENTS_ADDRESS, properties.getProperty("default_recipient"))
+                .putString(KEY_PREF_RECIPIENTS_ADDRESS, properties.getProperty("default_recipient"))
                 .putString(KEY_PREF_EMAIL_HOST, DEFAULT_HOST)
                 .putString(KEY_PREF_EMAIL_PORT, DEFAULT_PORT)
                 .putStringSet(KEY_PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS)
