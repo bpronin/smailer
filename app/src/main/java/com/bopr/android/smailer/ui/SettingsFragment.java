@@ -9,6 +9,7 @@ import android.preference.ListPreference;
 import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -385,7 +386,7 @@ public class SettingsFragment extends DefaultPreferenceFragment {
     }
 
     public void showAboutDialog() {
-        FragmentManager fm = ((SettingsActivity) getActivity()).getSupportFragmentManager();
+        FragmentManager fm = ((FragmentActivity) getActivity()).getSupportFragmentManager();
         new AboutDialogFragment().show(fm, "about_dialog");
     }
 

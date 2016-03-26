@@ -1,22 +1,18 @@
 package com.bopr.android.smailer.ui;
 
 
-import android.app.AlertDialog;
 import android.app.ListFragment;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -139,13 +135,12 @@ public class RecipientsFragment extends ListFragment {
     }
 
     private void addItem() {
-        showItemEditor(null);
+        showItemEditor(-1);
     }
 
     private void editItem(int position) {
-        Item item = listAdapter.getItem(position);
-        if (item != null) {
-            showItemEditor(item);
+        if (position != -1) {
+            showItemEditor(position);
         }
     }
 
@@ -172,7 +167,7 @@ public class RecipientsFragment extends ListFragment {
 
     private void enableItem(int position, boolean enabled) {
         Item item = listAdapter.getItem(position);
-        listAdapter.replaceItem(item, new Item(item.address, enabled));
+        listAdapter.replaceItem(position, new Item(item.address, enabled));
         listAdapter.notifyDataSetChanged();
         persistItems();
     }
@@ -186,49 +181,33 @@ public class RecipientsFragment extends ListFragment {
         return false;
     }
 
-    private void showItemEditor(final Item item) {
-        final EditText editText = new EditText(getActivity());
-        editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-        editText.addTextChangedListener(new EmailTextValidator(editText));
-        editText.setSelectAllOnFocus(true);
-        if (item != null) {
-            editText.setText(item.address);
-        }
+    private void showItemEditor(final int position) {
+        final Item item = listAdapter.getItem(position);
 
-        AlertDialog dialog = new AlertDialog.Builder(getActivity())
-                .setTitle(item == null ? R.string.pref_dialog_title_add_recipient : R.string.pref_dialog_title_edit_recipient)
-                .setMessage(R.string.pref_dialog_message_recipient)
-                .setView(editText)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        EditRecipientDialogFragment dialog = new EditRecipientDialogFragment();
+        dialog.setTitle(item == null ? R.string.pref_dialog_title_add_recipient : R.string.pref_dialog_title_edit_recipient);
+        dialog.setInitialValue(item == null ? null : item.address);
+        dialog.setCallback(new EditRecipientDialogFragment.Callback() {
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String address = editText.getText().toString();
-                        if (isItemExists(address)) {
-                            Toast.makeText(getActivity(), from(R.string.message_recipient_already_exists, getResources())
-                                    .put("name", address)
-                                    .format(), Toast.LENGTH_LONG).show();
-                        } else if (!Util.isTrimEmpty(address)) {
-                            Item newItem = new Item(address, item == null || item.enabled);
-                            listAdapter.replaceItem(item, newItem);
-                            listAdapter.notifyDataSetChanged();
-                            persistItems();
-                        }
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onOkClick(String address) {
+                if (isItemExists(address) && (item == null || !item.address.equals(address))) {
+                    Toast.makeText(getActivity(), from(R.string.message_recipient_already_exists, getResources())
+                            .put("name", address)
+                            .format(), Toast.LENGTH_LONG).show();
+                } else if (!Util.isTrimEmpty(address)) {
+                    Item newItem = new Item(address, item == null || item.enabled);
+                    listAdapter.replaceItem(position, newItem);
+                    listAdapter.notifyDataSetChanged();
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                })
-                .create();
+                  //  getListView().invalidateViews(); //todo: NPE when rotating during edit
 
-        /* this is to show soft keyboard when dialog is open */
-        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+                    persistItems();
+                }
+            }
+        });
 
-        dialog.show();
+        dialog.show(((FragmentActivity) getActivity()).getSupportFragmentManager(), "edit_recipient_dialog");
     }
 
     private void showUndoAction(List<Item> removedItems, final List<Item> lastItems) {
@@ -242,7 +221,7 @@ public class RecipientsFragment extends ListFragment {
         }
 
         Snackbar.make(getListView(), title, Snackbar.LENGTH_LONG)
-                .setActionTextColor(ContextCompat.getColor(getActivity(), R.color.snackBarButtonText))
+                .setActionTextColor(ContextCompat.getColor(getActivity(), R.color.dialogButtonText))
                 .setAction(R.string.action_undo, new View.OnClickListener() {
 
                     @Override
@@ -309,7 +288,7 @@ public class RecipientsFragment extends ListFragment {
 
         @Override
         public Item getItem(int position) {
-            return items.get(position);
+            return position != -1 ? items.get(position) : null;
         }
 
         @Override
@@ -335,14 +314,14 @@ public class RecipientsFragment extends ListFragment {
             items.add(item);
         }
 
-        public void replaceItem(Item oldItem, Item newItem) {
-            int position = items.indexOf(oldItem);
+        public void replaceItem(int position, Item item) {
             if (position < 0) {
-                items.add(newItem);
+                items.add(item);
             } else {
-                items.set(position, newItem);
+                items.set(position, item);
             }
         }
+
     }
 
 }

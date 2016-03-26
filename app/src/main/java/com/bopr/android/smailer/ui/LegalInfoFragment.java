@@ -19,7 +19,7 @@ public class LegalInfoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.legal_dialog, container, false);
+        View view = inflater.inflate(R.layout.dialog_legal_info, container, false);
 
         WebView webView = (WebView) view.findViewById(R.id.web_view);
         webView.loadUrl("file:///android_asset/legal.html");

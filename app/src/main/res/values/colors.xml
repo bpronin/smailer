@@ -5,6 +5,6 @@
     <color name="colorAccent">#872E3D</color>
     <!--<color name="colorAccent1">#95878D</color>-->
     <!--<color name="snackBarButtonText">#E2CEC0</color>-->
-    <color name="snackBarButtonText">@color/accent_material_light</color>
+    <color name="dialogButtonText">@color/accent_material_light</color>
     <color name="errorForeground">#e7291f</color>
 </resources>

@@ -1,11 +1,15 @@
 package com.bopr.android.smailer;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.provider.ContactsContract;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import static android.Manifest.permission.READ_CONTACTS;
+import static android.provider.ContactsContract.CommonDataKinds.Email;
 import static android.provider.ContactsContract.PhoneLookup;
 
 /**
@@ -17,9 +21,16 @@ public class Contacts {
 
     private static final String TAG = "Contacts";
 
-    public static String getContactName(Context context, String phoneNumber) {
+    private static boolean permissionDenied(Context context) {
         if (PermissionsChecker.isPermissionsDenied(context, READ_CONTACTS)) {
             Log.w(TAG, "Unable read contact. Permission denied.");
+            return true;
+        }
+        return false;
+    }
+
+    public static String getContactName(Context context, String phoneNumber) {
+        if (permissionDenied(context)) {
             return null;
         }
 
@@ -31,11 +42,35 @@ public class Contacts {
             if (cursor.moveToFirst()) {
                 result = cursor.getString(cursor.getColumnIndex(PhoneLookup.DISPLAY_NAME));
             }
-            if (!cursor.isClosed()) {
-                cursor.close();
-            }
+            cursor.close();
         }
         return result;
     }
 
+    public static Intent createPickContactEmailIntent() {
+        Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+        intent.setType(Email.CONTENT_TYPE);
+        return intent;
+    }
+
+    public static String getEmailAddress(Context context, String emailId) {
+        if (permissionDenied(context)) {
+            return null;
+        }
+
+        String result = null;
+        Cursor cursor = context.getContentResolver().query(Email.CONTENT_URI, null,
+                Email._ID + "=" + emailId, null, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                result = cursor.getString(cursor.getColumnIndex(Email.DATA));
+            }
+            cursor.close();
+        }
+        return result;
+    }
+
+    public static String getEmailAddressFromIntent(FragmentActivity activity, Intent intent) {
+        return getEmailAddress(activity, intent.getData().getLastPathSegment());
+    }
 }

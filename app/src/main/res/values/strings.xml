@@ -80,6 +80,7 @@
 
     <string name="action_about">About</string>
     <string name="action_activity_log">Activity log</string>
+    <string name="action_undo">Undo</string>
 
     <string name="activity_log_title">Activity log</string>
     <string name="activity_log_title_refresh">Refresh</string>
@@ -102,7 +103,7 @@
 
     <string name="open_source_title">Open source</string>
     <string name="notification_email_send_successfully">Email successfully sent</string>
-    <string name="action_undo">Undo</string>
+    <string name="hint_button_select_email_from_contacts">Select from contacts</string>
 
     <string-array name="email_trigger_titles">
         <item>Incoming SMS</item>

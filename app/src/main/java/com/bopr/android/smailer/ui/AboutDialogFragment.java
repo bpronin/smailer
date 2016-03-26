@@ -23,14 +23,9 @@ import com.bopr.android.smailer.util.TagFormatter;
 public class AboutDialogFragment extends DialogFragment {
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.about_dialog, container, false);
+        View view = inflater.inflate(R.layout.dialog_about, container, false);
 
         ((TextView) view.findViewById(R.id.label_message)).setText(formatVersion());
         view.findViewById(R.id.label_open_source).setOnClickListener(new View.OnClickListener() {
