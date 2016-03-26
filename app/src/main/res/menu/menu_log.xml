@@ -4,14 +4,14 @@
 
     <item
         android:id="@+id/action_log_refresh"
-        android:icon="@android:drawable/stat_notify_sync"
+        android:icon="@drawable/reload"
         android:title="@string/activity_log_title_refresh"
         app:showAsAction="ifRoom"
         />
 
     <item
         android:id="@+id/action_log_clear"
-        android:icon="@android:drawable/ic_menu_delete"
+        android:icon="@drawable/delete"
         android:title="@string/activity_log_title_clear"
         app:showAsAction="ifRoom"
         />
