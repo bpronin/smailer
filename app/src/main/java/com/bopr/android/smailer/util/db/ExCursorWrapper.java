@@ -45,11 +45,11 @@ public class ExCursorWrapper extends CursorWrapper {
         return new Date(getLong(getColumnIndex(columnName)));
     }
 
-    public <T> T getAndClose(String columnName, ValueReader<T> reader) {
+    public <T> T getAndClose(ValueReader<T> reader) {
         try {
             moveToFirst();
             if (!isBeforeFirst() && !isAfterLast()) {
-                return reader.read(columnName);
+                return reader.read(this);
             }
             return null;
         } finally {
@@ -57,28 +57,29 @@ public class ExCursorWrapper extends CursorWrapper {
         }
     }
 
-    public String getStringAndClose(String columnName) {
-        return getAndClose(columnName, new ValueReader<String>() {
+    public String getStringAndClose(final String columnName) {
+        return getAndClose(new ValueReader<String>() {
 
             @Override
-            public String read(String columnName) {
-                return getString(columnName);
+            public String read(ExCursorWrapper wrapper) {
+                return wrapper.getString(columnName);
             }
         });
     }
 
-    public long getLongAndClose(String columnName) {
-        return getAndClose(columnName, new ValueReader<Long>() {
+    public Long getLongAndClose(final String columnName) {
+        return getAndClose(new ValueReader<Long>() {
 
             @Override
-            public Long read(String columnName) {
-                return getLong(columnName);
+            public Long read(ExCursorWrapper wrapper) {
+                return wrapper.getLong(columnName);
             }
         });
     }
 
-    private interface ValueReader<T> {
-        T read(String columnName);
+    public interface ValueReader<T> {
+
+        T read(ExCursorWrapper wrapper);
     }
 
 }

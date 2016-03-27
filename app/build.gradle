@@ -62,3 +62,5 @@ dependencies {
     androidTestCompile 'com.android.support.test:runner:0.5'
     androidTestCompile 'com.android.support.test:rules:0.5'
 }
+
+//todo incrementVersionCode http://bryankrosenbaum.com/2013/11/27/getting-to-know-gradle-auto-increment-version-and-signing-releases/

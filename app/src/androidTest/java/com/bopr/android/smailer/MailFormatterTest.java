@@ -10,6 +10,7 @@ import com.bopr.android.smailer.util.Util;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import static android.provider.ContactsContract.AUTHORITY;
 import static android.provider.ContactsContract.CommonDataKinds.Phone;
@@ -29,6 +30,7 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
     public MailFormatterTest() {
         super(Application.class);
         Locale.setDefault(Locale.US);
+        TimeZone.setDefault(TimeZone.getTimeZone("America/New_York"));
     }
 
     @Override
@@ -67,7 +69,8 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      */
     public void testIncomingSmsSubject() throws Exception {
         MailMessage message = new MailMessage("+70123456789", true, null, null, false,
-                true, "Email body text", null, null, false, null);
+                true, "Email body text", null, false,
+                null);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
 
@@ -81,7 +84,8 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      */
     public void testIncomingCallSubject() throws Exception {
         MailMessage message = new MailMessage("+70123456789", true, null, null, false,
-                false, null, null, null, false, null);
+                false, null, null, false,
+                null);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
 
@@ -95,7 +99,8 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      */
     public void testOutgoingCallSubject() throws Exception {
         MailMessage message = new MailMessage("+70123456789", false, null, null, false,
-                false, null, null, null, false, null);
+                false, null, null, false,
+                null);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
 
@@ -109,7 +114,8 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      */
     public void testMissedCallSubject() throws Exception {
         MailMessage message = new MailMessage("+70123456789", false, null, null, true,
-                false, null, null, null, false, null);
+                false, null, null, false,
+                null);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
 
@@ -123,7 +129,8 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      */
     public void testNoBodyFooter() throws Exception {
         MailMessage message = new MailMessage("+70123456789", true, null, null, false,
-                true, "Email body text", null, null, false, null);
+                true, "Email body text", null, false,
+                null);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
 
@@ -140,7 +147,8 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
     public void testFooterTimeOption() throws Exception {
         long time = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         MailMessage message = new MailMessage("+70123456789", true, time, null, false,
-                true, "Email body text", null, null, false, null);
+                true, "Email body text", null, false,
+                null);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
         formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
@@ -159,7 +167,8 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      */
     public void testFooterNoTime() throws Exception {
         MailMessage message = new MailMessage("+70123456789", true, null, null, false,
-                true, "Email body text", null, null, false, null);
+                true, "Email body text", null, false,
+                null);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
         formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
@@ -178,7 +187,8 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
     public void testFooterDeviceNameOption() throws Exception {
         String deviceName = Settings.getDeviceName();
         MailMessage message = new MailMessage("+70123456789", true, null, null, false,
-                true, "Email body text", null, null, false, null);
+                true, "Email body text", null, false,
+                null);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, deviceName);
         formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME));
@@ -199,7 +209,8 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         String deviceName = Settings.getDeviceName();
         long time = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         MailMessage message = new MailMessage("+70123456789", true, time, null, false,
-                true, "Email body text", null, null, false, null);
+                true, "Email body text", null, false,
+                null);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, deviceName);
         formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
@@ -222,7 +233,8 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         location.setLatitude(60.555);
         location.setLongitude(30.555);
         MailMessage message = new MailMessage("+70123456789", true, null, null, false,
-                true, "Email body text", location.getLatitude(), location.getLongitude(), false, null);
+                true, "Email body text", new GeoCoordinates(location.getLatitude(), location.getLongitude()), false,
+                null);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
         formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_LOCATION));
@@ -242,7 +254,8 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      */
     public void testFooterNoLocation() throws Exception {
         MailMessage message = new MailMessage("+70123456789", true, null, null, false,
-                true, "Email body text", null, null, false, null);
+                true, "Email body text", null, false,
+                null);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
         formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_LOCATION));
@@ -262,7 +275,8 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
     public void testContactName() throws Exception {
 
         MailMessage message = new MailMessage("+12345678901", true, null, null, false,
-                true, "Email body text", null, null, false, null);
+                true, "Email body text", null, false,
+                null);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(),
                 Contacts.getContactName(getContext(), "+12345678901"), null);
@@ -283,7 +297,8 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
     public void testUnknownContactName() throws Exception {
 
         MailMessage message = new MailMessage("+12345678901", true, null, null, false,
-                true, "Email body text", null, null, false, null);
+                true, "Email body text", null, false,
+                null);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(),
                 null, null);
@@ -305,7 +320,8 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
         MailMessage message = new MailMessage("+70123456789", true, start, end, false,
-                false, null, null, null, false, null);
+                false, null, null, false,
+                null);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
 
@@ -323,7 +339,8 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 15).getTime().getTime();
         MailMessage message = new MailMessage("+70123456789", false, start, end, false,
-                false, null, null, null, false, null);
+                false, null, null, false,
+                null);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
 
@@ -340,7 +357,8 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
     public void testMissedCallBody() throws Exception {
         long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         MailMessage message = new MailMessage("+70123456789", false, start, null, true,
-                false, null, null, null, false, null);
+                false, null, null, false,
+                null);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
 
@@ -359,8 +377,9 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
 
-        MailMessage message = new MailMessage("+12345678901", true, start, end, false, false, null,
-                60.555, 30.555, true, null);
+        MailMessage message = new MailMessage("+12345678901", true, start, end, false,
+                false, null, new GeoCoordinates(60.555, 30.555), true,
+                null);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(),
                 Contacts.getContactName(getContext(), "+12345678901"), deviceName);
@@ -389,8 +408,9 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
 
-        MailMessage message = new MailMessage("+12345678901", false, start, end, false, false, null,
-                60.555, 30.555, true, null);
+        MailMessage message = new MailMessage("+12345678901", false, start, end, false,
+                false, null, new GeoCoordinates(60.555, 30.555), true,
+                null);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(),
                 Contacts.getContactName(getContext(), "+12345678901"), deviceName);
@@ -419,8 +439,9 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
 
-        MailMessage message = new MailMessage("+12345678901", true, start, end, true, false, null,
-                60.555, 30.555, true, null);
+        MailMessage message = new MailMessage("+12345678901", true, start, end, true,
+                false, null, new GeoCoordinates(60.555, 30.555), true,
+                null);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(),
                 null, deviceName);
@@ -446,15 +467,22 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
      */
     public void testNonDefaultLocale() throws Exception {
         String deviceName = Settings.getDeviceName();
-        long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
-        long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
 
-        MailMessage message = new MailMessage("+12345678901", true, start, end, true, false, null,
-                60.555, 30.555, true, null);
+        TimeZone timeZone = TimeZone.getTimeZone("EST");
+        GregorianCalendar calendar = new GregorianCalendar(timeZone);
+        calendar.set(2016, 1, 2, 3, 4, 5);
+        long start = calendar.getTime().getTime();
+        calendar.set(2016, 1, 2, 3, 4, 10);
+        long end = calendar.getTime().getTime();
+
+        MailMessage message = new MailMessage("+12345678901", true, start, end, true,
+                false, null, new GeoCoordinates(60.555, 30.555), true,
+                null);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(),
                 null, deviceName);
         formatter.setLocale("ru_RU");
+//        formatter.setTimeZone(timeZone);
         formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
                 VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
 
@@ -491,8 +519,8 @@ public class MailFormatterTest extends ApplicationTestCase<Application> {
         long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
 
-        MailMessage message = new MailMessage("+12345678901", true, start, end, true, false, null,
-                60.555, 30.555, true, null);
+        MailMessage message = new MailMessage("+12345678901", true, start, end, true,
+                false, null, new GeoCoordinates(60.555, 30.555), true, null);
 
         MailFormatter formatter = new MailFormatter(message, getContext().getResources(),
                 null, deviceName);

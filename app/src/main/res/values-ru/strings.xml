@@ -30,12 +30,14 @@
     <string name="pref_description_what_email_contain">Что должно включать почтовое сообщение</string>
     <string name="pref_description_notify_send_success">Показывать уведомление, когда почта успешно отправлена</string>
 
-    <string name="message_recipient_already_exists">Получатель {name} уже существует</string>
-    <string name="message_error_no_parameters">Некоторые обязательные параметры не указаны.</string>
-    <string name="message_error_authentication">Неверный пароль или имя пользователя.</string>
-    <string name="message_error_connect">Невозможно соединиться с почтовым сервером.</string>
-    <string name="message_error_mail_general">Невозможно отправить почту.</string>
-    <string name="message_error_internal">Внутренняя ошибка.</string>
+    <string name="recipient_message_already_exists">Получатель {name} уже существует</string>
+
+    <string name="notification_error_no_parameters">Некоторые обязательные параметры не указаны.</string>
+    <string name="notification_error_authentication">Неверный пароль или имя пользователя.</string>
+    <string name="notification_error_connect">Невозможно соединиться с почтовым сервером.</string>
+    <string name="notification_error_mail_general">Невозможно отправить почту.</string>
+    <string name="notification_error_internal">Внутренняя ошибка.</string>
+    <string name="notification_email_send_successfully">Почта устешно отправлена</string>
 
     <string name="message_permission_denied_receive_sms">Чтение SMS запрещено. Настройка будет отключена.</string>
     <string name="message_permission_denied_phone_state">Чтение состояния телефона запрещено. Настройка будет отключена.</string>
@@ -55,8 +57,6 @@
     <string name="message_at_least_one_item_checked">Хотябы один пункт должен быть отмечен.</string>
     <string name="message_item_removed">Запись удалена</string>
     <string name="message_items_removed">{count} записей удалено</string>
-
-    <string name="notification_email_send_successfully">Почта устешно отправлена</string>
 
     <string name="email_subject_incoming_sms">Входящее SMS от</string>
     <string name="email_subject_outgoing_sms">Исходящее SMS</string>
@@ -79,16 +79,21 @@
 
     <string name="action_about">О приложении</string>
     <string name="action_activity_log">Журнал активности</string>
+    <string name="action_undo">Отмена</string>
+    <string name="action_clear">Очистить</string>
 
-    <string name="activity_log_title_refresh">Обновить</string>
+    <string name="action_refresh">Обновить</string>
     <string name="activity_log_title_details">Детали</string>
     <string name="activity_log_title">Журнал </string>
     <string name="activity_log_empty_log">Журнал пуст</string>
-    <string name="activity_log_title_clear">Очистить</string>
+    <string name="activity_log_ask_clear">Очистить журнал?</string>
 
     <string name="about_dialog_title_version">Версия приложения: {version}</string>
     <string name="about_dialog_title_open_source">Открытый исходный код и ПО сторонних производителей</string>
+
     <string name="open_source_title">Открытый исходный код</string>
+
+    <string name="hint_button_select_email_from_contacts">Выбрать из контактов</string>
 
     <string-array name="email_trigger_titles">
         <item>Входящие SMS</item>
@@ -109,6 +114,5 @@
         <item>Английский</item>
         <item>Русский</item>
     </string-array>
-    <string name="action_undo">Отмена</string>
 
 </resources>

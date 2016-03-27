@@ -13,17 +13,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.bopr.android.smailer.Contacts;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.validator.EmailTextValidator;
 
 /**
- * Class EditRecipientDialogFragment.
+ * Class EditEmailDialogFragment.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class EditRecipientDialogFragment extends DialogFragment {
+public class EditEmailDialogFragment extends DialogFragment {
 
     private static final int PICK_CONTACT_REQUEST = 100;
 
@@ -51,11 +52,15 @@ public class EditRecipientDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = getDialog();
         if (dialog == null) {
-            View view = LayoutInflater.from(getActivity()).inflate(R.layout.editor_recipient, null, false);
+            View view = LayoutInflater.from(getActivity()).inflate(R.layout.editor_email, null, false);
 
             EditText editText = (EditText) view.findViewById(R.id.edit_text_address);
             editText.addTextChangedListener(new EmailTextValidator(editText));
             editText.setText(initialValue);
+
+            /* custom message view. do not use setMessage() } */
+            TextView messageText = (TextView) view.findViewById(R.id.dialog_message);
+            messageText.setText(R.string.pref_dialog_message_recipient);
 
             View browseButton = view.findViewById(R.id.button_browse_contacts);
             browseButton.setOnClickListener(new View.OnClickListener() {
@@ -68,16 +73,15 @@ public class EditRecipientDialogFragment extends DialogFragment {
 
             dialog = new AlertDialog.Builder(getActivity())
                     .setTitle(title)
-                    .setMessage(R.string.pref_dialog_message_recipient)
                     .setView(view)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 
                         @Override
                         public void onClick(DialogInterface dialogInterface, int which) {
                             callback.onOkClick(getEditor().getText().toString());
                         }
                     })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
 
                         @Override
                         public void onClick(DialogInterface dialogInterface, int which) {
@@ -117,7 +121,7 @@ public class EditRecipientDialogFragment extends DialogFragment {
         this.initialValue = address;
     }
 
-    public interface  Callback {
+    public interface Callback {
 
         void onOkClick(String result);
 

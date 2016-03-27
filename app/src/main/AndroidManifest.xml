@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.bopr.android.smailer">
+<manifest package="com.bopr.android.smailer"
+          xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
@@ -57,6 +57,17 @@
                 <action android:name="android.intent.action.PHONE_STATE"/>
             </intent-filter>
         </receiver>
+
+<!--
+        <receiver
+            android:name=".LocationReceiver">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="android.location.PROVIDERS_CHANGED"/>
+                <action android:name="com.bopr.android.smailer.LOCATION_RECEIVED_ACTION"/>
+            </intent-filter>
+        </receiver>
+-->
 
         <service android:name=".MailerService"/>
 

@@ -84,17 +84,15 @@ public class LogFragment extends ListFragment {
 
     private void clearData() {
         new AlertDialog.Builder(getActivity())
-                .setMessage("Clear log?")
-
-                .setPositiveButton("Clear", new DialogInterface.OnClickListener() {
+                .setMessage(R.string.activity_log_ask_clear)
+                .setPositiveButton(R.string.action_clear, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        database.clear();
+                        database.clearMessages();
                         refreshData();
                     }
                 })
-
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

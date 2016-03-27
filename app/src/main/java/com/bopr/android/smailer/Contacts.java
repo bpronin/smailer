@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -70,7 +69,7 @@ public class Contacts {
         return result;
     }
 
-    public static String getEmailAddressFromIntent(FragmentActivity activity, Intent intent) {
-        return getEmailAddress(activity, intent.getData().getLastPathSegment());
+    public static String getEmailAddressFromIntent(Context context, Intent intent) {
+        return getEmailAddress(context, intent.getData().getLastPathSegment());
     }
 }

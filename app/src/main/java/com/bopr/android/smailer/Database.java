@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.bopr.android.smailer.util.db.ExCursorWrapper;
+import com.bopr.android.smailer.util.db.ExCursorWrapper.ValueReader;
 
 import java.util.concurrent.TimeUnit;
 
@@ -37,6 +38,9 @@ public class Database {
     private static final String COLUMN_START_TIME = "start_time";
     private static final String COLUMN_END_TIME = "end_time";
     private static final String COLUMN_IS_SENT = "is_sent";
+    private static final String COLUMN_LAST_LATITUDE = "last_latitude";
+    private static final String COLUMN_LAST_LONGITUDE = "last_longitude";
+    private static final String COLUMN_LAST_LOCATION_TIME = "last_location_time";
 
     private final DbHelper helper;
     private final Context context;
@@ -99,18 +103,21 @@ public class Database {
         values.put(COLUMN_IS_MISSED, message.isMissed());
         values.put(COLUMN_IS_SMS, message.isSms());
         values.put(COLUMN_PHONE, message.getPhone());
-        values.put(COLUMN_LATITUDE, message.getLatitude());
-        values.put(COLUMN_LONGITUDE, message.getLongitude());
         values.put(COLUMN_START_TIME, message.getStartTime());
         values.put(COLUMN_END_TIME, message.getEndTime());
         values.put(COLUMN_TEXT, message.getText());
         values.put(COLUMN_DETAILS, message.getDetails());
+        GeoCoordinates location = message.getLocation();
+        if (location != null) {
+            values.put(COLUMN_LATITUDE, location.getLatitude());
+            values.put(COLUMN_LONGITUDE, location.getLongitude());
+        }
 
         long id = db.replace(TABLE_MESSAGES, null, values);
         message.setId(id);
     }
 
-    public boolean hasUnsent() {
+    public boolean hasUnsentMessages() {
         return new ExCursorWrapper(helper.getReadableDatabase().query(TABLE_MESSAGES,
                 new String[]{COLUMN_COUNT}, COLUMN_IS_SENT + "=0", null, null, null, null)
         ).getLongAndClose(COLUMN_COUNT) > 0;
@@ -119,7 +126,7 @@ public class Database {
     /**
      * Removes all records from log.
      */
-    public void clear() {
+    public void clearMessages() {
         SQLiteDatabase db = helper.getWritableDatabase();
         db.beginTransaction();
         try {
@@ -173,15 +180,37 @@ public class Database {
 
     private void updateLastPurgeTime(SQLiteDatabase db) {
         ContentValues values = new ContentValues();
-
-        values.put(COLUMN_ID, 0);
         values.put(COLUMN_PURGE_TIME, System.currentTimeMillis());
 
-        db.replace(TABLE_SYSTEM, null, values);
+        db.update(TABLE_SYSTEM, values, COLUMN_ID + "=0", null);
     }
 
     public void destroy() {
         context.deleteDatabase(DB_NAME);
+    }
+
+    public GeoCoordinates getLastLocation() {
+        return new ExCursorWrapper(helper.getReadableDatabase().query(TABLE_SYSTEM,
+                new String[]{COLUMN_LAST_LATITUDE, COLUMN_LAST_LONGITUDE}, COLUMN_ID + "=0", null, null, null, null)
+        ).getAndClose(new ValueReader<GeoCoordinates>() {
+
+            @Override
+            public GeoCoordinates read(ExCursorWrapper wrapper) {
+                return new GeoCoordinates(
+                        wrapper.getDouble(COLUMN_LAST_LATITUDE),
+                        wrapper.getDouble(COLUMN_LAST_LONGITUDE)
+                );
+            }
+        });
+    }
+
+    public void saveLastLocation(GeoCoordinates location) {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_LAST_LATITUDE, location != null ? location.getLatitude() : null);
+        values.put(COLUMN_LAST_LONGITUDE, location != null ? location.getLongitude() : null);
+        values.put(COLUMN_LAST_LOCATION_TIME, System.currentTimeMillis());
+
+        helper.getWritableDatabase().update(TABLE_SYSTEM, values, COLUMN_ID + "=0", null);
     }
 
     private class DbHelper extends SQLiteOpenHelper {
@@ -212,17 +241,27 @@ public class Database {
                     COLUMN_TEXT + " TEXT(256)," +
                     COLUMN_DETAILS + " TEXT(256)" +
                     ")");
+
             db.execSQL("CREATE TABLE " + TABLE_SYSTEM + " (" +
                     COLUMN_ID + " INTEGER PRIMARY KEY, " +
-                    COLUMN_PURGE_TIME + " INTEGER" +
+                    COLUMN_PURGE_TIME + " INTEGER," +
+                    COLUMN_LAST_LATITUDE + " REAL," +
+                    COLUMN_LAST_LONGITUDE + " REAL," +
+                    COLUMN_LAST_LOCATION_TIME + " INTEGER" +
                     ")");
+
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_ID, 0);
+            db.insert(TABLE_SYSTEM, null, values);
+
             updateLastPurgeTime(db);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            /* do nothing */
+            /* no updates yet - do nothing */
         }
+
     }
 
     /**
@@ -246,10 +285,12 @@ public class Database {
                 message.setEndTime(getLong(COLUMN_END_TIME));
                 message.setMissed(getBoolean(COLUMN_IS_MISSED));
                 message.setSms(getBoolean(COLUMN_IS_SMS));
-                message.setLatitude(getDouble(COLUMN_LATITUDE));
-                message.setLongitude(getDouble(COLUMN_LONGITUDE));
                 message.setText(getString(COLUMN_TEXT));
                 message.setDetails(getString(COLUMN_DETAILS));
+                message.setLocation(new GeoCoordinates(
+                        getDouble(COLUMN_LATITUDE),
+                        getDouble(COLUMN_LONGITUDE)
+                ));
             }
             return message;
         }

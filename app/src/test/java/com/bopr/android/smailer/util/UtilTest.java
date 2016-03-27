@@ -1,5 +1,7 @@
 package com.bopr.android.smailer.util;
 
+import com.bopr.android.smailer.GeoCoordinates;
+
 import org.junit.Test;
 import org.mockito.internal.matchers.Null;
 
@@ -21,12 +23,20 @@ public class UtilTest {
 
     @Test
     public void testFormatLocation() throws Exception {
-        assertEquals("30d33m59sn, 60d33m59sw", Util.formatLocation(30.5664, 60.5664, "d", "m", "s", "n", "s", "w", "e"));
+        assertEquals("30d33m59sn, 60d33m59sw", Util.formatLocation(new GeoCoordinates(30.5664, 60.5664), "d",
+                "m",
+                "s", "n", "s",
+                "w",
+                "e"));
     }
 
     @Test
     public void testFormatLocation1() throws Exception {
-        assertEquals("30°33'59\"N, 60°33'59\"W", Util.formatLocation(30.5664, 60.5664));
+        assertEquals("30°33'59\"N, 60°33'59\"W", Util.formatLocation(new GeoCoordinates(30.5664, 60.5664), "°",
+                "\'",
+                "\"", "N", "S",
+                "W",
+                "E"));
     }
 
     @Test

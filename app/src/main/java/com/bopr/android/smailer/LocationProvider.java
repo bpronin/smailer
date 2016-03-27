@@ -28,9 +28,11 @@ public class LocationProvider {
 
     private GoogleApiClient client;
     private Context context;
+    private Database database;
 
-    public LocationProvider(Context context) {
+    public LocationProvider(Context context, Database database) {
         this.context = context;
+        this.database = database;
         ClientListener listener = new ClientListener();
         client = new GoogleApiClient.Builder(context)
                 .addConnectionCallbacks(listener)
@@ -59,46 +61,62 @@ public class LocationProvider {
      * @return last known device location or null when it cannot be found
      */
     @SuppressWarnings("ResourceType")
-    public Location getLocation() {
+    public GeoCoordinates getLocation() {
         if (PermissionsChecker.isPermissionsDenied(context, ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION)) {
             Log.w(TAG, "Unable read location. Permission denied.");
             return null;
         }
 
-        Location location = null;
         if (client.isConnected()) {
-            location = LocationServices.FusedLocationApi.getLastLocation(client);
+            Location location = LocationServices.FusedLocationApi.getLastLocation(client);
+            if (location != null) {
+                Log.d(TAG, "Using Google API location");
+                GeoCoordinates coordinates = new GeoCoordinates(location);
+                database.saveLastLocation(coordinates);
+                return coordinates;
+            }
         }
 
-        if (location == null) {
-            LocationManager lm = (LocationManager) client.getContext().getSystemService(Context.LOCATION_SERVICE);
+        LocationManager lm = (LocationManager) client.getContext().getSystemService(Context.LOCATION_SERVICE);
 
-            if (lm.getProvider(GPS_PROVIDER) != null) {
-                location = lm.getLastKnownLocation(GPS_PROVIDER);
-            } else {
+        if (lm.isProviderEnabled(GPS_PROVIDER)) {
+            Location location = lm.getLastKnownLocation(GPS_PROVIDER);
+            if (location != null) {
                 Log.d(TAG, "Using GPS_PROVIDER location");
+                GeoCoordinates coordinates = new GeoCoordinates(location);
+                database.saveLastLocation(coordinates);
+                return coordinates;
             }
-
-            if (location == null && lm.getProvider(NETWORK_PROVIDER) != null) {
-                location = lm.getLastKnownLocation(NETWORK_PROVIDER);
-            } else {
-                Log.d(TAG, "Using NETWORK_PROVIDER location");
-            }
-
-            if (location == null && lm.getProvider(PASSIVE_PROVIDER) != null) {
-                location = lm.getLastKnownLocation(PASSIVE_PROVIDER);
-            } else {
-                Log.d(TAG, "Using PASSIVE_PROVIDER location");
-            }
-
-            if (location == null) {
-                Log.d(TAG, "Unable to retrieve location");
-            }
-        } else {
-            Log.d(TAG, "Using Google API location");
         }
 
-        return location;
+        if (lm.isProviderEnabled(NETWORK_PROVIDER)) {
+            Location location = lm.getLastKnownLocation(NETWORK_PROVIDER);
+            if (location != null) {
+                Log.d(TAG, "Using NETWORK_PROVIDER location");
+                GeoCoordinates coordinates = new GeoCoordinates(location);
+                database.saveLastLocation(coordinates);
+                return coordinates;
+            }
+        }
+
+        if (lm.isProviderEnabled(PASSIVE_PROVIDER)) {
+            Location location = lm.getLastKnownLocation(PASSIVE_PROVIDER);
+            if (location != null) {
+                Log.d(TAG, "Using PASSIVE_PROVIDER location");
+                GeoCoordinates coordinates = new GeoCoordinates(location);
+                database.saveLastLocation(coordinates);
+                return coordinates;
+            }
+        }
+
+        GeoCoordinates coordinates = database.getLastLocation();
+        if (coordinates != null) {
+            Log.d(TAG, "Using internal database location");
+            return coordinates;
+        }
+
+        Log.d(TAG, "Unable retrieve location");
+        return null;
     }
 
     private class ClientListener implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {

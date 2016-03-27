@@ -10,6 +10,7 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Set;
+import java.util.TimeZone;
 
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CONTACT;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME;
@@ -42,6 +43,7 @@ public class MailFormatter {
     private final String deviceName;
     private Set<String> contentOptions;
     private Locale locale = Locale.getDefault();
+    private TimeZone timeZone = TimeZone.getDefault();
 
     public MailFormatter(MailMessage message, Resources resources, String contactName,
                          String deviceName) {
@@ -62,6 +64,10 @@ public class MailFormatter {
         } else {
             this.locale = Locale.getDefault();
         }
+    }
+
+    public void setTimeZone(TimeZone timeZone) {
+        this.timeZone = timeZone;
     }
 
     /**
@@ -209,6 +215,7 @@ public class MailFormatter {
     private String getTimeText() {
         if (message.getStartTime() != null) {
             DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
+            df.setTimeZone(timeZone);
             return " " + from(R.string.email_body_time, resources)
                     .put("time", df.format(new Date(message.getStartTime())))
                     .format();
@@ -217,14 +224,13 @@ public class MailFormatter {
     }
 
     private String getLocationText() {
-        Double latitude = message.getLatitude();
-        Double longitude = message.getLongitude();
-        if (latitude != null && longitude != null) {
+        GeoCoordinates location = message.getLocation();
+        if (location != null) {
             return from(R.string.email_body_location, resources)
                     .put("location", from(GOOGLE_MAP_LINK_PATTERN)
-                            .put("latitude", latitude)
-                            .put("longitude", longitude)
-                            .put("location", formatLocation(latitude, longitude, "&#176;", "\'", "\"", "N", "S", "W", "E"))
+                            .put("latitude", location.getLatitude())
+                            .put("longitude", location.getLongitude())
+                            .put("location", formatLocation(location, "&#176;", "\'", "\"", "N", "S", "W", "E"))
                             .format())
                     .format();
         } else {

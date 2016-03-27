@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.Spannable;
 import android.text.SpannableString;
 
+import com.bopr.android.smailer.GeoCoordinates;
 import com.bopr.android.smailer.util.draw.WavyUnderlineSpan;
 
 import java.util.Arrays;
@@ -24,11 +25,12 @@ public class Util {
 
     public static final String DEFAULT = "default";
 
-    public static String formatLocation(double latitude, double longitude, String degreeSymbol,
-                                        String minuteSymbol,
-                                        String secondSymbol, String northSymbol, String southSymbol,
-                                        String westSymbol,
-                                        String eastSymbol) {
+    public static String formatLocation(GeoCoordinates location, String degreeSymbol,
+                                        String minuteSymbol, String secondSymbol,
+                                        String northSymbol, String southSymbol,
+                                        String westSymbol, String eastSymbol) {
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
         return decimalToDMS(latitude, degreeSymbol, minuteSymbol, secondSymbol)
                 + (latitude > 0 ? northSymbol : southSymbol)
                 + ", " +
@@ -36,8 +38,8 @@ public class Util {
                 + (longitude > 0 ? westSymbol : eastSymbol);
     }
 
-    public static String formatLocation(double latitude, double longitude) {
-        return formatLocation(latitude, longitude, "°", "\'", "\"", "N", "S", "W", "E");
+    public static String formatLocation(GeoCoordinates location) {
+        return formatLocation(location, "°", "\'", "\"", "N", "S", "W", "E");
     }
 
     public static String decimalToDMS(double coordinate, String degreeSymbol, String minuteSymbol,
@@ -141,14 +143,17 @@ public class Util {
     }
 
     public static Locale stringToLocale(String s) {
-        if (isEmpty(s)) {
-            return null;
-        } else if (s.equals(DEFAULT)) {
-            return Locale.getDefault();
-        } else {
-            String[] ss = s.split("_");
-            return new Locale(ss[0], ss[1]);
+        if (!isEmpty(s)) {
+            if (s.equals(DEFAULT)) {
+                return Locale.getDefault();
+            } else {
+                String[] ss = s.split("_");
+                if (ss.length == 2) {
+                    return new Locale(ss[0], ss[1]);
+                }
+            }
         }
+        return null;
     }
 
     public static Spannable validatedText(Context context, String value, boolean valid) {
@@ -159,4 +164,5 @@ public class Util {
         }
         return result;
     }
+
 }

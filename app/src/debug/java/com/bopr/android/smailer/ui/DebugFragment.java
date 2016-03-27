@@ -3,7 +3,6 @@ package com.bopr.android.smailer.ui;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -19,6 +18,7 @@ import android.widget.Toast;
 import com.bopr.android.smailer.Contacts;
 import com.bopr.android.smailer.Cryptor;
 import com.bopr.android.smailer.Database;
+import com.bopr.android.smailer.GeoCoordinates;
 import com.bopr.android.smailer.LocationProvider;
 import com.bopr.android.smailer.MailMessage;
 import com.bopr.android.smailer.MailTransport;
@@ -62,16 +62,16 @@ public class DebugFragment extends DefaultPreferenceFragment {
 
     private LocationProvider locationProvider;
     private Cryptor cryptor;
-    Database database;
+    private Database database;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_debug);
 
-        locationProvider = new LocationProvider(getActivity());
-        cryptor = new Cryptor(getActivity());
         database = new Database(getActivity());
+        locationProvider = new LocationProvider(getActivity(), database);
+        cryptor = new Cryptor(getActivity());
 
         findPreference("sendDefaultMail").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
@@ -252,7 +252,7 @@ public class DebugFragment extends DefaultPreferenceFragment {
         new AlertDialog.Builder(getActivity())
                 .setTitle("Phone number")
                 .setView(input)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -263,7 +263,7 @@ public class DebugFragment extends DefaultPreferenceFragment {
                         Toast.makeText(getActivity(), text, Toast.LENGTH_LONG).show();
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -274,9 +274,9 @@ public class DebugFragment extends DefaultPreferenceFragment {
     }
 
     private void onGetLocation() {
-        Location location = locationProvider.getLocation();
+        GeoCoordinates location = locationProvider.getLocation();
         Toast.makeText(getActivity(),
-                location != null ? Util.formatLocation(location.getLatitude(), location.getLongitude())
+                location != null ? Util.formatLocation(location)
                         : "No location received",
                 Toast.LENGTH_LONG).show();
     }
@@ -326,10 +326,9 @@ public class DebugFragment extends DefaultPreferenceFragment {
                 message.setSms(true);
                 message.setText("Debug message.");
                 message.setStartTime(System.currentTimeMillis());
-                message.setLongitude(30.0);
-                message.setLatitude(60.0);
+                message.setLocation(new GeoCoordinates(30.0, 60.0));
 
-                new Mailer(getActivity()).send(message);
+                new Mailer(getActivity(), database).send(message);
 
                 return null;
             }
@@ -389,18 +388,18 @@ public class DebugFragment extends DefaultPreferenceFragment {
 
     private void onPopulateLog() {
         long time = System.currentTimeMillis();
-        database.updateMessage(new MailMessage("+79052345671", true, time, null, false, true, "Debug message", null, null, true, null));
-        database.updateMessage(new MailMessage("+79052345672", false, time += 1000, null, false, true, "Debug message", null, null, true, null));
-        database.updateMessage(new MailMessage("+79052345673", true, time += 1000, time + 10000, false, false, null, null, null, true, null));
-        database.updateMessage(new MailMessage("+79052345674", false, time += 1000, time + 10000, false, false, null, null, null, true, null));
-        database.updateMessage(new MailMessage("+79052345675", true, time += 1000, time + 10000, true, false, null, null, null, true, null));
+        database.updateMessage(new MailMessage("+79052345671", true, time, null, false, true, "Debug message", null, true, null));
+        database.updateMessage(new MailMessage("+79052345672", false, time += 1000, null, false, true, "Debug message", null, true, null));
+        database.updateMessage(new MailMessage("+79052345673", true, time += 1000, time + 10000, false, false, null, null, true, null));
+        database.updateMessage(new MailMessage("+79052345674", false, time += 1000, time + 10000, false, false, null, null, true, null));
+        database.updateMessage(new MailMessage("+79052345675", true, time += 1000, time + 10000, true, false, null, null, true, null));
 
 
-        database.updateMessage(new MailMessage("+79052345671", true, time += 1000, null, false, true, "Debug message", null, null, false, "Test exception +79052345671"));
-        database.updateMessage(new MailMessage("+79052345672", false, time += 1000, null, false, true, "Debug message", null, null, false, "Test exception +79052345672"));
-        database.updateMessage(new MailMessage("+79052345673", true, time += 1000, time + 10000, false, false, null, null, null, false, "Test exception +79052345673"));
-        database.updateMessage(new MailMessage("+79052345674", false, time += 1000, time + 10000, false, false, null, null, null, false, "Test exception +79052345674"));
-        database.updateMessage(new MailMessage("+79052345675", true, time += 1000, time + 10000, true, false, null, null, null, false, "Test exception +79052345675"));
+        database.updateMessage(new MailMessage("+79052345671", true, time += 1000, null, false, true, "Debug message", null, false, "Test exception +79052345671"));
+        database.updateMessage(new MailMessage("+79052345672", false, time += 1000, null, false, true, "Debug message", null, false, "Test exception +79052345672"));
+        database.updateMessage(new MailMessage("+79052345673", true, time += 1000, time + 10000, false, false, null, null, false, "Test exception +79052345673"));
+        database.updateMessage(new MailMessage("+79052345674", false, time += 1000, time + 10000, false, false, null, null, false, "Test exception +79052345674"));
+        database.updateMessage(new MailMessage("+79052345675", true, time += 1000, time + 10000, true, false, null, null, false, "Test exception +79052345675"));
     }
 
     private void onClearLog() {

@@ -40,9 +40,9 @@ public class Mailer {
         this.database = database;
     }
 
-    public Mailer(Context context) {
+    public Mailer(Context context, Database database) {
         this(context, new MailTransport(), new Cryptor(context), new Notifications(),
-                new Database(context));
+                database);
     }
 
     /**
@@ -56,7 +56,7 @@ public class Mailer {
         MailerProperties mp = new MailerProperties(getPreferences(context));
         if (isAnyEmpty(mp.getHost(), mp.getPort(), mp.getUser(), mp.getRecipients())) {
             logError(null);
-            failed(message, "Invalid parameters", R.string.message_error_no_parameters);
+            failed(message, "Invalid parameters", R.string.notification_error_no_parameters);
         } else {
             MailFormatter formatter = createFormatter(message, mp);
             transport.init(mp.getUser(), cryptor.decrypt(mp.getPassword()), mp.getHost(), mp.getPort());
@@ -67,16 +67,16 @@ public class Mailer {
                 success(message);
             } catch (AuthenticationFailedException x) {
                 logError(x);
-                failed(message, x.toString(), R.string.message_error_authentication);
+                failed(message, x.toString(), R.string.notification_error_authentication);
             } catch (MailConnectException x) {
                 logError(x);
-                failed(message, x.toString(), R.string.message_error_connect);
+                failed(message, x.toString(), R.string.notification_error_connect);
             } catch (MessagingException x) {
                 logError(x);
-                failed(message, x.toString(), R.string.message_error_mail_general);
+                failed(message, x.toString(), R.string.notification_error_mail_general);
             } catch (Throwable x) {
                 logError(x);
-                failed(message, x.toString(), R.string.message_error_internal);
+                failed(message, x.toString(), R.string.notification_error_internal);
             }
         }
     }

@@ -33,12 +33,12 @@
     <string name="pref_description_what_email_contain">What should the email include</string>
     <string name="pref_description_notify_send_success">Display message when email successfully sent</string>
 
-    <string name="message_recipient_already_exists">Recipient {name} already exists</string>
-    <string name="message_error_no_parameters">Some required parameters are not specified.</string>
-    <string name="message_error_authentication">Username or password is incorrect.</string>
-    <string name="message_error_connect">Unable to connect to mail server.</string>
-    <string name="message_error_mail_general">Unable to send email.</string>
-    <string name="message_error_internal">Internal error.</string>
+    <string name="recipient_message_already_exists">Recipient {name} already exists</string>
+    <string name="notification_error_no_parameters">Some required parameters are not specified.</string>
+    <string name="notification_error_authentication">Username or password is incorrect.</string>
+    <string name="notification_error_connect">Unable to connect to mail server.</string>
+    <string name="notification_error_mail_general">Unable to send email.</string>
+    <string name="notification_error_internal">Internal error.</string>
 
     <string name="message_permission_denied_receive_sms">SMS read permission is denied. Trigger will be disabled.</string>
     <string name="message_permission_denied_phone_state">Read phone state permission is denied. Trigger will be disabled.</string>
@@ -81,12 +81,13 @@
     <string name="action_about">About</string>
     <string name="action_activity_log">Activity log</string>
     <string name="action_undo">Undo</string>
+    <string name="action_clear">Clear</string>
+    <string name="action_refresh">Refresh</string>
 
     <string name="activity_log_title">Activity log</string>
-    <string name="activity_log_title_refresh">Refresh</string>
     <string name="activity_log_title_details">Details</string>
-    <string name="activity_log_title_clear">Clear</string>
     <string name="activity_log_empty_log">Log is empty</string>
+    <string name="activity_log_ask_clear">Clear log?</string>
     <string name="activity_log_time_pattern" translatable="false">yyyy-MM-dd HH:mm:ss</string>
     <string name="activity_log_message" translatable="false">{message} {phone}. {result}</string>
     <string name="activity_log_message_send_email_failed" translatable="false">Send failed.</string>

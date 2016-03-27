@@ -45,31 +45,31 @@ public class ContactsTest extends ApplicationTestCase<Application> {
         assertEquals("John Dou", name);
     }
 
-    public void testEmail() throws Exception {
-//        ContentResolver cr = getContext().getContentResolver();
-//        Cursor cursor = cr.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
-//        if (cursor != null) {
-//            while (cursor.moveToNext()) {
-//                String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
-//                String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-////                Log.i("TEST", id + "  " + name);
+//    public void testEmail() throws Exception {
+////        ContentResolver cr = getContext().getContentResolver();
+////        Cursor cursor = cr.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+////        if (cursor != null) {
+////            while (cursor.moveToNext()) {
+////                String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+////                String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+//////                Log.i("TEST", id + "  " + name);
+////
+////                Cursor emails = cr.query(Email.CONTENT_URI, null, Email.CONTACT_ID + " = " + id, null, null);
+////                if (emails != null) {
+////                    while (emails.moveToNext()) {
+////                        String emailId = emails.getString(emails.getColumnIndex(Email._ID));
+////                        String email = emails.getString(emails.getColumnIndex(Email.DATA));
+////                        Log.i("TEST", id + " " + name + " " + emailId + " " + email);
+////                    }
+////                    emails.close();
+////                }
+////
+////            }
+////            cursor.close();
+////        }
 //
-//                Cursor emails = cr.query(Email.CONTENT_URI, null, Email.CONTACT_ID + " = " + id, null, null);
-//                if (emails != null) {
-//                    while (emails.moveToNext()) {
-//                        String emailId = emails.getString(emails.getColumnIndex(Email._ID));
-//                        String email = emails.getString(emails.getColumnIndex(Email.DATA));
-//                        Log.i("TEST", id + " " + name + " " + emailId + " " + email);
-//                    }
-//                    emails.close();
-//                }
-//
-//            }
-//            cursor.close();
-//        }
-
-        String name = Contacts.getEmailAddress(getContext(), "75");
-        assertEquals("John Dou", name);
-    }
+//        String name = Contacts.getEmailAddress(getContext(), "75");
+//        assertEquals("John Dou", name);
+//    }
 
 }

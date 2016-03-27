@@ -35,8 +35,9 @@ public class MailerService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-        mailer = new Mailer(this);
-        locationProvider = new LocationProvider(this);
+        Database database = new Database(this);
+        mailer = new Mailer(this, database);
+        locationProvider = new LocationProvider(this, database);
     }
 
     @Override

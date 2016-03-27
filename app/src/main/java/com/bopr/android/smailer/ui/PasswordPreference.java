@@ -7,10 +7,6 @@ import android.os.Build;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.util.AttributeSet;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
-import android.widget.EditText;
 
 import com.bopr.android.smailer.Cryptor;
 
@@ -50,23 +46,12 @@ public class PasswordPreference extends EditTextPreference {
 
     private void init() {
         cryptor = new Cryptor(getContext());
+        getEditText().setInputType(TYPE_CLASS_TEXT | TYPE_TEXT_VARIATION_PASSWORD);
     }
 
     @Override
-    protected void onBindDialogView(View view) {
-        super.onBindDialogView(view);
-
-        EditText editText = getEditText();
-        editText.setInputType(TYPE_CLASS_TEXT | TYPE_TEXT_VARIATION_PASSWORD);
-        editText.setText(null); /* do not show anything. even the length of current password */
-
-        ViewParent oldParent = editText.getParent();
-        if (oldParent != view) {
-            if (oldParent != null) {
-                ((ViewGroup) oldParent).removeView(editText);
-            }
-            onAddEditTextToDialogView(view, editText);
-        }
+    public String getText() {
+        return null; /* do not show anything. even the length of current password */
     }
 
     @Override

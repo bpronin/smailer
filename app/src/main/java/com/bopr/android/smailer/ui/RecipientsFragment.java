@@ -184,15 +184,15 @@ public class RecipientsFragment extends ListFragment {
     private void showItemEditor(final int position) {
         final Item item = listAdapter.getItem(position);
 
-        EditRecipientDialogFragment dialog = new EditRecipientDialogFragment();
+        EditEmailDialogFragment dialog = new EditEmailDialogFragment();
         dialog.setTitle(item == null ? R.string.pref_dialog_title_add_recipient : R.string.pref_dialog_title_edit_recipient);
         dialog.setInitialValue(item == null ? null : item.address);
-        dialog.setCallback(new EditRecipientDialogFragment.Callback() {
+        dialog.setCallback(new EditEmailDialogFragment.Callback() {
 
             @Override
             public void onOkClick(String address) {
                 if (isItemExists(address) && (item == null || !item.address.equals(address))) {
-                    Toast.makeText(getActivity(), from(R.string.message_recipient_already_exists, getResources())
+                    Toast.makeText(getActivity(), from(R.string.recipient_message_already_exists, getResources())
                             .put("name", address)
                             .format(), Toast.LENGTH_LONG).show();
                 } else if (!Util.isTrimEmpty(address)) {
