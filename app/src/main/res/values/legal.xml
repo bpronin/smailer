@@ -1,0 +1,8 @@
+<resources>
+
+    <string-array name="open_source">
+        <item>JavaMail API for Android|https://java.net/projects/javamail/pages/Android</item>
+        <item>Android-SwipeToDismiss|https://github.com/romannurik/Android-SwipeToDismiss</item>
+    </string-array>
+
+</resources>

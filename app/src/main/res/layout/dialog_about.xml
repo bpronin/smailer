@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="18dp"
-    android:background="@android:drawable/screen_background_light"
     >
 
     <LinearLayout
@@ -49,6 +48,11 @@
 
         </LinearLayout>
     </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        />
 
     <TextView
         android:layout_width="match_parent"
