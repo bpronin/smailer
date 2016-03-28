@@ -2,7 +2,7 @@ package com.bopr.android.smailer;
 
 import android.app.Application;
 import android.content.ContentProviderOperation;
-import android.provider.ContactsContract.CommonDataKinds.Email;
+import android.provider.ContactsContract;
 import android.test.ApplicationTestCase;
 
 import java.util.ArrayList;
@@ -26,18 +26,30 @@ public class ContactsTest extends ApplicationTestCase<Application> {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        ArrayList<ContentProviderOperation> ops = new ArrayList<>();
 
-        ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)
-                .withValue(Data.RAW_CONTACT_ID, 0)
-                .withValue(Data.MIMETYPE, Phone.CONTENT_ITEM_TYPE)
-                .withValue(Phone.NUMBER, "+12345678901")
-                .withValue(Phone.TYPE, Phone.TYPE_CUSTOM)
-                .withValue(StructuredName.DISPLAY_NAME, "John Dou")
-                .withValue(Email.DATA, "johndou@gmail.com")
-                .build());
+        if (Contacts.getContactName(getContext(), "+12345678901") == null) {
+            ArrayList<ContentProviderOperation> ops = new ArrayList<>();
 
-        getContext().getContentResolver().applyBatch(AUTHORITY, ops);
+            ops.add(ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
+                    .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, null)
+                    .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, null)
+                    .build());
+
+            ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)
+                    .withValueBackReference(Data.RAW_CONTACT_ID, 0)
+                    .withValue(Data.MIMETYPE, StructuredName.CONTENT_ITEM_TYPE)
+                    .withValue(StructuredName.DISPLAY_NAME, "John Dou")
+                    .build());
+
+            ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)
+                    .withValueBackReference(Data.RAW_CONTACT_ID, 0)
+                    .withValue(Data.MIMETYPE, Phone.CONTENT_ITEM_TYPE)
+                    .withValue(Phone.NUMBER, "+12345678901")
+                    .withValue(Phone.TYPE, Phone.TYPE_MOBILE)
+                    .build());
+
+            getContext().getContentResolver().applyBatch(AUTHORITY, ops);
+        }
     }
 
     public void testContactName() throws Exception {

@@ -51,10 +51,20 @@ public class MailFormatter {
         this.deviceName = deviceName;
     }
 
+    /**
+     * Sets email content options. See {@link Settings#DEFAULT_CONTENT}.
+     *
+     * @param contentOptions set of options
+     */
     public void setContentOptions(Set<String> contentOptions) {
         this.contentOptions = contentOptions;
     }
 
+    /**
+     * Sets custom mail locale.
+     *
+     * @param code locale code as "en_EN"
+     */
     public void setLocale(String code) {
         Locale locale = Util.stringToLocale(code);
         if (locale != null) {

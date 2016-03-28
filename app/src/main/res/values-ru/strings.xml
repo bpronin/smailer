@@ -78,7 +78,7 @@
     <string name="email_body_unknown_location">неизвестно</string>
 
     <string name="action_about">О приложении</string>
-    <string name="action_activity_log">Журнал активности</string>
+    <string name="action_activity_log">Журнал</string>
     <string name="action_undo">Отмена</string>
     <string name="action_clear">Очистить</string>
 

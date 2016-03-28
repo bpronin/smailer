@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Legal info fragment. Displays list of user open source.
+ * Legal info fragment. Displays list of used open source libs.
  */
 public class LegalInfoFragment extends ListFragment {
 
