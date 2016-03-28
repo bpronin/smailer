@@ -1,16 +1,9 @@
 package com.bopr.android.smailer;
 
-import android.app.Application;
-import android.test.ApplicationTestCase;
-
 /**
  * {@link Cryptor} tester.
  */
-public class CryptorTest extends ApplicationTestCase<Application> {
-
-    public CryptorTest() {
-        super(Application.class);
-    }
+public class CryptorTest extends BaseTest {
 
     public void testEncryptDecrypt() throws Exception {
         Cryptor cryptor = new Cryptor(getContext());

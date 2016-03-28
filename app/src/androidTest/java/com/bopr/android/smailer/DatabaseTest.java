@@ -1,25 +1,17 @@
 package com.bopr.android.smailer;
 
-import android.app.Application;
 import android.support.annotation.NonNull;
-import android.test.ApplicationTestCase;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 /**
  * {@link Database} class tester.
  */
-public class DatabaseTest extends ApplicationTestCase<Application> {
+public class DatabaseTest extends BaseTest {
 
     private Database database;
-
-    public DatabaseTest() {
-        super(Application.class);
-        Locale.setDefault(Locale.US);
-    }
 
     @NonNull
     private List<MailMessage> asList(Database.MailMessageCursor cursor) {
@@ -190,18 +182,18 @@ public class DatabaseTest extends ApplicationTestCase<Application> {
 
         /* change default capacity and period to small values */
         database.setCapacity(5);
-        database.setPurgePeriod(100);
+        database.setPurgePeriod(500);
 
         /* sleep a time that is less than purge period */
-        Thread.sleep(10);
+        Thread.sleep(100);
 
         database.purge();
 
-        /* nothing happen cause elapsed time is less than purge period */
+        /* nothing happens cause elapsed time is less than purge period */
         assertEquals(10, database.getMessages().getCount());
 
         /* sleep again */
-        Thread.sleep(90);
+        Thread.sleep(500);
 
         database.purge();
 

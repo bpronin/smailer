@@ -22,6 +22,8 @@ import com.bopr.android.smailer.util.TagFormatter;
  */
 public class AboutDialogFragment extends DialogFragment {
 
+    private static final String TAG = "AboutDialogFragment";
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -40,18 +42,19 @@ public class AboutDialogFragment extends DialogFragment {
         return view;
     }
 
-    private String formatVersion() {
-        return TagFormatter.from(R.string.about_dialog_title_version, getResources())
-                .put("version", Settings.getReleaseVersion(getActivity()))
-                .format();
-    }
-
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         return dialog;
+    }
+
+    private String formatVersion() {
+        return TagFormatter.from(R.string.about_dialog_title_version, getResources())
+                .put("version", Settings.getReleaseVersion(getActivity()))
+                .put("build", Settings.getReleaseBuild(getActivity()))
+                .format();
     }
 
 }

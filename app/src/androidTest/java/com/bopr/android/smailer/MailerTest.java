@@ -1,16 +1,12 @@
 package com.bopr.android.smailer;
 
-import android.app.Application;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.test.ApplicationTestCase;
 
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import java.util.GregorianCalendar;
-import java.util.Locale;
-import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.mail.AuthenticationFailedException;
@@ -42,19 +38,7 @@ import static org.mockito.Mockito.when;
 /**
  * {@link Mailer} tester.
  */
-public class MailerTest extends ApplicationTestCase<Application> {
-
-    public MailerTest() {
-        super(Application.class);
-        Locale.setDefault(Locale.US);
-        TimeZone.setDefault(TimeZone.getTimeZone("America/New_York"));
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        System.setProperty("dexmaker.dexcache", getContext().getCacheDir().getPath());
-    }
+public class MailerTest extends BaseTest {
 
     @Override
     protected void tearDown() throws Exception {

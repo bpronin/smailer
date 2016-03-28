@@ -1,14 +1,11 @@
 package com.bopr.android.smailer;
 
-import android.app.Application;
 import android.content.ContentProviderOperation;
-import android.test.ApplicationTestCase;
 
 import com.bopr.android.smailer.util.Util;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
-import java.util.Locale;
 import java.util.TimeZone;
 
 import static android.provider.ContactsContract.AUTHORITY;
@@ -24,13 +21,7 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_T
 /**
  * {@link MailFormatter} tester.
  */
-public class MailFormatterTest extends ApplicationTestCase<Application> {
-
-    public MailFormatterTest() {
-        super(Application.class);
-        Locale.setDefault(Locale.US);
-        TimeZone.setDefault(TimeZone.getTimeZone("America/New_York"));
-    }
+public class MailFormatterTest extends BaseTest {
 
     @Override
     public void setUp() throws Exception {

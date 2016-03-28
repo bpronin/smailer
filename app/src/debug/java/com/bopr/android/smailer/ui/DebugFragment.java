@@ -273,12 +273,41 @@ public class DebugFragment extends DefaultPreferenceFragment {
                 .show();
     }
 
+    @SuppressWarnings("ResourceType")
     private void onGetLocation() {
         GeoCoordinates location = locationProvider.getLocation();
         Toast.makeText(getActivity(),
                 location != null ? Util.formatLocation(location)
                         : "No location received",
                 Toast.LENGTH_LONG).show();
+
+/*
+        final LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        if (manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            manager.requestSingleUpdate(LocationManager.GPS_PROVIDER, new LocationListener() {
+
+                @Override
+                public void onLocationChanged(Location location) {
+                    manager.removeUpdates(this);
+                    Toast.makeText(getActivity(), location.toString(), Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {
+                }
+
+                @Override
+                public void onProviderEnabled(String provider) {
+                }
+
+                @Override
+                public void onProviderDisabled(String provider) {
+                }
+            }, null);
+        } else {
+            Toast.makeText(getActivity(), "Provider disabled", Toast.LENGTH_LONG).show();
+        }
+*/
     }
 
     private void onClearPreferences() {

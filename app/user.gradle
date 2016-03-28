@@ -1,0 +1,18 @@
+task incrementBuildNumber << {
+    def propFile = new File('app/src/main/assets/release.properties')
+    def Properties props = new Properties()
+    props.load(new FileInputStream(propFile))
+    def buildNumber = Integer.parseInt(props.getProperty('build_number')) + 1
+    props.setProperty('build_number', String.valueOf(buildNumber))
+    props.store(new FileOutputStream(propFile), 'Release properties')
+
+    println(':incrementBuildNumber current build=' + buildNumber);
+}
+
+assembleDebug.doLast {
+    incrementBuildNumber.execute()
+}
+
+assembleRelease.doLast {
+    incrementBuildNumber.execute()
+}

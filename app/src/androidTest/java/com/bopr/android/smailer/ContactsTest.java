@@ -1,12 +1,9 @@
 package com.bopr.android.smailer;
 
-import android.app.Application;
 import android.content.ContentProviderOperation;
 import android.provider.ContactsContract;
-import android.test.ApplicationTestCase;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 import static android.provider.ContactsContract.AUTHORITY;
 import static android.provider.ContactsContract.CommonDataKinds.Phone;
@@ -16,12 +13,7 @@ import static android.provider.ContactsContract.Data;
 /**
  * {@link MailFormatter} tester.
  */
-public class ContactsTest extends ApplicationTestCase<Application> {
-
-    public ContactsTest() {
-        super(Application.class);
-        Locale.setDefault(Locale.US);
-    }
+public class ContactsTest extends BaseTest {
 
     @Override
     public void setUp() throws Exception {

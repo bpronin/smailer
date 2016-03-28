@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Build;
 import android.provider.Telephony;
+import android.support.annotation.Nullable;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
@@ -85,6 +86,7 @@ public class MailerService extends IntentService {
         return message;
     }
 
+    @Nullable
     private MailMessage parseSmsIntent(Intent intent) {
         SmsMessage[] messages;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {

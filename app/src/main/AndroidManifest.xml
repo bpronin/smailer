@@ -58,17 +58,6 @@
             </intent-filter>
         </receiver>
 
-<!--
-        <receiver
-            android:name=".LocationReceiver">
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <action android:name="android.location.PROVIDERS_CHANGED"/>
-                <action android:name="com.bopr.android.smailer.LOCATION_RECEIVED_ACTION"/>
-            </intent-filter>
-        </receiver>
--->
-
         <service android:name=".MailerService"/>
 
     </application>

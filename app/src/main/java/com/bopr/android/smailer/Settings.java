@@ -6,6 +6,8 @@ import android.content.pm.PackageManager;
 
 import com.bopr.android.smailer.util.Util;
 
+import java.io.IOException;
+import java.util.Properties;
 import java.util.Set;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -64,17 +66,22 @@ public class Settings {
 
     public static String getReleaseVersion(Context context) {
         try {
-            return context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
+            return context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName +
+                    "." + getReleaseBuild(context);
         } catch (PackageManager.NameNotFoundException x) {
             throw new Error(x);
         }
     }
 
-/*
-    public String getLocaleName(Context context){
-        return context.getResources().getConfiguration().locale.getDisplayName();
+    public static String getReleaseBuild(Context context) {
+        Properties properties = new Properties();
+        try {
+            properties.load(context.getAssets().open("release.properties"));
+            return properties.getProperty("build_number");
+        } catch (IOException x) {
+            throw new Error("Cannot read release properties", x);
+        }
     }
-*/
 
 /*
     public static String getAndroidId(Context context) {

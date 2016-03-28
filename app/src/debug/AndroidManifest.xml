@@ -5,6 +5,7 @@
 
     <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
     <uses-permission android:name="android.permission.READ_LOGS"/>
+    <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION"/>
 
     <!-- todo: see inspection message - android:fullBackupContent="false" -->
     <application>
