@@ -46,16 +46,16 @@ public class Util {
                                       String secondSymbol) {
         double mod = coordinate % 1;
         int intPart = (int) coordinate;
-        int degrees = intPart;
+        int degrees = Math.abs(intPart);
 
         coordinate = mod * 60;
         mod = coordinate % 1;
         intPart = (int) coordinate;
-        int minutes = intPart;
+        int minutes = Math.abs(intPart);
 
         coordinate = mod * 60;
         intPart = (int) coordinate;
-        int seconds = intPart;
+        int seconds = Math.abs(intPart);
 
         return degrees + degreeSymbol + minutes + minuteSymbol + seconds + secondSymbol;
     }

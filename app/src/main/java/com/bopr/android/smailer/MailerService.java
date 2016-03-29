@@ -1,6 +1,7 @@
 package com.bopr.android.smailer;
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.provider.Telephony;
@@ -17,14 +18,13 @@ public class MailerService extends IntentService {
 
     private static final String TAG = "MailerService";
 
-    public static final String EXTRA_INCOMING = "direction";
-    public static final String EXTRA_MISSED = "missed";
-    public static final String EXTRA_PHONE_NUMBER = "phone_number";
-    public static final String EXTRA_START_TIME = "start_time";
-    public static final String EXTRA_END_TIME = "end_time";
-
-    public static final String ACTION_SMS = "sms";
-    public static final String ACTION_CALL = "call";
+    private static final String EXTRA_INCOMING = "direction";
+    private static final String EXTRA_MISSED = "missed";
+    private static final String EXTRA_PHONE_NUMBER = "phone_number";
+    private static final String EXTRA_START_TIME = "start_time";
+    private static final String EXTRA_END_TIME = "end_time";
+    private static final String ACTION_SMS = "sms";
+    private static final String ACTION_CALL = "call";
 
     private LocationProvider locationProvider;
     private Mailer mailer;
@@ -73,6 +73,7 @@ public class MailerService extends IntentService {
         }
     }
 
+    @Nullable
     private MailMessage parseCallIntent(Intent intent) {
         MailMessage message = new MailMessage();
         message.setPhone(intent.getStringExtra(EXTRA_PHONE_NUMBER));
@@ -118,6 +119,46 @@ public class MailerService extends IntentService {
             return message;
         }
         return null;
+    }
+
+    public static void startForSms(Context context, Intent smsIntent) {
+        Intent intent = new Intent(context, MailerService.class);
+        intent.setAction(ACTION_SMS);
+        intent.fillIn(smsIntent, Intent.FILL_IN_DATA);
+
+        context.startService(intent);
+    }
+
+    public static void startForMissingCall(Context context, String number, long start) {
+        Intent intent = new Intent(context, MailerService.class);
+        intent.setAction(ACTION_CALL);
+        intent.putExtra(EXTRA_MISSED, true);
+        intent.putExtra(EXTRA_PHONE_NUMBER, number);
+        intent.putExtra(EXTRA_START_TIME, start);
+
+        context.startService(intent);
+    }
+
+    public static void startForIncomingCall(Context context, String number, long start, long end) {
+        Intent intent = new Intent(context, MailerService.class);
+        intent.setAction(ACTION_CALL);
+        intent.putExtra(EXTRA_PHONE_NUMBER, number);
+        intent.putExtra(EXTRA_INCOMING, true);
+        intent.putExtra(EXTRA_START_TIME, start);
+        intent.putExtra(EXTRA_END_TIME, end);
+
+        context.startService(intent);
+    }
+
+    public static void startForOutgoingCall(Context context, String number, long start, long end) {
+        Intent intent = new Intent(context, MailerService.class);
+        intent.setAction(ACTION_CALL);
+        intent.putExtra(EXTRA_PHONE_NUMBER, number);
+        intent.putExtra(EXTRA_INCOMING, false);
+        intent.putExtra(EXTRA_START_TIME, start);
+        intent.putExtra(EXTRA_END_TIME, end);
+
+        context.startService(intent);
     }
 
 }

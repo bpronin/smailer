@@ -22,7 +22,7 @@ import com.bopr.android.smailer.GeoCoordinates;
 import com.bopr.android.smailer.LocationProvider;
 import com.bopr.android.smailer.MailMessage;
 import com.bopr.android.smailer.MailTransport;
-import com.bopr.android.smailer.Mailer;
+import com.bopr.android.smailer.MailerService;
 import com.bopr.android.smailer.PermissionsChecker;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.Util;
@@ -275,39 +275,21 @@ public class DebugFragment extends DefaultPreferenceFragment {
 
     @SuppressWarnings("ResourceType")
     private void onGetLocation() {
-        GeoCoordinates location = locationProvider.getLocation();
-        Toast.makeText(getActivity(),
-                location != null ? Util.formatLocation(location)
-                        : "No location received",
-                Toast.LENGTH_LONG).show();
+        new AsyncTask<Void, Void, GeoCoordinates>() {
 
-/*
-        final LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        if (manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            manager.requestSingleUpdate(LocationManager.GPS_PROVIDER, new LocationListener() {
+            @Override
+            protected GeoCoordinates doInBackground(Void... params) {
+                return locationProvider.getLocation(3000);
+            }
 
-                @Override
-                public void onLocationChanged(Location location) {
-                    manager.removeUpdates(this);
-                    Toast.makeText(getActivity(), location.toString(), Toast.LENGTH_LONG).show();
-                }
-
-                @Override
-                public void onStatusChanged(String provider, int status, Bundle extras) {
-                }
-
-                @Override
-                public void onProviderEnabled(String provider) {
-                }
-
-                @Override
-                public void onProviderDisabled(String provider) {
-                }
-            }, null);
-        } else {
-            Toast.makeText(getActivity(), "Provider disabled", Toast.LENGTH_LONG).show();
-        }
-*/
+            @Override
+            protected void onPostExecute(GeoCoordinates coordinates) {
+                Toast.makeText(getActivity(),
+                        coordinates != null ? Util.formatLocation(coordinates)
+                                : "No location received",
+                        Toast.LENGTH_LONG).show();
+            }
+        }.execute();
     }
 
     private void onClearPreferences() {
@@ -345,6 +327,7 @@ public class DebugFragment extends DefaultPreferenceFragment {
     }
 
     private void onSendMail() {
+/*
         new AsyncTask<Void, Void, Void>() {
 
             @Override
@@ -362,6 +345,9 @@ public class DebugFragment extends DefaultPreferenceFragment {
                 return null;
             }
         }.execute();
+*/
+        long start = System.currentTimeMillis();
+        MailerService.startForIncomingCall(getActivity(), "+79052345678", start, start + 10000);
     }
 
     private void onRequireReceiveSmsPermission() {

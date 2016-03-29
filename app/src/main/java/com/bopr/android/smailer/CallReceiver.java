@@ -14,13 +14,6 @@ import static android.telephony.TelephonyManager.EXTRA_STATE;
 import static android.telephony.TelephonyManager.EXTRA_STATE_IDLE;
 import static android.telephony.TelephonyManager.EXTRA_STATE_OFFHOOK;
 import static android.telephony.TelephonyManager.EXTRA_STATE_RINGING;
-import static com.bopr.android.smailer.MailerService.ACTION_CALL;
-import static com.bopr.android.smailer.MailerService.ACTION_SMS;
-import static com.bopr.android.smailer.MailerService.EXTRA_END_TIME;
-import static com.bopr.android.smailer.MailerService.EXTRA_INCOMING;
-import static com.bopr.android.smailer.MailerService.EXTRA_MISSED;
-import static com.bopr.android.smailer.MailerService.EXTRA_PHONE_NUMBER;
-import static com.bopr.android.smailer.MailerService.EXTRA_START_TIME;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SERVICE_ENABLED;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_CALLS;
@@ -98,59 +91,35 @@ public class CallReceiver extends BroadcastReceiver {
 
     private void onIncomingCall(Context context, String number, long start, long end) {
         Log.d(TAG, "Processing incoming call");
-        if (isSourceEnabled(context, VAL_PREF_TRIGGER_IN_CALLS)) {
-            Intent intent = new Intent(context, MailerService.class);
-            intent.setAction(ACTION_CALL);
-            intent.putExtra(EXTRA_PHONE_NUMBER, number);
-            intent.putExtra(EXTRA_INCOMING, true);
-            intent.putExtra(EXTRA_START_TIME, start);
-            intent.putExtra(EXTRA_END_TIME, end);
-
-            context.startService(intent);
+        if (isTriggerEnabled(context, VAL_PREF_TRIGGER_IN_CALLS)) {
+            MailerService.startForIncomingCall(context, number, start, end);
         }
     }
 
     private void onOutgoingCall(Context context, String number, long start, long end) {
         Log.d(TAG, "Processing outgoing call");
-        if (isSourceEnabled(context, VAL_PREF_TRIGGER_OUT_CALLS)) {
-            Intent intent = new Intent(context, MailerService.class);
-            intent.setAction(ACTION_CALL);
-            intent.putExtra(EXTRA_PHONE_NUMBER, number);
-            intent.putExtra(EXTRA_INCOMING, false);
-            intent.putExtra(EXTRA_START_TIME, start);
-            intent.putExtra(EXTRA_END_TIME, end);
-
-            context.startService(intent);
+        if (isTriggerEnabled(context, VAL_PREF_TRIGGER_OUT_CALLS)) {
+            MailerService.startForOutgoingCall(context, number, start, end);
         }
     }
 
     private void onMissedCall(Context context, String number, long start) {
         Log.d(TAG, "Processing missed call");
-        if (isSourceEnabled(context, VAL_PREF_TRIGGER_MISSED_CALLS)) {
-            Intent intent = new Intent(context, MailerService.class);
-            intent.setAction(ACTION_CALL);
-            intent.putExtra(EXTRA_MISSED, true);
-            intent.putExtra(EXTRA_PHONE_NUMBER, number);
-            intent.putExtra(EXTRA_START_TIME, start);
-
-            context.startService(intent);
+        if (isTriggerEnabled(context, VAL_PREF_TRIGGER_MISSED_CALLS)) {
+            MailerService.startForMissingCall(context, number, start);
         }
     }
 
     private void onIncomingSms(Context context, Intent smsIntent) {
-
         Log.d(TAG, "Processing incoming sms");
-        if (isSourceEnabled(context, VAL_PREF_TRIGGER_IN_SMS)) {
-            Intent intent = new Intent(context, MailerService.class);
-            intent.setAction(ACTION_SMS);
-            intent.fillIn(smsIntent, Intent.FILL_IN_DATA);
-            context.startService(intent);
+        if (isTriggerEnabled(context, VAL_PREF_TRIGGER_IN_SMS)) {
+            MailerService.startForSms(context, smsIntent);
         }
     }
 
-    private boolean isSourceEnabled(Context context, String source) {
+    private boolean isTriggerEnabled(Context context, String trigger) {
         Set<String> options = Settings.getPreferences(context).getStringSet(KEY_PREF_EMAIL_TRIGGERS, null);
-        return options != null && options.contains(source);
+        return options != null && options.contains(trigger);
     }
 
 }

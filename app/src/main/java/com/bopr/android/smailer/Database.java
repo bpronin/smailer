@@ -195,11 +195,14 @@ public class Database {
         ).getAndClose(new ValueReader<GeoCoordinates>() {
 
             @Override
-            public GeoCoordinates read(ExCursorWrapper wrapper) {
-                return new GeoCoordinates(
-                        wrapper.getDouble(COLUMN_LAST_LATITUDE),
-                        wrapper.getDouble(COLUMN_LAST_LONGITUDE)
-                );
+            public GeoCoordinates read(ExCursorWrapper cursor) {
+                if (!cursor.isNull(COLUMN_LAST_LATITUDE) && !cursor.isNull(COLUMN_LAST_LONGITUDE)) {
+                    return new GeoCoordinates(
+                            cursor.getDouble(COLUMN_LAST_LATITUDE),
+                            cursor.getDouble(COLUMN_LAST_LONGITUDE)
+                    );
+                }
+                return null;
             }
         });
     }

@@ -2,14 +2,18 @@ package com.bopr.android.smailer;
 
 import android.content.Context;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderApi;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import java.util.concurrent.CountDownLatch;
@@ -21,16 +25,17 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
 import static android.location.LocationManager.PASSIVE_PROVIDER;
+import static com.bopr.android.smailer.PermissionsChecker.isPermissionsDenied;
 
 /**
  * Provides last device location.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-@SuppressWarnings("ResourceType")
 public class LocationProvider {
 
     private static final String TAG = "LocationProvider";
+    private static final int DEFAULT_TIMEOUT = 5000;
 
     private final Context context;
     private final Database database;
@@ -66,23 +71,34 @@ public class LocationProvider {
     }
 
     /**
-     * Tries to retrieve last known device location from different providers.
+     * Tries to retrieve device location from different providers.
      *
      * @return last known device location or null when it cannot be found
      */
     @Nullable
     public GeoCoordinates getLocation() {
-        if (!hasPermissions()) {
+        return getLocation(DEFAULT_TIMEOUT);
+    }
+
+    /**
+     * Tries to retrieve device location from different providers.
+     *
+     * @return last known device location or null when it cannot be found
+     */
+    @Nullable
+    public GeoCoordinates getLocation(long timeout) {
+        if (isPermissionsDenied(context, ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION)) {
+            Log.w(TAG, "Unable read location. Permission denied.");
             return null;
         }
 
-        GeoCoordinates coordinates = getGoogleLocation();
+        GeoCoordinates coordinates = getGoogleLocation(timeout);
         if (coordinates == null) {
-            coordinates = getProviderLocation(GPS_PROVIDER);
+            coordinates = getProviderLocation(GPS_PROVIDER, timeout);
             if (coordinates == null) {
-                coordinates = getProviderLocation(NETWORK_PROVIDER);
+                coordinates = getProviderLocation(NETWORK_PROVIDER, timeout);
                 if (coordinates == null) {
-                    coordinates = getProviderLocation(PASSIVE_PROVIDER);
+                    coordinates = getLastProviderLocation(PASSIVE_PROVIDER);
                 }
             }
         }
@@ -92,9 +108,9 @@ public class LocationProvider {
         } else {
             coordinates = database.getLastLocation();
             if (coordinates != null) {
-                Log.d(TAG, "Using internal database location");
+                Log.d(TAG, "Using local database location");
             } else {
-                Log.w(TAG, "Unable detect location");
+                Log.w(TAG, "Unable obtain location");
             }
         }
 
@@ -102,9 +118,35 @@ public class LocationProvider {
     }
 
     @Nullable
-    private GeoCoordinates getGoogleLocation() {
+    private GeoCoordinates getGoogleLocation(long timeout) {
+        if (client.isConnected() && (locationManager.isProviderEnabled(GPS_PROVIDER)
+                || locationManager.isProviderEnabled(NETWORK_PROVIDER))) {
+            GeoCoordinates coordinates = requestGoogleLocation(timeout);
+            if (coordinates != null) {
+                Log.d(TAG, "Using Google API location");
+                return coordinates;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    private GeoCoordinates getProviderLocation(String provider, long timeout) {
+        if (locationManager.isProviderEnabled(provider)) {
+            GeoCoordinates coordinates = requestProviderLocation(provider, timeout);
+            if (coordinates != null) {
+                Log.d(TAG, "Using " + provider + " location");
+                return coordinates;
+            }
+        }
+        return null;
+    }
+
+    @SuppressWarnings("ResourceType")
+    @Nullable
+    private GeoCoordinates getLastGoogleLocation() {
         if (client.isConnected()) {
-            Log.d(TAG, "Using Google API location");
+            Log.d(TAG, "Using last Google API location");
             Location location = LocationServices.FusedLocationApi.getLastLocation(client);
             if (location != null) {
                 return new GeoCoordinates(location);
@@ -113,12 +155,13 @@ public class LocationProvider {
         return null;
     }
 
+    @SuppressWarnings("ResourceType")
     @Nullable
-    private GeoCoordinates getProviderLocation(String provider) {
+    private GeoCoordinates getLastProviderLocation(String provider) {
         if (locationManager.isProviderEnabled(provider)) {
             Location location = locationManager.getLastKnownLocation(provider);
             if (location != null) {
-                Log.d(TAG, "Using " + provider + " location");
+                Log.d(TAG, "Using last " + provider + " location");
                 return new GeoCoordinates(location);
             }
         }
@@ -126,79 +169,113 @@ public class LocationProvider {
     }
 
     /**
+     * Requests Google API for location updates and waits until first update.
+     * If timeout expired returns null.
+     * Caution: this method blocks caller thread for "timeout" time.
+     *
+     * @param timeout max await time in seconds
+     * @return location or null if timeout expired
+     */
+    @SuppressWarnings("ResourceType")
+    @Nullable
+    private GeoCoordinates requestGoogleLocation(long timeout) {
+        Log.d(TAG, "Requesting location from Google API");
+        final AtomicReference<GeoCoordinates> result = new AtomicReference<>();
+        final CountDownLatch completeSignal = new CountDownLatch(1);
+
+        com.google.android.gms.location.LocationListener listener = new com.google.android.gms.location.LocationListener() {
+
+            @Override
+            public void onLocationChanged(Location location) {
+                Log.d(TAG, "Received location: " + location);
+                result.set(new GeoCoordinates(location));
+                completeSignal.countDown();
+            }
+        };
+
+        LocationRequest request = new LocationRequest();
+        request.setNumUpdates(1);
+        request.setFastestInterval(5000);
+        request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        HandlerThread thread = new HandlerThread("location_request");
+        thread.start();
+
+        FusedLocationProviderApi api = LocationServices.FusedLocationApi;
+        api.requestLocationUpdates(client, request, listener, thread.getLooper());
+
+        try {
+            if (!completeSignal.await(timeout, TimeUnit.MILLISECONDS)) {
+                Log.w(TAG, "Location request timeout expired");
+            }
+        } catch (InterruptedException x) {
+            Log.w(TAG, "Location request interrupted", x);
+        } finally {
+            api.removeLocationUpdates(client, listener);
+            thread.quit();
+        }
+
+        return result.get();
+    }
+
+    /**
      * Requests provider for location updates and waits until first update.
      * If timeout expired returns null.
+     * Caution: this method blocks caller thread for "timeout" time.
      *
      * @param provider location provider name
      * @param timeout  max await time in seconds
      * @return location or null if timeout expired
      */
     @SuppressWarnings("ResourceType")
-    public GeoCoordinates requestLocation(final String provider, long timeout) {
-        if (!hasPermissions()) {
-            return null;
-        }
-
+    @Nullable
+    private GeoCoordinates requestProviderLocation(String provider, long timeout) {
         Log.d(TAG, "Requesting location from: " + provider);
 
         final AtomicReference<GeoCoordinates> result = new AtomicReference<>();
-        final CountDownLatch competeSignal = new CountDownLatch(1);
+        final CountDownLatch completeSignal = new CountDownLatch(1);
 
-//        Executors.newSingleThreadExecutor().execute(new Runnable() {
-//
-//            @Override
-//            public void run() {
-//                Looper.prepare();
-//
-//                final LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-//                manager.requestSingleUpdate(provider, new LocationListener() {
-//
-//                    @Override
-//                    public void onLocationChanged(Location location) {
-//                        Log.d(TAG, "Received location: " + location);
-//                        manager.removeUpdates(this);
-//                        result.set(new GeoCoordinates(location));
-//                        competeSignal.countDown();
-////                        Looper.myLooper().quit();
-//                    }
-//
-//                    @Override
-//                    public void onStatusChanged(String provider, int status, Bundle extras) {
-//                        /* do nothing*/
-//                    }
-//
-//                    @Override
-//                    public void onProviderEnabled(String provider) {
-//                        /* do nothing*/
-//                    }
-//
-//                    @Override
-//                    public void onProviderDisabled(String provider) {
-//                        /* do nothing*/
-//                    }
-//                }, null);
-//
-//                Looper.loop();
-//            }
-//        });
+        LocationListener listener = new LocationListener() {
+
+            @Override
+            public void onLocationChanged(Location location) {
+                Log.d(TAG, "Received location: " + location);
+                result.set(new GeoCoordinates(location));
+                completeSignal.countDown();
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+                /* do nothing*/
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+                /* do nothing*/
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+                /* do nothing*/
+            }
+        };
+
+        HandlerThread thread = new HandlerThread("location_request");
+        thread.start();
+        locationManager.requestSingleUpdate(provider, listener, thread.getLooper());
 
         try {
-            if (!competeSignal.await(timeout, TimeUnit.SECONDS)) {
+            if (!completeSignal.await(timeout, TimeUnit.MILLISECONDS)) {
                 Log.w(TAG, "Location request timeout expired");
             }
         } catch (InterruptedException x) {
             Log.w(TAG, "Location request interrupted", x);
+        } finally {
+            locationManager.removeUpdates(listener);
+            thread.quit();
         }
 
         return result.get();
-    }
-
-    private boolean hasPermissions() {
-        if (PermissionsChecker.isPermissionsDenied(context, ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION)) {
-            Log.w(TAG, "Unable read location. Permission denied.");
-            return false;
-        }
-        return true;
     }
 
     private class ClientListener implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {

@@ -77,6 +77,10 @@ public class ExCursorWrapper extends CursorWrapper {
         });
     }
 
+    public boolean isNull(String columnName) {
+        return isNull(getColumnIndex(columnName));
+    }
+
     public interface ValueReader<T> {
 
         T read(ExCursorWrapper wrapper);
