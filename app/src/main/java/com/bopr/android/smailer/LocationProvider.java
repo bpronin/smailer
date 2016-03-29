@@ -39,35 +39,49 @@ public class LocationProvider {
 
     private final Context context;
     private final Database database;
-    private final GoogleApiClient client;
-    private final LocationManager locationManager;
+    private GoogleApiClient googleApiClient;
+    private FusedLocationProviderApi googleApi;
+    private LocationManager locationManager;
 
     public LocationProvider(Context context, Database database) {
         this.context = context;
         this.database = database;
 
+        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+
         ClientListener listener = new ClientListener();
-        client = new GoogleApiClient.Builder(context)
+        googleApiClient = new GoogleApiClient.Builder(context)
                 .addConnectionCallbacks(listener)
                 .addOnConnectionFailedListener(listener)
                 .addApi(LocationServices.API)
                 .build();
+        googleApi = LocationServices.FusedLocationApi;
+    }
 
-        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+    protected void setLocationManager(LocationManager locationManager) {
+        this.locationManager = locationManager;
+    }
+
+    protected void setGoogleApi(FusedLocationProviderApi googleApi) {
+        this.googleApi = googleApi;
+    }
+
+    protected void setGoogleApiClient(GoogleApiClient googleApiClient) {
+        this.googleApiClient = googleApiClient;
     }
 
     /**
      * Starts google API client.
      */
     public void start() {
-        client.connect();
+        googleApiClient.connect();
     }
 
     /**
      * Stops google API client.
      */
     public void stop() {
-        client.disconnect();
+        googleApiClient.disconnect();
     }
 
     /**
@@ -119,7 +133,7 @@ public class LocationProvider {
 
     @Nullable
     private GeoCoordinates getGoogleLocation(long timeout) {
-        if (client.isConnected() && (locationManager.isProviderEnabled(GPS_PROVIDER)
+        if (googleApiClient.isConnected() && (locationManager.isProviderEnabled(GPS_PROVIDER)
                 || locationManager.isProviderEnabled(NETWORK_PROVIDER))) {
             GeoCoordinates coordinates = requestGoogleLocation(timeout);
             if (coordinates != null) {
@@ -145,9 +159,9 @@ public class LocationProvider {
     @SuppressWarnings("ResourceType")
     @Nullable
     private GeoCoordinates getLastGoogleLocation() {
-        if (client.isConnected()) {
+        if (googleApiClient.isConnected()) {
             Log.d(TAG, "Using last Google API location");
-            Location location = LocationServices.FusedLocationApi.getLastLocation(client);
+            Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
             if (location != null) {
                 return new GeoCoordinates(location);
             }
@@ -201,8 +215,7 @@ public class LocationProvider {
         HandlerThread thread = new HandlerThread("location_request");
         thread.start();
 
-        FusedLocationProviderApi api = LocationServices.FusedLocationApi;
-        api.requestLocationUpdates(client, request, listener, thread.getLooper());
+        googleApi.requestLocationUpdates(googleApiClient, request, listener, thread.getLooper());
 
         try {
             if (!completeSignal.await(timeout, TimeUnit.MILLISECONDS)) {
@@ -211,7 +224,7 @@ public class LocationProvider {
         } catch (InterruptedException x) {
             Log.w(TAG, "Location request interrupted", x);
         } finally {
-            api.removeLocationUpdates(client, listener);
+            googleApi.removeLocationUpdates(googleApiClient, listener);
             thread.quit();
         }
 
