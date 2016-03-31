@@ -25,6 +25,7 @@ public class MailerService extends IntentService {
     private static final String EXTRA_END_TIME = "end_time";
     private static final String ACTION_SMS = "sms";
     private static final String ACTION_CALL = "call";
+    private static final String ACTION_RESEND = "resend";
 
     private LocationProvider locationProvider;
     private Mailer mailer;
@@ -57,19 +58,18 @@ public class MailerService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d(TAG, "Processing mailer service intent");
+        Log.d(TAG, "Processing mailer service intent:" + intent);
 
-        MailMessage message;
-        if (intent.getAction().equals(ACTION_SMS)) {
-            message = parseSmsIntent(intent);
-        } else {
-            message = parseCallIntent(intent);
-        }
-
-        if (message != null) {
-            mailer.send(message);
-        } else {
-            Log.e(TAG, "Null message");
+        switch (intent.getAction()) {
+            case ACTION_SMS:
+                mailer.send(parseSmsIntent(intent));
+                break;
+            case ACTION_CALL:
+                mailer.send(parseCallIntent(intent));
+                break;
+            case ACTION_RESEND:
+                mailer.sendAllUnsent();
+                break;
         }
     }
 
@@ -161,4 +161,10 @@ public class MailerService extends IntentService {
         context.startService(intent);
     }
 
+    public static void startForResendPostponed(Context context) {
+        Intent intent = new Intent(context, MailerService.class);
+        intent.setAction(ACTION_RESEND);
+
+        context.startService(intent);
+    }
 }

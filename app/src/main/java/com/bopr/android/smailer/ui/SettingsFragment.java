@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.bopr.android.smailer.MailerService;
 import com.bopr.android.smailer.PermissionsChecker;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.validator.EmailListTextValidator;
@@ -157,6 +158,8 @@ public class SettingsFragment extends DefaultPreferenceFragment {
         inCallsPermissionsChecker = createInCallsPermissionChecker();
         contactsPermissionsChecker = createContactsPermissionChecker();
         locationPermissionsChecker = createLocationPermissionChecker();
+
+//        MailerService.startForResendPostponed(getActivity());
     }
 
     private PermissionsChecker createContactsPermissionChecker() {
@@ -352,7 +355,7 @@ public class SettingsFragment extends DefaultPreferenceFragment {
         int index = localePreference.findIndexOfValue(value);
         if (index < 0) {
             updateSummary(R.string.pref_description_not_set, localePreference, false);
-        }else {
+        } else {
             CharSequence cs = localePreference.getEntries()[index];
             updateSummary(cs.toString(), localePreference, true);
         }

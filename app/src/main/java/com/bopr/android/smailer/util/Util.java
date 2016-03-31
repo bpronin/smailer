@@ -1,11 +1,6 @@
 package com.bopr.android.smailer.util;
 
-import android.content.Context;
-import android.text.Spannable;
-import android.text.SpannableString;
-
 import com.bopr.android.smailer.GeoCoordinates;
-import com.bopr.android.smailer.util.draw.WavyUnderlineSpan;
 
 import java.util.Arrays;
 import java.util.Collection;

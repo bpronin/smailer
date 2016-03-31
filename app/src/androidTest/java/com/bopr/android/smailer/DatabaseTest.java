@@ -1,8 +1,5 @@
 package com.bopr.android.smailer;
 
-import android.support.annotation.NonNull;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -13,24 +10,10 @@ public class DatabaseTest extends BaseTest {
 
     private Database database;
 
-    @NonNull
-    private List<MailMessage> asList(Database.MailMessageCursor cursor) {
-        List<MailMessage> items = new ArrayList<>();
-
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            items.add(cursor.get());
-            cursor.moveToNext();
-        }
-        cursor.close();
-
-        return items;
-    }
-
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        database = new Database(getContext());
+        database = new Database(getContext(), "test.sqlite");
         database.destroy();
     }
 
@@ -61,7 +44,7 @@ public class DatabaseTest extends BaseTest {
         database.updateMessage(new MailMessage("9", false, 9000L, 0L, false, false, null, null, false, "Test 4"));
         database.updateMessage(new MailMessage("10", true, 10000L, 20000L, false, true, "SMS text", new GeoCoordinates(10.5, 20.5), true, "Test 10"));
 
-        List<MailMessage> items = asList(database.getMessages());
+        List<MailMessage> items = database.getMessages().getAll();
 
         assertEquals(10, items.size());
 
@@ -89,7 +72,7 @@ public class DatabaseTest extends BaseTest {
         MailMessage message = new MailMessage("1", true, 1000L, 2000L, false, true, "SMS text", new GeoCoordinates(10.5, 20.5), true, "Test 1");
         database.updateMessage(message);
 
-        List<MailMessage> items = asList(database.getMessages());
+        List<MailMessage> items = database.getMessages().getAll();
         assertEquals(1, items.size());
 
         message = items.get(0);
@@ -118,7 +101,7 @@ public class DatabaseTest extends BaseTest {
         message.setDetails("New details");
         database.updateMessage(message);
 
-        items = asList(database.getMessages());
+        items = database.getMessages().getAll();
         assertEquals(1, items.size());
 
         message = items.get(0);
@@ -247,6 +230,49 @@ public class DatabaseTest extends BaseTest {
 
         assertEquals(coordinates.getLatitude(), actual.getLatitude());
         assertEquals(coordinates.getLongitude(), actual.getLongitude());
+    }
+
+    /**
+     * Check {@link Database#updateSent(long, boolean)}} method.
+     *
+     * @throws Exception when failed
+     */
+    public void testUpdateSent() throws Exception {
+        long id = database.updateMessage(new MailMessage("+79052345672", false, 2000L, null, false, true, null, null, false, null));
+
+        assertFalse(database.getMessage(id).isSent());
+
+        database.updateSent(id, true);
+        assertTrue(database.getMessage(id).isSent());
+
+        database.updateSent(id, false);
+        assertFalse(database.getMessage(id).isSent());
+    }
+
+    /**
+     * Check {@link Database#getUnsentMessages()}} method.
+     *
+     * @throws Exception when failed
+     */
+    public void testGetUnsentMessages() throws Exception {
+        database.updateMessage(new MailMessage("1", true, 1000L, 0L, true, false, null, null, true, "Test 1"));
+        database.updateMessage(new MailMessage("2", false, 2000L, 0L, false, true, null, null, true, null));
+        database.updateMessage(new MailMessage("3", true, 3000L, 0L, false, false, null, null, true, null));
+        database.updateMessage(new MailMessage("4", false, 4000L, 0L, false, false, null, null, true, null));
+        database.updateMessage(new MailMessage("5", true, 5000L, 0L, true, false, null, null, true, null));
+        database.updateMessage(new MailMessage("6", true, 6000L, 7000L, false, true, null, null, false, "Test 1"));
+        database.updateMessage(new MailMessage("7", false, 7000L, 0L, false, true, null, null, false, "Test 2"));
+        database.updateMessage(new MailMessage("8", true, 8000L, 0L, false, false, null, null, false, "Test 3"));
+        database.updateMessage(new MailMessage("9", false, 9000L, 0L, false, false, null, null, false, "Test 4"));
+        database.updateMessage(new MailMessage("10", true, 10000L, 20000L, false, true, null, null, false, "Test 10"));
+
+        List<MailMessage> items = database.getUnsentMessages().getAll();
+
+        assertEquals(5, items.size());
+
+        MailMessage message = items.get(0); /* descending order so it should be the last */
+        assertNotNull(message.getId());
+        assertEquals("Test 10", message.getDetails());
     }
 
 }

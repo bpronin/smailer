@@ -1,13 +1,13 @@
 package com.bopr.android.smailer;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.List;
 
 import javax.mail.AuthenticationFailedException;
 import javax.mail.MessagingException;
@@ -27,10 +27,11 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SERVICE_ENABLED;
 import static com.bopr.android.smailer.Settings.getPreferences;
 import static org.junit.Assert.assertArrayEquals;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -40,10 +41,24 @@ import static org.mockito.Mockito.when;
  */
 public class MailerTest extends BaseTest {
 
+    private Database database;
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        database = new Database(getContext(), "test.sqlite");
+        database.destroy();
+    }
+
     @Override
     protected void tearDown() throws Exception {
         getPreferences(getContext()).edit().clear().commit();
         super.tearDown();
+    }
+
+    private Database getMockDatabase() {
+//        return mock(Database.class);
+        return database;
     }
 
     private void populatePreferences() {
@@ -75,14 +90,16 @@ public class MailerTest extends BaseTest {
     }
 
     @NonNull
-    private MailTransport createMailTransport(final AtomicReference<Object[]> initArgs,
-                                              final AtomicReference<Object[]> sendArgs) throws MessagingException {
+    private MailTransport createMailTransport(final List<Object[]> inits,
+                                              final List<Object[]> sends) throws MessagingException {
         MailTransport transport = mock(MailTransport.class);
         doAnswer(new Answer<Void>() {
 
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {
-                initArgs.set(invocation.getArguments());
+                if (inits != null) {
+                    inits.add(invocation.getArguments());
+                }
                 return null;
             }
         }).when(transport).init(anyString(), anyString(), anyString(), anyString());
@@ -91,7 +108,9 @@ public class MailerTest extends BaseTest {
 
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {
-                sendArgs.set(invocation.getArguments());
+                if (sends != null) {
+                    sends.add(invocation.getArguments());
+                }
                 return null;
             }
         }).when(transport).send(anyString(), anyString(), anyString(), anyString());
@@ -99,42 +118,42 @@ public class MailerTest extends BaseTest {
     }
 
     @NonNull
-    private Notifications createNotifications(final AtomicReference<Object[]> errorArgs,
-                                              final AtomicReference<Object[]> clearArgs,
-                                              final AtomicReference<Object[]> successArgs) {
+    private Notifications createNotifications(final List<Object[]> errors,
+                                              final List<Object[]> clears,
+                                              final List<Object[]> successes) {
         Notifications notifications = mock(Notifications.class);
         doAnswer(new Answer<Void>() {
 
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {
-                if (errorArgs != null) {
-                    errorArgs.set(invocation.getArguments());
+                if (errors != null) {
+                    errors.add(invocation.getArguments());
                 }
                 return null;
             }
-        }).when(notifications).showMailError(any(Context.class), anyInt());
+        }).when(notifications).showMailError(anyInt(), anyLong());
 
         doAnswer(new Answer<Void>() {
 
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {
-                if (clearArgs != null) {
-                    clearArgs.set(invocation.getArguments());
+                if (clears != null) {
+                    clears.add(invocation.getArguments());
                 }
                 return null;
             }
-        }).when(notifications).hideMailError(any(Context.class));
+        }).when(notifications).hideMailError();
 
         doAnswer(new Answer<Void>() {
 
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {
-                if (successArgs != null) {
-                    successArgs.set(invocation.getArguments());
+                if (successes != null) {
+                    successes.add(invocation.getArguments());
                 }
                 return null;
             }
-        }).when(notifications).showMailSuccess(any(Context.class));
+        }).when(notifications).showMailSuccess();
 
         return notifications;
     }
@@ -145,14 +164,14 @@ public class MailerTest extends BaseTest {
      * @throws Exception when fails
      */
     public void testSend() throws Exception {
-        AtomicReference<Object[]> initArgs = new AtomicReference<>();
-        AtomicReference<Object[]> sendArgs = new AtomicReference<>();
-        AtomicReference<Object[]> errorArgs = new AtomicReference<>();
+        List<Object[]> inits = new ArrayList<>();
+        List<Object[]> sends = new ArrayList<>();
+        List<Object[]> errors = new ArrayList<>();
 
         Cryptor cryptor = createCryptor();
-        Notifications notifications = createNotifications(null, null, null);
-        MailTransport transport = createMailTransport(initArgs, sendArgs);
-        Database database = mock(Database.class);
+        Notifications notifications = createNotifications(errors, null, null);
+        MailTransport transport = createMailTransport(inits, sends);
+        Database database = getMockDatabase();
 
         populatePreferences();
 
@@ -164,18 +183,9 @@ public class MailerTest extends BaseTest {
         Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, database);
         mailer.send(new MailMessage("+12345678901", false, start, end, false, false, null, new GeoCoordinates(30.0, 60.0), true, null));
 
-        assertNull(errorArgs.get());
-        assertArrayEquals(new Object[]{"user", "decrypted password", "smtp.gmail.com", "465"}, initArgs.get());
-        assertArrayEquals(new Object[]{"[SMailer] Outgoing call to +12345678901",
-                "<html><head>" +
-                        "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
-                        "You had an outgoing call of 1:01:05 duration." +
-                        "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                        "Called: <a href=\"tel:+12345678901\">+12345678901</a> (John Dou)<br>" +
-                        "Last known device location: <a href=\"http://maps.google.com/maps/place/30.0,60.0\">30&#176;0'0\"N, 60&#176;0'0\"W</a><br>" +
-                        "Sent from " + Settings.getDeviceName() + " at February 2, 2016 3:04:05 AM EST" +
-                        "</body></html>",
-                "user", "recipient"}, sendArgs.get());
+        assertTrue(errors.isEmpty());
+        assertArrayEquals(new Object[]{"user", "decrypted password", "smtp.gmail.com", "465"}, inits.get(0));
+        assertEquals("[SMailer] Outgoing call to +12345678901", sends.get(0)[0]);
     }
 
     /**
@@ -184,14 +194,14 @@ public class MailerTest extends BaseTest {
      * @throws Exception when fails
      */
     public void testSendLocalized() throws Exception {
-        AtomicReference<Object[]> initArgs = new AtomicReference<>();
-        AtomicReference<Object[]> sendArgs = new AtomicReference<>();
-        AtomicReference<Object[]> errorArgs = new AtomicReference<>();
+        List<Object[]> inits = new ArrayList<>();
+        List<Object[]> sends = new ArrayList<>();
+        List<Object[]> errors = new ArrayList<>();
 
         Cryptor cryptor = createCryptor();
-        Notifications notifications = createNotifications(null, null, null);
-        MailTransport transport = createMailTransport(initArgs, sendArgs);
-        Database database = mock(Database.class);
+        Notifications notifications = createNotifications(errors, null, null);
+        MailTransport transport = createMailTransport(inits, sends);
+        Database database = getMockDatabase();
 
         populatePreferences();
         getPreferences(getContext())
@@ -207,18 +217,9 @@ public class MailerTest extends BaseTest {
         Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, database);
         mailer.send(new MailMessage("+12345678901", false, start, end, false, false, null, new GeoCoordinates(30.0, 60.0), true, null));
 
-        assertNull(errorArgs.get());
-        assertArrayEquals(new Object[]{"user", "decrypted password", "smtp.gmail.com", "465"}, initArgs.get());
-        assertArrayEquals(new Object[]{"[SMailer] Исходящий звонок на +12345678901",
-                "<html><head>" +
-                        "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
-                        "Исходящий звонок длительностью 1:01:05." +
-                        "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                        "Вы звонили: <a href=\"tel:+12345678901\">+12345678901</a> (John Dou)<br>" +
-                        "Последнее известное местоположение: <a href=\"http://maps.google.com/maps/place/30.0,60.0\">30&#176;0'0\"N, 60&#176;0'0\"W</a><br>" +
-                        "Отправлено с " + Settings.getDeviceName() + " 2 февраля 2016 г. 3:04:05 GMT-05:00" +
-                        "</body></html>",
-                "user", "recipient"}, sendArgs.get());
+        assertTrue(errors.isEmpty());
+        assertArrayEquals(new Object[]{"user", "decrypted password", "smtp.gmail.com", "465"}, inits.get(0));
+        assertEquals("[SMailer] Исходящий звонок на +12345678901", sends.get(0)[0]);
     }
 
     /**
@@ -227,14 +228,14 @@ public class MailerTest extends BaseTest {
      * @throws Exception when fails
      */
     public void testEmptyUser() throws Exception {
-        AtomicReference<Object[]> initArgs = new AtomicReference<>();
-        AtomicReference<Object[]> sendArgs = new AtomicReference<>();
-        AtomicReference<Object[]> errorArgs = new AtomicReference<>();
+        List<Object[]> inits = new ArrayList<>();
+        List<Object[]> sends = new ArrayList<>();
+        List<Object[]> errors = new ArrayList<>();
 
         Cryptor cryptor = createCryptor();
-        Notifications notifications = createNotifications(errorArgs, null, null);
-        MailTransport transport = createMailTransport(initArgs, sendArgs);
-        Database database = mock(Database.class);
+        Notifications notifications = createNotifications(errors, null, null);
+        MailTransport transport = createMailTransport(inits, sends);
+        Database database = getMockDatabase();
 
         populatePreferences();
         getPreferences(getContext()).edit().putString(KEY_PREF_SENDER_ACCOUNT, null).commit();
@@ -244,9 +245,9 @@ public class MailerTest extends BaseTest {
         Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, database);
         mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, null, true, null));
 
-        assertNull(initArgs.get());
-        assertNull(sendArgs.get());
-        assertEquals(R.string.notification_error_no_parameters, errorArgs.get()[1]);
+        assertTrue(inits.isEmpty());
+        assertTrue(sends.isEmpty());
+        assertEquals(R.string.notification_error_no_parameters, errors.get(0)[0]);
     }
 
     /**
@@ -255,14 +256,14 @@ public class MailerTest extends BaseTest {
      * @throws Exception when fails
      */
     public void testEmptyRecipients() throws Exception {
-        AtomicReference<Object[]> initArgs = new AtomicReference<>();
-        AtomicReference<Object[]> sendArgs = new AtomicReference<>();
-        AtomicReference<Object[]> errorArgs = new AtomicReference<>();
+        List<Object[]> inits = new ArrayList<>();
+        List<Object[]> sends = new ArrayList<>();
+        List<Object[]> errors = new ArrayList<>();
 
         Cryptor cryptor = createCryptor();
-        Notifications notifications = createNotifications(errorArgs, null, null);
-        MailTransport transport = createMailTransport(initArgs, sendArgs);
-        Database database = mock(Database.class);
+        Notifications notifications = createNotifications(errors, null, null);
+        MailTransport transport = createMailTransport(inits, sends);
+        Database database = getMockDatabase();
 
 
         populatePreferences();
@@ -273,9 +274,9 @@ public class MailerTest extends BaseTest {
         Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, database);
         mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, null, true, null));
 
-        assertNull(initArgs.get());
-        assertNull(sendArgs.get());
-        assertEquals(R.string.notification_error_no_parameters, errorArgs.get()[1]);
+        assertTrue(inits.isEmpty());
+        assertTrue(sends.isEmpty());
+        assertEquals(R.string.notification_error_no_parameters, errors.get(0)[0]);
     }
 
     /**
@@ -284,14 +285,14 @@ public class MailerTest extends BaseTest {
      * @throws Exception when fails
      */
     public void testEmptyHost() throws Exception {
-        AtomicReference<Object[]> initArgs = new AtomicReference<>();
-        AtomicReference<Object[]> sendArgs = new AtomicReference<>();
-        AtomicReference<Object[]> errorArgs = new AtomicReference<>();
+        List<Object[]> inits = new ArrayList<>();
+        List<Object[]> sends = new ArrayList<>();
+        List<Object[]> errors = new ArrayList<>();
 
         Cryptor cryptor = createCryptor();
-        Notifications notifications = createNotifications(errorArgs, null, null);
-        MailTransport transport = createMailTransport(initArgs, sendArgs);
-        Database database = mock(Database.class);
+        Notifications notifications = createNotifications(errors, null, null);
+        MailTransport transport = createMailTransport(inits, sends);
+        Database database = getMockDatabase();
 
         populatePreferences();
         getPreferences(getContext()).edit().putString(KEY_PREF_EMAIL_HOST, null).commit();
@@ -301,9 +302,9 @@ public class MailerTest extends BaseTest {
         Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, database);
         mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, null, true, null));
 
-        assertNull(initArgs.get());
-        assertNull(sendArgs.get());
-        assertEquals(R.string.notification_error_no_parameters, errorArgs.get()[1]);
+        assertTrue(inits.isEmpty());
+        assertTrue(sends.isEmpty());
+        assertEquals(R.string.notification_error_no_parameters, errors.get(0)[0]);
     }
 
     /**
@@ -312,14 +313,14 @@ public class MailerTest extends BaseTest {
      * @throws Exception when fails
      */
     public void testEmptyPort() throws Exception {
-        AtomicReference<Object[]> initArgs = new AtomicReference<>();
-        AtomicReference<Object[]> sendArgs = new AtomicReference<>();
-        AtomicReference<Object[]> errorArgs = new AtomicReference<>();
+        List<Object[]> inits = new ArrayList<>();
+        List<Object[]> sends = new ArrayList<>();
+        List<Object[]> errors = new ArrayList<>();
 
         Cryptor cryptor = createCryptor();
-        Notifications notifications = createNotifications(errorArgs, null, null);
-        MailTransport transport = createMailTransport(initArgs, sendArgs);
-        Database database = mock(Database.class);
+        Notifications notifications = createNotifications(errors, null, null);
+        MailTransport transport = createMailTransport(inits, sends);
+        Database database = getMockDatabase();
 
         populatePreferences();
         getPreferences(getContext()).edit().putString(KEY_PREF_EMAIL_PORT, null).commit();
@@ -329,9 +330,9 @@ public class MailerTest extends BaseTest {
         Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, database);
         mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, null, true, null));
 
-        assertNull(initArgs.get());
-        assertNull(sendArgs.get());
-        assertEquals(R.string.notification_error_no_parameters, errorArgs.get()[1]);
+        assertTrue(inits.isEmpty());
+        assertTrue(sends.isEmpty());
+        assertEquals(R.string.notification_error_no_parameters, errors.get(0)[0]);
     }
 
     /**
@@ -340,15 +341,15 @@ public class MailerTest extends BaseTest {
      * @throws Exception when fails
      */
     public void testAuthenticationFailedException() throws Exception {
-        AtomicReference<Object[]> initArgs = new AtomicReference<>();
-        AtomicReference<Object[]> sendArgs = new AtomicReference<>();
-        AtomicReference<Object[]> errorArgs = new AtomicReference<>();
+        List<Object[]> inits = new ArrayList<>();
+        List<Object[]> sends = new ArrayList<>();
+        List<Object[]> errors = new ArrayList<>();
 
         Cryptor cryptor = createCryptor();
-        Notifications notifications = createNotifications(errorArgs, null, null);
-        MailTransport transport = createMailTransport(initArgs, sendArgs);
+        Notifications notifications = createNotifications(errors, null, null);
+        MailTransport transport = createMailTransport(inits, sends);
         doThrow(AuthenticationFailedException.class).when(transport).send(anyString(), anyString(), anyString(), anyString());
-        Database database = mock(Database.class);
+        Database database = getMockDatabase();
 
         populatePreferences();
 
@@ -357,9 +358,9 @@ public class MailerTest extends BaseTest {
         Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, database);
         mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, null, true, null));
 
-        assertNotNull(initArgs.get());
-        assertNull(sendArgs.get());
-        assertEquals(getContext().getString(R.string.notification_error_authentication), getContext().getString((int) errorArgs.get()[1]));
+        assertFalse(inits.isEmpty());
+        assertTrue(sends.isEmpty());
+        assertEquals(R.string.notification_error_authentication, errors.get(0)[0]);
     }
 
     /**
@@ -368,15 +369,15 @@ public class MailerTest extends BaseTest {
      * @throws Exception when fails
      */
     public void testOtherExceptions() throws Exception {
-        AtomicReference<Object[]> initArgs = new AtomicReference<>();
-        AtomicReference<Object[]> sendArgs = new AtomicReference<>();
-        AtomicReference<Object[]> errorArgs = new AtomicReference<>();
+        List<Object[]> inits = new ArrayList<>();
+        List<Object[]> sends = new ArrayList<>();
+        List<Object[]> errors = new ArrayList<>();
 
         Cryptor cryptor = createCryptor();
-        Notifications notifications = createNotifications(errorArgs, null, null);
-        MailTransport transport = createMailTransport(initArgs, sendArgs);
+        Notifications notifications = createNotifications(errors, null, null);
+        MailTransport transport = createMailTransport(inits, sends);
         doThrow(MessagingException.class).when(transport).send(anyString(), anyString(), anyString(), anyString());
-        Database database = mock(Database.class);
+        Database database = getMockDatabase();
 
         populatePreferences();
 
@@ -385,9 +386,9 @@ public class MailerTest extends BaseTest {
         Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, database);
         mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, null, true, null));
 
-        assertNotNull(initArgs.get());
-        assertNull(sendArgs.get());
-        assertEquals(R.string.notification_error_mail_general, errorArgs.get()[1]);
+        assertFalse(inits.isEmpty());
+        assertTrue(sends.isEmpty());
+        assertEquals(R.string.notification_error_mail_general, errors.get(0)[0]);
     }
 
     /**
@@ -396,15 +397,13 @@ public class MailerTest extends BaseTest {
      * @throws Exception when fails
      */
     public void testClearNotificationExceptions() throws Exception {
-        AtomicReference<Object[]> initArgs = new AtomicReference<>();
-        AtomicReference<Object[]> sendArgs = new AtomicReference<>();
-        AtomicReference<Object[]> errorArgs = new AtomicReference<>();
-        AtomicReference<Object[]> clearArgs = new AtomicReference<>();
+        List<Object[]> errors = new ArrayList<>();
+        List<Object[]> clears = new ArrayList<>();
 
         Cryptor cryptor = createCryptor();
-        Notifications notifications = createNotifications(errorArgs, clearArgs, null);
+        Notifications notifications = createNotifications(errors, clears, null);
 
-        MailTransport transport = createMailTransport(initArgs, sendArgs);
+        MailTransport transport = createMailTransport(null, null);
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
@@ -415,7 +414,7 @@ public class MailerTest extends BaseTest {
                 return null;
             }
         }).when(transport).send(anyString(), anyString(), anyString(), anyString());
-        Database database = mock(Database.class);
+        Database database = getMockDatabase();
 
         populatePreferences();
         getPreferences(getContext()).edit().putString(KEY_PREF_EMAIL_HOST, "good host").commit();
@@ -425,18 +424,18 @@ public class MailerTest extends BaseTest {
         /* bad_phone produces notification */
 
         mailer.send(new MailMessage("bad_phone", false, null, null, false, false, null, null, true, null));
-        assertEquals(R.string.notification_error_mail_general, errorArgs.get()[1]);
-        assertNull(clearArgs.get());
+        assertEquals(R.string.notification_error_mail_general, errors.get(0)[0]);
+        assertTrue(clears.isEmpty());
 
         /* good_phone removes it */
 
-        errorArgs.set(null);
-        clearArgs.set(null);
+        errors.clear();
+        clears.clear();
 
         mailer.send(new MailMessage("good_phone", false, null, null, false, false, null, null, true, null));
 
-        assertNull(errorArgs.get());
-        assertNotNull(clearArgs.get());
+        assertTrue(errors.isEmpty());
+        assertFalse(clears.isEmpty());
     }
 
     /**
@@ -445,16 +444,14 @@ public class MailerTest extends BaseTest {
      * @throws Exception when fails
      */
     public void testSuccessNotification() throws Exception {
-        AtomicReference<Object[]> initArgs = new AtomicReference<>();
-        AtomicReference<Object[]> sendArgs = new AtomicReference<>();
-        AtomicReference<Object[]> errorArgs = new AtomicReference<>();
-        AtomicReference<Object[]> successArgs = new AtomicReference<>();
+        List<Object[]> errors = new ArrayList<>();
+        List<Object[]> successes = new ArrayList<>();
 
         Cryptor cryptor = createCryptor();
-        Notifications notifications = createNotifications(errorArgs, null, successArgs);
+        Notifications notifications = createNotifications(errors, null, successes);
 
-        MailTransport transport = createMailTransport(initArgs, sendArgs);
-        Database database = mock(Database.class);
+        MailTransport transport = createMailTransport(null, null);
+        Database database = getMockDatabase();
 
         populatePreferences();
         Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, database);
@@ -463,15 +460,57 @@ public class MailerTest extends BaseTest {
         getPreferences(getContext()).edit().putBoolean(Settings.KEY_PREF_NOTIFY_SEND_SUCCESS, false).commit();
         mailer.send(new MailMessage("1", false, null, null, false, false, null, null, true, null));
 
-        assertNull(errorArgs.get());
-        assertNull(successArgs.get());
+        assertTrue(errors.isEmpty());
+        assertTrue(successes.isEmpty());
 
         /* settings is off */
         getPreferences(getContext()).edit().putBoolean(Settings.KEY_PREF_NOTIFY_SEND_SUCCESS, true).commit();
         mailer.send(new MailMessage("1", false, null, null, false, false, null, null, true, null));
 
-        assertNull(errorArgs.get());
-        assertNotNull(successArgs.get());
+        assertTrue(errors.isEmpty());
+        assertFalse(successes.isEmpty());
     }
+
+    /**
+     * Test resending unsent messages.
+     *
+     * @throws Exception when fails
+     */
+    public void testSendUnsent() throws Exception {
+        List<Object[]> errors = new ArrayList<>();
+
+        Cryptor cryptor = createCryptor();
+        Notifications notifications = createNotifications(errors, null, null);
+
+        MailTransport transport = createMailTransport(null, null);
+
+        populatePreferences();
+
+        long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
+        long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
+
+        /* test start */
+
+        doThrow(MessagingException.class).when(transport).send(anyString(), anyString(), anyString(), anyString());
+
+        Mailer mailer = new Mailer(getContext(), transport, cryptor, notifications, database);
+        mailer.send(new MailMessage("+12345678901", false, start, end, false, false, null, new GeoCoordinates(30.0, 60.0), false, null));
+        mailer.send(new MailMessage("+12345678901", false, start, end, false, false, null, new GeoCoordinates(30.0, 60.0), false, null));
+        mailer.send(new MailMessage("+12345678901", false, start, end, false, false, null, new GeoCoordinates(30.0, 60.0), false, null));
+
+        assertEquals(3, database.getMessages().getCount());
+        assertEquals(3, database.getUnsentMessages().getCount());
+        assertEquals(3, errors.size());
+
+        errors.clear();
+        doNothing().when(transport).send(anyString(), anyString(), anyString(), anyString());
+
+        mailer.sendAllUnsent();
+
+        assertEquals(3, database.getMessages().getCount());
+        assertEquals(0, database.getUnsentMessages().getCount());
+        assertTrue(errors.isEmpty());
+    }
+
 
 }

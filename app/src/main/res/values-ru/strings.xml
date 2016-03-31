@@ -80,6 +80,8 @@
     <string name="action_activity_log">Журнал</string>
     <string name="action_undo">Отмена</string>
     <string name="action_clear">Очистить</string>
+    <string name="action_send_later">Отправить позже</string>
+    <string name="action_send_settings">Настройки</string>
 
     <string name="action_refresh">Обновить</string>
     <string name="activity_log_title_details">Детали</string>

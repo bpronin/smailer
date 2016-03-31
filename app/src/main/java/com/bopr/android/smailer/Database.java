@@ -6,8 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.bopr.android.smailer.util.db.ExCursorWrapper;
-import com.bopr.android.smailer.util.db.ExCursorWrapper.ValueReader;
+import com.bopr.android.smailer.util.db.XCursor;
 
 import java.util.concurrent.TimeUnit;
 
@@ -21,7 +20,7 @@ public class Database {
     private static final String TAG = "Database";
 
     private static final int DB_VERSION = 1;
-    public static final String DB_NAME = "smailer.sqlite";
+    private static final String DB_NAME = "smailer.sqlite";
     private static final String TABLE_SYSTEM = "system_data";
     private static final String TABLE_MESSAGES = "messages";
     private static final String COLUMN_COUNT = "COUNT(*)";
@@ -42,13 +41,19 @@ public class Database {
     private static final String COLUMN_LAST_LONGITUDE = "last_longitude";
     private static final String COLUMN_LAST_LOCATION_TIME = "last_location_time";
 
-    private final DbHelper helper;
-    private final Context context;
+    private final String name;
     private int capacity = 10000;
     private long purgePeriod = TimeUnit.DAYS.toMillis(7);
+    private final DbHelper helper;
+    private final Context context;
 
     public Database(Context context) {
+        this(context, DB_NAME);
+    }
+
+    public Database(Context context, String name) {
         this.context = context;
+        this.name = name;
         helper = new DbHelper(context);
     }
 
@@ -85,15 +90,20 @@ public class Database {
         this.purgePeriod = purgePeriod;
     }
 
+    public MailMessage getMessage(long id) {
+        return new MailMessageCursor(helper.getReadableDatabase().query(TABLE_MESSAGES,
+                null, COLUMN_ID + "=" + id, null, null, null, null)
+        ).getAndClose();
+    }
+
     public MailMessageCursor getMessages() {
-        return new MailMessageCursor(helper.getReadableDatabase().query(
-                TABLE_MESSAGES,
+        return new MailMessageCursor(helper.getReadableDatabase().query(TABLE_MESSAGES,
                 null, null, null, null, null,
                 COLUMN_START_TIME + " DESC")
         );
     }
 
-    public void updateMessage(MailMessage message) {
+    public long updateMessage(MailMessage message) {
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -115,12 +125,27 @@ public class Database {
 
         long id = db.replace(TABLE_MESSAGES, null, values);
         message.setId(id);
+        return id;
+    }
+
+    public MailMessageCursor getUnsentMessages() {
+        return new MailMessageCursor(helper.getReadableDatabase().query(TABLE_MESSAGES,
+                null, COLUMN_IS_SENT + "=0", null, null, null,
+                COLUMN_START_TIME + " DESC")
+        );
+    }
+
+    public void updateSent(long messageId, boolean sent) {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_IS_SENT, sent);
+
+        helper.getWritableDatabase().update(TABLE_MESSAGES, values, COLUMN_ID + "=" + messageId, null);
     }
 
     public boolean hasUnsentMessages() {
-        return new ExCursorWrapper(helper.getReadableDatabase().query(TABLE_MESSAGES,
-                new String[]{COLUMN_COUNT}, COLUMN_IS_SENT + "=0", null, null, null, null)
-        ).getLongAndClose(COLUMN_COUNT) > 0;
+        return XCursor.forLong(helper.getReadableDatabase().query(TABLE_MESSAGES,
+                new String[]{COLUMN_COUNT}, COLUMN_IS_SENT + "=0", null, null, null, null))
+                .getAndClose() > 0;
     }
 
     /**
@@ -166,16 +191,23 @@ public class Database {
         }
     }
 
+    public void saveLastLocation(GeoCoordinates location) {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_LAST_LATITUDE, location != null ? location.getLatitude() : null);
+        values.put(COLUMN_LAST_LONGITUDE, location != null ? location.getLongitude() : null);
+        values.put(COLUMN_LAST_LOCATION_TIME, System.currentTimeMillis());
+
+        helper.getWritableDatabase().update(TABLE_SYSTEM, values, COLUMN_ID + "=0", null);
+    }
+
     private long getCurrentSize(SQLiteDatabase db) {
-        return new ExCursorWrapper(db.query(TABLE_MESSAGES,
-                new String[]{COLUMN_COUNT}, null, null, null, null, null)
-        ).getLongAndClose(COLUMN_COUNT);
+        return XCursor.forLong(db.query(TABLE_MESSAGES, new String[]{COLUMN_COUNT}, null, null,
+                null, null, null)).getAndClose();
     }
 
     private long getLastPurgeTime(SQLiteDatabase db) {
-        return new ExCursorWrapper(db.query(TABLE_SYSTEM,
-                new String[]{COLUMN_PURGE_TIME}, COLUMN_ID + "=0", null, null, null, null)
-        ).getLongAndClose(COLUMN_PURGE_TIME);
+        return XCursor.forLong(db.query(TABLE_SYSTEM, new String[]{COLUMN_PURGE_TIME},
+                COLUMN_ID + "=0", null, null, null, null)).getAndClose();
     }
 
     private void updateLastPurgeTime(SQLiteDatabase db) {
@@ -186,40 +218,31 @@ public class Database {
     }
 
     public void destroy() {
-        context.deleteDatabase(DB_NAME);
+        context.deleteDatabase(name);
     }
 
     public GeoCoordinates getLastLocation() {
-        return new ExCursorWrapper(helper.getReadableDatabase().query(TABLE_SYSTEM,
-                new String[]{COLUMN_LAST_LATITUDE, COLUMN_LAST_LONGITUDE}, COLUMN_ID + "=0", null, null, null, null)
-        ).getAndClose(new ValueReader<GeoCoordinates>() {
+        return new XCursor<GeoCoordinates>(helper.getReadableDatabase().query(TABLE_SYSTEM,
+                new String[]{COLUMN_LAST_LATITUDE, COLUMN_LAST_LONGITUDE}, COLUMN_ID + "=0",
+                null, null, null, null)) {
 
             @Override
-            public GeoCoordinates read(ExCursorWrapper cursor) {
-                if (!cursor.isNull(COLUMN_LAST_LATITUDE) && !cursor.isNull(COLUMN_LAST_LONGITUDE)) {
+            public GeoCoordinates get() {
+                if (!isNull(COLUMN_LAST_LATITUDE) && !isNull(COLUMN_LAST_LONGITUDE)) {
                     return new GeoCoordinates(
-                            cursor.getDouble(COLUMN_LAST_LATITUDE),
-                            cursor.getDouble(COLUMN_LAST_LONGITUDE)
+                            getDouble(COLUMN_LAST_LATITUDE),
+                            getDouble(COLUMN_LAST_LONGITUDE)
                     );
                 }
                 return null;
             }
-        });
-    }
-
-    public void saveLastLocation(GeoCoordinates location) {
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_LAST_LATITUDE, location != null ? location.getLatitude() : null);
-        values.put(COLUMN_LAST_LONGITUDE, location != null ? location.getLongitude() : null);
-        values.put(COLUMN_LAST_LOCATION_TIME, System.currentTimeMillis());
-
-        helper.getWritableDatabase().update(TABLE_SYSTEM, values, COLUMN_ID + "=0", null);
+        }.getAndClose();
     }
 
     private class DbHelper extends SQLiteOpenHelper {
 
         public DbHelper(Context context) {
-            super(context, DB_NAME, null, DB_VERSION);
+            super(context, name, null, DB_VERSION);
         }
 
         @Override
@@ -270,12 +293,13 @@ public class Database {
     /**
      * Cursor that returns values of {@link MailMessage}.
      */
-    public class MailMessageCursor extends ExCursorWrapper {
+    public class MailMessageCursor extends XCursor<MailMessage> {
 
         public MailMessageCursor(Cursor cursor) {
             super(cursor);
         }
 
+        @Override
         public MailMessage get() {
             MailMessage message = null;
             if (!isBeforeFirst() && !isAfterLast()) {
@@ -297,6 +321,7 @@ public class Database {
             }
             return message;
         }
+
     }
 
 }

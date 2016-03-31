@@ -41,7 +41,7 @@ public class Mailer {
     }
 
     public Mailer(Context context, Database database) {
-        this(context, new MailTransport(), new Cryptor(context), new Notifications(),
+        this(context, new MailTransport(), new Cryptor(context), new Notifications(context),
                 database);
     }
 
@@ -81,6 +81,15 @@ public class Mailer {
         }
     }
 
+    /**
+     * Sends out all previously unsent messages.
+     */
+    public void sendAllUnsent() {
+        for (MailMessage message : database.getUnsentMessages().getAll()) {
+            send(message);
+        }
+    }
+
     @NonNull
     private MailFormatter createFormatter(MailMessage message, MailerProperties mp) {
         MailFormatter formatter = new MailFormatter(message, context.getResources(),
@@ -96,9 +105,9 @@ public class Mailer {
         message.setSent(true);
         message.setDetails(null);
         database.updateMessage(message);
-        notifications.hideMailError(context);
+        notifications.hideMailError();
         if (getPreferences(context).getBoolean(KEY_PREF_NOTIFY_SEND_SUCCESS, false)) {
-            notifications.showMailSuccess(context);
+            notifications.showMailSuccess();
         }
     }
 
@@ -106,7 +115,7 @@ public class Mailer {
         message.setSent(false);
         message.setDetails(details);
         database.updateMessage(message);
-        notifications.showMailError(context, notificationMessage);
+        notifications.showMailError(notificationMessage, message.getId());
     }
 
     private void logError(Throwable x) {

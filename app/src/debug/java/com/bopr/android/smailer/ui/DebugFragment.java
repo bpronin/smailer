@@ -23,10 +23,9 @@ import com.bopr.android.smailer.LocationProvider;
 import com.bopr.android.smailer.MailMessage;
 import com.bopr.android.smailer.MailTransport;
 import com.bopr.android.smailer.MailerService;
+import com.bopr.android.smailer.Notifications;
 import com.bopr.android.smailer.PermissionsChecker;
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.Settings;
-import com.bopr.android.smailer.util.Util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -36,24 +35,31 @@ import java.util.Properties;
 
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-import static com.bopr.android.smailer.Settings.*;
-import static com.bopr.android.smailer.Settings.DEFAULT_CONTENT;
 import static com.bopr.android.smailer.Settings.DEFAULT_HOST;
 import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
 import static com.bopr.android.smailer.Settings.DEFAULT_PORT;
-import static com.bopr.android.smailer.Settings.DEFAULT_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_AVAILABLE_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
+import static com.bopr.android.smailer.Settings.KEY_PREF_NOTIFY_SEND_SUCCESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SERVICE_ENABLED;
+import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CONTACT;
+import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME;
+import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_LOCATION;
+import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME;
+import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_CALLS;
+import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
+import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS;
+import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
 import static com.bopr.android.smailer.Settings.getDeviceName;
-import static com.bopr.android.smailer.util.Util.*;
+import static com.bopr.android.smailer.util.Util.asSet;
+import static com.bopr.android.smailer.util.Util.formatLocation;
 
 /**
  * For debug purposes.
@@ -189,6 +195,15 @@ public class DebugFragment extends DefaultPreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 onClearLog();
+                return true;
+            }
+        });
+
+        findPreference("show_notification").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                onShowNotification();
                 return true;
             }
         });
@@ -426,6 +441,10 @@ public class DebugFragment extends DefaultPreferenceFragment {
 
     private void onClearLog() {
         database.destroy();
+    }
+
+    private void onShowNotification() {
+        new Notifications(getActivity()).showMailError("Test notification text", 100);
     }
 
 }

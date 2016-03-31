@@ -40,5 +40,8 @@
     <Preference
         android:key="clear_log"
         android:title="Clear log"/>
+    <Preference
+        android:key="show_notification"
+        android:title="Show notification"/>
 
 </PreferenceScreen>

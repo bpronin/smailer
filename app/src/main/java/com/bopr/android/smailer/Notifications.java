@@ -20,27 +20,29 @@ public class Notifications {
 
     private static final int ID_MAIL_SUCCESS = 100;
     private static final int ID_MAIL_ERROR = 101;
+    private Context context;
 
-    public Notifications() {
+    public Notifications(Context context) {
+        this.context = context;
     }
 
-    private NotificationManager getNotificationManager(Context context) {
+    private NotificationManager getNotificationManager() {
         return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
-    public void hideMailError(Context context) {
-        getNotificationManager(context).cancel(ID_MAIL_ERROR);
+    public void hideMailError() {
+        getNotificationManager().cancel(ID_MAIL_ERROR);
     }
 
-    public void showMailError(Context context, int messageResource) {
-        showMailError(context, context.getResources().getString(messageResource));
+    public void showMailError(int messageResource, long messageId) {
+        showMailError(context.getResources().getString(messageResource), messageId);
     }
 
-    public void showMailError(Context context, String text) {
+    public void showMailError(String text, long messageId) {
         Resources r = context.getResources();
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         Notification notification = builder
-                .setContentIntent(createIntent(context))
+                .setContentIntent(createSettingsIntent())
                 .setSmallIcon(R.drawable.alert)
                 .setTicker(r.getString(R.string.app_name))
                 .setAutoCancel(true)
@@ -49,10 +51,10 @@ public class Notifications {
                 .setContentText(text)
                 .build();
 
-        getNotificationManager(context).notify(ID_MAIL_ERROR, notification);
+        getNotificationManager().notify(ID_MAIL_ERROR, notification);
     }
 
-    public void showMailSuccess(Context context) {
+    public void showMailSuccess() {
         Resources r = context.getResources();
         String text = r.getString(R.string.notification_email_send_successfully);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
@@ -65,10 +67,10 @@ public class Notifications {
                 .setContentText(text)
                 .build();
 
-        getNotificationManager(context).notify(ID_MAIL_SUCCESS, notification);
+        getNotificationManager().notify(ID_MAIL_SUCCESS, notification);
     }
 
-    private PendingIntent createIntent(Context context) {
+    private PendingIntent createSettingsIntent() {
         Intent intent = new Intent(context, SettingsActivity.class);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addParentStack(SettingsActivity.class);
