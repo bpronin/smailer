@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -28,6 +29,7 @@ public class Contacts {
         return false;
     }
 
+    @Nullable
     public static String getContactName(Context context, String phoneNumber) {
         if (permissionDenied(context)) {
             return null;
@@ -46,12 +48,7 @@ public class Contacts {
         return result;
     }
 
-    public static Intent createPickContactEmailIntent() {
-        Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
-        intent.setType(Email.CONTENT_TYPE);
-        return intent;
-    }
-
+    @Nullable
     public static String getEmailAddress(Context context, String emailId) {
         if (permissionDenied(context)) {
             return null;
@@ -67,6 +64,12 @@ public class Contacts {
             cursor.close();
         }
         return result;
+    }
+
+    public static Intent createPickContactEmailIntent() {
+        Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+        intent.setType(Email.CONTENT_TYPE);
+        return intent;
     }
 
     public static String getEmailAddressFromIntent(Context context, Intent intent) {

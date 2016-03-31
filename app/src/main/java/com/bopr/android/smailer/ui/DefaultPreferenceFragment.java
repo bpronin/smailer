@@ -10,7 +10,7 @@ import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
 
-import com.bopr.android.smailer.util.Util;
+import com.bopr.android.smailer.util.AndroidUtil;
 
 import java.util.Collections;
 import java.util.Map;
@@ -56,7 +56,7 @@ public class DefaultPreferenceFragment extends PreferenceFragment {
      * @param preference preference
      */
     protected void updateSummary(String value, Preference preference, boolean valid) {
-        preference.setSummary(Util.validatedText(getActivity(), value, valid));
+        preference.setSummary(AndroidUtil.validatedText(getActivity(), value, valid));
     }
 
     /**

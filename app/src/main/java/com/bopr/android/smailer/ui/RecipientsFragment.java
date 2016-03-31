@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.Util;
 import com.bopr.android.smailer.util.ui.swipedismiss.SwipeDismissListViewTouchListener;
 import com.bopr.android.smailer.util.validator.EmailTextValidator;
@@ -264,7 +265,7 @@ public class RecipientsFragment extends ListFragment {
             final Item item = getItem(position);
 
             final TextView textView = (TextView) view.findViewById(R.id.text);
-            textView.setText(Util.validatedText(getActivity(), item.address,
+            textView.setText(AndroidUtil.validatedText(getActivity(), item.address,
                     EmailTextValidator.isValidValue(item.address)));
             textView.setEnabled(item.enabled);
 

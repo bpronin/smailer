@@ -25,6 +25,7 @@ import com.bopr.android.smailer.MailTransport;
 import com.bopr.android.smailer.MailerService;
 import com.bopr.android.smailer.PermissionsChecker;
 import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.Settings;
 import com.bopr.android.smailer.util.Util;
 
 import java.io.BufferedReader;
@@ -35,6 +36,7 @@ import java.util.Properties;
 
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+import static com.bopr.android.smailer.Settings.*;
 import static com.bopr.android.smailer.Settings.DEFAULT_CONTENT;
 import static com.bopr.android.smailer.Settings.DEFAULT_HOST;
 import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
@@ -51,6 +53,7 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SERVICE_ENABLED;
 import static com.bopr.android.smailer.Settings.getDeviceName;
+import static com.bopr.android.smailer.util.Util.*;
 
 /**
  * For debug purposes.
@@ -238,9 +241,14 @@ public class DebugFragment extends DefaultPreferenceFragment {
                 .putString(KEY_PREF_RECIPIENTS_ADDRESS, properties.getProperty("default_recipient"))
                 .putString(KEY_PREF_EMAIL_HOST, DEFAULT_HOST)
                 .putString(KEY_PREF_EMAIL_PORT, DEFAULT_PORT)
-                .putStringSet(KEY_PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS)
-                .putStringSet(KEY_PREF_EMAIL_CONTENT, DEFAULT_CONTENT)
+                .putStringSet(KEY_PREF_EMAIL_TRIGGERS, asSet(VAL_PREF_TRIGGER_IN_SMS,
+                        VAL_PREF_TRIGGER_IN_CALLS, VAL_PREF_TRIGGER_MISSED_CALLS,
+                        VAL_PREF_TRIGGER_OUT_CALLS))
+                .putStringSet(KEY_PREF_EMAIL_CONTENT, asSet(VAL_PREF_EMAIL_CONTENT_CONTACT,
+                        VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_LOCATION,
+                        VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME))
                 .putString(KEY_PREF_EMAIL_LOCALE, DEFAULT_LOCALE)
+                .putBoolean(KEY_PREF_NOTIFY_SEND_SUCCESS, true)
                 .apply();
         refreshPreferences(getPreferenceScreen());
     }
@@ -285,7 +293,7 @@ public class DebugFragment extends DefaultPreferenceFragment {
             @Override
             protected void onPostExecute(GeoCoordinates coordinates) {
                 Toast.makeText(getActivity(),
-                        coordinates != null ? Util.formatLocation(coordinates)
+                        coordinates != null ? formatLocation(coordinates)
                                 : "No location received",
                         Toast.LENGTH_LONG).show();
             }
@@ -362,7 +370,6 @@ public class DebugFragment extends DefaultPreferenceFragment {
     public void onSaveLog() {
         try {
             Process process = Runtime.getRuntime().exec("logcat -d");
-//            Process process = Runtime.getRuntime().exec("logcat com.bopr.android.smailer:D -d");
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
             StringBuilder log = new StringBuilder();

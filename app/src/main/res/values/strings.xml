@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
     <string name="app_name" translatable="false">SMailer</string>
@@ -52,7 +53,6 @@
     <string name="message_permission_rationale_read_contacts">Contacts read permission is needed to add contact name into email message.</string>
     <string name="message_permission_rationale_location">Location read permission is needed to add device location into email message.</string>
 
-    <string name="message_comma_separated_recipient">Separate multiple recipients with comma.</string>
     <string name="message_account_hint">Email address to send email from.</string>
     <string name="message_password_hint">Password of account to send email from.</string>
     <string name="message_at_least_one_item_checked">At least one item should be selected.</string>

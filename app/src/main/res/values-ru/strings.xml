@@ -51,7 +51,6 @@
     <string name="message_permission_rationale_read_contacts">Разрешение на чтение контактов необходимо, чтобы отображать имя звонившего в почтовом сообщении.</string>
     <string name="message_permission_rationale_location">Разрешение на чтение местоположения необходимо, чтобы отображать местоположение устройства в почтовом сообщении.</string>
 
-    <string name="message_comma_separated_recipient">Если получателей несколько, разделяйте их запятой.</string>
     <string name="message_password_hint">Пароль аккаунта, с которого будет отправляться почта.</string>
     <string name="message_account_hint">Адрес, с которого будет отправляться почта.</string>
     <string name="message_at_least_one_item_checked">Хотябы один пункт должен быть отмечен.</string>

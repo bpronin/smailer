@@ -2,6 +2,8 @@ package com.bopr.android.smailer;
 
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.bopr.android.smailer.util.TagFormatter;
 import com.bopr.android.smailer.util.Util;
@@ -33,7 +35,8 @@ public class MailFormatter {
             "<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
             "<body>{message}{line}{footer}</body></html>";
     private static final String LINE = "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">";
-    private static final String GOOGLE_MAP_LINK_PATTERN = "<a href=\"http://maps.google.com/maps/place/{latitude},{longitude}\">{location}</a>";
+    private static final String GOOGLE_MAP_LINK_PATTERN = "<a href=\"https://www.google.com/maps/" +
+            "place/{latitude}+{longitude}/@{latitude},{longitude}\">{location}</a>";
     private static final String PHONE_LINK_PATTERN = "<a href=\"tel:{phone}\">{phone}</a>";
 
     private final Resources resources;

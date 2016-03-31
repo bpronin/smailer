@@ -1,9 +1,17 @@
 package com.bopr.android.smailer.util;
 
+import android.text.Spannable;
+import android.text.SpannableString;
+
+import com.bopr.android.smailer.BuildConfig;
 import com.bopr.android.smailer.GeoCoordinates;
+import com.bopr.android.smailer.util.draw.WavyUnderlineSpan;
 
 import org.junit.Test;
-import org.mockito.internal.matchers.Null;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
 
 import java.util.Locale;
 import java.util.Set;
@@ -13,30 +21,25 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
  * {@link Util} tester.
  */
-public class UtilTest {
+public class UtilUnitTest {
 
     @Test
     public void testFormatLocation() throws Exception {
-        assertEquals("30d33m59sn, 60d33m59sw", Util.formatLocation(new GeoCoordinates(30.5664, 60.5664), "d",
-                "m",
-                "s", "n", "s",
-                "w",
-                "e"));
+        assertEquals("30d33m59sn, 60d33m59sw", Util.formatLocation(new GeoCoordinates(30.5664, 60.5664),
+                "d", "m", "s", "n", "s", "w", "e"));
     }
 
     @Test
     public void testFormatLocation1() throws Exception {
-        assertEquals("30°33'59\"N, 60°33'59\"W", Util.formatLocation(new GeoCoordinates(30.5664, 60.5664), "°",
-                "\'",
-                "\"", "N", "S",
-                "W",
-                "E"));
+        assertEquals("30°33'59\"N, 60°33'59\"W", Util.formatLocation(new GeoCoordinates(30.5664, 60.5664)));
+        assertEquals("30°33'59\"S, 60°33'59\"E", Util.formatLocation(new GeoCoordinates(-30.5664, -60.5664)));
     }
 
     @Test
@@ -48,6 +51,8 @@ public class UtilTest {
     public void testCapitalize() throws Exception {
         assertEquals("Hello", Util.capitalize("hello"));
         assertEquals("Hello", Util.capitalize("Hello"));
+        assertEquals("", Util.capitalize(""));
+        assertEquals(null, Util.capitalize(null));
     }
 
     @Test
@@ -58,26 +63,33 @@ public class UtilTest {
 
     @Test
     public void testIsEmpty() throws Exception {
-        assertTrue(!Util.isEmpty("A"));
+        assertFalse(Util.isEmpty("A"));
         assertTrue(Util.isEmpty(""));
         assertTrue(Util.isEmpty(null));
     }
 
     @Test
+    public void testIsTrimEmpty() throws Exception {
+        assertFalse(Util.isTrimEmpty("A"));
+        assertTrue(Util.isTrimEmpty("  "));
+        assertTrue(Util.isTrimEmpty(null));
+    }
+
+    @Test
     public void testIsAllEmpty() throws Exception {
-        assertTrue(!Util.isAllEmpty("A", "B", "C"));
-        assertTrue(!Util.isAllEmpty("", "B", "C"));
-        assertTrue(!Util.isAllEmpty("A", "", "C"));
+        assertFalse(Util.isAllEmpty("A", "B", "C"));
+        assertFalse(Util.isAllEmpty("", "B", "C"));
+        assertFalse(Util.isAllEmpty("A", "", "C"));
         assertTrue(Util.isAllEmpty("", "", ""));
-        assertTrue(!Util.isAllEmpty(null, "B", "C"));
-        assertTrue(!Util.isAllEmpty("A", null, "C"));
+        assertFalse(Util.isAllEmpty(null, "B", "C"));
+        assertFalse(Util.isAllEmpty("A", null, "C"));
         assertTrue(Util.isAllEmpty("", null, null));
         assertTrue(Util.isAllEmpty(null, null, null));
     }
 
     @Test
     public void testIsAnyEmpty() throws Exception {
-        assertTrue(!Util.isAnyEmpty("A", "B", "C"));
+        assertFalse(Util.isAnyEmpty("A", "B", "C"));
         assertTrue(Util.isAnyEmpty("", "B", "C"));
         assertTrue(Util.isAnyEmpty("A", "", "C"));
         assertTrue(Util.isAnyEmpty("", "", ""));
@@ -128,9 +140,17 @@ public class UtilTest {
     }
 
     @Test
-    public void testLocale() throws Exception {
-        assertEquals(new Locale("ru", "RU"), Util.stringToLocale("ru_RU"));
+    public void testLocaleToString() throws Exception {
         assertEquals("ru_RU", Util.localeToString(new Locale("ru", "RU")));
+        assertEquals(null, Util.localeToString(null));
+        assertEquals("default", Util.localeToString(Locale.getDefault()));
+    }
+
+    @Test
+    public void testStringToLocale() throws Exception {
+        assertEquals(new Locale("ru", "RU"), Util.stringToLocale("ru_RU"));
+        assertEquals(Locale.getDefault(), Util.stringToLocale("default"));
+        assertEquals(null, Util.stringToLocale(null));
     }
 
 }

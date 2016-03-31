@@ -17,13 +17,16 @@ import java.util.Locale;
 import java.util.Set;
 
 /**
- * Utility class to handle strings.
+ * Utilities.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 public class Util {
 
     public static final String DEFAULT = "default";
+
+    private Util() {
+    }
 
     public static String formatLocation(GeoCoordinates location, String degreeSymbol,
                                         String minuteSymbol, String secondSymbol,
@@ -154,15 +157,6 @@ public class Util {
             }
         }
         return null;
-    }
-
-    public static Spannable validatedText(Context context, String value, boolean valid) {
-        Spannable result = new SpannableString(value);
-        if (!valid) {
-            WavyUnderlineSpan span = new WavyUnderlineSpan(context);
-            result.setSpan(span, 0, result.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        }
-        return result;
     }
 
 }
