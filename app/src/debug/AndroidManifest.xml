@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.bopr.android.smailer"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
     <uses-permission android:name="android.permission.READ_LOGS"/>
     <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
 
-    <!-- todo: see inspection message - android:fullBackupContent="false" -->
-    <application>
+    <application tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <activity
             android:name=".ui.DebugSettingsActivity"
             android:label="Debug">

@@ -161,7 +161,7 @@ public class MailerService extends IntentService {
         context.startService(intent);
     }
 
-    public static void startForResendPostponed(Context context) {
+    public static void startForResendUnsent(Context context) {
         Intent intent = new Intent(context, MailerService.class);
         intent.setAction(ACTION_RESEND);
 

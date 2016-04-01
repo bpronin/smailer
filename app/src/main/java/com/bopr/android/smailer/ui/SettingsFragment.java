@@ -15,7 +15,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.bopr.android.smailer.MailerService;
 import com.bopr.android.smailer.PermissionsChecker;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.validator.EmailListTextValidator;
@@ -158,8 +157,6 @@ public class SettingsFragment extends DefaultPreferenceFragment {
         inCallsPermissionsChecker = createInCallsPermissionChecker();
         contactsPermissionsChecker = createContactsPermissionChecker();
         locationPermissionsChecker = createLocationPermissionChecker();
-
-//        MailerService.startForResendPostponed(getActivity());
     }
 
     private PermissionsChecker createContactsPermissionChecker() {

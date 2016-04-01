@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.bopr.android.smailer.util.AndroidUtil;
 import com.sun.mail.util.MailConnectException;
 
 import javax.mail.AuthenticationFailedException;
@@ -46,39 +47,12 @@ public class Mailer {
     }
 
     /**
-     * Sends out a message.
+     * Sends out a mail message.
      *
      * @param message email message
      */
     public void send(MailMessage message) {
-        Log.d(TAG, "Sending mail: " + message);
-
-        MailerProperties mp = new MailerProperties(getPreferences(context));
-        if (isAnyEmpty(mp.getHost(), mp.getPort(), mp.getUser(), mp.getRecipients())) {
-            logError(null);
-            failed(message, "Invalid parameters", R.string.notification_error_no_parameters);
-        } else {
-            MailFormatter formatter = createFormatter(message, mp);
-            transport.init(mp.getUser(), cryptor.decrypt(mp.getPassword()), mp.getHost(), mp.getPort());
-            try {
-                transport.send(formatter.getSubject(), formatter.getBody(), mp.getUser(),
-                        mp.getRecipients());
-
-                success(message);
-            } catch (AuthenticationFailedException x) {
-                logError(x);
-                failed(message, x.toString(), R.string.notification_error_authentication);
-            } catch (MailConnectException x) {
-                logError(x);
-                failed(message, x.toString(), R.string.notification_error_connect);
-            } catch (MessagingException x) {
-                logError(x);
-                failed(message, x.toString(), R.string.notification_error_mail_general);
-            } catch (Throwable x) {
-                logError(x);
-                failed(message, x.toString(), R.string.notification_error_internal);
-            }
-        }
+        doSend(message, false);
     }
 
     /**
@@ -86,7 +60,41 @@ public class Mailer {
      */
     public void sendAllUnsent() {
         for (MailMessage message : database.getUnsentMessages().getAll()) {
-            send(message);
+            doSend(message, true);
+        }
+    }
+
+    /**
+     * Sends out a message.
+     *
+     * @param message email message
+     * @param silent  if true do not show notifications
+     */
+    private void doSend(MailMessage message, boolean silent) {
+        Log.d(TAG, "Sending mail: " + message);
+
+        MailerProperties pp = new MailerProperties(getPreferences(context));
+        if (checkProperties(pp, message, silent) && checkConnection(message, silent)) {
+            MailFormatter formatter = createFormatter(message, pp);
+
+            transport.init(pp.getUser(), cryptor.decrypt(pp.getPassword()), pp.getHost(), pp.getPort());
+            try {
+                transport.send(formatter.getSubject(), formatter.getBody(), pp.getUser(), pp.getRecipients());
+
+                success(message);
+            } catch (AuthenticationFailedException x) {
+                logError(x);
+                failed(message, x.toString(), R.string.notification_error_authentication, silent);
+            } catch (MailConnectException x) {
+                logError(x);
+                failed(message, x.toString(), R.string.notification_error_connect, silent);
+            } catch (MessagingException x) {
+                logError(x);
+                failed(message, x.toString(), R.string.notification_error_mail_general, silent);
+            } catch (Throwable x) {
+                logError(x);
+                failed(message, x.toString(), R.string.notification_error_internal, silent);
+            }
         }
     }
 
@@ -101,6 +109,25 @@ public class Mailer {
         return formatter;
     }
 
+    private boolean checkProperties(MailerProperties properties, MailMessage message,
+                                    boolean silent) {
+        if (isAnyEmpty(properties.getHost(), properties.getPort(), properties.getUser(), properties.getRecipients())) {
+            logError(null);
+            failed(message, "Invalid parameters", R.string.notification_error_no_parameters, silent);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean checkConnection(MailMessage message, boolean silent) {
+        if (!AndroidUtil.hasInternetConnection(context)) {
+            logError(null);
+            failed(message, "No internet connection", R.string.notification_error_no_connection, silent);
+            return false;
+        }
+        return true;
+    }
+
     private void success(MailMessage message) {
         message.setSent(true);
         message.setDetails(null);
@@ -111,11 +138,14 @@ public class Mailer {
         }
     }
 
-    private void failed(MailMessage message, String details, int notificationMessage) {
+    private void failed(MailMessage message, String details, int notificationMessage,
+                        boolean silent) {
         message.setSent(false);
         message.setDetails(details);
         database.updateMessage(message);
-        notifications.showMailError(notificationMessage, message.getId());
+        if (!silent) {
+            notifications.showMailError(notificationMessage, message.getId());
+        }
     }
 
     private void logError(Throwable x) {

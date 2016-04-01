@@ -1,5 +1,7 @@
-package com.bopr.android.smailer;
+package com.bopr.android.smailer.util;
 
+import com.bopr.android.smailer.BaseTest;
+import com.bopr.android.smailer.GeoCoordinates;
 import com.bopr.android.smailer.util.Util;
 
 import java.util.Locale;

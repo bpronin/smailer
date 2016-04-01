@@ -90,11 +90,11 @@ public class Database {
         this.purgePeriod = purgePeriod;
     }
 
-    public MailMessage getMessage(long id) {
-        return new MailMessageCursor(helper.getReadableDatabase().query(TABLE_MESSAGES,
-                null, COLUMN_ID + "=" + id, null, null, null, null)
-        ).getAndClose();
-    }
+//    public MailMessage getMessage(long id) {
+//        return new MailMessageCursor(helper.getReadableDatabase().query(TABLE_MESSAGES,
+//                null, COLUMN_ID + "=" + id, null, null, null, null)
+//        ).getAndClose();
+//    }
 
     public MailMessageCursor getMessages() {
         return new MailMessageCursor(helper.getReadableDatabase().query(TABLE_MESSAGES,
@@ -135,18 +135,18 @@ public class Database {
         );
     }
 
-    public void updateSent(long messageId, boolean sent) {
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_IS_SENT, sent);
+//    public void updateSent(long messageId, boolean sent) {
+//        ContentValues values = new ContentValues();
+//        values.put(COLUMN_IS_SENT, sent);
+//
+//        helper.getWritableDatabase().update(TABLE_MESSAGES, values, COLUMN_ID + "=" + messageId, null);
+//    }
 
-        helper.getWritableDatabase().update(TABLE_MESSAGES, values, COLUMN_ID + "=" + messageId, null);
-    }
-
-    public boolean hasUnsentMessages() {
-        return XCursor.forLong(helper.getReadableDatabase().query(TABLE_MESSAGES,
-                new String[]{COLUMN_COUNT}, COLUMN_IS_SENT + "=0", null, null, null, null))
-                .getAndClose() > 0;
-    }
+//    public boolean hasUnsentMessages() {
+//        return XCursor.forLong(helper.getReadableDatabase().query(TABLE_MESSAGES,
+//                new String[]{COLUMN_COUNT}, COLUMN_IS_SENT + "=0", null, null, null, null))
+//                .getAndClose() > 0;
+//    }
 
     /**
      * Removes all records from log.
@@ -301,24 +301,21 @@ public class Database {
 
         @Override
         public MailMessage get() {
-            MailMessage message = null;
-            if (!isBeforeFirst() && !isAfterLast()) {
-                message = new MailMessage();
-                message.setId(getLong(COLUMN_ID));
-                message.setSent(getBoolean(COLUMN_IS_SENT));
-                message.setPhone(getString(COLUMN_PHONE));
-                message.setIncoming(getBoolean(COLUMN_IS_INCOMING));
-                message.setStartTime(getLong(COLUMN_START_TIME));
-                message.setEndTime(getLong(COLUMN_END_TIME));
-                message.setMissed(getBoolean(COLUMN_IS_MISSED));
-                message.setSms(getBoolean(COLUMN_IS_SMS));
-                message.setText(getString(COLUMN_TEXT));
-                message.setDetails(getString(COLUMN_DETAILS));
-                message.setLocation(new GeoCoordinates(
-                        getDouble(COLUMN_LATITUDE),
-                        getDouble(COLUMN_LONGITUDE)
-                ));
-            }
+            MailMessage message = new MailMessage();
+            message.setId(getLong(COLUMN_ID));
+            message.setSent(getBoolean(COLUMN_IS_SENT));
+            message.setPhone(getString(COLUMN_PHONE));
+            message.setIncoming(getBoolean(COLUMN_IS_INCOMING));
+            message.setStartTime(getLong(COLUMN_START_TIME));
+            message.setEndTime(getLong(COLUMN_END_TIME));
+            message.setMissed(getBoolean(COLUMN_IS_MISSED));
+            message.setSms(getBoolean(COLUMN_IS_SMS));
+            message.setText(getString(COLUMN_TEXT));
+            message.setDetails(getString(COLUMN_DETAILS));
+            message.setLocation(new GeoCoordinates(
+                    getDouble(COLUMN_LATITUDE),
+                    getDouble(COLUMN_LONGITUDE)
+            ));
             return message;
         }
 

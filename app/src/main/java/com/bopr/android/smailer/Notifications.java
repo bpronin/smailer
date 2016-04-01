@@ -5,7 +5,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.NotificationCompat;
 
@@ -20,6 +19,7 @@ public class Notifications {
 
     private static final int ID_MAIL_SUCCESS = 100;
     private static final int ID_MAIL_ERROR = 101;
+    public static final String EXTRA_MESSAGE_ID = "message_id";
     private Context context;
 
     public Notifications(Context context) {
@@ -39,14 +39,13 @@ public class Notifications {
     }
 
     public void showMailError(String text, long messageId) {
-        Resources r = context.getResources();
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         Notification notification = builder
-                .setContentIntent(createSettingsIntent())
+                .setContentIntent(createSettingsIntent(messageId))
                 .setSmallIcon(R.drawable.alert)
-                .setTicker(r.getString(R.string.app_name))
+                .setTicker(context.getResources().getString(R.string.app_name))
                 .setAutoCancel(true)
-                .setContentTitle(r.getString(R.string.app_name))
+                .setContentTitle(context.getResources().getString(R.string.app_name))
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
                 .setContentText(text)
                 .build();
@@ -55,14 +54,13 @@ public class Notifications {
     }
 
     public void showMailSuccess() {
-        Resources r = context.getResources();
-        String text = r.getString(R.string.notification_email_send_successfully);
+        String text = context.getResources().getString(R.string.notification_email_send_successfully);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         Notification notification = builder
                 .setSmallIcon(R.drawable.file_send)
-                .setTicker(r.getString(R.string.app_name))
+                .setTicker(context.getResources().getString(R.string.app_name))
                 .setAutoCancel(true)
-                .setContentTitle(r.getString(R.string.app_name))
+                .setContentTitle(context.getResources().getString(R.string.app_name))
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
                 .setContentText(text)
                 .build();
@@ -70,8 +68,10 @@ public class Notifications {
         getNotificationManager().notify(ID_MAIL_SUCCESS, notification);
     }
 
-    private PendingIntent createSettingsIntent() {
+    private PendingIntent createSettingsIntent(long messageId) {
         Intent intent = new Intent(context, SettingsActivity.class);
+        intent.putExtra(EXTRA_MESSAGE_ID, messageId);
+
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addParentStack(SettingsActivity.class);
         stackBuilder.addNextIntent(intent);

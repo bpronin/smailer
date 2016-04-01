@@ -32,12 +32,13 @@
 
     <string name="recipient_message_already_exists">Получатель {name} уже существует</string>
 
-    <string name="notification_error_no_parameters">Некоторые обязательные параметры не указаны.</string>
-    <string name="notification_error_authentication">Неверный пароль или имя пользователя.</string>
-    <string name="notification_error_connect">Невозможно соединиться с почтовым сервером.</string>
+    <string name="notification_error_no_parameters">Невозможно отправить почту. Некоторые обязательные параметры не указаны.</string>
+    <string name="notification_error_authentication">Невозможно отправить почту. Неверный пароль или имя пользователя.</string>
+    <string name="notification_error_connect">Невозможно отправить почту. Нет соединения с почтовым сервером.</string>
     <string name="notification_error_mail_general">Невозможно отправить почту.</string>
     <string name="notification_error_internal">Внутренняя ошибка.</string>
     <string name="notification_email_send_successfully">Почта устешно отправлена</string>
+    <string name="notification_error_no_connection">Невозможно отправить почту. Отсутствует соединение с интернетом</string>
 
     <string name="message_permission_denied_receive_sms">Чтение SMS запрещено. Настройка будет отключена.</string>
     <string name="message_permission_denied_phone_state">Чтение состояния телефона запрещено. Настройка будет отключена.</string>
