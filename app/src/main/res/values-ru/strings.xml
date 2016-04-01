@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="pref_title_enable">Активность</string>
+    <string name="pref_title_enable">Отправлять почту</string>
     <string name="pref_title_sender_account">Учетная запись</string>
     <string name="pref_title_recipients">Получатели</string>
     <string name="pref_title_sender_password">Пароль</string>
-    <string name="pref_title_server">Сервер</string>
+    <string name="pref_title_server">Сервер исходящей почты</string>
     <string name="pref_title_outgoing_server">Сервер исходящей почты</string>
     <string name="pref_title_host">Сервер</string>
     <string name="pref_title_port">Порт</string>
@@ -23,8 +23,8 @@
     <string name="pref_dialog_title_add_recipient">Добавление получателя</string>
     <string name="pref_dialog_title_edit_recipient">Редактирование получателя</string>
 
-    <string name="pref_description_service_on">Приложение будет отправлять почту</string>
-    <string name="pref_description_service_off">Приложение не будет отправлять почту</string>
+    <string name="pref_description_service_on">Сервис включен</string>
+    <string name="pref_description_service_off">Сервис отключен</string>
     <string name="pref_description_not_set">не указано</string>
     <string name="pref_description_when_to_send">Когда отправлять почту</string>
     <string name="pref_description_what_email_contain">Что должно включать почтовое сообщение</string>
@@ -32,13 +32,16 @@
 
     <string name="recipient_message_already_exists">Получатель {name} уже существует</string>
 
-    <string name="notification_error_no_parameters">Невозможно отправить почту. Некоторые обязательные параметры не указаны.</string>
-    <string name="notification_error_authentication">Невозможно отправить почту. Неверный пароль или имя пользователя.</string>
-    <string name="notification_error_connect">Невозможно отправить почту. Нет соединения с почтовым сервером.</string>
     <string name="notification_error_mail_general">Невозможно отправить почту.</string>
+    <string name="notification_error_no_account">Не указан аккаунт исходящей почты.</string>
+    <string name="notification_error_no_host">Не указан адрес серевера исходящей почты.</string>
+    <string name="notification_error_no_port">Не указан порт серевера исходящей почты.</string>
+    <string name="notification_error_authentication">Неверный пароль или имя пользователя.</string>
+    <string name="notification_error_connect">Нет соединения с почтовым сервером.</string>
+    <string name="notification_error_no_recipients">Не указан получатель.</string>
     <string name="notification_error_internal">Внутренняя ошибка.</string>
-    <string name="notification_email_send_successfully">Почта устешно отправлена</string>
-    <string name="notification_error_no_connection">Невозможно отправить почту. Отсутствует соединение с интернетом</string>
+    <string name="notification_email_send_successfully">Почта устешно отправлена.</string>
+    <string name="notification_error_no_connection">Невозможно отправить почту. Отсутствует соединение с интернетом.</string>
 
     <string name="message_permission_denied_receive_sms">Чтение SMS запрещено. Настройка будет отключена.</string>
     <string name="message_permission_denied_phone_state">Чтение состояния телефона запрещено. Настройка будет отключена.</string>

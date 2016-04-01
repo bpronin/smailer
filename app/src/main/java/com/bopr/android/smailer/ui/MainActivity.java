@@ -9,12 +9,12 @@ import android.view.MenuItem;
 /**
  * An activity that presents a set of application settings.
  */
-public class SettingsActivity extends DefaultActivity {
+public class MainActivity extends DefaultActivity {
 
     @NonNull
     @Override
     protected Fragment createFragment() {
-        return new SettingsFragment();
+        return new MainFragment();
     }
 
     public void onDebugMenuItemClick(MenuItem item) {

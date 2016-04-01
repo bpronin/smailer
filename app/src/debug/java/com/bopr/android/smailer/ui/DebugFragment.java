@@ -444,7 +444,7 @@ public class DebugFragment extends DefaultPreferenceFragment {
     }
 
     private void onShowNotification() {
-        new Notifications(getActivity()).showMailError("Test notification text", 100);
+        new Notifications(getActivity()).showMailError("Test notification text", 100, Notifications.ACTION_SHOW_CONNECTION);
     }
 
 }

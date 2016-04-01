@@ -81,7 +81,7 @@ public class Util {
         return isEmpty(s) || isEmpty(s.trim());
     }
 
-    public static boolean isAllEmpty(String... ss) {
+    public static boolean allIsEmpty(String... ss) {
         for (String s : ss) {
             if (!isEmpty(s)) {
                 return false;
@@ -90,7 +90,7 @@ public class Util {
         return true;
     }
 
-    public static boolean isAnyEmpty(String... ss) {
+    public static boolean anyIsEmpty(String... ss) {
         for (String s : ss) {
             if (isEmpty(s)) {
                 return true;

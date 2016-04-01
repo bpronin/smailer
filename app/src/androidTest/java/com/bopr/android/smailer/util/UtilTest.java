@@ -2,7 +2,6 @@ package com.bopr.android.smailer.util;
 
 import com.bopr.android.smailer.BaseTest;
 import com.bopr.android.smailer.GeoCoordinates;
-import com.bopr.android.smailer.util.Util;
 
 import java.util.Locale;
 import java.util.Set;
@@ -51,25 +50,25 @@ public class UtilTest extends BaseTest {
     }
 
     public void testIsAllEmpty() throws Exception {
-        assertTrue(!Util.isAllEmpty("A", "B", "C"));
-        assertTrue(!Util.isAllEmpty("", "B", "C"));
-        assertTrue(!Util.isAllEmpty("A", "", "C"));
-        assertTrue(Util.isAllEmpty("", "", ""));
-        assertTrue(!Util.isAllEmpty(null, "B", "C"));
-        assertTrue(!Util.isAllEmpty("A", null, "C"));
-        assertTrue(Util.isAllEmpty("", null, null));
-        assertTrue(Util.isAllEmpty(null, null, null));
+        assertTrue(!Util.allIsEmpty("A", "B", "C"));
+        assertTrue(!Util.allIsEmpty("", "B", "C"));
+        assertTrue(!Util.allIsEmpty("A", "", "C"));
+        assertTrue(Util.allIsEmpty("", "", ""));
+        assertTrue(!Util.allIsEmpty(null, "B", "C"));
+        assertTrue(!Util.allIsEmpty("A", null, "C"));
+        assertTrue(Util.allIsEmpty("", null, null));
+        assertTrue(Util.allIsEmpty(null, null, null));
     }
 
     public void testIsAnyEmpty() throws Exception {
-        assertTrue(!Util.isAnyEmpty("A", "B", "C"));
-        assertTrue(Util.isAnyEmpty("", "B", "C"));
-        assertTrue(Util.isAnyEmpty("A", "", "C"));
-        assertTrue(Util.isAnyEmpty("", "", ""));
-        assertTrue(Util.isAnyEmpty(null, "B", "C"));
-        assertTrue(Util.isAnyEmpty("A", null, "C"));
-        assertTrue(Util.isAnyEmpty("", null, null));
-        assertTrue(Util.isAnyEmpty(null, null, null));
+        assertTrue(!Util.anyIsEmpty("A", "B", "C"));
+        assertTrue(Util.anyIsEmpty("", "B", "C"));
+        assertTrue(Util.anyIsEmpty("A", "", "C"));
+        assertTrue(Util.anyIsEmpty("", "", ""));
+        assertTrue(Util.anyIsEmpty(null, "B", "C"));
+        assertTrue(Util.anyIsEmpty("A", null, "C"));
+        assertTrue(Util.anyIsEmpty("", null, null));
+        assertTrue(Util.anyIsEmpty(null, null, null));
     }
 
     public void testStringOf() throws Exception {

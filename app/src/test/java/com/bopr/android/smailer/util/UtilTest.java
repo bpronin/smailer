@@ -1,11 +1,6 @@
 package com.bopr.android.smailer.util;
 
-import android.text.Spannable;
-import android.text.SpannableString;
-
-import com.bopr.android.smailer.BuildConfig;
 import com.bopr.android.smailer.GeoCoordinates;
-import com.bopr.android.smailer.util.draw.WavyUnderlineSpan;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -77,26 +72,26 @@ public class UtilUnitTest {
 
     @Test
     public void testIsAllEmpty() throws Exception {
-        assertFalse(Util.isAllEmpty("A", "B", "C"));
-        assertFalse(Util.isAllEmpty("", "B", "C"));
-        assertFalse(Util.isAllEmpty("A", "", "C"));
-        assertTrue(Util.isAllEmpty("", "", ""));
-        assertFalse(Util.isAllEmpty(null, "B", "C"));
-        assertFalse(Util.isAllEmpty("A", null, "C"));
-        assertTrue(Util.isAllEmpty("", null, null));
-        assertTrue(Util.isAllEmpty(null, null, null));
+        assertFalse(Util.allIsEmpty("A", "B", "C"));
+        assertFalse(Util.allIsEmpty("", "B", "C"));
+        assertFalse(Util.allIsEmpty("A", "", "C"));
+        assertTrue(Util.allIsEmpty("", "", ""));
+        assertFalse(Util.allIsEmpty(null, "B", "C"));
+        assertFalse(Util.allIsEmpty("A", null, "C"));
+        assertTrue(Util.allIsEmpty("", null, null));
+        assertTrue(Util.allIsEmpty(null, null, null));
     }
 
     @Test
     public void testIsAnyEmpty() throws Exception {
-        assertFalse(Util.isAnyEmpty("A", "B", "C"));
-        assertTrue(Util.isAnyEmpty("", "B", "C"));
-        assertTrue(Util.isAnyEmpty("A", "", "C"));
-        assertTrue(Util.isAnyEmpty("", "", ""));
-        assertTrue(Util.isAnyEmpty(null, "B", "C"));
-        assertTrue(Util.isAnyEmpty("A", null, "C"));
-        assertTrue(Util.isAnyEmpty("", null, null));
-        assertTrue(Util.isAnyEmpty(null, null, null));
+        assertFalse(Util.anyIsEmpty("A", "B", "C"));
+        assertTrue(Util.anyIsEmpty("", "B", "C"));
+        assertTrue(Util.anyIsEmpty("A", "", "C"));
+        assertTrue(Util.anyIsEmpty("", "", ""));
+        assertTrue(Util.anyIsEmpty(null, "B", "C"));
+        assertTrue(Util.anyIsEmpty("A", null, "C"));
+        assertTrue(Util.anyIsEmpty("", null, null));
+        assertTrue(Util.anyIsEmpty(null, null, null));
     }
 
     @Test

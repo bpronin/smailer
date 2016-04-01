@@ -4,21 +4,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.text.Spannable;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.bopr.android.smailer.PermissionsChecker;
 import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.validator.EmailListTextValidator;
-import com.bopr.android.smailer.util.validator.EmailTextValidator;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -44,7 +44,6 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_OUTGOING_SERVER;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SERVICE_ENABLED;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CONTACT;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_LOCATION;
@@ -52,16 +51,16 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
+import static com.bopr.android.smailer.util.Util.allIsEmpty;
+import static com.bopr.android.smailer.util.Util.anyIsEmpty;
 import static com.bopr.android.smailer.util.Util.isEmpty;
 
 /**
  * Main settings fragment.
  */
-public class SettingsFragment extends DefaultPreferenceFragment {
+public class MainFragment extends DefaultPreferenceFragment {
 
     private Preference recipientsPreference;
-    private EditTextPreference accountPreference;
-    private EditTextPreference passwordPreference;
     private MultiSelectListPreference contentPreference;
     private MultiSelectListPreference triggersPreference;
     private ListPreference localePreference;
@@ -76,29 +75,8 @@ public class SettingsFragment extends DefaultPreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         loadDefaultPreferences();
-        addPreferencesFromResource(R.xml.pref_general);
+        addPreferencesFromResource(R.xml.pref_main);
         setHasOptionsMenu(true);
-
-        accountPreference = (EditTextPreference) findPreference(KEY_PREF_SENDER_ACCOUNT);
-        accountPreference.getEditText().addTextChangedListener(new EmailTextValidator(accountPreference.getEditText()));
-        accountPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object value) {
-                updateAccountPreference((String) value);
-                return true;
-            }
-        });
-
-        passwordPreference = (EditTextPreference) findPreference(KEY_PREF_SENDER_PASSWORD);
-        passwordPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object value) {
-                updatePasswordPreference((String) value);
-                return true;
-            }
-        });
 
         recipientsPreference = findPreference(KEY_PREF_RECIPIENTS_ADDRESS);
         recipientsPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -305,19 +283,21 @@ public class SettingsFragment extends DefaultPreferenceFragment {
         locationPermissionsChecker.onPermissionsRequestResult(requestCode, grantResults);
     }
 
-    private void updateAccountPreference(String value) {
-        if (isEmpty(value)) {
-            updateSummary(R.string.pref_description_not_set, accountPreference, false);
-        } else {
-            updateSummary(value, accountPreference, EmailTextValidator.isValidValue(value));
-        }
-    }
+    private void updateServerPreference() {
+        SharedPreferences preferences = getSharedPreferences();
+        String sender = preferences.getString(KEY_PREF_SENDER_ACCOUNT, "");
+        String host = preferences.getString(KEY_PREF_EMAIL_HOST, "");
+        String port = preferences.getString(KEY_PREF_EMAIL_PORT, "");
 
-    private void updatePasswordPreference(String value) {
-        if (isEmpty(value)) {
-            updateSummary(R.string.pref_description_not_set, passwordPreference, false);
+        if (allIsEmpty(sender, host, port)) {
+            updateSummary(R.string.pref_description_not_set, serverPreference, false);
         } else {
-            updateSummary(R.string.pref_description_password_asterisk, passwordPreference, true);
+            String value = sender + " (" + host + ":" + port + ")";
+            if (anyIsEmpty(sender, host, port)) {
+                updateSummary(value, serverPreference, false);
+            } else {
+                updateSummary(value, serverPreference, true);
+            }
         }
     }
 
@@ -328,23 +308,6 @@ public class SettingsFragment extends DefaultPreferenceFragment {
             updateSummary(R.string.pref_description_not_set, recipientsPreference, false);
         } else {
             updateSummary(value, recipientsPreference, EmailListTextValidator.isValidValue(value));
-        }
-    }
-
-    private void updateServerPreference() {
-        SharedPreferences preferences = getSharedPreferences();
-        String host = preferences.getString(KEY_PREF_EMAIL_HOST, "");
-        String port = preferences.getString(KEY_PREF_EMAIL_PORT, "");
-
-        if (isEmpty(host) && isEmpty(port)) {
-            updateSummary(R.string.pref_description_not_set, serverPreference, false);
-        } else {
-            String value = host + ":" + port;
-            if (isEmpty(host) || isEmpty(port)) {
-                updateSummary(value, serverPreference, false);
-            } else {
-                updateSummary(value, serverPreference, true);
-            }
         }
     }
 

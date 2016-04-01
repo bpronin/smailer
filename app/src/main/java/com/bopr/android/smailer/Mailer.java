@@ -11,10 +11,14 @@ import javax.mail.AuthenticationFailedException;
 import javax.mail.MessagingException;
 
 import static com.bopr.android.smailer.Contacts.getContactName;
+import static com.bopr.android.smailer.Notifications.ACTION_SHOW_CONNECTION;
+import static com.bopr.android.smailer.Notifications.ACTION_SHOW_MAIN;
+import static com.bopr.android.smailer.Notifications.ACTION_SHOW_RECIPIENTS;
+import static com.bopr.android.smailer.Notifications.ACTION_SHOW_SERVER;
 import static com.bopr.android.smailer.Settings.KEY_PREF_NOTIFY_SEND_SUCCESS;
 import static com.bopr.android.smailer.Settings.getDeviceName;
 import static com.bopr.android.smailer.Settings.getPreferences;
-import static com.bopr.android.smailer.util.Util.isAnyEmpty;
+import static com.bopr.android.smailer.util.Util.isEmpty;
 
 
 /**
@@ -83,17 +87,13 @@ public class Mailer {
 
                 success(message);
             } catch (AuthenticationFailedException x) {
-                logError(x);
-                failed(message, x.toString(), R.string.notification_error_authentication, silent);
+                failed(x, x.toString(), message, R.string.notification_error_authentication, ACTION_SHOW_SERVER, silent);
             } catch (MailConnectException x) {
-                logError(x);
-                failed(message, x.toString(), R.string.notification_error_connect, silent);
+                failed(x, x.toString(), message, R.string.notification_error_connect, ACTION_SHOW_SERVER, silent);
             } catch (MessagingException x) {
-                logError(x);
-                failed(message, x.toString(), R.string.notification_error_mail_general, silent);
+                failed(x, x.toString(), message, R.string.notification_error_mail_general, ACTION_SHOW_SERVER, silent);
             } catch (Throwable x) {
-                logError(x);
-                failed(message, x.toString(), R.string.notification_error_internal, silent);
+                failed(x, x.toString(), message, R.string.notification_error_internal, ACTION_SHOW_MAIN, silent);
             }
         }
     }
@@ -111,9 +111,17 @@ public class Mailer {
 
     private boolean checkProperties(MailerProperties properties, MailMessage message,
                                     boolean silent) {
-        if (isAnyEmpty(properties.getHost(), properties.getPort(), properties.getUser(), properties.getRecipients())) {
-            logError(null);
-            failed(message, "Invalid parameters", R.string.notification_error_no_parameters, silent);
+        if (isEmpty(properties.getHost())) {
+            failed(null, "Host not specified", message, R.string.notification_error_no_host, ACTION_SHOW_SERVER, silent);
+            return false;
+        } else if (isEmpty(properties.getPort())) {
+            failed(null, "Port not specified", message, R.string.notification_error_no_port, ACTION_SHOW_SERVER, silent);
+            return false;
+        } else if (isEmpty(properties.getUser())) {
+            failed(null, "Account not specified", message, R.string.notification_error_no_account, ACTION_SHOW_SERVER, silent);
+            return false;
+        } else if (isEmpty(properties.getRecipients())) {
+            failed(null, "Recipients not specified", message, R.string.notification_error_no_recipients, ACTION_SHOW_RECIPIENTS, silent);
             return false;
         }
         return true;
@@ -121,8 +129,7 @@ public class Mailer {
 
     private boolean checkConnection(MailMessage message, boolean silent) {
         if (!AndroidUtil.hasInternetConnection(context)) {
-            logError(null);
-            failed(message, "No internet connection", R.string.notification_error_no_connection, silent);
+            failed(null, "No internet connection", message, R.string.notification_error_no_connection, ACTION_SHOW_CONNECTION, silent);
             return false;
         }
         return true;
@@ -134,22 +141,20 @@ public class Mailer {
         database.updateMessage(message);
         notifications.hideMailError();
         if (getPreferences(context).getBoolean(KEY_PREF_NOTIFY_SEND_SUCCESS, false)) {
-            notifications.showMailSuccess();
+            notifications.showMailSuccess(message.getId());
         }
     }
 
-    private void failed(MailMessage message, String details, int notificationMessage,
-                        boolean silent) {
+    private void failed(Throwable error, String details, MailMessage message, int notification,
+                        int action, boolean silent) {
+        Log.e(TAG, "Send failed. " + message, error);
+
         message.setSent(false);
         message.setDetails(details);
         database.updateMessage(message);
         if (!silent) {
-            notifications.showMailError(notificationMessage, message.getId());
+            notifications.showMailError(notification, message.getId(), action);
         }
-    }
-
-    private void logError(Throwable x) {
-        Log.e(TAG, "Send failed", x);
     }
 
 }

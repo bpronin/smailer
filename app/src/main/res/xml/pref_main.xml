@@ -7,33 +7,14 @@
         android:summaryOn="@string/pref_description_service_on"
         android:title="@string/pref_title_enable"/>
 
-    <EditTextPreference
-        android:dialogMessage="@string/message_account_hint"
-        android:dialogTitle="@string/pref_dialog_title_email"
-        android:inputType="textEmailAddress"
-        android:key="sender_account"
-        android:maxLines="1"
-        android:singleLine="true"
-        android:title="@string/pref_title_sender_account"/>
-
-    <com.bopr.android.smailer.ui.PasswordPreference
-        android:dialogMessage="@string/message_password_hint"
-        android:dialogTitle="@string/pref_dialog_title_password"
-        android:key="sender_password"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/pref_title_sender_password"/>
-
+    <PreferenceScreen
+        android:key="outgoing_server"
+        android:title="@string/pref_title_server">
+    </PreferenceScreen>
 
     <PreferenceScreen
         android:key="recipients_address"
         android:title="@string/pref_title_recipients">
-    </PreferenceScreen>
-
-    <PreferenceScreen
-        android:key="outgoing_server"
-        android:title="@string/pref_title_server">
     </PreferenceScreen>
 
     <MultiSelectListPreference

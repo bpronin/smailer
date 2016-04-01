@@ -2,6 +2,24 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <EditTextPreference
+        android:dialogMessage="@string/message_account_hint"
+        android:dialogTitle="@string/pref_dialog_title_email"
+        android:inputType="textEmailAddress"
+        android:key="sender_account"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:title="@string/pref_title_sender_account"/>
+
+    <com.bopr.android.smailer.ui.PasswordPreference
+        android:dialogMessage="@string/message_password_hint"
+        android:dialogTitle="@string/pref_dialog_title_password"
+        android:key="sender_password"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_sender_password"/>
+
+    <EditTextPreference
         android:inputType="textNoSuggestions"
         android:key="sender_host"
         android:maxLines="1"

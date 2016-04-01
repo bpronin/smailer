@@ -9,7 +9,6 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.mail.AuthenticationFailedException;
@@ -108,7 +107,7 @@ public class MailerTest extends BaseTest {
         ArgumentsCollector sends = new ArgumentsCollector();
         ArgumentsCollector errors = new ArgumentsCollector();
 
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong());
+        doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
 
@@ -130,7 +129,7 @@ public class MailerTest extends BaseTest {
         ArgumentsCollector sends = new ArgumentsCollector();
         ArgumentsCollector errors = new ArgumentsCollector();
 
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong());
+        doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
 
@@ -154,7 +153,7 @@ public class MailerTest extends BaseTest {
         ArgumentsCollector sends = new ArgumentsCollector();
         ArgumentsCollector errors = new ArgumentsCollector();
 
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong());
+        doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
         when(networkInfo.isConnected()).thenReturn(false);
@@ -177,7 +176,7 @@ public class MailerTest extends BaseTest {
         ArgumentsCollector sends = new ArgumentsCollector();
         ArgumentsCollector errors = new ArgumentsCollector();
 
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong());
+        doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
 
@@ -188,7 +187,7 @@ public class MailerTest extends BaseTest {
 
         assertTrue(inits.isEmpty());
         assertTrue(sends.isEmpty());
-        assertEquals(R.string.notification_error_no_parameters, errors.get(0)[0]);
+        assertEquals(R.string.notification_error_no_account, errors.get(0)[0]);
     }
 
     /**
@@ -201,7 +200,7 @@ public class MailerTest extends BaseTest {
         ArgumentsCollector sends = new ArgumentsCollector();
         ArgumentsCollector errors = new ArgumentsCollector();
 
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong());
+        doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
 
@@ -212,7 +211,7 @@ public class MailerTest extends BaseTest {
 
         assertTrue(inits.isEmpty());
         assertTrue(sends.isEmpty());
-        assertEquals(R.string.notification_error_no_parameters, errors.get(0)[0]);
+        assertEquals(R.string.notification_error_no_recipients, errors.get(0)[0]);
     }
 
     /**
@@ -225,7 +224,7 @@ public class MailerTest extends BaseTest {
         ArgumentsCollector sends = new ArgumentsCollector();
         ArgumentsCollector errors = new ArgumentsCollector();
 
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong());
+        doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
 
@@ -236,7 +235,7 @@ public class MailerTest extends BaseTest {
 
         assertTrue(inits.isEmpty());
         assertTrue(sends.isEmpty());
-        assertEquals(R.string.notification_error_no_parameters, errors.get(0)[0]);
+        assertEquals(R.string.notification_error_no_host, errors.get(0)[0]);
     }
 
     /**
@@ -249,7 +248,7 @@ public class MailerTest extends BaseTest {
         ArgumentsCollector sends = new ArgumentsCollector();
         ArgumentsCollector errors = new ArgumentsCollector();
 
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong());
+        doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
 
@@ -260,7 +259,7 @@ public class MailerTest extends BaseTest {
 
         assertTrue(inits.isEmpty());
         assertTrue(sends.isEmpty());
-        assertEquals(R.string.notification_error_no_parameters, errors.get(0)[0]);
+        assertEquals(R.string.notification_error_no_port, errors.get(0)[0]);
     }
 
     /**
@@ -273,7 +272,7 @@ public class MailerTest extends BaseTest {
         ArgumentsCollector sends = new ArgumentsCollector();
         ArgumentsCollector errors = new ArgumentsCollector();
 
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong());
+        doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
         doThrow(AuthenticationFailedException.class).when(transport).send(anyString(), anyString(), anyString(), anyString());
@@ -296,7 +295,7 @@ public class MailerTest extends BaseTest {
         ArgumentsCollector sends = new ArgumentsCollector();
         ArgumentsCollector errors = new ArgumentsCollector();
 
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong());
+        doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
         doThrow(MessagingException.class).when(transport).send(anyString(), anyString(), anyString(), anyString());
@@ -318,7 +317,7 @@ public class MailerTest extends BaseTest {
         ArgumentsCollector errors = new ArgumentsCollector();
         ArgumentsCollector clears = new ArgumentsCollector();
 
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong());
+        doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(clears).when(notifications).hideMailError();
         doAnswer(new Answer() {
             @Override
@@ -359,8 +358,8 @@ public class MailerTest extends BaseTest {
         ArgumentsCollector errors = new ArgumentsCollector();
         ArgumentsCollector successes = new ArgumentsCollector();
 
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong());
-        doAnswer(successes).when(notifications).showMailSuccess();
+        doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
+        doAnswer(successes).when(notifications).showMailSuccess(anyLong());
 
         Mailer mailer = new Mailer(context, transport, cryptor, notifications, database);
 
@@ -388,7 +387,7 @@ public class MailerTest extends BaseTest {
     public void testSendUnsent() throws Exception {
         ArgumentsCollector errors = new ArgumentsCollector();
 
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong());
+        doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doThrow(MessagingException.class).when(transport).send(anyString(), anyString(), anyString(), anyString());
 
         Mailer mailer = new Mailer(context, transport, cryptor, notifications, database);

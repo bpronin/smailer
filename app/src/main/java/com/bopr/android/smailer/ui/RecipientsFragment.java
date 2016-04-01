@@ -201,7 +201,7 @@ public class RecipientsFragment extends ListFragment {
                     listAdapter.replaceItem(position, newItem);
                     listAdapter.notifyDataSetChanged();
 
-                  //  getListView().invalidateViews(); //todo: NPE when rotating during edit
+                    //  getListView().invalidateViews(); //todo: NPE when rotating during edit
 
                     persistItems();
                 }
@@ -265,7 +265,7 @@ public class RecipientsFragment extends ListFragment {
             final Item item = getItem(position);
 
             final TextView textView = (TextView) view.findViewById(R.id.text);
-            textView.setText(AndroidUtil.validatedText(getActivity(), item.address,
+            textView.setText(AndroidUtil.validatedUnderlinedText(getActivity(), item.address,
                     EmailTextValidator.isValidValue(item.address)));
             textView.setEnabled(item.enabled);
 

@@ -1,7 +1,6 @@
 package com.bopr.android.smailer.util;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.Spannable;
@@ -10,9 +9,6 @@ import android.text.SpannableString;
 import com.bopr.android.smailer.BaseTest;
 import com.bopr.android.smailer.util.draw.WavyUnderlineSpan;
 
-import org.mockito.Mockito;
-
-import static android.Manifest.permission.BROADCAST_SMS;
 import static org.mockito.Mockito.*;
 
 /**
@@ -21,12 +17,12 @@ import static org.mockito.Mockito.*;
 public class AndroidUtilTest extends BaseTest {
 
     /**
-     * Tests {@link AndroidUtil#validatedText(Context, String, boolean)} method.
+     * Tests {@link AndroidUtil#validatedUnderlinedText(Context, String, boolean)} method.
      *
      * @throws Exception when failed
      */
     public void testValidateText() throws Exception {
-        Spannable spannable = AndroidUtil.validatedText(getContext(), "Invalid text", false);
+        Spannable spannable = AndroidUtil.validatedUnderlinedText(getContext(), "Invalid text", false);
         assertTrue(spannable instanceof SpannableString);
         Object span = spannable.getSpans(0, spannable.length(), Object.class)[0];
         assertTrue(span instanceof WavyUnderlineSpan);

@@ -4,11 +4,11 @@
     <string name="app_name" translatable="false">SMailer</string>
     <string name="google_app_id" translatable="false">376904884028</string>
 
-    <string name="pref_title_enable">Activity</string>
+    <string name="pref_title_enable">Send mail</string>
     <string name="pref_title_sender_account">Account</string>
     <string name="pref_title_recipients">Recipients</string>
     <string name="pref_title_sender_password">Password</string>
-    <string name="pref_title_server">Server</string>
+    <string name="pref_title_server">Outgoing server</string>
     <string name="pref_title_outgoing_server">Outgoing email server</string>
     <string name="pref_title_host">Host</string>
     <string name="pref_title_port">Port</string>
@@ -26,21 +26,25 @@
     <string name="pref_dialog_title_add_recipient">Add recipient</string>
     <string name="pref_dialog_title_edit_recipient">Edit recipient</string>
 
-    <string name="pref_description_service_on">Email will be sent out</string>
-    <string name="pref_description_service_off">No email will be sent out</string>
+    <string name="pref_description_service_on">Service is on</string>
+    <string name="pref_description_service_off">Service is off</string>
     <string name="pref_description_password_asterisk" translatable="false">**********</string>
     <string name="pref_description_not_set">not specified</string>
     <string name="pref_description_when_to_send">When to send email</string>
     <string name="pref_description_what_email_contain">What should the email include</string>
     <string name="pref_description_notify_send_success">Display message when email successfully sent</string>
 
-    <string name="recipient_message_already_exists">Recipient {name} already exists</string>
-    <string name="notification_error_no_parameters">Unable to send email. Some required parameters are not specified.</string>
-    <string name="notification_error_authentication">Unable to send email. Username or password is incorrect.</string>
-    <string name="notification_error_connect">Unable to send email. Couldn\'t connect to mail server.</string>
     <string name="notification_error_mail_general">Unable to send email.</string>
-    <string name="notification_error_no_connection">Unable to send email. No internet connection</string>
+    <string name="notification_error_no_account">Account not specified.</string>
+    <string name="notification_error_no_host">Host not specified.</string>
+    <string name="notification_error_no_port">Port not specified.</string>
+    <string name="notification_error_no_recipients">No recipients specified.</string>
+    <string name="notification_error_authentication">Username or password is incorrect.</string>
+    <string name="notification_error_connect">Couldn\'t connect to mail server.</string>
+    <string name="notification_error_no_connection">No internet connection.</string>
     <string name="notification_error_internal">Internal error.</string>
+
+    <string name="recipient_message_already_exists">Recipient {name} already exists</string>
 
     <string name="message_permission_denied_receive_sms">SMS read permission is denied. Trigger will be disabled.</string>
     <string name="message_permission_denied_phone_state">Read phone state permission is denied. Trigger will be disabled.</string>

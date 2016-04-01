@@ -56,7 +56,8 @@ public class DefaultPreferenceFragment extends PreferenceFragment {
      * @param preference preference
      */
     protected void updateSummary(String value, Preference preference, boolean valid) {
-        preference.setSummary(AndroidUtil.validatedText(getActivity(), value, valid));
+//        preference.setSummary(AndroidUtil.validatedColoredText(getActivity(), value, valid));
+        preference.setSummary(value);
     }
 
     /**
