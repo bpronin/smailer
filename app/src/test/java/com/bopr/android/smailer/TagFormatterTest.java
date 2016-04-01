@@ -16,7 +16,7 @@ import org.mockito.MockitoAnnotations;
 /**
  * To work on unit tests, switch the Test Artifact in the Build Variants view.
  */
-public class TagFormatterUnitTest {
+public class TagFormatterTest {
 
     private static final int PATTERN_ONE = 1000;
     private static final int THREE = 1001;

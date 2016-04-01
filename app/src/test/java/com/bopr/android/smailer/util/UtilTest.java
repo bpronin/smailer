@@ -23,7 +23,7 @@ import static org.junit.Assert.fail;
 /**
  * {@link Util} tester.
  */
-public class UtilUnitTest {
+public class UtilTest {
 
     @Test
     public void testFormatLocation() throws Exception {
