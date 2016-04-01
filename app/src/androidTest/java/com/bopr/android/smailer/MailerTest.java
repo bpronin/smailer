@@ -1,11 +1,9 @@
 package com.bopr.android.smailer;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.wifi.WifiManager;
-
-import com.bopr.android.smailer.util.AndroidUtil;
 
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -18,8 +16,6 @@ import javax.mail.AuthenticationFailedException;
 import javax.mail.MessagingException;
 
 import static com.bopr.android.smailer.Settings.DEFAULT_CONTENT;
-import static com.bopr.android.smailer.Settings.DEFAULT_HOST;
-import static com.bopr.android.smailer.Settings.DEFAULT_PORT;
 import static com.bopr.android.smailer.Settings.DEFAULT_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
@@ -31,10 +27,11 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SERVICE_ENABLED;
-import static com.bopr.android.smailer.Settings.getPreferences;
 import static org.junit.Assert.assertArrayEquals;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anySetOf;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.doAnswer;
@@ -53,17 +50,42 @@ public class MailerTest extends BaseTest {
     private Context context;
     private Cryptor cryptor;
     private MailTransport transport;
-    Notifications notifications;
+    private Notifications notifications;
+    private NetworkInfo networkInfo;
+    private SharedPreferences preferences;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        context = getContext();
 
-        database = new Database(context, "test.sqlite"); /* not mock context */
+        preferences = mock(SharedPreferences.class);
+        when(preferences.getBoolean(eq(KEY_PREF_SERVICE_ENABLED), anyBoolean())).thenReturn(true);
+        when(preferences.getBoolean(eq(KEY_PREF_SERVICE_ENABLED), anyBoolean())).thenReturn(true);
+        when(preferences.getString(eq(KEY_PREF_SENDER_ACCOUNT), anyString())).thenReturn("sender@mail.com");
+        when(preferences.getString(eq(KEY_PREF_SENDER_PASSWORD), anyString())).thenReturn("password");
+        when(preferences.getString(eq(KEY_PREF_RECIPIENTS_ADDRESS), anyString())).thenReturn("recipient@mail.com");
+        when(preferences.getString(eq(KEY_PREF_EMAIL_HOST), anyString())).thenReturn("smtp.mail.com");
+        when(preferences.getString(eq(KEY_PREF_EMAIL_PORT), anyString())).thenReturn("111");
+        when(preferences.getStringSet(eq(KEY_PREF_EMAIL_TRIGGERS), anySetOf(String.class))).thenReturn(DEFAULT_TRIGGERS);
+        when(preferences.getStringSet(eq(KEY_PREF_EMAIL_CONTENT), anySetOf(String.class))).thenReturn(DEFAULT_CONTENT);
+
+        networkInfo = mock(NetworkInfo.class);
+        when(networkInfo.isConnected()).thenReturn(true);
+
+        ConnectivityManager connectivityManager = mock(ConnectivityManager.class);
+        when(connectivityManager.getActiveNetworkInfo()).thenReturn(networkInfo);
+
+        context = mock(Context.class);
+        when(context.getSystemService(eq(Context.CONNECTIVITY_SERVICE))).thenReturn(connectivityManager);
+        when(context.getContentResolver()).thenReturn(getContext().getContentResolver());
+        when(context.getResources()).thenReturn(getContext().getResources());
+        when(context.getSharedPreferences(anyString(), anyInt())).thenReturn(preferences);
+
+        database = new Database(getContext(), "test.sqlite"); /* not mock context */
         database.destroy();
 
         cryptor = mock(Cryptor.class);
+
         when(cryptor.decrypt(anyString())).then(new Answer<String>() {
 
             @Override
@@ -74,19 +96,6 @@ public class MailerTest extends BaseTest {
 
         transport = mock(MailTransport.class);
         notifications = mock(Notifications.class);
-
-        getPreferences(context)
-                .edit()
-                .clear()
-                .putBoolean(KEY_PREF_SERVICE_ENABLED, true)
-                .putString(KEY_PREF_SENDER_ACCOUNT, "user")
-                .putString(KEY_PREF_SENDER_PASSWORD, "password")
-                .putString(KEY_PREF_RECIPIENTS_ADDRESS, "recipient")
-                .putString(KEY_PREF_EMAIL_HOST, DEFAULT_HOST)
-                .putString(KEY_PREF_EMAIL_PORT, DEFAULT_PORT)
-                .putStringSet(KEY_PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS)
-                .putStringSet(KEY_PREF_EMAIL_CONTENT, DEFAULT_CONTENT)
-                .commit();
     }
 
     /**
@@ -103,16 +112,11 @@ public class MailerTest extends BaseTest {
         doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
 
-        long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
-        long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
-
-        /* test start */
-
         Mailer mailer = new Mailer(context, transport, cryptor, notifications, database);
-        mailer.send(new MailMessage("+12345678901", false, start, end, false, false, null, new GeoCoordinates(30.0, 60.0), true, null));
+        mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, new GeoCoordinates(30.0, 60.0), true, null));
 
         assertTrue(errors.isEmpty());
-        assertArrayEquals(new Object[]{"user", "decrypted password", "smtp.gmail.com", "465"}, inits.get(0));
+        assertArrayEquals(new Object[]{"sender@mail.com", "decrypted password", "smtp.mail.com", "111"}, inits.get(0));
         assertEquals("[SMailer] Outgoing call to +12345678901", sends.get(0)[0]);
     }
 
@@ -130,23 +134,18 @@ public class MailerTest extends BaseTest {
         doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
 
-        getPreferences(context).edit().putString(KEY_PREF_EMAIL_LOCALE, "ru_RU").commit();
-
-        long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
-        long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
-
-        /* test start */
+        when(preferences.getString(eq(KEY_PREF_EMAIL_LOCALE), anyString())).thenReturn("ru_RU");
 
         Mailer mailer = new Mailer(context, transport, cryptor, notifications, database);
-        mailer.send(new MailMessage("+12345678901", false, start, end, false, false, null, new GeoCoordinates(30.0, 60.0), true, null));
+        mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, new GeoCoordinates(30.0, 60.0), true, null));
 
         assertTrue(errors.isEmpty());
-        assertArrayEquals(new Object[]{"user", "decrypted password", "smtp.gmail.com", "465"}, inits.get(0));
+        assertArrayEquals(new Object[]{"sender@mail.com", "decrypted password", "smtp.mail.com", "111"}, inits.get(0));
         assertEquals("[SMailer] Исходящий звонок на +12345678901", sends.get(0)[0]);
     }
 
     /**
-     * Check that mailer produces notification when no internet connection.
+     * Check that mailer produces notification without internet connection.
      *
      * @throws Exception when fails
      */
@@ -158,21 +157,7 @@ public class MailerTest extends BaseTest {
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong());
         doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
-
-        NetworkInfo networkInfo = mock(NetworkInfo.class);
         when(networkInfo.isConnected()).thenReturn(false);
-
-        ConnectivityManager manager = mock(ConnectivityManager.class);
-        when(manager.getActiveNetworkInfo()).thenReturn(networkInfo);
-
-        Context context = mock(Context.class);
-        when(context.getSystemService(eq(Context.CONNECTIVITY_SERVICE))).thenReturn(manager);
-        when(context.getResources()).thenReturn(getContext().getResources());
-        when(context.getSharedPreferences(anyString(), anyInt())).thenReturn(getPreferences(getContext()));
-
-        assertFalse(AndroidUtil.hasInternetConnection(context));
-
-        /* test start */
 
         Mailer mailer = new Mailer(context, transport, cryptor, notifications, database);
         mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, null, true, null));
@@ -196,9 +181,7 @@ public class MailerTest extends BaseTest {
         doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
 
-        getPreferences(context).edit().putString(KEY_PREF_SENDER_ACCOUNT, null).commit();
-
-        /* test start */
+        when(preferences.getString(eq(KEY_PREF_SENDER_ACCOUNT), anyString())).thenReturn(null);
 
         Mailer mailer = new Mailer(context, transport, cryptor, notifications, database);
         mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, null, true, null));
@@ -222,9 +205,7 @@ public class MailerTest extends BaseTest {
         doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
 
-        getPreferences(context).edit().putString(KEY_PREF_RECIPIENTS_ADDRESS, null).commit();
-
-        /* test start */
+        when(preferences.getString(eq(KEY_PREF_RECIPIENTS_ADDRESS), anyString())).thenReturn(null);
 
         Mailer mailer = new Mailer(context, transport, cryptor, notifications, database);
         mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, null, true, null));
@@ -248,9 +229,7 @@ public class MailerTest extends BaseTest {
         doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
 
-        getPreferences(context).edit().putString(KEY_PREF_EMAIL_HOST, null).commit();
-
-        /* test start */
+        when(preferences.getString(eq(KEY_PREF_EMAIL_HOST), anyString())).thenReturn(null);
 
         Mailer mailer = new Mailer(context, transport, cryptor, notifications, database);
         mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, null, true, null));
@@ -274,9 +253,7 @@ public class MailerTest extends BaseTest {
         doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
 
-        getPreferences(context).edit().putString(KEY_PREF_EMAIL_PORT, null).commit();
-
-        /* test start */
+        when(preferences.getString(eq(KEY_PREF_EMAIL_PORT), anyString())).thenReturn(null);
 
         Mailer mailer = new Mailer(context, transport, cryptor, notifications, database);
         mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, null, true, null));
@@ -301,8 +278,6 @@ public class MailerTest extends BaseTest {
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
         doThrow(AuthenticationFailedException.class).when(transport).send(anyString(), anyString(), anyString(), anyString());
 
-        /* test start */
-
         Mailer mailer = new Mailer(context, transport, cryptor, notifications, database);
         mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, null, true, null));
 
@@ -325,8 +300,6 @@ public class MailerTest extends BaseTest {
         doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
         doThrow(MessagingException.class).when(transport).send(anyString(), anyString(), anyString(), anyString());
-
-        /* test start */
 
         Mailer mailer = new Mailer(context, transport, cryptor, notifications, database);
         mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, null, true, null));
@@ -391,15 +364,16 @@ public class MailerTest extends BaseTest {
 
         Mailer mailer = new Mailer(context, transport, cryptor, notifications, database);
 
-        /* settings is on */
-        getPreferences(context).edit().putBoolean(KEY_PREF_NOTIFY_SEND_SUCCESS, false).commit();
+        /* settings is off */
+        when(preferences.getBoolean(eq(KEY_PREF_NOTIFY_SEND_SUCCESS), anyBoolean())).thenReturn(false);
+
         mailer.send(new MailMessage("1", false, null, null, false, false, null, null, true, null));
 
         assertTrue(errors.isEmpty());
         assertTrue(successes.isEmpty());
 
-        /* settings is off */
-        getPreferences(context).edit().putBoolean(KEY_PREF_NOTIFY_SEND_SUCCESS, true).commit();
+        /* settings is on */
+        when(preferences.getBoolean(eq(KEY_PREF_NOTIFY_SEND_SUCCESS), anyBoolean())).thenReturn(true);
         mailer.send(new MailMessage("1", false, null, null, false, false, null, null, true, null));
 
         assertTrue(errors.isEmpty());
@@ -415,25 +389,29 @@ public class MailerTest extends BaseTest {
         ArgumentsCollector errors = new ArgumentsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong());
-
-        long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
-        long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
-
-        /* test start */
-
         doThrow(MessagingException.class).when(transport).send(anyString(), anyString(), anyString(), anyString());
 
         Mailer mailer = new Mailer(context, transport, cryptor, notifications, database);
-        mailer.send(new MailMessage("+12345678901", false, start, end, false, false, null, new GeoCoordinates(30.0, 60.0), false, null));
-        mailer.send(new MailMessage("+12345678901", false, start, end, false, false, null, new GeoCoordinates(30.0, 60.0), false, null));
-        mailer.send(new MailMessage("+12345678901", false, start, end, false, false, null, new GeoCoordinates(30.0, 60.0), false, null));
+        mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, new GeoCoordinates(30.0, 60.0), false, null));
+        mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, new GeoCoordinates(30.0, 60.0), false, null));
+        mailer.send(new MailMessage("+12345678901", false, null, null, false, false, null, new GeoCoordinates(30.0, 60.0), false, null));
 
         assertEquals(3, database.getMessages().getCount());
         assertEquals(3, database.getUnsentMessages().getCount());
         assertEquals(3, errors.size());
 
+        /* try resend with transport still disabled */
         errors.clear();
+
+        mailer.sendAllUnsent();
+
+        assertEquals(3, database.getMessages().getCount());
+        assertEquals(3, database.getUnsentMessages().getCount());
+        assertTrue(errors.isEmpty()); /* no error notifications should be shown */
+
+        /* enable transport an try again */
         doNothing().when(transport).send(anyString(), anyString(), anyString(), anyString());
+        errors.clear();
 
         mailer.sendAllUnsent();
 

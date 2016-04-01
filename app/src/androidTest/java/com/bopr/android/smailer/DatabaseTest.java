@@ -184,6 +184,7 @@ public class DatabaseTest extends BaseTest {
         assertEquals(5, database.getMessages().getCount());
     }
 
+// TODO: 01.04.2016 remove
 //    /**
 //     * Check {@link Database#hasUnsentMessages()} method.
 //     *

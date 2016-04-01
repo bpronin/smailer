@@ -90,6 +90,7 @@ public class Database {
         this.purgePeriod = purgePeriod;
     }
 
+// TODO: 01.04.2016 remove
 //    public MailMessage getMessage(long id) {
 //        return new MailMessageCursor(helper.getReadableDatabase().query(TABLE_MESSAGES,
 //                null, COLUMN_ID + "=" + id, null, null, null, null)
@@ -135,6 +136,7 @@ public class Database {
         );
     }
 
+// TODO: 01.04.2016 remove
 //    public void updateSent(long messageId, boolean sent) {
 //        ContentValues values = new ContentValues();
 //        values.put(COLUMN_IS_SENT, sent);
