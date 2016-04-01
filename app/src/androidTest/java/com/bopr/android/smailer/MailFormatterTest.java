@@ -221,7 +221,7 @@ public class MailFormatterTest extends BaseTest {
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
                 "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                "Last known device location: <a href=\"http://maps.google.com/maps/place/60.555,30.555\">" +
+                "Last known device location: <a href=\"https://www.google.com/maps/place/60.555+30.555/@60.555,30.555\">" +
                 "60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "</body></html>", formatter.getBody());
     }
@@ -364,7 +364,7 @@ public class MailFormatterTest extends BaseTest {
                 "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
                 "Caller: <a href=\"tel:+12345678901\">+12345678901</a> (John Dou)" +
                 "<br>" +
-                "Last known device location: <a href=\"http://maps.google.com/maps/place/60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
+                "Last known device location: <a href=\"https://www.google.com/maps/place/60.555+30.555/@60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "<br>" +
                 "Sent from " + deviceName + " at February 2, 2016 3:04:05 AM EST" +
                 "</body></html>", formatter.getBody());
@@ -394,7 +394,7 @@ public class MailFormatterTest extends BaseTest {
                 "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
                 "Called: <a href=\"tel:+12345678901\">+12345678901</a> (John Dou)" +
                 "<br>" +
-                "Last known device location: <a href=\"http://maps.google.com/maps/place/60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
+                "Last known device location: <a href=\"https://www.google.com/maps/place/60.555+30.555/@60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "<br>" +
                 "Sent from " + deviceName + " at February 2, 2016 3:04:05 AM EST" +
                 "</body></html>", formatter.getBody());
@@ -424,7 +424,7 @@ public class MailFormatterTest extends BaseTest {
                 "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
                 "Caller: <a href=\"tel:+12345678901\">+12345678901</a> (Unknown contact)" +
                 "<br>" +
-                "Last known device location: <a href=\"http://maps.google.com/maps/place/60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
+                "Last known device location: <a href=\"https://www.google.com/maps/place/60.555+30.555/@60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "<br>" +
                 "Sent from " + deviceName + " at February 2, 2016 3:04:05 AM EST" +
                 "</body></html>", formatter.getBody());
@@ -461,7 +461,7 @@ public class MailFormatterTest extends BaseTest {
                 "Пропущенный звонок." +
                 "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
                 "Вам звонил: <a href=\"tel:+12345678901\">+12345678901</a> (Неизвестный контакт)<br>" +
-                "Последнее известное местоположение: <a href=\"http://maps.google.com/maps/place/60.555,30.555\">" +
+                "Последнее известное местоположение: <a href=\"https://www.google.com/maps/place/60.555+30.555/@60.555,30.555\">" +
                 "60&#176;33'17\"N, 30&#176;33'17\"W</a><br>" +
                 "Отправлено с " + deviceName + " 2 февраля 2016 г. 3:04:05 GMT-05:00" +
                 "</body></html>", formatter.getBody());
@@ -472,7 +472,7 @@ public class MailFormatterTest extends BaseTest {
                 "You had a missed call." +
                 "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
                 "Caller: <a href=\"tel:+12345678901\">+12345678901</a> (Unknown contact)<br>" +
-                "Last known device location: <a href=\"http://maps.google.com/maps/place/60.555,30.555\">" +
+                "Last known device location: <a href=\"https://www.google.com/maps/place/60.555+30.555/@60.555,30.555\">" +
                 "60&#176;33'17\"N, 30&#176;33'17\"W</a><br>" +
                 "Sent from " + deviceName + " at February 2, 2016 3:04:05 AM EST" +
                 "</body></html>", formatter.getBody());
@@ -503,7 +503,7 @@ public class MailFormatterTest extends BaseTest {
                 "You had a missed call." +
                 "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
                 "Caller: <a href=\"tel:+12345678901\">+12345678901</a> (Unknown contact)<br>" +
-                "Last known device location: <a href=\"http://maps.google.com/maps/place/60.555,30.555\">" +
+                "Last known device location: <a href=\"https://www.google.com/maps/place/60.555+30.555/@60.555,30.555\">" +
                 "60&#176;33'17\"N, 30&#176;33'17\"W</a><br>" +
                 "Sent from " + deviceName + " at February 2, 2016 3:04:05 AM EST" +
                 "</body></html>", formatter.getBody());
