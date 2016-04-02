@@ -184,40 +184,6 @@ public class DatabaseTest extends BaseTest {
         assertEquals(5, database.getMessages().getCount());
     }
 
-// TODO: 01.04.2016 remove
-//    /**
-//     * Check {@link Database#hasUnsentMessages()} method.
-//     *
-//     * @throws Exception when failed
-//     */
-//    public void testHasUnsent() throws Exception {
-//        database.updateMessage(new MailMessage("+79052345671", true, 1000L, 2000L, false, true, "SMS text", new GeoCoordinates(10.5, 20.5), true, null));
-//        assertFalse(database.hasUnsentMessages());
-//
-//        MailMessage message = new MailMessage("+79052345672", false, 2000L, null, false, true, null, null, false, "Error");
-//        database.updateMessage(message);
-//        assertTrue(database.hasUnsentMessages());
-//
-//        message.setSent(true);
-//        message.setDetails(null);
-//        database.updateMessage(message);
-//        assertFalse(database.hasUnsentMessages());
-//    }
-
-//    /**
-//     * Check {@link Database#hasUnsentMessages()} method.
-//     *
-//     * @throws Exception when failed
-//     */
-//    public void testClearHasUnsent() throws Exception {
-//        MailMessage message = new MailMessage("+79052345672", false, 2000L, null, false, true, null, null, false, null);
-//        database.updateMessage(message);
-//        assertTrue(database.hasUnsentMessages());
-//
-//        database.clearMessages();
-//        assertFalse(database.hasUnsentMessages());
-//    }
-
     /**
      * Check {@link Database#getLastLocation()} and {@link Database#saveLastLocation(GeoCoordinates)} methods.
      *
@@ -232,23 +198,6 @@ public class DatabaseTest extends BaseTest {
         assertEquals(coordinates.getLatitude(), actual.getLatitude());
         assertEquals(coordinates.getLongitude(), actual.getLongitude());
     }
-
-//    /**
-//     * Check {@link Database#updateSent(long, boolean)}} method.
-//     *
-//     * @throws Exception when failed
-//     */
-//    public void testUpdateSent() throws Exception {
-//        long id = database.updateMessage(new MailMessage("+79052345672", false, 2000L, null, false, true, null, null, false, null));
-//
-//        assertFalse(database.getMessage(id).isSent());
-//
-//        database.updateSent(id, true);
-//        assertTrue(database.getMessage(id).isSent());
-//
-//        database.updateSent(id, false);
-//        assertFalse(database.getMessage(id).isSent());
-//    }
 
     /**
      * Check {@link Database#getUnsentMessages()}} method.

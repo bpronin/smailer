@@ -4,6 +4,7 @@ package com.bopr.android.smailer.ui;
 import android.app.ListFragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -11,8 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.bopr.android.smailer.Settings.KEY_PREF_AVAILABLE_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.getPreferences;
 import static com.bopr.android.smailer.util.TagFormatter.from;
@@ -39,6 +37,7 @@ public class RecipientsFragment extends ListFragment {
 
     private SharedPreferences preferences;
     private RecipientListAdapter listAdapter;
+    private FloatingActionButton addButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -74,12 +73,14 @@ public class RecipientsFragment extends ListFragment {
         listView.setOnTouchListener(touchListener);
         listView.setOnScrollListener(touchListener.makeScrollListener());
 
-        view.findViewById(R.id.button_add).setOnClickListener(new View.OnClickListener() {
+        addButton = (FloatingActionButton) view.findViewById(R.id.button_add);
+        addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addItem();
             }
         });
+
     }
 
     @Override
@@ -88,50 +89,32 @@ public class RecipientsFragment extends ListFragment {
         loadItems();
     }
 
+    public void onShow() {
+        addButton.show();
+    }
+
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
         editItem(position);
     }
 
     private void loadItems() {
-        List<String> availableAddresses = new ArrayList<>();
-        List<String> enabledAddresses = new ArrayList<>();
-
-        String enabledPref = preferences.getString(KEY_PREF_RECIPIENTS_ADDRESS, "");
-        enabledAddresses.addAll(Util.listOf(enabledPref, ",", true));
-
-        String availablePref = preferences.getString(KEY_PREF_AVAILABLE_RECIPIENTS_ADDRESS, "");
-        availableAddresses.addAll(Util.listOf(availablePref, ",", true));
-
-        /* add lost items */
-        for (String address : enabledAddresses) {
-            if (!availableAddresses.contains(address)) {
-                availableAddresses.add(address);
-            }
-        }
-
         listAdapter = new RecipientListAdapter();
-        for (String address : availableAddresses) {
-            listAdapter.addItem(new Item(address, enabledAddresses.contains(address)));
+        List<String> addresses = Util.listOf(preferences.getString(KEY_PREF_RECIPIENTS_ADDRESS, ""), ",", true);
+        for (String address : addresses) {
+            listAdapter.addItem(new Item(address));
         }
-
         setListAdapter(listAdapter);
     }
 
     private void persistItems() {
-        List<String> availableAddresses = new ArrayList<>();
-        List<String> enabledAddresses = new ArrayList<>();
+        List<String> addresses = new ArrayList<>();
         for (Item item : listAdapter.getItems()) {
-            String address = item.address;
-            availableAddresses.add(address);
-            if (item.enabled) {
-                enabledAddresses.add(address);
-            }
+            addresses.add(item.address);
         }
 
         preferences.edit()
-                .putString(KEY_PREF_AVAILABLE_RECIPIENTS_ADDRESS, Util.stringOf(", ", availableAddresses))
-                .putString(KEY_PREF_RECIPIENTS_ADDRESS, Util.stringOf(", ", enabledAddresses))
+                .putString(KEY_PREF_RECIPIENTS_ADDRESS, Util.stringOf(", ", addresses))
                 .apply();
     }
 
@@ -166,13 +149,6 @@ public class RecipientsFragment extends ListFragment {
         persistItems();
     }
 
-    private void enableItem(int position, boolean enabled) {
-        Item item = listAdapter.getItem(position);
-        listAdapter.replaceItem(position, new Item(item.address, enabled));
-        listAdapter.notifyDataSetChanged();
-        persistItems();
-    }
-
     private boolean isItemExists(String address) {
         for (Item item : listAdapter.getItems()) {
             if (item.address.equals(address)) {
@@ -197,7 +173,7 @@ public class RecipientsFragment extends ListFragment {
                             .put("name", address)
                             .format(), Toast.LENGTH_LONG).show();
                 } else if (!Util.isTrimEmpty(address)) {
-                    Item newItem = new Item(address, item == null || item.enabled);
+                    Item newItem = new Item(address);
                     listAdapter.replaceItem(position, newItem);
                     listAdapter.notifyDataSetChanged();
 
@@ -235,12 +211,10 @@ public class RecipientsFragment extends ListFragment {
 
     private class Item {
 
-        private final boolean enabled;
         private final String address;
 
-        public Item(String address, boolean enabled) {
+        public Item(String address) {
             this.address = address;
-            this.enabled = enabled;
         }
     }
 
@@ -255,29 +229,16 @@ public class RecipientsFragment extends ListFragment {
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            View view;
-            if (convertView == null) {
+            View view = convertView;
+            if (view == null) {
                 view = inflater.inflate(R.layout.list_item_recipient, parent, false);
-            } else {
-                view = convertView;
             }
 
-            final Item item = getItem(position);
+            Item item = getItem(position);
 
-            final TextView textView = (TextView) view.findViewById(R.id.text);
+            TextView textView = (TextView) view.findViewById(R.id.text);
             textView.setText(AndroidUtil.validatedUnderlinedText(getActivity(), item.address,
                     EmailTextValidator.isValidValue(item.address)));
-            textView.setEnabled(item.enabled);
-
-            CheckBox checkBox = (CheckBox) view.findViewById(R.id.check_box);
-            checkBox.setChecked(item.enabled);
-            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    enableItem(position, isChecked);
-                }
-            });
 
             return view;
         }

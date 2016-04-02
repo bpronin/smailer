@@ -8,6 +8,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
 
+import com.bopr.android.smailer.util.AndroidUtil;
+
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 /**
@@ -44,7 +46,7 @@ public abstract class PermissionsChecker<V> {
     public void check(V value) {
         if (isPermissionRequired(value) && isPermissionsDenied(activity, permissions)) {
             if (needExplanation()) {
-                new AlertDialog.Builder(activity)
+                AndroidUtil.dialogBuilder(activity)
                         .setMessage(rationale)
                         .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 

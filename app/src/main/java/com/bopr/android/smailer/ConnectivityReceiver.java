@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.util.Log;
 
-import static com.bopr.android.smailer.util.AndroidUtil.*;
+import static com.bopr.android.smailer.util.AndroidUtil.hasInternetConnection;
 
 /**
  * Starts mail service for when internet connection status changes.

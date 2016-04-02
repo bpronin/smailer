@@ -3,7 +3,9 @@ package com.bopr.android.smailer.util;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -39,7 +41,7 @@ public class AndroidUtil {
     public static Spannable validatedColoredText(Context context, String value, boolean valid) {
         Spannable result = new SpannableString(value);
         if (!valid) {
-            ForegroundColorSpan span = new ForegroundColorSpan(ContextCompat.getColor(context, R.color.colorAccent));
+            ForegroundColorSpan span = new ForegroundColorSpan(ContextCompat.getColor(context, R.color.colorAccent2));
             result.setSpan(span, 0, result.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
         return result;
@@ -52,5 +54,13 @@ public class AndroidUtil {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = cm.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    /**
+     * Convenient method to avoid of mess in versions of AlertDialog.
+     */
+    @NonNull
+    public static AlertDialog.Builder dialogBuilder(Context context) {
+        return new AlertDialog.Builder(context);
     }
 }

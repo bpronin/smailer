@@ -4,67 +4,62 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="18dp"
-    >
+    android:padding="18dp">
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <ImageView
+            android:id="@+id/imageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/imageView"
             android:src="@drawable/ic_app"/>
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:paddingLeft="8dp">
 
             <TextView
+                android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="@string/app_name"
-                android:id="@+id/textView"
-                />
+                android:textAppearance="?android:attr/textAppearanceLarge"/>
 
             <TextView
                 android:id="@+id/label_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/about_dialog_title_version"
-                android:padding="2dp"/>
+                android:padding="2dp"
+                android:text="@string/about_dialog_title_version"/>
 
             <TextView
+                android:id="@+id/label_copyright"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/about_dialog_copyright"
-                android:id="@+id/label_copyright"
-                android:padding="2dp"/>
+                android:padding="2dp"
+                android:text="@string/about_dialog_copyright"/>
 
         </LinearLayout>
     </LinearLayout>
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="20dp"
-        />
+        android:layout_height="20dp"/>
 
     <TextView
+        android:id="@+id/label_open_source"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/about_dialog_title_open_source"
-        android:textColor="?android:attr/textColorLink"
-        android:id="@+id/label_open_source"
-        android:textAlignment="center"
-        android:padding="8dp"
         android:clickable="true"
+        android:padding="8dp"
         android:singleLine="false"
-
-        />
+        android:text="@string/about_dialog_title_open_source"
+        android:textAlignment="center"
+        android:textColor="?android:attr/textColorLink"/>
 
 </LinearLayout>

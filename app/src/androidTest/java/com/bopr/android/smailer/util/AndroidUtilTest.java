@@ -9,7 +9,9 @@ import android.text.SpannableString;
 import com.bopr.android.smailer.BaseTest;
 import com.bopr.android.smailer.util.draw.WavyUnderlineSpan;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * {@link AndroidUtil} tester.

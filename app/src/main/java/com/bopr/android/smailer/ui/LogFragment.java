@@ -4,7 +4,6 @@ package com.bopr.android.smailer.ui;
 import android.app.ListFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,6 +14,7 @@ import android.widget.ListView;
 
 import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.util.AndroidUtil;
 
 /**
  * Application activity log activity fragment.
@@ -50,9 +50,7 @@ public class LogFragment extends ListFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_log_refresh) {
-            refreshData();
-        } else if (item.getItemId() == R.id.action_log_clear) {
+        if (item.getItemId() == R.id.action_log_clear) {
             clearData();
         }
         return super.onOptionsItemSelected(item);
@@ -61,7 +59,7 @@ public class LogFragment extends ListFragment {
     @Override
     public void onStart() {
         super.onStart();
-        refreshData();
+        loadData();
     }
 
     @Override
@@ -71,25 +69,25 @@ public class LogFragment extends ListFragment {
         Database.MailMessageCursor cursor = (Database.MailMessageCursor) list.getAdapter().getItem(position);
         String details = cursor.get().getDetails();
         if (details != null) {
-            new AlertDialog.Builder(getActivity())
+            AndroidUtil.dialogBuilder(getActivity())
                     .setTitle(R.string.activity_log_title_details)
                     .setMessage(details)
                     .show();
         }
     }
 
-    private void refreshData() {
+    private void loadData() {
         setListAdapter(new LogListAdapter(getActivity(), database.getMessages()));
     }
 
     private void clearData() {
-        new AlertDialog.Builder(getActivity())
+        AndroidUtil.dialogBuilder(getActivity())
                 .setMessage(R.string.activity_log_ask_clear)
                 .setPositiveButton(R.string.action_clear, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         database.clearMessages();
-                        refreshData();
+                        loadData();
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {

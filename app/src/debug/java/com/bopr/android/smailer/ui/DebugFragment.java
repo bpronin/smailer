@@ -9,7 +9,6 @@ import android.preference.Preference;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.util.Log;
 import android.widget.EditText;
@@ -26,6 +25,7 @@ import com.bopr.android.smailer.MailerService;
 import com.bopr.android.smailer.Notifications;
 import com.bopr.android.smailer.PermissionsChecker;
 import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.util.AndroidUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -38,7 +38,6 @@ import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static com.bopr.android.smailer.Settings.DEFAULT_HOST;
 import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
 import static com.bopr.android.smailer.Settings.DEFAULT_PORT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_AVAILABLE_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
@@ -252,7 +251,6 @@ public class DebugFragment extends DefaultPreferenceFragment {
                 .putBoolean(KEY_PREF_SERVICE_ENABLED, true)
                 .putString(KEY_PREF_SENDER_ACCOUNT, properties.getProperty("default_sender"))
                 .putString(KEY_PREF_SENDER_PASSWORD, cryptor.encrypt(properties.getProperty("default_password")))
-                .putString(KEY_PREF_AVAILABLE_RECIPIENTS_ADDRESS, properties.getProperty("default_recipient"))
                 .putString(KEY_PREF_RECIPIENTS_ADDRESS, properties.getProperty("default_recipient"))
                 .putString(KEY_PREF_EMAIL_HOST, DEFAULT_HOST)
                 .putString(KEY_PREF_EMAIL_PORT, DEFAULT_PORT)
@@ -272,7 +270,7 @@ public class DebugFragment extends DefaultPreferenceFragment {
         final EditText input = new EditText(getActivity());
         input.setInputType(InputType.TYPE_CLASS_PHONE);
 
-        new AlertDialog.Builder(getActivity())
+        AndroidUtil.dialogBuilder(getActivity())
                 .setTitle("Phone number")
                 .setView(input)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {

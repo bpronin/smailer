@@ -9,13 +9,11 @@
 
     <PreferenceScreen
         android:key="outgoing_server"
-        android:title="@string/pref_title_server">
-    </PreferenceScreen>
+        android:title="@string/pref_title_server"/>
 
     <PreferenceScreen
         android:key="recipients_address"
-        android:title="@string/pref_title_recipients">
-    </PreferenceScreen>
+        android:title="@string/pref_title_recipients"/>
 
     <MultiSelectListPreference
         android:dialogTitle="@string/pref_dialog_title_trigger"

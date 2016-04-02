@@ -10,14 +10,12 @@ import android.preference.Preference;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.text.Spannable;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.bopr.android.smailer.PermissionsChecker;
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.validator.EmailListTextValidator;
 
 import java.util.HashSet;
@@ -51,7 +49,6 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
-import static com.bopr.android.smailer.util.Util.allIsEmpty;
 import static com.bopr.android.smailer.util.Util.anyIsEmpty;
 import static com.bopr.android.smailer.util.Util.isEmpty;
 
@@ -289,15 +286,10 @@ public class MainFragment extends DefaultPreferenceFragment {
         String host = preferences.getString(KEY_PREF_EMAIL_HOST, "");
         String port = preferences.getString(KEY_PREF_EMAIL_PORT, "");
 
-        if (allIsEmpty(sender, host, port)) {
-            updateSummary(R.string.pref_description_not_set, serverPreference, false);
+        if (anyIsEmpty(sender, host, port)) {
+            updateNotSpecifiedSummary(serverPreference);
         } else {
-            String value = sender + " (" + host + ":" + port + ")";
-            if (anyIsEmpty(sender, host, port)) {
-                updateSummary(value, serverPreference, false);
-            } else {
-                updateSummary(value, serverPreference, true);
-            }
+            updateSummary(sender, serverPreference, true);
         }
     }
 
@@ -305,7 +297,7 @@ public class MainFragment extends DefaultPreferenceFragment {
         SharedPreferences preferences = getSharedPreferences();
         String value = preferences.getString(KEY_PREF_RECIPIENTS_ADDRESS, null);
         if (isEmpty(value)) {
-            updateSummary(R.string.pref_description_not_set, recipientsPreference, false);
+            updateNotSpecifiedSummary(recipientsPreference);
         } else {
             updateSummary(value, recipientsPreference, EmailListTextValidator.isValidValue(value));
         }
@@ -314,7 +306,7 @@ public class MainFragment extends DefaultPreferenceFragment {
     private void updateLocalePreference(String value) {
         int index = localePreference.findIndexOfValue(value);
         if (index < 0) {
-            updateSummary(R.string.pref_description_not_set, localePreference, false);
+            updateNotSpecifiedSummary(localePreference);
         } else {
             CharSequence cs = localePreference.getEntries()[index];
             updateSummary(cs.toString(), localePreference, true);

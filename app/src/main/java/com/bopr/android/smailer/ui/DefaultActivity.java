@@ -19,7 +19,6 @@ public abstract class DefaultActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         fragment = createFragment();
         getFragmentManager()
                 .beginTransaction()
@@ -58,23 +57,5 @@ public abstract class DefaultActivity extends AppCompatActivity {
                                            @NonNull int[] grantResults) {
         fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
-
-/*
-    Sliding on finish() looks ugly.
-    -------------------------------
-    @Override
-    public void startActivityForResult(Intent intent, int requestCode, Bundle options) {
-        super.startActivityForResult(intent, requestCode, options);
-        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-    }
-
-
-
-    @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(android.R.anim.slide_out_right, android.R.anim.slide_in_left);
-    }
-*/
 
 }

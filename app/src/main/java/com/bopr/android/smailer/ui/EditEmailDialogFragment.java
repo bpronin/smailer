@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.bopr.android.smailer.Contacts;
 import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.validator.EmailTextValidator;
 
 /**
@@ -71,7 +72,7 @@ public class EditEmailDialogFragment extends DialogFragment {
                 }
             });
 
-            dialog = new AlertDialog.Builder(getActivity())
+            dialog = AndroidUtil.dialogBuilder(getActivity())
                     .setTitle(title)
                     .setView(view)
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {

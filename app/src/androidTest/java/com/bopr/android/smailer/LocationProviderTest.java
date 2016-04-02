@@ -40,7 +40,7 @@ public class LocationProviderTest extends BaseTest {
     protected void setUp() throws Exception {
         super.setUp();
 
-        googelApiLocation= new GeoCoordinates(0, 10);
+        googelApiLocation = new GeoCoordinates(0, 10);
         gpsLocation = new GeoCoordinates(10, 20);
         networkLocation = new GeoCoordinates(20, 30);
         lastPassiveLocation = new GeoCoordinates(30, 40);

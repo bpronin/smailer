@@ -2,8 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:orientation="horizontal"
-    >
+              android:orientation="horizontal">
 
     <!--
         <ImageView
@@ -22,8 +21,7 @@
         android:layout_height="match_parent"
         android:padding="4dp"
         android:text="2016.03.15 21:20:15"
-        android:textAlignment="textEnd"
-        />
+        android:textAlignment="textEnd"/>
 
     <TextView
         android:id="@+id/list_item_message"
@@ -31,8 +29,7 @@
         android:layout_height="match_parent"
         android:padding="4dp"
         android:text="Missed call from +79052345675. Send failed."
-        android:textAlignment="textStart"
-        />
+        android:textAlignment="textStart"/>
 
 </LinearLayout>
 

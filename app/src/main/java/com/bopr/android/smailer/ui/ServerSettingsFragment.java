@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 
-import com.bopr.android.smailer.Notifications;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.Util;
 import com.bopr.android.smailer.util.validator.EmailTextValidator;
@@ -75,7 +74,7 @@ public class ServerSettingsFragment extends DefaultPreferenceFragment {
 
     private void updateAccountPreference(String value) {
         if (isEmpty(value)) {
-            updateSummary(R.string.pref_description_not_set, accountPreference, false);
+            updateNotSpecifiedSummary(accountPreference);
         } else {
             updateSummary(value, accountPreference, EmailTextValidator.isValidValue(value));
         }
@@ -83,7 +82,7 @@ public class ServerSettingsFragment extends DefaultPreferenceFragment {
 
     private void updatePasswordPreference(String value) {
         if (isEmpty(value)) {
-            updateSummary(R.string.pref_description_not_set, passwordPreference, false);
+            updateNotSpecifiedSummary(passwordPreference);
         } else {
             updateSummary(R.string.pref_description_password_asterisk, passwordPreference, true);
         }
@@ -91,7 +90,7 @@ public class ServerSettingsFragment extends DefaultPreferenceFragment {
 
     private void updateHostPreference(String value) {
         if (Util.isEmpty(value)) {
-            updateSummary(R.string.pref_description_not_set, hostPreference, false);
+            updateNotSpecifiedSummary(hostPreference);
         } else {
             updateSummary(value, hostPreference, true);
         }
@@ -99,7 +98,7 @@ public class ServerSettingsFragment extends DefaultPreferenceFragment {
 
     private void updatePortPreference(String value) {
         if (Util.isEmpty(value)) {
-            updateSummary(R.string.pref_description_not_set, portPreference, false);
+            updateNotSpecifiedSummary(portPreference);
         } else {
             updateSummary(value, portPreference, true);
         }

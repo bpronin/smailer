@@ -15,21 +15,31 @@ import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.Settings;
 import com.bopr.android.smailer.util.TagFormatter;
 
+import static com.bopr.android.smailer.util.AndroidUtil.dialogBuilder;
+
 /**
- * Class AboutDialogFragment.
+ * About dialog fragment.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 public class AboutDialogFragment extends DialogFragment {
-
-    private static final String TAG = "AboutDialogFragment";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_about, container, false);
 
-        ((TextView) view.findViewById(R.id.label_message)).setText(formatVersion());
+        TextView versionLabel = (TextView) view.findViewById(R.id.label_message);
+        versionLabel.setText(formatVersion());
+        versionLabel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogBuilder(getActivity())
+                        .setMessage("Build number: " + Settings.getReleaseBuild(getActivity()))
+                        .show();
+            }
+        });
+
         view.findViewById(R.id.label_open_source).setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -53,7 +63,6 @@ public class AboutDialogFragment extends DialogFragment {
     private String formatVersion() {
         return TagFormatter.from(R.string.about_dialog_title_version, getResources())
                 .put("version", Settings.getReleaseVersion(getActivity()))
-                .put("build", Settings.getReleaseBuild(getActivity()))
                 .format();
     }
 

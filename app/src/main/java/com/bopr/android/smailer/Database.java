@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.bopr.android.smailer.util.db.XCursor;
 
@@ -90,13 +91,6 @@ public class Database {
         this.purgePeriod = purgePeriod;
     }
 
-// TODO: 01.04.2016 remove
-//    public MailMessage getMessage(long id) {
-//        return new MailMessageCursor(helper.getReadableDatabase().query(TABLE_MESSAGES,
-//                null, COLUMN_ID + "=" + id, null, null, null, null)
-//        ).getAndClose();
-//    }
-
     public MailMessageCursor getMessages() {
         return new MailMessageCursor(helper.getReadableDatabase().query(TABLE_MESSAGES,
                 null, null, null, null, null,
@@ -136,20 +130,6 @@ public class Database {
         );
     }
 
-// TODO: 01.04.2016 remove
-//    public void updateSent(long messageId, boolean sent) {
-//        ContentValues values = new ContentValues();
-//        values.put(COLUMN_IS_SENT, sent);
-//
-//        helper.getWritableDatabase().update(TABLE_MESSAGES, values, COLUMN_ID + "=" + messageId, null);
-//    }
-
-//    public boolean hasUnsentMessages() {
-//        return XCursor.forLong(helper.getReadableDatabase().query(TABLE_MESSAGES,
-//                new String[]{COLUMN_COUNT}, COLUMN_IS_SENT + "=0", null, null, null, null))
-//                .getAndClose() > 0;
-//    }
-
     /**
      * Removes all records from log.
      */
@@ -164,6 +144,8 @@ public class Database {
         } finally {
             db.endTransaction();
         }
+
+        Log.d(TAG, "all messages removed");
     }
 
     /**
@@ -171,6 +153,8 @@ public class Database {
      * period of time has elapsed.
      */
     public void purge() {
+        Log.d(TAG, "purging");
+
         SQLiteDatabase db = helper.getWritableDatabase();
         db.beginTransaction();
         try {

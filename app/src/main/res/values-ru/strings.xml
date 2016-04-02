@@ -30,8 +30,6 @@
     <string name="pref_description_what_email_contain">Что должно включать почтовое сообщение</string>
     <string name="pref_description_notify_send_success">Показывать уведомление, когда почта успешно отправлена</string>
 
-    <string name="recipient_message_already_exists">Получатель {name} уже существует</string>
-
     <string name="notification_error_mail_general">Невозможно отправить почту.</string>
     <string name="notification_error_no_account">Не указан аккаунт исходящей почты.</string>
     <string name="notification_error_no_host">Не указан адрес серевера исходящей почты.</string>
@@ -48,7 +46,6 @@
     <string name="message_permission_denied_outgoing_call">Обработка исходящих звонков запрещена. Настройка будет отключена.</string>
     <string name="message_permission_denied_read_contacts">Чтение контактов запрещено. Настройка будет отключена.</string>
     <string name="message_permission_denied_location">Чтение местоположения запрещено. Настройка будет отключена.</string>
-
     <string name="message_permission_rationale_receive_sms">Разрешение на чтение SMS необходимо, чтобы отправлять почтовое сообщение, когда приходит SMS.</string>
     <string name="message_permission_rationale_phone_state">Разрешение на чтение состояния телефона необходимо, чтобы отправлять почтовое сообщение при входящих и исходящих вызовах.</string>
     <string name="message_permission_rationale_outgoing_call">Разрешение на обработку исходящих звонков необходимо, чтобы отправлять почтовое сообщение при исходящих вызовах.</string>
@@ -84,21 +81,19 @@
     <string name="action_activity_log">Журнал</string>
     <string name="action_undo">Отмена</string>
     <string name="action_clear">Очистить</string>
-    <string name="action_send_later">Отправить позже</string>
-    <string name="action_send_settings">Настройки</string>
 
-    <string name="action_refresh">Обновить</string>
     <string name="activity_log_title_details">Детали</string>
-    <string name="activity_log_title">Журнал </string>
+    <string name="activity_log_title">Журнал</string>
     <string name="activity_log_empty_log">Журнал пуст</string>
     <string name="activity_log_ask_clear">Очистить журнал?</string>
 
     <string name="about_dialog_title_version">Версия приложения: {version}</string>
     <string name="about_dialog_title_open_source">Открытый исходный код и ПО сторонних производителей</string>
 
-    <string name="open_source_title">Открытый исходный код</string>
+    <string name="recipient_hint_button_select_email_from_contacts">Выбрать из контактов</string>
+    <string name="recipient_message_already_exists">Получатель {name} уже существует</string>
 
-    <string name="hint_button_select_email_from_contacts">Выбрать из контактов</string>
+    <string name="open_source_title">Открытый исходный код</string>
 
     <string-array name="email_trigger_titles">
         <item>Входящие SMS</item>
