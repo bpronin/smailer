@@ -101,8 +101,9 @@ public class EditEmailDialogFragment extends DialogFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == PICK_CONTACT_REQUEST && resultCode == Activity.RESULT_OK) {
             String email = Contacts.getEmailAddressFromIntent(getActivity(), intent);
-            callback.onOkClick(email);
-            dismiss();
+            getEditor().setText(email);
+//            callback.onOkClick(email);
+//            dismiss();
         }
     }
 

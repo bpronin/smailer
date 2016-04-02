@@ -12,7 +12,6 @@ import java.util.regex.Pattern;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-//todo: optional tags markers. like [Title: {key}]
 public class TagFormatter {
 
     private static final String OPEN_BRACKET = "\\{";

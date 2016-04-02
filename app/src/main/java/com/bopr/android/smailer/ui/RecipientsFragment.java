@@ -8,6 +8,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,27 +36,37 @@ import static com.bopr.android.smailer.util.TagFormatter.from;
  */
 public class RecipientsFragment extends ListFragment {
 
-    private SharedPreferences preferences;
     private RecipientListAdapter listAdapter;
+    private ListView listView;
     private FloatingActionButton addButton;
+    private SharedPreferences preferences;
+    private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         preferences = getPreferences(getActivity());
+        preferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                loadItems();
+            }
+        };
+        preferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
+    }
+
+    @Override
+    public void onDestroy() {
+        preferences.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
+        super.onDestroy();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_recipients, container, false);
-    }
+        View view = inflater.inflate(R.layout.fragment_recipients, container, false);
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        ListView listView = getListView();
+        listView = (ListView) view.findViewById(android.R.id.list);
         SwipeDismissListViewTouchListener touchListener = new SwipeDismissListViewTouchListener(listView,
                 new SwipeDismissListViewTouchListener.DismissCallbacks() {
 
@@ -81,12 +92,9 @@ public class RecipientsFragment extends ListFragment {
             }
         });
 
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         loadItems();
+
+        return view;
     }
 
     public void onShow() {
@@ -173,12 +181,10 @@ public class RecipientsFragment extends ListFragment {
                             .put("name", address)
                             .format(), Toast.LENGTH_LONG).show();
                 } else if (!Util.isTrimEmpty(address)) {
+                    /* note: if we rotated device reference to "this" is changed here */
                     Item newItem = new Item(address);
                     listAdapter.replaceItem(position, newItem);
                     listAdapter.notifyDataSetChanged();
-
-                    //  getListView().invalidateViews(); //todo: NPE when rotating during edit
-
                     persistItems();
                 }
             }
@@ -197,7 +203,7 @@ public class RecipientsFragment extends ListFragment {
                     .format();
         }
 
-        Snackbar.make(getListView(), title, Snackbar.LENGTH_LONG)
+        Snackbar.make(listView, title, Snackbar.LENGTH_LONG)
                 .setActionTextColor(ContextCompat.getColor(getActivity(), R.color.dialogButtonText))
                 .setAction(R.string.action_undo, new View.OnClickListener() {
 
