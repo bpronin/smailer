@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-//apply plugin: 'jacoco'
 
 apply from: 'user.gradle'
 
@@ -34,9 +33,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
         }
-//        debug {
-//            testCoverageEnabled = true
-//        }
     }
 
     testOptions {
@@ -47,10 +43,6 @@ android {
         pickFirst 'META-INF/LICENSE.txt' // picks the JavaMail license file
     }
 
-    productFlavors {
-    }
-
-//    useLibrary 'org.apache.http.legacy'  // required by some robolectric tests
 }
 
 repositories {

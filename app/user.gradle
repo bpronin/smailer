@@ -1,18 +1,29 @@
-task incrementBuildNumber << {
+import java.text.SimpleDateFormat
+
+/* user defined procedures */
+
+task updateReleaseInfo << {
     def propFile = new File('app/src/main/assets/release.properties')
     def Properties props = new Properties()
     props.load(new FileInputStream(propFile))
+
     def buildNumber = Integer.parseInt(props.getProperty('build_number')) + 1
+
+    def df = new SimpleDateFormat('yyyy-MM-dd HH:mm:ss z')
+    df.setTimeZone(TimeZone.getTimeZone('UTC'))
+    def buildTime = df.format(new Date())
+
     props.setProperty('build_number', String.valueOf(buildNumber))
+    props.setProperty('build_time', String.valueOf(buildTime))
     props.store(new FileOutputStream(propFile), 'Release properties')
 
-    println(':incrementBuildNumber current build=' + buildNumber);
+    println(':updateReleaseInfo current build=' + buildNumber);
 }
 
 assembleDebug.doLast {
-    incrementBuildNumber.execute()
+    updateReleaseInfo.execute()
 }
 
 assembleRelease.doLast {
-    incrementBuildNumber.execute()
+    updateReleaseInfo.execute()
 }
