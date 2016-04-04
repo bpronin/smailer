@@ -10,7 +10,7 @@
         android:singleLine="true"
         android:title="@string/pref_title_sender_account"/>
 
-    <com.bopr.android.smailer.ui.PasswordPreference
+    <com.bopr.android.smailer.util.ui.preference.PasswordPreference
         android:dialogMessage="@string/message_password_hint"
         android:dialogTitle="@string/pref_dialog_title_password"
         android:key="sender_password"

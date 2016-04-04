@@ -23,6 +23,8 @@ import javax.mail.internet.MimeMessage;
 
 /**
  * An utility class that sends email using SMTP transport.
+ *
+ * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 public class MailTransport {
 

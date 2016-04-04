@@ -20,7 +20,6 @@ import static com.bopr.android.smailer.Settings.getDeviceName;
 import static com.bopr.android.smailer.Settings.getPreferences;
 import static com.bopr.android.smailer.util.Util.isEmpty;
 
-
 /**
  * Sends out {@link MailMessage}.
  *

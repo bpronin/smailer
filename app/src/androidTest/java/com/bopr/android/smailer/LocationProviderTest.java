@@ -1,5 +1,6 @@
 package com.bopr.android.smailer;
 
+import android.annotation.SuppressLint;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -28,6 +29,7 @@ import static org.mockito.Mockito.when;
  * and Geolocation should be ON
  */
 @SuppressWarnings("ResourceType")
+@SuppressLint("MissingPermission")
 public class LocationProviderTest extends BaseTest {
 
     private GeoCoordinates googelApiLocation;

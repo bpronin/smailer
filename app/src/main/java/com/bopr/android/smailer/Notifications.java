@@ -14,7 +14,7 @@ import com.bopr.android.smailer.ui.RecipientsSettingsActivity;
 import com.bopr.android.smailer.ui.ServerSettingsActivity;
 
 /**
- * Creates and shows specific notifications.
+ * Creates and shows notifications.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */

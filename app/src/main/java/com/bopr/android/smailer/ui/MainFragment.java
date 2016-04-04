@@ -54,6 +54,8 @@ import static com.bopr.android.smailer.util.Util.isEmpty;
 
 /**
  * Main settings fragment.
+ *
+ * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 public class MainFragment extends DefaultPreferenceFragment {
 
@@ -146,7 +148,7 @@ public class MainFragment extends DefaultPreferenceFragment {
             protected void onPermissionsDenied() {
                 Set<String> values = new HashSet<>(contentPreference.getValues());
                 values.remove(VAL_PREF_EMAIL_CONTENT_CONTACT);
-                triggersPreference.setValues(values);
+                contentPreference.setValues(values);
             }
         };
         checker.setPermissions(READ_CONTACTS);

@@ -3,7 +3,7 @@ package com.bopr.android.smailer;
 import android.location.Location;
 
 /**
- * Class GeoCoordinates.
+ * Geolocation coordinates.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */

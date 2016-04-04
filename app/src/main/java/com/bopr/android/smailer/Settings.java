@@ -15,7 +15,7 @@ import static android.os.Build.MANUFACTURER;
 import static android.os.Build.MODEL;
 
 /**
- * Settings.
+ * Application settings names and values.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */

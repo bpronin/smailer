@@ -20,7 +20,6 @@ import static com.bopr.android.smailer.util.Util.formatDuration;
 import static com.bopr.android.smailer.util.Util.formatLocation;
 import static com.bopr.android.smailer.util.Util.isEmpty;
 
-
 /**
  * Formats email subject and body.
  *

@@ -1,4 +1,4 @@
-package com.bopr.android.smailer.ui;
+package com.bopr.android.smailer.util.ui.preference;
 
 
 import android.annotation.TargetApi;
@@ -15,8 +15,9 @@ import static android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD;
 
 /**
  * A {@link Preference} for password input.
- * <p/>
  * This preference will store an encrypted string into the {@link android.content.SharedPreferences}.
+ *
+ * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 public class PasswordPreference extends EditTextPreference {
 

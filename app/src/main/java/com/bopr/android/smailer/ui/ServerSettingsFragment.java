@@ -17,6 +17,8 @@ import static com.bopr.android.smailer.util.Util.isEmpty;
 
 /**
  * Outgoing server settings activity's fragment.
+ *
+ * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 public class ServerSettingsFragment extends DefaultPreferenceFragment {
 

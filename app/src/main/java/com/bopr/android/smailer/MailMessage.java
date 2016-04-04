@@ -1,7 +1,7 @@
 package com.bopr.android.smailer;
 
 /**
- * Class MailMessage.
+ * Email message.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */

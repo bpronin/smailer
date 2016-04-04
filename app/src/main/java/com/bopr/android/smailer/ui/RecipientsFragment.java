@@ -1,6 +1,5 @@
 package com.bopr.android.smailer.ui;
 
-
 import android.app.ListFragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -8,7 +7,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +30,9 @@ import static com.bopr.android.smailer.Settings.getPreferences;
 import static com.bopr.android.smailer.util.TagFormatter.from;
 
 /**
- * Application activity log activity fragment.
+ * Recipients list fragment.
+ *
+ * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 public class RecipientsFragment extends ListFragment {
 

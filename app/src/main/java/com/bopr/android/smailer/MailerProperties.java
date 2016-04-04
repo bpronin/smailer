@@ -2,8 +2,6 @@ package com.bopr.android.smailer;
 
 import android.content.SharedPreferences;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
@@ -15,7 +13,7 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
 
 /**
- * Class MailerProperties.
+ * {@link Mailer} properties.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
@@ -28,9 +26,6 @@ public class MailerProperties {
     private String port;
     private Set<String> contentOptions;
     private String messageLocale;
-
-    public MailerProperties() {
-    }
 
     public MailerProperties(SharedPreferences preferences) {
         setUser(preferences.getString(KEY_PREF_SENDER_ACCOUNT, ""));
@@ -84,10 +79,6 @@ public class MailerProperties {
 
     public Set<String> getContentOptions() {
         return contentOptions;
-    }
-
-    public void setContentOptions(String... options) {
-        setContentOptions(new HashSet<>(Arrays.asList(options)));
     }
 
     public void setContentOptions(Set<String> contentOptions) {

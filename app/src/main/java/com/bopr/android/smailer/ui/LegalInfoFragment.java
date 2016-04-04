@@ -17,6 +17,8 @@ import java.util.List;
 
 /**
  * Legal info fragment. Displays list of used open source libs.
+ *
+ * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 public class LegalInfoFragment extends ListFragment {
 

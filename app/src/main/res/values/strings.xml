@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name" translatable="false">SMailer</string>
+    <string name="app_title" translatable="false">SMailer OS</string>
     <string name="google_app_id" translatable="false">376904884028</string>
 
     <string name="pref_title_enable">Send mail</string>

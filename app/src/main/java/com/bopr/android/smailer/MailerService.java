@@ -10,7 +10,7 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 
 /**
- * Class MailerService.
+ * Service that starts {@link Mailer}.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
@@ -87,6 +87,7 @@ public class MailerService extends IntentService {
         return message;
     }
 
+    @SuppressWarnings("deprecation")
     @Nullable
     private MailMessage parseSmsIntent(Intent intent) {
         SmsMessage[] messages;
@@ -97,7 +98,6 @@ public class MailerService extends IntentService {
             messages = new SmsMessage[pdus.length];
             for (int i = 0; i < pdus.length; i++) {
                 byte[] pdu = (byte[]) pdus[i];
-                //noinspection deprecation
                 messages[i] = SmsMessage.createFromPdu(pdu);
             }
         }

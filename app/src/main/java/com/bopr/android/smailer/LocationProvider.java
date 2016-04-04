@@ -28,7 +28,7 @@ import static android.location.LocationManager.PASSIVE_PROVIDER;
 import static com.bopr.android.smailer.PermissionsChecker.isPermissionsDenied;
 
 /**
- * Provides last device location.
+ * Provides device location.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */

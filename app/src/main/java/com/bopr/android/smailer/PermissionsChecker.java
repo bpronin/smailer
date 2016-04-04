@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
 
 import com.bopr.android.smailer.util.AndroidUtil;
@@ -13,7 +12,7 @@ import com.bopr.android.smailer.util.AndroidUtil;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 /**
- * Class PermissionsChecker.
+ * Permissions check utilities.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */

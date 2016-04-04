@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -21,7 +20,7 @@ import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.validator.EmailTextValidator;
 
 /**
- * Class EditEmailDialogFragment.
+ * Email editor dialog fragment.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
