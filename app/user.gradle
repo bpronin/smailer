@@ -3,7 +3,7 @@ import java.text.SimpleDateFormat
 /* user defined procedures */
 
 task updateReleaseInfo << {
-    def propFile = new File('src/main/assets/release.properties')
+    def propFile = new File(projectDir, 'src/main/assets/release.properties')
     def Properties props = new Properties()
     props.load(new FileInputStream(propFile))
 
