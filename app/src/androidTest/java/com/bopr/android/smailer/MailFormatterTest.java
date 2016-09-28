@@ -1,55 +1,42 @@
 package com.bopr.android.smailer;
 
-import android.content.ContentProviderOperation;
+import android.content.Context;
 
 import com.bopr.android.smailer.util.Util;
 
-import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import static android.provider.ContactsContract.AUTHORITY;
-import static android.provider.ContactsContract.CommonDataKinds.Phone;
-import static android.provider.ContactsContract.CommonDataKinds.StructuredName;
-import static android.provider.ContactsContract.Data;
-import static android.provider.ContactsContract.RawContacts;
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.READ_CONTACTS;
+import static android.content.pm.PackageManager.PERMISSION_DENIED;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CONTACT;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_LOCATION;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * {@link MailFormatter} tester.
+ *
+ * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 public class MailFormatterTest extends BaseTest {
+
+    private Context context;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
 
-        if (Contacts.getContactName(getContext(), "+12345678901") == null) {
-            ArrayList<ContentProviderOperation> ops = new ArrayList<>();
-
-            ops.add(ContentProviderOperation.newInsert(RawContacts.CONTENT_URI)
-                    .withValue(RawContacts.ACCOUNT_TYPE, null)
-                    .withValue(RawContacts.ACCOUNT_NAME, null)
-                    .build());
-
-            ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)
-                    .withValueBackReference(Data.RAW_CONTACT_ID, 0)
-                    .withValue(Data.MIMETYPE, StructuredName.CONTENT_ITEM_TYPE)
-                    .withValue(StructuredName.DISPLAY_NAME, "John Dou")
-                    .build());
-
-            ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)
-                    .withValueBackReference(Data.RAW_CONTACT_ID, 0)
-                    .withValue(Data.MIMETYPE, Phone.CONTENT_ITEM_TYPE)
-                    .withValue(Phone.NUMBER, "+12345678901")
-                    .withValue(Phone.TYPE, Phone.TYPE_MOBILE)
-                    .build());
-
-            getContext().getContentResolver().applyBatch(AUTHORITY, ops);
-        }
+        context = mock(Context.class);
+        when(context.getResources()).thenReturn(getContext().getResources());
+//        when(context.getContentResolver()).thenReturn(getContext().getContentResolver());
+//        when(context.getSharedPreferences(anyString(), anyInt())).thenReturn(mock(SharedPreferences.class));
     }
 
     /**
@@ -61,9 +48,23 @@ public class MailFormatterTest extends BaseTest {
         MailMessage message = new MailMessage("+70123456789", true, null, null, false,
                 true, "Email body text", null, false, null);
 
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
+        MailFormatter formatter = new MailFormatter(context, message);
 
         assertEquals("[SMailer] Incoming SMS from +70123456789", formatter.getSubject());
+    }
+
+    /**
+     * Check formatting outgoing sms email subject.
+     *
+     * @throws Exception when fails
+     */
+    public void testOutgoingSmsSubject() throws Exception {
+        MailMessage message = new MailMessage("+70123456789", false, null, null, false,
+                true, "Email body text", null, false, null);
+
+        MailFormatter formatter = new MailFormatter(context, message);
+
+        assertEquals("[SMailer] Outgoing SMS to +70123456789", formatter.getSubject());
     }
 
     /**
@@ -75,7 +76,7 @@ public class MailFormatterTest extends BaseTest {
         MailMessage message = new MailMessage("+70123456789", true, null, null, false,
                 false, null, null, false, null);
 
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
+        MailFormatter formatter = new MailFormatter(context, message);
 
         assertEquals("[SMailer] Incoming call from +70123456789", formatter.getSubject());
     }
@@ -89,7 +90,7 @@ public class MailFormatterTest extends BaseTest {
         MailMessage message = new MailMessage("+70123456789", false, null, null, false,
                 false, null, null, false, null);
 
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
+        MailFormatter formatter = new MailFormatter(context, message);
 
         assertEquals("[SMailer] Outgoing call to +70123456789", formatter.getSubject());
     }
@@ -103,7 +104,7 @@ public class MailFormatterTest extends BaseTest {
         MailMessage message = new MailMessage("+70123456789", false, null, null, true,
                 false, null, null, false, null);
 
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
+        MailFormatter formatter = new MailFormatter(context, message);
 
         assertEquals("[SMailer] Missed call from +70123456789", formatter.getSubject());
     }
@@ -117,7 +118,7 @@ public class MailFormatterTest extends BaseTest {
         MailMessage message = new MailMessage("+70123456789", true, null, null, false,
                 true, "Email body text", null, false, null);
 
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
+        MailFormatter formatter = new MailFormatter(context, message);
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
@@ -134,7 +135,7 @@ public class MailFormatterTest extends BaseTest {
         MailMessage message = new MailMessage("+70123456789", true, time, null, false,
                 true, "Email body text", null, false, null);
 
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
+        MailFormatter formatter = new MailFormatter(context, message);
         formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
@@ -154,7 +155,7 @@ public class MailFormatterTest extends BaseTest {
         MailMessage message = new MailMessage("+70123456789", true, null, null, false,
                 true, "Email body text", null, false, null);
 
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
+        MailFormatter formatter = new MailFormatter(context, message);
         formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
 
         String body = formatter.getBody();
@@ -169,11 +170,12 @@ public class MailFormatterTest extends BaseTest {
      * @throws Exception when fails
      */
     public void testFooterDeviceNameOption() throws Exception {
-        String deviceName = Settings.getDeviceName();
+        String deviceName = Settings.getDeviceName(getContext());
         MailMessage message = new MailMessage("+70123456789", true, null, null, false,
                 true, "Email body text", null, false, null);
 
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, deviceName);
+        MailFormatter formatter = new MailFormatter(context, message);
+        formatter.setDeviceName(deviceName);
         formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME));
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
@@ -184,18 +186,37 @@ public class MailFormatterTest extends BaseTest {
     }
 
     /**
+     * Check email body footer with {@link Settings#VAL_PREF_EMAIL_CONTENT_DEVICE_NAME} option
+     * switched on and no devise name specified.
+     *
+     * @throws Exception when fails
+     */
+    public void testFooterDeviceNameOptionNoValue() throws Exception {
+        MailMessage message = new MailMessage("+70123456789", true, null, null, false,
+                true, "Email body text", null, false, null);
+
+        MailFormatter formatter = new MailFormatter(context, message);
+        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME));
+
+        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
+                "Email body text" +
+                "</body></html>", formatter.getBody());
+    }
+
+    /**
      * Check email body footer with {@link Settings#VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME} and
      * {@link Settings#VAL_PREF_EMAIL_CONTENT_DEVICE_NAME} options switched on.
      *
      * @throws Exception when fails
      */
     public void testFooterDeviceNameTimeOption() throws Exception {
-        String deviceName = Settings.getDeviceName();
+        String deviceName = Settings.getDeviceName(getContext());
         long time = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         MailMessage message = new MailMessage("+70123456789", true, time, null, false,
                 true, "Email body text", null, false, null);
 
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, deviceName);
+        MailFormatter formatter = new MailFormatter(context, message);
+        formatter.setDeviceName(deviceName);
         formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
 
 
@@ -215,7 +236,7 @@ public class MailFormatterTest extends BaseTest {
         MailMessage message = new MailMessage("+70123456789", true, null, null, false, true,
                 "Email body text", new GeoCoordinates(60.555, 30.555), false, null);
 
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
+        MailFormatter formatter = new MailFormatter(context, message);
         formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_LOCATION));
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
@@ -228,7 +249,7 @@ public class MailFormatterTest extends BaseTest {
 
     /**
      * Check email body footer with {@link Settings#VAL_PREF_EMAIL_CONTENT_DEVICE_NAME} option
-     * switched on and ni location specified in message.
+     * switched on and no location specified in message.
      *
      * @throws Exception when fails
      */
@@ -236,13 +257,35 @@ public class MailFormatterTest extends BaseTest {
         MailMessage message = new MailMessage("+70123456789", true, null, null, false,
                 true, "Email body text", null, false, null);
 
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
+        MailFormatter formatter = new MailFormatter(context, message);
         formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_LOCATION));
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
                 "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                "Last known device location: unknown" +
+                "Last known device location: (location service disabled)" +
+                "</body></html>", formatter.getBody());
+    }
+
+    /**
+     * Check email body footer with {@link Settings#VAL_PREF_EMAIL_CONTENT_DEVICE_NAME} option
+     * switched on and no location permissions.
+     *
+     * @throws Exception when fails
+     */
+    public void testFooterNoLocationPermissions() throws Exception {
+        MailMessage message = new MailMessage("+70123456789", true, null, null, false,
+                true, "Email body text", null, false, null);
+
+        MailFormatter formatter = new MailFormatter(context, message);
+        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_LOCATION));
+        when(context.checkPermission(eq(ACCESS_COARSE_LOCATION), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED);
+        when(context.checkPermission(eq(ACCESS_FINE_LOCATION), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED);
+
+        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
+                "Email body text" +
+                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                "Last known device location: (no permission to read location)" +
                 "</body></html>", formatter.getBody());
     }
 
@@ -255,14 +298,35 @@ public class MailFormatterTest extends BaseTest {
         MailMessage message = new MailMessage("+12345678901", true, null, null, false,
                 true, "Email body text", null, false, null);
 
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(),
-                Contacts.getContactName(getContext(), "+12345678901"), null);
+        MailFormatter formatter = new MailFormatter(context, message);
+        formatter.setContactName("John Dou");
         formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_CONTACT));
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
                 "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
                 "Sender: <a href=\"tel:+12345678901\">+12345678901</a> (John Dou)" +
+                "</body></html>", formatter.getBody());
+    }
+
+    /**
+     * Check email body footer with {@link Settings#VAL_PREF_EMAIL_CONTENT_CONTACT} option switched on
+     * and no permission to read contacts.
+     *
+     * @throws Exception when fails
+     */
+    public void testContactNameNoPermission() throws Exception {
+        MailMessage message = new MailMessage("+12345678901", true, null, null, false,
+                true, "Email body text", null, false, null);
+
+        MailFormatter formatter = new MailFormatter(context, message);
+        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_CONTACT));
+        when(context.checkPermission(eq(READ_CONTACTS), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED);
+
+        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
+                "Email body text" +
+                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                "Sender: <a href=\"tel:+12345678901\">+12345678901</a> (no permission to read contacts)" +
                 "</body></html>", formatter.getBody());
     }
 
@@ -276,8 +340,7 @@ public class MailFormatterTest extends BaseTest {
         MailMessage message = new MailMessage("+12345678901", true, null, null, false,
                 true, "Email body text", null, false, null);
 
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(),
-                null, null);
+        MailFormatter formatter = new MailFormatter(context, message);
         formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_CONTACT));
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
@@ -298,7 +361,7 @@ public class MailFormatterTest extends BaseTest {
         MailMessage message = new MailMessage("+70123456789", true, start, end, false,
                 false, null, null, false, null);
 
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
+        MailFormatter formatter = new MailFormatter(context, message);
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "You had an incoming call of 1:01:05 duration." +
@@ -316,7 +379,7 @@ public class MailFormatterTest extends BaseTest {
         MailMessage message = new MailMessage("+70123456789", false, start, end, false,
                 false, null, null, false, null);
 
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
+        MailFormatter formatter = new MailFormatter(context, message);
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "You had an outgoing call of 1:01:10 duration." +
@@ -333,7 +396,7 @@ public class MailFormatterTest extends BaseTest {
         MailMessage message = new MailMessage("+70123456789", false, start, null, true,
                 false, null, null, false, null);
 
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null, null);
+        MailFormatter formatter = new MailFormatter(context, message);
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "You had a missed call." +
@@ -346,15 +409,16 @@ public class MailFormatterTest extends BaseTest {
      * @throws Exception when fails
      */
     public void testAllIncomingContentCall() throws Exception {
-        String deviceName = Settings.getDeviceName();
+        String deviceName = Settings.getDeviceName(getContext());
         long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
 
         MailMessage message = new MailMessage("+12345678901", true, start, end, false,
                 false, null, new GeoCoordinates(60.555, 30.555), true, null);
 
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(),
-                Contacts.getContactName(getContext(), "+12345678901"), deviceName);
+        MailFormatter formatter = new MailFormatter(context, message);
+        formatter.setContactName("John Dou");
+        formatter.setDeviceName(deviceName);
         formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
                 VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
 
@@ -376,15 +440,16 @@ public class MailFormatterTest extends BaseTest {
      * @throws Exception when fails
      */
     public void testAllOutgoingContentCall() throws Exception {
-        String deviceName = Settings.getDeviceName();
+        String deviceName = Settings.getDeviceName(getContext());
         long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
 
         MailMessage message = new MailMessage("+12345678901", false, start, end, false,
                 false, null, new GeoCoordinates(60.555, 30.555), true, null);
 
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(),
-                Contacts.getContactName(getContext(), "+12345678901"), deviceName);
+        MailFormatter formatter = new MailFormatter(context, message);
+        formatter.setContactName("John Dou");
+        formatter.setDeviceName(deviceName);
         formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
                 VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
 
@@ -406,15 +471,15 @@ public class MailFormatterTest extends BaseTest {
      * @throws Exception when fails
      */
     public void testAllContentMissedCall() throws Exception {
-        String deviceName = Settings.getDeviceName();
+        String deviceName = Settings.getDeviceName(getContext());
         long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
 
         MailMessage message = new MailMessage("+12345678901", true, start, end, true,
                 false, null, new GeoCoordinates(60.555, 30.555), true, null);
 
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(),
-                null, deviceName);
+        MailFormatter formatter = new MailFormatter(context, message);
+        formatter.setDeviceName(deviceName);
         formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
                 VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
 
@@ -436,7 +501,7 @@ public class MailFormatterTest extends BaseTest {
      * @throws Exception when fails
      */
     public void testNonDefaultLocale() throws Exception {
-        String deviceName = Settings.getDeviceName();
+        String deviceName = Settings.getDeviceName(getContext());
 
         TimeZone timeZone = TimeZone.getTimeZone("EST");
         GregorianCalendar calendar = new GregorianCalendar(timeZone);
@@ -449,8 +514,8 @@ public class MailFormatterTest extends BaseTest {
                 false, null, new GeoCoordinates(60.555, 30.555), true,
                 null);
 
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null,
-                deviceName);
+        MailFormatter formatter = new MailFormatter(context, message);
+        formatter.setDeviceName(deviceName);
         formatter.setLocale("ru_RU");
         formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
                 VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
@@ -484,15 +549,15 @@ public class MailFormatterTest extends BaseTest {
      * @throws Exception when fails
      */
     public void testInvalidLocale() throws Exception {
-        String deviceName = Settings.getDeviceName();
+        String deviceName = Settings.getDeviceName(getContext());
         long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
 
         MailMessage message = new MailMessage("+12345678901", true, start, end, true,
                 false, null, new GeoCoordinates(60.555, 30.555), true, null);
 
-        MailFormatter formatter = new MailFormatter(message, getContext().getResources(), null,
-                deviceName);
+        MailFormatter formatter = new MailFormatter(context, message);
+        formatter.setDeviceName(deviceName);
         formatter.setLocale("blah-blah"); /* should set default locale */
 
         formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,

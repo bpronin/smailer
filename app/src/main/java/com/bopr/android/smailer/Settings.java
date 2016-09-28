@@ -4,18 +4,20 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 
+import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.Util;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
 import static android.content.Context.MODE_PRIVATE;
-import static android.os.Build.MANUFACTURER;
-import static android.os.Build.MODEL;
 
 /**
- * Application settings names and values.
+ * Settings.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
@@ -33,12 +35,17 @@ public class Settings {
     public static final String KEY_PREF_EMAIL_TRIGGERS = "email_triggers";
     public static final String KEY_PREF_EMAIL_LOCALE = "email_locale";
     public static final String KEY_PREF_NOTIFY_SEND_SUCCESS = "notify_send_success";
+    public static final String KEY_PREF_MORE = "more";
+    public static final String KEY_PREF_TEST_MAIL_SERVER = "test_mail_server";
+    public static final String KEY_PREF_RESEND_UNSENT = "resend_unsent";
+    public static final String KEY_PREF_DEVICE_ALIAS = "device_alias";
 
     public static final String VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME = "time";
     public static final String VAL_PREF_EMAIL_CONTENT_DEVICE_NAME = "device_name";
     public static final String VAL_PREF_EMAIL_CONTENT_LOCATION = "location";
     public static final String VAL_PREF_EMAIL_CONTENT_CONTACT = "contact_name";
     public static final String VAL_PREF_TRIGGER_IN_SMS = "in_sms";
+    public static final String VAL_PREF_TRIGGER_OUT_SMS = "out_sms";
     public static final String VAL_PREF_TRIGGER_IN_CALLS = "in_calls";
     public static final String VAL_PREF_TRIGGER_OUT_CALLS = "out_calls";
 
@@ -59,8 +66,31 @@ public class Settings {
         return context.getSharedPreferences(PREFERENCES_STORAGE_NAME, MODE_PRIVATE);
     }
 
-    public static String getDeviceName() {
-        return Util.capitalize(MANUFACTURER) + " " + MODEL;
+    /**
+     * Loads default preferences values.
+     */
+    public static void loadDefaultPreferences(Context context) {
+        Map<String, Object> data = new HashMap<>();
+        data.put(KEY_PREF_SERVICE_ENABLED, true);
+        data.put(KEY_PREF_EMAIL_HOST, DEFAULT_HOST);
+        data.put(KEY_PREF_EMAIL_PORT, DEFAULT_PORT);
+        data.put(KEY_PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS);
+        data.put(KEY_PREF_EMAIL_CONTENT, DEFAULT_CONTENT);
+        data.put(KEY_PREF_EMAIL_LOCALE, DEFAULT_LOCALE);
+        data.put(KEY_PREF_RESEND_UNSENT, true);
+
+        AndroidUtil.putPreferencesOptional(getPreferences(context), data);
+    }
+
+    /**
+     * Returns device name.
+     */
+    public static String getDeviceName(Context context) {
+        String name = getPreferences(context).getString(KEY_PREF_DEVICE_ALIAS, "");
+        if (!Util.isEmpty(name)) {
+            return name;
+        }
+        return AndroidUtil.getDeviceName();
     }
 
     public static String getReleaseVersion(Context context) {
@@ -71,14 +101,26 @@ public class Settings {
         }
     }
 
-    public static String getReleaseBuild(Context context) {
+    public static BuildInfo getReleaseInfo(Context context) {
         Properties properties = new Properties();
         try {
             properties.load(context.getAssets().open("release.properties"));
-            return properties.getProperty("build_number");
+            return new BuildInfo(
+                    properties.getProperty("build_number"),
+                    properties.getProperty("build_time")
+            );
         } catch (IOException x) {
             throw new Error("Cannot read release properties", x);
         }
+    }
+
+    public static boolean isServiceEnabled(Context context) {
+        return getPreferences(context).getBoolean(KEY_PREF_SERVICE_ENABLED, false);
+    }
+
+    public static boolean isTriggerEnabled(Context context, String trigger) {
+        return getPreferences(context).getStringSet(KEY_PREF_EMAIL_TRIGGERS,
+                Collections.<String>emptySet()).contains(trigger);
     }
 
 /*
@@ -99,5 +141,17 @@ public class Settings {
         return uuid.toString();
     }
 */
+
+    public static class BuildInfo {
+
+        public final String number;
+        public final String time;
+
+        public BuildInfo(String number, String time) {
+            this.number = number;
+            this.time = time;
+        }
+
+    }
 
 }

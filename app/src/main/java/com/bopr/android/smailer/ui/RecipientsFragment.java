@@ -1,25 +1,23 @@
 package com.bopr.android.smailer.ui;
 
-import android.app.ListFragment;
+import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.Util;
-import com.bopr.android.smailer.util.ui.swipedismiss.SwipeDismissListViewTouchListener;
-import com.bopr.android.smailer.util.validator.EmailTextValidator;
+import com.bopr.android.smailer.util.ui.recycleview.DividerItemDecoration;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,14 +28,14 @@ import static com.bopr.android.smailer.Settings.getPreferences;
 import static com.bopr.android.smailer.util.TagFormatter.from;
 
 /**
- * Recipients list fragment.
+ * Recipients list activity fragment.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class RecipientsFragment extends ListFragment {
+public class RecipientsFragment extends Fragment {
 
-    private RecipientListAdapter listAdapter;
-    private ListView listView;
+    private ListAdapter listAdapter;
+    private RecyclerView listView;
     private FloatingActionButton addButton;
     private SharedPreferences preferences;
     private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
@@ -66,23 +64,24 @@ public class RecipientsFragment extends ListFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recipients, container, false);
 
-        listView = (ListView) view.findViewById(android.R.id.list);
-        SwipeDismissListViewTouchListener touchListener = new SwipeDismissListViewTouchListener(listView,
-                new SwipeDismissListViewTouchListener.DismissCallbacks() {
+        listView = (RecyclerView) view.findViewById(android.R.id.list);
+        listView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
 
-                    @Override
-                    public boolean canDismiss(int position) {
-                        return true;
-                    }
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
-                    @Override
-                    public void onDismiss(ListView listView, int[] reverseSortedPositions) {
-                        removeItems(reverseSortedPositions);
-                    }
-                }
-        );
-        listView.setOnTouchListener(touchListener);
-        listView.setOnScrollListener(touchListener.makeScrollListener());
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
+                                  RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder holder, int swipeDir) {
+                removeItems(new int[]{holder.getAdapterPosition()});
+            }
+
+        });
+        itemTouchHelper.attachToRecyclerView(listView);
 
         addButton = (FloatingActionButton) view.findViewById(R.id.button_add);
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -92,27 +91,52 @@ public class RecipientsFragment extends ListFragment {
             }
         });
 
-        loadItems();
+        view.post(new Runnable() {
+
+            @Override
+            public void run() {
+                addButton.show();
+            }
+        });
 
         return view;
     }
 
-    public void onShow() {
-        addButton.show();
+    @Override
+    public void onStart() {
+        super.onStart();
+        loadItems();
     }
 
-    @Override
-    public void onListItemClick(ListView listView, View view, int position, long id) {
-        editItem(position);
+    protected void updateEmptyText() {
+        View view = getView();
+        if (view != null) {
+            TextView text = (TextView) view.findViewById(R.id.text_empty);
+            if (listView.getAdapter().getItemCount() == 0) {
+                text.setVisibility(View.VISIBLE);
+            } else {
+                text.setVisibility(View.GONE);
+            }
+        }
     }
 
     private void loadItems() {
-        listAdapter = new RecipientListAdapter();
+        listAdapter = new ListAdapter();
+        listAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                updateEmptyText();
+            }
+        });
+
+        listView.setAdapter(listAdapter);
+
+        List<Item> items = new ArrayList<>();
         List<String> addresses = Util.listOf(preferences.getString(KEY_PREF_RECIPIENTS_ADDRESS, ""), ",", true);
         for (String address : addresses) {
-            listAdapter.addItem(new Item(address));
+            items.add(new Item(address));
         }
-        setListAdapter(listAdapter);
+        listAdapter.setItems(items);
     }
 
     private void persistItems() {
@@ -127,28 +151,19 @@ public class RecipientsFragment extends ListFragment {
     }
 
     private void addItem() {
-        showItemEditor(-1);
+        showItemEditor(null);
     }
 
-    private void editItem(int position) {
-        if (position != -1) {
-            showItemEditor(position);
+    private void editItem(Item item) {
+        if (item != null) {
+            showItemEditor(item);
         }
     }
 
     private void removeItems(int[] positions) {
         List<Item> savedItems = new ArrayList<>(listAdapter.getItems());
-        List<Item> removedItems = new ArrayList<>();
-
-        for (int position : positions) {
-            Item item = listAdapter.getItem(position);
-            listAdapter.removeItem(item);
-            removedItems.add(item);
-        }
-
+        List<Item> removedItems = listAdapter.removeItems(positions);
         persistItems();
-        listAdapter.notifyDataSetChanged();
-
         showUndoAction(removedItems, savedItems);
     }
 
@@ -166,9 +181,7 @@ public class RecipientsFragment extends ListFragment {
         return false;
     }
 
-    private void showItemEditor(final int position) {
-        final Item item = listAdapter.getItem(position);
-
+    private void showItemEditor(final Item item) {
         EditEmailDialogFragment dialog = new EditEmailDialogFragment();
         dialog.setTitle(item == null ? R.string.pref_dialog_title_add_recipient : R.string.pref_dialog_title_edit_recipient);
         dialog.setInitialValue(item == null ? null : item.address);
@@ -183,8 +196,7 @@ public class RecipientsFragment extends ListFragment {
                 } else if (!Util.isTrimEmpty(address)) {
                     /* note: if we rotated device reference to "this" is changed here */
                     Item newItem = new Item(address);
-                    listAdapter.replaceItem(position, newItem);
-                    listAdapter.notifyDataSetChanged();
+                    listAdapter.replaceItem(item, newItem);
                     persistItems();
                 }
             }
@@ -217,51 +229,48 @@ public class RecipientsFragment extends ListFragment {
 
     private class Item {
 
-        private final String address;
+        public final String address;
 
         public Item(String address) {
             this.address = address;
         }
     }
 
-    private class RecipientListAdapter extends BaseAdapter {
+    private class ListAdapter extends RecyclerView.Adapter<ItemViewHolder> {
 
-        private final LayoutInflater inflater;
         private final List<Item> items = new ArrayList<>();
 
-        public RecipientListAdapter() {
-            inflater = LayoutInflater.from(getActivity());
+        @Override
+        public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            LayoutInflater inflater = LayoutInflater.from(getActivity());
+            return new ItemViewHolder(inflater.inflate(R.layout.list_item_recipient, parent, false));
         }
 
         @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-            View view = convertView;
-            if (view == null) {
-                view = inflater.inflate(R.layout.list_item_recipient, parent, false);
-            }
+        public void onBindViewHolder(final ItemViewHolder holder, int position) {
+            final Item item = getItem(position);
+            holder.textView.setText(item.address);
+            holder.view.setOnClickListener(new View.OnClickListener() {
 
-            Item item = getItem(position);
-
-            TextView textView = (TextView) view.findViewById(R.id.text);
-            textView.setText(AndroidUtil.validatedUnderlinedText(getActivity(), item.address,
-                    EmailTextValidator.isValidValue(item.address)));
-
-            return view;
-        }
-
-        @Override
-        public int getCount() {
-            return items.size();
-        }
-
-        @Override
-        public Item getItem(int position) {
-            return position != -1 ? items.get(position) : null;
+                @Override
+                public void onClick(View v) {
+                    editItem(item);
+                }
+            });
         }
 
         @Override
         public long getItemId(int position) {
             return position;
+        }
+
+        @Override
+        public int getItemCount() {
+            return items.size();
+        }
+
+        public Item getItem(int position) {
+            return position != -1 ? items.get(position) : null;
         }
 
         public List<Item> getItems() {
@@ -274,22 +283,39 @@ public class RecipientsFragment extends ListFragment {
             notifyDataSetChanged();
         }
 
-        public void removeItem(Item item) {
-            items.remove(item);
-        }
-
-        public void addItem(Item item) {
-            items.add(item);
-        }
-
-        public void replaceItem(int position, Item item) {
-            if (position < 0) {
-                items.add(item);
-            } else {
-                items.set(position, item);
+        public List<Item> removeItems(int[] positions) {
+            List<Item> removedItems = new ArrayList<>();
+            for (int position : positions) {
+                Item item = getItem(position);
+                removedItems.add(item);
+                items.remove(item);
             }
+            notifyDataSetChanged();
+            return removedItems;
+        }
+
+        public void replaceItem(Item oldItem, Item newItem) {
+            int position = items.indexOf(oldItem);
+            if (position < 0) {
+                items.add(newItem);
+            } else {
+                items.set(position, newItem);
+            }
+            notifyDataSetChanged();
         }
 
     }
 
+    private class ItemViewHolder extends RecyclerView.ViewHolder {
+
+        public final View view;
+        public final TextView textView;
+
+        public ItemViewHolder(View view) {
+            super(view);
+            this.view = view;
+            textView = (TextView) view.findViewById(R.id.text);
+        }
+
+    }
 }

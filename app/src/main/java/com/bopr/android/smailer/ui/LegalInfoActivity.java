@@ -1,6 +1,5 @@
 package com.bopr.android.smailer.ui;
 
-
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,7 +9,7 @@ import android.support.annotation.NonNull;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class LegalInfoActivity extends DefaultActivity {
+public class LegalInfoActivity extends AppActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

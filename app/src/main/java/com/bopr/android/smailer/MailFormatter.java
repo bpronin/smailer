@@ -1,7 +1,9 @@
 package com.bopr.android.smailer;
 
+import android.content.Context;
 import android.content.res.Configuration;
-import android.content.res.Resources;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.bopr.android.smailer.util.TagFormatter;
 import com.bopr.android.smailer.util.Util;
@@ -36,18 +38,33 @@ public class MailFormatter {
             "place/{latitude}+{longitude}/@{latitude},{longitude}\">{location}</a>";
     private static final String PHONE_LINK_PATTERN = "<a href=\"tel:{phone}\">{phone}</a>";
 
-    private final Resources resources;
     private final MailMessage message;
-    private final String contactName;
-    private final String deviceName;
+    private Context context;
+    private String contactName;
+    private String deviceName;
     private Set<String> contentOptions;
     private Locale locale = Locale.getDefault();
 
-    public MailFormatter(MailMessage message, Resources resources, String contactName,
-                         String deviceName) {
-        this.resources = resources;
+    public MailFormatter(Context context, MailMessage message) {
         this.message = message;
+        this.context = context;
+    }
+
+    /**
+     * Sets contact name to be used in email body.
+     *
+     * @param contactName name
+     */
+    public void setContactName(String contactName) {
         this.contactName = contactName;
+    }
+
+    /**
+     * Sets device name to be used in email body.
+     *
+     * @param deviceName name
+     */
+    public void setDeviceName(String deviceName) {
         this.deviceName = deviceName;
     }
 
@@ -79,17 +96,18 @@ public class MailFormatter {
      *
      * @return email subject
      */
+    @NonNull
     public String getSubject() {
         Locale currentLocale = setupLocale();
-        try {
-            return from(SUBJECT_PATTERN, resources)
-                    .putResource("app_name", R.string.app_name)
-                    .put("source", getSourceText())
-                    .put("phone", message.getPhone())
-                    .format();
-        } finally {
-            restoreLocale(currentLocale);
-        }
+
+        String result = from(SUBJECT_PATTERN, context)
+                .putResource("app_name", R.string.app_name)
+                .put("source", getTriggerText())
+                .put("phone", message.getPhone())
+                .format();
+
+        restoreLocale(currentLocale);
+        return result;
     }
 
     /**
@@ -97,23 +115,25 @@ public class MailFormatter {
      *
      * @return email body
      */
+    @NonNull
     public String getBody() {
         Locale currentLocale = setupLocale();
-        try {
-            String footerText = getFooterText();
-            TagFormatter formatter = from(BODY_PATTERN)
-                    .put("message", getMessageText())
-                    .put("footer", footerText);
-            if (!isEmpty(footerText)) {
-                formatter.put("line", LINE);
-            }
-            return formatter.format();
-        } finally {
-            restoreLocale(currentLocale);
+
+        String footerText = getFooterText();
+        TagFormatter formatter = from(BODY_PATTERN)
+                .put("message", getMessageText())
+                .put("footer", footerText);
+        if (!isEmpty(footerText)) {
+            formatter.put("line", LINE);
         }
+        String result = formatter.format();
+
+        restoreLocale(currentLocale);
+        return result;
     }
 
-    private String getSourceText() {
+    @NonNull
+    private String getTriggerText() {
         int resourceId;
 
         if (message.isMissed()) {
@@ -132,12 +152,13 @@ public class MailFormatter {
             }
         }
 
-        return resources.getString(resourceId);
+        return context.getString(resourceId);
     }
 
+    @NonNull
     private String getMessageText() {
         if (message.isMissed()) {
-            return resources.getString(R.string.email_body_missed_call);
+            return context.getString(R.string.email_body_missed_call);
         } else if (message.isSms()) {
             return message.getText();
         } else {
@@ -147,12 +168,13 @@ public class MailFormatter {
             } else {
                 pattern = R.string.email_body_outgoing_call;
             }
-            return from(pattern, resources)
+            return from(pattern, context)
                     .put("duration", formatDuration(message.getCallDuration()))
                     .format();
         }
     }
 
+    @Nullable
     private String getFooterText() {
         if (contentOptions != null) {
             String callerText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_CONTACT) ? getCallerText() : null;
@@ -177,7 +199,7 @@ public class MailFormatter {
                 if (!isEmpty(callerText) || !isEmpty(locationText)) {
                     text.append("<br>");
                 }
-                text.append(from(R.string.email_body_sent, resources)
+                text.append(from(R.string.email_body_sent, context)
                         .put("device_name", deviceNameText)
                         .put("time", timeText));
             }
@@ -187,6 +209,7 @@ public class MailFormatter {
         return null;
     }
 
+    @NonNull
     private String getCallerText() {
         int resourceId;
         if (message.isSms()) {
@@ -199,27 +222,37 @@ public class MailFormatter {
             }
         }
 
-        String name = !isEmpty(this.contactName) ? this.contactName : resources.getString(R.string.email_body_unknown_contact);
-        return from(resourceId, resources)
+        String name = this.contactName;
+        if (isEmpty(name)) {
+            if (Contacts.isPermissionsDenied(context)) {
+                name = context.getString(R.string.email_body_unknown_contact_no_permission);
+            } else {
+                name = context.getString(R.string.email_body_unknown_contact);
+            }
+        }
+
+        return from(resourceId, context)
                 .put("phone", from(PHONE_LINK_PATTERN)
                         .put("phone", message.getPhone()))
                 .put("name", name)
                 .format();
     }
 
+    @Nullable
     private String getDeviceNameText() {
         if (!isEmpty(deviceName)) {
-            return " " + from(R.string.email_body_from, resources)
+            return " " + from(R.string.email_body_from, context)
                     .put("device_name", deviceName)
                     .format();
         }
         return null;
     }
 
+    @Nullable
     private String getTimeText() {
         if (message.getStartTime() != null) {
             DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
-            return " " + from(R.string.email_body_time, resources)
+            return " " + from(R.string.email_body_time, context)
                     .put("time", df.format(new Date(message.getStartTime())))
                     .format();
         }
@@ -229,7 +262,7 @@ public class MailFormatter {
     private String getLocationText() {
         GeoCoordinates location = message.getLocation();
         if (location != null) {
-            return from(R.string.email_body_location, resources)
+            return from(R.string.email_body_location, context)
                     .put("location", from(GOOGLE_MAP_LINK_PATTERN)
                             .put("latitude", location.getLatitude())
                             .put("longitude", location.getLongitude())
@@ -237,23 +270,25 @@ public class MailFormatter {
                             .format())
                     .format();
         } else {
-            return from(R.string.email_body_location, resources)
-                    .putResource("location", R.string.email_body_unknown_location)
+            return from(R.string.email_body_location, context)
+                    .putResource("location", Locator.isPermissionsDenied(context)
+                            ? R.string.email_body_unknown_location_no_permission
+                            : R.string.email_body_unknown_location)
                     .format();
         }
     }
 
     private Locale setupLocale() {
-        Configuration configuration = resources.getConfiguration();
+        Configuration configuration = context.getResources().getConfiguration();
         Locale locale = configuration.locale;
         restoreLocale(this.locale);
         return locale;
     }
 
     private void restoreLocale(Locale locale) {
-        Configuration configuration = resources.getConfiguration();
+        Configuration configuration = context.getResources().getConfiguration();
         configuration.locale = locale;
-        resources.updateConfiguration(configuration, null);
+        context.getResources().updateConfiguration(configuration, null);
     }
 
 }

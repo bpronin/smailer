@@ -1,5 +1,6 @@
 package com.bopr.android.smailer.ui;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -20,7 +21,7 @@ import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.validator.EmailTextValidator;
 
 /**
- * Email editor dialog fragment.
+ * Email editor dialog.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
@@ -52,6 +53,7 @@ public class EditEmailDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = getDialog();
         if (dialog == null) {
+            @SuppressLint("InflateParams")
             View view = LayoutInflater.from(getActivity()).inflate(R.layout.editor_email, null, false);
 
             EditText editText = (EditText) view.findViewById(R.id.edit_text_address);

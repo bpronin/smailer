@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name" translatable="false">SMailer</string>
-    <string name="app_title" translatable="false">SMailer OS</string>
-    <string name="google_app_id" translatable="false">376904884028</string>
-
     <string name="pref_title_enable">Send mail</string>
     <string name="pref_title_sender_account">Account</string>
-    <string name="pref_title_recipients">Recipients</string>
+    <string name="pref_title_recipients">Email recipients</string>
     <string name="pref_title_sender_password">Password</string>
     <string name="pref_title_server">Outgoing server</string>
     <string name="pref_title_outgoing_server">Outgoing email server</string>
@@ -17,7 +13,11 @@
     <string name="pref_title_content">Email content</string>
     <string name="pref_title_email_locale">Email message language</string>
     <string name="pref_title_notify_send_success">Notify of send</string>
+    <string name="pref_title_more">More</string>
+    <string name="pref_title_resend_unsent">Resend</string>
+    <string name="pref_title_device_alias">Device name</string>
 
+    <string name="pref_dialog_title_more">Additional settings</string>
     <string name="pref_dialog_title_email">Outgoing email address</string>
     <string name="pref_dialog_title_password">Outgoing email password</string>
     <string name="pref_dialog_title_email_content">Email message content</string>
@@ -34,32 +34,30 @@
     <string name="pref_description_when_to_send">When to send email</string>
     <string name="pref_description_what_email_contain">What should the email include</string>
     <string name="pref_description_notify_send_success">Display message when email successfully sent</string>
+    <string name="pref_description_resend_unsent">Try to resend unsent messages when connection is established</string>
+    <string name="pref_description_device_alias">Device name to be shown in email message (leave blank to use default)</string>
 
     <string name="notification_email_send_successfully">Email successfully sent</string>
     <string name="notification_error_mail_general">Unable to send email.</string>
-    <string name="notification_error_no_account">Account not specified.</string>
-    <string name="notification_error_no_host">Host not specified.</string>
-    <string name="notification_error_no_port">Port not specified.</string>
+    <string name="notification_error_no_account">No account specified.</string>
+    <string name="notification_error_no_host">No host specified.</string>
+    <string name="notification_error_no_port">No port specified.</string>
     <string name="notification_error_no_recipients">No recipients specified.</string>
-    <string name="notification_error_authentication">Username or password is incorrect.</string>
-    <string name="notification_error_connect">Couldn\'t connect to mail server.</string>
+    <string name="notification_error_authentication">Username and password not accepted.</string>
+    <string name="notification_error_connect">Couldn\'t open connection to mail server.</string>
     <string name="notification_error_no_connection">No internet connection.</string>
     <string name="notification_error_internal">Internal error.</string>
 
-    <string name="message_permission_denied_receive_sms">SMS read permission is denied. Trigger will be disabled.</string>
-    <string name="message_permission_denied_phone_state">Read phone state permission is denied. Trigger will be disabled.</string>
-    <string name="message_permission_denied_outgoing_call">Outgoing calls processing permission is denied. Trigger will be disabled.</string>
-    <string name="message_permission_denied_read_contacts">Contacts read permission is denied. Option will be disabled.</string>
-    <string name="message_permission_denied_location">Location read permission is denied. Option will be disabled.</string>
-    <string name="message_permission_rationale_receive_sms">SMS read permission is needed to send out email when SMS is received.</string>
-    <string name="message_permission_rationale_phone_state">Read phone state permission is needed to send out email when phone calls are received or made.</string>
-    <string name="message_permission_rationale_outgoing_call">Outgoing calls processing permission is needed to send out email when phone calls are made.</string>
-    <string name="message_permission_rationale_read_contacts">Contacts read permission is needed to add contact name into email message.</string>
-    <string name="message_permission_rationale_location">Location read permission is needed to add device location into email message.</string>
+    <string name="message_permissions_denied">Since permissions not granted some options are disabled.</string>
+    <string name="message_permission_rationale_receive_sms">Permission to {permission} is needed to send out email when SMS is received.</string>
+    <string name="message_permission_rationale_phone_state">Permission to {permission} is needed to send out email when phone calls are received or made.</string>
+    <string name="message_permission_rationale_outgoing_call">Permission to {permission} is needed to send out email when phone calls are made.</string>
+    <string name="message_permission_rationale_read_contacts">Permission to {permission} is needed to add contact name into email message.</string>
+    <string name="message_permission_rationale_coarse_location">Permission to {permission} is needed to add device location into email message.</string>
+    <string name="message_permission_rationale_fine_location">Permission to {permission} is needed to add device location into email message.</string>
 
     <string name="message_account_hint">Email address to send email from.</string>
     <string name="message_password_hint">Password of account to send email from.</string>
-    <string name="message_at_least_one_item_checked">At least one item should be selected.</string>
     <string name="message_item_removed">Item removed</string>
     <string name="message_items_removed">{count} item removed</string>
 
@@ -80,7 +78,9 @@
     <string name="email_body_caller">Caller: {phone} ({name})</string>
     <string name="email_body_called">Called: {phone} ({name})</string>
     <string name="email_body_unknown_contact">Unknown contact</string>
-    <string name="email_body_unknown_location">unknown</string>
+    <string name="email_body_unknown_contact_no_permission">no permission to read contacts</string>
+    <string name="email_body_unknown_location">(location service disabled)</string>
+    <string name="email_body_unknown_location_no_permission">(no permission to read location)</string>
 
     <string name="action_about">About</string>
     <string name="action_activity_log">Activity log</string>
@@ -92,9 +92,9 @@
     <string name="activity_log_empty_log">Log is empty</string>
     <string name="activity_log_ask_clear">Clear log?</string>
     <string name="activity_log_time_pattern" translatable="false">yyyy-MM-dd HH:mm:ss</string>
-    <string name="activity_log_message" translatable="false">{message} {phone}. {result}</string>
+    <string name="activity_log_message" translatable="false">{message} {phone}.</string>
     <string name="activity_log_message_send_email_failed" translatable="false">Send failed.</string>
-    <string name="activity_log_message_send_email_success" translatable="false">Send success.</string>
+    <string name="activity_log_message_send_email_success" translatable="false">Successfully sent.</string>
     <string name="activity_log_message_incoming_sms" translatable="false">Incoming SMS from</string>
     <string name="activity_log_message_outgoing_sms" translatable="false">Outgoing SMS to</string>
     <string name="activity_log_message_incoming_call" translatable="false">Incoming call from</string>
@@ -107,21 +107,20 @@
 
     <string name="recipient_hint_button_select_email_from_contacts">Select from contacts</string>
     <string name="recipient_message_already_exists">Recipient {name} already exists</string>
+    <string name="recipient_list_empty">List is empty</string>
+
+    <string name="server_test">Test connection</string>
+    <string name="server_test_success">Settings are valid</string>
+    <string name="server_testing">Validating server settings…</string>
 
     <string name="open_source_title">Open source</string>
 
     <string-array name="email_trigger_titles">
         <item>Incoming SMS</item>
+        <item>Outgoing SMS</item>
         <item>Incoming calls</item>
         <item>Outgoing calls</item>
         <item>Missed calls</item>
-    </string-array>
-
-    <string-array name="email_trigger_values" translatable="false">
-        <item>in_sms</item>
-        <item>in_calls</item>
-        <item>out_calls</item>
-        <item>missed_calls</item>
     </string-array>
 
     <string-array name="email_content_titles">
@@ -131,23 +130,10 @@
         <item>Device location</item>
     </string-array>
 
-    <string-array name="email_content_values" translatable="false">
-        <item>time</item>
-        <item>device_name</item>
-        <item>contact_name</item>
-        <item>location</item>
-    </string-array>
-
     <string-array name="email_locale_titles">
         <item>Default</item>
         <item>English</item>
         <item>Russian</item>
-    </string-array>
-
-    <string-array name="email_locale_values" translatable="false">
-        <item>default</item>
-        <item>en_US</item>
-        <item>ru_RU</item>
     </string-array>
 
 </resources>

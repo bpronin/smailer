@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <string name="app_name" translatable="false">SMailer</string>
+    <string name="google_app_id" translatable="false" tools:ignore="UnusedResources">376904884028</string>
+
+    <string-array name="email_trigger_values" translatable="false">
+        <item>in_sms</item>
+        <item>out_sms</item>
+        <item>in_calls</item>
+        <item>out_calls</item>
+        <item>missed_calls</item>
+    </string-array>
+
+    <string-array name="email_content_values" translatable="false">
+        <item>time</item>
+        <item>device_name</item>
+        <item>contact_name</item>
+        <item>location</item>
+    </string-array>
+
+    <string-array name="email_locale_values" translatable="false">
+        <item>default</item>
+        <item>en_US</item>
+        <item>ru_RU</item>
+    </string-array>
+
+</resources>

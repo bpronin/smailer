@@ -20,7 +20,7 @@ public class WavyUnderlineSpan implements LineBackgroundSpan {
     private int waveSize;
 
     public WavyUnderlineSpan(Context context) {
-        this(ContextCompat.getColor(context, R.color.errorForeground));
+        this(ContextCompat.getColor(context, R.color.errorLine));
     }
 
     public WavyUnderlineSpan(int color) {

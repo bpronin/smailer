@@ -2,10 +2,13 @@ package com.bopr.android.smailer;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
-import com.bopr.android.smailer.util.AndroidUtil;
 import com.sun.mail.util.MailConnectException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 import javax.mail.AuthenticationFailedException;
 import javax.mail.MessagingException;
@@ -18,6 +21,7 @@ import static com.bopr.android.smailer.Notifications.ACTION_SHOW_SERVER;
 import static com.bopr.android.smailer.Settings.KEY_PREF_NOTIFY_SEND_SUCCESS;
 import static com.bopr.android.smailer.Settings.getDeviceName;
 import static com.bopr.android.smailer.Settings.getPreferences;
+import static com.bopr.android.smailer.util.AndroidUtil.hasInternetConnection;
 import static com.bopr.android.smailer.util.Util.isEmpty;
 
 /**
@@ -27,7 +31,7 @@ import static com.bopr.android.smailer.util.Util.isEmpty;
  */
 public class Mailer {
 
-    private static final String TAG = "Mailer";
+    private static Logger log = LoggerFactory.getLogger("Mailer");
     private final Context context;
     private final MailTransport transport;
     private final Cryptor cryptor;
@@ -62,7 +66,9 @@ public class Mailer {
      * Sends out all previously unsent messages.
      */
     public void sendAllUnsent() {
-        for (MailMessage message : database.getUnsentMessages().getAll()) {
+        List<MailMessage> messages = database.getUnsentMessages().getAll();
+        log.debug("Resending " + messages.size() + " messages");
+        for (MailMessage message : messages) {
             doSend(message, true);
         }
     }
@@ -74,7 +80,7 @@ public class Mailer {
      * @param silent  if true do not show notifications
      */
     private void doSend(MailMessage message, boolean silent) {
-        Log.d(TAG, "Sending mail: " + message);
+        log.debug("Sending mail: " + message);
 
         MailerProperties pp = new MailerProperties(getPreferences(context));
         if (checkProperties(pp, message, silent) && checkConnection(message, silent)) {
@@ -99,9 +105,11 @@ public class Mailer {
 
     @NonNull
     private MailFormatter createFormatter(MailMessage message, MailerProperties mp) {
-        MailFormatter formatter = new MailFormatter(message, context.getResources(),
-                getContactName(context, message.getPhone()), getDeviceName());
+        MailFormatter formatter = new MailFormatter(context, message);
+        formatter.setContactName(getContactName(context, message.getPhone()));
+        formatter.setDeviceName(getDeviceName(context));
         formatter.setContentOptions(mp.getContentOptions());
+
         if (mp.getMessageLocale() != null) {
             formatter.setLocale(mp.getMessageLocale());
         }
@@ -127,7 +135,7 @@ public class Mailer {
     }
 
     private boolean checkConnection(MailMessage message, boolean silent) {
-        if (!AndroidUtil.hasInternetConnection(context)) {
+        if (!hasInternetConnection(context)) {
             failed(null, "No internet connection", message, R.string.notification_error_no_connection, ACTION_SHOW_CONNECTION, silent);
             return false;
         }
@@ -146,7 +154,7 @@ public class Mailer {
 
     private void failed(Throwable error, String details, MailMessage message, int notification,
                         int action, boolean silent) {
-        Log.e(TAG, "Send failed. " + message, error);
+        log.error("Send failed. " + message, error);
 
         message.setSent(false);
         message.setDetails(details);

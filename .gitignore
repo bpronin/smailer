@@ -1,10 +1,7 @@
-/app/keystore.jks
+/local.properties
+/app/local.gradle
 /.idea
-/app/src/debug/assets/debug.properties
 *.iml
 .gradle
-/local.properties
-.DS_Store
-/build
-/app/build
-/captures
+/app/build/
+/build/

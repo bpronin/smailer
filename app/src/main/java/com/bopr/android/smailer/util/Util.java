@@ -12,7 +12,7 @@ import java.util.Locale;
 import java.util.Set;
 
 /**
- * Utilities.
+ * Miscellaneous utilities.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
@@ -62,12 +62,12 @@ public class Util {
         if (Util.isEmpty(text)) {
             return text;
         }
-        return text.substring(0, 1).toUpperCase() + text.substring(1);
+        return text.substring(0, 1).toUpperCase(Locale.getDefault()) + text.substring(1);
     }
 
     public static String formatDuration(long duration) {
         long seconds = duration / 1000;
-        return String.format("%d:%02d:%02d", seconds / 3600, (seconds % 3600) / 60, seconds % 60);
+        return String.format(Locale.US, "%d:%02d:%02d", seconds / 3600, (seconds % 3600) / 60, seconds % 60);
     }
 
     /**
@@ -152,6 +152,10 @@ public class Util {
             }
         }
         return null;
+    }
+
+    public static String[] toArray(Collection<String> collection) {
+        return collection.toArray(new String[collection.size()]);
     }
 
 }

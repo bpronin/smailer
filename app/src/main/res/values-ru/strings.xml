@@ -3,7 +3,7 @@
 
     <string name="pref_title_enable">Отправлять почту</string>
     <string name="pref_title_sender_account">Учетная запись</string>
-    <string name="pref_title_recipients">Получатели</string>
+    <string name="pref_title_recipients">Получатели почты</string>
     <string name="pref_title_sender_password">Пароль</string>
     <string name="pref_title_server">Сервер исходящей почты</string>
     <string name="pref_title_outgoing_server">Сервер исходящей почты</string>
@@ -13,15 +13,21 @@
     <string name="pref_title_trigger">Условия</string>
     <string name="pref_title_email_locale">Язык почтового сообщения</string>
     <string name="pref_title_notify_send_success">Уведомлять об отправке</string>
+    <string name="pref_title_more">Дополнительно</string>
+    <string name="pref_dialog_title_more">Дополнительные параметры</string>
+    <string name="pref_title_device_alias">Имя устройства</string>
+    <string name="pref_title_resend_unsent">Повторная отправка</string>
 
     <string name="pref_dialog_title_email">Адрес исходящей почты</string>
     <string name="pref_dialog_title_password">Пароль исходящей почты</string>
     <string name="pref_dialog_title_email_content">Влючать в почтовое сообщение</string>
-    <string name="pref_dialog_title_trigger">Условия отправки почты</string>
+    <string name="pref_dialog_title_trigger">Условия для отправки почты</string>
     <string name="pref_dialog_title_email_locale">Язык почтового сообщения</string>
     <string name="pref_dialog_message_recipient">Почтовый адрес</string>
     <string name="pref_dialog_title_add_recipient">Добавление получателя</string>
     <string name="pref_dialog_title_edit_recipient">Редактирование получателя</string>
+    <string name="pref_description_resend_unsent">Заново отправлять неотправленные сообщения при появлении соединения</string>
+    <string name="pref_description_device_alias">Имя устройства в почтовом сообщении (оставьте пустым, чтобы использовать имя по умолчанию)</string>
 
     <string name="pref_description_service_on">Сервис включен</string>
     <string name="pref_description_service_off">Сервис отключен</string>
@@ -41,20 +47,16 @@
     <string name="notification_email_send_successfully">Почта устешно отправлена.</string>
     <string name="notification_error_no_connection">Невозможно отправить почту. Отсутствует соединение с интернетом.</string>
 
-    <string name="message_permission_denied_receive_sms">Чтение SMS запрещено. Настройка будет отключена.</string>
-    <string name="message_permission_denied_phone_state">Чтение состояния телефона запрещено. Настройка будет отключена.</string>
-    <string name="message_permission_denied_outgoing_call">Обработка исходящих звонков запрещена. Настройка будет отключена.</string>
-    <string name="message_permission_denied_read_contacts">Чтение контактов запрещено. Настройка будет отключена.</string>
-    <string name="message_permission_denied_location">Чтение местоположения запрещено. Настройка будет отключена.</string>
-    <string name="message_permission_rationale_receive_sms">Разрешение на чтение SMS необходимо, чтобы отправлять почтовое сообщение, когда приходит SMS.</string>
-    <string name="message_permission_rationale_phone_state">Разрешение на чтение состояния телефона необходимо, чтобы отправлять почтовое сообщение при входящих и исходящих вызовах.</string>
-    <string name="message_permission_rationale_outgoing_call">Разрешение на обработку исходящих звонков необходимо, чтобы отправлять почтовое сообщение при исходящих вызовах.</string>
-    <string name="message_permission_rationale_read_contacts">Разрешение на чтение контактов необходимо, чтобы отображать имя звонившего в почтовом сообщении.</string>
-    <string name="message_permission_rationale_location">Разрешение на чтение местоположения необходимо, чтобы отображать местоположение устройства в почтовом сообщении.</string>
+    <string name="message_permissions_denied">Некоторые настройки отключены, поскольку разрешения не получены.</string>
+    <string name="message_permission_rationale_receive_sms">Чтобы отправлять почтовое сообщение, когда приходит SMS, необходимо разрешение \"{permission}\".</string>
+    <string name="message_permission_rationale_phone_state">Чтобы отправлять почтовое сообщение при входящих и исходящих вызовах, необходимо разрешение \"{permission}\".</string>
+    <string name="message_permission_rationale_outgoing_call">Чтобы отправлять почтовое сообщение при исходящих вызовах, необходимо разрешение \"{permission}\".</string>
+    <string name="message_permission_rationale_read_contacts">Чтобы отображать имя звонившего в почтовом сообщении, необходимо разрешение \"{permission}\".</string>
+    <string name="message_permission_rationale_coarse_location">Чтобы отображать местоположение устройства в почтовом сообщении, необходимо разрешение \"{permission}\".</string>
+    <string name="message_permission_rationale_fine_location">Чтобы отображать местоположение устройства в почтовом сообщении, необходимо разрешение \"{permission}\".</string>
 
     <string name="message_password_hint">Пароль аккаунта, с которого будет отправляться почта.</string>
     <string name="message_account_hint">Адрес, с которого будет отправляться почта.</string>
-    <string name="message_at_least_one_item_checked">Хотябы один пункт должен быть отмечен.</string>
     <string name="message_item_removed">Запись удалена</string>
     <string name="message_items_removed">{count} записей удалено</string>
 
@@ -75,7 +77,9 @@
     <string name="email_body_missed_call">Пропущенный звонок.</string>
     <string name="email_body_outgoing_call">Исходящий звонок длительностью {duration}.</string>
     <string name="email_body_unknown_contact">Неизвестный контакт</string>
-    <string name="email_body_unknown_location">неизвестно</string>
+    <string name="email_body_unknown_location">(определение местоположения отключено)</string>
+    <string name="email_body_unknown_contact_no_permission">нет разрешения на чтение контактов</string>
+    <string name="email_body_unknown_location_no_permission">нет разрешения на определение местоположения</string>
 
     <string name="action_about">О приложении</string>
     <string name="action_activity_log">Журнал</string>
@@ -92,11 +96,17 @@
 
     <string name="recipient_hint_button_select_email_from_contacts">Выбрать из контактов</string>
     <string name="recipient_message_already_exists">Получатель {name} уже существует</string>
+    <string name="recipient_list_empty">Список пуст</string>
+
+    <string name="server_test">Проверить соединение</string>
+    <string name="server_testing">Проверка настроек сервера…</string>
+    <string name="server_test_success">Настройки проверены успешно</string>
 
     <string name="open_source_title">Открытый исходный код</string>
 
     <string-array name="email_trigger_titles">
         <item>Входящие SMS</item>
+        <item>Исходящие SMS</item>
         <item>Входящие звонки</item>
         <item>Исходящие звонки</item>
         <item>Пропущенные звонки</item>
@@ -106,7 +116,7 @@
         <item>Время отправления</item>
         <item>Название устройства</item>
         <item>Имя звонившего</item>
-        <item>Местоположение устройства</item>
+        <item>Местоположение</item>
     </string-array>
 
     <string-array name="email_locale_titles">

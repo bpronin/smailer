@@ -36,4 +36,9 @@
         android:singleLine="true"
         android:title="@string/pref_title_port"/>
 
+    <Preference
+        android:key="test_mail_server"
+        android:persistent="false"
+        android:widgetLayout="@layout/pref_test_mail_server"/>
+
 </PreferenceScreen>

@@ -3,8 +3,9 @@
     <color name="colorPrimary">#4D814F</color>
     <color name="colorPrimaryDark">#367735</color>
     <color name="colorAccent">#872E3D</color>
-    <color name="colorAccent1">#95878D</color>
+    <!--<color name="colorAccent1">#95878D</color>-->
     <color name="colorAccent2">#E2CEC0</color>
     <color name="dialogButtonText">@color/accent_material_light</color>
-    <color name="errorForeground">#e7291f</color>
+    <color name="errorForeground">#872E3D</color>
+    <color name="errorLine">#e7291f</color>
 </resources>

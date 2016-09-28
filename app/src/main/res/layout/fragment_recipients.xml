@@ -3,26 +3,48 @@
     android:id="@+id/main_content"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true">
 
-    <ListView
-        android:id="@android:id/list"
+    <FrameLayout
+        android:id="@+id/listContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentBottom="false"
         android:layout_alignParentStart="false"
-        android:layout_alignParentTop="false"/>
+        android:layout_alignParentTop="false">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@android:id/list"
+            android:name="com.bopr.android.smailer.ui.RecipientFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="LinearLayoutManager"
+            tools:context="com.bopr.android.smailer.ui.RecipientFragment"
+            tools:listitem="@layout/list_item_recipient"/>
+
+        <TextView
+            android:id="@+id/text_empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/recipient_list_empty"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="?android:attr/textColorSecondary"
+            android:visibility="gone"
+            />
+    </FrameLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/button_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
+        android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_plus"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_anchor="@android:id/list"
         app:layout_anchorGravity="bottom|right|end"/>
 

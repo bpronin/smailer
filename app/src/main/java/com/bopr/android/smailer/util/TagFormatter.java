@@ -1,5 +1,6 @@
 package com.bopr.android.smailer.util;
 
+import android.content.Context;
 import android.content.res.Resources;
 
 import java.util.LinkedHashMap;
@@ -29,8 +30,16 @@ public class TagFormatter {
         return new TagFormatter(format, resources);
     }
 
+    public static TagFormatter from(String format, Context context) {
+        return from(format, context.getResources());
+    }
+
     public static TagFormatter from(int formatResourceId, Resources resources) {
         return new TagFormatter(formatResourceId, resources);
+    }
+
+    public static TagFormatter from(int formatResourceId, Context context) {
+        return from(formatResourceId, context.getResources());
     }
 
     public TagFormatter(String format, Resources resources) {
