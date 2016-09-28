@@ -26,29 +26,19 @@ android {
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
     }
 
-//    sourceSets {
-//        androidTest {
-//            java {
-//                exclude '**/ui_automation/**'
-//            }
-//        }
-//    }
-
     lintOptions {
-//        abortOnError true
-        abortOnError false
+        abortOnError true
     }
 
     buildTypes {
         release {
-            minifyEnabled false
-//            minifyEnabled true
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
         }
         debug {
             multiDexEnabled true
-//            testCoverageEnabled = true
+            testCoverageEnabled = true
         }
     }
 
@@ -64,7 +54,7 @@ android {
     }
 
     packagingOptions {
-        pickFirst 'META-INF/LICENSE.txt' // picks the JavaMail license file
+        pickFirst 'META-INF/LICENSE.txt' // JavaMail license file
     }
 
 }
