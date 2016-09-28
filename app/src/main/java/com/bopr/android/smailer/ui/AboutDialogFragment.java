@@ -31,12 +31,16 @@ public class AboutDialogFragment extends DialogFragment {
 
         TextView versionLabel = (TextView) view.findViewById(R.id.label_message);
         versionLabel.setText(formatVersion());
-        versionLabel.setOnClickListener(new View.OnClickListener() {
+
+        versionLabel.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View v) {
+            public boolean onLongClick(View v) {
+                Settings.BuildInfo info = Settings.getReleaseInfo(getActivity());
                 dialogBuilder(getActivity())
-                        .setMessage("Build number: " + Settings.getReleaseBuild(getActivity()))
+                        .setTitle("Release info")
+                        .setMessage("Build number: " + info.number + "\nBuild time: " + info.time)
                         .show();
+                return true;
             }
         });
 

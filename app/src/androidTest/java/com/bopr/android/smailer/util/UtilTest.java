@@ -13,15 +13,14 @@ import static org.junit.Assert.assertArrayEquals;
 
 /**
  * {@link Util} tester.
+ *
+ * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 public class UtilTest extends BaseTest {
 
     public void testFormatLocation() throws Exception {
-        assertEquals("30d33m59sn, 60d33m59sw", Util.formatLocation(new GeoCoordinates(30.5664, 60.5664), "d",
-                "m",
-                "s", "n", "s",
-                "w",
-                "e"));
+        assertEquals("30d33m59sn, 60d33m59sw", Util.formatLocation(new GeoCoordinates(30.5664, 60.5664),
+                "d", "m", "s", "n", "s", "w", "e"));
     }
 
     public void testFormatLocation1() throws Exception {
@@ -36,6 +35,8 @@ public class UtilTest extends BaseTest {
     public void testCapitalize() throws Exception {
         assertEquals("Hello", Util.capitalize("hello"));
         assertEquals("Hello", Util.capitalize("Hello"));
+        assertEquals("", Util.capitalize(""));
+        assertEquals(null, Util.capitalize(null));
     }
 
     public void testFormatDuration() throws Exception {
@@ -47,6 +48,14 @@ public class UtilTest extends BaseTest {
         assertTrue(!Util.isEmpty("A"));
         assertTrue(Util.isEmpty(""));
         assertTrue(Util.isEmpty(null));
+    }
+
+    public void testIsTrimEmpty() throws Exception {
+        assertTrue(!Util.isTrimEmpty("A"));
+        assertTrue(Util.isTrimEmpty(""));
+        assertTrue(Util.isTrimEmpty(null));
+        assertTrue(!Util.isTrimEmpty(" A "));
+        assertTrue(Util.isTrimEmpty("    "));
     }
 
     public void testIsAllEmpty() throws Exception {
@@ -108,9 +117,23 @@ public class UtilTest extends BaseTest {
         }
     }
 
-    public void testLocale() throws Exception {
+    public void testToArray() throws Exception {
+        Set<String> set = Util.asSet("A", "B", "C");
+        String[] strings = Util.toArray(set);
+        assertArrayEquals(strings, new String[]{"A", "B", "C"});
+    }
+
+    public void testStringToLocale() throws Exception {
         assertEquals(new Locale("ru", "RU"), Util.stringToLocale("ru_RU"));
+        assertEquals(Locale.getDefault(), Util.stringToLocale("default"));
+        assertNull(Util.stringToLocale(""));
+        assertNull(Util.stringToLocale(null));
+    }
+
+    public void testLocaleToString() throws Exception {
         assertEquals("ru_RU", Util.localeToString(new Locale("ru", "RU")));
+        assertEquals("default", Util.localeToString(Locale.getDefault()));
+        assertNull(Util.localeToString(null));
     }
 
 }

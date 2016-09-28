@@ -1,79 +1,152 @@
 package com.bopr.android.smailer;
 
-import android.content.ContentProviderOperation;
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.provider.ContactsContract;
+import android.test.mock.MockContentProvider;
+import android.test.mock.MockContentResolver;
+import android.test.mock.MockCursor;
 
-import java.util.ArrayList;
+import java.util.List;
 
-import static android.provider.ContactsContract.AUTHORITY;
-import static android.provider.ContactsContract.CommonDataKinds.Phone;
-import static android.provider.ContactsContract.CommonDataKinds.StructuredName;
-import static android.provider.ContactsContract.Data;
+import static android.Manifest.permission.READ_CONTACTS;
+import static android.content.pm.PackageManager.PERMISSION_DENIED;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
- * {@link MailFormatter} tester.
+ * {@link Contacts} tester.
+ *
+ * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 public class ContactsTest extends BaseTest {
+
+    private Context context;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
+        context = mock(Context.class);
+        MockContentResolver resolver = new MockContentResolver();
+        resolver.addProvider(ContactsContract.AUTHORITY, new MockContentProvider(context) {
 
-        if (Contacts.getContactName(getContext(), "+12345678901") == null) {
-            ArrayList<ContentProviderOperation> ops = new ArrayList<>();
+            @Override
+            public Cursor query(Uri uri, String[] projection, String selection,
+                                String[] selectionArgs,
+                                String sortOrder) {
+                List<String> segments = uri.getPathSegments();
+                if (segments.get(0).equals("phone_lookup") && segments.get(1).equals("+12345678901")) {
+                    return new TestCursor("display_name", "John Dou");
+                } else if (segments.get(0).equals("data") && segments.get(1).equals("emails") && selection.equals("_id=75")) {
+                    return new TestCursor("data1", "johndou@mail.com");
+                } else {
+                    return super.query(uri, projection, selection, selectionArgs, sortOrder);
+                }
+            }
+        });
 
-            ops.add(ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
-                    .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, null)
-                    .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, null)
-                    .build());
+        when(context.getContentResolver()).thenReturn(resolver);
+        when(context.getResources()).thenReturn(getContext().getResources());
+    }
 
-            ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)
-                    .withValueBackReference(Data.RAW_CONTACT_ID, 0)
-                    .withValue(Data.MIMETYPE, StructuredName.CONTENT_ITEM_TYPE)
-                    .withValue(StructuredName.DISPLAY_NAME, "John Dou")
-                    .build());
+    /**
+     * Method {@link Contacts#getContactName(Context, String)} tester.
+     *
+     * @throws Exception when failed
+     */
+    public void testGetContactName() throws Exception {
+        assertEquals("John Dou", Contacts.getContactName(context, "+12345678901"));
+    }
 
-            ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)
-                    .withValueBackReference(Data.RAW_CONTACT_ID, 0)
-                    .withValue(Data.MIMETYPE, Phone.CONTENT_ITEM_TYPE)
-                    .withValue(Phone.NUMBER, "+12345678901")
-                    .withValue(Phone.TYPE, Phone.TYPE_MOBILE)
-                    .build());
+    /**
+     * Method {@link Contacts#getContactName(Context, String)} tester with no permission.
+     *
+     * @throws Exception when failed
+     */
+    public void testGetContactNameNoPermission() throws Exception {
+        when(context.checkPermission(eq(READ_CONTACTS), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED);
+        assertNull(Contacts.getContactName(context, "+12345678901"));
+    }
 
-            getContext().getContentResolver().applyBatch(AUTHORITY, ops);
+    /**
+     * Method {@link Contacts#getEmailAddress(Context, String)} tester.
+     *
+     * @throws Exception when failed
+     */
+    public void testGetEmailAddress() throws Exception {
+        assertEquals("johndou@mail.com", Contacts.getEmailAddress(context, "75"));
+    }
+
+    /**
+     * Method {@link Contacts#getEmailAddress(Context, String)} tester with no permission.
+     *
+     * @throws Exception when failed
+     */
+    public void testGetEmailAddressNoPermission() throws Exception {
+        when(context.checkPermission(eq(READ_CONTACTS), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED);
+        assertNull(Contacts.getEmailAddress(context, "75"));
+    }
+
+    /**
+     * Method {@link Contacts#getEmailAddressFromIntent(Context, Intent)} tester.
+     *
+     * @throws Exception when failed
+     */
+    public void testEmailFromIntent() throws Exception {
+        Intent intent = new Intent();
+        intent.setData(Uri.parse("content://com.android.contacts/data/75"));
+
+        String name = Contacts.getEmailAddressFromIntent(context, intent);
+        assertEquals("johndou@mail.com", name);
+    }
+
+    /**
+     * Method {@link Contacts#createPickContactEmailIntent()}} tester.
+     *
+     * @throws Exception when failed
+     */
+    public void testCreatePickContactEmailIntent() throws Exception {
+        Intent intent = Contacts.createPickContactEmailIntent();
+        assertEquals(Intent.ACTION_PICK, intent.getAction());
+        assertEquals(ContactsContract.CommonDataKinds.Email.CONTENT_TYPE, intent.getType());
+    }
+
+    private class TestCursor extends MockCursor {
+
+        private String columnName;
+        private String value;
+
+        public TestCursor(String columnName, String value) {
+            this.columnName = columnName;
+            this.value = value;
+        }
+
+        @Override
+        public int getColumnIndex(String columnName) {
+            return columnName.equals(this.columnName) ? 0 : -1;
+        }
+
+        @Override
+        public String getString(int columnIndex) {
+            return columnIndex == 0 ? value : null;
+        }
+
+        @Override
+        public int getCount() {
+            return 1;
+        }
+
+        @Override
+        public boolean moveToFirst() {
+            return true;
+        }
+
+        @Override
+        public void close() {
         }
     }
-
-    public void testContactName() throws Exception {
-        String name = Contacts.getContactName(getContext(), "+12345678901");
-        assertEquals("John Dou", name);
-    }
-
-//    public void testEmail() throws Exception {
-////        ContentResolver cr = getContext().getContentResolver();
-////        Cursor cursor = cr.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
-////        if (cursor != null) {
-////            while (cursor.moveToNext()) {
-////                String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
-////                String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-//////                Log.i("TEST", id + "  " + name);
-////
-////                Cursor emails = cr.query(Email.CONTENT_URI, null, Email.CONTACT_ID + " = " + id, null, null);
-////                if (emails != null) {
-////                    while (emails.moveToNext()) {
-////                        String emailId = emails.getString(emails.getColumnIndex(Email._ID));
-////                        String email = emails.getString(emails.getColumnIndex(Email.DATA));
-////                        Log.i("TEST", id + " " + name + " " + emailId + " " + email);
-////                    }
-////                    emails.close();
-////                }
-////
-////            }
-////            cursor.close();
-////        }
-//
-//        String name = Contacts.getEmailAddress(getContext(), "75");
-//        assertEquals("John Dou", name);
-//    }
-
 }

@@ -1,9 +1,13 @@
 package com.bopr.android.smailer;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.security.KeyPairGeneratorSpec;
 import android.security.keystore.KeyGenParameterSpec;
+import android.security.keystore.KeyProperties;
+import android.support.annotation.NonNull;
 import android.util.Base64;
 
 import com.bopr.android.smailer.util.Util;
@@ -18,22 +22,17 @@ import java.util.Calendar;
 import javax.crypto.Cipher;
 import javax.security.auth.x500.X500Principal;
 
-import static android.security.keystore.KeyProperties.DIGEST_SHA256;
-import static android.security.keystore.KeyProperties.DIGEST_SHA512;
-import static android.security.keystore.KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1;
-import static android.security.keystore.KeyProperties.PURPOSE_DECRYPT;
-import static android.security.keystore.KeyProperties.PURPOSE_ENCRYPT;
-
 /**
  * RSA encryption operations.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
+@SuppressWarnings("deprecation")
 public class Cryptor {
 
     private static final String KEY_ALIAS = "smailer";
     private static final String CIPHER_TRANSFORMATION = "RSA/ECB/PKCS1Padding";
-    //    private static final String CIPHER_TRANSFORMATION = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding";
+
     private final Context context;
 
     public Cryptor(Context context) {
@@ -46,6 +45,7 @@ public class Cryptor {
         }
 
         try {
+            @SuppressLint("GetInstance")
             Cipher cipher = Cipher.getInstance(CIPHER_TRANSFORMATION);
             cipher.init(Cipher.ENCRYPT_MODE, getKeys().getPublic());
             byte[] bytes = cipher.doFinal(s.getBytes());
@@ -61,6 +61,7 @@ public class Cryptor {
         }
 
         try {
+            @SuppressLint("GetInstance")
             Cipher cipher = Cipher.getInstance(CIPHER_TRANSFORMATION);
             cipher.init(Cipher.DECRYPT_MODE, getKeys().getPrivate());
             byte[] bytes = cipher.doFinal(Base64.decode(s, Base64.NO_WRAP));
@@ -71,42 +72,72 @@ public class Cryptor {
     }
 
     private KeyPair getKeys() throws Exception {
-        KeyStore ks = KeyStore.getInstance("AndroidKeyStore");
-        ks.load(null);
-
-        if (!ks.containsAlias(KEY_ALIAS)) {
-            generateKeys();
-        }
-        KeyStore.PrivateKeyEntry entry = (KeyStore.PrivateKeyEntry) ks.getEntry(KEY_ALIAS, null);
+        KeyStore keyStore = initKeystore(context);
+        KeyStore.PrivateKeyEntry entry = (KeyStore.PrivateKeyEntry) keyStore.getEntry(KEY_ALIAS, null);
         return new KeyPair(entry.getCertificate().getPublicKey(), entry.getPrivateKey());
     }
 
-    @SuppressWarnings("deprecation")
-    private void generateKeys() throws Exception {
-        AlgorithmParameterSpec spec;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            spec = new KeyGenParameterSpec.Builder(
-                    KEY_ALIAS, PURPOSE_ENCRYPT | PURPOSE_DECRYPT)
-                    .setDigests(DIGEST_SHA256, DIGEST_SHA512)
-                    .setEncryptionPaddings(ENCRYPTION_PADDING_RSA_PKCS1)
-                    .build();
-
-        } else {
-            Calendar start = Calendar.getInstance();
-            Calendar end = Calendar.getInstance();
-            end.add(Calendar.YEAR, 100);
-            spec = new KeyPairGeneratorSpec.Builder(context)
-                    .setAlias(KEY_ALIAS)
-                    .setSubject(new X500Principal("CN=" + KEY_ALIAS + ", O=Android Authority"))
-                    .setSerialNumber(BigInteger.ONE)
-                    .setStartDate(start.getTime())
-                    .setEndDate(end.getTime())
-                    .build();
+    public static boolean isKeystoreInitialized() {
+        try {
+            KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+            keyStore.load(null);
+            return keyStore.containsAlias(KEY_ALIAS);
+        } catch (Exception x) {
+            throw new Error("Unable init keystore", x);
         }
+    }
 
-        KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA", "AndroidKeyStore");
-        generator.initialize(spec);
-        generator.generateKeyPair();
+    @SuppressLint({"InlinedApi", "TrulyRandom"})
+    public static KeyStore initKeystore(Context context) {
+        try {
+            KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+            keyStore.load(null);
+
+            if (!keyStore.containsAlias(KEY_ALIAS)) {
+                AlgorithmParameterSpec spec;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    spec = getAlgorithmParameterSpec();
+                } else {
+                    spec = getAlgorithmParameterSpecLegacy(context);
+                }
+
+                KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA", "AndroidKeyStore");
+                generator.initialize(spec);
+                generator.generateKeyPair();
+            }
+            return keyStore;
+        } catch (Exception x) {
+            throw new Error("Unable init keystore", x);
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    @NonNull
+    private static AlgorithmParameterSpec getAlgorithmParameterSpec() {
+        AlgorithmParameterSpec spec;
+        spec = new KeyGenParameterSpec.Builder(
+                KEY_ALIAS, KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
+                .build();
+        return spec;
+    }
+
+    @NonNull
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+    private static AlgorithmParameterSpec getAlgorithmParameterSpecLegacy(Context context) {
+        AlgorithmParameterSpec spec;
+        Calendar start = Calendar.getInstance();
+        Calendar end = Calendar.getInstance();
+        end.add(Calendar.YEAR, 100);
+        spec = new KeyPairGeneratorSpec.Builder(context)
+                .setAlias(KEY_ALIAS)
+                .setSubject(new X500Principal("CN=" + KEY_ALIAS + ", O=Android Authority"))
+                .setSerialNumber(BigInteger.ONE)
+                .setStartDate(start.getTime())
+                .setEndDate(end.getTime())
+                .build();
+        return spec;
     }
 
 }

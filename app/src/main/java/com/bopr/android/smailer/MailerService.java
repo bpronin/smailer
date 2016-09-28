@@ -3,62 +3,69 @@ package com.bopr.android.smailer;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
-import android.provider.Telephony;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.telephony.SmsMessage;
-import android.util.Log;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Service that starts {@link Mailer}.
+ * Service that sends mail.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 public class MailerService extends IntentService {
 
-    private static final String TAG = "MailerService";
+    private static Logger log = LoggerFactory.getLogger("MailerService");
 
-    private static final String EXTRA_INCOMING = "direction";
-    private static final String EXTRA_MISSED = "missed";
-    private static final String EXTRA_PHONE_NUMBER = "phone_number";
-    private static final String EXTRA_START_TIME = "start_time";
-    private static final String EXTRA_END_TIME = "end_time";
-    private static final String ACTION_SMS = "sms";
-    private static final String ACTION_CALL = "call";
-    private static final String ACTION_RESEND = "resend";
+    public static final String EXTRA_INCOMING = "incoming";
+    public static final String EXTRA_MISSED = "missed";
+    public static final String EXTRA_PHONE_NUMBER = "phone_number";
+    public static final String EXTRA_START_TIME = "start_time";
+    public static final String EXTRA_END_TIME = "end_time";
+    public static final String EXTRA_TEXT = "text";
 
-    private LocationProvider locationProvider;
+    public static final String ACTION_SMS = "sms";
+    public static final String ACTION_CALL = "call";
+    public static final String ACTION_RESEND = "resend";
+
+    private Locator locator;
     private Mailer mailer;
 
     public MailerService() {
-        super(TAG);
+        super("MailerService");
+    }
+
+    protected void init(Mailer mailer, Locator locator) {
+        this.mailer = mailer;
+        this.locator = locator;
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
         Database database = new Database(this);
-        mailer = new Mailer(this, database);
-        locationProvider = new LocationProvider(this, database);
+        init(new Mailer(this, database), new Locator(this, database));
+        log.debug("Created");
     }
 
     @Override
     public void onStart(Intent intent, int startId) {
-        locationProvider.start();
+        locator.start();
         super.onStart(intent, startId);
-        Log.d(TAG, "Service started");
+        log.debug("Running");
     }
 
     @Override
     public void onDestroy() {
-        locationProvider.stop();
+        locator.stop();
         super.onDestroy();
-        Log.d(TAG, "Service destroyed");
+        log.debug("Destroyed");
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d(TAG, "Processing mailer service intent:" + intent);
+        log.debug("Processing mailer service intent:" + intent);
 
         switch (intent.getAction()) {
             case ACTION_SMS:
@@ -76,95 +83,81 @@ public class MailerService extends IntentService {
     @Nullable
     private MailMessage parseCallIntent(Intent intent) {
         MailMessage message = new MailMessage();
+        message.setSms(false);
         message.setPhone(intent.getStringExtra(EXTRA_PHONE_NUMBER));
         message.setIncoming(intent.getBooleanExtra(EXTRA_INCOMING, true));
-        message.setStartTime(intent.getLongExtra(EXTRA_START_TIME, 0));
-        message.setEndTime(intent.getLongExtra(EXTRA_END_TIME, 0));
         message.setMissed(intent.getBooleanExtra(EXTRA_MISSED, false));
-        message.setSms(false);
-        message.setLocation(locationProvider.getLocation());
+        message.setLocation(locator.getLocation());
+        message.setStartTime(intent.getLongExtra(EXTRA_START_TIME, 0));
+        if (intent.hasExtra(EXTRA_END_TIME)) {
+            message.setEndTime(intent.getLongExtra(EXTRA_END_TIME, 0));
+        }
 
         return message;
     }
 
-    @SuppressWarnings("deprecation")
     @Nullable
     private MailMessage parseSmsIntent(Intent intent) {
-        SmsMessage[] messages;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            messages = Telephony.Sms.Intents.getMessagesFromIntent(intent);
-        } else {
-            Object[] pdus = (Object[]) intent.getSerializableExtra("pdus");
-            messages = new SmsMessage[pdus.length];
-            for (int i = 0; i < pdus.length; i++) {
-                byte[] pdu = (byte[]) pdus[i];
-                messages[i] = SmsMessage.createFromPdu(pdu);
-            }
-        }
-
-        if (messages.length > 0) {
-            String text = "";
-            for (SmsMessage message : messages) {
-                text += message.getDisplayMessageBody();
-            }
-
-            MailMessage message = new MailMessage();
-            message.setPhone(messages[0].getDisplayOriginatingAddress());
-            message.setIncoming(true);
-            message.setStartTime(messages[0].getTimestampMillis());
-            message.setSms(true);
-            message.setText(text);
-            message.setLocation(locationProvider.getLocation());
-
-            return message;
-        }
-        return null;
+        MailMessage message = new MailMessage();
+        message.setSms(true);
+        message.setPhone(intent.getStringExtra(EXTRA_PHONE_NUMBER));
+        message.setIncoming(intent.getBooleanExtra(EXTRA_INCOMING, true));
+        message.setLocation(locator.getLocation());
+        message.setStartTime(intent.getLongExtra(EXTRA_START_TIME, 0));
+        message.setText(intent.getStringExtra(EXTRA_TEXT));
+        return message;
     }
 
-    public static void startForSms(Context context, Intent smsIntent) {
+    @NonNull
+    public static Intent createSmsIntent(Context context, String number, long time,
+                                         String text, boolean incoming) {
         Intent intent = new Intent(context, MailerService.class);
         intent.setAction(ACTION_SMS);
-        intent.fillIn(smsIntent, Intent.FILL_IN_DATA);
-
-        context.startService(intent);
+        intent.putExtra(EXTRA_PHONE_NUMBER, number);
+        intent.putExtra(EXTRA_INCOMING, incoming);
+        intent.putExtra(EXTRA_START_TIME, time);
+        intent.putExtra(EXTRA_TEXT, text);
+        return intent;
     }
 
-    public static void startForMissingCall(Context context, String number, long start) {
+    @NonNull
+    public static Intent createMissedCallIntent(Context context, String number, long start) {
         Intent intent = new Intent(context, MailerService.class);
         intent.setAction(ACTION_CALL);
         intent.putExtra(EXTRA_MISSED, true);
         intent.putExtra(EXTRA_PHONE_NUMBER, number);
         intent.putExtra(EXTRA_START_TIME, start);
-
-        context.startService(intent);
+        return intent;
     }
 
-    public static void startForIncomingCall(Context context, String number, long start, long end) {
+    @NonNull
+    public static Intent createIncomingCallIntent(Context context, String number, long start,
+                                                  long end) {
         Intent intent = new Intent(context, MailerService.class);
         intent.setAction(ACTION_CALL);
         intent.putExtra(EXTRA_PHONE_NUMBER, number);
         intent.putExtra(EXTRA_INCOMING, true);
         intent.putExtra(EXTRA_START_TIME, start);
         intent.putExtra(EXTRA_END_TIME, end);
-
-        context.startService(intent);
+        return intent;
     }
 
-    public static void startForOutgoingCall(Context context, String number, long start, long end) {
+    @NonNull
+    public static Intent createOutgoingCallIntent(Context context, String number, long start,
+                                                  long end) {
         Intent intent = new Intent(context, MailerService.class);
         intent.setAction(ACTION_CALL);
         intent.putExtra(EXTRA_PHONE_NUMBER, number);
         intent.putExtra(EXTRA_INCOMING, false);
         intent.putExtra(EXTRA_START_TIME, start);
         intent.putExtra(EXTRA_END_TIME, end);
-
-        context.startService(intent);
+        return intent;
     }
 
-    public static void startForResendUnsent(Context context) {
+    @NonNull
+    public static Intent createResendIntent(Context context) {
         Intent intent = new Intent(context, MailerService.class);
         intent.setAction(ACTION_RESEND);
-
-        context.startService(intent);
+        return intent;
     }
 }

@@ -12,7 +12,7 @@ import com.bopr.android.smailer.util.AndroidUtil;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 /**
- * Permissions check utilities.
+ * Responsible for permissions check.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */

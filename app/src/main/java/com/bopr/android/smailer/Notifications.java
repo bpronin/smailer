@@ -8,10 +8,7 @@ import android.content.Intent;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.NotificationCompat;
 
-import com.bopr.android.smailer.ui.LogActivity;
 import com.bopr.android.smailer.ui.MainActivity;
-import com.bopr.android.smailer.ui.RecipientsSettingsActivity;
-import com.bopr.android.smailer.ui.ServerSettingsActivity;
 
 /**
  * Creates and shows notifications.
@@ -83,13 +80,10 @@ public class Notifications {
     private PendingIntent createIntent(int action, long messageId) {
         switch (action) {
             case ACTION_SHOW_RECIPIENTS:
-                return createActivityIntent(RecipientsSettingsActivity.class, messageId);
             case ACTION_SHOW_SERVER:
-                return createActivityIntent(ServerSettingsActivity.class, messageId);
             case ACTION_SHOW_MAIN:
-                return createActivityIntent(MainActivity.class, messageId);
             case ACTION_SHOW_LOG:
-                return createActivityIntent(LogActivity.class, messageId);
+                return createActivityIntent(MainActivity.class, messageId);
             case ACTION_SHOW_CONNECTION:
                 Intent intent = new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS);
                 return PendingIntent.getActivities(context, 0, new Intent[]{intent}, PendingIntent.FLAG_UPDATE_CURRENT);

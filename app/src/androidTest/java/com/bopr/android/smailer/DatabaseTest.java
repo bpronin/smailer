@@ -5,6 +5,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * {@link Database} class tester.
+ *
+ * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 public class DatabaseTest extends BaseTest {
 

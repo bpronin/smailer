@@ -18,7 +18,7 @@
         android:id="@+id/action_debug"
         app:showAsAction="never"
         android:title="@string/action_debug"
-        android:onClick="onDebugMenuItemClick"
+        app:actionProviderClass="com.bopr.android.smailer.ui.DebugActionProvider"
         />
 
 </menu>

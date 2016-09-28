@@ -48,12 +48,4 @@ public class GeoCoordinates {
         return Double.compare(that.latitude, latitude) == 0 && Double.compare(that.longitude, longitude) == 0;
     }
 
-    @Override
-    public int hashCode() {
-        long temp = Double.doubleToLongBits(latitude);
-        int result = (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(longitude);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        return result;
-    }
 }

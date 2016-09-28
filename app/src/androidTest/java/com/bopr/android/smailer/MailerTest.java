@@ -8,9 +8,6 @@ import android.net.NetworkInfo;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.mail.AuthenticationFailedException;
 import javax.mail.MessagingException;
 
@@ -41,8 +38,9 @@ import static org.mockito.Mockito.when;
 
 /**
  * {@link Mailer} tester.
+ *
+ * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-@SuppressWarnings("ResourceType")
 public class MailerTest extends BaseTest {
 
     private Database database;
@@ -54,6 +52,7 @@ public class MailerTest extends BaseTest {
     private SharedPreferences preferences;
 
     @Override
+    @SuppressWarnings("ResourceType")
     protected void setUp() throws Exception {
         super.setUp();
 
@@ -103,9 +102,9 @@ public class MailerTest extends BaseTest {
      * @throws Exception when fails
      */
     public void testSend() throws Exception {
-        ArgumentsCollector inits = new ArgumentsCollector();
-        ArgumentsCollector sends = new ArgumentsCollector();
-        ArgumentsCollector errors = new ArgumentsCollector();
+        InvocationsCollector inits = new InvocationsCollector();
+        InvocationsCollector sends = new InvocationsCollector();
+        InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
@@ -125,9 +124,9 @@ public class MailerTest extends BaseTest {
      * @throws Exception when fails
      */
     public void testSendLocalized() throws Exception {
-        ArgumentsCollector inits = new ArgumentsCollector();
-        ArgumentsCollector sends = new ArgumentsCollector();
-        ArgumentsCollector errors = new ArgumentsCollector();
+        InvocationsCollector inits = new InvocationsCollector();
+        InvocationsCollector sends = new InvocationsCollector();
+        InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
@@ -149,9 +148,9 @@ public class MailerTest extends BaseTest {
      * @throws Exception when fails
      */
     public void testErrorNotConnected() throws Exception {
-        ArgumentsCollector inits = new ArgumentsCollector();
-        ArgumentsCollector sends = new ArgumentsCollector();
-        ArgumentsCollector errors = new ArgumentsCollector();
+        InvocationsCollector inits = new InvocationsCollector();
+        InvocationsCollector sends = new InvocationsCollector();
+        InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
@@ -172,9 +171,9 @@ public class MailerTest extends BaseTest {
      * @throws Exception when fails
      */
     public void testErrorEmptyUser() throws Exception {
-        ArgumentsCollector inits = new ArgumentsCollector();
-        ArgumentsCollector sends = new ArgumentsCollector();
-        ArgumentsCollector errors = new ArgumentsCollector();
+        InvocationsCollector inits = new InvocationsCollector();
+        InvocationsCollector sends = new InvocationsCollector();
+        InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
@@ -196,9 +195,9 @@ public class MailerTest extends BaseTest {
      * @throws Exception when fails
      */
     public void testErrorEmptyRecipients() throws Exception {
-        ArgumentsCollector inits = new ArgumentsCollector();
-        ArgumentsCollector sends = new ArgumentsCollector();
-        ArgumentsCollector errors = new ArgumentsCollector();
+        InvocationsCollector inits = new InvocationsCollector();
+        InvocationsCollector sends = new InvocationsCollector();
+        InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
@@ -220,9 +219,9 @@ public class MailerTest extends BaseTest {
      * @throws Exception when fails
      */
     public void testErrorEmptyHost() throws Exception {
-        ArgumentsCollector inits = new ArgumentsCollector();
-        ArgumentsCollector sends = new ArgumentsCollector();
-        ArgumentsCollector errors = new ArgumentsCollector();
+        InvocationsCollector inits = new InvocationsCollector();
+        InvocationsCollector sends = new InvocationsCollector();
+        InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
@@ -244,9 +243,9 @@ public class MailerTest extends BaseTest {
      * @throws Exception when fails
      */
     public void testErrorEmptyPort() throws Exception {
-        ArgumentsCollector inits = new ArgumentsCollector();
-        ArgumentsCollector sends = new ArgumentsCollector();
-        ArgumentsCollector errors = new ArgumentsCollector();
+        InvocationsCollector inits = new InvocationsCollector();
+        InvocationsCollector sends = new InvocationsCollector();
+        InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
@@ -268,9 +267,9 @@ public class MailerTest extends BaseTest {
      * @throws Exception when fails
      */
     public void testErrorAuthenticationFailedException() throws Exception {
-        ArgumentsCollector inits = new ArgumentsCollector();
-        ArgumentsCollector sends = new ArgumentsCollector();
-        ArgumentsCollector errors = new ArgumentsCollector();
+        InvocationsCollector inits = new InvocationsCollector();
+        InvocationsCollector sends = new InvocationsCollector();
+        InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
@@ -291,9 +290,9 @@ public class MailerTest extends BaseTest {
      * @throws Exception when fails
      */
     public void testErrorOtherExceptions() throws Exception {
-        ArgumentsCollector inits = new ArgumentsCollector();
-        ArgumentsCollector sends = new ArgumentsCollector();
-        ArgumentsCollector errors = new ArgumentsCollector();
+        InvocationsCollector inits = new InvocationsCollector();
+        InvocationsCollector sends = new InvocationsCollector();
+        InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
@@ -314,8 +313,8 @@ public class MailerTest extends BaseTest {
      * @throws Exception when fails
      */
     public void testClearNotificationExceptions() throws Exception {
-        ArgumentsCollector errors = new ArgumentsCollector();
-        ArgumentsCollector clears = new ArgumentsCollector();
+        InvocationsCollector errors = new InvocationsCollector();
+        InvocationsCollector clears = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(clears).when(notifications).hideMailError();
@@ -355,8 +354,8 @@ public class MailerTest extends BaseTest {
      * @throws Exception when fails
      */
     public void testSuccessNotification() throws Exception {
-        ArgumentsCollector errors = new ArgumentsCollector();
-        ArgumentsCollector successes = new ArgumentsCollector();
+        InvocationsCollector errors = new InvocationsCollector();
+        InvocationsCollector successes = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(successes).when(notifications).showMailSuccess(anyLong());
@@ -385,7 +384,7 @@ public class MailerTest extends BaseTest {
      * @throws Exception when fails
      */
     public void testSendUnsent() throws Exception {
-        ArgumentsCollector errors = new ArgumentsCollector();
+        InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doThrow(MessagingException.class).when(transport).send(anyString(), anyString(), anyString(), anyString());
@@ -417,33 +416,6 @@ public class MailerTest extends BaseTest {
         assertEquals(3, database.getMessages().getCount());
         assertEquals(0, database.getUnsentMessages().getCount());
         assertTrue(errors.isEmpty());
-    }
-
-    private class ArgumentsCollector implements Answer {
-
-        private final List<Object[]> arguments = new ArrayList<>();
-
-        @Override
-        public Object answer(InvocationOnMock invocation) throws Throwable {
-            arguments.add(invocation.getArguments());
-            return null;
-        }
-
-        public Object[] get(int index) {
-            return arguments.get(index);
-        }
-
-        public boolean isEmpty() {
-            return arguments.isEmpty();
-        }
-
-        public void clear() {
-            arguments.clear();
-        }
-
-        public int size() {
-            return arguments.size();
-        }
     }
 
 }

@@ -3,8 +3,6 @@ package com.bopr.android.smailer;
 import android.content.Context;
 import android.content.pm.PackageManager;
 
-import junit.framework.TestCase;
-
 import static android.Manifest.permission.BROADCAST_SMS;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.eq;
@@ -12,10 +10,17 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * {@link PermissionsCheckerTest} tester.
+ * {@link PermissionsChecker} tester.
+ *
+ * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class PermissionsCheckerTest extends TestCase {
+public class PermissionsCheckerTest extends BaseTest {
 
+    /**
+     * Tests {@link PermissionsChecker#isPermissionsDenied(Context, String...)} method.
+     *
+     * @throws Exception when failed
+     */
     public void testIsPermissionsDenied() throws Exception {
         Context context = mock(Context.class);
 

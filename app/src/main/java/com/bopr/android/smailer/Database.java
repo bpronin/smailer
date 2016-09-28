@@ -5,9 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.bopr.android.smailer.util.db.XCursor;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
@@ -18,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Database {
 
-    private static final String TAG = "Database";
+    private static Logger log = LoggerFactory.getLogger("Database");
 
     private static final int DB_VERSION = 1;
     private static final String DB_NAME = "smailer.sqlite";
@@ -145,7 +147,7 @@ public class Database {
             db.endTransaction();
         }
 
-        Log.d(TAG, "all messages removed");
+        log.debug("all messages removed");
     }
 
     /**
@@ -153,7 +155,7 @@ public class Database {
      * period of time has elapsed.
      */
     public void purge() {
-        Log.d(TAG, "purging");
+        log.debug("purging");
 
         SQLiteDatabase db = helper.getWritableDatabase();
         db.beginTransaction();

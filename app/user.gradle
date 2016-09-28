@@ -3,7 +3,7 @@ import java.text.SimpleDateFormat
 /* user defined procedures */
 
 task updateReleaseInfo << {
-    def propFile = new File('app/src/main/assets/release.properties')
+    def propFile = new File('src/main/assets/release.properties')
     def Properties props = new Properties()
     props.load(new FileInputStream(propFile))
 
@@ -20,10 +20,11 @@ task updateReleaseInfo << {
     println(':updateReleaseInfo current build=' + buildNumber);
 }
 
-assembleDebug.doLast {
+assemble.doLast {
     updateReleaseInfo.execute()
-}
-
-assembleRelease.doLast {
-    updateReleaseInfo.execute()
+    copy {
+        from new File(projectDir, 'build/outputs/apk/')
+        include '*-release.apk'
+        into release_path
+    }
 }

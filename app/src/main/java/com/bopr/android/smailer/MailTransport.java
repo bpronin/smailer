@@ -1,9 +1,13 @@
 package com.bopr.android.smailer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.Provider;
@@ -12,14 +16,18 @@ import java.util.Properties;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
+import javax.mail.AuthenticationFailedException;
 import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 /**
  * An utility class that sends email using SMTP transport.
@@ -27,6 +35,12 @@ import javax.mail.internet.MimeMessage;
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 public class MailTransport {
+
+    private static Logger log = LoggerFactory.getLogger("MailTransport");
+
+    public static final int CHECK_RESULT_OK = 0;
+    public static final int CHECK_RESULT_NOT_CONNECTED = 1;
+    public static final int CHECK_RESULT_AUTHENTICATION = 2;
 
     private Session session;
 
@@ -68,18 +82,57 @@ public class MailTransport {
      */
     public void send(String subject, String body, String sender,
                      String recipients) throws MessagingException {
+        send(subject, body, null, sender, recipients);
+    }
+
+    public void send(String subject, String body, URL attachment, String sender,
+                     String recipients) throws MessagingException {
         DataHandler handler = new DataHandler(new ByteArrayDataSource(body.getBytes(), false));
 
         MimeMessage message = new MimeMessage(session);
         message.setSender(new InternetAddress(sender));
         message.setSubject(subject);
         message.setDataHandler(handler);
+
+        if (attachment != null) {
+            MimeBodyPart bodyPart = new MimeBodyPart();
+            bodyPart.setDataHandler(new DataHandler(attachment));
+            Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(bodyPart);
+            message.setContent(multipart);
+        }
+
         if (recipients.indexOf(',') > 0) {
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipients));
         } else {
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipients));
         }
         Transport.send(message);
+    }
+
+    /**
+     * Checks connection to mail server.
+     */
+    public int checkConnection() {
+        try {
+            Transport transport = session.getTransport();
+            try {
+                transport.connect();
+                return CHECK_RESULT_OK;
+            } finally {
+                try {
+                    transport.close();
+                } catch (MessagingException x) {
+                    log.warn("closing transport failed", x);
+                }
+            }
+        } catch (AuthenticationFailedException x) {
+            log.debug("authentication failed", x);
+            return CHECK_RESULT_AUTHENTICATION;
+        } catch (MessagingException x) {
+            log.debug("connection failed", x);
+            return CHECK_RESULT_NOT_CONNECTED;
+        }
     }
 
     private static class JSSEProvider extends Provider {
