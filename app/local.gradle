@@ -1,0 +1,5 @@
+project.ext {
+    store_password = <production keystore password>
+    key_password = <production keypassword>
+    release_path =  <path to release repository>
+}
