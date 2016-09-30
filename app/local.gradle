@@ -1,5 +1,5 @@
 project.ext {
-    store_password = 'bella44Donna'
-    key_password = 'bella43Donna'
-    release_path =  'c:/Cloud/Google/Release'
+    store_password = '<production keystore password>'
+    key_password = '<production keypassword>'
+    release_path =  '<path to release repository>'
 }
