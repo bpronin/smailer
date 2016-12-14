@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply from: 'user.gradle'
-apply from: 'local.gradle'
 
 android {
     compileSdkVersion 24
@@ -9,10 +8,10 @@ android {
 
     signingConfigs {
         config {
-            keyAlias 'SMailer'
+            keyAlias 'sample'
             storeFile file('../etc/keystore.jks')
-            storePassword store_password
-            keyPassword key_password
+            storePassword 'sample'
+            keyPassword 'sample'
         }
     }
 
@@ -60,7 +59,7 @@ android {
 }
 
 repositories {
-    maven { url 'https://maven.java.net/content/groups/public/' }
+    maven {url 'https://maven.java.net/content/groups/public/'}
     maven { url 'https://maven.fabric.io/public' }
 }
 
@@ -73,15 +72,13 @@ dependencies {
 
     compile 'org.slf4j:slf4j-api:1.7.21'
     compile 'com.github.tony19:logback-android-core:1.1.1-6'
-    compile('com.github.tony19:logback-android-classic:1.1.1-6',
-            { exclude group: 'com.google.android' }
-    )
+    compile 'com.github.tony19:logback-android-classic:1.1.1-6'
 
     compile('com.crashlytics.sdk.android:crashlytics:2.6.3@aar') {
         transitive = true;
     }
 
-    freeCompile 'com.google.android.gms:play-services-ads:9.6.1'
+    freeCompile 'com.google.android.gms:play-services-ads:10.0.1'
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.robolectric:robolectric:3.0'
