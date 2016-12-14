@@ -1,5 +1,0 @@
-project.ext {
-    store_password = 'bella44Donna'
-    key_password = 'bella43Donna'
-    release_path = 'd:/Cloud/Google/Release/'
-}
