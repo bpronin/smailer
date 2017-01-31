@@ -528,7 +528,7 @@ public class MailFormatterTest extends BaseTest {
                 "Вам звонил: <a href=\"tel:+12345678901\">+12345678901</a> (Неизвестный контакт)<br>" +
                 "Последнее известное местоположение: <a href=\"https://www.google.com/maps/place/60.555+30.555/@60.555,30.555\">" +
                 "60&#176;33'17\"N, 30&#176;33'17\"W</a><br>" +
-                "Отправлено с " + deviceName + " 2 февраля 2016 г. 3:04:05 GMT-05:00" +
+                "Отправлено с устройства \"" + deviceName + "\" 2 февраля 2016 г. 3:04:05 GMT-05:00" +
                 "</body></html>", formatter.getBody());
 
         formatter.setLocale(null); /* should set default locale */
