@@ -22,9 +22,9 @@ task updateReleaseInfo << {
 
 assemble.doLast {
     updateReleaseInfo.execute()
-//    copy {
-//        from new File(projectDir, 'build/outputs/apk/')
-//        include '*-release.apk'
-//        into 'd:/Cloud/Google/Release/'
-//    }
+    copy {
+        from new File(projectDir, 'build/outputs/apk/')
+        include '*-release.apk'
+        into 'd:/Cloud/Google/Release/'
+    }
 }
