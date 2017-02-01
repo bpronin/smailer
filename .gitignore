@@ -4,3 +4,4 @@
 .gradle
 /app/build/
 /build/
+/app/local.gradle

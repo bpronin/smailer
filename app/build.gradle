@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply from: 'user.gradle'
+apply from: 'local.gradle'
 
 android {
     compileSdkVersion 25
@@ -10,8 +11,8 @@ android {
         config {
             keyAlias 'sample'
             storeFile file('../etc/keystore.jks')
-            storePassword 'sample'
-            keyPassword 'sample'
+            storePassword store_password
+            keyPassword key_password
         }
     }
 
