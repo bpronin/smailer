@@ -31,7 +31,8 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled true
+            /* NOTE: minification may break everything! do test app in release mode */
+//            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
         }
