@@ -24,6 +24,7 @@ import static android.content.Context.MODE_PRIVATE;
 public class Settings {
 
     public static final String PREFERENCES_STORAGE_NAME = "com.bopr.android.smailer_preferences";
+    public static final String DB_NAME = "smailer.sqlite";
     public static final String KEY_PREF_SERVICE_ENABLED = "service_enabled";
     public static final String KEY_PREF_SENDER_ACCOUNT = "sender_account";
     public static final String KEY_PREF_SENDER_PASSWORD = "sender_password";
@@ -38,8 +39,8 @@ public class Settings {
     public static final String KEY_PREF_MORE = "more";
     public static final String KEY_PREF_TEST_MAIL_SERVER = "test_mail_server";
     public static final String KEY_PREF_RESEND_UNSENT = "resend_unsent";
-    public static final String KEY_PREF_DEVICE_ALIAS = "device_alias";
 
+    public static final String KEY_PREF_DEVICE_ALIAS = "device_alias";
     public static final String VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME = "time";
     public static final String VAL_PREF_EMAIL_CONTENT_DEVICE_NAME = "device_name";
     public static final String VAL_PREF_EMAIL_CONTENT_LOCATION = "location";
@@ -47,8 +48,8 @@ public class Settings {
     public static final String VAL_PREF_TRIGGER_IN_SMS = "in_sms";
     public static final String VAL_PREF_TRIGGER_OUT_SMS = "out_sms";
     public static final String VAL_PREF_TRIGGER_IN_CALLS = "in_calls";
-    public static final String VAL_PREF_TRIGGER_OUT_CALLS = "out_calls";
 
+    public static final String VAL_PREF_TRIGGER_OUT_CALLS = "out_calls";
     public static final String VAL_PREF_TRIGGER_MISSED_CALLS = "missed_calls";
     public static final String DEFAULT_HOST = "smtp.gmail.com";
     public static final String DEFAULT_PORT = "465";
