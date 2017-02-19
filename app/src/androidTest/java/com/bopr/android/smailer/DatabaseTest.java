@@ -1,5 +1,7 @@
 package com.bopr.android.smailer;
 
+import org.junit.Test;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -24,6 +26,7 @@ public class DatabaseTest extends BaseTest {
      *
      * @throws Exception when failed
      */
+    @Test
     public void testDefaults() throws Exception {
         assertEquals(10000L, database.getCapacity());
         assertEquals(TimeUnit.DAYS.toMillis(7), database.getPurgePeriod());
@@ -34,6 +37,7 @@ public class DatabaseTest extends BaseTest {
      *
      * @throws Exception when failed
      */
+    @Test
     public void testAddGet() throws Exception {
         database.updateMessage(new MailMessage("1", true, 1000L, 0L, true, false, null, null, false, "Test 1"));
         database.updateMessage(new MailMessage("2", false, 2000L, 0L, false, true, null, null, false, null));
@@ -70,6 +74,7 @@ public class DatabaseTest extends BaseTest {
      *
      * @throws Exception when failed
      */
+    @Test
     public void testUpdateGet() throws Exception {
         MailMessage message = new MailMessage("1", true, 1000L, 2000L, false, true, "SMS text", new GeoCoordinates(10.5, 20.5), true, "Test 1");
         database.updateMessage(message);
@@ -126,6 +131,7 @@ public class DatabaseTest extends BaseTest {
      *
      * @throws Exception when failed
      */
+    @Test
     public void testClear() throws Exception {
         database.updateMessage(new MailMessage("1", true, 1000L, 2000L, false, true, "SMS text", new GeoCoordinates(10.5, 20.5), true, "Test 1"));
         database.updateMessage(new MailMessage("2", false, 2000L, 0L, false, true, null, null, false, null));
@@ -150,6 +156,7 @@ public class DatabaseTest extends BaseTest {
      *
      * @throws Exception when failed
      */
+    @Test
     public void testPurge() throws Exception {
         database.updateMessage(new MailMessage("1", true, 1000L, 2000L, false, true, "SMS text", new GeoCoordinates(10.5, 20.5), true, "Test 1"));
         database.updateMessage(new MailMessage("2", false, 2000L, 0L, false, true, null, null, false, null));
@@ -191,6 +198,7 @@ public class DatabaseTest extends BaseTest {
      *
      * @throws Exception when failed
      */
+    @Test
     public void testSaveLoadLocation() throws Exception {
         GeoCoordinates coordinates = new GeoCoordinates(30, 60);
         database.saveLastLocation(coordinates);
@@ -206,6 +214,7 @@ public class DatabaseTest extends BaseTest {
      *
      * @throws Exception when failed
      */
+    @Test
     public void testGetUnsentMessages() throws Exception {
         database.updateMessage(new MailMessage("1", true, 1000L, 0L, true, false, null, null, true, "Test 1"));
         database.updateMessage(new MailMessage("2", false, 2000L, 0L, false, true, null, null, true, null));

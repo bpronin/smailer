@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -53,7 +54,7 @@ public class MailerTest extends BaseTest {
 
     @Override
     @SuppressWarnings("ResourceType")
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
 
         preferences = mock(SharedPreferences.class);
@@ -101,6 +102,7 @@ public class MailerTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testSend() throws Exception {
         InvocationsCollector inits = new InvocationsCollector();
         InvocationsCollector sends = new InvocationsCollector();
@@ -123,6 +125,7 @@ public class MailerTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testSendLocalized() throws Exception {
         InvocationsCollector inits = new InvocationsCollector();
         InvocationsCollector sends = new InvocationsCollector();
@@ -147,6 +150,7 @@ public class MailerTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testErrorNotConnected() throws Exception {
         InvocationsCollector inits = new InvocationsCollector();
         InvocationsCollector sends = new InvocationsCollector();
@@ -170,6 +174,7 @@ public class MailerTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testErrorEmptyUser() throws Exception {
         InvocationsCollector inits = new InvocationsCollector();
         InvocationsCollector sends = new InvocationsCollector();
@@ -194,6 +199,7 @@ public class MailerTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testErrorEmptyRecipients() throws Exception {
         InvocationsCollector inits = new InvocationsCollector();
         InvocationsCollector sends = new InvocationsCollector();
@@ -218,6 +224,7 @@ public class MailerTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testErrorEmptyHost() throws Exception {
         InvocationsCollector inits = new InvocationsCollector();
         InvocationsCollector sends = new InvocationsCollector();
@@ -242,6 +249,7 @@ public class MailerTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testErrorEmptyPort() throws Exception {
         InvocationsCollector inits = new InvocationsCollector();
         InvocationsCollector sends = new InvocationsCollector();
@@ -266,6 +274,7 @@ public class MailerTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testErrorAuthenticationFailedException() throws Exception {
         InvocationsCollector inits = new InvocationsCollector();
         InvocationsCollector sends = new InvocationsCollector();
@@ -289,6 +298,7 @@ public class MailerTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testErrorOtherExceptions() throws Exception {
         InvocationsCollector inits = new InvocationsCollector();
         InvocationsCollector sends = new InvocationsCollector();
@@ -312,6 +322,7 @@ public class MailerTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testClearNotificationExceptions() throws Exception {
         InvocationsCollector errors = new InvocationsCollector();
         InvocationsCollector clears = new InvocationsCollector();
@@ -353,6 +364,7 @@ public class MailerTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testSuccessNotification() throws Exception {
         InvocationsCollector errors = new InvocationsCollector();
         InvocationsCollector successes = new InvocationsCollector();
@@ -383,6 +395,7 @@ public class MailerTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testSendUnsent() throws Exception {
         InvocationsCollector errors = new InvocationsCollector();
 

@@ -93,6 +93,13 @@ public class BaseActivityTest {
         return onDialog(withText(text));
     }
 
+//    @NonNull
+//    protected ViewInteraction onSnackBar(Matcher<View> matcher) {
+//        //return onView(allOf(withId(android.support.design.R.id.snackbar_text), matcher));
+//        return onView(withId(android.support.design.R.id.snackbar_text))
+//                .inRoot(withDecorView(not(is(rule.getActivity().getWindow().getDecorView()))));
+//    }
+
     @NonNull
     protected ViewInteraction onToolbar(Matcher<View> matcher) {
         return onView(allOf(isDescendantOfA(Matchers.<View>instanceOf(Toolbar.class)), matcher));

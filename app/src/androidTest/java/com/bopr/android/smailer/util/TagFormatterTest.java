@@ -4,6 +4,8 @@ import android.content.res.Resources;
 
 import com.bopr.android.smailer.BaseTest;
 
+import org.junit.Test;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -25,6 +27,7 @@ public class TagFormatterTest extends BaseTest {
         when(resources.getString(THREE)).thenReturn("THREE");
     }
 
+    @Test
     public void testPut() throws Exception {
         String text = TagFormatter.from("{one}, {two} and {three}")
                 .put("one", "ONE")
@@ -35,6 +38,7 @@ public class TagFormatterTest extends BaseTest {
         assertEquals("ONE, TWO and THREE", text);
     }
 
+    @Test
     public void testPutRemoveAbsent() throws Exception {
         String text = TagFormatter.from("{one}, {two} and {three}")
                 .put("one", "ONE")
@@ -44,6 +48,7 @@ public class TagFormatterTest extends BaseTest {
         assertEquals("ONE,  and THREE", text);
     }
 
+    @Test
     public void testPutRemoveBlank() throws Exception {
         String text = TagFormatter.from("{one}, {two} and {three}")
                 .put("one", "ONE")
@@ -54,6 +59,7 @@ public class TagFormatterTest extends BaseTest {
         assertEquals("ONE,  and THREE", text);
     }
 
+    @Test
     public void testList() throws Exception {
         String text = TagFormatter.from("{list}")
                 .putList("list", " ", "ONE", "TWO", "THREE")
@@ -62,6 +68,7 @@ public class TagFormatterTest extends BaseTest {
         assertEquals("ONE TWO THREE", text);
     }
 
+    @Test
     public void testListNullValue() throws Exception {
         String text = TagFormatter.from("{list}")
                 .putList("list", " ", "ONE", "TWO", null, "THREE")
@@ -70,6 +77,7 @@ public class TagFormatterTest extends BaseTest {
         assertEquals("ONE TWO THREE", text);
     }
 
+    @Test
     public void testPutFromResource() throws Exception {
         String text = TagFormatter.from(PATTERN_ONE, resources)
                 .put("one", "ONE")
@@ -80,6 +88,7 @@ public class TagFormatterTest extends BaseTest {
         assertEquals("ONE, TWO and THREE", text);
     }
 
+    @Test
     public void testPutResource() throws Exception {
         String text = TagFormatter.from(PATTERN_ONE, resources)
                 .put("one", "ONE")

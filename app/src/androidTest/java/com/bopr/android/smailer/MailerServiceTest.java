@@ -2,6 +2,8 @@ package com.bopr.android.smailer;
 
 import android.content.Intent;
 
+import org.junit.Test;
+
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -19,6 +21,7 @@ public class MailerServiceTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testStartResend() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
 
@@ -39,6 +42,7 @@ public class MailerServiceTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testStartSendIncomingSms() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
 
@@ -71,6 +75,7 @@ public class MailerServiceTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testStartSendOutgoingSms() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
 
@@ -102,6 +107,7 @@ public class MailerServiceTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testStartSendIncomingCall() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
 
@@ -134,6 +140,7 @@ public class MailerServiceTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testStartSendOutgoingCall() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
 
@@ -166,6 +173,7 @@ public class MailerServiceTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testStartSendMissedCall() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
 

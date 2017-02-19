@@ -7,6 +7,8 @@ import android.util.Base64;
 
 import com.bopr.android.smailer.util.Util;
 
+import org.junit.Test;
+
 import static com.bopr.android.smailer.MailerService.ACTION_SMS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SERVICE_ENABLED;
@@ -46,6 +48,7 @@ public class SmsReceiverTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testReceive() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
@@ -72,6 +75,7 @@ public class SmsReceiverTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testServiceDisabled() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
@@ -89,6 +93,7 @@ public class SmsReceiverTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testReceiveDisabled() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));

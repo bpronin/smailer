@@ -1,5 +1,7 @@
 package com.bopr.android.smailer;
 
+import org.junit.Test;
+
 import java.util.Properties;
 
 /**
@@ -15,6 +17,8 @@ public class MailTransportTest extends BaseTest {
 //        transport.send("test_subject", "test_body", "boris.i.pronin@gmail.com", "boprsoft.dev@gmail.com");
 //    }
 
+    /* NOTE: disable antivirus for this test */
+    @Test
     public void testCheckConnection() throws Exception {
         Properties properties = new Properties();
         properties.load(getContext().getAssets().open("debug.properties"));
