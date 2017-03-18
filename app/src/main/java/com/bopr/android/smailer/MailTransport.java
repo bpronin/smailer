@@ -114,6 +114,7 @@ public class MailTransport {
      * Checks connection to mail server.
      */
     public int checkConnection() {
+        log.trace("checking connection");
         try {
             Transport transport = session.getTransport();
             try {

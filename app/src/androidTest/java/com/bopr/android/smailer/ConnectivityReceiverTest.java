@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import org.junit.Test;
+
 import static com.bopr.android.smailer.MailerService.ACTION_RESEND;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SERVICE_ENABLED;
@@ -55,6 +57,7 @@ public class ConnectivityReceiverTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testReceiveConnectionOn() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
@@ -74,6 +77,7 @@ public class ConnectivityReceiverTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testReceiveConnectionOff() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
@@ -92,6 +96,7 @@ public class ConnectivityReceiverTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testReceiveDisabled() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
@@ -110,6 +115,7 @@ public class ConnectivityReceiverTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testReceiveServiceDisabled() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));

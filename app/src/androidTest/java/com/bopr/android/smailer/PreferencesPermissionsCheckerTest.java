@@ -2,6 +2,8 @@ package com.bopr.android.smailer;
 
 import android.content.Context;
 
+import org.junit.Test;
+
 /**
  * {@link PreferencesPermissionsChecker} tester.
  *
@@ -14,6 +16,7 @@ public class PreferencesPermissionsCheckerTest extends BaseTest {
      *
      * @throws Exception when failed
      */
+    @Test
     public void testIsPermissionsDenied() throws Exception {
 //        Log.i("TEST", Settings.getPermissionLabel(getContext(), RECEIVE_SMS));
 //        Log.i("TEST", Settings.getPermissionLabel(getContext(), READ_PHONE_STATE));

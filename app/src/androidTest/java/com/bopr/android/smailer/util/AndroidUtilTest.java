@@ -14,6 +14,8 @@ import com.bopr.android.smailer.BaseTest;
 import com.bopr.android.smailer.MailerService;
 import com.bopr.android.smailer.util.draw.WavyUnderlineSpan;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +42,7 @@ public class AndroidUtilTest extends BaseTest {
      *
      * @throws Exception when failed
      */
+    @Test
     public void testValidateText() throws Exception {
         Spannable spannable = AndroidUtil.validatedUnderlinedText(getContext(), "Invalid text", false);
 
@@ -58,6 +61,7 @@ public class AndroidUtilTest extends BaseTest {
      *
      * @throws Exception when failed
      */
+    @Test
     public void testValidatedColoredText() throws Exception {
         Spannable spannable = AndroidUtil.validatedColoredText(getContext(), "Invalid text", false);
         assertThat(spannable, instanceOf(SpannableString.class));
@@ -76,6 +80,7 @@ public class AndroidUtilTest extends BaseTest {
      * @throws Exception when failed
      */
     @SuppressWarnings("ResourceType")
+    @Test
     public void testHasInternetConnection() throws Exception {
         NetworkInfo info = mock(NetworkInfo.class);
 
@@ -96,6 +101,7 @@ public class AndroidUtilTest extends BaseTest {
     }
 
     @SuppressWarnings("ResourceType")
+    @Test
     public void testIsServiceRunning() throws Exception {
         Context context = mock(Context.class);
 
@@ -117,6 +123,7 @@ public class AndroidUtilTest extends BaseTest {
         assertFalse(AndroidUtil.isServiceRunning(context, MailerService.class));
     }
 
+    @Test
     public void testPutPreferencesOptional() throws Exception {
         Map<String, Object> data = new HashMap<>();
         data.put("BOOL", true);

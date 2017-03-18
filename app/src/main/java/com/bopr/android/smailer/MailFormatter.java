@@ -204,6 +204,11 @@ public class MailFormatter {
                         .put("time", timeText));
             }
 
+            if (!isEmpty(text)) {
+                text.insert(0, "<small>");
+                text.append("</small>");
+            }
+
             return text.toString();
         }
         return null;

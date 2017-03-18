@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply from: 'user.gradle'
+apply from: 'local.gradle'
 
 android {
     compileSdkVersion 25
@@ -10,8 +11,8 @@ android {
         config {
             keyAlias 'sample'
             storeFile file('../etc/keystore.jks')
-            storePassword 'sample'
-            keyPassword 'sample'
+            storePassword store_password
+            keyPassword key_password
         }
     }
 
@@ -19,8 +20,8 @@ android {
         applicationId 'com.bopr.android.smailer'
         minSdkVersion 18
         targetSdkVersion 25
-        versionCode 6
-        versionName '1.0.4'
+        versionCode 7
+        versionName '1.0.5'
         archivesBaseName = "smailer-${versionName}"
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
     }
@@ -31,7 +32,8 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled true
+            /* NOTE: minification may break everything! do test app in release mode */
+//            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
         }

@@ -7,6 +7,8 @@ import android.content.SharedPreferences;
 
 import com.bopr.android.smailer.util.Util;
 
+import org.junit.Test;
+
 import java.util.Collections;
 
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
@@ -50,6 +52,7 @@ public class BootReceiverTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testReceiveEnabled() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
@@ -73,6 +76,7 @@ public class BootReceiverTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testReceiveDisabled() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
@@ -93,6 +97,7 @@ public class BootReceiverTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testReceiveServiceDisabled() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));

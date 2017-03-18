@@ -7,6 +7,7 @@ import android.location.LocationManager;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 
+import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -34,7 +35,7 @@ public class LocatorTest extends BaseTest {
     private GeoCoordinates databaseLocation;
 
     @Override
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
 
         gpsLocation = new GeoCoordinates(10, 20);
@@ -93,6 +94,7 @@ public class LocatorTest extends BaseTest {
         return database;
     }
 
+    @Test
     public void testGetLocationGpsOn() throws Exception {
         Locator provider = new Locator(getContext(), createMockDatabase());
         provider.setLocationManager(createMockManager(true, true, true));
@@ -100,6 +102,7 @@ public class LocatorTest extends BaseTest {
         assertEquals(gpsLocation, provider.getLocation(1000));
     }
 
+    @Test
     public void testGetLocationNetworkOn() throws Exception {
         Locator provider = new Locator(getContext(), createMockDatabase());
         provider.setLocationManager(createMockManager(false, true, true));
@@ -107,6 +110,7 @@ public class LocatorTest extends BaseTest {
         assertEquals(networkLocation, provider.getLocation(1000));
     }
 
+    @Test
     public void testGetLocationPassiveOn() throws Exception {
         Locator provider = new Locator(getContext(), createMockDatabase());
         provider.setLocationManager(createMockManager(false, false, true));
@@ -114,6 +118,7 @@ public class LocatorTest extends BaseTest {
         assertEquals(lastPassiveLocation, provider.getLocation(1000));
     }
 
+    @Test
     public void testGetLocationAllOff() throws Exception {
         Locator provider = new Locator(getContext(), createMockDatabase());
         provider.setLocationManager(createMockManager(false, false, false));

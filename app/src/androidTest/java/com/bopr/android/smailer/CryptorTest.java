@@ -1,5 +1,7 @@
 package com.bopr.android.smailer;
 
+import org.junit.Test;
+
 /**
  * {@link Cryptor} tester.
  *
@@ -8,7 +10,7 @@ package com.bopr.android.smailer;
 public class CryptorTest extends BaseTest {
 
     @Override
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
 
 /*
@@ -29,6 +31,7 @@ public class CryptorTest extends BaseTest {
 */
     }
 
+    @Test
     public void testEncryptDecrypt() throws Exception {
         Cryptor cryptor = new Cryptor(getContext());
         String text = "the text";
@@ -40,6 +43,7 @@ public class CryptorTest extends BaseTest {
         assertEquals(text, decrypted);
     }
 
+    @Test
     public void testInvalidInput() throws Exception {
         Cryptor cryptor = new Cryptor(getContext());
 

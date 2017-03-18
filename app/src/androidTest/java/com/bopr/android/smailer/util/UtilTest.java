@@ -3,6 +3,8 @@ package com.bopr.android.smailer.util;
 import com.bopr.android.smailer.BaseTest;
 import com.bopr.android.smailer.GeoCoordinates;
 
+import org.junit.Test;
+
 import java.util.Locale;
 import java.util.Set;
 
@@ -18,20 +20,24 @@ import static org.junit.Assert.assertArrayEquals;
  */
 public class UtilTest extends BaseTest {
 
+    @Test
     public void testFormatLocation() throws Exception {
         assertEquals("30d33m59sn, 60d33m59sw", Util.formatLocation(new GeoCoordinates(30.5664, 60.5664),
                 "d", "m", "s", "n", "s", "w", "e"));
     }
 
+    @Test
     public void testFormatLocation1() throws Exception {
         assertEquals("30°33'59\"N, 60°33'59\"W", Util.formatLocation(new GeoCoordinates(30.5664, 60.5664)));
         assertEquals("30°33'59\"S, 60°33'59\"E", Util.formatLocation(new GeoCoordinates(-30.5664, -60.5664)));
     }
 
+    @Test
     public void testDecimalToDMS() throws Exception {
         assertEquals("90D33M59S", Util.decimalToDMS(90.5664, "D", "M", "S"));
     }
 
+    @Test
     public void testCapitalize() throws Exception {
         assertEquals("Hello", Util.capitalize("hello"));
         assertEquals("Hello", Util.capitalize("Hello"));
@@ -39,17 +45,20 @@ public class UtilTest extends BaseTest {
         assertEquals(null, Util.capitalize(null));
     }
 
+    @Test
     public void testFormatDuration() throws Exception {
         long duration = HOURS.toMillis(15) + MINUTES.toMillis(15) + SECONDS.toMillis(15);
         assertEquals("15:15:15", Util.formatDuration(duration));
     }
 
+    @Test
     public void testIsEmpty() throws Exception {
         assertTrue(!Util.isEmpty("A"));
         assertTrue(Util.isEmpty(""));
         assertTrue(Util.isEmpty(null));
     }
 
+    @Test
     public void testIsTrimEmpty() throws Exception {
         assertTrue(!Util.isTrimEmpty("A"));
         assertTrue(Util.isTrimEmpty(""));
@@ -58,6 +67,7 @@ public class UtilTest extends BaseTest {
         assertTrue(Util.isTrimEmpty("    "));
     }
 
+    @Test
     public void testIsAllEmpty() throws Exception {
         assertTrue(!Util.allIsEmpty("A", "B", "C"));
         assertTrue(!Util.allIsEmpty("", "B", "C"));
@@ -69,6 +79,7 @@ public class UtilTest extends BaseTest {
         assertTrue(Util.allIsEmpty(null, null, null));
     }
 
+    @Test
     public void testIsAnyEmpty() throws Exception {
         assertTrue(!Util.anyIsEmpty("A", "B", "C"));
         assertTrue(Util.anyIsEmpty("", "B", "C"));
@@ -80,12 +91,14 @@ public class UtilTest extends BaseTest {
         assertTrue(Util.anyIsEmpty(null, null, null));
     }
 
+    @Test
     public void testStringOf() throws Exception {
         assertEquals("1, 2, 3", Util.stringOf(", ", 1, 2, 3));
         assertEquals("1, null, null", Util.stringOf(", ", 1, null, null));
         assertEquals("", Util.stringOf(", "));
     }
 
+    @Test
     public void testListOf() throws Exception {
         assertArrayEquals(new String[]{"1", " 2", "3 "}, Util.listOf("1, 2,3 ", ",", false).toArray());
         assertArrayEquals(new String[]{"1", "2", "3"}, Util.listOf("1, 2, 3 ", ",", true).toArray());
@@ -101,6 +114,7 @@ public class UtilTest extends BaseTest {
         }
     }
 
+    @Test
     public void testAsSet() throws Exception {
         Set<String> set = Util.asSet("A", "B", "B", "C");
 
@@ -117,12 +131,14 @@ public class UtilTest extends BaseTest {
         }
     }
 
+    @Test
     public void testToArray() throws Exception {
         Set<String> set = Util.asSet("A", "B", "C");
         String[] strings = Util.toArray(set);
         assertArrayEquals(strings, new String[]{"A", "B", "C"});
     }
 
+    @Test
     public void testStringToLocale() throws Exception {
         assertEquals(new Locale("ru", "RU"), Util.stringToLocale("ru_RU"));
         assertEquals(Locale.getDefault(), Util.stringToLocale("default"));
@@ -130,6 +146,7 @@ public class UtilTest extends BaseTest {
         assertNull(Util.stringToLocale(null));
     }
 
+    @Test
     public void testLocaleToString() throws Exception {
         assertEquals("ru_RU", Util.localeToString(new Locale("ru", "RU")));
         assertEquals("default", Util.localeToString(Locale.getDefault()));

@@ -9,6 +9,8 @@ import android.test.mock.MockContentProvider;
 import android.test.mock.MockContentResolver;
 import android.test.mock.MockCursor;
 
+import org.junit.Test;
+
 import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -58,6 +60,7 @@ public class ContactsTest extends BaseTest {
      *
      * @throws Exception when failed
      */
+    @Test
     public void testGetContactName() throws Exception {
         assertEquals("John Dou", Contacts.getContactName(context, "+12345678901"));
     }
@@ -67,6 +70,7 @@ public class ContactsTest extends BaseTest {
      *
      * @throws Exception when failed
      */
+    @Test
     public void testGetContactNameNoPermission() throws Exception {
         when(context.checkPermission(eq(READ_CONTACTS), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED);
         assertNull(Contacts.getContactName(context, "+12345678901"));
@@ -77,6 +81,7 @@ public class ContactsTest extends BaseTest {
      *
      * @throws Exception when failed
      */
+    @Test
     public void testGetEmailAddress() throws Exception {
         assertEquals("johndou@mail.com", Contacts.getEmailAddress(context, "75"));
     }
@@ -86,6 +91,7 @@ public class ContactsTest extends BaseTest {
      *
      * @throws Exception when failed
      */
+    @Test
     public void testGetEmailAddressNoPermission() throws Exception {
         when(context.checkPermission(eq(READ_CONTACTS), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED);
         assertNull(Contacts.getEmailAddress(context, "75"));
@@ -96,6 +102,7 @@ public class ContactsTest extends BaseTest {
      *
      * @throws Exception when failed
      */
+    @Test
     public void testEmailFromIntent() throws Exception {
         Intent intent = new Intent();
         intent.setData(Uri.parse("content://com.android.contacts/data/75"));
@@ -109,6 +116,7 @@ public class ContactsTest extends BaseTest {
      *
      * @throws Exception when failed
      */
+    @Test
     public void testCreatePickContactEmailIntent() throws Exception {
         Intent intent = Contacts.createPickContactEmailIntent();
         assertEquals(Intent.ACTION_PICK, intent.getAction());

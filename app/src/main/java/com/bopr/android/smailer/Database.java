@@ -23,7 +23,6 @@ public class Database {
     private static Logger log = LoggerFactory.getLogger("Database");
 
     private static final int DB_VERSION = 1;
-    private static final String DB_NAME = "smailer.sqlite";
     private static final String TABLE_SYSTEM = "system_data";
     private static final String TABLE_MESSAGES = "messages";
     private static final String COLUMN_COUNT = "COUNT(*)";
@@ -51,7 +50,7 @@ public class Database {
     private final Context context;
 
     public Database(Context context) {
-        this(context, DB_NAME);
+        this(context, Settings.DB_NAME);
     }
 
     public Database(Context context, String name) {

@@ -73,7 +73,7 @@ public class Util {
     /**
      * Returns true if string is empty or null.
      */
-    public static boolean isEmpty(String s) {
+    public static boolean isEmpty(CharSequence s) {
         return s == null || s.length() == 0;
     }
 

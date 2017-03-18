@@ -1,5 +1,6 @@
-import java.text.SimpleDateFormat
+apply from: 'local.gradle'
 
+import java.text.SimpleDateFormat
 /* user defined procedures */
 
 task updateReleaseInfo << {
@@ -22,9 +23,11 @@ task updateReleaseInfo << {
 
 assemble.doLast {
     updateReleaseInfo.execute()
-    copy {
-        from new File(projectDir, 'build/outputs/apk/')
-        include '*-release.apk'
-        into 'd:/Cloud/Google/Release/'
+    if (project.hasProperty('upload_path')) {
+        copy {
+            from new File(projectDir, 'build/outputs/apk/')
+            include '*-release.apk'
+            into upload_path
+        }
     }
 }

@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 
 import com.bopr.android.smailer.util.Util;
 
+import org.junit.Test;
+
 import static android.content.Intent.ACTION_NEW_OUTGOING_CALL;
 import static android.telephony.TelephonyManager.ACTION_PHONE_STATE_CHANGED;
 import static android.telephony.TelephonyManager.EXTRA_INCOMING_NUMBER;
@@ -59,6 +61,7 @@ public class CallReceiverTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testServiceDisabled() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
@@ -78,6 +81,7 @@ public class CallReceiverTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testReceiveIncomingCall() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
@@ -120,6 +124,7 @@ public class CallReceiverTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testReceiveIncomingCallDisabled() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
@@ -154,6 +159,7 @@ public class CallReceiverTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testReceiveOutgoingCall() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
@@ -195,6 +201,7 @@ public class CallReceiverTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testReceiveOutgoingCallDisabled() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
@@ -228,6 +235,7 @@ public class CallReceiverTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testReceiveMissedCall() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
@@ -263,6 +271,7 @@ public class CallReceiverTest extends BaseTest {
      *
      * @throws Exception when fails
      */
+    @Test
     public void testReceiveMissedCallDisabled() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
