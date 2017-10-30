@@ -45,7 +45,7 @@
     <string name="notification_error_no_recipients">Не указан получатель.</string>
     <string name="notification_error_internal">Внутренняя ошибка.</string>
     <string name="notification_email_send_successfully">Почта устешно отправлена.</string>
-    <string name="notification_error_no_connection">Невозможно отправить почту. Отсутствует соединение с интернетом.</string>
+    <string name="notification_error_no_connection">Отсутствует соединение с интернетом.</string>
 
     <string name="message_permissions_denied">Некоторые настройки отключены, поскольку разрешения не получены.</string>
     <string name="message_permission_rationale_receive_sms">Чтобы отправлять почтовое сообщение, когда приходит SMS, необходимо разрешение \"{permission}\".</string>
