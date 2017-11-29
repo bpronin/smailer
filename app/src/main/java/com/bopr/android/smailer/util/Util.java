@@ -103,7 +103,7 @@ public class Util {
         return builder.toString();
     }
 
-    public static String stringOf(String divider, Object... values) {
+    public static <T> String stringOf(String divider, T... values) {
         return stringOf(divider, Arrays.asList(values));
     }
 

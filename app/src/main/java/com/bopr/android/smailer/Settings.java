@@ -3,16 +3,12 @@ package com.bopr.android.smailer;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-
+import android.support.annotation.NonNull;
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.Util;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -39,7 +35,10 @@ public class Settings {
     public static final String KEY_PREF_MORE = "more";
     public static final String KEY_PREF_TEST_MAIL_SERVER = "test_mail_server";
     public static final String KEY_PREF_RESEND_UNSENT = "resend_unsent";
-    public static final String KEY_PREF_FILTER = "message_filter";
+    public static final String KEY_PREF_FILTER_PATTERN = "message_filter_pattern";
+    public static final String KEY_PREF_FILTER_BLACK_LISTED = "message_filter_black_listed";
+    public static final String KEY_PREF_FILTER_BLACK_LIST = "message_filter_black_list";
+    public static final String KEY_PREF_FILTER_WHITE_LIST = "message_filter_white_list";
 
     public static final String KEY_PREF_DEVICE_ALIAS = "device_alias";
     public static final String VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME = "time";
@@ -123,6 +122,30 @@ public class Settings {
     public static boolean isTriggerEnabled(Context context, String trigger) {
         return getPreferences(context).getStringSet(KEY_PREF_EMAIL_TRIGGERS,
                 Collections.<String>emptySet()).contains(trigger);
+    }
+
+    public static void saveFilter(SmsFilter filter, Context context) {
+        SharedPreferences.Editor editor = getPreferences(context).edit();
+
+        editor.putString(KEY_PREF_FILTER_PATTERN, filter.getPattern());
+        editor.putBoolean(KEY_PREF_FILTER_BLACK_LISTED, filter.isBlackListed());
+        editor.putStringSet(KEY_PREF_FILTER_BLACK_LIST, filter.getBlackList());
+        editor.putStringSet(KEY_PREF_FILTER_WHITE_LIST, filter.getWhiteList());
+
+        editor.apply();
+    }
+
+    @NonNull
+    public static SmsFilter loadFilter(Context context) {
+        SharedPreferences preferences = getPreferences(context);
+        SmsFilter filter = new SmsFilter();
+
+        filter.setPattern(preferences.getString(KEY_PREF_FILTER_PATTERN, null));
+        filter.setBlackListed(preferences.getBoolean(KEY_PREF_FILTER_BLACK_LISTED, true));
+        filter.setBlackList(preferences.getStringSet(KEY_PREF_FILTER_BLACK_LIST, Collections.<String>emptySet()));
+        filter.setWhiteList(preferences.getStringSet(KEY_PREF_FILTER_WHITE_LIST, Collections.<String>emptySet()));
+
+        return filter;
     }
 
 /*

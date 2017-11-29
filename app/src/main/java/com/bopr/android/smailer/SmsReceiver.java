@@ -20,7 +20,6 @@ public class SmsReceiver extends BroadcastReceiver {
     private static Logger log = LoggerFactory.getLogger("SmsReceiver");
     public static final String SMS_RECEIVED_ACTION = "android.provider.Telephony.SMS_RECEIVED";
     private final SmsParser parser = new SmsParser();
-    private final SmsFilter filter = new SmsFilter();
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -29,8 +28,7 @@ public class SmsReceiver extends BroadcastReceiver {
                 && isTriggerEnabled(context, VAL_PREF_TRIGGER_IN_SMS)) {
 
             Sms sms = parser.parse(intent);
-
-            filter.setPattern(getPreferences(context).getString(Settings.KEY_PREF_FILTER, null));
+            SmsFilter filter = Settings.loadFilter(context);
             if (filter.accept(sms)) {
                 log.debug("Processing incoming sms");
                 context.startService(createSmsIntent(context, sms.getPhone(), sms.getTime(), sms.getText(), true));
