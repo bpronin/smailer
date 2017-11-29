@@ -2,14 +2,7 @@ package com.bopr.android.smailer.util;
 
 import com.bopr.android.smailer.GeoCoordinates;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Miscellaneous utilities.
@@ -156,6 +149,10 @@ public class Util {
 
     public static String[] toArray(Collection<String> collection) {
         return collection.toArray(new String[collection.size()]);
+    }
+
+    public static boolean equals(Object a, Object b) {
+        return (a == b) || (a != null && a.equals(b));
     }
 
 }

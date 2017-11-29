@@ -4,9 +4,10 @@ apply from: 'user.gradle'
 apply from: 'local.gradle'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.2'
-
+    compileSdkVersion 26
+//    buildToolsVersion '25.0.2'
+//    compileSdkVersion 27
+    buildToolsVersion '27.0.1'
     signingConfigs {
         config {
             keyAlias 'sample'
@@ -19,7 +20,7 @@ android {
     defaultConfig {
         applicationId 'com.bopr.android.smailer'
         minSdkVersion 18
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 7
         versionName '1.0.5'
         archivesBaseName = "smailer-${versionName}"
@@ -43,10 +44,14 @@ android {
         }
     }
 
+    flavorDimensions "main"
+
     productFlavors {
         free {
+            dimension "main"
         }
         paid {
+            dimension "main"
         }
     }
 
@@ -79,7 +84,7 @@ dependencies {
     }
 
     compile('com.crashlytics.sdk.android:crashlytics:2.6.3@aar') {
-        transitive = true;
+        transitive = true
     }
 
     freeCompile 'com.google.android.gms:play-services-ads:10.0.1'

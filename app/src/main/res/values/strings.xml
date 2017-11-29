@@ -9,7 +9,7 @@
     <string name="pref_title_outgoing_server">Outgoing email server</string>
     <string name="pref_title_host">Host</string>
     <string name="pref_title_port">Port</string>
-    <string name="pref_title_trigger">Triggers</string>
+    <string name="pref_title_trigger">Filter</string>
     <string name="pref_title_content">Email content</string>
     <string name="pref_title_email_locale">Email message language</string>
     <string name="pref_title_notify_send_success">Notify of send</string>

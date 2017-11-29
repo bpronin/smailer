@@ -39,6 +39,7 @@ public class Settings {
     public static final String KEY_PREF_MORE = "more";
     public static final String KEY_PREF_TEST_MAIL_SERVER = "test_mail_server";
     public static final String KEY_PREF_RESEND_UNSENT = "resend_unsent";
+    public static final String KEY_PREF_FILTER = "message_filter";
 
     public static final String KEY_PREF_DEVICE_ALIAS = "device_alias";
     public static final String VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME = "time";

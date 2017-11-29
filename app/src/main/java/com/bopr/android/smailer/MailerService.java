@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +79,7 @@ public class MailerService extends IntentService {
         }
     }
 
-    @Nullable
+    @NonNull
     private MailMessage parseCallIntent(Intent intent) {
         MailMessage message = new MailMessage();
         message.setSms(false);
@@ -96,7 +95,7 @@ public class MailerService extends IntentService {
         return message;
     }
 
-    @Nullable
+    @NonNull
     private MailMessage parseSmsIntent(Intent intent) {
         MailMessage message = new MailMessage();
         message.setSms(true);
@@ -109,8 +108,7 @@ public class MailerService extends IntentService {
     }
 
     @NonNull
-    public static Intent createSmsIntent(Context context, String number, long time,
-                                         String text, boolean incoming) {
+    public static Intent createSmsIntent(Context context, String number, long time, String text, boolean incoming) {
         Intent intent = new Intent(context, MailerService.class);
         intent.setAction(ACTION_SMS);
         intent.putExtra(EXTRA_PHONE_NUMBER, number);
@@ -131,8 +129,7 @@ public class MailerService extends IntentService {
     }
 
     @NonNull
-    public static Intent createIncomingCallIntent(Context context, String number, long start,
-                                                  long end) {
+    public static Intent createIncomingCallIntent(Context context, String number, long start, long end) {
         Intent intent = new Intent(context, MailerService.class);
         intent.setAction(ACTION_CALL);
         intent.putExtra(EXTRA_PHONE_NUMBER, number);
@@ -143,8 +140,7 @@ public class MailerService extends IntentService {
     }
 
     @NonNull
-    public static Intent createOutgoingCallIntent(Context context, String number, long start,
-                                                  long end) {
+    public static Intent createOutgoingCallIntent(Context context, String number, long start, long end) {
         Intent intent = new Intent(context, MailerService.class);
         intent.setAction(ACTION_CALL);
         intent.putExtra(EXTRA_PHONE_NUMBER, number);

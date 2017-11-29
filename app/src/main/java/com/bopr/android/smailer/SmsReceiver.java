@@ -1,18 +1,14 @@
 package com.bopr.android.smailer;
 
-import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
-import android.provider.Telephony;
-import android.support.annotation.NonNull;
-import android.telephony.SmsMessage;
-
+import com.bopr.android.smailer.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
+import static com.bopr.android.smailer.MailerService.createSmsIntent;
+import static com.bopr.android.smailer.Settings.*;
 
 /**
  * Receives SMS intents and starts mailer service.
@@ -23,70 +19,23 @@ public class SmsReceiver extends BroadcastReceiver {
 
     private static Logger log = LoggerFactory.getLogger("SmsReceiver");
     public static final String SMS_RECEIVED_ACTION = "android.provider.Telephony.SMS_RECEIVED";
+    private final SmsParser parser = new SmsParser();
+    private final SmsFilter filter = new SmsFilter();
 
     @Override
     public void onReceive(Context context, Intent intent) {
         log.debug("Received intent: " + intent);
+        if (Util.equals(intent.getAction(), SMS_RECEIVED_ACTION) && isServiceEnabled(context)
+                && isTriggerEnabled(context, VAL_PREF_TRIGGER_IN_SMS)) {
 
-        if (intent.getAction().equals(SMS_RECEIVED_ACTION)
-                && Settings.isServiceEnabled(context)
-                && Settings.isTriggerEnabled(context, VAL_PREF_TRIGGER_IN_SMS)) {
-            log.debug("Processing incoming sms");
-            Sms sms = parse(intent);
-            context.startService(MailerService.createSmsIntent(context, sms.phone, sms.time, sms.text, true));
-        }
-    }
+            Sms sms = parser.parse(intent);
 
-    /**
-     * Parses sms intent into plain object.
-     */
-    @NonNull
-    private Sms parse(@NonNull Intent intent) {
-        SmsMessage[] messages;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            messages = parseSmsMessages(intent);
-        } else {
-            messages = parseSmsMessagesLegacy(intent);
-        }
-
-        Sms sms = new Sms();
-        if (messages.length > 0) {
-
-            StringBuilder text = new StringBuilder();
-            for (SmsMessage message : messages) {
-                text.append(message.getDisplayMessageBody());
+            filter.setPattern(getPreferences(context).getString(Settings.KEY_PREF_FILTER, null));
+            if (filter.test(sms)) {
+                log.debug("Processing incoming sms");
+                context.startService(createSmsIntent(context, sms.getPhone(), sms.getTime(), sms.getText(), true));
             }
-
-            sms.phone = messages[0].getDisplayOriginatingAddress();
-            sms.time = messages[0].getTimestampMillis();
-            sms.text = text.toString();
         }
-        return sms;
-    }
-
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    private SmsMessage[] parseSmsMessages(Intent intent) {
-        return Telephony.Sms.Intents.getMessagesFromIntent(intent);
-    }
-
-    @NonNull
-    @SuppressWarnings("deprecation")
-    private SmsMessage[] parseSmsMessagesLegacy(Intent intent) {
-        SmsMessage[] messages;
-        Object[] pdus = (Object[]) intent.getSerializableExtra("pdus");
-        messages = new SmsMessage[pdus.length];
-        for (int i = 0; i < pdus.length; i++) {
-            byte[] pdu = (byte[]) pdus[i];
-            messages[i] = SmsMessage.createFromPdu(pdu);
-        }
-        return messages;
-    }
-
-    private class Sms {
-
-        private String phone;
-        private long time;
-        private String text;
     }
 
 }

@@ -10,7 +10,7 @@
     <string name="pref_title_host">Сервер</string>
     <string name="pref_title_port">Порт</string>
     <string name="pref_title_content">Содержание</string>
-    <string name="pref_title_trigger">Условия</string>
+    <string name="pref_title_trigger">Фильтр</string>
     <string name="pref_title_email_locale">Язык почтового сообщения</string>
     <string name="pref_title_notify_send_success">Уведомлять об отправке</string>
     <string name="pref_title_more">Дополнительно</string>
@@ -32,11 +32,11 @@
     <string name="pref_description_service_on">Сервис включен</string>
     <string name="pref_description_service_off">Сервис отключен</string>
     <string name="pref_description_not_set">не указано</string>
-    <string name="pref_description_when_to_send">Когда отправлять почту</string>
-    <string name="pref_description_what_email_contain">Что должно включать почтовое сообщение</string>
-    <string name="pref_description_notify_send_success">Показывать уведомление, когда почта успешно отправлена</string>
+    <string name="pref_description_when_to_send">Условия для отправки почты</string>
+    <string name="pref_description_what_email_contain">Содержание почтового сообщения</string>
+    <string name="pref_description_notify_send_success">Показывать уведомление об отправке почты</string>
 
-    <string name="notification_error_mail_general">Невозможно отправить почту.</string>
+    <string name="notification_error_mail_general">Неудалось отправить почту.</string>
     <string name="notification_error_no_account">Не указан аккаунт исходящей почты.</string>
     <string name="notification_error_no_host">Не указан адрес серевера исходящей почты.</string>
     <string name="notification_error_no_port">Не указан порт серевера исходящей почты.</string>
@@ -116,7 +116,7 @@
         <item>Время отправления</item>
         <item>Название устройства</item>
         <item>Имя звонившего</item>
-        <item>Местоположение</item>
+        <item>Местоположение устройства</item>
     </string-array>
 
     <string-array name="email_locale_titles">
