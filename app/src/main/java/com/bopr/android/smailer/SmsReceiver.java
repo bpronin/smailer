@@ -31,7 +31,7 @@ public class SmsReceiver extends BroadcastReceiver {
             Sms sms = parser.parse(intent);
 
             filter.setPattern(getPreferences(context).getString(Settings.KEY_PREF_FILTER, null));
-            if (filter.test(sms)) {
+            if (filter.accept(sms)) {
                 log.debug("Processing incoming sms");
                 context.startService(createSmsIntent(context, sms.getPhone(), sms.getTime(), sms.getText(), true));
             }

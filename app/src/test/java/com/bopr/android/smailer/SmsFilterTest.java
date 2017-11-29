@@ -17,11 +17,11 @@ public class SmsFilterTest {
 
         filter.setPattern(".*Bob");
         sms.setText("This is a message from Bob");
-        assertTrue(filter.test(sms));
+        assertTrue(filter.accept(sms));
 
         filter.setPattern("^((?!Bob).)*$");
         sms.setText("This is a message from Bob");
-        assertFalse(filter.test(sms));
+        assertFalse(filter.accept(sms));
     }
 
     @Test
@@ -31,14 +31,14 @@ public class SmsFilterTest {
 
         filter.setBlackList(new HashSet<>(asList("111", "333")));
         sms.setPhone("111");
-        assertFalse(filter.test(sms));
+        assertFalse(filter.accept(sms));
 
         sms.setPhone("222");
-        assertTrue(filter.test(sms));
+        assertTrue(filter.accept(sms));
 
         filter.setBlackList(new HashSet<>(asList("111", "222")));
         sms.setPhone("222");
-        assertFalse(filter.test(sms));
+        assertFalse(filter.accept(sms));
     }
 
 }

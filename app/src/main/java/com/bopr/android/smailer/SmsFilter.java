@@ -21,8 +21,7 @@ class SmsFilter {
         this.blackList = blackList;
     }
 
-    boolean test(Sms sms) {
-        return !blackList.contains(sms.getPhone())
-                && (sms.getText() == null || pattern == null || sms.getText().matches(pattern));
+    boolean accept(Sms sms) {
+        return true;
     }
 }
