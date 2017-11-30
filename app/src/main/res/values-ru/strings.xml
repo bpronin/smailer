@@ -36,11 +36,11 @@
     <string name="pref_description_what_email_contain">Содержание почтового сообщения</string>
     <string name="pref_description_notify_send_success">Показывать уведомление об отправке почты</string>
 
-    <string name="notification_error_mail_general">Неудалось отправить почту.</string>
+    <string name="notification_error_mail_general">Не удалось отправить почту.</string>
     <string name="notification_error_no_account">Не указан аккаунт исходящей почты.</string>
     <string name="notification_error_no_host">Не указан адрес серевера исходящей почты.</string>
     <string name="notification_error_no_port">Не указан порт серевера исходящей почты.</string>
-    <string name="notification_error_authentication">Неверный пароль или имя пользователя.</string>
+    <string name="notification_error_authentication">Неверное имя пользователя или пароль.</string>
     <string name="notification_error_connect">Нет соединения с почтовым сервером.</string>
     <string name="notification_error_no_recipients">Не указан получатель.</string>
     <string name="notification_error_internal">Внутренняя ошибка.</string>
