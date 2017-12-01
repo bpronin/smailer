@@ -56,12 +56,12 @@ public class EditEmailDialogFragment extends DialogFragment {
             @SuppressLint("InflateParams")
             View view = LayoutInflater.from(getActivity()).inflate(R.layout.editor_email, null, false);
 
-            EditText editText = (EditText) view.findViewById(R.id.edit_text_address);
+            EditText editText = view.findViewById(R.id.edit_text_address);
             editText.addTextChangedListener(new EmailTextValidator(editText));
             editText.setText(initialValue);
 
             /* custom message view. do not use setMessage() } */
-            TextView messageText = (TextView) view.findViewById(R.id.dialog_message);
+            TextView messageText = view.findViewById(R.id.dialog_message);
             messageText.setText(R.string.pref_dialog_message_recipient);
 
             View browseButton = view.findViewById(R.id.button_browse_contacts);
@@ -93,6 +93,7 @@ public class EditEmailDialogFragment extends DialogFragment {
                     .create();
 
             /* this is to show soft keyboard when dialog is open */
+            //noinspection ConstantConditions
             dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         }
         return dialog;

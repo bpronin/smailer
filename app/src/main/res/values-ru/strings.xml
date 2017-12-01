@@ -14,7 +14,7 @@
     <string name="pref_title_email_locale">Язык почтового сообщения</string>
     <string name="pref_title_notify_send_success">Уведомлять об отправке</string>
     <string name="pref_title_more">Дополнительно</string>
-    <string name="pref_dialog_title_more">Дополнительные параметры</string>
+    <string name="pref_title_additional_settings">Дополнительные параметры</string>
     <string name="pref_title_device_alias">Имя устройства</string>
     <string name="pref_title_resend_unsent">Повторная отправка</string>
 
@@ -100,7 +100,7 @@
 
     <string name="server_test">Проверить соединение</string>
     <string name="server_testing">Проверка настроек сервера…</string>
-    <string name="server_test_success">Настройки проверены успешно</string>
+    <string name="server_test_success">Настройки успешно проверены</string>
 
     <string name="open_source_title">Открытый исходный код</string>
 
@@ -114,8 +114,8 @@
 
     <string-array name="email_content_titles">
         <item>Время отправления</item>
-        <item>Название устройства</item>
         <item>Имя звонившего</item>
+        <item>Название устройства</item>
         <item>Местоположение устройства</item>
     </string-array>
 
