@@ -59,7 +59,7 @@ public class MailerServiceTest extends BaseTest {
         assertEquals(100000, message.getStartTime().longValue());
         assertEquals("Text", message.getText());
         assertNull(message.getEndTime());
-        assertFalse(message.isSent());
+        assertFalse(message.isProcessed());
         assertTrue(message.isIncoming());
         assertFalse(message.isMissed());
         assertTrue(message.isSms());
@@ -91,7 +91,7 @@ public class MailerServiceTest extends BaseTest {
         assertEquals("123", message.getPhone());
         assertEquals(100000, message.getStartTime().longValue());
         assertEquals("Text", message.getText());
-        assertFalse(message.isSent());
+        assertFalse(message.isProcessed());
         assertFalse(message.isIncoming());
         assertFalse(message.isMissed());
         assertTrue(message.isSms());
@@ -124,7 +124,7 @@ public class MailerServiceTest extends BaseTest {
         assertEquals(100000, message.getStartTime().longValue());
         assertEquals(200000, message.getEndTime().longValue());
         assertNull(message.getText());
-        assertFalse(message.isSent());
+        assertFalse(message.isProcessed());
         assertTrue(message.isIncoming());
         assertFalse(message.isMissed());
         assertFalse(message.isSms());
@@ -157,7 +157,7 @@ public class MailerServiceTest extends BaseTest {
         assertEquals(100000, message.getStartTime().longValue());
         assertEquals(200000, message.getEndTime().longValue());
         assertNull(message.getText());
-        assertFalse(message.isSent());
+        assertFalse(message.isProcessed());
         assertFalse(message.isIncoming());
         assertFalse(message.isMissed());
         assertFalse(message.isSms());
@@ -190,7 +190,7 @@ public class MailerServiceTest extends BaseTest {
         assertEquals(100000, message.getStartTime().longValue());
         assertNull(message.getEndTime());
         assertNull(message.getText());
-        assertFalse(message.isSent());
+        assertFalse(message.isProcessed());
         assertTrue(message.isIncoming());
         assertTrue(message.isMissed());
         assertFalse(message.isSms());

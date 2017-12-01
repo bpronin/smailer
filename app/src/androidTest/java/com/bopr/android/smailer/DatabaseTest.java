@@ -56,7 +56,7 @@ public class DatabaseTest extends BaseTest {
 
         PhoneEvent message = items.get(0); /* descending order so it should be the last */
         assertNotNull(message.getId());
-        assertEquals(true, message.isSent());
+        assertEquals(true, message.isProcessed());
         assertEquals("10", message.getPhone());
         assertEquals(true, message.isIncoming());
         assertEquals(10000L, message.getStartTime().longValue());
@@ -84,7 +84,7 @@ public class DatabaseTest extends BaseTest {
 
         message = items.get(0);
         assertTrue(message.getId() != -1);
-        assertEquals(true, message.isSent());
+        assertEquals(true, message.isProcessed());
         assertEquals("1", message.getPhone());
         assertEquals(true, message.isIncoming());
         assertEquals(1000L, message.getStartTime().longValue());
@@ -96,13 +96,12 @@ public class DatabaseTest extends BaseTest {
         assertEquals("SMS text", message.getText());
         assertEquals("Test 1", message.getDetails());
 
-        message.setSent(false);
+        message.setProcessed(false);
         message.setPhone("2");
         message.setIncoming(false);
         message.setStartTime(2000L);
         message.setEndTime(3000L);
         message.setMissed(true);
-        message.setSms(false);
         message.setLocation(new GeoCoordinates(11.5, 21.5));
         message.setText("New text");
         message.setDetails("New details");
@@ -113,7 +112,7 @@ public class DatabaseTest extends BaseTest {
 
         message = items.get(0);
         assertTrue(message.getId() != -1);
-        assertEquals(false, message.isSent());
+        assertEquals(false, message.isProcessed());
         assertEquals("2", message.getPhone());
         assertEquals(false, message.isIncoming());
         assertEquals(2000L, message.getStartTime().longValue());

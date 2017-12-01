@@ -34,7 +34,7 @@ public class LogFragment extends Fragment {
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_log, container, false);
 
-        listView = (RecyclerView) view.findViewById(android.R.id.list);
+        listView = view.findViewById(android.R.id.list);
         listView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
 
         return view;
@@ -79,7 +79,7 @@ public class LogFragment extends Fragment {
     protected void updateEmptyText() {
         View view = getView();
         if (view != null) {
-            TextView text = (TextView) view.findViewById(R.id.text_empty);
+            TextView text = view.findViewById(R.id.text_empty);
             if (listView.getAdapter().getItemCount() == 0) {
                 text.setVisibility(View.VISIBLE);
             } else {
@@ -136,7 +136,7 @@ public class LogFragment extends Fragment {
 
     @NonNull
     private String formatResultText(Context context, PhoneEvent message) {
-        return context.getString(message.isSent()
+        return context.getString(message.isProcessed()
                 ? R.string.activity_log_message_send_email_success
                 : R.string.activity_log_message_send_email_failed);
     }
@@ -148,7 +148,7 @@ public class LogFragment extends Fragment {
         private Context context;
         private Database.MailMessageCursor cursor;
 
-        public ListAdapter(Context context, Database.MailMessageCursor cursor) {
+        private ListAdapter(Context context, Database.MailMessageCursor cursor) {
             this.context = context;
             this.cursor = cursor;
         }
@@ -170,7 +170,7 @@ public class LogFragment extends Fragment {
             if (item != null) {
                 final PhoneEvent message = cursor.get();
 
-                if (!message.isSent()) {
+                if (!message.isProcessed()) {
                     holder.resultView.setTextColor(errorColor);
                 } else {
                     holder.resultView.setTextColor(defaultColor);
@@ -219,9 +219,9 @@ public class LogFragment extends Fragment {
         public ItemViewHolder(View view) {
             super(view);
             this.view = view;
-            timeView = (TextView) view.findViewById(R.id.list_item_date);
-            messageView = (TextView) view.findViewById(R.id.list_item_message);
-            resultView = (TextView) view.findViewById(R.id.list_item_result);
+            timeView = view.findViewById(R.id.list_item_date);
+            messageView = view.findViewById(R.id.list_item_message);
+            resultView = view.findViewById(R.id.list_item_result);
         }
 
     }

@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
+@SuppressWarnings("WeakerAccess")
 public class Database {
 
     private static Logger log = LoggerFactory.getLogger("Database");
@@ -35,7 +36,7 @@ public class Database {
     private static final String COLUMN_DETAILS = "details";
     private static final String COLUMN_START_TIME = "start_time";
     private static final String COLUMN_END_TIME = "end_time";
-    private static final String COLUMN_IS_SENT = "is_sent";
+    private static final String COLUMN_PROCESSED = "is_processed";
     private static final String COLUMN_LAST_LATITUDE = "last_latitude";
     private static final String COLUMN_LAST_LONGITUDE = "last_longitude";
     private static final String COLUMN_LAST_LOCATION_TIME = "last_location_time";
@@ -96,33 +97,33 @@ public class Database {
         );
     }
 
-    public long updateMessage(PhoneEvent message) {
+    public long updateMessage(PhoneEvent event) {
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        values.put(COLUMN_ID, message.getId());
-        values.put(COLUMN_IS_SENT, message.isSent());
-        values.put(COLUMN_IS_INCOMING, message.isIncoming());
-        values.put(COLUMN_IS_MISSED, message.isMissed());
-        values.put(COLUMN_PHONE, message.getPhone());
-        values.put(COLUMN_START_TIME, message.getStartTime());
-        values.put(COLUMN_END_TIME, message.getEndTime());
-        values.put(COLUMN_TEXT, message.getText());
-        values.put(COLUMN_DETAILS, message.getDetails());
-        GeoCoordinates location = message.getLocation();
+        values.put(COLUMN_ID, event.getId());
+        values.put(COLUMN_PROCESSED, event.isProcessed());
+        values.put(COLUMN_IS_INCOMING, event.isIncoming());
+        values.put(COLUMN_IS_MISSED, event.isMissed());
+        values.put(COLUMN_PHONE, event.getPhone());
+        values.put(COLUMN_START_TIME, event.getStartTime());
+        values.put(COLUMN_END_TIME, event.getEndTime());
+        values.put(COLUMN_TEXT, event.getText());
+        values.put(COLUMN_DETAILS, event.getDetails());
+        GeoCoordinates location = event.getLocation();
         if (location != null) {
             values.put(COLUMN_LATITUDE, location.getLatitude());
             values.put(COLUMN_LONGITUDE, location.getLongitude());
         }
 
         long id = db.replace(TABLE_MESSAGES, null, values);
-        message.setId(id);
+        event.setId(id);
         return id;
     }
 
     public MailMessageCursor getUnsentMessages() {
         return new MailMessageCursor(helper.getReadableDatabase().query(TABLE_MESSAGES,
-                null, COLUMN_IS_SENT + "=0", null, null, null,
+                null, COLUMN_PROCESSED + "=0", null, null, null,
                 COLUMN_START_TIME + " DESC")
         );
     }
@@ -238,7 +239,7 @@ public class Database {
         public void onCreate(SQLiteDatabase db) {
             db.execSQL("CREATE TABLE " + TABLE_MESSAGES + " (" +
                     COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    COLUMN_IS_SENT + " INTEGER, " +
+                    COLUMN_PROCESSED + " INTEGER, " +
                     COLUMN_IS_INCOMING + " INTEGER, " +
                     COLUMN_IS_MISSED + " INTEGER, " +
                     COLUMN_START_TIME + " INTEGER, " +
@@ -283,21 +284,21 @@ public class Database {
 
         @Override
         public PhoneEvent get() {
-            PhoneEvent message = new PhoneEvent();
-            message.setId(getLong(COLUMN_ID));
-            message.setSent(getBoolean(COLUMN_IS_SENT));
-            message.setPhone(getString(COLUMN_PHONE));
-            message.setIncoming(getBoolean(COLUMN_IS_INCOMING));
-            message.setStartTime(getLong(COLUMN_START_TIME));
-            message.setEndTime(getLong(COLUMN_END_TIME));
-            message.setMissed(getBoolean(COLUMN_IS_MISSED));
-            message.setText(getString(COLUMN_TEXT));
-            message.setDetails(getString(COLUMN_DETAILS));
-            message.setLocation(new GeoCoordinates(
+            PhoneEvent event = new PhoneEvent();
+            event.setId(getLong(COLUMN_ID));
+            event.setProcessed(getBoolean(COLUMN_PROCESSED));
+            event.setPhone(getString(COLUMN_PHONE));
+            event.setIncoming(getBoolean(COLUMN_IS_INCOMING));
+            event.setStartTime(getLong(COLUMN_START_TIME));
+            event.setEndTime(getLong(COLUMN_END_TIME));
+            event.setMissed(getBoolean(COLUMN_IS_MISSED));
+            event.setText(getString(COLUMN_TEXT));
+            event.setDetails(getString(COLUMN_DETAILS));
+            event.setLocation(new GeoCoordinates(
                     getDouble(COLUMN_LATITUDE),
                     getDouble(COLUMN_LONGITUDE)
             ));
-            return message;
+            return event;
         }
 
     }

@@ -48,8 +48,9 @@
     <string name="notification_error_no_connection">No internet connection.</string>
     <string name="notification_error_internal">Internal error.</string>
 
-    <string name="message_permissions_denied">Since permissions not granted some options are disabled.</string>
-    <string name="message_permission_rationale_receive_sms">Permission to {permission} is needed to send out email when SMS is received.</string>
+    <string name="message_permissions_denied">Since permissions not granted some options have been disabled.</string>
+    <string name="message_permission_rationale_receive_sms">Permission to {permission} is needed to send out email when SMS has received.</string>
+    <string name="message_permission_rationale_read_sms">Permission to {permission} is needed to send out email when SMS has sent.</string>
     <string name="message_permission_rationale_phone_state">Permission to {permission} is needed to send out email when phone calls are received or made.</string>
     <string name="message_permission_rationale_outgoing_call">Permission to {permission} is needed to send out email when phone calls are made.</string>
     <string name="message_permission_rationale_read_contacts">Permission to {permission} is needed to add contact name into email message.</string>

@@ -111,6 +111,7 @@ public class OutgoingSmsService extends Service {
         event.setIncoming(false);
         event.setPhone(address);
         event.setStartTime(date);
+        event.setEndTime(date);
         event.setText(body);
 
         startService(createEventIntent(this, event));

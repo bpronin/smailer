@@ -5,10 +5,11 @@ package com.bopr.android.smailer;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
+@SuppressWarnings("WeakerAccess")
 public class PhoneEvent {
 
     private Long id;
-    private boolean sent;
+    private boolean processed;
     private boolean incoming;
     private boolean missed;
     private String phone;
@@ -22,7 +23,7 @@ public class PhoneEvent {
     }
 
     public PhoneEvent(String phone, boolean incoming, Long startTime, Long endTime, boolean missed,
-                      String text, GeoCoordinates location, boolean sent,
+                      String text, GeoCoordinates location, boolean processed,
                       String details) {
         this.text = text;
         this.endTime = endTime;
@@ -31,7 +32,7 @@ public class PhoneEvent {
         this.missed = missed;
         this.incoming = incoming;
         this.location = location;
-        this.sent = sent;
+        this.processed = processed;
         this.details = details;
     }
 
@@ -102,12 +103,12 @@ public class PhoneEvent {
         return 0;
     }
 
-    public void setSent(boolean sent) {
-        this.sent = sent;
+    public void setProcessed(boolean processed) {
+        this.processed = processed;
     }
 
-    public boolean isSent() {
-        return sent;
+    public boolean isProcessed() {
+        return processed;
     }
 
     public void setDetails(String details) {
@@ -130,7 +131,7 @@ public class PhoneEvent {
     public String toString() {
         return "PhoneEvent{" +
                 "id=" + id +
-                ", sent=" + sent +
+                ", sent=" + processed +
                 ", incoming=" + incoming +
                 ", missed=" + missed +
                 ", phone='" + phone + '\'' +

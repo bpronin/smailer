@@ -135,7 +135,7 @@ public class Mailer {
     }
 
     private void success(PhoneEvent message) {
-        message.setSent(true);
+        message.setProcessed(true);
         message.setDetails(null);
         database.updateMessage(message);
         notifications.hideMailError();
@@ -148,7 +148,7 @@ public class Mailer {
                         int action, boolean silent) {
         log.error("Send failed. " + message, error);
 
-        message.setSent(false);
+        message.setProcessed(false);
         message.setDetails(details);
         database.updateMessage(message);
         if (!silent) {

@@ -8,7 +8,7 @@ import android.support.annotation.NonNull;
 import android.telephony.SmsMessage;
 
 /**
- * Class SmsParser.
+ * Parses sms intent into plain object.
  *
  * @author Boris Pronin (<a href="mailto:bpronin@bttprime.com">bpronin@bttprime.com</a>)
  */
@@ -37,6 +37,7 @@ class SmsParser {
 
             event.setPhone(messages[0].getDisplayOriginatingAddress());
             event.setStartTime(messages[0].getTimestampMillis());
+            event.setEndTime(event.getStartTime());
             event.setText(text.toString());
         }
         return event;
