@@ -18,7 +18,7 @@ class SmsParser {
      * Parses sms intent into plain object.
      */
     @NonNull
-    Sms parse(@NonNull Intent intent) {
+    PhoneEvent parse(@NonNull Intent intent) {
         SmsMessage[] messages;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             messages = parseMessage(intent);
@@ -26,7 +26,8 @@ class SmsParser {
             messages = parseMessageLegacy(intent);
         }
 
-        Sms sms = new Sms();
+        PhoneEvent event = new PhoneEvent();
+        event.setIncoming(true);
         if (messages.length > 0) {
 
             StringBuilder text = new StringBuilder();
@@ -34,11 +35,11 @@ class SmsParser {
                 text.append(message.getDisplayMessageBody());
             }
 
-            sms.setPhone(messages[0].getDisplayOriginatingAddress());
-            sms.setTime(messages[0].getTimestampMillis());
-            sms.setText(text.toString());
+            event.setPhone(messages[0].getDisplayOriginatingAddress());
+            event.setStartTime(messages[0].getTimestampMillis());
+            event.setText(text.toString());
         }
-        return sms;
+        return event;
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)

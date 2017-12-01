@@ -5,9 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
 import com.bopr.android.smailer.util.db.XCursor;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +28,6 @@ public class Database {
     private static final String COLUMN_PURGE_TIME = "messages_purge_time";
     private static final String COLUMN_IS_INCOMING = "is_incoming";
     private static final String COLUMN_IS_MISSED = "is_missed";
-    private static final String COLUMN_IS_SMS = "is_sms";
     private static final String COLUMN_PHONE = "phone";
     private static final String COLUMN_LATITUDE = "latitude";
     private static final String COLUMN_LONGITUDE = "longitude";
@@ -99,7 +96,7 @@ public class Database {
         );
     }
 
-    public long updateMessage(MailMessage message) {
+    public long updateMessage(PhoneEvent message) {
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -107,7 +104,6 @@ public class Database {
         values.put(COLUMN_IS_SENT, message.isSent());
         values.put(COLUMN_IS_INCOMING, message.isIncoming());
         values.put(COLUMN_IS_MISSED, message.isMissed());
-        values.put(COLUMN_IS_SMS, message.isSms());
         values.put(COLUMN_PHONE, message.getPhone());
         values.put(COLUMN_START_TIME, message.getStartTime());
         values.put(COLUMN_END_TIME, message.getEndTime());
@@ -245,7 +241,6 @@ public class Database {
                     COLUMN_IS_SENT + " INTEGER, " +
                     COLUMN_IS_INCOMING + " INTEGER, " +
                     COLUMN_IS_MISSED + " INTEGER, " +
-                    COLUMN_IS_SMS + " INTEGER, " +
                     COLUMN_START_TIME + " INTEGER, " +
                     COLUMN_END_TIME + " INTEGER, " +
                     COLUMN_LATITUDE + " REAL, " +
@@ -278,17 +273,17 @@ public class Database {
     }
 
     /**
-     * Cursor that returns values of {@link MailMessage}.
+     * Cursor that returns values of {@link PhoneEvent}.
      */
-    public class MailMessageCursor extends XCursor<MailMessage> {
+    public class MailMessageCursor extends XCursor<PhoneEvent> {
 
         public MailMessageCursor(Cursor cursor) {
             super(cursor);
         }
 
         @Override
-        public MailMessage get() {
-            MailMessage message = new MailMessage();
+        public PhoneEvent get() {
+            PhoneEvent message = new PhoneEvent();
             message.setId(getLong(COLUMN_ID));
             message.setSent(getBoolean(COLUMN_IS_SENT));
             message.setPhone(getString(COLUMN_PHONE));
@@ -296,7 +291,6 @@ public class Database {
             message.setStartTime(getLong(COLUMN_START_TIME));
             message.setEndTime(getLong(COLUMN_END_TIME));
             message.setMissed(getBoolean(COLUMN_IS_MISSED));
-            message.setSms(getBoolean(COLUMN_IS_SMS));
             message.setText(getString(COLUMN_TEXT));
             message.setDetails(getString(COLUMN_DETAILS));
             message.setLocation(new GeoCoordinates(

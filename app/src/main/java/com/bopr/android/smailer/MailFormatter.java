@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import com.bopr.android.smailer.util.TagFormatter;
 import com.bopr.android.smailer.util.Util;
 
@@ -13,14 +12,9 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Set;
 
-import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CONTACT;
-import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME;
-import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_LOCATION;
-import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME;
+import static com.bopr.android.smailer.Settings.*;
 import static com.bopr.android.smailer.util.TagFormatter.from;
-import static com.bopr.android.smailer.util.Util.formatDuration;
-import static com.bopr.android.smailer.util.Util.formatLocation;
-import static com.bopr.android.smailer.util.Util.isEmpty;
+import static com.bopr.android.smailer.util.Util.*;
 
 /**
  * Formats email subject and body.
@@ -38,14 +32,14 @@ public class MailFormatter {
             "place/{latitude}+{longitude}/@{latitude},{longitude}\">{location}</a>";
     private static final String PHONE_LINK_PATTERN = "<a href=\"tel:{phone}\">{phone}</a>";
 
-    private final MailMessage message;
+    private final PhoneEvent message;
     private Context context;
     private String contactName;
     private String deviceName;
     private Set<String> contentOptions;
     private Locale locale = Locale.getDefault();
 
-    public MailFormatter(Context context, MailMessage message) {
+    public MailFormatter(Context context, PhoneEvent message) {
         this.message = message;
         this.context = context;
     }

@@ -5,11 +5,10 @@ package com.bopr.android.smailer;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class MailMessage {
+public class PhoneEvent {
 
     private Long id;
     private boolean sent;
-    private boolean sms;
     private boolean incoming;
     private boolean missed;
     private String phone;
@@ -19,19 +18,18 @@ public class MailMessage {
     private String details;
     private GeoCoordinates location;
 
-    public MailMessage() {
+    public PhoneEvent() {
     }
 
-    public MailMessage(String phone, boolean incoming, Long startTime, Long endTime, boolean missed,
-                       boolean sms, String text, GeoCoordinates location, boolean sent,
-                       String details) {
+    public PhoneEvent(String phone, boolean incoming, Long startTime, Long endTime, boolean missed,
+                      String text, GeoCoordinates location, boolean sent,
+                      String details) {
         this.text = text;
         this.endTime = endTime;
         this.startTime = startTime;
         this.phone = phone;
         this.missed = missed;
         this.incoming = incoming;
-        this.sms = sms;
         this.location = location;
         this.sent = sent;
         this.details = details;
@@ -46,11 +44,7 @@ public class MailMessage {
     }
 
     public boolean isSms() {
-        return sms;
-    }
-
-    public void setSms(boolean sms) {
-        this.sms = sms;
+        return text != null && !text.isEmpty();
     }
 
     public boolean isIncoming() {
@@ -134,10 +128,9 @@ public class MailMessage {
 
     @Override
     public String toString() {
-        return "MailMessage{" +
+        return "PhoneEvent{" +
                 "id=" + id +
                 ", sent=" + sent +
-                ", sms=" + sms +
                 ", incoming=" + incoming +
                 ", missed=" + missed +
                 ", phone='" + phone + '\'' +

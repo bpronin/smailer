@@ -1,22 +1,21 @@
 package com.bopr.android.smailer;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Class SmsFilter.
+ * Class PhoneEventFilter.
  *
  * @author Boris Pronin (<a href="mailto:bpronin@bttprime.com">bpronin@bttprime.com</a>)
  */
-class SmsFilter {
+class PhoneEventFilter {
 
     private String pattern;
     private boolean blackListed = true;
     private Set<String> whiteList = Collections.emptySet();
     private Set<String> blackList = Collections.emptySet();
 
-    public SmsFilter() {
+    public PhoneEventFilter() {
     }
 
     public String getPattern() {
@@ -51,8 +50,8 @@ class SmsFilter {
         this.blackList = blackList;
     }
 
-    public boolean accept(Sms sms) {
-        return acceptPhone(sms.getPhone()) && acceptPattern(sms.getText());
+    public boolean accept(PhoneEvent event) {
+        return acceptPhone(event.getPhone()) && acceptPattern(event.getText());
     }
 
     private boolean acceptPhone(String phone) {

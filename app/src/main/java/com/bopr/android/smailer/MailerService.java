@@ -4,7 +4,6 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +23,6 @@ public class MailerService extends IntentService {
     public static final String EXTRA_END_TIME = "end_time";
     public static final String EXTRA_TEXT = "text";
 
-    public static final String ACTION_SMS = "sms";
     public static final String ACTION_CALL = "call";
     public static final String ACTION_RESEND = "resend";
 
@@ -66,12 +64,10 @@ public class MailerService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         log.debug("Processing mailer service intent:" + intent);
 
+        //noinspection ConstantConditions
         switch (intent.getAction()) {
-            case ACTION_SMS:
-                mailer.send(parseSmsIntent(intent));
-                break;
             case ACTION_CALL:
-                mailer.send(parseCallIntent(intent));
+                mailer.send(parseEventIntent(intent));
                 break;
             case ACTION_RESEND:
                 mailer.sendAllUnsent();
@@ -80,75 +76,104 @@ public class MailerService extends IntentService {
     }
 
     @NonNull
-    private MailMessage parseCallIntent(Intent intent) {
-        MailMessage message = new MailMessage();
-        message.setSms(false);
-        message.setPhone(intent.getStringExtra(EXTRA_PHONE_NUMBER));
-        message.setIncoming(intent.getBooleanExtra(EXTRA_INCOMING, true));
-        message.setMissed(intent.getBooleanExtra(EXTRA_MISSED, false));
-        message.setLocation(locator.getLocation());
-        message.setStartTime(intent.getLongExtra(EXTRA_START_TIME, 0));
-        if (intent.hasExtra(EXTRA_END_TIME)) {
-            message.setEndTime(intent.getLongExtra(EXTRA_END_TIME, 0));
-        }
+    private PhoneEvent parseEventIntent(Intent intent) {
+        PhoneEvent event = new PhoneEvent();
+        event.setIncoming(intent.getBooleanExtra(EXTRA_INCOMING, true));
+        event.setMissed(intent.getBooleanExtra(EXTRA_MISSED, false));
+        event.setPhone(intent.getStringExtra(EXTRA_PHONE_NUMBER));
+        event.setStartTime(intent.getLongExtra(EXTRA_START_TIME, 0));
+        event.setEndTime(intent.getLongExtra(EXTRA_END_TIME, 0));
+        event.setText(intent.getStringExtra(EXTRA_TEXT));
+        event.setLocation(locator.getLocation());
 
-        return message;
+        return event;
     }
 
     @NonNull
-    private MailMessage parseSmsIntent(Intent intent) {
-        MailMessage message = new MailMessage();
-        message.setSms(true);
-        message.setPhone(intent.getStringExtra(EXTRA_PHONE_NUMBER));
-        message.setIncoming(intent.getBooleanExtra(EXTRA_INCOMING, true));
-        message.setLocation(locator.getLocation());
-        message.setStartTime(intent.getLongExtra(EXTRA_START_TIME, 0));
-        message.setText(intent.getStringExtra(EXTRA_TEXT));
-        return message;
-    }
-
-    @NonNull
-    public static Intent createSmsIntent(Context context, String number, long time, String text, boolean incoming) {
-        Intent intent = new Intent(context, MailerService.class);
-        intent.setAction(ACTION_SMS);
-        intent.putExtra(EXTRA_PHONE_NUMBER, number);
-        intent.putExtra(EXTRA_INCOMING, incoming);
-        intent.putExtra(EXTRA_START_TIME, time);
-        intent.putExtra(EXTRA_TEXT, text);
-        return intent;
-    }
-
-    @NonNull
-    public static Intent createMissedCallIntent(Context context, String number, long start) {
+    public static Intent createEventIntent(Context context, PhoneEvent event) {
         Intent intent = new Intent(context, MailerService.class);
         intent.setAction(ACTION_CALL);
-        intent.putExtra(EXTRA_MISSED, true);
-        intent.putExtra(EXTRA_PHONE_NUMBER, number);
-        intent.putExtra(EXTRA_START_TIME, start);
+        intent.putExtra(EXTRA_INCOMING, event.isIncoming());
+        intent.putExtra(EXTRA_MISSED, event.isMissed());
+        intent.putExtra(EXTRA_PHONE_NUMBER, event.getPhone());
+        intent.putExtra(EXTRA_START_TIME, event.getStartTime());
+        intent.putExtra(EXTRA_END_TIME, event.getEndTime());
+        intent.putExtra(EXTRA_TEXT, event.getText());
+
         return intent;
     }
 
-    @NonNull
-    public static Intent createIncomingCallIntent(Context context, String number, long start, long end) {
-        Intent intent = new Intent(context, MailerService.class);
-        intent.setAction(ACTION_CALL);
-        intent.putExtra(EXTRA_PHONE_NUMBER, number);
-        intent.putExtra(EXTRA_INCOMING, true);
-        intent.putExtra(EXTRA_START_TIME, start);
-        intent.putExtra(EXTRA_END_TIME, end);
-        return intent;
-    }
-
-    @NonNull
-    public static Intent createOutgoingCallIntent(Context context, String number, long start, long end) {
-        Intent intent = new Intent(context, MailerService.class);
-        intent.setAction(ACTION_CALL);
-        intent.putExtra(EXTRA_PHONE_NUMBER, number);
-        intent.putExtra(EXTRA_INCOMING, false);
-        intent.putExtra(EXTRA_START_TIME, start);
-        intent.putExtra(EXTRA_END_TIME, end);
-        return intent;
-    }
+//    @NonNull
+//    private PhoneEvent parseCallIntent(Intent intent) {
+//        PhoneEvent event = new PhoneEvent();
+//        event.setSms(false);
+//        event.setPhone(intent.getStringExtra(EXTRA_PHONE_NUMBER));
+//        event.setIncoming(intent.getBooleanExtra(EXTRA_INCOMING, true));
+//        event.setMissed(intent.getBooleanExtra(EXTRA_MISSED, false));
+//        event.setLocation(locator.getLocation());
+//        event.setStartTime(intent.getLongExtra(EXTRA_START_TIME, 0));
+//        if (intent.hasExtra(EXTRA_END_TIME)) {
+//            event.setEndTime(intent.getLongExtra(EXTRA_END_TIME, 0));
+//        }
+//
+//        return event;
+//    }
+//
+//
+//    @NonNull
+//    private PhoneEvent parseSmsIntent(Intent intent) {
+//        PhoneEvent message = new PhoneEvent();
+//        message.setSms(true);
+//        message.setPhone(intent.getStringExtra(EXTRA_PHONE_NUMBER));
+//        message.setIncoming(intent.getBooleanExtra(EXTRA_INCOMING, true));
+//        message.setLocation(locator.getLocation());
+//        message.setStartTime(intent.getLongExtra(EXTRA_START_TIME, 0));
+//        message.setText(intent.getStringExtra(EXTRA_TEXT));
+//        return message;
+//    }
+//
+//    @NonNull
+//    public static Intent createSmsIntent(Context context, String number, long time, String text, boolean incoming) {
+//        Intent intent = new Intent(context, MailerService.class);
+//        intent.setAction(ACTION_SMS);
+//        intent.putExtra(EXTRA_PHONE_NUMBER, number);
+//        intent.putExtra(EXTRA_INCOMING, incoming);
+//        intent.putExtra(EXTRA_START_TIME, time);
+//        intent.putExtra(EXTRA_TEXT, text);
+//        return intent;
+//    }
+//
+//    @NonNull
+//    public static Intent createMissedCallIntent(Context context, String number, long start) {
+//        Intent intent = new Intent(context, MailerService.class);
+//        intent.setAction(ACTION_CALL);
+//        intent.putExtra(EXTRA_MISSED, true);
+//        intent.putExtra(EXTRA_PHONE_NUMBER, number);
+//        intent.putExtra(EXTRA_START_TIME, start);
+//        return intent;
+//    }
+//
+//    @NonNull
+//    public static Intent createIncomingCallIntent(Context context, String number, long start, long end) {
+//        Intent intent = new Intent(context, MailerService.class);
+//        intent.setAction(ACTION_CALL);
+//        intent.putExtra(EXTRA_PHONE_NUMBER, number);
+//        intent.putExtra(EXTRA_INCOMING, true);
+//        intent.putExtra(EXTRA_START_TIME, start);
+//        intent.putExtra(EXTRA_END_TIME, end);
+//        return intent;
+//    }
+//
+//    @NonNull
+//    public static Intent createOutgoingCallIntent(Context context, String number, long start, long end) {
+//        Intent intent = new Intent(context, MailerService.class);
+//        intent.setAction(ACTION_CALL);
+//        intent.putExtra(EXTRA_PHONE_NUMBER, number);
+//        intent.putExtra(EXTRA_INCOMING, false);
+//        intent.putExtra(EXTRA_START_TIME, start);
+//        intent.putExtra(EXTRA_END_TIME, end);
+//        return intent;
+//    }
 
     @NonNull
     public static Intent createResendIntent(Context context) {

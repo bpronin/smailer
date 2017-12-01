@@ -8,16 +8,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.TextView;
-
 import com.bopr.android.smailer.Database;
-import com.bopr.android.smailer.MailMessage;
+import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.TagFormatter;
@@ -66,7 +60,7 @@ public class LogFragment extends Fragment {
         loadData();
     }
 
-    public void showDetails(MailMessage message) {
+    public void showDetails(PhoneEvent message) {
         String details = message.getDetails();
         if (details != null) {
             // TODO: 04.04.2016 details dialog for any type of messages
@@ -115,7 +109,7 @@ public class LogFragment extends Fragment {
     }
 
     @NonNull
-    private String formatMessageText(Context context, MailMessage message) {
+    private String formatMessageText(Context context, PhoneEvent message) {
         int messageText;
 
         if (message.isMissed()) {
@@ -141,7 +135,7 @@ public class LogFragment extends Fragment {
     }
 
     @NonNull
-    private String formatResultText(Context context, MailMessage message) {
+    private String formatResultText(Context context, PhoneEvent message) {
         return context.getString(message.isSent()
                 ? R.string.activity_log_message_send_email_success
                 : R.string.activity_log_message_send_email_failed);
@@ -172,9 +166,9 @@ public class LogFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(ItemViewHolder holder, int position) {
-            MailMessage item = getItem(position);
+            PhoneEvent item = getItem(position);
             if (item != null) {
-                final MailMessage message = cursor.get();
+                final PhoneEvent message = cursor.get();
 
                 if (!message.isSent()) {
                     holder.resultView.setTextColor(errorColor);
@@ -197,7 +191,7 @@ public class LogFragment extends Fragment {
 
         @Override
         public long getItemId(int position) {
-            MailMessage item = getItem(position);
+            PhoneEvent item = getItem(position);
             return item != null ? item.getId() : -1;
         }
 
@@ -206,7 +200,7 @@ public class LogFragment extends Fragment {
             return cursor.getCount();
         }
 
-        public MailMessage getItem(int position) {
+        public PhoneEvent getItem(int position) {
             cursor.moveToPosition(position);
             if (!cursor.isBeforeFirst() && !cursor.isAfterLast()) {
                 return cursor.get();

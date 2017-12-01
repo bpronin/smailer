@@ -1,7 +1,7 @@
 package com.bopr.android.smailer.util;
 
 /**
- * Class SmsFilter.
+ * Class PhoneEventFilter.
  *
  * @author Boris Pronin (<a href="mailto:bpronin@bttprime.com">bpronin@bttprime.com</a>)
  */

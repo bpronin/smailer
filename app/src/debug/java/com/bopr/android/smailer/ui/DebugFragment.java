@@ -17,59 +17,20 @@ import android.text.InputType;
 import android.util.Base64;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import com.bopr.android.smailer.Contacts;
-import com.bopr.android.smailer.Cryptor;
-import com.bopr.android.smailer.Database;
-import com.bopr.android.smailer.GeoCoordinates;
-import com.bopr.android.smailer.Locator;
-import com.bopr.android.smailer.MailMessage;
-import com.bopr.android.smailer.MailTransport;
-import com.bopr.android.smailer.Notifications;
-import com.bopr.android.smailer.PermissionsChecker;
-import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.SmsReceiver;
+import com.bopr.android.smailer.*;
 import com.bopr.android.smailer.util.AndroidUtil;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.List;
 import java.util.Properties;
 
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.preference.Preference.OnPreferenceClickListener;
-import static com.bopr.android.smailer.MailerService.createIncomingCallIntent;
-import static com.bopr.android.smailer.Settings.DEFAULT_HOST;
-import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
-import static com.bopr.android.smailer.Settings.DEFAULT_PORT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_NOTIFY_SEND_SUCCESS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
-import static com.bopr.android.smailer.Settings.KEY_PREF_SERVICE_ENABLED;
-import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CONTACT;
-import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME;
-import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_LOCATION;
-import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME;
-import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_CALLS;
-import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
-import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS;
-import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
-import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
-import static com.bopr.android.smailer.Settings.getDeviceName;
+import static com.bopr.android.smailer.MailerService.createEventIntent;
+import static com.bopr.android.smailer.Settings.*;
 import static com.bopr.android.smailer.util.Util.asSet;
 import static com.bopr.android.smailer.util.Util.formatLocation;
 
@@ -116,6 +77,7 @@ public class DebugFragment extends BasePreferenceFragment {
         }));
 
         screen.addPreference(createSimplePreference("Send default mail", new OnPreferenceClickListener() {
+
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 onSendDefaultMail();
@@ -413,7 +375,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
             @Override
             protected Void doInBackground(Void... params) {
-                MailMessage message = new MailMessage();
+                PhoneEvent message = new PhoneEvent();
                 message.setPhone("+79052345678");
                 message.setIncoming(true);
                 message.setSms(true);
@@ -428,7 +390,12 @@ public class DebugFragment extends BasePreferenceFragment {
         }.execute();
 */
         long start = System.currentTimeMillis();
-        getActivity().startService(createIncomingCallIntent(getActivity(), "+79052345678", start, start + 10000));
+        PhoneEvent event = new PhoneEvent();
+        event.setPhone("+79052345678");
+        event.setStartTime(start);
+        event.setEndTime(start + 10000);
+        
+        getActivity().startService(createEventIntent(getActivity(), event));
     }
 
     private void onRequireReceiveSmsPermission() {
@@ -483,18 +450,18 @@ public class DebugFragment extends BasePreferenceFragment {
 
     private void onPopulateLog() {
         long time = System.currentTimeMillis();
-        database.updateMessage(new MailMessage("+79052345671", true, time, null, false, true, "Debug message", null, true, null));
-        database.updateMessage(new MailMessage("+79052345672", false, time += 1000, null, false, true, "Debug message", null, true, null));
-        database.updateMessage(new MailMessage("+79052345673", true, time += 1000, time + 10000, false, false, null, null, true, null));
-        database.updateMessage(new MailMessage("+79052345674", false, time += 1000, time + 10000, false, false, null, null, true, null));
-        database.updateMessage(new MailMessage("+79052345675", true, time += 1000, time + 10000, true, false, null, null, true, null));
+        database.updateMessage(new PhoneEvent("+79052345671", true, time, null, false, "Debug message", null, true, null));
+        database.updateMessage(new PhoneEvent("+79052345672", false, time += 1000, null, false, "Debug message", null, true, null));
+        database.updateMessage(new PhoneEvent("+79052345673", true, time += 1000, time + 10000, false, null, null, true, null));
+        database.updateMessage(new PhoneEvent("+79052345674", false, time += 1000, time + 10000, false, null, null, true, null));
+        database.updateMessage(new PhoneEvent("+79052345675", true, time += 1000, time + 10000, true, null, null, true, null));
 
 
-        database.updateMessage(new MailMessage("+79052345671", true, time += 1000, null, false, true, "Debug message", null, false, "Test exception +79052345671"));
-        database.updateMessage(new MailMessage("+79052345672", false, time += 1000, null, false, true, "Debug message", null, false, "Test exception +79052345672"));
-        database.updateMessage(new MailMessage("+79052345673", true, time += 1000, time + 10000, false, false, null, null, false, "Test exception +79052345673"));
-        database.updateMessage(new MailMessage("+79052345674", false, time += 1000, time + 10000, false, false, null, null, false, "Test exception +79052345674"));
-        database.updateMessage(new MailMessage("+79052345675", true, time += 1000, time + 10000, true, false, null, null, false, "Test exception +79052345675"));
+        database.updateMessage(new PhoneEvent("+79052345671", true, time += 1000, null, false, "Debug message", null, false, "Test exception +79052345671"));
+        database.updateMessage(new PhoneEvent("+79052345672", false, time += 1000, null, false, "Debug message", null, false, "Test exception +79052345672"));
+        database.updateMessage(new PhoneEvent("+79052345673", true, time += 1000, time + 10000, false, null, null, false, "Test exception +79052345673"));
+        database.updateMessage(new PhoneEvent("+79052345674", false, time += 1000, time + 10000, false, null, null, false, "Test exception +79052345674"));
+        database.updateMessage(new PhoneEvent("+79052345675", true, time += 1000, time + 10000, true, null, null, false, "Test exception +79052345675"));
     }
 
     private void onClearLog() {

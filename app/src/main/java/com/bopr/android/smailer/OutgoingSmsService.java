@@ -11,15 +11,12 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import com.bopr.android.smailer.util.db.XCursor;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
-import static com.bopr.android.smailer.Settings.isServiceEnabled;
-import static com.bopr.android.smailer.Settings.isTriggerEnabled;
+import static com.bopr.android.smailer.MailerService.createEventIntent;
+import static com.bopr.android.smailer.Settings.*;
 import static com.bopr.android.smailer.util.AndroidUtil.isServiceRunning;
 
 /**
@@ -109,7 +106,14 @@ public class OutgoingSmsService extends Service {
 
     private void startMailService(String address, long date, String body) {
         log.debug("starting mail service");
-        startService(MailerService.createSmsIntent(this, address, date, body, false));
+
+        PhoneEvent event = new PhoneEvent();
+        event.setIncoming(false);
+        event.setPhone(address);
+        event.setStartTime(date);
+        event.setText(body);
+
+        startService(createEventIntent(this, event));
     }
 
     @NonNull

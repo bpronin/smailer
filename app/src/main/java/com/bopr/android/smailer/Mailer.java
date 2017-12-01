@@ -2,30 +2,22 @@ package com.bopr.android.smailer;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-
 import com.sun.mail.util.MailConnectException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-
 import javax.mail.AuthenticationFailedException;
 import javax.mail.MessagingException;
+import java.util.List;
 
 import static com.bopr.android.smailer.Contacts.getContactName;
-import static com.bopr.android.smailer.Notifications.ACTION_SHOW_CONNECTION;
-import static com.bopr.android.smailer.Notifications.ACTION_SHOW_MAIN;
-import static com.bopr.android.smailer.Notifications.ACTION_SHOW_RECIPIENTS;
-import static com.bopr.android.smailer.Notifications.ACTION_SHOW_SERVER;
-import static com.bopr.android.smailer.Settings.KEY_PREF_NOTIFY_SEND_SUCCESS;
-import static com.bopr.android.smailer.Settings.getDeviceName;
-import static com.bopr.android.smailer.Settings.getPreferences;
+import static com.bopr.android.smailer.Notifications.*;
+import static com.bopr.android.smailer.Settings.*;
 import static com.bopr.android.smailer.util.AndroidUtil.hasInternetConnection;
 import static com.bopr.android.smailer.util.Util.isEmpty;
 
 /**
- * Sends out {@link MailMessage}.
+ * Sends out {@link PhoneEvent}.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
@@ -58,7 +50,7 @@ public class Mailer {
      *
      * @param message email message
      */
-    public void send(MailMessage message) {
+    public void send(PhoneEvent message) {
         doSend(message, false);
     }
 
@@ -66,9 +58,9 @@ public class Mailer {
      * Sends out all previously unsent messages.
      */
     public void sendAllUnsent() {
-        List<MailMessage> messages = database.getUnsentMessages().getAll();
+        List<PhoneEvent> messages = database.getUnsentMessages().getAll();
         log.debug("Resending " + messages.size() + " messages");
-        for (MailMessage message : messages) {
+        for (PhoneEvent message : messages) {
             doSend(message, true);
         }
     }
@@ -79,7 +71,7 @@ public class Mailer {
      * @param message email message
      * @param silent  if true do not show notifications
      */
-    private void doSend(MailMessage message, boolean silent) {
+    private void doSend(PhoneEvent message, boolean silent) {
         log.debug("Sending mail: " + message);
 
         MailerProperties pp = new MailerProperties(getPreferences(context));
@@ -104,7 +96,7 @@ public class Mailer {
     }
 
     @NonNull
-    private MailFormatter createFormatter(MailMessage message, MailerProperties mp) {
+    private MailFormatter createFormatter(PhoneEvent message, MailerProperties mp) {
         MailFormatter formatter = new MailFormatter(context, message);
         formatter.setContactName(getContactName(context, message.getPhone()));
         formatter.setDeviceName(getDeviceName(context));
@@ -116,7 +108,7 @@ public class Mailer {
         return formatter;
     }
 
-    private boolean checkProperties(MailerProperties properties, MailMessage message,
+    private boolean checkProperties(MailerProperties properties, PhoneEvent message,
                                     boolean silent) {
         if (isEmpty(properties.getHost())) {
             failed(null, "Host not specified", message, R.string.notification_error_no_host, ACTION_SHOW_SERVER, silent);
@@ -134,7 +126,7 @@ public class Mailer {
         return true;
     }
 
-    private boolean checkConnection(MailMessage message, boolean silent) {
+    private boolean checkConnection(PhoneEvent message, boolean silent) {
         if (!hasInternetConnection(context)) {
             failed(null, "No internet connection", message, R.string.notification_error_no_connection, ACTION_SHOW_CONNECTION, silent);
             return false;
@@ -142,7 +134,7 @@ public class Mailer {
         return true;
     }
 
-    private void success(MailMessage message) {
+    private void success(PhoneEvent message) {
         message.setSent(true);
         message.setDetails(null);
         database.updateMessage(message);
@@ -152,7 +144,7 @@ public class Mailer {
         }
     }
 
-    private void failed(Throwable error, String details, MailMessage message, int notification,
+    private void failed(Throwable error, String details, PhoneEvent message, int notification,
                         int action, boolean silent) {
         log.error("Send failed. " + message, error);
 

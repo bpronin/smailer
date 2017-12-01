@@ -124,7 +124,7 @@ public class Settings {
                 Collections.<String>emptySet()).contains(trigger);
     }
 
-    public static void saveFilter(SmsFilter filter, Context context) {
+    public static void saveFilter(PhoneEventFilter filter, Context context) {
         SharedPreferences.Editor editor = getPreferences(context).edit();
 
         editor.putString(KEY_PREF_FILTER_PATTERN, filter.getPattern());
@@ -136,9 +136,9 @@ public class Settings {
     }
 
     @NonNull
-    public static SmsFilter loadFilter(Context context) {
+    public static PhoneEventFilter loadFilter(Context context) {
         SharedPreferences preferences = getPreferences(context);
-        SmsFilter filter = new SmsFilter();
+        PhoneEventFilter filter = new PhoneEventFilter();
 
         filter.setPattern(preferences.getString(KEY_PREF_FILTER_PATTERN, null));
         filter.setBlackListed(preferences.getBoolean(KEY_PREF_FILTER_BLACK_LISTED, true));
