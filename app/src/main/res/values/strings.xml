@@ -103,7 +103,7 @@
 
     <string name="about_dialog_title_version">Application version: {version}</string>
     <string name="about_dialog_copyright" translatable="false">Copyright © BoPr, 2016</string>
-    <string name="about_dialog_title_open_source">Open source &amp; third party software</string>
+    <string name="about_dialog_title_open_source">Open source and third party software</string>
 
     <string name="recipient_hint_button_select_email_from_contacts">Select from contacts</string>
     <string name="recipient_message_already_exists">Recipient {name} already exists</string>
