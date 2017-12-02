@@ -1,5 +1,0 @@
-project.ext {
-    store_password = 'sample'
-    key_password = 'sample'
-    //upload_path =  'c:/Cloud/Google/Release'
-}

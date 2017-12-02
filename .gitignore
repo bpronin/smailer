@@ -1,7 +1,7 @@
 /local.properties
-/.idea
+.idea
 *.iml
 .gradle
-/app/build/
-/build/
+**/build/
 /app/local.gradle
+/app/src/debug/assets/debug.properties

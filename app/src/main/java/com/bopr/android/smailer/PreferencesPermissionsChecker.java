@@ -8,37 +8,16 @@ import android.content.pm.PackageManager;
 import android.content.pm.PermissionInfo;
 import android.support.v4.app.ActivityCompat;
 import android.widget.Toast;
-
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.TagFormatter;
 import com.bopr.android.smailer.util.Util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
-import static android.Manifest.permission.ACCESS_FINE_LOCATION;
-import static android.Manifest.permission.PROCESS_OUTGOING_CALLS;
-import static android.Manifest.permission.READ_CONTACTS;
-import static android.Manifest.permission.READ_PHONE_STATE;
-import static android.Manifest.permission.RECEIVE_SMS;
+import static android.Manifest.permission.*;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-import static com.bopr.android.smailer.PermissionsChecker.isPermissionsDenied;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
-import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CONTACT;
-import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_LOCATION;
-import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_CALLS;
-import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
-import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS;
-import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
+import static com.bopr.android.smailer.Settings.*;
+import static com.bopr.android.smailer.util.AndroidUtil.isPermissionsDenied;
 
 /**
  * Responsible for permissions checking.
@@ -60,6 +39,7 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
         this.sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 
         items.put(RECEIVE_SMS, R.string.message_permission_rationale_receive_sms);
+        items.put(READ_SMS, R.string.message_permission_rationale_read_sms);
         items.put(READ_PHONE_STATE, R.string.message_permission_rationale_phone_state);
         items.put(PROCESS_OUTGOING_CALLS, R.string.message_permission_rationale_outgoing_call);
         items.put(READ_CONTACTS, R.string.message_permission_rationale_read_contacts);
@@ -113,6 +93,9 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
                 if (triggersPreference.contains(VAL_PREF_TRIGGER_IN_SMS)) {
                     requiredPermissions.add(RECEIVE_SMS);
                 }
+                if (triggersPreference.contains(VAL_PREF_TRIGGER_OUT_SMS)) {
+                    requiredPermissions.add(READ_SMS);
+                }
                 if (triggersPreference.contains(VAL_PREF_TRIGGER_IN_CALLS) || sharedPreferences.contains(VAL_PREF_TRIGGER_MISSED_CALLS)) {
                     requiredPermissions.add(READ_PHONE_STATE);
                 }
@@ -140,6 +123,9 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
             switch (permission) {
                 case RECEIVE_SMS:
                     removeSetPreferenceValue(sharedPreferences, KEY_PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_IN_SMS);
+                    break;
+                case READ_SMS:
+                    removeSetPreferenceValue(sharedPreferences, KEY_PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_OUT_SMS);
                     break;
                 case READ_PHONE_STATE:
                     removeSetPreferenceValue(sharedPreferences, KEY_PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_IN_CALLS, VAL_PREF_TRIGGER_MISSED_CALLS);
@@ -205,13 +191,13 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
     }
 
     private String formatRationale(Collection<String> permissions) {
-        String result = "";
+        StringBuilder b = new StringBuilder();
         for (String permission : permissions) {
-            result += TagFormatter.from(items.get(permission), activity.getResources())
-                    .put("permission", getPermissionLabel(permission))
-                    + "\n\n";
+            TagFormatter line = TagFormatter.from(items.get(permission), activity.getResources())
+                    .put("permission", getPermissionLabel(permission));
+            b.append(line).append("\n\n");
         }
-        return result;
+        return b.toString();
     }
 
     private String getPermissionLabel(String permission) {
@@ -224,9 +210,8 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
         }
     }
 
-    @SuppressLint("CommitPrefEdits")
-    private void removeSetPreferenceValue(SharedPreferences preferences, String key,
-                                          String... values) {
+    @SuppressLint("ApplySharedPref")
+    private void removeSetPreferenceValue(SharedPreferences preferences, String key, String... values) {
         Set<String> set = preferences.getStringSet(key, Collections.<String>emptySet());
         set.removeAll(Arrays.asList(values));
         preferences.edit().putStringSet(key, set).commit();

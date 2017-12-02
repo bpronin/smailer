@@ -3,13 +3,11 @@ package com.bopr.android.smailer.ui_automation;
 import android.annotation.SuppressLint;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
-
 import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.GeoCoordinates;
-import com.bopr.android.smailer.MailMessage;
+import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.ui.MainActivity;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -17,27 +15,13 @@ import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.isNotChecked;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static com.bopr.android.smailer.Settings.DEFAULT_TRIGGERS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_SERVICE_ENABLED;
-import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_CALLS;
-import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
-import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS;
-import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
-import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
+import static android.support.test.espresso.matcher.ViewMatchers.*;
+import static com.bopr.android.smailer.Settings.*;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -130,7 +114,7 @@ public class MainActivityTest extends BaseActivityTest {
     public void testLogView() {
         Database database = new Database(rule.getActivity());
         database.clearMessages();
-        database.updateMessage(new MailMessage("10", true, 10000L, 20000L, false, true, "SMS text", new GeoCoordinates(10.5, 20.5), true, "Test 10"));
+        database.updateMessage(new PhoneEvent("10", true, 10000L, 20000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), true, "Test 10"));
 
         onMenuButton().perform(click());
         onView(withText(R.string.action_activity_log)).perform(click());

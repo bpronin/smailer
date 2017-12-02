@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.os.Build.MANUFACTURER;
 import static android.os.Build.MODEL;
 
@@ -87,6 +88,15 @@ public class AndroidUtil {
         return false;
     }
 
+    public static boolean isPermissionsDenied(Context context, String... permissions) {
+        for (String permission : permissions) {
+            if (ContextCompat.checkSelfPermission(context, permission) != PERMISSION_GRANTED) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Returns denice name.
      */
@@ -123,5 +133,4 @@ public class AndroidUtil {
         }
         editor.apply();
     }
-
 }

@@ -3,6 +3,7 @@ package com.bopr.android.smailer;
 import android.content.Context;
 import android.content.pm.PackageManager;
 
+import com.bopr.android.smailer.util.AndroidUtil;
 import org.junit.Test;
 
 import static android.Manifest.permission.BROADCAST_SMS;
@@ -19,7 +20,7 @@ import static org.mockito.Mockito.when;
 public class PermissionsCheckerTest extends BaseTest {
 
     /**
-     * Tests {@link PermissionsChecker#isPermissionsDenied(Context, String...)} method.
+     * Tests {@link AndroidUtil#isPermissionsDenied(Context, String...)} method.
      *
      * @throws Exception when failed
      */
@@ -28,9 +29,9 @@ public class PermissionsCheckerTest extends BaseTest {
         Context context = mock(Context.class);
 
         when(context.checkPermission(eq(BROADCAST_SMS), anyInt(), anyInt())).thenReturn(PackageManager.PERMISSION_DENIED);
-        assertTrue(PermissionsChecker.isPermissionsDenied(context, BROADCAST_SMS));
+        assertTrue(AndroidUtil.isPermissionsDenied(context, BROADCAST_SMS));
 
         when(context.checkPermission(eq(BROADCAST_SMS), anyInt(), anyInt())).thenReturn(PackageManager.PERMISSION_GRANTED);
-        assertFalse(PermissionsChecker.isPermissionsDenied(context, BROADCAST_SMS));
+        assertFalse(AndroidUtil.isPermissionsDenied(context, BROADCAST_SMS));
     }
 }

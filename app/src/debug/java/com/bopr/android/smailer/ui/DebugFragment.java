@@ -1,12 +1,11 @@
 package com.bopr.android.smailer.ui;
 
 import android.Manifest;
-import android.app.ProgressDialog;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ResolveInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceScreen;
@@ -17,59 +16,21 @@ import android.text.InputType;
 import android.util.Base64;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import com.bopr.android.smailer.Contacts;
-import com.bopr.android.smailer.Cryptor;
-import com.bopr.android.smailer.Database;
-import com.bopr.android.smailer.GeoCoordinates;
-import com.bopr.android.smailer.Locator;
-import com.bopr.android.smailer.MailMessage;
-import com.bopr.android.smailer.MailTransport;
-import com.bopr.android.smailer.Notifications;
-import com.bopr.android.smailer.PermissionsChecker;
-import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.SmsReceiver;
+import com.bopr.android.smailer.*;
 import com.bopr.android.smailer.util.AndroidUtil;
-
+import com.bopr.android.smailer.util.ui.ContextAsyncTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.List;
 import java.util.Properties;
 
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.preference.Preference.OnPreferenceClickListener;
-import static com.bopr.android.smailer.MailerService.createIncomingCallIntent;
-import static com.bopr.android.smailer.Settings.DEFAULT_HOST;
-import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
-import static com.bopr.android.smailer.Settings.DEFAULT_PORT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_NOTIFY_SEND_SUCCESS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
-import static com.bopr.android.smailer.Settings.KEY_PREF_SERVICE_ENABLED;
-import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CONTACT;
-import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME;
-import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_LOCATION;
-import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME;
-import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_CALLS;
-import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
-import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS;
-import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
-import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
-import static com.bopr.android.smailer.Settings.getDeviceName;
+import static com.bopr.android.smailer.MailerService.createEventIntent;
+import static com.bopr.android.smailer.Settings.*;
 import static com.bopr.android.smailer.util.Util.asSet;
 import static com.bopr.android.smailer.util.Util.formatLocation;
 
@@ -116,6 +77,7 @@ public class DebugFragment extends BasePreferenceFragment {
         }));
 
         screen.addPreference(createSimplePreference("Send default mail", new OnPreferenceClickListener() {
+
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 onSendDefaultMail();
@@ -296,7 +258,7 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     public void requestSmsPermission() {
-        if (PermissionsChecker.isPermissionsDenied(getActivity(), RECEIVE_SMS)) {
+        if (AndroidUtil.isPermissionsDenied(getActivity(), RECEIVE_SMS)) {
             ActivityCompat.requestPermissions(getActivity(), new String[]{RECEIVE_SMS},
                     PERMISSIONS_REQUEST_RECEIVE_SMS);
         }
@@ -307,7 +269,6 @@ public class DebugFragment extends BasePreferenceFragment {
 
         getSharedPreferences()
                 .edit()
-                .putBoolean(KEY_PREF_SERVICE_ENABLED, true)
                 .putString(KEY_PREF_SENDER_ACCOUNT, properties.getProperty("default_sender"))
                 .putString(KEY_PREF_SENDER_PASSWORD, cryptor.encrypt(properties.getProperty("default_password")))
                 .putString(KEY_PREF_RECIPIENTS_ADDRESS, properties.getProperty("default_recipient"))
@@ -356,21 +317,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
     @SuppressWarnings("ResourceType")
     private void onGetLocation() {
-        new AsyncTask<Void, Void, GeoCoordinates>() {
-
-            @Override
-            protected GeoCoordinates doInBackground(Void... params) {
-                return locator.getLocation(3000);
-            }
-
-            @Override
-            protected void onPostExecute(GeoCoordinates coordinates) {
-                Toast.makeText(getActivity(),
-                        coordinates != null ? formatLocation(coordinates)
-                                : "No location received",
-                        Toast.LENGTH_LONG).show();
-            }
-        }.execute();
+        new GetLocationTask(getActivity(), locator).execute();
     }
 
     private void onClearPreferences() {
@@ -379,32 +326,7 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private void onSendDefaultMail() {
-        new AsyncTask<Void, Void, Void>() {
-
-            @Override
-            protected Void doInBackground(Void... params) {
-                Properties properties = getDebugProperties();
-                String user = properties.getProperty("default_sender");
-
-                MailTransport transport = new MailTransport();
-                transport.init(user,
-                        properties.getProperty("default_password"),
-                        "smtp.gmail.com",
-                        "465");
-
-                try {
-                    transport.send(
-                            "test subject",
-                            "test message from " + getDeviceName(getActivity()),
-                            user,
-                            properties.getProperty("default_recipient")
-                    );
-                } catch (Exception x) {
-                    log.error("FAILED: ", x);
-                }
-                return null;
-            }
-        }.execute();
+        new SendDefaultMailTask(getActivity(), getDebugProperties()).execute();
     }
 
     private void onSendMail() {
@@ -413,7 +335,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
             @Override
             protected Void doInBackground(Void... params) {
-                MailMessage message = new MailMessage();
+                PhoneEvent message = new PhoneEvent();
                 message.setPhone("+79052345678");
                 message.setIncoming(true);
                 message.setSms(true);
@@ -428,7 +350,12 @@ public class DebugFragment extends BasePreferenceFragment {
         }.execute();
 */
         long start = System.currentTimeMillis();
-        getActivity().startService(createIncomingCallIntent(getActivity(), "+79052345678", start, start + 10000));
+        PhoneEvent event = new PhoneEvent();
+        event.setPhone("+79052345678");
+        event.setStartTime(start);
+        event.setEndTime(start + 10000);
+
+        getActivity().startService(createEventIntent(getActivity(), event));
     }
 
     private void onRequireReceiveSmsPermission() {
@@ -483,18 +410,18 @@ public class DebugFragment extends BasePreferenceFragment {
 
     private void onPopulateLog() {
         long time = System.currentTimeMillis();
-        database.updateMessage(new MailMessage("+79052345671", true, time, null, false, true, "Debug message", null, true, null));
-        database.updateMessage(new MailMessage("+79052345672", false, time += 1000, null, false, true, "Debug message", null, true, null));
-        database.updateMessage(new MailMessage("+79052345673", true, time += 1000, time + 10000, false, false, null, null, true, null));
-        database.updateMessage(new MailMessage("+79052345674", false, time += 1000, time + 10000, false, false, null, null, true, null));
-        database.updateMessage(new MailMessage("+79052345675", true, time += 1000, time + 10000, true, false, null, null, true, null));
+        database.updateMessage(new PhoneEvent("+79052345671", true, time, null, false, "Debug message", null, true, null));
+        database.updateMessage(new PhoneEvent("+79052345672", false, time += 1000, null, false, "Debug message", null, true, null));
+        database.updateMessage(new PhoneEvent("+79052345673", true, time += 1000, time + 10000, false, null, null, true, null));
+        database.updateMessage(new PhoneEvent("+79052345674", false, time += 1000, time + 10000, false, null, null, true, null));
+        database.updateMessage(new PhoneEvent("+79052345675", true, time += 1000, time + 10000, true, null, null, true, null));
 
 
-        database.updateMessage(new MailMessage("+79052345671", true, time += 1000, null, false, true, "Debug message", null, false, "Test exception +79052345671"));
-        database.updateMessage(new MailMessage("+79052345672", false, time += 1000, null, false, true, "Debug message", null, false, "Test exception +79052345672"));
-        database.updateMessage(new MailMessage("+79052345673", true, time += 1000, time + 10000, false, false, null, null, false, "Test exception +79052345673"));
-        database.updateMessage(new MailMessage("+79052345674", false, time += 1000, time + 10000, false, false, null, null, false, "Test exception +79052345674"));
-        database.updateMessage(new MailMessage("+79052345675", true, time += 1000, time + 10000, true, false, null, null, false, "Test exception +79052345675"));
+        database.updateMessage(new PhoneEvent("+79052345671", true, time += 1000, null, false, "Debug message", null, false, "Test exception +79052345671"));
+        database.updateMessage(new PhoneEvent("+79052345672", false, time += 1000, null, false, "Debug message", null, false, "Test exception +79052345672"));
+        database.updateMessage(new PhoneEvent("+79052345673", true, time += 1000, time + 10000, false, null, null, false, "Test exception +79052345673"));
+        database.updateMessage(new PhoneEvent("+79052345674", false, time += 1000, time + 10000, false, null, null, false, "Test exception +79052345674"));
+        database.updateMessage(new PhoneEvent("+79052345675", true, time += 1000, time + 10000, true, null, null, false, "Test exception +79052345675"));
     }
 
     private void onClearLog() {
@@ -514,69 +441,122 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private void onSendLog() {
-        new AsyncTask<Void, Void, Void>() {
-
-            private ProgressDialog progressDialog;
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                progressDialog = ProgressDialog.show(getActivity(), getString(R.string.app_name), "Sending mail");
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                progressDialog.dismiss();
-                super.onPostExecute(aVoid);
-            }
-
-            @Override
-            protected Void doInBackground(Void... params) {
-                Properties properties = getDebugProperties();
-                String user = properties.getProperty("default_sender");
-
-                MailTransport transport = new MailTransport();
-                transport.init(user,
-                        properties.getProperty("default_password"),
-                        "smtp.gmail.com",
-                        "465");
-
-                File logDir = new File(getActivity().getFilesDir(), "log");
-                if (logDir.exists()) {
-                    for (String fileName : logDir.list()) {
-                        try {
-                            transport.send(
-                                    "SMailer log",
-                                    "See attachment",
-                                    new File(fileName).toURI().toURL(),
-                                    user,
-                                    properties.getProperty("developer_email")
-                            );
-                        } catch (Exception x) {
-                            log.error("Send mail failed: ", x);
-                        }
-                    }
-                }
-                return null;
-            }
-        }.execute();
+        new SendLogTask(getActivity(), getDebugProperties()).execute();
     }
 
     private void onShowConcurrent() {
-        String s = "";
+        StringBuilder b = new StringBuilder();
 
         Intent intent = new Intent("android.provider.Telephony.SMS_RECEIVED");
         List<ResolveInfo> activities = getActivity().getPackageManager().queryBroadcastReceivers(intent, 0);
         for (ResolveInfo resolveInfo : activities) {
             ActivityInfo activityInfo = resolveInfo.activityInfo;
             if (activityInfo != null) {
-                s += activityInfo.packageName + " : " + resolveInfo.priority + "\n";
+                b.append(activityInfo.packageName)
+                        .append(" : ")
+                        .append(resolveInfo.priority)
+                        .append("\n");
                 log.debug("Concurrent package:" + activityInfo.packageName + " priority: " + resolveInfo.priority);
             }
         }
         AndroidUtil.dialogBuilder(getActivity())
-                .setMessage(s)
+                .setMessage(b.toString())
                 .show();
     }
 
+    private static class GetLocationTask extends ContextAsyncTask<Void, Void, GeoCoordinates> {
+
+        private final Locator locator;
+
+        private GetLocationTask(Activity activity, Locator locator) {
+            super(activity);
+            this.locator = locator;
+        }
+
+        @Override
+        protected GeoCoordinates doInBackground(Void... params) {
+            return locator.getLocation(3000);
+        }
+
+        @Override
+        protected void onPostExecute(GeoCoordinates coordinates) {
+            Toast.makeText(getContext(),
+                    coordinates != null ? formatLocation(coordinates)
+                            : "No location received",
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private static class SendDefaultMailTask extends ContextAsyncTask<Void, Void, Void> {
+
+        private Properties properties;
+
+        private SendDefaultMailTask(Activity activity, Properties properties) {
+            super(activity);
+            this.properties = properties;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            String user = properties.getProperty("default_sender");
+
+            MailTransport transport = new MailTransport();
+            transport.init(user,
+                    properties.getProperty("default_password"),
+                    "smtp.gmail.com",
+                    "465");
+
+            try {
+                transport.send(
+                        "test subject",
+                        "test message from " + getDeviceName(getContext()),
+                        user,
+                        properties.getProperty("default_recipient")
+                );
+            } catch (Exception x) {
+                log.error("FAILED: ", x);
+            }
+            return null;
+        }
+    }
+
+    private static class SendLogTask extends LongAsyncTask<Void, Void, Void> {
+
+        private Properties properties;
+
+        private SendLogTask(Activity activity, Properties properties) {
+            super(activity);
+            this.properties = properties;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            String user = properties.getProperty("default_sender");
+
+            MailTransport transport = new MailTransport();
+            transport.init(user,
+                    properties.getProperty("default_password"),
+                    "smtp.gmail.com",
+                    "465");
+
+            File logDir = new File(getContext().getFilesDir(), "log");
+            if (logDir.exists()) {
+                for (String fileName : logDir.list()) {
+                    try {
+                        transport.send(
+                                "SMailer log",
+                                "See attachment",
+                                new File(fileName).toURI().toURL(),
+                                user,
+                                properties.getProperty("developer_email")
+                        );
+                    } catch (Exception x) {
+                        log.error("Send mail failed: ", x);
+                    }
+                }
+            }
+            
+            return null;
+        }
+    }
 }

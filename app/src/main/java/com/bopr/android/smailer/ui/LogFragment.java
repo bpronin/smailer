@@ -6,22 +6,17 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.TextView;
-
-import com.bopr.android.smailer.Database;
-import com.bopr.android.smailer.MailMessage;
-import com.bopr.android.smailer.R;
+import android.widget.Toast;
+import com.bopr.android.smailer.*;
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.TagFormatter;
-import com.bopr.android.smailer.util.ui.recycleview.DividerItemDecoration;
+
+import static com.bopr.android.smailer.util.TagFormatter.from;
 
 /**
  * Application activity log activity fragment.
@@ -32,6 +27,7 @@ public class LogFragment extends Fragment {
 
     private Database database;
     private RecyclerView listView;
+    private PhoneEvent selectedEvent;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -40,8 +36,8 @@ public class LogFragment extends Fragment {
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_log, container, false);
 
-        listView = (RecyclerView) view.findViewById(android.R.id.list);
-        listView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+        listView = view.findViewById(android.R.id.list);
+        listView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
 
         return view;
     }
@@ -50,6 +46,17 @@ public class LogFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_log, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_add_to_blacklist:
+                addToBlacklist();
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
     }
 
     @Override
@@ -66,14 +73,16 @@ public class LogFragment extends Fragment {
         loadData();
     }
 
-    public void showDetails(MailMessage message) {
-        String details = message.getDetails();
-        if (details != null) {
-            // TODO: 04.04.2016 details dialog for any type of messages
-            AndroidUtil.dialogBuilder(getActivity())
-                    .setTitle(R.string.activity_log_title_details)
-                    .setMessage(details)
-                    .show();
+    public void showDetails() {
+        if (selectedEvent != null) {
+            String details = selectedEvent.getDetails();
+            if (details != null) {
+                // TODO: 04.04.2016 details dialog for any type of messages
+                AndroidUtil.dialogBuilder(getActivity())
+                        .setTitle(R.string.activity_log_title_details)
+                        .setMessage(details)
+                        .show();
+            }
         }
     }
 
@@ -85,7 +94,7 @@ public class LogFragment extends Fragment {
     protected void updateEmptyText() {
         View view = getView();
         if (view != null) {
-            TextView text = (TextView) view.findViewById(R.id.text_empty);
+            TextView text = view.findViewById(R.id.text_empty);
             if (listView.getAdapter().getItemCount() == 0) {
                 text.setVisibility(View.VISIBLE);
             } else {
@@ -98,6 +107,7 @@ public class LogFragment extends Fragment {
         AndroidUtil.dialogBuilder(getActivity())
                 .setMessage(R.string.activity_log_ask_clear)
                 .setPositiveButton(R.string.action_clear, new DialogInterface.OnClickListener() {
+
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         database.clearMessages();
@@ -114,8 +124,24 @@ public class LogFragment extends Fragment {
                 .show();
     }
 
+    private void addToBlacklist() {
+        if (selectedEvent != null) {
+            String number = selectedEvent.getPhone();
+
+            PhoneEventFilter filter = Settings.loadFilter(getActivity());
+            filter.getBlacklist().add(number);
+            Settings.saveFilter(getActivity(), filter);
+
+            Toast.makeText(getActivity(),
+                    from(R.string.message_added_to_black_list, getActivity())
+                            .put("number", number)
+                            .format(),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @NonNull
-    private String formatMessageText(Context context, MailMessage message) {
+    private String formatMessageText(Context context, PhoneEvent message) {
         int messageText;
 
         if (message.isMissed()) {
@@ -141,8 +167,8 @@ public class LogFragment extends Fragment {
     }
 
     @NonNull
-    private String formatResultText(Context context, MailMessage message) {
-        return context.getString(message.isSent()
+    private String formatResultText(Context context, PhoneEvent message) {
+        return context.getString(message.isProcessed()
                 ? R.string.activity_log_message_send_email_success
                 : R.string.activity_log_message_send_email_failed);
     }
@@ -154,7 +180,7 @@ public class LogFragment extends Fragment {
         private Context context;
         private Database.MailMessageCursor cursor;
 
-        public ListAdapter(Context context, Database.MailMessageCursor cursor) {
+        private ListAdapter(Context context, Database.MailMessageCursor cursor) {
             this.context = context;
             this.cursor = cursor;
         }
@@ -172,24 +198,40 @@ public class LogFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(ItemViewHolder holder, int position) {
-            MailMessage item = getItem(position);
+            PhoneEvent item = getItem(position);
             if (item != null) {
-                final MailMessage message = cursor.get();
+                final PhoneEvent event = cursor.get();
 
-                if (!message.isSent()) {
+                if (!event.isProcessed()) {
                     holder.resultView.setTextColor(errorColor);
                 } else {
                     holder.resultView.setTextColor(defaultColor);
                 }
 
-                holder.timeView.setText(DateFormat.format(context.getString(R.string.activity_log_time_pattern), message.getStartTime()));
-                holder.messageView.setText(formatMessageText(context, message));
-                holder.resultView.setText(formatResultText(context, message));
-                holder.view.setOnClickListener(new View.OnClickListener() {
+                holder.timeView.setText(DateFormat.format(context.getString(R.string.activity_log_time_pattern), event.getStartTime()));
+                holder.messageView.setText(formatMessageText(context, event));
+                holder.resultView.setText(formatResultText(context, event));
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
 
                     @Override
                     public void onClick(View v) {
-                        showDetails(message);
+                        selectedEvent = event;
+                        showDetails();
+                    }
+                });
+                holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+
+                    @Override
+                    public boolean onLongClick(View v) {
+                        selectedEvent = event;
+                        return false;
+                    }
+                });
+                holder.itemView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+
+                    @Override
+                    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+                        getActivity().getMenuInflater().inflate(R.menu.menu_item_log, menu);
                     }
                 });
             }
@@ -197,7 +239,7 @@ public class LogFragment extends Fragment {
 
         @Override
         public long getItemId(int position) {
-            MailMessage item = getItem(position);
+            PhoneEvent item = getItem(position);
             return item != null ? item.getId() : -1;
         }
 
@@ -206,7 +248,7 @@ public class LogFragment extends Fragment {
             return cursor.getCount();
         }
 
-        public MailMessage getItem(int position) {
+        PhoneEvent getItem(int position) {
             cursor.moveToPosition(position);
             if (!cursor.isBeforeFirst() && !cursor.isAfterLast()) {
                 return cursor.get();
@@ -217,17 +259,15 @@ public class LogFragment extends Fragment {
 
     private class ItemViewHolder extends RecyclerView.ViewHolder {
 
-        public final View view;
-        public final TextView timeView;
-        public final TextView messageView;
-        public final TextView resultView;
+        private final TextView timeView;
+        private final TextView messageView;
+        private final TextView resultView;
 
-        public ItemViewHolder(View view) {
+        private ItemViewHolder(View view) {
             super(view);
-            this.view = view;
-            timeView = (TextView) view.findViewById(R.id.list_item_date);
-            messageView = (TextView) view.findViewById(R.id.list_item_message);
-            resultView = (TextView) view.findViewById(R.id.list_item_result);
+            timeView = view.findViewById(R.id.list_item_date);
+            messageView = view.findViewById(R.id.list_item_message);
+            resultView = view.findViewById(R.id.list_item_result);
         }
 
     }

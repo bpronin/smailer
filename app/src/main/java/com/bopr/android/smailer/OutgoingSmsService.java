@@ -11,15 +11,12 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import com.bopr.android.smailer.util.db.XCursor;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
-import static com.bopr.android.smailer.Settings.isServiceEnabled;
-import static com.bopr.android.smailer.Settings.isTriggerEnabled;
+import static com.bopr.android.smailer.MailerService.createEventIntent;
+import static com.bopr.android.smailer.Settings.*;
 import static com.bopr.android.smailer.util.AndroidUtil.isServiceRunning;
 
 /**
@@ -74,8 +71,8 @@ public class OutgoingSmsService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        log.debug("running");
-        contentResolver.registerContentObserver(Uri.parse("content://sms"), true, contentObserver);
+        contentResolver.registerContentObserver(Uri.parse("content://sms"), contentObserver);
+        log.debug("Running");
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -84,7 +81,7 @@ public class OutgoingSmsService extends Service {
         looper.quit();
         contentResolver.unregisterContentObserver(contentObserver);
         super.onDestroy();
-        log.debug("destroyed");
+        log.debug("Destroyed");
     }
 
     @Nullable
@@ -94,7 +91,7 @@ public class OutgoingSmsService extends Service {
     }
 
     private void processSms(String id) {
-        log.debug("processing sms: " + id);
+        log.debug("Processing sms: " + id);
 
         new XCursor<Void>(getContentResolver().query(Uri.parse("content://sms/sent"), null,
                 "_id=?", new String[]{id}, null)) {
@@ -108,8 +105,16 @@ public class OutgoingSmsService extends Service {
     }
 
     private void startMailService(String address, long date, String body) {
-        log.debug("starting mail service");
-        startService(MailerService.createSmsIntent(this, address, date, body, false));
+        log.debug("Starting mail service");
+
+        PhoneEvent event = new PhoneEvent();
+        event.setIncoming(false);
+        event.setPhone(address);
+        event.setStartTime(date);
+        event.setEndTime(date);
+        event.setText(body);
+
+        startService(createEventIntent(this, event));
     }
 
     @NonNull
@@ -118,7 +123,7 @@ public class OutgoingSmsService extends Service {
     }
 
     public static void toggle(Context context) {
-        if (isServiceEnabled(context) && isTriggerEnabled(context, VAL_PREF_TRIGGER_OUT_SMS)) {
+        if (isTriggerEnabled(context, VAL_PREF_TRIGGER_OUT_SMS)) {
             if (!isServiceRunning(context, OutgoingSmsService.class)) {
                 context.startService(createServiceIntent(context));
             }
@@ -143,9 +148,8 @@ public class OutgoingSmsService extends Service {
             this.context = context;
         }
 
-        public void registerContentObserver(@NonNull Uri uri, boolean notifyForDescendents,
-                                            @NonNull ContentObserver observer) {
-            context.getContentResolver().registerContentObserver(uri, notifyForDescendents, observer);
+        public void registerContentObserver(@NonNull Uri uri, @NonNull ContentObserver observer) {
+            context.getContentResolver().registerContentObserver(uri, true, observer);
         }
 
         public void unregisterContentObserver(@NonNull ContentObserver observer) {

@@ -3,29 +3,27 @@ package com.bopr.android.smailer;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-
+import android.support.annotation.NonNull;
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.Util;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.bopr.android.smailer.util.Util.listOf;
+import static com.bopr.android.smailer.util.Util.stringOf;
 
 /**
  * Settings.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
+@SuppressWarnings("WeakerAccess")
 public class Settings {
 
     public static final String PREFERENCES_STORAGE_NAME = "com.bopr.android.smailer_preferences";
     public static final String DB_NAME = "smailer.sqlite";
-    public static final String KEY_PREF_SERVICE_ENABLED = "service_enabled";
     public static final String KEY_PREF_SENDER_ACCOUNT = "sender_account";
     public static final String KEY_PREF_SENDER_PASSWORD = "sender_password";
     public static final String KEY_PREF_EMAIL_HOST = "sender_host";
@@ -39,7 +37,10 @@ public class Settings {
     public static final String KEY_PREF_MORE = "more";
     public static final String KEY_PREF_TEST_MAIL_SERVER = "test_mail_server";
     public static final String KEY_PREF_RESEND_UNSENT = "resend_unsent";
-    public static final String KEY_PREF_FILTER = "message_filter";
+    public static final String KEY_PREF_FILTER_PATTERN = "message_filter_pattern";
+    public static final String KEY_PREF_FILTER_BLACK_LISTED = "message_filter_black_listed";
+    public static final String KEY_PREF_FILTER_BLACK_LIST = "message_filter_black_list";
+    public static final String KEY_PREF_FILTER_WHITE_LIST = "message_filter_white_list";
 
     public static final String KEY_PREF_DEVICE_ALIAS = "device_alias";
     public static final String VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME = "time";
@@ -73,7 +74,6 @@ public class Settings {
      */
     public static void loadDefaultPreferences(Context context) {
         Map<String, Object> data = new HashMap<>();
-        data.put(KEY_PREF_SERVICE_ENABLED, true);
         data.put(KEY_PREF_EMAIL_HOST, DEFAULT_HOST);
         data.put(KEY_PREF_EMAIL_PORT, DEFAULT_PORT);
         data.put(KEY_PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS);
@@ -116,13 +116,33 @@ public class Settings {
         }
     }
 
-    public static boolean isServiceEnabled(Context context) {
-        return getPreferences(context).getBoolean(KEY_PREF_SERVICE_ENABLED, false);
-    }
-
     public static boolean isTriggerEnabled(Context context, String trigger) {
         return getPreferences(context).getStringSet(KEY_PREF_EMAIL_TRIGGERS,
                 Collections.<String>emptySet()).contains(trigger);
+    }
+
+    public static void saveFilter(Context context, PhoneEventFilter filter) {
+        SharedPreferences.Editor editor = getPreferences(context).edit();
+
+        editor.putString(KEY_PREF_FILTER_PATTERN, filter.getPattern());
+        editor.putBoolean(KEY_PREF_FILTER_BLACK_LISTED, filter.isBlackListed());
+        editor.putString(KEY_PREF_FILTER_BLACK_LIST, stringOf(filter.getBlacklist()));
+        editor.putString(KEY_PREF_FILTER_WHITE_LIST, stringOf(filter.getWhitelist()));
+
+        editor.apply();
+    }
+
+    @NonNull
+    public static PhoneEventFilter loadFilter(Context context) {
+        SharedPreferences preferences = getPreferences(context);
+        PhoneEventFilter filter = new PhoneEventFilter();
+
+        filter.setPattern(preferences.getString(KEY_PREF_FILTER_PATTERN, null));
+        filter.setBlackListed(preferences.getBoolean(KEY_PREF_FILTER_BLACK_LISTED, true));
+        filter.setBlacklist(listOf(preferences.getString(KEY_PREF_FILTER_BLACK_LIST, ""), ",", true));
+        filter.setWhitelist(listOf(preferences.getString(KEY_PREF_FILTER_WHITE_LIST, ""), ",", true));
+
+        return filter;
     }
 
 /*

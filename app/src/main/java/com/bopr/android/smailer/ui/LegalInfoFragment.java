@@ -45,7 +45,7 @@ public class LegalInfoFragment extends ListFragment {
         private final String name;
         private final Uri url;
 
-        public Item(String name, Uri url) {
+        Item(String name, Uri url) {
             this.name = name;
             this.url = url;
         }

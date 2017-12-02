@@ -1,13 +1,10 @@
 package com.bopr.android.smailer;
 
 import android.content.Intent;
-
 import org.junit.Test;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * {@link MailerService} tester.
@@ -38,7 +35,7 @@ public class MailerServiceTest extends BaseTest {
     }
 
     /**
-     * Checks that service calls {@link Mailer#send(MailMessage)}} method on incoming sms.
+     * Checks that service calls {@link Mailer#send(PhoneEvent)}} method on incoming sms.
      *
      * @throws Exception when fails
      */
@@ -47,7 +44,7 @@ public class MailerServiceTest extends BaseTest {
         InvocationsCollector invocations = new InvocationsCollector();
 
         Mailer mailer = mock(Mailer.class);
-        doAnswer(invocations).when(mailer).send(any(MailMessage.class));
+        doAnswer(invocations).when(mailer).send(any(PhoneEvent.class));
         Locator locator = mock(Locator.class);
         when(locator.getLocation()).thenReturn(new GeoCoordinates(60, 30));
 
@@ -57,12 +54,12 @@ public class MailerServiceTest extends BaseTest {
         Intent intent = MailerService.createSmsIntent(getContext(), "123", (long) 100000, "Text", true);
         service.onHandleIntent(intent);
 
-        MailMessage message = (MailMessage) invocations.get(0)[0];
+        PhoneEvent message = (PhoneEvent) invocations.get(0)[0];
         assertEquals("123", message.getPhone());
         assertEquals(100000, message.getStartTime().longValue());
         assertEquals("Text", message.getText());
         assertNull(message.getEndTime());
-        assertFalse(message.isSent());
+        assertFalse(message.isProcessed());
         assertTrue(message.isIncoming());
         assertFalse(message.isMissed());
         assertTrue(message.isSms());
@@ -71,7 +68,7 @@ public class MailerServiceTest extends BaseTest {
     }
 
     /**
-     * Checks that service calls {@link Mailer#send(MailMessage)}} method on outgoing sms.
+     * Checks that service calls {@link Mailer#send(PhoneEvent)}} method on outgoing sms.
      *
      * @throws Exception when fails
      */
@@ -80,7 +77,7 @@ public class MailerServiceTest extends BaseTest {
         InvocationsCollector invocations = new InvocationsCollector();
 
         Mailer mailer = mock(Mailer.class);
-        doAnswer(invocations).when(mailer).send(any(MailMessage.class));
+        doAnswer(invocations).when(mailer).send(any(PhoneEvent.class));
         Locator locator = mock(Locator.class);
         when(locator.getLocation()).thenReturn(new GeoCoordinates(60, 30));
 
@@ -90,11 +87,11 @@ public class MailerServiceTest extends BaseTest {
         Intent intent = MailerService.createSmsIntent(getContext(), "123", (long) 100000, "Text", false);
         service.onHandleIntent(intent);
 
-        MailMessage message = (MailMessage) invocations.get(0)[0];
+        PhoneEvent message = (PhoneEvent) invocations.get(0)[0];
         assertEquals("123", message.getPhone());
         assertEquals(100000, message.getStartTime().longValue());
         assertEquals("Text", message.getText());
-        assertFalse(message.isSent());
+        assertFalse(message.isProcessed());
         assertFalse(message.isIncoming());
         assertFalse(message.isMissed());
         assertTrue(message.isSms());
@@ -103,7 +100,7 @@ public class MailerServiceTest extends BaseTest {
     }
 
     /**
-     * Checks that service calls {@link Mailer#send(MailMessage)}} method on incoming call.
+     * Checks that service calls {@link Mailer#send(PhoneEvent)}} method on incoming call.
      *
      * @throws Exception when fails
      */
@@ -112,7 +109,7 @@ public class MailerServiceTest extends BaseTest {
         InvocationsCollector invocations = new InvocationsCollector();
 
         Mailer mailer = mock(Mailer.class);
-        doAnswer(invocations).when(mailer).send(any(MailMessage.class));
+        doAnswer(invocations).when(mailer).send(any(PhoneEvent.class));
         Locator locator = mock(Locator.class);
         when(locator.getLocation()).thenReturn(new GeoCoordinates(60, 30));
 
@@ -122,12 +119,12 @@ public class MailerServiceTest extends BaseTest {
         Intent intent = MailerService.createIncomingCallIntent(getContext(), "123", 100000, 200000);
         service.onHandleIntent(intent);
 
-        MailMessage message = (MailMessage) invocations.get(0)[0];
+        PhoneEvent message = (PhoneEvent) invocations.get(0)[0];
         assertEquals("123", message.getPhone());
         assertEquals(100000, message.getStartTime().longValue());
         assertEquals(200000, message.getEndTime().longValue());
         assertNull(message.getText());
-        assertFalse(message.isSent());
+        assertFalse(message.isProcessed());
         assertTrue(message.isIncoming());
         assertFalse(message.isMissed());
         assertFalse(message.isSms());
@@ -136,7 +133,7 @@ public class MailerServiceTest extends BaseTest {
     }
 
     /**
-     * Checks that service calls {@link Mailer#send(MailMessage)}} method on outgoing call.
+     * Checks that service calls {@link Mailer#send(PhoneEvent)}} method on outgoing call.
      *
      * @throws Exception when fails
      */
@@ -145,7 +142,7 @@ public class MailerServiceTest extends BaseTest {
         InvocationsCollector invocations = new InvocationsCollector();
 
         Mailer mailer = mock(Mailer.class);
-        doAnswer(invocations).when(mailer).send(any(MailMessage.class));
+        doAnswer(invocations).when(mailer).send(any(PhoneEvent.class));
         Locator locator = mock(Locator.class);
         when(locator.getLocation()).thenReturn(new GeoCoordinates(60, 30));
 
@@ -155,12 +152,12 @@ public class MailerServiceTest extends BaseTest {
         Intent intent = MailerService.createOutgoingCallIntent(getContext(), "123", 100000, 200000);
         service.onHandleIntent(intent);
 
-        MailMessage message = (MailMessage) invocations.get(0)[0];
+        PhoneEvent message = (PhoneEvent) invocations.get(0)[0];
         assertEquals("123", message.getPhone());
         assertEquals(100000, message.getStartTime().longValue());
         assertEquals(200000, message.getEndTime().longValue());
         assertNull(message.getText());
-        assertFalse(message.isSent());
+        assertFalse(message.isProcessed());
         assertFalse(message.isIncoming());
         assertFalse(message.isMissed());
         assertFalse(message.isSms());
@@ -169,7 +166,7 @@ public class MailerServiceTest extends BaseTest {
     }
 
     /**
-     * Checks that service calls {@link Mailer#send(MailMessage)}} method on missed call.
+     * Checks that service calls {@link Mailer#send(PhoneEvent)}} method on missed call.
      *
      * @throws Exception when fails
      */
@@ -178,7 +175,7 @@ public class MailerServiceTest extends BaseTest {
         InvocationsCollector invocations = new InvocationsCollector();
 
         Mailer mailer = mock(Mailer.class);
-        doAnswer(invocations).when(mailer).send(any(MailMessage.class));
+        doAnswer(invocations).when(mailer).send(any(PhoneEvent.class));
         Locator locator = mock(Locator.class);
         when(locator.getLocation()).thenReturn(new GeoCoordinates(60, 30));
 
@@ -188,12 +185,12 @@ public class MailerServiceTest extends BaseTest {
         Intent intent = MailerService.createMissedCallIntent(getContext(), "123", 100000);
         service.onHandleIntent(intent);
 
-        MailMessage message = (MailMessage) invocations.get(0)[0];
+        PhoneEvent message = (PhoneEvent) invocations.get(0)[0];
         assertEquals("123", message.getPhone());
         assertEquals(100000, message.getStartTime().longValue());
         assertNull(message.getEndTime());
         assertNull(message.getText());
-        assertFalse(message.isSent());
+        assertFalse(message.isProcessed());
         assertTrue(message.isIncoming());
         assertTrue(message.isMissed());
         assertFalse(message.isSms());

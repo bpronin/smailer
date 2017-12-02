@@ -29,7 +29,7 @@ public class AboutDialogFragment extends DialogFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_about, container, false);
 
-        TextView versionLabel = (TextView) view.findViewById(R.id.label_message);
+        TextView versionLabel = view.findViewById(R.id.label_message);
         versionLabel.setText(formatVersion());
 
         versionLabel.setOnLongClickListener(new View.OnLongClickListener() {

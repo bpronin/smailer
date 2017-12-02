@@ -65,8 +65,8 @@ public class LocatorTest extends BaseTest {
                 new Answer() {
                     @Override
                     public Object answer(InvocationOnMock invocation) throws Throwable {
-                        String provider = invocation.getArgumentAt(0, String.class);
-                        LocationListener listener = invocation.getArgumentAt(1, LocationListener.class);
+                        String provider = (String) invocation.getArguments()[0];
+                        LocationListener listener = (LocationListener) invocation.getArguments()[1];
                         switch (provider) {
                             case GPS_PROVIDER:
                                 listener.onLocationChanged(location(gpsLocation));

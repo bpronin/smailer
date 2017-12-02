@@ -9,23 +9,22 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import com.bopr.android.smailer.Contacts;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.AndroidUtil;
-import com.bopr.android.smailer.util.validator.EmailTextValidator;
 
 /**
- * Email editor dialog.
+ * Phone number editor dialog.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class EditEmailDialogFragment extends DialogFragment {
+public class EditPhoneDialogFragment extends DialogFragment {
 
     private static final int PICK_CONTACT_REQUEST = 100;
 
@@ -54,22 +53,22 @@ public class EditEmailDialogFragment extends DialogFragment {
         Dialog dialog = getDialog();
         if (dialog == null) {
             @SuppressLint("InflateParams")
-            View view = LayoutInflater.from(getActivity()).inflate(R.layout.editor_email, null, false);
+            View view = LayoutInflater.from(getActivity()).inflate(R.layout.editor_phone, null, false);
 
-            EditText editText = view.findViewById(R.id.edit_text_address);
-            editText.addTextChangedListener(new EmailTextValidator(editText));
+            EditText editText = view.findViewById(R.id.edit_text_phone);
+            editText.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
             editText.setText(initialValue);
 
             /* custom message view. do not use setMessage() } */
             TextView messageText = view.findViewById(R.id.dialog_message);
-            messageText.setText(R.string.pref_dialog_message_recipient);
+            messageText.setText(R.string.pref_dialog_message_phone);
 
             View browseButton = view.findViewById(R.id.button_browse_contacts);
             browseButton.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
-                    startActivityForResult(Contacts.createPickContactEmailIntent(), PICK_CONTACT_REQUEST);
+                    startActivityForResult(Contacts.createPickContactPhoneIntent(), PICK_CONTACT_REQUEST);
                 }
             });
 
@@ -102,15 +101,13 @@ public class EditEmailDialogFragment extends DialogFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == PICK_CONTACT_REQUEST && resultCode == Activity.RESULT_OK) {
-            String email = Contacts.getEmailAddressFromIntent(getActivity(), intent);
-            getEditor().setText(email);
-//            callback.onOkClick(email);
-//            dismiss();
+            String phone = Contacts.getPhoneFromIntent(getActivity(), intent);
+            getEditor().setText(phone);
         }
     }
 
     private EditText getEditor() {
-        return (EditText) getDialog().findViewById(R.id.edit_text_address);
+        return getDialog().findViewById(R.id.edit_text_phone);
     }
 
     public void setCallback(Callback callback) {

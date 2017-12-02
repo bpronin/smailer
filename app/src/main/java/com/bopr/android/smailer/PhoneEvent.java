@@ -5,11 +5,11 @@ package com.bopr.android.smailer;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class MailMessage {
+@SuppressWarnings("WeakerAccess")
+public class PhoneEvent {
 
     private Long id;
-    private boolean sent;
-    private boolean sms;
+    private boolean processed;
     private boolean incoming;
     private boolean missed;
     private String phone;
@@ -19,21 +19,20 @@ public class MailMessage {
     private String details;
     private GeoCoordinates location;
 
-    public MailMessage() {
+    public PhoneEvent() {
     }
 
-    public MailMessage(String phone, boolean incoming, Long startTime, Long endTime, boolean missed,
-                       boolean sms, String text, GeoCoordinates location, boolean sent,
-                       String details) {
+    public PhoneEvent(String phone, boolean incoming, Long startTime, Long endTime, boolean missed,
+                      String text, GeoCoordinates location, boolean processed,
+                      String details) {
         this.text = text;
         this.endTime = endTime;
         this.startTime = startTime;
         this.phone = phone;
         this.missed = missed;
         this.incoming = incoming;
-        this.sms = sms;
         this.location = location;
-        this.sent = sent;
+        this.processed = processed;
         this.details = details;
     }
 
@@ -46,11 +45,7 @@ public class MailMessage {
     }
 
     public boolean isSms() {
-        return sms;
-    }
-
-    public void setSms(boolean sms) {
-        this.sms = sms;
+        return text != null && !text.isEmpty();
     }
 
     public boolean isIncoming() {
@@ -108,12 +103,12 @@ public class MailMessage {
         return 0;
     }
 
-    public void setSent(boolean sent) {
-        this.sent = sent;
+    public void setProcessed(boolean processed) {
+        this.processed = processed;
     }
 
-    public boolean isSent() {
-        return sent;
+    public boolean isProcessed() {
+        return processed;
     }
 
     public void setDetails(String details) {
@@ -134,10 +129,9 @@ public class MailMessage {
 
     @Override
     public String toString() {
-        return "MailMessage{" +
+        return "PhoneEvent{" +
                 "id=" + id +
-                ", sent=" + sent +
-                ", sms=" + sms +
+                ", sent=" + processed +
                 ", incoming=" + incoming +
                 ", missed=" + missed +
                 ", phone='" + phone + '\'' +

@@ -1,12 +1,12 @@
 package com.bopr.android.smailer.ui;
 
-import android.app.ProgressDialog;
-import android.os.AsyncTask;
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.widget.Toast;
-
 import com.bopr.android.smailer.Cryptor;
 import com.bopr.android.smailer.MailTransport;
 import com.bopr.android.smailer.MailerProperties;
@@ -15,11 +15,7 @@ import com.bopr.android.smailer.util.Util;
 import com.bopr.android.smailer.util.validator.EmailTextValidator;
 
 import static android.preference.Preference.OnPreferenceChangeListener;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
-import static com.bopr.android.smailer.Settings.KEY_PREF_TEST_MAIL_SERVER;
+import static com.bopr.android.smailer.Settings.*;
 import static com.bopr.android.smailer.util.Util.isEmpty;
 
 /**
@@ -81,6 +77,7 @@ public class ServerFragment extends BasePreferenceFragment {
         });
 
         findPreference(KEY_PREF_TEST_MAIL_SERVER).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 checkSettings();
@@ -122,42 +119,41 @@ public class ServerFragment extends BasePreferenceFragment {
     }
 
     protected void checkSettings() {
-        new AsyncTask<Void, Void, Integer>() {
-
-            public ProgressDialog dialog;
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                dialog = ProgressDialog.show(getActivity(), null, getActivity().getString(R.string.server_testing), true);
-            }
-
-            @Override
-            protected Integer doInBackground(Void... params) {
-                MailTransport transport = new MailTransport();
-                MailerProperties pp = new MailerProperties(getSharedPreferences());
-                Cryptor cryptor = new Cryptor(getActivity());
-                transport.init(pp.getUser(), cryptor.decrypt(pp.getPassword()), pp.getHost(), pp.getPort());
-                return transport.checkConnection();
-            }
-
-            @Override
-            protected void onPostExecute(Integer result) {
-                super.onPostExecute(result);
-                dialog.dismiss();
-
-                int message;
-                if (result == MailTransport.CHECK_RESULT_NOT_CONNECTED) {
-                    message = R.string.notification_error_connect;
-                } else if (result == MailTransport.CHECK_RESULT_AUTHENTICATION) {
-                    message = R.string.notification_error_authentication;
-                } else {
-                    message = R.string.server_test_success;
-                }
-
-                Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
-            }
-        }.execute();
+        new CheckServerSettingsTask(getActivity(), getSharedPreferences()).execute();
     }
 
+    private static class CheckServerSettingsTask extends LongAsyncTask<Void, Void, Integer> {
+
+        private SharedPreferences preferences;
+
+        private CheckServerSettingsTask(Activity context, SharedPreferences preferences) {
+            super(context);
+            this.preferences = preferences;
+        }
+
+        @Override
+        protected Integer doInBackground(Void... params) {
+            MailTransport transport = new MailTransport();
+            Cryptor cryptor = new Cryptor(getContext());
+            MailerProperties pp = new MailerProperties(preferences);
+            transport.init(pp.getUser(), cryptor.decrypt(pp.getPassword()), pp.getHost(), pp.getPort());
+            return transport.checkConnection();
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            super.onPostExecute(result);
+
+            int message;
+            if (result == MailTransport.CHECK_RESULT_NOT_CONNECTED) {
+                message = R.string.notification_error_connect;
+            } else if (result == MailTransport.CHECK_RESULT_AUTHENTICATION) {
+                message = R.string.notification_error_authentication;
+            } else {
+                message = R.string.server_test_success;
+            }
+
+            Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+        }
+    }
 }

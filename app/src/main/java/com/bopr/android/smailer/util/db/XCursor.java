@@ -11,6 +11,7 @@ import java.util.List;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
+@SuppressWarnings("WeakerAccess")
 public abstract class XCursor<R> extends CursorWrapper {
 
     /**

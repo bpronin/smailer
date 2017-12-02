@@ -5,8 +5,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.support.v7.app.NotificationCompat;
 
 import com.bopr.android.smailer.ui.MainActivity;
 
@@ -47,7 +47,7 @@ public class Notifications {
     }
 
     public void showMailError(String text, long messageId, int action) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "default");
         Notification notification = builder
                 .setContentIntent(createIntent(action, messageId))
                 .setSmallIcon(R.drawable.alert)
@@ -63,7 +63,7 @@ public class Notifications {
 
     public void showMailSuccess(long messageId) {
         String text = context.getResources().getString(R.string.notification_email_send_successfully);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "default");
         Notification notification = builder
                 .setContentIntent(createIntent(ACTION_SHOW_LOG, messageId))
                 .setSmallIcon(R.drawable.file_send)

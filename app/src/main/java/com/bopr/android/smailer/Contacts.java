@@ -4,13 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 
+import com.bopr.android.smailer.util.AndroidUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static android.Manifest.permission.READ_CONTACTS;
-import static android.provider.ContactsContract.CommonDataKinds.Email;
+import static android.provider.ContactsContract.CommonDataKinds.*;
 import static android.provider.ContactsContract.PhoneLookup;
 
 /**
@@ -55,8 +57,24 @@ public class Contacts {
         return result;
     }
 
+    @Nullable
+    public static String getPhone(Context context, String phoneId) {
+        String result = null;
+        if (!permissionDenied(context)) {
+            Cursor cursor = context.getContentResolver().query(Phone.CONTENT_URI, null,
+                    Phone._ID + "=" + phoneId, null, null);
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(Phone.DATA));
+                }
+                cursor.close();
+            }
+        }
+        return result;
+    }
+
     public static boolean isPermissionsDenied(Context context) {
-        return PermissionsChecker.isPermissionsDenied(context, READ_CONTACTS);
+        return AndroidUtil.isPermissionsDenied(context, READ_CONTACTS);
     }
 
     private static boolean permissionDenied(Context context) {
@@ -73,7 +91,17 @@ public class Contacts {
         return intent;
     }
 
+    public static Intent createPickContactPhoneIntent() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType(Phone.CONTENT_TYPE);
+        return intent;
+    }
+
     public static String getEmailAddressFromIntent(Context context, Intent intent) {
         return getEmailAddress(context, intent.getData().getLastPathSegment());
+    }
+
+    public static String getPhoneFromIntent(Context context, Intent intent) {
+        return getPhone(context, intent.getData().getLastPathSegment());
     }
 }

@@ -14,8 +14,8 @@
 
     <string-array name="email_content_values" translatable="false">
         <item>time</item>
-        <item>device_name</item>
         <item>contact_name</item>
+        <item>device_name</item>
         <item>location</item>
     </string-array>
 

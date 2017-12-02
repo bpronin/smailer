@@ -16,13 +16,7 @@ import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.validator.EmailListTextValidator;
 import com.bopr.android.smailer.util.validator.EmailTextValidator;
 
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_MORE;
-import static com.bopr.android.smailer.Settings.KEY_PREF_OUTGOING_SERVER;
-import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
-import static com.bopr.android.smailer.Settings.loadDefaultPreferences;
+import static com.bopr.android.smailer.Settings.*;
 import static com.bopr.android.smailer.util.Util.anyIsEmpty;
 import static com.bopr.android.smailer.util.Util.isEmpty;
 
@@ -34,6 +28,7 @@ import static com.bopr.android.smailer.util.Util.isEmpty;
 public class MainFragment extends BasePreferenceFragment {
 
     private Preference recipientsPreference;
+    private Preference blacklistPreference;
     private Preference serverPreference;
     private OnSharedPreferenceChangeListener preferenceChangeListener;
 
@@ -51,6 +46,16 @@ public class MainFragment extends BasePreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 startActivity(new Intent(getActivity(), RecipientsActivity.class));
+                return true;
+            }
+        });
+
+        blacklistPreference = findPreference(KEY_PREF_FILTER_BLACK_LIST);
+        blacklistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                startActivity(new Intent(getActivity(), BlacklistActivity.class));
                 return true;
             }
         });

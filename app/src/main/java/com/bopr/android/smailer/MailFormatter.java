@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import com.bopr.android.smailer.util.TagFormatter;
 import com.bopr.android.smailer.util.Util;
 
@@ -13,21 +12,16 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Set;
 
-import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CONTACT;
-import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME;
-import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_LOCATION;
-import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME;
+import static com.bopr.android.smailer.Settings.*;
 import static com.bopr.android.smailer.util.TagFormatter.from;
-import static com.bopr.android.smailer.util.Util.formatDuration;
-import static com.bopr.android.smailer.util.Util.formatLocation;
-import static com.bopr.android.smailer.util.Util.isEmpty;
+import static com.bopr.android.smailer.util.Util.*;
 
 /**
  * Formats email subject and body.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class MailFormatter {
+class MailFormatter {
 
     private static final String SUBJECT_PATTERN = "[{app_name}] {source} {phone}";
     private static final String BODY_PATTERN = "<html>" +
@@ -38,14 +32,14 @@ public class MailFormatter {
             "place/{latitude}+{longitude}/@{latitude},{longitude}\">{location}</a>";
     private static final String PHONE_LINK_PATTERN = "<a href=\"tel:{phone}\">{phone}</a>";
 
-    private final MailMessage message;
+    private final PhoneEvent message;
     private Context context;
     private String contactName;
     private String deviceName;
     private Set<String> contentOptions;
     private Locale locale = Locale.getDefault();
 
-    public MailFormatter(Context context, MailMessage message) {
+    MailFormatter(Context context, PhoneEvent message) {
         this.message = message;
         this.context = context;
     }
@@ -55,7 +49,7 @@ public class MailFormatter {
      *
      * @param contactName name
      */
-    public void setContactName(String contactName) {
+    void setContactName(String contactName) {
         this.contactName = contactName;
     }
 
@@ -64,7 +58,7 @@ public class MailFormatter {
      *
      * @param deviceName name
      */
-    public void setDeviceName(String deviceName) {
+    void setDeviceName(String deviceName) {
         this.deviceName = deviceName;
     }
 
@@ -73,7 +67,7 @@ public class MailFormatter {
      *
      * @param contentOptions set of options
      */
-    public void setContentOptions(Set<String> contentOptions) {
+    void setContentOptions(Set<String> contentOptions) {
         this.contentOptions = contentOptions;
     }
 
@@ -82,7 +76,7 @@ public class MailFormatter {
      *
      * @param code locale code as "en_EN"
      */
-    public void setLocale(String code) {
+    void setLocale(String code) {
         Locale locale = Util.stringToLocale(code);
         if (locale != null) {
             this.locale = locale;
@@ -97,7 +91,7 @@ public class MailFormatter {
      * @return email subject
      */
     @NonNull
-    public String getSubject() {
+    String getSubject() {
         Locale currentLocale = setupLocale();
 
         String result = from(SUBJECT_PATTERN, context)
@@ -116,7 +110,7 @@ public class MailFormatter {
      * @return email body
      */
     @NonNull
-    public String getBody() {
+    String getBody() {
         Locale currentLocale = setupLocale();
 
         String footerText = getFooterText();

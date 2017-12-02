@@ -2,6 +2,7 @@ package com.bopr.android.smailer;
 
 import android.content.Context;
 
+import com.bopr.android.smailer.util.AndroidUtil;
 import org.junit.Test;
 
 /**
@@ -12,7 +13,7 @@ import org.junit.Test;
 public class PreferencesPermissionsCheckerTest extends BaseTest {
 
     /**
-     * Tests {@link PermissionsChecker#isPermissionsDenied(Context, String...)} method.
+     * Tests {@link AndroidUtil#isPermissionsDenied(Context, String...)} method.
      *
      * @throws Exception when failed
      */

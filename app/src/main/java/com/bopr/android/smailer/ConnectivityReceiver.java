@@ -4,13 +4,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
-
+import com.bopr.android.smailer.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
-import static com.bopr.android.smailer.Settings.getPreferences;
-import static com.bopr.android.smailer.Settings.isServiceEnabled;
+import static com.bopr.android.smailer.Settings.*;
 import static com.bopr.android.smailer.util.AndroidUtil.hasInternetConnection;
 
 /**
@@ -26,8 +24,7 @@ public class ConnectivityReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         log.debug("Received intent: " + intent);
 
-        if (intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)
-                && isServiceEnabled(context)
+        if (Util.equals(intent.getAction(), ConnectivityManager.CONNECTIVITY_ACTION)
                 && getPreferences(context).getBoolean(KEY_PREF_RESEND_UNSENT, true)
                 && hasInternetConnection(context)) {
             context.startService(MailerService.createResendIntent(context));
