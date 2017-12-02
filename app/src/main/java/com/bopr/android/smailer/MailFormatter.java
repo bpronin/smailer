@@ -21,7 +21,7 @@ import static com.bopr.android.smailer.util.Util.*;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class MailFormatter {
+class MailFormatter {
 
     private static final String SUBJECT_PATTERN = "[{app_name}] {source} {phone}";
     private static final String BODY_PATTERN = "<html>" +
@@ -39,7 +39,7 @@ public class MailFormatter {
     private Set<String> contentOptions;
     private Locale locale = Locale.getDefault();
 
-    public MailFormatter(Context context, PhoneEvent message) {
+    MailFormatter(Context context, PhoneEvent message) {
         this.message = message;
         this.context = context;
     }
@@ -49,7 +49,7 @@ public class MailFormatter {
      *
      * @param contactName name
      */
-    public void setContactName(String contactName) {
+    void setContactName(String contactName) {
         this.contactName = contactName;
     }
 
@@ -58,7 +58,7 @@ public class MailFormatter {
      *
      * @param deviceName name
      */
-    public void setDeviceName(String deviceName) {
+    void setDeviceName(String deviceName) {
         this.deviceName = deviceName;
     }
 
@@ -67,7 +67,7 @@ public class MailFormatter {
      *
      * @param contentOptions set of options
      */
-    public void setContentOptions(Set<String> contentOptions) {
+    void setContentOptions(Set<String> contentOptions) {
         this.contentOptions = contentOptions;
     }
 
@@ -76,7 +76,7 @@ public class MailFormatter {
      *
      * @param code locale code as "en_EN"
      */
-    public void setLocale(String code) {
+    void setLocale(String code) {
         Locale locale = Util.stringToLocale(code);
         if (locale != null) {
             this.locale = locale;
@@ -91,7 +91,7 @@ public class MailFormatter {
      * @return email subject
      */
     @NonNull
-    public String getSubject() {
+    String getSubject() {
         Locale currentLocale = setupLocale();
 
         String result = from(SUBJECT_PATTERN, context)
@@ -110,7 +110,7 @@ public class MailFormatter {
      * @return email body
      */
     @NonNull
-    public String getBody() {
+    String getBody() {
         Locale currentLocale = setupLocale();
 
         String footerText = getFooterText();

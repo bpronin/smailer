@@ -1,24 +1,27 @@
 apply from: 'local.gradle'
 
 import java.text.SimpleDateFormat
+
 /* user defined procedures */
 
-task updateReleaseInfo << {
-    def propFile = new File(projectDir, 'src/main/assets/release.properties')
-    def Properties props = new Properties()
-    props.load(new FileInputStream(propFile))
+task updateReleaseInfo {
+    doLast {
+        def propFile = new File(projectDir, 'src/main/assets/release.properties')
+        Properties props = new Properties()
+        props.load(new FileInputStream(propFile))
 
-    def buildNumber = Integer.parseInt(props.getProperty('build_number')) + 1
+        def buildNumber = Integer.parseInt(props.getProperty('build_number')) + 1
 
-    def df = new SimpleDateFormat('yyyy-MM-dd HH:mm:ss z')
-    df.setTimeZone(TimeZone.getTimeZone('UTC'))
-    def buildTime = df.format(new Date())
+        def df = new SimpleDateFormat('yyyy-MM-dd HH:mm:ss z')
+        df.setTimeZone(TimeZone.getTimeZone('UTC'))
+        def buildTime = df.format(new Date())
 
-    props.setProperty('build_number', String.valueOf(buildNumber))
-    props.setProperty('build_time', String.valueOf(buildTime))
-    props.store(new FileOutputStream(propFile), 'Release properties')
+        props.setProperty('build_number', String.valueOf(buildNumber))
+        props.setProperty('build_time', String.valueOf(buildTime))
+        props.store(new FileOutputStream(propFile), 'Release properties')
 
-    println(':updateReleaseInfo current build=' + buildNumber);
+        println(':updateReleaseInfo current build=' + buildNumber)
+    }
 }
 
 assemble.doLast {

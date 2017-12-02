@@ -71,8 +71,8 @@ public class OutgoingSmsService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        log.debug("running");
-        contentResolver.registerContentObserver(Uri.parse("content://sms"), true, contentObserver);
+        contentResolver.registerContentObserver(Uri.parse("content://sms"), contentObserver);
+        log.debug("Running");
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -81,7 +81,7 @@ public class OutgoingSmsService extends Service {
         looper.quit();
         contentResolver.unregisterContentObserver(contentObserver);
         super.onDestroy();
-        log.debug("destroyed");
+        log.debug("Destroyed");
     }
 
     @Nullable
@@ -91,7 +91,7 @@ public class OutgoingSmsService extends Service {
     }
 
     private void processSms(String id) {
-        log.debug("processing sms: " + id);
+        log.debug("Processing sms: " + id);
 
         new XCursor<Void>(getContentResolver().query(Uri.parse("content://sms/sent"), null,
                 "_id=?", new String[]{id}, null)) {
@@ -105,7 +105,7 @@ public class OutgoingSmsService extends Service {
     }
 
     private void startMailService(String address, long date, String body) {
-        log.debug("starting mail service");
+        log.debug("Starting mail service");
 
         PhoneEvent event = new PhoneEvent();
         event.setIncoming(false);
@@ -123,7 +123,7 @@ public class OutgoingSmsService extends Service {
     }
 
     public static void toggle(Context context) {
-        if (isServiceEnabled(context) && isTriggerEnabled(context, VAL_PREF_TRIGGER_OUT_SMS)) {
+        if (isTriggerEnabled(context, VAL_PREF_TRIGGER_OUT_SMS)) {
             if (!isServiceRunning(context, OutgoingSmsService.class)) {
                 context.startService(createServiceIntent(context));
             }
@@ -148,9 +148,8 @@ public class OutgoingSmsService extends Service {
             this.context = context;
         }
 
-        public void registerContentObserver(@NonNull Uri uri, boolean notifyForDescendents,
-                                            @NonNull ContentObserver observer) {
-            context.getContentResolver().registerContentObserver(uri, notifyForDescendents, observer);
+        public void registerContentObserver(@NonNull Uri uri, @NonNull ContentObserver observer) {
+            context.getContentResolver().registerContentObserver(uri, true, observer);
         }
 
         public void unregisterContentObserver(@NonNull ContentObserver observer) {

@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <SwitchPreference
-        android:key="service_enabled"
-        android:summaryOff="@string/pref_description_service_off"
-        android:summaryOn="@string/pref_description_service_on"
-        android:title="@string/pref_title_enable"/>
-
     <PreferenceScreen
         android:key="outgoing_server"
         android:title="@string/pref_title_server"/>

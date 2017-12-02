@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.HandlerThread;
 import android.support.annotation.Nullable;
 
+import com.bopr.android.smailer.util.AndroidUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +44,7 @@ public class Locator {
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
     }
 
-    protected void setLocationManager(LocationManager locationManager) {
+    void setLocationManager(LocationManager locationManager) {
         this.locationManager = locationManager;
     }
 
@@ -190,8 +191,8 @@ public class Locator {
         return result.get();
     }
 
-    public static boolean isPermissionsDenied(Context context) {
-        return PermissionsChecker.isPermissionsDenied(context, ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION);
+    static boolean isPermissionsDenied(Context context) {
+        return AndroidUtil.isPermissionsDenied(context, ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION);
     }
 
 }

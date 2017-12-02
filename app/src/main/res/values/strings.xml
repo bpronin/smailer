@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="pref_title_enable">Send mail</string>
     <string name="pref_title_sender_account">Account</string>
     <string name="pref_title_recipients">Email recipients</string>
     <string name="pref_title_sender_password">Password</string>
@@ -9,7 +8,7 @@
     <string name="pref_title_outgoing_server">Outgoing email server</string>
     <string name="pref_title_host">Host</string>
     <string name="pref_title_port">Port</string>
-    <string name="pref_title_trigger">Filter</string>
+    <string name="pref_title_trigger">Message filter</string>
     <string name="pref_title_content">Email content</string>
     <string name="pref_title_email_locale">Email message language</string>
     <string name="pref_title_notify_send_success">Notify of send</string>
@@ -37,7 +36,7 @@
     <string name="pref_description_resend_unsent">Try to resend unsent messages when connection is established</string>
     <string name="pref_description_device_alias">Device name to be shown in email message (leave blank to use default)</string>
 
-    <string name="notification_email_send_successfully">Email successfully sent</string>
+    <string name="notification_email_send_successfully">Email sent</string>
     <string name="notification_error_mail_general">Unable to send email.</string>
     <string name="notification_error_no_account">No account specified.</string>
     <string name="notification_error_no_host">No host specified.</string>

@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
+import com.bopr.android.smailer.util.AndroidUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +57,7 @@ public class Contacts {
     }
 
     public static boolean isPermissionsDenied(Context context) {
-        return PermissionsChecker.isPermissionsDenied(context, READ_CONTACTS);
+        return AndroidUtil.isPermissionsDenied(context, READ_CONTACTS);
     }
 
     private static boolean permissionDenied(Context context) {

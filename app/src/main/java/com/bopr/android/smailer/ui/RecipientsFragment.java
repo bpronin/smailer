@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
@@ -14,10 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.Util;
-import com.bopr.android.smailer.util.ui.recycleview.DividerItemDecoration;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,6 +44,7 @@ public class RecipientsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         preferences = getPreferences(getActivity());
         preferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 loadItems();
@@ -64,8 +64,8 @@ public class RecipientsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recipients, container, false);
 
-        listView = (RecyclerView) view.findViewById(android.R.id.list);
-        listView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+        listView = view.findViewById(android.R.id.list);
+        listView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
@@ -83,8 +83,9 @@ public class RecipientsFragment extends Fragment {
         });
         itemTouchHelper.attachToRecyclerView(listView);
 
-        addButton = (FloatingActionButton) view.findViewById(R.id.button_add);
+        addButton = view.findViewById(R.id.button_add);
         addButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 addItem();
@@ -111,7 +112,7 @@ public class RecipientsFragment extends Fragment {
     protected void updateEmptyText() {
         View view = getView();
         if (view != null) {
-            TextView text = (TextView) view.findViewById(R.id.text_empty);
+            TextView text = view.findViewById(R.id.text_empty);
             if (listView.getAdapter().getItemCount() == 0) {
                 text.setVisibility(View.VISIBLE);
             } else {
@@ -123,6 +124,7 @@ public class RecipientsFragment extends Fragment {
     private void loadItems() {
         listAdapter = new ListAdapter();
         listAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+
             @Override
             public void onChanged() {
                 updateEmptyText();
@@ -229,9 +231,9 @@ public class RecipientsFragment extends Fragment {
 
     private class Item {
 
-        public final String address;
+        private final String address;
 
-        public Item(String address) {
+        private Item(String address) {
             this.address = address;
         }
     }
@@ -250,7 +252,7 @@ public class RecipientsFragment extends Fragment {
         public void onBindViewHolder(final ItemViewHolder holder, int position) {
             final Item item = getItem(position);
             holder.textView.setText(item.address);
-            holder.view.setOnClickListener(new View.OnClickListener() {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
@@ -269,21 +271,21 @@ public class RecipientsFragment extends Fragment {
             return items.size();
         }
 
-        public Item getItem(int position) {
+        private Item getItem(int position) {
             return position != -1 ? items.get(position) : null;
         }
 
-        public List<Item> getItems() {
+        private List<Item> getItems() {
             return Collections.unmodifiableList(items);
         }
 
-        public void setItems(List<Item> items) {
+        private void setItems(List<Item> items) {
             this.items.clear();
             this.items.addAll(items);
             notifyDataSetChanged();
         }
 
-        public List<Item> removeItems(int[] positions) {
+        private List<Item> removeItems(int[] positions) {
             List<Item> removedItems = new ArrayList<>();
             for (int position : positions) {
                 Item item = getItem(position);
@@ -294,7 +296,7 @@ public class RecipientsFragment extends Fragment {
             return removedItems;
         }
 
-        public void replaceItem(Item oldItem, Item newItem) {
+        private void replaceItem(Item oldItem, Item newItem) {
             int position = items.indexOf(oldItem);
             if (position < 0) {
                 items.add(newItem);
@@ -308,13 +310,11 @@ public class RecipientsFragment extends Fragment {
 
     private class ItemViewHolder extends RecyclerView.ViewHolder {
 
-        public final View view;
-        public final TextView textView;
+        private final TextView textView;
 
-        public ItemViewHolder(View view) {
+        private ItemViewHolder(View view) {
             super(view);
-            this.view = view;
-            textView = (TextView) view.findViewById(R.id.text);
+            textView = view.findViewById(R.id.text);
         }
 
     }

@@ -139,7 +139,7 @@ public class OutgoingSmsServiceTest extends ServiceTestCase<OutgoingSmsService> 
         }
 
         @Override
-        public void registerContentObserver(@NonNull Uri uri, boolean notifyForDescendents,
+        public void registerContentObserver(@NonNull Uri uri,
                                             @NonNull ContentObserver observer) {
             provider.observer = observer;
         }

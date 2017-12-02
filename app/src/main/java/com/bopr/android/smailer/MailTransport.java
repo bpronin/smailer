@@ -138,7 +138,7 @@ public class MailTransport {
 
     private static class JSSEProvider extends Provider {
 
-        public JSSEProvider() {
+        private JSSEProvider() {
             super("HarmonyJSSE", 1.0, "Harmony JSSE Provider");
 
             AccessController.doPrivileged(new PrivilegedAction<Void>() {
@@ -160,7 +160,7 @@ public class MailTransport {
         private final String contentType;
         private byte[] data;
 
-        public ByteArrayDataSource(byte[] data, boolean html) {
+        private ByteArrayDataSource(byte[] data, boolean html) {
             this.data = data;
             contentType = html ? "text/plain" : "text/html";
         }

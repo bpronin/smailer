@@ -17,11 +17,11 @@ import static android.content.Context.MODE_PRIVATE;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
+@SuppressWarnings("WeakerAccess")
 public class Settings {
 
     public static final String PREFERENCES_STORAGE_NAME = "com.bopr.android.smailer_preferences";
     public static final String DB_NAME = "smailer.sqlite";
-    public static final String KEY_PREF_SERVICE_ENABLED = "service_enabled";
     public static final String KEY_PREF_SENDER_ACCOUNT = "sender_account";
     public static final String KEY_PREF_SENDER_PASSWORD = "sender_password";
     public static final String KEY_PREF_EMAIL_HOST = "sender_host";
@@ -72,7 +72,6 @@ public class Settings {
      */
     public static void loadDefaultPreferences(Context context) {
         Map<String, Object> data = new HashMap<>();
-        data.put(KEY_PREF_SERVICE_ENABLED, true);
         data.put(KEY_PREF_EMAIL_HOST, DEFAULT_HOST);
         data.put(KEY_PREF_EMAIL_PORT, DEFAULT_PORT);
         data.put(KEY_PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS);
@@ -113,10 +112,6 @@ public class Settings {
         } catch (IOException x) {
             throw new Error("Cannot read release properties", x);
         }
-    }
-
-    public static boolean isServiceEnabled(Context context) {
-        return getPreferences(context).getBoolean(KEY_PREF_SERVICE_ENABLED, false);
     }
 
     public static boolean isTriggerEnabled(Context context, String trigger) {

@@ -29,16 +29,14 @@ public class CallReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         log.debug("Received intent: " + intent);
 
-        if (Settings.isServiceEnabled(context)) {
-            //noinspection ConstantConditions
-            switch (intent.getAction()) {
-                case Intent.ACTION_NEW_OUTGOING_CALL:
-                    lastCallNumber = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
-                    break;
-                case TelephonyManager.ACTION_PHONE_STATE_CHANGED:
-                    onCallStateChanged(context, intent);
-                    break;
-            }
+        //noinspection ConstantConditions
+        switch (intent.getAction()) {
+            case Intent.ACTION_NEW_OUTGOING_CALL:
+                lastCallNumber = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
+                break;
+            case TelephonyManager.ACTION_PHONE_STATE_CHANGED:
+                onCallStateChanged(context, intent);
+                break;
         }
     }
 

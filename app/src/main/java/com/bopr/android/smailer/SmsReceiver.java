@@ -24,7 +24,7 @@ public class SmsReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         log.debug("Received intent: " + intent);
-        if (Util.equals(intent.getAction(), SMS_RECEIVED_ACTION) && isServiceEnabled(context)
+        if (Util.equals(intent.getAction(), SMS_RECEIVED_ACTION)
                 && isTriggerEnabled(context, VAL_PREF_TRIGGER_IN_SMS)) {
 
             PhoneEvent event = parser.parse(intent);

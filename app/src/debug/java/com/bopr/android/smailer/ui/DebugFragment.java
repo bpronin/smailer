@@ -1,12 +1,11 @@
 package com.bopr.android.smailer.ui;
 
 import android.Manifest;
-import android.app.ProgressDialog;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ResolveInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceScreen;
@@ -19,6 +18,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 import com.bopr.android.smailer.*;
 import com.bopr.android.smailer.util.AndroidUtil;
+import com.bopr.android.smailer.util.ui.ContextAsyncTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -258,7 +258,7 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     public void requestSmsPermission() {
-        if (PermissionsChecker.isPermissionsDenied(getActivity(), RECEIVE_SMS)) {
+        if (AndroidUtil.isPermissionsDenied(getActivity(), RECEIVE_SMS)) {
             ActivityCompat.requestPermissions(getActivity(), new String[]{RECEIVE_SMS},
                     PERMISSIONS_REQUEST_RECEIVE_SMS);
         }
@@ -269,7 +269,6 @@ public class DebugFragment extends BasePreferenceFragment {
 
         getSharedPreferences()
                 .edit()
-                .putBoolean(KEY_PREF_SERVICE_ENABLED, true)
                 .putString(KEY_PREF_SENDER_ACCOUNT, properties.getProperty("default_sender"))
                 .putString(KEY_PREF_SENDER_PASSWORD, cryptor.encrypt(properties.getProperty("default_password")))
                 .putString(KEY_PREF_RECIPIENTS_ADDRESS, properties.getProperty("default_recipient"))
@@ -318,21 +317,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
     @SuppressWarnings("ResourceType")
     private void onGetLocation() {
-        new AsyncTask<Void, Void, GeoCoordinates>() {
-
-            @Override
-            protected GeoCoordinates doInBackground(Void... params) {
-                return locator.getLocation(3000);
-            }
-
-            @Override
-            protected void onPostExecute(GeoCoordinates coordinates) {
-                Toast.makeText(getActivity(),
-                        coordinates != null ? formatLocation(coordinates)
-                                : "No location received",
-                        Toast.LENGTH_LONG).show();
-            }
-        }.execute();
+        new GetLocationTask(getActivity(), locator).execute();
     }
 
     private void onClearPreferences() {
@@ -341,32 +326,7 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private void onSendDefaultMail() {
-        new AsyncTask<Void, Void, Void>() {
-
-            @Override
-            protected Void doInBackground(Void... params) {
-                Properties properties = getDebugProperties();
-                String user = properties.getProperty("default_sender");
-
-                MailTransport transport = new MailTransport();
-                transport.init(user,
-                        properties.getProperty("default_password"),
-                        "smtp.gmail.com",
-                        "465");
-
-                try {
-                    transport.send(
-                            "test subject",
-                            "test message from " + getDeviceName(getActivity()),
-                            user,
-                            properties.getProperty("default_recipient")
-                    );
-                } catch (Exception x) {
-                    log.error("FAILED: ", x);
-                }
-                return null;
-            }
-        }.execute();
+        new SendDefaultMailTask(getActivity(), getDebugProperties()).execute();
     }
 
     private void onSendMail() {
@@ -394,7 +354,7 @@ public class DebugFragment extends BasePreferenceFragment {
         event.setPhone("+79052345678");
         event.setStartTime(start);
         event.setEndTime(start + 10000);
-        
+
         getActivity().startService(createEventIntent(getActivity(), event));
     }
 
@@ -481,69 +441,122 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private void onSendLog() {
-        new AsyncTask<Void, Void, Void>() {
-
-            private ProgressDialog progressDialog;
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                progressDialog = ProgressDialog.show(getActivity(), getString(R.string.app_name), "Sending mail");
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                progressDialog.dismiss();
-                super.onPostExecute(aVoid);
-            }
-
-            @Override
-            protected Void doInBackground(Void... params) {
-                Properties properties = getDebugProperties();
-                String user = properties.getProperty("default_sender");
-
-                MailTransport transport = new MailTransport();
-                transport.init(user,
-                        properties.getProperty("default_password"),
-                        "smtp.gmail.com",
-                        "465");
-
-                File logDir = new File(getActivity().getFilesDir(), "log");
-                if (logDir.exists()) {
-                    for (String fileName : logDir.list()) {
-                        try {
-                            transport.send(
-                                    "SMailer log",
-                                    "See attachment",
-                                    new File(fileName).toURI().toURL(),
-                                    user,
-                                    properties.getProperty("developer_email")
-                            );
-                        } catch (Exception x) {
-                            log.error("Send mail failed: ", x);
-                        }
-                    }
-                }
-                return null;
-            }
-        }.execute();
+        new SendLogTask(getActivity(), getDebugProperties()).execute();
     }
 
     private void onShowConcurrent() {
-        String s = "";
+        StringBuilder b = new StringBuilder();
 
         Intent intent = new Intent("android.provider.Telephony.SMS_RECEIVED");
         List<ResolveInfo> activities = getActivity().getPackageManager().queryBroadcastReceivers(intent, 0);
         for (ResolveInfo resolveInfo : activities) {
             ActivityInfo activityInfo = resolveInfo.activityInfo;
             if (activityInfo != null) {
-                s += activityInfo.packageName + " : " + resolveInfo.priority + "\n";
+                b.append(activityInfo.packageName)
+                        .append(" : ")
+                        .append(resolveInfo.priority)
+                        .append("\n");
                 log.debug("Concurrent package:" + activityInfo.packageName + " priority: " + resolveInfo.priority);
             }
         }
         AndroidUtil.dialogBuilder(getActivity())
-                .setMessage(s)
+                .setMessage(b.toString())
                 .show();
     }
 
+    private static class GetLocationTask extends ContextAsyncTask<Void, Void, GeoCoordinates> {
+
+        private final Locator locator;
+
+        private GetLocationTask(Activity activity, Locator locator) {
+            super(activity);
+            this.locator = locator;
+        }
+
+        @Override
+        protected GeoCoordinates doInBackground(Void... params) {
+            return locator.getLocation(3000);
+        }
+
+        @Override
+        protected void onPostExecute(GeoCoordinates coordinates) {
+            Toast.makeText(getContext(),
+                    coordinates != null ? formatLocation(coordinates)
+                            : "No location received",
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private static class SendDefaultMailTask extends ContextAsyncTask<Void, Void, Void> {
+
+        private Properties properties;
+
+        private SendDefaultMailTask(Activity activity, Properties properties) {
+            super(activity);
+            this.properties = properties;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            String user = properties.getProperty("default_sender");
+
+            MailTransport transport = new MailTransport();
+            transport.init(user,
+                    properties.getProperty("default_password"),
+                    "smtp.gmail.com",
+                    "465");
+
+            try {
+                transport.send(
+                        "test subject",
+                        "test message from " + getDeviceName(getContext()),
+                        user,
+                        properties.getProperty("default_recipient")
+                );
+            } catch (Exception x) {
+                log.error("FAILED: ", x);
+            }
+            return null;
+        }
+    }
+
+    private static class SendLogTask extends LongAsyncTask<Void, Void, Void> {
+
+        private Properties properties;
+
+        private SendLogTask(Activity activity, Properties properties) {
+            super(activity);
+            this.properties = properties;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            String user = properties.getProperty("default_sender");
+
+            MailTransport transport = new MailTransport();
+            transport.init(user,
+                    properties.getProperty("default_password"),
+                    "smtp.gmail.com",
+                    "465");
+
+            File logDir = new File(getContext().getFilesDir(), "log");
+            if (logDir.exists()) {
+                for (String fileName : logDir.list()) {
+                    try {
+                        transport.send(
+                                "SMailer log",
+                                "See attachment",
+                                new File(fileName).toURI().toURL(),
+                                user,
+                                properties.getProperty("developer_email")
+                        );
+                    } catch (Exception x) {
+                        log.error("Send mail failed: ", x);
+                    }
+                }
+            }
+            
+            return null;
+        }
+    }
 }

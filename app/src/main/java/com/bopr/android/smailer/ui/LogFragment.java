@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
 import android.view.*;
@@ -15,7 +16,6 @@ import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.TagFormatter;
-import com.bopr.android.smailer.util.ui.recycleview.DividerItemDecoration;
 
 /**
  * Application activity log activity fragment.
@@ -35,7 +35,7 @@ public class LogFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_log, container, false);
 
         listView = view.findViewById(android.R.id.list);
-        listView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+        listView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
 
         return view;
     }
@@ -92,6 +92,7 @@ public class LogFragment extends Fragment {
         AndroidUtil.dialogBuilder(getActivity())
                 .setMessage(R.string.activity_log_ask_clear)
                 .setPositiveButton(R.string.action_clear, new DialogInterface.OnClickListener() {
+
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         database.clearMessages();
@@ -179,7 +180,7 @@ public class LogFragment extends Fragment {
                 holder.timeView.setText(DateFormat.format(context.getString(R.string.activity_log_time_pattern), message.getStartTime()));
                 holder.messageView.setText(formatMessageText(context, message));
                 holder.resultView.setText(formatResultText(context, message));
-                holder.view.setOnClickListener(new View.OnClickListener() {
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
 
                     @Override
                     public void onClick(View v) {
@@ -200,7 +201,7 @@ public class LogFragment extends Fragment {
             return cursor.getCount();
         }
 
-        public PhoneEvent getItem(int position) {
+        PhoneEvent getItem(int position) {
             cursor.moveToPosition(position);
             if (!cursor.isBeforeFirst() && !cursor.isAfterLast()) {
                 return cursor.get();
@@ -211,14 +212,12 @@ public class LogFragment extends Fragment {
 
     private class ItemViewHolder extends RecyclerView.ViewHolder {
 
-        public final View view;
-        public final TextView timeView;
-        public final TextView messageView;
-        public final TextView resultView;
+        private final TextView timeView;
+        private final TextView messageView;
+        private final TextView resultView;
 
-        public ItemViewHolder(View view) {
+        private ItemViewHolder(View view) {
             super(view);
-            this.view = view;
             timeView = view.findViewById(R.id.list_item_date);
             messageView = view.findViewById(R.id.list_item_message);
             resultView = view.findViewById(R.id.list_item_result);

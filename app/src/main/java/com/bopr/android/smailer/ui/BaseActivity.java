@@ -43,6 +43,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         setupActionBar();
     }
 
+    @SuppressWarnings("SameParameterValue")
     public void setClosable(boolean closable) {
         this.closable = closable;
     }

@@ -3,7 +3,7 @@ package com.bopr.android.smailer;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-
+import com.bopr.android.smailer.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +20,7 @@ public class BootReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         log.debug("Received intent: " + intent);
 
-        if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
+        if (Util.equals(intent.getAction(), Intent.ACTION_BOOT_COMPLETED)) {
             OutgoingSmsService.toggle(context);
         }
     }

@@ -16,8 +16,8 @@ import java.util.*;
 
 import static android.Manifest.permission.*;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-import static com.bopr.android.smailer.PermissionsChecker.isPermissionsDenied;
 import static com.bopr.android.smailer.Settings.*;
+import static com.bopr.android.smailer.util.AndroidUtil.isPermissionsDenied;
 
 /**
  * Responsible for permissions checking.
@@ -191,13 +191,13 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
     }
 
     private String formatRationale(Collection<String> permissions) {
-        String result = "";
+        StringBuilder b = new StringBuilder();
         for (String permission : permissions) {
-            result += TagFormatter.from(items.get(permission), activity.getResources())
-                    .put("permission", getPermissionLabel(permission))
-                    + "\n\n";
+            TagFormatter line = TagFormatter.from(items.get(permission), activity.getResources())
+                    .put("permission", getPermissionLabel(permission));
+            b.append(line).append("\n\n");
         }
-        return result;
+        return b.toString();
     }
 
     private String getPermissionLabel(String permission) {
@@ -210,9 +210,8 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
         }
     }
 
-    @SuppressLint("CommitPrefEdits")
-    private void removeSetPreferenceValue(SharedPreferences preferences, String key,
-                                          String... values) {
+    @SuppressLint("ApplySharedPref")
+    private void removeSetPreferenceValue(SharedPreferences preferences, String key, String... values) {
         Set<String> set = preferences.getStringSet(key, Collections.<String>emptySet());
         set.removeAll(Arrays.asList(values));
         preferences.edit().putStringSet(key, set).commit();

@@ -15,10 +15,10 @@ class PhoneEventFilter {
     private Set<String> whiteList = Collections.emptySet();
     private Set<String> blackList = Collections.emptySet();
 
-    public PhoneEventFilter() {
+    PhoneEventFilter() {
     }
 
-    public String getPattern() {
+    String getPattern() {
         return pattern;
     }
 
@@ -26,31 +26,31 @@ class PhoneEventFilter {
         this.pattern = pattern;
     }
 
-    public boolean isBlackListed() {
+    boolean isBlackListed() {
         return blackListed;
     }
 
-    public void setBlackListed(boolean blackListed) {
+    void setBlackListed(boolean blackListed) {
         this.blackListed = blackListed;
     }
 
-    public Set<String> getWhiteList() {
+    Set<String> getWhiteList() {
         return whiteList;
     }
 
-    public void setWhiteList(Set<String> whiteList) {
+    void setWhiteList(Set<String> whiteList) {
         this.whiteList = whiteList;
     }
 
-    public Set<String> getBlackList() {
+    Set<String> getBlackList() {
         return blackList;
     }
 
-    public void setBlackList(Set<String> blackList) {
+    void setBlackList(Set<String> blackList) {
         this.blackList = blackList;
     }
 
-    public boolean accept(PhoneEvent event) {
+    boolean accept(PhoneEvent event) {
         return acceptPhone(event.getPhone()) && acceptPattern(event.getText());
     }
 

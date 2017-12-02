@@ -21,7 +21,7 @@ import static com.bopr.android.smailer.util.Util.isEmpty;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class Mailer {
+class Mailer {
 
     private static Logger log = LoggerFactory.getLogger("Mailer");
     private final Context context;
@@ -30,9 +30,9 @@ public class Mailer {
     private final Notifications notifications;
     private final Database database;
 
-    public Mailer(Context context, MailTransport transport, Cryptor cryptor,
-                  Notifications notifications,
-                  Database database) {
+    Mailer(Context context, MailTransport transport, Cryptor cryptor,
+           Notifications notifications,
+           Database database) {
         this.context = context;
         this.transport = transport;
         this.cryptor = cryptor;
@@ -40,7 +40,7 @@ public class Mailer {
         this.database = database;
     }
 
-    public Mailer(Context context, Database database) {
+    Mailer(Context context, Database database) {
         this(context, new MailTransport(), new Cryptor(context), new Notifications(context),
                 database);
     }
@@ -50,14 +50,14 @@ public class Mailer {
      *
      * @param message email message
      */
-    public void send(PhoneEvent message) {
+    void send(PhoneEvent message) {
         doSend(message, false);
     }
 
     /**
      * Sends out all previously unsent messages.
      */
-    public void sendAllUnsent() {
+    void sendAllUnsent() {
         List<PhoneEvent> messages = database.getUnsentMessages().getAll();
         log.debug("Resending " + messages.size() + " messages");
         for (PhoneEvent message : messages) {
