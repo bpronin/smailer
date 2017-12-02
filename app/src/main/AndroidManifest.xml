@@ -47,6 +47,10 @@
             android:label="@string/pref_title_recipients">
         </activity>
         <activity
+            android:name=".ui.BlacklistActivity"
+            android:label="@string/pref_title_blacklist">
+        </activity>
+        <activity
             android:name=".ui.MoreActivity"
             android:label="@string/pref_title_additional_settings">
         </activity>

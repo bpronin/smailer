@@ -112,13 +112,13 @@ public class ContactsTest extends BaseTest {
     }
 
     /**
-     * Method {@link Contacts#createPickContactEmailIntent()}} tester.
+     * Method {@link Contacts#createPickContactRequestIntent()}} tester.
      *
      * @throws Exception when failed
      */
     @Test
     public void testCreatePickContactEmailIntent() throws Exception {
-        Intent intent = Contacts.createPickContactEmailIntent();
+        Intent intent = Contacts.createPickContactRequestIntent();
         assertEquals(Intent.ACTION_PICK, intent.getAction());
         assertEquals(ContactsContract.CommonDataKinds.Email.CONTENT_TYPE, intent.getType());
     }

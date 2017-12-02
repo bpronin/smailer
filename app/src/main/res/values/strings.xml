@@ -3,6 +3,8 @@
 
     <string name="pref_title_sender_account">Account</string>
     <string name="pref_title_recipients">Email recipients</string>
+    <string name="pref_title_blacklist">Blacklist</string>
+    <string name="pref_title_whitelist">Whitelist</string>
     <string name="pref_title_sender_password">Password</string>
     <string name="pref_title_server">Outgoing server</string>
     <string name="pref_title_outgoing_server">Outgoing email server</string>
@@ -23,8 +25,11 @@
     <string name="pref_dialog_title_trigger">Triggers</string>
     <string name="pref_dialog_title_email_locale">Email language</string>
     <string name="pref_dialog_message_recipient">Email address</string>
+    <string name="pref_dialog_message_phone">Phone number</string>
     <string name="pref_dialog_title_add_recipient">Add recipient</string>
     <string name="pref_dialog_title_edit_recipient">Edit recipient</string>
+    <string name="pref_dialog_title_add_phone">Add phone number</string>
+    <string name="pref_dialog_title_edit_phone">Edit phone number</string>
 
     <string name="pref_description_service_on">Service is on</string>
     <string name="pref_description_service_off">Service is off</string>
@@ -86,6 +91,8 @@
     <string name="action_activity_log">Activity log</string>
     <string name="action_undo">Undo</string>
     <string name="action_clear">Clear</string>
+    <string name="action_add_to_blacklist">Add to blacklist</string>
+    <string name="action_add_to_whitelist">Add to whitelist</string>
 
     <string name="activity_log_title">Activity log</string>
     <string name="activity_log_title_details">Details</string>
@@ -107,13 +114,17 @@
 
     <string name="recipient_hint_button_select_email_from_contacts">Select from contacts</string>
     <string name="recipient_message_already_exists">Recipient {name} already exists</string>
-    <string name="recipient_list_empty">List is empty</string>
+    <string name="list_item_already_exists">{item} already exists</string>
+    <string name="list_empty">List is empty</string>
 
     <string name="server_test">Test connection</string>
     <string name="server_test_success">Settings are valid</string>
     <string name="server_testing">Validating server settings…</string>
 
     <string name="open_source_title">Open source</string>
+    <string name="pref_description_blacklist">Unacceptable phone numbers</string>
+    <string name="pref_description_whitelist">Acceptable phone numbers</string>
+    <string name="message_added_to_black_list">{number} added to blacklist</string>
 
     <string-array name="email_trigger_titles">
         <item>Incoming SMS</item>

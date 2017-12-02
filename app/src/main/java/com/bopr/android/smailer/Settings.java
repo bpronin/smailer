@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.util.*;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.bopr.android.smailer.util.Util.listOf;
+import static com.bopr.android.smailer.util.Util.stringOf;
 
 /**
  * Settings.
@@ -119,13 +121,13 @@ public class Settings {
                 Collections.<String>emptySet()).contains(trigger);
     }
 
-    public static void saveFilter(PhoneEventFilter filter, Context context) {
+    public static void saveFilter(Context context, PhoneEventFilter filter) {
         SharedPreferences.Editor editor = getPreferences(context).edit();
 
         editor.putString(KEY_PREF_FILTER_PATTERN, filter.getPattern());
         editor.putBoolean(KEY_PREF_FILTER_BLACK_LISTED, filter.isBlackListed());
-        editor.putStringSet(KEY_PREF_FILTER_BLACK_LIST, filter.getBlackList());
-        editor.putStringSet(KEY_PREF_FILTER_WHITE_LIST, filter.getWhiteList());
+        editor.putString(KEY_PREF_FILTER_BLACK_LIST, stringOf(filter.getBlacklist()));
+        editor.putString(KEY_PREF_FILTER_WHITE_LIST, stringOf(filter.getWhitelist()));
 
         editor.apply();
     }
@@ -137,8 +139,8 @@ public class Settings {
 
         filter.setPattern(preferences.getString(KEY_PREF_FILTER_PATTERN, null));
         filter.setBlackListed(preferences.getBoolean(KEY_PREF_FILTER_BLACK_LISTED, true));
-        filter.setBlackList(preferences.getStringSet(KEY_PREF_FILTER_BLACK_LIST, Collections.<String>emptySet()));
-        filter.setWhiteList(preferences.getStringSet(KEY_PREF_FILTER_WHITE_LIST, Collections.<String>emptySet()));
+        filter.setBlacklist(listOf(preferences.getString(KEY_PREF_FILTER_BLACK_LIST, ""), ",", true));
+        filter.setWhitelist(listOf(preferences.getString(KEY_PREF_FILTER_WHITE_LIST, ""), ",", true));
 
         return filter;
     }

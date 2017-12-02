@@ -103,6 +103,10 @@ public class Util {
         return builder.toString();
     }
 
+    public static String stringOf(Collection values) {
+        return stringOf(", ", values);
+    }
+
     @SafeVarargs
     public static <T> String stringOf(String divider, T... values) {
         return stringOf(divider, Arrays.asList(values));
@@ -156,4 +160,17 @@ public class Util {
         return (a == b) || (a != null && a.equals(b));
     }
 
+    public static String normalizePhone(String phone) {
+        return phone.replaceAll("\\D", "");
+    }
+
+    public static boolean containsPhone(Collection<String> phones, String phone) {
+        String p = normalizePhone(phone);
+        for (String s : phones) {
+            if (equals(normalizePhone(s), p)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

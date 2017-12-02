@@ -11,11 +11,12 @@ import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
 import android.view.*;
 import android.widget.TextView;
-import com.bopr.android.smailer.Database;
-import com.bopr.android.smailer.PhoneEvent;
-import com.bopr.android.smailer.R;
+import android.widget.Toast;
+import com.bopr.android.smailer.*;
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.TagFormatter;
+
+import static com.bopr.android.smailer.util.TagFormatter.from;
 
 /**
  * Application activity log activity fragment.
@@ -26,6 +27,7 @@ public class LogFragment extends Fragment {
 
     private Database database;
     private RecyclerView listView;
+    private PhoneEvent selectedEvent;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,6 +49,17 @@ public class LogFragment extends Fragment {
     }
 
     @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_add_to_blacklist:
+                addToBlacklist();
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_log_clear) {
             clearData();
@@ -60,14 +73,16 @@ public class LogFragment extends Fragment {
         loadData();
     }
 
-    public void showDetails(PhoneEvent message) {
-        String details = message.getDetails();
-        if (details != null) {
-            // TODO: 04.04.2016 details dialog for any type of messages
-            AndroidUtil.dialogBuilder(getActivity())
-                    .setTitle(R.string.activity_log_title_details)
-                    .setMessage(details)
-                    .show();
+    public void showDetails() {
+        if (selectedEvent != null) {
+            String details = selectedEvent.getDetails();
+            if (details != null) {
+                // TODO: 04.04.2016 details dialog for any type of messages
+                AndroidUtil.dialogBuilder(getActivity())
+                        .setTitle(R.string.activity_log_title_details)
+                        .setMessage(details)
+                        .show();
+            }
         }
     }
 
@@ -107,6 +122,22 @@ public class LogFragment extends Fragment {
                     }
                 })
                 .show();
+    }
+
+    private void addToBlacklist() {
+        if (selectedEvent != null) {
+            String number = selectedEvent.getPhone();
+
+            PhoneEventFilter filter = Settings.loadFilter(getActivity());
+            filter.getBlacklist().add(number);
+            Settings.saveFilter(getActivity(), filter);
+
+            Toast.makeText(getActivity(),
+                    from(R.string.message_added_to_black_list, getActivity())
+                            .put("number", number)
+                            .format(),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     @NonNull
@@ -169,22 +200,38 @@ public class LogFragment extends Fragment {
         public void onBindViewHolder(ItemViewHolder holder, int position) {
             PhoneEvent item = getItem(position);
             if (item != null) {
-                final PhoneEvent message = cursor.get();
+                final PhoneEvent event = cursor.get();
 
-                if (!message.isProcessed()) {
+                if (!event.isProcessed()) {
                     holder.resultView.setTextColor(errorColor);
                 } else {
                     holder.resultView.setTextColor(defaultColor);
                 }
 
-                holder.timeView.setText(DateFormat.format(context.getString(R.string.activity_log_time_pattern), message.getStartTime()));
-                holder.messageView.setText(formatMessageText(context, message));
-                holder.resultView.setText(formatResultText(context, message));
+                holder.timeView.setText(DateFormat.format(context.getString(R.string.activity_log_time_pattern), event.getStartTime()));
+                holder.messageView.setText(formatMessageText(context, event));
+                holder.resultView.setText(formatResultText(context, event));
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
 
                     @Override
                     public void onClick(View v) {
-                        showDetails(message);
+                        selectedEvent = event;
+                        showDetails();
+                    }
+                });
+                holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+
+                    @Override
+                    public boolean onLongClick(View v) {
+                        selectedEvent = event;
+                        return false;
+                    }
+                });
+                holder.itemView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+
+                    @Override
+                    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+                        getActivity().getMenuInflater().inflate(R.menu.menu_item_log, menu);
                     }
                 });
             }
