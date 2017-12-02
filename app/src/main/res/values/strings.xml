@@ -38,7 +38,7 @@
     <string name="pref_description_when_to_send">When to send email</string>
     <string name="pref_description_what_email_contain">What should the email include</string>
     <string name="pref_description_notify_send_success">Display message when email successfully sent</string>
-    <string name="pref_description_resend_unsent">Try to resend unsent messages when connection is established</string>
+    <string name="pref_description_resend_unsent">Try to resend unsent messages when device comes online</string>
     <string name="pref_description_device_alias">Device name to be shown in email message (leave blank to use default)</string>
 
     <string name="notification_email_send_successfully">Email sent</string>
