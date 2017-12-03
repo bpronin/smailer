@@ -46,7 +46,7 @@ public class MoreActivityTest extends BaseActivityTest {
     public void testContentSetting() {
         onView(withText(R.string.title_more)).perform(click());
 
-        String[] titles = rule.getActivity().getResources().getStringArray(R.array.email_content_titles);
+        String[] titles = rule.getActivity().getResources().getStringArray(R.array.titles_email_content);
 
          /* check preferences */
         assertThat(preferences.getStringSet(KEY_PREF_EMAIL_CONTENT, null), equalTo(DEFAULT_CONTENT));
@@ -77,7 +77,7 @@ public class MoreActivityTest extends BaseActivityTest {
     public void testLanguageSetting() {
         onView(withText(R.string.title_more)).perform(click());
 
-        String[] titles = rule.getActivity().getResources().getStringArray(R.array.email_locale_titles);
+        String[] titles = rule.getActivity().getResources().getStringArray(R.array.titles_language);
         String[] values = rule.getActivity().getResources().getStringArray(R.array.email_locale_values);
 
          /* check preferences */

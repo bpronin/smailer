@@ -74,6 +74,16 @@ public class ConditionsFragment extends BasePreferenceFragment {
             }
 
         });
+
+        findPreference(KEY_PREF_FILTER_PATTERN).setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object value) {
+                updateSummary((String) value, preference, true);
+                return true;
+            }
+
+        });
     }
 
 }

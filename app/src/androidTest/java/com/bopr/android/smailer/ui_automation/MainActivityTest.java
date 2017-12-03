@@ -42,14 +42,14 @@ public class MainActivityTest extends BaseActivityTest {
 
     @Test
     public void testTriggersSetting() {
-        String[] titles = rule.getActivity().getResources().getStringArray(R.array.trigger_titles);
+        String[] titles = rule.getActivity().getResources().getStringArray(R.array.titles_triggers);
 
          /* check preferences */
         assertThat(preferences.getStringSet(KEY_PREF_EMAIL_TRIGGERS, null), equalTo(DEFAULT_TRIGGERS));
 
         /* check all and press cancel */
         onView(withText(R.string.title_triggers)).perform(click());
-        onView(withText(R.string.title_trigger)).check(matches(isDisplayed()));
+        onView(withText(R.string.title_triggers)).check(matches(isDisplayed()));
         onData(allOf(is(instanceOf(String.class)), is(titles[0]))).perform(click());
         onData(allOf(is(instanceOf(String.class)), is(titles[1]))).perform(click());
         onData(allOf(is(instanceOf(String.class)), is(titles[2]))).perform(click());
@@ -65,7 +65,7 @@ public class MainActivityTest extends BaseActivityTest {
 
         /* check all and press ok */
         onView(withText(R.string.title_triggers)).perform(click());
-        onView(withText(R.string.title_trigger)).check(matches(isDisplayed()));
+        onView(withText(R.string.title_triggers)).check(matches(isDisplayed()));
         onData(allOf(is(instanceOf(String.class)), is(titles[0]))).perform(click());
         onData(allOf(is(instanceOf(String.class)), is(titles[1]))).perform(click());
         onData(allOf(is(instanceOf(String.class)), is(titles[2]))).perform(click());

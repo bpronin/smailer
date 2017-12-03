@@ -164,22 +164,22 @@ public class LogFragment extends Fragment {
         int messageText;
 
         if (message.isMissed()) {
-            messageText = R.string.activity_log_message_missed_call;
+            messageText = R.string.log_message_missed_call;
         } else if (message.isSms()) {
             if (message.isIncoming()) {
-                messageText = R.string.activity_log_message_incoming_sms;
+                messageText = R.string.log_message_incoming_sms;
             } else {
-                messageText = R.string.activity_log_message_outgoing_sms;
+                messageText = R.string.log_message_outgoing_sms;
             }
         } else {
             if (message.isIncoming()) {
-                messageText = R.string.activity_log_message_incoming_call;
+                messageText = R.string.log_message_incoming_call;
             } else {
-                messageText = R.string.activity_log_message_outgoing_call;
+                messageText = R.string.log_message_outgoing_call;
             }
         }
 
-        return formatFrom(R.string.activity_log_message, context.getResources())
+        return formatFrom(R.string.log_message, context.getResources())
                 .putResource("message", messageText)
                 .put("phone", message.getPhone())
                 .format();
@@ -188,8 +188,8 @@ public class LogFragment extends Fragment {
     @NonNull
     private String formatResultText(Context context, PhoneEvent message) {
         return context.getString(message.isProcessed()
-                ? R.string.activity_log_message_send_email_success
-                : R.string.activity_log_message_send_email_failed);
+                ? R.string.log_message_send_email_success
+                : R.string.log_message_send_email_failed);
     }
 
     private class ListAdapter extends RecyclerView.Adapter<ItemViewHolder> {
@@ -227,7 +227,7 @@ public class LogFragment extends Fragment {
                     holder.resultView.setTextColor(defaultColor);
                 }
 
-                holder.timeView.setText(DateFormat.format(context.getString(R.string.activity_log_time_pattern), event.getStartTime()));
+                holder.timeView.setText(DateFormat.format(context.getString(R.string.log_time_pattern), event.getStartTime()));
                 holder.messageView.setText(formatMessageText(context, event));
                 holder.resultView.setText(formatResultText(context, event));
                 holder.itemView.setOnClickListener(new View.OnClickListener() {

@@ -3,7 +3,7 @@
 
     <MultiSelectListPreference
         android:dialogTitle="@string/title_email_message_content"
-        android:entries="@array/email_content_titles"
+        android:entries="@array/titles_email_content"
         android:entryValues="@array/email_content_values"
         android:key="email_content"
         android:summary="@string/title_what_email_contain"
@@ -20,7 +20,7 @@
 
     <ListPreference
         android:dialogTitle="@string/title_email_language"
-        android:entries="@array/email_locale_titles"
+        android:entries="@array/titles_language"
         android:entryValues="@array/email_locale_values"
         android:key="email_locale"
         android:title="@string/title_email_language_hint"/>

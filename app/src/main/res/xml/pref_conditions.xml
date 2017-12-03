@@ -2,11 +2,10 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <MultiSelectListPreference
-        android:dialogTitle="@string/title_trigger"
-        android:entries="@array/trigger_titles"
+        android:entries="@array/titles_triggers"
         android:entryValues="@array/trigger_values"
         android:key="email_triggers"
-        android:summary="@string/title_when_to_send"
+        android:summary="@string/title_triggers_hint"
         android:title="@string/title_triggers"/>
 
     <SwitchPreference
@@ -21,4 +20,9 @@
         android:key="message_filter_whitelist"
         android:title="@string/title_whitelist"/>
 
+    <EditTextPreference
+        android:key="message_filter_pattern"
+        android:dialogMessage="@string/title_regexp"
+        android:title="@string/title_text_filter">
+    </EditTextPreference>
 </PreferenceScreen>

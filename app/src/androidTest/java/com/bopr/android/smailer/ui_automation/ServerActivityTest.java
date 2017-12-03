@@ -82,7 +82,7 @@ public class ServerActivityTest extends BaseActivityTest {
         onView(withEditText()).perform(typeText("password"));
         onView(withText(android.R.string.cancel)).perform(click());
 
-        onView(withSummary(R.string.title_password, R.string.pref_description_password_asterisk)).check(doesNotExist());
+        onView(withSummary(R.string.title_password, R.string.title_password_asterisks)).check(doesNotExist());
 
         /* enter password and press ok */
         onView(withText(R.string.title_password)).perform(click());
@@ -90,7 +90,7 @@ public class ServerActivityTest extends BaseActivityTest {
         onView(withEditText()).perform(typeText("password"));
         onView(withText(android.R.string.ok)).perform(click());
 
-        onView(withSummary(R.string.title_password, R.string.pref_description_password_asterisk)).check(matches(isDisplayed()));
+        onView(withSummary(R.string.title_password, R.string.title_password_asterisks)).check(matches(isDisplayed()));
 
         /* check preferences */
         assertNotNull(preferences.getString(KEY_PREF_SENDER_PASSWORD, null));
