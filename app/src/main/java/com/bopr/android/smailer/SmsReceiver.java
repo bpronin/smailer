@@ -8,8 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.bopr.android.smailer.MailerService.createEventIntent;
-import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
-import static com.bopr.android.smailer.Settings.isTriggerEnabled;
 
 /**
  * Receives SMS intents and starts mailer service.
@@ -27,15 +25,7 @@ public class SmsReceiver extends BroadcastReceiver {
         log.debug("Received intent: " + intent);
 
         if (Util.equals(intent.getAction(), SMS_RECEIVED_ACTION)) {
-            PhoneEvent event = parser.parse(intent);
-            PhoneEventFilter filter = Settings.loadFilter(context);
-
-            if (isTriggerEnabled(context, VAL_PREF_TRIGGER_IN_SMS) && filter.accept(event)) {
-                log.debug("Processing incoming sms");
-                context.startService(createEventIntent(context, event));
-            } else {
-                log.debug("Bypassed incoming sms");
-            }
+            context.startService(createEventIntent(context, parser.parse(intent)));
         }
     }
 }

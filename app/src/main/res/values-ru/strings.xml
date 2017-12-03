@@ -55,6 +55,7 @@
     <string name="title_add_to_blacklist">Добавить в черный список</string>
     <string name="title_add_to_whitelist">Добавить в белый список</string>
     <string name="title_additional_settings">Дополнительные параметры</string>
+    <string name="title_any">любые</string>
     <string name="title_black_list_used">Используется черный список</string>
     <string name="title_blacklist">Черный список</string>
     <string name="title_clear">Очистить</string>
@@ -77,6 +78,7 @@
     <string name="title_list_empty">Список пуст</string>
     <string name="title_log_empty">Журнал пуст</string>
     <string name="title_more">Дополнительно</string>
+    <string name="title_none">отсутствуют</string>
     <string name="title_not_set">не указано</string>
     <string name="title_notify_on_send">Уведомлять об отправке</string>
     <string name="title_notify_send_success">Показывать уведомление об успешной отправке почты</string>
@@ -95,6 +97,7 @@
     <string name="title_service_off">Сервис отключен</string>
     <string name="title_service_on">Сервис включен</string>
     <string name="title_text_filter">Фильтр текста</string>
+    <string name="title_text_filter_any">Любой текст</string>
     <string name="title_triggers">Триггеры</string>
     <string name="title_triggers_hint">События, вызывающие отправку почты</string>
     <string name="title_unacceptable_phone_numbers">Заблокированные номера ({size})</string>
@@ -104,7 +107,6 @@
     <string name="title_what_email_contain">Содержание почтового сообщения</string>
     <string name="title_white_list_used">Используется белый список</string>
     <string name="title_whitelist">Белый список</string>
-    <string name="title_zero_size">нет</string>
 
     <string-array name="titles_triggers">
         <item>Входящие SMS</item>

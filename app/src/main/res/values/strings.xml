@@ -103,6 +103,7 @@
     <string name="title_sender_account">Account</string>
     <string name="title_server_test">Test connection</string>
     <string name="title_text_filter">Text filter</string>
+    <string name="title_text_filter_any">Any text</string>
     <string name="title_triggers">Triggers</string>
     <string name="title_triggers_hint">Events causing sending email</string>
     <string name="title_unacceptable_phone_numbers">Unacceptable phone numbers ({size})</string>
@@ -112,7 +113,8 @@
     <string name="title_what_email_contain">What should the email include</string>
     <string name="title_white_list_used">White list used</string>
     <string name="title_whitelist">Whitelist</string>
-    <string name="title_zero_size">empty</string>
+    <string name="title_none">none</string>
+    <string name="title_any">any</string>
 
     <string-array name="titles_triggers">
         <item>Incoming SMS</item>

@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
 import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.util.Util;
 
 import static android.preference.Preference.OnPreferenceChangeListener;
 import static com.bopr.android.smailer.Settings.*;
 import static com.bopr.android.smailer.util.TagFormatter.formatFrom;
+import static com.bopr.android.smailer.util.Util.isEmpty;
 import static com.bopr.android.smailer.util.Util.parseCommaSeparated;
 
 /**
@@ -35,10 +37,8 @@ public class ConditionsFragment extends BasePreferenceFragment {
 
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
-                updateSummary(formatFrom(R.string.title_unacceptable_phone_numbers, getActivity())
-                                .put("size", parseCommaSeparated((String) value).size())
-                                .format(),
-                        preference, true);
+                updateSummary(formatListAndSize((String) value, R.string.title_unacceptable_phone_numbers,
+                        R.string.title_none), preference, true);
                 return true;
             }
         });
@@ -56,10 +56,8 @@ public class ConditionsFragment extends BasePreferenceFragment {
 
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
-                updateSummary(formatFrom(R.string.title_acceptable_phone_numbers, getActivity())
-                                .put("size", parseCommaSeparated((String) value).size())
-                                .format(),
-                        preference, true);
+                updateSummary(formatListAndSize((String) value, R.string.title_acceptable_phone_numbers,
+                        R.string.title_any), preference, true);
                 return true;
             }
         });
@@ -79,11 +77,25 @@ public class ConditionsFragment extends BasePreferenceFragment {
 
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
-                updateSummary((String) value, preference, true);
+                String regexp = (String) value;
+                if (!isEmpty(regexp)) {
+                    updateSummary(regexp, preference, true);
+                } else {
+                    updateSummary(R.string.title_text_filter_any, preference, true);
+                }
                 return true;
             }
 
         });
+    }
+
+    private String formatListAndSize(String value, int pattern, int zeroSizeText) {
+        int size = parseCommaSeparated(value).size();
+        if (size > 0) {
+            return formatFrom(pattern, getActivity()).put("size", size).format();
+        } else {
+            return formatFrom(pattern, getActivity()).putResource("size", zeroSizeText).format();
+        }
     }
 
 }

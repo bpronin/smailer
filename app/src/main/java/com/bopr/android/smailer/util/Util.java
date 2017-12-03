@@ -113,12 +113,14 @@ public class Util {
     }
 
     public static List<String> parseSeparated(String value, String divider, boolean trim) {
-        String s = value;
-        if (trim) {
-            s = value.replaceAll(" ", "");
-        }
-        if (!isEmpty(s)) {
-            return Arrays.asList(s.split(divider));
+        if (!isEmpty(value)) {
+            String s = value;
+            if (trim) {
+                s = value.replaceAll(" ", "");
+            }
+            if (!isEmpty(s)) {
+                return Arrays.asList(s.split(divider));
+            }
         }
         return Collections.emptyList();
     }

@@ -90,7 +90,7 @@ public class LogFragment extends Fragment {
     }
 
     private void loadData() {
-        listView.setAdapter(new ListAdapter(getActivity(), database.getMessages()));
+        listView.setAdapter(new ListAdapter(getActivity(), database.getEvents()));
         updateEmptyText();
     }
 
@@ -113,7 +113,7 @@ public class LogFragment extends Fragment {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        database.clearMessages();
+                        database.clearEvents();
                         loadData();
                     }
                 })
@@ -187,19 +187,19 @@ public class LogFragment extends Fragment {
 
     @NonNull
     private String formatResultText(Context context, PhoneEvent message) {
-        return context.getString(message.isProcessed()
-                ? R.string.log_message_send_email_success
-                : R.string.log_message_send_email_failed);
+        return message.getState().name();
     }
 
     private class ListAdapter extends RecyclerView.Adapter<ItemViewHolder> {
 
         private int errorColor;
+        private int succeccColor;
+        private int ignoredColor;
         private int defaultColor;
         private Context context;
-        private Database.MailMessageCursor cursor;
+        private Database.PhoneEventCursor cursor;
 
-        private ListAdapter(Context context, Database.MailMessageCursor cursor) {
+        private ListAdapter(Context context, Database.PhoneEventCursor cursor) {
             this.context = context;
             this.cursor = cursor;
         }
@@ -210,6 +210,8 @@ public class LogFragment extends Fragment {
             ItemViewHolder holder = new ItemViewHolder(inflater.inflate(R.layout.list_item_log, parent, false));
 
             errorColor = ContextCompat.getColor(context, R.color.errorForeground);
+            succeccColor = ContextCompat.getColor(context, R.color.successForeground);
+            ignoredColor = ContextCompat.getColor(context, R.color.ignoredForeground);
             defaultColor = holder.timeView.getCurrentTextColor();
 
             return holder;
@@ -221,10 +223,16 @@ public class LogFragment extends Fragment {
             if (item != null) {
                 final PhoneEvent event = cursor.get();
 
-                if (!event.isProcessed()) {
-                    holder.resultView.setTextColor(errorColor);
-                } else {
-                    holder.resultView.setTextColor(defaultColor);
+                switch (event.getState()) {
+                    case PENDING:
+                        holder.resultView.setTextColor(defaultColor);
+                        break;
+                    case PROCESSED:
+                        holder.resultView.setTextColor(succeccColor);
+                        break;
+                    case IGNORED:
+                        holder.resultView.setTextColor(ignoredColor);
+                        break;
                 }
 
                 holder.timeView.setText(DateFormat.format(context.getString(R.string.log_time_pattern), event.getStartTime()));

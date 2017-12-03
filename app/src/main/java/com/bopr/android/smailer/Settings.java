@@ -24,6 +24,7 @@ public class Settings {
 
     public static final String PREFERENCES_STORAGE_NAME = "com.bopr.android.smailer_preferences";
     public static final String DB_NAME = "smailer.sqlite";
+
     public static final String KEY_PREF_SENDER_ACCOUNT = "sender_account";
     public static final String KEY_PREF_SENDER_PASSWORD = "sender_password";
     public static final String KEY_PREF_EMAIL_HOST = "sender_host";
@@ -42,8 +43,8 @@ public class Settings {
     public static final String KEY_PREF_FILTER_USE_WHITE_LIST = "message_filter_use_white_list";
     public static final String KEY_PREF_FILTER_BLACKLIST = "message_filter_blacklist";
     public static final String KEY_PREF_FILTER_WHITELIST = "message_filter_whitelist";
-
     public static final String KEY_PREF_DEVICE_ALIAS = "device_alias";
+
     public static final String VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME = "time";
     public static final String VAL_PREF_EMAIL_CONTENT_DEVICE_NAME = "device_name";
     public static final String VAL_PREF_EMAIL_CONTENT_LOCATION = "location";
@@ -51,9 +52,9 @@ public class Settings {
     public static final String VAL_PREF_TRIGGER_IN_SMS = "in_sms";
     public static final String VAL_PREF_TRIGGER_OUT_SMS = "out_sms";
     public static final String VAL_PREF_TRIGGER_IN_CALLS = "in_calls";
-
     public static final String VAL_PREF_TRIGGER_OUT_CALLS = "out_calls";
     public static final String VAL_PREF_TRIGGER_MISSED_CALLS = "missed_calls";
+
     public static final String DEFAULT_HOST = "smtp.gmail.com";
     public static final String DEFAULT_PORT = "465";
     public static final String DEFAULT_LOCALE = "default";
@@ -118,11 +119,6 @@ public class Settings {
         }
     }
 
-    public static boolean isTriggerEnabled(Context context, String trigger) {
-        return getPreferences(context).getStringSet(KEY_PREF_EMAIL_TRIGGERS,
-                Collections.<String>emptySet()).contains(trigger);
-    }
-
     public static void saveFilter(Context context, PhoneEventFilter filter) {
         SharedPreferences.Editor editor = getPreferences(context).edit();
 
@@ -139,6 +135,7 @@ public class Settings {
         SharedPreferences preferences = getPreferences(context);
         PhoneEventFilter filter = new PhoneEventFilter();
 
+        filter.setTriggers(preferences.getStringSet(KEY_PREF_EMAIL_TRIGGERS, Collections.<String>emptySet()));
         filter.setPattern(preferences.getString(KEY_PREF_FILTER_PATTERN, null));
         filter.setUseWhiteList(preferences.getBoolean(KEY_PREF_FILTER_USE_WHITE_LIST, true));
         filter.setBlacklist(parseCommaSeparated(preferences.getString(KEY_PREF_FILTER_BLACKLIST, "")));

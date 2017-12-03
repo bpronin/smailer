@@ -22,8 +22,10 @@ public class Database {
     private static Logger log = LoggerFactory.getLogger("Database");
 
     private static final int DB_VERSION = 1;
+
     private static final String TABLE_SYSTEM = "system_data";
-    private static final String TABLE_MESSAGES = "messages";
+    private static final String TABLE_EVENTS = "phone_events";
+
     private static final String COLUMN_COUNT = "COUNT(*)";
     private static final String COLUMN_ID = "_id";
     private static final String COLUMN_PURGE_TIME = "messages_purge_time";
@@ -36,7 +38,7 @@ public class Database {
     private static final String COLUMN_DETAILS = "details";
     private static final String COLUMN_START_TIME = "start_time";
     private static final String COLUMN_END_TIME = "end_time";
-    private static final String COLUMN_PROCESSED = "is_processed";
+    private static final String COLUMN_STATE = "state";
     private static final String COLUMN_LAST_LATITUDE = "last_latitude";
     private static final String COLUMN_LAST_LONGITUDE = "last_longitude";
     private static final String COLUMN_LAST_LOCATION_TIME = "last_location_time";
@@ -90,19 +92,19 @@ public class Database {
         this.purgePeriod = purgePeriod;
     }
 
-    public MailMessageCursor getMessages() {
-        return new MailMessageCursor(helper.getReadableDatabase().query(TABLE_MESSAGES,
+    public PhoneEventCursor getEvents() {
+        return new PhoneEventCursor(helper.getReadableDatabase().query(TABLE_EVENTS,
                 null, null, null, null, null,
                 COLUMN_START_TIME + " DESC")
         );
     }
 
-    public long updateMessage(PhoneEvent event) {
+    public long putEvent(PhoneEvent event) {
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put(COLUMN_ID, event.getId());
-        values.put(COLUMN_PROCESSED, event.isProcessed());
+        values.put(COLUMN_STATE, event.getState().name());
         values.put(COLUMN_IS_INCOMING, event.isIncoming());
         values.put(COLUMN_IS_MISSED, event.isMissed());
         values.put(COLUMN_PHONE, event.getPhone());
@@ -116,14 +118,14 @@ public class Database {
             values.put(COLUMN_LONGITUDE, location.getLongitude());
         }
 
-        long id = db.replace(TABLE_MESSAGES, null, values);
+        long id = db.replace(TABLE_EVENTS, null, values);
         event.setId(id);
         return id;
     }
 
-    public MailMessageCursor getUnsentMessages() {
-        return new MailMessageCursor(helper.getReadableDatabase().query(TABLE_MESSAGES,
-                null, COLUMN_PROCESSED + "=0", null, null, null,
+    public PhoneEventCursor getUnsentEvents() {
+        return new PhoneEventCursor(helper.getReadableDatabase().query(TABLE_EVENTS, null,
+                COLUMN_STATE + "='" + PhoneEvent.State.PENDING + "'", null, null, null,
                 COLUMN_START_TIME + " DESC")
         );
     }
@@ -131,11 +133,11 @@ public class Database {
     /**
      * Removes all records from log.
      */
-    public void clearMessages() {
+    public void clearEvents() {
         SQLiteDatabase db = helper.getWritableDatabase();
         db.beginTransaction();
         try {
-            db.delete(TABLE_MESSAGES, null, null);
+            db.delete(TABLE_EVENTS, null, null);
             updateLastPurgeTime(db);
 
             db.setTransactionSuccessful();
@@ -143,7 +145,7 @@ public class Database {
             db.endTransaction();
         }
 
-        log.debug("all messages removed");
+        log.debug("All events removed");
     }
 
     /**
@@ -151,7 +153,7 @@ public class Database {
      * period of time has elapsed.
      */
     public void purge() {
-        log.debug("purging");
+        log.debug("Purging");
 
         SQLiteDatabase db = helper.getWritableDatabase();
         db.beginTransaction();
@@ -159,10 +161,10 @@ public class Database {
             if (System.currentTimeMillis() - getLastPurgeTime(db) >= purgePeriod
                     && getCurrentSize(db) >= capacity) {
 
-                db.execSQL("delete from " + TABLE_MESSAGES +
+                db.execSQL("delete from " + TABLE_EVENTS +
                         " where " + COLUMN_ID + " not in " +
                         "(" +
-                        "select " + COLUMN_ID + " from " + TABLE_MESSAGES +
+                        "select " + COLUMN_ID + " from " + TABLE_EVENTS +
                         " order by " + COLUMN_ID + " desc " +
                         "limit " + capacity +
                         ")");
@@ -185,7 +187,7 @@ public class Database {
     }
 
     private long getCurrentSize(SQLiteDatabase db) {
-        return XCursor.forLong(db.query(TABLE_MESSAGES, new String[]{COLUMN_COUNT}, null, null,
+        return XCursor.forLong(db.query(TABLE_EVENTS, new String[]{COLUMN_COUNT}, null, null,
                 null, null, null)).getAndClose();
     }
 
@@ -199,10 +201,6 @@ public class Database {
         values.put(COLUMN_PURGE_TIME, System.currentTimeMillis());
 
         db.update(TABLE_SYSTEM, values, COLUMN_ID + "=0", null);
-    }
-
-    public void destroy() {
-        context.deleteDatabase(name);
     }
 
     public GeoCoordinates getLastLocation() {
@@ -223,6 +221,10 @@ public class Database {
         }.getAndClose();
     }
 
+    public void destroy() {
+        context.deleteDatabase(name);
+    }
+
     private class DbHelper extends SQLiteOpenHelper {
 
         public DbHelper(Context context) {
@@ -237,9 +239,9 @@ public class Database {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL("CREATE TABLE " + TABLE_MESSAGES + " (" +
+            db.execSQL("CREATE TABLE " + TABLE_EVENTS + " (" +
                     COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    COLUMN_PROCESSED + " INTEGER, " +
+                    COLUMN_STATE + " INTEGER, " +
                     COLUMN_IS_INCOMING + " INTEGER, " +
                     COLUMN_IS_MISSED + " INTEGER, " +
                     COLUMN_START_TIME + " INTEGER, " +
@@ -276,9 +278,9 @@ public class Database {
     /**
      * Cursor that returns values of {@link PhoneEvent}.
      */
-    public class MailMessageCursor extends XCursor<PhoneEvent> {
+    public class PhoneEventCursor extends XCursor<PhoneEvent> {
 
-        public MailMessageCursor(Cursor cursor) {
+        public PhoneEventCursor(Cursor cursor) {
             super(cursor);
         }
 
@@ -286,7 +288,7 @@ public class Database {
         public PhoneEvent get() {
             PhoneEvent event = new PhoneEvent();
             event.setId(getLong(COLUMN_ID));
-            event.setProcessed(getBoolean(COLUMN_PROCESSED));
+            event.setState(PhoneEvent.State.valueOf(getString(COLUMN_STATE)));
             event.setPhone(getString(COLUMN_PHONE));
             event.setIncoming(getBoolean(COLUMN_IS_INCOMING));
             event.setStartTime(getLong(COLUMN_START_TIME));

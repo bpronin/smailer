@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import static android.telephony.TelephonyManager.*;
 import static com.bopr.android.smailer.MailerService.createEventIntent;
-import static com.bopr.android.smailer.Settings.*;
 
 /**
  * Receives phone call intents and starts mailer service.
@@ -77,40 +76,35 @@ public class CallReceiver extends BroadcastReceiver {
 
     private void onIncomingCall(Context context, String number, long start, long end) {
         log.debug("Processing incoming call");
-        if (isTriggerEnabled(context, VAL_PREF_TRIGGER_IN_CALLS)) {
-            PhoneEvent event = new PhoneEvent();
-            event.setIncoming(true);
-            event.setPhone(number);
-            event.setStartTime(start);
-            event.setEndTime(end);
 
-            context.startService(createEventIntent(context, event));
-        }
+        PhoneEvent event = new PhoneEvent();
+        event.setIncoming(true);
+        event.setPhone(number);
+        event.setStartTime(start);
+        event.setEndTime(end);
+
+        context.startService(createEventIntent(context, event));
     }
 
     private void onOutgoingCall(Context context, String number, long start, long end) {
-        log.debug("Processing outgoing call");
-        if (isTriggerEnabled(context, VAL_PREF_TRIGGER_OUT_CALLS)) {
-            PhoneEvent event = new PhoneEvent();
-            event.setIncoming(false);
-            event.setPhone(number);
-            event.setStartTime(start);
-            event.setEndTime(end);
+        PhoneEvent event = new PhoneEvent();
+        event.setIncoming(false);
+        event.setPhone(number);
+        event.setStartTime(start);
+        event.setEndTime(end);
 
-            context.startService(createEventIntent(context, event));
-        }
+        context.startService(createEventIntent(context, event));
     }
 
     private void onMissedCall(Context context, String number, long start) {
         log.debug("Processing missed call");
-        if (isTriggerEnabled(context, VAL_PREF_TRIGGER_MISSED_CALLS)) {
-            PhoneEvent event = new PhoneEvent();
-            event.setMissed(true);
-            event.setPhone(number);
-            event.setStartTime(start);
 
-            context.startService(createEventIntent(context, event));
-        }
+        PhoneEvent event = new PhoneEvent();
+        event.setMissed(true);
+        event.setPhone(number);
+        event.setStartTime(start);
+
+        context.startService(createEventIntent(context, event));
     }
 
 }

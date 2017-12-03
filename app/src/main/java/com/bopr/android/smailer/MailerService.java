@@ -28,6 +28,7 @@ public class MailerService extends IntentService {
 
     private Locator locator;
     private Mailer mailer;
+    private Database database;
 
     public MailerService() {
         super("MailerService");
@@ -41,7 +42,7 @@ public class MailerService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-        Database database = new Database(this);
+        database = new Database(this);
         init(new Mailer(this, database), new Locator(this, database));
         log.debug("Created");
     }
@@ -67,11 +68,25 @@ public class MailerService extends IntentService {
         //noinspection ConstantConditions
         switch (intent.getAction()) {
             case ACTION_CALL:
-                mailer.send(parseEventIntent(intent));
+                handlePhoneEvent(parseEventIntent(intent));
                 break;
             case ACTION_RESEND:
                 mailer.sendAllUnsent();
                 break;
+        }
+    }
+
+    private void handlePhoneEvent(PhoneEvent event) {
+        database.putEvent(event);
+        if (Settings.loadFilter(this).accept(event)) {
+            log.debug("Processing phone event: " + event);
+
+            mailer.send(event);
+        } else {
+            log.debug("Bypassed phone event");
+
+            event.setState(PhoneEvent.State.IGNORED);
+            database.putEvent(event);
         }
     }
 

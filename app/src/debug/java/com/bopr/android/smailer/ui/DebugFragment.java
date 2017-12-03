@@ -410,18 +410,18 @@ public class DebugFragment extends BasePreferenceFragment {
 
     private void onPopulateLog() {
         long time = System.currentTimeMillis();
-        database.updateMessage(new PhoneEvent("+79052345671", true, time, null, false, "Debug message", null, true, null));
-        database.updateMessage(new PhoneEvent("+79052345672", false, time += 1000, null, false, "Debug message", null, true, null));
-        database.updateMessage(new PhoneEvent("+79052345673", true, time += 1000, time + 10000, false, null, null, true, null));
-        database.updateMessage(new PhoneEvent("+79052345674", false, time += 1000, time + 10000, false, null, null, true, null));
-        database.updateMessage(new PhoneEvent("+79052345675", true, time += 1000, time + 10000, true, null, null, true, null));
+        database.putEvent(new PhoneEvent("+79052345671", true, time, null, false, "Debug message", null, true, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("+79052345672", false, time += 1000, null, false, "Debug message", null, true, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("+79052345673", true, time += 1000, time + 10000, false, null, null, true, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("+79052345674", false, time += 1000, time + 10000, false, null, null, true, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("+79052345675", true, time += 1000, time + 10000, true, null, null, true, null, PhoneEvent.State.PENDING));
 
 
-        database.updateMessage(new PhoneEvent("+79052345671", true, time += 1000, null, false, "Debug message", null, false, "Test exception +79052345671"));
-        database.updateMessage(new PhoneEvent("+79052345672", false, time += 1000, null, false, "Debug message", null, false, "Test exception +79052345672"));
-        database.updateMessage(new PhoneEvent("+79052345673", true, time += 1000, time + 10000, false, null, null, false, "Test exception +79052345673"));
-        database.updateMessage(new PhoneEvent("+79052345674", false, time += 1000, time + 10000, false, null, null, false, "Test exception +79052345674"));
-        database.updateMessage(new PhoneEvent("+79052345675", true, time += 1000, time + 10000, true, null, null, false, "Test exception +79052345675"));
+        database.putEvent(new PhoneEvent("+79052345671", true, time += 1000, null, false, "Debug message", null, false, "Test exception +79052345671", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("+79052345672", false, time += 1000, null, false, "Debug message", null, false, "Test exception +79052345672", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("+79052345673", true, time += 1000, time + 10000, false, null, null, false, "Test exception +79052345673", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("+79052345674", false, time += 1000, time + 10000, false, null, null, false, "Test exception +79052345674", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("+79052345675", true, time += 1000, time + 10000, true, null, null, false, "Test exception +79052345675", PhoneEvent.State.PENDING));
     }
 
     private void onClearLog() {

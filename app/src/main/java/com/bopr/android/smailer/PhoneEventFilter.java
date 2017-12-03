@@ -7,7 +7,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.bopr.android.smailer.Settings.*;
 import static com.bopr.android.smailer.util.Util.containsPhone;
+import static com.bopr.android.smailer.util.Util.isEmpty;
 
 /**
  * Class PhoneEventFilter.
@@ -20,8 +22,17 @@ public class PhoneEventFilter {
     private boolean useWhiteList;
     private Set<String> whitelist = Collections.emptySet();
     private Set<String> blacklist = Collections.emptySet();
+    private Set<String> triggers = Collections.emptySet();
 
     public PhoneEventFilter() {
+    }
+
+    public Set<String> getTriggers() {
+        return triggers;
+    }
+
+    public void setTriggers(Set<String> triggers) {
+        this.triggers = triggers;
     }
 
     public String getPattern() {
@@ -57,7 +68,25 @@ public class PhoneEventFilter {
     }
 
     public boolean accept(PhoneEvent event) {
-        return acceptPhone(event.getPhone()) && acceptPattern(event.getText());
+        return acceptTrigger(event) && acceptPhone(event.getPhone()) && acceptPattern(event.getText());
+    }
+
+    private boolean acceptTrigger(PhoneEvent event) {
+        if (event.isSms()) {
+            if (event.isIncoming()) {
+                return triggers.contains(VAL_PREF_TRIGGER_IN_SMS);
+            } else {
+                return triggers.contains(VAL_PREF_TRIGGER_OUT_SMS);
+            }
+        } else {
+            if (event.isMissed()) {
+                return triggers.contains(VAL_PREF_TRIGGER_MISSED_CALLS);
+            } else if (event.isIncoming()) {
+                return triggers.contains(VAL_PREF_TRIGGER_IN_CALLS);
+            } else {
+                return triggers.contains(VAL_PREF_TRIGGER_OUT_CALLS);
+            }
+        }
     }
 
     private boolean acceptPhone(String phone) {
@@ -65,7 +94,7 @@ public class PhoneEventFilter {
     }
 
     private boolean acceptPattern(String text) {
-        return text == null || pattern == null || text.matches(pattern);
+        return isEmpty(text) || isEmpty(pattern) || text.matches(pattern);
     }
 
     @Override
@@ -73,8 +102,9 @@ public class PhoneEventFilter {
         return "PhoneEventFilter{" +
                 "pattern='" + pattern + '\'' +
                 ", useWhiteList=" + useWhiteList +
-                ", whiteList=" + whitelist +
-                ", blackList=" + blacklist +
+                ", whitelist=" + whitelist +
+                ", blacklist=" + blacklist +
+                ", triggers=" + triggers +
                 '}';
     }
 }

@@ -97,8 +97,8 @@ public class MainActivityTest extends BaseActivityTest {
     @Test
     public void testLogView() {
         Database database = new Database(rule.getActivity());
-        database.clearMessages();
-        database.updateMessage(new PhoneEvent("10", true, 10000L, 20000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), true, "Test 10"));
+        database.clearEvents();
+        database.putEvent(new PhoneEvent("10", true, 10000L, 20000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), true, "Test 10", PhoneEvent.State.PENDING));
 
         onMenuButton().perform(click());
         onView(withText(R.string.title_activity_log)).perform(click());
