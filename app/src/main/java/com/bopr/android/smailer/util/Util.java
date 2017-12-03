@@ -92,7 +92,12 @@ public class Util {
         return false;
     }
 
-    public static String stringOf(String divider, Collection values) {
+    @SafeVarargs
+    public static <T> String separated(String divider, T... values) {
+        return separated(divider, Arrays.asList(values));
+    }
+
+    public static String separated(String divider, Collection values) {
         StringBuilder builder = new StringBuilder();
         for (Iterator iterator = values.iterator(); iterator.hasNext(); ) {
             builder.append(iterator.next());
@@ -103,16 +108,11 @@ public class Util {
         return builder.toString();
     }
 
-    public static String stringOf(Collection values) {
-        return stringOf(", ", values);
+    public static String commaSeparated(Collection values) {
+        return separated(",", values);
     }
 
-    @SafeVarargs
-    public static <T> String stringOf(String divider, T... values) {
-        return stringOf(divider, Arrays.asList(values));
-    }
-
-    public static List<String> listOf(String value, String divider, boolean trim) {
+    public static List<String> parseSeparated(String value, String divider, boolean trim) {
         String s = value;
         if (trim) {
             s = value.replaceAll(" ", "");
@@ -121,6 +121,10 @@ public class Util {
             return Arrays.asList(s.split(divider));
         }
         return Collections.emptyList();
+    }
+
+    public static List<String> parseCommaSeparated(String s) {
+        return parseSeparated(s, ",", true);
     }
 
     @SafeVarargs
@@ -161,7 +165,7 @@ public class Util {
     }
 
     public static String normalizePhone(String phone) {
-        return phone.replaceAll("\\D", "");
+        return phone != null ? phone.replaceAll("\\D", "") : null;
     }
 
     public static boolean containsPhone(Collection<String> phones, String phone) {

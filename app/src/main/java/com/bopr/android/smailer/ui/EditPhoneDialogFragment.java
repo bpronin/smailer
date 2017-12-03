@@ -61,7 +61,7 @@ public class EditPhoneDialogFragment extends DialogFragment {
 
             /* custom message view. do not use setMessage() } */
             TextView messageText = view.findViewById(R.id.dialog_message);
-            messageText.setText(R.string.pref_dialog_message_phone);
+            messageText.setText(R.string.title_phone_number);
 
             View browseButton = view.findViewById(R.id.button_browse_contacts);
             browseButton.setOnClickListener(new View.OnClickListener() {
@@ -118,8 +118,8 @@ public class EditPhoneDialogFragment extends DialogFragment {
         this.title = title;
     }
 
-    public void setInitialValue(String address) {
-        this.initialValue = address;
+    public void setInitialValue(String phone) {
+        this.initialValue = phone;
     }
 
     public interface Callback {

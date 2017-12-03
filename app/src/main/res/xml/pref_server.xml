@@ -3,21 +3,21 @@
 
     <EditTextPreference
         android:dialogMessage="@string/message_account_hint"
-        android:dialogTitle="@string/pref_dialog_title_email"
+        android:dialogTitle="@string/title_outgoing_email_address"
         android:inputType="textEmailAddress"
         android:key="sender_account"
         android:maxLines="1"
         android:singleLine="true"
-        android:title="@string/pref_title_sender_account"/>
+        android:title="@string/title_sender_account"/>
 
     <com.bopr.android.smailer.util.ui.preference.PasswordPreference
-        android:dialogMessage="@string/message_password_hint"
-        android:dialogTitle="@string/pref_dialog_title_password"
+        android:dialogMessage="@string/title_email_password_hint"
+        android:dialogTitle="@string/title_password"
         android:key="sender_password"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="@string/pref_title_sender_password"/>
+        android:title="@string/title_password"/>
 
     <EditTextPreference
         android:inputType="textNoSuggestions"
@@ -25,7 +25,7 @@
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="@string/pref_title_host"/>
+        android:title="@string/title_host"/>
 
     <EditTextPreference
         android:inputType="textNoSuggestions"
@@ -34,7 +34,7 @@
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="@string/pref_title_port"/>
+        android:title="@string/title_port"/>
 
     <Preference
         android:key="test_mail_server"

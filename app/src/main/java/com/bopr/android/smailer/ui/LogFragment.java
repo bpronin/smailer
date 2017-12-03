@@ -14,9 +14,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.bopr.android.smailer.*;
 import com.bopr.android.smailer.util.AndroidUtil;
-import com.bopr.android.smailer.util.TagFormatter;
 
-import static com.bopr.android.smailer.util.TagFormatter.from;
+import static com.bopr.android.smailer.util.TagFormatter.formatFrom;
+
 
 /**
  * Application activity log activity fragment.
@@ -54,6 +54,9 @@ public class LogFragment extends Fragment {
             case R.id.action_add_to_blacklist:
                 addToBlacklist();
                 return true;
+            case R.id.action_add_to_whitelist:
+                addToBlacklist();
+                return true;
             default:
                 return super.onContextItemSelected(item);
         }
@@ -79,7 +82,7 @@ public class LogFragment extends Fragment {
             if (details != null) {
                 // TODO: 04.04.2016 details dialog for any type of messages
                 AndroidUtil.dialogBuilder(getActivity())
-                        .setTitle(R.string.activity_log_title_details)
+                        .setTitle(R.string.title_details)
                         .setMessage(details)
                         .show();
             }
@@ -105,8 +108,8 @@ public class LogFragment extends Fragment {
 
     private void clearData() {
         AndroidUtil.dialogBuilder(getActivity())
-                .setMessage(R.string.activity_log_ask_clear)
-                .setPositiveButton(R.string.action_clear, new DialogInterface.OnClickListener() {
+                .setMessage(R.string.message_activity_log_ask_clear)
+                .setPositiveButton(R.string.title_clear, new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -133,7 +136,23 @@ public class LogFragment extends Fragment {
             Settings.saveFilter(getActivity(), filter);
 
             Toast.makeText(getActivity(),
-                    from(R.string.message_added_to_black_list, getActivity())
+                    formatFrom(R.string.message_added_to_black_list, getActivity())
+                            .put("number", number)
+                            .format(),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void addToWhitelist() {
+        if (selectedEvent != null) {
+            String number = selectedEvent.getPhone();
+
+            PhoneEventFilter filter = Settings.loadFilter(getActivity());
+            filter.getBlacklist().add(number);
+            Settings.saveFilter(getActivity(), filter);
+
+            Toast.makeText(getActivity(),
+                    formatFrom(R.string.message_added_to_black_list, getActivity())
                             .put("number", number)
                             .format(),
                     Toast.LENGTH_SHORT).show();
@@ -160,7 +179,7 @@ public class LogFragment extends Fragment {
             }
         }
 
-        return TagFormatter.from(R.string.activity_log_message, context.getResources())
+        return formatFrom(R.string.activity_log_message, context.getResources())
                 .putResource("message", messageText)
                 .put("phone", message.getPhone())
                 .format();

@@ -193,7 +193,7 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
     private String formatRationale(Collection<String> permissions) {
         StringBuilder b = new StringBuilder();
         for (String permission : permissions) {
-            TagFormatter line = TagFormatter.from(items.get(permission), activity.getResources())
+            TagFormatter line = TagFormatter.formatFrom(items.get(permission), activity.getResources())
                     .put("permission", getPermissionLabel(permission));
             b.append(line).append("\n\n");
         }

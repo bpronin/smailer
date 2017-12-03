@@ -37,35 +37,19 @@ public class MainActivityTest extends BaseActivityTest {
     @Test
     public void testTitle() {
         onView(withText(R.string.app_name)).check(matches(isDisplayed()));
-        onView(withSummary(R.string.pref_title_recipients, R.string.pref_description_not_set)).check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void testEnabledSetting() {
-        /* check preferences */
-        assertTrue(preferences.getBoolean(KEY_PREF_SERVICE_ENABLED, false));
-
-        onView(withPrefSwitcher(R.string.pref_title_enable)).check(matches(isChecked()));
-        onView(withSummary(R.string.pref_title_enable, R.string.pref_description_service_on)).check(matches(isDisplayed()));
-
-        onView(withText(R.string.pref_title_enable)).perform(click());
-        onView(withPrefSwitcher(R.string.pref_title_enable)).check(matches(isNotChecked()));
-        onView(withSummary(R.string.pref_title_enable, R.string.pref_description_service_off)).check(matches(isDisplayed()));
-
-        /* check preferences */
-        assertFalse(preferences.getBoolean(KEY_PREF_SERVICE_ENABLED, true));
+        onView(withSummary(R.string.title_email_recipients, R.string.title_not_set)).check(matches(isDisplayed()));
     }
 
     @Test
     public void testTriggersSetting() {
-        String[] titles = rule.getActivity().getResources().getStringArray(R.array.email_trigger_titles);
+        String[] titles = rule.getActivity().getResources().getStringArray(R.array.trigger_titles);
 
          /* check preferences */
         assertThat(preferences.getStringSet(KEY_PREF_EMAIL_TRIGGERS, null), equalTo(DEFAULT_TRIGGERS));
 
         /* check all and press cancel */
-        onView(withText(R.string.pref_title_trigger)).perform(click());
-        onView(withText(R.string.pref_dialog_title_trigger)).check(matches(isDisplayed()));
+        onView(withText(R.string.title_triggers)).perform(click());
+        onView(withText(R.string.title_trigger)).check(matches(isDisplayed()));
         onData(allOf(is(instanceOf(String.class)), is(titles[0]))).perform(click());
         onData(allOf(is(instanceOf(String.class)), is(titles[1]))).perform(click());
         onData(allOf(is(instanceOf(String.class)), is(titles[2]))).perform(click());
@@ -80,8 +64,8 @@ public class MainActivityTest extends BaseActivityTest {
 
 
         /* check all and press ok */
-        onView(withText(R.string.pref_title_trigger)).perform(click());
-        onView(withText(R.string.pref_dialog_title_trigger)).check(matches(isDisplayed()));
+        onView(withText(R.string.title_triggers)).perform(click());
+        onView(withText(R.string.title_trigger)).check(matches(isDisplayed()));
         onData(allOf(is(instanceOf(String.class)), is(titles[0]))).perform(click());
         onData(allOf(is(instanceOf(String.class)), is(titles[1]))).perform(click());
         onData(allOf(is(instanceOf(String.class)), is(titles[2]))).perform(click());
@@ -100,11 +84,11 @@ public class MainActivityTest extends BaseActivityTest {
         String[] openSources = rule.getActivity().getResources().getStringArray(R.array.open_source);
 
         onMenuButton().perform(click());
-        onView(withText(R.string.action_about)).perform(click());
+        onView(withText(R.string.title_about)).perform(click());
         onDialog(withText(R.string.app_title)).check(matches(isDisplayed()));
-        onDialog(withText(R.string.about_dialog_copyright)).check(matches(isDisplayed()));
-        onDialog(withText(R.string.about_dialog_title_open_source)).perform(click());
-        onView(withText(R.string.open_source_title)).check(matches(isDisplayed()));
+        onDialog(withText(R.string.title_copyright)).check(matches(isDisplayed()));
+        onDialog(withText(R.string.title_open_source_and_third_party)).perform(click());
+        onView(withText(R.string.title_open_source)).check(matches(isDisplayed()));
         onView(withId(android.R.id.list)).check(matches(hasListItemsCount(openSources.length)));
         onHomeButton().perform(click());
         onView(withText(R.string.app_name)).check(matches(isDisplayed()));
@@ -117,8 +101,8 @@ public class MainActivityTest extends BaseActivityTest {
         database.updateMessage(new PhoneEvent("10", true, 10000L, 20000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), true, "Test 10"));
 
         onMenuButton().perform(click());
-        onView(withText(R.string.action_activity_log)).perform(click());
-        onView(withText(R.string.activity_log_title)).check(matches(isDisplayed()));
+        onView(withText(R.string.title_activity_log)).perform(click());
+        onView(withText(R.string.title_activity_log)).check(matches(isDisplayed()));
 
         onView(withId(android.R.id.list)).check(matches(hasListItemsCount(1)));
 
@@ -126,7 +110,7 @@ public class MainActivityTest extends BaseActivityTest {
         onToolbar(withId(R.id.action_log_clear)).perform(click());
 
         /* in dialog click cancel */
-        onDialog(withText(R.string.activity_log_ask_clear)).check(matches(isDisplayed()));
+        onDialog(withText(R.string.message_activity_log_ask_clear)).check(matches(isDisplayed()));
         onDialog(withText(android.R.string.cancel)).perform(click());
 
         onView(withId(android.R.id.list)).check(matches(hasListItemsCount(1)));
@@ -135,7 +119,7 @@ public class MainActivityTest extends BaseActivityTest {
         onToolbar(withId(R.id.action_log_clear)).perform(click());
 
         /* in dialog click clear */
-        onDialog(withText(R.string.action_clear)).perform(click());
+        onDialog(withText(R.string.title_clear)).perform(click());
 
         onView(withId(android.R.id.list)).check(matches(hasListItemsCount(0)));
 

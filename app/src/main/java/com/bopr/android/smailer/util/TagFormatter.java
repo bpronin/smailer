@@ -22,24 +22,24 @@ public class TagFormatter {
     private final String format;
     private final Resources resources;
 
-    public static TagFormatter from(String format) {
+    public static TagFormatter formatFrom(String format) {
         return new TagFormatter(format);
     }
 
-    public static TagFormatter from(String format, Resources resources) {
+    public static TagFormatter formatFrom(String format, Resources resources) {
         return new TagFormatter(format, resources);
     }
 
-    public static TagFormatter from(String format, Context context) {
-        return from(format, context.getResources());
+    public static TagFormatter formatFrom(String format, Context context) {
+        return formatFrom(format, context.getResources());
     }
 
-    public static TagFormatter from(int formatResourceId, Resources resources) {
+    public static TagFormatter formatFrom(int formatResourceId, Resources resources) {
         return new TagFormatter(formatResourceId, resources);
     }
 
-    public static TagFormatter from(int formatResourceId, Context context) {
-        return from(formatResourceId, context.getResources());
+    public static TagFormatter formatFrom(int formatResourceId, Context context) {
+        return formatFrom(formatResourceId, context.getResources());
     }
 
     public TagFormatter(String format, Resources resources) {

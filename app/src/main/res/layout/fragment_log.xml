@@ -28,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@string/activity_log_empty_log"
+            android:text="@string/title_activity_log_empty_log"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="?android:attr/textColorSecondary"
             android:visibility="gone"

@@ -38,14 +38,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="2dp"
-                android:text="@string/about_dialog_title_version"/>
+                android:text="@string/title_version"/>
 
             <TextView
                 android:id="@+id/label_copyright"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="2dp"
-                android:text="@string/about_dialog_copyright"/>
+                android:text="@string/title_copyright"/>
 
         </LinearLayout>
     </LinearLayout>
@@ -61,7 +61,7 @@
         android:clickable="true"
         android:padding="8dp"
         android:singleLine="false"
-        android:text="@string/about_dialog_title_open_source"
+        android:text="@string/title_open_source_and_third_party"
         android:textAlignment="center"
         android:textColor="?android:attr/textColorLink"/>
 

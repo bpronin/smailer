@@ -10,7 +10,6 @@ import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-
 import com.bopr.android.smailer.OutgoingSmsService;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.validator.EmailListTextValidator;
@@ -72,12 +71,13 @@ public class MainFragment extends BasePreferenceFragment {
 
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                startActivity(new Intent(getActivity(), FiltersActivity.class));
+                startActivity(new Intent(getActivity(), ConditionsActivity.class));
                 return true;
             }
         });
 
         preferenceChangeListener = new OnSharedPreferenceChangeListener() {
+
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 enableOutgoingSmsService();
@@ -135,7 +135,7 @@ public class MainFragment extends BasePreferenceFragment {
         if (isEmpty(value)) {
             updateNotSpecifiedSummary(recipientsPreference);
         } else {
-            updateSummary(value, recipientsPreference, EmailListTextValidator.isValidValue(value));
+            updateSummary(value.replaceAll(",", ", "), recipientsPreference, EmailListTextValidator.isValidValue(value));
         }
     }
 

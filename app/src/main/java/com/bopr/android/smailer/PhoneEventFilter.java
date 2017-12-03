@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.bopr.android.smailer.util.Util.containsPhone;
+
 /**
  * Class PhoneEventFilter.
  *
@@ -15,7 +17,7 @@ import java.util.Set;
 public class PhoneEventFilter {
 
     private String pattern;
-    private boolean blackListed = true;
+    private boolean useWhiteList;
     private Set<String> whitelist = Collections.emptySet();
     private Set<String> blacklist = Collections.emptySet();
 
@@ -30,12 +32,12 @@ public class PhoneEventFilter {
         this.pattern = pattern;
     }
 
-    public boolean isBlackListed() {
-        return blackListed;
+    public boolean isUseWhiteList() {
+        return useWhiteList;
     }
 
-    public void setBlackListed(boolean blackListed) {
-        this.blackListed = blackListed;
+    public void setUseWhiteList(boolean useWhiteList) {
+        this.useWhiteList = useWhiteList;
     }
 
     public Set<String> getWhitelist() {
@@ -59,11 +61,7 @@ public class PhoneEventFilter {
     }
 
     private boolean acceptPhone(String phone) {
-        return blackListed && !containsPhone(blacklist, phone) || containsPhone(whitelist, phone);
-    }
-
-    private boolean containsPhone(Set<String> set, String phone) {
-        return Util.containsPhone(set, phone);
+        return useWhiteList ? containsPhone(whitelist, phone) : !containsPhone(blacklist, phone);
     }
 
     private boolean acceptPattern(String text) {
@@ -74,7 +72,7 @@ public class PhoneEventFilter {
     public String toString() {
         return "PhoneEventFilter{" +
                 "pattern='" + pattern + '\'' +
-                ", blackListed=" + blackListed +
+                ", useWhiteList=" + useWhiteList +
                 ", whiteList=" + whitelist +
                 ", blackList=" + blacklist +
                 '}';

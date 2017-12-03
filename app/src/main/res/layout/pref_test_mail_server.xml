@@ -7,6 +7,6 @@
     android:clickable="false"
     android:focusable="false"
     android:gravity="center_vertical"
-    android:text="@string/server_test"
+    android:text="@string/title_server_test"
     android:textAppearance="?android:attr/textAppearanceButton"
     android:textColor="@color/colorAccent"/>

@@ -11,8 +11,8 @@ import java.io.IOException;
 import java.util.*;
 
 import static android.content.Context.MODE_PRIVATE;
-import static com.bopr.android.smailer.util.Util.listOf;
-import static com.bopr.android.smailer.util.Util.stringOf;
+import static com.bopr.android.smailer.util.Util.commaSeparated;
+import static com.bopr.android.smailer.util.Util.parseCommaSeparated;
 
 /**
  * Settings.
@@ -39,9 +39,9 @@ public class Settings {
     public static final String KEY_PREF_TEST_MAIL_SERVER = "test_mail_server";
     public static final String KEY_PREF_RESEND_UNSENT = "resend_unsent";
     public static final String KEY_PREF_FILTER_PATTERN = "message_filter_pattern";
-    public static final String KEY_PREF_FILTER_BLACK_LISTED = "message_filter_black_listed";
-    public static final String KEY_PREF_FILTER_BLACK_LIST = "message_filter_black_list";
-    public static final String KEY_PREF_FILTER_WHITE_LIST = "message_filter_white_list";
+    public static final String KEY_PREF_FILTER_USE_WHITE_LIST = "message_filter_use_white_list";
+    public static final String KEY_PREF_FILTER_BLACKLIST = "message_filter_blacklist";
+    public static final String KEY_PREF_FILTER_WHITELIST = "message_filter_whitelist";
 
     public static final String KEY_PREF_DEVICE_ALIAS = "device_alias";
     public static final String VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME = "time";
@@ -81,6 +81,7 @@ public class Settings {
         data.put(KEY_PREF_EMAIL_CONTENT, DEFAULT_CONTENT);
         data.put(KEY_PREF_EMAIL_LOCALE, DEFAULT_LOCALE);
         data.put(KEY_PREF_RESEND_UNSENT, true);
+        data.put(KEY_PREF_FILTER_USE_WHITE_LIST, false);
 
         AndroidUtil.putPreferencesOptional(getPreferences(context), data);
     }
@@ -126,9 +127,9 @@ public class Settings {
         SharedPreferences.Editor editor = getPreferences(context).edit();
 
         editor.putString(KEY_PREF_FILTER_PATTERN, filter.getPattern());
-        editor.putBoolean(KEY_PREF_FILTER_BLACK_LISTED, filter.isBlackListed());
-        editor.putString(KEY_PREF_FILTER_BLACK_LIST, stringOf(filter.getBlacklist()));
-        editor.putString(KEY_PREF_FILTER_WHITE_LIST, stringOf(filter.getWhitelist()));
+        editor.putBoolean(KEY_PREF_FILTER_USE_WHITE_LIST, filter.isUseWhiteList());
+        editor.putString(KEY_PREF_FILTER_BLACKLIST, commaSeparated(filter.getBlacklist()));
+        editor.putString(KEY_PREF_FILTER_WHITELIST, commaSeparated(filter.getWhitelist()));
 
         editor.apply();
     }
@@ -139,9 +140,9 @@ public class Settings {
         PhoneEventFilter filter = new PhoneEventFilter();
 
         filter.setPattern(preferences.getString(KEY_PREF_FILTER_PATTERN, null));
-        filter.setBlackListed(preferences.getBoolean(KEY_PREF_FILTER_BLACK_LISTED, true));
-        filter.setBlacklist(listOf(preferences.getString(KEY_PREF_FILTER_BLACK_LIST, ""), ",", true));
-        filter.setWhitelist(listOf(preferences.getString(KEY_PREF_FILTER_WHITE_LIST, ""), ",", true));
+        filter.setUseWhiteList(preferences.getBoolean(KEY_PREF_FILTER_USE_WHITE_LIST, true));
+        filter.setBlacklist(parseCommaSeparated(preferences.getString(KEY_PREF_FILTER_BLACKLIST, "")));
+        filter.setWhitelist(parseCommaSeparated(preferences.getString(KEY_PREF_FILTER_WHITELIST, "")));
 
         return filter;
     }

@@ -40,32 +40,35 @@
         </activity>
         <activity
             android:name=".ui.ServerActivity"
-            android:label="@string/pref_title_sender">
+            android:label="@string/title_email_sender">
         </activity>
         <activity
             android:name=".ui.RecipientsActivity"
-            android:label="@string/pref_title_recipients">
+            android:label="@string/title_email_recipients">
         </activity>
         <activity
             android:name=".ui.BlacklistActivity"
-            android:label="@string/pref_title_blacklist">
+            android:label="@string/title_blacklist">
+        </activity>
+        <activity
+            android:name=".ui.WhitelistActivity"
+            android:label="@string/title_whitelist">
         </activity>
         <activity
             android:name=".ui.MoreActivity"
-            android:label="@string/pref_title_additional_settings">
+            android:label="@string/title_additional_settings">
         </activity>
         <activity
             android:name=".ui.LogActivity"
-            android:label="@string/activity_log_title">
+            android:label="@string/title_activity_log">
         </activity>
         <activity
             android:name=".ui.LegalInfoActivity"
-            android:label="@string/open_source_title">
+            android:label="@string/title_open_source">
         </activity>
-
         <activity
-            android:name=".ui.FiltersActivity"
-            android:label="@string/pref_title_filters">
+            android:name=".ui.ConditionsActivity"
+            android:label="@string/title_conditions_for_sending">
         </activity>
 
         <service android:name=".MailerService"/>

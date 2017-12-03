@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <MultiSelectListPreference
+        android:dialogTitle="@string/title_trigger"
+        android:entries="@array/trigger_titles"
+        android:entryValues="@array/trigger_values"
+        android:key="email_triggers"
+        android:summary="@string/title_when_to_send"
+        android:title="@string/title_triggers"/>
+
+    <SwitchPreference
+        android:key="message_filter_use_white_list"
+        android:title="@string/title_use_black_white_list"/>
+
+    <Preference
+        android:key="message_filter_blacklist"
+        android:title="@string/title_blacklist"/>
+
+    <Preference
+        android:key="message_filter_whitelist"
+        android:title="@string/title_whitelist"/>
+
+</PreferenceScreen>

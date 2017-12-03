@@ -5,11 +5,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 /**
- * Message filter settings activity.
+ * Whitelist activity.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class FiltersActivity extends AppActivity {
+public class WhitelistActivity extends AppActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,7 +20,7 @@ public class FiltersActivity extends AppActivity {
     @NonNull
     @Override
     protected Fragment createFragment() {
-        return new FiltersFragment();
+        return new WhitelistFragment();
     }
 
 }
