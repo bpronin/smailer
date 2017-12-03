@@ -40,7 +40,7 @@ public class ServerActivityTest extends BaseActivityTest {
 
     @Test
     public void testAccountSetting() {
-        onView(withText(R.string.pref_title_server)).perform(click());
+        onView(withText(R.string.pref_title_sender)).perform(click());
 
         /* check preferences */
         assertNull(preferences.getString(KEY_PREF_SENDER_ACCOUNT, null));
@@ -69,7 +69,7 @@ public class ServerActivityTest extends BaseActivityTest {
 
     @Test
     public void testPasswordSetting() {
-        onView(withText(R.string.pref_title_server)).perform(click());
+        onView(withText(R.string.pref_title_sender)).perform(click());
 
         /* check preferences */
         assertNull(preferences.getString(KEY_PREF_SENDER_PASSWORD, null));
@@ -98,7 +98,7 @@ public class ServerActivityTest extends BaseActivityTest {
 
     @Test
     public void testHost() {
-        onView(withText(R.string.pref_title_server)).perform(click());
+        onView(withText(R.string.pref_title_sender)).perform(click());
 
         /* check preferences */
         assertEquals(DEFAULT_HOST, preferences.getString(KEY_PREF_EMAIL_HOST, null));
@@ -129,7 +129,7 @@ public class ServerActivityTest extends BaseActivityTest {
 
     @Test
     public void testPort() {
-        onView(withText(R.string.pref_title_server)).perform(click());
+        onView(withText(R.string.pref_title_sender)).perform(click());
 
         /* check preferences */
         assertEquals(DEFAULT_PORT, preferences.getString(KEY_PREF_EMAIL_PORT, null));
@@ -160,12 +160,12 @@ public class ServerActivityTest extends BaseActivityTest {
 
     @Test
     public void testSummaryText() {
-        onView(withSummary(R.string.pref_title_server, R.string.pref_description_not_set)).check(matches(isDisplayed()));
+        onView(withSummary(R.string.pref_title_sender, R.string.pref_description_not_set)).check(matches(isDisplayed()));
 
         /* enter page */
-        onView(withText(R.string.pref_title_server)).perform(click());
+        onView(withText(R.string.pref_title_sender)).perform(click());
 
-        onView(withText(R.string.pref_title_outgoing_server)).check(matches(isDisplayed()));
+        onView(withText(R.string.pref_title_sender)).check(matches(isDisplayed()));
 
         /* add address */
         onView(withText(R.string.pref_title_sender_account)).perform(click());
@@ -175,7 +175,7 @@ public class ServerActivityTest extends BaseActivityTest {
         /* leave the page */
         onHomeButton().perform(click());
         onView(withText(R.string.app_name)).check(matches(isDisplayed()));
-        onView(withSummary(R.string.pref_title_server, "test@mail.com")).check(matches(isDisplayed()));
+        onView(withSummary(R.string.pref_title_sender, "test@mail.com")).check(matches(isDisplayed()));
     }
 
 }

@@ -20,24 +20,22 @@ public class MainActivity extends AppActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        log.debug("Application init");
         super.onCreate(savedInstanceState);
+
         Fabric.with(this, new Crashlytics());
-        init();
+
+        /* key generation may take some time. we don't want to interrupt user
+         when he set password at first time so we initializing keystore here */
+        if (!Cryptor.isKeystoreInitialized()) {
+            new InitKeystoreTask(this).execute();
+        }
     }
 
     @NonNull
     @Override
     protected Fragment createFragment() {
         return new MainFragment();
-    }
-
-    private void init() {
-        log.debug("Application init");
-        /* key generation may take some time. we don't want to interrupt user
-         when he set password at first time so we initializing keystore here */
-        if (!Cryptor.isKeystoreInitialized()) {
-            new InitKeystoreTask(this).execute();
-        }
     }
 
     private static class InitKeystoreTask extends LongAsyncTask<Void, Void, Void> {

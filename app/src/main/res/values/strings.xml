@@ -6,15 +6,16 @@
     <string name="pref_title_blacklist">Blacklist</string>
     <string name="pref_title_whitelist">Whitelist</string>
     <string name="pref_title_sender_password">Password</string>
-    <string name="pref_title_server">Outgoing server</string>
-    <string name="pref_title_outgoing_server">Outgoing email server</string>
+    <string name="pref_title_sender">Sender</string>
+    <string name="pref_title_email_server">Outgoing email server</string>
     <string name="pref_title_host">Host</string>
     <string name="pref_title_port">Port</string>
-    <string name="pref_title_trigger">Message filter</string>
+    <string name="pref_title_trigger">Triggers</string>
     <string name="pref_title_content">Email content</string>
     <string name="pref_title_email_locale">Email message language</string>
     <string name="pref_title_notify_send_success">Notify of send</string>
     <string name="pref_title_more">More</string>
+    <string name="pref_title_filters">Message filter</string>
     <string name="pref_title_resend_unsent">Resend</string>
     <string name="pref_title_device_alias">Device name</string>
 

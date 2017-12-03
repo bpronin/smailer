@@ -6,12 +6,12 @@
     <string name="pref_title_blacklist">Черный список</string>
     <string name="pref_title_whitelist">Белый список</string>
     <string name="pref_title_sender_password">Пароль</string>
-    <string name="pref_title_server">Сервер исходящей почты</string>
-    <string name="pref_title_outgoing_server">Сервер исходящей почты</string>
+    <string name="pref_title_sender">Отправитель</string>
+    <string name="pref_title_email_server">Сервер исходящей почты</string>
     <string name="pref_title_host">Сервер</string>
     <string name="pref_title_port">Порт</string>
     <string name="pref_title_content">Содержание</string>
-    <string name="pref_title_trigger">Фильтр сообщений</string>
+    <string name="pref_title_trigger">Триггеры</string>
     <string name="pref_title_email_locale">Язык почтового сообщения</string>
     <string name="pref_title_notify_send_success">Уведомлять об отправке</string>
     <string name="pref_title_more">Дополнительно</string>
@@ -135,5 +135,6 @@
         <item>Английский</item>
         <item>Русский</item>
     </string-array>
+    <string name="pref_title_filters">Фильтр сообщений</string>
 
 </resources>

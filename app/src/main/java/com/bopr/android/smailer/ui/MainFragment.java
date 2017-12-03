@@ -28,7 +28,6 @@ import static com.bopr.android.smailer.util.Util.isEmpty;
 public class MainFragment extends BasePreferenceFragment {
 
     private Preference recipientsPreference;
-    private Preference blacklistPreference;
     private Preference serverPreference;
     private OnSharedPreferenceChangeListener preferenceChangeListener;
 
@@ -50,16 +49,6 @@ public class MainFragment extends BasePreferenceFragment {
             }
         });
 
-        blacklistPreference = findPreference(KEY_PREF_FILTER_BLACK_LIST);
-        blacklistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                startActivity(new Intent(getActivity(), BlacklistActivity.class));
-                return true;
-            }
-        });
-
         serverPreference = findPreference(KEY_PREF_OUTGOING_SERVER);
         serverPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
@@ -75,6 +64,15 @@ public class MainFragment extends BasePreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 startActivity(new Intent(getActivity(), MoreActivity.class));
+                return true;
+            }
+        });
+
+        findPreference(KEY_PREF_FILTERS).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                startActivity(new Intent(getActivity(), FiltersActivity.class));
                 return true;
             }
         });
