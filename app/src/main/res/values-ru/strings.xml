@@ -20,7 +20,8 @@
     <string name="email_subject_outgoing_call">Исходящий звонок на</string>
     <string name="email_subject_outgoing_sms">Исходящее SMS</string>
     <string name="message_activity_log_ask_clear">Очистить журнал?</string>
-    <string name="message_added_to_black_list">{number} добавлен в черный список</string>
+    <string name="message_added_to_blacklist">{number} добавлен в черный список</string>
+    <string name="message_added_to_whitelist">{number} добавлен в белый список</string>
     <string name="message_item_removed">Запись удалена</string>
     <string name="message_items_removed">{count} записей удалено</string>
     <string name="message_list_item_already_exists">{item} уже существует</string>

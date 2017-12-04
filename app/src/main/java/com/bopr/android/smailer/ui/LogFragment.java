@@ -55,7 +55,7 @@ public class LogFragment extends Fragment {
                 addToBlacklist();
                 return true;
             case R.id.action_add_to_whitelist:
-                addToBlacklist();
+                addToWhitelist();
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -136,7 +136,7 @@ public class LogFragment extends Fragment {
             Settings.saveFilter(getActivity(), filter);
 
             Toast.makeText(getActivity(),
-                    formatFrom(R.string.message_added_to_black_list, getActivity())
+                    formatFrom(R.string.message_added_to_blacklist, getActivity())
                             .put("number", number)
                             .format(),
                     Toast.LENGTH_SHORT).show();
@@ -148,11 +148,11 @@ public class LogFragment extends Fragment {
             String number = selectedEvent.getPhone();
 
             PhoneEventFilter filter = Settings.loadFilter(getActivity());
-            filter.getBlacklist().add(number);
+            filter.getWhitelist().add(number);
             Settings.saveFilter(getActivity(), filter);
 
             Toast.makeText(getActivity(),
-                    formatFrom(R.string.message_added_to_black_list, getActivity())
+                    formatFrom(R.string.message_added_to_whitelist, getActivity())
                             .put("number", number)
                             .format(),
                     Toast.LENGTH_SHORT).show();
@@ -193,7 +193,7 @@ public class LogFragment extends Fragment {
     private class ListAdapter extends RecyclerView.Adapter<ItemViewHolder> {
 
         private int errorColor;
-        private int succeccColor;
+        private int successColor;
         private int ignoredColor;
         private int defaultColor;
         private Context context;
@@ -210,7 +210,7 @@ public class LogFragment extends Fragment {
             ItemViewHolder holder = new ItemViewHolder(inflater.inflate(R.layout.list_item_log, parent, false));
 
             errorColor = ContextCompat.getColor(context, R.color.errorForeground);
-            succeccColor = ContextCompat.getColor(context, R.color.successForeground);
+            successColor = ContextCompat.getColor(context, R.color.successForeground);
             ignoredColor = ContextCompat.getColor(context, R.color.ignoredForeground);
             defaultColor = holder.timeView.getCurrentTextColor();
 
@@ -228,7 +228,7 @@ public class LogFragment extends Fragment {
                         holder.resultView.setTextColor(defaultColor);
                         break;
                     case PROCESSED:
-                        holder.resultView.setTextColor(succeccColor);
+                        holder.resultView.setTextColor(successColor);
                         break;
                     case IGNORED:
                         holder.resultView.setTextColor(ignoredColor);
