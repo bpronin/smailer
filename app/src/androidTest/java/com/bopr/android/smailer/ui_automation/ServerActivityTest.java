@@ -78,7 +78,7 @@ public class ServerActivityTest extends BaseActivityTest {
 
         /* enter password and press cancel */
         onView(withText(R.string.title_password)).perform(click());
-        onView(withText(R.string.title_password_description)).check(matches(isDisplayed()));
+        onView(withText(R.string.title_email_password_hint)).check(matches(isDisplayed()));
         onView(withEditText()).perform(typeText("password"));
         onView(withText(android.R.string.cancel)).perform(click());
 
@@ -86,7 +86,7 @@ public class ServerActivityTest extends BaseActivityTest {
 
         /* enter password and press ok */
         onView(withText(R.string.title_password)).perform(click());
-        onView(withText(R.string.title_password_description)).check(matches(isDisplayed()));
+        onView(withText(R.string.title_email_password_hint)).check(matches(isDisplayed()));
         onView(withEditText()).perform(typeText("password"));
         onView(withText(android.R.string.ok)).perform(click());
 

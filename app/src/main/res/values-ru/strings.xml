@@ -87,7 +87,6 @@
     <string name="title_open_source_and_third_party">Открытый исходный код и ПО сторонних производителей</string>
     <string name="title_outgoing_email_address">Адрес исходящей почты</string>
     <string name="title_password">Пароль</string>
-    <string name="title_password_description">Пароль исходящей почты</string>
     <string name="title_phone_number">Номер телефона</string>
     <string name="title_port">Порт</string>
     <string name="title_regexp">Регулярное выражение</string>
@@ -95,8 +94,6 @@
     <string name="title_resend_hint">Заново отправлять неотправленные сообщения при появлении соединения</string>
     <string name="title_sender_account">Учетная запись</string>
     <string name="title_server_test">Проверить соединение</string>
-    <string name="title_service_off">Сервис отключен</string>
-    <string name="title_service_on">Сервис включен</string>
     <string name="title_text_filter">Фильтр текста</string>
     <string name="title_text_filter_any">Любой текст</string>
     <string name="title_triggers">Триггеры</string>
