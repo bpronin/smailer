@@ -20,13 +20,14 @@
     <string name="email_subject_outgoing_call">Outgoing call to</string>
     <string name="email_subject_outgoing_sms">Outgoing SMS to</string>
     <string name="log_message" translatable="false">{message} {phone}.</string>
-    <string name="log_message_incoming_call" translatable="false">Incoming call from</string>
-    <string name="log_message_incoming_sms" translatable="false">Incoming SMS from</string>
-    <string name="log_message_missed_call" translatable="false">Missed call from</string>
-    <string name="log_message_outgoing_call" translatable="false">Outgoing call to</string>
-    <string name="log_message_outgoing_sms" translatable="false">Outgoing SMS to</string>
-    <string name="log_message_send_email_failed" translatable="false">Send failed.</string>
-    <string name="log_message_send_email_success" translatable="false">Successfully sent.</string>
+    <string name="log_message_incoming_call" translatable="false">IN CALL</string>
+    <string name="log_message_incoming_sms" translatable="false">IN SMS</string>
+    <string name="log_message_missed_call" translatable="false">MIS CALL</string>
+    <string name="log_message_outgoing_call" translatable="false">OUT CALL</string>
+    <string name="log_message_outgoing_sms" translatable="false">OUT SMS</string>
+    <string name="log_state_pending" translatable="false">PENDING</string>
+    <string name="log_state_done" translatable="false">DONE</string>
+    <string name="log_state_ignored" translatable="false">IGNORED</string>
     <string name="log_time_pattern" translatable="false">yyyy-MM-dd HH:mm:ss</string>
     <string name="message_activity_log_ask_clear">Clear log?</string>
     <string name="message_added_to_blacklist">{number} added to blacklist</string>
