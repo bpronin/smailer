@@ -42,8 +42,6 @@ public class MailerTest extends BaseTest {
         super.setUp();
 
         preferences = mock(SharedPreferences.class);
-        when(preferences.getBoolean(eq(KEY_PREF_SERVICE_ENABLED), anyBoolean())).thenReturn(true);
-        when(preferences.getBoolean(eq(KEY_PREF_SERVICE_ENABLED), anyBoolean())).thenReturn(true);
         when(preferences.getString(eq(KEY_PREF_SENDER_ACCOUNT), anyString())).thenReturn("sender@mail.com");
         when(preferences.getString(eq(KEY_PREF_SENDER_PASSWORD), anyString())).thenReturn("password");
         when(preferences.getString(eq(KEY_PREF_RECIPIENTS_ADDRESS), anyString())).thenReturn("recipient@mail.com");
@@ -316,7 +314,7 @@ public class MailerTest extends BaseTest {
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                String subject = invocation.getArgumentAt(0, String.class);
+                String subject = (String) invocation.getArguments()[0];
                 if (subject.equals("[SMailer] Outgoing call to bad_phone")) {
                     throw new MessagingException("bad_phone");
                 }

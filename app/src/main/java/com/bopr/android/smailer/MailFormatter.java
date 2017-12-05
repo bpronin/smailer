@@ -287,6 +287,7 @@ class MailFormatter {
     private void restoreLocale(Locale locale) {
         Configuration configuration = context.getResources().getConfiguration();
         configuration.locale = locale;
+        // TODO: 05.12.2017 https://stackoverflow.com/questions/40221711/android-context-getresources-updateconfiguration-deprecated 
         context.getResources().updateConfiguration(configuration, null);
     }
 
