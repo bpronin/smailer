@@ -1,4 +1,4 @@
-package com.bopr.android.smailer.ui_automation;
+package com.bopr.android.ui_automation;
 
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;

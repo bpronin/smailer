@@ -1,4 +1,4 @@
-package com.bopr.android.smailer.ui_automation;
+package com.bopr.android.ui_automation;
 
 import android.annotation.SuppressLint;
 import android.support.test.filters.LargeTest;
