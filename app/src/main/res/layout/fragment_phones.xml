@@ -23,14 +23,14 @@
             android:layout_height="match_parent"
             app:layoutManager="LinearLayoutManager"
             tools:context="com.bopr.android.smailer.ui.BlacklistFragment"
-            tools:listitem="@layout/list_item_blacklist"/>
+            tools:listitem="@layout/list_item_phone"/>
 
         <TextView
             android:id="@+id/text_empty"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@string/list_empty"
+            android:text="@string/title_list_empty"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="?android:attr/textColorSecondary"
             android:visibility="gone"

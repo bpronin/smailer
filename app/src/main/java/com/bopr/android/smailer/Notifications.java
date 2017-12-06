@@ -62,7 +62,7 @@ public class Notifications {
     }
 
     public void showMailSuccess(long messageId) {
-        String text = context.getResources().getString(R.string.notification_email_send_successfully);
+        String text = context.getResources().getString(R.string.notification_email_send);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "default");
         Notification notification = builder
                 .setContentIntent(createIntent(ACTION_SHOW_LOG, messageId))

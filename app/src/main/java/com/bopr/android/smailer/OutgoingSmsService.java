@@ -123,7 +123,8 @@ public class OutgoingSmsService extends Service {
     }
 
     public static void toggle(Context context) {
-        if (isTriggerEnabled(context, VAL_PREF_TRIGGER_OUT_SMS)) {
+        PhoneEventFilter filter = Settings.loadFilter(context);
+        if (filter.getTriggers().contains(VAL_PREF_TRIGGER_OUT_SMS)) {
             if (!isServiceRunning(context, OutgoingSmsService.class)) {
                 context.startService(createServiceIntent(context));
             }

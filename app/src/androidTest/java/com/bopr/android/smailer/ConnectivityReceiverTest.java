@@ -10,7 +10,6 @@ import org.junit.Test;
 
 import static com.bopr.android.smailer.MailerService.ACTION_RESEND;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_SERVICE_ENABLED;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
@@ -38,7 +37,6 @@ public class ConnectivityReceiverTest extends BaseTest {
 
         preferences = mock(SharedPreferences.class);
         when(preferences.getBoolean(eq(KEY_PREF_RESEND_UNSENT), anyBoolean())).thenReturn(true);
-        when(preferences.getBoolean(eq(KEY_PREF_SERVICE_ENABLED), anyBoolean())).thenReturn(true);
 
         networkInfo = mock(NetworkInfo.class);
         when(networkInfo.isConnected()).thenReturn(true);
@@ -102,25 +100,6 @@ public class ConnectivityReceiverTest extends BaseTest {
         doAnswer(invocations).when(context).startService(any(Intent.class));
         when(networkInfo.isConnected()).thenReturn(true);
         when(preferences.getBoolean(eq(KEY_PREF_RESEND_UNSENT), anyBoolean())).thenReturn(false);
-
-        ConnectivityReceiver receiver = new ConnectivityReceiver();
-
-        Intent intent = new Intent(ConnectivityManager.CONNECTIVITY_ACTION);
-        receiver.onReceive(context, intent);
-        assertTrue(invocations.isEmpty());
-    }
-
-    /**
-     * Checks that receiver do not starts service when service is disabled.
-     *
-     * @throws Exception when fails
-     */
-    @Test
-    public void testReceiveServiceDisabled() throws Exception {
-        InvocationsCollector invocations = new InvocationsCollector();
-        doAnswer(invocations).when(context).startService(any(Intent.class));
-        when(networkInfo.isConnected()).thenReturn(true);
-        when(preferences.getBoolean(eq(KEY_PREF_SERVICE_ENABLED), anyBoolean())).thenReturn(false);
 
         ConnectivityReceiver receiver = new ConnectivityReceiver();
 

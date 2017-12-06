@@ -51,20 +51,22 @@ public class MailerServiceTest extends BaseTest {
         MailerService service = new MailerService();
         service.init(mailer, locator);
 
-        Intent intent = MailerService.createSmsIntent(getContext(), "123", (long) 100000, "Text", true);
+        //"123", (long) 100000, "Text", true
+        PhoneEvent event1 = new PhoneEvent();
+        Intent intent = MailerService.createEventIntent(getContext(), event1);
         service.onHandleIntent(intent);
 
-        PhoneEvent message = (PhoneEvent) invocations.get(0)[0];
-        assertEquals("123", message.getPhone());
-        assertEquals(100000, message.getStartTime().longValue());
-        assertEquals("Text", message.getText());
-        assertNull(message.getEndTime());
-        assertFalse(message.isProcessed());
-        assertTrue(message.isIncoming());
-        assertFalse(message.isMissed());
-        assertTrue(message.isSms());
-        assertNull(message.getDetails());
-        assertEquals(new GeoCoordinates(60, 30), message.getLocation());
+        PhoneEvent event = (PhoneEvent) invocations.get(0)[0];
+        assertEquals("123", event.getPhone());
+        assertEquals(100000, event.getStartTime().longValue());
+        assertEquals("Text", event.getText());
+        assertNull(event.getEndTime());
+        assertEquals(PhoneEvent.State.PENDING, event.getState());
+        assertTrue(event.isIncoming());
+        assertFalse(event.isMissed());
+        assertTrue(event.isSms());
+        assertNull(event.getDetails());
+        assertEquals(new GeoCoordinates(60, 30), event.getLocation());
     }
 
     /**
@@ -84,14 +86,16 @@ public class MailerServiceTest extends BaseTest {
         MailerService service = new MailerService();
         service.init(mailer, locator);
 
-        Intent intent = MailerService.createSmsIntent(getContext(), "123", (long) 100000, "Text", false);
+//        Intent intent = MailerService.createSmsIntent(getContext(), "123", (long) 100000, "Text", false);
+        PhoneEvent event1 = new PhoneEvent();
+        Intent intent = MailerService.createEventIntent(getContext(), event1);
         service.onHandleIntent(intent);
 
         PhoneEvent message = (PhoneEvent) invocations.get(0)[0];
         assertEquals("123", message.getPhone());
         assertEquals(100000, message.getStartTime().longValue());
         assertEquals("Text", message.getText());
-        assertFalse(message.isProcessed());
+//        assertFalse(message.isProcessed());
         assertFalse(message.isIncoming());
         assertFalse(message.isMissed());
         assertTrue(message.isSms());
@@ -116,7 +120,9 @@ public class MailerServiceTest extends BaseTest {
         MailerService service = new MailerService();
         service.init(mailer, locator);
 
-        Intent intent = MailerService.createIncomingCallIntent(getContext(), "123", 100000, 200000);
+//        Intent intent = MailerService.createIncomingCallIntent(getContext(), "123", 100000, 200000);
+        PhoneEvent event1 = new PhoneEvent();
+        Intent intent = MailerService.createEventIntent(getContext(), event1);
         service.onHandleIntent(intent);
 
         PhoneEvent message = (PhoneEvent) invocations.get(0)[0];
@@ -124,7 +130,7 @@ public class MailerServiceTest extends BaseTest {
         assertEquals(100000, message.getStartTime().longValue());
         assertEquals(200000, message.getEndTime().longValue());
         assertNull(message.getText());
-        assertFalse(message.isProcessed());
+//        assertFalse(message.isProcessed());
         assertTrue(message.isIncoming());
         assertFalse(message.isMissed());
         assertFalse(message.isSms());
@@ -149,7 +155,9 @@ public class MailerServiceTest extends BaseTest {
         MailerService service = new MailerService();
         service.init(mailer, locator);
 
-        Intent intent = MailerService.createOutgoingCallIntent(getContext(), "123", 100000, 200000);
+//        Intent intent = MailerService.createOutgoingCallIntent(getContext(), "123", 100000, 200000);
+        PhoneEvent event1 = new PhoneEvent();
+        Intent intent = MailerService.createEventIntent(getContext(), event1);
         service.onHandleIntent(intent);
 
         PhoneEvent message = (PhoneEvent) invocations.get(0)[0];
@@ -157,7 +165,7 @@ public class MailerServiceTest extends BaseTest {
         assertEquals(100000, message.getStartTime().longValue());
         assertEquals(200000, message.getEndTime().longValue());
         assertNull(message.getText());
-        assertFalse(message.isProcessed());
+//        assertFalse(message.isProcessed());
         assertFalse(message.isIncoming());
         assertFalse(message.isMissed());
         assertFalse(message.isSms());
@@ -182,7 +190,9 @@ public class MailerServiceTest extends BaseTest {
         MailerService service = new MailerService();
         service.init(mailer, locator);
 
-        Intent intent = MailerService.createMissedCallIntent(getContext(), "123", 100000);
+//        Intent intent = MailerService.createMissedCallIntent(getContext(), "123", 100000);
+        PhoneEvent event1 = new PhoneEvent();
+        Intent intent = MailerService.createEventIntent(getContext(), event1);
         service.onHandleIntent(intent);
 
         PhoneEvent message = (PhoneEvent) invocations.get(0)[0];
@@ -190,7 +200,7 @@ public class MailerServiceTest extends BaseTest {
         assertEquals(100000, message.getStartTime().longValue());
         assertNull(message.getEndTime());
         assertNull(message.getText());
-        assertFalse(message.isProcessed());
+//        assertFalse(message.isProcessed());
         assertTrue(message.isIncoming());
         assertTrue(message.isMissed());
         assertFalse(message.isSms());

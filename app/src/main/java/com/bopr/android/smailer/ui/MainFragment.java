@@ -10,7 +10,6 @@ import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-
 import com.bopr.android.smailer.OutgoingSmsService;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.validator.EmailListTextValidator;
@@ -28,7 +27,6 @@ import static com.bopr.android.smailer.util.Util.isEmpty;
 public class MainFragment extends BasePreferenceFragment {
 
     private Preference recipientsPreference;
-    private Preference blacklistPreference;
     private Preference serverPreference;
     private OnSharedPreferenceChangeListener preferenceChangeListener;
 
@@ -46,16 +44,6 @@ public class MainFragment extends BasePreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 startActivity(new Intent(getActivity(), RecipientsActivity.class));
-                return true;
-            }
-        });
-
-        blacklistPreference = findPreference(KEY_PREF_FILTER_BLACK_LIST);
-        blacklistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                startActivity(new Intent(getActivity(), BlacklistActivity.class));
                 return true;
             }
         });
@@ -79,7 +67,17 @@ public class MainFragment extends BasePreferenceFragment {
             }
         });
 
+        findPreference(KEY_PREF_FILTERS).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                startActivity(new Intent(getActivity(), ConditionsActivity.class));
+                return true;
+            }
+        });
+
         preferenceChangeListener = new OnSharedPreferenceChangeListener() {
+
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 enableOutgoingSmsService();
@@ -137,7 +135,7 @@ public class MainFragment extends BasePreferenceFragment {
         if (isEmpty(value)) {
             updateNotSpecifiedSummary(recipientsPreference);
         } else {
-            updateSummary(value, recipientsPreference, EmailListTextValidator.isValidValue(value));
+            updateSummary(value.replaceAll(",", ", "), recipientsPreference, EmailListTextValidator.isValidValue(value));
         }
     }
 

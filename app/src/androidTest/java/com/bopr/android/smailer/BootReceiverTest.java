@@ -59,8 +59,6 @@ public class BootReceiverTest extends BaseTest {
 
         when(preferences.getStringSet(eq(KEY_PREF_EMAIL_TRIGGERS), anySetOf(String.class)))
                 .thenReturn(Util.asSet(VAL_PREF_TRIGGER_OUT_SMS));
-        when(preferences.getBoolean(eq(Settings.KEY_PREF_SERVICE_ENABLED), anyBoolean()))
-                .thenReturn(true);
 
         BootReceiver receiver = new BootReceiver();
 
@@ -83,25 +81,6 @@ public class BootReceiverTest extends BaseTest {
 
         when(preferences.getStringSet(eq(KEY_PREF_EMAIL_TRIGGERS), anySetOf(String.class)))
                 .thenReturn(Collections.<String>emptySet());
-
-        BootReceiver receiver = new BootReceiver();
-
-        Intent intent = new Intent(Intent.ACTION_BOOT_COMPLETED);
-        receiver.onReceive(context, intent);
-
-        assertTrue(invocations.isEmpty());
-    }
-
-    /**
-     * Checks that receiver does not start service when service is disabled.
-     *
-     * @throws Exception when fails
-     */
-    @Test
-    public void testReceiveServiceDisabled() throws Exception {
-        InvocationsCollector invocations = new InvocationsCollector();
-        doAnswer(invocations).when(context).startService(any(Intent.class));
-        when(preferences.getBoolean(eq(Settings.KEY_PREF_SERVICE_ENABLED), anyBoolean())).thenReturn(false);
 
         BootReceiver receiver = new BootReceiver();
 

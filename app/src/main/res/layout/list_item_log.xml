@@ -1,41 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:background="?android:attr/selectableItemBackground"
               android:clickable="true"
-              android:orientation="horizontal">
+              android:focusable="true"
+              android:orientation="horizontal"
+              tools:ignore="HardcodedText">
 
     <TextView
-        android:id="@+id/list_item_date"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:id="@+id/list_item_time"
+        android:layout_width="140sp"
+        android:layout_height="48sp"
+        android:gravity="center"
         android:padding="4dp"
-        android:textAlignment="textEnd"/>
+        android:text="2017.11.05 12:30:44"
+        />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+    <TextView
+        android:id="@+id/list_item_type"
+        android:layout_width="80sp"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:text="OUT CALL"/>
 
-        <TextView
-            android:id="@+id/list_item_message"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingEnd="4dp"
-            android:paddingStart="4dp"
-            android:paddingTop="4dp"
-            android:textAlignment="textStart"/>
+    <TextView
+        android:id="@+id/list_item_phone"
+        android:layout_width="120sp"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:text="+79052309441"/>
 
-        <TextView
-            android:id="@+id/list_item_result"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="4dp"
-            android:paddingEnd="4dp"
-            android:paddingStart="4dp"
-            android:textAlignment="textStart"/>
-    </LinearLayout>
+    <TextView
+        android:id="@+id/list_item_state"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:padding="4dp"
+        android:text="PEND"/>
 
 </LinearLayout>
 

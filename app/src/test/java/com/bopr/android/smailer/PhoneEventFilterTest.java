@@ -42,9 +42,10 @@ public class PhoneEventFilterTest {
     @Test
     public void testBlackList() throws Exception {
         PhoneEventFilter filter = new PhoneEventFilter();
-        filter.setBlackListed(true);
+        filter.setUseWhiteList(false);
         PhoneEvent event = new PhoneEvent();
 
+        filter.setWhitelist(Collections.<String>emptySet());
         filter.setBlacklist(Collections.<String>emptySet());
         event.setPhone("111");
         assertTrue(filter.accept(event));
@@ -68,9 +69,10 @@ public class PhoneEventFilterTest {
     @Test
     public void testWhiteList() throws Exception {
         PhoneEventFilter filter = new PhoneEventFilter();
-        filter.setBlackListed(false);
+        filter.setUseWhiteList(true);
         PhoneEvent event = new PhoneEvent();
 
+        filter.setWhitelist(Collections.<String>emptySet());
         filter.setBlacklist(Collections.<String>emptySet());
         event.setPhone("111");
         assertFalse(filter.accept(event));

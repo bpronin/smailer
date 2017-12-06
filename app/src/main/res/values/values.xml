@@ -4,7 +4,7 @@
     <string name="app_name" translatable="false">SMailer</string>
     <string name="google_app_id" translatable="false" tools:ignore="UnusedResources">376904884028</string>
 
-    <string-array name="email_trigger_values" translatable="false">
+    <string-array name="trigger_values" translatable="false">
         <item>in_sms</item>
         <item>out_sms</item>
         <item>in_calls</item>

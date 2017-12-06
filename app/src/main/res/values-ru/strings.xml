@@ -1,121 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="pref_title_sender_account">Учетная запись</string>
-    <string name="pref_title_recipients">Получатели почты</string>
-    <string name="pref_title_blacklist">Черный список</string>
-    <string name="pref_title_whitelist">Белый список</string>
-    <string name="pref_title_sender_password">Пароль</string>
-    <string name="pref_title_server">Сервер исходящей почты</string>
-    <string name="pref_title_outgoing_server">Сервер исходящей почты</string>
-    <string name="pref_title_host">Сервер</string>
-    <string name="pref_title_port">Порт</string>
-    <string name="pref_title_content">Содержание</string>
-    <string name="pref_title_trigger">Фильтр сообщений</string>
-    <string name="pref_title_email_locale">Язык почтового сообщения</string>
-    <string name="pref_title_notify_send_success">Уведомлять об отправке</string>
-    <string name="pref_title_more">Дополнительно</string>
-    <string name="pref_title_additional_settings">Дополнительные параметры</string>
-    <string name="pref_title_device_alias">Имя устройства</string>
-    <string name="pref_title_resend_unsent">Повторная отправка</string>
-
-    <string name="pref_dialog_title_email">Адрес исходящей почты</string>
-    <string name="pref_dialog_title_password">Пароль исходящей почты</string>
-    <string name="pref_dialog_title_email_content">Влючать в почтовое сообщение</string>
-    <string name="pref_dialog_title_trigger">Условия для отправки почты</string>
-    <string name="pref_dialog_title_email_locale">Язык почтового сообщения</string>
-    <string name="pref_dialog_message_recipient">Почтовый адрес</string>
-    <string name="pref_dialog_message_phone">Номер телефона</string>
-    <string name="pref_dialog_title_add_recipient">Добавление получателя</string>
-    <string name="pref_dialog_title_edit_recipient">Редактирование получателя</string>
-    <string name="pref_dialog_title_add_phone">Добавление номера</string>
-    <string name="pref_dialog_title_edit_phone">Редактирование номера</string>
-    <string name="pref_description_resend_unsent">Заново отправлять неотправленные сообщения при появлении соединения</string>
-    <string name="pref_description_device_alias">Имя устройства в почтовом сообщении (оставьте пустым, чтобы использовать имя по умолчанию)</string>
-
-    <string name="pref_description_service_on">Сервис включен</string>
-    <string name="pref_description_service_off">Сервис отключен</string>
-    <string name="pref_description_not_set">не указано</string>
-    <string name="pref_description_when_to_send">Условия для отправки почты</string>
-    <string name="pref_description_what_email_contain">Содержание почтового сообщения</string>
-    <string name="pref_description_notify_send_success">Показывать уведомление об отправке почты</string>
-
-    <string name="notification_error_mail_general">Не удалось отправить почту.</string>
-    <string name="notification_error_no_account">Не указан аккаунт исходящей почты.</string>
-    <string name="notification_error_no_host">Не указан адрес серевера исходящей почты.</string>
-    <string name="notification_error_no_port">Не указан порт серевера исходящей почты.</string>
-    <string name="notification_error_authentication">Неверное имя пользователя или пароль.</string>
-    <string name="notification_error_connect">Нет соединения с почтовым сервером.</string>
-    <string name="notification_error_no_recipients">Не указан получатель.</string>
-    <string name="notification_error_internal">Внутренняя ошибка.</string>
-    <string name="notification_email_send_successfully">Почта отправлена.</string>
-    <string name="notification_error_no_connection">Отсутствует соединение с интернетом.</string>
-
-    <string name="message_permissions_denied">Некоторые настройки отключены, поскольку разрешения не получены.</string>
-    <string name="message_permission_rationale_receive_sms">Чтобы отправлять почтовое сообщение при приеме SMS, необходимо разрешение \"{permission}\".</string>
-    <string name="message_permission_rationale_read_sms">Чтобы отправлять почтовое сообщение при отправлеии SMS, необходимо разрешение \"{permission}\".</string>
-    <string name="message_permission_rationale_phone_state">Чтобы отправлять почтовое сообщение при входящих и исходящих вызовах, необходимо разрешение \"{permission}\".</string>
-    <string name="message_permission_rationale_outgoing_call">Чтобы отправлять почтовое сообщение при исходящих вызовах, необходимо разрешение \"{permission}\".</string>
-    <string name="message_permission_rationale_read_contacts">Чтобы отображать имя звонившего в почтовом сообщении, необходимо разрешение \"{permission}\".</string>
-    <string name="message_permission_rationale_coarse_location">Чтобы отображать местоположение устройства в почтовом сообщении, необходимо разрешение \"{permission}\".</string>
-    <string name="message_permission_rationale_fine_location">Чтобы отображать местоположение устройства в почтовом сообщении, необходимо разрешение \"{permission}\".</string>
-
-    <string name="message_password_hint">Пароль аккаунта, с которого будет отправляться почта.</string>
-    <string name="message_account_hint">Адрес, с которого будет отправляться почта.</string>
-    <string name="message_item_removed">Запись удалена</string>
-    <string name="message_items_removed">{count} записей удалено</string>
-    <string name="message_added_to_black_list">{number} добавлен в черный список</string>
-
-    <string name="email_subject_incoming_sms">Входящее SMS от</string>
-    <string name="email_subject_outgoing_sms">Исходящее SMS</string>
-    <string name="email_subject_incoming_call">Входящий звонок от</string>
-    <string name="email_subject_outgoing_call">Исходящий звонок на</string>
-    <string name="email_subject_missed_call">Пропущенный звонок от</string>
-
-    <string name="email_body_sent">Отправлено{device_name}{time}</string>
-    <string name="email_body_time"> {time}</string>
     <string name="email_body_called">Вы звонили: {phone} ({name})</string>
     <string name="email_body_caller">Вам звонил: {phone} ({name})</string>
-    <string name="email_body_sender">Отправитель: {phone} ({name})</string>
     <string name="email_body_from">с устройства \"{device_name}\"</string>
     <string name="email_body_incoming_call">Входящий звонок длительностью {duration}.</string>
     <string name="email_body_location">Последнее известное местоположение: {location}</string>
     <string name="email_body_missed_call">Пропущенный звонок.</string>
     <string name="email_body_outgoing_call">Исходящий звонок длительностью {duration}.</string>
+    <string name="email_body_sender">Отправитель: {phone} ({name})</string>
+    <string name="email_body_sent">Отправлено{device_name}{time}</string>
+    <string name="email_body_time"> {time}</string>
     <string name="email_body_unknown_contact">Неизвестный контакт</string>
-    <string name="email_body_unknown_location">(определение местоположения отключено)</string>
     <string name="email_body_unknown_contact_no_permission">нет разрешения на чтение контактов</string>
+    <string name="email_body_unknown_location">(определение местоположения отключено)</string>
     <string name="email_body_unknown_location_no_permission">нет разрешения на определение местоположения</string>
+    <string name="email_subject_incoming_call">Входящий звонок от</string>
+    <string name="email_subject_incoming_sms">Входящее SMS от</string>
+    <string name="email_subject_missed_call">Пропущенный звонок от</string>
+    <string name="email_subject_outgoing_call">Исходящий звонок на</string>
+    <string name="email_subject_outgoing_sms">Исходящее SMS</string>
+    <string name="message_activity_log_ask_clear">Очистить журнал?</string>
+    <string name="message_added_to_blacklist">{number} добавлен в черный список</string>
+    <string name="message_added_to_whitelist">{number} добавлен в белый список</string>
+    <string name="message_item_removed">Запись удалена</string>
+    <string name="message_items_removed">{count} записей удалено</string>
+    <string name="message_list_item_already_exists">{item} уже существует</string>
+    <string name="message_permission_rationale_coarse_location">Чтобы отображать местоположение устройства в почтовом сообщении, необходимо разрешение \"{permission}\".</string>
+    <string name="message_permission_rationale_fine_location">Чтобы отображать местоположение устройства в почтовом сообщении, необходимо разрешение \"{permission}\".</string>
+    <string name="message_permission_rationale_outgoing_call">Чтобы отправлять почтовое сообщение при исходящих вызовах, необходимо разрешение \"{permission}\".</string>
+    <string name="message_permission_rationale_phone_state">Чтобы отправлять почтовое сообщение при входящих и исходящих вызовах, необходимо разрешение \"{permission}\".</string>
+    <string name="message_permission_rationale_read_contacts">Чтобы отображать имя звонившего в почтовом сообщении, необходимо разрешение \"{permission}\".</string>
+    <string name="message_permission_rationale_read_sms">Чтобы отправлять почтовое сообщение при отправлеии SMS, необходимо разрешение \"{permission}\".</string>
+    <string name="message_permission_rationale_receive_sms">Чтобы отправлять почтовое сообщение при приеме SMS, необходимо разрешение \"{permission}\".</string>
+    <string name="message_permissions_denied">Некоторые настройки отключены, поскольку разрешения не получены.</string>
+    <string name="message_recipient_already_exists">Получатель {name} уже существует</string>
+    <string name="message_select_email_from_contacts">Выбрать из контактов</string>
+    <string name="message_server_test_success">Настройки успешно проверены</string>
+    <string name="message_server_testing">Проверка настроек сервера…</string>
+    <string name="notification_email_send">Почта отправлена.</string>
+    <string name="notification_error_authentication">Неверное имя пользователя или пароль.</string>
+    <string name="notification_error_connect">Нет соединения с почтовым сервером.</string>
+    <string name="notification_error_internal">Внутренняя ошибка.</string>
+    <string name="notification_error_mail_general">Не удалось отправить почту.</string>
+    <string name="notification_error_no_account">Не указан аккаунт исходящей почты.</string>
+    <string name="notification_error_no_connection">Отсутствует соединение с интернетом.</string>
+    <string name="notification_error_no_host">Не указан адрес серевера исходящей почты.</string>
+    <string name="notification_error_no_port">Не указан порт серевера исходящей почты.</string>
+    <string name="notification_error_no_recipients">Не указан получатель.</string>
+    <string name="title_about">О приложении</string>
+    <string name="title_acceptable_phone_numbers">Разрешенные номера ({size})</string>
+    <string name="title_account_hint">Адрес, с которого будет отправляться почта.</string>
+    <string name="title_activity_log">Журнал</string>
+    <string name="title_add_phone">Добавление номера</string>
+    <string name="title_add_recipient">Добавление получателя</string>
+    <string name="title_add_to_blacklist">Добавить в черный список</string>
+    <string name="title_add_to_whitelist">Добавить в белый список</string>
+    <string name="title_additional_settings">Дополнительные параметры</string>
+    <string name="title_any">любые</string>
+    <string name="title_black_list_used">Используется черный список</string>
+    <string name="title_blacklist">Черный список</string>
+    <string name="title_clear">Очистить</string>
+    <string name="title_conditions_for_sending">Условия для отправки почты</string>
+    <string name="title_content">Содержание</string>
+    <string name="title_details">Детали</string>
+    <string name="title_device_alias">Имя устройства</string>
+    <string name="title_device_alias_hint">Имя устройства в почтовом сообщении (оставьте пустым, чтобы использовать имя по умолчанию)</string>
+    <string name="title_edit_phone">Редактирование номера</string>
+    <string name="title_edit_recipient">Редактирование получателя</string>
+    <string name="title_email_address">Почтовый адрес</string>
+    <string name="title_email_language">Язык почтового сообщения</string>
+    <string name="title_email_language_hint">Язык почтового сообщения</string>
+    <string name="title_email_message_content">Влючать в почтовое сообщение</string>
+    <string name="title_email_password_hint">Пароль аккаунта, с которого будет отправляться почта.</string>
+    <string name="title_email_recipients">Получатели почты</string>
+    <string name="title_email_sender">Отправитель почты</string>
+    <string name="title_email_server">Сервер исходящей почты</string>
+    <string name="title_host">Сервер</string>
+    <string name="title_list_empty">Список пуст</string>
+    <string name="title_log_empty">Журнал пуст</string>
+    <string name="title_more">Дополнительно</string>
+    <string name="title_none">отсутствуют</string>
+    <string name="title_not_set">не указано</string>
+    <string name="title_notify_on_send">Уведомлять об отправке</string>
+    <string name="title_notify_send_success">Показывать уведомление об успешной отправке почты</string>
+    <string name="title_open_source">Открытый исходный код</string>
+    <string name="title_open_source_and_third_party">Открытый исходный код и ПО сторонних производителей</string>
+    <string name="title_outgoing_email_address">Адрес исходящей почты</string>
+    <string name="title_password">Пароль</string>
+    <string name="title_phone_number">Номер телефона</string>
+    <string name="title_port">Порт</string>
+    <string name="title_regexp">Регулярное выражение</string>
+    <string name="title_resend">Повторная отправка</string>
+    <string name="title_resend_hint">Заново отправлять неотправленные сообщения при появлении соединения</string>
+    <string name="title_sender_account">Учетная запись</string>
+    <string name="title_server_test">Проверить соединение</string>
+    <string name="title_text_filter">Фильтр текста</string>
+    <string name="title_text_filter_any">Любой текст</string>
+    <string name="title_triggers">Триггеры</string>
+    <string name="title_triggers_hint">События, вызывающие отправку почты</string>
+    <string name="title_unacceptable_phone_numbers">Заблокированные номера ({size})</string>
+    <string name="title_undo">Отмена</string>
+    <string name="title_use_black_white_list">Использовать черный/белый список</string>
+    <string name="title_version">Версия приложения: {version}</string>
+    <string name="title_what_email_contain">Содержание почтового сообщения</string>
+    <string name="title_white_list_used">Используется белый список</string>
+    <string name="title_whitelist">Белый список</string>
 
-    <string name="action_about">О приложении</string>
-    <string name="action_activity_log">Журнал</string>
-    <string name="action_undo">Отмена</string>
-    <string name="action_clear">Очистить</string>
-    <string name="action_add_to_blacklist">Добавить в черный список</string>
-    <string name="action_add_to_whitelist">Добавить в белый список</string>
-
-    <string name="activity_log_title_details">Детали</string>
-    <string name="activity_log_title">Журнал</string>
-    <string name="activity_log_empty_log">Журнал пуст</string>
-    <string name="activity_log_ask_clear">Очистить журнал?</string>
-
-    <string name="about_dialog_title_version">Версия приложения: {version}</string>
-    <string name="about_dialog_title_open_source">Открытый исходный код и ПО сторонних производителей</string>
-
-    <string name="recipient_hint_button_select_email_from_contacts">Выбрать из контактов</string>
-    <string name="recipient_message_already_exists">Получатель {name} уже существует</string>
-    <string name="list_item_already_exists">{item} уже существует</string>
-    <string name="list_empty">Список пуст</string>
-
-    <string name="server_test">Проверить соединение</string>
-    <string name="server_testing">Проверка настроек сервера…</string>
-    <string name="server_test_success">Настройки успешно проверены</string>
-
-    <string name="open_source_title">Открытый исходный код</string>
-    <string name="pref_description_blacklist">Заблокированные номера</string>
-    <string name="pref_description_whitelist">Разрешенные номера</string>
-
-    <string-array name="email_trigger_titles">
+    <string-array name="titles_triggers">
         <item>Входящие SMS</item>
         <item>Исходящие SMS</item>
         <item>Входящие звонки</item>
@@ -123,14 +114,14 @@
         <item>Пропущенные звонки</item>
     </string-array>
 
-    <string-array name="email_content_titles">
+    <string-array name="titles_email_content">
         <item>Время отправления</item>
         <item>Имя звонившего</item>
         <item>Название устройства</item>
         <item>Местоположение устройства</item>
     </string-array>
 
-    <string-array name="email_locale_titles">
+    <string-array name="titles_language">
         <item>По умолчанию</item>
         <item>Английский</item>
         <item>Русский</item>

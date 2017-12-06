@@ -12,11 +12,11 @@ abstract public class RegexpUtil {
     }
 
     public static String patternContains(String... words) {
-        return ".*(" + Util.stringOf("|", words) + ").*$";
+        return ".*(" + Util.separated("|", words) + ").*$";
     }
 
     public static String patternDoesNotContain(String... words) {
-        return "^(?!.*(" + Util.stringOf("|", words) + ")).*$";
+        return "^(?!.*(" + Util.separated("|", words) + ")).*$";
     }
 
 }

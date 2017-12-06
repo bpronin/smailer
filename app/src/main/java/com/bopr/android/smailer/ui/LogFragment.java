@@ -4,7 +4,6 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
@@ -14,9 +13,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.bopr.android.smailer.*;
 import com.bopr.android.smailer.util.AndroidUtil;
-import com.bopr.android.smailer.util.TagFormatter;
 
-import static com.bopr.android.smailer.util.TagFormatter.from;
+import static com.bopr.android.smailer.util.TagFormatter.formatFrom;
+
 
 /**
  * Application activity log activity fragment.
@@ -54,6 +53,9 @@ public class LogFragment extends Fragment {
             case R.id.action_add_to_blacklist:
                 addToBlacklist();
                 return true;
+            case R.id.action_add_to_whitelist:
+                addToWhitelist();
+                return true;
             default:
                 return super.onContextItemSelected(item);
         }
@@ -79,7 +81,7 @@ public class LogFragment extends Fragment {
             if (details != null) {
                 // TODO: 04.04.2016 details dialog for any type of messages
                 AndroidUtil.dialogBuilder(getActivity())
-                        .setTitle(R.string.activity_log_title_details)
+                        .setTitle(R.string.title_details)
                         .setMessage(details)
                         .show();
             }
@@ -87,7 +89,7 @@ public class LogFragment extends Fragment {
     }
 
     private void loadData() {
-        listView.setAdapter(new ListAdapter(getActivity(), database.getMessages()));
+        listView.setAdapter(new ListAdapter(getActivity(), database.getEvents()));
         updateEmptyText();
     }
 
@@ -105,12 +107,12 @@ public class LogFragment extends Fragment {
 
     private void clearData() {
         AndroidUtil.dialogBuilder(getActivity())
-                .setMessage(R.string.activity_log_ask_clear)
-                .setPositiveButton(R.string.action_clear, new DialogInterface.OnClickListener() {
+                .setMessage(R.string.message_activity_log_ask_clear)
+                .setPositiveButton(R.string.title_clear, new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        database.clearMessages();
+                        database.clearEvents();
                         loadData();
                     }
                 })
@@ -133,54 +135,56 @@ public class LogFragment extends Fragment {
             Settings.saveFilter(getActivity(), filter);
 
             Toast.makeText(getActivity(),
-                    from(R.string.message_added_to_black_list, getActivity())
+                    formatFrom(R.string.message_added_to_blacklist, getActivity())
                             .put("number", number)
                             .format(),
                     Toast.LENGTH_SHORT).show();
         }
     }
 
-    @NonNull
-    private String formatMessageText(Context context, PhoneEvent message) {
-        int messageText;
+    private void addToWhitelist() {
+        if (selectedEvent != null) {
+            String number = selectedEvent.getPhone();
 
-        if (message.isMissed()) {
-            messageText = R.string.activity_log_message_missed_call;
-        } else if (message.isSms()) {
-            if (message.isIncoming()) {
-                messageText = R.string.activity_log_message_incoming_sms;
-            } else {
-                messageText = R.string.activity_log_message_outgoing_sms;
-            }
-        } else {
-            if (message.isIncoming()) {
-                messageText = R.string.activity_log_message_incoming_call;
-            } else {
-                messageText = R.string.activity_log_message_outgoing_call;
-            }
+            PhoneEventFilter filter = Settings.loadFilter(getActivity());
+            filter.getWhitelist().add(number);
+            Settings.saveFilter(getActivity(), filter);
+
+            Toast.makeText(getActivity(),
+                    formatFrom(R.string.message_added_to_whitelist, getActivity())
+                            .put("number", number)
+                            .format(),
+                    Toast.LENGTH_SHORT).show();
         }
-
-        return TagFormatter.from(R.string.activity_log_message, context.getResources())
-                .putResource("message", messageText)
-                .put("phone", message.getPhone())
-                .format();
     }
 
-    @NonNull
-    private String formatResultText(Context context, PhoneEvent message) {
-        return context.getString(message.isProcessed()
-                ? R.string.activity_log_message_send_email_success
-                : R.string.activity_log_message_send_email_failed);
+    private int getTypeText(PhoneEvent event) {
+        if (event.isMissed()) {
+            return R.string.log_message_missed_call;
+        } else if (event.isSms()) {
+            if (event.isIncoming()) {
+                return R.string.log_message_incoming_sms;
+            } else {
+                return R.string.log_message_outgoing_sms;
+            }
+        } else {
+            if (event.isIncoming()) {
+                return R.string.log_message_incoming_call;
+            } else {
+                return R.string.log_message_outgoing_call;
+            }
+        }
     }
 
     private class ListAdapter extends RecyclerView.Adapter<ItemViewHolder> {
 
-        private int errorColor;
+        private int successColor;
+        private int ignoredColor;
         private int defaultColor;
         private Context context;
-        private Database.MailMessageCursor cursor;
+        private Database.PhoneEventCursor cursor;
 
-        private ListAdapter(Context context, Database.MailMessageCursor cursor) {
+        private ListAdapter(Context context, Database.PhoneEventCursor cursor) {
             this.context = context;
             this.cursor = cursor;
         }
@@ -190,7 +194,8 @@ public class LogFragment extends Fragment {
             LayoutInflater inflater = LayoutInflater.from(context);
             ItemViewHolder holder = new ItemViewHolder(inflater.inflate(R.layout.list_item_log, parent, false));
 
-            errorColor = ContextCompat.getColor(context, R.color.errorForeground);
+            successColor = ContextCompat.getColor(context, R.color.successForeground);
+            ignoredColor = ContextCompat.getColor(context, R.color.ignoredForeground);
             defaultColor = holder.timeView.getCurrentTextColor();
 
             return holder;
@@ -202,15 +207,25 @@ public class LogFragment extends Fragment {
             if (item != null) {
                 final PhoneEvent event = cursor.get();
 
-                if (!event.isProcessed()) {
-                    holder.resultView.setTextColor(errorColor);
-                } else {
-                    holder.resultView.setTextColor(defaultColor);
+                holder.timeView.setText(DateFormat.format(context.getString(R.string.log_time_pattern), event.getStartTime()));
+                holder.typeView.setText(getTypeText(event));
+                holder.phoneView.setText(event.getPhone());
+
+                switch (event.getState()) {
+                    case PENDING:
+                        holder.stateView.setText(R.string.log_state_pending);
+                        holder.stateView.setTextColor(defaultColor);
+                        break;
+                    case PROCESSED:
+                        holder.stateView.setText(R.string.log_state_done);
+                        holder.stateView.setTextColor(successColor);
+                        break;
+                    case IGNORED:
+                        holder.stateView.setText(R.string.log_state_ignored);
+                        holder.stateView.setTextColor(ignoredColor);
+                        break;
                 }
 
-                holder.timeView.setText(DateFormat.format(context.getString(R.string.activity_log_time_pattern), event.getStartTime()));
-                holder.messageView.setText(formatMessageText(context, event));
-                holder.resultView.setText(formatResultText(context, event));
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
 
                     @Override
@@ -260,14 +275,16 @@ public class LogFragment extends Fragment {
     private class ItemViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView timeView;
-        private final TextView messageView;
-        private final TextView resultView;
+        private final TextView typeView;
+        private final TextView phoneView;
+        private final TextView stateView;
 
         private ItemViewHolder(View view) {
             super(view);
-            timeView = view.findViewById(R.id.list_item_date);
-            messageView = view.findViewById(R.id.list_item_message);
-            resultView = view.findViewById(R.id.list_item_result);
+            timeView = view.findViewById(R.id.list_item_time);
+            typeView = view.findViewById(R.id.list_item_type);
+            phoneView = view.findViewById(R.id.list_item_phone);
+            stateView = view.findViewById(R.id.list_item_state);
         }
 
     }

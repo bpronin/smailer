@@ -3,27 +3,18 @@
 
     <PreferenceScreen
         android:key="outgoing_server"
-        android:title="@string/pref_title_server"/>
+        android:title="@string/title_email_sender"/>
 
     <PreferenceScreen
         android:key="recipients_address"
-        android:title="@string/pref_title_recipients"/>
-
-    <MultiSelectListPreference
-        android:dialogTitle="@string/pref_dialog_title_trigger"
-        android:entries="@array/email_trigger_titles"
-        android:entryValues="@array/email_trigger_values"
-        android:key="email_triggers"
-        android:summary="@string/pref_description_when_to_send"
-        android:title="@string/pref_title_trigger"/>
+        android:title="@string/title_email_recipients"/>
 
     <PreferenceScreen
-        android:key="message_filter_black_list"
-        android:summary="@string/pref_description_blacklist"
-        android:title="@string/pref_title_blacklist"/>
+        android:key="filters"
+        android:title="@string/title_conditions_for_sending"/>
 
     <PreferenceScreen
         android:key="more"
-        android:title="@string/pref_title_more"/>
+        android:title="@string/title_more"/>
 
 </PreferenceScreen>

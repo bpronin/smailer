@@ -65,7 +65,7 @@ public class AboutDialogFragment extends DialogFragment {
     }
 
     private String formatVersion() {
-        return TagFormatter.from(R.string.about_dialog_title_version, getResources())
+        return TagFormatter.formatFrom(R.string.title_version, getResources())
                 .put("version", Settings.getReleaseVersion(getActivity()))
                 .format();
     }

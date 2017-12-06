@@ -1,5 +1,7 @@
 package com.bopr.android.smailer;
 
+import com.bopr.android.smailer.util.Util;
+
 /**
  * Email message.
  *
@@ -8,8 +10,13 @@ package com.bopr.android.smailer;
 @SuppressWarnings("WeakerAccess")
 public class PhoneEvent {
 
+    public enum State {
+        PENDING,
+        PROCESSED,
+        IGNORED
+    }
+
     private Long id;
-    private boolean processed;
     private boolean incoming;
     private boolean missed;
     private String phone;
@@ -18,13 +25,14 @@ public class PhoneEvent {
     private String text;
     private String details;
     private GeoCoordinates location;
+    private State state = State.PENDING;
 
     public PhoneEvent() {
     }
 
     public PhoneEvent(String phone, boolean incoming, Long startTime, Long endTime, boolean missed,
                       String text, GeoCoordinates location, boolean processed,
-                      String details) {
+                      String details, State state) {
         this.text = text;
         this.endTime = endTime;
         this.startTime = startTime;
@@ -32,8 +40,8 @@ public class PhoneEvent {
         this.missed = missed;
         this.incoming = incoming;
         this.location = location;
-        this.processed = processed;
         this.details = details;
+        this.state = state;
     }
 
     public Long getId() {
@@ -45,7 +53,7 @@ public class PhoneEvent {
     }
 
     public boolean isSms() {
-        return text != null && !text.isEmpty();
+        return !Util.isEmpty(text);
     }
 
     public boolean isIncoming() {
@@ -103,14 +111,6 @@ public class PhoneEvent {
         return 0;
     }
 
-    public void setProcessed(boolean processed) {
-        this.processed = processed;
-    }
-
-    public boolean isProcessed() {
-        return processed;
-    }
-
     public void setDetails(String details) {
         this.details = details;
     }
@@ -127,11 +127,18 @@ public class PhoneEvent {
         this.location = location;
     }
 
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+    }
+
     @Override
     public String toString() {
         return "PhoneEvent{" +
                 "id=" + id +
-                ", sent=" + processed +
                 ", incoming=" + incoming +
                 ", missed=" + missed +
                 ", phone='" + phone + '\'' +
@@ -140,6 +147,7 @@ public class PhoneEvent {
                 ", text='" + text + '\'' +
                 ", details='" + details + '\'' +
                 ", location=" + location +
+                ", state=" + state +
                 '}';
     }
 

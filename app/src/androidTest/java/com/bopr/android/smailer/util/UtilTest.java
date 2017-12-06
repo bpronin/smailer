@@ -93,21 +93,21 @@ public class UtilTest extends BaseTest {
 
     @Test
     public void testStringOf() throws Exception {
-        assertEquals("1, 2, 3", Util.stringOf(", ", 1, 2, 3));
-        assertEquals("1, null, null", Util.stringOf(", ", 1, null, null));
-        assertEquals("", Util.stringOf(", "));
+        assertEquals("1, 2, 3", Util.separated(", ", 1, 2, 3));
+        assertEquals("1, null, null", Util.separated(", ", 1, null, null));
+        assertEquals("", Util.separated(", "));
     }
 
     @Test
     public void testListOf() throws Exception {
-        assertArrayEquals(new String[]{"1", " 2", "3 "}, Util.listOf("1, 2,3 ", ",", false).toArray());
-        assertArrayEquals(new String[]{"1", "2", "3"}, Util.listOf("1, 2, 3 ", ",", true).toArray());
-        assertArrayEquals(new String[]{" "}, Util.listOf(" ", ",", false).toArray());
-        assertArrayEquals(new String[]{}, Util.listOf("", ",", true).toArray());
-        assertArrayEquals(new String[]{}, Util.listOf(" ", ",", true).toArray());
+        assertArrayEquals(new String[]{"1", " 2", "3 "}, Util.parseSeparated("1, 2,3 ", ",", false).toArray());
+        assertArrayEquals(new String[]{"1", "2", "3"}, Util.parseSeparated("1, 2, 3 ", ",", true).toArray());
+        assertArrayEquals(new String[]{" "}, Util.parseSeparated(" ", ",", false).toArray());
+        assertArrayEquals(new String[]{}, Util.parseSeparated("", ",", true).toArray());
+        assertArrayEquals(new String[]{}, Util.parseSeparated(" ", ",", true).toArray());
 
         try {
-            assertArrayEquals(new String[]{}, Util.listOf(null, ",", true).toArray());
+            assertArrayEquals(new String[]{}, Util.parseSeparated(null, ",", true).toArray());
             fail("No exception");
         } catch (NullPointerException x) {
             /* ok */

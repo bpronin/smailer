@@ -1,7 +1,6 @@
 package com.bopr.android.smailer.ui;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
@@ -98,7 +97,7 @@ public class ServerFragment extends BasePreferenceFragment {
         if (isEmpty(value)) {
             updateNotSpecifiedSummary(passwordPreference);
         } else {
-            updateSummary(R.string.pref_description_password_asterisk, passwordPreference, true);
+            updateSummary(R.string.title_password_asterisks, passwordPreference, true);
         }
     }
 
@@ -150,7 +149,7 @@ public class ServerFragment extends BasePreferenceFragment {
             } else if (result == MailTransport.CHECK_RESULT_AUTHENTICATION) {
                 message = R.string.notification_error_authentication;
             } else {
-                message = R.string.server_test_success;
+                message = R.string.message_server_test_success;
             }
 
             Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();

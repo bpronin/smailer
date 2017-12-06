@@ -33,30 +33,30 @@ public class DatabaseTest extends BaseTest {
     }
 
     /**
-     * Check {@link Database#updateMessage(PhoneEvent)} and {@link Database#getMessages()} methods.
+     * Check {@link Database#putEvent(PhoneEvent)} and {@link Database#getEvents()} methods.
      *
      * @throws Exception when failed
      */
     @Test
     public void testAddGet() throws Exception {
-        database.updateMessage(new PhoneEvent("1", true, 1000L, 0L, true, null, null, false, "Test 1"));
-        database.updateMessage(new PhoneEvent("2", false, 2000L, 0L, false, null, null, false, null));
-        database.updateMessage(new PhoneEvent("3", true, 3000L, 0L, false, null, null, false, null));
-        database.updateMessage(new PhoneEvent("4", false, 4000L, 0L, false, null, null, false, null));
-        database.updateMessage(new PhoneEvent("5", true, 5000L, 0L, true, null, null, false, null));
-        database.updateMessage(new PhoneEvent("6", true, 6000L, 7000L, false, null, null, false, "Test 1"));
-        database.updateMessage(new PhoneEvent("7", false, 7000L, 0L, false, null, null, false, "Test 2"));
-        database.updateMessage(new PhoneEvent("8", true, 8000L, 0L, false, null, null, false, "Test 3"));
-        database.updateMessage(new PhoneEvent("9", false, 9000L, 0L, false, null, null, false, "Test 4"));
-        database.updateMessage(new PhoneEvent("10", true, 10000L, 20000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), true, "Test 10"));
+        database.putEvent(new PhoneEvent("1", true, 1000L, 0L, true, null, null, false, "Test 1", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("2", false, 2000L, 0L, false, null, null, false, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("3", true, 3000L, 0L, false, null, null, false, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("4", false, 4000L, 0L, false, null, null, false, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("5", true, 5000L, 0L, true, null, null, false, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("6", true, 6000L, 7000L, false, null, null, false, "Test 1", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("7", false, 7000L, 0L, false, null, null, false, "Test 2", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("8", true, 8000L, 0L, false, null, null, false, "Test 3", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("9", false, 9000L, 0L, false, null, null, false, "Test 4", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("10", true, 10000L, 20000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), true, "Test 10", PhoneEvent.State.PENDING));
 
-        List<PhoneEvent> items = database.getMessages().getAll();
+        List<PhoneEvent> items = database.getEvents().getAll();
 
         assertEquals(10, items.size());
 
         PhoneEvent message = items.get(0); /* descending order so it should be the last */
         assertNotNull(message.getId());
-        assertEquals(true, message.isProcessed());
+        assertEquals(PhoneEvent.State.PENDING, message.getState());
         assertEquals("10", message.getPhone());
         assertEquals(true, message.isIncoming());
         assertEquals(10000L, message.getStartTime().longValue());
@@ -70,21 +70,21 @@ public class DatabaseTest extends BaseTest {
     }
 
     /**
-     * Check {@link Database#updateMessage(PhoneEvent)} and {@link Database#getMessages()} methods.
+     * Check {@link Database#putEvent(PhoneEvent)} and {@link Database#getEvents()} methods.
      *
      * @throws Exception when failed
      */
     @Test
     public void testUpdateGet() throws Exception {
-        PhoneEvent message = new PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), true, "Test 1");
-        database.updateMessage(message);
+        PhoneEvent message = new PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), true, "Test 1", PhoneEvent.State.PENDING);
+        database.putEvent(message);
 
-        List<PhoneEvent> items = database.getMessages().getAll();
+        List<PhoneEvent> items = database.getEvents().getAll();
         assertEquals(1, items.size());
 
         message = items.get(0);
         assertTrue(message.getId() != -1);
-        assertEquals(true, message.isProcessed());
+        assertEquals(PhoneEvent.State.PENDING, message.getState());
         assertEquals("1", message.getPhone());
         assertEquals(true, message.isIncoming());
         assertEquals(1000L, message.getStartTime().longValue());
@@ -96,7 +96,7 @@ public class DatabaseTest extends BaseTest {
         assertEquals("SMS text", message.getText());
         assertEquals("Test 1", message.getDetails());
 
-        message.setProcessed(false);
+        assertEquals(PhoneEvent.State.PENDING, message.getState());
         message.setPhone("2");
         message.setIncoming(false);
         message.setStartTime(2000L);
@@ -105,14 +105,14 @@ public class DatabaseTest extends BaseTest {
         message.setLocation(new GeoCoordinates(11.5, 21.5));
         message.setText("New text");
         message.setDetails("New details");
-        database.updateMessage(message);
+        database.putEvent(message);
 
-        items = database.getMessages().getAll();
+        items = database.getEvents().getAll();
         assertEquals(1, items.size());
 
         message = items.get(0);
         assertTrue(message.getId() != -1);
-        assertEquals(false, message.isProcessed());
+        assertEquals(PhoneEvent.State.PENDING, message.getState());
         assertEquals("2", message.getPhone());
         assertEquals(false, message.isIncoming());
         assertEquals(2000L, message.getStartTime().longValue());
@@ -126,28 +126,28 @@ public class DatabaseTest extends BaseTest {
     }
 
     /**
-     * Check {@link Database#clearMessages()}  method.
+     * Check {@link Database#clearEvents()}  method.
      *
      * @throws Exception when failed
      */
     @Test
     public void testClear() throws Exception {
-        database.updateMessage(new PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), true, "Test 1"));
-        database.updateMessage(new PhoneEvent("2", false, 2000L, 0L, false, null, null, false, null));
-        database.updateMessage(new PhoneEvent("3", true, 3000L, 0L, false, null, null, false, null));
-        database.updateMessage(new PhoneEvent("4", false, 4000L, 0L, false, null, null, false, null));
-        database.updateMessage(new PhoneEvent("5", true, 5000L, 0L, true, null, null, false, null));
-        database.updateMessage(new PhoneEvent("6", true, 6000L, 7000L, false, null, null, false, "Test 1"));
-        database.updateMessage(new PhoneEvent("7", false, 7000L, 0L, false, null, null, false, "Test 2"));
-        database.updateMessage(new PhoneEvent("8", true, 8000L, 0L, false, null, null, false, "Test 3"));
-        database.updateMessage(new PhoneEvent("9", false, 9000L, 0L, false, null, null, false, "Test 4"));
-        database.updateMessage(new PhoneEvent("10", true, 10000L, 0L, true, null, null, false, "Test 5"));
+        database.putEvent(new PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), true, "Test 1", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("2", false, 2000L, 0L, false, null, null, false, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("3", true, 3000L, 0L, false, null, null, false, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("4", false, 4000L, 0L, false, null, null, false, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("5", true, 5000L, 0L, true, null, null, false, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("6", true, 6000L, 7000L, false, null, null, false, "Test 1", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("7", false, 7000L, 0L, false, null, null, false, "Test 2", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("8", true, 8000L, 0L, false, null, null, false, "Test 3", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("9", false, 9000L, 0L, false, null, null, false, "Test 4", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("10", true, 10000L, 0L, true, null, null, false, "Test 5", PhoneEvent.State.PENDING));
 
-        assertEquals(10, database.getMessages().getCount());
+        assertEquals(10, database.getEvents().getCount());
 
-        database.clearMessages();
+        database.clearEvents();
 
-        assertEquals(0, database.getMessages().getCount());
+        assertEquals(0, database.getEvents().getCount());
     }
 
     /**
@@ -157,19 +157,19 @@ public class DatabaseTest extends BaseTest {
      */
     @Test
     public void testPurge() throws Exception {
-        database.updateMessage(new PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), true, "Test 1"));
-        database.updateMessage(new PhoneEvent("2", false, 2000L, 0L, false, null, null, false, null));
-        database.updateMessage(new PhoneEvent("3", true, 3000L, 0L, false, null, null, false, null));
-        database.updateMessage(new PhoneEvent("4", false, 4000L, 0L, false, null, null, false, null));
-        database.updateMessage(new PhoneEvent("5", true, 5000L, 0L, true, null, null, false, null));
-        database.updateMessage(new PhoneEvent("6", true, 6000L, 7000L, false, null, null, false, "Test 1"));
-        database.updateMessage(new PhoneEvent("7", false, 7000L, 0L, false, null, null, false, "Test 2"));
-        database.updateMessage(new PhoneEvent("8", true, 8000L, 0L, false, null, null, false, "Test 3"));
-        database.updateMessage(new PhoneEvent("9", false, 9000L, 0L, false, null, null, false, "Test 4"));
-        database.updateMessage(new PhoneEvent("10", true, 10000L, 0L, true, null, null, false, "Test 5"));
+        database.putEvent(new PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), true, "Test 1", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("2", false, 2000L, 0L, false, null, null, false, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("3", true, 3000L, 0L, false, null, null, false, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("4", false, 4000L, 0L, false, null, null, false, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("5", true, 5000L, 0L, true, null, null, false, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("6", true, 6000L, 7000L, false, null, null, false, "Test 1", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("7", false, 7000L, 0L, false, null, null, false, "Test 2", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("8", true, 8000L, 0L, false, null, null, false, "Test 3", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("9", false, 9000L, 0L, false, null, null, false, "Test 4", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("10", true, 10000L, 0L, true, null, null, false, "Test 5", PhoneEvent.State.PENDING));
 
         /* first we have 9 records */
-        assertEquals(10, database.getMessages().getCount());
+        assertEquals(10, database.getEvents().getCount());
 
         /* change default capacity and period to small values */
         database.setCapacity(5);
@@ -181,7 +181,7 @@ public class DatabaseTest extends BaseTest {
         database.purge();
 
         /* nothing happens cause elapsed time is less than purge period */
-        assertEquals(10, database.getMessages().getCount());
+        assertEquals(10, database.getEvents().getCount());
 
         /* sleep again */
         Thread.sleep(500);
@@ -189,7 +189,7 @@ public class DatabaseTest extends BaseTest {
         database.purge();
 
         /* last addition should trigger purge process cause total elapsed time exceeds purge period */
-        assertEquals(5, database.getMessages().getCount());
+        assertEquals(5, database.getEvents().getCount());
     }
 
     /**
@@ -209,24 +209,24 @@ public class DatabaseTest extends BaseTest {
     }
 
     /**
-     * Check {@link Database#getUnsentMessages()}} method.
+     * Check {@link Database#getUnsentEvents()}} method.
      *
      * @throws Exception when failed
      */
     @Test
     public void testGetUnsentMessages() throws Exception {
-        database.updateMessage(new PhoneEvent("1", true, 1000L, 0L, true, null, null, true, "Test 1"));
-        database.updateMessage(new PhoneEvent("2", false, 2000L, 0L, false, null, null, true, null));
-        database.updateMessage(new PhoneEvent("3", true, 3000L, 0L, false, null, null, true, null));
-        database.updateMessage(new PhoneEvent("4", false, 4000L, 0L, false, null, null, true, null));
-        database.updateMessage(new PhoneEvent("5", true, 5000L, 0L, true, null, null, true, null));
-        database.updateMessage(new PhoneEvent("6", true, 6000L, 7000L, false, null, null, false, "Test 1"));
-        database.updateMessage(new PhoneEvent("7", false, 7000L, 0L, false, null, null, false, "Test 2"));
-        database.updateMessage(new PhoneEvent("8", true, 8000L, 0L, false, null, null, false, "Test 3"));
-        database.updateMessage(new PhoneEvent("9", false, 9000L, 0L, false, null, null, false, "Test 4"));
-        database.updateMessage(new PhoneEvent("10", true, 10000L, 20000L, false, null, null, false, "Test 10"));
+        database.putEvent(new PhoneEvent("1", true, 1000L, 0L, true, null, null, true, "Test 1", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("2", false, 2000L, 0L, false, null, null, true, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("3", true, 3000L, 0L, false, null, null, true, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("4", false, 4000L, 0L, false, null, null, true, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("5", true, 5000L, 0L, true, null, null, true, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("6", true, 6000L, 7000L, false, null, null, false, "Test 1", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("7", false, 7000L, 0L, false, null, null, false, "Test 2", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("8", true, 8000L, 0L, false, null, null, false, "Test 3", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("9", false, 9000L, 0L, false, null, null, false, "Test 4", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("10", true, 10000L, 20000L, false, null, null, false, "Test 10", PhoneEvent.State.PENDING));
 
-        List<PhoneEvent> items = database.getUnsentMessages().getAll();
+        List<PhoneEvent> items = database.getUnsentEvents().getAll();
 
         assertEquals(5, items.size());
 

@@ -15,25 +15,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.bopr.android.smailer.PhoneEventFilter;
 import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.Settings;
 import com.bopr.android.smailer.util.Util;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
-import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.getPreferences;
-import static com.bopr.android.smailer.util.TagFormatter.formatFrom;
-import static com.bopr.android.smailer.util.Util.commaSeparated;
 
+import static com.bopr.android.smailer.util.TagFormatter.formatFrom;
+import static com.bopr.android.smailer.util.Util.normalizePhone;
 
 /**
- * Recipients list activity fragment.
+ * Base for black/whitelist fragments.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class RecipientsFragment extends Fragment {
+abstract class PhonesFragment extends Fragment {
 
     private ListAdapter listAdapter;
     private RecyclerView listView;
@@ -62,9 +64,8 @@ public class RecipientsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_recipients, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_phones, container, false);
 
         listView = view.findViewById(android.R.id.list);
         listView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
@@ -111,6 +112,10 @@ public class RecipientsFragment extends Fragment {
         loadItems();
     }
 
+    abstract Set<String> getPhoneList(PhoneEventFilter filter);
+
+    abstract void setPhoneList(PhoneEventFilter filter, List<String> list);
+
     protected void updateEmptyText() {
         View view = getView();
         if (view != null) {
@@ -135,23 +140,25 @@ public class RecipientsFragment extends Fragment {
 
         listView.setAdapter(listAdapter);
 
+        List<String> list = new ArrayList<>(getPhoneList(Settings.loadFilter(getActivity())));
+        Collections.sort(list);
+
         List<Item> items = new ArrayList<>();
-        List<String> addresses = Util.parseSeparated(preferences.getString(KEY_PREF_RECIPIENTS_ADDRESS, ""), ",", true);
-        for (String address : addresses) {
-            items.add(new Item(address));
+        for (String phone : list) {
+            items.add(new Item(phone));
         }
         listAdapter.setItems(items);
     }
 
     private void persistItems() {
-        List<String> addresses = new ArrayList<>();
+        List<String> phones = new ArrayList<>();
         for (Item item : listAdapter.getItems()) {
-            addresses.add(item.address);
+            phones.add(item.phone);
         }
 
-        preferences.edit()
-                .putString(KEY_PREF_RECIPIENTS_ADDRESS, commaSeparated(addresses))
-                .apply();
+        PhoneEventFilter filter = Settings.loadFilter(getActivity());
+        setPhoneList(filter, phones);
+        Settings.saveFilter(getActivity(), filter);
     }
 
     private void addItem() {
@@ -176,9 +183,10 @@ public class RecipientsFragment extends Fragment {
         persistItems();
     }
 
-    private boolean isItemExists(String address) {
+    private boolean isItemExists(String phone) {
+        String p = normalizePhone(phone);
         for (Item item : listAdapter.getItems()) {
-            if (item.address.equals(address)) {
+            if (p.equals(normalizePhone(item.phone))) {
                 return true;
             }
         }
@@ -186,27 +194,27 @@ public class RecipientsFragment extends Fragment {
     }
 
     private void showItemEditor(final Item item) {
-        EditEmailDialogFragment dialog = new EditEmailDialogFragment();
-        dialog.setTitle(item == null ? R.string.title_add_recipient : R.string.title_edit_recipient);
-        dialog.setInitialValue(item == null ? null : item.address);
-        dialog.setCallback(new EditEmailDialogFragment.Callback() {
+        EditPhoneDialogFragment dialog = new EditPhoneDialogFragment();
+        dialog.setTitle(item == null ? R.string.title_add_phone : R.string.title_edit_phone);
+        dialog.setInitialValue(item == null ? null : item.phone);
+        dialog.setCallback(new EditPhoneDialogFragment.Callback() {
 
             @Override
-            public void onOkClick(String address) {
-                if (isItemExists(address) && (item == null || !item.address.equals(address))) {
-                    Toast.makeText(getActivity(), formatFrom(R.string.message_recipient_already_exists, getResources())
-                            .put("name", address)
+            public void onOkClick(String phone) {
+                if (isItemExists(phone) && (item == null || !item.phone.equals(phone))) {
+                    Toast.makeText(getActivity(), formatFrom(R.string.message_list_item_already_exists, getResources())
+                            .put("item", phone)
                             .format(), Toast.LENGTH_LONG).show();
-                } else if (!Util.isTrimEmpty(address)) {
+                } else if (!Util.isTrimEmpty(phone)) {
                     /* note: if we rotated device reference to "this" is changed here */
-                    Item newItem = new Item(address);
+                    Item newItem = new Item(phone);
                     listAdapter.replaceItem(item, newItem);
                     persistItems();
                 }
             }
         });
 
-        dialog.show(((FragmentActivity) getActivity()).getSupportFragmentManager(), "edit_recipient_dialog");
+        dialog.show(((FragmentActivity) getActivity()).getSupportFragmentManager(), "edit_phone_dialog");
     }
 
     private void showUndoAction(List<Item> removedItems, final List<Item> lastItems) {
@@ -233,10 +241,10 @@ public class RecipientsFragment extends Fragment {
 
     private class Item {
 
-        private final String address;
+        private final String phone;
 
-        private Item(String address) {
-            this.address = address;
+        private Item(String phone) {
+            this.phone = phone;
         }
     }
 
@@ -247,13 +255,13 @@ public class RecipientsFragment extends Fragment {
         @Override
         public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(getActivity());
-            return new ItemViewHolder(inflater.inflate(R.layout.list_item_recipient, parent, false));
+            return new ItemViewHolder(inflater.inflate(R.layout.list_item_phone, parent, false));
         }
 
         @Override
         public void onBindViewHolder(final ItemViewHolder holder, int position) {
             final Item item = getItem(position);
-            holder.textView.setText(item.address);
+            holder.textView.setText(item.phone);
             holder.itemView.setOnClickListener(new View.OnClickListener() {
 
                 @Override

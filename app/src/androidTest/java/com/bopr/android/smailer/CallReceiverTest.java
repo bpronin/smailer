@@ -22,7 +22,6 @@ import static com.bopr.android.smailer.MailerService.EXTRA_MISSED;
 import static com.bopr.android.smailer.MailerService.EXTRA_PHONE_NUMBER;
 import static com.bopr.android.smailer.MailerService.EXTRA_START_TIME;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_SERVICE_ENABLED;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
@@ -57,26 +56,6 @@ public class CallReceiverTest extends BaseTest {
     }
 
     /**
-     * Checks service disabled.
-     *
-     * @throws Exception when fails
-     */
-    @Test
-    public void testServiceDisabled() throws Exception {
-        InvocationsCollector invocations = new InvocationsCollector();
-        doAnswer(invocations).when(context).startService(any(Intent.class));
-        when(preferences.getBoolean(eq(KEY_PREF_SERVICE_ENABLED), anyBoolean())).thenReturn(false);
-
-        CallReceiver receiver = new CallReceiver();
-
-        receiver.onReceive(context, new Intent(ACTION_PHONE_STATE_CHANGED));
-        assertTrue(invocations.isEmpty());
-
-        receiver.onReceive(context, new Intent(ACTION_NEW_OUTGOING_CALL));
-        assertTrue(invocations.isEmpty());
-    }
-
-    /**
      * Checks that receiver starts service on incoming call.
      *
      * @throws Exception when fails
@@ -85,7 +64,6 @@ public class CallReceiverTest extends BaseTest {
     public void testReceiveIncomingCall() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
-        when(preferences.getBoolean(eq(KEY_PREF_SERVICE_ENABLED), anyBoolean())).thenReturn(true);
         when(preferences.getStringSet(eq(KEY_PREF_EMAIL_TRIGGERS), anySetOf(String.class))).thenReturn(Util.asSet(VAL_PREF_TRIGGER_IN_CALLS));
 
         CallReceiver receiver = new CallReceiver();
@@ -128,7 +106,6 @@ public class CallReceiverTest extends BaseTest {
     public void testReceiveIncomingCallDisabled() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
-        when(preferences.getBoolean(eq(KEY_PREF_SERVICE_ENABLED), anyBoolean())).thenReturn(true);
 
         CallReceiver receiver = new CallReceiver();
 
@@ -163,7 +140,6 @@ public class CallReceiverTest extends BaseTest {
     public void testReceiveOutgoingCall() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
-        when(preferences.getBoolean(eq(KEY_PREF_SERVICE_ENABLED), anyBoolean())).thenReturn(true);
         when(preferences.getStringSet(eq(KEY_PREF_EMAIL_TRIGGERS), anySetOf(String.class))).thenReturn(Util.asSet(VAL_PREF_TRIGGER_OUT_CALLS));
 
         CallReceiver receiver = new CallReceiver();
@@ -205,7 +181,6 @@ public class CallReceiverTest extends BaseTest {
     public void testReceiveOutgoingCallDisabled() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
-        when(preferences.getBoolean(eq(KEY_PREF_SERVICE_ENABLED), anyBoolean())).thenReturn(true);
 
         CallReceiver receiver = new CallReceiver();
 
@@ -239,7 +214,6 @@ public class CallReceiverTest extends BaseTest {
     public void testReceiveMissedCall() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
-        when(preferences.getBoolean(eq(KEY_PREF_SERVICE_ENABLED), anyBoolean())).thenReturn(true);
         when(preferences.getStringSet(eq(KEY_PREF_EMAIL_TRIGGERS), anySetOf(String.class))).thenReturn(Util.asSet(VAL_PREF_TRIGGER_MISSED_CALLS));
 
         CallReceiver receiver = new CallReceiver();
@@ -275,7 +249,6 @@ public class CallReceiverTest extends BaseTest {
     public void testReceiveMissedCallDisabled() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
-        when(preferences.getBoolean(eq(KEY_PREF_SERVICE_ENABLED), anyBoolean())).thenReturn(true);
 
         CallReceiver receiver = new CallReceiver();
 
