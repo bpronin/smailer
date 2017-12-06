@@ -24,7 +24,7 @@ public class ConnectivityReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         log.debug("Received intent: " + intent);
 
-        if (Util.equals(intent.getAction(), ConnectivityManager.CONNECTIVITY_ACTION)
+        if (Util.safeEquals(intent.getAction(), ConnectivityManager.CONNECTIVITY_ACTION)
                 && getPreferences(context).getBoolean(KEY_PREF_RESEND_UNSENT, true)
                 && hasInternetConnection(context)) {
             context.startService(MailerService.createResendIntent(context));

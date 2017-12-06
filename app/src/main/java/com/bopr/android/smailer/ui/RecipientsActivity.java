@@ -11,12 +11,6 @@ import android.support.annotation.NonNull;
  */
 public class RecipientsActivity extends AppActivity {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        setClosable(true);
-        super.onCreate(savedInstanceState);
-    }
-
     @NonNull
     @Override
     protected Fragment createFragment() {

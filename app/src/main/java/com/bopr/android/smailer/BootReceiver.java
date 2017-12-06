@@ -20,7 +20,7 @@ public class BootReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         log.debug("Received intent: " + intent);
 
-        if (Util.equals(intent.getAction(), Intent.ACTION_BOOT_COMPLETED)) {
+        if (Util.safeEquals(intent.getAction(), Intent.ACTION_BOOT_COMPLETED)) {
             OutgoingSmsService.toggle(context);
         }
     }

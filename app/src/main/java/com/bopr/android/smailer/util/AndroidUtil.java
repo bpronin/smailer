@@ -75,19 +75,6 @@ public class AndroidUtil {
         return new AlertDialog.Builder(context);
     }
 
-    /**
-     * Returns true if specified service is running.
-     */
-    public static boolean isServiceRunning(Context context, Class<? extends Service> serviceClass) {
-        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo info : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(info.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static boolean isPermissionsDenied(Context context, String... permissions) {
         for (String permission : permissions) {
             if (ContextCompat.checkSelfPermission(context, permission) != PERMISSION_GRANTED) {

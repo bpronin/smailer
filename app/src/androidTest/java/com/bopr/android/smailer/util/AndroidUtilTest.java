@@ -1,6 +1,7 @@
 package com.bopr.android.smailer.util;
 
 import android.app.ActivityManager;
+import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -36,6 +37,19 @@ import static org.mockito.Mockito.when;
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 public class AndroidUtilTest extends BaseTest {
+
+    /**
+     * Returns true if specified service is running.
+     */
+    private static boolean isServiceRunning(Context context, Class<? extends Service> serviceClass) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo info : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(info.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Tests {@link AndroidUtil#validatedUnderlinedText(Context, String, boolean)} method.
@@ -116,11 +130,11 @@ public class AndroidUtilTest extends BaseTest {
         info.service = new ComponentName(context, MailerService.class.getName());
         runningServices.add(info);
 
-        assertTrue(AndroidUtil.isServiceRunning(context, MailerService.class));
+        assertTrue(isServiceRunning(context, MailerService.class));
 
         runningServices.clear();
 
-        assertFalse(AndroidUtil.isServiceRunning(context, MailerService.class));
+        assertFalse(isServiceRunning(context, MailerService.class));
     }
 
     @Test

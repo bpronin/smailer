@@ -162,7 +162,7 @@ public class Util {
         return collection.toArray(new String[collection.size()]);
     }
 
-    public static boolean equals(Object a, Object b) {
+    public static boolean safeEquals(Object a, Object b) {
         return (a == b) || (a != null && a.equals(b));
     }
 
@@ -173,7 +173,7 @@ public class Util {
     public static boolean containsPhone(Collection<String> phones, String phone) {
         String p = normalizePhone(phone);
         for (String s : phones) {
-            if (equals(normalizePhone(s), p)) {
+            if (safeEquals(normalizePhone(s), p)) {
                 return true;
             }
         }

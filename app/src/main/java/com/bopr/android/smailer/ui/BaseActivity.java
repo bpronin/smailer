@@ -10,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-
 import com.bopr.android.smailer.R;
 
 /**
@@ -23,7 +22,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public static final String TAG_FRAGMENT = "activity_fragment";
 
     private Fragment fragment;
-    private boolean closable;
+    private boolean closable = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,8 +67,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     @TargetApi(Build.VERSION_CODES.M)
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 

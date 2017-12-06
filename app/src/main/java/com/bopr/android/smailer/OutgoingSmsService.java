@@ -16,8 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.bopr.android.smailer.MailerService.createEventIntent;
-import static com.bopr.android.smailer.Settings.*;
-import static com.bopr.android.smailer.util.AndroidUtil.isServiceRunning;
+import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
 
 /**
  * Class OutgoingSmsService.
@@ -123,15 +122,11 @@ public class OutgoingSmsService extends Service {
     }
 
     public static void toggle(Context context) {
-        PhoneEventFilter filter = Settings.loadFilter(context);
-        if (filter.getTriggers().contains(VAL_PREF_TRIGGER_OUT_SMS)) {
-            if (!isServiceRunning(context, OutgoingSmsService.class)) {
-                context.startService(createServiceIntent(context));
-            }
+        Intent intent = createServiceIntent(context);
+        if (Settings.loadFilter(context).getTriggers().contains(VAL_PREF_TRIGGER_OUT_SMS)) {
+            context.startService(intent);
         } else {
-            if (isServiceRunning(context, OutgoingSmsService.class)) {
-                context.stopService(createServiceIntent(context));
-            }
+            context.stopService(intent);
         }
     }
 

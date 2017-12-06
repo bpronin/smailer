@@ -18,6 +18,10 @@ public class MainActivity extends AppActivity {
 
     private static Logger log = LoggerFactory.getLogger("MainActivity");
 
+    public MainActivity() {
+        setClosable(false);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         log.debug("Application init");

@@ -11,12 +11,6 @@ import android.support.annotation.NonNull;
  */
 public class MoreActivity extends AppActivity {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        setClosable(true);
-        super.onCreate(savedInstanceState);
-    }
-
     @NonNull
     @Override
     protected Fragment createFragment() {

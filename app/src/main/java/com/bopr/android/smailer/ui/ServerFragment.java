@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
+import android.text.TextUtils;
 import android.widget.Toast;
 import com.bopr.android.smailer.Cryptor;
 import com.bopr.android.smailer.MailTransport;
@@ -90,6 +91,9 @@ public class ServerFragment extends BasePreferenceFragment {
             updateNotSpecifiedSummary(accountPreference);
         } else {
             updateSummary(value, accountPreference, EmailTextValidator.isValidValue(value));
+            if (!TextUtils.equals(accountPreference.getText(), value)) {
+                updateHostByAccount(value);
+            }
         }
     }
 
@@ -114,6 +118,15 @@ public class ServerFragment extends BasePreferenceFragment {
             updateNotSpecifiedSummary(portPreference);
         } else {
             updateSummary(value, portPreference, true);
+        }
+    }
+
+    private void updateHostByAccount(String account) {
+        String[] ss = account.split("@");
+        if (ss.length > 1) {
+            String host = "imap." + ss[1];
+            hostPreference.setText(host);
+            updateHostPreference(host);
         }
     }
 
