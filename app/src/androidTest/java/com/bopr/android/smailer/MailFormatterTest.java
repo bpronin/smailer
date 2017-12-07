@@ -41,10 +41,10 @@ public class MailFormatterTest extends BaseTest {
      */
     @Test
     public void testIncomingSmsSubject() throws Exception {
-        PhoneEvent message = new PhoneEvent("+70123456789", true, null, null, false,
+        PhoneEvent event = new PhoneEvent("+70123456789", true, null, null, false,
                 "Email body text", null, false, null, PhoneEvent.State.PENDING);
 
-        MailFormatter formatter = new MailFormatter(context, message);
+        MailFormatter formatter = new MailFormatter(context, event);
 
         assertEquals("[SMailer] Incoming SMS from +70123456789", formatter.getSubject());
     }

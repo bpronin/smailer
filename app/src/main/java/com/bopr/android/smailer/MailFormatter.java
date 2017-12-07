@@ -13,7 +13,6 @@ import java.util.Locale;
 import java.util.Set;
 
 import static com.bopr.android.smailer.Settings.*;
-
 import static com.bopr.android.smailer.util.Util.*;
 
 /**
@@ -32,15 +31,15 @@ class MailFormatter {
             "place/{latitude}+{longitude}/@{latitude},{longitude}\">{location}</a>";
     private static final String PHONE_LINK_PATTERN = "<a href=\"tel:{phone}\">{phone}</a>";
 
-    private final PhoneEvent message;
+    private final PhoneEvent event;
     private Context context;
     private String contactName;
     private String deviceName;
     private Set<String> contentOptions;
     private Locale locale = Locale.getDefault();
 
-    MailFormatter(Context context, PhoneEvent message) {
-        this.message = message;
+    MailFormatter(Context context, PhoneEvent event) {
+        this.event = event;
         this.context = context;
     }
 
@@ -97,7 +96,7 @@ class MailFormatter {
         String result = TagFormatter.formatFrom(SUBJECT_PATTERN, context)
                 .putResource("app_name", R.string.app_name)
                 .put("source", getTriggerText())
-                .put("phone", message.getPhone())
+                .put("phone", event.getPhone())
                 .format();
 
         restoreLocale(currentLocale);
@@ -130,16 +129,16 @@ class MailFormatter {
     private String getTriggerText() {
         int resourceId;
 
-        if (message.isMissed()) {
+        if (event.isMissed()) {
             resourceId = R.string.email_subject_missed_call;
-        } else if (message.isSms()) {
-            if (message.isIncoming()) {
+        } else if (event.isSms()) {
+            if (event.isIncoming()) {
                 resourceId = R.string.email_subject_incoming_sms;
             } else {
                 resourceId = R.string.email_subject_outgoing_sms;
             }
         } else {
-            if (message.isIncoming()) {
+            if (event.isIncoming()) {
                 resourceId = R.string.email_subject_incoming_call;
             } else {
                 resourceId = R.string.email_subject_outgoing_call;
@@ -151,19 +150,19 @@ class MailFormatter {
 
     @NonNull
     private String getMessageText() {
-        if (message.isMissed()) {
+        if (event.isMissed()) {
             return context.getString(R.string.email_body_missed_call);
-        } else if (message.isSms()) {
-            return message.getText();
+        } else if (event.isSms()) {
+            return event.getText();
         } else {
             int pattern;
-            if (message.isIncoming()) {
+            if (event.isIncoming()) {
                 pattern = R.string.email_body_incoming_call;
             } else {
                 pattern = R.string.email_body_outgoing_call;
             }
             return TagFormatter.formatFrom(pattern, context)
-                    .put("duration", formatDuration(message.getCallDuration()))
+                    .put("duration", formatDuration(event.getCallDuration()))
                     .format();
         }
     }
@@ -211,10 +210,10 @@ class MailFormatter {
     @NonNull
     private String getCallerText() {
         int resourceId;
-        if (message.isSms()) {
+        if (event.isSms()) {
             resourceId = R.string.email_body_sender;
         } else {
-            if (message.isIncoming()) {
+            if (event.isIncoming()) {
                 resourceId = R.string.email_body_caller;
             } else {
                 resourceId = R.string.email_body_called;
@@ -232,7 +231,7 @@ class MailFormatter {
 
         return TagFormatter.formatFrom(resourceId, context)
                 .put("phone", TagFormatter.formatFrom(PHONE_LINK_PATTERN)
-                        .put("phone", message.getPhone()))
+                        .put("phone", event.getPhone()))
                 .put("name", name)
                 .format();
     }
@@ -249,17 +248,17 @@ class MailFormatter {
 
     @Nullable
     private String getTimeText() {
-        if (message.getStartTime() != null) {
+        if (event.getStartTime() != null) {
             DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
             return " " + TagFormatter.formatFrom(R.string.email_body_time, context)
-                    .put("time", df.format(new Date(message.getStartTime())))
+                    .put("time", df.format(new Date(event.getStartTime())))
                     .format();
         }
         return null;
     }
 
     private String getLocationText() {
-        GeoCoordinates location = message.getLocation();
+        GeoCoordinates location = event.getLocation();
         if (location != null) {
             return TagFormatter.formatFrom(R.string.email_body_location, context)
                     .put("location", TagFormatter.formatFrom(GOOGLE_MAP_LINK_PATTERN)
