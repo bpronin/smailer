@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +32,10 @@ public class EditPhoneDialogFragment extends DialogFragment {
     private int title;
     private String initialValue;
     private Callback callback;
+
+    public void showDialog(FragmentActivity activity) {
+        show(activity.getSupportFragmentManager(), "edit_phone_dialog");
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

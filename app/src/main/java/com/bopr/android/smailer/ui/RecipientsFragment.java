@@ -206,7 +206,7 @@ public class RecipientsFragment extends Fragment {
             }
         });
 
-        dialog.show(((FragmentActivity) getActivity()).getSupportFragmentManager(), "edit_recipient_dialog");
+        dialog.showDialog(((FragmentActivity) getActivity()));
     }
 
     private void showUndoAction(List<Item> removedItems, final List<Item> lastItems) {
@@ -253,7 +253,7 @@ public class RecipientsFragment extends Fragment {
         @Override
         public void onBindViewHolder(final ItemViewHolder holder, int position) {
             final Item item = getItem(position);
-            holder.textView.setText(item.address);
+            holder.textView.setText(item != null ? item.address : null);
             holder.itemView.setOnClickListener(new View.OnClickListener() {
 
                 @Override

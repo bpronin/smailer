@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
@@ -13,10 +14,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.bopr.android.smailer.*;
 import com.bopr.android.smailer.util.AndroidUtil;
-import com.bopr.android.smailer.util.TagFormatter;
 
 import static com.bopr.android.smailer.util.TagFormatter.formatFrom;
-import static com.bopr.android.smailer.util.Util.formatDuration;
 
 
 /**
@@ -31,8 +30,7 @@ public class LogFragment extends Fragment {
     private PhoneEvent selectedEvent;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         database = new Database(getActivity());
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_log, container, false);
@@ -77,30 +75,11 @@ public class LogFragment extends Fragment {
         loadData();
     }
 
-    private String formatDetailsText(PhoneEvent event) {
-        if (event.isSms()) {
-            return event.getText();
-        } else if (event.isMissed()) {
-            return getString(R.string.email_body_missed_call);
-        } else {
-            int pattern;
-            if (event.isIncoming()) {
-                pattern = R.string.email_body_incoming_call;
-            } else {
-                pattern = R.string.email_body_outgoing_call;
-            }
-            return TagFormatter.formatFrom(pattern, getActivity())
-                    .put("duration", formatDuration(event.getCallDuration()))
-                    .format();
-        }
-    }
-
     public void showDetails() {
         if (selectedEvent != null) {
-            AndroidUtil.dialogBuilder(getActivity())
-                    .setTitle(R.string.title_details)
-                    .setMessage(formatDetailsText(selectedEvent))
-                    .show();
+            LogDetailsDialogFragment fragment = new LogDetailsDialogFragment();
+            fragment.setValue(selectedEvent);
+            fragment.showDialog((FragmentActivity) getActivity());
         }
     }
 
@@ -196,34 +175,11 @@ public class LogFragment extends Fragment {
             if (item != null) {
                 final PhoneEvent event = cursor.get();
 
-                holder.timeView.setText(DateFormat.format(context.getString(R.string.log_time_pattern), event.getStartTime()));
+                holder.timeView.setText(DateFormat.format(getString(R.string.event_time_pattern), event.getStartTime()));
                 holder.phoneView.setText(event.getPhone());
-
-                if (event.isSms()) {
-                    holder.typeView.setImageResource(R.drawable.ic_message);
-                } else {
-                    holder.typeView.setImageResource(R.drawable.ic_call);
-                }
-
-                if (event.isMissed()) {
-                    holder.directionView.setImageResource(R.drawable.ic_call_missed);
-                } else if (event.isIncoming()) {
-                    holder.directionView.setImageResource(R.drawable.ic_call_in);
-                } else {
-                    holder.directionView.setImageResource(R.drawable.ic_call_out);
-                }
-
-                switch (event.getState()) {
-                    case PENDING:
-                        holder.stateView.setImageResource(R.drawable.ic_state_pending);
-                        break;
-                    case PROCESSED:
-                        holder.stateView.setImageResource(R.drawable.ic_state_sent);
-                        break;
-                    case IGNORED:
-                        holder.stateView.setImageResource(R.drawable.ic_state_bypass);
-                        break;
-                }
+                holder.typeView.setImageResource(Formats.eventTypeImage(event));
+                holder.directionView.setImageResource(Formats.eventDirectionImage(event));
+                holder.stateView.setImageResource(Formats.eventStateImage(event));
 
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
 
@@ -287,7 +243,6 @@ public class LogFragment extends Fragment {
             phoneView = view.findViewById(R.id.list_item_phone);
             stateView = view.findViewById(R.id.list_item_state);
         }
-
     }
 
 }

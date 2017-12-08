@@ -19,6 +19,14 @@
     <string name="email_subject_missed_call">Пропущенный звонок от</string>
     <string name="email_subject_outgoing_call">Исходящий звонок на</string>
     <string name="email_subject_outgoing_sms">Исходящее SMS</string>
+    <string name="event_state_done">Отправлена почта</string>
+    <string name="event_state_ignored">Пропущено</string>
+    <string name="event_state_pending">Ожидание</string>
+    <string name="event_type_incoming_call">Входящий звонок</string>
+    <string name="event_type_incoming_sms">Входящее SMS</string>
+    <string name="event_type_missed_call">Пропущенный звонок</string>
+    <string name="event_type_outgoing_call">Исходящий звонок</string>
+    <string name="event_type_outgoing_sms">Исходящее SMS</string>
     <string name="message_activity_log_ask_clear">Очистить журнал?</string>
     <string name="message_added_to_blacklist">{number} добавлен в черный список</string>
     <string name="message_added_to_whitelist">{number} добавлен в белый список</string>

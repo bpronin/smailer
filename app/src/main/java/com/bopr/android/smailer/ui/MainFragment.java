@@ -6,7 +6,6 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -140,8 +139,7 @@ public class MainFragment extends BasePreferenceFragment {
     }
 
     public void showAboutDialog() {
-        FragmentManager fm = ((FragmentActivity) getActivity()).getSupportFragmentManager();
-        new AboutDialogFragment().show(fm, "about_dialog");
+        new AboutDialogFragment().showDialog((FragmentActivity) getActivity());
     }
 
     private void enableOutgoingSmsService() {

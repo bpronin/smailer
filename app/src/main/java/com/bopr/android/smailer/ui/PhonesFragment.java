@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Set;
 
 import static com.bopr.android.smailer.Settings.getPreferences;
-
 import static com.bopr.android.smailer.util.TagFormatter.formatFrom;
 import static com.bopr.android.smailer.util.Util.normalizePhone;
 
@@ -214,7 +213,7 @@ abstract class PhonesFragment extends Fragment {
             }
         });
 
-        dialog.show(((FragmentActivity) getActivity()).getSupportFragmentManager(), "edit_phone_dialog");
+        dialog.showDialog(((FragmentActivity) getActivity()));
     }
 
     private void showUndoAction(List<Item> removedItems, final List<Item> lastItems) {
@@ -261,7 +260,7 @@ abstract class PhonesFragment extends Fragment {
         @Override
         public void onBindViewHolder(final ItemViewHolder holder, int position) {
             final Item item = getItem(position);
-            holder.textView.setText(item.phone);
+            holder.textView.setText(item != null ? item.phone : null);
             holder.itemView.setOnClickListener(new View.OnClickListener() {
 
                 @Override

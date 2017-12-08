@@ -5,12 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.TextView;
-
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.Settings;
 import com.bopr.android.smailer.util.TagFormatter;
@@ -24,6 +24,10 @@ import static com.bopr.android.smailer.util.AndroidUtil.dialogBuilder;
  */
 public class AboutDialogFragment extends DialogFragment {
 
+    public void showDialog(FragmentActivity activity) {
+        show(activity.getSupportFragmentManager(), "about_dialog");
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -33,6 +37,7 @@ public class AboutDialogFragment extends DialogFragment {
         versionLabel.setText(formatVersion());
 
         versionLabel.setOnLongClickListener(new View.OnLongClickListener() {
+
             @Override
             public boolean onLongClick(View v) {
                 Settings.BuildInfo info = Settings.getReleaseInfo(getActivity());
