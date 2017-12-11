@@ -43,7 +43,7 @@
     <string name="message_permissions_denied">Некоторые настройки отключены, поскольку разрешения не получены.</string>
     <string name="message_recipient_already_exists">Получатель {name} уже существует</string>
     <string name="message_select_email_from_contacts">Выбрать из контактов</string>
-    <string name="message_server_test_success">Настройки успешно проверены</string>
+    <string name="message_server_test_success">Тестовое сообщение отправлено</string>
     <string name="message_server_testing">Проверка настроек сервера…</string>
     <string name="notification_email_send">Почта отправлена.</string>
     <string name="notification_error_authentication">Неверное имя пользователя или пароль.</string>
@@ -101,7 +101,7 @@
     <string name="title_resend">Повторная отправка</string>
     <string name="title_resend_hint">Заново отправлять неотправленные сообщения при появлении соединения</string>
     <string name="title_sender_account">Учетная запись</string>
-    <string name="title_server_test">Проверить соединение</string>
+    <string name="title_server_test">Отправить тестовое сообщение</string>
     <string name="title_text_filter">Фильтр текста</string>
     <string name="title_text_filter_any">Любой текст</string>
     <string name="title_triggers">Триггеры</string>

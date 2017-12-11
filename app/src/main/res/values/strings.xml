@@ -45,7 +45,7 @@
     <string name="message_permissions_denied">Since permissions not granted some options have been disabled.</string>
     <string name="message_recipient_already_exists">Recipient {name} already exists</string>
     <string name="message_select_email_from_contacts">Select from contacts</string>
-    <string name="message_server_test_success">Settings are valid</string>
+    <string name="message_server_test_success">Test message successfully sent</string>
     <string name="message_server_testing">Validating server settings…</string>
     <string name="notification_email_send">Email sent.</string>
     <string name="notification_error_authentication">Username and password not accepted.</string>
@@ -105,7 +105,7 @@
     <string name="title_resend">Resend</string>
     <string name="title_resend_hint">Try to resend unsent messages when connection is established</string>
     <string name="title_sender_account">Account</string>
-    <string name="title_server_test">Test connection</string>
+    <string name="title_server_test">Send test message</string>
     <string name="title_text_filter">Text filter</string>
     <string name="title_text_filter_any">Any text</string>
     <string name="title_triggers">Triggers</string>
