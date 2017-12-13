@@ -93,15 +93,6 @@ public class RecipientsFragment extends Fragment {
                 addItem();
             }
         });
-
-        view.post(new Runnable() {
-
-            @Override
-            public void run() {
-                addButton.show();
-            }
-        });
-
         return view;
     }
 
@@ -187,7 +178,7 @@ public class RecipientsFragment extends Fragment {
 
     private void showItemEditor(final Item item) {
         EditEmailDialogFragment dialog = new EditEmailDialogFragment();
-        dialog.setTitle(item == null ? R.string.title_add_recipient : R.string.title_edit_recipient);
+        dialog.setTitle(item == null ? R.string.title_add : R.string.title_edit);
         dialog.setInitialValue(item == null ? null : item.address);
         dialog.setCallback(new EditEmailDialogFragment.Callback() {
 

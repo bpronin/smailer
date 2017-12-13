@@ -62,8 +62,7 @@
     <string name="title_acceptable_text">Acceptable words ({size})</string>
     <string name="title_account_hint">Email address to send email from.</string>
     <string name="title_activity_log">Activity log</string>
-    <string name="title_add_phone">Add phone number</string>
-    <string name="title_add_recipient">Add recipient</string>
+    <string name="title_add">Add</string>
     <string name="title_add_to_blacklist">Add phone to blacklist</string>
     <string name="title_add_to_whitelist">Add phone to whitelist</string>
     <string name="title_additional_settings">Additional settings</string>
@@ -77,10 +76,7 @@
     <string name="title_details">Details</string>
     <string name="title_device_alias">Device name</string>
     <string name="title_device_alias_hint">Device name to be shown in email message (leave blank to use default)</string>
-    <string name="title_edit_phone">Edit phone number</string>
-    <string name="title_edit_text_fragment">Edit text fragment</string>
-    <string name="title_add_text_fragment">Add text fragment</string>
-    <string name="title_edit_recipient">Edit recipient</string>
+    <string name="title_edit">Edit</string>
     <string name="title_email_address">Email address</string>
     <string name="title_email_language">Email language</string>
     <string name="title_email_language_hint">Email message language</string>
@@ -97,6 +93,7 @@
     <string name="title_not_set">not specified</string>
     <string name="title_notify_on_send">Notify of send</string>
     <string name="title_notify_send_success">Display message when email successfully sent</string>
+    <string name="title_number_filter">Phone number filter</string>
     <string name="title_open_source">Open source</string>
     <string name="title_open_source_and_third_party">Open source and third party software</string>
     <string name="title_outgoing_email_address">Outgoing email address</string>
@@ -111,6 +108,7 @@
     <string name="title_server_test">Send test message</string>
     <string name="title_text_filter">Text filter</string>
     <string name="title_text_filter_any">Any text</string>
+    <string name="title_text_fragment">Text fragment</string>
     <string name="title_triggers">Triggers</string>
     <string name="title_triggers_hint">Events causing sending email</string>
     <string name="title_unacceptable_phone_numbers">Unacceptable phone numbers ({size})</string>
@@ -121,8 +119,6 @@
     <string name="title_what_email_contain">What should the email include</string>
     <string name="title_white_list_used">White list used</string>
     <string name="title_whitelist">Whitelist</string>
-    <string name="title_number_filter">Phone number filter</string>
-    <string name="title_text_fragment">Text fragment</string>
 
     <string-array name="titles_triggers">
         <item>Incoming SMS</item>

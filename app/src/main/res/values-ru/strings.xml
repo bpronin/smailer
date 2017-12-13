@@ -57,10 +57,10 @@
     <string name="notification_error_no_recipients">Не указан получатель.</string>
     <string name="title_about">О приложении</string>
     <string name="title_acceptable_phone_numbers">Разрешенные номера ({size})</string>
+    <string name="title_acceptable_text">Разрешенные слова</string>
     <string name="title_account_hint">Адрес, с которого будет отправляться почта.</string>
     <string name="title_activity_log">Журнал</string>
-    <string name="title_add_phone">Добавление номера</string>
-    <string name="title_add_recipient">Добавление получателя</string>
+    <string name="title_add">Добавить</string>
     <string name="title_add_to_blacklist">Добавить в черный список</string>
     <string name="title_add_to_whitelist">Добавить в белый список</string>
     <string name="title_additional_settings">Дополнительные параметры</string>
@@ -73,8 +73,7 @@
     <string name="title_details">Детали</string>
     <string name="title_device_alias">Имя устройства</string>
     <string name="title_device_alias_hint">Имя устройства в почтовом сообщении (оставьте пустым, чтобы использовать имя по умолчанию)</string>
-    <string name="title_edit_phone">Редактирование номера</string>
-    <string name="title_edit_recipient">Редактирование получателя</string>
+    <string name="title_edit">Изменить</string>
     <string name="title_email_address">Почтовый адрес</string>
     <string name="title_email_language">Язык почтового сообщения</string>
     <string name="title_email_language_hint">Язык почтового сообщения</string>
@@ -91,6 +90,7 @@
     <string name="title_not_set">не указано</string>
     <string name="title_notify_on_send">Уведомлять об отправке</string>
     <string name="title_notify_send_success">Показывать уведомление об успешной отправке почты</string>
+    <string name="title_number_filter">Фильтр номеров</string>
     <string name="title_open_source">Открытый исходный код</string>
     <string name="title_open_source_and_third_party">Открытый исходный код и ПО сторонних производителей</string>
     <string name="title_outgoing_email_address">Адрес исходящей почты</string>
@@ -104,18 +104,17 @@
     <string name="title_server_test">Отправить тестовое сообщение</string>
     <string name="title_text_filter">Фильтр текста</string>
     <string name="title_text_filter_any">Любой текст</string>
+    <string name="title_text_fragment">Фрагмент текста</string>
     <string name="title_triggers">Триггеры</string>
     <string name="title_triggers_hint">События, вызывающие отправку почты</string>
     <string name="title_unacceptable_phone_numbers">Заблокированные номера ({size})</string>
+    <string name="title_unacceptable_text">Запрещеные слова</string>
     <string name="title_undo">Отмена</string>
     <string name="title_use_black_white_list">Использовать черный/белый список</string>
     <string name="title_version">Версия приложения: {version}</string>
     <string name="title_what_email_contain">Содержание почтового сообщения</string>
     <string name="title_white_list_used">Используется белый список</string>
     <string name="title_whitelist">Белый список</string>
-    <string name="title_number_filter">Фильтр номеров</string>
-    <string name="title_acceptable_text">Разрешенные слова</string>
-    <string name="title_unacceptable_text">Запрещеные слова</string>
 
     <string-array name="titles_triggers">
         <item>Входящие SMS</item>

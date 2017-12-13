@@ -94,13 +94,13 @@ abstract class FilterListFragment extends Fragment {
             }
         });
 
-        view.post(new Runnable() {
-
-            @Override
-            public void run() {
-                addButton.show();
-            }
-        });
+//        view.post(new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                addButton.show();
+//            }
+//        });
 
         return view;
     }

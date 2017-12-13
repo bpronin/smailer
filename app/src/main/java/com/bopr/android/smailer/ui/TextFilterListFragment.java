@@ -14,7 +14,7 @@ abstract class TextFilterListFragment extends FilterListFragment {
     @Override
     EditFilterListItemDialogFragment createEditItemDialog(String text) {
         EditTextDialogFragment dialog = new EditTextDialogFragment();
-        dialog.setTitle(text == null ? R.string.title_add_text_fragment : R.string.title_edit_text_fragment);
+        dialog.setTitle(text == null ? R.string.title_add : R.string.title_edit);
         dialog.setInitialValue(text);
         return dialog;
     }
