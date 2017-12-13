@@ -2,7 +2,6 @@
 <LinearLayout
     android:id="@+id/edit_text_container"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -14,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="48dp"
-        android:labelFor="@+id/edit_text_address"
+        android:labelFor="@+id/edit_text"
         android:paddingEnd="4dp"
         android:paddingStart="4dp"
         android:textColor="?android:attr/textColorSecondary"/>
@@ -25,21 +24,13 @@
         android:orientation="horizontal">
 
         <EditText
-            android:id="@+id/edit_text_address"
+            android:id="@+id/edit_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:inputType="textEmailAddress"
             android:selectAllOnFocus="true"/>
 
-        <ImageButton
-            android:id="@+id/button_browse_contacts"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="@string/message_select_email_from_contacts"
-            android:src="@drawable/account_black"
-            tools:ignore="ContentDescription"/>
-
     </LinearLayout>
+
 
 </LinearLayout>

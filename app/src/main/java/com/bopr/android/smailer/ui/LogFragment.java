@@ -126,7 +126,7 @@ public class LogFragment extends Fragment {
             String number = selectedEvent.getPhone();
 
             PhoneEventFilter filter = Settings.loadFilter(getActivity());
-            filter.getBlacklist().add(number);
+            filter.getNumberBlacklist().add(number);
             Settings.saveFilter(getActivity(), filter);
 
             Toast.makeText(getActivity(),
@@ -142,7 +142,7 @@ public class LogFragment extends Fragment {
             String number = selectedEvent.getPhone();
 
             PhoneEventFilter filter = Settings.loadFilter(getActivity());
-            filter.getWhitelist().add(number);
+            filter.getNumberWhitelist().add(number);
             Settings.saveFilter(getActivity(), filter);
 
             Toast.makeText(getActivity(),

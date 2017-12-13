@@ -113,6 +113,9 @@
     <string name="title_what_email_contain">Содержание почтового сообщения</string>
     <string name="title_white_list_used">Используется белый список</string>
     <string name="title_whitelist">Белый список</string>
+    <string name="title_number_filter">Фильтр номеров</string>
+    <string name="title_acceptable_text">Разрешенные слова</string>
+    <string name="title_unacceptable_text">Запрещеные слова</string>
 
     <string-array name="titles_triggers">
         <item>Входящие SMS</item>

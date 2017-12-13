@@ -129,6 +129,10 @@ public class Util {
         return parseSeparated(s, ",", true);
     }
 
+    public static Set<String> parseCommaSeparatedSet(String s) {
+        return new HashSet<>(parseCommaSeparated(s));
+    }
+
     @SafeVarargs
     public static <T> Set<T> asSet(T... values) {
         return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(values)));
@@ -170,13 +174,4 @@ public class Util {
         return phone != null ? phone.replaceAll("\\D", "") : null;
     }
 
-    public static boolean containsPhone(Collection<String> phones, String phone) {
-        String p = normalizePhone(phone);
-        for (String s : phones) {
-            if (safeEquals(normalizePhone(s), p)) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

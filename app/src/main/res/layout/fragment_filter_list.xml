@@ -18,12 +18,10 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@android:id/list"
-            android:name="com.bopr.android.smailer.ui.BlacklistFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layoutManager="LinearLayoutManager"
-            tools:context="com.bopr.android.smailer.ui.BlacklistFragment"
-            tools:listitem="@layout/list_item_phone"/>
+            tools:listitem="@layout/list_item_filter"/>
 
         <TextView
             android:id="@+id/text_empty"

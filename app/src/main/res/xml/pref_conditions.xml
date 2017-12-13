@@ -8,21 +8,38 @@
         android:summary="@string/title_triggers_hint"
         android:title="@string/title_triggers"/>
 
-    <SwitchPreference
-        android:key="message_filter_use_white_list"
-        android:title="@string/title_use_black_white_list"/>
+    <PreferenceCategory android:title="@string/title_number_filter">
+        <SwitchPreference
+            android:key="message_filter_use_white_list"
+            android:title="@string/title_use_black_white_list"/>
 
-    <Preference
-        android:key="message_filter_blacklist"
-        android:title="@string/title_blacklist"/>
+        <Preference
+            android:key="message_filter_blacklist"
+            android:title="@string/title_blacklist"/>
 
-    <Preference
-        android:key="message_filter_whitelist"
-        android:title="@string/title_whitelist"/>
+        <Preference
+            android:key="message_filter_whitelist"
+            android:title="@string/title_whitelist"/>
+    </PreferenceCategory>
 
-    <EditTextPreference
-        android:key="message_filter_pattern"
-        android:dialogMessage="@string/title_regexp"
-        android:title="@string/title_text_filter">
-    </EditTextPreference>
+    <PreferenceCategory android:title="@string/title_text_filter">
+        <SwitchPreference
+            android:key="message_filter_text_use_white_list"
+            android:title="@string/title_use_black_white_list"/>
+
+        <Preference
+            android:key="message_filter_text_blacklist"
+            android:title="@string/title_blacklist"/>
+
+        <Preference
+            android:key="message_filter_text_whitelist"
+            android:title="@string/title_whitelist"/>
+    </PreferenceCategory>
+
+    <!--<EditTextPreference-->
+        <!--android:dialogMessage="@string/title_regexp"-->
+        <!--android:key="message_filter_pattern"-->
+        <!--android:title="@string/title_text_filter">-->
+    <!--</EditTextPreference>-->
+
 </PreferenceScreen>

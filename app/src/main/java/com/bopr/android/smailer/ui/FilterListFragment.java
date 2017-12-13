@@ -3,6 +3,7 @@ package com.bopr.android.smailer.ui;
 import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
@@ -27,14 +28,13 @@ import java.util.Set;
 
 import static com.bopr.android.smailer.Settings.getPreferences;
 import static com.bopr.android.smailer.util.TagFormatter.formatFrom;
-import static com.bopr.android.smailer.util.Util.normalizePhone;
 
 /**
  * Base for black/whitelist fragments.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-abstract class PhonesFragment extends Fragment {
+abstract class FilterListFragment extends Fragment {
 
     private ListAdapter listAdapter;
     private RecyclerView listView;
@@ -64,7 +64,7 @@ abstract class PhonesFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_phones, container, false);
+        View view = inflater.inflate(R.layout.fragment_filter_list, container, false);
 
         listView = view.findViewById(android.R.id.list);
         listView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
@@ -79,7 +79,7 @@ abstract class PhonesFragment extends Fragment {
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder holder, int swipeDir) {
-                removeItems(new int[]{holder.getAdapterPosition()});
+                onRemoveItems(new int[]{holder.getAdapterPosition()});
             }
 
         });
@@ -90,7 +90,7 @@ abstract class PhonesFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                addItem();
+                onAddItem();
             }
         });
 
@@ -111,9 +111,16 @@ abstract class PhonesFragment extends Fragment {
         loadItems();
     }
 
-    abstract Set<String> getPhoneList(PhoneEventFilter filter);
+    abstract Set<String> getItemsList(PhoneEventFilter filter);
 
-    abstract void setPhoneList(PhoneEventFilter filter, List<String> list);
+    abstract void setItemsList(PhoneEventFilter filter, List<String> list);
+
+    @NonNull
+    abstract EditFilterListItemDialogFragment createEditItemDialog(String text);
+
+    String getItemText(String text) {
+        return text;
+    }
 
     protected void updateEmptyText() {
         View view = getView();
@@ -139,74 +146,72 @@ abstract class PhonesFragment extends Fragment {
 
         listView.setAdapter(listAdapter);
 
-        List<String> list = new ArrayList<>(getPhoneList(Settings.loadFilter(getActivity())));
+        List<String> list = new ArrayList<>(getItemsList(Settings.loadFilter(getActivity())));
         Collections.sort(list);
 
         List<Item> items = new ArrayList<>();
-        for (String phone : list) {
-            items.add(new Item(phone));
+        for (String item : list) {
+            items.add(new Item(item));
         }
         listAdapter.setItems(items);
     }
 
     private void persistItems() {
-        List<String> phones = new ArrayList<>();
+        List<String> items = new ArrayList<>();
         for (Item item : listAdapter.getItems()) {
-            phones.add(item.phone);
+            items.add(item.text);
         }
 
         PhoneEventFilter filter = Settings.loadFilter(getActivity());
-        setPhoneList(filter, phones);
+        setItemsList(filter, items);
         Settings.saveFilter(getActivity(), filter);
     }
 
-    private void addItem() {
-        showItemEditor(null);
+    private void onAddItem() {
+        editItem(null);
     }
 
-    private void editItem(Item item) {
+    private void onEditItem(Item item) {
         if (item != null) {
-            showItemEditor(item);
+            editItem(item);
         }
     }
 
-    private void removeItems(int[] positions) {
+    private void onRemoveItems(int[] positions) {
         List<Item> savedItems = new ArrayList<>(listAdapter.getItems());
         List<Item> removedItems = listAdapter.removeItems(positions);
         persistItems();
         showUndoAction(removedItems, savedItems);
     }
 
-    private void undoRemove(List<Item> lastItems) {
+    private void onUndoRemove(List<Item> lastItems) {
         listAdapter.setItems(lastItems);
         persistItems();
     }
 
-    private boolean isItemExists(String phone) {
-        String p = normalizePhone(phone);
+    private boolean isItemExists(String text) {
+        String p = getItemText(text);
         for (Item item : listAdapter.getItems()) {
-            if (p.equals(normalizePhone(item.phone))) {
+            if (p.equals(getItemText(item.text))) {
                 return true;
             }
         }
         return false;
     }
 
-    private void showItemEditor(final Item item) {
-        EditPhoneDialogFragment dialog = new EditPhoneDialogFragment();
-        dialog.setTitle(item == null ? R.string.title_add_phone : R.string.title_edit_phone);
-        dialog.setInitialValue(item == null ? null : item.phone);
-        dialog.setCallback(new EditPhoneDialogFragment.Callback() {
+    private void editItem(final Item item) {
+        EditFilterListItemDialogFragment dialog = createEditItemDialog(item == null ? null : item.text);
+        dialog.setCallback(new EditFilterListItemDialogFragment.Callback() {
 
             @Override
-            public void onOkClick(String phone) {
-                if (isItemExists(phone) && (item == null || !item.phone.equals(phone))) {
+            public void onOkClick(String text) {
+                if (isItemExists(text) && (item == null || !item.text.equals(text))) {
                     Toast.makeText(getActivity(), formatFrom(R.string.message_list_item_already_exists, getResources())
-                            .put("item", phone)
+                            .put("item", text)
                             .format(), Toast.LENGTH_LONG).show();
-                } else if (!Util.isTrimEmpty(phone)) {
+                } else if (!Util.isTrimEmpty(text)) {
                     /* note: if we rotated device reference to "this" is changed here */
-                    Item newItem = new Item(phone);
+                    Item newItem = new Item(text);
                     listAdapter.replaceItem(item, newItem);
                     persistItems();
                 }
@@ -232,7 +237,7 @@ abstract class PhonesFragment extends Fragment {
 
                     @Override
                     public void onClick(View v) {
-                        undoRemove(lastItems);
+                        onUndoRemove(lastItems);
                     }
                 })
                 .show();
@@ -240,10 +245,10 @@ abstract class PhonesFragment extends Fragment {
 
     private class Item {
 
-        private final String phone;
+        private final String text;
 
-        private Item(String phone) {
-            this.phone = phone;
+        private Item(String text) {
+            this.text = text;
         }
     }
 
@@ -254,18 +259,18 @@ abstract class PhonesFragment extends Fragment {
         @Override
         public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(getActivity());
-            return new ItemViewHolder(inflater.inflate(R.layout.list_item_phone, parent, false));
+            return new ItemViewHolder(inflater.inflate(R.layout.list_item_filter, parent, false));
         }
 
         @Override
         public void onBindViewHolder(final ItemViewHolder holder, int position) {
             final Item item = getItem(position);
-            holder.textView.setText(item != null ? item.phone : null);
+            holder.textView.setText(item != null ? item.text : null);
             holder.itemView.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
-                    editItem(item);
+                    onEditItem(item);
                 }
             });
         }

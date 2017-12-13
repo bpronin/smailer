@@ -4,12 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.util.Util;
 
 import static android.preference.Preference.OnPreferenceChangeListener;
 import static com.bopr.android.smailer.Settings.*;
 import static com.bopr.android.smailer.util.TagFormatter.formatFrom;
-import static com.bopr.android.smailer.util.Util.isEmpty;
 import static com.bopr.android.smailer.util.Util.parseCommaSeparated;
 
 /**
@@ -24,16 +22,16 @@ public class ConditionsFragment extends BasePreferenceFragment {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_conditions);
 
-        Preference blacklistPreference = findPreference(KEY_PREF_FILTER_BLACKLIST);
-        blacklistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        Preference numberBlacklistPreference = findPreference(KEY_PREF_FILTER_BLACKLIST);
+        numberBlacklistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                startActivity(new Intent(getActivity(), BlacklistActivity.class));
+                startActivity(new Intent(getActivity(), NumberBlacklistActivity.class));
                 return true;
             }
         });
-        blacklistPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+        numberBlacklistPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
@@ -43,16 +41,16 @@ public class ConditionsFragment extends BasePreferenceFragment {
             }
         });
 
-        Preference whitelistPreference = findPreference(KEY_PREF_FILTER_WHITELIST);
-        whitelistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        Preference numberWhitelistPreference = findPreference(KEY_PREF_FILTER_WHITELIST);
+        numberWhitelistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                startActivity(new Intent(getActivity(), WhitelistActivity.class));
+                startActivity(new Intent(getActivity(), NumberWhitelistActivity.class));
                 return true;
             }
         });
-        whitelistPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+        numberWhitelistPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
@@ -73,20 +71,55 @@ public class ConditionsFragment extends BasePreferenceFragment {
 
         });
 
-        findPreference(KEY_PREF_FILTER_PATTERN).setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+        Preference textBlacklistPreference = findPreference(KEY_PREF_FILTER_TEXT_BLACKLIST);
+        textBlacklistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                startActivity(new Intent(getActivity(), TextBlacklistActivity.class));
+                return true;
+            }
+        });
+        textBlacklistPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
-                String regexp = (String) value;
-                if (!isEmpty(regexp)) {
-                    updateSummary(regexp, preference, true);
-                } else {
-                    updateSummary(R.string.title_text_filter_any, preference, true);
-                }
+                updateSummary(formatListAndSize((String) value, R.string.title_unacceptable_text,
+                        R.string.title_none), preference, true);
+                return true;
+            }
+        });
+
+        Preference textWhitelistPreference = findPreference(KEY_PREF_FILTER_TEXT_WHITELIST);
+        textWhitelistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                startActivity(new Intent(getActivity(), TextWhitelistActivity.class));
+                return true;
+            }
+        });
+        textWhitelistPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object value) {
+                updateSummary(formatListAndSize((String) value, R.string.title_acceptable_text,
+                        R.string.title_any), preference, true);
+                return true;
+            }
+        });
+
+        findPreference(KEY_PREF_FILTER_TEXT_USE_WHITE_LIST).setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object value) {
+                boolean useWhitelist = (Boolean) value;
+                updateSummary(useWhitelist ? R.string.title_white_list_used : R.string.title_black_list_used, preference, true);
                 return true;
             }
 
         });
+
     }
 
     private String formatListAndSize(String value, int pattern, int zeroSizeText) {

@@ -47,11 +47,19 @@
             android:label="@string/title_email_recipients">
         </activity>
         <activity
-            android:name=".ui.BlacklistActivity"
+            android:name=".ui.NumberBlacklistActivity"
             android:label="@string/title_blacklist">
         </activity>
         <activity
-            android:name=".ui.WhitelistActivity"
+            android:name=".ui.NumberWhitelistActivity"
+            android:label="@string/title_whitelist">
+        </activity>
+        <activity
+            android:name=".ui.TextBlacklistActivity"
+            android:label="@string/title_blacklist">
+        </activity>
+        <activity
+            android:name=".ui.TextWhitelistActivity"
             android:label="@string/title_whitelist">
         </activity>
         <activity
