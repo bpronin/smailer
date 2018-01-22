@@ -3,12 +3,6 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_log"
-        app:showAsAction="never"
-        android:title="@string/title_activity_log"
-        />
-
-    <item
         android:id="@+id/action_about"
         app:showAsAction="never"
         android:title="@string/title_about"

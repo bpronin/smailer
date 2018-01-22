@@ -75,6 +75,15 @@ public class MainFragment extends BasePreferenceFragment {
             }
         });
 
+        findPreference(KEY_PREF_LOG).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                startActivity(new Intent(getActivity(), LogActivity.class));
+                return true;
+            }
+        });
+
         preferenceChangeListener = new OnSharedPreferenceChangeListener() {
 
             @Override
@@ -109,8 +118,6 @@ public class MainFragment extends BasePreferenceFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_about) {
             showAboutDialog();
-        } else if (item.getItemId() == R.id.action_log) {
-            startActivity(new Intent(getActivity(), LogActivity.class));
         }
 
         return super.onOptionsItemSelected(item);

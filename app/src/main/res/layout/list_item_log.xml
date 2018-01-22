@@ -11,6 +11,14 @@
               tools:ignore="HardcodedText">
 
     <ImageView
+        android:id="@+id/list_item_type"
+        android:layout_width="24sp"
+        android:layout_height="24sp"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_call"
+        android:contentDescription="Event type"/>
+
+    <ImageView
         android:id="@+id/list_item_direction"
         android:layout_width="24sp"
         android:layout_height="24sp"
@@ -18,13 +26,6 @@
         android:src="@drawable/ic_call_in"
         android:contentDescription="Call direction"/>
 
-    <ImageView
-        android:id="@+id/list_item_type"
-        android:layout_width="24sp"
-        android:layout_height="24sp"
-        android:layout_gravity="center"
-        android:src="@drawable/ic_call"
-        android:contentDescription="Event type"/>
 
     <TextView
         android:id="@+id/list_item_phone"

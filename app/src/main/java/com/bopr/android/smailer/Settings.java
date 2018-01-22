@@ -37,6 +37,7 @@ public class Settings {
     public static final String KEY_PREF_NOTIFY_SEND_SUCCESS = "notify_send_success";
     public static final String KEY_PREF_MORE = "more";
     public static final String KEY_PREF_FILTERS = "filters";
+    public static final String KEY_PREF_LOG = "log";
     public static final String KEY_PREF_TEST_MAIL_SERVER = "test_mail_server";
     public static final String KEY_PREF_RESEND_UNSENT = "resend_unsent";
     public static final String KEY_PREF_FILTER_USE_WHITE_LIST = "message_filter_use_white_list";

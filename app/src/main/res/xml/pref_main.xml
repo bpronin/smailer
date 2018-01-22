@@ -17,4 +17,8 @@
         android:key="more"
         android:title="@string/title_more"/>
 
+    <PreferenceScreen
+        android:key="log"
+        android:title="@string/title_activity_log"/>
+
 </PreferenceScreen>
