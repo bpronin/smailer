@@ -39,16 +39,16 @@ public class DatabaseTest extends BaseTest {
      */
     @Test
     public void testAddGet() throws Exception {
-        database.putEvent(new PhoneEvent("1", true, 1000L, 0L, true, null, null, false, "Test 1", PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("2", false, 2000L, 0L, false, null, null, false, null, PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("3", true, 3000L, 0L, false, null, null, false, null, PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("4", false, 4000L, 0L, false, null, null, false, null, PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("5", true, 5000L, 0L, true, null, null, false, null, PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("6", true, 6000L, 7000L, false, null, null, false, "Test 1", PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("7", false, 7000L, 0L, false, null, null, false, "Test 2", PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("8", true, 8000L, 0L, false, null, null, false, "Test 3", PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("9", false, 9000L, 0L, false, null, null, false, "Test 4", PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("10", true, 10000L, 20000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), true, "Test 10", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("1", true, 1000L, 0L, true, null, null, "Test 1", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("2", false, 2000L, 0L, false, null, null, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("3", true, 3000L, 0L, false, null, null, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("4", false, 4000L, 0L, false, null, null, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("5", true, 5000L, 0L, true, null, null, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("6", true, 6000L, 7000L, false, null, null, "Test 1", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("7", false, 7000L, 0L, false, null, null, "Test 2", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("8", true, 8000L, 0L, false, null, null, "Test 3", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("9", false, 9000L, 0L, false, null, null, "Test 4", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("10", true, 10000L, 20000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), "Test 10", PhoneEvent.State.PENDING));
 
         List<PhoneEvent> items = database.getEvents().getAll();
 
@@ -76,7 +76,7 @@ public class DatabaseTest extends BaseTest {
      */
     @Test
     public void testUpdateGet() throws Exception {
-        PhoneEvent message = new PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), true, "Test 1", PhoneEvent.State.PENDING);
+        PhoneEvent message = new PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), "Test 1", PhoneEvent.State.PENDING);
         database.putEvent(message);
 
         List<PhoneEvent> items = database.getEvents().getAll();
@@ -132,16 +132,16 @@ public class DatabaseTest extends BaseTest {
      */
     @Test
     public void testClear() throws Exception {
-        database.putEvent(new PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), true, "Test 1", PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("2", false, 2000L, 0L, false, null, null, false, null, PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("3", true, 3000L, 0L, false, null, null, false, null, PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("4", false, 4000L, 0L, false, null, null, false, null, PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("5", true, 5000L, 0L, true, null, null, false, null, PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("6", true, 6000L, 7000L, false, null, null, false, "Test 1", PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("7", false, 7000L, 0L, false, null, null, false, "Test 2", PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("8", true, 8000L, 0L, false, null, null, false, "Test 3", PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("9", false, 9000L, 0L, false, null, null, false, "Test 4", PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("10", true, 10000L, 0L, true, null, null, false, "Test 5", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), "Test 1", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("2", false, 2000L, 0L, false, null, null, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("3", true, 3000L, 0L, false, null, null, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("4", false, 4000L, 0L, false, null, null, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("5", true, 5000L, 0L, true, null, null, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("6", true, 6000L, 7000L, false, null, null, "Test 1", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("7", false, 7000L, 0L, false, null, null, "Test 2", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("8", true, 8000L, 0L, false, null, null, "Test 3", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("9", false, 9000L, 0L, false, null, null, "Test 4", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("10", true, 10000L, 0L, true, null, null, "Test 5", PhoneEvent.State.PENDING));
 
         assertEquals(10, database.getEvents().getCount());
 
@@ -157,16 +157,16 @@ public class DatabaseTest extends BaseTest {
      */
     @Test
     public void testPurge() throws Exception {
-        database.putEvent(new PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), true, "Test 1", PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("2", false, 2000L, 0L, false, null, null, false, null, PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("3", true, 3000L, 0L, false, null, null, false, null, PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("4", false, 4000L, 0L, false, null, null, false, null, PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("5", true, 5000L, 0L, true, null, null, false, null, PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("6", true, 6000L, 7000L, false, null, null, false, "Test 1", PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("7", false, 7000L, 0L, false, null, null, false, "Test 2", PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("8", true, 8000L, 0L, false, null, null, false, "Test 3", PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("9", false, 9000L, 0L, false, null, null, false, "Test 4", PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("10", true, 10000L, 0L, true, null, null, false, "Test 5", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), "Test 1", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("2", false, 2000L, 0L, false, null, null, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("3", true, 3000L, 0L, false, null, null, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("4", false, 4000L, 0L, false, null, null, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("5", true, 5000L, 0L, true, null, null, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("6", true, 6000L, 7000L, false, null, null, "Test 1", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("7", false, 7000L, 0L, false, null, null, "Test 2", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("8", true, 8000L, 0L, false, null, null, "Test 3", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("9", false, 9000L, 0L, false, null, null, "Test 4", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("10", true, 10000L, 0L, true, null, null, "Test 5", PhoneEvent.State.PENDING));
 
         /* first we have 9 records */
         assertEquals(10, database.getEvents().getCount());
@@ -215,16 +215,16 @@ public class DatabaseTest extends BaseTest {
      */
     @Test
     public void testGetUnsentMessages() throws Exception {
-        database.putEvent(new PhoneEvent("1", true, 1000L, 0L, true, null, null, true, "Test 1", PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("2", false, 2000L, 0L, false, null, null, true, null, PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("3", true, 3000L, 0L, false, null, null, true, null, PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("4", false, 4000L, 0L, false, null, null, true, null, PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("5", true, 5000L, 0L, true, null, null, true, null, PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("6", true, 6000L, 7000L, false, null, null, false, "Test 1", PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("7", false, 7000L, 0L, false, null, null, false, "Test 2", PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("8", true, 8000L, 0L, false, null, null, false, "Test 3", PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("9", false, 9000L, 0L, false, null, null, false, "Test 4", PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("10", true, 10000L, 20000L, false, null, null, false, "Test 10", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("1", true, 1000L, 0L, true, null, null, "Test 1", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("2", false, 2000L, 0L, false, null, null, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("3", true, 3000L, 0L, false, null, null, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("4", false, 4000L, 0L, false, null, null, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("5", true, 5000L, 0L, true, null, null, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("6", true, 6000L, 7000L, false, null, null, "Test 1", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("7", false, 7000L, 0L, false, null, null, "Test 2", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("8", true, 8000L, 0L, false, null, null, "Test 3", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("9", false, 9000L, 0L, false, null, null, "Test 4", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("10", true, 10000L, 20000L, false, null, null, "Test 10", PhoneEvent.State.PENDING));
 
         List<PhoneEvent> items = database.getUnsentEvents().getAll();
 

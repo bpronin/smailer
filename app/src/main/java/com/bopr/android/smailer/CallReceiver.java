@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import static android.telephony.TelephonyManager.*;
 import static com.bopr.android.smailer.MailerService.createEventIntent;
+import static java.lang.System.currentTimeMillis;
 
 /**
  * Receives phone call intents and starts mailer service.
@@ -52,20 +53,23 @@ public class CallReceiver extends BroadcastReceiver {
         if (!lastCallState.equals(callState)) {
             if (callState.equals(EXTRA_STATE_RINGING)) {
                 isIncomingCall = true;
-                callStartTime = System.currentTimeMillis();
+                callStartTime = currentTimeMillis();
                 lastCallNumber = intent.getStringExtra(EXTRA_INCOMING_NUMBER);
                 log.debug("Call received");
             } else if (callState.equals(EXTRA_STATE_OFFHOOK)) {
                 isIncomingCall = lastCallState.equals(EXTRA_STATE_RINGING);
-                callStartTime = System.currentTimeMillis();
+                callStartTime = currentTimeMillis();
                 log.debug(("Started " + (isIncomingCall ? "incoming" : "outgoing") + " call"));
             } else if (callState.equals(EXTRA_STATE_IDLE)) {
                 if (lastCallState.equals(EXTRA_STATE_RINGING)) {
-                    onMissedCall(context, lastCallNumber, callStartTime);
+                    log.debug("Processing missed call");
+                    processCall(context, true, true);
                 } else if (isIncomingCall) {
-                    onIncomingCall(context, lastCallNumber, callStartTime, System.currentTimeMillis());
+                    log.debug("Processing incoming call");
+                    processCall(context, true, false);
                 } else {
-                    onOutgoingCall(context, lastCallNumber, callStartTime, System.currentTimeMillis());
+                    log.debug("Processing outgoing call");
+                    processCall(context, false, false);
                 }
                 lastCallNumber = null;
             }
@@ -74,35 +78,13 @@ public class CallReceiver extends BroadcastReceiver {
         }
     }
 
-    private void onIncomingCall(Context context, String number, long start, long end) {
-        log.debug("Processing incoming call");
-
+    private void processCall(Context context, boolean incoming, boolean missed) {
         PhoneEvent event = new PhoneEvent();
-        event.setIncoming(true);
-        event.setPhone(number);
-        event.setStartTime(start);
-        event.setEndTime(end);
-
-        context.startService(createEventIntent(context, event));
-    }
-
-    private void onOutgoingCall(Context context, String number, long start, long end) {
-        PhoneEvent event = new PhoneEvent();
-        event.setIncoming(false);
-        event.setPhone(number);
-        event.setStartTime(start);
-        event.setEndTime(end);
-
-        context.startService(createEventIntent(context, event));
-    }
-
-    private void onMissedCall(Context context, String number, long start) {
-        log.debug("Processing missed call");
-
-        PhoneEvent event = new PhoneEvent();
-        event.setMissed(true);
-        event.setPhone(number);
-        event.setStartTime(start);
+        event.setPhone(lastCallNumber);
+        event.setStartTime(callStartTime);
+        event.setEndTime(currentTimeMillis());
+        event.setIncoming(incoming);
+        event.setMissed(missed);
 
         context.startService(createEventIntent(context, event));
     }

@@ -31,8 +31,7 @@ public class PhoneEvent {
     }
 
     public PhoneEvent(String phone, boolean incoming, Long startTime, Long endTime, boolean missed,
-                      String text, GeoCoordinates location, boolean processed,
-                      String details, State state) {
+                      String text, GeoCoordinates location, String details, State state) {
         this.text = text;
         this.endTime = endTime;
         this.startTime = startTime;

@@ -13,6 +13,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import static com.bopr.android.smailer.Settings.*;
+import static com.bopr.android.smailer.util.TagFormatter.formatFrom;
 import static com.bopr.android.smailer.util.Util.*;
 
 /**
@@ -93,7 +94,7 @@ class MailFormatter {
     String getSubject() {
         Locale currentLocale = setupLocale();
 
-        String result = TagFormatter.formatFrom(SUBJECT_PATTERN, context)
+        String result = formatFrom(SUBJECT_PATTERN, context)
                 .putResource("app_name", R.string.app_name)
                 .put("source", getTriggerText())
                 .put("phone", event.getPhone())
@@ -113,7 +114,7 @@ class MailFormatter {
         Locale currentLocale = setupLocale();
 
         String footerText = getFooterText();
-        TagFormatter formatter = TagFormatter.formatFrom(BODY_PATTERN)
+        TagFormatter formatter = formatFrom(BODY_PATTERN)
                 .put("message", getMessageText())
                 .put("footer", footerText);
         if (!isEmpty(footerText)) {
@@ -161,7 +162,7 @@ class MailFormatter {
             } else {
                 pattern = R.string.email_body_outgoing_call;
             }
-            return TagFormatter.formatFrom(pattern, context)
+            return formatFrom(pattern, context)
                     .put("duration", formatDuration(event.getCallDuration()))
                     .format();
         }
@@ -192,7 +193,7 @@ class MailFormatter {
                 if (!isEmpty(callerText) || !isEmpty(locationText)) {
                     text.append("<br>");
                 }
-                text.append(TagFormatter.formatFrom(R.string.email_body_sent, context)
+                text.append(formatFrom(R.string.email_body_sent, context)
                         .put("device_name", deviceNameText)
                         .put("time", timeText));
             }
@@ -229,8 +230,8 @@ class MailFormatter {
             }
         }
 
-        return TagFormatter.formatFrom(resourceId, context)
-                .put("phone", TagFormatter.formatFrom(PHONE_LINK_PATTERN)
+        return formatFrom(resourceId, context)
+                .put("phone", formatFrom(PHONE_LINK_PATTERN)
                         .put("phone", event.getPhone()))
                 .put("name", name)
                 .format();
@@ -239,7 +240,7 @@ class MailFormatter {
     @Nullable
     private String getDeviceNameText() {
         if (!isEmpty(deviceName)) {
-            return " " + TagFormatter.formatFrom(R.string.email_body_from, context)
+            return " " + formatFrom(R.string.email_body_from, context)
                     .put("device_name", deviceName)
                     .format();
         }
@@ -250,7 +251,7 @@ class MailFormatter {
     private String getTimeText() {
         if (event.getStartTime() != null) {
             DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
-            return " " + TagFormatter.formatFrom(R.string.email_body_time, context)
+            return " " + formatFrom(R.string.email_body_time, context)
                     .put("time", df.format(new Date(event.getStartTime())))
                     .format();
         }
@@ -260,15 +261,15 @@ class MailFormatter {
     private String getLocationText() {
         GeoCoordinates location = event.getLocation();
         if (location != null) {
-            return TagFormatter.formatFrom(R.string.email_body_location, context)
-                    .put("location", TagFormatter.formatFrom(GOOGLE_MAP_LINK_PATTERN)
+            return formatFrom(R.string.email_body_location, context)
+                    .put("location", formatFrom(GOOGLE_MAP_LINK_PATTERN)
                             .put("latitude", location.getLatitude())
                             .put("longitude", location.getLongitude())
                             .put("location", formatLocation(location, "&#176;", "\'", "\"", "N", "S", "W", "E"))
                             .format())
                     .format();
         } else {
-            return TagFormatter.formatFrom(R.string.email_body_location, context)
+            return formatFrom(R.string.email_body_location, context)
                     .putResource("location", Locator.isPermissionsDenied(context)
                             ? R.string.email_body_unknown_location_no_permission
                             : R.string.email_body_unknown_location)
