@@ -105,7 +105,7 @@
     <string name="title_rules">Правила</string>
     <string name="title_rules_for_sending">Условия для отправки почты</string>
     <string name="title_sender_account">Учетная запись</string>
-    <string name="title_server_test">Отправить тестовое сообщение</string>
+    <string name="title_server_test">Tестовое сообщение</string>
     <string name="title_text_filter">Фильтр текста</string>
     <string name="title_text_filter_any">Любой текст</string>
     <string name="title_text_fragment">Фрагмент текста</string>
