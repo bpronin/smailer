@@ -11,7 +11,7 @@
 
     <PreferenceScreen
         android:key="filters"
-        android:title="@string/title_conditions"/>
+        android:title="@string/title_rules"/>
 
     <PreferenceScreen
         android:key="more"

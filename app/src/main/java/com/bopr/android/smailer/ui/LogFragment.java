@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
@@ -236,12 +237,18 @@ public class LogFragment extends Fragment {
 
                 String phone = event.getPhone();
                 holder.phoneView.setText(phone);
-                int phoneColor = getPhoneColor(phone);
-                if (phoneColor != 0) {
-                    holder.phoneView.setTextColor(getResources().getColor(phoneColor));
+                if (phoneEventFilter.isPhoneBlacklisted(phone)) {
+                    holder.phoneView.setPaintFlags(holder.defaultPhoneFlags | Paint.STRIKE_THRU_TEXT_FLAG);
                 } else {
-                    holder.phoneView.setTextColor(holder.detfaultPhoneColors);
+                    holder.phoneView.setPaintFlags(holder.defaultPhoneFlags);
                 }
+
+//                int phoneColor = getPhoneColor(phone);
+//                if (phoneColor != 0) {
+//                    holder.phoneView.setTextColor(getResources().getColor(phoneColor));
+//                } else {
+//                    holder.phoneView.setTextColor(holder.detfaultPhoneColors);
+//                }
 
                 holder.typeView.setImageResource(Formats.eventTypeImage(event));
                 holder.directionView.setImageResource(Formats.eventDirectionImage(event));
@@ -301,7 +308,8 @@ public class LogFragment extends Fragment {
         private final TextView phoneView;
         private final TextView timeView;
         private final ImageView stateView;
-        private final ColorStateList detfaultPhoneColors;
+        private final ColorStateList defaultPhoneColors;
+        private final int defaultPhoneFlags;
 
         private ItemViewHolder(View view) {
             super(view);
@@ -310,7 +318,8 @@ public class LogFragment extends Fragment {
             directionView = view.findViewById(R.id.list_item_direction);
             phoneView = view.findViewById(R.id.list_item_phone);
             stateView = view.findViewById(R.id.list_item_state);
-            detfaultPhoneColors = phoneView.getTextColors();
+            defaultPhoneColors = phoneView.getTextColors();
+            defaultPhoneFlags = phoneView.getPaintFlags();
         }
     }
 

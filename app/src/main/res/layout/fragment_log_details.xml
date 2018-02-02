@@ -9,6 +9,14 @@
     android:padding="20dp"
     tools:ignore="HardcodedText">
 
+    <TextView
+        android:id="@+id/text_type_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="Missed call"
+        android:textStyle="bold"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -55,16 +63,19 @@
         android:text="Message body"
         />
 
+<!--
     <View
         android:layout_width="fill_parent"
         android:layout_height="1dip"
         android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
         android:background="@android:color/darker_gray"/>
+-->
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="8dp"
         android:orientation="horizontal">
 
         <Space

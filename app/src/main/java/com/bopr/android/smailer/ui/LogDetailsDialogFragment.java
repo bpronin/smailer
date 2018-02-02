@@ -63,6 +63,7 @@ public class LogDetailsDialogFragment extends DialogFragment {
             view.<TextView>findViewById(R.id.text_time).setText(formatTime(value.getStartTime()));
             view.<ImageView>findViewById(R.id.image_event_result).setImageResource(Formats.eventStateImage(value));
             view.<TextView>findViewById(R.id.text_result).setText(Formats.eventStateText(value));
+            view.<TextView>findViewById(R.id.text_type_title).setText(Formats.eventTypeText(getContext(), value));
 
             dialog = AndroidUtil.dialogBuilder(getActivity())
                     .setView(view)

@@ -4,7 +4,7 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:background="?android:attr/selectableItemBackground"
-              android:padding="8dp"
+              android:padding="14dp"
               android:clickable="true"
               android:focusable="true"
               android:orientation="horizontal"
@@ -12,16 +12,16 @@
 
     <ImageView
         android:id="@+id/list_item_type"
-        android:layout_width="24sp"
-        android:layout_height="24sp"
+        android:layout_width="22sp"
+        android:layout_height="22sp"
         android:layout_gravity="center"
         android:src="@drawable/ic_call"
         android:contentDescription="Event type"/>
 
     <ImageView
         android:id="@+id/list_item_direction"
-        android:layout_width="24sp"
-        android:layout_height="24sp"
+        android:layout_width="22sp"
+        android:layout_height="22sp"
         android:layout_gravity="center"
         android:src="@drawable/ic_call_in"
         android:contentDescription="Call direction"/>
@@ -46,8 +46,8 @@
 
     <ImageView
         android:id="@+id/list_item_state"
-        android:layout_width="24sp"
-        android:layout_height="24sp"
+        android:layout_width="22sp"
+        android:layout_height="22sp"
         android:gravity="center"
         android:src="@drawable/ic_state_bypass"
         android:contentDescription="Event state"/>

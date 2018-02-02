@@ -19,7 +19,7 @@
     <string name="email_subject_missed_call">Missed call from</string>
     <string name="email_subject_outgoing_call">Outgoing call to</string>
     <string name="email_subject_outgoing_sms">Outgoing SMS to</string>
-    <string name="event_state_done">Sent mail</string>
+    <string name="event_state_done">Sent email</string>
     <string name="event_state_ignored">Ignored</string>
     <string name="event_state_pending" >Pending</string>
     <string name="event_time_pattern" translatable="false">yyyy-MM-dd HH:mm:ss</string>
@@ -32,7 +32,6 @@
     <string name="message_activity_log_ask_clear">Clear log?</string>
     <string name="message_added_to_blacklist">{number} added to blacklist</string>
     <string name="message_added_to_whitelist">{number} added to whitelist</string>
-    <string name="message_phone_removed_from_filter">{number} removed from filter</string>
     <string name="message_item_removed">Item removed</string>
     <string name="message_items_removed">{count} item removed</string>
     <string name="message_list_item_already_exists">{item} already exists</string>
@@ -44,6 +43,7 @@
     <string name="message_permission_rationale_read_sms">Permission to {permission} is needed to send out email when SMS has sent.</string>
     <string name="message_permission_rationale_receive_sms">Permission to {permission} is needed to send out email when SMS has received.</string>
     <string name="message_permissions_denied">Since permissions not granted some options have been disabled.</string>
+    <string name="message_phone_removed_from_filter">{number} removed from filter</string>
     <string name="message_recipient_already_exists">Recipient {name} already exists</string>
     <string name="message_select_email_from_contacts">Select from contacts</string>
     <string name="message_server_test_success">Test message successfully sent</string>
@@ -66,21 +66,17 @@
     <string name="title_add">Add</string>
     <string name="title_add_to_blacklist">Add phone to blacklist</string>
     <string name="title_add_to_whitelist">Add phone to whitelist</string>
-    <string name="title_remove_from_filter">Remove phone from filter</string>
-    <string name="title_additional_settings">Additional settings</string>
+    <string name="title_additional_settings">Options</string>
     <string name="title_any">any</string>
     <string name="title_black_list_used">Black list used</string>
     <string name="title_blacklist">Blacklist</string>
     <string name="title_clear">Clear</string>
-    <string name="title_conditions">Conditions</string>
-    <string name="title_conditions_for_sending">Conditions for sending email</string>
     <string name="title_content">Email content</string>
     <string name="title_copyright" translatable="false">Copyright © BoPr, 2016</string>
     <string name="title_details">Details</string>
     <string name="title_device_alias">Device name</string>
     <string name="title_device_alias_hint">Device name to be shown in email message (leave blank to use default)</string>
     <string name="title_edit">Edit</string>
-    <string name="title_remove">Remove</string>
     <string name="title_email_address">Email address</string>
     <string name="title_email_language">Email language</string>
     <string name="title_email_language_hint">Email message language</string>
@@ -92,11 +88,11 @@
     <string name="title_host">Host</string>
     <string name="title_list_empty">List is empty</string>
     <string name="title_log_empty">Log is empty</string>
-    <string name="title_more">More</string>
+    <string name="title_more">Options</string>
     <string name="title_none">none</string>
     <string name="title_not_set">not specified</string>
     <string name="title_notify_on_send">Notify of send</string>
-    <string name="title_notify_send_success">Display message when email successfully sent</string>
+    <string name="title_notify_send_success">Display notification when email successfully sent</string>
     <string name="title_number_filter">Phone number filter</string>
     <string name="title_open_source">Open source</string>
     <string name="title_open_source_and_third_party">Open source and third party software</string>
@@ -106,8 +102,12 @@
     <string name="title_phone_number">Phone number</string>
     <string name="title_port">Port</string>
     <string name="title_regexp">Regular expression</string>
+    <string name="title_remove">Remove</string>
+    <string name="title_remove_from_filter">Remove phone from filter</string>
     <string name="title_resend">Resend</string>
     <string name="title_resend_hint">Try to resend unsent messages when connection is established</string>
+    <string name="title_rules">Rules</string>
+    <string name="title_rules_for_sending">Rules for sending email</string>
     <string name="title_sender_account">Account</string>
     <string name="title_server_test">Send test message</string>
     <string name="title_text_filter">Text filter</string>

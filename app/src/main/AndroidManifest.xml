@@ -76,7 +76,7 @@
         </activity>
         <activity
             android:name=".ui.ConditionsActivity"
-            android:label="@string/title_conditions_for_sending">
+            android:label="@string/title_rules_for_sending">
         </activity>
 
         <service android:name=".MailerService"/>

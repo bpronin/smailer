@@ -41,6 +41,7 @@
     <string name="message_permission_rationale_read_sms">Чтобы отправлять почтовое сообщение при отправлеии SMS, необходимо разрешение \"{permission}\".</string>
     <string name="message_permission_rationale_receive_sms">Чтобы отправлять почтовое сообщение при приеме SMS, необходимо разрешение \"{permission}\".</string>
     <string name="message_permissions_denied">Некоторые настройки отключены, поскольку разрешения не получены.</string>
+    <string name="message_phone_removed_from_filter">{number} удален из фильтра</string>
     <string name="message_recipient_already_exists">Получатель {name} уже существует</string>
     <string name="message_select_email_from_contacts">Выбрать из контактов</string>
     <string name="message_server_test_success">Тестовое сообщение отправлено</string>
@@ -68,14 +69,11 @@
     <string name="title_black_list_used">Используется черный список</string>
     <string name="title_blacklist">Черный список</string>
     <string name="title_clear">Очистить</string>
-    <string name="title_conditions">Условия</string>
-    <string name="title_conditions_for_sending">Условия для отправки почты</string>
     <string name="title_content">Содержание</string>
     <string name="title_details">Детали</string>
     <string name="title_device_alias">Имя устройства</string>
     <string name="title_device_alias_hint">Имя устройства в почтовом сообщении (оставьте пустым, чтобы использовать имя по умолчанию)</string>
     <string name="title_edit">Изменить</string>
-    <string name="title_remove">Удалить</string>
     <string name="title_email_address">Почтовый адрес</string>
     <string name="title_email_language">Язык почтового сообщения</string>
     <string name="title_email_language_hint">Язык почтового сообщения</string>
@@ -100,8 +98,12 @@
     <string name="title_phone_number">Номер телефона</string>
     <string name="title_port">Порт</string>
     <string name="title_regexp">Регулярное выражение</string>
+    <string name="title_remove">Удалить</string>
+    <string name="title_remove_from_filter">Удалить номер из фильтра</string>
     <string name="title_resend">Повторная отправка</string>
     <string name="title_resend_hint">Заново отправлять неотправленные сообщения при появлении соединения</string>
+    <string name="title_rules">Правила</string>
+    <string name="title_rules_for_sending">Условия для отправки почты</string>
     <string name="title_sender_account">Учетная запись</string>
     <string name="title_server_test">Отправить тестовое сообщение</string>
     <string name="title_text_filter">Фильтр текста</string>
@@ -117,8 +119,6 @@
     <string name="title_what_email_contain">Содержание почтового сообщения</string>
     <string name="title_white_list_used">Используется белый список</string>
     <string name="title_whitelist">Белый список</string>
-    <string name="title_remove_from_filter">Удалить номер из фильтра</string>
-    <string name="message_phone_removed_from_filter">{number} удален из фильтра</string>
 
     <string-array name="titles_triggers">
         <item>Входящие SMS</item>
