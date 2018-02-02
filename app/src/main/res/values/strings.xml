@@ -77,6 +77,7 @@
     <string name="title_device_alias">Device name</string>
     <string name="title_device_alias_hint">Device name to be shown in email message (leave blank to use default)</string>
     <string name="title_edit">Edit</string>
+    <string name="title_remove">Remove</string>
     <string name="title_email_address">Email address</string>
     <string name="title_email_language">Email language</string>
     <string name="title_email_language_hint">Email message language</string>

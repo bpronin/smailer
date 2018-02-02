@@ -27,7 +27,7 @@ public class LogFragment extends Fragment {
 
     private Database database;
     private RecyclerView listView;
-    private PhoneEvent selectedEvent;
+    private PhoneEvent selectedListItem;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -76,9 +76,9 @@ public class LogFragment extends Fragment {
     }
 
     public void showDetails() {
-        if (selectedEvent != null) {
+        if (selectedListItem != null) {
             LogDetailsDialogFragment fragment = new LogDetailsDialogFragment();
-            fragment.setValue(selectedEvent);
+            fragment.setValue(selectedListItem);
             fragment.showDialog((FragmentActivity) getActivity());
         }
     }
@@ -122,8 +122,8 @@ public class LogFragment extends Fragment {
     }
 
     private void addToBlacklist() {
-        if (selectedEvent != null) {
-            String number = selectedEvent.getPhone();
+        if (selectedListItem != null) {
+            String number = selectedListItem.getPhone();
 
             PhoneEventFilter filter = Settings.loadFilter(getActivity());
             filter.getNumberBlacklist().add(number);
@@ -138,8 +138,8 @@ public class LogFragment extends Fragment {
     }
 
     private void addToWhitelist() {
-        if (selectedEvent != null) {
-            String number = selectedEvent.getPhone();
+        if (selectedListItem != null) {
+            String number = selectedListItem.getPhone();
 
             PhoneEventFilter filter = Settings.loadFilter(getActivity());
             filter.getNumberWhitelist().add(number);
@@ -185,7 +185,7 @@ public class LogFragment extends Fragment {
 
                     @Override
                     public void onClick(View v) {
-                        selectedEvent = event;
+                        selectedListItem = event;
                         showDetails();
                     }
                 });
@@ -193,7 +193,7 @@ public class LogFragment extends Fragment {
 
                     @Override
                     public boolean onLongClick(View v) {
-                        selectedEvent = event;
+                        selectedListItem = event;
                         return false;
                     }
                 });

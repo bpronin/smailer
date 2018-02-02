@@ -74,6 +74,7 @@
     <string name="title_device_alias">Имя устройства</string>
     <string name="title_device_alias_hint">Имя устройства в почтовом сообщении (оставьте пустым, чтобы использовать имя по умолчанию)</string>
     <string name="title_edit">Изменить</string>
+    <string name="title_remove">Удалить</string>
     <string name="title_email_address">Почтовый адрес</string>
     <string name="title_email_language">Язык почтового сообщения</string>
     <string name="title_email_language_hint">Язык почтового сообщения</string>

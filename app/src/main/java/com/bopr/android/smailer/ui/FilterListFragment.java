@@ -11,9 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.bopr.android.smailer.PhoneEventFilter;
@@ -26,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import static android.support.v7.widget.RecyclerView.NO_POSITION;
 import static com.bopr.android.smailer.Settings.getPreferences;
 import static com.bopr.android.smailer.util.TagFormatter.formatFrom;
 
@@ -38,9 +37,9 @@ abstract class FilterListFragment extends Fragment {
 
     private ListAdapter listAdapter;
     private RecyclerView listView;
-    private FloatingActionButton addButton;
     private SharedPreferences preferences;
     private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
+    private int selectedListPosition = NO_POSITION;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,18 +78,19 @@ abstract class FilterListFragment extends Fragment {
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder holder, int swipeDir) {
-                onRemoveItems(new int[]{holder.getAdapterPosition()});
+                selectedListPosition = holder.getAdapterPosition();
+                removeSelectedItem();
             }
 
         });
         itemTouchHelper.attachToRecyclerView(listView);
 
-        addButton = view.findViewById(R.id.button_add);
+        FloatingActionButton addButton = view.findViewById(R.id.button_add);
         addButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                onAddItem();
+                addItem();
             }
         });
 
@@ -109,6 +109,20 @@ abstract class FilterListFragment extends Fragment {
     public void onStart() {
         super.onStart();
         loadItems();
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_edit_item:
+                editSelectedItem();
+                return true;
+            case R.id.action_remove_item:
+                removeSelectedItem();
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
     }
 
     abstract Set<String> getItemsList(PhoneEventFilter filter);
@@ -167,28 +181,6 @@ abstract class FilterListFragment extends Fragment {
         Settings.saveFilter(getActivity(), filter);
     }
 
-    private void onAddItem() {
-        editItem(null);
-    }
-
-    private void onEditItem(Item item) {
-        if (item != null) {
-            editItem(item);
-        }
-    }
-
-    private void onRemoveItems(int[] positions) {
-        List<Item> savedItems = new ArrayList<>(listAdapter.getItems());
-        List<Item> removedItems = listAdapter.removeItems(positions);
-        persistItems();
-        showUndoAction(removedItems, savedItems);
-    }
-
-    private void onUndoRemove(List<Item> lastItems) {
-        listAdapter.setItems(lastItems);
-        persistItems();
-    }
-
     private boolean isItemExists(String text) {
         String p = getItemText(text);
         for (Item item : listAdapter.getItems()) {
@@ -197,6 +189,17 @@ abstract class FilterListFragment extends Fragment {
             }
         }
         return false;
+    }
+
+    private void addItem() {
+        editItem(null);
+    }
+
+    private void editSelectedItem() {
+        if (selectedListPosition != NO_POSITION) {
+            Item item = listAdapter.getItem(selectedListPosition);
+            editItem(item);
+        }
     }
 
     private void editItem(final Item item) {
@@ -221,6 +224,20 @@ abstract class FilterListFragment extends Fragment {
         dialog.showDialog(((FragmentActivity) getActivity()));
     }
 
+    private void removeSelectedItem() {
+        if (selectedListPosition != NO_POSITION) {
+            List<Item> savedItems = new ArrayList<>(listAdapter.getItems());
+            List<Item> removedItems = listAdapter.removeItems(new int[]{selectedListPosition});
+            persistItems();
+            showUndoAction(removedItems, savedItems);
+        }
+    }
+
+    private void undoRemoveItem(List<Item> lastItems) {
+        listAdapter.setItems(lastItems);
+        persistItems();
+    }
+
     private void showUndoAction(List<Item> removedItems, final List<Item> lastItems) {
         String title;
         if (removedItems.size() == 1) {
@@ -237,7 +254,7 @@ abstract class FilterListFragment extends Fragment {
 
                     @Override
                     public void onClick(View v) {
-                        onUndoRemove(lastItems);
+                        undoRemoveItem(lastItems);
                     }
                 })
                 .show();
@@ -263,14 +280,31 @@ abstract class FilterListFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(final ItemViewHolder holder, int position) {
-            final Item item = getItem(position);
+        public void onBindViewHolder(final ItemViewHolder holder, final int position) {
+            Item item = getItem(position);
             holder.textView.setText(item != null ? item.text : null);
+
             holder.itemView.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
-                    onEditItem(item);
+                    selectedListPosition = holder.getAdapterPosition();
+                    editSelectedItem();
+                }
+            });
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+
+                @Override
+                public boolean onLongClick(View v) {
+                    selectedListPosition = holder.getAdapterPosition();
+                    return false;
+                }
+            });
+            holder.itemView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+
+                @Override
+                public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+                    getActivity().getMenuInflater().inflate(R.menu.menu_item_filter_list, menu);
                 }
             });
         }
