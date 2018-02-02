@@ -44,7 +44,7 @@
     <string name="message_phone_removed_from_filter">{number} удален из фильтра</string>
     <string name="message_recipient_already_exists">Получатель {name} уже существует</string>
     <string name="message_select_email_from_contacts">Выбрать из контактов</string>
-    <string name="message_server_test_success">Тестовое сообщение отправлено</string>
+    <string name="message_server_test_success">Тестовое сообщение отправлено.\nПроверьте вашу почту.</string>
     <string name="message_server_testing">Проверка настроек сервера…</string>
     <string name="notification_email_send">Почта отправлена.</string>
     <string name="notification_error_authentication">Неверное имя пользователя или пароль.</string>

@@ -70,7 +70,7 @@ public class MainFragment extends BasePreferenceFragment {
 
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                startActivity(new Intent(getActivity(), ConditionsActivity.class));
+                startActivity(new Intent(getActivity(), RulesActivity.class));
                 return true;
             }
         });

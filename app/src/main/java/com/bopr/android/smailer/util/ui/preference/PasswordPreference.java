@@ -7,7 +7,6 @@ import android.os.Build;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.util.AttributeSet;
-
 import com.bopr.android.smailer.Cryptor;
 
 import static android.text.InputType.TYPE_CLASS_TEXT;
@@ -24,22 +23,25 @@ public class PasswordPreference extends EditTextPreference {
     private Cryptor cryptor;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public PasswordPreference(Context context, AttributeSet attrs, int defStyleAttr,
-                              int defStyleRes) {
+    @SuppressWarnings("unused")
+    public PasswordPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init();
     }
 
+    @SuppressWarnings("unused")
     public PasswordPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
+    @SuppressWarnings("unused")
     public PasswordPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
+    @SuppressWarnings("unused")
     public PasswordPreference(Context context) {
         super(context);
         init();

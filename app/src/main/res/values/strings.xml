@@ -46,7 +46,7 @@
     <string name="message_phone_removed_from_filter">{number} removed from filter</string>
     <string name="message_recipient_already_exists">Recipient {name} already exists</string>
     <string name="message_select_email_from_contacts">Select from contacts</string>
-    <string name="message_server_test_success">Test message successfully sent</string>
+    <string name="message_server_test_success">Test message have been successfully sent.\nCheck your email.</string>
     <string name="message_server_testing">Validating server settings…</string>
     <string name="notification_email_send">Email sent.</string>
     <string name="notification_error_authentication">Username and password not accepted.</string>

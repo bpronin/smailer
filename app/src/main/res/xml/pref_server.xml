@@ -36,7 +36,7 @@
         android:singleLine="true"
         android:title="@string/title_port"/>
 
-    <Preference
+    <com.bopr.android.smailer.ui.TestServerPreference
         android:key="test_mail_server"
         android:persistent="false"
         android:widgetLayout="@layout/pref_test_mail_server"/>

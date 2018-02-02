@@ -1,23 +1,14 @@
 package com.bopr.android.smailer.ui;
 
-import android.app.Activity;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.text.TextUtils;
-import android.widget.Toast;
-import com.bopr.android.smailer.Cryptor;
-import com.bopr.android.smailer.MailTransport;
-import com.bopr.android.smailer.MailerProperties;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.Util;
 import com.bopr.android.smailer.util.validator.EmailTextValidator;
 
-import javax.mail.MessagingException;
-
 import static android.preference.Preference.OnPreferenceChangeListener;
-import static com.bopr.android.smailer.MailTransport.*;
 import static com.bopr.android.smailer.Settings.*;
 import static com.bopr.android.smailer.util.Util.isEmpty;
 
@@ -78,16 +69,6 @@ public class ServerFragment extends BasePreferenceFragment {
                 return true;
             }
         });
-
-        findPreference(KEY_PREF_TEST_MAIL_SERVER).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-//                checkSettings();
-                sendTestMessage();
-                return true;
-            }
-        });
     }
 
     private void updateAccountPreference(String value) {
@@ -131,54 +112,6 @@ public class ServerFragment extends BasePreferenceFragment {
             String host = "smtp." + ss[1];
             hostPreference.setText(host);
             updateHostPreference(host);
-        }
-    }
-
-    protected void sendTestMessage() {
-        new SendTestMailTask(getActivity(), getSharedPreferences()).execute();
-    }
-
-    private static class SendTestMailTask extends LongAsyncTask<Void, Void, Integer> {
-
-        private SharedPreferences preferences;
-
-        private SendTestMailTask(Activity context, SharedPreferences preferences) {
-            super(context);
-            this.preferences = preferences;
-        }
-
-        @Override
-        protected Integer doInBackground(Void... params) {
-            MailTransport transport = new MailTransport();
-            Cryptor cryptor = new Cryptor(getContext());
-            MailerProperties pp = new MailerProperties(preferences);
-            transport.init(pp.getUser(), cryptor.decrypt(pp.getPassword()), pp.getHost(), pp.getPort());
-            int result = transport.checkConnection();
-            if (result == CHECK_RESULT_OK) {
-                try {
-                    transport.send("[" + getContext().getString(R.string.app_name) + "] TEST",
-                            "This is the test message", pp.getUser(), pp.getRecipients());
-                } catch (MessagingException e) {
-                    result = CHECK_RESULT_NOT_CONNECTED;
-                }
-            }
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(Integer result) {
-            super.onPostExecute(result);
-
-            int message;
-            if (result == CHECK_RESULT_NOT_CONNECTED) {
-                message = R.string.notification_error_connect;
-            } else if (result == CHECK_RESULT_AUTHENTICATION) {
-                message = R.string.notification_error_authentication;
-            } else {
-                message = R.string.message_server_test_success;
-            }
-
-            Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
         }
     }
 

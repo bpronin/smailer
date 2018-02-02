@@ -17,7 +17,7 @@ import static com.bopr.android.smailer.util.Util.parseCommaSeparated;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class ConditionsFragment extends BasePreferenceFragment {
+public class RulesFragment extends BasePreferenceFragment {
 
     private OnSharedPreferenceChangeListener preferenceChangeListener;
     private Preference phoneBlacklistPreference;
