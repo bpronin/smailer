@@ -237,9 +237,9 @@ public class LogFragment extends Fragment {
 
                 holder.phoneView.setText(event.getPhone());
                 if (phoneEventFilter.acceptPhone(event.getPhone())) {
-                    holder.phoneView.setPaintFlags(holder.defaultPhoneFlags | Paint.STRIKE_THRU_TEXT_FLAG);
-                } else {
                     holder.phoneView.setPaintFlags(holder.defaultPhoneFlags);
+                } else {
+                    holder.phoneView.setPaintFlags(holder.defaultPhoneFlags | Paint.STRIKE_THRU_TEXT_FLAG);
                 }
 
                 holder.typeView.setImageResource(Formats.eventTypeImage(event));
