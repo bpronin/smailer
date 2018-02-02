@@ -1,6 +1,8 @@
 package com.bopr.android.smailer.ui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.Preference;
 import com.bopr.android.smailer.R;
@@ -17,13 +19,19 @@ import static com.bopr.android.smailer.util.Util.parseCommaSeparated;
  */
 public class ConditionsFragment extends BasePreferenceFragment {
 
+    private OnSharedPreferenceChangeListener preferenceChangeListener;
+    private Preference phoneBlacklistPreference;
+    private Preference phoneWhitelistPreference;
+    private Preference textBlacklistPreference;
+    private Preference textWhitelistPreference;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_conditions);
 
-        Preference numberBlacklistPreference = findPreference(KEY_PREF_FILTER_BLACKLIST);
-        numberBlacklistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        phoneBlacklistPreference = findPreference(KEY_PREF_FILTER_BLACKLIST);
+        phoneBlacklistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -31,7 +39,7 @@ public class ConditionsFragment extends BasePreferenceFragment {
                 return true;
             }
         });
-        numberBlacklistPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+        phoneBlacklistPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
@@ -41,8 +49,8 @@ public class ConditionsFragment extends BasePreferenceFragment {
             }
         });
 
-        Preference numberWhitelistPreference = findPreference(KEY_PREF_FILTER_WHITELIST);
-        numberWhitelistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        phoneWhitelistPreference = findPreference(KEY_PREF_FILTER_WHITELIST);
+        phoneWhitelistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -50,7 +58,7 @@ public class ConditionsFragment extends BasePreferenceFragment {
                 return true;
             }
         });
-        numberWhitelistPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+        phoneWhitelistPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
@@ -71,7 +79,7 @@ public class ConditionsFragment extends BasePreferenceFragment {
 
         });
 
-        Preference textBlacklistPreference = findPreference(KEY_PREF_FILTER_TEXT_BLACKLIST);
+        textBlacklistPreference = findPreference(KEY_PREF_FILTER_TEXT_BLACKLIST);
         textBlacklistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
             @Override
@@ -90,7 +98,7 @@ public class ConditionsFragment extends BasePreferenceFragment {
             }
         });
 
-        Preference textWhitelistPreference = findPreference(KEY_PREF_FILTER_TEXT_WHITELIST);
+        textWhitelistPreference = findPreference(KEY_PREF_FILTER_TEXT_WHITELIST);
         textWhitelistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
             @Override
@@ -120,6 +128,26 @@ public class ConditionsFragment extends BasePreferenceFragment {
 
         });
 
+        preferenceChangeListener = new OnSharedPreferenceChangeListener() {
+
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                updateControls();
+            }
+        };
+        getSharedPreferences().registerOnSharedPreferenceChangeListener(preferenceChangeListener);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateControls();
+    }
+
+    @Override
+    public void onDestroy() {
+        getSharedPreferences().unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
+        super.onDestroy();
     }
 
     private String formatListAndSize(String value, int pattern, int zeroSizeText) {
@@ -129,6 +157,16 @@ public class ConditionsFragment extends BasePreferenceFragment {
         } else {
             return formatFrom(pattern, getActivity()).putResource("size", zeroSizeText).format();
         }
+    }
+
+    private void updateControls() {
+        boolean phoneUseWhiteList = getSharedPreferences().getBoolean(KEY_PREF_FILTER_USE_WHITE_LIST, true);
+        phoneWhitelistPreference.setEnabled(phoneUseWhiteList);
+        phoneBlacklistPreference.setEnabled(!phoneUseWhiteList);
+
+        boolean textUseWhiteList = getSharedPreferences().getBoolean(KEY_PREF_FILTER_TEXT_USE_WHITE_LIST, true);
+        textWhitelistPreference.setEnabled(textUseWhiteList);
+        textBlacklistPreference.setEnabled(!textUseWhiteList);
     }
 
 }

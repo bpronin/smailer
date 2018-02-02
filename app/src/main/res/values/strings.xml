@@ -70,6 +70,7 @@
     <string name="title_black_list_used">Black list used</string>
     <string name="title_blacklist">Blacklist</string>
     <string name="title_clear">Clear</string>
+    <string name="title_conditions">Conditions</string>
     <string name="title_conditions_for_sending">Conditions for sending email</string>
     <string name="title_content">Email content</string>
     <string name="title_copyright" translatable="false">Copyright © BoPr, 2016</string>

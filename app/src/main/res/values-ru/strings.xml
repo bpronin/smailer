@@ -68,6 +68,7 @@
     <string name="title_black_list_used">Используется черный список</string>
     <string name="title_blacklist">Черный список</string>
     <string name="title_clear">Очистить</string>
+    <string name="title_conditions">Условия</string>
     <string name="title_conditions_for_sending">Условия для отправки почты</string>
     <string name="title_content">Содержание</string>
     <string name="title_details">Детали</string>

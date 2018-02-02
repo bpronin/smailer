@@ -11,7 +11,7 @@
 
     <PreferenceScreen
         android:key="filters"
-        android:title="@string/title_conditions_for_sending"/>
+        android:title="@string/title_conditions"/>
 
     <PreferenceScreen
         android:key="more"

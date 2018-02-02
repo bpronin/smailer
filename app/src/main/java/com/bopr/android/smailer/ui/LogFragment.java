@@ -77,21 +77,13 @@ public class LogFragment extends Fragment {
         loadData();
     }
 
-    public void showDetails() {
-        if (selectedListItemPosition != NO_POSITION) {
-            LogDetailsDialogFragment fragment = new LogDetailsDialogFragment();
-            fragment.setValue(listAdapter.getItem(selectedListItemPosition));
-            fragment.showDialog((FragmentActivity) getActivity());
-        }
-    }
-
     private void loadData() {
         listAdapter = new ListAdapter(getActivity(), database.getEvents());
         listView.setAdapter(listAdapter);
         updateEmptyText();
     }
 
-    protected void updateEmptyText() {
+    private void updateEmptyText() {
         View view = getView();
         if (view != null) {
             TextView text = view.findViewById(R.id.text_empty);
@@ -100,6 +92,14 @@ public class LogFragment extends Fragment {
             } else {
                 text.setVisibility(View.GONE);
             }
+        }
+    }
+
+    private void showDetails() {
+        if (selectedListItemPosition != NO_POSITION) {
+            LogDetailsDialogFragment fragment = new LogDetailsDialogFragment();
+            fragment.setValue(listAdapter.getItem(selectedListItemPosition));
+            fragment.showDialog((FragmentActivity) getActivity());
         }
     }
 
