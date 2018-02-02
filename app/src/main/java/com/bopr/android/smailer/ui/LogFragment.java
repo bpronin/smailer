@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.bopr.android.smailer.*;
 import com.bopr.android.smailer.util.AndroidUtil;
 
+import static android.support.v7.widget.RecyclerView.NO_POSITION;
 import static com.bopr.android.smailer.util.TagFormatter.formatFrom;
 
 
@@ -27,7 +28,8 @@ public class LogFragment extends Fragment {
 
     private Database database;
     private RecyclerView listView;
-    private PhoneEvent selectedListItem;
+    private ListAdapter listAdapter;
+    private int selectedListItemPosition = NO_POSITION;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -76,15 +78,16 @@ public class LogFragment extends Fragment {
     }
 
     public void showDetails() {
-        if (selectedListItem != null) {
+        if (selectedListItemPosition != NO_POSITION) {
             LogDetailsDialogFragment fragment = new LogDetailsDialogFragment();
-            fragment.setValue(selectedListItem);
+            fragment.setValue(listAdapter.getItem(selectedListItemPosition));
             fragment.showDialog((FragmentActivity) getActivity());
         }
     }
 
     private void loadData() {
-        listView.setAdapter(new ListAdapter(getActivity(), database.getEvents()));
+        listAdapter = new ListAdapter(getActivity(), database.getEvents());
+        listView.setAdapter(listAdapter);
         updateEmptyText();
     }
 
@@ -122,8 +125,8 @@ public class LogFragment extends Fragment {
     }
 
     private void addToBlacklist() {
-        if (selectedListItem != null) {
-            String number = selectedListItem.getPhone();
+        if (selectedListItemPosition != NO_POSITION) {
+            String number = listAdapter.getItem(selectedListItemPosition).getPhone();
 
             PhoneEventFilter filter = Settings.loadFilter(getActivity());
             filter.getNumberBlacklist().add(number);
@@ -138,8 +141,8 @@ public class LogFragment extends Fragment {
     }
 
     private void addToWhitelist() {
-        if (selectedListItem != null) {
-            String number = selectedListItem.getPhone();
+        if (selectedListItemPosition != NO_POSITION) {
+            String number = listAdapter.getItem(selectedListItemPosition).getPhone();
 
             PhoneEventFilter filter = Settings.loadFilter(getActivity());
             filter.getNumberWhitelist().add(number);
@@ -170,7 +173,7 @@ public class LogFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(ItemViewHolder holder, int position) {
+        public void onBindViewHolder(final ItemViewHolder holder, int position) {
             PhoneEvent item = getItem(position);
             if (item != null) {
                 final PhoneEvent event = cursor.get();
@@ -185,7 +188,7 @@ public class LogFragment extends Fragment {
 
                     @Override
                     public void onClick(View v) {
-                        selectedListItem = event;
+                        selectedListItemPosition = holder.getAdapterPosition();
                         showDetails();
                     }
                 });
@@ -193,7 +196,7 @@ public class LogFragment extends Fragment {
 
                     @Override
                     public boolean onLongClick(View v) {
-                        selectedListItem = event;
+                        selectedListItemPosition = holder.getAdapterPosition();
                         return false;
                     }
                 });
