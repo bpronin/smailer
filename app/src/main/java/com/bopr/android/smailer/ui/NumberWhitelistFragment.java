@@ -15,12 +15,12 @@ public class NumberWhitelistFragment extends PhoneFilterListFragment {
 
     @Override
     Set<String> getItemsList(PhoneEventFilter filter) {
-        return filter.getNumberWhitelist();
+        return filter.getPhoneWhitelist();
     }
 
     @Override
     void setItemsList(PhoneEventFilter filter, List<String> list) {
-        filter.setNumberWhitelist(new HashSet<>(list));
+        filter.setPhoneWhitelist(new HashSet<>(list));
     }
 
 }

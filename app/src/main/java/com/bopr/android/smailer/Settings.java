@@ -126,9 +126,9 @@ public class Settings {
     public static void saveFilter(Context context, PhoneEventFilter filter) {
         SharedPreferences.Editor editor = getPreferences(context).edit();
 
-        editor.putBoolean(KEY_PREF_FILTER_USE_WHITE_LIST, filter.isUseNumberWhiteList());
-        editor.putString(KEY_PREF_FILTER_BLACKLIST, commaSeparated(filter.getNumberBlacklist()));
-        editor.putString(KEY_PREF_FILTER_WHITELIST, commaSeparated(filter.getNumberWhitelist()));
+        editor.putBoolean(KEY_PREF_FILTER_USE_WHITE_LIST, filter.isUsePhoneWhiteList());
+        editor.putString(KEY_PREF_FILTER_BLACKLIST, commaSeparated(filter.getPhoneBlacklist()));
+        editor.putString(KEY_PREF_FILTER_WHITELIST, commaSeparated(filter.getPhoneWhitelist()));
         editor.putBoolean(KEY_PREF_FILTER_TEXT_USE_WHITE_LIST, filter.isUseTextWhiteList());
         editor.putString(KEY_PREF_FILTER_TEXT_BLACKLIST, commaSeparated(filter.getTextBlacklist()));
         editor.putString(KEY_PREF_FILTER_TEXT_WHITELIST, commaSeparated(filter.getTextWhitelist()));
@@ -142,9 +142,9 @@ public class Settings {
         PhoneEventFilter filter = new PhoneEventFilter();
 
         filter.setTriggers(preferences.getStringSet(KEY_PREF_EMAIL_TRIGGERS, Collections.<String>emptySet()));
-        filter.setUseNumberWhiteList(preferences.getBoolean(KEY_PREF_FILTER_USE_WHITE_LIST, true));
-        filter.setNumberBlacklist(parseCommaSeparatedSet(preferences.getString(KEY_PREF_FILTER_BLACKLIST, "")));
-        filter.setNumberWhitelist(parseCommaSeparatedSet(preferences.getString(KEY_PREF_FILTER_WHITELIST, "")));
+        filter.setUsePhoneWhiteList(preferences.getBoolean(KEY_PREF_FILTER_USE_WHITE_LIST, true));
+        filter.setPhoneBlacklist(parseCommaSeparatedSet(preferences.getString(KEY_PREF_FILTER_BLACKLIST, "")));
+        filter.setPhoneWhitelist(parseCommaSeparatedSet(preferences.getString(KEY_PREF_FILTER_WHITELIST, "")));
         filter.setUseTextWhiteList(preferences.getBoolean(KEY_PREF_FILTER_TEXT_USE_WHITE_LIST, true));
         filter.setTextBlacklist(parseCommaSeparatedSet(preferences.getString(KEY_PREF_FILTER_TEXT_BLACKLIST, "")));
         filter.setTextWhitelist(parseCommaSeparatedSet(preferences.getString(KEY_PREF_FILTER_TEXT_WHITELIST, "")));

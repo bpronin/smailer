@@ -3,7 +3,10 @@ package com.bopr.android.smailer.ui;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
@@ -29,7 +32,29 @@ public class LogFragment extends Fragment {
     private Database database;
     private RecyclerView listView;
     private ListAdapter listAdapter;
+    private PhoneEventFilter phoneEventFilter;
     private int selectedListItemPosition = NO_POSITION;
+    private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        preferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+                loadData();
+            }
+        };
+        Settings.getPreferences(getActivity()).registerOnSharedPreferenceChangeListener(preferenceChangeListener);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Settings.getPreferences(getActivity()).unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,6 +83,9 @@ public class LogFragment extends Fragment {
             case R.id.action_add_to_whitelist:
                 addToWhitelist();
                 return true;
+            case R.id.action_remove_from_lists:
+                removeFromLists();
+                return true;
             default:
                 return super.onContextItemSelected(item);
         }
@@ -80,6 +108,7 @@ public class LogFragment extends Fragment {
     private void loadData() {
         listAdapter = new ListAdapter(getActivity(), database.getEvents());
         listView.setAdapter(listAdapter);
+        phoneEventFilter = Settings.loadFilter(getActivity());
         updateEmptyText();
     }
 
@@ -128,9 +157,8 @@ public class LogFragment extends Fragment {
         if (selectedListItemPosition != NO_POSITION) {
             String number = listAdapter.getItem(selectedListItemPosition).getPhone();
 
-            PhoneEventFilter filter = Settings.loadFilter(getActivity());
-            filter.getNumberBlacklist().add(number);
-            Settings.saveFilter(getActivity(), filter);
+            phoneEventFilter.getPhoneBlacklist().add(number);
+            Settings.saveFilter(getActivity(), phoneEventFilter);
 
             Toast.makeText(getActivity(),
                     formatFrom(R.string.message_added_to_blacklist, getActivity())
@@ -144,9 +172,8 @@ public class LogFragment extends Fragment {
         if (selectedListItemPosition != NO_POSITION) {
             String number = listAdapter.getItem(selectedListItemPosition).getPhone();
 
-            PhoneEventFilter filter = Settings.loadFilter(getActivity());
-            filter.getNumberWhitelist().add(number);
-            Settings.saveFilter(getActivity(), filter);
+            phoneEventFilter.getPhoneWhitelist().add(number);
+            Settings.saveFilter(getActivity(), phoneEventFilter);
 
             Toast.makeText(getActivity(),
                     formatFrom(R.string.message_added_to_whitelist, getActivity())
@@ -156,9 +183,36 @@ public class LogFragment extends Fragment {
         }
     }
 
+    private void removeFromLists() {
+        if (selectedListItemPosition != NO_POSITION) {
+            String number = listAdapter.getItem(selectedListItemPosition).getPhone();
+
+            phoneEventFilter.getPhoneWhitelist().remove(number);
+            phoneEventFilter.getPhoneBlacklist().remove(number);
+            Settings.saveFilter(getActivity(), phoneEventFilter);
+
+            Toast.makeText(getActivity(),
+                    formatFrom(R.string.message_phone_removed_from_filter, getActivity())
+                            .put("number", number)
+                            .format(),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private int getPhoneColor(String phone) {
+        if (phoneEventFilter.isPhoneBlacklisted(phone)) {
+            return R.color.blackListedForeground;
+        } else if (phoneEventFilter.isPhoneWhitelisted(phone)) {
+            return R.color.whiteListedForeground;
+        } else {
+            return 0;
+        }
+    }
+
     private class ListAdapter extends RecyclerView.Adapter<ItemViewHolder> {
 
         private Context context;
+
         private Database.PhoneEventCursor cursor;
 
         private ListAdapter(Context context, Database.PhoneEventCursor cursor) {
@@ -179,7 +233,16 @@ public class LogFragment extends Fragment {
                 final PhoneEvent event = cursor.get();
 
                 holder.timeView.setText(DateFormat.format(getString(R.string.event_time_pattern), event.getStartTime()));
-                holder.phoneView.setText(event.getPhone());
+
+                String phone = event.getPhone();
+                holder.phoneView.setText(phone);
+                int phoneColor = getPhoneColor(phone);
+                if (phoneColor != 0) {
+                    holder.phoneView.setTextColor(getResources().getColor(phoneColor));
+                } else {
+                    holder.phoneView.setTextColor(holder.detfaultPhoneColors);
+                }
+
                 holder.typeView.setImageResource(Formats.eventTypeImage(event));
                 holder.directionView.setImageResource(Formats.eventDirectionImage(event));
                 holder.stateView.setImageResource(Formats.eventStateImage(event));
@@ -228,6 +291,7 @@ public class LogFragment extends Fragment {
             }
             return null;
         }
+
     }
 
     private class ItemViewHolder extends RecyclerView.ViewHolder {
@@ -237,6 +301,7 @@ public class LogFragment extends Fragment {
         private final TextView phoneView;
         private final TextView timeView;
         private final ImageView stateView;
+        private final ColorStateList detfaultPhoneColors;
 
         private ItemViewHolder(View view) {
             super(view);
@@ -245,6 +310,7 @@ public class LogFragment extends Fragment {
             directionView = view.findViewById(R.id.list_item_direction);
             phoneView = view.findViewById(R.id.list_item_phone);
             stateView = view.findViewById(R.id.list_item_state);
+            detfaultPhoneColors = phoneView.getTextColors();
         }
     }
 

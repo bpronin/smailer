@@ -42,26 +42,26 @@ public class PhoneEventFilterTest {
     @Test
     public void testBlackList() throws Exception {
         PhoneEventFilter filter = new PhoneEventFilter();
-        filter.setUseNumberWhiteList(false);
+        filter.setUsePhoneWhiteList(false);
         PhoneEvent event = new PhoneEvent();
 
-        filter.setNumberWhitelist(Collections.<String>emptySet());
-        filter.setNumberBlacklist(Collections.<String>emptySet());
+        filter.setPhoneWhitelist(Collections.<String>emptySet());
+        filter.setPhoneBlacklist(Collections.<String>emptySet());
         event.setPhone("111");
         assertTrue(filter.accept(event));
 
-        filter.setNumberBlacklist(new HashSet<>(asList("111", "333")));
+        filter.setPhoneBlacklist(new HashSet<>(asList("111", "333")));
         event.setPhone("111");
         assertFalse(filter.accept(event));
 
-        filter.setNumberBlacklist(new HashSet<>(asList("+1(11)", "333")));
+        filter.setPhoneBlacklist(new HashSet<>(asList("+1(11)", "333")));
         event.setPhone("1 11");
         assertFalse(filter.accept(event));
 
         event.setPhone("222");
         assertTrue(filter.accept(event));
 
-        filter.setNumberBlacklist(new HashSet<>(asList("111", "222")));
+        filter.setPhoneBlacklist(new HashSet<>(asList("111", "222")));
         event.setPhone("222");
         assertFalse(filter.accept(event));
     }
@@ -69,22 +69,22 @@ public class PhoneEventFilterTest {
     @Test
     public void testWhiteList() throws Exception {
         PhoneEventFilter filter = new PhoneEventFilter();
-        filter.setUseNumberWhiteList(true);
+        filter.setUsePhoneWhiteList(true);
         PhoneEvent event = new PhoneEvent();
 
-        filter.setNumberWhitelist(Collections.<String>emptySet());
-        filter.setNumberBlacklist(Collections.<String>emptySet());
+        filter.setPhoneWhitelist(Collections.<String>emptySet());
+        filter.setPhoneBlacklist(Collections.<String>emptySet());
         event.setPhone("111");
         assertFalse(filter.accept(event));
 
-        filter.setNumberWhitelist(new HashSet<>(asList("111", "333")));
+        filter.setPhoneWhitelist(new HashSet<>(asList("111", "333")));
         event.setPhone("111");
         assertTrue(filter.accept(event));
 
         event.setPhone("222");
         assertFalse(filter.accept(event));
 
-        filter.setNumberWhitelist(new HashSet<>(asList("111", "222")));
+        filter.setPhoneWhitelist(new HashSet<>(asList("111", "222")));
         event.setPhone("222");
         assertTrue(filter.accept(event));
     }

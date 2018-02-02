@@ -12,4 +12,9 @@
         android:title="@string/title_add_to_whitelist"
         />
 
+    <item
+        android:id="@+id/action_remove_from_lists"
+        android:title="@string/title_remove_from_filter"
+        />
+
 </menu>

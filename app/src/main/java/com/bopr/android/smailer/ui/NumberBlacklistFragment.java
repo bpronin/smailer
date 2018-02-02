@@ -19,12 +19,12 @@ public class NumberBlacklistFragment extends FilterListFragment {
 
     @Override
     Set<String> getItemsList(PhoneEventFilter filter) {
-        return filter.getNumberBlacklist();
+        return filter.getPhoneBlacklist();
     }
 
     @Override
     void setItemsList(PhoneEventFilter filter, List<String> list) {
-        filter.setNumberBlacklist(new HashSet<>(list));
+        filter.setPhoneBlacklist(new HashSet<>(list));
     }
 
     @NonNull

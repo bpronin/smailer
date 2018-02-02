@@ -16,10 +16,10 @@ import static com.bopr.android.smailer.util.Util.*;
 public class PhoneEventFilter {
 
     private Set<String> triggers = Collections.emptySet();
-    private boolean useNumberWhiteList;
+    private boolean usePhoneWhiteList;
     private boolean useTextWhiteList;
-    private Set<String> numberWhitelist = Collections.emptySet();
-    private Set<String> numberBlacklist = Collections.emptySet();
+    private Set<String> phoneWhitelist = Collections.emptySet();
+    private Set<String> phoneBlacklist = Collections.emptySet();
     private Set<String> textWhitelist = Collections.emptySet();
     private Set<String> textBlacklist = Collections.emptySet();
 
@@ -34,12 +34,12 @@ public class PhoneEventFilter {
         this.triggers = triggers;
     }
 
-    public boolean isUseNumberWhiteList() {
-        return useNumberWhiteList;
+    public boolean isUsePhoneWhiteList() {
+        return usePhoneWhiteList;
     }
 
-    public void setUseNumberWhiteList(boolean useNumberWhiteList) {
-        this.useNumberWhiteList = useNumberWhiteList;
+    public void setUsePhoneWhiteList(boolean usePhoneWhiteList) {
+        this.usePhoneWhiteList = usePhoneWhiteList;
     }
 
     public boolean isUseTextWhiteList() {
@@ -50,20 +50,20 @@ public class PhoneEventFilter {
         this.useTextWhiteList = useTextWhiteList;
     }
 
-    public Set<String> getNumberWhitelist() {
-        return numberWhitelist;
+    public Set<String> getPhoneWhitelist() {
+        return phoneWhitelist;
     }
 
-    public void setNumberWhitelist(Set<String> numberWhitelist) {
-        this.numberWhitelist = numberWhitelist;
+    public void setPhoneWhitelist(Set<String> phoneWhitelist) {
+        this.phoneWhitelist = phoneWhitelist;
     }
 
-    public Set<String> getNumberBlacklist() {
-        return numberBlacklist;
+    public Set<String> getPhoneBlacklist() {
+        return phoneBlacklist;
     }
 
-    public void setNumberBlacklist(Set<String> numberBlacklist) {
-        this.numberBlacklist = numberBlacklist;
+    public void setPhoneBlacklist(Set<String> phoneBlacklist) {
+        this.phoneBlacklist = phoneBlacklist;
     }
 
     public Set<String> getTextWhitelist() {
@@ -105,7 +105,7 @@ public class PhoneEventFilter {
     }
 
     private boolean acceptPhone(String phone) {
-        return useNumberWhiteList ? containsPhone(numberWhitelist, phone) : !containsPhone(numberBlacklist, phone);
+        return usePhoneWhiteList ? isPhoneWhitelisted(phone) : !isPhoneBlacklisted(phone);
     }
 
     private boolean acceptText(String message) {
@@ -120,6 +120,14 @@ public class PhoneEventFilter {
             }
         }
         return false;
+    }
+
+    public boolean isPhoneBlacklisted(String phone) {
+        return containsPhone(phoneBlacklist, phone);
+    }
+
+    public boolean isPhoneWhitelisted(String phone) {
+        return containsPhone(phoneWhitelist, phone);
     }
 
     private boolean containsText(Collection<String> words, String text) {
@@ -137,10 +145,10 @@ public class PhoneEventFilter {
     public String toString() {
         return "PhoneEventFilter{" +
                 "triggers=" + triggers +
-                ", useNumberWhiteList=" + useNumberWhiteList +
+                ", useNumberWhiteList=" + usePhoneWhiteList +
                 ", useTextWhiteList=" + useTextWhiteList +
-                ", numberWhitelist=" + numberWhitelist +
-                ", numberBlacklist=" + numberBlacklist +
+                ", numberWhitelist=" + phoneWhitelist +
+                ", numberBlacklist=" + phoneBlacklist +
                 ", textWhitelist=" + textWhitelist +
                 ", textBlacklist=" + textBlacklist +
                 '}';

@@ -8,6 +8,8 @@
     <color name="dialogButtonText">@color/accent_material_light</color>
     <color name="errorForeground">#872E3D</color>
     <color name="successForeground">#4D814F</color>
+    <color name="blackListedForeground">#872E3D</color>
+    <color name="whiteListedForeground">#4D814F</color>
     <color name="ignoredForeground">#949494</color>
     <color name="errorLine">#e7291f</color>
 </resources>
