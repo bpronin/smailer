@@ -86,7 +86,7 @@ public class PhoneEventFilter {
         return acceptTrigger(event) && acceptPhone(event.getPhone()) && acceptText(event.getText());
     }
 
-    private boolean acceptTrigger(PhoneEvent event) {
+    public boolean acceptTrigger(PhoneEvent event) {
         if (event.isSms()) {
             if (event.isIncoming()) {
                 return triggers.contains(VAL_PREF_TRIGGER_IN_SMS);
@@ -104,7 +104,7 @@ public class PhoneEventFilter {
         }
     }
 
-    private boolean acceptPhone(String phone) {
+    public boolean acceptPhone(String phone) {
         return usePhoneWhiteList ? isPhoneWhitelisted(phone) : !isPhoneBlacklisted(phone);
     }
 

@@ -235,20 +235,12 @@ public class LogFragment extends Fragment {
 
                 holder.timeView.setText(DateFormat.format(getString(R.string.event_time_pattern), event.getStartTime()));
 
-                String phone = event.getPhone();
-                holder.phoneView.setText(phone);
-                if (phoneEventFilter.isPhoneBlacklisted(phone)) {
+                holder.phoneView.setText(event.getPhone());
+                if (phoneEventFilter.acceptPhone(event.getPhone())) {
                     holder.phoneView.setPaintFlags(holder.defaultPhoneFlags | Paint.STRIKE_THRU_TEXT_FLAG);
                 } else {
                     holder.phoneView.setPaintFlags(holder.defaultPhoneFlags);
                 }
-
-//                int phoneColor = getPhoneColor(phone);
-//                if (phoneColor != 0) {
-//                    holder.phoneView.setTextColor(getResources().getColor(phoneColor));
-//                } else {
-//                    holder.phoneView.setTextColor(holder.detfaultPhoneColors);
-//                }
 
                 holder.typeView.setImageResource(Formats.eventTypeImage(event));
                 holder.directionView.setImageResource(Formats.eventDirectionImage(event));
