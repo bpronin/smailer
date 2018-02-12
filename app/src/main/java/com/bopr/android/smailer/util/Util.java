@@ -9,6 +9,7 @@ import java.util.*;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
+@SuppressWarnings("WeakerAccess")
 public class Util {
 
     public static final String DEFAULT = "default";
@@ -171,7 +172,7 @@ public class Util {
     }
 
     public static String normalizePhone(String phone) {
-        return phone != null ? phone.replaceAll("\\D", "") : null;
+        return phone != null ? phone.replaceAll("\\W", "") : null;
     }
 
 }

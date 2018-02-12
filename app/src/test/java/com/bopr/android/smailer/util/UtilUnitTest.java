@@ -1,20 +1,13 @@
 package com.bopr.android.smailer.util;
 
 import com.bopr.android.smailer.GeoCoordinates;
-
 import org.junit.Test;
 
 import java.util.Locale;
 import java.util.Set;
 
-import static java.util.concurrent.TimeUnit.HOURS;
-import static java.util.concurrent.TimeUnit.MINUTES;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static java.util.concurrent.TimeUnit.*;
+import static org.junit.Assert.*;
 
 /**
  * {@link Util} tester.
@@ -142,6 +135,13 @@ public class UtilUnitTest {
         assertEquals(new Locale("ru", "RU"), Util.stringToLocale("ru_RU"));
         assertEquals(Locale.getDefault(), Util.stringToLocale("default"));
         assertEquals(null, Util.stringToLocale(null));
+    }
+
+    @Test
+    public void testNormalizePhone() throws Exception {
+        assertEquals("123", Util.normalizePhone("123"));
+        assertEquals("123456HELLO", Util.normalizePhone("+1 234-56-(HELLO)"));
+        assertNotEquals("BCS Online", Util.normalizePhone("Beeline"));
     }
 
 }
