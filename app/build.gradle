@@ -19,8 +19,8 @@ android {
         applicationId 'com.bopr.android.smailer'
         minSdkVersion 18
         targetSdkVersion 27
-        versionCode 23
-        versionName '1.1.10'
+        versionCode 24
+        versionName '1.1.11'
         archivesBaseName = "smailer-${versionName}"
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
     }

@@ -58,7 +58,7 @@
     <string name="notification_error_no_recipients">Не указан получатель.</string>
     <string name="title_about">О приложении</string>
     <string name="title_acceptable_phone_numbers">Разрешенные номера ({size})</string>
-    <string name="title_acceptable_text">Разрешенные слова</string>
+    <string name="title_acceptable_text">Разрешенные фразы ({size})</string>
     <string name="title_account_hint">Адрес, с которого будет отправляться почта.</string>
     <string name="title_activity_log">Журнал</string>
     <string name="title_add">Добавить</string>
@@ -112,7 +112,7 @@
     <string name="title_triggers">Триггеры</string>
     <string name="title_triggers_hint">События, вызывающие отправку почты</string>
     <string name="title_unacceptable_phone_numbers">Заблокированные номера ({size})</string>
-    <string name="title_unacceptable_text">Запрещеные слова</string>
+    <string name="title_unacceptable_text">Запрещеные фразы ({size})</string>
     <string name="title_undo">Отмена</string>
     <string name="title_use_black_white_list">Использовать черный/белый список</string>
     <string name="title_version">Версия приложения: {version}</string>
