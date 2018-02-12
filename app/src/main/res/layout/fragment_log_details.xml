@@ -90,7 +90,7 @@
             android:layout_gravity="center"
             android:contentDescription="Result"
             android:padding="4dp"
-            android:src="@drawable/ic_state_bypass"/>
+            android:src="@drawable/ic_state_block"/>
 
         <TextView
             android:id="@+id/text_result"

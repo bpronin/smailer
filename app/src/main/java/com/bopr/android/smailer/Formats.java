@@ -50,9 +50,9 @@ public class Formats {
             case PENDING:
                 return R.drawable.ic_state_pending;
             case PROCESSED:
-                return R.drawable.ic_state_sent;
+                return R.drawable.ic_state_done;
             case IGNORED:
-                return R.drawable.ic_state_bypass;
+                return R.drawable.ic_state_block;
         }
         return -1;
     }

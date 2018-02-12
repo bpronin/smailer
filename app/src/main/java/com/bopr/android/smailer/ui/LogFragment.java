@@ -200,16 +200,6 @@ public class LogFragment extends Fragment {
         }
     }
 
-    private int getPhoneColor(String phone) {
-        if (phoneEventFilter.isPhoneBlacklisted(phone)) {
-            return R.color.blackListedForeground;
-        } else if (phoneEventFilter.isPhoneWhitelisted(phone)) {
-            return R.color.whiteListedForeground;
-        } else {
-            return 0;
-        }
-    }
-
     private class ListAdapter extends RecyclerView.Adapter<ItemViewHolder> {
 
         private Context context;
