@@ -45,7 +45,6 @@
     <string name="message_recipient_already_exists">Получатель {name} уже существует</string>
     <string name="message_select_email_from_contacts">Выбрать из контактов</string>
     <string name="message_server_test_success">Тестовое сообщение отправлено.\nПроверьте вашу почту.</string>
-    <string name="message_server_testing">Проверка настроек сервера…</string>
     <string name="notification_email_send">Почта отправлена.</string>
     <string name="notification_error_authentication">Неверное имя пользователя или пароль.</string>
     <string name="notification_error_connect">Нет соединения с почтовым сервером.</string>
@@ -64,13 +63,11 @@
     <string name="title_add">Добавить</string>
     <string name="title_add_to_blacklist">Добавить в черный список</string>
     <string name="title_add_to_whitelist">Добавить в белый список</string>
-    <string name="title_additional_settings">Дополнительные параметры</string>
     <string name="title_any">любые</string>
     <string name="title_black_list_used">Используется черный список</string>
     <string name="title_blacklist">Черный список</string>
     <string name="title_clear">Очистить</string>
     <string name="title_content">Содержание</string>
-    <string name="title_details">Детали</string>
     <string name="title_device_alias">Имя устройства</string>
     <string name="title_device_alias_hint">Имя устройства в почтовом сообщении (оставьте пустым, чтобы использовать имя по умолчанию)</string>
     <string name="title_edit">Изменить</string>
@@ -81,7 +78,6 @@
     <string name="title_email_password_hint">Пароль аккаунта, с которого будет отправляться почта.</string>
     <string name="title_email_recipients">Получатели почты</string>
     <string name="title_email_sender">Отправитель почты</string>
-    <string name="title_email_server">Сервер исходящей почты</string>
     <string name="title_host">Сервер</string>
     <string name="title_list_empty">Список пуст</string>
     <string name="title_log_empty">Журнал пуст</string>
@@ -97,7 +93,6 @@
     <string name="title_password">Пароль</string>
     <string name="title_phone_number">Номер телефона</string>
     <string name="title_port">Порт</string>
-    <string name="title_regexp">Регулярное выражение</string>
     <string name="title_remove">Удалить</string>
     <string name="title_remove_from_filter">Удалить номер из фильтра</string>
     <string name="title_resend">Повторная отправка</string>
@@ -107,7 +102,6 @@
     <string name="title_sender_account">Учетная запись</string>
     <string name="title_server_test">Tестовое сообщение</string>
     <string name="title_text_filter">Фильтр текста</string>
-    <string name="title_text_filter_any">Любой текст</string>
     <string name="title_text_fragment">Фрагмент текста</string>
     <string name="title_triggers">Триггеры</string>
     <string name="title_triggers_hint">События, вызывающие отправку почты</string>

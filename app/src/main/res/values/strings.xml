@@ -28,7 +28,6 @@
     <string name="event_type_missed_call">Missed call</string>
     <string name="event_type_outgoing_call">Outgoing call</string>
     <string name="event_type_outgoing_sms">Outgoing SMS</string>
-    <string name="log_message" translatable="false">{message} {phone}.</string>
     <string name="message_activity_log_ask_clear">Clear log?</string>
     <string name="message_added_to_blacklist">{number} added to blacklist</string>
     <string name="message_added_to_whitelist">{number} added to whitelist</string>
@@ -47,7 +46,6 @@
     <string name="message_recipient_already_exists">Recipient {name} already exists</string>
     <string name="message_select_email_from_contacts">Select from contacts</string>
     <string name="message_server_test_success">Test message has been successfully sent.\nCheck your email.</string>
-    <string name="message_server_testing">Validating server settings…</string>
     <string name="notification_email_send">Email sent.</string>
     <string name="notification_error_authentication">Username and password not accepted.</string>
     <string name="notification_error_connect">Couldn\'t open connection to mail server.</string>
@@ -66,14 +64,12 @@
     <string name="title_add">Add</string>
     <string name="title_add_to_blacklist">Add phone number to blacklist</string>
     <string name="title_add_to_whitelist">Add phone number to whitelist</string>
-    <string name="title_additional_settings">Preferences</string>
     <string name="title_any">any</string>
     <string name="title_black_list_used">Black list used</string>
     <string name="title_blacklist">Blacklist</string>
     <string name="title_clear">Clear</string>
     <string name="title_content">Email content</string>
     <string name="title_copyright" translatable="false">Copyright © BoPr, 2016</string>
-    <string name="title_details">Details</string>
     <string name="title_device_alias">Device name</string>
     <string name="title_device_alias_hint">Device name to be shown in email message (leave blank to use default)</string>
     <string name="title_edit">Edit</string>
@@ -84,7 +80,6 @@
     <string name="title_email_password_hint">Password of account to send email from.</string>
     <string name="title_email_recipients">Email recipients</string>
     <string name="title_email_sender">Email sender</string>
-    <string name="title_email_server">Outgoing email server</string>
     <string name="title_host">Host</string>
     <string name="title_list_empty">List is empty</string>
     <string name="title_log_empty">Log is empty</string>
@@ -101,7 +96,6 @@
     <string name="title_password_asterisks" translatable="false">**********</string>
     <string name="title_phone_number">Phone number</string>
     <string name="title_port">Port</string>
-    <string name="title_regexp">Regular expression</string>
     <string name="title_remove">Remove</string>
     <string name="title_remove_from_filter">Remove phone number from filter</string>
     <string name="title_resend">Resend</string>
@@ -111,7 +105,6 @@
     <string name="title_sender_account">Account</string>
     <string name="title_server_test">Send test message</string>
     <string name="title_text_filter">Text filter</string>
-    <string name="title_text_filter_any">Any text</string>
     <string name="title_text_fragment">Text fragment</string>
     <string name="title_triggers">Triggers</string>
     <string name="title_triggers_hint">Events causing sending email</string>
