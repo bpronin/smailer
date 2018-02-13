@@ -11,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import com.bopr.android.smailer.OutgoingSmsService;
 import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.ResendService;
 import com.bopr.android.smailer.util.validator.EmailListTextValidator;
 import com.bopr.android.smailer.util.validator.EmailTextValidator;
 
@@ -88,7 +89,8 @@ public class MainFragment extends BasePreferenceFragment {
 
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                enableOutgoingSmsService();
+                OutgoingSmsService.toggleService(getActivity());
+                ResendService.toggleService(getActivity());
             }
         };
         getSharedPreferences().registerOnSharedPreferenceChangeListener(preferenceChangeListener);
@@ -105,7 +107,8 @@ public class MainFragment extends BasePreferenceFragment {
         super.onStart();
         updateServerPreference();
         updateRecipientsPreference();
-        enableOutgoingSmsService();
+        OutgoingSmsService.toggleService(getActivity());
+        ResendService.toggleService(getActivity());
     }
 
     @Override
@@ -147,10 +150,6 @@ public class MainFragment extends BasePreferenceFragment {
 
     public void showAboutDialog() {
         new AboutDialogFragment().showDialog((FragmentActivity) getActivity());
-    }
-
-    private void enableOutgoingSmsService() {
-        OutgoingSmsService.toggle(getActivity());
     }
 
 }

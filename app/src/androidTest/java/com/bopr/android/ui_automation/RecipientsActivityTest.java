@@ -163,7 +163,7 @@ public class RecipientsActivityTest extends BaseActivityTest {
         onToast("Recipient mary@mail.com already exists").check(matches(isDisplayed()));
 
          /* check preferences */
-        assertEquals("mary@mail.com, john@mail.com", preferences.getString(KEY_PREF_RECIPIENTS_ADDRESS, null));
+        assertEquals("mary@mail.com,john@mail.com", preferences.getString(KEY_PREF_RECIPIENTS_ADDRESS, null));
     }
 
     @Test

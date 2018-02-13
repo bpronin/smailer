@@ -121,12 +121,18 @@ public class OutgoingSmsService extends Service {
         return new Intent(context, OutgoingSmsService.class);
     }
 
-    public static void toggle(Context context) {
-        Intent intent = createServiceIntent(context);
+    /**
+     * Starts or stops the service depending on preferences
+     *
+     * @param context context
+     */
+    public static void toggleService(Context context) {
         if (Settings.loadFilter(context).getTriggers().contains(VAL_PREF_TRIGGER_OUT_SMS)) {
-            context.startService(intent);
+            context.startService(createServiceIntent(context));
+            log.debug("Enabled");
         } else {
-            context.stopService(intent);
+            context.stopService(createServiceIntent(context));
+            log.debug("Disabled");
         }
     }
 
@@ -140,6 +146,7 @@ public class OutgoingSmsService extends Service {
 
         private Context context;
 
+        @SuppressWarnings("WeakerAccess")
         public ContentResolverWrapper(Context context) {
             this.context = context;
         }

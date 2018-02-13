@@ -21,7 +21,8 @@ public class BootReceiver extends BroadcastReceiver {
         log.debug("Received intent: " + intent);
 
         if (Util.safeEquals(intent.getAction(), Intent.ACTION_BOOT_COMPLETED)) {
-            OutgoingSmsService.toggle(context);
+            OutgoingSmsService.toggleService(context);
+            ResendService.toggleService(context);
         }
     }
 

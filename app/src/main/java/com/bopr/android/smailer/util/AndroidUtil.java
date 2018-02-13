@@ -1,7 +1,5 @@
 package com.bopr.android.smailer.util;
 
-import android.app.ActivityManager;
-import android.app.Service;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -12,7 +10,6 @@ import android.support.v7.app.AlertDialog;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
-
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.draw.WavyUnderlineSpan;
 
@@ -59,20 +56,25 @@ public class AndroidUtil {
     }
 
     /**
-     * Returns true if device is connected ty internet.
-     */
-    public static boolean hasInternetConnection(Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = cm.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
-    /**
      * Convenient method to avoid of mess in versions of AlertDialog.
      */
     @NonNull
     public static AlertDialog.Builder dialogBuilder(Context context) {
         return new AlertDialog.Builder(context);
+    }
+
+    /**
+     * Returns true if device is connected ty internet.
+     */
+    public static boolean hasInternetConnection(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm != null) {
+            NetworkInfo info = cm.getActiveNetworkInfo();
+            if (info != null) {
+                return info.isConnected();
+            }
+        }
+        return false;
     }
 
     public static boolean isPermissionsDenied(Context context, String... permissions) {

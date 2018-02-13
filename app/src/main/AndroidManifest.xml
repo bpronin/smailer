@@ -81,6 +81,13 @@
 
         <service android:name=".MailerService"/>
         <service android:name=".OutgoingSmsService"/>
+        <service android:name=".ResendService"
+                 android:exported="true"
+                 android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
+            <intent-filter>
+                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
+            </intent-filter>
+        </service>
 
         <receiver
             android:name=".SmsReceiver"
@@ -97,11 +104,6 @@
             <intent-filter>
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL"/>
                 <action android:name="android.intent.action.PHONE_STATE"/>
-            </intent-filter>
-        </receiver>
-        <receiver android:name=".ConnectivityReceiver">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
             </intent-filter>
         </receiver>
         <receiver
