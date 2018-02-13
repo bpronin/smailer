@@ -4,14 +4,14 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
-import android.security.KeyPairGeneratorSpec;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.support.annotation.NonNull;
 import android.util.Base64;
-
 import com.bopr.android.smailer.util.Util;
 
+import javax.crypto.Cipher;
+import javax.security.auth.x500.X500Principal;
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -19,15 +19,11 @@ import java.security.KeyStore;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.Calendar;
 
-import javax.crypto.Cipher;
-import javax.security.auth.x500.X500Principal;
-
 /**
  * RSA encryption operations.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-@SuppressWarnings("deprecation")
 public class Cryptor {
 
     private static final String KEY_ALIAS = "smailer";
@@ -125,12 +121,14 @@ public class Cryptor {
 
     @NonNull
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+    @SuppressWarnings("deprecation")
     private static AlgorithmParameterSpec getAlgorithmParameterSpecLegacy(Context context) {
         AlgorithmParameterSpec spec;
         Calendar start = Calendar.getInstance();
         Calendar end = Calendar.getInstance();
         end.add(Calendar.YEAR, 100);
-        spec = new KeyPairGeneratorSpec.Builder(context)
+        /* do not put KeyPairGeneratorSpec in imports to avoid deprecation warning */
+        spec = new android.security.KeyPairGeneratorSpec.Builder(context)
                 .setAlias(KEY_ALIAS)
                 .setSubject(new X500Principal("CN=" + KEY_ALIAS + ", O=Android Authority"))
                 .setSerialNumber(BigInteger.ONE)

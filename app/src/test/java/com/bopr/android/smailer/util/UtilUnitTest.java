@@ -91,19 +91,13 @@ public class UtilUnitTest {
     }
 
     @Test
-    public void testListOf() throws Exception {
+    public void testParseSeparated() throws Exception {
         assertArrayEquals(new String[]{"1", " 2", "3 "}, Util.parseSeparated("1, 2,3 ", ",", false).toArray());
         assertArrayEquals(new String[]{"1", "2", "3"}, Util.parseSeparated("1, 2, 3 ", ",", true).toArray());
         assertArrayEquals(new String[]{" "}, Util.parseSeparated(" ", ",", false).toArray());
         assertArrayEquals(new String[]{}, Util.parseSeparated("", ",", true).toArray());
         assertArrayEquals(new String[]{}, Util.parseSeparated(" ", ",", true).toArray());
-
-        try {
-            assertArrayEquals(new String[]{}, Util.parseSeparated(null, ",", true).toArray());
-            fail("No exception");
-        } catch (NullPointerException x) {
-            /* ok */
-        }
+        assertArrayEquals(new String[]{}, Util.parseSeparated(null, ",", true).toArray());
     }
 
     @Test
