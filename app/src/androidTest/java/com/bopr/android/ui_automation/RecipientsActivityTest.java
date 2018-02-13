@@ -3,23 +3,15 @@ package com.bopr.android.ui_automation;
 import android.annotation.SuppressLint;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
-
 import com.bopr.android.smailer.R;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.clearText;
-import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.swipeRight;
-import static android.support.test.espresso.action.ViewActions.typeText;
+import static android.support.test.espresso.action.ViewActions.*;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.assertThat;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static android.support.test.espresso.matcher.ViewMatchers.*;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static junit.framework.Assert.assertEquals;
 import static org.hamcrest.Matchers.isEmptyString;
@@ -49,7 +41,7 @@ public class RecipientsActivityTest extends BaseActivityTest {
 
         /* add an item and click cancel */
         onView(withId(R.id.button_add)).perform(click());
-        onView(withText(R.string.title_add_recipient)).check(matches(isDisplayed()));
+        onView(withText(R.string.title_add)).check(matches(isDisplayed()));
         onView(withText(R.string.title_email_address)).check(matches(isDisplayed()));
         onView(withEditText()).perform(clearText());
         onView(withEditText()).perform(typeText("john@mail.com"));
@@ -59,7 +51,7 @@ public class RecipientsActivityTest extends BaseActivityTest {
 
         /* add an item and click ok */
         onView(withId(R.id.button_add)).perform(click());
-        onView(withText(R.string.title_add_recipient)).check(matches(isDisplayed()));
+        onView(withText(R.string.title_add)).check(matches(isDisplayed()));
         onView(withText(R.string.title_email_address)).check(matches(isDisplayed()));
         onView(withEditText()).perform(clearText());
         onView(withEditText()).perform(typeText("john@mail.com"));
@@ -69,7 +61,7 @@ public class RecipientsActivityTest extends BaseActivityTest {
 
         /* edit an item and click cancel */
         onRecyclerItem(withText("john@mail.com")).perform(click());
-        onView(withText(R.string.title_edit_recipient)).check(matches(isDisplayed()));
+        onView(withText(R.string.title_edit)).check(matches(isDisplayed()));
         onView(withText(R.string.title_email_address)).check(matches(isDisplayed()));
         onView(withEditText()).perform(clearText());
         onView(withEditText()).perform(typeText("mary@mail.com"));
@@ -80,7 +72,7 @@ public class RecipientsActivityTest extends BaseActivityTest {
 
         /* edit an item and click ok */
         onRecyclerItem(withText("john@mail.com")).perform(click());
-        onView(withText(R.string.title_edit_recipient)).check(matches(isDisplayed()));
+        onView(withText(R.string.title_edit)).check(matches(isDisplayed()));
         onView(withText(R.string.title_email_address)).check(matches(isDisplayed()));
         onView(withEditText()).perform(clearText());
         onView(withEditText()).perform(typeText("mary@mail.com"));
@@ -108,7 +100,7 @@ public class RecipientsActivityTest extends BaseActivityTest {
 
         /* add an item */
         onView(withId(R.id.button_add)).perform(click());
-        onView(withText(R.string.title_add_recipient)).check(matches(isDisplayed()));
+        onView(withText(R.string.title_add)).check(matches(isDisplayed()));
         onView(withText(R.string.title_email_address)).check(matches(isDisplayed()));
         onView(withEditText()).perform(clearText());
         onView(withEditText()).perform(typeText("john@mail.com"));
@@ -118,7 +110,7 @@ public class RecipientsActivityTest extends BaseActivityTest {
 
         /* add an the item another time */
         onView(withId(R.id.button_add)).perform(click());
-        onView(withText(R.string.title_add_recipient)).check(matches(isDisplayed()));
+        onView(withText(R.string.title_add)).check(matches(isDisplayed()));
         onView(withText(R.string.title_email_address)).check(matches(isDisplayed()));
         onView(withEditText()).perform(clearText());
         onView(withEditText()).perform(typeText("john@mail.com"));
@@ -143,7 +135,7 @@ public class RecipientsActivityTest extends BaseActivityTest {
 
         /* add an item */
         onView(withId(R.id.button_add)).perform(click());
-        onView(withText(R.string.title_add_recipient)).check(matches(isDisplayed()));
+        onView(withText(R.string.title_add)).check(matches(isDisplayed()));
         onView(withText(R.string.title_email_address)).check(matches(isDisplayed()));
         onView(withEditText()).perform(clearText());
         onView(withEditText()).perform(typeText("mary@mail.com"));
@@ -151,7 +143,7 @@ public class RecipientsActivityTest extends BaseActivityTest {
 
         /* add another item */
         onView(withId(R.id.button_add)).perform(click());
-        onView(withText(R.string.title_add_recipient)).check(matches(isDisplayed()));
+        onView(withText(R.string.title_add)).check(matches(isDisplayed()));
         onView(withText(R.string.title_email_address)).check(matches(isDisplayed()));
         onView(withEditText()).perform(clearText());
         onView(withEditText()).perform(typeText("john@mail.com"));
@@ -162,7 +154,7 @@ public class RecipientsActivityTest extends BaseActivityTest {
 
         /* try to change to existent address */
         onRecyclerItem(withText("john@mail.com")).perform(click());
-        onView(withText(R.string.title_edit_recipient)).check(matches(isDisplayed()));
+        onView(withText(R.string.title_edit)).check(matches(isDisplayed()));
         onView(withText(R.string.title_email_address)).check(matches(isDisplayed()));
         onView(withEditText()).perform(clearText());
         onView(withEditText()).perform(typeText("mary@mail.com"));
@@ -189,7 +181,7 @@ public class RecipientsActivityTest extends BaseActivityTest {
 
         /* add an item and click ok */
         onView(withId(R.id.button_add)).perform(click());
-        onView(withText(R.string.title_add_recipient)).check(matches(isDisplayed()));
+        onView(withText(R.string.title_add)).check(matches(isDisplayed()));
         onView(withText(R.string.title_email_address)).check(matches(isDisplayed()));
         onView(withEditText()).perform(clearText());
         onView(withEditText()).perform(typeText("john@mail.com"));

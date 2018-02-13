@@ -1,8 +1,11 @@
 package com.bopr.android.smailer;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import com.bopr.android.smailer.util.Util;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
@@ -10,8 +13,7 @@ import java.util.TimeZone;
 import static android.Manifest.permission.*;
 import static android.content.pm.PackageManager.PERMISSION_DENIED;
 import static com.bopr.android.smailer.Settings.*;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -28,8 +30,18 @@ public class MailFormatterTest extends BaseTest {
     public void setUp() throws Exception {
         super.setUp();
 
+//        context = getContext();
         context = mock(Context.class);
         when(context.getResources()).thenReturn(getContext().getResources());
+        when(context.createConfigurationContext(any(Configuration.class))).thenAnswer(new Answer<Context>() {
+
+            @Override
+            public Context answer(InvocationOnMock invocation) throws Throwable {
+                Configuration parameter = (Configuration) invocation.getArguments()[0];
+                return getContext().createConfigurationContext(parameter);
+            }
+        });
+
 //        when(context.getContentResolver()).thenReturn(getContext().getContentResolver());
 //        when(context.getSharedPreferences(anyString(), anyInt())).thenReturn(mock(SharedPreferences.class));
     }
@@ -288,14 +300,16 @@ public class MailFormatterTest extends BaseTest {
 
         MailFormatter formatter = new MailFormatter(context, message);
         formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_LOCATION));
+
         when(context.checkPermission(eq(ACCESS_COARSE_LOCATION), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED);
         when(context.checkPermission(eq(ACCESS_FINE_LOCATION), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED);
 
+        String body = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
                 "<hr style=\"border: none; background-color: #cccccc; height: 1px;\"><small>" +
                 "Last known device location: (no permission to read location)" +
-                "</small></body></html>", formatter.getBody());
+                "</small></body></html>", body);
     }
 
     /**

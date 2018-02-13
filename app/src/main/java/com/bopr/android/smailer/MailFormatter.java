@@ -33,7 +33,7 @@ class MailFormatter {
     private static final String PHONE_LINK_PATTERN = "<a href=\"tel:{phone}\">{phone}</a>";
 
     private final PhoneEvent event;
-    private Context context;
+    private Context baseContext;
     private String contactName;
     private String deviceName;
     private Set<String> contentOptions;
@@ -41,7 +41,7 @@ class MailFormatter {
 
     MailFormatter(Context context, PhoneEvent event) {
         this.event = event;
-        this.context = context;
+        this.baseContext = context;
     }
 
     /**
@@ -92,16 +92,13 @@ class MailFormatter {
      */
     @NonNull
     String getSubject() {
-        Locale currentLocale = setupLocale();
+        Context context = setupContext();
 
-        String result = formatFrom(SUBJECT_PATTERN, context)
+        return formatFrom(SUBJECT_PATTERN, context)
                 .putResource("app_name", R.string.app_name)
-                .put("source", getTriggerText())
+                .put("source", getTriggerText(context))
                 .put("phone", event.getPhone())
                 .format();
-
-        restoreLocale(currentLocale);
-        return result;
     }
 
     /**
@@ -111,23 +108,22 @@ class MailFormatter {
      */
     @NonNull
     String getBody() {
-        Locale currentLocale = setupLocale();
+        Context context = setupContext();
 
-        String footerText = getFooterText();
+        String footerText = getFooterText(context);
         TagFormatter formatter = formatFrom(BODY_PATTERN)
-                .put("message", getMessageText())
+                .put("message", getMessageText(context))
                 .put("footer", footerText);
+
         if (!isEmpty(footerText)) {
             formatter.put("line", LINE);
         }
-        String result = formatter.format();
 
-        restoreLocale(currentLocale);
-        return result;
+        return formatter.format();
     }
 
     @NonNull
-    private String getTriggerText() {
+    private String getTriggerText(Context context) {
         int resourceId;
 
         if (event.isMissed()) {
@@ -150,7 +146,7 @@ class MailFormatter {
     }
 
     @NonNull
-    private String getMessageText() {
+    private String getMessageText(Context context) {
         if (event.isMissed()) {
             return context.getString(R.string.email_body_missed_call);
         } else if (event.isSms()) {
@@ -169,12 +165,12 @@ class MailFormatter {
     }
 
     @Nullable
-    private String getFooterText() {
+    private String getFooterText(Context context) {
         if (contentOptions != null) {
-            String callerText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_CONTACT) ? getCallerText() : null;
-            String deviceNameText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME) ? getDeviceNameText() : null;
-            String timeText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME) ? getTimeText() : null;
-            String locationText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_LOCATION) ? getLocationText() : null;
+            String callerText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_CONTACT) ? getCallerText(context) : null;
+            String deviceNameText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME) ? getDeviceNameText(context) : null;
+            String timeText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME) ? getTimeText(context) : null;
+            String locationText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_LOCATION) ? getLocationText(context) : null;
 
             StringBuilder text = new StringBuilder();
 
@@ -209,7 +205,7 @@ class MailFormatter {
     }
 
     @NonNull
-    private String getCallerText() {
+    private String getCallerText(Context context) {
         int resourceId;
         if (event.isSms()) {
             resourceId = R.string.email_body_sender;
@@ -223,7 +219,7 @@ class MailFormatter {
 
         String name = this.contactName;
         if (isEmpty(name)) {
-            if (Contacts.isPermissionsDenied(context)) {
+            if (Contacts.isPermissionsDenied(baseContext)) { /* base context here */
                 name = context.getString(R.string.email_body_unknown_contact_no_permission);
             } else {
                 name = context.getString(R.string.email_body_unknown_contact);
@@ -238,7 +234,7 @@ class MailFormatter {
     }
 
     @Nullable
-    private String getDeviceNameText() {
+    private String getDeviceNameText(Context context) {
         if (!isEmpty(deviceName)) {
             return " " + formatFrom(R.string.email_body_from, context)
                     .put("device_name", deviceName)
@@ -248,7 +244,7 @@ class MailFormatter {
     }
 
     @Nullable
-    private String getTimeText() {
+    private String getTimeText(Context context) {
         if (event.getStartTime() != null) {
             DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
             return " " + formatFrom(R.string.email_body_time, context)
@@ -258,7 +254,8 @@ class MailFormatter {
         return null;
     }
 
-    private String getLocationText() {
+    @NonNull
+    private String getLocationText(Context context) {
         GeoCoordinates location = event.getLocation();
         if (location != null) {
             return formatFrom(R.string.email_body_location, context)
@@ -270,25 +267,31 @@ class MailFormatter {
                     .format();
         } else {
             return formatFrom(R.string.email_body_location, context)
-                    .putResource("location", Locator.isPermissionsDenied(context)
+                    .putResource("location", Locator.isPermissionsDenied(baseContext) /* base context here */
                             ? R.string.email_body_unknown_location_no_permission
                             : R.string.email_body_unknown_location)
                     .format();
         }
     }
 
-    private Locale setupLocale() {
-        Configuration configuration = context.getResources().getConfiguration();
-        Locale locale = configuration.locale;
-        restoreLocale(this.locale);
-        return locale;
+    private Context setupContext() {
+        Configuration configuration = baseContext.getResources().getConfiguration();
+        configuration.setLocale(locale);
+        return baseContext.createConfigurationContext(configuration);
     }
 
-    private void restoreLocale(Locale locale) {
-        Configuration configuration = context.getResources().getConfiguration();
-        configuration.locale = locale;
-        // TODO: 05.12.2017 https://stackoverflow.com/questions/40221711/android-context-getresources-updateconfiguration-deprecated 
-        context.getResources().updateConfiguration(configuration, null);
-    }
+//    private Locale setupLocale() {
+//        Configuration configuration = context.getResources().getConfiguration();
+//        Locale locale = configuration.locale;
+//        restoreLocale(this.locale);
+//        return locale;
+//    }
+//
+//    private void restoreLocale(Locale locale) {
+//        Configuration configuration = context.getResources().getConfiguration();
+//        configuration.locale = locale;
+//        // TODO: 05.12.2017 https://stackoverflow.com/questions/40221711/android-context-getresources-updateconfiguration-deprecated
+//        context.getResources().updateConfiguration(configuration, null);
+//    }
 
 }
