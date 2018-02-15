@@ -24,8 +24,9 @@ import java.util.List;
 
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.getPreferences;
-import static com.bopr.android.smailer.util.TagFormatter.formatFrom;
+import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.Util.commaSeparated;
+import static java.lang.String.valueOf;
 
 
 /**
@@ -185,7 +186,7 @@ public class RecipientsFragment extends Fragment {
             @Override
             public void onOkClick(String address) {
                 if (isItemExists(address) && (item == null || !item.address.equals(address))) {
-                    Toast.makeText(getActivity(), formatFrom(R.string.message_recipient_already_exists, getResources())
+                    Toast.makeText(getActivity(), formatter(R.string.message_recipient_already_exists, getResources())
                             .put("name", address)
                             .format(), Toast.LENGTH_LONG).show();
                 } else if (!Util.isTrimEmpty(address)) {
@@ -205,8 +206,8 @@ public class RecipientsFragment extends Fragment {
         if (removedItems.size() == 1) {
             title = getString(R.string.message_item_removed);
         } else {
-            title = formatFrom(R.string.message_items_removed, getResources())
-                    .put("count", removedItems.size())
+            title = formatter(R.string.message_items_removed, getResources())
+                    .put("count", valueOf(removedItems.size()))
                     .format();
         }
 

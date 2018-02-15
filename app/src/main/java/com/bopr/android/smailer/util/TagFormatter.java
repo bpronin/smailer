@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.bopr.android.smailer.util.Util.isEmpty;
+
 /**
  * Tagged string formatter.
  *
@@ -19,55 +21,52 @@ public class TagFormatter {
     private static final String CLOSE_BRACKET = "\\}";
 
     private final Map<String, String> values = new LinkedHashMap<>();
-    private final String format;
+    private final String pattern;
     private final Resources resources;
 
-    public static TagFormatter formatFrom(String format) {
-        return new TagFormatter(format);
+    public static TagFormatter formatter(String pattern) {
+        return new TagFormatter(pattern);
     }
 
-    public static TagFormatter formatFrom(String format, Resources resources) {
-        return new TagFormatter(format, resources);
+    public static TagFormatter formatter(String pattern, Resources resources) {
+        return new TagFormatter(pattern, resources);
     }
 
-    public static TagFormatter formatFrom(String format, Context context) {
-        return formatFrom(format, context.getResources());
+    public static TagFormatter formatter(String pattern, Context context) {
+        return formatter(pattern, context.getResources());
     }
 
-    public static TagFormatter formatFrom(int formatResourceId, Resources resources) {
-        return new TagFormatter(formatResourceId, resources);
+    public static TagFormatter formatter(int patternResourceId, Resources resources) {
+        return new TagFormatter(patternResourceId, resources);
     }
 
-    public static TagFormatter formatFrom(int formatResourceId, Context context) {
-        return formatFrom(formatResourceId, context.getResources());
+    public static TagFormatter formatter(int patternResourceId, Context context) {
+        return formatter(patternResourceId, context.getResources());
     }
 
-    public TagFormatter(String format, Resources resources) {
-        this.format = format;
+    public TagFormatter(String pattern, Resources resources) {
+        this.pattern = pattern;
         this.resources = resources;
     }
 
-    public TagFormatter(int formatResourceId, Resources resources) {
-        this(resources.getString(formatResourceId), resources);
+    public TagFormatter(int patternResourceId, Resources resources) {
+        this(resources.getString(patternResourceId), resources);
     }
 
-    public TagFormatter(String format) {
-        this(format, null);
+    public TagFormatter(String pattern) {
+        this(pattern, null);
     }
 
-    public TagFormatter put(String key, Object value) {
+    public TagFormatter put(String key, String value) {
         values.remove(key);
-        if (value != null) {
-            String s = value.toString();
-            if (!s.isEmpty()) {
-                values.put(key, s);
-            }
+        if (!isEmpty(value)) {
+            values.put(key, value);
         }
         return this;
     }
 
-    public TagFormatter putResource(String tag, int resourceId) {
-        return put(tag, resources.getString(resourceId));
+    public TagFormatter put(String key, int resourceId) {
+        return put(key, resources.getString(resourceId));
     }
 
     public TagFormatter putList(String key, String separator, Object... values) {
@@ -85,9 +84,9 @@ public class TagFormatter {
     }
 
     public String format() {
-        String result = format;
+        String result = pattern;
 
-        Matcher matcher = Pattern.compile(OPEN_BRACKET + "(.*?)" + CLOSE_BRACKET).matcher(format);
+        Matcher matcher = Pattern.compile(OPEN_BRACKET + "(.*?)" + CLOSE_BRACKET).matcher(pattern);
         while (matcher.find()) {
             String tag = matcher.group(1);
             String value = values.get(tag);

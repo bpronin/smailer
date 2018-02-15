@@ -14,8 +14,9 @@ import java.util.Locale;
 import java.util.Set;
 
 import static com.bopr.android.smailer.Settings.*;
-import static com.bopr.android.smailer.util.TagFormatter.formatFrom;
+import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.Util.*;
+import static java.lang.String.valueOf;
 
 /**
  * Formats email subject and body.
@@ -96,8 +97,8 @@ class MailFormatter {
     String getSubject() {
         setupResources();
 
-        return formatFrom(SUBJECT_PATTERN, resources)
-                .putResource("app_name", R.string.app_name)
+        return formatter(SUBJECT_PATTERN, resources)
+                .put("app_name", R.string.app_name)
                 .put("source", getTriggerText())
                 .put("phone", event.getPhone())
                 .format();
@@ -113,7 +114,7 @@ class MailFormatter {
         setupResources();
 
         String footerText = getFooterText();
-        TagFormatter formatter = formatFrom(BODY_PATTERN)
+        TagFormatter formatter = formatter(BODY_PATTERN)
                 .put("message", getMessageText())
                 .put("footer", footerText);
 
@@ -160,7 +161,7 @@ class MailFormatter {
             } else {
                 pattern = R.string.email_body_outgoing_call;
             }
-            return formatFrom(pattern, resources)
+            return formatter(pattern, resources)
                     .put("duration", formatDuration(event.getCallDuration()))
                     .format();
         }
@@ -191,7 +192,7 @@ class MailFormatter {
                 if (!isEmpty(callerText) || !isEmpty(locationText)) {
                     text.append("<br>");
                 }
-                text.append(formatFrom(R.string.email_body_sent, resources)
+                text.append(formatter(R.string.email_body_sent, resources)
                         .put("device_name", deviceNameText)
                         .put("time", timeText));
             }
@@ -228,9 +229,10 @@ class MailFormatter {
             }
         }
 
-        return formatFrom(resourceId, resources)
-                .put("phone", formatFrom(PHONE_LINK_PATTERN)
-                        .put("phone", event.getPhone()))
+        return formatter(resourceId, resources)
+                .put("phone", formatter(PHONE_LINK_PATTERN)
+                        .put("phone", event.getPhone())
+                        .format())
                 .put("name", name)
                 .format();
     }
@@ -238,7 +240,7 @@ class MailFormatter {
     @Nullable
     private String getDeviceNameText() {
         if (!isEmpty(deviceName)) {
-            return " " + formatFrom(R.string.email_body_from, resources)
+            return " " + formatter(R.string.email_body_from, resources)
                     .put("device_name", deviceName)
                     .format();
         }
@@ -249,7 +251,7 @@ class MailFormatter {
     private String getTimeText() {
         if (event.getStartTime() != null) {
             DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
-            return " " + formatFrom(R.string.email_body_time, resources)
+            return " " + formatter(R.string.email_body_time, resources)
                     .put("time", df.format(new Date(event.getStartTime())))
                     .format();
         }
@@ -260,16 +262,16 @@ class MailFormatter {
     private String getLocationText() {
         GeoCoordinates location = event.getLocation();
         if (location != null) {
-            return formatFrom(R.string.email_body_location, resources)
-                    .put("location", formatFrom(GOOGLE_MAP_LINK_PATTERN)
-                            .put("latitude", location.getLatitude())
-                            .put("longitude", location.getLongitude())
+            return formatter(R.string.email_body_location, resources)
+                    .put("location", formatter(GOOGLE_MAP_LINK_PATTERN)
+                            .put("latitude", valueOf(location.getLatitude()))
+                            .put("longitude", valueOf(location.getLongitude()))
                             .put("location", formatLocation(location, "&#176;", "\'", "\"", "N", "S", "W", "E"))
                             .format())
                     .format();
         } else {
-            return formatFrom(R.string.email_body_location, resources)
-                    .putResource("location", Locator.isPermissionsDenied(context) /* base context here */
+            return formatter(R.string.email_body_location, resources)
+                    .put("location", Locator.isPermissionsDenied(context) /* base context here */
                             ? R.string.email_body_unknown_location_no_permission
                             : R.string.email_body_unknown_location)
                     .format();
@@ -281,19 +283,5 @@ class MailFormatter {
         configuration.setLocale(locale);
         resources = context.createConfigurationContext(configuration).getResources();
     }
-
-//    private Locale setupLocale() {
-//        Configuration configuration = context.getResources().getConfiguration();
-//        Locale locale = configuration.locale;
-//        restoreLocale(this.locale);
-//        return locale;
-//    }
-//
-//    private void restoreLocale(Locale locale) {
-//        Configuration configuration = context.getResources().getConfiguration();
-//        configuration.locale = locale;
-//        // TODO: 05.12.2017 https://stackoverflow.com/questions/40221711/android-context-getresources-updateconfiguration-deprecated
-//        context.getResources().updateConfiguration(configuration, null);
-//    }
 
 }

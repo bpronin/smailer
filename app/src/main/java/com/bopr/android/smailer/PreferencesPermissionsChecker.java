@@ -18,6 +18,7 @@ import static android.Manifest.permission.*;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static com.bopr.android.smailer.Settings.*;
 import static com.bopr.android.smailer.util.AndroidUtil.isPermissionsDenied;
+import static com.bopr.android.smailer.util.TagFormatter.formatter;
 
 /**
  * Responsible for permissions checking.
@@ -193,7 +194,7 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
     private String formatRationale(Collection<String> permissions) {
         StringBuilder b = new StringBuilder();
         for (String permission : permissions) {
-            TagFormatter line = TagFormatter.formatFrom(items.get(permission), activity.getResources())
+            TagFormatter line = formatter(items.get(permission), activity.getResources())
                     .put("permission", getPermissionLabel(permission));
             b.append(line).append("\n\n");
         }

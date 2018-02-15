@@ -1,16 +1,14 @@
 package com.bopr.android.smailer;
 
 import android.content.res.Resources;
-
-import com.bopr.android.smailer.util.TagFormatter;
-
 import junit.framework.Assert;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+
+import static com.bopr.android.smailer.util.TagFormatter.formatter;
 
 
 /**
@@ -34,7 +32,7 @@ public class TagFormatterUnitTest {
 
     @Test
     public void testPut() throws Exception {
-        String text = TagFormatter.formatFrom("{one}, {two} and {three}")
+        String text = formatter("{one}, {two} and {three}")
                 .put("one", "ONE")
                 .put("two", "TWO")
                 .put("three", "THREE")
@@ -45,7 +43,7 @@ public class TagFormatterUnitTest {
 
     @Test
     public void testPutRemoveAbsent() throws Exception {
-        String text = TagFormatter.formatFrom("{one}, {two} and {three}")
+        String text = formatter("{one}, {two} and {three}")
                 .put("one", "ONE")
                 .put("three", "THREE")
                 .format();
@@ -55,7 +53,7 @@ public class TagFormatterUnitTest {
 
     @Test
     public void testPutRemoveBlank() throws Exception {
-        String text = TagFormatter.formatFrom("{one}, {two} and {three}")
+        String text = formatter("{one}, {two} and {three}")
                 .put("one", "ONE")
                 .put("two", "")
                 .put("three", "THREE")
@@ -66,7 +64,7 @@ public class TagFormatterUnitTest {
 
     @Test
     public void testList() throws Exception {
-        String text = TagFormatter.formatFrom("{list}")
+        String text = formatter("{list}")
                 .putList("list", " ", "ONE", "TWO", "THREE")
                 .format();
 
@@ -75,7 +73,7 @@ public class TagFormatterUnitTest {
 
     @Test
     public void testListNullValue() throws Exception {
-        String text = TagFormatter.formatFrom("{list}")
+        String text = formatter("{list}")
                 .putList("list", " ", "ONE", "TWO", null, "THREE")
                 .format();
 
@@ -84,7 +82,7 @@ public class TagFormatterUnitTest {
 
     @Test
     public void testPutFromResource() throws Exception {
-        String text = TagFormatter.formatFrom(PATTERN_ONE, resources)
+        String text = formatter(PATTERN_ONE, resources)
                 .put("one", "ONE")
                 .put("two", "TWO")
                 .put("three", "THREE")
@@ -95,10 +93,10 @@ public class TagFormatterUnitTest {
 
     @Test
     public void testPutResource() throws Exception {
-        String text = TagFormatter.formatFrom(PATTERN_ONE, resources)
+        String text = formatter(PATTERN_ONE, resources)
                 .put("one", "ONE")
                 .put("two", "TWO")
-                .putResource("three", THREE)
+                .put("three", THREE)
                 .format();
 
         Assert.assertEquals("ONE, TWO and THREE", text);

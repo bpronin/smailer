@@ -26,7 +26,8 @@ import java.util.Set;
 
 import static android.support.v7.widget.RecyclerView.NO_POSITION;
 import static com.bopr.android.smailer.Settings.getPreferences;
-import static com.bopr.android.smailer.util.TagFormatter.formatFrom;
+import static com.bopr.android.smailer.util.TagFormatter.formatter;
+import static java.lang.String.valueOf;
 
 /**
  * Base for black/whitelist fragments.
@@ -209,7 +210,7 @@ abstract class FilterListFragment extends Fragment {
             @Override
             public void onOkClick(String text) {
                 if (isItemExists(text) && (item == null || !item.text.equals(text))) {
-                    Toast.makeText(getActivity(), formatFrom(R.string.message_list_item_already_exists, getResources())
+                    Toast.makeText(getActivity(), formatter(R.string.message_list_item_already_exists, getResources())
                             .put("item", text)
                             .format(), Toast.LENGTH_LONG).show();
                 } else if (!Util.isTrimEmpty(text)) {
@@ -243,8 +244,8 @@ abstract class FilterListFragment extends Fragment {
         if (removedItems.size() == 1) {
             title = getString(R.string.message_item_removed);
         } else {
-            title = formatFrom(R.string.message_items_removed, getResources())
-                    .put("count", removedItems.size())
+            title = formatter(R.string.message_items_removed, getResources())
+                    .put("count", valueOf(removedItems.size()))
                     .format();
         }
 

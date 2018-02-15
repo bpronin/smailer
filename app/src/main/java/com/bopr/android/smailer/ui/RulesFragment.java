@@ -6,10 +6,11 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.Preference;
 import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.util.TagFormatter;
 
 import static android.preference.Preference.OnPreferenceChangeListener;
 import static com.bopr.android.smailer.Settings.*;
-import static com.bopr.android.smailer.util.TagFormatter.formatFrom;
+import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.Util.parseCommaSeparated;
 
 /**
@@ -151,11 +152,12 @@ public class RulesFragment extends BasePreferenceFragment {
     }
 
     private String formatListAndSize(String value, int pattern, int zeroSizeText) {
+        TagFormatter formatter = formatter(pattern, getActivity());
         int size = parseCommaSeparated(value).size();
         if (size > 0) {
-            return formatFrom(pattern, getActivity()).put("size", size).format();
+            return formatter.put("size", String.valueOf(size)).format();
         } else {
-            return formatFrom(pattern, getActivity()).putResource("size", zeroSizeText).format();
+            return formatter.put("size", zeroSizeText).format();
         }
     }
 

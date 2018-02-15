@@ -20,7 +20,7 @@ import com.bopr.android.smailer.*;
 import com.bopr.android.smailer.util.AndroidUtil;
 
 import static android.support.v7.widget.RecyclerView.NO_POSITION;
-import static com.bopr.android.smailer.util.TagFormatter.formatFrom;
+import static com.bopr.android.smailer.util.TagFormatter.formatter;
 
 
 /**
@@ -162,7 +162,7 @@ public class LogFragment extends Fragment {
             Settings.saveFilter(getActivity(), phoneEventFilter);
 
             Toast.makeText(getActivity(),
-                    formatFrom(R.string.message_added_to_blacklist, getActivity())
+                    formatter(R.string.message_added_to_blacklist, getActivity())
                             .put("number", number)
                             .format(),
                     Toast.LENGTH_SHORT).show();
@@ -177,7 +177,7 @@ public class LogFragment extends Fragment {
             Settings.saveFilter(getActivity(), phoneEventFilter);
 
             Toast.makeText(getActivity(),
-                    formatFrom(R.string.message_added_to_whitelist, getActivity())
+                    formatter(R.string.message_added_to_whitelist, getActivity())
                             .put("number", number)
                             .format(),
                     Toast.LENGTH_SHORT).show();
@@ -193,7 +193,7 @@ public class LogFragment extends Fragment {
             Settings.saveFilter(getActivity(), phoneEventFilter);
 
             Toast.makeText(getActivity(),
-                    formatFrom(R.string.message_phone_removed_from_filter, getActivity())
+                    formatter(R.string.message_phone_removed_from_filter, getActivity())
                             .put("number", number)
                             .format(),
                     Toast.LENGTH_SHORT).show();

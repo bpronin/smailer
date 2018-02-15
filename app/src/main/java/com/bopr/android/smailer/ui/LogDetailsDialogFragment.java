@@ -16,8 +16,8 @@ import com.bopr.android.smailer.Formats;
 import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.AndroidUtil;
-import com.bopr.android.smailer.util.TagFormatter;
 
+import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.Util.formatDuration;
 
 /**
@@ -88,7 +88,7 @@ public class LogDetailsDialogFragment extends DialogFragment {
             } else {
                 pattern = R.string.email_body_outgoing_call;
             }
-            return TagFormatter.formatFrom(pattern, getActivity())
+            return formatter(pattern, getActivity())
                     .put("duration", formatDuration(event.getCallDuration()))
                     .format();
         }

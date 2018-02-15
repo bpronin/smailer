@@ -2,7 +2,6 @@ package com.bopr.android.smailer;
 
 import android.content.Context;
 import android.content.res.Configuration;
-import com.bopr.android.smailer.util.Util;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -13,6 +12,7 @@ import java.util.TimeZone;
 import static android.Manifest.permission.*;
 import static android.content.pm.PackageManager.PERMISSION_DENIED;
 import static com.bopr.android.smailer.Settings.*;
+import static com.bopr.android.smailer.util.Util.asSet;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -150,7 +150,7 @@ public class MailFormatterTest extends BaseTest {
                 "Email body text", null, null, PhoneEvent.State.PENDING);
 
         MailFormatter formatter = new MailFormatter(context, message);
-        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
+        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
@@ -171,7 +171,7 @@ public class MailFormatterTest extends BaseTest {
                 "Email body text", null, null, PhoneEvent.State.PENDING);
 
         MailFormatter formatter = new MailFormatter(context, message);
-        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
+        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
 
         String body = formatter.getBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
@@ -192,7 +192,7 @@ public class MailFormatterTest extends BaseTest {
 
         MailFormatter formatter = new MailFormatter(context, message);
         formatter.setDeviceName(deviceName);
-        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME));
+        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME));
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
@@ -213,7 +213,7 @@ public class MailFormatterTest extends BaseTest {
                 "Email body text", null, null, PhoneEvent.State.PENDING);
 
         MailFormatter formatter = new MailFormatter(context, message);
-        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME));
+        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME));
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
@@ -235,7 +235,7 @@ public class MailFormatterTest extends BaseTest {
 
         MailFormatter formatter = new MailFormatter(context, message);
         formatter.setDeviceName(deviceName);
-        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
+        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
 
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
@@ -256,7 +256,7 @@ public class MailFormatterTest extends BaseTest {
                 "Email body text", new GeoCoordinates(60.555, 30.555), null, PhoneEvent.State.PENDING);
 
         MailFormatter formatter = new MailFormatter(context, message);
-        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_LOCATION));
+        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_LOCATION));
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
@@ -278,7 +278,7 @@ public class MailFormatterTest extends BaseTest {
                 "Email body text", null, null, PhoneEvent.State.PENDING);
 
         MailFormatter formatter = new MailFormatter(context, message);
-        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_LOCATION));
+        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_LOCATION));
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
@@ -299,7 +299,7 @@ public class MailFormatterTest extends BaseTest {
                 "Email body text", null, null, PhoneEvent.State.PENDING);
 
         MailFormatter formatter = new MailFormatter(context, message);
-        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_LOCATION));
+        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_LOCATION));
 
         when(context.checkPermission(eq(ACCESS_COARSE_LOCATION), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED);
         when(context.checkPermission(eq(ACCESS_FINE_LOCATION), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED);
@@ -324,7 +324,7 @@ public class MailFormatterTest extends BaseTest {
 
         MailFormatter formatter = new MailFormatter(context, message);
         formatter.setContactName("John Dou");
-        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_CONTACT));
+        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_CONTACT));
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
@@ -345,7 +345,7 @@ public class MailFormatterTest extends BaseTest {
                 "Email body text", null, null, PhoneEvent.State.PENDING);
 
         MailFormatter formatter = new MailFormatter(context, message);
-        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_CONTACT));
+        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_CONTACT));
         when(context.checkPermission(eq(READ_CONTACTS), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED);
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
@@ -367,7 +367,7 @@ public class MailFormatterTest extends BaseTest {
                 "Email body text", null, null, PhoneEvent.State.PENDING);
 
         MailFormatter formatter = new MailFormatter(context, message);
-        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_CONTACT));
+        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_CONTACT));
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
@@ -449,7 +449,7 @@ public class MailFormatterTest extends BaseTest {
         MailFormatter formatter = new MailFormatter(context, message);
         formatter.setContactName("John Dou");
         formatter.setDeviceName(deviceName);
-        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
+        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
                 VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
@@ -481,7 +481,7 @@ public class MailFormatterTest extends BaseTest {
         MailFormatter formatter = new MailFormatter(context, message);
         formatter.setContactName("John Dou");
         formatter.setDeviceName(deviceName);
-        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
+        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
                 VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
@@ -512,7 +512,7 @@ public class MailFormatterTest extends BaseTest {
 
         MailFormatter formatter = new MailFormatter(context, message);
         formatter.setDeviceName(deviceName);
-        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
+        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
                 VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
@@ -550,8 +550,10 @@ public class MailFormatterTest extends BaseTest {
         MailFormatter formatter = new MailFormatter(context, message);
         formatter.setDeviceName(deviceName);
         formatter.setLocale("ru_RU");
-        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
-                VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
+        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_CONTACT,
+                VAL_PREF_EMAIL_CONTENT_LOCATION,
+                VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
+                VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
 
         assertEquals("[SMailer] Пропущенный звонок от +12345678901", formatter.getSubject());
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">" +
@@ -594,7 +596,7 @@ public class MailFormatterTest extends BaseTest {
         formatter.setDeviceName(deviceName);
         formatter.setLocale("blah-blah"); /* should set default locale */
 
-        formatter.setContentOptions(Util.asSet(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
+        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
                 VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">" +

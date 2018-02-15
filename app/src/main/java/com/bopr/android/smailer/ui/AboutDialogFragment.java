@@ -13,9 +13,9 @@ import android.view.Window;
 import android.widget.TextView;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.Settings;
-import com.bopr.android.smailer.util.TagFormatter;
 
 import static com.bopr.android.smailer.util.AndroidUtil.dialogBuilder;
+import static com.bopr.android.smailer.util.TagFormatter.formatter;
 
 /**
  * About dialog fragment.
@@ -70,7 +70,7 @@ public class AboutDialogFragment extends DialogFragment {
     }
 
     private String formatVersion() {
-        return TagFormatter.formatFrom(R.string.title_version, getResources())
+        return formatter(R.string.title_version, getResources())
                 .put("version", Settings.getReleaseVersion(getActivity()))
                 .format();
     }
