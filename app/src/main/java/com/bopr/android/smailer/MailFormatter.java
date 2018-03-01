@@ -5,7 +5,6 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.bopr.android.smailer.util.TagFormatter;
 import com.bopr.android.smailer.util.Util;
 
 import java.text.DateFormat;
@@ -15,7 +14,8 @@ import java.util.Set;
 
 import static com.bopr.android.smailer.Settings.*;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
-import static com.bopr.android.smailer.util.Util.*;
+import static com.bopr.android.smailer.util.Util.formatDuration;
+import static com.bopr.android.smailer.util.Util.isEmpty;
 import static java.lang.String.valueOf;
 
 /**
@@ -36,15 +36,17 @@ class MailFormatter {
 
     private final PhoneEvent event;
     private final Context context;
+    private Resources resources;
+    private Locale locale;
     private String contactName;
     private String deviceName;
     private Set<String> contentOptions;
-    private Locale locale = Locale.getDefault();
-    private Resources resources;
 
     MailFormatter(Context context, PhoneEvent event) {
         this.event = event;
         this.context = context;
+        this.resources = context.getResources();
+        this.locale = Locale.getDefault();
     }
 
     /**
@@ -81,11 +83,9 @@ class MailFormatter {
      */
     void setLocale(String code) {
         Locale locale = Util.stringToLocale(code);
-        if (locale != null) {
-            this.locale = locale;
-        } else {
-            this.locale = Locale.getDefault();
-        }
+        this.locale = locale != null ? locale : Locale.getDefault();
+
+        updateResources();
     }
 
     /**
@@ -94,12 +94,10 @@ class MailFormatter {
      * @return email subject
      */
     @NonNull
-    String getSubject() {
-        setupResources();
-
+    String formatSubject() {
         return formatter(SUBJECT_PATTERN, resources)
                 .put("app_name", R.string.app_name)
-                .put("source", getTriggerText())
+                .put("source", formatTrigger())
                 .put("phone", event.getPhone())
                 .format();
     }
@@ -110,23 +108,18 @@ class MailFormatter {
      * @return email body
      */
     @NonNull
-    String getBody() {
-        setupResources();
+    String formatBody() {
+        String footer = formatFooter();
 
-        String footerText = getFooterText();
-        TagFormatter formatter = formatter(BODY_PATTERN)
-                .put("message", getMessageText())
-                .put("footer", footerText);
-
-        if (!isEmpty(footerText)) {
-            formatter.put("line", LINE);
-        }
-
-        return formatter.format();
+        return formatter(BODY_PATTERN)
+                .put("message", formatMessage())
+                .put("footer", footer)
+                .put("line", !isEmpty(footer) ? LINE : null)
+                .format();
     }
 
     @NonNull
-    private String getTriggerText() {
+    private String formatTrigger() {
         int resourceId;
 
         if (event.isMissed()) {
@@ -149,7 +142,7 @@ class MailFormatter {
     }
 
     @NonNull
-    private String getMessageText() {
+    private String formatMessage() {
         if (event.isMissed()) {
             return resources.getString(R.string.email_body_missed_call);
         } else if (event.isSms()) {
@@ -168,12 +161,12 @@ class MailFormatter {
     }
 
     @Nullable
-    private String getFooterText() {
+    private String formatFooter() {
         if (contentOptions != null) {
-            String callerText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_CONTACT) ? getCallerText() : null;
-            String deviceNameText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME) ? getDeviceNameText() : null;
-            String timeText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME) ? getTimeText() : null;
-            String locationText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_LOCATION) ? getLocationText() : null;
+            String callerText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_CONTACT) ? formatCaller() : null;
+            String deviceNameText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME) ? formatDeviceName() : null;
+            String timeText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME) ? formatTime() : null;
+            String locationText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_LOCATION) ? formatLocation() : null;
 
             StringBuilder text = new StringBuilder();
 
@@ -192,6 +185,11 @@ class MailFormatter {
                 if (!isEmpty(callerText) || !isEmpty(locationText)) {
                     text.append("<br>");
                 }
+
+                if (!isEmpty(timeText)) {
+                    deviceNameText += "<br>";
+                }
+
                 text.append(formatter(R.string.email_body_sent, resources)
                         .put("device_name", deviceNameText)
                         .put("time", timeText));
@@ -208,7 +206,7 @@ class MailFormatter {
     }
 
     @NonNull
-    private String getCallerText() {
+    private String formatCaller() {
         int resourceId;
         if (event.isSms()) {
             resourceId = R.string.email_body_sender;
@@ -238,9 +236,9 @@ class MailFormatter {
     }
 
     @Nullable
-    private String getDeviceNameText() {
+    private String formatDeviceName() {
         if (!isEmpty(deviceName)) {
-            return " " + formatter(R.string.email_body_from, resources)
+            return formatter(R.string.email_body_from, resources)
                     .put("device_name", deviceName)
                     .format();
         }
@@ -248,10 +246,10 @@ class MailFormatter {
     }
 
     @Nullable
-    private String getTimeText() {
+    private String formatTime() {
         if (event.getStartTime() != null) {
             DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
-            return " " + formatter(R.string.email_body_time, resources)
+            return formatter(R.string.email_body_time, resources)
                     .put("time", df.format(new Date(event.getStartTime())))
                     .format();
         }
@@ -259,14 +257,14 @@ class MailFormatter {
     }
 
     @NonNull
-    private String getLocationText() {
+    private String formatLocation() {
         GeoCoordinates location = event.getLocation();
         if (location != null) {
             return formatter(R.string.email_body_location, resources)
                     .put("location", formatter(GOOGLE_MAP_LINK_PATTERN)
                             .put("latitude", valueOf(location.getLatitude()))
                             .put("longitude", valueOf(location.getLongitude()))
-                            .put("location", formatLocation(location, "&#176;", "\'", "\"", "N", "S", "W", "E"))
+                            .put("location", Util.formatLocation(location, "&#176;", "\'", "\"", "N", "S", "W", "E"))
                             .format())
                     .format();
         } else {
@@ -278,10 +276,14 @@ class MailFormatter {
         }
     }
 
-    private void setupResources() {
-        Configuration configuration = context.getResources().getConfiguration();
-        configuration.setLocale(locale);
-        resources = context.createConfigurationContext(configuration).getResources();
+    private void updateResources() {
+        if (locale != Locale.getDefault()) {
+            Configuration configuration = context.getResources().getConfiguration();
+            configuration.setLocale(locale);
+            resources = context.createConfigurationContext(configuration).getResources();
+        } else {
+            resources = context.getResources();
+        }
     }
 
 }

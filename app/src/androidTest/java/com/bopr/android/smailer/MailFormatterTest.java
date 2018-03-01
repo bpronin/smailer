@@ -58,7 +58,7 @@ public class MailFormatterTest extends BaseTest {
 
         MailFormatter formatter = new MailFormatter(context, event);
 
-        assertEquals("[SMailer] Incoming SMS from +70123456789", formatter.getSubject());
+        assertEquals("[SMailer] Incoming SMS from +70123456789", formatter.formatSubject());
     }
 
     /**
@@ -73,7 +73,7 @@ public class MailFormatterTest extends BaseTest {
 
         MailFormatter formatter = new MailFormatter(context, message);
 
-        assertEquals("[SMailer] Outgoing SMS to +70123456789", formatter.getSubject());
+        assertEquals("[SMailer] Outgoing SMS to +70123456789", formatter.formatSubject());
     }
 
     /**
@@ -88,7 +88,7 @@ public class MailFormatterTest extends BaseTest {
 
         MailFormatter formatter = new MailFormatter(context, message);
 
-        assertEquals("[SMailer] Incoming call from +70123456789", formatter.getSubject());
+        assertEquals("[SMailer] Incoming call from +70123456789", formatter.formatSubject());
     }
 
     /**
@@ -103,7 +103,7 @@ public class MailFormatterTest extends BaseTest {
 
         MailFormatter formatter = new MailFormatter(context, message);
 
-        assertEquals("[SMailer] Outgoing call to +70123456789", formatter.getSubject());
+        assertEquals("[SMailer] Outgoing call to +70123456789", formatter.formatSubject());
     }
 
     /**
@@ -118,7 +118,7 @@ public class MailFormatterTest extends BaseTest {
 
         MailFormatter formatter = new MailFormatter(context, message);
 
-        assertEquals("[SMailer] Missed call from +70123456789", formatter.getSubject());
+        assertEquals("[SMailer] Missed call from +70123456789", formatter.formatSubject());
     }
 
     /**
@@ -135,7 +135,7 @@ public class MailFormatterTest extends BaseTest {
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
-                "</body></html>", formatter.getBody());
+                "</body></html>", formatter.formatBody());
     }
 
     /**
@@ -156,7 +156,7 @@ public class MailFormatterTest extends BaseTest {
                 "Email body text" +
                 "<hr style=\"border: none; background-color: #cccccc; height: 1px;\"><small>" +
                 "Sent at February 2, 2016 3:04:05 AM EST" +
-                "</small></body></html>", formatter.getBody());
+                "</small></body></html>", formatter.formatBody());
     }
 
     /**
@@ -173,7 +173,7 @@ public class MailFormatterTest extends BaseTest {
         MailFormatter formatter = new MailFormatter(context, message);
         formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
 
-        String body = formatter.getBody();
+        String body = formatter.formatBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
                 "</body></html>", body);
@@ -198,7 +198,7 @@ public class MailFormatterTest extends BaseTest {
                 "Email body text" +
                 "<hr style=\"border: none; background-color: #cccccc; height: 1px;\"><small>" +
                 "Sent from " + deviceName +
-                "</small></body></html>", formatter.getBody());
+                "</small></body></html>", formatter.formatBody());
     }
 
     /**
@@ -217,7 +217,7 @@ public class MailFormatterTest extends BaseTest {
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
-                "</body></html>", formatter.getBody());
+                "</body></html>", formatter.formatBody());
     }
 
     /**
@@ -242,7 +242,7 @@ public class MailFormatterTest extends BaseTest {
                 "Email body text" +
                 "<hr style=\"border: none; background-color: #cccccc; height: 1px;\"><small>" +
                 "Sent from " + deviceName + " at February 2, 2016 3:04:05 AM EST" +
-                "</small></body></html>", formatter.getBody());
+                "</small></body></html>", formatter.formatBody());
     }
 
     /**
@@ -263,7 +263,7 @@ public class MailFormatterTest extends BaseTest {
                 "<hr style=\"border: none; background-color: #cccccc; height: 1px;\"><small>" +
                 "Last known device location: <a href=\"https://www.google.com/maps/place/60.555+30.555/@60.555,30.555\">" +
                 "60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
-                "</small></body></html>", formatter.getBody());
+                "</small></body></html>", formatter.formatBody());
     }
 
     /**
@@ -284,7 +284,7 @@ public class MailFormatterTest extends BaseTest {
                 "Email body text" +
                 "<hr style=\"border: none; background-color: #cccccc; height: 1px;\"><small>" +
                 "Last known device location: (location service disabled)" +
-                "</small></body></html>", formatter.getBody());
+                "</small></body></html>", formatter.formatBody());
     }
 
     /**
@@ -304,7 +304,7 @@ public class MailFormatterTest extends BaseTest {
         when(context.checkPermission(eq(ACCESS_COARSE_LOCATION), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED);
         when(context.checkPermission(eq(ACCESS_FINE_LOCATION), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED);
 
-        String body = formatter.getBody();
+        String body = formatter.formatBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Email body text" +
                 "<hr style=\"border: none; background-color: #cccccc; height: 1px;\"><small>" +
@@ -330,7 +330,7 @@ public class MailFormatterTest extends BaseTest {
                 "Email body text" +
                 "<hr style=\"border: none; background-color: #cccccc; height: 1px;\"><small>" +
                 "Sender: <a href=\"tel:+12345678901\">+12345678901</a> (John Dou)" +
-                "</small></body></html>", formatter.getBody());
+                "</small></body></html>", formatter.formatBody());
     }
 
     /**
@@ -352,7 +352,7 @@ public class MailFormatterTest extends BaseTest {
                 "Email body text" +
                 "<hr style=\"border: none; background-color: #cccccc; height: 1px;\"><small>" +
                 "Sender: <a href=\"tel:+12345678901\">+12345678901</a> (no permission to read contacts)" +
-                "</small></body></html>", formatter.getBody());
+                "</small></body></html>", formatter.formatBody());
     }
 
     /**
@@ -373,7 +373,7 @@ public class MailFormatterTest extends BaseTest {
                 "Email body text" +
                 "<hr style=\"border: none; background-color: #cccccc; height: 1px;\"><small>" +
                 "Sender: <a href=\"tel:+12345678901\">+12345678901</a> (Unknown contact)" +
-                "</small></body></html>", formatter.getBody());
+                "</small></body></html>", formatter.formatBody());
     }
 
     /**
@@ -392,7 +392,7 @@ public class MailFormatterTest extends BaseTest {
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "You had an incoming call of 1:01:05 duration." +
-                "</body></html>", formatter.getBody());
+                "</body></html>", formatter.formatBody());
     }
 
     /**
@@ -411,7 +411,7 @@ public class MailFormatterTest extends BaseTest {
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "You had an outgoing call of 1:01:10 duration." +
-                "</body></html>", formatter.getBody());
+                "</body></html>", formatter.formatBody());
     }
 
     /**
@@ -429,7 +429,7 @@ public class MailFormatterTest extends BaseTest {
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "You had a missed call." +
-                "</body></html>", formatter.getBody());
+                "</body></html>", formatter.formatBody());
     }
 
     /**
@@ -461,7 +461,7 @@ public class MailFormatterTest extends BaseTest {
                 "Last known device location: <a href=\"https://www.google.com/maps/place/60.555+30.555/@60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "<br>" +
                 "Sent from " + deviceName + " at February 2, 2016 3:04:05 AM EST" +
-                "</small></body></html>", formatter.getBody());
+                "</small></body></html>", formatter.formatBody());
     }
 
     /**
@@ -493,7 +493,7 @@ public class MailFormatterTest extends BaseTest {
                 "Last known device location: <a href=\"https://www.google.com/maps/place/60.555+30.555/@60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "<br>" +
                 "Sent from " + deviceName + " at February 2, 2016 3:04:05 AM EST" +
-                "</small></body></html>", formatter.getBody());
+                "</small></body></html>", formatter.formatBody());
     }
 
     /**
@@ -524,7 +524,7 @@ public class MailFormatterTest extends BaseTest {
                 "Last known device location: <a href=\"https://www.google.com/maps/place/60.555+30.555/@60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "<br>" +
                 "Sent from " + deviceName + " at February 2, 2016 3:04:05 AM EST" +
-                "</small></body></html>", formatter.getBody());
+                "</small></body></html>", formatter.formatBody());
     }
 
     /**
@@ -555,7 +555,7 @@ public class MailFormatterTest extends BaseTest {
                 VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
                 VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
 
-        assertEquals("[SMailer] Пропущенный звонок от +12345678901", formatter.getSubject());
+        assertEquals("[SMailer] Пропущенный звонок от +12345678901", formatter.formatSubject());
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">" +
                 "</head><body>" +
                 "Пропущенный звонок." +
@@ -564,7 +564,7 @@ public class MailFormatterTest extends BaseTest {
                 "Последнее известное местоположение: <a href=\"https://www.google.com/maps/place/60.555+30.555/@60.555,30.555\">" +
                 "60&#176;33'17\"N, 30&#176;33'17\"W</a><br>" +
                 "Отправлено с устройства \"" + deviceName + "\" 2 февраля 2016 г. 3:04:05 GMT-05:00" +
-                "</small></body></html>", formatter.getBody());
+                "</small></body></html>", formatter.formatBody());
 
         formatter.setLocale(null); /* should set default locale */
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">" +
@@ -575,7 +575,7 @@ public class MailFormatterTest extends BaseTest {
                 "Last known device location: <a href=\"https://www.google.com/maps/place/60.555+30.555/@60.555,30.555\">" +
                 "60&#176;33'17\"N, 30&#176;33'17\"W</a><br>" +
                 "Sent from " + deviceName + " at February 2, 2016 3:04:05 AM EST" +
-                "</small></body></html>", formatter.getBody());
+                "</small></body></html>", formatter.formatBody());
     }
 
     /**
@@ -607,7 +607,7 @@ public class MailFormatterTest extends BaseTest {
                 "Last known device location: <a href=\"https://www.google.com/maps/place/60.555+30.555/@60.555,30.555\">" +
                 "60&#176;33'17\"N, 30&#176;33'17\"W</a><br>" +
                 "Sent from " + deviceName + " at February 2, 2016 3:04:05 AM EST" +
-                "</small></body></html>", formatter.getBody());
+                "</small></body></html>", formatter.formatBody());
     }
 
 }

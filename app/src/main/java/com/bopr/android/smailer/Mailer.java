@@ -81,7 +81,7 @@ class Mailer {
 
             transport.init(pp.getUser(), cryptor.decrypt(pp.getPassword()), pp.getHost(), pp.getPort());
             try {
-                transport.send(formatter.getSubject(), formatter.getBody(), pp.getUser(), pp.getRecipients());
+                transport.send(formatter.formatSubject(), formatter.formatBody(), pp.getUser(), pp.getRecipients());
 
                 success(event);
             } catch (AuthenticationFailedException x) {
