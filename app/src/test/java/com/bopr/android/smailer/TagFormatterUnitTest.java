@@ -102,4 +102,16 @@ public class TagFormatterUnitTest {
         Assert.assertEquals("ONE, TWO and THREE", text);
     }
 
+    @Test
+    public void testEscape() throws Exception {
+//        String text = formatter("/{three/}")
+////                .put("one", "ONE")
+//                .put("three", "THREE")
+//                .format();
+//        String text = "{three}".replaceAll("\\{(.*?)\\}", "text");
+        String text = "{/{three".replaceAll("\\{(?!/\\{)", "*");
+        System.out.println(text);
+//        Assert.assertEquals("{three}", text);
+    }
+
 }

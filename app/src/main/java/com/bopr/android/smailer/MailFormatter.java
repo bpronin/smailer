@@ -186,10 +186,6 @@ class MailFormatter {
                     text.append("<br>");
                 }
 
-                if (!isEmpty(timeText)) {
-                    deviceNameText += "<br>";
-                }
-
                 text.append(formatter(R.string.email_body_sent, resources)
                         .put("device_name", deviceNameText)
                         .put("time", timeText));
@@ -238,7 +234,7 @@ class MailFormatter {
     @Nullable
     private String formatDeviceName() {
         if (!isEmpty(deviceName)) {
-            return formatter(R.string.email_body_from, resources)
+            return " " + formatter(R.string.email_body_from, resources)
                     .put("device_name", deviceName)
                     .format();
         }
@@ -249,7 +245,7 @@ class MailFormatter {
     private String formatTime() {
         if (event.getStartTime() != null) {
             DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
-            return formatter(R.string.email_body_time, resources)
+            return " " + formatter(R.string.email_body_time, resources)
                     .put("time", df.format(new Date(event.getStartTime())))
                     .format();
         }
