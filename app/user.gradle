@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat
 
 /* user defined procedures */
 
-task updateReleaseInfo << {
+def updateReleaseInfo = {
     def propFile = new File(projectDir, 'src/main/assets/release.properties')
     Properties props = new Properties()
     props.load(new FileInputStream(propFile))
@@ -23,7 +23,7 @@ task updateReleaseInfo << {
 }
 
 assemble.doLast {
-    updateReleaseInfo.execute()
+    updateReleaseInfo()
     if (project.hasProperty('upload_path')) {
         println('copying release to: ' + upload_path)
         copy {
