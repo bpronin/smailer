@@ -32,7 +32,7 @@ class MailFormatter {
     private static final String LINE = "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">";
     private static final String GOOGLE_MAP_LINK_PATTERN = "<a href=\"https://www.google.com/maps/" +
             "place/{latitude}+{longitude}/@{latitude},{longitude}\">{location}</a>";
-    private static final String PHONE_LINK_PATTERN = "<a href=\"tel:{phone}\">{phone}</a>";
+    private static final String PHONE_LINK_PATTERN = "<a href=\"tel:{phone}\" style=\"text-decoration: none\">&#9742;</a>{phone}";
 
     private final PhoneEvent event;
     private final Context context;

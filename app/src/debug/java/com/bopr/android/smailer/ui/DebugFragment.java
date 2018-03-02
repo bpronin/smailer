@@ -58,163 +58,146 @@ public class DebugFragment extends BasePreferenceFragment {
 
         PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(getActivity());
 
-        screen.addPreference(createSimplePreference("Emulate Sms", new Preference.OnPreferenceClickListener() {
+        screen.addPreference(createSimplePreference("Emulate Sms", new DefaultClickListener() {
 
             @Override
-            public boolean onPreferenceClick(Preference preference) {
+            protected void onClick(Preference preference) {
                 onEmulateSms();
-                return true;
             }
         }));
 
-        screen.addPreference(createSimplePreference("Set default preferences", new Preference.OnPreferenceClickListener() {
+        screen.addPreference(createSimplePreference("Set default preferences", new DefaultClickListener() {
 
             @Override
-            public boolean onPreferenceClick(Preference preference) {
+            protected void onClick(Preference preference) {
                 onRestorePreferences();
-                return true;
             }
         }));
 
-        screen.addPreference(createSimplePreference("Send default mail", new OnPreferenceClickListener() {
+        screen.addPreference(createSimplePreference("Send default mail", new DefaultClickListener() {
 
             @Override
-            public boolean onPreferenceClick(Preference preference) {
+            protected void onClick(Preference preference) {
                 onSendDefaultMail();
-                return true;
             }
         }));
 
-        screen.addPreference(createSimplePreference("Send mail", new Preference.OnPreferenceClickListener() {
+        screen.addPreference(createSimplePreference("Send mail", new DefaultClickListener() {
 
             @Override
-            public boolean onPreferenceClick(Preference preference) {
+            protected void onClick(Preference preference) {
                 onSendMail();
-                return true;
             }
         }));
 
-        screen.addPreference(createSimplePreference("Clear preferences", new Preference.OnPreferenceClickListener() {
+        screen.addPreference(createSimplePreference("Clear preferences", new DefaultClickListener() {
 
             @Override
-            public boolean onPreferenceClick(Preference preference) {
+            protected void onClick(Preference preference) {
                 onClearPreferences();
-                return true;
             }
         }));
 
-        screen.addPreference(createSimplePreference("Require Sms permission", new Preference.OnPreferenceClickListener() {
+        screen.addPreference(createSimplePreference("Require Sms permission", new DefaultClickListener() {
 
             @Override
-            public boolean onPreferenceClick(Preference preference) {
+            protected void onClick(Preference preference) {
                 onRequireReceiveSmsPermission();
-                return true;
             }
         }));
 
-        screen.addPreference(createSimplePreference("Request Sms permission", new Preference.OnPreferenceClickListener() {
+        screen.addPreference(createSimplePreference("Request Sms permission", new DefaultClickListener() {
 
             @Override
-            public boolean onPreferenceClick(Preference preference) {
+            protected void onClick(Preference preference) {
                 requestSmsPermission();
-                return true;
             }
         }));
 
-        screen.addPreference(createSimplePreference("Get location", new Preference.OnPreferenceClickListener() {
+        screen.addPreference(createSimplePreference("Get location", new DefaultClickListener() {
 
             @Override
-            public boolean onPreferenceClick(Preference preference) {
+            protected void onClick(Preference preference) {
                 onGetLocation();
-                return true;
             }
         }));
 
-        screen.addPreference(createSimplePreference("Get contact", new Preference.OnPreferenceClickListener() {
+        screen.addPreference(createSimplePreference("Get contact", new DefaultClickListener() {
 
             @Override
-            public boolean onPreferenceClick(Preference preference) {
+            protected void onClick(Preference preference) {
                 onGetContact();
-                return true;
             }
         }));
 
-        screen.addPreference(createSimplePreference("Save log", new Preference.OnPreferenceClickListener() {
+        screen.addPreference(createSimplePreference("Save log", new DefaultClickListener() {
 
             @Override
-            public boolean onPreferenceClick(Preference preference) {
+            protected void onClick(Preference preference) {
                 onSaveLog();
-                return true;
             }
         }));
 
-        screen.addPreference(createSimplePreference("Send log", new Preference.OnPreferenceClickListener() {
+        screen.addPreference(createSimplePreference("Send log", new DefaultClickListener() {
 
             @Override
-            public boolean onPreferenceClick(Preference preference) {
+            protected void onClick(Preference preference) {
                 onSendLog();
-                return true;
             }
         }));
 
-        screen.addPreference(createSimplePreference("Destroy database", new Preference.OnPreferenceClickListener() {
+        screen.addPreference(createSimplePreference("Destroy database", new DefaultClickListener() {
 
             @Override
-            public boolean onPreferenceClick(Preference preference) {
+            protected void onClick(Preference preference) {
                 database.destroy();
-                return true;
             }
         }));
 
-        screen.addPreference(createSimplePreference("Show password", new Preference.OnPreferenceClickListener() {
+        screen.addPreference(createSimplePreference("Show password", new DefaultClickListener() {
 
             @Override
-            public boolean onPreferenceClick(Preference preference) {
+            protected void onClick(Preference preference) {
                 onShowPassword();
-                return true;
             }
         }));
 
-        screen.addPreference(createSimplePreference("Populate log", new Preference.OnPreferenceClickListener() {
+        screen.addPreference(createSimplePreference("Populate log", new DefaultClickListener() {
 
             @Override
-            public boolean onPreferenceClick(Preference preference) {
+            protected void onClick(Preference preference) {
                 onPopulateLog();
-                return true;
             }
         }));
 
-        screen.addPreference(createSimplePreference("Clear log", new Preference.OnPreferenceClickListener() {
+        screen.addPreference(createSimplePreference("Clear log", new DefaultClickListener() {
 
             @Override
-            public boolean onPreferenceClick(Preference preference) {
+            protected void onClick(Preference preference) {
                 onClearLog();
-                return true;
             }
         }));
 
-        screen.addPreference(createSimplePreference("Show notification", new Preference.OnPreferenceClickListener() {
+        screen.addPreference(createSimplePreference("Show notification", new DefaultClickListener() {
 
             @Override
-            public boolean onPreferenceClick(Preference preference) {
+            protected void onClick(Preference preference) {
                 onShowNotification();
-                return true;
             }
         }));
 
-        screen.addPreference(createSimplePreference("Show concurrent", new Preference.OnPreferenceClickListener() {
+        screen.addPreference(createSimplePreference("Show concurrent", new DefaultClickListener() {
 
             @Override
-            public boolean onPreferenceClick(Preference preference) {
+            protected void onClick(Preference preference) {
                 onShowConcurrent();
-                return true;
             }
         }));
 
-        screen.addPreference(createSimplePreference("Crash!", new Preference.OnPreferenceClickListener() {
+        screen.addPreference(createSimplePreference("Crash!", new DefaultClickListener() {
 
             @Override
-            public boolean onPreferenceClick(Preference preference) {
+            protected void onClick(Preference preference) {
                 throw new RuntimeException("Test crash");
             }
         }));
@@ -553,8 +536,20 @@ public class DebugFragment extends BasePreferenceFragment {
                     }
                 }
             }
-            
+
             return null;
+        }
+    }
+
+    private abstract class DefaultClickListener implements OnPreferenceClickListener {
+
+        protected abstract void onClick(Preference preference);
+
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+            onClick(preference);
+            getActivity().finish();
+            return true;
         }
     }
 }
