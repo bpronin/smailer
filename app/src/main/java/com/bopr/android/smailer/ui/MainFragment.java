@@ -29,6 +29,11 @@ public class MainFragment extends BasePreferenceFragment {
     private Preference recipientsPreference;
     private Preference serverPreference;
     private OnSharedPreferenceChangeListener preferenceChangeListener;
+    private Preference.OnPreferenceClickListener preferenceClickListener;
+
+    public MainFragment() {
+        setPreferenceClickListener(new PreferenceClickListener());
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,51 +44,13 @@ public class MainFragment extends BasePreferenceFragment {
         setHasOptionsMenu(true);
 
         recipientsPreference = findPreference(KEY_PREF_RECIPIENTS_ADDRESS);
-        recipientsPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                startActivity(new Intent(getActivity(), RecipientsActivity.class));
-                return true;
-            }
-        });
-
         serverPreference = findPreference(KEY_PREF_OUTGOING_SERVER);
-        serverPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                startActivity(new Intent(getActivity(), ServerActivity.class));
-                return true;
-            }
-        });
-
-        findPreference(KEY_PREF_MORE).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                startActivity(new Intent(getActivity(), MoreActivity.class));
-                return true;
-            }
-        });
-
-        findPreference(KEY_PREF_FILTERS).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                startActivity(new Intent(getActivity(), RulesActivity.class));
-                return true;
-            }
-        });
-
-        findPreference(KEY_PREF_LOG).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                startActivity(new Intent(getActivity(), LogActivity.class));
-                return true;
-            }
-        });
+        recipientsPreference.setOnPreferenceClickListener(preferenceClickListener);
+        serverPreference.setOnPreferenceClickListener(preferenceClickListener);
+        findPreference(KEY_PREF_MORE).setOnPreferenceClickListener(preferenceClickListener);
+        findPreference(KEY_PREF_RULES).setOnPreferenceClickListener(preferenceClickListener);
+        findPreference(KEY_PREF_LOG).setOnPreferenceClickListener(preferenceClickListener);
 
         preferenceChangeListener = new OnSharedPreferenceChangeListener() {
 
@@ -126,6 +93,10 @@ public class MainFragment extends BasePreferenceFragment {
         return super.onOptionsItemSelected(item);
     }
 
+    public void setPreferenceClickListener(Preference.OnPreferenceClickListener listener) {
+        this.preferenceClickListener = listener;
+    }
+
     private void updateServerPreference() {
         SharedPreferences preferences = getSharedPreferences();
         String sender = preferences.getString(KEY_PREF_SENDER_ACCOUNT, "");
@@ -152,4 +123,28 @@ public class MainFragment extends BasePreferenceFragment {
         new AboutDialogFragment().showDialog((FragmentActivity) getActivity());
     }
 
+    private class PreferenceClickListener implements Preference.OnPreferenceClickListener {
+
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+            switch (preference.getKey()) {
+                case KEY_PREF_OUTGOING_SERVER:
+                    startActivity(new Intent(getActivity(), ServerActivity.class));
+                    break;
+                case KEY_PREF_RECIPIENTS_ADDRESS:
+                    startActivity(new Intent(getActivity(), RecipientsActivity.class));
+                    break;
+                case KEY_PREF_MORE:
+                    startActivity(new Intent(getActivity(), MoreActivity.class));
+                    break;
+                case KEY_PREF_RULES:
+                    startActivity(new Intent(getActivity(), RulesActivity.class));
+                    break;
+                case KEY_PREF_LOG:
+                    startActivity(new Intent(getActivity(), LogActivity.class));
+                    break;
+            }
+            return true;
+        }
+    }
 }

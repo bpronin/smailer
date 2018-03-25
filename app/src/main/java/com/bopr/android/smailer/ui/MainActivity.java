@@ -39,7 +39,7 @@ public class MainActivity extends AppActivity {
     @NonNull
     @Override
     protected Fragment createFragment() {
-        return new MainFragment();
+        return new MainFragmentLarge();
     }
 
     private static class InitKeystoreTask extends LongAsyncTask<Void, Void, Void> {
