@@ -76,8 +76,8 @@
     <string name="title_email_language_hint">Язык почтового сообщения</string>
     <string name="title_email_message_content">Влючать в почтовое сообщение</string>
     <string name="title_email_password_hint">Пароль аккаунта, с которого будет отправляться почта.</string>
-    <string name="title_email_recipients">Получатели почты</string>
-    <string name="title_email_sender">Отправитель почты</string>
+    <string name="title_email_recipients">Получатели</string>
+    <string name="title_email_sender">Отправитель</string>
     <string name="title_host">Сервер</string>
     <string name="title_list_empty">Список пуст</string>
     <string name="title_log_empty">Журнал пуст</string>

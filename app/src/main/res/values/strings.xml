@@ -78,8 +78,8 @@
     <string name="title_email_language_hint">Email message language</string>
     <string name="title_email_message_content">Email message content</string>
     <string name="title_email_password_hint">Password of account to send email from.</string>
-    <string name="title_email_recipients">Email recipients</string>
-    <string name="title_email_sender">Email sender</string>
+    <string name="title_email_recipients">Recipients</string>
+    <string name="title_email_sender">Account</string>
     <string name="title_host">Host</string>
     <string name="title_list_empty">List is empty</string>
     <string name="title_log_empty">Log is empty</string>
