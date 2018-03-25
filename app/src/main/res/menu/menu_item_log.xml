@@ -2,19 +2,29 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     >
 
-    <item
-        android:id="@+id/action_add_to_blacklist"
-        android:title="@string/title_add_to_blacklist"
-        />
+    <group
+        android:id="@+id/rules">
+        <item
+            android:id="@+id/action_add_to_blacklist"
+            android:title="@string/title_add_to_blacklist"
+            />
 
-    <item
-        android:id="@+id/action_add_to_whitelist"
-        android:title="@string/title_add_to_whitelist"
-        />
+        <item
+            android:id="@+id/action_add_to_whitelist"
+            android:title="@string/title_add_to_whitelist"
+            />
 
-    <item
-        android:id="@+id/action_remove_from_lists"
-        android:title="@string/title_remove_from_filter"
-        />
+        <item
+            android:id="@+id/action_remove_from_lists"
+            android:title="@string/title_remove_from_filter"
+            />
+    </group>
+
+    <group android:id="@+id/common">
+        <item
+            android:id="@+id/action_log_clear"
+            android:title="@string/title_clear_log"
+            />
+    </group>
 
 </menu>

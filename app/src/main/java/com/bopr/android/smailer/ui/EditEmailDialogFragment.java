@@ -3,13 +3,12 @@ package com.bopr.android.smailer.ui;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -33,8 +32,8 @@ public class EditEmailDialogFragment extends DialogFragment {
     private String initialValue;
     private Callback callback;
 
-    public void showDialog(FragmentActivity activity) {
-        show(activity.getSupportFragmentManager(), "edit_recipient_dialog");
+    public void showDialog(Activity activity) {
+        show(activity.getFragmentManager(), "edit_recipient_dialog");
     }
 
     @Override

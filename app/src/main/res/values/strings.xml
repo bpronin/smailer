@@ -62,12 +62,12 @@
     <string name="title_account_hint">Email address to send email from.</string>
     <string name="title_activity_log">Activity log</string>
     <string name="title_add">Add</string>
-    <string name="title_add_to_blacklist">Add phone number to blacklist</string>
-    <string name="title_add_to_whitelist">Add phone number to whitelist</string>
+    <string name="title_add_to_blacklist">Add number to blacklist</string>
+    <string name="title_add_to_whitelist">Add number to whitelist</string>
     <string name="title_any">any</string>
     <string name="title_black_list_used">Black list used</string>
     <string name="title_blacklist">Blacklist</string>
-    <string name="title_clear">Clear</string>
+    <string name="title_clear_log">Clear log</string>
     <string name="title_content">Email content</string>
     <string name="title_copyright" translatable="false">Copyright © BoPr, 2016</string>
     <string name="title_device_alias">Device name</string>
@@ -97,7 +97,7 @@
     <string name="title_phone_number">Phone number</string>
     <string name="title_port">Port</string>
     <string name="title_remove">Remove</string>
-    <string name="title_remove_from_filter">Remove phone number from filter</string>
+    <string name="title_remove_from_filter">Exclude number from all rules</string>
     <string name="title_resend">Resend</string>
     <string name="title_resend_hint">Try to resend unsent messages when connection is established</string>
     <string name="title_rules">Rules</string>
