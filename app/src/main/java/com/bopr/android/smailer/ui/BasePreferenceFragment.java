@@ -2,21 +2,11 @@ package com.bopr.android.smailer.ui;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
-import android.preference.EditTextPreference;
-import android.preference.ListPreference;
-import android.preference.MultiSelectListPreference;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceGroup;
-import android.preference.PreferenceManager;
-import android.preference.SwitchPreference;
+import android.preference.*;
 import android.support.annotation.NonNull;
-
 import com.bopr.android.smailer.PreferencesPermissionsChecker;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.AndroidUtil;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,12 +96,11 @@ public class BasePreferenceFragment extends PreferenceFragment {
 
     /**
      * Updates summary of {@link Preference}.
-     *
-     * @param valueResource value resource ID
+     *  @param valueResource value resource ID
      * @param preference    preference
      */
-    protected void updateSummary(int valueResource, Preference preference, boolean valid) {
-        updateSummary(getString(valueResource), preference, valid);
+    protected void updateSummary(int valueResource, Preference preference) {
+        updateSummary(getString(valueResource), preference, true);
     }
 
     /**

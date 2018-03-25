@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import com.bopr.android.smailer.R;
 
 import java.util.HashMap;
@@ -23,6 +24,7 @@ import static com.bopr.android.smailer.Settings.*;
 public class MainFragmentDual extends Fragment {
 
     private Map<String, Fragment> detailFragments = new HashMap<>();
+    private MainFragment masterFragment;
 
     @Nullable
     @Override
@@ -30,13 +32,13 @@ public class MainFragmentDual extends Fragment {
         View view = inflater.inflate(R.layout.fragment_master_detail, container, false);
 
         FragmentManager fragmentManager = getChildFragmentManager();
-        MainFragment fragment = (MainFragment) fragmentManager.findFragmentByTag("master");
-        if (fragment == null) {
-            fragment = new MainFragment();
-            fragment.setPreferenceClickListener(new PreferenceClickListener());
+        masterFragment = (MainFragment) fragmentManager.findFragmentByTag("master");
+        if (masterFragment == null) {
+            masterFragment = new MainFragment();
+            masterFragment.setPreferenceClickListener(new PreferenceClickListener());
             fragmentManager
                     .beginTransaction()
-                    .replace(R.id.master_content, fragment, "master")
+                    .replace(R.id.master_content, masterFragment, "master")
                     .commit();
         }
 
@@ -45,9 +47,21 @@ public class MainFragmentDual extends Fragment {
         return view;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        ListView listView = masterFragment.getView().findViewById(android.R.id.list);
+        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        /* listView.getSelectedItem() is not null at startup but null when fragment's activity restored */
+        if (listView.getSelectedItem() != null) {
+            listView.setItemChecked(listView.getSelectedItemPosition(), true);
+        }
+    }
+
     private void selectDetails(String key) {
         Fragment fragment = detailFragments.get(key);
-        if (fragment == null){
+        if (fragment == null) {
             switch (key) {
                 case KEY_PREF_OUTGOING_SERVER:
                     fragment = new ServerFragment();

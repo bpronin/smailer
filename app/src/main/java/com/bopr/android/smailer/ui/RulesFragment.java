@@ -74,7 +74,7 @@ public class RulesFragment extends BasePreferenceFragment {
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
                 boolean useWhitelist = (Boolean) value;
-                updateSummary(useWhitelist ? R.string.title_white_list_used : R.string.title_black_list_used, preference, true);
+                updateSummary(useWhitelist ? R.string.title_white_list_used : R.string.title_black_list_used, preference);
                 return true;
             }
 
@@ -123,7 +123,7 @@ public class RulesFragment extends BasePreferenceFragment {
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
                 boolean useWhitelist = (Boolean) value;
-                updateSummary(useWhitelist ? R.string.title_white_list_used : R.string.title_black_list_used, preference, true);
+                updateSummary(useWhitelist ? R.string.title_white_list_used : R.string.title_black_list_used, preference);
                 return true;
             }
 

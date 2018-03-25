@@ -86,7 +86,7 @@ public class ServerFragment extends BasePreferenceFragment {
         if (isEmpty(value)) {
             updateNotSpecifiedSummary(passwordPreference);
         } else {
-            updateSummary(R.string.title_password_asterisks, passwordPreference, true);
+            updateSummary(R.string.title_password_asterisks, passwordPreference);
         }
     }
 
