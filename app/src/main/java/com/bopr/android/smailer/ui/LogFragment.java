@@ -4,9 +4,9 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.res.ColorStateList;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
@@ -59,19 +59,12 @@ public class LogFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         database = new Database(getActivity());
-        setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_log, container, false);
 
         listView = view.findViewById(android.R.id.list);
         listView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
 
         return view;
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_log, menu);
     }
 
     @Override
@@ -86,17 +79,12 @@ public class LogFragment extends Fragment {
             case R.id.action_remove_from_lists:
                 removeFromLists();
                 return true;
+            case R.id.action_log_clear:
+                clearData();
+                return true;
             default:
                 return super.onContextItemSelected(item);
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_log_clear) {
-            clearData();
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -135,7 +123,7 @@ public class LogFragment extends Fragment {
     private void clearData() {
         AndroidUtil.dialogBuilder(getActivity())
                 .setMessage(R.string.message_activity_log_ask_clear)
-                .setPositiveButton(R.string.title_clear, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.title_clear_log, new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -210,14 +198,15 @@ public class LogFragment extends Fragment {
             this.cursor = cursor;
         }
 
+        @NonNull
         @Override
-        public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(context);
             return new ItemViewHolder(inflater.inflate(R.layout.list_item_log, parent, false));
         }
 
         @Override
-        public void onBindViewHolder(final ItemViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull final ItemViewHolder holder, int position) {
             PhoneEvent item = getItem(position);
             if (item != null) {
                 final PhoneEvent event = cursor.get();
@@ -289,7 +278,6 @@ public class LogFragment extends Fragment {
         private final TextView phoneView;
         private final TextView timeView;
         private final ImageView stateView;
-        private final ColorStateList defaultPhoneColors;
         private final int defaultPhoneFlags;
 
         private ItemViewHolder(View view) {
@@ -299,7 +287,6 @@ public class LogFragment extends Fragment {
             directionView = view.findViewById(R.id.list_item_direction);
             phoneView = view.findViewById(R.id.list_item_phone);
             stateView = view.findViewById(R.id.list_item_state);
-            defaultPhoneColors = phoneView.getTextColors();
             defaultPhoneFlags = phoneView.getPaintFlags();
         }
     }

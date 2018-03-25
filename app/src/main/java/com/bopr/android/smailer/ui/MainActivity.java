@@ -2,13 +2,14 @@ package com.bopr.android.smailer.ui;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.SharedPreferences;
+import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.support.v7.app.ActionBar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 import com.bopr.android.smailer.Cryptor;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.ui.AppCompatPreferenceActivity;
@@ -30,15 +31,11 @@ public class MainActivity extends AppCompatPreferenceActivity {
 
     private static Logger log = LoggerFactory.getLogger("MainActivity");
 
-    private Preference recipientsPreference;
-    private Preference serverPreference;
-    private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         log.debug("Application init");
         super.onCreate(savedInstanceState);
-//        setupActionBar();
+        setupHeadersView();
 
         loadDefaultPreferences(this);
 
@@ -52,20 +49,36 @@ public class MainActivity extends AppCompatPreferenceActivity {
     }
 
     @Override
-    public void onDestroy() {
-//        getSharedPreferences().unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
-        super.onDestroy();
+    public void onHeaderClick(Header header, int position) {
+        super.onHeaderClick(header, position);
+        setupActionBar();
     }
 
-//    /**
-//     * Set up the {@link android.app.ActionBar}, if the API is available.
-//     */
-//    private void setupActionBar() {
-//        ActionBar actionBar = getSupportActionBar();
-//        if (actionBar != null) {
-//            actionBar.setDisplayHomeAsUpEnabled(true);
-//        }
-//    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        setupActionBar();
+    }
+
+    /**
+     * Set up the {@link android.app.ActionBar}, if the API is available.
+     */
+    private void setupActionBar() {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(!hasHeaders());
+        }
+    }
+
+    private void setupHeadersView() {
+        ListView listView = getListView();
+
+        TypedArray a = getApplicationContext().obtainStyledAttributes(new int[]{android.R.attr.listDivider});
+        listView.setDivider(a.getDrawable(0));
+        listView.setDividerHeight(1);
+
+        a.recycle();
+    }
 
     /**
      * {@inheritDoc}

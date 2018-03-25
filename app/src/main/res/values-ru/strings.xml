@@ -66,7 +66,7 @@
     <string name="title_any">любые</string>
     <string name="title_black_list_used">Используется черный список</string>
     <string name="title_blacklist">Черный список</string>
-    <string name="title_clear">Очистить</string>
+    <string name="title_clear_log">Очистить журнал</string>
     <string name="title_content">Содержание</string>
     <string name="title_device_alias">Имя устройства</string>
     <string name="title_device_alias_hint">Имя устройства в почтовом сообщении (оставьте пустым, чтобы использовать имя по умолчанию)</string>
@@ -94,7 +94,7 @@
     <string name="title_phone_number">Номер телефона</string>
     <string name="title_port">Порт</string>
     <string name="title_remove">Удалить</string>
-    <string name="title_remove_from_filter">Удалить номер из фильтра</string>
+    <string name="title_remove_from_filter">Исключить номер из правил</string>
     <string name="title_resend">Повторная отправка</string>
     <string name="title_resend_hint">Заново отправлять неотправленные сообщения при появлении соединения</string>
     <string name="title_rules">Правила</string>
