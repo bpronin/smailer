@@ -11,6 +11,8 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.bopr.android.smailer.Settings.*;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
@@ -146,7 +148,7 @@ class MailFormatter {
         if (event.isMissed()) {
             return resources.getString(R.string.email_body_missed_call);
         } else if (event.isSms()) {
-            return event.getText();
+            return replaceUrls(event.getText());
         } else {
             int pattern;
             if (event.isIncoming()) {
@@ -270,6 +272,19 @@ class MailFormatter {
                             : R.string.email_body_unknown_location)
                     .format();
         }
+    }
+
+    private String replaceUrls(String s) {
+        Matcher matcher = Pattern.compile("((?i:http|https|rtsp|ftp|file)://[\\S]+)").matcher(s);
+
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            String url = matcher.group(1);
+            matcher.appendReplacement(sb, "<a href=\"" + url + "\">" + url + "</a>");
+        }
+        matcher.appendTail(sb);
+
+        return sb.toString();
     }
 
     private void updateResources() {
