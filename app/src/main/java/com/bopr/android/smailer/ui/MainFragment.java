@@ -56,6 +56,8 @@ public class MainFragment extends BasePreferenceFragment {
 
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                updateServerPreference();
+                updateRecipientsPreference();
                 OutgoingSmsService.toggleService(getActivity());
                 ResendService.toggleService(getActivity());
             }

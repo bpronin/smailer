@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import com.bopr.android.smailer.Cryptor;
+import com.bopr.android.smailer.util.AndroidUtil;
 import com.crashlytics.android.Crashlytics;
 import io.fabric.sdk.android.Fabric;
 import org.slf4j.Logger;
@@ -39,7 +40,7 @@ public class MainActivity extends AppActivity {
     @NonNull
     @Override
     protected Fragment createFragment() {
-        return new MainFragmentLarge();
+        return AndroidUtil.isXLargeTablet(this) ? new MainFragmentDual() : new MainFragment();
     }
 
     private static class InitKeystoreTask extends LongAsyncTask<Void, Void, Void> {

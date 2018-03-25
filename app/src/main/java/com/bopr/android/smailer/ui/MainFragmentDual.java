@@ -10,13 +10,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.bopr.android.smailer.R;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static com.bopr.android.smailer.Settings.*;
 
 /**
- * Created by bo on 25.03.2018.
+ * Main settings fragment (dual pane layout)
+ *
+ * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
+public class MainFragmentDual extends Fragment {
 
-public class MainFragmentLarge extends Fragment {
+    private Map<String, Fragment> detailFragments = new HashMap<>();
 
     @Nullable
     @Override
@@ -34,10 +40,34 @@ public class MainFragmentLarge extends Fragment {
                     .commit();
         }
 
+        selectDetails(KEY_PREF_OUTGOING_SERVER);
+
         return view;
     }
 
-    private void setDetailFragment(Fragment fragment) {
+    private void selectDetails(String key) {
+        Fragment fragment = detailFragments.get(key);
+        if (fragment == null){
+            switch (key) {
+                case KEY_PREF_OUTGOING_SERVER:
+                    fragment = new ServerFragment();
+                    break;
+                case KEY_PREF_RECIPIENTS_ADDRESS:
+                    fragment = new RecipientsFragment();
+                    break;
+                case KEY_PREF_MORE:
+                    fragment = new MoreFragment();
+                    break;
+                case KEY_PREF_RULES:
+                    fragment = new RulesFragment();
+                    break;
+                case KEY_PREF_LOG:
+                    fragment = new LogFragment();
+                    break;
+            }
+            detailFragments.put(key, fragment);
+        }
+
         getChildFragmentManager()
                 .beginTransaction()
                 .replace(R.id.detail_content, fragment, "detail")
@@ -48,23 +78,7 @@ public class MainFragmentLarge extends Fragment {
 
         @Override
         public boolean onPreferenceClick(Preference preference) {
-            switch (preference.getKey()) {
-                case KEY_PREF_OUTGOING_SERVER:
-                    setDetailFragment(new ServerFragment());
-                    break;
-                case KEY_PREF_RECIPIENTS_ADDRESS:
-                    setDetailFragment(new RecipientsFragment());
-                    break;
-                case KEY_PREF_MORE:
-                    setDetailFragment(new MoreFragment());
-                    break;
-                case KEY_PREF_RULES:
-                    setDetailFragment(new RulesFragment());
-                    break;
-                case KEY_PREF_LOG:
-                    setDetailFragment(new LogFragment());
-                    break;
-            }
+            selectDetails(preference.getKey());
             return true;
         }
     }
