@@ -3,9 +3,9 @@ package com.bopr.android.smailer.ui;
 import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
@@ -38,7 +38,6 @@ public class RecipientsFragment extends Fragment {
 
     private ListAdapter listAdapter;
     private RecyclerView listView;
-    private FloatingActionButton addButton;
     private SharedPreferences preferences;
     private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
 
@@ -86,7 +85,7 @@ public class RecipientsFragment extends Fragment {
         });
         itemTouchHelper.attachToRecyclerView(listView);
 
-        addButton = view.findViewById(R.id.button_add);
+        FloatingActionButton addButton = view.findViewById(R.id.button_add);
         addButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -198,7 +197,7 @@ public class RecipientsFragment extends Fragment {
             }
         });
 
-        dialog.showDialog(((FragmentActivity) getActivity()));
+        dialog.showDialog(getActivity());
     }
 
     private void showUndoAction(List<Item> removedItems, final List<Item> lastItems) {
@@ -236,14 +235,15 @@ public class RecipientsFragment extends Fragment {
 
         private final List<Item> items = new ArrayList<>();
 
+        @NonNull
         @Override
-        public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(getActivity());
             return new ItemViewHolder(inflater.inflate(R.layout.list_item_recipient, parent, false));
         }
 
         @Override
-        public void onBindViewHolder(final ItemViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull final ItemViewHolder holder, int position) {
             final Item item = getItem(position);
             holder.textView.setText(item != null ? item.address : null);
             holder.itemView.setOnClickListener(new View.OnClickListener() {

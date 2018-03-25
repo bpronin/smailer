@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.Preference;
-import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,6 +23,7 @@ import static com.bopr.android.smailer.util.Util.isEmpty;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
+@Deprecated
 public class MainFragment extends BasePreferenceFragment {
 
     private Preference recipientsPreference;
@@ -67,7 +67,7 @@ public class MainFragment extends BasePreferenceFragment {
             }
         });
 
-        findPreference(KEY_PREF_FILTERS).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        findPreference(KEY_PREF_RULES).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -149,7 +149,7 @@ public class MainFragment extends BasePreferenceFragment {
     }
 
     public void showAboutDialog() {
-        new AboutDialogFragment().showDialog((FragmentActivity) getActivity());
+        new AboutDialogFragment().showDialog(getActivity());
     }
 
 }

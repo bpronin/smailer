@@ -8,7 +8,6 @@ import android.content.res.ColorStateList;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
@@ -129,7 +128,7 @@ public class LogFragment extends Fragment {
         if (selectedListItemPosition != NO_POSITION) {
             LogDetailsDialogFragment fragment = new LogDetailsDialogFragment();
             fragment.setValue(listAdapter.getItem(selectedListItemPosition));
-            fragment.showDialog((FragmentActivity) getActivity());
+            fragment.showDialog(getActivity());
         }
     }
 
