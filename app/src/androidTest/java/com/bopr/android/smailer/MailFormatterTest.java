@@ -610,4 +610,35 @@ public class MailFormatterTest extends BaseTest {
                 "</small></body></html>", formatter.formatBody());
     }
 
+    /**
+     * Check URLs ormatting.
+     *
+     * @throws Exception when fails
+     */
+    @Test
+    public void testFormatUrls() throws Exception {
+//        String input = "Please visit http://google.com or hTTp://google.com or ftp://google.ru or https://google.ru or google.com site";
+//        Matcher matcher = Pattern.compile("((?i:http|https|rtsp|ftp|file)://[\\S]+)").matcher(input);
+//
+//        StringBuffer sb = new StringBuffer();
+//        while (matcher.find()) {
+//            String url = matcher.group(1);
+//            matcher.appendReplacement(sb, "<a href=\"" + url + "\">" + url + "</a>");
+//        }
+//        matcher.appendTail(sb);
+//
+//        System.out.println("-----------------------------");
+//        System.out.println(sb);
+//        System.out.println("-----------------------------");
+
+        PhoneEvent message = new PhoneEvent("+12345678901", true, null, null, false,
+                "Please visit http://google.com site", null, null, PhoneEvent.State.PENDING);
+
+        MailFormatter formatter = new MailFormatter(context, message);
+
+        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
+                "Please visit <a href=\"http://google.com\">http://google.com</a> site" +
+                "</body></html>", formatter.formatBody());
+    }
+
 }

@@ -1,12 +1,13 @@
 package com.bopr.android.smailer.ui;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
+import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,8 +30,8 @@ public class LogDetailsDialogFragment extends DialogFragment {
 
     private PhoneEvent value;
 
-    public void showDialog(FragmentActivity activity) {
-        show(activity.getSupportFragmentManager(), "log_details_dialog");
+    public void showDialog(Activity activity) {
+        show(activity.getFragmentManager(), "log_details_dialog");
     }
 
     @Override
@@ -63,10 +64,17 @@ public class LogDetailsDialogFragment extends DialogFragment {
             view.<TextView>findViewById(R.id.text_time).setText(formatTime(value.getStartTime()));
             view.<ImageView>findViewById(R.id.image_event_result).setImageResource(Formats.eventStateImage(value));
             view.<TextView>findViewById(R.id.text_result).setText(Formats.eventStateText(value));
-            view.<TextView>findViewById(R.id.text_type_title).setText(Formats.eventTypeText(getContext(), value));
+            view.<TextView>findViewById(R.id.text_type_title).setText(Formats.eventTypeText(getActivity(), value));
 
             dialog = AndroidUtil.dialogBuilder(getActivity())
                     .setView(view)
+                    .setPositiveButton(R.string.title_close, new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int which) {
+                            dialogInterface.cancel();
+                        }
+                    })
                     .create();
         }
         return dialog;
