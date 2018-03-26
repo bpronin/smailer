@@ -32,10 +32,10 @@ public class MainFragment extends BasePreferenceFragment {
     private Preference serverPreference;
     private OnSharedPreferenceChangeListener preferenceChangeListener;
     private Preference.OnPreferenceClickListener preferenceClickListener;
-    private boolean selectionVisible;
+    private boolean asListView;
 
     public MainFragment() {
-        setSelectionVisible(false);
+        setAsListView(false);
         setPreferenceClickListener(new PreferenceClickListener());
     }
 
@@ -72,7 +72,7 @@ public class MainFragment extends BasePreferenceFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (selectionVisible) {
+        if (asListView) {
             @SuppressWarnings("ConstantConditions")
             ListView listView = getView().findViewById(android.R.id.list);
             listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -110,8 +110,8 @@ public class MainFragment extends BasePreferenceFragment {
         return super.onOptionsItemSelected(item);
     }
 
-    public void setSelectionVisible(boolean selectionVisible) {
-        this.selectionVisible = selectionVisible;
+    public void setAsListView(boolean asListView) {
+        this.asListView = asListView;
     }
 
     public void setPreferenceClickListener(Preference.OnPreferenceClickListener listener) {
@@ -119,24 +119,28 @@ public class MainFragment extends BasePreferenceFragment {
     }
 
     private void updateServerPreference() {
-        SharedPreferences preferences = getSharedPreferences();
-        String sender = preferences.getString(KEY_PREF_SENDER_ACCOUNT, "");
-        String host = preferences.getString(KEY_PREF_EMAIL_HOST, "");
-        String port = preferences.getString(KEY_PREF_EMAIL_PORT, "");
+        if (!asListView) {
+            SharedPreferences preferences = getSharedPreferences();
+            String sender = preferences.getString(KEY_PREF_SENDER_ACCOUNT, "");
+            String host = preferences.getString(KEY_PREF_EMAIL_HOST, "");
+            String port = preferences.getString(KEY_PREF_EMAIL_PORT, "");
 
-        if (anyIsEmpty(sender, host, port)) {
-            updateNotSpecifiedSummary(serverPreference);
-        } else {
-            updateSummary(sender, serverPreference, EmailTextValidator.isValidValue(sender));
+            if (anyIsEmpty(sender, host, port)) {
+                updateNotSpecifiedSummary(serverPreference);
+            } else {
+                updateSummary(sender, serverPreference, EmailTextValidator.isValidValue(sender));
+            }
         }
     }
 
     private void updateRecipientsPreference() {
-        String value = getSharedPreferences().getString(KEY_PREF_RECIPIENTS_ADDRESS, null);
-        if (isEmpty(value)) {
-            updateNotSpecifiedSummary(recipientsPreference);
-        } else {
-            updateSummary(value.replaceAll(",", ", "), recipientsPreference, EmailListTextValidator.isValidValue(value));
+        if (!asListView) {
+            String value = getSharedPreferences().getString(KEY_PREF_RECIPIENTS_ADDRESS, null);
+            if (isEmpty(value)) {
+                updateNotSpecifiedSummary(recipientsPreference);
+            } else {
+                updateSummary(value.replaceAll(",", ", "), recipientsPreference, EmailListTextValidator.isValidValue(value));
+            }
         }
     }
 

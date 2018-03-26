@@ -33,7 +33,7 @@ public class MainFragmentDual extends Fragment {
         MainFragment fragment = (MainFragment) fragmentManager.findFragmentByTag("master");
         if (fragment == null) {
             fragment = new MainFragment();
-            fragment.setSelectionVisible(true);
+            fragment.setAsListView(true);
             fragment.setPreferenceClickListener(new PreferenceClickListener());
             fragmentManager
                     .beginTransaction()
