@@ -116,6 +116,7 @@
     <string name="title_what_email_contain">What should the email include</string>
     <string name="title_white_list_used">White list used</string>
     <string name="title_whitelist">Whitelist</string>
+    <string name="title_close">Close</string>
 
     <string-array name="titles_triggers">
         <item>Incoming SMS</item>

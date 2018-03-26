@@ -73,9 +73,9 @@ public class MainActivity extends AppCompatPreferenceActivity {
     private void setupHeadersView() {
         ListView listView = getListView();
 
-        TypedArray a = getApplicationContext().obtainStyledAttributes(new int[]{android.R.attr.listDivider});
+        TypedArray a = obtainStyledAttributes(new int[]{android.R.attr.listDivider});
         listView.setDivider(a.getDrawable(0));
-        listView.setDividerHeight(1);
+        listView.setDividerHeight(2);
 
         a.recycle();
     }
