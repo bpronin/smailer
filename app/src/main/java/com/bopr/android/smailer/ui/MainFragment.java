@@ -5,10 +5,12 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.Preference;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.ListView;
 import com.bopr.android.smailer.OutgoingSmsService;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.ResendService;
@@ -30,8 +32,10 @@ public class MainFragment extends BasePreferenceFragment {
     private Preference serverPreference;
     private OnSharedPreferenceChangeListener preferenceChangeListener;
     private Preference.OnPreferenceClickListener preferenceClickListener;
+    private boolean selectionVisible;
 
     public MainFragment() {
+        setSelectionVisible(false);
         setPreferenceClickListener(new PreferenceClickListener());
     }
 
@@ -66,6 +70,17 @@ public class MainFragment extends BasePreferenceFragment {
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (selectionVisible) {
+            @SuppressWarnings("ConstantConditions")
+            ListView listView = getView().findViewById(android.R.id.list);
+            listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+            listView.setItemChecked(listView.getSelectedItemPosition(), true);
+        }
+    }
+
+    @Override
     public void onDestroy() {
         getSharedPreferences().unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
         super.onDestroy();
@@ -93,6 +108,10 @@ public class MainFragment extends BasePreferenceFragment {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void setSelectionVisible(boolean selectionVisible) {
+        this.selectionVisible = selectionVisible;
     }
 
     public void setPreferenceClickListener(Preference.OnPreferenceClickListener listener) {

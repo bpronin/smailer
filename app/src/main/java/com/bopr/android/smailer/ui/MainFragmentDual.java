@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import com.bopr.android.smailer.R;
 
 import java.util.HashMap;
@@ -24,7 +23,6 @@ import static com.bopr.android.smailer.Settings.*;
 public class MainFragmentDual extends Fragment {
 
     private Map<String, Fragment> detailFragments = new HashMap<>();
-    private MainFragment masterFragment;
 
     @Nullable
     @Override
@@ -32,31 +30,20 @@ public class MainFragmentDual extends Fragment {
         View view = inflater.inflate(R.layout.fragment_master_detail, container, false);
 
         FragmentManager fragmentManager = getChildFragmentManager();
-        masterFragment = (MainFragment) fragmentManager.findFragmentByTag("master");
-        if (masterFragment == null) {
-            masterFragment = new MainFragment();
-            masterFragment.setPreferenceClickListener(new PreferenceClickListener());
+        MainFragment fragment = (MainFragment) fragmentManager.findFragmentByTag("master");
+        if (fragment == null) {
+            fragment = new MainFragment();
+            fragment.setSelectionVisible(true);
+            fragment.setPreferenceClickListener(new PreferenceClickListener());
             fragmentManager
                     .beginTransaction()
-                    .replace(R.id.master_content, masterFragment, "master")
+                    .replace(R.id.master_content, fragment, "master")
                     .commit();
         }
 
         selectDetails(KEY_PREF_OUTGOING_SERVER);
 
         return view;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        ListView listView = masterFragment.getView().findViewById(android.R.id.list);
-        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        /* listView.getSelectedItem() is not null at startup but null when fragment's activity restored */
-        if (listView.getSelectedItem() != null) {
-            listView.setItemChecked(listView.getSelectedItemPosition(), true);
-        }
     }
 
     private void selectDetails(String key) {
