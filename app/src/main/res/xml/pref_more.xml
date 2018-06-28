@@ -7,7 +7,7 @@
         android:entryValues="@array/email_content_values"
         android:key="email_content"
         android:summary="@string/title_what_email_contain"
-        android:title="@string/title_content"/>
+        android:title="@string/title_content" />
 
     <EditTextPreference
         android:dialogMessage="@string/title_device_alias_hint"
@@ -16,23 +16,27 @@
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="@string/title_device_alias"/>
+        android:title="@string/title_device_alias" />
 
     <ListPreference
         android:dialogTitle="@string/title_email_language"
         android:entries="@array/titles_language"
         android:entryValues="@array/email_locale_values"
         android:key="email_locale"
-        android:title="@string/title_email_language_hint"/>
+        android:title="@string/title_email_language_hint" />
 
     <SwitchPreference
         android:key="resend_unsent"
         android:summary="@string/title_resend_hint"
-        android:title="@string/title_resend"/>
+        android:title="@string/title_resend" />
 
     <SwitchPreference
         android:key="notify_send_success"
         android:summary="@string/title_notify_send_success"
-        android:title="@string/title_notify_on_send"/>
+        android:title="@string/title_notify_on_send" />
+
+    <SwitchPreference
+        android:key="mark_processed_sms_as_read"
+        android:title="@string/title_mark_processed_sms_as_read" />
 
 </PreferenceScreen>

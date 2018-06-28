@@ -23,13 +23,13 @@ public abstract class XCursor<R> extends CursorWrapper {
         super(cursor);
     }
 
-    public abstract R get();
+    public abstract R found();
 
-    public R getAndClose() {
+    public R findAndClose() {
         try {
             moveToFirst();
             if (!isBeforeFirst() && !isAfterLast()) {
-                return get();
+                return found();
             }
             return null;
         } finally {
@@ -42,7 +42,7 @@ public abstract class XCursor<R> extends CursorWrapper {
             List<R> list = new ArrayList<>();
             moveToFirst();
             while (!isAfterLast()) {
-                list.add(get());
+                list.add(found());
                 moveToNext();
             }
             return list;
@@ -79,9 +79,10 @@ public abstract class XCursor<R> extends CursorWrapper {
         return new XCursor<Long>(cursor) {
 
             @Override
-            public Long get() {
+            public Long found() {
                 return getLong(0);
             }
         };
     }
+
 }

@@ -11,7 +11,7 @@ import android.support.v4.app.TaskStackBuilder;
 import com.bopr.android.smailer.ui.MainActivity;
 
 /**
- * Creates and shows notifications.
+ * Produces notifications.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
@@ -33,12 +33,12 @@ public class Notifications {
         this.context = context;
     }
 
-    private NotificationManager getNotificationManager() {
+    private NotificationManager notificationManager() {
         return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
     public void hideMailError() {
-        getNotificationManager().cancel(ID_MAIL_ERROR);
+        notificationManager().cancel(ID_MAIL_ERROR);
     }
 
     public void showMailError(int messageResource, long messageId, int action) {
@@ -58,7 +58,7 @@ public class Notifications {
                 .setContentText(text)
                 .build();
 
-        getNotificationManager().notify(ID_MAIL_ERROR, notification);
+        notificationManager().notify(ID_MAIL_ERROR, notification);
     }
 
     public void showMailSuccess(long messageId) {
@@ -74,7 +74,7 @@ public class Notifications {
                 .setContentText(text)
                 .build();
 
-        getNotificationManager().notify(ID_MAIL_SUCCESS, notification);
+        notificationManager().notify(ID_MAIL_SUCCESS, notification);
     }
 
     private PendingIntent createIntent(int action, long messageId) {

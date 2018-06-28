@@ -1,18 +1,32 @@
 package com.bopr.android.smailer;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
 import android.support.annotation.NonNull;
+
 import com.sun.mail.util.MailConnectException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.mail.AuthenticationFailedException;
-import javax.mail.MessagingException;
 import java.util.List;
 
+import javax.mail.AuthenticationFailedException;
+import javax.mail.MessagingException;
+
 import static com.bopr.android.smailer.Contacts.getContactName;
-import static com.bopr.android.smailer.Notifications.*;
-import static com.bopr.android.smailer.Settings.*;
+import static com.bopr.android.smailer.Notifications.ACTION_SHOW_CONNECTION;
+import static com.bopr.android.smailer.Notifications.ACTION_SHOW_MAIN;
+import static com.bopr.android.smailer.Notifications.ACTION_SHOW_RECIPIENTS;
+import static com.bopr.android.smailer.Notifications.ACTION_SHOW_SERVER;
+import static com.bopr.android.smailer.Settings.KEY_PREF_MARK_SMS_AS_READ;
+import static com.bopr.android.smailer.Settings.KEY_PREF_NOTIFY_SEND_SUCCESS;
+import static com.bopr.android.smailer.Settings.getDeviceName;
+import static com.bopr.android.smailer.Settings.getPreferences;
 import static com.bopr.android.smailer.util.AndroidUtil.hasInternetConnection;
 import static com.bopr.android.smailer.util.Util.isEmpty;
 
@@ -24,6 +38,7 @@ import static com.bopr.android.smailer.util.Util.isEmpty;
 class Mailer {
 
     private static Logger log = LoggerFactory.getLogger("Mailer");
+
     private final Context context;
     private final MailTransport transport;
     private final Cryptor cryptor;
@@ -134,13 +149,46 @@ class Mailer {
         return true;
     }
 
+    private void markSmsAsRead(final PhoneEvent event) {
+        ContentResolver contentResolver = context.getContentResolver();
+        Uri uri = Uri.parse("content://sms/inbox");
+
+        Cursor cursor = contentResolver.query(uri, null, "read = 0 AND address = ? AND date_sent = ?",
+                new String[]{event.getPhone(), String.valueOf(event.getStartTime())}, null);
+        if (cursor == null) {
+            throw new NullPointerException("Cannot obtain cursor");
+        }
+
+        try {
+            if (cursor.moveToFirst()) {
+                String id = cursor.getString(cursor.getColumnIndex("_id"));
+
+                ContentValues values = new ContentValues();
+                values.put("read", true);
+                values.put("seen", true);
+                contentResolver.update(uri, values, "_id=" + id, null);
+
+                log.debug("SMS marked as read. " + event);
+            }
+        } catch (Exception e) {
+            log.error("Mark SMS as read failed. ", e);
+        } finally {
+            cursor.close();
+        }
+    }
+
     private void success(PhoneEvent event) {
         event.setState(PhoneEvent.State.PROCESSED);
         event.setDetails(null);
         database.putEvent(event);
         notifications.hideMailError();
-        if (getPreferences(context).getBoolean(KEY_PREF_NOTIFY_SEND_SUCCESS, false)) {
+
+        SharedPreferences preferences = getPreferences(context);
+        if (preferences.getBoolean(KEY_PREF_NOTIFY_SEND_SUCCESS, false)) {
             notifications.showMailSuccess(event.getId());
+        }
+        if (preferences.getBoolean(KEY_PREF_MARK_SMS_AS_READ, false)) {
+            markSmsAsRead(event);
         }
     }
 

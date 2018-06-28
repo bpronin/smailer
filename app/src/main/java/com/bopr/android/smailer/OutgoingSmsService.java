@@ -11,7 +11,9 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import com.bopr.android.smailer.util.db.XCursor;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,11 +98,11 @@ public class OutgoingSmsService extends Service {
                 "_id=?", new String[]{id}, null)) {
 
             @Override
-            public Void get() {
+            public Void found() {
                 startMailService(getString("address"), getLong("date"), getString("body"));
                 return null;
             }
-        }.getAndClose();
+        }.findAndClose();
     }
 
     private void startMailService(String address, long date, String body) {

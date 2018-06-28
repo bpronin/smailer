@@ -3,5 +3,4 @@
 *.iml
 .gradle
 **/build/
-/app/local.gradle
 /app/src/debug/assets/debug.properties

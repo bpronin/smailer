@@ -11,11 +11,21 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
-import android.view.*;
+import android.view.ContextMenu;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.bopr.android.smailer.*;
+
+import com.bopr.android.smailer.Database;
+import com.bopr.android.smailer.Formats;
+import com.bopr.android.smailer.PhoneEvent;
+import com.bopr.android.smailer.PhoneEventFilter;
+import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.Settings;
 import com.bopr.android.smailer.util.AndroidUtil;
 
 import static android.support.v7.widget.RecyclerView.NO_POSITION;
@@ -209,7 +219,7 @@ public class LogFragment extends Fragment {
         public void onBindViewHolder(@NonNull final ItemViewHolder holder, int position) {
             PhoneEvent item = getItem(position);
             if (item != null) {
-                final PhoneEvent event = cursor.get();
+                final PhoneEvent event = cursor.found();
 
                 holder.timeView.setText(DateFormat.format(getString(R.string.event_time_pattern), event.getStartTime()));
 
@@ -264,7 +274,7 @@ public class LogFragment extends Fragment {
         PhoneEvent getItem(int position) {
             cursor.moveToPosition(position);
             if (!cursor.isBeforeFirst() && !cursor.isAfterLast()) {
-                return cursor.get();
+                return cursor.found();
             }
             return null;
         }

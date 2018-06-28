@@ -40,6 +40,7 @@
     <string name="message_permission_rationale_phone_state">Permission to {permission} is needed to send out email when phone calls are received or made.</string>
     <string name="message_permission_rationale_read_contacts">Permission to {permission} is needed to add contact name into email message.</string>
     <string name="message_permission_rationale_read_sms">Permission to {permission} is needed to send out email when SMS has sent.</string>
+    <string name="message_permission_rationale_write_sms">Permission to {permission} is needed to mark processed SMS as read.</string>
     <string name="message_permission_rationale_receive_sms">Permission to {permission} is needed to send out email when SMS has received.</string>
     <string name="message_permissions_denied">Since permissions not granted some options have been disabled.</string>
     <string name="message_phone_removed_from_filter">{number} removed from filter</string>
@@ -117,6 +118,7 @@
     <string name="title_white_list_used">White list used</string>
     <string name="title_whitelist">Whitelist</string>
     <string name="title_close">Close</string>
+    <string name="title_mark_processed_sms_as_read">Mark processed SMS as read</string>
 
     <string-array name="titles_triggers">
         <item>Incoming SMS</item>

@@ -5,7 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
 import com.bopr.android.smailer.util.db.XCursor;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -188,12 +190,12 @@ public class Database {
 
     private long getCurrentSize(SQLiteDatabase db) {
         return XCursor.forLong(db.query(TABLE_EVENTS, new String[]{COLUMN_COUNT}, null, null,
-                null, null, null)).getAndClose();
+                null, null, null)).findAndClose();
     }
 
     private long getLastPurgeTime(SQLiteDatabase db) {
         return XCursor.forLong(db.query(TABLE_SYSTEM, new String[]{COLUMN_PURGE_TIME},
-                COLUMN_ID + "=0", null, null, null, null)).getAndClose();
+                COLUMN_ID + "=0", null, null, null, null)).findAndClose();
     }
 
     private void updateLastPurgeTime(SQLiteDatabase db) {
@@ -209,7 +211,7 @@ public class Database {
                 null, null, null, null)) {
 
             @Override
-            public GeoCoordinates get() {
+            public GeoCoordinates found() {
                 if (!isNull(COLUMN_LAST_LATITUDE) && !isNull(COLUMN_LAST_LONGITUDE)) {
                     return new GeoCoordinates(
                             getDouble(COLUMN_LAST_LATITUDE),
@@ -218,7 +220,7 @@ public class Database {
                 }
                 return null;
             }
-        }.getAndClose();
+        }.findAndClose();
     }
 
     public void destroy() {
@@ -285,7 +287,7 @@ public class Database {
         }
 
         @Override
-        public PhoneEvent get() {
+        public PhoneEvent found() {
             PhoneEvent event = new PhoneEvent();
             event.setId(getLong(COLUMN_ID));
             event.setState(PhoneEvent.State.valueOf(getString(COLUMN_STATE)));

@@ -4,11 +4,16 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
+
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.Util;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.bopr.android.smailer.util.Util.commaSeparated;
@@ -38,7 +43,7 @@ public class Settings {
     public static final String KEY_PREF_MORE = "more";
     public static final String KEY_PREF_RULES = "filters";
     public static final String KEY_PREF_LOG = "log";
-    public static final String KEY_PREF_TEST_MAIL_SERVER = "test_mail_server";
+    public static final String KEY_PREF_MARK_SMS_AS_READ = "mark_processed_sms_as_read";
     public static final String KEY_PREF_RESEND_UNSENT = "resend_unsent";
     public static final String KEY_PREF_FILTER_USE_WHITE_LIST = "message_filter_use_white_list";
     public static final String KEY_PREF_FILTER_BLACKLIST = "message_filter_blacklist";
@@ -87,6 +92,7 @@ public class Settings {
         data.put(KEY_PREF_RESEND_UNSENT, true);
         data.put(KEY_PREF_FILTER_USE_WHITE_LIST, false);
         data.put(KEY_PREF_FILTER_TEXT_USE_WHITE_LIST, false);
+        data.put(KEY_PREF_MARK_SMS_AS_READ, false);
 
         AndroidUtil.putPreferencesOptional(getPreferences(context), data);
     }

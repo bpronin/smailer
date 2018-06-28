@@ -39,6 +39,7 @@
     <string name="message_permission_rationale_phone_state">Чтобы отправлять почтовое сообщение при входящих и исходящих вызовах, необходимо разрешение \"{permission}\".</string>
     <string name="message_permission_rationale_read_contacts">Чтобы отображать имя звонившего в почтовом сообщении, необходимо разрешение \"{permission}\".</string>
     <string name="message_permission_rationale_read_sms">Чтобы отправлять почтовое сообщение при отправлеии SMS, необходимо разрешение \"{permission}\".</string>
+    <string name="message_permission_rationale_write_sms">Чтобы отмечать обработанные SMS как прочитанные, необходимо разрешение \"{permission}\".</string>
     <string name="message_permission_rationale_receive_sms">Чтобы отправлять почтовое сообщение при приеме SMS, необходимо разрешение \"{permission}\".</string>
     <string name="message_permissions_denied">Некоторые настройки отключены, поскольку разрешения не получены.</string>
     <string name="message_phone_removed_from_filter">{number} удален из фильтра</string>
@@ -114,6 +115,7 @@
     <string name="title_white_list_used">Используется белый список</string>
     <string name="title_whitelist">Белый список</string>
     <string name="title_close">Закрыть</string>
+    <string name="title_mark_processed_sms_as_read">Отметить обработанные SMS как прочитанные</string>
 
     <string-array name="titles_triggers">
         <item>Входящие SMS</item>
