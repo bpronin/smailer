@@ -27,16 +27,14 @@
 
     <SwitchPreference
         android:key="resend_unsent"
-        android:summary="@string/title_resend_hint"
-        android:title="@string/title_resend" />
+        android:summary="@string/title_resend_hint" />
 
     <SwitchPreference
         android:key="notify_send_success"
-        android:summary="@string/title_notify_send_success"
-        android:title="@string/title_notify_on_send" />
+        android:summary="@string/title_notify_send_success" />
 
     <SwitchPreference
         android:key="mark_processed_sms_as_read"
-        android:title="@string/title_mark_processed_sms_as_read" />
+        android:summary="@string/title_mark_processed_sms_as_read" />
 
 </PreferenceScreen>

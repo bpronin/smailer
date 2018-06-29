@@ -115,7 +115,7 @@
     <string name="title_white_list_used">Используется белый список</string>
     <string name="title_whitelist">Белый список</string>
     <string name="title_close">Закрыть</string>
-    <string name="title_mark_processed_sms_as_read">Отметить обработанные SMS как прочитанные</string>
+    <string name="title_mark_processed_sms_as_read">Отмечать обработанные SMS как прочитанные</string>
 
     <string-array name="titles_triggers">
         <item>Входящие SMS</item>
