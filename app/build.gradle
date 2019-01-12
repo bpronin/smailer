@@ -18,8 +18,8 @@ android {
         applicationId 'com.bopr.android.smailer'
         minSdkVersion 18
         targetSdkVersion 27
-        versionCode 30
-        versionName '1.2.1'
+        versionCode 31
+        versionName '1.2.2'
         archivesBaseName = "smailer-${versionName}"
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
     }
@@ -60,7 +60,7 @@ android {
         pickFirst 'META-INF/LICENSE.txt' // JavaMail license file
     }
 
-    buildToolsVersion '27.0.3'
+    buildToolsVersion '28.0.3'
 }
 
 repositories {
@@ -74,7 +74,7 @@ dependencies {
     implementation 'com.android.support:support-v4:27.1.1'
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.sun.mail:android-mail:1.5.5'
-    implementation 'com.google.android.gms:play-services-gcm:15.0.1'
+    implementation 'com.google.android.gms:play-services-gcm:16.0.0'
 
     implementation 'org.slf4j:slf4j-api:1.7.25'
     implementation 'com.github.tony19:logback-android-core:1.1.1-6'
@@ -85,7 +85,7 @@ dependencies {
         transitive = true
     }
 
-    freeImplementation 'com.google.android.gms:play-services-ads:15.0.1'
+    freeImplementation 'com.google.android.gms:play-services-ads:17.1.2'
 
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.robolectric:robolectric:3.0'
@@ -93,7 +93,7 @@ dependencies {
 
     androidTestImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.google.dexmaker:dexmaker-mockito:1.2'
-    androidTestImplementation 'com.android.support:support-annotations:27.1.1'
+    androidTestImplementation 'com.android.support:support-annotations:28.0.0'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test:rules:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
