@@ -20,7 +20,7 @@ public abstract class AppActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        adView = (AdView) findViewById(R.id.ad_view);
+        adView = findViewById(R.id.ad_view);
         adView.loadAd(new AdRequest.Builder().build());
     }
 

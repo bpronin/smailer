@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="email_body_at_time"> {time}</string>
     <string name="email_body_called">Вы звонили: {phone} ({name})</string>
     <string name="email_body_caller">Вам звонил: {phone} ({name})</string>
     <string name="email_body_from">с устройства \"{device_name}\"</string>
@@ -10,7 +11,6 @@
     <string name="email_body_sender">Отправитель: {phone} ({name})</string>
     <string name="email_body_sent">Отправлено{device_name}{time}</string>
     <string name="email_body_time">Время: {time}</string>
-    <string name="email_body_at_time"> {time}</string>
     <string name="email_body_unknown_contact">Неизвестный контакт</string>
     <string name="email_body_unknown_contact_no_permission">нет разрешения на чтение контактов</string>
     <string name="email_body_unknown_location">(определение местоположения отключено)</string>
@@ -40,8 +40,8 @@
     <string name="message_permission_rationale_phone_state">Чтобы отправлять почтовое сообщение при входящих и исходящих вызовах, необходимо разрешение \"{permission}\".</string>
     <string name="message_permission_rationale_read_contacts">Чтобы отображать имя звонившего в почтовом сообщении, необходимо разрешение \"{permission}\".</string>
     <string name="message_permission_rationale_read_sms">Чтобы отправлять почтовое сообщение при отправлеии SMS, необходимо разрешение \"{permission}\".</string>
-    <string name="message_permission_rationale_write_sms">Чтобы отмечать обработанные SMS как прочитанные, необходимо разрешение \"{permission}\".</string>
     <string name="message_permission_rationale_receive_sms">Чтобы отправлять почтовое сообщение при приеме SMS, необходимо разрешение \"{permission}\".</string>
+    <string name="message_permission_rationale_write_sms">Чтобы отмечать обработанные SMS как прочитанные, необходимо разрешение \"{permission}\".</string>
     <string name="message_permissions_denied">Некоторые настройки отключены, поскольку разрешения не получены.</string>
     <string name="message_phone_removed_from_filter">{number} удален из фильтра</string>
     <string name="message_recipient_already_exists">Получатель {name} уже существует</string>
@@ -69,6 +69,7 @@
     <string name="title_black_list_used">Используется черный список</string>
     <string name="title_blacklist">Черный список</string>
     <string name="title_clear_log">Очистить журнал</string>
+    <string name="title_close">Закрыть</string>
     <string name="title_content">Содержание</string>
     <string name="title_device_alias">Имя устройства</string>
     <string name="title_device_alias_hint">Имя устройства в почтовом сообщении (оставьте пустым, чтобы использовать имя по умолчанию)</string>
@@ -83,6 +84,7 @@
     <string name="title_host">Сервер</string>
     <string name="title_list_empty">Список пуст</string>
     <string name="title_log_empty">Журнал пуст</string>
+    <string name="title_mark_processed_sms_as_read">Отмечать обработанные SMS как прочитанные</string>
     <string name="title_more">Дополнительно</string>
     <string name="title_none">отсутствуют</string>
     <string name="title_not_set">не указано</string>
@@ -115,8 +117,6 @@
     <string name="title_what_email_contain">Содержание почтового сообщения</string>
     <string name="title_white_list_used">Используется белый список</string>
     <string name="title_whitelist">Белый список</string>
-    <string name="title_close">Закрыть</string>
-    <string name="title_mark_processed_sms_as_read">Отмечать обработанные SMS как прочитанные</string>
 
     <string-array name="titles_triggers">
         <item>Входящие SMS</item>
@@ -127,7 +127,7 @@
     </string-array>
 
     <string-array name="titles_email_content">
-        <item>Время отправления</item>
+        <item>Время</item>
         <item>Имя звонившего</item>
         <item>Название устройства</item>
         <item>Местоположение устройства</item>
