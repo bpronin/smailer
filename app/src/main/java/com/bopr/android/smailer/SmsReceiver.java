@@ -8,7 +8,9 @@ import android.os.Build;
 import android.provider.Telephony;
 import android.support.annotation.NonNull;
 import android.telephony.SmsMessage;
+
 import com.bopr.android.smailer.util.Util;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +58,7 @@ public class SmsReceiver extends BroadcastReceiver {
             }
 
             event.setPhone(messages[0].getDisplayOriginatingAddress());
-            event.setStartTime(messages[0].getTimestampMillis());
+            event.setStartTime(messages[0].getTimestampMillis()); /* on emulator time zone of this may be wrong */
             event.setEndTime(event.getStartTime());
             event.setText(text.toString());
         }

@@ -4,10 +4,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.telephony.TelephonyManager;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static android.telephony.TelephonyManager.*;
+import static android.telephony.TelephonyManager.EXTRA_INCOMING_NUMBER;
+import static android.telephony.TelephonyManager.EXTRA_STATE;
+import static android.telephony.TelephonyManager.EXTRA_STATE_IDLE;
+import static android.telephony.TelephonyManager.EXTRA_STATE_OFFHOOK;
+import static android.telephony.TelephonyManager.EXTRA_STATE_RINGING;
 import static com.bopr.android.smailer.MailerService.createEventIntent;
 import static java.lang.System.currentTimeMillis;
 
@@ -42,8 +47,8 @@ public class CallReceiver extends BroadcastReceiver {
 
     /**
      * Deals with actual events.
-     * Incoming call: goes from IDLE to RINGING when it rings, to OFFHOOK when it's answered, to IDLE when its hung up.
-     * Outgoing call: goes from IDLE to OFFHOOK when it dials out, to IDLE when hung up.
+     * Incoming call: goes from IDLE to RINGING when it rings, to OFF HOOK when it's answered, to IDLE when its hung up.
+     * Outgoing call: goes from IDLE to OFF HOOK when it dials out, to IDLE when hung up.
      *
      * @param context context
      * @param intent  call state intent

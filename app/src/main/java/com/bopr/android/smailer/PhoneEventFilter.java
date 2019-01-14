@@ -4,11 +4,17 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-import static com.bopr.android.smailer.Settings.*;
-import static com.bopr.android.smailer.util.Util.*;
+import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_CALLS;
+import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
+import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS;
+import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
+import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
+import static com.bopr.android.smailer.util.Util.isEmpty;
+import static com.bopr.android.smailer.util.Util.normalizePhone;
+import static com.bopr.android.smailer.util.Util.safeEquals;
 
 /**
- * Class PhoneEventFilter.
+ * Filters phone events by various criteria.
  *
  * @author Boris Pronin (<a href="mailto:bpronin@bttprime.com">bpronin@bttprime.com</a>)
  */

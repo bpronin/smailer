@@ -9,7 +9,8 @@
     <string name="email_body_outgoing_call">Исходящий звонок длительностью {duration}.</string>
     <string name="email_body_sender">Отправитель: {phone} ({name})</string>
     <string name="email_body_sent">Отправлено{device_name}{time}</string>
-    <string name="email_body_time"> {time}</string>
+    <string name="email_body_time">Время: {time}</string>
+    <string name="email_body_at_time"> {time}</string>
     <string name="email_body_unknown_contact">Неизвестный контакт</string>
     <string name="email_body_unknown_contact_no_permission">нет разрешения на чтение контактов</string>
     <string name="email_body_unknown_location">(определение местоположения отключено)</string>

@@ -8,8 +8,9 @@
     <string name="email_body_missed_call">You had a missed call.</string>
     <string name="email_body_outgoing_call">You had an outgoing call of {duration} duration.</string>
     <string name="email_body_sender">Sender: {phone} ({name})</string>
+    <string name="email_body_time">Time: {time}</string>
     <string name="email_body_sent">Sent{device_name}{time}</string>
-    <string name="email_body_time">at {time}</string>
+    <string name="email_body_at_time">at {time}</string>
     <string name="email_body_unknown_contact">Unknown contact</string>
     <string name="email_body_unknown_contact_no_permission">no permission to read contacts</string>
     <string name="email_body_unknown_location">(location service disabled)</string>

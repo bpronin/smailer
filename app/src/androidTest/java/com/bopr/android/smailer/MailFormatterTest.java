@@ -2,18 +2,27 @@ package com.bopr.android.smailer;
 
 import android.content.Context;
 import android.content.res.Configuration;
+
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import static android.Manifest.permission.*;
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.READ_CONTACTS;
 import static android.content.pm.PackageManager.PERMISSION_DENIED;
-import static com.bopr.android.smailer.Settings.*;
+import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CONTACT;
+import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME;
+import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_LOCATION;
+import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME;
 import static com.bopr.android.smailer.util.Util.asSet;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -22,9 +31,16 @@ import static org.mockito.Mockito.when;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
+@SuppressWarnings("RedundantThrows")
 public class MailFormatterTest extends BaseTest {
 
     private Context context;
+
+    private Date defaultTime() {
+        GregorianCalendar calendar = new GregorianCalendar(2016, 1, 2, 3, 4, 5);
+//        calendar.setTimeZone(TimeZone.getTimeZone(("Europe/Moscow")));
+        return calendar.getTime();
+    }
 
     @Override
     public void setUp() throws Exception {
@@ -145,18 +161,27 @@ public class MailFormatterTest extends BaseTest {
      */
     @Test
     public void testFooterTimeOption() throws Exception {
-        long time = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
-        PhoneEvent message = new PhoneEvent("+70123456789", true, time, null, false,
+        PhoneEvent message = new PhoneEvent("+70123456789", true, defaultTime().getTime(), null, false,
                 "Email body text", null, null, PhoneEvent.State.PENDING);
 
         MailFormatter formatter = new MailFormatter(context, message);
+        formatter.setSendTime(defaultTime());
         formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
 
-        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
+        assertEquals("<html>" +
+                "<head>" +
+                "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">" +
+                "</head>" +
+                "<body>" +
                 "Email body text" +
-                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\"><small>" +
+                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                "<small> " +
+                "Time: February 2, 2016 3:04:05 AM EST" +
+                "<br>" +
                 "Sent at February 2, 2016 3:04:05 AM EST" +
-                "</small></body></html>", formatter.formatBody());
+                "</small>" +
+                "</body>" +
+                "</html>", formatter.formatBody());
     }
 
     /**
@@ -171,12 +196,21 @@ public class MailFormatterTest extends BaseTest {
                 "Email body text", null, null, PhoneEvent.State.PENDING);
 
         MailFormatter formatter = new MailFormatter(context, message);
+        formatter.setSendTime(defaultTime());
         formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
 
-        String body = formatter.formatBody();
-        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
+        assertEquals("<html>" +
+                "<head>" +
+                "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">" +
+                "</head>" +
+                "<body>" +
                 "Email body text" +
-                "</body></html>", body);
+                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                "<small>" +
+                "Sent at February 2, 2016 3:04:05 AM EST" +
+                "</small>" +
+                "</body>" +
+                "</html>", formatter.formatBody());
     }
 
     /**
@@ -186,19 +220,26 @@ public class MailFormatterTest extends BaseTest {
      */
     @Test
     public void testFooterDeviceNameOption() throws Exception {
-        String deviceName = Settings.getDeviceName(getContext());
         PhoneEvent message = new PhoneEvent("+70123456789", true, null, null, false,
                 "Email body text", null, null, PhoneEvent.State.PENDING);
 
         MailFormatter formatter = new MailFormatter(context, message);
-        formatter.setDeviceName(deviceName);
+        formatter.setSendTime(defaultTime());
+        formatter.setDeviceName("The Device");
         formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME));
 
-        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
+        assertEquals("<html>" +
+                "<head>" +
+                "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">" +
+                "</head>" +
+                "<body>" +
                 "Email body text" +
-                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\"><small>" +
-                "Sent from " + deviceName +
-                "</small></body></html>", formatter.formatBody());
+                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                "<small>" +
+                "Sent from The Device at February 2, 2016 3:04:05 AM EST" +
+                "</small>" +
+                "</body>" +
+                "</html>", formatter.formatBody());
     }
 
     /**
@@ -213,11 +254,21 @@ public class MailFormatterTest extends BaseTest {
                 "Email body text", null, null, PhoneEvent.State.PENDING);
 
         MailFormatter formatter = new MailFormatter(context, message);
+        formatter.setSendTime(defaultTime());
         formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME));
 
-        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
+        assertEquals("<html>" +
+                "<head>" +
+                "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">" +
+                "</head>" +
+                "<body>" +
                 "Email body text" +
-                "</body></html>", formatter.formatBody());
+                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                "<small>" +
+                "Sent at February 2, 2016 3:04:05 AM EST" +
+                "</small>" +
+                "</body>" +
+                "</html>", formatter.formatBody());
     }
 
     /**
@@ -228,21 +279,28 @@ public class MailFormatterTest extends BaseTest {
      */
     @Test
     public void testFooterDeviceNameTimeOption() throws Exception {
-        String deviceName = Settings.getDeviceName(getContext());
-        long time = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
-        PhoneEvent message = new PhoneEvent("+70123456789", true, time, null, false,
+        PhoneEvent message = new PhoneEvent("+70123456789", true, defaultTime().getTime(), null, false,
                 "Email body text", null, null, PhoneEvent.State.PENDING);
 
         MailFormatter formatter = new MailFormatter(context, message);
-        formatter.setDeviceName(deviceName);
+        formatter.setSendTime(defaultTime());
+        formatter.setDeviceName("The Device");
         formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
 
-
-        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
+        assertEquals("<html>" +
+                "<head>" +
+                "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">" +
+                "</head>" +
+                "<body>" +
                 "Email body text" +
-                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\"><small>" +
-                "Sent from " + deviceName + " at February 2, 2016 3:04:05 AM EST" +
-                "</small></body></html>", formatter.formatBody());
+                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                "<small> " +
+                "Time: February 2, 2016 3:04:05 AM EST" +
+                "<br>" +
+                "Sent from The Device at February 2, 2016 3:04:05 AM EST" +
+                "</small>" +
+                "</body>" +
+                "</html>", formatter.formatBody());
     }
 
     /**
@@ -383,7 +441,7 @@ public class MailFormatterTest extends BaseTest {
      */
     @Test
     public void testIncomingCallBody() throws Exception {
-        long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
+        long start = defaultTime().getTime();
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
         PhoneEvent message = new PhoneEvent("+70123456789", true, start, end, false,
                 null, null, null, PhoneEvent.State.PENDING);
@@ -402,7 +460,7 @@ public class MailFormatterTest extends BaseTest {
      */
     @Test
     public void testOutgoingCallBody() throws Exception {
-        long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
+        long start = defaultTime().getTime();
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 15).getTime().getTime();
         PhoneEvent message = new PhoneEvent("+70123456789", false, start, end, false,
                 null, null, null, PhoneEvent.State.PENDING);
@@ -421,7 +479,7 @@ public class MailFormatterTest extends BaseTest {
      */
     @Test
     public void testMissedCallBody() throws Exception {
-        long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
+        long start = defaultTime().getTime();
         PhoneEvent message = new PhoneEvent("+70123456789", false, start, null, true,
                 null, null, null, PhoneEvent.State.PENDING);
 
@@ -440,7 +498,7 @@ public class MailFormatterTest extends BaseTest {
     @Test
     public void testAllIncomingContentCall() throws Exception {
         String deviceName = Settings.getDeviceName(getContext());
-        long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
+        long start = defaultTime().getTime();
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
 
         PhoneEvent message = new PhoneEvent("+12345678901", true, start, end, false,
@@ -472,7 +530,7 @@ public class MailFormatterTest extends BaseTest {
     @Test
     public void testAllOutgoingContentCall() throws Exception {
         String deviceName = Settings.getDeviceName(getContext());
-        long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
+        long start = defaultTime().getTime();
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
 
         PhoneEvent message = new PhoneEvent("+12345678901", false, start, end, false,
@@ -504,7 +562,7 @@ public class MailFormatterTest extends BaseTest {
     @Test
     public void testAllContentMissedCall() throws Exception {
         String deviceName = Settings.getDeviceName(getContext());
-        long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
+        long start = defaultTime().getTime();
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
 
         PhoneEvent message = new PhoneEvent("+12345678901", true, start, end, true,
@@ -586,7 +644,7 @@ public class MailFormatterTest extends BaseTest {
     @Test
     public void testInvalidLocale() throws Exception {
         String deviceName = Settings.getDeviceName(getContext());
-        long start = new GregorianCalendar(2016, 1, 2, 3, 4, 5).getTime().getTime();
+        long start = defaultTime().getTime();
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
 
         PhoneEvent message = new PhoneEvent("+12345678901", true, start, end, true,

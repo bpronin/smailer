@@ -5,16 +5,21 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import com.bopr.android.smailer.util.Util;
 
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.bopr.android.smailer.Settings.*;
+import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CONTACT;
+import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME;
+import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_LOCATION;
+import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.Util.formatDuration;
 import static com.bopr.android.smailer.util.Util.isEmpty;
@@ -43,6 +48,7 @@ class MailFormatter {
     private String contactName;
     private String deviceName;
     private Set<String> contentOptions;
+    private Date sendTime;
 
     MailFormatter(Context context, PhoneEvent event) {
         this.event = event;
@@ -88,6 +94,14 @@ class MailFormatter {
         this.locale = locale != null ? locale : Locale.getDefault();
 
         updateResources();
+    }
+
+    /**
+     * Sets email send time
+     * @param sendTime time
+     */
+    void setSendTime(Date sendTime) {
+        this.sendTime = sendTime;
     }
 
     /**
@@ -166,8 +180,10 @@ class MailFormatter {
     private String formatFooter() {
         if (contentOptions != null) {
             String callerText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_CONTACT) ? formatCaller() : null;
+            String timeText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME) ? formatEventTime() : null;
             String deviceNameText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME) ? formatDeviceName() : null;
-            String timeText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME) ? formatTime() : null;
+//            String sendTimeText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME) ? formatSendTime() : null;
+            String sendTimeText = formatSendTime();
             String locationText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_LOCATION) ? formatLocation() : null;
 
             StringBuilder text = new StringBuilder();
@@ -176,21 +192,31 @@ class MailFormatter {
                 text.append(callerText);
             }
 
+            if (!isEmpty(timeText)) {
+//                if (!isEmpty(callerText)) {
+                if (!isEmpty(text)) {
+                    text.append("<br>");
+                }
+                text.append(timeText);
+            }
+
             if (!isEmpty(locationText)) {
-                if (!isEmpty(callerText)) {
+                //if (!isEmpty(callerText) || !isEmpty(timeText)) {
+                if (!isEmpty(text)) {
                     text.append("<br>");
                 }
                 text.append(locationText);
             }
 
-            if (!isEmpty(deviceNameText) || !isEmpty(timeText)) {
-                if (!isEmpty(callerText) || !isEmpty(locationText)) {
+            if (!isEmpty(deviceNameText) || !isEmpty(sendTimeText)) {
+                //if (!isEmpty(callerText) || !isEmpty(timeText) || !isEmpty(locationText)) {
+                if (!isEmpty(text)) {
                     text.append("<br>");
                 }
 
                 text.append(formatter(R.string.email_body_sent, resources)
                         .put("device_name", deviceNameText)
-                        .put("time", timeText));
+                        .put("time", sendTimeText));
             }
 
             if (!isEmpty(text)) {
@@ -244,7 +270,7 @@ class MailFormatter {
     }
 
     @Nullable
-    private String formatTime() {
+    private String formatEventTime() {
         if (event.getStartTime() != null) {
             DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
             return " " + formatter(R.string.email_body_time, resources)
@@ -252,6 +278,15 @@ class MailFormatter {
                     .format();
         }
         return null;
+    }
+
+    @Nullable
+    private String formatSendTime() {
+        DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
+        df.setTimeZone(TimeZone.getTimeZone("Europe/Moscow"));
+        return " " + formatter(R.string.email_body_at_time, resources)
+                .put("time", df.format(sendTime))
+                .format();
     }
 
     @NonNull

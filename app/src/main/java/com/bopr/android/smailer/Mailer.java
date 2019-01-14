@@ -13,6 +13,7 @@ import com.sun.mail.util.MailConnectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.mail.AuthenticationFailedException;
@@ -114,6 +115,7 @@ class Mailer {
     @NonNull
     private MailFormatter createFormatter(PhoneEvent event, MailerProperties mp) {
         MailFormatter formatter = new MailFormatter(context, event);
+        formatter.setSendTime(new Date());
         formatter.setContactName(getContactName(context, event.getPhone()));
         formatter.setDeviceName(getDeviceName(context));
         formatter.setContentOptions(mp.getContentOptions());

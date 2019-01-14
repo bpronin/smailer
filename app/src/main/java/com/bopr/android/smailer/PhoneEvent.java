@@ -3,7 +3,7 @@ package com.bopr.android.smailer;
 import com.bopr.android.smailer.util.Util;
 
 /**
- * Email message.
+ * Represents phone call or SMS event.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
