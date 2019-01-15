@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="?android:attr/selectableItemBackground"
-              android:clickable="true"
-              android:focusable="true"
-              android:orientation="vertical"
-              android:padding="8dp"
-              tools:ignore="HardcodedText">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical"
+    android:padding="6dp"
+    tools:ignore="HardcodedText">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,43 +17,62 @@
 
         <ImageView
             android:id="@+id/list_item_type"
-            android:layout_width="24sp"
-            android:layout_height="24sp"
+            android:layout_width="20sp"
+            android:layout_height="20sp"
             android:layout_gravity="center"
             android:contentDescription="Event type"
-            android:src="@drawable/ic_call"/>
+            android:paddingTop="1dp"
+            android:src="@drawable/ic_call" />
 
         <ImageView
             android:id="@+id/list_item_direction"
-            android:layout_width="24sp"
-            android:layout_height="24sp"
+            android:layout_width="20sp"
+            android:layout_height="20sp"
             android:layout_gravity="center"
             android:contentDescription="Call direction"
-            android:src="@drawable/ic_call_in"/>
+            android:paddingTop="1dp"
+            android:src="@drawable/ic_call_in" />
 
         <TextView
             android:id="@+id/list_item_phone"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:layout_weight="1"
             android:text="+79052309441"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <ImageView
             android:id="@+id/list_item_state"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="20sp"
+            android:layout_height="20sp"
             android:contentDescription="Event state"
-            android:src="@drawable/ic_state_done"/>
+            android:src="@drawable/ic_state_done" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/list_item_time"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="2017.11.05 12:30:44"
-        android:textAlignment="viewEnd"/>
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/list_item_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Text text text text text text text "
+            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+
+        <TextView
+            android:id="@+id/list_item_time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="2017.11.05 12:30:44"
+            android:textAlignment="textEnd"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+    </LinearLayout>
 
 </LinearLayout>
 

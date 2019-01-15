@@ -1,8 +1,10 @@
 package com.bopr.android.smailer.ui;
 
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -45,6 +47,7 @@ public class LogFragment extends Fragment {
     private PhoneEventFilter phoneEventFilter;
     private int selectedListItemPosition = NO_POSITION;
     private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
+    private BroadcastReceiver databaseListener;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,17 +61,26 @@ public class LogFragment extends Fragment {
             }
         };
         Settings.getPreferences(getActivity()).registerOnSharedPreferenceChangeListener(preferenceChangeListener);
+
+        databaseListener = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                loadData();
+            }
+        };
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        database.removeListener(databaseListener);
         Settings.getPreferences(getActivity()).unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         database = new Database(getActivity());
+        database.addListener(databaseListener);
         View view = inflater.inflate(R.layout.fragment_log, container, false);
 
         listView = view.findViewById(android.R.id.list);
@@ -222,6 +234,7 @@ public class LogFragment extends Fragment {
                 final PhoneEvent event = cursor.found();
 
                 holder.timeView.setText(DateFormat.format(getString(R.string.event_time_pattern), event.getStartTime()));
+                holder.textView.setText(event.getText());
 
                 holder.phoneView.setText(event.getPhone());
                 if (phoneEventFilter.acceptPhone(event.getPhone())) {
@@ -287,12 +300,14 @@ public class LogFragment extends Fragment {
         private final ImageView directionView;
         private final TextView phoneView;
         private final TextView timeView;
+        private final TextView textView;
         private final ImageView stateView;
         private final int defaultPhoneFlags;
 
         private ItemViewHolder(View view) {
             super(view);
             timeView = view.findViewById(R.id.list_item_time);
+            textView = view.findViewById(R.id.list_item_text);
             typeView = view.findViewById(R.id.list_item_type);
             directionView = view.findViewById(R.id.list_item_direction);
             phoneView = view.findViewById(R.id.list_item_phone);

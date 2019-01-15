@@ -1,10 +1,14 @@
 package com.bopr.android.smailer;
 
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.bopr.android.smailer.util.db.XCursor;
 
@@ -24,6 +28,8 @@ public class Database {
     private static Logger log = LoggerFactory.getLogger("Database");
 
     private static final int DB_VERSION = 1;
+
+    private static final String DATABASE_EVENT = "database-event";
 
     private static final String TABLE_SYSTEM = "system_data";
     private static final String TABLE_EVENTS = "phone_events";
@@ -122,6 +128,9 @@ public class Database {
 
         long id = db.replace(TABLE_EVENTS, null, values);
         event.setId(id);
+
+        fireChanged();
+
         return id;
     }
 
@@ -148,6 +157,8 @@ public class Database {
         }
 
         log.debug("All events removed");
+
+        fireChanged();
     }
 
     /**
@@ -177,6 +188,8 @@ public class Database {
         } finally {
             db.endTransaction();
         }
+
+        fireChanged();
     }
 
     public void saveLastLocation(GeoCoordinates location) {
@@ -225,6 +238,22 @@ public class Database {
 
     public void destroy() {
         context.deleteDatabase(name);
+    }
+
+    public void addListener(BroadcastReceiver listener) {
+        LocalBroadcastManager.getInstance(context).registerReceiver(listener, new IntentFilter(DATABASE_EVENT));
+    }
+
+    public void removeListener(BroadcastReceiver listener) {
+        LocalBroadcastManager.getInstance(context).unregisterReceiver(listener);
+    }
+
+    private void fireChanged() {
+        log.debug("sender", "Broadcasting message");
+
+        Intent intent = new Intent(DATABASE_EVENT);
+        intent.putExtra("message", "changed");
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
     private class DbHelper extends SQLiteOpenHelper {

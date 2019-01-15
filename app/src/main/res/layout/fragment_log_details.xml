@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:id="@+id/main_content"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -15,7 +14,7 @@
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:text="Missed call"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,20 +22,20 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:id="@+id/image_event_direction"
-            android:layout_width="32sp"
-            android:layout_height="32sp"
-            android:layout_gravity="center"
-            android:contentDescription="Call direction"
-            android:src="@drawable/ic_call_in"/>
-
-        <ImageView
             android:id="@+id/image_event_type"
             android:layout_width="32sp"
             android:layout_height="32sp"
             android:layout_gravity="center"
             android:contentDescription="Event type"
-            android:src="@drawable/ic_call"/>
+            android:src="@drawable/ic_call" />
+
+        <ImageView
+            android:id="@+id/image_event_direction"
+            android:layout_width="32sp"
+            android:layout_height="32sp"
+            android:layout_gravity="center"
+            android:contentDescription="Call direction"
+            android:src="@drawable/ic_call_in" />
 
         <TextView
             android:id="@+id/text_title"
@@ -44,24 +43,22 @@
             android:layout_height="wrap_content"
             android:padding="8dp"
             android:text="+78998778798"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
+            android:textAppearance="@style/TextAppearance.AppCompat.Title" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/text_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="2017-12-13 10:45:41"
         android:padding="8dp"
-        />
+        android:text="2017-12-13 10:45:41" />
 
     <TextView
         android:id="@+id/text_message"
         android:layout_width="match_parent"
-        android:padding="8dp"
         android:layout_height="wrap_content"
-        android:text="Message body"
-        />
+        android:padding="8dp"
+        android:text="Message body" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -72,20 +69,19 @@
             android:id="@+id/image_event_result"
             android:layout_width="28sp"
             android:layout_height="28sp"
-            android:padding="4dp"
             android:layout_gravity="center"
             android:contentDescription="Result"
-            android:src="@drawable/ic_state_block"/>
+            android:padding="4dp"
+            android:src="@drawable/ic_state_block" />
 
         <TextView
             android:id="@+id/text_result"
             android:layout_width="wrap_content"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Sent email"
-            />
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:text="Sent email" />
     </LinearLayout>
 
 
