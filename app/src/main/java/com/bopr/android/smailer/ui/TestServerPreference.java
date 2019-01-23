@@ -3,8 +3,7 @@ package com.bopr.android.smailer.ui;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceViewHolder;
+import android.preference.Preference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Toast;
@@ -30,12 +29,13 @@ import static com.bopr.android.smailer.MailTransport.CHECK_RESULT_OK;
  */
 public class TestServerPreference extends Preference {
 
-    private PreferenceViewHolder viewHolder;
+    private View view;
 
     @SuppressWarnings("unused")
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public TestServerPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes, View view) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        this.view = view;
     }
 
     @SuppressWarnings("unused")
@@ -53,6 +53,8 @@ public class TestServerPreference extends Preference {
         super(context);
     }
 
+/*
+    TODO: Migration
     @Override
     public void onBindViewHolder(PreferenceViewHolder holder) {
         super.onBindViewHolder(holder);
@@ -74,9 +76,9 @@ public class TestServerPreference extends Preference {
     protected void onClick() {
         new SendTestMailTask(this).execute();
     }
+*/
 
     private static class SendTestMailTask extends ContextAsyncTask<Void, Void, Integer> {
-
 
         private TestServerPreference owner;
 
@@ -127,7 +129,6 @@ public class TestServerPreference extends Preference {
             }
             return result;
         }
-
     }
 
 }
