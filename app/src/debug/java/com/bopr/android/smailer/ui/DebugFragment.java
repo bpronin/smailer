@@ -49,6 +49,7 @@ import java.util.Properties;
 
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+import static android.preference.Preference.OnPreferenceClickListener;
 import static com.bopr.android.smailer.MailerService.createEventIntent;
 import static com.bopr.android.smailer.Settings.DEFAULT_HOST;
 import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
