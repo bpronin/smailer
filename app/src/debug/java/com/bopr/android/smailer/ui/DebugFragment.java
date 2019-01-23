@@ -601,7 +601,7 @@ public class DebugFragment extends BasePreferenceFragment {
         @Override
         public boolean onPreferenceClick(Preference preference) {
             onClick(preference);
-            //    getActivity().finish();
+            getActivity().finish();
             return true;
         }
     }
