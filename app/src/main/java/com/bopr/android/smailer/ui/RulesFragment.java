@@ -35,7 +35,7 @@ public class RulesFragment extends BasePreferenceFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.pref_conditions);
+        addPreferencesFromResource(R.xml.pref_rules);
 
         phoneBlacklistPreference = findPreference(KEY_PREF_FILTER_BLACKLIST);
         phoneBlacklistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
