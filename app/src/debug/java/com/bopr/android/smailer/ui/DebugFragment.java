@@ -12,6 +12,8 @@ import android.preference.PreferenceScreen;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceScreen;
 import android.text.InputType;
 import android.util.Base64;
 import android.widget.EditText;
@@ -28,23 +30,15 @@ import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.SmsReceiver;
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.ui.ContextAsyncTask;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.Comparator;
+import java.io.*;
 import java.util.List;
 import java.util.Properties;
 
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-import static android.preference.Preference.OnPreferenceClickListener;
 import static com.bopr.android.smailer.MailerService.createEventIntent;
 import static com.bopr.android.smailer.Settings.DEFAULT_HOST;
 import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
@@ -270,7 +264,7 @@ public class DebugFragment extends BasePreferenceFragment {
         super.onStop();
     }
 
-    private Preference createSimplePreference(String title, OnPreferenceClickListener listener) {
+    private Preference createSimplePreference(String title, Preference.OnPreferenceClickListener listener) {
         Preference preference = new Preference(getActivity());
         preference.setTitle(title);
         preference.setOnPreferenceClickListener(listener);
@@ -594,7 +588,7 @@ public class DebugFragment extends BasePreferenceFragment {
         }
     }
 
-    private abstract class DefaultClickListener implements OnPreferenceClickListener {
+    private abstract class DefaultClickListener implements Preference.OnPreferenceClickListener {
 
         protected abstract void onClick(Preference preference);
 
