@@ -61,6 +61,7 @@ public class TestServerPreference extends Preference {
 
     private void setWaiting(boolean waiting) {
         if (waiting) {
+
             viewHolder.itemView.findViewById(R.id.text_title).setEnabled(false);
             viewHolder.itemView.findViewById(R.id.progress_wait).setVisibility(View.VISIBLE);
         } else {

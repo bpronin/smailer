@@ -82,6 +82,11 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
         permissionChecker.handleRequestResult(requestCode, permissions, grantResults);
     }
 
+    @Override
+    public void onDisplayPreferenceDialog(Preference preference) {
+        super.onDisplayPreferenceDialog(preference);
+    }
+
     /**
      * Returns application's shared preferences.
      */
