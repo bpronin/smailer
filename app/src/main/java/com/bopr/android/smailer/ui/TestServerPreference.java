@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Toast;
@@ -29,13 +30,12 @@ import static com.bopr.android.smailer.MailTransport.CHECK_RESULT_OK;
  */
 public class TestServerPreference extends Preference {
 
-    private View view;
+    private PreferenceViewHolder viewHolder;
 
     @SuppressWarnings("unused")
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public TestServerPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes, View view) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        this.view = view;
     }
 
     @SuppressWarnings("unused")
@@ -53,24 +53,29 @@ public class TestServerPreference extends Preference {
         super(context);
     }
 
-/*
-    TODO: Migration
     @Override
-    protected void onBindView(View view) {
-        this.view = view;
-        setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                new SendTestMailTask(TestServerPreference.this).execute();
-                return true;
-            }
-        });
-        super.onBindView(view);
+    public void onBindViewHolder(PreferenceViewHolder holder) {
+        super.onBindViewHolder(holder);
+        viewHolder = holder;
     }
-*/
+
+    private void setWaiting(boolean waiting) {
+        if (waiting) {
+            viewHolder.itemView.findViewById(R.id.text_title).setEnabled(false);
+            viewHolder.itemView.findViewById(R.id.progress_wait).setVisibility(View.VISIBLE);
+        } else {
+            viewHolder.itemView.findViewById(R.id.text_title).setEnabled(true);
+            viewHolder.itemView.findViewById(R.id.progress_wait).setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @Override
+    protected void onClick() {
+        new SendTestMailTask(this).execute();
+    }
 
     private static class SendTestMailTask extends ContextAsyncTask<Void, Void, Integer> {
+
 
         private TestServerPreference owner;
 
@@ -82,15 +87,14 @@ public class TestServerPreference extends Preference {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            owner.view.findViewById(R.id.text_title).setEnabled(false);
-            owner.view.findViewById(R.id.progress_wait).setVisibility(View.VISIBLE);
+            owner.setWaiting(true);
+
         }
 
         @Override
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
-            owner.view.findViewById(R.id.text_title).setEnabled(true);
-            owner.view.findViewById(R.id.progress_wait).setVisibility(View.INVISIBLE);
+            owner.setWaiting(false);
 
             int message;
             if (result == CHECK_RESULT_NOT_CONNECTED) {
@@ -122,6 +126,7 @@ public class TestServerPreference extends Preference {
             }
             return result;
         }
+
     }
 
 }
