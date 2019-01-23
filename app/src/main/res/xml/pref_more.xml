@@ -2,6 +2,7 @@
 <android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <android.support.v14.preference.MultiSelectListPreference
+        android:icon="@drawable/ic_pref_content"
         android:dialogTitle="@string/title_email_message_content"
         android:entries="@array/titles_email_content"
         android:entryValues="@array/email_content_values"
@@ -10,6 +11,7 @@
         android:title="@string/title_content" />
 
     <android.support.v7.preference.EditTextPreference
+        android:icon="@drawable/ic_pref_device"
         android:dialogMessage="@string/title_device_alias_hint"
         android:inputType="textNoSuggestions"
         android:key="device_alias"
@@ -19,6 +21,7 @@
         android:title="@string/title_device_alias" />
 
     <android.support.v7.preference.ListPreference
+        android:icon="@drawable/ic_pref_language"
         android:dialogTitle="@string/title_email_language"
         android:entries="@array/titles_language"
         android:entryValues="@array/email_locale_values"
@@ -27,14 +30,14 @@
 
     <android.support.v14.preference.SwitchPreference
         android:key="resend_unsent"
-        android:summary="@string/title_resend_hint" />
+        android:title="@string/title_resend_hint" />
 
     <android.support.v14.preference.SwitchPreference
         android:key="notify_send_success"
-        android:summary="@string/title_notify_send_success" />
+        android:title="@string/title_notify_send_success" />
 
     <android.support.v14.preference.SwitchPreference
         android:key="mark_processed_sms_as_read"
-        android:summary="@string/title_mark_processed_sms_as_read" />
+        android:title="@string/title_mark_processed_sms_as_read" />
 
 </android.support.v7.preference.PreferenceScreen>
