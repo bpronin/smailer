@@ -88,7 +88,7 @@ public class DebugFragment extends BasePreferenceFragment {
         super.onCreate(savedInstanceState);
 
         database = new Database(getActivity());
-        locator = new Locator(getActivity(), database);
+        locator = new Locator(getContext(), database);
         cryptor = new Cryptor(getActivity());
 
         PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(getActivity());
@@ -583,7 +583,8 @@ public class DebugFragment extends BasePreferenceFragment {
         @Override
         public boolean onPreferenceClick(Preference preference) {
             onClick(preference);
-            getActivity().finish();
+            Toast.makeText(getContext(), "Done", Toast.LENGTH_LONG).show();
+            //getActivity().finish();
             return true;
         }
     }
