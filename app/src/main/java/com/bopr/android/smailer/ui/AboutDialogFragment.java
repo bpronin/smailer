@@ -1,16 +1,17 @@
 package com.bopr.android.smailer.ui;
 
-import android.app.Activity;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.TextView;
+
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.Settings;
 
@@ -24,8 +25,8 @@ import static com.bopr.android.smailer.util.TagFormatter.formatter;
  */
 public class AboutDialogFragment extends DialogFragment {
 
-    public void showDialog(Activity activity) {
-        show(activity.getFragmentManager(), "about_dialog");
+    public void showDialog(FragmentActivity activity) {
+        show(activity.getSupportFragmentManager(), "about_dialog");
     }
 
     @Override

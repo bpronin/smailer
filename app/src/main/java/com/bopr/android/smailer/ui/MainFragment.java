@@ -4,20 +4,29 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
-import android.preference.Preference;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.preference.Preference;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ListView;
+
 import com.bopr.android.smailer.OutgoingSmsService;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.ResendService;
 import com.bopr.android.smailer.util.validator.EmailListTextValidator;
 import com.bopr.android.smailer.util.validator.EmailTextValidator;
 
-import static com.bopr.android.smailer.Settings.*;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
+import static com.bopr.android.smailer.Settings.KEY_PREF_LOG;
+import static com.bopr.android.smailer.Settings.KEY_PREF_MORE;
+import static com.bopr.android.smailer.Settings.KEY_PREF_OUTGOING_SERVER;
+import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
+import static com.bopr.android.smailer.Settings.KEY_PREF_RULES;
+import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
+import static com.bopr.android.smailer.Settings.loadDefaultPreferences;
 import static com.bopr.android.smailer.util.Util.anyIsEmpty;
 import static com.bopr.android.smailer.util.Util.isEmpty;
 

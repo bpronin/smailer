@@ -1,18 +1,19 @@
 package com.bopr.android.smailer.ui;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.bopr.android.smailer.Formats;
 import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
@@ -30,8 +31,8 @@ public class LogDetailsDialogFragment extends DialogFragment {
 
     private PhoneEvent value;
 
-    public void showDialog(Activity activity) {
-        show(activity.getFragmentManager(), "log_details_dialog");
+    public void showDialog(FragmentActivity activity) {
+        show(activity.getSupportFragmentManager(), "log_details_dialog");
     }
 
     @Override

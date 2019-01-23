@@ -1,15 +1,14 @@
 package com.bopr.android.smailer.ui;
 
 import android.os.Bundle;
-import android.preference.EditTextPreference;
-import android.preference.ListPreference;
-import android.preference.Preference;
+import android.support.v7.preference.EditTextPreference;
+import android.support.v7.preference.ListPreference;
+import android.support.v7.preference.Preference;
 
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.Util;
 
-import static android.preference.Preference.OnPreferenceChangeListener;
 import static com.bopr.android.smailer.Settings.KEY_PREF_DEVICE_ALIAS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
 
@@ -25,7 +24,7 @@ public class MoreFragment extends BasePreferenceFragment {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_more);
 
-        findPreference(KEY_PREF_EMAIL_LOCALE).setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+        findPreference(KEY_PREF_EMAIL_LOCALE).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
                 updateLocalePreference((ListPreference) preference, (String) value);
@@ -33,7 +32,7 @@ public class MoreFragment extends BasePreferenceFragment {
             }
         });
 
-        findPreference(KEY_PREF_DEVICE_ALIAS).setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+        findPreference(KEY_PREF_DEVICE_ALIAS).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {

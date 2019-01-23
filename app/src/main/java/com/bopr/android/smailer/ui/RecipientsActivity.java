@@ -1,8 +1,7 @@
 package com.bopr.android.smailer.ui;
 
-import android.app.Fragment;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 
 /**
  * Recipients list activity.

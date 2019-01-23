@@ -2,11 +2,21 @@ package com.bopr.android.smailer.ui;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.*;
 import android.support.annotation.NonNull;
+import android.support.v14.preference.MultiSelectListPreference;
+import android.support.v14.preference.SwitchPreference;
+import android.support.v7.preference.CheckBoxPreference;
+import android.support.v7.preference.EditTextPreference;
+import android.support.v7.preference.ListPreference;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.v7.preference.PreferenceGroup;
+import android.support.v7.preference.PreferenceManager;
+
 import com.bopr.android.smailer.PreferencesPermissionsChecker;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.AndroidUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,12 +28,12 @@ import java.util.Set;
 import static com.bopr.android.smailer.Settings.PREFERENCES_STORAGE_NAME;
 
 /**
- * Base {@link PreferenceFragment} with default behaviour.
+ * Base PreferenceFragment with default behaviour.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 // TODO: 06.04.2016 there is a bug in MultiListPreference. when dialog is showing and device rotated when ok pressed then selected value are lost
-public class BasePreferenceFragment extends PreferenceFragment {
+public class BasePreferenceFragment extends PreferenceFragmentCompat {
 
     private static Logger log = LoggerFactory.getLogger("BasePreferenceFragment");
 
@@ -37,6 +47,11 @@ public class BasePreferenceFragment extends PreferenceFragment {
         PreferenceManager preferenceManager = getPreferenceManager();
         preferenceManager.setSharedPreferencesName(PREFERENCES_STORAGE_NAME);
         sharedPreferences = preferenceManager.getSharedPreferences();
+    }
+
+    @Override
+    public void onCreatePreferences(Bundle bundle, String s) {
+        log.warn("CREATE PREFERENCES");
     }
 
     @Override
