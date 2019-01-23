@@ -1,7 +1,7 @@
 package com.bopr.android.smailer.ui;
 
-import android.app.Fragment;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 
 /**
  * Number blacklist activity.

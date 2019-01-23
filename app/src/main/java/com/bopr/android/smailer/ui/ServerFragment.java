@@ -1,15 +1,19 @@
 package com.bopr.android.smailer.ui;
 
 import android.os.Bundle;
-import android.preference.EditTextPreference;
-import android.preference.Preference;
+import android.support.v7.preference.EditTextPreference;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.Preference.OnPreferenceChangeListener;
 import android.text.TextUtils;
+
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.Util;
 import com.bopr.android.smailer.util.validator.EmailTextValidator;
 
-import static android.preference.Preference.OnPreferenceChangeListener;
-import static com.bopr.android.smailer.Settings.*;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
+import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
+import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
 import static com.bopr.android.smailer.util.Util.isEmpty;
 
 /**
@@ -30,7 +34,10 @@ public class ServerFragment extends BasePreferenceFragment {
         addPreferencesFromResource(R.xml.pref_server);
 
         accountPreference = (EditTextPreference) findPreference(KEY_PREF_SENDER_ACCOUNT);
-        accountPreference.getEditText().addTextChangedListener(new EmailTextValidator(accountPreference.getEditText()));
+
+        // TODO: 23.01.2019  Migration issue
+        //accountPreference.getEditText().addTextChangedListener(new EmailTextValidator(accountPreference.getEditText()));
+
         accountPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
             @Override

@@ -7,30 +7,65 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceScreen;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceScreen;
 import android.text.InputType;
 import android.util.Base64;
 import android.widget.EditText;
 import android.widget.Toast;
-import com.bopr.android.smailer.*;
+
+import com.bopr.android.smailer.Contacts;
+import com.bopr.android.smailer.Cryptor;
+import com.bopr.android.smailer.Database;
+import com.bopr.android.smailer.GeoCoordinates;
+import com.bopr.android.smailer.Locator;
+import com.bopr.android.smailer.MailTransport;
+import com.bopr.android.smailer.Notifications;
+import com.bopr.android.smailer.PhoneEvent;
+import com.bopr.android.smailer.SmsReceiver;
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.ui.ContextAsyncTask;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Properties;
 
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-import static android.preference.Preference.OnPreferenceClickListener;
 import static com.bopr.android.smailer.MailerService.createEventIntent;
-import static com.bopr.android.smailer.Settings.*;
+import static com.bopr.android.smailer.Settings.DEFAULT_HOST;
+import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
+import static com.bopr.android.smailer.Settings.DEFAULT_PORT;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
+import static com.bopr.android.smailer.Settings.KEY_PREF_NOTIFY_SEND_SUCCESS;
+import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
+import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
+import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
+import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
+import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CONTACT;
+import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME;
+import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_LOCATION;
+import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME;
+import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_CALLS;
+import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
+import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS;
+import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
+import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
+import static com.bopr.android.smailer.Settings.getDeviceName;
 import static com.bopr.android.smailer.util.Util.asSet;
 import static com.bopr.android.smailer.util.Util.formatLocation;
 
@@ -217,7 +252,7 @@ public class DebugFragment extends BasePreferenceFragment {
         super.onStop();
     }
 
-    private Preference createSimplePreference(String title, OnPreferenceClickListener listener) {
+    private Preference createSimplePreference(String title, Preference.OnPreferenceClickListener listener) {
         Preference preference = new Preference(getActivity());
         preference.setTitle(title);
         preference.setOnPreferenceClickListener(listener);
@@ -541,7 +576,7 @@ public class DebugFragment extends BasePreferenceFragment {
         }
     }
 
-    private abstract class DefaultClickListener implements OnPreferenceClickListener {
+    private abstract class DefaultClickListener implements Preference.OnPreferenceClickListener {
 
         protected abstract void onClick(Preference preference);
 

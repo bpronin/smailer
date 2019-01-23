@@ -1,14 +1,17 @@
 package com.bopr.android.smailer.ui;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+
 import com.bopr.android.smailer.Cryptor;
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.crashlytics.android.Crashlytics;
-import io.fabric.sdk.android.Fabric;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * An activity that presents a set of application settings.

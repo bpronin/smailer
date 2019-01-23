@@ -3,16 +3,23 @@ package com.bopr.android.smailer.ui;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
-import android.preference.Preference;
+import android.support.v7.preference.Preference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Toast;
-import com.bopr.android.smailer.*;
+
+import com.bopr.android.smailer.Cryptor;
+import com.bopr.android.smailer.MailTransport;
+import com.bopr.android.smailer.MailerProperties;
+import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.Settings;
 import com.bopr.android.smailer.util.ui.ContextAsyncTask;
 
 import javax.mail.MessagingException;
 
-import static com.bopr.android.smailer.MailTransport.*;
+import static com.bopr.android.smailer.MailTransport.CHECK_RESULT_AUTHENTICATION;
+import static com.bopr.android.smailer.MailTransport.CHECK_RESULT_NOT_CONNECTED;
+import static com.bopr.android.smailer.MailTransport.CHECK_RESULT_OK;
 
 /**
  * A {@link Preference} for testing server settings.
@@ -46,6 +53,8 @@ public class TestServerPreference extends Preference {
         super(context);
     }
 
+/*
+    TODO: Migration
     @Override
     protected void onBindView(View view) {
         this.view = view;
@@ -59,6 +68,7 @@ public class TestServerPreference extends Preference {
         });
         super.onBindView(view);
     }
+*/
 
     private static class SendTestMailTask extends ContextAsyncTask<Void, Void, Integer> {
 
