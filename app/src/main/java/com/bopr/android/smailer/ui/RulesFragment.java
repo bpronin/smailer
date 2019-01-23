@@ -4,12 +4,18 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
-import android.preference.Preference;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.Preference.OnPreferenceChangeListener;
+
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.TagFormatter;
 
-import static android.preference.Preference.OnPreferenceChangeListener;
-import static com.bopr.android.smailer.Settings.*;
+import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_BLACKLIST;
+import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_TEXT_BLACKLIST;
+import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_TEXT_USE_WHITE_LIST;
+import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_TEXT_WHITELIST;
+import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_USE_WHITE_LIST;
+import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_WHITELIST;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.Util.parseCommaSeparated;
 

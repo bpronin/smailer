@@ -1,19 +1,26 @@
 package com.bopr.android.smailer.ui;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.os.Bundle;
-import android.preference.Preference;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.Preference.OnPreferenceClickListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.bopr.android.smailer.R;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.bopr.android.smailer.Settings.*;
+import static com.bopr.android.smailer.Settings.KEY_PREF_LOG;
+import static com.bopr.android.smailer.Settings.KEY_PREF_MORE;
+import static com.bopr.android.smailer.Settings.KEY_PREF_OUTGOING_SERVER;
+import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
+import static com.bopr.android.smailer.Settings.KEY_PREF_RULES;
 
 /**
  * Main settings fragment (dual pane layout)
@@ -26,7 +33,7 @@ public class MainFragmentDual extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_master_detail, container, false);
 
         FragmentManager fragmentManager = getChildFragmentManager();
@@ -75,7 +82,7 @@ public class MainFragmentDual extends Fragment {
                 .commit();
     }
 
-    private class PreferenceClickListener implements Preference.OnPreferenceClickListener {
+    private class PreferenceClickListener implements OnPreferenceClickListener {
 
         @Override
         public boolean onPreferenceClick(Preference preference) {
