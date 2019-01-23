@@ -3,7 +3,7 @@ package com.bopr.android.smailer.ui;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
-import android.preference.Preference;
+import android.support.v7.preference.Preference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Toast;
@@ -63,7 +63,6 @@ public class TestServerPreference extends Preference {
 
     private void setWaiting(boolean waiting) {
         if (waiting) {
-
             viewHolder.itemView.findViewById(R.id.text_title).setEnabled(false);
             viewHolder.itemView.findViewById(R.id.progress_wait).setVisibility(View.VISIBLE);
         } else {
@@ -79,6 +78,7 @@ public class TestServerPreference extends Preference {
 */
 
     private static class SendTestMailTask extends ContextAsyncTask<Void, Void, Integer> {
+
 
         private TestServerPreference owner;
 
@@ -129,6 +129,7 @@ public class TestServerPreference extends Preference {
             }
             return result;
         }
+
     }
 
 }
