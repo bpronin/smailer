@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Toast;
@@ -52,8 +53,6 @@ public class TestServerPreference extends Preference {
         super(context);
     }
 
-/*
-    TODO: Migration
     @Override
     public void onBindViewHolder(PreferenceViewHolder holder) {
         super.onBindViewHolder(holder);
@@ -62,7 +61,6 @@ public class TestServerPreference extends Preference {
 
     private void setWaiting(boolean waiting) {
         if (waiting) {
-
             viewHolder.itemView.findViewById(R.id.text_title).setEnabled(false);
             viewHolder.itemView.findViewById(R.id.progress_wait).setVisibility(View.VISIBLE);
         } else {
@@ -75,7 +73,6 @@ public class TestServerPreference extends Preference {
     protected void onClick() {
         new SendTestMailTask(this).execute();
     }
-*/
 
     private static class SendTestMailTask extends ContextAsyncTask<Void, Void, Integer> {
 
