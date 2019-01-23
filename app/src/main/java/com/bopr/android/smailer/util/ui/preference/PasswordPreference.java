@@ -10,7 +10,7 @@ import android.util.AttributeSet;
 import com.bopr.android.smailer.Cryptor;
 
 /**
- * A Preference for password input.
+ * A {@link EditTextPreference } for password input.
  * This preference will store an encrypted string into the {@link android.content.SharedPreferences}.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
@@ -51,11 +51,26 @@ public class PasswordPreference extends EditTextPreference {
     }
 
     @Override
+    public void setText(String text) {
+        super.setText(text);
+    }
+
+    @Override
     public String getText() {
         return null; /* do not show anything. even the length of current password */
     }
 
-   /*
+//    public EditText getEditText() {
+//        if (mFragment != null) {
+//            final Dialog dialog = mFragment.getDialog();
+//            if (dialog != null) {
+//                return (EditText) dialog.findViewById(android.R.id.edit);
+//            }
+//        }
+//        return null;
+//    }
+
+  /*
     //// TODO: 23.01.2019 Migration 
     @Override
     protected void onDialogClosed(boolean positiveResult) {
