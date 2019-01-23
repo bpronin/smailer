@@ -34,7 +34,7 @@ public class ServerFragment extends BasePreferenceFragment {
         addPreferencesFromResource(R.xml.pref_server);
 
         accountPreference = (EditTextPreference) findPreference(KEY_PREF_SENDER_ACCOUNT);
-        
+
         // TODO: 23.01.2019  Migration issue
         //accountPreference.getEditText().addTextChangedListener(new EmailTextValidator(accountPreference.getEditText()));
 
