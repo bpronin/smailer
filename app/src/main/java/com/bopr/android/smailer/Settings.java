@@ -41,7 +41,7 @@ public class Settings {
     public static final String KEY_PREF_EMAIL_LOCALE = "email_locale";
     public static final String KEY_PREF_NOTIFY_SEND_SUCCESS = "notify_send_success";
     public static final String KEY_PREF_MORE = "more";
-    public static final String KEY_PREF_RULES = "filters";
+    public static final String KEY_PREF_RULES = "rules";
     public static final String KEY_PREF_LOG = "log";
     public static final String KEY_PREF_MARK_SMS_AS_READ = "mark_processed_sms_as_read";
     public static final String KEY_PREF_RESEND_UNSENT = "resend_unsent";

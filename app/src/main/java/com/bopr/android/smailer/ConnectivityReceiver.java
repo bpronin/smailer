@@ -4,11 +4,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+
 import com.bopr.android.smailer.util.Util;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.bopr.android.smailer.Settings.*;
+import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
+import static com.bopr.android.smailer.Settings.getPreferences;
 import static com.bopr.android.smailer.util.AndroidUtil.hasInternetConnection;
 
 /**
@@ -23,7 +26,7 @@ public class ConnectivityReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         log.debug("Received intent: " + intent);
-
+        // TODO: 24.01.2019 Avoid deprecation
         if (Util.safeEquals(intent.getAction(), ConnectivityManager.CONNECTIVITY_ACTION)
                 && getPreferences(context).getBoolean(KEY_PREF_RESEND_UNSENT, true)
                 && hasInternetConnection(context)) {
