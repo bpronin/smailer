@@ -72,7 +72,7 @@
     <string name="title_clear_log">Clear log</string>
     <string name="title_close">Close</string>
     <string name="title_content">Email content</string>
-    <string name="title_copyright" translatable="false">Copyright © BoPr, 2016</string>
+    <string name="title_copyright" translatable="false">Copyright © BoPr, 2016-2019</string>
     <string name="title_device_alias">Device name</string>
     <string name="title_device_alias_hint">Device name to be shown in email message (leave blank to use default)</string>
     <string name="title_edit">Edit</string>
