@@ -1,13 +1,22 @@
 package com.bopr.android.smailer.util;
 
 import com.bopr.android.smailer.GeoCoordinates;
+
 import org.junit.Test;
 
 import java.util.Locale;
 import java.util.Set;
 
-import static java.util.concurrent.TimeUnit.*;
-import static org.junit.Assert.*;
+import static java.util.concurrent.TimeUnit.HOURS;
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * {@link Util} tester.
@@ -15,52 +24,52 @@ import static org.junit.Assert.*;
 public class UtilUnitTest {
 
     @Test
-    public void testFormatLocation() throws Exception {
+    public void testFormatLocation() {
         assertEquals("30d33m59sn, 60d33m59sw", Util.formatLocation(new GeoCoordinates(30.5664, 60.5664),
                 "d", "m", "s", "n", "s", "w", "e"));
     }
 
     @Test
-    public void testFormatLocation1() throws Exception {
+    public void testFormatLocation1() {
         assertEquals("30°33'59\"N, 60°33'59\"W", Util.formatLocation(new GeoCoordinates(30.5664, 60.5664)));
         assertEquals("30°33'59\"S, 60°33'59\"E", Util.formatLocation(new GeoCoordinates(-30.5664, -60.5664)));
     }
 
     @Test
-    public void testDecimalToDMS() throws Exception {
+    public void testDecimalToDMS() {
         assertEquals("90D33M59S", Util.decimalToDMS(90.5664, "D", "M", "S"));
     }
 
     @Test
-    public void testCapitalize() throws Exception {
+    public void testCapitalize() {
         assertEquals("Hello", Util.capitalize("hello"));
         assertEquals("Hello", Util.capitalize("Hello"));
         assertEquals("", Util.capitalize(""));
-        assertEquals(null, Util.capitalize(null));
+        assertNull(Util.capitalize(null));
     }
 
     @Test
-    public void testFormatDuration() throws Exception {
+    public void testFormatDuration() {
         long duration = HOURS.toMillis(15) + MINUTES.toMillis(15) + SECONDS.toMillis(15);
         assertEquals("15:15:15", Util.formatDuration(duration));
     }
 
     @Test
-    public void testIsEmpty() throws Exception {
+    public void testIsEmpty() {
         assertFalse(Util.isEmpty("A"));
         assertTrue(Util.isEmpty(""));
         assertTrue(Util.isEmpty(null));
     }
 
     @Test
-    public void testIsTrimEmpty() throws Exception {
+    public void testIsTrimEmpty() {
         assertFalse(Util.isTrimEmpty("A"));
         assertTrue(Util.isTrimEmpty("  "));
         assertTrue(Util.isTrimEmpty(null));
     }
 
     @Test
-    public void testIsAllEmpty() throws Exception {
+    public void testIsAllEmpty() {
         assertFalse(Util.allIsEmpty("A", "B", "C"));
         assertFalse(Util.allIsEmpty("", "B", "C"));
         assertFalse(Util.allIsEmpty("A", "", "C"));
@@ -72,7 +81,7 @@ public class UtilUnitTest {
     }
 
     @Test
-    public void testIsAnyEmpty() throws Exception {
+    public void testIsAnyEmpty() {
         assertFalse(Util.anyIsEmpty("A", "B", "C"));
         assertTrue(Util.anyIsEmpty("", "B", "C"));
         assertTrue(Util.anyIsEmpty("A", "", "C"));
@@ -84,14 +93,14 @@ public class UtilUnitTest {
     }
 
     @Test
-    public void testStringOf() throws Exception {
+    public void testStringOf() {
         assertEquals("1, 2, 3", Util.separated(", ", 1, 2, 3));
         assertEquals("1, null, null", Util.separated(", ", 1, null, null));
         assertEquals("", Util.separated(", "));
     }
 
     @Test
-    public void testParseSeparated() throws Exception {
+    public void testParseSeparated() {
         assertArrayEquals(new String[]{"1", " 2", "3 "}, Util.parseSeparated("1, 2,3 ", ",", false).toArray());
         assertArrayEquals(new String[]{"1", "2", "3"}, Util.parseSeparated("1, 2, 3 ", ",", true).toArray());
         assertArrayEquals(new String[]{" "}, Util.parseSeparated(" ", ",", false).toArray());
@@ -101,7 +110,7 @@ public class UtilUnitTest {
     }
 
     @Test
-    public void testAsSet() throws Exception {
+    public void testAsSet() {
         Set<String> set = Util.asSet("A", "B", "B", "C");
 
         assertEquals(3, set.size());
@@ -118,24 +127,38 @@ public class UtilUnitTest {
     }
 
     @Test
-    public void testLocaleToString() throws Exception {
+    public void testLocaleToString() {
         assertEquals("ru_RU", Util.localeToString(new Locale("ru", "RU")));
-        assertEquals(null, Util.localeToString(null));
+        assertNull(Util.localeToString(null));
         assertEquals("default", Util.localeToString(Locale.getDefault()));
     }
 
     @Test
-    public void testStringToLocale() throws Exception {
+    public void testStringToLocale() {
         assertEquals(new Locale("ru", "RU"), Util.stringToLocale("ru_RU"));
         assertEquals(Locale.getDefault(), Util.stringToLocale("default"));
-        assertEquals(null, Util.stringToLocale(null));
+        assertNull(Util.stringToLocale(null));
     }
 
     @Test
-    public void testNormalizePhone() throws Exception {
+    public void testNormalizePhone() {
         assertEquals("123", Util.normalizePhone("123"));
-        assertEquals("123456HELLO", Util.normalizePhone("+1 234-56-(HELLO)"));
+        assertEquals("123456HELLO", Util.normalizePhone("+1 234-56-(HeLl*.O)"));
         assertNotEquals("BCS Online", Util.normalizePhone("Beeline"));
+    }
+
+    @Test
+    public void testNormalizePhonePattern() {
+        assertEquals("123456", Util.normalizePhonePattern("123456"));
+        assertEquals("123456(.*)(.*)56", Util.normalizePhonePattern("123456 * *56"));
+        assertEquals("1(.*)3456HE(.*)O", Util.normalizePhonePattern("+1 * 34-56-(He*o)"));
+    }
+
+    @Test
+    public void testPhoneMatches() {
+        assertTrue(Util.normalizePhone("1234").matches(Util.normalizePhonePattern("1234")));
+        assertTrue(Util.normalizePhone("+1 2 34-56-(Hello)").matches(Util.normalizePhonePattern("+1*34-56-(HE**O)")));
+        assertTrue(Util.normalizePhone("*1 2 34-56-*Hello*").matches(Util.normalizePhonePattern("1*34-56-(HE * O)")));
     }
 
 }

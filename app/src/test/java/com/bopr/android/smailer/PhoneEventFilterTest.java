@@ -31,28 +31,6 @@ public class PhoneEventFilterTest {
         assertTrue(filter.accept(event));
     }
 
-/*
-    @Test
-    public void testPattern() throws Exception {
-        PhoneEventFilter filter = new PhoneEventFilter();
-        PhoneEvent event = new PhoneEvent();
-
-        event.setText("This is a message for Bob or Ann");
-        filter.getTPattern(".*(Bob|Ann).*");
-        assertTrue(filter.accept(event));
-
-        filter.setPattern(".*(bob|ann).*");
-        assertFalse(filter.accept(event));
-
-        filter.setPattern("(?i).*(bob|ann).*");
-        assertTrue(filter.accept(event));
-
-        event.setText("This is a message from Bob or Ann");
-        filter.setPattern("^((?!Bob).)*$");
-        assertFalse(filter.accept(event));
-    }
-*/
-
     @Test
     public void testPhoneBlackList() throws Exception {
         PhoneEventFilter filter = new PhoneEventFilter();
@@ -80,6 +58,27 @@ public class PhoneEventFilterTest {
 
         filter.setPhoneBlacklist(asSet("111", "222"));
         event.setPhone("222");
+        assertFalse(filter.accept(event));
+    }
+
+    @Test
+    public void testPhoneBlackListPattern() throws Exception {
+        PhoneEventFilter filter = new PhoneEventFilter();
+//        filter.setTriggers(asSet(VAL_PREF_TRIGGER_IN_SMS));
+        filter.setUsePhoneWhitelist(false);
+        filter.setPhoneBlacklist(asSet("+79628810***"));
+
+        PhoneEvent event = new PhoneEvent();
+        event.setIncoming(true);
+        event.setMissed(true);
+
+        event.setPhone("+79628810559");
+        assertFalse(filter.accept(event));
+
+        event.setPhone("+79628810558");
+        assertFalse(filter.accept(event));
+
+        event.setPhone("+79628810111");
         assertFalse(filter.accept(event));
     }
 
@@ -154,4 +153,15 @@ public class PhoneEventFilterTest {
         event.setText("This is a message");
         assertFalse(filter.accept(event));
     }
+
+//    @Test
+//    public void testPhonePattern() throws Exception {
+//        PhoneEventFilter filter = new PhoneEventFilter();
+//        PhoneEvent event = new PhoneEvent();
+//
+//        filter.setPhoneBlacklist(".*(Bob|Ann).*");
+//        event.setText("+79628810559");
+//        event.setText("+79628810559");
+//        assertTrue(filter.accept(event));
+//    }
 }

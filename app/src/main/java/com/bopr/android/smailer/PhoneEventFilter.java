@@ -1,5 +1,7 @@
 package com.bopr.android.smailer;
 
+import android.support.annotation.NonNull;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -11,7 +13,7 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
 import static com.bopr.android.smailer.util.Util.isEmpty;
 import static com.bopr.android.smailer.util.Util.normalizePhone;
-import static com.bopr.android.smailer.util.Util.safeEquals;
+import static com.bopr.android.smailer.util.Util.normalizePhonePattern;
 
 /**
  * Filters phone events by various criteria.
@@ -89,11 +91,15 @@ public class PhoneEventFilter {
     }
 
     public boolean accept(PhoneEvent event) {
-        return acceptTrigger(event) && acceptPhone(event.getPhone()) && acceptText(event.getText());
+        return acceptTrigger(event)
+                && acceptPhone(event.getPhone())
+                && acceptText(event.getText());
     }
 
     public boolean acceptTrigger(PhoneEvent event) {
-        if (event.isSms()) {
+        if (triggers.isEmpty()) {
+            return true;
+        } else if (event.isSms()) {
             if (event.isIncoming()) {
                 return triggers.contains(VAL_PREF_TRIGGER_IN_SMS);
             } else {
@@ -118,10 +124,10 @@ public class PhoneEventFilter {
         return useTextWhitelist ? containsText(textWhitelist, message) : !containsText(textBlacklist, message);
     }
 
-    private boolean containsPhone(Collection<String> phones, String phone) {
+    private boolean containsPhone(Collection<String> patterns, String phone) {
         String p = normalizePhone(phone);
-        for (String s : phones) {
-            if (safeEquals(normalizePhone(s), p)) {
+        for (String pattern : patterns) {
+            if (p.matches(normalizePhonePattern(pattern))) {
                 return true;
             }
         }
@@ -147,6 +153,7 @@ public class PhoneEventFilter {
         return false;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "PhoneEventFilter{" +

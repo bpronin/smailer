@@ -4,11 +4,11 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import com.bopr.android.smailer.Contacts;
 import com.bopr.android.smailer.R;
 
@@ -49,12 +49,12 @@ public class EditPhoneDialogFragment extends EditFilterListItemDialogFragment {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.editor_phone, null, false);
 
         EditText editText = view.findViewById(R.id.edit_text_phone);
-        editText.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
+        //editText.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
         editText.setText(initialValue);
 
         /* custom message view. do not use setMessage() } */
         TextView messageText = view.findViewById(R.id.dialog_message);
-        messageText.setText(R.string.title_phone_number);
+        messageText.setText(R.string.title_enter_phone_number);
 
         return view;
     }

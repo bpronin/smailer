@@ -1,9 +1,8 @@
 package com.bopr.android.smailer.ui;
 
 import android.support.annotation.NonNull;
-import com.bopr.android.smailer.R;
 
-import static com.bopr.android.smailer.util.Util.normalizePhone;
+import com.bopr.android.smailer.R;
 
 /**
  * Phone filter list activity fragment.
@@ -23,6 +22,7 @@ abstract class PhoneFilterListFragment extends FilterListFragment {
 
     @Override
     String getItemText(String text) {
-        return normalizePhone(text);
+        //return normalizePhone(text);
+        return text;
     }
 }

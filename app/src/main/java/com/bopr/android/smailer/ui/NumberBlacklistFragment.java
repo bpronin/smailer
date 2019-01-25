@@ -1,14 +1,13 @@
 package com.bopr.android.smailer.ui;
 
 import android.support.annotation.NonNull;
+
 import com.bopr.android.smailer.PhoneEventFilter;
 import com.bopr.android.smailer.R;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import static com.bopr.android.smailer.util.Util.normalizePhone;
 
 /**
  * Number blacklist activity fragment.
@@ -38,7 +37,8 @@ public class NumberBlacklistFragment extends FilterListFragment {
 
     @Override
     String getItemText(String text) {
-        return normalizePhone(text);
+        //return normalizePhone(text);
+        return text;
     }
 
 }

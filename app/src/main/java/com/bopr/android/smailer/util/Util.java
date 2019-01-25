@@ -1,8 +1,18 @@
 package com.bopr.android.smailer.util;
 
+import android.support.annotation.NonNull;
+
 import com.bopr.android.smailer.GeoCoordinates;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * Miscellaneous utilities.
@@ -164,15 +174,18 @@ public class Util {
     }
 
     public static String[] toArray(Collection<String> collection) {
-        return collection.toArray(new String[collection.size()]);
+        return collection.toArray(new String[0]);
     }
 
     public static boolean safeEquals(Object a, Object b) {
         return (a == b) || (a != null && a.equals(b));
     }
 
-    public static String normalizePhone(String phone) {
-        return phone != null ? phone.replaceAll("\\W", "") : null;
+    public static String normalizePhone(@NonNull String phone) {
+        return phone.toUpperCase().replaceAll("[^A-Z0-9]", "");
     }
 
+    public static String normalizePhonePattern(@NonNull String pattern) {
+        return pattern.toUpperCase().replaceAll("[^A-Z0-9*.]", "").replaceAll("\\*", "(.*)");
+    }
 }
