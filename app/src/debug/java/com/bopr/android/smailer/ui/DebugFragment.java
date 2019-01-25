@@ -28,10 +28,15 @@ import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.SmsReceiver;
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.ui.ContextAsyncTask;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Properties;
 
@@ -83,7 +88,7 @@ public class DebugFragment extends BasePreferenceFragment {
         super.onCreate(savedInstanceState);
 
         database = new Database(getActivity());
-        locator = new Locator(getActivity(), database);
+        locator = new Locator(getContext(), database);
         cryptor = new Cryptor(getActivity());
 
         PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(getActivity());
@@ -578,7 +583,8 @@ public class DebugFragment extends BasePreferenceFragment {
         @Override
         public boolean onPreferenceClick(Preference preference) {
             onClick(preference);
-            getActivity().finish();
+            Toast.makeText(getContext(), "Done", Toast.LENGTH_LONG).show();
+            //getActivity().finish();
             return true;
         }
     }

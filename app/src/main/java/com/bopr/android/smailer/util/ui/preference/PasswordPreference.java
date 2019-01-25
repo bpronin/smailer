@@ -61,7 +61,19 @@ public class PasswordPreference extends EditTextPreference {
     }
 
    /*
-    //// TODO: 23.01.2019 Migration 
+    //// TODO: 23.01.2019 Migration
+//    public EditText getEditText() {
+//        if (mFragment != null) {
+//            final Dialog dialog = mFragment.getDialog();
+//            if (dialog != null) {
+//                return (EditText) dialog.findViewById(android.R.id.edit);
+//            }
+//        }
+//        return null;
+//    }
+
+  /*
+    //// TODO: 23.01.2019 Migration
     @Override
     protected void onDialogClosed(boolean positiveResult) {
         super.onDialogClosed(positiveResult);
