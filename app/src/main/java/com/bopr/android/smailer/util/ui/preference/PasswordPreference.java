@@ -4,16 +4,13 @@ package com.bopr.android.smailer.util.ui.preference;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
-import android.preference.EditTextPreference;
-import android.preference.Preference;
+import android.support.v7.preference.EditTextPreference;
 import android.util.AttributeSet;
+
 import com.bopr.android.smailer.Cryptor;
 
-import static android.text.InputType.TYPE_CLASS_TEXT;
-import static android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD;
-
 /**
- * A {@link Preference} for password input.
+ * A {@link EditTextPreference } for password input.
  * This preference will store an encrypted string into the {@link android.content.SharedPreferences}.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
@@ -49,7 +46,13 @@ public class PasswordPreference extends EditTextPreference {
 
     private void init() {
         cryptor = new Cryptor(getContext());
-        getEditText().setInputType(TYPE_CLASS_TEXT | TYPE_TEXT_VARIATION_PASSWORD);
+        //// TODO: 23.01.2019 Migration
+        //        getEditText().setInputType(TYPE_CLASS_TEXT | TYPE_TEXT_VARIATION_PASSWORD);
+    }
+
+    @Override
+    public void setText(String text) {
+        super.setText(text);
     }
 
     @Override
@@ -57,6 +60,20 @@ public class PasswordPreference extends EditTextPreference {
         return null; /* do not show anything. even the length of current password */
     }
 
+   /*
+    //// TODO: 23.01.2019 Migration
+//    public EditText getEditText() {
+//        if (mFragment != null) {
+//            final Dialog dialog = mFragment.getDialog();
+//            if (dialog != null) {
+//                return (EditText) dialog.findViewById(android.R.id.edit);
+//            }
+//        }
+//        return null;
+//    }
+
+  /*
+    //// TODO: 23.01.2019 Migration
     @Override
     protected void onDialogClosed(boolean positiveResult) {
         super.onDialogClosed(positiveResult);
@@ -67,5 +84,5 @@ public class PasswordPreference extends EditTextPreference {
                 setText(value);
             }
         }
-    }
+    }*/
 }

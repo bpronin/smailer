@@ -90,7 +90,7 @@ public class DebugFragment extends BasePreferenceFragment {
         super.onCreate(savedInstanceState);
 
         database = new Database(getActivity());
-        locator = new Locator(getActivity(), database);
+        locator = new Locator(getContext(), database);
         cryptor = new Cryptor(getActivity());
 
         Preference[] preferences = {
@@ -250,7 +250,7 @@ public class DebugFragment extends BasePreferenceFragment {
             }
         });
 
-        PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(getActivity());
+        PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(getContext());
         for (Preference preference : preferences) {
             screen.addPreference(preference);
         }
@@ -270,7 +270,7 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private Preference createSimplePreference(String title, Preference.OnPreferenceClickListener listener) {
-        Preference preference = new Preference(getActivity());
+        Preference preference = new Preference(getContext());
         preference.setTitle(title);
         preference.setOnPreferenceClickListener(listener);
         return preference;
