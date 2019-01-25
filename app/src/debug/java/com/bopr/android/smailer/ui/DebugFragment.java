@@ -7,11 +7,11 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.PreferenceScreen;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceScreen;
 import android.text.InputType;
 import android.util.Base64;
 import android.widget.EditText;
@@ -32,11 +32,6 @@ import com.bopr.android.smailer.util.ui.ContextAsyncTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -96,155 +91,170 @@ public class DebugFragment extends BasePreferenceFragment {
         super.onCreate(savedInstanceState);
 
         database = new Database(getActivity());
-        locator = new Locator(getContext(), database);
+        locator = new Locator(getActivity(), database);
         cryptor = new Cryptor(getActivity());
 
+        Preference[] preferences = {
+
+                createSimplePreference("Emulate Sms", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onEmulateSms();
+                    }
+                }),
+
+                createSimplePreference("Set default preferences", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onRestorePreferences();
+                    }
+                }),
+
+                createSimplePreference("Send default mail", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onSendDefaultMail();
+                    }
+                }),
+
+                createSimplePreference("Send mail", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onSendMail();
+                    }
+                }),
+
+                createSimplePreference("Clear preferences", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onClearPreferences();
+                    }
+                }),
+
+                createSimplePreference("Require Sms permission", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onRequireReceiveSmsPermission();
+                    }
+                }),
+
+                createSimplePreference("Request Sms permission", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        requestSmsPermission();
+                    }
+                }),
+
+                createSimplePreference("Get location", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onGetLocation();
+                    }
+                }),
+
+                createSimplePreference("Get contact", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onGetContact();
+                    }
+                }),
+
+                createSimplePreference("Save log", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onSaveLog();
+                    }
+                }),
+
+                createSimplePreference("Send log", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onSendLog();
+                    }
+                }),
+
+                createSimplePreference("Destroy database", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        database.destroy();
+                    }
+                }),
+
+                createSimplePreference("Show password", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onShowPassword();
+                    }
+                }),
+
+                createSimplePreference("Populate log", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onPopulateLog();
+                    }
+                }),
+
+                createSimplePreference("Clear log", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onClearLog();
+                    }
+                }),
+
+                createSimplePreference("Show notification", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onShowNotification();
+                    }
+                }),
+
+                createSimplePreference("Show concurrent", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onShowConcurrent();
+                    }
+                }),
+
+                createSimplePreference("Crash!", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        throw new RuntimeException("Test crash");
+                    }
+                }),
+
+        };
+
+
+        Arrays.sort(preferences, new Comparator<Preference>() {
+            @Override
+            public int compare(Preference o1, Preference o2) {
+
+                return o1.getTitle().toString().compareTo(o2.toString());
+            }
+        });
+
         PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(getActivity());
-
-        screen.addPreference(createSimplePreference("Emulate Sms", new DefaultClickListener() {
-
-            @Override
-            protected void onClick(Preference preference) {
-                onEmulateSms();
-            }
-        }));
-
-        screen.addPreference(createSimplePreference("Set default preferences", new DefaultClickListener() {
-
-            @Override
-            protected void onClick(Preference preference) {
-                onRestorePreferences();
-            }
-        }));
-
-        screen.addPreference(createSimplePreference("Send default mail", new DefaultClickListener() {
-
-            @Override
-            protected void onClick(Preference preference) {
-                onSendDefaultMail();
-            }
-        }));
-
-        screen.addPreference(createSimplePreference("Send mail", new DefaultClickListener() {
-
-            @Override
-            protected void onClick(Preference preference) {
-                onSendMail();
-            }
-        }));
-
-        screen.addPreference(createSimplePreference("Clear preferences", new DefaultClickListener() {
-
-            @Override
-            protected void onClick(Preference preference) {
-                onClearPreferences();
-            }
-        }));
-
-        screen.addPreference(createSimplePreference("Require Sms permission", new DefaultClickListener() {
-
-            @Override
-            protected void onClick(Preference preference) {
-                onRequireReceiveSmsPermission();
-            }
-        }));
-
-        screen.addPreference(createSimplePreference("Request Sms permission", new DefaultClickListener() {
-
-            @Override
-            protected void onClick(Preference preference) {
-                requestSmsPermission();
-            }
-        }));
-
-        screen.addPreference(createSimplePreference("Get location", new DefaultClickListener() {
-
-            @Override
-            protected void onClick(Preference preference) {
-                onGetLocation();
-            }
-        }));
-
-        screen.addPreference(createSimplePreference("Get contact", new DefaultClickListener() {
-
-            @Override
-            protected void onClick(Preference preference) {
-                onGetContact();
-            }
-        }));
-
-        screen.addPreference(createSimplePreference("Save log", new DefaultClickListener() {
-
-            @Override
-            protected void onClick(Preference preference) {
-                onSaveLog();
-            }
-        }));
-
-        screen.addPreference(createSimplePreference("Send log", new DefaultClickListener() {
-
-            @Override
-            protected void onClick(Preference preference) {
-                onSendLog();
-            }
-        }));
-
-        screen.addPreference(createSimplePreference("Destroy database", new DefaultClickListener() {
-
-            @Override
-            protected void onClick(Preference preference) {
-                database.destroy();
-            }
-        }));
-
-        screen.addPreference(createSimplePreference("Show password", new DefaultClickListener() {
-
-            @Override
-            protected void onClick(Preference preference) {
-                onShowPassword();
-            }
-        }));
-
-        screen.addPreference(createSimplePreference("Populate log", new DefaultClickListener() {
-
-            @Override
-            protected void onClick(Preference preference) {
-                onPopulateLog();
-            }
-        }));
-
-        screen.addPreference(createSimplePreference("Clear log", new DefaultClickListener() {
-
-            @Override
-            protected void onClick(Preference preference) {
-                onClearLog();
-            }
-        }));
-
-        screen.addPreference(createSimplePreference("Show notification", new DefaultClickListener() {
-
-            @Override
-            protected void onClick(Preference preference) {
-                onShowNotification();
-            }
-        }));
-
-        screen.addPreference(createSimplePreference("Show concurrent", new DefaultClickListener() {
-
-            @Override
-            protected void onClick(Preference preference) {
-                onShowConcurrent();
-            }
-        }));
-
-        screen.addPreference(createSimplePreference("Crash!", new DefaultClickListener() {
-
-            @Override
-            protected void onClick(Preference preference) {
-                throw new RuntimeException("Test crash");
-            }
-        }));
-
+        for (Preference preference : preferences) {
+            screen.addPreference(preference);
+        }
         setPreferenceScreen(screen);
     }
 
@@ -260,7 +270,7 @@ public class DebugFragment extends BasePreferenceFragment {
         super.onStop();
     }
 
-    private Preference createSimplePreference(String title, Preference.OnPreferenceClickListener listener) {
+    private Preference createSimplePreference(String title, OnPreferenceClickListener listener) {
         Preference preference = new Preference(getActivity());
         preference.setTitle(title);
         preference.setOnPreferenceClickListener(listener);
@@ -584,15 +594,14 @@ public class DebugFragment extends BasePreferenceFragment {
         }
     }
 
-    private abstract class DefaultClickListener implements Preference.OnPreferenceClickListener {
+    private abstract class DefaultClickListener implements OnPreferenceClickListener {
 
         protected abstract void onClick(Preference preference);
 
         @Override
         public boolean onPreferenceClick(Preference preference) {
             onClick(preference);
-            Toast.makeText(getContext(), "Done", Toast.LENGTH_LONG).show();
-            //getActivity().finish();
+            //    getActivity().finish();
             return true;
         }
     }
