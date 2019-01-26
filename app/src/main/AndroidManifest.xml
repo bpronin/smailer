@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.bopr.android.smailer"
-          xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.bopr.android.smailer">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
-    <uses-permission android:name="android.permission.READ_SMS"/>
-    <uses-permission android:name="android.permission.WRITE_SMS"/>
-    <uses-permission android:name="android.permission.READ_CONTACTS"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.WRITE_SMS" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -27,63 +30,66 @@
 
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="0826344a90cfbc5883d6103b68cd8441cc4eede1"
-            />
+            android:value="0826344a90cfbc5883d6103b68cd8441cc4eede1" />
 
         <activity
             android:name=".ui.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER"/>
-                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER" />
+
+                <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ui.ServerActivity"
-            android:label="@string/title_email_sender">
-        </activity>
+            android:label="@string/title_email_sender" />
+
         <activity
             android:name=".ui.RecipientsActivity"
-            android:label="@string/title_email_recipients">
-        </activity>
+            android:label="@string/title_email_recipients" />
+
         <activity
             android:name=".ui.NumberBlacklistActivity"
-            android:label="@string/title_blacklist">
-        </activity>
+            android:label="@string/title_blacklist" />
+
         <activity
             android:name=".ui.NumberWhitelistActivity"
-            android:label="@string/title_whitelist">
-        </activity>
+            android:label="@string/title_whitelist" />
+
         <activity
             android:name=".ui.TextBlacklistActivity"
-            android:label="@string/title_blacklist">
-        </activity>
+            android:label="@string/title_blacklist" />
+
         <activity
             android:name=".ui.TextWhitelistActivity"
-            android:label="@string/title_whitelist">
-        </activity>
+            android:label="@string/title_whitelist" />
+
         <activity
             android:name=".ui.MoreActivity"
-            android:label="@string/title_more">
-        </activity>
+            android:label="@string/title_more" />
+
         <activity
             android:name=".ui.LogActivity"
-            android:label="@string/title_activity_log">
-        </activity>
+            android:label="@string/title_activity_log" />
+
         <activity
             android:name=".ui.LegalInfoActivity"
-            android:label="@string/title_open_source">
-        </activity>
+            android:label="@string/title_open_source" />
+
         <activity
             android:name=".ui.RulesActivity"
-            android:label="@string/title_rules_for_sending">
-        </activity>
+            android:label="@string/title_rules_for_sending" />
 
-        <service android:name=".MailerService"/>
-        <service android:name=".OutgoingSmsService"/>
-        <service android:name=".ResendService"
-                 android:exported="true"
-                 android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
+        <service android:name=".MailerService" />
+
+        <service android:name=".OutgoingSmsService" />
+
+        <service
+            android:name=".ResendService"
+            android:exported="true"
+            android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
             <intent-filter>
                 <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
             </intent-filter>
@@ -94,23 +100,25 @@
             android:exported="true"
             android:permission="android.permission.BROADCAST_SMS">
             <intent-filter>
-                <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
-                <action android:name="android.provider.Telephony.SMS_DELIVER"/>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+                <action android:name="android.provider.Telephony.SMS_DELIVER" />
             </intent-filter>
         </receiver>
+
         <receiver
             android:name=".CallReceiver"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.NEW_OUTGOING_CALL"/>
-                <action android:name="android.intent.action.PHONE_STATE"/>
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
+                <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
         </receiver>
+
         <receiver
             android:name=".BootReceiver"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
     </application>

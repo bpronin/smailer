@@ -72,6 +72,8 @@ public class MainFragmentDual extends Fragment {
                 case KEY_PREF_LOG:
                     fragment = new LogFragment();
                     break;
+                default:
+                    throw new RuntimeException("Unregistered fragment");
             }
             detailFragments.put(key, fragment);
         }

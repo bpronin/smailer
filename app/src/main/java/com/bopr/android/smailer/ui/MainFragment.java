@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.preference.Preference;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -154,7 +153,7 @@ public class MainFragment extends BasePreferenceFragment {
     }
 
     public void showAboutDialog() {
-        new AboutDialogFragment().showDialog((FragmentActivity) getActivity());
+        new AboutDialogFragment().showDialog(getActivity());
     }
 
     private class PreferenceClickListener implements Preference.OnPreferenceClickListener {

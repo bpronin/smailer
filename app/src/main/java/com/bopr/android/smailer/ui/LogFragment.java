@@ -60,7 +60,7 @@ public class LogFragment extends Fragment {
                 loadData();
             }
         };
-        Settings.getPreferences(getActivity()).registerOnSharedPreferenceChangeListener(preferenceChangeListener);
+        Settings.getPreferences(getContext()).registerOnSharedPreferenceChangeListener(preferenceChangeListener);
 
         databaseListener = new BroadcastReceiver() {
             @Override
@@ -78,7 +78,7 @@ public class LogFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         database = new Database(getActivity());
         database.addListener(databaseListener);
         View view = inflater.inflate(R.layout.fragment_log, container, false);
