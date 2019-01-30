@@ -118,22 +118,18 @@ public class OutgoingSmsService extends Service {
         startService(createPhoneEventIntent(this, event));
     }
 
-    @NonNull
-    protected static Intent createServiceIntent(Context context) {
-        return new Intent(context, OutgoingSmsService.class);
-    }
-
     /**
      * Starts or stops the service depending on preferences
      *
      * @param context context
      */
     public static void toggleService(Context context) {
+        Intent intent = new Intent(context, OutgoingSmsService.class);
         if (Settings.loadFilter(context).getTriggers().contains(VAL_PREF_TRIGGER_OUT_SMS)) {
-            context.startService(createServiceIntent(context));
+            context.startService(intent);
             log.debug("Enabled");
         } else {
-            context.stopService(createServiceIntent(context));
+            context.stopService(intent);
             log.debug("Disabled");
         }
     }
@@ -153,11 +149,11 @@ public class OutgoingSmsService extends Service {
             this.context = context;
         }
 
-        public void registerContentObserver(@NonNull Uri uri, @NonNull ContentObserver observer) {
+        void registerContentObserver(@NonNull Uri uri, @NonNull ContentObserver observer) {
             context.getContentResolver().registerContentObserver(uri, true, observer);
         }
 
-        public void unregisterContentObserver(@NonNull ContentObserver observer) {
+        void unregisterContentObserver(@NonNull ContentObserver observer) {
             context.getContentResolver().unregisterContentObserver(observer);
         }
 
