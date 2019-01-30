@@ -117,6 +117,7 @@
     <string name="title_what_email_contain">Содержание почтового сообщения</string>
     <string name="title_white_list_used">Используется белый список</string>
     <string name="title_whitelist">Белый список</string>
+    <string name="title_regex">Регулярное выражение</string>
 
     <string-array name="titles_triggers">
         <item>Входящие SMS</item>

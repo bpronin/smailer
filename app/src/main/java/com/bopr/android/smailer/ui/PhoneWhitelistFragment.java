@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Number whitelist activity fragment.
+ * Phone number whitelist activity fragment.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class NumberWhitelistFragment extends PhoneFilterListFragment {
+public class PhoneWhitelistFragment extends PhoneFilterListFragment {
 
     @Override
     Set<String> getItemsList(PhoneEventFilter filter) {

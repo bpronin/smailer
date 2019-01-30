@@ -2,12 +2,14 @@ package com.bopr.android.smailer.ui;
 
 import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
-import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.util.Util;
 
 /**
  * Phone number editor dialog.
@@ -16,7 +18,11 @@ import com.bopr.android.smailer.R;
  */
 public class EditTextDialogFragment extends EditFilterListItemDialogFragment {
 
-    private String initialValue;
+
+    private String initialText;
+    private boolean initialRegex;
+    private EditText editText;
+    private CheckBox checkBox;
 
     @NonNull
     @Override
@@ -24,14 +30,16 @@ public class EditTextDialogFragment extends EditFilterListItemDialogFragment {
         return "edit_text_filter_item_dialog";
     }
 
-    public void setInitialValue(String phone) {
-        this.initialValue = phone;
+    public void setInitialValue(String text) {
+        String s = Util.unquoteRegex(text);
+        initialRegex = (s != null);
+        initialText = initialRegex ? s : text;
     }
 
     @Override
     protected String getValue() {
-        EditText editor = getDialog().findViewById(R.id.edit_text);
-        return editor.getText().toString();
+        String s = editText.getText().toString();
+        return checkBox.isChecked() ? Util.quoteRegex(s) : s;
     }
 
     @NonNull
@@ -39,9 +47,11 @@ public class EditTextDialogFragment extends EditFilterListItemDialogFragment {
         @SuppressLint("InflateParams")
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.editor_text, null, false);
 
-        EditText editText = view.findViewById(R.id.edit_text);
-        editText.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
-        editText.setText(initialValue);
+        editText = view.findViewById(R.id.edit_text);
+        editText.setText(initialText);
+
+        checkBox = view.findViewById(R.id.checkbox_regex);
+        checkBox.setChecked(initialRegex);
 
         /* custom message view. do not use setMessage() } */
         TextView messageText = view.findViewById(R.id.dialog_message);

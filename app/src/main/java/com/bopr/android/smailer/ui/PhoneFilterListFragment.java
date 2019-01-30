@@ -20,9 +20,4 @@ abstract class PhoneFilterListFragment extends FilterListFragment {
         return dialog;
     }
 
-    @Override
-    String getItemText(String text) {
-        //return normalizePhone(text);
-        return text;
-    }
 }

@@ -51,11 +51,11 @@
             android:label="@string/title_email_recipients" />
 
         <activity
-            android:name=".ui.NumberBlacklistActivity"
+            android:name=".ui.PhoneBlacklistActivity"
             android:label="@string/title_blacklist" />
 
         <activity
-            android:name=".ui.NumberWhitelistActivity"
+            android:name=".ui.PhoneWhitelistActivity"
             android:label="@string/title_whitelist" />
 
         <activity

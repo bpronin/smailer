@@ -67,7 +67,7 @@ abstract class FilterListFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_filter_list, container, false);
 
         listView = view.findViewById(android.R.id.list);
@@ -76,13 +76,13 @@ abstract class FilterListFragment extends Fragment {
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
             @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
-                                  RecyclerView.ViewHolder target) {
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder,
+                                  @NonNull RecyclerView.ViewHolder target) {
                 return false;
             }
 
             @Override
-            public void onSwiped(RecyclerView.ViewHolder holder, int swipeDir) {
+            public void onSwiped(@NonNull RecyclerView.ViewHolder holder, int swipeDir) {
                 selectedListPosition = holder.getAdapterPosition();
                 removeSelectedItem();
             }
@@ -137,8 +137,8 @@ abstract class FilterListFragment extends Fragment {
     @NonNull
     abstract EditFilterListItemDialogFragment createEditItemDialog(String text);
 
-    String getItemText(String text) {
-        return text;
+    String getItemText(String value) {
+        return value;
     }
 
     protected void updateEmptyText() {
@@ -178,7 +178,7 @@ abstract class FilterListFragment extends Fragment {
     private void persistItems() {
         List<String> items = new ArrayList<>();
         for (Item item : listAdapter.getItems()) {
-            items.add(item.text);
+            items.add(item.value);
         }
 
         PhoneEventFilter filter = Settings.loadFilter(getActivity());
@@ -187,9 +187,8 @@ abstract class FilterListFragment extends Fragment {
     }
 
     private boolean isItemExists(String text) {
-        String p = getItemText(text);
         for (Item item : listAdapter.getItems()) {
-            if (p.equals(getItemText(item.text))) {
+            if (text.equals(item.value)) {
                 return true;
             }
         }
@@ -208,19 +207,19 @@ abstract class FilterListFragment extends Fragment {
     }
 
     private void editItem(final Item item) {
-        EditFilterListItemDialogFragment dialog = createEditItemDialog(item == null ? null : item.text);
+        EditFilterListItemDialogFragment dialog = createEditItemDialog(item == null ? null : item.value);
         dialog.setCallback(new EditFilterListItemDialogFragment.Callback() {
 
             @Override
-            public void onOkClick(String text) {
-                if (isItemExists(text) && (item == null || !item.text.equals(text))) {
+            public void onOkClick(String value) {
+                if (isItemExists(value) && (item == null || !item.value.equals(value))) {
                     Toast.makeText(getActivity(), formatter(R.string.message_list_item_already_exists, getResources())
-                            .put("item", text)
-                            .format(), Toast.LENGTH_LONG).show();
-                } else if (!Util.isTrimEmpty(text)) {
+                            .put("item", getItemText(value))
+                            .format(), Toast.LENGTH_LONG)
+                            .show();
+                } else if (!Util.isTrimEmpty(value)) {
                     /* note: if we rotated device reference to "this" is changed here */
-                    Item newItem = new Item(text);
-                    listAdapter.replaceItem(item, newItem);
+                    listAdapter.replaceItem(item, new Item(value));
                     persistItems();
                 }
             }
@@ -267,10 +266,10 @@ abstract class FilterListFragment extends Fragment {
 
     private class Item {
 
-        private final String text;
+        private final String value;
 
-        private Item(String text) {
-            this.text = text;
+        private Item(String value) {
+            this.value = value;
         }
     }
 
@@ -278,16 +277,17 @@ abstract class FilterListFragment extends Fragment {
 
         private final List<Item> items = new ArrayList<>();
 
+        @NonNull
         @Override
-        public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(getActivity());
             return new ItemViewHolder(inflater.inflate(R.layout.list_item_filter, parent, false));
         }
 
         @Override
-        public void onBindViewHolder(final ItemViewHolder holder, final int position) {
+        public void onBindViewHolder(@NonNull final ItemViewHolder holder, final int position) {
             Item item = getItem(position);
-            holder.textView.setText(item != null ? item.text : null);
+            holder.textView.setText(item != null ? getItemText(item.value) : null);
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
 

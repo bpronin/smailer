@@ -1,6 +1,7 @@
 package com.bopr.android.smailer.util;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.bopr.android.smailer.GeoCoordinates;
 
@@ -194,4 +195,20 @@ public class Util {
             throw new NullPointerException();
         return obj;
     }
+
+    public static String quoteRegex(String s) {
+        return "REGEX:" + s;
+    }
+
+    @Nullable
+    public static String unquoteRegex(String s) {
+        if (!isEmpty(s)) {
+            String[] ss = s.split("REGEX:");
+            if (ss.length > 1) {
+                return ss[1];
+            }
+        }
+        return null;
+    }
+
 }

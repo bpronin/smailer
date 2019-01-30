@@ -42,7 +42,7 @@ public class RulesFragment extends BasePreferenceFragment {
 
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                startActivity(new Intent(getActivity(), NumberBlacklistActivity.class));
+                startActivity(new Intent(getActivity(), PhoneBlacklistActivity.class));
                 return true;
             }
         });
@@ -61,7 +61,7 @@ public class RulesFragment extends BasePreferenceFragment {
 
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                startActivity(new Intent(getActivity(), NumberWhitelistActivity.class));
+                startActivity(new Intent(getActivity(), PhoneWhitelistActivity.class));
                 return true;
             }
         });

@@ -6,6 +6,7 @@ import java.util.Collections;
 
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
 import static com.bopr.android.smailer.util.Util.asSet;
+import static com.bopr.android.smailer.util.Util.quoteRegex;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -78,8 +79,8 @@ public class PhoneEventFilterTest {
         event.setPhone("+79628810558");
         assertFalse(filter.accept(event));
 
-        event.setPhone("+79628810111");
-        assertFalse(filter.accept(event));
+        event.setPhone("+79628811111");
+        assertTrue(filter.accept(event));
     }
 
     @Test
@@ -129,6 +130,29 @@ public class PhoneEventFilterTest {
         filter.setTextBlacklist(asSet("Bob", "Ann"));
         event.setText("This is a message");
         assertTrue(filter.accept(event));
+    }
+
+    @Test
+    public void testTextBlackListPattern() throws Exception {
+        PhoneEventFilter filter = new PhoneEventFilter();
+        filter.setTriggers(asSet(VAL_PREF_TRIGGER_IN_SMS));
+        filter.setUseTextWhitelist(false);
+
+        PhoneEvent event = new PhoneEvent();
+        event.setPhone("111");
+        event.setIncoming(true);
+
+        filter.setTextBlacklist(asSet(quoteRegex("(.*)Bob(.*)")));
+        event.setText("This is a message for Bob or Ann");
+        assertFalse(filter.accept(event));
+
+        filter.setTextBlacklist(asSet(quoteRegex("(.*)John(.*)")));
+        event.setText("This is a message for Bob or Ann");
+        assertTrue(filter.accept(event));
+
+        filter.setTextBlacklist(asSet("(.*)John(.*)"));
+        event.setText("This is a message for (.*)John(.*)");
+        assertFalse(filter.accept(event));
     }
 
     @Test

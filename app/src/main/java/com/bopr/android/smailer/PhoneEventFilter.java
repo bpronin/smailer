@@ -2,6 +2,8 @@ package com.bopr.android.smailer;
 
 import android.support.annotation.NonNull;
 
+import com.bopr.android.smailer.util.Util;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -142,10 +144,13 @@ public class PhoneEventFilter {
         return containsPhone(phoneWhitelist, phone);
     }
 
-    private boolean containsText(Collection<String> words, String text) {
+    private boolean containsText(Collection<String> patterns, String text) {
         if (!isEmpty(text)) {
-            for (String s : words) {
-                if (text.contains(s)) {
+            for (String pattern : patterns) {
+                String p = Util.unquoteRegex(pattern);
+                if (p != null && text.matches(p)) {
+                    return true;
+                } else if (text.contains(pattern)) {
                     return true;
                 }
             }
