@@ -8,6 +8,7 @@ import android.text.TextUtils;
 
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.Util;
+import com.bopr.android.smailer.util.ui.preference.EmailPreference;
 import com.bopr.android.smailer.util.validator.EmailTextValidator;
 
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
@@ -33,11 +34,7 @@ public class ServerFragment extends BasePreferenceFragment {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_server);
 
-        accountPreference = (EditTextPreference) findPreference(KEY_PREF_SENDER_ACCOUNT);
-        
-        // TODO: 23.01.2019  Migration issue
-        //accountPreference.getEditText().addTextChangedListener(new EmailTextValidator(accountPreference.getEditText()));
-
+        accountPreference = (EmailPreference) findPreference(KEY_PREF_SENDER_ACCOUNT);
         accountPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
             @Override

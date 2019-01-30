@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <android.support.v7.preference.EditTextPreference
+    <com.bopr.android.smailer.util.ui.preference.EmailPreference
         android:dialogMessage="@string/title_account_hint"
         android:dialogTitle="@string/title_outgoing_email_address"
         android:inputType="textEmailAddress"

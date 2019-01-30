@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v14.preference.MultiSelectListPreference;
 import android.support.v14.preference.SwitchPreference;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.ListPreference;
@@ -16,6 +17,10 @@ import android.support.v7.preference.PreferenceManager;
 import com.bopr.android.smailer.PreferencesPermissionsChecker;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.AndroidUtil;
+import com.bopr.android.smailer.util.ui.preference.EmailPreference;
+import com.bopr.android.smailer.util.ui.preference.EmailPreferenceDialog;
+import com.bopr.android.smailer.util.ui.preference.PasswordPreference;
+import com.bopr.android.smailer.util.ui.preference.PasswordPreferenceDialog;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,14 +33,15 @@ import java.util.Set;
 import static com.bopr.android.smailer.Settings.PREFERENCES_STORAGE_NAME;
 
 /**
- * Base PreferenceFragment with default behaviour.
+ * Base {@link PreferenceFragmentCompat } with default behaviour.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-// TODO: 06.04.2016 there is a bug in MultiListPreference. when dialog is showing and device rotated when ok pressed then selected value are lost
 public class BasePreferenceFragment extends PreferenceFragmentCompat {
 
     private static Logger log = LoggerFactory.getLogger("BasePreferenceFragment");
+
+    private static final String DIALOG_FRAGMENT_TAG = "android.support.v7.preference.PreferenceFragment.DIALOG";
 
     private SharedPreferences sharedPreferences;
     private PreferencesPermissionsChecker permissionChecker;
@@ -84,7 +90,25 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
 
     @Override
     public void onDisplayPreferenceDialog(Preference preference) {
-        super.onDisplayPreferenceDialog(preference);
+        /* check if dialog is already showing */
+        assert getFragmentManager() != null;
+        if (getFragmentManager().findFragmentByTag(DIALOG_FRAGMENT_TAG) != null) {
+            return;
+        }
+
+        DialogFragment fragment = null;
+        if (preference instanceof EmailPreference) {
+            fragment = EmailPreferenceDialog.newInstance(preference.getKey());
+        } else if (preference instanceof PasswordPreference) {
+            fragment = PasswordPreferenceDialog.newInstance(preference.getKey());
+        } else {
+            super.onDisplayPreferenceDialog(preference);
+        }
+
+        if (fragment != null) {
+            fragment.setTargetFragment(this, 0);
+            fragment.show(getFragmentManager(), DIALOG_FRAGMENT_TAG);
+        }
     }
 
     /**
@@ -116,7 +140,8 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
 
     /**
      * Updates summary of {@link Preference}.
-     *  @param valueResource value resource ID
+     *
+     * @param valueResource value resource ID
      * @param preference    preference
      */
     protected void updateSummary(int valueResource, Preference preference) {
@@ -156,7 +181,7 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
                     Set<String> set = value == null ? Collections.<String>emptySet() : (Set<String>) value;
                     ((MultiSelectListPreference) preference).setValues(set);
                 } else if (preference.getClass() != Preference.class) {
-                    log.error( "Unregistered preference class: " + preference.getClass());
+                    log.error("Unregistered preference class: " + preference.getClass());
                 }
             }
         }
