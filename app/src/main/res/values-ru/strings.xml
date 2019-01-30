@@ -112,7 +112,6 @@
     <string name="title_unacceptable_phone_numbers">Заблокированные номера ({size})</string>
     <string name="title_unacceptable_text">Запрещеные фразы ({size})</string>
     <string name="title_undo">Отмена</string>
-    <string name="title_use_black_white_list">Использовать черный/белый список</string>
     <string name="title_version">Версия приложения: {version}</string>
     <string name="title_what_email_contain">Содержание почтового сообщения</string>
     <string name="title_white_list_used">Используется белый список</string>

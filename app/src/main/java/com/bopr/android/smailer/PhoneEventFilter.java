@@ -26,8 +26,6 @@ import static com.bopr.android.smailer.util.Util.normalizePhonePattern;
 public class PhoneEventFilter {
 
     private Set<String> triggers = Collections.emptySet();
-    private boolean usePhoneWhitelist;
-    private boolean useTextWhitelist;
     private Set<String> phoneWhitelist = Collections.emptySet();
     private Set<String> phoneBlacklist = Collections.emptySet();
     private Set<String> textWhitelist = Collections.emptySet();
@@ -42,22 +40,6 @@ public class PhoneEventFilter {
 
     public void setTriggers(Set<String> triggers) {
         this.triggers = triggers;
-    }
-
-    public boolean isUsePhoneWhitelist() {
-        return usePhoneWhitelist;
-    }
-
-    public void setUsePhoneWhitelist(boolean usePhoneWhitelist) {
-        this.usePhoneWhitelist = usePhoneWhitelist;
-    }
-
-    public boolean isUseTextWhitelist() {
-        return useTextWhitelist;
-    }
-
-    public void setUseTextWhitelist(boolean useTextWhitelist) {
-        this.useTextWhitelist = useTextWhitelist;
     }
 
     public Set<String> getPhoneWhitelist() {
@@ -119,11 +101,11 @@ public class PhoneEventFilter {
     }
 
     public boolean acceptPhone(String phone) {
-        return usePhoneWhitelist ? isPhoneWhitelisted(phone) : !isPhoneBlacklisted(phone);
+        return containsPhone(phoneWhitelist, phone) || !containsPhone(phoneBlacklist, phone);
     }
 
-    private boolean acceptText(String message) {
-        return useTextWhitelist ? containsText(textWhitelist, message) : !containsText(textBlacklist, message);
+    public boolean acceptText(String text) {
+        return containsText(textWhitelist, text) || !containsText(textBlacklist, text);
     }
 
     private boolean containsPhone(Collection<String> patterns, String phone) {
@@ -134,14 +116,6 @@ public class PhoneEventFilter {
             }
         }
         return false;
-    }
-
-    public boolean isPhoneBlacklisted(String phone) {
-        return containsPhone(phoneBlacklist, phone);
-    }
-
-    public boolean isPhoneWhitelisted(String phone) {
-        return containsPhone(phoneWhitelist, phone);
     }
 
     private boolean containsText(Collection<String> patterns, String text) {
@@ -163,8 +137,6 @@ public class PhoneEventFilter {
     public String toString() {
         return "PhoneEventFilter{" +
                 "triggers=" + triggers +
-                ", useNumberWhiteList=" + usePhoneWhitelist +
-                ", useTextWhiteList=" + useTextWhitelist +
                 ", numberWhitelist=" + phoneWhitelist +
                 ", numberBlacklist=" + phoneBlacklist +
                 ", textWhitelist=" + textWhitelist +

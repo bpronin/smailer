@@ -115,7 +115,6 @@
     <string name="title_unacceptable_phone_numbers">Unacceptable phone numbers ({size})</string>
     <string name="title_unacceptable_text">Unacceptable words ({size})</string>
     <string name="title_undo">Undo</string>
-    <string name="title_use_black_white_list">Use black/white list</string>
     <string name="title_version">Application version: {version}</string>
     <string name="title_what_email_contain">What should the email include</string>
     <string name="title_white_list_used">White list used</string>

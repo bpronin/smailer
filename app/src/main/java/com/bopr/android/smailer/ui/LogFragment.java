@@ -235,7 +235,13 @@ public class LogFragment extends Fragment {
                 final PhoneEvent event = cursor.found();
 
                 holder.timeView.setText(DateFormat.format(getString(R.string.event_time_pattern), event.getStartTime()));
+
                 holder.textView.setText(event.getText());
+                if (phoneEventFilter.acceptText(event.getText())) {
+                    holder.textView.setPaintFlags(holder.defaultPhoneFlags);
+                } else {
+                    holder.textView.setPaintFlags(holder.defaultPhoneFlags | Paint.STRIKE_THRU_TEXT_FLAG);
+                }
 
                 holder.phoneView.setText(event.getPhone());
                 if (phoneEventFilter.acceptPhone(event.getPhone())) {

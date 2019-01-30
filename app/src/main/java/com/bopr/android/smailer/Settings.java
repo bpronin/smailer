@@ -45,10 +45,8 @@ public class Settings {
     public static final String KEY_PREF_LOG = "log";
     public static final String KEY_PREF_MARK_SMS_AS_READ = "mark_processed_sms_as_read";
     public static final String KEY_PREF_RESEND_UNSENT = "resend_unsent";
-    public static final String KEY_PREF_FILTER_USE_WHITE_LIST = "message_filter_use_white_list";
     public static final String KEY_PREF_FILTER_BLACKLIST = "message_filter_blacklist";
     public static final String KEY_PREF_FILTER_WHITELIST = "message_filter_whitelist";
-    public static final String KEY_PREF_FILTER_TEXT_USE_WHITE_LIST = "message_filter_text_use_white_list";
     public static final String KEY_PREF_FILTER_TEXT_BLACKLIST = "message_filter_text_blacklist";
     public static final String KEY_PREF_FILTER_TEXT_WHITELIST = "message_filter_text_whitelist";
     public static final String KEY_PREF_DEVICE_ALIAS = "device_alias";
@@ -90,8 +88,6 @@ public class Settings {
         data.put(KEY_PREF_EMAIL_CONTENT, DEFAULT_CONTENT);
         data.put(KEY_PREF_EMAIL_LOCALE, DEFAULT_LOCALE);
         data.put(KEY_PREF_RESEND_UNSENT, true);
-        data.put(KEY_PREF_FILTER_USE_WHITE_LIST, false);
-        data.put(KEY_PREF_FILTER_TEXT_USE_WHITE_LIST, false);
         data.put(KEY_PREF_MARK_SMS_AS_READ, false);
 
         AndroidUtil.putPreferencesOptional(getPreferences(context), data);
@@ -132,10 +128,8 @@ public class Settings {
     public static void saveFilter(Context context, PhoneEventFilter filter) {
         SharedPreferences.Editor editor = getPreferences(context).edit();
 
-        editor.putBoolean(KEY_PREF_FILTER_USE_WHITE_LIST, filter.isUsePhoneWhitelist());
         editor.putString(KEY_PREF_FILTER_BLACKLIST, commaSeparated(filter.getPhoneBlacklist()));
         editor.putString(KEY_PREF_FILTER_WHITELIST, commaSeparated(filter.getPhoneWhitelist()));
-        editor.putBoolean(KEY_PREF_FILTER_TEXT_USE_WHITE_LIST, filter.isUseTextWhitelist());
         editor.putString(KEY_PREF_FILTER_TEXT_BLACKLIST, commaSeparated(filter.getTextBlacklist()));
         editor.putString(KEY_PREF_FILTER_TEXT_WHITELIST, commaSeparated(filter.getTextWhitelist()));
 
@@ -148,10 +142,8 @@ public class Settings {
         PhoneEventFilter filter = new PhoneEventFilter();
 
         filter.setTriggers(preferences.getStringSet(KEY_PREF_EMAIL_TRIGGERS, Collections.<String>emptySet()));
-        filter.setUsePhoneWhitelist(preferences.getBoolean(KEY_PREF_FILTER_USE_WHITE_LIST, true));
         filter.setPhoneBlacklist(parseCommaSeparatedSet(preferences.getString(KEY_PREF_FILTER_BLACKLIST, "")));
         filter.setPhoneWhitelist(parseCommaSeparatedSet(preferences.getString(KEY_PREF_FILTER_WHITELIST, "")));
-        filter.setUseTextWhitelist(preferences.getBoolean(KEY_PREF_FILTER_TEXT_USE_WHITE_LIST, true));
         filter.setTextBlacklist(parseCommaSeparatedSet(preferences.getString(KEY_PREF_FILTER_TEXT_BLACKLIST, "")));
         filter.setTextWhitelist(parseCommaSeparatedSet(preferences.getString(KEY_PREF_FILTER_TEXT_WHITELIST, "")));
 
