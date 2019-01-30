@@ -59,6 +59,7 @@ public class MailerService extends IntentService {
 
     @Override
     public void onDestroy() {
+        database.close();
         locator.stop();
         super.onDestroy();
         log.debug("Destroyed");

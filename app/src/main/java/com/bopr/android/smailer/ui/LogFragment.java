@@ -60,7 +60,7 @@ public class LogFragment extends Fragment {
                 loadData();
             }
         };
-        Settings.getPreferences(getContext()).registerOnSharedPreferenceChangeListener(preferenceChangeListener);
+        Settings.getPreferences(getActivity()).registerOnSharedPreferenceChangeListener(preferenceChangeListener);
 
         databaseListener = new BroadcastReceiver() {
             @Override
@@ -74,6 +74,7 @@ public class LogFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         database.removeListener(databaseListener);
+        database.close();
         Settings.getPreferences(getActivity()).unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
     }
 

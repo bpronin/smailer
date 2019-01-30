@@ -161,37 +161,6 @@ public class Database {
         fireChanged();
     }
 
-    /**
-     * Removes all stale records that exceeds specified capacity if given
-     * period of time has elapsed.
-     */
-    public void purge() {
-        log.debug("Purging");
-
-        SQLiteDatabase db = helper.getWritableDatabase();
-        db.beginTransaction();
-        try {
-            if (System.currentTimeMillis() - getLastPurgeTime(db) >= purgePeriod
-                    && getCurrentSize(db) >= capacity) {
-
-                db.execSQL("delete from " + TABLE_EVENTS +
-                        " where " + COLUMN_ID + " not in " +
-                        "(" +
-                        "select " + COLUMN_ID + " from " + TABLE_EVENTS +
-                        " order by " + COLUMN_ID + " desc " +
-                        "limit " + capacity +
-                        ")");
-
-                updateLastPurgeTime(db);
-            }
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
-
-        fireChanged();
-    }
-
     public void saveLastLocation(GeoCoordinates location) {
         ContentValues values = new ContentValues();
         values.put(COLUMN_LAST_LATITUDE, location != null ? location.getLatitude() : null);
@@ -234,6 +203,42 @@ public class Database {
                 return null;
             }
         }.findAndClose();
+    }
+
+    /**
+     * Removes all stale records that exceeds specified capacity if given
+     * period of time has elapsed.
+     */
+    public void purge() {
+        log.debug("Purging");
+
+        SQLiteDatabase db = helper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            if (System.currentTimeMillis() - getLastPurgeTime(db) >= purgePeriod
+                    && getCurrentSize(db) >= capacity) {
+
+                db.execSQL("delete from " + TABLE_EVENTS +
+                        " where " + COLUMN_ID + " not in " +
+                        "(" +
+                        "select " + COLUMN_ID + " from " + TABLE_EVENTS +
+                        " order by " + COLUMN_ID + " desc " +
+                        "limit " + capacity +
+                        ")");
+
+                updateLastPurgeTime(db);
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+
+        fireChanged();
+    }
+
+    public void close() {
+        log.debug("Close");
+        helper.close();
     }
 
     public void destroy() {

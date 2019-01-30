@@ -99,8 +99,6 @@ public class MainFragment extends BasePreferenceFragment {
         super.onStart();
         updateServerPreference();
         updateRecipientsPreference();
-        OutgoingSmsService.toggleService(getActivity());
-        ResendService.toggleService(getActivity());
     }
 
     @Override

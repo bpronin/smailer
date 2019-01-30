@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 
 import com.bopr.android.smailer.Cryptor;
+import com.bopr.android.smailer.OutgoingSmsService;
+import com.bopr.android.smailer.ResendService;
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.crashlytics.android.Crashlytics;
 
@@ -38,6 +40,9 @@ public class MainActivity extends AppActivity {
         if (!Cryptor.isKeystoreInitialized()) {
             new InitKeystoreTask(this).execute();
         }
+        
+        OutgoingSmsService.toggleService(this);
+        ResendService.toggleService(this);
     }
 
     @NonNull
