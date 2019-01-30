@@ -2,6 +2,7 @@ package com.bopr.android.smailer.ui;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -85,13 +86,21 @@ public class DebugFragment extends BasePreferenceFragment {
     private Cryptor cryptor;
     private Database database;
 
+    @NonNull
+    @Override
+    public Context getContext() {
+        Context context = super.getContext();
+        assert context != null;
+        return context;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        database = new Database(getActivity());
+        database = new Database(getContext());
         locator = new Locator(getContext(), database);
-        cryptor = new Cryptor(getActivity());
+        cryptor = new Cryptor(getContext());
 
         Preference[] preferences = {
 
@@ -280,7 +289,7 @@ public class DebugFragment extends BasePreferenceFragment {
     private Properties getDebugProperties() {
         Properties properties = new Properties();
         try {
-            InputStream stream = getActivity().getAssets().open("debug.properties");
+            InputStream stream = getContext().getAssets().open("debug.properties");
             properties.load(stream);
         } catch (IOException x) {
             log.error("Cannot read debug properties", x);
@@ -289,12 +298,12 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private boolean smsPermissionDenied() {
-        return ContextCompat.checkSelfPermission(getActivity(), RECEIVE_SMS) != PERMISSION_GRANTED;
+        return ContextCompat.checkSelfPermission(getContext(), RECEIVE_SMS) != PERMISSION_GRANTED;
     }
 
     public void requestSmsPermission() {
-        if (AndroidUtil.isPermissionsDenied(getActivity(), RECEIVE_SMS)) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{RECEIVE_SMS},
+        if (AndroidUtil.isPermissionsDenied(getContext(), RECEIVE_SMS)) {
+            ActivityCompat.requestPermissions((Activity) getContext(), new String[]{RECEIVE_SMS},
                     PERMISSIONS_REQUEST_RECEIVE_SMS);
         }
     }
@@ -323,10 +332,10 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private void onGetContact() {
-        final EditText input = new EditText(getActivity());
+        final EditText input = new EditText(getContext());
         input.setInputType(InputType.TYPE_CLASS_PHONE);
 
-        AndroidUtil.dialogBuilder(getActivity())
+        AndroidUtil.dialogBuilder(getContext())
                 .setTitle("Phone number")
                 .setView(input)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -334,10 +343,10 @@ public class DebugFragment extends BasePreferenceFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String phone = input.getText().toString();
-                        String contact = Contacts.getContactName(getActivity(), phone);
+                        String contact = Contacts.getContactName(getContext(), phone);
                         String text = contact != null ? (phone + ": " + contact) : "Contact not found";
 
-                        Toast.makeText(getActivity(), text, Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), text, Toast.LENGTH_LONG).show();
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -352,7 +361,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
     @SuppressWarnings("ResourceType")
     private void onGetLocation() {
-        new GetLocationTask(getActivity(), locator).execute();
+        new GetLocationTask(getContext(), locator).execute();
     }
 
     private void onClearPreferences() {
@@ -361,7 +370,7 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private void onSendDefaultMail() {
-        new SendDefaultMailTask(getActivity(), getDebugProperties()).execute();
+        new SendDefaultMailTask(getContext(), getDebugProperties()).execute();
     }
 
     private void onSendMail() {
@@ -378,7 +387,7 @@ public class DebugFragment extends BasePreferenceFragment {
                 message.setStartTime(System.currentTimeMillis());
                 message.setLocation(new GeoCoordinates(30.0, 60.0));
 
-                new Mailer(getActivity(), database).send(message);
+                new Mailer(getContext(), database).send(message);
 
                 return null;
             }
@@ -390,15 +399,15 @@ public class DebugFragment extends BasePreferenceFragment {
         event.setStartTime(start);
         event.setEndTime(start + 10000);
 
-        getActivity().startService(createEventIntent(getActivity(), event));
+        getContext().startService(createEventIntent(getContext(), event));
     }
 
     private void onRequireReceiveSmsPermission() {
         if (!smsPermissionDenied()) {
-            getActivity().enforceCallingOrSelfPermission(
+            getContext().enforceCallingOrSelfPermission(
                     Manifest.permission.RECEIVE_SMS, "Testing SMS permission");
         } else {
-            Toast.makeText(getActivity(), "SMS PERMISSION DENIED", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "SMS PERMISSION DENIED", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -431,16 +440,16 @@ public class DebugFragment extends BasePreferenceFragment {
     ) {
         if (requestCode == PERMISSIONS_REQUEST_RECEIVE_SMS) {
             if (grantResults[0] != PERMISSION_GRANTED) {
-                Toast.makeText(getActivity(), "Permission denied", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Permission denied", Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(getActivity(), "Permission granted", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Permission granted", Toast.LENGTH_LONG).show();
             }
         }
     }
 
     private void onShowPassword() {
         String text = cryptor.decrypt(getSharedPreferences().getString(KEY_PREF_SENDER_PASSWORD, null));
-        Toast.makeText(getActivity(), text, Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), text, Toast.LENGTH_LONG).show();
     }
 
     private void onPopulateLog() {
@@ -462,7 +471,7 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private void onShowNotification() {
-        new Notifications(getActivity()).showMailError("Test notification text", 100, Notifications.ACTION_SHOW_CONNECTION);
+        new Notifications(getContext()).showMailError("Test notification text", 100, Notifications.ACTION_SHOW_CONNECTION);
     }
 
     private void onEmulateSms() {
@@ -470,18 +479,18 @@ public class DebugFragment extends BasePreferenceFragment {
         intent.putExtra("pdus", new Object[]{Base64.decode("ACADgSHzAABhQEASFTQhBcgym/0G", Base64.NO_WRAP)});
         intent.putExtra("format", "3gpp");
 
-        getActivity().sendBroadcast(intent);
+        getContext().sendBroadcast(intent);
     }
 
     private void onSendLog() {
-        new SendLogTask(getActivity(), getDebugProperties()).execute();
+        new SendLogTask(getContext(), getDebugProperties()).execute();
     }
 
     private void onShowConcurrent() {
         StringBuilder b = new StringBuilder();
 
         Intent intent = new Intent("android.provider.Telephony.SMS_RECEIVED");
-        List<ResolveInfo> activities = getActivity().getPackageManager().queryBroadcastReceivers(intent, 0);
+        List<ResolveInfo> activities = getContext().getPackageManager().queryBroadcastReceivers(intent, 0);
         for (ResolveInfo resolveInfo : activities) {
             ActivityInfo activityInfo = resolveInfo.activityInfo;
             if (activityInfo != null) {
@@ -492,7 +501,7 @@ public class DebugFragment extends BasePreferenceFragment {
                 log.debug("Concurrent package:" + activityInfo.packageName + " priority: " + resolveInfo.priority);
             }
         }
-        AndroidUtil.dialogBuilder(getActivity())
+        AndroidUtil.dialogBuilder(getContext())
                 .setMessage(b.toString())
                 .show();
     }
@@ -501,8 +510,8 @@ public class DebugFragment extends BasePreferenceFragment {
 
         private final Locator locator;
 
-        private GetLocationTask(Activity activity, Locator locator) {
-            super(activity);
+        private GetLocationTask(Context context, Locator locator) {
+            super(context);
             this.locator = locator;
         }
 
@@ -524,8 +533,8 @@ public class DebugFragment extends BasePreferenceFragment {
 
         private Properties properties;
 
-        private SendDefaultMailTask(Activity activity, Properties properties) {
-            super(activity);
+        private SendDefaultMailTask(Context context, Properties properties) {
+            super(context);
             this.properties = properties;
         }
 
@@ -557,8 +566,8 @@ public class DebugFragment extends BasePreferenceFragment {
 
         private Properties properties;
 
-        private SendLogTask(Activity activity, Properties properties) {
-            super(activity);
+        private SendLogTask(Context context, Properties properties) {
+            super(context);
             this.properties = properties;
         }
 
@@ -600,7 +609,7 @@ public class DebugFragment extends BasePreferenceFragment {
         @Override
         public boolean onPreferenceClick(Preference preference) {
             onClick(preference);
-            //    getActivity().finish();
+            //    getContext().finish();
             return true;
         }
     }

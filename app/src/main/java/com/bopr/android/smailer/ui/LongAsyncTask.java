@@ -2,6 +2,8 @@ package com.bopr.android.smailer.ui;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
+
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.ui.ContextAsyncTask;
 
@@ -14,8 +16,8 @@ public abstract class LongAsyncTask<Params, Progress, Result> extends ContextAsy
 
     private Dialog dialog;
 
-    public LongAsyncTask(Activity activity) {
-        super(activity);
+    public LongAsyncTask(Context context) {
+        super(context);
     }
 
     @Override

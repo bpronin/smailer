@@ -8,12 +8,14 @@
         android:key="sender_account"
         android:maxLines="1"
         android:singleLine="true"
+        android:icon="@drawable/ic_pref_account"
         android:title="@string/title_sender_account"/>
 
     <com.bopr.android.smailer.util.ui.preference.PasswordPreference
         android:dialogMessage="@string/title_email_password_hint"
         android:dialogTitle="@string/title_password"
         android:key="sender_password"
+        android:icon="@drawable/ic_pref_password"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
