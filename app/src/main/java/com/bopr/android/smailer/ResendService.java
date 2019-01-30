@@ -1,7 +1,13 @@
 package com.bopr.android.smailer;
 
 import android.content.Context;
-import com.google.android.gms.gcm.*;
+
+import com.google.android.gms.gcm.GcmNetworkManager;
+import com.google.android.gms.gcm.GcmTaskService;
+import com.google.android.gms.gcm.PeriodicTask;
+import com.google.android.gms.gcm.Task;
+import com.google.android.gms.gcm.TaskParams;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +25,7 @@ public class ResendService extends GcmTaskService {
 
     private static final Logger log = LoggerFactory.getLogger("ResendService");
     private static final String TASK_TAG = "resend-task";
+    private static final long PERIOD = TimeUnit.MINUTES.toSeconds(5);
 
     @Override
     public int onRunTask(TaskParams taskParams) {
@@ -55,7 +62,7 @@ public class ResendService extends GcmTaskService {
                     .setService(ResendService.class)
                     .setPersisted(true)
                     .setTag(TASK_TAG)
-                    .setPeriod(TimeUnit.MINUTES.toSeconds(5))
+                    .setPeriod(PERIOD)
                     .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED) /* default */
                     .setUpdateCurrent(true)
                     .build();

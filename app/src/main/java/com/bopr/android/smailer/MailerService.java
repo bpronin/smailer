@@ -4,6 +4,9 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+
+import com.bopr.android.smailer.util.Util;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,10 +68,9 @@ public class MailerService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         log.debug("Processing mailer service intent:" + intent);
 
-        //noinspection ConstantConditions
-        switch (intent.getAction()) {
+        switch (Util.requireNonNull(intent.getAction())) {
             case ACTION_CALL:
-                handlePhoneEvent(parseEventIntent(intent));
+                handlePhoneEvent(parsePhoneEventIntent(intent));
                 break;
             case ACTION_RESEND:
                 mailer.sendAllUnsent();
@@ -91,7 +93,7 @@ public class MailerService extends IntentService {
     }
 
     @NonNull
-    private PhoneEvent parseEventIntent(Intent intent) {
+    private PhoneEvent parsePhoneEventIntent(Intent intent) {
         PhoneEvent event = new PhoneEvent();
         event.setIncoming(intent.getBooleanExtra(EXTRA_INCOMING, true));
         event.setMissed(intent.getBooleanExtra(EXTRA_MISSED, false));
@@ -105,7 +107,7 @@ public class MailerService extends IntentService {
     }
 
     @NonNull
-    public static Intent createEventIntent(Context context, PhoneEvent event) {
+    public static Intent createPhoneEventIntent(Context context, PhoneEvent event) {
         Intent intent = new Intent(context, MailerService.class);
         intent.setAction(ACTION_CALL);
         intent.putExtra(EXTRA_INCOMING, event.isIncoming());
@@ -118,6 +120,12 @@ public class MailerService extends IntentService {
         return intent;
     }
 
+    /**
+     * Creates intent that triggers resend unsent messages task
+     *
+     * @param context context
+     * @return intent
+     */
     @NonNull
     public static Intent createResendIntent(Context context) {
         Intent intent = new Intent(context, MailerService.class);

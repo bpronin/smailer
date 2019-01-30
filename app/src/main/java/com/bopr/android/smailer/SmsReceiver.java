@@ -14,7 +14,7 @@ import com.bopr.android.smailer.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.bopr.android.smailer.MailerService.createEventIntent;
+import static com.bopr.android.smailer.MailerService.createPhoneEventIntent;
 
 /**
  * Receives SMS intents and starts mailer service.
@@ -31,7 +31,7 @@ public class SmsReceiver extends BroadcastReceiver {
         log.debug("Received intent: " + intent);
 
         if (Util.safeEquals(intent.getAction(), SMS_RECEIVED_ACTION)) {
-            context.startService(createEventIntent(context, parse(intent)));
+            context.startService(createPhoneEventIntent(context, parse(intent)));
         }
     }
 

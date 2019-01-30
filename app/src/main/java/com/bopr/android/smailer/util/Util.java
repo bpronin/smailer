@@ -188,4 +188,10 @@ public class Util {
     public static String normalizePhonePattern(@NonNull String pattern) {
         return pattern.toUpperCase().replaceAll("[^A-Z0-9*.]", "").replaceAll("\\*", "(.*)");
     }
+
+    public static <T> T requireNonNull(T obj) {
+        if (obj == null)
+            throw new NullPointerException();
+        return obj;
+    }
 }

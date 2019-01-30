@@ -17,7 +17,7 @@ import com.bopr.android.smailer.util.db.XCursor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.bopr.android.smailer.MailerService.createEventIntent;
+import static com.bopr.android.smailer.MailerService.createPhoneEventIntent;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
 
 /**
@@ -115,7 +115,7 @@ public class OutgoingSmsService extends Service {
         event.setEndTime(date);
         event.setText(body);
 
-        startService(createEventIntent(this, event));
+        startService(createPhoneEventIntent(this, event));
     }
 
     @NonNull
