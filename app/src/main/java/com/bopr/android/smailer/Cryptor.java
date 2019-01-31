@@ -8,16 +8,18 @@ import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.support.annotation.NonNull;
 import android.util.Base64;
+
 import com.bopr.android.smailer.util.Util;
 
-import javax.crypto.Cipher;
-import javax.security.auth.x500.X500Principal;
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.Calendar;
+
+import javax.crypto.Cipher;
+import javax.security.auth.x500.X500Principal;
 
 /**
  * RSA encryption operations.
@@ -27,7 +29,9 @@ import java.util.Calendar;
 public class Cryptor {
 
     private static final String KEY_ALIAS = "smailer";
+    public static final String KEYSTORE_FILE = "keystore.jks";
     private static final String CIPHER_TRANSFORMATION = "RSA/ECB/PKCS1Padding";
+    private static final char[] KEYSTORE_PASSWORD = "7y%6B7ло9c557".toCharArray();
 
     private final Context context;
 
@@ -87,7 +91,13 @@ public class Cryptor {
     public static KeyStore initKeystore(Context context) {
         try {
             KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
-            keyStore.load(null);
+
+//            File file = new File(context.getFilesDir(), KEYSTORE_FILE);
+//            if (file.exists()) {
+//                keyStore.load(new FileInputStream(file), KEYSTORE_PASSWORD);
+//            } else {
+                keyStore.load(null);
+//            }
 
             if (!keyStore.containsAlias(KEY_ALIAS)) {
                 AlgorithmParameterSpec spec;
@@ -100,10 +110,12 @@ public class Cryptor {
                 KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA", "AndroidKeyStore");
                 generator.initialize(spec);
                 generator.generateKeyPair();
+
+//                keyStore.store(new FileOutputStream(file), KEYSTORE_PASSWORD);
             }
             return keyStore;
         } catch (Exception x) {
-            throw new Error("Unable init keystore", x);
+            throw new Error("Keystore initialization failed", x);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.bopr.android.smailer.ui;
 
+import android.app.backup.BackupManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -41,6 +42,7 @@ public class MainFragment extends BasePreferenceFragment {
     private OnSharedPreferenceChangeListener preferenceChangeListener;
     private Preference.OnPreferenceClickListener preferenceClickListener;
     private boolean asListView;
+    private BackupManager backupManager;
 
     public MainFragment() {
         setAsListView(false);
@@ -50,6 +52,9 @@ public class MainFragment extends BasePreferenceFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        backupManager = new BackupManager(getActivity());
+
         loadDefaultPreferences(getActivity());
 
         addPreferencesFromResource(R.xml.pref_main);
@@ -72,9 +77,17 @@ public class MainFragment extends BasePreferenceFragment {
                 updateRecipientsPreference();
                 OutgoingSmsService.toggleService(getActivity());
                 ResendService.toggleService(getActivity());
+
+                backupManager.dataChanged();
             }
         };
         getSharedPreferences().registerOnSharedPreferenceChangeListener(preferenceChangeListener);
+    }
+
+    @Override
+    public void onDestroy() {
+        getSharedPreferences().unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
+        super.onDestroy();
     }
 
     @Override
@@ -86,12 +99,6 @@ public class MainFragment extends BasePreferenceFragment {
             listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
             listView.setItemChecked(listView.getSelectedItemPosition(), true);
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        getSharedPreferences().unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
-        super.onDestroy();
     }
 
     @Override

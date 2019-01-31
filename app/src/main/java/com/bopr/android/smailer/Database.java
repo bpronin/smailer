@@ -237,8 +237,8 @@ public class Database {
     }
 
     public void close() {
-        log.debug("Close");
         helper.close();
+        log.debug("Closed");
     }
 
     public void destroy() {
