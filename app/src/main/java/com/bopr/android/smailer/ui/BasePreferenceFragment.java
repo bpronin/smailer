@@ -3,6 +3,7 @@ package com.bopr.android.smailer.ui;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v14.preference.MultiSelectListPreference;
 import android.support.v14.preference.SwitchPreference;
 import android.support.v4.app.DialogFragment;
@@ -12,10 +13,10 @@ import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceGroup;
-import android.support.v7.preference.PreferenceManager;
 
 import com.bopr.android.smailer.PreferencesPermissionsChecker;
 import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.Settings;
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.ui.preference.EmailPreference;
 import com.bopr.android.smailer.util.ui.preference.EmailPreferenceDialog;
@@ -30,8 +31,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import static com.bopr.android.smailer.Settings.PREFERENCES_STORAGE_NAME;
-
 /**
  * Base {@link PreferenceFragmentCompat } with default behaviour.
  *
@@ -43,16 +42,11 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
 
     private static final String DIALOG_FRAGMENT_TAG = "android.support.v7.preference.PreferenceFragment.DIALOG";
 
-    private SharedPreferences sharedPreferences;
     private PreferencesPermissionsChecker permissionChecker;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        PreferenceManager preferenceManager = getPreferenceManager();
-        preferenceManager.setSharedPreferencesName(PREFERENCES_STORAGE_NAME);
-        sharedPreferences = preferenceManager.getSharedPreferences();
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
@@ -65,7 +59,7 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
         super.onStart();
         refreshPreferences();
 
-        permissionChecker = new PreferencesPermissionsChecker(getActivity(), getSharedPreferences()) {
+        permissionChecker = new PreferencesPermissionsChecker(getActivity(), getPreferences()) {
 
             @Override
             protected void onPermissionsDenied(Collection<String> permissions) {
@@ -114,8 +108,8 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
     /**
      * Returns application's shared preferences.
      */
-    protected SharedPreferences getSharedPreferences() {
-        return sharedPreferences;
+    protected SharedPreferences getPreferences() {
+        return Settings.getPreferences(getContext());
     }
 
     /**
@@ -139,16 +133,6 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
     }
 
     /**
-     * Updates summary of {@link Preference}.
-     *
-     * @param valueResource value resource ID
-     * @param preference    preference
-     */
-    protected void updateSummary(int valueResource, Preference preference) {
-        updateSummary(getString(valueResource), preference, true);
-    }
-
-    /**
      * Reads fragment's {@link SharedPreferences} and updates preferences value.
      */
     protected void refreshPreferences() {
@@ -157,7 +141,7 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
 
     @SuppressWarnings("unchecked")
     private void doRefreshPreferences(PreferenceGroup group) {
-        Map<String, ?> map = getSharedPreferences().getAll();
+        Map<String, ?> map = getPreferences().getAll();
         for (int i = 0; i < group.getPreferenceCount(); i++) {
             Preference preference = group.getPreference(i);
             if (preference instanceof PreferenceGroup) {

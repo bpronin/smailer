@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Set;
 
 import static android.support.v7.widget.RecyclerView.NO_POSITION;
-import static com.bopr.android.smailer.Settings.getPreferences;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static java.lang.String.valueOf;
 
@@ -49,7 +48,7 @@ abstract class FilterListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        preferences = getPreferences(getActivity());
+        preferences = Settings.getPreferences(getActivity());
         preferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
 
             @Override
@@ -143,7 +142,7 @@ abstract class FilterListFragment extends Fragment {
 
     protected void updateEmptyText() {
         View view = getView();
-        if (view != null) {
+        if (view != null && listView.getAdapter() != null) {
             TextView text = view.findViewById(R.id.text_empty);
             if (listView.getAdapter().getItemCount() == 0) {
                 text.setVisibility(View.VISIBLE);

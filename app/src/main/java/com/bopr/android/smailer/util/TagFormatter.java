@@ -36,11 +36,11 @@ public class TagFormatter {
         return formatter(pattern, context.getResources());
     }
 
-    public static TagFormatter formatter(int patternResourceId, Resources resources) {
+    public static TagFormatter formatter(Integer patternResourceId, Resources resources) {
         return new TagFormatter(patternResourceId, resources);
     }
 
-    public static TagFormatter formatter(int patternResourceId, Context context) {
+    public static TagFormatter formatter(Integer patternResourceId, Context context) {
         return formatter(patternResourceId, context.getResources());
     }
 
@@ -49,7 +49,7 @@ public class TagFormatter {
         this.resources = resources;
     }
 
-    public TagFormatter(int patternResourceId, Resources resources) {
+    public TagFormatter(Integer patternResourceId, Resources resources) {
         this(resources.getString(patternResourceId), resources);
     }
 

@@ -1,3 +1,7 @@
+/**
+ * Information specific to your local configuration
+ */
+
 project.ext {
     store_password = 'sample'
     key_password = 'sample'

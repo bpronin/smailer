@@ -63,7 +63,7 @@ public class RecipientsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recipients, container, false);
 
@@ -73,13 +73,13 @@ public class RecipientsFragment extends Fragment {
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
             @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
-                                  RecyclerView.ViewHolder target) {
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder,
+                                  @NonNull RecyclerView.ViewHolder target) {
                 return false;
             }
 
             @Override
-            public void onSwiped(RecyclerView.ViewHolder holder, int swipeDir) {
+            public void onSwiped(@NonNull RecyclerView.ViewHolder holder, int swipeDir) {
                 removeItems(new int[]{holder.getAdapterPosition()});
             }
 
@@ -105,7 +105,7 @@ public class RecipientsFragment extends Fragment {
 
     protected void updateEmptyText() {
         View view = getView();
-        if (view != null) {
+        if (view != null && listView.getAdapter() != null) {
             TextView text = view.findViewById(R.id.text_empty);
             if (listView.getAdapter().getItemCount() == 0) {
                 text.setVisibility(View.VISIBLE);

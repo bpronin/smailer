@@ -311,7 +311,7 @@ public class DebugFragment extends BasePreferenceFragment {
     private void onRestorePreferences() {
         Properties properties = getDebugProperties();
 
-        getSharedPreferences()
+        getPreferences()
                 .edit()
                 .putString(KEY_PREF_SENDER_ACCOUNT, properties.getProperty("default_sender"))
                 .putString(KEY_PREF_SENDER_PASSWORD, cryptor.encrypt(properties.getProperty("default_password")))
@@ -365,7 +365,7 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private void onClearPreferences() {
-        getSharedPreferences().edit().clear().apply();
+        getPreferences().edit().clear().apply();
         refreshPreferences();
     }
 
@@ -448,7 +448,7 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private void onShowPassword() {
-        String text = cryptor.decrypt(getSharedPreferences().getString(KEY_PREF_SENDER_PASSWORD, null));
+        String text = cryptor.decrypt(getPreferences().getString(KEY_PREF_SENDER_PASSWORD, null));
         Toast.makeText(getContext(), text, Toast.LENGTH_LONG).show();
     }
 

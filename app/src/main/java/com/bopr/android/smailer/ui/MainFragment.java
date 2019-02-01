@@ -81,12 +81,12 @@ public class MainFragment extends BasePreferenceFragment {
                 backupManager.dataChanged();
             }
         };
-        getSharedPreferences().registerOnSharedPreferenceChangeListener(preferenceChangeListener);
+        getPreferences().registerOnSharedPreferenceChangeListener(preferenceChangeListener);
     }
 
     @Override
     public void onDestroy() {
-        getSharedPreferences().unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
+        getPreferences().unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
         super.onDestroy();
     }
 
@@ -133,7 +133,7 @@ public class MainFragment extends BasePreferenceFragment {
 
     private void updateServerPreference() {
         if (!asListView) {
-            SharedPreferences preferences = getSharedPreferences();
+            SharedPreferences preferences = getPreferences();
             String sender = preferences.getString(KEY_PREF_SENDER_ACCOUNT, "");
             String host = preferences.getString(KEY_PREF_EMAIL_HOST, "");
             String port = preferences.getString(KEY_PREF_EMAIL_PORT, "");
@@ -148,7 +148,7 @@ public class MainFragment extends BasePreferenceFragment {
 
     private void updateRecipientsPreference() {
         if (!asListView) {
-            String value = getSharedPreferences().getString(KEY_PREF_RECIPIENTS_ADDRESS, null);
+            String value = getPreferences().getString(KEY_PREF_RECIPIENTS_ADDRESS, null);
             if (isEmpty(value)) {
                 updateNotSpecifiedSummary(recipientsPreference);
             } else {
