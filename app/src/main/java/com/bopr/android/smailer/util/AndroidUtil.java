@@ -97,6 +97,7 @@ public class AndroidUtil {
 
     public static void putPreferencesOptional(SharedPreferences preferences,
                                               Map<String, Object> data) {
+        
         SharedPreferences.Editor editor = preferences.edit();
         for (Map.Entry<String, Object> entry : data.entrySet()) {
             String key = entry.getKey();

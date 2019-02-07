@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
@@ -37,18 +36,16 @@ import static java.lang.String.valueOf;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-abstract class FilterListFragment extends Fragment {
+abstract class FilterListFragment extends BaseFragment {
 
     private ListAdapter listAdapter;
     private RecyclerView listView;
-    private SharedPreferences preferences;
     private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
     private int selectedListPosition = NO_POSITION;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        preferences = Settings.getPreferences(getActivity());
         preferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
 
             @Override
@@ -70,7 +67,7 @@ abstract class FilterListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_filter_list, container, false);
 
         listView = view.findViewById(android.R.id.list);
-        listView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+        listView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
@@ -164,7 +161,7 @@ abstract class FilterListFragment extends Fragment {
 
         listView.setAdapter(listAdapter);
 
-        List<String> list = new ArrayList<>(getItemsList(Settings.loadFilter(getActivity())));
+        List<String> list = new ArrayList<>(getItemsList(Settings.loadFilter(getContext())));
         Collections.sort(list);
 
         List<Item> items = new ArrayList<>();
@@ -180,9 +177,9 @@ abstract class FilterListFragment extends Fragment {
             items.add(item.value);
         }
 
-        PhoneEventFilter filter = Settings.loadFilter(getActivity());
+        PhoneEventFilter filter = Settings.loadFilter(getContext());
         setItemsList(filter, items);
-        Settings.saveFilter(getActivity(), filter);
+        Settings.saveFilter(getContext(), filter);
     }
 
     private boolean isItemExists(String text) {
@@ -212,7 +209,7 @@ abstract class FilterListFragment extends Fragment {
             @Override
             public void onOkClick(String value) {
                 if (isItemExists(value) && (item == null || !item.value.equals(value))) {
-                    Toast.makeText(getActivity(), formatter(R.string.message_list_item_already_exists, getResources())
+                    Toast.makeText(getContext(), formatter(R.string.message_list_item_already_exists, getResources())
                             .put("item", getItemText(value))
                             .format(), Toast.LENGTH_LONG)
                             .show();
@@ -252,7 +249,7 @@ abstract class FilterListFragment extends Fragment {
         }
 
         Snackbar.make(listView, title, Snackbar.LENGTH_LONG)
-                .setActionTextColor(ContextCompat.getColor(getActivity(), R.color.dialogButtonText))
+                .setActionTextColor(ContextCompat.getColor(getContext(), R.color.dialogButtonText))
                 .setAction(R.string.title_undo, new View.OnClickListener() {
 
                     @Override
@@ -279,7 +276,7 @@ abstract class FilterListFragment extends Fragment {
         @NonNull
         @Override
         public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            LayoutInflater inflater = LayoutInflater.from(getActivity());
+            LayoutInflater inflater = LayoutInflater.from(getContext());
             return new ItemViewHolder(inflater.inflate(R.layout.list_item_filter, parent, false));
         }
 

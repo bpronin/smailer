@@ -3,11 +3,13 @@ package com.bopr.android.ui_automation;
 import android.annotation.SuppressLint;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
+
 import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.GeoCoordinates;
 import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.ui.MainActivity;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -15,11 +17,22 @@ import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.*;
-import static com.bopr.android.smailer.Settings.*;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static com.bopr.android.smailer.Settings.DEFAULT_TRIGGERS;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
+import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_CALLS;
+import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
+import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS;
+import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
+import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -40,7 +53,7 @@ public class MainActivityTest extends BaseActivityTest {
 
     @Test
     public void testTriggersSetting() {
-        String[] titles = rule.getActivity().getResources().getStringArray(R.array.titles_triggers);
+        String[] titles = rule.getContext().getResources().getStringArray(R.array.titles_triggers);
 
          /* check preferences */
         assertThat(preferences.getStringSet(KEY_PREF_EMAIL_TRIGGERS, null), equalTo(DEFAULT_TRIGGERS));
@@ -79,7 +92,7 @@ public class MainActivityTest extends BaseActivityTest {
 
     @Test
     public void testAboutBoxView() {
-        String[] openSources = rule.getActivity().getResources().getStringArray(R.array.open_source);
+        String[] openSources = rule.getContext().getResources().getStringArray(R.array.open_source);
 
         onMenuButton().perform(click());
         onView(withText(R.string.title_about)).perform(click());
@@ -94,7 +107,7 @@ public class MainActivityTest extends BaseActivityTest {
 
     @Test
     public void testLogView() {
-        Database database = new Database(rule.getActivity());
+        Database database = new Database(rule.getContext());
         database.clearEvents();
         database.putEvent(new PhoneEvent("10", true, 10000L, 20000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), "Test 10", PhoneEvent.State.PENDING));
 

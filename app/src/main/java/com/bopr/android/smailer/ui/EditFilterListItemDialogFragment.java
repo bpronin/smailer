@@ -47,7 +47,7 @@ abstract class EditFilterListItemDialogFragment extends DialogFragment {
         Dialog dialog = getDialog();
         if (dialog == null) {
             View view = createView();
-            dialog = AndroidUtil.dialogBuilder(getActivity())
+            dialog = AndroidUtil.dialogBuilder(getContext())
                     .setTitle(title)
                     .setView(view)
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {

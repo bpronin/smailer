@@ -56,7 +56,7 @@ public class LogDetailsDialogFragment extends DialogFragment {
         Dialog dialog = getDialog();
         if (dialog == null) {
             @SuppressLint("InflateParams")
-            View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_log_details, null, false);
+            View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_log_details, null, false);
 
             view.<ImageView>findViewById(R.id.image_event_type).setImageResource(Formats.eventTypeImage(value));
             view.<ImageView>findViewById(R.id.image_event_direction).setImageResource(Formats.eventDirectionImage(value));
@@ -65,9 +65,9 @@ public class LogDetailsDialogFragment extends DialogFragment {
             view.<TextView>findViewById(R.id.text_time).setText(formatTime(value.getStartTime()));
             view.<ImageView>findViewById(R.id.image_event_result).setImageResource(Formats.eventStateImage(value));
             view.<TextView>findViewById(R.id.text_result).setText(Formats.eventStateText(value));
-            view.<TextView>findViewById(R.id.text_type_title).setText(Formats.eventTypeText(getActivity(), value));
+            view.<TextView>findViewById(R.id.text_type_title).setText(Formats.eventTypeText(getContext(), value));
 
-            dialog = AndroidUtil.dialogBuilder(getActivity())
+            dialog = AndroidUtil.dialogBuilder(getContext())
                     .setView(view)
                     .setPositiveButton(R.string.title_close, new DialogInterface.OnClickListener() {
 
@@ -97,7 +97,7 @@ public class LogDetailsDialogFragment extends DialogFragment {
             } else {
                 pattern = R.string.email_body_outgoing_call;
             }
-            return formatter(pattern, getActivity())
+            return formatter(pattern, getContext())
                     .put("duration", formatDuration(event.getCallDuration()))
                     .format();
         }

@@ -97,7 +97,8 @@ public class DebugFragment extends BasePreferenceFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setHasOptionsMenu(false);
+        
         database = new Database(getContext());
         locator = new Locator(getContext(), database);
         cryptor = new Cryptor(getContext());
@@ -311,7 +312,7 @@ public class DebugFragment extends BasePreferenceFragment {
     private void onRestorePreferences() {
         Properties properties = getDebugProperties();
 
-        getPreferences()
+        preferences
                 .edit()
                 .putString(KEY_PREF_SENDER_ACCOUNT, properties.getProperty("default_sender"))
                 .putString(KEY_PREF_SENDER_PASSWORD, cryptor.encrypt(properties.getProperty("default_password")))
@@ -365,7 +366,7 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private void onClearPreferences() {
-        getPreferences().edit().clear().apply();
+        preferences.edit().clear().apply();
         refreshPreferences();
     }
 
@@ -448,7 +449,7 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private void onShowPassword() {
-        String text = cryptor.decrypt(getPreferences().getString(KEY_PREF_SENDER_PASSWORD, null));
+        String text = cryptor.decrypt(preferences.getString(KEY_PREF_SENDER_PASSWORD, null));
         Toast.makeText(getContext(), text, Toast.LENGTH_LONG).show();
     }
 

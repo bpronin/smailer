@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import com.bopr.android.smailer.Cryptor;
 import com.bopr.android.smailer.OutgoingSmsService;
 import com.bopr.android.smailer.ResendService;
-import com.bopr.android.smailer.util.AndroidUtil;
 import com.crashlytics.android.Crashlytics;
 
 import org.slf4j.Logger;
@@ -48,7 +47,8 @@ public class MainActivity extends AppActivity {
     @NonNull
     @Override
     protected Fragment createFragment() {
-        return AndroidUtil.isXLargeTablet(this) ? new MainFragmentDual() : new MainFragment();
+//        return AndroidUtil.isXLargeTablet(this) ? new MainFragmentDual() : new MainFragment();
+        return new MainFragment();
     }
 
     private static class InitKeystoreTask extends LongAsyncTask<Void, Void, Void> {

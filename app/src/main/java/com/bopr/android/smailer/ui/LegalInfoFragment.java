@@ -29,7 +29,7 @@ public class LegalInfoFragment extends ListFragment {
             String[] s = line.split("\\|");
             data.add(new Item(s[0], Uri.parse(s[1])));
         }
-        setListAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, data));
+        setListAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, data));
 
         return inflater.inflate(android.R.layout.list_content, container, false);
     }

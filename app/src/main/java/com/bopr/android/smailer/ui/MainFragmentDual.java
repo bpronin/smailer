@@ -27,7 +27,7 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_RULES;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class MainFragmentDual extends Fragment {
+public class MainFragmentDual extends BaseFragment {
 
     private Map<String, Fragment> detailFragments = new HashMap<>();
 

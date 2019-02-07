@@ -9,7 +9,6 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
@@ -39,7 +38,7 @@ import static com.bopr.android.smailer.util.TagFormatter.formatter;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class LogFragment extends Fragment {
+public class LogFragment extends BaseFragment {
 
     private Database database;
     private RecyclerView listView;
@@ -60,7 +59,7 @@ public class LogFragment extends Fragment {
                 loadData();
             }
         };
-        Settings.getPreferences(getActivity()).registerOnSharedPreferenceChangeListener(preferenceChangeListener);
+        preferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
 
         databaseListener = new BroadcastReceiver() {
             @Override
@@ -75,19 +74,25 @@ public class LogFragment extends Fragment {
         super.onDestroy();
         database.removeListener(databaseListener);
         database.close();
-        Settings.getPreferences(getActivity()).unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
+        preferences.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        database = new Database(getActivity());
+        database = new Database(getContext());
         database.addListener(databaseListener);
         View view = inflater.inflate(R.layout.fragment_log, container, false);
 
         listView = view.findViewById(android.R.id.list);
-        listView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+        listView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        loadData();
     }
 
     @Override
@@ -110,16 +115,10 @@ public class LogFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        loadData();
-    }
-
     private void loadData() {
-        listAdapter = new ListAdapter(getActivity(), database.getEvents());
+        listAdapter = new ListAdapter(getContext(), database.getEvents());
         listView.setAdapter(listAdapter);
-        phoneEventFilter = Settings.loadFilter(getActivity());
+        phoneEventFilter = Settings.loadFilter(getContext());
         updateEmptyText();
     }
 
@@ -144,7 +143,7 @@ public class LogFragment extends Fragment {
     }
 
     private void clearData() {
-        AndroidUtil.dialogBuilder(getActivity())
+        AndroidUtil.dialogBuilder(getContext())
                 .setMessage(R.string.message_activity_log_ask_clear)
                 .setPositiveButton(R.string.title_clear_log, new DialogInterface.OnClickListener() {
 
@@ -169,10 +168,10 @@ public class LogFragment extends Fragment {
             String number = listAdapter.getItem(selectedListItemPosition).getPhone();
 
             phoneEventFilter.getPhoneBlacklist().add(number);
-            Settings.saveFilter(getActivity(), phoneEventFilter);
+            Settings.saveFilter(getContext(), phoneEventFilter);
 
-            Toast.makeText(getActivity(),
-                    formatter(R.string.message_added_to_blacklist, getActivity())
+            Toast.makeText(getContext(),
+                    formatter(R.string.message_added_to_blacklist, getContext())
                             .put("number", number)
                             .format(),
                     Toast.LENGTH_SHORT).show();
@@ -184,10 +183,10 @@ public class LogFragment extends Fragment {
             String number = listAdapter.getItem(selectedListItemPosition).getPhone();
 
             phoneEventFilter.getPhoneWhitelist().add(number);
-            Settings.saveFilter(getActivity(), phoneEventFilter);
+            Settings.saveFilter(getContext(), phoneEventFilter);
 
-            Toast.makeText(getActivity(),
-                    formatter(R.string.message_added_to_whitelist, getActivity())
+            Toast.makeText(getContext(),
+                    formatter(R.string.message_added_to_whitelist, getContext())
                             .put("number", number)
                             .format(),
                     Toast.LENGTH_SHORT).show();
@@ -200,10 +199,10 @@ public class LogFragment extends Fragment {
 
             phoneEventFilter.getPhoneWhitelist().remove(number);
             phoneEventFilter.getPhoneBlacklist().remove(number);
-            Settings.saveFilter(getActivity(), phoneEventFilter);
+            Settings.saveFilter(getContext(), phoneEventFilter);
 
-            Toast.makeText(getActivity(),
-                    formatter(R.string.message_phone_removed_from_filter, getActivity())
+            Toast.makeText(getContext(),
+                    formatter(R.string.message_phone_removed_from_filter, getContext())
                             .put("number", number)
                             .format(),
                     Toast.LENGTH_SHORT).show();

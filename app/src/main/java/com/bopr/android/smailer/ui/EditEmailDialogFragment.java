@@ -59,7 +59,7 @@ public class EditEmailDialogFragment extends DialogFragment {
         Dialog dialog = getDialog();
         if (dialog == null) {
             @SuppressLint("InflateParams")
-            View view = LayoutInflater.from(getActivity()).inflate(R.layout.editor_email, null, false);
+            View view = LayoutInflater.from(getContext()).inflate(R.layout.editor_email, null, false);
 
             EditText editText = view.findViewById(R.id.edit_text_address);
             editText.addTextChangedListener(new EmailTextValidator(editText));
@@ -78,7 +78,7 @@ public class EditEmailDialogFragment extends DialogFragment {
                 }
             });
 
-            dialog = AndroidUtil.dialogBuilder(getActivity())
+            dialog = AndroidUtil.dialogBuilder(getContext())
                     .setTitle(title)
                     .setView(view)
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -107,7 +107,7 @@ public class EditEmailDialogFragment extends DialogFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == PICK_CONTACT_REQUEST && resultCode == Activity.RESULT_OK) {
-            String email = Contacts.getEmailAddressFromIntent(getActivity(), intent);
+            String email = Contacts.getEmailAddressFromIntent(getContext(), intent);
             getEditor().setText(email);
 //            callback.onOkClick(email);
 //            dismiss();

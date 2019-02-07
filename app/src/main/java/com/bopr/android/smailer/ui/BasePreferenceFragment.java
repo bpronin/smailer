@@ -3,7 +3,6 @@ package com.bopr.android.smailer.ui;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v14.preference.MultiSelectListPreference;
 import android.support.v14.preference.SwitchPreference;
 import android.support.v4.app.DialogFragment;
@@ -13,6 +12,8 @@ import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceGroup;
+import android.view.Menu;
+import android.view.MenuInflater;
 
 import com.bopr.android.smailer.PreferencesPermissionsChecker;
 import com.bopr.android.smailer.R;
@@ -43,10 +44,13 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
     private static final String DIALOG_FRAGMENT_TAG = "android.support.v7.preference.PreferenceFragment.DIALOG";
 
     private PreferencesPermissionsChecker permissionChecker;
+    protected SharedPreferences preferences;
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        preferences = Settings.getPreferences(getContext());
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -59,7 +63,7 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
         super.onStart();
         refreshPreferences();
 
-        permissionChecker = new PreferencesPermissionsChecker(getActivity(), getPreferences()) {
+        permissionChecker = new PreferencesPermissionsChecker(getActivity(), preferences) {
 
             @Override
             protected void onPermissionsDenied(Collection<String> permissions) {
@@ -105,11 +109,10 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
         }
     }
 
-    /**
-     * Returns application's shared preferences.
-     */
-    protected SharedPreferences getPreferences() {
-        return Settings.getPreferences(getContext());
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_main, menu);
     }
 
     /**
@@ -118,7 +121,7 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
      * @param preference preference
      */
     protected void updateNotSpecifiedSummary(Preference preference) {
-        preference.setSummary(AndroidUtil.validatedColoredText(getActivity(),
+        preference.setSummary(AndroidUtil.validatedColoredText(getContext(),
                 getString(R.string.title_not_set), false));
     }
 
@@ -129,7 +132,7 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
      * @param preference preference
      */
     protected void updateSummary(String value, Preference preference, boolean valid) {
-        preference.setSummary(AndroidUtil.validatedUnderlinedText(getActivity(), value, valid));
+        preference.setSummary(AndroidUtil.validatedUnderlinedText(getContext(), value, valid));
     }
 
     /**
@@ -141,7 +144,7 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
 
     @SuppressWarnings("unchecked")
     private void doRefreshPreferences(PreferenceGroup group) {
-        Map<String, ?> map = getPreferences().getAll();
+        Map<String, ?> map = preferences.getAll();
         for (int i = 0; i < group.getPreferenceCount(); i++) {
             Preference preference = group.getPreference(i);
             if (preference instanceof PreferenceGroup) {

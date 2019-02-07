@@ -41,8 +41,8 @@ public class AboutDialogFragment extends DialogFragment {
 
             @Override
             public boolean onLongClick(View v) {
-                Settings.BuildInfo info = Settings.getReleaseInfo(getActivity());
-                dialogBuilder(getActivity())
+                Settings.BuildInfo info = Settings.getReleaseInfo(getContext());
+                dialogBuilder(getContext())
                         .setTitle("Release info")
                         .setMessage("Build number: " + info.number + "\nBuild time: " + info.time)
                         .show();
@@ -54,7 +54,7 @@ public class AboutDialogFragment extends DialogFragment {
 
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), LegalInfoActivity.class));
+                startActivity(new Intent(getContext(), LegalInfoActivity.class));
                 dismiss();
             }
         });
@@ -72,7 +72,7 @@ public class AboutDialogFragment extends DialogFragment {
 
     private String formatVersion() {
         return formatter(R.string.title_version, getResources())
-                .put("version", Settings.getReleaseVersion(getActivity()))
+                .put("version", Settings.getReleaseVersion(getContext()))
                 .format();
     }
 

@@ -32,7 +32,7 @@ public class RulesFragment extends BasePreferenceFragment {
 
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                startActivity(new Intent(getActivity(), PhoneBlacklistActivity.class));
+                startActivity(new Intent(getContext(), PhoneBlacklistActivity.class));
                 return true;
             }
         });
@@ -51,7 +51,7 @@ public class RulesFragment extends BasePreferenceFragment {
 
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                startActivity(new Intent(getActivity(), PhoneWhitelistActivity.class));
+                startActivity(new Intent(getContext(), PhoneWhitelistActivity.class));
                 return true;
             }
         });
@@ -70,7 +70,7 @@ public class RulesFragment extends BasePreferenceFragment {
 
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                startActivity(new Intent(getActivity(), TextBlacklistActivity.class));
+                startActivity(new Intent(getContext(), TextBlacklistActivity.class));
                 return true;
             }
         });
@@ -89,7 +89,7 @@ public class RulesFragment extends BasePreferenceFragment {
 
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                startActivity(new Intent(getActivity(), TextWhitelistActivity.class));
+                startActivity(new Intent(getContext(), TextWhitelistActivity.class));
                 return true;
             }
         });
@@ -106,7 +106,7 @@ public class RulesFragment extends BasePreferenceFragment {
     }
 
     private String formatListAndSize(String value, int pattern, int zeroSizeText) {
-        TagFormatter formatter = formatter(pattern, getActivity());
+        TagFormatter formatter = formatter(pattern, getContext());
         int size = parseCommaSeparated(value).size();
         if (size > 0) {
             return formatter.put("size", String.valueOf(size)).format();

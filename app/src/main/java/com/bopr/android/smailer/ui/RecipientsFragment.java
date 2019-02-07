@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
@@ -24,7 +23,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
-import static com.bopr.android.smailer.Settings.getPreferences;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.Util.commaSeparated;
 import static java.lang.String.valueOf;
@@ -35,17 +33,15 @@ import static java.lang.String.valueOf;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class RecipientsFragment extends Fragment {
+public class RecipientsFragment extends BaseFragment {
 
     private ListAdapter listAdapter;
     private RecyclerView listView;
-    private SharedPreferences preferences;
     private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        preferences = getPreferences(getActivity());
         preferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
 
             @Override
@@ -68,7 +64,7 @@ public class RecipientsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_recipients, container, false);
 
         listView = view.findViewById(android.R.id.list);
-        listView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+        listView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
@@ -186,7 +182,7 @@ public class RecipientsFragment extends Fragment {
             @Override
             public void onOkClick(String address) {
                 if (isItemExists(address) && (item == null || !item.address.equals(address))) {
-                    Toast.makeText(getActivity(), formatter(R.string.message_recipient_already_exists, getResources())
+                    Toast.makeText(getContext(), formatter(R.string.message_recipient_already_exists, getResources())
                             .put("name", address)
                             .format(), Toast.LENGTH_LONG).show();
                 } else if (!Util.isTrimEmpty(address)) {
@@ -212,7 +208,7 @@ public class RecipientsFragment extends Fragment {
         }
 
         Snackbar.make(listView, title, Snackbar.LENGTH_LONG)
-                .setActionTextColor(ContextCompat.getColor(getActivity(), R.color.dialogButtonText))
+                .setActionTextColor(ContextCompat.getColor(getContext(), R.color.dialogButtonText))
                 .setAction(R.string.title_undo, new View.OnClickListener() {
 
                     @Override
@@ -239,7 +235,7 @@ public class RecipientsFragment extends Fragment {
         @NonNull
         @Override
         public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            LayoutInflater inflater = LayoutInflater.from(getActivity());
+            LayoutInflater inflater = LayoutInflater.from(getContext());
             return new ItemViewHolder(inflater.inflate(R.layout.list_item_recipient, parent, false));
         }
 

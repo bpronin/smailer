@@ -46,7 +46,7 @@ public class EditPhoneDialogFragment extends EditFilterListItemDialogFragment {
     @Override
     protected View createView() {
         @SuppressLint("InflateParams")
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.editor_phone, null, false);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.editor_phone, null, false);
 
         EditText editText = view.findViewById(R.id.edit_text_phone);
         //editText.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
@@ -62,7 +62,7 @@ public class EditPhoneDialogFragment extends EditFilterListItemDialogFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == PICK_CONTACT_REQUEST && resultCode == Activity.RESULT_OK) {
-            String phone = Contacts.getPhoneFromIntent(getActivity(), intent);
+            String phone = Contacts.getPhoneFromIntent(getContext(), intent);
             getEditor().setText(phone);
         }
     }

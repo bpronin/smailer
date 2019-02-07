@@ -45,7 +45,7 @@ public class EditTextDialogFragment extends EditFilterListItemDialogFragment {
     @NonNull
     protected View createView() {
         @SuppressLint("InflateParams")
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.editor_text, null, false);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.editor_text, null, false);
 
         editText = view.findViewById(R.id.edit_text);
         editText.setText(initialText);

@@ -7,8 +7,6 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.preference.Preference;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ListView;
 
@@ -53,12 +51,11 @@ public class MainFragment extends BasePreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        backupManager = new BackupManager(getActivity());
+        backupManager = new BackupManager(getContext());
 
-        loadDefaultPreferences(getActivity());
+        loadDefaultPreferences(getContext());
 
         addPreferencesFromResource(R.xml.pref_main);
-        setHasOptionsMenu(true);
 
         recipientsPreference = findPreference(KEY_PREF_RECIPIENTS_ADDRESS);
         serverPreference = findPreference(KEY_PREF_OUTGOING_SERVER);
@@ -75,18 +72,18 @@ public class MainFragment extends BasePreferenceFragment {
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 updateServerPreference();
                 updateRecipientsPreference();
-                OutgoingSmsService.toggleService(getActivity());
-                ResendService.toggleService(getActivity());
+                OutgoingSmsService.toggleService(getContext());
+                ResendService.toggleService(getContext());
 
                 backupManager.dataChanged();
             }
         };
-        getPreferences().registerOnSharedPreferenceChangeListener(preferenceChangeListener);
+        preferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
     }
 
     @Override
     public void onDestroy() {
-        getPreferences().unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
+        preferences.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
         super.onDestroy();
     }
 
@@ -108,11 +105,6 @@ public class MainFragment extends BasePreferenceFragment {
         updateRecipientsPreference();
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_main, menu);
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -133,7 +125,7 @@ public class MainFragment extends BasePreferenceFragment {
 
     private void updateServerPreference() {
         if (!asListView) {
-            SharedPreferences preferences = getPreferences();
+            SharedPreferences preferences = this.preferences;
             String sender = preferences.getString(KEY_PREF_SENDER_ACCOUNT, "");
             String host = preferences.getString(KEY_PREF_EMAIL_HOST, "");
             String port = preferences.getString(KEY_PREF_EMAIL_PORT, "");
@@ -148,7 +140,7 @@ public class MainFragment extends BasePreferenceFragment {
 
     private void updateRecipientsPreference() {
         if (!asListView) {
-            String value = getPreferences().getString(KEY_PREF_RECIPIENTS_ADDRESS, null);
+            String value = preferences.getString(KEY_PREF_RECIPIENTS_ADDRESS, null);
             if (isEmpty(value)) {
                 updateNotSpecifiedSummary(recipientsPreference);
             } else {
@@ -167,19 +159,19 @@ public class MainFragment extends BasePreferenceFragment {
         public boolean onPreferenceClick(Preference preference) {
             switch (preference.getKey()) {
                 case KEY_PREF_OUTGOING_SERVER:
-                    startActivity(new Intent(getActivity(), ServerActivity.class));
+                    startActivity(new Intent(getContext(), ServerActivity.class));
                     break;
                 case KEY_PREF_RECIPIENTS_ADDRESS:
-                    startActivity(new Intent(getActivity(), RecipientsActivity.class));
+                    startActivity(new Intent(getContext(), RecipientsActivity.class));
                     break;
                 case KEY_PREF_MORE:
-                    startActivity(new Intent(getActivity(), MoreActivity.class));
+                    startActivity(new Intent(getContext(), MoreActivity.class));
                     break;
                 case KEY_PREF_RULES:
-                    startActivity(new Intent(getActivity(), RulesActivity.class));
+                    startActivity(new Intent(getContext(), RulesActivity.class));
                     break;
                 case KEY_PREF_LOG:
-                    startActivity(new Intent(getActivity(), LogActivity.class));
+                    startActivity(new Intent(getContext(), LogActivity.class));
                     break;
             }
             return true;
