@@ -53,7 +53,7 @@ public class MainActivityTest extends BaseActivityTest {
 
     @Test
     public void testTriggersSetting() {
-        String[] titles = rule.getContext().getResources().getStringArray(R.array.titles_triggers);
+        String[] titles = rule.getActivity().getResources().getStringArray(R.array.titles_triggers);
 
          /* check preferences */
         assertThat(preferences.getStringSet(KEY_PREF_EMAIL_TRIGGERS, null), equalTo(DEFAULT_TRIGGERS));
@@ -92,7 +92,7 @@ public class MainActivityTest extends BaseActivityTest {
 
     @Test
     public void testAboutBoxView() {
-        String[] openSources = rule.getContext().getResources().getStringArray(R.array.open_source);
+        String[] openSources = rule.getActivity().getResources().getStringArray(R.array.open_source);
 
         onMenuButton().perform(click());
         onView(withText(R.string.title_about)).perform(click());
@@ -107,7 +107,7 @@ public class MainActivityTest extends BaseActivityTest {
 
     @Test
     public void testLogView() {
-        Database database = new Database(rule.getContext());
+        Database database = new Database(rule.getActivity());
         database.clearEvents();
         database.putEvent(new PhoneEvent("10", true, 10000L, 20000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), "Test 10", PhoneEvent.State.PENDING));
 

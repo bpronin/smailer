@@ -32,7 +32,7 @@ public class CryptorTest extends BaseTest {
     }
 
     @Test
-    public void testEncryptDecrypt() throws Exception {
+    public void testEncryptDecrypt() {
         Cryptor cryptor = new Cryptor(getContext());
         String text = "the text";
 
@@ -44,7 +44,7 @@ public class CryptorTest extends BaseTest {
     }
 
     @Test
-    public void testInvalidInput() throws Exception {
+    public void testInvalidInput() {
         Cryptor cryptor = new Cryptor(getContext());
 
         String encrypted = cryptor.encrypt(null);

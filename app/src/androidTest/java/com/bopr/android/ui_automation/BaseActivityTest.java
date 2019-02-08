@@ -46,6 +46,7 @@ import static com.bopr.android.smailer.Settings.getPreferences;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.core.Is.is;
 
 /**
  * Base UI tester.
@@ -67,7 +68,7 @@ public class BaseActivityTest {
     @Before
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public void setUp() {
-        preferences = getPreferences(rule.getContext());
+        preferences = getPreferences(rule.getActivity());
         preferences
                 .edit()
                 .clear()
@@ -82,7 +83,7 @@ public class BaseActivityTest {
 
     @NonNull
     protected ViewInteraction onDialog(Matcher<View> matcher) {
-        return onView(matcher).inRoot(withDecorView(not(is(rule.getContext().getWindow().getDecorView()))));
+        return onView(matcher).inRoot(withDecorView(not(is(rule.getActivity().getWindow().getDecorView()))));
     }
 
     @NonNull
@@ -94,7 +95,7 @@ public class BaseActivityTest {
 //    protected ViewInteraction onSnackBar(Matcher<View> matcher) {
 //        //return onView(allOf(withId(android.support.design.R.id.snackbar_text), matcher));
 //        return onView(withId(android.support.design.R.id.snackbar_text))
-//                .inRoot(withDecorView(not(is(rule.getContext().getWindow().getDecorView()))));
+//                .inRoot(withDecorView(not(is(rule.getActivity().getWindow().getDecorView()))));
 //    }
 
     @NonNull

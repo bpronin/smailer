@@ -1,25 +1,14 @@
 package com.bopr.android.smailer;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
-import android.security.keystore.KeyGenParameterSpec;
-import android.security.keystore.KeyProperties;
-import android.support.annotation.NonNull;
 import android.util.Base64;
 
 import com.bopr.android.smailer.util.Util;
 
-import java.math.BigInteger;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.KeyStore;
-import java.security.spec.AlgorithmParameterSpec;
-import java.util.Calendar;
 
 import javax.crypto.Cipher;
-import javax.security.auth.x500.X500Principal;
 
 /**
  * RSA encryption operations.
@@ -28,15 +17,17 @@ import javax.security.auth.x500.X500Principal;
  */
 public class Cryptor {
 
-    private static final String KEY_ALIAS = "smailer";
-    public static final String KEYSTORE_FILE = "keystore.jks";
     private static final String CIPHER_TRANSFORMATION = "RSA/ECB/PKCS1Padding";
-    private static final char[] KEYSTORE_PASSWORD = "7y%6B7ло9c557".toCharArray();
 
-    private final Context context;
+    private final KeyStore keyStore;
 
     public Cryptor(Context context) {
-        this.context = context;
+        try {
+            keyStore = KeyStore.getInstance("BKS");
+            keyStore.load(context.getAssets().open("keystore.bks"), "return".toCharArray());
+        } catch (Exception x) {
+            throw new RuntimeException(x);
+        }
     }
 
     public String encrypt(String s) {
@@ -47,7 +38,7 @@ public class Cryptor {
         try {
             @SuppressLint("GetInstance")
             Cipher cipher = Cipher.getInstance(CIPHER_TRANSFORMATION);
-            cipher.init(Cipher.ENCRYPT_MODE, getKeys().getPublic());
+            cipher.init(Cipher.ENCRYPT_MODE, keys().getCertificate().getPublicKey());
             byte[] bytes = cipher.doFinal(s.getBytes());
             return Base64.encodeToString(bytes, Base64.NO_WRAP);
         } catch (Exception x) {
@@ -63,7 +54,7 @@ public class Cryptor {
         try {
             @SuppressLint("GetInstance")
             Cipher cipher = Cipher.getInstance(CIPHER_TRANSFORMATION);
-            cipher.init(Cipher.DECRYPT_MODE, getKeys().getPrivate());
+            cipher.init(Cipher.DECRYPT_MODE, keys().getPrivateKey());
             byte[] bytes = cipher.doFinal(Base64.decode(s, Base64.NO_WRAP));
             return new String(bytes);
         } catch (Exception x) {
@@ -71,83 +62,9 @@ public class Cryptor {
         }
     }
 
-    private KeyPair getKeys() throws Exception {
-        KeyStore keyStore = initKeystore(context);
-        KeyStore.PrivateKeyEntry entry = (KeyStore.PrivateKeyEntry) keyStore.getEntry(KEY_ALIAS, null);
-        return new KeyPair(entry.getCertificate().getPublicKey(), entry.getPrivateKey());
-    }
-
-    public static boolean isKeystoreInitialized() {
-        try {
-            KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
-            keyStore.load(null);
-            return keyStore.containsAlias(KEY_ALIAS);
-        } catch (Exception x) {
-            throw new Error("Unable init keystore", x);
-        }
-    }
-
-    @SuppressLint({"InlinedApi", "TrulyRandom"})
-    public static KeyStore initKeystore(Context context) {
-        try {
-            KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
-
-//            File file = new File(context.getFilesDir(), KEYSTORE_FILE);
-//            if (file.exists()) {
-//                keyStore.load(new FileInputStream(file), KEYSTORE_PASSWORD);
-//            } else {
-                keyStore.load(null);
-//            }
-
-            if (!keyStore.containsAlias(KEY_ALIAS)) {
-                AlgorithmParameterSpec spec;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    spec = getAlgorithmParameterSpec();
-                } else {
-                    spec = getAlgorithmParameterSpecLegacy(context);
-                }
-
-                KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA", "AndroidKeyStore");
-                generator.initialize(spec);
-                generator.generateKeyPair();
-
-//                keyStore.store(new FileOutputStream(file), KEYSTORE_PASSWORD);
-            }
-            return keyStore;
-        } catch (Exception x) {
-            throw new Error("Keystore initialization failed", x);
-        }
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    @NonNull
-    private static AlgorithmParameterSpec getAlgorithmParameterSpec() {
-        AlgorithmParameterSpec spec;
-        spec = new KeyGenParameterSpec.Builder(
-                KEY_ALIAS, KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
-                .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
-                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
-                .build();
-        return spec;
-    }
-
-    @NonNull
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    @SuppressWarnings("deprecation")
-    private static AlgorithmParameterSpec getAlgorithmParameterSpecLegacy(Context context) {
-        AlgorithmParameterSpec spec;
-        Calendar start = Calendar.getInstance();
-        Calendar end = Calendar.getInstance();
-        end.add(Calendar.YEAR, 100);
-        /* do not put KeyPairGeneratorSpec in imports to avoid deprecation warning */
-        spec = new android.security.KeyPairGeneratorSpec.Builder(context)
-                .setAlias(KEY_ALIAS)
-                .setSubject(new X500Principal("CN=" + KEY_ALIAS + ", O=Android Authority"))
-                .setSerialNumber(BigInteger.ONE)
-                .setStartDate(start.getTime())
-                .setEndDate(end.getTime())
-                .build();
-        return spec;
+    private KeyStore.PrivateKeyEntry keys() throws Exception {
+        KeyStore.ProtectionParameter parameter = new KeyStore.PasswordProtection("byte[]".toCharArray());
+        return (KeyStore.PrivateKeyEntry) keyStore.getEntry("mail", parameter);
     }
 
 }
