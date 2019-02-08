@@ -18,6 +18,7 @@
         android:icon="@drawable/ic_pref_password"
         android:maxLines="1"
         android:selectAllOnFocus="true"
+        android:dialogLayout="@layout/editor_password"
         android:singleLine="true"
         android:title="@string/title_password"/>
 

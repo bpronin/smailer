@@ -50,7 +50,7 @@ public class Notifications {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "default");
         Notification notification = builder
                 .setContentIntent(createIntent(action, messageId))
-                .setSmallIcon(R.drawable.alert)
+                .setSmallIcon(R.drawable.ic_alert)
                 .setTicker(context.getResources().getString(R.string.app_name))
                 .setAutoCancel(true)
                 .setContentTitle(context.getResources().getString(R.string.app_name))
@@ -66,7 +66,7 @@ public class Notifications {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "default");
         Notification notification = builder
                 .setContentIntent(createIntent(ACTION_SHOW_LOG, messageId))
-                .setSmallIcon(R.drawable.file_send)
+                .setSmallIcon(R.drawable.ic_file_send)
                 .setTicker(context.getResources().getString(R.string.app_name))
                 .setAutoCancel(true)
                 .setContentTitle(context.getResources().getString(R.string.app_name))
