@@ -62,7 +62,7 @@ public class PasswordPreferenceDialog extends EditTextPreferenceDialogFragmentCo
 
     @SuppressLint("ClickableViewAccessibility")
     private void setUpButton(View view) {
-        ImageButton button = view.findViewById(R.id.button);
+        ImageButton button = view.findViewById(R.id.button_show_password);
         button.setOnTouchListener(new View.OnTouchListener() {
 
             @Override

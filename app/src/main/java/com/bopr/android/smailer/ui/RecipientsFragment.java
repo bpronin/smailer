@@ -1,5 +1,6 @@
 package com.bopr.android.smailer.ui;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,10 +40,12 @@ public class RecipientsFragment extends BaseFragment {
     private ListAdapter listAdapter;
     private RecyclerView listView;
     private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
+    private Activity activity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        activity = getActivity();
         preferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
 
             @Override
@@ -64,7 +68,7 @@ public class RecipientsFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_recipients, container, false);
 
         listView = view.findViewById(android.R.id.list);
-        listView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+        listView.addItemDecoration(new DividerItemDecoration(activity, DividerItemDecoration.VERTICAL));
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
@@ -90,14 +94,23 @@ public class RecipientsFragment extends BaseFragment {
                 addItem();
             }
         });
+
+        loadItems();
+
         return view;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        loadItems();
-    }
+//    @Override
+//    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+//        super.onViewCreated(view, savedInstanceState);
+//        view.post(new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                addButton.show();
+//            }
+//        });
+//    }
 
     protected void updateEmptyText() {
         View view = getView();
@@ -181,6 +194,7 @@ public class RecipientsFragment extends BaseFragment {
 
             @Override
             public void onOkClick(String address) {
+                Log.d("", "onOkClick: ");
                 if (isItemExists(address) && (item == null || !item.address.equals(address))) {
                     Toast.makeText(getContext(), formatter(R.string.message_recipient_already_exists, getResources())
                             .put("name", address)
@@ -208,7 +222,7 @@ public class RecipientsFragment extends BaseFragment {
         }
 
         Snackbar.make(listView, title, Snackbar.LENGTH_LONG)
-                .setActionTextColor(ContextCompat.getColor(getContext(), R.color.dialogButtonText))
+                .setActionTextColor(ContextCompat.getColor(activity, R.color.dialogButtonText))
                 .setAction(R.string.title_undo, new View.OnClickListener() {
 
                     @Override

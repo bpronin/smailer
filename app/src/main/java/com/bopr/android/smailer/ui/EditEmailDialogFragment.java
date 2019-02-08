@@ -13,7 +13,6 @@ import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.bopr.android.smailer.Contacts;
@@ -33,6 +32,7 @@ public class EditEmailDialogFragment extends DialogFragment {
     private int title;
     private String initialValue;
     private Callback callback;
+    private TextView editText;
 
     public void showDialog(FragmentActivity activity) {
         show(activity.getSupportFragmentManager(), "edit_recipient_dialog");
@@ -61,12 +61,12 @@ public class EditEmailDialogFragment extends DialogFragment {
             @SuppressLint("InflateParams")
             View view = LayoutInflater.from(getContext()).inflate(R.layout.editor_email, null, false);
 
-            EditText editText = view.findViewById(R.id.edit_text_address);
+            editText = view.findViewById(android.R.id.edit);
             editText.addTextChangedListener(new EmailTextValidator(editText));
             editText.setText(initialValue);
 
             /* custom message view. do not use setMessage() } */
-            TextView messageText = view.findViewById(R.id.dialog_message);
+            TextView messageText = view.findViewById(android.R.id.message);
             messageText.setText(R.string.title_email_address);
 
             View browseButton = view.findViewById(R.id.button_browse_contacts);
@@ -85,7 +85,7 @@ public class EditEmailDialogFragment extends DialogFragment {
 
                         @Override
                         public void onClick(DialogInterface dialogInterface, int which) {
-                            callback.onOkClick(getEditor().getText().toString());
+                            callback.onOkClick(editText.getText().toString());
                         }
                     })
                     .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -108,14 +108,8 @@ public class EditEmailDialogFragment extends DialogFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == PICK_CONTACT_REQUEST && resultCode == Activity.RESULT_OK) {
             String email = Contacts.getEmailAddressFromIntent(getContext(), intent);
-            getEditor().setText(email);
-//            callback.onOkClick(email);
-//            dismiss();
+            editText.setText(email);
         }
-    }
-
-    private EditText getEditor() {
-        return (EditText) getDialog().findViewById(R.id.edit_text_address);
     }
 
     public void setCallback(Callback callback) {

@@ -2,25 +2,26 @@
 <android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <com.bopr.android.smailer.util.ui.preference.EmailPreference
+        android:dialogLayout="@layout/editor_email"
         android:dialogMessage="@string/title_account_hint"
         android:dialogTitle="@string/title_outgoing_email_address"
+        android:icon="@drawable/ic_pref_account"
         android:inputType="textEmailAddress"
         android:key="sender_account"
         android:maxLines="1"
         android:singleLine="true"
-        android:icon="@drawable/ic_pref_account"
-        android:title="@string/title_sender_account"/>
+        android:title="@string/title_sender_account" />
 
     <com.bopr.android.smailer.util.ui.preference.PasswordPreference
+        android:dialogLayout="@layout/editor_password"
         android:dialogMessage="@string/title_email_password_hint"
         android:dialogTitle="@string/title_password"
-        android:key="sender_password"
         android:icon="@drawable/ic_pref_password"
+        android:key="sender_password"
         android:maxLines="1"
         android:selectAllOnFocus="true"
-        android:dialogLayout="@layout/editor_password"
         android:singleLine="true"
-        android:title="@string/title_password"/>
+        android:title="@string/title_password" />
 
     <android.support.v7.preference.EditTextPreference
         android:inputType="textNoSuggestions"
@@ -28,20 +29,20 @@
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="@string/title_host"/>
+        android:title="@string/title_host" />
 
     <android.support.v7.preference.EditTextPreference
-        android:inputType="textNoSuggestions"
         android:digits="0123456789"
+        android:inputType="textNoSuggestions"
         android:key="sender_port"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="@string/title_port"/>
+        android:title="@string/title_port" />
 
     <com.bopr.android.smailer.ui.TestServerPreference
         android:key="test_mail_server"
         android:persistent="false"
-        android:widgetLayout="@layout/pref_test_mail_server"/>
+        android:widgetLayout="@layout/pref_test_mail_server" />
 
 </android.support.v7.preference.PreferenceScreen>

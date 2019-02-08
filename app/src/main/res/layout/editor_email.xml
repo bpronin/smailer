@@ -1,45 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:id="@+id/edit_text_container"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="20dp">
-
-    <TextView
-        android:id="@+id/dialog_message"
-        style="?android:attr/textAppearanceSmall"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="48dp"
-        android:labelFor="@+id/edit_text_address"
-        android:paddingEnd="4dp"
-        android:paddingStart="4dp"
-        android:textColor="?android:attr/textColorSecondary"/>
+    android:layout_height="match_parent"
+    android:layout_marginTop="48dp"
+    android:layout_marginBottom="48dp"
+    android:overScrollMode="ifContentScrolls">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/edit_text_address"
-            android:layout_width="0dp"
+        <TextView
+            android:id="@android:id/message"
+            style="?android:attr/textAppearanceSmall"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:inputType="textEmailAddress"
-            android:selectAllOnFocus="true"/>
+            android:layout_marginBottom="48dp"
+            android:textColor="?android:attr/textColorSecondary" />
 
-        <ImageButton
-            android:id="@+id/button_browse_contacts"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="@string/message_select_email_from_contacts"
-            android:src="@drawable/ic_account"
-            tools:ignore="ContentDescription"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@android:id/edit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="-4dp"
+                android:layout_marginEnd="-4dp"
+                android:inputType="textEmailAddress"
+                android:layout_weight="1"
+                android:selectAllOnFocus="true" />
+
+            <ImageButton
+                android:id="@+id/button_browse_contacts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="@string/message_select_email_from_contacts"
+                android:src="@drawable/ic_account"
+                tools:ignore="ContentDescription" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
-</LinearLayout>
+</ScrollView>

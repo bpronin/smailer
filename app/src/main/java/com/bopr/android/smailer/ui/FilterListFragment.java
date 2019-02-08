@@ -1,5 +1,6 @@
 package com.bopr.android.smailer.ui;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -42,10 +43,13 @@ abstract class FilterListFragment extends BaseFragment {
     private RecyclerView listView;
     private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
     private int selectedListPosition = NO_POSITION;
+    private Activity activity;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        activity = getActivity();
         preferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
 
             @Override
@@ -67,7 +71,7 @@ abstract class FilterListFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_filter_list, container, false);
 
         listView = view.findViewById(android.R.id.list);
-        listView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+        listView.addItemDecoration(new DividerItemDecoration(activity, DividerItemDecoration.VERTICAL));
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
@@ -95,21 +99,9 @@ abstract class FilterListFragment extends BaseFragment {
             }
         });
 
-//        view.post(new Runnable() {
-//
-//            @Override
-//            public void run() {
-//                addButton.show();
-//            }
-//        });
+        loadItems();
 
         return view;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        loadItems();
     }
 
     @Override
@@ -249,7 +241,7 @@ abstract class FilterListFragment extends BaseFragment {
         }
 
         Snackbar.make(listView, title, Snackbar.LENGTH_LONG)
-                .setActionTextColor(ContextCompat.getColor(getContext(), R.color.dialogButtonText))
+                .setActionTextColor(ContextCompat.getColor(activity, R.color.dialogButtonText))
                 .setAction(R.string.title_undo, new View.OnClickListener() {
 
                     @Override
@@ -305,7 +297,7 @@ abstract class FilterListFragment extends BaseFragment {
 
                 @Override
                 public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-                    getActivity().getMenuInflater().inflate(R.menu.menu_item_filter_list, menu);
+                    activity.getMenuInflater().inflate(R.menu.menu_item_filter_list, menu);
                 }
             });
         }
