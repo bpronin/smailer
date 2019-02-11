@@ -1,6 +1,5 @@
 package com.bopr.android.smailer;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -246,11 +245,12 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
         }
     }
 
-    @SuppressLint("ApplySharedPref")
     private void removeSetPreferenceValue(SharedPreferences preferences, String key, String... values) {
-        Set<String> set = preferences.getStringSet(key, Collections.<String>emptySet());
+         /* should be a copy of values set.
+           see: https://stackoverflow.com/questions/17469583/setstring-in-android-sharedpreferences-does-not-save-on-force-close */
+        Set<String> set = new HashSet<>(preferences.getStringSet(key, Collections.<String>emptySet()));
         set.removeAll(Arrays.asList(values));
-        preferences.edit().putStringSet(key, set).commit();
+        preferences.edit().putStringSet(key, set).apply();
     }
 
 }
