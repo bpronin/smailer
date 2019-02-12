@@ -4,16 +4,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 
 import com.bopr.android.smailer.util.AndroidUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static android.Manifest.permission.READ_CONTACTS;
-import static android.provider.ContactsContract.CommonDataKinds.*;
+import static android.provider.ContactsContract.CommonDataKinds.Email;
+import static android.provider.ContactsContract.CommonDataKinds.Phone;
 import static android.provider.ContactsContract.PhoneLookup;
+import static com.bopr.android.smailer.util.Util.requireNonNull;
 
 /**
  * Contacts utilities.
@@ -27,7 +29,7 @@ public class Contacts {
     @Nullable
     public static String getContactName(Context context, String phoneNumber) {
         String result = null;
-        if (!permissionDenied(context)) {
+        if (requirePermission(context)) {
             Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
             Cursor cursor = context.getContentResolver().query(uri,
                     new String[]{PhoneLookup.DISPLAY_NAME}, null, null, null);
@@ -42,9 +44,9 @@ public class Contacts {
     }
 
     @Nullable
-    public static String getEmailAddress(Context context, String emailId) {
+    private static String getEmailAddress(Context context, String emailId) {
         String result = null;
-        if (!permissionDenied(context)) {
+        if (requirePermission(context)) {
             Cursor cursor = context.getContentResolver().query(Email.CONTENT_URI, null,
                     Email._ID + "=" + emailId, null, null);
             if (cursor != null) {
@@ -60,7 +62,7 @@ public class Contacts {
     @Nullable
     public static String getPhone(Context context, String phoneId) {
         String result = null;
-        if (!permissionDenied(context)) {
+        if (requirePermission(context)) {
             Cursor cursor = context.getContentResolver().query(Phone.CONTENT_URI, null,
                     Phone._ID + "=" + phoneId, null, null);
             if (cursor != null) {
@@ -73,16 +75,16 @@ public class Contacts {
         return result;
     }
 
-    public static boolean isPermissionsDenied(Context context) {
+    static boolean isPermissionsDenied(Context context) {
         return AndroidUtil.isPermissionsDenied(context, READ_CONTACTS);
     }
 
-    private static boolean permissionDenied(Context context) {
+    private static boolean requirePermission(Context context) {
         if (isPermissionsDenied(context)) {
             log.warn("Unable read contact. Permission denied.");
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     public static Intent createPickContactEmailIntent() {
@@ -91,17 +93,19 @@ public class Contacts {
         return intent;
     }
 
+/*
     public static Intent createPickContactPhoneIntent() {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType(Phone.CONTENT_TYPE);
         return intent;
     }
+*/
 
     public static String getEmailAddressFromIntent(Context context, Intent intent) {
-        return getEmailAddress(context, intent.getData().getLastPathSegment());
+        return getEmailAddress(context, requireNonNull(intent.getData()).getLastPathSegment());
     }
 
     public static String getPhoneFromIntent(Context context, Intent intent) {
-        return getPhone(context, intent.getData().getLastPathSegment());
+        return getPhone(context, requireNonNull(intent.getData()).getLastPathSegment());
     }
 }

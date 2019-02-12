@@ -22,7 +22,6 @@ import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -37,6 +36,7 @@ public class MailTransport {
 
     private static Logger log = LoggerFactory.getLogger("MailTransport");
 
+    private static final String HTML_CONTENT = "text/html";
     public static final int CHECK_RESULT_OK = 0;
     public static final int CHECK_RESULT_NOT_CONNECTED = 1;
     public static final int CHECK_RESULT_AUTHENTICATION = 2;
@@ -64,9 +64,15 @@ public class MailTransport {
         props.put("mail.smtp.socketFactory.fallback", false);
         props.put("mail.smtp.quitwait", false);
         props.put("mail.smtp.connectiontimeout", 10000);
-//        props.put("mail.smtp.timeout", 10000);
 
-        session = Session.getInstance(props, new PasswordAuthenticator(user, password));
+        final PasswordAuthentication authentication = new PasswordAuthentication(user, password);
+        session = Session.getInstance(props, new Authenticator() {
+
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return authentication;
+            }
+        });
     }
 
     /**
@@ -77,44 +83,46 @@ public class MailTransport {
         send(subject, body, null, sender, recipients);
     }
 
+    /**
+     * Sends email with attachment.
+     */
     public void send(String subject, String body, File[] attachment, String sender,
                      String recipients) throws MessagingException {
         MimeMessage message = new MimeMessage(session);
         message.setSender(new InternetAddress(sender));
         message.setSubject(subject);
-        message.setRecipients(Message.RecipientType.TO, getRecipients(recipients));
-        message.setContent(getContent(body, attachment));
+
+        if (recipients.indexOf(',') > 0) {
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipients));
+        } else {
+            message.setRecipients(Message.RecipientType.TO, new InternetAddress[]{new InternetAddress(recipients)});
+        }
+
+        if (attachment == null) {
+            message.setContent(body, HTML_CONTENT);
+        } else {
+            message.setContent(createMultipart(body, attachment));
+        }
 
         Transport.send(message);
     }
 
     @NonNull
-    private Multipart getContent(String body, File[] attachment) throws MessagingException {
+    private Multipart createMultipart(String body, File[] attachment) throws MessagingException {
         Multipart content = new MimeMultipart();
 
         MimeBodyPart textPart = new MimeBodyPart();
-        textPart.setContent(body, "text/html");
+        textPart.setContent(body, HTML_CONTENT);
         content.addBodyPart(textPart);
 
-        if (attachment != null) {
-            for (File file : attachment) {
-                MimeBodyPart attachmentPart = new MimeBodyPart();
-                attachmentPart.setFileName(file.getName());
-                attachmentPart.setDataHandler(new DataHandler(new FileDataSource(file)));
-                content.addBodyPart(attachmentPart);
-            }
+        for (File file : attachment) {
+            MimeBodyPart attachmentPart = new MimeBodyPart();
+            attachmentPart.setFileName(file.getName());
+            attachmentPart.setDataHandler(new DataHandler(new FileDataSource(file)));
+            content.addBodyPart(attachmentPart);
         }
 
         return content;
-    }
-
-    @NonNull
-    private InternetAddress[] getRecipients(String recipients) throws AddressException {
-        if (recipients.indexOf(',') > 0) {
-            return InternetAddress.parse(recipients);
-        } else {
-            return new InternetAddress[]{new InternetAddress(recipients)};
-        }
     }
 
     /**
@@ -162,19 +170,4 @@ public class MailTransport {
         }
     }
 
-    private static class PasswordAuthenticator extends Authenticator {
-
-        private final String user;
-        private final String password;
-
-        PasswordAuthenticator(String user, String password) {
-            this.user = user;
-            this.password = password;
-        }
-
-        @Override
-        protected PasswordAuthentication getPasswordAuthentication() {
-            return new PasswordAuthentication(user, password);
-        }
-    }
 }

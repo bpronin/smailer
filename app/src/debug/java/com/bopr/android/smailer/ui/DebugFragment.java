@@ -44,6 +44,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Properties;
 
+import static android.Manifest.permission.BROADCAST_SMS;
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static com.bopr.android.smailer.MailerService.createPhoneEventIntent;
@@ -81,7 +82,9 @@ import static com.bopr.android.smailer.util.Util.formatLocation;
 public class DebugFragment extends BasePreferenceFragment {
 
     private static Logger log = LoggerFactory.getLogger("DebugFragment");
+
     private static final int PERMISSIONS_REQUEST_RECEIVE_SMS = 100;
+    private static final int PERMISSIONS_REQUEST_BROADCAST_SMS = 101;
 
     private Context context;
     private Locator locator;
@@ -122,7 +125,7 @@ public class DebugFragment extends BasePreferenceFragment {
                 })
         );
 
-        addCategory("Logging",
+        addCategory("Database",
 
                 createPreference("Populate calls log", new DefaultClickListener() {
 
@@ -140,22 +143,15 @@ public class DebugFragment extends BasePreferenceFragment {
                         showDone();
                     }
                 }),
-
-                createPreference("Save application log", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        onSaveLog();
-                    }
-                }),
-
-                createPreference("Email application log", new DefaultClickListener() {
+                createPreference("Destroy database", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        onSendLog();
+                        database.destroy();
+                        showDone();
                     }
                 })
+
         );
 
         addCategory("Mail",
@@ -168,11 +164,11 @@ public class DebugFragment extends BasePreferenceFragment {
                     }
                 }),
 
-                createPreference("Send mail", new DefaultClickListener() {
+                createPreference("Run mail service", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        onSendMail();
+                        onRunMailService();
                     }
                 })
         );
@@ -192,6 +188,25 @@ public class DebugFragment extends BasePreferenceFragment {
                     @Override
                     protected void onClick(Preference preference) {
                         onRequestSmsPermission();
+                    }
+                })
+        );
+
+        addCategory("Logging",
+
+                createPreference("Save logcat log", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onSaveLogcatLog();
+                    }
+                }),
+
+                createPreference("Send application log", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onSendLog();
                     }
                 })
         );
@@ -222,15 +237,6 @@ public class DebugFragment extends BasePreferenceFragment {
                     }
                 }),
 
-                createPreference("Destroy database", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        database.destroy();
-                        showDone();
-                    }
-                }),
-
                 createPreference("Show password", new DefaultClickListener() {
 
                     @Override
@@ -247,7 +253,7 @@ public class DebugFragment extends BasePreferenceFragment {
                     }
                 }),
 
-                createPreference("Show concurrent", new DefaultClickListener() {
+                createPreference("Show concurrent applications", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
@@ -320,13 +326,6 @@ public class DebugFragment extends BasePreferenceFragment {
         Toast.makeText(context, "Done", Toast.LENGTH_SHORT).show();
     }
 
-    public void onRequestSmsPermission() {
-        if (AndroidUtil.isPermissionsDenied(context, RECEIVE_SMS)) {
-            ActivityCompat.requestPermissions(requireActivity(), new String[]{RECEIVE_SMS},
-                    PERMISSIONS_REQUEST_RECEIVE_SMS);
-        }
-    }
-
     private void onSetDefaultPreferences() {
         Properties properties = loadDebugProperties();
 
@@ -390,29 +389,12 @@ public class DebugFragment extends BasePreferenceFragment {
         new SendDefaultMailTask(getActivity(), loadDebugProperties()).execute();
     }
 
-    private void onSendMail() {
-/*
-        new AsyncTask<Void, Void, Void>() {
-
-            @Override
-            protected Void doInBackground(Void... params) {
-                PhoneEvent message = new PhoneEvent();
-                message.setPhone("+79052345678");
-                message.setIncoming(true);
-                message.setSms(true);
-                message.setText("Debug message.");
-                message.setStartTime(System.currentTimeMillis());
-                message.setLocation(new GeoCoordinates(30.0, 60.0));
-
-                new Mailer(getContext(), database).send(message);
-
-                return null;
-            }
-        }.execute();
-*/
+    private void onRunMailService() {
         long start = System.currentTimeMillis();
         PhoneEvent event = new PhoneEvent();
-        event.setPhone("+79052345678");
+        event.setPhone("PHONE NUMBER");
+        event.setText("SMS TEXT");
+        event.setIncoming(true);
         event.setStartTime(start);
         event.setEndTime(start + 10000);
 
@@ -427,7 +409,30 @@ public class DebugFragment extends BasePreferenceFragment {
         }
     }
 
-    public void onSaveLog() {
+    private void onRequestSmsPermission() {
+        ActivityCompat.requestPermissions(requireActivity(), new String[]{RECEIVE_SMS},
+                PERMISSIONS_REQUEST_RECEIVE_SMS);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == PERMISSIONS_REQUEST_RECEIVE_SMS) {
+            if (grantResults[0] == PERMISSION_GRANTED) {
+                AndroidUtil.showMessage(context, "Permission granted");
+            } else {
+                AndroidUtil.showMessage(context, "Permission denied");
+            }
+        } else if (requestCode == PERMISSIONS_REQUEST_BROADCAST_SMS) {
+            if (grantResults[0] == PERMISSION_GRANTED) {
+                onEmulateSms();
+            } else {
+                AndroidUtil.showMessage(context, "Permission denied");
+            }
+        }
+    }
+
+    public void onSaveLogcatLog() {
         try {
             Process process = Runtime.getRuntime().exec("logcat -d");
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -450,18 +455,6 @@ public class DebugFragment extends BasePreferenceFragment {
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults
-    ) {
-        if (requestCode == PERMISSIONS_REQUEST_RECEIVE_SMS) {
-            if (grantResults[0] != PERMISSION_GRANTED) {
-                Toast.makeText(context, "Permission denied", Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(context, "Permission granted", Toast.LENGTH_LONG).show();
-            }
-        }
-    }
 
     private void onShowPassword() {
         String text = cryptor.decrypt(preferences.getString(KEY_PREF_SENDER_PASSWORD, null));
@@ -489,11 +482,17 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private void onEmulateSms() {
-        Intent intent = new Intent(SmsReceiver.SMS_RECEIVED_ACTION);
-        intent.putExtra("pdus", new Object[]{Base64.decode("ACADgSHzAABhQEASFTQhBcgym/0G", Base64.NO_WRAP)});
-        intent.putExtra("format", "3gpp");
+        if (!AndroidUtil.isPermissionsDenied(context, BROADCAST_SMS)) {
 
-        context.sendBroadcast(intent);
+            Intent intent = new Intent(SmsReceiver.SMS_RECEIVED_ACTION);
+            intent.putExtra("pdus", new Object[]{Base64.decode("ACADgSHzAABhQEASFTQhBcgym/0G", Base64.NO_WRAP)});
+            intent.putExtra("format", "3gpp");
+
+            context.sendBroadcast(intent);
+        } else {
+            ActivityCompat.requestPermissions(requireActivity(), new String[]{BROADCAST_SMS},
+                    PERMISSIONS_REQUEST_BROADCAST_SMS);
+        }
     }
 
     private void onSendLog() {
