@@ -28,7 +28,7 @@ public class Util {
     private Util() {
     }
 
-    public static String formatLocation(GeoCoordinates location, String degreeSymbol,
+    public static String formatLocation(@NonNull GeoCoordinates location, String degreeSymbol,
                                         String minuteSymbol, String secondSymbol,
                                         String northSymbol, String southSymbol,
                                         String westSymbol, String eastSymbol) {
@@ -41,7 +41,7 @@ public class Util {
                 + (longitude > 0 ? westSymbol : eastSymbol);
     }
 
-    public static String formatLocation(GeoCoordinates location) {
+    public static String formatLocation(@NonNull  GeoCoordinates location) {
         return formatLocation(location, "°", "\'", "\"", "N", "S", "W", "E");
     }
 

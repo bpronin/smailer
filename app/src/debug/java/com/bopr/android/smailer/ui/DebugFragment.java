@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceCategory;
 import android.support.v7.preference.PreferenceScreen;
 import android.text.InputType;
 import android.util.Base64;
@@ -26,20 +27,20 @@ import com.bopr.android.smailer.Locator;
 import com.bopr.android.smailer.MailTransport;
 import com.bopr.android.smailer.Notifications;
 import com.bopr.android.smailer.PhoneEvent;
+import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.SmsReceiver;
 import com.bopr.android.smailer.util.AndroidUtil;
-import com.bopr.android.smailer.util.ui.ContextAsyncTask;
+import com.bopr.android.smailer.util.ui.ActivityAsyncTask;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 
@@ -82,134 +83,48 @@ public class DebugFragment extends BasePreferenceFragment {
     private static Logger log = LoggerFactory.getLogger("DebugFragment");
     private static final int PERMISSIONS_REQUEST_RECEIVE_SMS = 100;
 
+    private Context context;
     private Locator locator;
     private Cryptor cryptor;
     private Database database;
-
-    @NonNull
-    @Override
-    public Context getContext() {
-        Context context = super.getContext();
-        assert context != null;
-        return context;
-    }
+    private PreferenceScreen screen;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(false);
-        
-        database = new Database(getContext());
-        locator = new Locator(getContext(), database);
-        cryptor = new Cryptor(getContext());
 
-        Preference[] preferences = {
+        /* do not use fragment's context. see: https://developer.android.com/guide/topics/ui/settings/programmatic-hierarchy*/
+        context = getPreferenceManager().getContext();
 
-                createSimplePreference("Emulate Sms", new DefaultClickListener() {
+        database = new Database(context);
+        locator = new Locator(context, database);
+        cryptor = new Cryptor(context);
 
-                    @Override
-                    protected void onClick(Preference preference) {
-                        onEmulateSms();
-                    }
-                }),
+        screen = getPreferenceManager().createPreferenceScreen(context);
 
-                createSimplePreference("Set default preferences", new DefaultClickListener() {
+        addCategory("Preferences",
+
+                createPreference("Set default preferences", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        onRestorePreferences();
+                        onSetDefaultPreferences();
                     }
                 }),
 
-                createSimplePreference("Send default mail", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        onSendDefaultMail();
-                    }
-                }),
-
-                createSimplePreference("Send mail", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        onSendMail();
-                    }
-                }),
-
-                createSimplePreference("Clear preferences", new DefaultClickListener() {
+                createPreference("Clear preferences", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
                         onClearPreferences();
                     }
-                }),
+                })
+        );
 
-                createSimplePreference("Require Sms permission", new DefaultClickListener() {
+        addCategory("Logging",
 
-                    @Override
-                    protected void onClick(Preference preference) {
-                        onRequireReceiveSmsPermission();
-                    }
-                }),
-
-                createSimplePreference("Request Sms permission", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        requestSmsPermission();
-                    }
-                }),
-
-                createSimplePreference("Get location", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        onGetLocation();
-                    }
-                }),
-
-                createSimplePreference("Get contact", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        onGetContact();
-                    }
-                }),
-
-                createSimplePreference("Save log", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        onSaveLog();
-                    }
-                }),
-
-                createSimplePreference("Send log", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        onSendLog();
-                    }
-                }),
-
-                createSimplePreference("Destroy database", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        database.destroy();
-                    }
-                }),
-
-                createSimplePreference("Show password", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        onShowPassword();
-                    }
-                }),
-
-                createSimplePreference("Populate log", new DefaultClickListener() {
+                createPreference("Populate calls log", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
@@ -217,15 +132,114 @@ public class DebugFragment extends BasePreferenceFragment {
                     }
                 }),
 
-                createSimplePreference("Clear log", new DefaultClickListener() {
+                createPreference("Clear calls log", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        onClearLog();
+                        database.clearEvents();
+                        showDone();
                     }
                 }),
 
-                createSimplePreference("Show notification", new DefaultClickListener() {
+                createPreference("Save application log", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onSaveLog();
+                    }
+                }),
+
+                createPreference("Email application log", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onSendLog();
+                    }
+                })
+        );
+
+        addCategory("Mail",
+
+                createPreference("Send default mail", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onSendDefaultMail();
+                    }
+                }),
+
+                createPreference("Send mail", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onSendMail();
+                    }
+                })
+        );
+
+        addCategory("Permissions",
+
+                createPreference("Require Sms permission", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onRequireReceiveSmsPermission();
+                    }
+                }),
+
+                createPreference("Request Sms permission", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onRequestSmsPermission();
+                    }
+                })
+        );
+
+        addCategory("Other",
+
+                createPreference("Emulate Sms", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onEmulateSms();
+                    }
+                }),
+
+                createPreference("Get location", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        new GetLocationTask(getActivity(), locator).execute();
+                    }
+                }),
+
+                createPreference("Get contact", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onGetContact();
+                    }
+                }),
+
+                createPreference("Destroy database", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        database.destroy();
+                        showDone();
+                    }
+                }),
+
+                createPreference("Show password", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onShowPassword();
+                    }
+                }),
+
+                createPreference("Show notification", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
@@ -233,7 +247,7 @@ public class DebugFragment extends BasePreferenceFragment {
                     }
                 }),
 
-                createSimplePreference("Show concurrent", new DefaultClickListener() {
+                createPreference("Show concurrent", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
@@ -241,29 +255,15 @@ public class DebugFragment extends BasePreferenceFragment {
                     }
                 }),
 
-                createSimplePreference("Crash!", new DefaultClickListener() {
+                createPreference("Crash!", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
                         throw new RuntimeException("Test crash");
                     }
-                }),
+                })
+        );
 
-        };
-
-
-        Arrays.sort(preferences, new Comparator<Preference>() {
-            @Override
-            public int compare(Preference o1, Preference o2) {
-
-                return o1.getTitle().toString().compareTo(o2.toString());
-            }
-        });
-
-        PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(getContext());
-        for (Preference preference : preferences) {
-            screen.addPreference(preference);
-        }
         setPreferenceScreen(screen);
     }
 
@@ -279,18 +279,11 @@ public class DebugFragment extends BasePreferenceFragment {
         super.onStop();
     }
 
-    private Preference createSimplePreference(String title, Preference.OnPreferenceClickListener listener) {
-        Preference preference = new Preference(getContext());
-        preference.setTitle(title);
-        preference.setOnPreferenceClickListener(listener);
-        return preference;
-    }
-
     @NonNull
-    private Properties getDebugProperties() {
+    private Properties loadDebugProperties() {
         Properties properties = new Properties();
         try {
-            InputStream stream = getContext().getAssets().open("debug.properties");
+            InputStream stream = context.getAssets().open("debug.properties");
             properties.load(stream);
         } catch (IOException x) {
             log.error("Cannot read debug properties", x);
@@ -298,19 +291,44 @@ public class DebugFragment extends BasePreferenceFragment {
         return properties;
     }
 
-    private boolean smsPermissionDenied() {
-        return ContextCompat.checkSelfPermission(getContext(), RECEIVE_SMS) != PERMISSION_GRANTED;
+    private Preference createPreference(String title, Preference.OnPreferenceClickListener listener) {
+        Preference preference = new Preference(context);
+        preference.setTitle(title);
+        preference.setIcon(R.drawable.ic_bullet);
+        preference.setOnPreferenceClickListener(listener);
+        return preference;
     }
 
-    public void requestSmsPermission() {
-        if (AndroidUtil.isPermissionsDenied(getContext(), RECEIVE_SMS)) {
-            ActivityCompat.requestPermissions((Activity) getContext(), new String[]{RECEIVE_SMS},
+/*
+    private void addPreference(String title, Preference.OnPreferenceClickListener listener) {
+        Preference preference = createPreference(title, listener);
+        screen.addPreference(preference);
+    }
+*/
+
+    private void addCategory(String title, Preference... preferences) {
+        PreferenceCategory category = new PreferenceCategory(context);
+        screen.addPreference(category);
+
+        category.setTitle(title);
+        for (Preference preference : preferences) {
+            category.addPreference(preference);
+        }
+    }
+
+    private void showDone() {
+        Toast.makeText(context, "Done", Toast.LENGTH_SHORT).show();
+    }
+
+    public void onRequestSmsPermission() {
+        if (AndroidUtil.isPermissionsDenied(context, RECEIVE_SMS)) {
+            ActivityCompat.requestPermissions(requireActivity(), new String[]{RECEIVE_SMS},
                     PERMISSIONS_REQUEST_RECEIVE_SMS);
         }
     }
 
-    private void onRestorePreferences() {
-        Properties properties = getDebugProperties();
+    private void onSetDefaultPreferences() {
+        Properties properties = loadDebugProperties();
 
         preferences
                 .edit()
@@ -330,13 +348,15 @@ public class DebugFragment extends BasePreferenceFragment {
                 .putBoolean(KEY_PREF_RESEND_UNSENT, true)
                 .apply();
         refreshPreferences();
+
+        showDone();
     }
 
     private void onGetContact() {
-        final EditText input = new EditText(getContext());
+        final EditText input = new EditText(context);
         input.setInputType(InputType.TYPE_CLASS_PHONE);
 
-        AndroidUtil.dialogBuilder(getContext())
+        AndroidUtil.dialogBuilder(context)
                 .setTitle("Phone number")
                 .setView(input)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -344,10 +364,10 @@ public class DebugFragment extends BasePreferenceFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String phone = input.getText().toString();
-                        String contact = Contacts.getContactName(getContext(), phone);
+                        String contact = Contacts.getContactName(context, phone);
                         String text = contact != null ? (phone + ": " + contact) : "Contact not found";
 
-                        Toast.makeText(getContext(), text, Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, text, Toast.LENGTH_LONG).show();
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -360,18 +380,14 @@ public class DebugFragment extends BasePreferenceFragment {
                 .show();
     }
 
-    @SuppressWarnings("ResourceType")
-    private void onGetLocation() {
-        new GetLocationTask(getContext(), locator).execute();
-    }
-
     private void onClearPreferences() {
         preferences.edit().clear().apply();
         refreshPreferences();
+        showDone();
     }
 
     private void onSendDefaultMail() {
-        new SendDefaultMailTask(getContext(), getDebugProperties()).execute();
+        new SendDefaultMailTask(getActivity(), loadDebugProperties()).execute();
     }
 
     private void onSendMail() {
@@ -400,15 +416,14 @@ public class DebugFragment extends BasePreferenceFragment {
         event.setStartTime(start);
         event.setEndTime(start + 10000);
 
-        getContext().startService(createPhoneEventIntent(getContext(), event));
+        context.startService(createPhoneEventIntent(context, event));
     }
 
     private void onRequireReceiveSmsPermission() {
-        if (!smsPermissionDenied()) {
-            getContext().enforceCallingOrSelfPermission(
-                    Manifest.permission.RECEIVE_SMS, "Testing SMS permission");
+        if (ContextCompat.checkSelfPermission(context, RECEIVE_SMS) == PERMISSION_GRANTED) {
+            context.enforceCallingOrSelfPermission(Manifest.permission.RECEIVE_SMS, "Testing SMS permission");
         } else {
-            Toast.makeText(getContext(), "SMS PERMISSION DENIED", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "SMS PERMISSION DENIED", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -441,16 +456,16 @@ public class DebugFragment extends BasePreferenceFragment {
     ) {
         if (requestCode == PERMISSIONS_REQUEST_RECEIVE_SMS) {
             if (grantResults[0] != PERMISSION_GRANTED) {
-                Toast.makeText(getContext(), "Permission denied", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Permission denied", Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(getContext(), "Permission granted", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Permission granted", Toast.LENGTH_LONG).show();
             }
         }
     }
 
     private void onShowPassword() {
         String text = cryptor.decrypt(preferences.getString(KEY_PREF_SENDER_PASSWORD, null));
-        Toast.makeText(getContext(), text, Toast.LENGTH_LONG).show();
+        AndroidUtil.showMessage(context, text);
     }
 
     private void onPopulateLog() {
@@ -465,14 +480,12 @@ public class DebugFragment extends BasePreferenceFragment {
         database.putEvent(new PhoneEvent("+79052345673", true, time += 1000, time + 10000, false, null, null, "Test exception +79052345673", PhoneEvent.State.PENDING));
         database.putEvent(new PhoneEvent("+79052345674", false, time += 1000, time + 10000, false, null, null, "Test exception +79052345674", PhoneEvent.State.PENDING));
         database.putEvent(new PhoneEvent("+79052345675", true, time += 1000, time + 10000, true, null, null, "Test exception +79052345675", PhoneEvent.State.PENDING));
-    }
 
-    private void onClearLog() {
-        database.destroy();
+        showDone();
     }
 
     private void onShowNotification() {
-        new Notifications(getContext()).showMailError("Test notification text", 100, Notifications.ACTION_SHOW_CONNECTION);
+        new Notifications(context).showMailError("Test notification text", 100, Notifications.ACTION_SHOW_CONNECTION);
     }
 
     private void onEmulateSms() {
@@ -480,18 +493,18 @@ public class DebugFragment extends BasePreferenceFragment {
         intent.putExtra("pdus", new Object[]{Base64.decode("ACADgSHzAABhQEASFTQhBcgym/0G", Base64.NO_WRAP)});
         intent.putExtra("format", "3gpp");
 
-        getContext().sendBroadcast(intent);
+        context.sendBroadcast(intent);
     }
 
     private void onSendLog() {
-        new SendLogTask(getContext(), getDebugProperties()).execute();
+        new SendLogTask(getActivity(), loadDebugProperties()).execute();
     }
 
     private void onShowConcurrent() {
         StringBuilder b = new StringBuilder();
 
         Intent intent = new Intent("android.provider.Telephony.SMS_RECEIVED");
-        List<ResolveInfo> activities = getContext().getPackageManager().queryBroadcastReceivers(intent, 0);
+        List<ResolveInfo> activities = context.getPackageManager().queryBroadcastReceivers(intent, 0);
         for (ResolveInfo resolveInfo : activities) {
             ActivityInfo activityInfo = resolveInfo.activityInfo;
             if (activityInfo != null) {
@@ -502,17 +515,15 @@ public class DebugFragment extends BasePreferenceFragment {
                 log.debug("Concurrent package:" + activityInfo.packageName + " priority: " + resolveInfo.priority);
             }
         }
-        AndroidUtil.dialogBuilder(getContext())
-                .setMessage(b.toString())
-                .show();
+        AndroidUtil.showMessage(context, b.toString());
     }
 
-    private static class GetLocationTask extends ContextAsyncTask<Void, Void, GeoCoordinates> {
+    private static class GetLocationTask extends ActivityAsyncTask<Void, Void, GeoCoordinates> {
 
         private final Locator locator;
 
-        private GetLocationTask(Context context, Locator locator) {
-            super(context);
+        private GetLocationTask(Activity activity, Locator locator) {
+            super(activity);
             this.locator = locator;
         }
 
@@ -523,19 +534,17 @@ public class DebugFragment extends BasePreferenceFragment {
 
         @Override
         protected void onPostExecute(GeoCoordinates coordinates) {
-            Toast.makeText(getContext(),
-                    coordinates != null ? formatLocation(coordinates)
-                            : "No location received",
-                    Toast.LENGTH_LONG).show();
+            AndroidUtil.showMessage(getActivity(),
+                    coordinates != null ? formatLocation(coordinates) : "No location received");
         }
     }
 
-    private static class SendDefaultMailTask extends ContextAsyncTask<Void, Void, Void> {
+    private static class SendDefaultMailTask extends ActivityAsyncTask<Void, Void, Void> {
 
         private Properties properties;
 
-        private SendDefaultMailTask(Context context, Properties properties) {
-            super(context);
+        private SendDefaultMailTask(Activity activity, Properties properties) {
+            super(activity);
             this.properties = properties;
         }
 
@@ -544,7 +553,7 @@ public class DebugFragment extends BasePreferenceFragment {
             String user = properties.getProperty("default_sender");
 
             MailTransport transport = new MailTransport();
-            transport.init(user,
+            transport.startSession(user,
                     properties.getProperty("default_password"),
                     "smtp.gmail.com",
                     "465");
@@ -552,7 +561,7 @@ public class DebugFragment extends BasePreferenceFragment {
             try {
                 transport.send(
                         "test subject",
-                        "test message from " + getDeviceName(getContext()),
+                        "test message from " + getDeviceName(getActivity()),
                         user,
                         properties.getProperty("default_recipient")
                 );
@@ -563,43 +572,60 @@ public class DebugFragment extends BasePreferenceFragment {
         }
     }
 
-    private static class SendLogTask extends LongAsyncTask<Void, Void, Void> {
+    private static class SendLogTask extends LongAsyncTask<Void, Void, String> {
 
         private Properties properties;
 
-        private SendLogTask(Context context, Properties properties) {
-            super(context);
+        private SendLogTask(Activity activity, Properties properties) {
+            super(activity);
             this.properties = properties;
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
-            String user = properties.getProperty("default_sender");
+        protected String doInBackground(Void... params) {
+            File dir = getActivity().getFilesDir();
+            File[] files = dir.listFiles(new FilenameFilter() {
 
-            MailTransport transport = new MailTransport();
-            transport.init(user,
-                    properties.getProperty("default_password"),
-                    "smtp.gmail.com",
-                    "465");
-
-            File logDir = new File(getContext().getFilesDir(), "log");
-            if (logDir.exists()) {
-                for (String fileName : logDir.list()) {
-                    try {
-                        transport.send(
-                                "SMailer log",
-                                "See attachment",
-                                new File(fileName).toURI().toURL(),
-                                user,
-                                properties.getProperty("developer_email")
-                        );
-                    } catch (Exception x) {
-                        log.error("Send mail failed: ", x);
-                    }
+                @Override
+                public boolean accept(File dir, String name) {
+                    return name.toLowerCase().endsWith(".log");
                 }
+            });
+
+            if (files.length == 0) {
+                return "No log files found";
+            }
+
+            try {
+                String user = properties.getProperty("default_sender");
+                MailTransport transport = new MailTransport();
+                transport.startSession(user,
+                        properties.getProperty("default_password"),
+                        "smtp.gmail.com",
+                        "465");
+                transport.send(
+                        "SMailer log",
+                        "See attachment",
+                        files,
+                        user,
+                        properties.getProperty("developer_email")
+                );
+            } catch (Exception x) {
+                log.error("Send mail failed", x);
+                return "Send mail failed";
             }
 
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(String error) {
+            super.onPostExecute(error);
+            if (error != null) {
+                AndroidUtil.showMessage(getActivity(), error);
+            } else {
+                Toast.makeText(getActivity(), "Done", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -610,8 +636,9 @@ public class DebugFragment extends BasePreferenceFragment {
         @Override
         public boolean onPreferenceClick(Preference preference) {
             onClick(preference);
-            //    getContext().finish();
+            //getActivity().finish();
             return true;
         }
     }
+
 }

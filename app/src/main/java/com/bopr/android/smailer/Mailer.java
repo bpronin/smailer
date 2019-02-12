@@ -76,7 +76,7 @@ class Mailer {
         List<PhoneEvent> events = database.getUnsentEvents().getAll();
 
         log.debug("Resending " + events.size() + " messages");
-
+        // TODO: 13.02.2019 send all in one transport session
         for (PhoneEvent event : events) {
             doSend(event, true);
         }
@@ -95,7 +95,7 @@ class Mailer {
         if (checkProperties(pp, event, silent) && checkConnection(event, silent)) {
             MailFormatter formatter = createFormatter(event, pp);
 
-            transport.init(pp.getUser(), cryptor.decrypt(pp.getPassword()), pp.getHost(), pp.getPort());
+            transport.startSession(pp.getUser(), cryptor.decrypt(pp.getPassword()), pp.getHost(), pp.getPort());
             try {
                 transport.send(formatter.formatSubject(), formatter.formatBody(), pp.getUser(), pp.getRecipients());
 

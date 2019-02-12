@@ -1,13 +1,11 @@
 package com.bopr.android.smailer;
 
+import android.support.annotation.NonNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
+import java.io.File;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.Provider;
@@ -15,7 +13,7 @@ import java.security.Security;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
-import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.AuthenticationFailedException;
 import javax.mail.Authenticator;
 import javax.mail.Message;
@@ -24,6 +22,7 @@ import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -52,9 +51,9 @@ public class MailTransport {
     }
 
     /**
-     * Initialize transport with specified properties.
+     * Starts new delivery session.
      */
-    public void init(String user, String password, String host, String port) {
+    public void startSession(String user, String password, String host, String port) {
         Properties props = new Properties();
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.host", host);
@@ -67,47 +66,55 @@ public class MailTransport {
         props.put("mail.smtp.connectiontimeout", 10000);
 //        props.put("mail.smtp.timeout", 10000);
 
-        final PasswordAuthentication authentication = new PasswordAuthentication(user, password);
-        session = Session.getInstance(props, new Authenticator() {
-
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return authentication;
-            }
-        });
+        session = Session.getInstance(props, new PasswordAuthenticator(user, password));
     }
 
     /**
      * Sends email.
      */
-    public void send(String subject, String body, String sender,
-                     String recipients) throws MessagingException {
+    public void send(String subject, String body, String sender, String recipients)
+            throws MessagingException {
         send(subject, body, null, sender, recipients);
     }
 
-    public void send(String subject, String body, URL attachment, String sender,
+    public void send(String subject, String body, File[] attachment, String sender,
                      String recipients) throws MessagingException {
-        DataHandler handler = new DataHandler(new ByteArrayDataSource(body.getBytes(), false));
-
         MimeMessage message = new MimeMessage(session);
         message.setSender(new InternetAddress(sender));
         message.setSubject(subject);
-        message.setDataHandler(handler);
+        message.setRecipients(Message.RecipientType.TO, getRecipients(recipients));
+        message.setContent(getContent(body, attachment));
+
+        Transport.send(message);
+    }
+
+    @NonNull
+    private Multipart getContent(String body, File[] attachment) throws MessagingException {
+        Multipart content = new MimeMultipart();
+
+        MimeBodyPart textPart = new MimeBodyPart();
+        textPart.setContent(body, "text/html");
+        content.addBodyPart(textPart);
 
         if (attachment != null) {
-            MimeBodyPart bodyPart = new MimeBodyPart();
-            bodyPart.setDataHandler(new DataHandler(attachment));
-            Multipart multipart = new MimeMultipart();
-            multipart.addBodyPart(bodyPart);
-            message.setContent(multipart);
+            for (File file : attachment) {
+                MimeBodyPart attachmentPart = new MimeBodyPart();
+                attachmentPart.setFileName(file.getName());
+                attachmentPart.setDataHandler(new DataHandler(new FileDataSource(file)));
+                content.addBodyPart(attachmentPart);
+            }
         }
 
+        return content;
+    }
+
+    @NonNull
+    private InternetAddress[] getRecipients(String recipients) throws AddressException {
         if (recipients.indexOf(',') > 0) {
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipients));
+            return InternetAddress.parse(recipients);
         } else {
-            message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipients));
+            return new InternetAddress[]{new InternetAddress(recipients)};
         }
-        Transport.send(message);
     }
 
     /**
@@ -155,34 +162,19 @@ public class MailTransport {
         }
     }
 
-    private static class ByteArrayDataSource implements DataSource {
+    private static class PasswordAuthenticator extends Authenticator {
 
-        private final String contentType;
-        private byte[] data;
+        private final String user;
+        private final String password;
 
-        private ByteArrayDataSource(byte[] data, boolean html) {
-            this.data = data;
-            contentType = html ? "text/plain" : "text/html";
+        PasswordAuthenticator(String user, String password) {
+            this.user = user;
+            this.password = password;
         }
 
         @Override
-        public String getContentType() {
-            return contentType;
-        }
-
-        @Override
-        public InputStream getInputStream() throws IOException {
-            return new ByteArrayInputStream(data);
-        }
-
-        @Override
-        public String getName() {
-            return "ByteArrayDataSource";
-        }
-
-        @Override
-        public OutputStream getOutputStream() throws IOException {
-            throw new IOException("Not Supported");
+        protected PasswordAuthentication getPasswordAuthentication() {
+            return new PasswordAuthentication(user, password);
         }
     }
 }

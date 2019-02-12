@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -11,7 +12,17 @@ import org.mockito.stubbing.Answer;
 import javax.mail.AuthenticationFailedException;
 import javax.mail.MessagingException;
 
-import static com.bopr.android.smailer.Settings.*;
+import static com.bopr.android.smailer.Settings.DEFAULT_CONTENT;
+import static com.bopr.android.smailer.Settings.DEFAULT_TRIGGERS;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
+import static com.bopr.android.smailer.Settings.KEY_PREF_NOTIFY_SEND_SUCCESS;
+import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
+import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
+import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
 import static org.junit.Assert.assertArrayEquals;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
@@ -19,7 +30,11 @@ import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anySetOf;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * {@link Mailer} tester.
@@ -91,7 +106,7 @@ public class MailerTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
-        doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
+        doAnswer(inits).when(transport).startSession(anyString(), anyString(), anyString(), anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
 
         Mailer mailer = new Mailer(context, transport, cryptor, notifications, database);
@@ -114,7 +129,7 @@ public class MailerTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
-        doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
+        doAnswer(inits).when(transport).startSession(anyString(), anyString(), anyString(), anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
 
         when(preferences.getString(eq(KEY_PREF_EMAIL_LOCALE), anyString())).thenReturn("ru_RU");
@@ -139,7 +154,7 @@ public class MailerTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
-        doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
+        doAnswer(inits).when(transport).startSession(anyString(), anyString(), anyString(), anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
         when(networkInfo.isConnected()).thenReturn(false);
 
@@ -163,7 +178,7 @@ public class MailerTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
-        doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
+        doAnswer(inits).when(transport).startSession(anyString(), anyString(), anyString(), anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
 
         when(preferences.getString(eq(KEY_PREF_SENDER_ACCOUNT), anyString())).thenReturn(null);
@@ -188,7 +203,7 @@ public class MailerTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
-        doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
+        doAnswer(inits).when(transport).startSession(anyString(), anyString(), anyString(), anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
 
         when(preferences.getString(eq(KEY_PREF_RECIPIENTS_ADDRESS), anyString())).thenReturn(null);
@@ -213,7 +228,7 @@ public class MailerTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
-        doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
+        doAnswer(inits).when(transport).startSession(anyString(), anyString(), anyString(), anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
 
         when(preferences.getString(eq(KEY_PREF_EMAIL_HOST), anyString())).thenReturn(null);
@@ -238,7 +253,7 @@ public class MailerTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
-        doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
+        doAnswer(inits).when(transport).startSession(anyString(), anyString(), anyString(), anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
 
         when(preferences.getString(eq(KEY_PREF_EMAIL_PORT), anyString())).thenReturn(null);
@@ -263,7 +278,7 @@ public class MailerTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
-        doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
+        doAnswer(inits).when(transport).startSession(anyString(), anyString(), anyString(), anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
         doThrow(AuthenticationFailedException.class).when(transport).send(anyString(), anyString(), anyString(), anyString());
 
@@ -287,7 +302,7 @@ public class MailerTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
-        doAnswer(inits).when(transport).init(anyString(), anyString(), anyString(), anyString());
+        doAnswer(inits).when(transport).startSession(anyString(), anyString(), anyString(), anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
         doThrow(MessagingException.class).when(transport).send(anyString(), anyString(), anyString(), anyString());
 

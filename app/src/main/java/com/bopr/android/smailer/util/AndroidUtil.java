@@ -65,6 +65,19 @@ public class AndroidUtil {
         return new AlertDialog.Builder(context);
     }
 
+    public static void showMessage(Context context, String message){
+        dialogBuilder(context)
+                .setMessage(message)
+//                .setNegativeButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+//
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        dialog.cancel();
+//                    }
+//                })
+                .show();
+    }
+
     /**
      * Returns true if device is connected ty internet.
      */

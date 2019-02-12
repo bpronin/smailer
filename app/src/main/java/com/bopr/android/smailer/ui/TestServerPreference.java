@@ -2,6 +2,7 @@ package com.bopr.android.smailer.ui;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceViewHolder;
@@ -14,7 +15,6 @@ import com.bopr.android.smailer.MailTransport;
 import com.bopr.android.smailer.MailerProperties;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.Settings;
-import com.bopr.android.smailer.util.ui.ContextAsyncTask;
 
 import javax.mail.MessagingException;
 
@@ -74,12 +74,11 @@ public class TestServerPreference extends Preference {
         new SendTestMailTask(this).execute();
     }
 
-    private static class SendTestMailTask extends ContextAsyncTask<Void, Void, Integer> {
+    private static class SendTestMailTask extends AsyncTask<Void, Void, Integer> {
 
         private TestServerPreference owner;
 
         private SendTestMailTask(TestServerPreference owner) {
-            super(owner.getContext());
             this.owner = owner;
         }
 
@@ -87,7 +86,26 @@ public class TestServerPreference extends Preference {
         protected void onPreExecute() {
             super.onPreExecute();
             owner.setWaiting(true);
+        }
 
+        @Override
+        protected Integer doInBackground(Void... params) {
+            MailTransport transport = new MailTransport();
+            Cryptor cryptor = new Cryptor(owner.getContext());
+
+            MailerProperties pp = new MailerProperties(Settings.getPreferences(owner.getContext()));
+            transport.startSession(pp.getUser(), cryptor.decrypt(pp.getPassword()), pp.getHost(), pp.getPort());
+
+            int result = transport.checkConnection();
+            if (result == CHECK_RESULT_OK) {
+                try {
+                    transport.send("[" + owner.getContext().getString(R.string.app_name) + "] TEST", "This is the test message",
+                            pp.getUser(), pp.getUser());
+                } catch (MessagingException e) {
+                    result = CHECK_RESULT_NOT_CONNECTED;
+                }
+            }
+            return result;
         }
 
         @Override
@@ -104,26 +122,7 @@ public class TestServerPreference extends Preference {
                 message = R.string.message_server_test_success;
             }
 
-            Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
-        }
-
-        @Override
-        protected Integer doInBackground(Void... params) {
-            MailTransport transport = new MailTransport();
-            Cryptor cryptor = new Cryptor(getContext());
-
-            MailerProperties pp = new MailerProperties(Settings.getPreferences(getContext()));
-            transport.init(pp.getUser(), cryptor.decrypt(pp.getPassword()), pp.getHost(), pp.getPort());
-
-            int result = transport.checkConnection();
-            if (result == CHECK_RESULT_OK) {
-                try {
-                    transport.send("[" + getContext().getString(R.string.app_name) + "] TEST", "This is the test message", pp.getUser(), pp.getUser());
-                } catch (MessagingException e) {
-                    result = CHECK_RESULT_NOT_CONNECTED;
-                }
-            }
-            return result;
+            Toast.makeText(owner.getContext(), message, Toast.LENGTH_LONG).show();
         }
     }
 

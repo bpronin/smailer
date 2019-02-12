@@ -28,19 +28,19 @@ public class MailTransportTest extends BaseTest {
 
         MailTransport transport = new MailTransport();
 
-        transport.init(user, password, "smtp.gmail.com", "465");
+        transport.startSession(user, password, "smtp.gmail.com", "465");
         assertEquals(MailTransport.CHECK_RESULT_OK, transport.checkConnection());
 
-        transport.init(user, "bad_password", "smtp.gmail.com", "465");
+        transport.startSession(user, "bad_password", "smtp.gmail.com", "465");
         assertEquals(MailTransport.CHECK_RESULT_AUTHENTICATION, transport.checkConnection());
 
-        transport.init("bad_user", password, "smtp.gmail.com", "465");
+        transport.startSession("bad_user", password, "smtp.gmail.com", "465");
         assertEquals(MailTransport.CHECK_RESULT_AUTHENTICATION, transport.checkConnection());
 
-        transport.init(user, password, "smtp.gmail.com", "111");
+        transport.startSession(user, password, "smtp.gmail.com", "111");
         assertEquals(MailTransport.CHECK_RESULT_NOT_CONNECTED, transport.checkConnection());
 
-        transport.init(user, password, "smtp.ggg.com", "465");
+        transport.startSession(user, password, "smtp.ggg.com", "465");
         assertEquals(MailTransport.CHECK_RESULT_NOT_CONNECTED, transport.checkConnection());
     }
 
