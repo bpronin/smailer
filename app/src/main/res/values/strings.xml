@@ -29,7 +29,7 @@
     <string name="event_type_missed_call">Missed call</string>
     <string name="event_type_outgoing_call">Outgoing call</string>
     <string name="event_type_outgoing_sms">Outgoing SMS</string>
-    <string name="message_activity_log_ask_clear">Clear log?</string>
+    <string name="message_activity_log_ask_clear">Clear history?</string>
     <string name="message_added_to_blacklist">{number} added to blacklist</string>
     <string name="message_added_to_whitelist">{number} added to whitelist</string>
     <string name="message_item_removed">Item removed</string>
@@ -62,14 +62,14 @@
     <string name="title_acceptable_phone_numbers">Acceptable phone numbers ({size})</string>
     <string name="title_acceptable_text">Acceptable words ({size})</string>
     <string name="title_account_hint">Email address to send email from.</string>
-    <string name="title_activity_log">Activity log</string>
+    <string name="title_activity_log">Call history</string>
     <string name="title_add">Add</string>
     <string name="title_add_to_blacklist">Add number to blacklist</string>
     <string name="title_add_to_whitelist">Add number to whitelist</string>
     <string name="title_any">any</string>
     <string name="title_black_list_used">Black list used</string>
     <string name="title_blacklist">Blacklist</string>
-    <string name="title_clear_log">Clear log</string>
+    <string name="title_clear_log">Clear history</string>
     <string name="title_close">Close</string>
     <string name="title_content">Email content</string>
     <string name="title_copyright" translatable="false">Copyright © BoPr, 2016-2019</string>
@@ -85,7 +85,7 @@
     <string name="title_email_sender">Account</string>
     <string name="title_host">Host</string>
     <string name="title_list_empty">List is empty</string>
-    <string name="title_log_empty">Log is empty</string>
+    <string name="title_log_empty">History is empty</string>
     <string name="title_mark_processed_sms_as_read">Mark processed SMS as read</string>
     <string name="title_more">Preferences</string>
     <string name="title_none">none</string>

@@ -17,6 +17,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
+import static java.lang.System.currentTimeMillis;
+
 /**
  * Application database.
  *
@@ -165,24 +167,24 @@ public class Database {
         ContentValues values = new ContentValues();
         values.put(COLUMN_LAST_LATITUDE, location != null ? location.getLatitude() : null);
         values.put(COLUMN_LAST_LONGITUDE, location != null ? location.getLongitude() : null);
-        values.put(COLUMN_LAST_LOCATION_TIME, System.currentTimeMillis());
+        values.put(COLUMN_LAST_LOCATION_TIME, currentTimeMillis());
 
         helper.getWritableDatabase().update(TABLE_SYSTEM, values, COLUMN_ID + "=0", null);
     }
 
     private long getCurrentSize(SQLiteDatabase db) {
         return XCursor.forLong(db.query(TABLE_EVENTS, new String[]{COLUMN_COUNT}, null, null,
-                null, null, null)).findAndClose();
+                null, null, null)).findFirst();
     }
 
     private long getLastPurgeTime(SQLiteDatabase db) {
         return XCursor.forLong(db.query(TABLE_SYSTEM, new String[]{COLUMN_PURGE_TIME},
-                COLUMN_ID + "=0", null, null, null, null)).findAndClose();
+                COLUMN_ID + "=0", null, null, null, null)).findFirst();
     }
 
     private void updateLastPurgeTime(SQLiteDatabase db) {
         ContentValues values = new ContentValues();
-        values.put(COLUMN_PURGE_TIME, System.currentTimeMillis());
+        values.put(COLUMN_PURGE_TIME, currentTimeMillis());
 
         db.update(TABLE_SYSTEM, values, COLUMN_ID + "=0", null);
     }
@@ -202,7 +204,7 @@ public class Database {
                 }
                 return null;
             }
-        }.findAndClose();
+        }.findFirst();
     }
 
     /**
@@ -215,15 +217,13 @@ public class Database {
         SQLiteDatabase db = helper.getWritableDatabase();
         db.beginTransaction();
         try {
-            if (System.currentTimeMillis() - getLastPurgeTime(db) >= purgePeriod
-                    && getCurrentSize(db) >= capacity) {
-
-                db.execSQL("delete from " + TABLE_EVENTS +
-                        " where " + COLUMN_ID + " not in " +
+            if (currentTimeMillis() - getLastPurgeTime(db) >= purgePeriod && getCurrentSize(db) >= capacity) {
+                db.execSQL("DELETE FROM " + TABLE_EVENTS +
+                        " WHERE " + COLUMN_ID + " NOT IN " +
                         "(" +
-                        "select " + COLUMN_ID + " from " + TABLE_EVENTS +
-                        " order by " + COLUMN_ID + " desc " +
-                        "limit " + capacity +
+                        "SELECT " + COLUMN_ID + " FROM " + TABLE_EVENTS +
+                        " ORDER BY " + COLUMN_ID + " DESC " +
+                        "LIMIT " + capacity +
                         ")");
 
                 updateLastPurgeTime(db);
@@ -254,7 +254,7 @@ public class Database {
     }
 
     private void fireChanged() {
-        log.debug("sender", "Broadcasting message");
+        log.debug("Broadcasting data changed");
 
         Intent intent = new Intent(DATABASE_EVENT);
         intent.putExtra("message", "changed");

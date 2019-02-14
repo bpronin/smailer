@@ -50,7 +50,7 @@ public class DatabaseTest extends BaseTest {
         database.putEvent(new PhoneEvent("9", false, 9000L, 0L, false, null, null, "Test 4", PhoneEvent.State.PENDING));
         database.putEvent(new PhoneEvent("10", true, 10000L, 20000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), "Test 10", PhoneEvent.State.PENDING));
 
-        List<PhoneEvent> items = database.getEvents().getAll();
+        List<PhoneEvent> items = database.getEvents().findAll();
 
         assertEquals(10, items.size());
 
@@ -79,7 +79,7 @@ public class DatabaseTest extends BaseTest {
         PhoneEvent message = new PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), "Test 1", PhoneEvent.State.PENDING);
         database.putEvent(message);
 
-        List<PhoneEvent> items = database.getEvents().getAll();
+        List<PhoneEvent> items = database.getEvents().findAll();
         assertEquals(1, items.size());
 
         message = items.get(0);
@@ -107,7 +107,7 @@ public class DatabaseTest extends BaseTest {
         message.setDetails("New details");
         database.putEvent(message);
 
-        items = database.getEvents().getAll();
+        items = database.getEvents().findAll();
         assertEquals(1, items.size());
 
         message = items.get(0);
@@ -226,7 +226,7 @@ public class DatabaseTest extends BaseTest {
         database.putEvent(new PhoneEvent("9", false, 9000L, 0L, false, null, null, "Test 4", PhoneEvent.State.PENDING));
         database.putEvent(new PhoneEvent("10", true, 10000L, 20000L, false, null, null, "Test 10", PhoneEvent.State.PENDING));
 
-        List<PhoneEvent> items = database.getUnsentEvents().getAll();
+        List<PhoneEvent> items = database.getUnsentEvents().findAll();
 
         assertEquals(5, items.size());
 

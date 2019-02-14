@@ -73,7 +73,7 @@ class Mailer {
      * Sends out all previously unsent messages.
      */
     void sendAllUnsent() {
-        List<PhoneEvent> events = database.getUnsentEvents().getAll();
+        List<PhoneEvent> events = database.getUnsentEvents().findAll();
 
         log.debug("Resending " + events.size() + " messages");
         // TODO: 13.02.2019 send all in one transport session

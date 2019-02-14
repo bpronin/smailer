@@ -25,7 +25,11 @@ public abstract class XCursor<R> extends CursorWrapper {
 
     public abstract R found();
 
-    public R findAndClose() {
+    public R findFirst() {
+        if (getWrappedCursor() == null) {
+            return null;
+        }
+
         try {
             moveToFirst();
             if (!isBeforeFirst() && !isAfterLast()) {
@@ -37,7 +41,11 @@ public abstract class XCursor<R> extends CursorWrapper {
         }
     }
 
-    public List<R> getAll() {
+    public List<R> findAll() {
+        if (getWrappedCursor() == null) {
+            return null;
+        }
+
         try {
             List<R> list = new ArrayList<>();
             moveToFirst();

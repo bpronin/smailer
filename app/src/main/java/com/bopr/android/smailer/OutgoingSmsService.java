@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.bopr.android.smailer.util.db.XCursor;
@@ -17,6 +16,7 @@ import com.bopr.android.smailer.util.db.XCursor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.bopr.android.smailer.MailerService.startMailService;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
 
 /**
@@ -26,20 +26,13 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
  */
 public class OutgoingSmsService extends Service {
 
+    public static final Uri CONTENT_SMS_SENT = Uri.parse("content://sms/sent");
+    public static final Uri CONTENT_SMS = Uri.parse("content://sms");
     private static Logger log = LoggerFactory.getLogger("OutgoingSmsService");
 
     private ContentObserver contentObserver;
-    private ContentResolverWrapper contentResolver;
     private Looper looper;
-    private String lastProcessedMessage;
 
-    public OutgoingSmsService() {
-        setContentResolver(new ContentResolverWrapper(this));
-    }
-
-    protected void setContentResolver(ContentResolverWrapper wrapper) {
-        this.contentResolver = wrapper;
-    }
 
     @Override
     public void onCreate() {
@@ -48,38 +41,20 @@ public class OutgoingSmsService extends Service {
 
         looper = thread.getLooper();
         Handler handler = new Handler(looper);
-        contentObserver = new ContentObserver(handler) {
-
-            @Override
-            public void onChange(boolean selfChange) {
-                onChange(selfChange, null);
-            }
-
-            @Override
-            public void onChange(boolean selfChange, Uri uri) {
-                /* this method can be called multiple times so we need to remember processed message */
-                if (uri != null) {
-                    String id = uri.getLastPathSegment();
-                    if (id != null && !id.equals(lastProcessedMessage)) {
-                        lastProcessedMessage = id;
-                        processSms(id);
-                    }
-                }
-            }
-        };
+        contentObserver = new SmsContentObserver(handler);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        contentResolver.registerContentObserver(Uri.parse("content://sms"), contentObserver);
         log.debug("Running");
+        getContentResolver().registerContentObserver(CONTENT_SMS, true, contentObserver);
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
         looper.quit();
-        contentResolver.unregisterContentObserver(contentObserver);
+        getContentResolver().unregisterContentObserver(contentObserver);
         super.onDestroy();
         log.debug("Destroyed");
     }
@@ -90,31 +65,28 @@ public class OutgoingSmsService extends Service {
         return null;
     }
 
-    private void processSms(String id) {
+    private void processEvent(String id) {
         log.debug("Processing sms: " + id);
 
-        new XCursor<Void>(getContentResolver().query(Uri.parse("content://sms/sent"), null,
-                "_id=?", new String[]{id}, null)) {
+        new XCursor<Void>(getContentResolver().query(CONTENT_SMS_SENT, null, "_id=?",
+                new String[]{id}, null)) {
 
             @Override
             public Void found() {
-                startMailService(getString("address"), getLong("date"), getString("body"));
+                long date = getLong("date");
+                log.debug("Starting mail service");
+
+                PhoneEvent event = new PhoneEvent();
+                event.setIncoming(false);
+                event.setPhone(getString("address"));
+                event.setStartTime(date);
+                event.setEndTime(date);
+                event.setText(getString("body"));
+
+                startMailService(OutgoingSmsService.this, event);
                 return null;
             }
-        }.findAndClose();
-    }
-
-    private void startMailService(String address, long date, String body) {
-        log.debug("Starting mail service");
-
-        PhoneEvent event = new PhoneEvent();
-        event.setIncoming(false);
-        event.setPhone(address);
-        event.setStartTime(date);
-        event.setEndTime(date);
-        event.setText(body);
-
-        MailerService.startMailService(this, event);
+        }.findFirst();
     }
 
     /**
@@ -133,29 +105,29 @@ public class OutgoingSmsService extends Service {
         }
     }
 
-    /**
-     * This is only for testing purposes since we cannot either use nor override
-     * {@link android.content.ContentResolver#registerContentObserver(Uri, boolean, ContentObserver)} and
-     * {@link android.content.ContentResolver#unregisterContentObserver(ContentObserver)}
-     * in tests.
-     */
-    protected static class ContentResolverWrapper {
+    private class SmsContentObserver extends ContentObserver {
 
-        private Context context;
+        private String lastProcessed;
 
-        @SuppressWarnings("WeakerAccess")
-        public ContentResolverWrapper(Context context) {
-            this.context = context;
+        private SmsContentObserver(Handler handler) {
+            super(handler);
         }
 
-        void registerContentObserver(@NonNull Uri uri, @NonNull ContentObserver observer) {
-            context.getContentResolver().registerContentObserver(uri, true, observer);
+        @Override
+        public void onChange(boolean selfChange) {
+            onChange(selfChange, null);
         }
 
-        void unregisterContentObserver(@NonNull ContentObserver observer) {
-            context.getContentResolver().unregisterContentObserver(observer);
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            /* this method can be called multiple times so we need to remember processed message */
+            if (uri != null) {
+                String id = uri.getLastPathSegment();
+                if (id != null && !id.equals(lastProcessed)) {
+                    lastProcessed = id;
+                    processEvent(id);
+                }
+            }
         }
-
     }
-
 }
