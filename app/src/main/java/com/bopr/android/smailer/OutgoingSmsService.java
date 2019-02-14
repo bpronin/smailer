@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.ContentObserver;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -32,10 +33,12 @@ public class OutgoingSmsService extends Service {
 
     private ContentObserver contentObserver;
     private Looper looper;
-
+    private Notifications notifications;
 
     @Override
     public void onCreate() {
+        notifications = new Notifications(this);
+
         HandlerThread thread = new HandlerThread("OutgoingSmsService");
         thread.start();
 
@@ -48,6 +51,7 @@ public class OutgoingSmsService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         log.debug("Running");
         getContentResolver().registerContentObserver(CONTENT_SMS, true, contentObserver);
+        startForeground(1, notifications.getForegroundServiceNotification());
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -89,6 +93,7 @@ public class OutgoingSmsService extends Service {
         }.findFirst();
     }
 
+
     /**
      * Starts or stops the service depending on preferences
      *
@@ -97,7 +102,11 @@ public class OutgoingSmsService extends Service {
     public static void toggleService(Context context) {
         Intent intent = new Intent(context, OutgoingSmsService.class);
         if (Settings.loadFilter(context).getTriggers().contains(VAL_PREF_TRIGGER_OUT_SMS)) {
-            context.startService(intent);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(intent);
+            } else {
+                context.startService(intent);
+            }
             log.debug("Enabled");
         } else {
             context.stopService(intent);

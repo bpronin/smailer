@@ -58,6 +58,8 @@
     <string name="notification_error_no_host">No host specified.</string>
     <string name="notification_error_no_port">No port specified.</string>
     <string name="notification_error_no_recipients">No recipients specified.</string>
+    <string name="notifications_channel">Notifications</string>
+    <string name="notifications_service_running">Service is active</string>
     <string name="title_about">About</string>
     <string name="title_acceptable_phone_numbers">Acceptable phone numbers ({size})</string>
     <string name="title_acceptable_text">Acceptable words ({size})</string>
@@ -83,6 +85,7 @@
     <string name="title_email_password_hint">Password of account to send email from.</string>
     <string name="title_email_recipients">Recipients</string>
     <string name="title_email_sender">Account</string>
+    <string name="title_enter_phone_number">Enter phone number. You also may use * as a wildcard.</string>
     <string name="title_host">Host</string>
     <string name="title_list_empty">List is empty</string>
     <string name="title_log_empty">History is empty</string>
@@ -98,8 +101,8 @@
     <string name="title_outgoing_email_address">Outgoing email address</string>
     <string name="title_password">Password</string>
     <string name="title_password_asterisks" translatable="false">**********</string>
-    <string name="title_enter_phone_number">Enter phone number. You also may use * as a wildcard.</string>
     <string name="title_port">Port</string>
+    <string name="title_regex">Regular expression</string>
     <string name="title_remove">Remove</string>
     <string name="title_remove_from_filter">Exclude number from all rules</string>
     <string name="title_resend">Resend</string>
@@ -119,7 +122,6 @@
     <string name="title_what_email_contain">What should the email include</string>
     <string name="title_white_list_used">White list used</string>
     <string name="title_whitelist">Whitelist</string>
-    <string name="title_regex">Regular expression</string>
 
     <string-array name="titles_triggers">
         <item>Incoming SMS</item>

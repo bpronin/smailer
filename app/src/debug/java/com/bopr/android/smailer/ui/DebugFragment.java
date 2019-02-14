@@ -211,6 +211,34 @@ public class DebugFragment extends BasePreferenceFragment {
                 })
         );
 
+        addCategory("Notifications",
+
+                createPreference("Mail error. Show connection", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        new Notifications(context).showMailError("Test notification text", 100, Notifications.ACTION_SHOW_CONNECTION);
+                    }
+                }),
+
+                createPreference("Mail error. Show log", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        new Notifications(context).showMailError("Test notification text", 100, Notifications.ACTION_SHOW_LOG);
+                    }
+                }),
+
+                createPreference("Mail success", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        new Notifications(context).showMailSuccess(100);
+                    }
+                })
+
+        );
+
         addCategory("Other",
 
                 createPreference("Emulate Sms", new DefaultClickListener() {
@@ -242,14 +270,6 @@ public class DebugFragment extends BasePreferenceFragment {
                     @Override
                     protected void onClick(Preference preference) {
                         onShowPassword();
-                    }
-                }),
-
-                createPreference("Show notification", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        onShowNotification();
                     }
                 }),
 
@@ -475,10 +495,6 @@ public class DebugFragment extends BasePreferenceFragment {
         database.putEvent(new PhoneEvent("+79052345675", true, time += 1000, time + 10000, true, null, null, "Test exception +79052345675", PhoneEvent.State.PENDING));
 
         showDone();
-    }
-
-    private void onShowNotification() {
-        new Notifications(context).showMailError("Test notification text", 100, Notifications.ACTION_SHOW_CONNECTION);
     }
 
     private void onEmulateSms() {

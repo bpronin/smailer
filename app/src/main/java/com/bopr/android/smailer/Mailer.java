@@ -99,15 +99,15 @@ class Mailer {
             try {
                 transport.send(formatter.formatSubject(), formatter.formatBody(), pp.getUser(), pp.getRecipients());
 
-                success(event);
+                handleSuccess(event);
             } catch (AuthenticationFailedException x) {
-                failed(x, x.toString(), event, R.string.notification_error_authentication, ACTION_SHOW_SERVER, silent);
+                handleError(x, x.toString(), event, R.string.notification_error_authentication, ACTION_SHOW_SERVER, silent);
             } catch (MailConnectException x) {
-                failed(x, x.toString(), event, R.string.notification_error_connect, ACTION_SHOW_SERVER, silent);
+                handleError(x, x.toString(), event, R.string.notification_error_connect, ACTION_SHOW_SERVER, silent);
             } catch (MessagingException x) {
-                failed(x, x.toString(), event, R.string.notification_error_mail_general, ACTION_SHOW_SERVER, silent);
+                handleError(x, x.toString(), event, R.string.notification_error_mail_general, ACTION_SHOW_SERVER, silent);
             } catch (Throwable x) {
-                failed(x, x.toString(), event, R.string.notification_error_internal, ACTION_SHOW_MAIN, silent);
+                handleError(x, x.toString(), event, R.string.notification_error_internal, ACTION_SHOW_MAIN, silent);
             }
         }
     }
@@ -128,16 +128,16 @@ class Mailer {
 
     private boolean checkProperties(MailerProperties properties, PhoneEvent event, boolean silent) {
         if (isEmpty(properties.getHost())) {
-            failed(null, "Host not specified", event, R.string.notification_error_no_host, ACTION_SHOW_SERVER, silent);
+            handleError(null, "Host not specified", event, R.string.notification_error_no_host, ACTION_SHOW_SERVER, silent);
             return false;
         } else if (isEmpty(properties.getPort())) {
-            failed(null, "Port not specified", event, R.string.notification_error_no_port, ACTION_SHOW_SERVER, silent);
+            handleError(null, "Port not specified", event, R.string.notification_error_no_port, ACTION_SHOW_SERVER, silent);
             return false;
         } else if (isEmpty(properties.getUser())) {
-            failed(null, "Account not specified", event, R.string.notification_error_no_account, ACTION_SHOW_SERVER, silent);
+            handleError(null, "Account not specified", event, R.string.notification_error_no_account, ACTION_SHOW_SERVER, silent);
             return false;
         } else if (isEmpty(properties.getRecipients())) {
-            failed(null, "Recipients not specified", event, R.string.notification_error_no_recipients, ACTION_SHOW_RECIPIENTS, silent);
+            handleError(null, "Recipients not specified", event, R.string.notification_error_no_recipients, ACTION_SHOW_RECIPIENTS, silent);
             return false;
         }
         return true;
@@ -145,7 +145,7 @@ class Mailer {
 
     private boolean checkConnection(PhoneEvent event, boolean silent) {
         if (!hasInternetConnection(context)) {
-            failed(null, "No internet connection", event, R.string.notification_error_no_connection, ACTION_SHOW_CONNECTION, silent);
+            handleError(null, "No internet connection", event, R.string.notification_error_no_connection, ACTION_SHOW_CONNECTION, silent);
             return false;
         }
         return true;
@@ -179,7 +179,7 @@ class Mailer {
         }
     }
 
-    private void success(PhoneEvent event) {
+    private void handleSuccess(PhoneEvent event) {
         event.setState(PhoneEvent.State.PROCESSED);
         event.setDetails(null);
         database.putEvent(event);
@@ -194,13 +194,14 @@ class Mailer {
         }
     }
 
-    private void failed(Throwable error, String details, PhoneEvent event, int notification,
-                        int action, boolean silent) {
+    private void handleError(Throwable error, String details, PhoneEvent event, int notification,
+                             int action, boolean silent) {
         log.error("Send failed. " + event, error);
 
         event.setState(PhoneEvent.State.PENDING);
         event.setDetails(details);
         database.putEvent(event);
+
         if (!silent) {
             notifications.showMailError(notification, event.getId(), action);
         }

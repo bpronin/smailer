@@ -81,6 +81,7 @@
     <string name="title_email_password_hint">Пароль аккаунта, с которого будет отправляться почта.</string>
     <string name="title_email_recipients">Получатели</string>
     <string name="title_email_sender">Отправитель</string>
+    <string name="title_enter_phone_number">Укажите номер телефона. Вы также можете использовать * для шаблона</string>
     <string name="title_host">Сервер</string>
     <string name="title_list_empty">Список пуст</string>
     <string name="title_log_empty">Журнал пуст</string>
@@ -95,8 +96,8 @@
     <string name="title_open_source_and_third_party">Открытый исходный код и ПО сторонних производителей</string>
     <string name="title_outgoing_email_address">Адрес исходящей почты</string>
     <string name="title_password">Пароль</string>
-    <string name="title_enter_phone_number">Укажите номер телефона. Вы также можете использовать * для шаблона</string>
     <string name="title_port">Порт</string>
+    <string name="title_regex">Регулярное выражение</string>
     <string name="title_remove">Удалить</string>
     <string name="title_remove_from_filter">Исключить номер из правил</string>
     <string name="title_resend">Повторная отправка</string>
@@ -116,7 +117,6 @@
     <string name="title_what_email_contain">Содержание почтового сообщения</string>
     <string name="title_white_list_used">Используется белый список</string>
     <string name="title_whitelist">Белый список</string>
-    <string name="title_regex">Регулярное выражение</string>
 
     <string-array name="titles_triggers">
         <item>Входящие SMS</item>
@@ -138,5 +138,7 @@
         <item>Английский</item>
         <item>Русский</item>
     </string-array>
+    <string name="notifications_channel">Уведомления</string>
+    <string name="notifications_service_running">Служба запущена</string>
 
 </resources>

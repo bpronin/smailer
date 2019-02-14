@@ -1,10 +1,13 @@
 package com.bopr.android.smailer;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
@@ -15,8 +18,10 @@ import com.bopr.android.smailer.ui.MainActivity;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
+@SuppressWarnings("WeakerAccess")
 public class Notifications {
 
+    private static final String CHANNEL_ID = "com.bopr.android.smailer";
     private static final int ID_MAIL_SUCCESS = 100;
     private static final int ID_MAIL_ERROR = 101;
     private static final String EXTRA_MESSAGE_ID = "message_id";
@@ -33,12 +38,20 @@ public class Notifications {
         this.context = context;
     }
 
-    private NotificationManager notificationManager() {
-        return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+    public Notification getForegroundServiceNotification() {
+        String text = context.getResources().getString(R.string.notifications_service_running);
+        return new NotificationCompat.Builder(context, getChannel())
+                .setContentIntent(createIntent(ACTION_SHOW_MAIN, null))
+                .setSmallIcon(R.drawable.ic_service)
+                .setTicker(context.getResources().getString(R.string.app_name))
+                .setContentTitle(context.getResources().getString(R.string.app_name))
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
+                .setContentText(text)
+                .build();
     }
 
     public void hideMailError() {
-        notificationManager().cancel(ID_MAIL_ERROR);
+        getManager().cancel(ID_MAIL_ERROR);
     }
 
     public void showMailError(int messageResource, long messageId, int action) {
@@ -47,7 +60,7 @@ public class Notifications {
     }
 
     public void showMailError(String text, long messageId, int action) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "default");
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, getChannel());
         Notification notification = builder
                 .setContentIntent(createIntent(action, messageId))
                 .setSmallIcon(R.drawable.ic_alert)
@@ -58,12 +71,12 @@ public class Notifications {
                 .setContentText(text)
                 .build();
 
-        notificationManager().notify(ID_MAIL_ERROR, notification);
+        getManager().notify(ID_MAIL_ERROR, notification);
     }
 
     public void showMailSuccess(long messageId) {
         String text = context.getResources().getString(R.string.notification_email_send);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "default");
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, getChannel());
         Notification notification = builder
                 .setContentIntent(createIntent(ACTION_SHOW_LOG, messageId))
                 .setSmallIcon(R.drawable.ic_file_send)
@@ -74,15 +87,18 @@ public class Notifications {
                 .setContentText(text)
                 .build();
 
-        notificationManager().notify(ID_MAIL_SUCCESS, notification);
+        getManager().notify(ID_MAIL_SUCCESS, notification);
     }
 
-    private PendingIntent createIntent(int action, long messageId) {
+    private PendingIntent createIntent(int action, @Nullable Long messageId) {
         switch (action) {
             case ACTION_SHOW_RECIPIENTS:
+//                return createActivityIntent(RecipientsActivity.class, messageId);
             case ACTION_SHOW_SERVER:
-            case ACTION_SHOW_MAIN:
+//                return createActivityIntent(ServerActivity.class, messageId);
             case ACTION_SHOW_LOG:
+//                return createActivityIntent(LogActivity.class, messageId);
+            case ACTION_SHOW_MAIN:
                 return createActivityIntent(MainActivity.class, messageId);
             case ACTION_SHOW_CONNECTION:
                 Intent intent = new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS);
@@ -91,14 +107,29 @@ public class Notifications {
         return null;
     }
 
-    private PendingIntent createActivityIntent(Class activityClass, long messageId) {
+    private PendingIntent createActivityIntent(Class activityClass, @Nullable Long messageId) {
         Intent intent = new Intent(context, activityClass);
-        intent.putExtra(EXTRA_MESSAGE_ID, messageId);
+        if (messageId != null) {
+            intent.putExtra(EXTRA_MESSAGE_ID, messageId);
+        }
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addParentStack(activityClass);
         stackBuilder.addNextIntent(intent);
         return stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    private NotificationManager getManager() {
+        return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+    }
+
+    private String getChannel() {
+        if (Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            String name = context.getResources().getString(R.string.notifications_channel);
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_LOW);
+            getManager().createNotificationChannel(channel);
+        }
+        return CHANNEL_ID;
     }
 
 }
