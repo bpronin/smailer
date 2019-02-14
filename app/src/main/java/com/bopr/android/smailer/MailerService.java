@@ -26,8 +26,8 @@ public class MailerService extends IntentService {
     public static final String EXTRA_END_TIME = "end_time";
     public static final String EXTRA_TEXT = "text";
 
-    public static final String ACTION_CALL = "call";
-    public static final String ACTION_RESEND = "resend";
+    public static final String ACTION_SINGLE = "single";
+    public static final String ACTION_ALL = "all";
 
     private Locator locator;
     private Mailer mailer;
@@ -70,16 +70,16 @@ public class MailerService extends IntentService {
         log.debug("Processing mailer service intent:" + intent);
 
         switch (Util.requireNonNull(intent.getAction())) {
-            case ACTION_CALL:
-                handlePhoneEvent(parsePhoneEventIntent(intent));
+            case ACTION_SINGLE:
+                processEvent(parsePhoneEventIntent(intent));
                 break;
-            case ACTION_RESEND:
+            case ACTION_ALL:
                 mailer.sendAllUnsent();
                 break;
         }
     }
 
-    private void handlePhoneEvent(PhoneEvent event) {
+    private void processEvent(PhoneEvent event) {
         database.putEvent(event);
         if (Settings.loadFilter(this).accept(event)) {
             log.debug("Processing phone event: " + event);
@@ -107,10 +107,15 @@ public class MailerService extends IntentService {
         return event;
     }
 
-    @NonNull
-    public static Intent createPhoneEventIntent(Context context, PhoneEvent event) {
+    /**
+     * Start service for single event
+     *
+     * @param context context
+     * @param event   event
+     */
+    public static void startMailService(Context context, PhoneEvent event) {
         Intent intent = new Intent(context, MailerService.class);
-        intent.setAction(ACTION_CALL);
+        intent.setAction(ACTION_SINGLE);
         intent.putExtra(EXTRA_INCOMING, event.isIncoming());
         intent.putExtra(EXTRA_MISSED, event.isMissed());
         intent.putExtra(EXTRA_PHONE_NUMBER, event.getPhone());
@@ -118,19 +123,18 @@ public class MailerService extends IntentService {
         intent.putExtra(EXTRA_END_TIME, event.getEndTime());
         intent.putExtra(EXTRA_TEXT, event.getText());
 
-        return intent;
+        context.startService(intent);
     }
 
     /**
-     * Creates intent that triggers resend unsent messages task
+     * Start service for all unprocessed events
      *
      * @param context context
-     * @return intent
      */
-    @NonNull
-    public static Intent createResendIntent(Context context) {
+    public static void startMailService(Context context) {
         Intent intent = new Intent(context, MailerService.class);
-        intent.setAction(ACTION_RESEND);
-        return intent;
+        intent.setAction(ACTION_ALL);
+
+        context.startService(intent);
     }
 }

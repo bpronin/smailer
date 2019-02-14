@@ -4,18 +4,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Base64;
+
 import com.bopr.android.smailer.util.Util;
+
 import org.junit.Test;
 
-import static com.bopr.android.smailer.MailerService.ACTION_CALL;
-import static com.bopr.android.smailer.Settings.*;
+import static com.bopr.android.smailer.MailerService.ACTION_SINGLE;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
+import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.anySetOf;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * {@link SmsReceiver} tester.
@@ -57,7 +61,7 @@ public class SmsReceiverTest extends BaseTest {
         receiver.onReceive(context, intent);
         Intent result = (Intent) invocations.get(0)[0];
 
-        assertEquals(ACTION_CALL, result.getAction());
+        assertEquals(ACTION_SINGLE, result.getAction());
         assertEquals("123", result.getStringExtra(MailerService.EXTRA_PHONE_NUMBER));
         assertEquals("Hello", result.getStringExtra(MailerService.EXTRA_TEXT));
         assertEquals(1459795903000L, result.getLongExtra(MailerService.EXTRA_START_TIME, 0));

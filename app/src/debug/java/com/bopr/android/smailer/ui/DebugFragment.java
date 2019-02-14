@@ -47,7 +47,7 @@ import java.util.Properties;
 import static android.Manifest.permission.BROADCAST_SMS;
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-import static com.bopr.android.smailer.MailerService.createPhoneEventIntent;
+import static com.bopr.android.smailer.MailerService.startMailService;
 import static com.bopr.android.smailer.Settings.DEFAULT_HOST;
 import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
 import static com.bopr.android.smailer.Settings.DEFAULT_PORT;
@@ -398,7 +398,7 @@ public class DebugFragment extends BasePreferenceFragment {
         event.setStartTime(start);
         event.setEndTime(start + 10000);
 
-        context.startService(createPhoneEventIntent(context, event));
+        startMailService(context, event);
     }
 
     private void onRequireReceiveSmsPermission() {

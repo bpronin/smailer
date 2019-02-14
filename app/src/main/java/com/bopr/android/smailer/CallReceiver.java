@@ -13,7 +13,7 @@ import static android.telephony.TelephonyManager.EXTRA_STATE;
 import static android.telephony.TelephonyManager.EXTRA_STATE_IDLE;
 import static android.telephony.TelephonyManager.EXTRA_STATE_OFFHOOK;
 import static android.telephony.TelephonyManager.EXTRA_STATE_RINGING;
-import static com.bopr.android.smailer.MailerService.createPhoneEventIntent;
+import static com.bopr.android.smailer.MailerService.startMailService;
 import static java.lang.System.currentTimeMillis;
 
 /**
@@ -91,7 +91,7 @@ public class CallReceiver extends BroadcastReceiver {
         event.setIncoming(incoming);
         event.setMissed(missed);
 
-        context.startService(createPhoneEventIntent(context, event));
+        startMailService(context, event);
     }
 
 }

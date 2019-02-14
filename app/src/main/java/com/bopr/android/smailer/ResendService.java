@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
+import static com.bopr.android.smailer.MailerService.startMailService;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
 import static com.bopr.android.smailer.Settings.getPreferences;
 import static com.bopr.android.smailer.util.AndroidUtil.hasInternetConnection;
@@ -65,7 +66,7 @@ public class ResendService extends Service {
     public void onTimer() {
         log.debug("Running");
         if (isPreferenceEnabled(this) && hasInternetConnection(this)) {
-            startService(MailerService.createResendIntent(this));
+            startMailService(this);
             log.debug("Started mailer service");
         }
     }

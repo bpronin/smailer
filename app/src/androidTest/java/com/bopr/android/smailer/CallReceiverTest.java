@@ -15,7 +15,7 @@ import static android.telephony.TelephonyManager.EXTRA_STATE;
 import static android.telephony.TelephonyManager.EXTRA_STATE_IDLE;
 import static android.telephony.TelephonyManager.EXTRA_STATE_OFFHOOK;
 import static android.telephony.TelephonyManager.EXTRA_STATE_RINGING;
-import static com.bopr.android.smailer.MailerService.ACTION_CALL;
+import static com.bopr.android.smailer.MailerService.ACTION_SINGLE;
 import static com.bopr.android.smailer.MailerService.EXTRA_END_TIME;
 import static com.bopr.android.smailer.MailerService.EXTRA_INCOMING;
 import static com.bopr.android.smailer.MailerService.EXTRA_MISSED;
@@ -26,7 +26,6 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -89,7 +88,7 @@ public class CallReceiverTest extends BaseTest {
         receiver.onReceive(context, intent);
 
         Intent result = (Intent) invocations.get(0)[0];
-        assertEquals(ACTION_CALL, result.getAction());
+        assertEquals(ACTION_SINGLE, result.getAction());
         assertTrue(result.getBooleanExtra(EXTRA_INCOMING, false));
         assertFalse(result.hasExtra(EXTRA_MISSED));
         assertTrue(result.getLongExtra(EXTRA_START_TIME, 0) != 0);
@@ -164,7 +163,7 @@ public class CallReceiverTest extends BaseTest {
         receiver.onReceive(context, intent);
 
         Intent result = (Intent) invocations.get(0)[0];
-        assertEquals(ACTION_CALL, result.getAction());
+        assertEquals(ACTION_SINGLE, result.getAction());
         assertFalse(result.getBooleanExtra(EXTRA_INCOMING, true));
         assertFalse(result.hasExtra(EXTRA_MISSED));
         assertTrue(result.getLongExtra(EXTRA_START_TIME, 0) != 0);
@@ -232,7 +231,7 @@ public class CallReceiverTest extends BaseTest {
         receiver.onReceive(context, intent);
 
         Intent result = (Intent) invocations.get(0)[0];
-        assertEquals(ACTION_CALL, result.getAction());
+        assertEquals(ACTION_SINGLE, result.getAction());
         assertFalse(result.hasExtra(EXTRA_INCOMING));
         assertTrue(result.getBooleanExtra(EXTRA_MISSED, false));
         assertTrue(result.getLongExtra(EXTRA_START_TIME, 0) != 0);

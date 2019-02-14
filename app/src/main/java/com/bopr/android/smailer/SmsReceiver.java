@@ -9,12 +9,11 @@ import android.provider.Telephony;
 import android.support.annotation.NonNull;
 import android.telephony.SmsMessage;
 
-import com.bopr.android.smailer.util.Util;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.bopr.android.smailer.MailerService.createPhoneEventIntent;
+import static com.bopr.android.smailer.MailerService.startMailService;
+import static com.bopr.android.smailer.util.Util.safeEquals;
 
 /**
  * Receives SMS intents and starts mailer service.
@@ -30,11 +29,10 @@ public class SmsReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         log.debug("Received intent: " + intent);
 
-        if (Util.safeEquals(intent.getAction(), SMS_RECEIVED_ACTION)) {
-            context.startService(createPhoneEventIntent(context, parse(intent)));
+        if (safeEquals(intent.getAction(), SMS_RECEIVED_ACTION)) {
+            startMailService(context, parse(intent));
         }
     }
-
 
     /**
      * Parses sms intent into event object.
@@ -58,7 +56,7 @@ public class SmsReceiver extends BroadcastReceiver {
             }
 
             event.setPhone(messages[0].getDisplayOriginatingAddress());
-            event.setStartTime(messages[0].getTimestampMillis()); /* on emulator time zone of this may be wrong */
+            event.setStartTime(messages[0].getTimestampMillis()); /* time zone on emulator may be incorrect */
             event.setEndTime(event.getStartTime());
             event.setText(text.toString());
         }
