@@ -8,14 +8,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * {@link MailerService} tester.
+ * {@link CallProcessorService} tester.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class MailerServiceTest extends BaseTest {
+public class CallProcessorServiceTest extends BaseTest {
 
     /**
-     * Checks that service calls {@link Mailer#sendAllUnsent()} method.
+     * Checks that service calls {@link CallProcessor#processAll()} method.
      *
      * @throws Exception when fails
      */
@@ -23,14 +23,14 @@ public class MailerServiceTest extends BaseTest {
     public void testStartResend() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
 
-        Mailer mailer = mock(Mailer.class);
-        doAnswer(invocations).when(mailer).sendAllUnsent();
+        CallProcessor callProcessor = mock(CallProcessor.class);
+        doAnswer(invocations).when(callProcessor).processAll();
 
-        MailerService service = new MailerService();
-        service.init(mailer, mock(Locator.class));
+        CallProcessorService service = new CallProcessorService();
+//        service.init(callProcessor, mock(GeoLocator.class));
 
 /*
-        Intent intent = MailerService.createResendIntent(getContext());
+        Intent intent = CallProcessorService.createResendIntent(getContext());
         service.onHandleIntent(intent);
 */
 
@@ -38,7 +38,7 @@ public class MailerServiceTest extends BaseTest {
     }
 
     /**
-     * Checks that service calls {@link Mailer#send(PhoneEvent)}} method on incoming sms.
+     * Checks that service calls {@link CallProcessor#process(PhoneEvent)}} method on incoming sms.
      *
      * @throws Exception when fails
      */
@@ -46,18 +46,18 @@ public class MailerServiceTest extends BaseTest {
     public void testStartSendIncomingSms() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
 
-        Mailer mailer = mock(Mailer.class);
-        doAnswer(invocations).when(mailer).send(any(PhoneEvent.class));
-        Locator locator = mock(Locator.class);
+        CallProcessor callProcessor = mock(CallProcessor.class);
+        doAnswer(invocations).when(callProcessor).process(any(PhoneEvent.class));
+        GeoLocator locator = mock(GeoLocator.class);
         when(locator.getLocation()).thenReturn(new GeoCoordinates(60, 30));
 
-        MailerService service = new MailerService();
-        service.init(mailer, locator);
+        CallProcessorService service = new CallProcessorService();
+//        service.init(callProcessor, locator);
 
         //"123", (long) 100000, "Text", true
         PhoneEvent event1 = new PhoneEvent();
 /*
-        Intent intent = MailerService.createPhoneEventIntent(getContext(), event1);
+        Intent intent = CallProcessorService.createPhoneEventIntent(getContext(), event1);
         service.onHandleIntent(intent);
 */
 
@@ -75,7 +75,7 @@ public class MailerServiceTest extends BaseTest {
     }
 
     /**
-     * Checks that service calls {@link Mailer#send(PhoneEvent)}} method on outgoing sms.
+     * Checks that service calls {@link CallProcessor#process(PhoneEvent)}} method on outgoing sms.
      *
      * @throws Exception when fails
      */
@@ -83,18 +83,18 @@ public class MailerServiceTest extends BaseTest {
     public void testStartSendOutgoingSms() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
 
-        Mailer mailer = mock(Mailer.class);
-        doAnswer(invocations).when(mailer).send(any(PhoneEvent.class));
-        Locator locator = mock(Locator.class);
+        CallProcessor callProcessor = mock(CallProcessor.class);
+        doAnswer(invocations).when(callProcessor).process(any(PhoneEvent.class));
+        GeoLocator locator = mock(GeoLocator.class);
         when(locator.getLocation()).thenReturn(new GeoCoordinates(60, 30));
 
-        MailerService service = new MailerService();
-        service.init(mailer, locator);
+        CallProcessorService service = new CallProcessorService();
+//        service.init(callProcessor, locator);
 
-//        Intent intent = MailerService.createSmsIntent(getContext(), "123", (long) 100000, "Text", false);
+//        Intent intent = CallProcessorService.createSmsIntent(getContext(), "123", (long) 100000, "Text", false);
 /*
         PhoneEvent event1 = new PhoneEvent();
-        Intent intent = MailerService.createPhoneEventIntent(getContext(), event1);
+        Intent intent = CallProcessorService.createPhoneEventIntent(getContext(), event1);
         service.onHandleIntent(intent);
 */
 
@@ -111,7 +111,7 @@ public class MailerServiceTest extends BaseTest {
     }
 
     /**
-     * Checks that service calls {@link Mailer#send(PhoneEvent)}} method on incoming call.
+     * Checks that service calls {@link CallProcessor#process(PhoneEvent)}} method on incoming call.
      *
      * @throws Exception when fails
      */
@@ -119,18 +119,18 @@ public class MailerServiceTest extends BaseTest {
     public void testStartSendIncomingCall() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
 
-        Mailer mailer = mock(Mailer.class);
-        doAnswer(invocations).when(mailer).send(any(PhoneEvent.class));
-        Locator locator = mock(Locator.class);
+        CallProcessor callProcessor = mock(CallProcessor.class);
+        doAnswer(invocations).when(callProcessor).process(any(PhoneEvent.class));
+        GeoLocator locator = mock(GeoLocator.class);
         when(locator.getLocation()).thenReturn(new GeoCoordinates(60, 30));
 
-        MailerService service = new MailerService();
-        service.init(mailer, locator);
+        CallProcessorService service = new CallProcessorService();
+//        service.init(callProcessor, locator);
 
-//        Intent intent = MailerService.createIncomingCallIntent(getContext(), "123", 100000, 200000);
+//        Intent intent = CallProcessorService.createIncomingCallIntent(getContext(), "123", 100000, 200000);
 /*
         PhoneEvent event1 = new PhoneEvent();
-        Intent intent = MailerService.createPhoneEventIntent(getContext(), event1);
+        Intent intent = CallProcessorService.createPhoneEventIntent(getContext(), event1);
         service.onHandleIntent(intent);
 */
 
@@ -148,7 +148,7 @@ public class MailerServiceTest extends BaseTest {
     }
 
     /**
-     * Checks that service calls {@link Mailer#send(PhoneEvent)}} method on outgoing call.
+     * Checks that service calls {@link CallProcessor#process(PhoneEvent)}} method on outgoing call.
      *
      * @throws Exception when fails
      */
@@ -156,18 +156,18 @@ public class MailerServiceTest extends BaseTest {
     public void testStartSendOutgoingCall() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
 
-        Mailer mailer = mock(Mailer.class);
-        doAnswer(invocations).when(mailer).send(any(PhoneEvent.class));
-        Locator locator = mock(Locator.class);
+        CallProcessor callProcessor = mock(CallProcessor.class);
+        doAnswer(invocations).when(callProcessor).process(any(PhoneEvent.class));
+        GeoLocator locator = mock(GeoLocator.class);
         when(locator.getLocation()).thenReturn(new GeoCoordinates(60, 30));
 
-        MailerService service = new MailerService();
-        service.init(mailer, locator);
+        CallProcessorService service = new CallProcessorService();
+//        service.init(callProcessor, locator);
 
-//        Intent intent = MailerService.createOutgoingCallIntent(getContext(), "123", 100000, 200000);
+//        Intent intent = CallProcessorService.createOutgoingCallIntent(getContext(), "123", 100000, 200000);
         PhoneEvent event1 = new PhoneEvent();
 /*
-        Intent intent = MailerService.createPhoneEventIntent(getContext(), event1);
+        Intent intent = CallProcessorService.createPhoneEventIntent(getContext(), event1);
         service.onHandleIntent(intent);
 */
 
@@ -185,7 +185,7 @@ public class MailerServiceTest extends BaseTest {
     }
 
     /**
-     * Checks that service calls {@link Mailer#send(PhoneEvent)}} method on missed call.
+     * Checks that service calls {@link CallProcessor#process(PhoneEvent)}} method on missed call.
      *
      * @throws Exception when fails
      */
@@ -193,18 +193,18 @@ public class MailerServiceTest extends BaseTest {
     public void testStartSendMissedCall() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
 
-        Mailer mailer = mock(Mailer.class);
-        doAnswer(invocations).when(mailer).send(any(PhoneEvent.class));
-        Locator locator = mock(Locator.class);
+        CallProcessor callProcessor = mock(CallProcessor.class);
+        doAnswer(invocations).when(callProcessor).process(any(PhoneEvent.class));
+        GeoLocator locator = mock(GeoLocator.class);
         when(locator.getLocation()).thenReturn(new GeoCoordinates(60, 30));
 
-        MailerService service = new MailerService();
-        service.init(mailer, locator);
+        CallProcessorService service = new CallProcessorService();
+//        service.init(callProcessor, locator);
 
-//        Intent intent = MailerService.createMissedCallIntent(getContext(), "123", 100000);
+//        Intent intent = CallProcessorService.createMissedCallIntent(getContext(), "123", 100000);
         PhoneEvent event1 = new PhoneEvent();
 /*
-        Intent intent = MailerService.createPhoneEventIntent(getContext(), event1);
+        Intent intent = CallProcessorService.createPhoneEventIntent(getContext(), event1);
         service.onHandleIntent(intent);
 */
 

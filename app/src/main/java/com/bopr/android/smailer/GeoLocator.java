@@ -30,16 +30,16 @@ import static android.location.LocationManager.PASSIVE_PROVIDER;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class Locator {
+public class GeoLocator {
 
-    private static Logger log = LoggerFactory.getLogger("Locator");
+    private static Logger log = LoggerFactory.getLogger("GeoLocator");
     private static final int DEFAULT_TIMEOUT = 5000;
 
     private final Context context;
     private final Database database;
     private LocationManager locationManager;
 
-    public Locator(Context context, Database database) {
+    public GeoLocator(Context context, Database database) {
         this.context = context;
         this.database = database;
 

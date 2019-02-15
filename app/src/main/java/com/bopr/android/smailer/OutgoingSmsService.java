@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import androidx.annotation.Nullable;
 
-import static com.bopr.android.smailer.MailerService.startMailService;
+import static com.bopr.android.smailer.CallProcessorService.startMailService;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
 
 /**

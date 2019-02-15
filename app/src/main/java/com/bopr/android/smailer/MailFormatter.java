@@ -10,7 +10,6 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Set;
-import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -90,7 +89,7 @@ class MailFormatter {
      *
      * @param code locale code as "en_EN"
      */
-    void setLocale(String code) {
+    void setLocale(@Nullable String code) {
         Locale locale = Util.stringToLocale(code);
         this.locale = locale != null ? locale : Locale.getDefault();
 
@@ -99,6 +98,7 @@ class MailFormatter {
 
     /**
      * Sets email send time
+     *
      * @param sendTime time
      */
     void setSendTime(Date sendTime) {
@@ -183,7 +183,6 @@ class MailFormatter {
             String callerText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_CONTACT) ? formatCaller() : null;
             String timeText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME) ? formatEventTime() : null;
             String deviceNameText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME) ? formatDeviceName() : null;
-//            String sendTimeText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME) ? formatSendTime() : null;
             String sendTimeText = formatSendTime();
             String locationText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_LOCATION) ? formatLocation() : null;
 
@@ -194,7 +193,6 @@ class MailFormatter {
             }
 
             if (!isEmpty(timeText)) {
-//                if (!isEmpty(callerText)) {
                 if (!isEmpty(text)) {
                     text.append("<br>");
                 }
@@ -202,7 +200,6 @@ class MailFormatter {
             }
 
             if (!isEmpty(locationText)) {
-                //if (!isEmpty(callerText) || !isEmpty(timeText)) {
                 if (!isEmpty(text)) {
                     text.append("<br>");
                 }
@@ -210,7 +207,6 @@ class MailFormatter {
             }
 
             if (!isEmpty(deviceNameText) || !isEmpty(sendTimeText)) {
-                //if (!isEmpty(callerText) || !isEmpty(timeText) || !isEmpty(locationText)) {
                 if (!isEmpty(text)) {
                     text.append("<br>");
                 }
@@ -281,10 +277,8 @@ class MailFormatter {
         return null;
     }
 
-    @Nullable
     private String formatSendTime() {
         DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
-        df.setTimeZone(TimeZone.getTimeZone("Europe/Moscow"));
         return " " + formatter(R.string.email_body_at_time, resources)
                 .put("time", df.format(sendTime))
                 .format();
@@ -303,7 +297,7 @@ class MailFormatter {
                     .format();
         } else {
             return formatter(R.string.email_body_location, resources)
-                    .put("location", Locator.isPermissionsDenied(context) /* base context here */
+                    .put("location", GeoLocator.isPermissionsDenied(context) /* base context here */
                             ? R.string.email_body_unknown_location_no_permission
                             : R.string.email_body_unknown_location)
                     .format();

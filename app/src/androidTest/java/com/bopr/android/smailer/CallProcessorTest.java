@@ -37,11 +37,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * {@link Mailer} tester.
+ * {@link CallProcessor} tester.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class MailerTest extends BaseTest {
+public class CallProcessorTest extends BaseTest {
 
     private Database database;
     private Context context;
@@ -50,6 +50,7 @@ public class MailerTest extends BaseTest {
     private Notifications notifications;
     private NetworkInfo networkInfo;
     private SharedPreferences preferences;
+    private GeoLocator locator;
 
     @Override
     @SuppressWarnings("ResourceType")
@@ -92,6 +93,7 @@ public class MailerTest extends BaseTest {
 
         transport = mock(MailTransport.class);
         notifications = mock(Notifications.class);
+        locator = mock(GeoLocator.class);
     }
 
     /**
@@ -109,8 +111,8 @@ public class MailerTest extends BaseTest {
         doAnswer(inits).when(transport).startSession(anyString(), anyString(), anyString(), anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
 
-        Mailer mailer = new Mailer(context, transport, cryptor, notifications, database);
-        mailer.send(new PhoneEvent("+12345678901", false, null, null, false, null, new GeoCoordinates(30.0, 60.0), null, PhoneEvent.State.PENDING));
+        CallProcessor callProcessor = new CallProcessor(context, transport, cryptor, notifications, database, locator);
+        callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, new GeoCoordinates(30.0, 60.0), null, PhoneEvent.State.PENDING));
 
         assertTrue(errors.isEmpty());
         assertArrayEquals(new Object[]{"sender@mail.com", "decrypted password", "smtp.mail.com", "111"}, inits.get(0));
@@ -134,8 +136,8 @@ public class MailerTest extends BaseTest {
 
         when(preferences.getString(eq(KEY_PREF_EMAIL_LOCALE), anyString())).thenReturn("ru_RU");
 
-        Mailer mailer = new Mailer(context, transport, cryptor, notifications, database);
-        mailer.send(new PhoneEvent("+12345678901", false, null, null, false, null, new GeoCoordinates(30.0, 60.0), null, PhoneEvent.State.PENDING));
+        CallProcessor callProcessor = new CallProcessor(context, transport, cryptor, notifications, database, locator);
+        callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, new GeoCoordinates(30.0, 60.0), null, PhoneEvent.State.PENDING));
 
         assertTrue(errors.isEmpty());
         assertArrayEquals(new Object[]{"sender@mail.com", "decrypted password", "smtp.mail.com", "111"}, inits.get(0));
@@ -158,8 +160,8 @@ public class MailerTest extends BaseTest {
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
         when(networkInfo.isConnected()).thenReturn(false);
 
-        Mailer mailer = new Mailer(context, transport, cryptor, notifications, database);
-        mailer.send(new PhoneEvent("+12345678901", false, null, null, false, null, null, null, PhoneEvent.State.PENDING));
+        CallProcessor callProcessor = new CallProcessor(context, transport, cryptor, notifications, database, locator);
+        callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, null, null, PhoneEvent.State.PENDING));
 
         assertTrue(inits.isEmpty());
         assertTrue(sends.isEmpty());
@@ -183,8 +185,8 @@ public class MailerTest extends BaseTest {
 
         when(preferences.getString(eq(KEY_PREF_SENDER_ACCOUNT), anyString())).thenReturn(null);
 
-        Mailer mailer = new Mailer(context, transport, cryptor, notifications, database);
-        mailer.send(new PhoneEvent("+12345678901", false, null, null, false, null, null, null, PhoneEvent.State.PENDING));
+        CallProcessor callProcessor = new CallProcessor(context, transport, cryptor, notifications, database, locator);
+        callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, null, null, PhoneEvent.State.PENDING));
 
         assertTrue(inits.isEmpty());
         assertTrue(sends.isEmpty());
@@ -208,8 +210,8 @@ public class MailerTest extends BaseTest {
 
         when(preferences.getString(eq(KEY_PREF_RECIPIENTS_ADDRESS), anyString())).thenReturn(null);
 
-        Mailer mailer = new Mailer(context, transport, cryptor, notifications, database);
-        mailer.send(new PhoneEvent("+12345678901", false, null, null, false, null, null, null, PhoneEvent.State.PENDING));
+        CallProcessor callProcessor = new CallProcessor(context, transport, cryptor, notifications, database, locator);
+        callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, null, null, PhoneEvent.State.PENDING));
 
         assertTrue(inits.isEmpty());
         assertTrue(sends.isEmpty());
@@ -233,8 +235,8 @@ public class MailerTest extends BaseTest {
 
         when(preferences.getString(eq(KEY_PREF_EMAIL_HOST), anyString())).thenReturn(null);
 
-        Mailer mailer = new Mailer(context, transport, cryptor, notifications, database);
-        mailer.send(new PhoneEvent("+12345678901", false, null, null, false, null, null, null, PhoneEvent.State.PENDING));
+        CallProcessor callProcessor = new CallProcessor(context, transport, cryptor, notifications, database, locator);
+        callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, null, null, PhoneEvent.State.PENDING));
 
         assertTrue(inits.isEmpty());
         assertTrue(sends.isEmpty());
@@ -258,8 +260,8 @@ public class MailerTest extends BaseTest {
 
         when(preferences.getString(eq(KEY_PREF_EMAIL_PORT), anyString())).thenReturn(null);
 
-        Mailer mailer = new Mailer(context, transport, cryptor, notifications, database);
-        mailer.send(new PhoneEvent("+12345678901", false, null, null, false, null, null, null, PhoneEvent.State.PENDING));
+        CallProcessor callProcessor = new CallProcessor(context, transport, cryptor, notifications, database, locator);
+        callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, null, null, PhoneEvent.State.PENDING));
 
         assertTrue(inits.isEmpty());
         assertTrue(sends.isEmpty());
@@ -282,8 +284,8 @@ public class MailerTest extends BaseTest {
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
         doThrow(AuthenticationFailedException.class).when(transport).send(anyString(), anyString(), anyString(), anyString());
 
-        Mailer mailer = new Mailer(context, transport, cryptor, notifications, database);
-        mailer.send(new PhoneEvent("+12345678901", false, null, null, false, null, null, null, PhoneEvent.State.PENDING));
+        CallProcessor callProcessor = new CallProcessor(context, transport, cryptor, notifications, database, locator);
+        callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, null, null, PhoneEvent.State.PENDING));
 
         assertFalse(inits.isEmpty());
         assertTrue(sends.isEmpty());
@@ -306,8 +308,8 @@ public class MailerTest extends BaseTest {
         doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
         doThrow(MessagingException.class).when(transport).send(anyString(), anyString(), anyString(), anyString());
 
-        Mailer mailer = new Mailer(context, transport, cryptor, notifications, database);
-        mailer.send(new PhoneEvent("+12345678901", false, null, null, false, null, null, null, PhoneEvent.State.PENDING));
+        CallProcessor callProcessor = new CallProcessor(context, transport, cryptor, notifications, database, locator);
+        callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, null, null, PhoneEvent.State.PENDING));
 
         assertFalse(inits.isEmpty());
         assertTrue(sends.isEmpty());
@@ -337,11 +339,11 @@ public class MailerTest extends BaseTest {
             }
         }).when(transport).send(anyString(), anyString(), anyString(), anyString());
 
-        Mailer mailer = new Mailer(context, transport, cryptor, notifications, database);
+        CallProcessor callProcessor = new CallProcessor(context, transport, cryptor, notifications, database, locator);
 
         /* bad_phone produces notification */
 
-        mailer.send(new PhoneEvent("bad_phone", false, null, null, false, null, null, null, PhoneEvent.State.PENDING));
+        callProcessor.process(new PhoneEvent("bad_phone", false, null, null, false, null, null, null, PhoneEvent.State.PENDING));
         assertEquals(R.string.notification_error_mail_general, errors.get(0)[0]);
         assertTrue(clears.isEmpty());
 
@@ -350,7 +352,7 @@ public class MailerTest extends BaseTest {
         errors.clear();
         clears.clear();
 
-        mailer.send(new PhoneEvent("good_phone", false, null, null, false, null, null, null, PhoneEvent.State.PENDING));
+        callProcessor.process(new PhoneEvent("good_phone", false, null, null, false, null, null, null, PhoneEvent.State.PENDING));
 
         assertTrue(errors.isEmpty());
         assertFalse(clears.isEmpty());
@@ -369,19 +371,19 @@ public class MailerTest extends BaseTest {
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(successes).when(notifications).showMailSuccess(anyLong());
 
-        Mailer mailer = new Mailer(context, transport, cryptor, notifications, database);
+        CallProcessor callProcessor = new CallProcessor(context, transport, cryptor, notifications, database, locator);
 
         /* settings is off */
         when(preferences.getBoolean(eq(KEY_PREF_NOTIFY_SEND_SUCCESS), anyBoolean())).thenReturn(false);
 
-        mailer.send(new PhoneEvent("1", false, null, null, false, null, null, null, PhoneEvent.State.PENDING));
+        callProcessor.process(new PhoneEvent("1", false, null, null, false, null, null, null, PhoneEvent.State.PENDING));
 
         assertTrue(errors.isEmpty());
         assertTrue(successes.isEmpty());
 
         /* settings is on */
         when(preferences.getBoolean(eq(KEY_PREF_NOTIFY_SEND_SUCCESS), anyBoolean())).thenReturn(true);
-        mailer.send(new PhoneEvent("1", false, null, null, false, null, null, null, PhoneEvent.State.PENDING));
+        callProcessor.process(new PhoneEvent("1", false, null, null, false, null, null, null, PhoneEvent.State.PENDING));
 
         assertTrue(errors.isEmpty());
         assertFalse(successes.isEmpty());
@@ -399,10 +401,10 @@ public class MailerTest extends BaseTest {
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doThrow(MessagingException.class).when(transport).send(anyString(), anyString(), anyString(), anyString());
 
-        Mailer mailer = new Mailer(context, transport, cryptor, notifications, database);
-        mailer.send(new PhoneEvent("+12345678901", false, null, null, false, null, new GeoCoordinates(30.0, 60.0), null, PhoneEvent.State.PENDING));
-        mailer.send(new PhoneEvent("+12345678901", false, null, null, false, null, new GeoCoordinates(30.0, 60.0), null, PhoneEvent.State.PENDING));
-        mailer.send(new PhoneEvent("+12345678901", false, null, null, false, null, new GeoCoordinates(30.0, 60.0), null, PhoneEvent.State.PENDING));
+        CallProcessor callProcessor = new CallProcessor(context, transport, cryptor, notifications, database, locator);
+        callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, new GeoCoordinates(30.0, 60.0), null, PhoneEvent.State.PENDING));
+        callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, new GeoCoordinates(30.0, 60.0), null, PhoneEvent.State.PENDING));
+        callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, new GeoCoordinates(30.0, 60.0), null, PhoneEvent.State.PENDING));
 
         assertEquals(3, database.getEvents().getCount());
         assertEquals(3, database.getUnsentEvents().getCount());
@@ -411,7 +413,7 @@ public class MailerTest extends BaseTest {
         /* try resend with transport still disabled */
         errors.clear();
 
-        mailer.sendAllUnsent();
+        callProcessor.processAll();
 
         assertEquals(3, database.getEvents().getCount());
         assertEquals(3, database.getUnsentEvents().getCount());
@@ -421,7 +423,7 @@ public class MailerTest extends BaseTest {
         doNothing().when(transport).send(anyString(), anyString(), anyString(), anyString());
         errors.clear();
 
-        mailer.sendAllUnsent();
+        callProcessor.processAll();
 
         assertEquals(3, database.getEvents().getCount());
         assertEquals(0, database.getUnsentEvents().getCount());

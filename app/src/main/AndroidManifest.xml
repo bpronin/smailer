@@ -89,7 +89,7 @@
             android:name=".ui.RulesActivity"
             android:label="@string/title_rules_for_sending" />
 
-        <service android:name=".MailerService" />
+        <service android:name=".CallProcessorService" />
 
         <service android:name=".OutgoingSmsService" />
 

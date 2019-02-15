@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import androidx.annotation.NonNull;
 
-import static com.bopr.android.smailer.MailerService.startMailService;
+import static com.bopr.android.smailer.CallProcessorService.startMailService;
 import static com.bopr.android.smailer.util.Util.safeEquals;
 
 /**

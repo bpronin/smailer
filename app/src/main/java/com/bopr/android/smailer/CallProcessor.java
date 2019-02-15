@@ -42,9 +42,9 @@ import static com.bopr.android.smailer.util.AndroidUtil.hasInternetConnection;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-class Mailer {
+class CallProcessor {
 
-    private static Logger log = LoggerFactory.getLogger("Mailer");
+    private static Logger log = LoggerFactory.getLogger("CallProcessor");
 
     private final SharedPreferences preferences;
     private final Context context;
@@ -52,19 +52,21 @@ class Mailer {
     private final Cryptor cryptor;
     private final Notifications notifications;
     private final Database database;
+    private final GeoLocator locator;
 
-    Mailer(Context context, MailTransport transport, Cryptor cryptor, Notifications notifications,
-           Database database) {
+    CallProcessor(Context context, MailTransport transport, Cryptor cryptor, Notifications notifications,
+                  Database database, GeoLocator locator) {
         this.context = context;
         this.transport = transport;
         this.cryptor = cryptor;
         this.notifications = notifications;
         this.database = database;
+        this.locator = locator;
         preferences = Settings.preferences(context);
     }
 
-    Mailer(Context context, Database database) {
-        this(context, new MailTransport(), new Cryptor(context), new Notifications(context), database);
+    CallProcessor(Context context, Database database, GeoLocator locator) {
+        this(context, new MailTransport(), new Cryptor(context), new Notifications(context), database, locator);
     }
 
     /**
@@ -72,20 +74,31 @@ class Mailer {
      *
      * @param event email event
      */
-    void send(PhoneEvent event) {
-        doSend(event, false);
+    void process(PhoneEvent event) {
+        log.debug("Processing event: " + event);
+
+        event.setLocation(locator.getLocation());
+        database.putEvent(event);
+
+        if (Settings.loadFilter(context).accept(event)) {
+            sendMail(event, false);
+        } else {
+            event.setState(PhoneEvent.State.IGNORED);
+            database.putEvent(event);
+            log.debug("Event ignored");
+        }
     }
 
     /**
      * Sends out all previously unsent messages.
      */
-    void sendAllUnsent() {
+    void processAll() {
         List<PhoneEvent> events = database.getUnsentEvents().findAll();
 
         log.debug("Resending " + events.size() + " messages");
         // TODO: 13.02.2019 send all in one transport session
         for (PhoneEvent event : events) {
-            doSend(event, true);
+            sendMail(event, true);
         }
     }
 
@@ -95,7 +108,7 @@ class Mailer {
      * @param event  email event
      * @param silent if true do not show notifications
      */
-    private void doSend(PhoneEvent event, boolean silent) {
+    private void sendMail(PhoneEvent event, boolean silent) {
         log.debug("Sending mail: " + event);
 
         if (checkInternetConnection(event, silent) && checkPreferences(event, silent)) {
@@ -218,5 +231,4 @@ class Mailer {
             notifications.showMailError(notification, event.getId(), action);
         }
     }
-
 }

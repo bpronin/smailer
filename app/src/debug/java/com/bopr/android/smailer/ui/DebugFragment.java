@@ -17,7 +17,7 @@ import com.bopr.android.smailer.Contacts;
 import com.bopr.android.smailer.Cryptor;
 import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.GeoCoordinates;
-import com.bopr.android.smailer.Locator;
+import com.bopr.android.smailer.GeoLocator;
 import com.bopr.android.smailer.MailTransport;
 import com.bopr.android.smailer.Notifications;
 import com.bopr.android.smailer.PhoneEvent;
@@ -48,7 +48,7 @@ import androidx.preference.PreferenceScreen;
 import static android.Manifest.permission.BROADCAST_SMS;
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-import static com.bopr.android.smailer.MailerService.startMailService;
+import static com.bopr.android.smailer.CallProcessorService.startMailService;
 import static com.bopr.android.smailer.Settings.DEFAULT_HOST;
 import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
 import static com.bopr.android.smailer.Settings.DEFAULT_PORT;
@@ -88,7 +88,7 @@ public class DebugFragment extends BasePreferenceFragment {
     private static final int PERMISSIONS_REQUEST_BROADCAST_SMS = 101;
 
     private Context context;
-    private Locator locator;
+    private GeoLocator locator;
     private Cryptor cryptor;
     private Database database;
     private PreferenceScreen screen;
@@ -102,7 +102,7 @@ public class DebugFragment extends BasePreferenceFragment {
         context = getPreferenceManager().getContext();
 
         database = new Database(context);
-        locator = new Locator(context, database);
+        locator = new GeoLocator(context, database);
         cryptor = new Cryptor(context);
 
         screen = getPreferenceManager().createPreferenceScreen(context);
@@ -536,9 +536,9 @@ public class DebugFragment extends BasePreferenceFragment {
 
     private static class GetLocationTask extends ActivityAsyncTask<Void, Void, GeoCoordinates> {
 
-        private final Locator locator;
+        private final GeoLocator locator;
 
-        private GetLocationTask(Activity activity, Locator locator) {
+        private GetLocationTask(Activity activity, GeoLocator locator) {
             super(activity);
             this.locator = locator;
         }

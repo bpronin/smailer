@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.Nullable;
 
-import static com.bopr.android.smailer.MailerService.startMailService;
+import static com.bopr.android.smailer.CallProcessorService.startMailService;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
 import static com.bopr.android.smailer.Settings.preferences;
 import static com.bopr.android.smailer.util.AndroidUtil.hasInternetConnection;

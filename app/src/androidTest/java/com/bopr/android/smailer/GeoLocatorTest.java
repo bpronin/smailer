@@ -22,13 +22,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * {@link Locator} class tester.
+ * {@link GeoLocator} class tester.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 @SuppressWarnings("ResourceType")
 @SuppressLint("MissingPermission")
-public class LocatorTest extends BaseTest {
+public class GeoLocatorTest extends BaseTest {
 
     private GeoCoordinates lastPassiveLocation;
     private GeoCoordinates gpsLocation;
@@ -97,7 +97,7 @@ public class LocatorTest extends BaseTest {
 
     @Test
     public void testGetLocationGpsOn() throws Exception {
-        Locator provider = new Locator(getContext(), createMockDatabase());
+        GeoLocator provider = new GeoLocator(getContext(), createMockDatabase());
         provider.setLocationManager(createMockManager(true, true, true));
 
         assertEquals(gpsLocation, provider.getLocation(1000));
@@ -105,7 +105,7 @@ public class LocatorTest extends BaseTest {
 
     @Test
     public void testGetLocationNetworkOn() throws Exception {
-        Locator provider = new Locator(getContext(), createMockDatabase());
+        GeoLocator provider = new GeoLocator(getContext(), createMockDatabase());
         provider.setLocationManager(createMockManager(false, true, true));
 
         assertEquals(networkLocation, provider.getLocation(1000));
@@ -113,7 +113,7 @@ public class LocatorTest extends BaseTest {
 
     @Test
     public void testGetLocationPassiveOn() throws Exception {
-        Locator provider = new Locator(getContext(), createMockDatabase());
+        GeoLocator provider = new GeoLocator(getContext(), createMockDatabase());
         provider.setLocationManager(createMockManager(false, false, true));
 
         assertEquals(lastPassiveLocation, provider.getLocation(1000));
@@ -121,7 +121,7 @@ public class LocatorTest extends BaseTest {
 
     @Test
     public void testGetLocationAllOff() throws Exception {
-        Locator provider = new Locator(getContext(), createMockDatabase());
+        GeoLocator provider = new GeoLocator(getContext(), createMockDatabase());
         provider.setLocationManager(createMockManager(false, false, false));
 
         assertEquals(databaseLocation, provider.getLocation(1000));

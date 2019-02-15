@@ -151,22 +151,6 @@ public class Settings {
         editor.apply();
     }
 
-/*
-    public static MailerProperties loadMailerProperties(Context context) {
-        SharedPreferences preferences = preferences(context);
-        MailerProperties properties = new MailerProperties();
-        properties.setUser(preferences.getString(KEY_PREF_SENDER_ACCOUNT, ""));
-        properties.setPassword(preferences.getString(KEY_PREF_SENDER_PASSWORD, ""));
-        properties.setRecipients(preferences.getString(KEY_PREF_RECIPIENTS_ADDRESS, ""));
-        properties.setHost(preferences.getString(KEY_PREF_EMAIL_HOST, ""));
-        properties.setPort(preferences.getString(KEY_PREF_EMAIL_PORT, ""));
-        properties.setContentOptions(preferences.getStringSet(KEY_PREF_EMAIL_CONTENT, null));
-        properties.setMessageLocale(preferences.getString(KEY_PREF_EMAIL_LOCALE, null));
-
-        return properties;
-    }
-*/
-
     public static class BuildInfo {
 
         public final String number;

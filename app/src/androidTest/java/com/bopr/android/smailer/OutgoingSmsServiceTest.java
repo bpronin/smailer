@@ -66,7 +66,7 @@ public class OutgoingSmsServiceTest
 //
 //        @Override
 //        public ComponentName startService(Intent service) {
-//            if (service.getComponent().getClassName().equals(MailerService.class.getName())) {
+//            if (service.getComponent().getClassName().equals(CallProcessorService.class.getName())) {
 //                mailServiceStarted.set(true);
 //            }
 //            return super.startService(service);

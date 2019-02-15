@@ -12,7 +12,7 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 
 import com.bopr.android.smailer.BaseTest;
-import com.bopr.android.smailer.MailerService;
+import com.bopr.android.smailer.CallProcessorService;
 import com.bopr.android.smailer.util.draw.WavyUnderlineSpan;
 
 import org.junit.Test;
@@ -127,14 +127,14 @@ public class AndroidUtilTest extends BaseTest {
         when(context.getSystemService(eq(Context.ACTIVITY_SERVICE))).thenReturn(manager);
 
         RunningServiceInfo info = new RunningServiceInfo();
-        info.service = new ComponentName(context, MailerService.class.getName());
+        info.service = new ComponentName(context, CallProcessorService.class.getName());
         runningServices.add(info);
 
-        assertTrue(isServiceRunning(context, MailerService.class));
+        assertTrue(isServiceRunning(context, CallProcessorService.class));
 
         runningServices.clear();
 
-        assertFalse(isServiceRunning(context, MailerService.class));
+        assertFalse(isServiceRunning(context, CallProcessorService.class));
     }
 
     @Test
