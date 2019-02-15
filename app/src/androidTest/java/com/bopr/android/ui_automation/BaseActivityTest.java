@@ -46,6 +46,8 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
 import static com.bopr.android.smailer.Settings.preferences;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 /**
  * Base UI tester.
@@ -89,13 +91,6 @@ public class BaseActivityTest {
     protected ViewInteraction onToast(String text) {
         return onDialog(withText(text));
     }
-
-//    @NonNull
-//    protected ViewInteraction onSnackBar(Matcher<View> matcher) {
-//        //return onView(allOf(withId(android.support.design.R.id.snackbar_text), matcher));
-//        return onView(withId(android.support.design.R.id.snackbar_text))
-//                .inRoot(withDecorView(not(is(rule.getActivity().getWindow().getDecorView()))));
-//    }
 
     @NonNull
     protected ViewInteraction onToolbar(Matcher<View> matcher) {

@@ -99,10 +99,10 @@ public class TestServerPreference extends Preference {
             Cryptor cryptor = new Cryptor(owner.getContext());
 
             SharedPreferences preferences = Settings.preferences(owner.getContext());
-            String user = preferences.getString(KEY_PREF_SENDER_ACCOUNT, null);
-            String password = preferences.getString(KEY_PREF_SENDER_PASSWORD, null);
-            String host = preferences.getString(KEY_PREF_EMAIL_HOST, null);
-            String port = preferences.getString(KEY_PREF_EMAIL_PORT, null);
+            String user = preferences.getString(KEY_PREF_SENDER_ACCOUNT, "");
+            String password = preferences.getString(KEY_PREF_SENDER_PASSWORD, "");
+            String host = preferences.getString(KEY_PREF_EMAIL_HOST, "");
+            String port = preferences.getString(KEY_PREF_EMAIL_PORT, "");
 
             transport.startSession(user, cryptor.decrypt(password), host, port);
 

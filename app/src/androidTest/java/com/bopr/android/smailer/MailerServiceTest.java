@@ -1,7 +1,5 @@
 package com.bopr.android.smailer;
 
-import android.content.Intent;
-
 import org.junit.Test;
 
 import static org.mockito.Matchers.any;
@@ -31,8 +29,10 @@ public class MailerServiceTest extends BaseTest {
         MailerService service = new MailerService();
         service.init(mailer, mock(Locator.class));
 
+/*
         Intent intent = MailerService.createResendIntent(getContext());
         service.onHandleIntent(intent);
+*/
 
         assertEquals(1, invocations.size());
     }
@@ -56,8 +56,10 @@ public class MailerServiceTest extends BaseTest {
 
         //"123", (long) 100000, "Text", true
         PhoneEvent event1 = new PhoneEvent();
+/*
         Intent intent = MailerService.createPhoneEventIntent(getContext(), event1);
         service.onHandleIntent(intent);
+*/
 
         PhoneEvent event = (PhoneEvent) invocations.get(0)[0];
         assertEquals("123", event.getPhone());
@@ -90,9 +92,11 @@ public class MailerServiceTest extends BaseTest {
         service.init(mailer, locator);
 
 //        Intent intent = MailerService.createSmsIntent(getContext(), "123", (long) 100000, "Text", false);
+/*
         PhoneEvent event1 = new PhoneEvent();
         Intent intent = MailerService.createPhoneEventIntent(getContext(), event1);
         service.onHandleIntent(intent);
+*/
 
         PhoneEvent message = (PhoneEvent) invocations.get(0)[0];
         assertEquals("123", message.getPhone());
@@ -124,9 +128,11 @@ public class MailerServiceTest extends BaseTest {
         service.init(mailer, locator);
 
 //        Intent intent = MailerService.createIncomingCallIntent(getContext(), "123", 100000, 200000);
+/*
         PhoneEvent event1 = new PhoneEvent();
         Intent intent = MailerService.createPhoneEventIntent(getContext(), event1);
         service.onHandleIntent(intent);
+*/
 
         PhoneEvent message = (PhoneEvent) invocations.get(0)[0];
         assertEquals("123", message.getPhone());
@@ -160,8 +166,10 @@ public class MailerServiceTest extends BaseTest {
 
 //        Intent intent = MailerService.createOutgoingCallIntent(getContext(), "123", 100000, 200000);
         PhoneEvent event1 = new PhoneEvent();
+/*
         Intent intent = MailerService.createPhoneEventIntent(getContext(), event1);
         service.onHandleIntent(intent);
+*/
 
         PhoneEvent message = (PhoneEvent) invocations.get(0)[0];
         assertEquals("123", message.getPhone());
@@ -195,8 +203,10 @@ public class MailerServiceTest extends BaseTest {
 
 //        Intent intent = MailerService.createMissedCallIntent(getContext(), "123", 100000);
         PhoneEvent event1 = new PhoneEvent();
+/*
         Intent intent = MailerService.createPhoneEventIntent(getContext(), event1);
         service.onHandleIntent(intent);
+*/
 
         PhoneEvent message = (PhoneEvent) invocations.get(0)[0];
         assertEquals("123", message.getPhone());

@@ -42,7 +42,7 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
 
     private static Logger log = LoggerFactory.getLogger("BasePreferenceFragment");
 
-    private static final String DIALOG_FRAGMENT_TAG = "android.support.v7.preference.PreferenceFragment.DIALOG";
+    private static final String DIALOG_FRAGMENT_TAG = "androidx.preference.PreferenceFragment.DIALOG";
 
     private PreferencesPermissionsChecker permissionChecker;
     protected SharedPreferences preferences;
@@ -168,8 +168,6 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
                 } else if (preference instanceof MultiSelectListPreference) {
                     Set<String> set = value == null ? Collections.<String>emptySet() : (Set<String>) value;
                     ((MultiSelectListPreference) preference).setValues(set);
-                } else if (preference.getClass() != Preference.class) {
-                    log.error("Unregistered preference class: " + preference.getClass());
                 }
             }
         }
