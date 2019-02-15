@@ -130,7 +130,7 @@ abstract class FilterListFragment extends BaseFragment {
         return value;
     }
 
-    protected void updateEmptyText() {
+    private void updateEmptyText() {
         View view = getView();
         if (view != null && listView.getAdapter() != null) {
             TextView text = view.findViewById(R.id.text_empty);
@@ -298,7 +298,7 @@ abstract class FilterListFragment extends BaseFragment {
 
                 @Override
                 public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-                    activity.getMenuInflater().inflate(R.menu.menu_item_filter_list, menu);
+                    activity.getMenuInflater().inflate(R.menu.menu_context_filters, menu);
                 }
             });
         }

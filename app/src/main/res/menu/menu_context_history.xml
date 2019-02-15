@@ -20,11 +20,4 @@
             />
     </group>
 
-    <group android:id="@+id/common">
-        <item
-            android:id="@+id/action_log_clear"
-            android:title="@string/title_clear_log"
-            />
-    </group>
-
 </menu>

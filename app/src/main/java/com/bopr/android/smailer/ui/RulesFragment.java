@@ -107,7 +107,7 @@ public class RulesFragment extends BasePreferenceFragment {
     }
 
     private String formatListAndSize(String value, int pattern, int zeroSizeText) {
-        TagFormatter formatter = formatter(pattern, getContext());
+        TagFormatter formatter = formatter(pattern, requireContext());
         int size = parseCommaSeparated(value).size();
         if (size > 0) {
             return formatter.put("size", String.valueOf(size)).format();

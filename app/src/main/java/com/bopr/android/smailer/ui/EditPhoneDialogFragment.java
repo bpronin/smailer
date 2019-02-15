@@ -24,7 +24,7 @@ public class EditPhoneDialogFragment extends EditFilterListItemDialogFragment {
 
     private String initialValue;
 
-    public void setInitialValue(String phone) {
+    void setInitialValue(String phone) {
         this.initialValue = phone;
     }
 

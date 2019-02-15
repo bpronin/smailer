@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.widget.ListView;
 
 import com.bopr.android.smailer.OutgoingSmsService;
@@ -106,21 +105,11 @@ public class MainFragment extends BasePreferenceFragment {
         updateRecipientsPreference();
     }
 
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_about) {
-            showAboutDialog();
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    public void setAsListView(boolean asListView) {
+    void setAsListView(boolean asListView) {
         this.asListView = asListView;
     }
 
-    public void setPreferenceClickListener(Preference.OnPreferenceClickListener listener) {
+    void setPreferenceClickListener(Preference.OnPreferenceClickListener listener) {
         this.preferenceClickListener = listener;
     }
 
@@ -149,10 +138,6 @@ public class MainFragment extends BasePreferenceFragment {
         }
     }
 
-    public void showAboutDialog() {
-        new AboutDialogFragment().showDialog(getActivity());
-    }
-
     private class PreferenceClickListener implements Preference.OnPreferenceClickListener {
 
         @Override
@@ -171,7 +156,7 @@ public class MainFragment extends BasePreferenceFragment {
                     startActivity(new Intent(getContext(), RulesActivity.class));
                     break;
                 case KEY_PREF_LOG:
-                    startActivity(new Intent(getContext(), LogActivity.class));
+                    startActivity(new Intent(getContext(), HistoryActivity.class));
                     break;
             }
             return true;

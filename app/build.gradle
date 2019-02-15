@@ -84,7 +84,7 @@ dependencies {
         exclude group: 'com.google.android'
     }
 
-    implementation('com.crashlytics.sdk.android:crashlytics:2.9.8@aar') {
+    implementation('com.crashlytics.sdk.android:crashlytics:2.9.9@aar') {
         transitive = true
     }
 

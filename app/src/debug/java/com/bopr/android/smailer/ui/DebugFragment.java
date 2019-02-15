@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 
 import androidx.annotation.NonNull;
@@ -453,7 +454,7 @@ public class DebugFragment extends BasePreferenceFragment {
         }
     }
 
-    public void onSaveLogcatLog() {
+    private void onSaveLogcatLog() {
         try {
             Process process = Runtime.getRuntime().exec("logcat -d");
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -602,7 +603,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                 @Override
                 public boolean accept(File dir, String name) {
-                    return name.toLowerCase().endsWith(".log");
+                    return name.toLowerCase(Locale.ROOT).endsWith(".log");
                 }
             });
 

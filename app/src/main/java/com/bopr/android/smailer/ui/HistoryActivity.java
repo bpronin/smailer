@@ -8,12 +8,12 @@ import androidx.fragment.app.Fragment;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class LogActivity extends AppActivity {
+public class HistoryActivity extends AppActivity {
 
     @NonNull
     @Override
     protected Fragment createFragment() {
-        return new LogFragment();
+        return new HistoryFragment();
     }
 
 }

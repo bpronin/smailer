@@ -29,7 +29,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:selectAllOnFocus="true"/>
+            android:selectAllOnFocus="true"
+            android:inputType="phone" />
 
         <ImageButton
             android:id="@+id/button_browse_contacts"

@@ -28,11 +28,11 @@ import static com.bopr.android.smailer.util.Util.formatDuration;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class LogDetailsDialogFragment extends DialogFragment {
+public class HistoryDetailsDialogFragment extends DialogFragment {
 
     private PhoneEvent value;
 
-    public void showDialog(FragmentActivity activity) {
+    void showDialog(FragmentActivity activity) {
         show(activity.getSupportFragmentManager(), "log_details_dialog");
     }
 
@@ -98,7 +98,7 @@ public class LogDetailsDialogFragment extends DialogFragment {
             } else {
                 pattern = R.string.email_body_outgoing_call;
             }
-            return formatter(pattern, getContext())
+            return formatter(pattern, requireContext())
                     .put("duration", formatDuration(event.getCallDuration()))
                     .format();
         }

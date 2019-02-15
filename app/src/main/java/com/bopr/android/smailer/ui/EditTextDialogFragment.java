@@ -31,7 +31,7 @@ public class EditTextDialogFragment extends EditFilterListItemDialogFragment {
         return "edit_text_filter_item_dialog";
     }
 
-    public void setInitialValue(String text) {
+    void setInitialValue(String text) {
         String s = Util.unquoteRegex(text);
         initialRegex = (s != null);
         initialText = initialRegex ? s : text;

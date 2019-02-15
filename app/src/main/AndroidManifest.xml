@@ -78,7 +78,7 @@
             android:label="@string/title_more" />
 
         <activity
-            android:name=".ui.LogActivity"
+            android:name=".ui.HistoryActivity"
             android:label="@string/title_activity_log" />
 
         <activity

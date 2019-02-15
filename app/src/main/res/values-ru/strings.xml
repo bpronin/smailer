@@ -66,7 +66,6 @@
     <string name="title_add_to_blacklist">Добавить в черный список</string>
     <string name="title_add_to_whitelist">Добавить в белый список</string>
     <string name="title_any">любые</string>
-    <string name="title_black_list_used">Используется черный список</string>
     <string name="title_blacklist">Черный список</string>
     <string name="title_clear_log">Очистить журнал</string>
     <string name="title_close">Закрыть</string>
@@ -115,7 +114,6 @@
     <string name="title_undo">Отмена</string>
     <string name="title_version">Версия приложения: {version}</string>
     <string name="title_what_email_contain">Содержание почтового сообщения</string>
-    <string name="title_white_list_used">Используется белый список</string>
     <string name="title_whitelist">Белый список</string>
 
     <string-array name="titles_triggers">

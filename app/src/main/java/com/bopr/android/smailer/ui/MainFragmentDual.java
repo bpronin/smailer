@@ -71,7 +71,7 @@ public class MainFragmentDual extends BaseFragment {
                     fragment = new RulesFragment();
                     break;
                 case KEY_PREF_LOG:
-                    fragment = new LogFragment();
+                    fragment = new HistoryFragment();
                     break;
                 default:
                     throw new RuntimeException("Unregistered fragment");

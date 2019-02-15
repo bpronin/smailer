@@ -69,7 +69,6 @@
     <string name="title_add_to_blacklist">Add number to blacklist</string>
     <string name="title_add_to_whitelist">Add number to whitelist</string>
     <string name="title_any">any</string>
-    <string name="title_black_list_used">Black list used</string>
     <string name="title_blacklist">Blacklist</string>
     <string name="title_clear_log">Clear history</string>
     <string name="title_close">Close</string>
@@ -120,7 +119,6 @@
     <string name="title_undo">Undo</string>
     <string name="title_version">Application version: {version}</string>
     <string name="title_what_email_contain">What should the email include</string>
-    <string name="title_white_list_used">White list used</string>
     <string name="title_whitelist">Whitelist</string>
 
     <string-array name="titles_triggers">

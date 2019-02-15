@@ -196,7 +196,7 @@ public class Database {
                 null, null, null, null)) {
 
             @Override
-            public GeoCoordinates found() {
+            public GeoCoordinates mapRow() {
                 if (!isNull(COLUMN_LAST_LATITUDE) && !isNull(COLUMN_LAST_LONGITUDE)) {
                     return new GeoCoordinates(
                             getDouble(COLUMN_LAST_LATITUDE),
@@ -322,7 +322,7 @@ public class Database {
         }
 
         @Override
-        public PhoneEvent found() {
+        public PhoneEvent mapRow() {
             PhoneEvent event = new PhoneEvent();
             event.setId(getLong(COLUMN_ID));
             event.setState(PhoneEvent.State.valueOf(getString(COLUMN_STATE)));

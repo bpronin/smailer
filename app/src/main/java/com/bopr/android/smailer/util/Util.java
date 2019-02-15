@@ -41,7 +41,7 @@ public class Util {
                 + (longitude > 0 ? westSymbol : eastSymbol);
     }
 
-    public static String formatLocation(@NonNull  GeoCoordinates location) {
+    public static String formatLocation(@NonNull GeoCoordinates location) {
         return formatLocation(location, "°", "\'", "\"", "N", "S", "W", "E");
     }
 
@@ -183,11 +183,11 @@ public class Util {
     }
 
     public static String normalizePhone(@NonNull String phone) {
-        return phone.toUpperCase().replaceAll("[^A-Z0-9]", "");
+        return phone.toUpperCase(Locale.ROOT).replaceAll("[^A-Z0-9]", "");
     }
 
     public static String normalizePhonePattern(@NonNull String pattern) {
-        return pattern.toUpperCase().replaceAll("[^A-Z0-9*.]", "").replaceAll("\\*", "(.*)");
+        return pattern.toUpperCase(Locale.ROOT).replaceAll("[^A-Z0-9*.]", "").replaceAll("\\*", "(.*)");
     }
 
     public static <T> T requireNonNull(T obj) {

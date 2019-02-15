@@ -35,7 +35,7 @@ public class EditEmailDialogFragment extends DialogFragment {
     private Callback callback;
     private TextView editText;
 
-    public void showDialog(FragmentActivity activity) {
+    void showDialog(FragmentActivity activity) {
         show(activity.getSupportFragmentManager(), "edit_recipient_dialog");
     }
 

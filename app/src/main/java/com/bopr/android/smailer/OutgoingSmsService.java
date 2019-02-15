@@ -77,7 +77,7 @@ public class OutgoingSmsService extends Service {
                 new String[]{id}, null)) {
 
             @Override
-            public Void found() {
+            public Void mapRow() {
                 long date = getLong("date");
                 log.debug("Starting mail service");
 

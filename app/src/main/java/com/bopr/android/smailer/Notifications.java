@@ -109,7 +109,7 @@ public class Notifications {
             case ACTION_SHOW_SERVER:
 //                return createActivityIntent(ServerActivity.class, messageId);
             case ACTION_SHOW_LOG:
-//                return createActivityIntent(LogActivity.class, messageId);
+//                return createActivityIntent(HistoryActivity.class, messageId);
             case ACTION_SHOW_MAIN:
                 return createActivityIntent(MainActivity.class, messageId);
             case ACTION_SHOW_CONNECTION:

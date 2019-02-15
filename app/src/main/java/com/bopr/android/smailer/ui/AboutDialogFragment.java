@@ -26,10 +26,6 @@ import static com.bopr.android.smailer.util.TagFormatter.formatter;
  */
 public class AboutDialogFragment extends DialogFragment {
 
-    public void showDialog(FragmentActivity activity) {
-        show(activity.getSupportFragmentManager(), "about_dialog");
-    }
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -42,7 +38,7 @@ public class AboutDialogFragment extends DialogFragment {
 
             @Override
             public boolean onLongClick(View v) {
-                Settings.BuildInfo info = Settings.getReleaseInfo(getContext());
+                Settings.BuildInfo info = Settings.getReleaseInfo(requireContext());
                 dialogBuilder(getContext())
                         .setTitle("Release info")
                         .setMessage("Build number: " + info.number + "\nBuild time: " + info.time)
@@ -73,8 +69,11 @@ public class AboutDialogFragment extends DialogFragment {
 
     private String formatVersion() {
         return formatter(R.string.title_version, getResources())
-                .put("version", Settings.getReleaseVersion(getContext()))
+                .put("version", Settings.getReleaseVersion(requireContext()))
                 .format();
     }
 
+    static void showAboutDialog(@NonNull FragmentActivity activity) {
+        new AboutDialogFragment().show(activity.getSupportFragmentManager(), "about_dialog");
+    }
 }

@@ -113,7 +113,7 @@ public class RecipientsFragment extends BaseFragment {
 //        });
 //    }
 
-    protected void updateEmptyText() {
+    private void updateEmptyText() {
         View view = getView();
         if (view != null && listView.getAdapter() != null) {
             TextView text = view.findViewById(R.id.text_empty);

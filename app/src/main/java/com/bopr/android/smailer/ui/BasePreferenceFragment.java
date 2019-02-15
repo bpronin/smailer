@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.bopr.android.smailer.PreferencesPermissionsChecker;
 import com.bopr.android.smailer.R;
@@ -32,6 +33,8 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceGroup;
 import androidx.preference.SwitchPreference;
+
+import static com.bopr.android.smailer.ui.AboutDialogFragment.showAboutDialog;
 
 /**
  * Base {@link PreferenceFragmentCompat } with default behaviour.
@@ -116,12 +119,21 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
         inflater.inflate(R.menu.menu_main, menu);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_about) {
+            showAboutDialog(requireActivity());
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     /**
      * Sets "not specified" summary of {@link Preference}.
      *
      * @param preference preference
      */
-    protected void updateNotSpecifiedSummary(Preference preference) {
+    void updateNotSpecifiedSummary(Preference preference) {
         preference.setSummary(AndroidUtil.validatedColoredText(getContext(),
                 getString(R.string.title_not_set), false));
     }
@@ -132,14 +144,14 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
      * @param value      value
      * @param preference preference
      */
-    protected void updateSummary(String value, Preference preference, boolean valid) {
+    void updateSummary(String value, Preference preference, boolean valid) {
         preference.setSummary(AndroidUtil.validatedUnderlinedText(getContext(), value, valid));
     }
 
     /**
      * Reads fragment's {@link SharedPreferences} and updates preferences value.
      */
-    protected void refreshPreferences() {
+    void refreshPreferences() {
         doRefreshPreferences(getPreferenceScreen());
     }
 

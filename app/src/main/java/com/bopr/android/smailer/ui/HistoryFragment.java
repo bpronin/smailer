@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +41,7 @@ import static com.bopr.android.smailer.util.TagFormatter.formatter;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class LogFragment extends BaseFragment {
+public class HistoryFragment extends BaseFragment {
 
     private Database database;
     private RecyclerView listView;
@@ -85,7 +87,7 @@ public class LogFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_log, container, false);
 
         listView = view.findViewById(android.R.id.list);
-        listView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+        listView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
 
         return view;
     }
@@ -108,12 +110,24 @@ public class LogFragment extends BaseFragment {
             case R.id.action_remove_from_lists:
                 removeFromLists();
                 return true;
-            case R.id.action_log_clear:
-                clearData();
-                return true;
             default:
                 return super.onContextItemSelected(item);
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_history, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_log_clear) {
+            clearData();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void loadData() {
@@ -127,7 +141,7 @@ public class LogFragment extends BaseFragment {
         View view = getView();
         if (view != null) {
             TextView text = view.findViewById(R.id.text_empty);
-            if (listView.getAdapter().getItemCount() == 0) {
+            if (listAdapter.getItemCount() == 0) {
                 text.setVisibility(View.VISIBLE);
             } else {
                 text.setVisibility(View.GONE);
@@ -137,7 +151,7 @@ public class LogFragment extends BaseFragment {
 
     private void showDetails() {
         if (selectedListItemPosition != NO_POSITION) {
-            LogDetailsDialogFragment fragment = new LogDetailsDialogFragment();
+            HistoryDetailsDialogFragment fragment = new HistoryDetailsDialogFragment();
             fragment.setValue(listAdapter.getItem(selectedListItemPosition));
             fragment.showDialog(getActivity());
         }
@@ -172,7 +186,7 @@ public class LogFragment extends BaseFragment {
             Settings.saveFilter(getContext(), phoneEventFilter);
 
             Toast.makeText(getContext(),
-                    formatter(R.string.message_added_to_blacklist, getContext())
+                    formatter(R.string.message_added_to_blacklist, requireContext())
                             .put("number", number)
                             .format(),
                     Toast.LENGTH_SHORT).show();
@@ -187,7 +201,7 @@ public class LogFragment extends BaseFragment {
             Settings.saveFilter(getContext(), phoneEventFilter);
 
             Toast.makeText(getContext(),
-                    formatter(R.string.message_added_to_whitelist, getContext())
+                    formatter(R.string.message_added_to_whitelist, requireContext())
                             .put("number", number)
                             .format(),
                     Toast.LENGTH_SHORT).show();
@@ -203,7 +217,7 @@ public class LogFragment extends BaseFragment {
             Settings.saveFilter(getContext(), phoneEventFilter);
 
             Toast.makeText(getContext(),
-                    formatter(R.string.message_phone_removed_from_filter, getContext())
+                    formatter(R.string.message_phone_removed_from_filter, requireContext())
                             .put("number", number)
                             .format(),
                     Toast.LENGTH_SHORT).show();
@@ -232,7 +246,7 @@ public class LogFragment extends BaseFragment {
         public void onBindViewHolder(@NonNull final ItemViewHolder holder, int position) {
             PhoneEvent item = getItem(position);
             if (item != null) {
-                final PhoneEvent event = cursor.found();
+                final PhoneEvent event = cursor.mapRow();
 
                 holder.timeView.setText(DateFormat.format(getString(R.string.event_time_pattern), event.getStartTime()));
 
@@ -274,7 +288,7 @@ public class LogFragment extends BaseFragment {
 
                     @Override
                     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-                        getActivity().getMenuInflater().inflate(R.menu.menu_item_log, menu);
+                        requireActivity().getMenuInflater().inflate(R.menu.menu_context_history, menu);
                     }
                 });
             }
@@ -294,7 +308,7 @@ public class LogFragment extends BaseFragment {
         PhoneEvent getItem(int position) {
             cursor.moveToPosition(position);
             if (!cursor.isBeforeFirst() && !cursor.isAfterLast()) {
-                return cursor.found();
+                return cursor.mapRow();
             }
             return null;
         }

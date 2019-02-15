@@ -20,7 +20,7 @@ import androidx.fragment.app.FragmentActivity;
  */
 abstract class EditFilterListItemDialogFragment extends DialogFragment {
 
-    protected Callback callback;
+    private Callback callback;
     private int title;
 
     public void setTitle(int title) {
