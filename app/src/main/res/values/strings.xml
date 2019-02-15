@@ -120,6 +120,7 @@
     <string name="title_version">Application version: {version}</string>
     <string name="title_what_email_contain">What should the email include</string>
     <string name="title_whitelist">Whitelist</string>
+    <string name="title_phone_number">Phone number</string>
 
     <string-array name="titles_triggers">
         <item>Incoming SMS</item>

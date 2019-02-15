@@ -115,6 +115,9 @@
     <string name="title_version">Версия приложения: {version}</string>
     <string name="title_what_email_contain">Содержание почтового сообщения</string>
     <string name="title_whitelist">Белый список</string>
+    <string name="notifications_channel">Уведомления</string>
+    <string name="notifications_service_running">Служба запущена</string>
+    <string name="title_phone_number">Телефон</string>
 
     <string-array name="titles_triggers">
         <item>Входящие SMS</item>
@@ -136,7 +139,5 @@
         <item>Английский</item>
         <item>Русский</item>
     </string-array>
-    <string name="notifications_channel">Уведомления</string>
-    <string name="notifications_service_running">Служба запущена</string>
 
 </resources>
