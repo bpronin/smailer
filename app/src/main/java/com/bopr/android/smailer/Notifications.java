@@ -40,14 +40,20 @@ public class Notifications {
 
     public Notification getForegroundServiceNotification() {
         String text = context.getResources().getString(R.string.notifications_service_running);
-        return new NotificationCompat.Builder(context, getChannel())
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, getChannel())
                 .setContentIntent(createIntent(ACTION_SHOW_MAIN, null))
                 .setSmallIcon(R.drawable.ic_service)
                 .setTicker(context.getResources().getString(R.string.app_name))
                 .setContentTitle(context.getResources().getString(R.string.app_name))
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
-                .setContentText(text)
-                .build();
+                .setContentText(text);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder.setCategory(Notification.CATEGORY_SERVICE);
+        }
+
+        return builder.build();
     }
 
     public void hideMailError() {
@@ -60,34 +66,39 @@ public class Notifications {
     }
 
     public void showMailError(String text, long messageId, int action) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, getChannel());
-        Notification notification = builder
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, getChannel())
                 .setContentIntent(createIntent(action, messageId))
                 .setSmallIcon(R.drawable.ic_alert)
                 .setTicker(context.getResources().getString(R.string.app_name))
                 .setAutoCancel(true)
                 .setContentTitle(context.getResources().getString(R.string.app_name))
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
-                .setContentText(text)
-                .build();
+                .setContentText(text);
 
-        getManager().notify(ID_MAIL_ERROR, notification);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder.setCategory(Notification.CATEGORY_ERROR);
+        }
+
+        getManager().notify(ID_MAIL_ERROR, builder.build());
     }
 
     public void showMailSuccess(long messageId) {
         String text = context.getResources().getString(R.string.notification_email_send);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, getChannel());
-        Notification notification = builder
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, getChannel())
                 .setContentIntent(createIntent(ACTION_SHOW_LOG, messageId))
                 .setSmallIcon(R.drawable.ic_file_send)
                 .setTicker(context.getResources().getString(R.string.app_name))
                 .setAutoCancel(true)
                 .setContentTitle(context.getResources().getString(R.string.app_name))
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
-                .setContentText(text)
-                .build();
+                .setContentText(text);
 
-        getManager().notify(ID_MAIL_SUCCESS, notification);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder.setCategory(Notification.CATEGORY_MESSAGE);
+        }
+
+        getManager().notify(ID_MAIL_SUCCESS, builder.build());
     }
 
     private PendingIntent createIntent(int action, @Nullable Long messageId) {

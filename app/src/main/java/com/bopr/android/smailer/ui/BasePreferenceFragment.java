@@ -49,7 +49,7 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        preferences = Settings.getPreferences(getContext());
+        preferences = Settings.preferences(requireContext());
         setHasOptionsMenu(true);
     }
 

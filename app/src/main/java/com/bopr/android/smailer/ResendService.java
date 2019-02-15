@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.bopr.android.smailer.MailerService.startMailService;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
-import static com.bopr.android.smailer.Settings.getPreferences;
+import static com.bopr.android.smailer.Settings.preferences;
 import static com.bopr.android.smailer.util.AndroidUtil.hasInternetConnection;
 
 /**
@@ -72,7 +72,7 @@ public class ResendService extends Service {
     }
 
     private static boolean isPreferenceEnabled(Context context) {
-        return getPreferences(context).getBoolean(KEY_PREF_RESEND_UNSENT, true);
+        return preferences(context).getBoolean(KEY_PREF_RESEND_UNSENT, true);
     }
 
     /**

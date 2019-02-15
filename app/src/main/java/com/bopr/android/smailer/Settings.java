@@ -73,7 +73,7 @@ public class Settings {
             VAL_PREF_TRIGGER_IN_SMS,
             VAL_PREF_TRIGGER_MISSED_CALLS);
 
-    public static SharedPreferences getPreferences(Context context) {
+    public static SharedPreferences preferences(Context context) {
         return context.getSharedPreferences(PREFERENCES_STORAGE_NAME, MODE_PRIVATE);
     }
 
@@ -90,14 +90,14 @@ public class Settings {
         data.put(KEY_PREF_RESEND_UNSENT, true);
         data.put(KEY_PREF_MARK_SMS_AS_READ, false);
 
-        AndroidUtil.putPreferencesOptional(getPreferences(context), data);
+        AndroidUtil.putPreferencesOptional(preferences(context), data);
     }
 
     /**
      * Returns device name.
      */
     public static String getDeviceName(Context context) {
-        String name = getPreferences(context).getString(KEY_PREF_DEVICE_ALIAS, "");
+        String name = preferences(context).getString(KEY_PREF_DEVICE_ALIAS, "");
         if (!Util.isEmpty(name)) {
             return name;
         }
@@ -125,20 +125,9 @@ public class Settings {
         }
     }
 
-    public static void saveFilter(Context context, PhoneEventFilter filter) {
-        SharedPreferences.Editor editor = getPreferences(context).edit();
-
-        editor.putString(KEY_PREF_FILTER_BLACKLIST, commaSeparated(filter.getPhoneBlacklist()));
-        editor.putString(KEY_PREF_FILTER_WHITELIST, commaSeparated(filter.getPhoneWhitelist()));
-        editor.putString(KEY_PREF_FILTER_TEXT_BLACKLIST, commaSeparated(filter.getTextBlacklist()));
-        editor.putString(KEY_PREF_FILTER_TEXT_WHITELIST, commaSeparated(filter.getTextWhitelist()));
-
-        editor.apply();
-    }
-
     @NonNull
     public static PhoneEventFilter loadFilter(Context context) {
-        SharedPreferences preferences = getPreferences(context);
+        SharedPreferences preferences = preferences(context);
         PhoneEventFilter filter = new PhoneEventFilter();
 
         filter.setTriggers(preferences.getStringSet(KEY_PREF_EMAIL_TRIGGERS, Collections.<String>emptySet()));
@@ -149,6 +138,33 @@ public class Settings {
 
         return filter;
     }
+
+    public static void saveFilter(Context context, PhoneEventFilter filter) {
+        SharedPreferences.Editor editor = preferences(context).edit();
+
+        editor.putString(KEY_PREF_FILTER_BLACKLIST, commaSeparated(filter.getPhoneBlacklist()));
+        editor.putString(KEY_PREF_FILTER_WHITELIST, commaSeparated(filter.getPhoneWhitelist()));
+        editor.putString(KEY_PREF_FILTER_TEXT_BLACKLIST, commaSeparated(filter.getTextBlacklist()));
+        editor.putString(KEY_PREF_FILTER_TEXT_WHITELIST, commaSeparated(filter.getTextWhitelist()));
+
+        editor.apply();
+    }
+
+/*
+    public static MailerProperties loadMailerProperties(Context context) {
+        SharedPreferences preferences = preferences(context);
+        MailerProperties properties = new MailerProperties();
+        properties.setUser(preferences.getString(KEY_PREF_SENDER_ACCOUNT, ""));
+        properties.setPassword(preferences.getString(KEY_PREF_SENDER_PASSWORD, ""));
+        properties.setRecipients(preferences.getString(KEY_PREF_RECIPIENTS_ADDRESS, ""));
+        properties.setHost(preferences.getString(KEY_PREF_EMAIL_HOST, ""));
+        properties.setPort(preferences.getString(KEY_PREF_EMAIL_PORT, ""));
+        properties.setContentOptions(preferences.getStringSet(KEY_PREF_EMAIL_CONTENT, null));
+        properties.setMessageLocale(preferences.getString(KEY_PREF_EMAIL_LOCALE, null));
+
+        return properties;
+    }
+*/
 
     public static class BuildInfo {
 

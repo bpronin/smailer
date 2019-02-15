@@ -125,7 +125,6 @@ public class MainFragment extends BasePreferenceFragment {
 
     private void updateServerPreference() {
         if (!asListView) {
-            SharedPreferences preferences = this.preferences;
             String sender = preferences.getString(KEY_PREF_SENDER_ACCOUNT, "");
             String host = preferences.getString(KEY_PREF_EMAIL_HOST, "");
             String port = preferences.getString(KEY_PREF_EMAIL_PORT, "");

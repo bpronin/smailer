@@ -2,6 +2,7 @@ package com.bopr.android.smailer.ui;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v7.preference.Preference;
@@ -12,7 +13,6 @@ import android.widget.Toast;
 
 import com.bopr.android.smailer.Cryptor;
 import com.bopr.android.smailer.MailTransport;
-import com.bopr.android.smailer.MailerProperties;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.Settings;
 
@@ -21,6 +21,10 @@ import javax.mail.MessagingException;
 import static com.bopr.android.smailer.MailTransport.CHECK_RESULT_AUTHENTICATION;
 import static com.bopr.android.smailer.MailTransport.CHECK_RESULT_NOT_CONNECTED;
 import static com.bopr.android.smailer.MailTransport.CHECK_RESULT_OK;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
+import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
+import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
 
 /**
  * A {@link Preference} for testing server settings.
@@ -93,14 +97,18 @@ public class TestServerPreference extends Preference {
             MailTransport transport = new MailTransport();
             Cryptor cryptor = new Cryptor(owner.getContext());
 
-            MailerProperties pp = new MailerProperties(Settings.getPreferences(owner.getContext()));
-            transport.startSession(pp.getUser(), cryptor.decrypt(pp.getPassword()), pp.getHost(), pp.getPort());
+            SharedPreferences preferences = Settings.preferences(owner.getContext());
+            String user = preferences.getString(KEY_PREF_SENDER_ACCOUNT, null);
+            String password = preferences.getString(KEY_PREF_SENDER_PASSWORD, null);
+            String host = preferences.getString(KEY_PREF_EMAIL_HOST, null);
+            String port = preferences.getString(KEY_PREF_EMAIL_PORT, null);
+
+            transport.startSession(user, cryptor.decrypt(password), host, port);
 
             int result = transport.checkConnection();
             if (result == CHECK_RESULT_OK) {
                 try {
-                    transport.send("[" + owner.getContext().getString(R.string.app_name) + "] TEST", "This is the test message",
-                            pp.getUser(), pp.getUser());
+                    transport.send("[" + owner.getContext().getString(R.string.app_name) + "] TEST", "This is the test message", user, user);
                 } catch (MessagingException e) {
                     result = CHECK_RESULT_NOT_CONNECTED;
                 }

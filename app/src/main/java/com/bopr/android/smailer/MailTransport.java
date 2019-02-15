@@ -53,7 +53,7 @@ public class MailTransport {
     /**
      * Starts new delivery session.
      */
-    public void startSession(String user, String password, String host, String port) {
+    public void startSession(@NonNull String user, @NonNull String password, @NonNull String host, @NonNull String port) {
         Properties props = new Properties();
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.host", host);
@@ -78,7 +78,7 @@ public class MailTransport {
     /**
      * Sends email.
      */
-    public void send(String subject, String body, String sender, String recipients)
+    public void send(String subject, String body, @NonNull String sender, @NonNull String recipients)
             throws MessagingException {
         send(subject, body, null, sender, recipients);
     }
@@ -86,8 +86,8 @@ public class MailTransport {
     /**
      * Sends email with attachment.
      */
-    public void send(String subject, String body, File[] attachment, String sender,
-                     String recipients) throws MessagingException {
+    public void send(String subject, String body, File[] attachment, @NonNull String sender,
+                     @NonNull String recipients) throws MessagingException {
         MimeMessage message = new MimeMessage(session);
         message.setSender(new InternetAddress(sender));
         message.setSubject(subject);

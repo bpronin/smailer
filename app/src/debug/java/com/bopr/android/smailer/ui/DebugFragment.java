@@ -568,10 +568,8 @@ public class DebugFragment extends BasePreferenceFragment {
             String user = properties.getProperty("default_sender");
 
             MailTransport transport = new MailTransport();
-            transport.startSession(user,
-                    properties.getProperty("default_password"),
-                    "smtp.gmail.com",
-                    "465");
+            transport.startSession(user, properties.getProperty("default_password"),
+                    "smtp.gmail.com", "465");
 
             try {
                 transport.send(
@@ -614,10 +612,8 @@ public class DebugFragment extends BasePreferenceFragment {
             try {
                 String user = properties.getProperty("default_sender");
                 MailTransport transport = new MailTransport();
-                transport.startSession(user,
-                        properties.getProperty("default_password"),
-                        "smtp.gmail.com",
-                        "465");
+                transport.startSession(user, properties.getProperty("default_password"),
+                        "smtp.gmail.com", "465");
                 transport.send(
                         "SMailer log",
                         "See attachment",

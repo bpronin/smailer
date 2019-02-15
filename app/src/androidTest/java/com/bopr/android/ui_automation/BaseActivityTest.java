@@ -42,11 +42,10 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
-import static com.bopr.android.smailer.Settings.getPreferences;
+import static com.bopr.android.smailer.Settings.preferences;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.not;
-import static org.hamcrest.core.Is.is;
 
 /**
  * Base UI tester.
@@ -68,7 +67,7 @@ public class BaseActivityTest {
     @Before
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public void setUp() {
-        preferences = getPreferences(rule.getActivity());
+        preferences = preferences(rule.getActivity());
         preferences
                 .edit()
                 .clear()

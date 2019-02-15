@@ -2,6 +2,7 @@ package com.bopr.android.smailer;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.util.Base64;
 
 import com.bopr.android.smailer.util.Util;
@@ -46,7 +47,7 @@ public class Cryptor {
         }
     }
 
-    public String decrypt(String s) {
+    public String decrypt(@Nullable String s) {
         if (Util.isEmpty(s)) {
             return s;
         }

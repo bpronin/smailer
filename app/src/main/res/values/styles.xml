@@ -5,33 +5,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <!--<item name="preferenceTheme">@style/PreferenceThemeOverlay</item>-->
-        <!--<item name="preferenceTheme">@style/AppPreferenceTheme</item>-->
+        <!--<item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>-->
     </style>
-
-    <!--<style name="AppPreferenceTheme" parent="PreferenceThemeOverlay">-->
-        <!--<item name="preferenceScreenStyle">@style/Preference.PreferenceScreen</item>-->
-        <!--<item name="preferenceFragmentStyle">@style/PreferenceFragment</item>-->
-        <!--<item name="preferenceCategoryStyle">@style/Preference.Category</item>-->
-        <!--<item name="preferenceStyle">@style/Preference.Material</item>-->
-        <!--<item name="preferenceInformationStyle">@style/Preference.Information</item>-->
-        <!--<item name="checkBoxPreferenceStyle">@style/Preference.CheckBoxPreference</item>-->
-        <!--<item name="switchPreferenceCompatStyle">@style/Preference.SwitchPreferenceCompat</item>-->
-        <!--<item name="switchPreferenceStyle">@style/Preference.SwitchPreference</item>-->
-        <!--<item name="dialogPreferenceStyle">@style/Preference.DialogPreference</item>-->
-        <!--<item name="editTextPreferenceStyle">@style/Preference.DialogPreference.EditTextPreference</item>-->
-        <!--<item name="preferenceFragmentListStyle">@style/PreferenceFragmentList</item>-->
-    <!--</style>-->
-
-    <!--
-        <style name="AppTheme.NoActionBar">
-            <item name="windowActionBar">false</item>
-            <item name="windowNoTitle">true</item>
-        </style>
-
-        <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
-
-        <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
-    -->
 
 </resources>

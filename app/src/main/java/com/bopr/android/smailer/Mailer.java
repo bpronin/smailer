@@ -22,14 +22,19 @@ import javax.mail.MessagingException;
 import static com.bopr.android.smailer.Contacts.getContactName;
 import static com.bopr.android.smailer.Notifications.ACTION_SHOW_CONNECTION;
 import static com.bopr.android.smailer.Notifications.ACTION_SHOW_MAIN;
-import static com.bopr.android.smailer.Notifications.ACTION_SHOW_RECIPIENTS;
 import static com.bopr.android.smailer.Notifications.ACTION_SHOW_SERVER;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_MARK_SMS_AS_READ;
 import static com.bopr.android.smailer.Settings.KEY_PREF_NOTIFY_SEND_SUCCESS;
+import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
+import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
+import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
 import static com.bopr.android.smailer.Settings.getDeviceName;
-import static com.bopr.android.smailer.Settings.getPreferences;
+import static com.bopr.android.smailer.Settings.preferences;
 import static com.bopr.android.smailer.util.AndroidUtil.hasInternetConnection;
-import static com.bopr.android.smailer.util.Util.isEmpty;
 
 /**
  * Sends out {@link PhoneEvent}.
@@ -40,20 +45,21 @@ class Mailer {
 
     private static Logger log = LoggerFactory.getLogger("Mailer");
 
+    private final SharedPreferences preferences;
     private final Context context;
     private final MailTransport transport;
     private final Cryptor cryptor;
     private final Notifications notifications;
     private final Database database;
 
-    Mailer(Context context, MailTransport transport, Cryptor cryptor,
-           Notifications notifications,
+    Mailer(Context context, MailTransport transport, Cryptor cryptor, Notifications notifications,
            Database database) {
         this.context = context;
         this.transport = transport;
         this.cryptor = cryptor;
         this.notifications = notifications;
         this.database = database;
+        preferences = Settings.preferences(context);
     }
 
     Mailer(Context context, Database database) {
@@ -91,14 +97,18 @@ class Mailer {
     private void doSend(PhoneEvent event, boolean silent) {
         log.debug("Sending mail: " + event);
 
-        MailerProperties pp = new MailerProperties(getPreferences(context));
-        if (checkProperties(pp, event, silent) && checkConnection(event, silent)) {
-            MailFormatter formatter = createFormatter(event, pp);
+        if (checkInternetConnection(event, silent) && checkPreferences(event, silent)) {
+            MailFormatter formatter = createFormatter(event);
 
-            transport.startSession(pp.getUser(), cryptor.decrypt(pp.getPassword()), pp.getHost(), pp.getPort());
+            String host = preferences.getString(KEY_PREF_EMAIL_HOST, "");
+            String port = preferences.getString(KEY_PREF_EMAIL_PORT, "");
+            String user = preferences.getString(KEY_PREF_SENDER_ACCOUNT, "");
+            String password = preferences.getString(KEY_PREF_SENDER_PASSWORD, "");
+            String recipients = preferences.getString(KEY_PREF_RECIPIENTS_ADDRESS, "");
+
+            transport.startSession(user, cryptor.decrypt(password), host, port);
             try {
-                transport.send(formatter.formatSubject(), formatter.formatBody(), pp.getUser(), pp.getRecipients());
-
+                transport.send(formatter.formatSubject(), formatter.formatBody(), user, recipients);
                 handleSuccess(event);
             } catch (AuthenticationFailedException x) {
                 handleError(x, x.toString(), event, R.string.notification_error_authentication, ACTION_SHOW_SERVER, silent);
@@ -113,37 +123,38 @@ class Mailer {
     }
 
     @NonNull
-    private MailFormatter createFormatter(PhoneEvent event, MailerProperties mp) {
+    private MailFormatter createFormatter(PhoneEvent event) {
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(new Date());
         formatter.setContactName(getContactName(context, event.getPhone()));
         formatter.setDeviceName(getDeviceName(context));
-        formatter.setContentOptions(mp.getContentOptions());
+        formatter.setContentOptions(preferences.getStringSet(KEY_PREF_EMAIL_CONTENT, null));
 
-        if (mp.getMessageLocale() != null) {
-            formatter.setLocale(mp.getMessageLocale());
+        String locale = preferences.getString(KEY_PREF_EMAIL_LOCALE, null);
+        if (locale != null) {
+            formatter.setLocale(locale);
         }
         return formatter;
     }
 
-    private boolean checkProperties(MailerProperties properties, PhoneEvent event, boolean silent) {
-        if (isEmpty(properties.getHost())) {
-            handleError(null, "Host not specified", event, R.string.notification_error_no_host, ACTION_SHOW_SERVER, silent);
-            return false;
-        } else if (isEmpty(properties.getPort())) {
-            handleError(null, "Port not specified", event, R.string.notification_error_no_port, ACTION_SHOW_SERVER, silent);
-            return false;
-        } else if (isEmpty(properties.getUser())) {
-            handleError(null, "Account not specified", event, R.string.notification_error_no_account, ACTION_SHOW_SERVER, silent);
-            return false;
-        } else if (isEmpty(properties.getRecipients())) {
-            handleError(null, "Recipients not specified", event, R.string.notification_error_no_recipients, ACTION_SHOW_RECIPIENTS, silent);
-            return false;
-        }
+    private boolean checkPreferences(PhoneEvent event, boolean silent) {
+//        if (!preferences.contains(KEY_PREF_EMAIL_HOST)) {
+//            handleError(null, "Host not specified", event, R.string.notification_error_no_host, ACTION_SHOW_SERVER, silent);
+//            return false;
+//        } else if (!preferences.contains(KEY_PREF_EMAIL_PORT)) {
+//            handleError(null, "Port not specified", event, R.string.notification_error_no_port, ACTION_SHOW_SERVER, silent);
+//            return false;
+//        } else if (!preferences.contains(KEY_PREF_SENDER_ACCOUNT)) {
+//            handleError(null, "Account not specified", event, R.string.notification_error_no_account, ACTION_SHOW_SERVER, silent);
+//            return false;
+//        } else if (!preferences.contains(KEY_PREF_RECIPIENTS_ADDRESS)) {
+//            handleError(null, "Recipients not specified", event, R.string.notification_error_no_recipients, ACTION_SHOW_RECIPIENTS, silent);
+//            return false;
+//        }
         return true;
     }
 
-    private boolean checkConnection(PhoneEvent event, boolean silent) {
+    private boolean checkInternetConnection(PhoneEvent event, boolean silent) {
         if (!hasInternetConnection(context)) {
             handleError(null, "No internet connection", event, R.string.notification_error_no_connection, ACTION_SHOW_CONNECTION, silent);
             return false;
@@ -185,7 +196,7 @@ class Mailer {
         database.putEvent(event);
         notifications.hideMailError();
 
-        SharedPreferences preferences = getPreferences(context);
+        SharedPreferences preferences = preferences(context);
         if (preferences.getBoolean(KEY_PREF_NOTIFY_SEND_SUCCESS, false)) {
             notifications.showMailSuccess(event.getId());
         }
