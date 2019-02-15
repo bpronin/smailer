@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.preference.Preference;
 import android.view.MenuItem;
 import android.widget.ListView;
 
@@ -15,6 +13,9 @@ import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.ResendService;
 import com.bopr.android.smailer.util.validator.EmailListTextValidator;
 import com.bopr.android.smailer.util.validator.EmailTextValidator;
+
+import androidx.annotation.Nullable;
+import androidx.preference.Preference;
 
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;

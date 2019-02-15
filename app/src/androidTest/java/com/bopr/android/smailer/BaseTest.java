@@ -1,8 +1,6 @@
 package com.bopr.android.smailer;
 
 import android.content.Context;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
 
 import junit.framework.Assert;
 
@@ -11,6 +9,9 @@ import org.junit.runner.RunWith;
 
 import java.util.Locale;
 import java.util.TimeZone;
+
+import androidx.test.InstrumentationRegistry;
+import androidx.test.runner.AndroidJUnit4;
 
 /**
  * Base tester.

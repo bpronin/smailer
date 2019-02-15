@@ -2,7 +2,8 @@ package com.bopr.android.smailer.ui;
 
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 /**
  * For debug purposes.

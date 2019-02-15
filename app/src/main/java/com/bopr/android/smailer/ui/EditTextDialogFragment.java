@@ -1,7 +1,6 @@
 package com.bopr.android.smailer.ui;
 
 import android.annotation.SuppressLint;
-import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
@@ -10,6 +9,8 @@ import android.widget.TextView;
 
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.Util;
+
+import androidx.annotation.NonNull;
 
 /**
  * Phone number editor dialog.

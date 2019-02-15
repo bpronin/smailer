@@ -1,8 +1,5 @@
 package com.bopr.android.smailer.util;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
 import com.bopr.android.smailer.GeoCoordinates;
 
 import java.util.Arrays;
@@ -14,6 +11,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * Miscellaneous utilities.

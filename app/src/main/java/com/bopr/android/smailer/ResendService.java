@@ -5,12 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
+
+import androidx.annotation.Nullable;
 
 import static com.bopr.android.smailer.MailerService.startMailService;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;

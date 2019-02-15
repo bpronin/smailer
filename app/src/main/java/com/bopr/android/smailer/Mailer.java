@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
-import android.support.annotation.NonNull;
 
 import com.sun.mail.util.MailConnectException;
 
@@ -18,6 +17,8 @@ import java.util.List;
 
 import javax.mail.AuthenticationFailedException;
 import javax.mail.MessagingException;
+
+import androidx.annotation.NonNull;
 
 import static com.bopr.android.smailer.Contacts.getContactName;
 import static com.bopr.android.smailer.Notifications.ACTION_SHOW_CONNECTION;

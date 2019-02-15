@@ -1,8 +1,8 @@
 package com.bopr.android.smailer.ui;
 
-import android.support.annotation.NonNull;
-
 import com.bopr.android.smailer.R;
+
+import androidx.annotation.NonNull;
 
 /**
  * Phone filter list activity fragment.

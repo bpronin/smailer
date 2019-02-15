@@ -7,10 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -29,7 +25,12 @@ import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.Settings;
 import com.bopr.android.smailer.util.AndroidUtil;
 
-import static android.support.v7.widget.RecyclerView.NO_POSITION;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.RecyclerView;
+
+import static androidx.recyclerview.widget.RecyclerView.NO_POSITION;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
 
 

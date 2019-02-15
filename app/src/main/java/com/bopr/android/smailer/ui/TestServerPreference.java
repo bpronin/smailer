@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Toast;
@@ -17,6 +15,9 @@ import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.Settings;
 
 import javax.mail.MessagingException;
+
+import androidx.preference.Preference;
+import androidx.preference.PreferenceViewHolder;
 
 import static com.bopr.android.smailer.MailTransport.CHECK_RESULT_AUTHENTICATION;
 import static com.bopr.android.smailer.MailTransport.CHECK_RESULT_NOT_CONNECTED;

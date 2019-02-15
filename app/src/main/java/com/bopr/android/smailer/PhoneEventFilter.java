@@ -1,12 +1,12 @@
 package com.bopr.android.smailer;
 
-import android.support.annotation.NonNull;
-
 import com.bopr.android.smailer.util.Util;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
+
+import androidx.annotation.NonNull;
 
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;

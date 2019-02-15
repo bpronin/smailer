@@ -1,12 +1,6 @@
 package com.bopr.android.smailer.ui;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.Preference.OnPreferenceClickListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +9,13 @@ import com.bopr.android.smailer.R;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.preference.Preference;
+import androidx.preference.Preference.OnPreferenceClickListener;
 
 import static com.bopr.android.smailer.Settings.KEY_PREF_LOG;
 import static com.bopr.android.smailer.Settings.KEY_PREF_MORE;

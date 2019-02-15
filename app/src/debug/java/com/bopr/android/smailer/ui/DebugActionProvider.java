@@ -2,8 +2,9 @@ package com.bopr.android.smailer.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.view.ActionProvider;
 import android.view.View;
+
+import androidx.core.view.ActionProvider;
 
 /**
  * Class DebugActionProvider.

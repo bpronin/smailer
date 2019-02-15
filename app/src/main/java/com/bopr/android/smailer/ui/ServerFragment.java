@@ -1,15 +1,16 @@
 package com.bopr.android.smailer.ui;
 
 import android.os.Bundle;
-import android.support.v7.preference.EditTextPreference;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.Preference.OnPreferenceChangeListener;
 import android.text.TextUtils;
 
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.Util;
 import com.bopr.android.smailer.util.ui.preference.EmailPreference;
 import com.bopr.android.smailer.util.validator.EmailTextValidator;
+
+import androidx.preference.EditTextPreference;
+import androidx.preference.Preference;
+import androidx.preference.Preference.OnPreferenceChangeListener;
 
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;

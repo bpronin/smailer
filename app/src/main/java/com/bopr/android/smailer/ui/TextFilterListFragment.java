@@ -1,9 +1,9 @@
 package com.bopr.android.smailer.ui;
 
-import android.support.annotation.NonNull;
-
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.Util;
+
+import androidx.annotation.NonNull;
 
 /**
  * Text filter list activity fragment.

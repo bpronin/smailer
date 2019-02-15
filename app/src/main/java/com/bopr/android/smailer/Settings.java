@@ -3,7 +3,6 @@ package com.bopr.android.smailer;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
 
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.Util;
@@ -14,6 +13,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
+import androidx.annotation.NonNull;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.bopr.android.smailer.util.Util.commaSeparated;

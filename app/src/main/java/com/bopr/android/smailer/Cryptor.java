@@ -2,7 +2,6 @@ package com.bopr.android.smailer;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.util.Base64;
 
 import com.bopr.android.smailer.util.Util;
@@ -10,6 +9,8 @@ import com.bopr.android.smailer.util.Util;
 import java.security.KeyStore;
 
 import javax.crypto.Cipher;
+
+import androidx.annotation.Nullable;
 
 /**
  * RSA encryption operations.

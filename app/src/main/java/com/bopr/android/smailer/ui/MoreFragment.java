@@ -1,13 +1,14 @@
 package com.bopr.android.smailer.ui;
 
 import android.os.Bundle;
-import android.support.v7.preference.EditTextPreference;
-import android.support.v7.preference.ListPreference;
-import android.support.v7.preference.Preference;
 
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.Util;
+
+import androidx.preference.EditTextPreference;
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
 
 import static com.bopr.android.smailer.Settings.KEY_PREF_DEVICE_ALIAS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;

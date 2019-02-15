@@ -10,12 +10,13 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
-import android.support.annotation.Nullable;
 
 import com.bopr.android.smailer.util.db.XCursor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import androidx.annotation.Nullable;
 
 import static com.bopr.android.smailer.MailerService.startMailService;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;

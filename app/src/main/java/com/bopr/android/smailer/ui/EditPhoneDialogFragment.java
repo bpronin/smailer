@@ -3,7 +3,6 @@ package com.bopr.android.smailer.ui;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -11,6 +10,8 @@ import android.widget.TextView;
 
 import com.bopr.android.smailer.Contacts;
 import com.bopr.android.smailer.R;
+
+import androidx.annotation.NonNull;
 
 /**
  * Phone number editor dialog.

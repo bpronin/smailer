@@ -6,11 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.provider.Telephony;
-import android.support.annotation.NonNull;
 import android.telephony.SmsMessage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import androidx.annotation.NonNull;
 
 import static com.bopr.android.smailer.MailerService.startMailService;
 import static com.bopr.android.smailer.util.Util.safeEquals;

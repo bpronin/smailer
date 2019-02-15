@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.support.v4.content.LocalBroadcastManager;
 
 import com.bopr.android.smailer.util.db.XCursor;
 
@@ -16,6 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import static java.lang.System.currentTimeMillis;
 

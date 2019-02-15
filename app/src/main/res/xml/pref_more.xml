@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <android.support.v14.preference.MultiSelectListPreference
+    <androidx.preference.MultiSelectListPreference
         android:icon="@drawable/ic_pref_content"
         android:dialogTitle="@string/title_email_message_content"
         android:entries="@array/titles_email_content"
@@ -10,7 +10,7 @@
         android:summary="@string/title_what_email_contain"
         android:title="@string/title_content" />
 
-    <android.support.v7.preference.EditTextPreference
+    <androidx.preference.EditTextPreference
         android:icon="@drawable/ic_pref_device"
         android:dialogMessage="@string/title_device_alias_hint"
         android:inputType="textNoSuggestions"
@@ -20,7 +20,7 @@
         android:singleLine="true"
         android:title="@string/title_device_alias" />
 
-    <android.support.v7.preference.ListPreference
+    <androidx.preference.ListPreference
         android:icon="@drawable/ic_pref_language"
         android:dialogTitle="@string/title_email_language"
         android:entries="@array/titles_language"
@@ -28,16 +28,16 @@
         android:key="email_locale"
         android:title="@string/title_email_language_hint" />
 
-    <android.support.v14.preference.SwitchPreference
+    <androidx.preference.SwitchPreference
         android:key="resend_unsent"
         android:title="@string/title_resend_hint" />
 
-    <android.support.v14.preference.SwitchPreference
+    <androidx.preference.SwitchPreference
         android:key="notify_send_success"
         android:title="@string/title_notify_send_success" />
 
-    <android.support.v14.preference.SwitchPreference
+    <androidx.preference.SwitchPreference
         android:key="mark_processed_sms_as_read"
         android:title="@string/title_mark_processed_sms_as_read" />
 
-</android.support.v7.preference.PreferenceScreen>
+</androidx.preference.PreferenceScreen>

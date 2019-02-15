@@ -4,12 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.support.annotation.Nullable;
 
 import com.bopr.android.smailer.util.AndroidUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import androidx.annotation.Nullable;
 
 import static android.Manifest.permission.READ_CONTACTS;
 import static android.provider.ContactsContract.CommonDataKinds.Email;

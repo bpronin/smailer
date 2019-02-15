@@ -1,8 +1,6 @@
 package com.bopr.android.smailer.ui;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 
 import com.bopr.android.smailer.OutgoingSmsService;
 import com.bopr.android.smailer.ResendService;
@@ -11,6 +9,8 @@ import com.crashlytics.android.Crashlytics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import io.fabric.sdk.android.Fabric;
 
 /**

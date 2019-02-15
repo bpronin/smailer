@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <android.support.v14.preference.MultiSelectListPreference
+    <androidx.preference.MultiSelectListPreference
         android:icon="@drawable/ic_pref_triggers"
         android:entries="@array/titles_triggers"
         android:entryValues="@array/trigger_values"
@@ -9,7 +9,7 @@
         android:summary="@string/title_triggers_hint"
         android:title="@string/title_triggers" />
 
-    <android.support.v7.preference.PreferenceCategory
+    <androidx.preference.PreferenceCategory
         android:icon="@drawable/ic_call"
         android:title="@string/title_number_filter">
 
@@ -20,9 +20,9 @@
         <android.support.v7.preference.Preference
             android:key="message_filter_whitelist"
             android:title="@string/title_whitelist" />
-    </android.support.v7.preference.PreferenceCategory>
+    </androidx.preference.PreferenceCategory>
 
-    <android.support.v7.preference.PreferenceCategory
+    <androidx.preference.PreferenceCategory
         android:icon="@drawable/ic_text"
         android:title="@string/title_text_filter">
 
@@ -33,7 +33,7 @@
         <android.support.v7.preference.Preference
             android:key="message_filter_text_whitelist"
             android:title="@string/title_whitelist" />
-    </android.support.v7.preference.PreferenceCategory>
+    </androidx.preference.PreferenceCategory>
 
 
-</android.support.v7.preference.PreferenceScreen>
+</androidx.preference.PreferenceScreen>

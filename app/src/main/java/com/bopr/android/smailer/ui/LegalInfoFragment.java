@@ -3,7 +3,6 @@ package com.bopr.android.smailer.ui;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +13,8 @@ import com.bopr.android.smailer.R;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.fragment.app.ListFragment;
 
 /**
  * Legal info fragment. Displays list of used open source libs.

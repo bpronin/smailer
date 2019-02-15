@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <com.bopr.android.smailer.util.ui.preference.EmailPreference
         android:dialogLayout="@layout/editor_email"
@@ -23,7 +23,7 @@
         android:singleLine="true"
         android:title="@string/title_password" />
 
-    <android.support.v7.preference.EditTextPreference
+    <androidx.preference.EditTextPreference
         android:inputType="textNoSuggestions"
         android:key="sender_host"
         android:maxLines="1"
@@ -31,7 +31,7 @@
         android:singleLine="true"
         android:title="@string/title_host" />
 
-    <android.support.v7.preference.EditTextPreference
+    <androidx.preference.EditTextPreference
         android:digits="0123456789"
         android:inputType="textNoSuggestions"
         android:key="sender_port"
@@ -45,4 +45,4 @@
         android:persistent="false"
         android:widgetLayout="@layout/pref_test_mail_server" />
 
-</android.support.v7.preference.PreferenceScreen>
+</androidx.preference.PreferenceScreen>

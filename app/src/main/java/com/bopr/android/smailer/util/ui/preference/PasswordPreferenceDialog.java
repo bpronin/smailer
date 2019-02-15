@@ -2,7 +2,6 @@ package com.bopr.android.smailer.util.ui.preference;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.support.v7.preference.EditTextPreferenceDialogFragmentCompat;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -10,6 +9,8 @@ import android.widget.ImageButton;
 
 import com.bopr.android.smailer.Cryptor;
 import com.bopr.android.smailer.R;
+
+import androidx.preference.EditTextPreferenceDialogFragmentCompat;
 
 import static android.text.InputType.TYPE_CLASS_TEXT;
 import static android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD;

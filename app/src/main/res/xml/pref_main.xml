@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <android.support.v7.preference.PreferenceScreen
+    <androidx.preference.PreferenceScreen
         android:icon="@drawable/ic_pref_account"
         android:key="outgoing_server"
         android:title="@string/title_email_sender" />
 
-    <android.support.v7.preference.PreferenceScreen
+    <androidx.preference.PreferenceScreen
         android:icon="@drawable/ic_pref_recipient"
         android:key="recipients_address"
         android:title="@string/title_email_recipients" />
 
-    <android.support.v7.preference.PreferenceScreen
+    <androidx.preference.PreferenceScreen
         android:icon="@drawable/ic_pref_rules"
         android:key="rules"
         android:title="@string/title_rules" />
 
-    <android.support.v7.preference.PreferenceScreen
+    <androidx.preference.PreferenceScreen
         android:icon="@drawable/ic_pref_more"
         android:key="more"
         android:title="@string/title_more" />
 
-    <android.support.v7.preference.PreferenceScreen
+    <androidx.preference.PreferenceScreen
         android:icon="@drawable/ic_pref_log"
         android:key="log"
         android:title="@string/title_activity_log" />
 
-</android.support.v7.preference.PreferenceScreen>
+</androidx.preference.PreferenceScreen>

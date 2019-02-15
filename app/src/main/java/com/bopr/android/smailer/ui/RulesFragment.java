@@ -2,11 +2,12 @@ package com.bopr.android.smailer.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.Preference.OnPreferenceChangeListener;
 
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.TagFormatter;
+
+import androidx.preference.Preference;
+import androidx.preference.Preference.OnPreferenceChangeListener;
 
 import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_BLACKLIST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_TEXT_BLACKLIST;

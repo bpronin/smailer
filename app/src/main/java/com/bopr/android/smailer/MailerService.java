@@ -3,12 +3,13 @@ package com.bopr.android.smailer;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
 
 import com.bopr.android.smailer.util.Util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import androidx.annotation.NonNull;
 
 /**
  * Service that sends mail.

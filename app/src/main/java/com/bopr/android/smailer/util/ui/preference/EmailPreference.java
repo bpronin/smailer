@@ -1,8 +1,9 @@
 package com.bopr.android.smailer.util.ui.preference;
 
 import android.content.Context;
-import android.support.v7.preference.EditTextPreference;
 import android.util.AttributeSet;
+
+import androidx.preference.EditTextPreference;
 
 /**
  * A {@link EditTextPreference } for email input.

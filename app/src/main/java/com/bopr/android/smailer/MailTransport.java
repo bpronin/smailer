@@ -1,7 +1,5 @@
 package com.bopr.android.smailer;
 
-import android.support.annotation.NonNull;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +24,8 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+
+import androidx.annotation.NonNull;
 
 /**
  * An utility class that sends email using SMTP transport.

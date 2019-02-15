@@ -3,7 +3,6 @@ package com.bopr.android.smailer.util.ui.preference;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.preference.EditTextPreferenceDialogFragmentCompat;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -11,6 +10,8 @@ import android.widget.TextView;
 import com.bopr.android.smailer.Contacts;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.validator.EmailTextValidator;
+
+import androidx.preference.EditTextPreferenceDialogFragmentCompat;
 
 /**
  * A {@link EmailPreference } dialog.
