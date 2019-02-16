@@ -1,10 +1,9 @@
-package com.bopr.android.smailer.ui;
+package com.bopr.android.smailer.util.ui;
 
 import android.app.Activity;
 import android.app.Dialog;
 
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.util.ui.ActivityAsyncTask;
 
 /**
  * Task showing full screen infinite progress.

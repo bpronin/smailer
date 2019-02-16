@@ -31,6 +31,7 @@
     <string name="event_type_outgoing_sms">Outgoing SMS</string>
     <string name="message_activity_log_ask_clear">Clear history?</string>
     <string name="message_added_to_blacklist">{number} added to blacklist</string>
+    <string name="message_added_to_blacklist_remotely">{number} remotely added to blacklist</string>
     <string name="message_added_to_whitelist">{number} added to whitelist</string>
     <string name="message_item_removed">Item removed</string>
     <string name="message_items_removed">{count} item removed</string>

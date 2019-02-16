@@ -5,7 +5,6 @@ import com.bopr.android.smailer.GeoCoordinates;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -141,13 +140,13 @@ public class Util {
         return parseSeparated(s, ",", true);
     }
 
-    public static Set<String> parseCommaSeparatedSet(String s) {
-        return new HashSet<>(parseCommaSeparated(s));
-    }
-
     @SafeVarargs
     public static <T> Set<T> asSet(T... values) {
         return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(values)));
+    }
+
+    public static <T> Set<T> toSet(final Collection<T> collection) {
+        return new LinkedHashSet<>(collection);
     }
 
     public static String localeToString(Locale locale) {

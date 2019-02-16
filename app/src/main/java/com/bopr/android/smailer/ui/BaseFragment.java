@@ -1,6 +1,5 @@
 package com.bopr.android.smailer.ui;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,12 +15,12 @@ import static com.bopr.android.smailer.ui.AboutDialogFragment.showAboutDialog;
 
 public class BaseFragment extends Fragment {
 
-    protected SharedPreferences preferences;
+    protected Settings settings;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        preferences = Settings.preferences(requireContext());
+        settings = new Settings(requireContext());
         setHasOptionsMenu(true);
     }
 

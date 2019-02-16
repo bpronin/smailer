@@ -3,9 +3,14 @@ package com.bopr.android.smailer;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
 import com.bopr.android.smailer.util.Util;
+import com.crashlytics.android.Crashlytics;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Starts outgoing sms service device boot.
@@ -21,8 +26,10 @@ public class BootReceiver extends BroadcastReceiver {
         log.debug("Received intent: " + intent);
 
         if (Util.safeEquals(intent.getAction(), Intent.ACTION_BOOT_COMPLETED)) {
+            Fabric.with(context, new Crashlytics());
             OutgoingSmsService.toggleService(context);
             ResendService.toggleService(context);
+            MessagingService.initMessaging(context);
         }
     }
 

@@ -18,7 +18,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    
+
     <application
         android:allowBackup="true"
         android:backupAgent="AppBackupAgent"
@@ -34,7 +34,7 @@
         <meta-data
             android:name="com.google.android.backup.api_key"
             android:value="AEdPqrEAAAAI4Ju-ayl5GJi0GgUprqv9f4BpIq7lr3-NFUwctw" />
-        
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="0826344a90cfbc5883d6103b68cd8441cc4eede1" />
@@ -94,6 +94,14 @@
         <service android:name=".OutgoingSmsService" />
 
         <service android:name=".ResendService" />
+
+        <service
+            android:name=".MessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
 
         <receiver
             android:name=".SmsReceiver"

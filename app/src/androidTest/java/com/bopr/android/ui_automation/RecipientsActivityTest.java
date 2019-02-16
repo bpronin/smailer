@@ -37,7 +37,7 @@ public class RecipientsActivityTest extends BaseActivityTest {
 
     @Test
     public void testAddEdit() {
-         /* check preferences */
+         /* check settings */
         assertThat(preferences.getString(KEY_PREF_RECIPIENTS_ADDRESS, ""), isEmptyString());
 
         onView(withText(R.string.title_email_recipients)).check(matches(isDisplayed()));
@@ -90,13 +90,13 @@ public class RecipientsActivityTest extends BaseActivityTest {
         assertItemDisplayed("mary@mail.com");
         assertItemNotExists("john@mail.com");
 
-         /* check preferences */
+         /* check settings */
         assertEquals("mary@mail.com", preferences.getString(KEY_PREF_RECIPIENTS_ADDRESS, null));
     }
 
     @Test
     public void testAddExistent() {
-         /* check preferences */
+         /* check settings */
         assertThat(preferences.getString(KEY_PREF_RECIPIENTS_ADDRESS, ""), isEmptyString());
 
         onView(withText(R.string.title_email_recipients)).check(matches(isDisplayed()));
@@ -127,13 +127,13 @@ public class RecipientsActivityTest extends BaseActivityTest {
 
         onToast("Recipient john@mail.com already exists").check(matches(isDisplayed()));
 
-         /* check preferences */
+         /* check settings */
         assertEquals("john@mail.com", preferences.getString(KEY_PREF_RECIPIENTS_ADDRESS, null));
     }
 
     @Test
     public void testEditExistent() {
-         /* check preferences */
+         /* check settings */
         onView(withText(R.string.title_email_recipients)).check(matches(isDisplayed()));
 
         /* click on label */
@@ -171,13 +171,13 @@ public class RecipientsActivityTest extends BaseActivityTest {
 
         onToast("Recipient mary@mail.com already exists").check(matches(isDisplayed()));
 
-         /* check preferences */
+         /* check settings */
         assertEquals("mary@mail.com,john@mail.com", preferences.getString(KEY_PREF_RECIPIENTS_ADDRESS, null));
     }
 
     @Test
     public void testRemove() {
-         /* check preferences */
+         /* check settings */
         assertThat(preferences.getString(KEY_PREF_RECIPIENTS_ADDRESS, ""), isEmptyString());
 
         onView(withText(R.string.title_email_recipients)).check(matches(isDisplayed()));
@@ -214,7 +214,7 @@ public class RecipientsActivityTest extends BaseActivityTest {
 
         assertItemNotExists("john@mail.com");
 
-         /* check preferences */
+         /* check settings */
         assertThat(preferences.getString(KEY_PREF_RECIPIENTS_ADDRESS, ""), isEmptyString());
     }
 

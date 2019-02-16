@@ -56,7 +56,7 @@ public class MainActivityTest extends BaseActivityTest {
     public void testTriggersSetting() {
         String[] titles = rule.getActivity().getResources().getStringArray(R.array.titles_triggers);
 
-         /* check preferences */
+         /* check settings */
         assertThat(preferences.getStringSet(KEY_PREF_EMAIL_TRIGGERS, null), equalTo(DEFAULT_TRIGGERS));
 
         /* check all and press cancel */

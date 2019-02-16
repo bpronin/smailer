@@ -24,7 +24,6 @@ import com.bopr.android.smailer.Formats;
 import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.PhoneEventFilter;
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.Settings;
 import com.bopr.android.smailer.util.AndroidUtil;
 
 import androidx.annotation.NonNull;
@@ -48,21 +47,21 @@ public class HistoryFragment extends BaseFragment {
     private ListAdapter listAdapter;
     private PhoneEventFilter phoneEventFilter;
     private int selectedListItemPosition = NO_POSITION;
-    private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
+    private SharedPreferences.OnSharedPreferenceChangeListener settingsChangeListener;
     private BroadcastReceiver databaseListener;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        preferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        settingsChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
 
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
                 loadData();
             }
         };
-        preferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
+        settings.registerOnSharedPreferenceChangeListener(settingsChangeListener);
 
         databaseListener = new BroadcastReceiver() {
             @Override
@@ -77,7 +76,7 @@ public class HistoryFragment extends BaseFragment {
         super.onDestroy();
         database.removeListener(databaseListener);
         database.close();
-        preferences.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
+        settings.unregisterOnSharedPreferenceChangeListener(settingsChangeListener);
     }
 
     @Override
@@ -133,7 +132,7 @@ public class HistoryFragment extends BaseFragment {
     private void loadData() {
         listAdapter = new ListAdapter(getContext(), database.getEvents());
         listView.setAdapter(listAdapter);
-        phoneEventFilter = Settings.loadFilter(getContext());
+        phoneEventFilter = settings.getFilter();
         updateEmptyText();
     }
 
@@ -183,7 +182,7 @@ public class HistoryFragment extends BaseFragment {
             String number = listAdapter.getItem(selectedListItemPosition).getPhone();
 
             phoneEventFilter.getPhoneBlacklist().add(number);
-            Settings.saveFilter(getContext(), phoneEventFilter);
+            settings.putFilter(phoneEventFilter);
 
             Toast.makeText(getContext(),
                     formatter(R.string.message_added_to_blacklist, requireContext())
@@ -198,7 +197,7 @@ public class HistoryFragment extends BaseFragment {
             String number = listAdapter.getItem(selectedListItemPosition).getPhone();
 
             phoneEventFilter.getPhoneWhitelist().add(number);
-            Settings.saveFilter(getContext(), phoneEventFilter);
+            settings.putFilter(phoneEventFilter);
 
             Toast.makeText(getContext(),
                     formatter(R.string.message_added_to_whitelist, requireContext())
@@ -214,7 +213,7 @@ public class HistoryFragment extends BaseFragment {
 
             phoneEventFilter.getPhoneWhitelist().remove(number);
             phoneEventFilter.getPhoneBlacklist().remove(number);
-            Settings.saveFilter(getContext(), phoneEventFilter);
+            settings.putFilter(phoneEventFilter);
 
             Toast.makeText(getContext(),
                     formatter(R.string.message_phone_removed_from_filter, requireContext())

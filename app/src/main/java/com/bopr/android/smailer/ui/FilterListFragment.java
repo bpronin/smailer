@@ -1,7 +1,5 @@
 package com.bopr.android.smailer.ui;
 
-import android.app.Activity;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -13,7 +11,6 @@ import android.widget.Toast;
 
 import com.bopr.android.smailer.PhoneEventFilter;
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.Settings;
 import com.bopr.android.smailer.util.Util;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -42,29 +39,11 @@ abstract class FilterListFragment extends BaseFragment {
 
     private ListAdapter listAdapter;
     private RecyclerView listView;
-    private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
     private int selectedListPosition = NO_POSITION;
-    private Activity activity;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activity = getActivity();
-        preferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                loadItems();
-            }
-        };
-        preferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
-    }
-
-    @Override
-    public void onDestroy() {
-        preferences.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
-        super.onDestroy();
     }
 
     @Override
@@ -72,7 +51,7 @@ abstract class FilterListFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_filter_list, container, false);
 
         listView = view.findViewById(android.R.id.list);
-        listView.addItemDecoration(new DividerItemDecoration(activity, DividerItemDecoration.VERTICAL));
+        listView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
@@ -142,7 +121,7 @@ abstract class FilterListFragment extends BaseFragment {
         }
     }
 
-    private void loadItems() {
+    void loadItems() {
         listAdapter = new ListAdapter();
         listAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
 
@@ -154,7 +133,7 @@ abstract class FilterListFragment extends BaseFragment {
 
         listView.setAdapter(listAdapter);
 
-        List<String> list = new ArrayList<>(getItemsList(Settings.loadFilter(getContext())));
+        List<String> list = new ArrayList<>(getItemsList(settings.getFilter()));
         Collections.sort(list);
 
         List<Item> items = new ArrayList<>();
@@ -170,9 +149,9 @@ abstract class FilterListFragment extends BaseFragment {
             items.add(item.value);
         }
 
-        PhoneEventFilter filter = Settings.loadFilter(getContext());
+        PhoneEventFilter filter = settings.getFilter();
         setItemsList(filter, items);
-        Settings.saveFilter(getContext(), filter);
+        settings.putFilter(filter);
     }
 
     private boolean isItemExists(String text) {
@@ -242,7 +221,7 @@ abstract class FilterListFragment extends BaseFragment {
         }
 
         Snackbar.make(listView, title, Snackbar.LENGTH_LONG)
-                .setActionTextColor(ContextCompat.getColor(activity, R.color.dialogButtonText))
+                .setActionTextColor(ContextCompat.getColor(requireContext(), R.color.dialogButtonText))
                 .setAction(R.string.title_undo, new View.OnClickListener() {
 
                     @Override
@@ -298,7 +277,7 @@ abstract class FilterListFragment extends BaseFragment {
 
                 @Override
                 public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-                    activity.getMenuInflater().inflate(R.menu.menu_context_filters, menu);
+                    requireActivity().getMenuInflater().inflate(R.menu.menu_context_filters, menu);
                 }
             });
         }

@@ -2,8 +2,10 @@ package com.bopr.android.smailer.ui;
 
 import android.os.Bundle;
 
+import com.bopr.android.smailer.MessagingService;
 import com.bopr.android.smailer.OutgoingSmsService;
 import com.bopr.android.smailer.ResendService;
+import com.bopr.android.smailer.Settings;
 import com.crashlytics.android.Crashlytics;
 
 import org.slf4j.Logger;
@@ -33,6 +35,8 @@ public class MainActivity extends AppActivity {
 
         Fabric.with(this, new Crashlytics());
 
+        Settings.putDefaults(this);
+        MessagingService.initMessaging(this);
         OutgoingSmsService.toggleService(this);
         ResendService.toggleService(this);
     }

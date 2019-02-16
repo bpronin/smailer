@@ -1,24 +1,24 @@
 package com.bopr.android.smailer;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 
 import com.bopr.android.smailer.util.AndroidUtil;
+import com.bopr.android.smailer.util.SharedPreferencesWrapper;
 import com.bopr.android.smailer.util.Util;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
 import androidx.annotation.NonNull;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.bopr.android.smailer.util.Util.asSet;
 import static com.bopr.android.smailer.util.Util.commaSeparated;
-import static com.bopr.android.smailer.util.Util.parseCommaSeparatedSet;
+import static com.bopr.android.smailer.util.Util.parseCommaSeparated;
+import static com.bopr.android.smailer.util.Util.toSet;
 
 /**
  * Settings.
@@ -26,7 +26,7 @@ import static com.bopr.android.smailer.util.Util.parseCommaSeparatedSet;
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 @SuppressWarnings("WeakerAccess")
-public class Settings {
+public class Settings extends SharedPreferencesWrapper {
 
     public static final String PREFERENCES_STORAGE_NAME = "com.bopr.android.smailer_preferences";
     public static final String DB_NAME = "smailer.sqlite";
@@ -51,6 +51,7 @@ public class Settings {
     public static final String KEY_PREF_FILTER_TEXT_BLACKLIST = "message_filter_text_blacklist";
     public static final String KEY_PREF_FILTER_TEXT_WHITELIST = "message_filter_text_whitelist";
     public static final String KEY_PREF_DEVICE_ALIAS = "device_alias";
+    public static final String KEY_PREF_FIREBASE_TOKEN = "firebase_token";
 
     public static final String VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME = "time";
     public static final String VAL_PREF_EMAIL_CONTENT_DEVICE_NAME = "device_name";
@@ -65,55 +66,57 @@ public class Settings {
     public static final String DEFAULT_HOST = "smtp.gmail.com";
     public static final String DEFAULT_PORT = "465";
     public static final String DEFAULT_LOCALE = "default";
-    public static final Set<String> DEFAULT_CONTENT = Util.asSet(
+    public static final Set<String> DEFAULT_CONTENT = asSet(
             VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
             VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
             VAL_PREF_EMAIL_CONTENT_LOCATION,
             VAL_PREF_EMAIL_CONTENT_CONTACT);
-    public static final Set<String> DEFAULT_TRIGGERS = Util.asSet(
+    public static final Set<String> DEFAULT_TRIGGERS = asSet(
             VAL_PREF_TRIGGER_IN_SMS,
             VAL_PREF_TRIGGER_MISSED_CALLS);
 
-    public static SharedPreferences preferences(Context context) {
-        return context.getSharedPreferences(PREFERENCES_STORAGE_NAME, MODE_PRIVATE);
+    private Context context;
+
+    public Settings(Context context) {
+        super(context.getSharedPreferences(PREFERENCES_STORAGE_NAME, MODE_PRIVATE));
+        this.context = context;
     }
 
     /**
-     * Loads default preferences values.
+     * Loads default settings values.
      */
-    public static void loadDefaultPreferences(Context context) {
-        Map<String, Object> data = new HashMap<>();
-        data.put(KEY_PREF_EMAIL_HOST, DEFAULT_HOST);
-        data.put(KEY_PREF_EMAIL_PORT, DEFAULT_PORT);
-        data.put(KEY_PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS);
-        data.put(KEY_PREF_EMAIL_CONTENT, DEFAULT_CONTENT);
-        data.put(KEY_PREF_EMAIL_LOCALE, DEFAULT_LOCALE);
-        data.put(KEY_PREF_RESEND_UNSENT, true);
-        data.put(KEY_PREF_MARK_SMS_AS_READ, false);
-
-        AndroidUtil.putPreferencesOptional(preferences(context), data);
+    public static void putDefaults(Context context) {
+        new Settings(context).edit()
+                .putStringOptional(KEY_PREF_EMAIL_HOST, DEFAULT_HOST)
+                .putStringOptional(KEY_PREF_EMAIL_PORT, DEFAULT_PORT)
+                .putStringSetOptional(KEY_PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS)
+                .putStringSetOptional(KEY_PREF_EMAIL_CONTENT, DEFAULT_CONTENT)
+                .putStringOptional(KEY_PREF_EMAIL_LOCALE, DEFAULT_LOCALE)
+                .putBooleanOptional(KEY_PREF_RESEND_UNSENT, true)
+                .putBooleanOptional(KEY_PREF_MARK_SMS_AS_READ, false)
+                .apply();
     }
 
     /**
      * Returns device name.
      */
-    public static String getDeviceName(Context context) {
-        String name = preferences(context).getString(KEY_PREF_DEVICE_ALIAS, "");
+    public String getDeviceName() {
+        String name = getString(KEY_PREF_DEVICE_ALIAS, "");
         if (!Util.isEmpty(name)) {
             return name;
         }
         return AndroidUtil.getDeviceName();
     }
 
-    public static String getReleaseVersion(Context context) {
+    public String getReleaseVersion() {
         try {
             return context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
         } catch (PackageManager.NameNotFoundException x) {
-            throw new Error(x);
+            throw new RuntimeException(x);
         }
     }
 
-    public static BuildInfo getReleaseInfo(Context context) {
+    public BuildInfo getReleaseInfo() {
         Properties properties = new Properties();
         try {
             properties.load(context.getAssets().open("release.properties"));
@@ -122,33 +125,29 @@ public class Settings {
                     properties.getProperty("build_time")
             );
         } catch (IOException x) {
-            throw new Error("Cannot read release properties", x);
+            throw new RuntimeException("Cannot read release properties", x);
         }
     }
 
     @NonNull
-    public static PhoneEventFilter loadFilter(Context context) {
-        SharedPreferences preferences = preferences(context);
+    public PhoneEventFilter getFilter() {
         PhoneEventFilter filter = new PhoneEventFilter();
 
-        filter.setTriggers(preferences.getStringSet(KEY_PREF_EMAIL_TRIGGERS, Collections.<String>emptySet()));
-        filter.setPhoneBlacklist(parseCommaSeparatedSet(preferences.getString(KEY_PREF_FILTER_BLACKLIST, "")));
-        filter.setPhoneWhitelist(parseCommaSeparatedSet(preferences.getString(KEY_PREF_FILTER_WHITELIST, "")));
-        filter.setTextBlacklist(parseCommaSeparatedSet(preferences.getString(KEY_PREF_FILTER_TEXT_BLACKLIST, "")));
-        filter.setTextWhitelist(parseCommaSeparatedSet(preferences.getString(KEY_PREF_FILTER_TEXT_WHITELIST, "")));
+        filter.setTriggers(getStringSet(KEY_PREF_EMAIL_TRIGGERS, Collections.<String>emptySet()));
+        filter.setPhoneBlacklist(toSet(parseCommaSeparated(getString(KEY_PREF_FILTER_BLACKLIST, ""))));
+        filter.setPhoneWhitelist(toSet(parseCommaSeparated(getString(KEY_PREF_FILTER_WHITELIST, ""))));
+        filter.setTextBlacklist(toSet(parseCommaSeparated(getString(KEY_PREF_FILTER_TEXT_BLACKLIST, ""))));
+        filter.setTextWhitelist(toSet(parseCommaSeparated(getString(KEY_PREF_FILTER_TEXT_WHITELIST, ""))));
 
         return filter;
     }
 
-    public static void saveFilter(Context context, PhoneEventFilter filter) {
-        SharedPreferences.Editor editor = preferences(context).edit();
-
-        editor.putString(KEY_PREF_FILTER_BLACKLIST, commaSeparated(filter.getPhoneBlacklist()));
-        editor.putString(KEY_PREF_FILTER_WHITELIST, commaSeparated(filter.getPhoneWhitelist()));
-        editor.putString(KEY_PREF_FILTER_TEXT_BLACKLIST, commaSeparated(filter.getTextBlacklist()));
-        editor.putString(KEY_PREF_FILTER_TEXT_WHITELIST, commaSeparated(filter.getTextWhitelist()));
-
-        editor.apply();
+    public void putFilter(PhoneEventFilter filter) {
+        edit().putString(KEY_PREF_FILTER_BLACKLIST, commaSeparated(filter.getPhoneBlacklist()))
+                .putString(KEY_PREF_FILTER_WHITELIST, commaSeparated(filter.getPhoneWhitelist()))
+                .putString(KEY_PREF_FILTER_TEXT_BLACKLIST, commaSeparated(filter.getTextBlacklist()))
+                .putString(KEY_PREF_FILTER_TEXT_WHITELIST, commaSeparated(filter.getTextWhitelist()))
+                .apply();
     }
 
     public static class BuildInfo {

@@ -12,7 +12,6 @@ import com.bopr.android.smailer.util.TagFormatter;
 import com.bopr.android.smailer.util.Util;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -44,6 +43,7 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
 import static com.bopr.android.smailer.util.AndroidUtil.isPermissionsDenied;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
+import static java.util.Arrays.asList;
 
 /**
  * Responsible for permissions checking.
@@ -57,14 +57,14 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
     private static AtomicInteger nextRequestResult = new AtomicInteger(200);
 
     private Activity activity;
-    private SharedPreferences preferences;
+    private Settings settings;
     private int requestResultCode = nextRequestResult.incrementAndGet();
     private Map<String, Integer> items = new HashMap<>();
 
-    protected PreferencesPermissionsChecker(Activity activity, SharedPreferences preferences) {
+    protected PreferencesPermissionsChecker(Activity activity, Settings settings) {
         this.activity = activity;
-        this.preferences = preferences;
-        this.preferences.registerOnSharedPreferenceChangeListener(this);
+        this.settings = settings;
+        this.settings.registerOnSharedPreferenceChangeListener(this);
 
         items.put(RECEIVE_SMS, R.string.message_permission_rationale_receive_sms);
         items.put(WRITE_SMS, R.string.message_permission_rationale_write_sms);
@@ -77,7 +77,7 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
     }
 
     public void destroy() {
-        preferences.unregisterOnSharedPreferenceChangeListener(this);
+        settings.unregisterOnSharedPreferenceChangeListener(this);
     }
 
     public void checkAll() {
@@ -113,31 +113,31 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+    public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
         Set<String> requiredPermissions = new HashSet<>();
 
         switch (key) {
             case KEY_PREF_EMAIL_TRIGGERS:
-                Set<String> triggersPreference = sharedPreferences.getStringSet(key, Collections.<String>emptySet());
-                if (triggersPreference.contains(VAL_PREF_TRIGGER_IN_SMS)) {
+                Set<String> triggers = preferences.getStringSet(KEY_PREF_EMAIL_TRIGGERS, Collections.<String>emptySet());
+                if (triggers.contains(VAL_PREF_TRIGGER_IN_SMS)) {
                     requiredPermissions.add(RECEIVE_SMS);
                 }
-                if (triggersPreference.contains(VAL_PREF_TRIGGER_OUT_SMS)) {
+                if (triggers.contains(VAL_PREF_TRIGGER_OUT_SMS)) {
                     requiredPermissions.add(READ_SMS);
                 }
-                if (triggersPreference.contains(VAL_PREF_TRIGGER_IN_CALLS) || sharedPreferences.contains(VAL_PREF_TRIGGER_MISSED_CALLS)) {
+                if (triggers.contains(VAL_PREF_TRIGGER_IN_CALLS) || preferences.contains(VAL_PREF_TRIGGER_MISSED_CALLS)) {
                     requiredPermissions.add(READ_PHONE_STATE);
                 }
-                if (triggersPreference.contains(VAL_PREF_TRIGGER_OUT_CALLS)) {
+                if (triggers.contains(VAL_PREF_TRIGGER_OUT_CALLS)) {
                     requiredPermissions.add(PROCESS_OUTGOING_CALLS);
                 }
                 break;
             case KEY_PREF_EMAIL_CONTENT:
-                Set<String> contentPreference = sharedPreferences.getStringSet(key, Collections.<String>emptySet());
-                if (contentPreference.contains(VAL_PREF_EMAIL_CONTENT_CONTACT)) {
+                Set<String> content = preferences.getStringSet(KEY_PREF_EMAIL_CONTENT, Collections.<String>emptySet());
+                if (content.contains(VAL_PREF_EMAIL_CONTENT_CONTACT)) {
                     requiredPermissions.add(READ_CONTACTS);
                 }
-                if (contentPreference.contains(VAL_PREF_EMAIL_CONTENT_LOCATION)) {
+                if (content.contains(VAL_PREF_EMAIL_CONTENT_LOCATION)) {
                     requiredPermissions.add(ACCESS_COARSE_LOCATION);
                     requiredPermissions.add(ACCESS_FINE_LOCATION);
                 }
@@ -154,26 +154,26 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
         for (String permission : permissions) {
             switch (permission) {
                 case RECEIVE_SMS:
-                    removeSetPreferenceValue(preferences, KEY_PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_IN_SMS);
+                    removeSetPreferenceValue(settings, KEY_PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_IN_SMS);
                     break;
                 case READ_SMS:
-                    removeSetPreferenceValue(preferences, KEY_PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_OUT_SMS);
+                    removeSetPreferenceValue(settings, KEY_PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_OUT_SMS);
                     break;
                 case WRITE_SMS:
-                    removeSetPreferenceValue(preferences, KEY_PREF_MARK_SMS_AS_READ);
+                    removeSetPreferenceValue(settings, KEY_PREF_MARK_SMS_AS_READ);
                     break;
                 case READ_PHONE_STATE:
-                    removeSetPreferenceValue(preferences, KEY_PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_IN_CALLS, VAL_PREF_TRIGGER_MISSED_CALLS);
+                    removeSetPreferenceValue(settings, KEY_PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_IN_CALLS, VAL_PREF_TRIGGER_MISSED_CALLS);
                     break;
                 case PROCESS_OUTGOING_CALLS:
-                    removeSetPreferenceValue(preferences, KEY_PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_OUT_CALLS);
+                    removeSetPreferenceValue(settings, KEY_PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_OUT_CALLS);
                     break;
                 case READ_CONTACTS:
-                    removeSetPreferenceValue(preferences, KEY_PREF_EMAIL_CONTENT, VAL_PREF_EMAIL_CONTENT_CONTACT);
+                    removeSetPreferenceValue(settings, KEY_PREF_EMAIL_CONTENT, VAL_PREF_EMAIL_CONTENT_CONTACT);
                     break;
                 case ACCESS_COARSE_LOCATION:
                 case ACCESS_FINE_LOCATION:
-                    removeSetPreferenceValue(preferences, KEY_PREF_EMAIL_CONTENT, VAL_PREF_EMAIL_CONTENT_LOCATION);
+                    removeSetPreferenceValue(settings, KEY_PREF_EMAIL_CONTENT, VAL_PREF_EMAIL_CONTENT_LOCATION);
                     break;
             }
         }
@@ -246,12 +246,10 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
         }
     }
 
-    private void removeSetPreferenceValue(SharedPreferences preferences, String key, String... values) {
-         /* should be a copy of values set.
-           see: https://stackoverflow.com/questions/17469583/setstring-in-android-sharedpreferences-does-not-save-on-force-close */
-        Set<String> set = new HashSet<>(preferences.getStringSet(key, Collections.<String>emptySet()));
-        set.removeAll(Arrays.asList(values));
-        preferences.edit().putStringSet(key, set).apply();
+    private void removeSetPreferenceValue(Settings settings, String key, String... values) {
+        Set<String> set = settings.getStringSet(key, Collections.<String>emptySet());
+        set.removeAll(asList(values));
+        settings.edit().putStringSet(key, set).apply();
     }
 
 }

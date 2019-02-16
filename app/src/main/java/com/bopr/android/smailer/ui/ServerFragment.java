@@ -4,8 +4,8 @@ import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.ui.preference.EmailPreference;
 import com.bopr.android.smailer.util.Util;
-import com.bopr.android.smailer.util.ui.preference.EmailPreference;
 import com.bopr.android.smailer.util.validator.EmailTextValidator;
 
 import androidx.preference.EditTextPreference;

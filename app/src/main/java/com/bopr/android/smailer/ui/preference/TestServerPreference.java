@@ -1,8 +1,7 @@
-package com.bopr.android.smailer.ui;
+package com.bopr.android.smailer.ui.preference;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -98,11 +97,11 @@ public class TestServerPreference extends Preference {
             MailTransport transport = new MailTransport();
             Cryptor cryptor = new Cryptor(owner.getContext());
 
-            SharedPreferences preferences = Settings.preferences(owner.getContext());
-            String user = preferences.getString(KEY_PREF_SENDER_ACCOUNT, "");
-            String password = preferences.getString(KEY_PREF_SENDER_PASSWORD, "");
-            String host = preferences.getString(KEY_PREF_EMAIL_HOST, "");
-            String port = preferences.getString(KEY_PREF_EMAIL_PORT, "");
+            Settings settings = new Settings(owner.getContext());
+            String user = settings.getString(KEY_PREF_SENDER_ACCOUNT, "");
+            String password = settings.getString(KEY_PREF_SENDER_PASSWORD, "");
+            String host = settings.getString(KEY_PREF_EMAIL_HOST, "");
+            String port = settings.getString(KEY_PREF_EMAIL_PORT, "");
 
             transport.startSession(user, cryptor.decrypt(password), host, port);
 

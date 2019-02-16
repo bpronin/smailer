@@ -23,9 +23,11 @@ import androidx.core.app.TaskStackBuilder;
 public class Notifications {
 
     private static final String CHANNEL_ID = "com.bopr.android.smailer";
+    private static final String EXTRA_MESSAGE_ID = "message_id";
+
     private static final int ID_MAIL_SUCCESS = 100;
     private static final int ID_MAIL_ERROR = 101;
-    private static final String EXTRA_MESSAGE_ID = "message_id";
+    private static final int ID_REMOTE_ACTION = 102;
 
     public static final int ACTION_SHOW_MAIN = 0;
     public static final int ACTION_SHOW_SERVER = 1;
@@ -102,6 +104,23 @@ public class Notifications {
         getManager().notify(ID_MAIL_SUCCESS, builder.build());
     }
 
+    public void showRemoteAction(String message) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, getChannel())
+                .setContentIntent(createIntent(ACTION_SHOW_MAIN, null))
+                .setSmallIcon(R.drawable.ic_service)
+                .setTicker(context.getResources().getString(R.string.app_name))
+                .setAutoCancel(true)
+                .setContentTitle(context.getResources().getString(R.string.app_name))
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
+                .setContentText(message);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder.setCategory(Notification.CATEGORY_MESSAGE);
+        }
+
+        getManager().notify(ID_REMOTE_ACTION, builder.build());
+    }
+
     private PendingIntent createIntent(int action, @Nullable Long messageId) {
         switch (action) {
             case ACTION_SHOW_RECIPIENTS:
@@ -143,5 +162,4 @@ public class Notifications {
         }
         return CHANNEL_ID;
     }
-
 }

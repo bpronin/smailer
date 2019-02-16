@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <com.bopr.android.smailer.util.ui.preference.EmailPreference
+    <com.bopr.android.smailer.ui.preference.EmailPreference
         android:dialogLayout="@layout/editor_email"
         android:dialogMessage="@string/title_account_hint"
         android:dialogTitle="@string/title_outgoing_email_address"
@@ -12,7 +12,7 @@
         android:singleLine="true"
         android:title="@string/title_sender_account" />
 
-    <com.bopr.android.smailer.util.ui.preference.PasswordPreference
+    <com.bopr.android.smailer.ui.preference.PasswordPreference
         android:dialogLayout="@layout/editor_password"
         android:dialogMessage="@string/title_email_password_hint"
         android:dialogTitle="@string/title_password"
@@ -40,7 +40,7 @@
         android:singleLine="true"
         android:title="@string/title_port" />
 
-    <com.bopr.android.smailer.ui.TestServerPreference
+    <com.bopr.android.smailer.ui.preference.TestServerPreference
         android:key="test_mail_server"
         android:persistent="false"
         android:widgetLayout="@layout/pref_test_mail_server" />

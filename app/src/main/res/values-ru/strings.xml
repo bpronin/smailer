@@ -30,6 +30,7 @@
     <string name="event_type_outgoing_sms">Исходящее SMS</string>
     <string name="message_activity_log_ask_clear">Очистить журнал?</string>
     <string name="message_added_to_blacklist">{number} добавлен в черный список</string>
+    <string name="message_added_to_blacklist_remotely">{number} удаленно добавлен в черный список</string>
     <string name="message_added_to_whitelist">{number} добавлен в белый список</string>
     <string name="message_item_removed">Запись удалена</string>
     <string name="message_items_removed">{count} записей удалено</string>

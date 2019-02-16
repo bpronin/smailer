@@ -15,7 +15,6 @@ import androidx.annotation.Nullable;
 
 import static com.bopr.android.smailer.CallProcessorService.startMailService;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
-import static com.bopr.android.smailer.Settings.preferences;
 import static com.bopr.android.smailer.util.AndroidUtil.hasInternetConnection;
 
 /**
@@ -73,11 +72,11 @@ public class ResendService extends Service {
     }
 
     private static boolean isPreferenceEnabled(Context context) {
-        return preferences(context).getBoolean(KEY_PREF_RESEND_UNSENT, true);
+        return new Settings(context).getBoolean(KEY_PREF_RESEND_UNSENT, true);
     }
 
     /**
-     * Starts or stops the service depending on preferences
+     * Starts or stops the service depending on settings
      *
      * @param context context
      */

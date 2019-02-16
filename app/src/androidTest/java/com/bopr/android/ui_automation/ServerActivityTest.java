@@ -43,7 +43,7 @@ public class ServerActivityTest extends BaseActivityTest {
     public void testAccountSetting() {
         onView(withText(R.string.title_email_sender)).perform(click());
 
-        /* check preferences */
+        /* check settings */
         assertNull(preferences.getString(KEY_PREF_SENDER_ACCOUNT, null));
 
         onView(withSummary(R.string.title_sender_account, R.string.title_not_set)).check(matches(isDisplayed()));
@@ -64,7 +64,7 @@ public class ServerActivityTest extends BaseActivityTest {
 
         onView(withSummary(R.string.title_sender_account, "test@mail.com")).check(matches(isDisplayed()));
 
-        /* check preferences */
+        /* check settings */
         assertEquals("test@mail.com", preferences.getString(KEY_PREF_SENDER_ACCOUNT, null));
     }
 
@@ -72,7 +72,7 @@ public class ServerActivityTest extends BaseActivityTest {
     public void testPasswordSetting() {
         onView(withText(R.string.title_email_sender)).perform(click());
 
-        /* check preferences */
+        /* check settings */
         assertNull(preferences.getString(KEY_PREF_SENDER_PASSWORD, null));
 
         onView(withSummary(R.string.title_password, R.string.title_not_set)).check(matches(isDisplayed()));
@@ -93,7 +93,7 @@ public class ServerActivityTest extends BaseActivityTest {
 
         onView(withSummary(R.string.title_password, R.string.title_password_asterisks)).check(matches(isDisplayed()));
 
-        /* check preferences */
+        /* check settings */
         assertNotNull(preferences.getString(KEY_PREF_SENDER_PASSWORD, null));
     }
 
@@ -101,7 +101,7 @@ public class ServerActivityTest extends BaseActivityTest {
     public void testHost() {
         onView(withText(R.string.title_email_sender)).perform(click());
 
-        /* check preferences */
+        /* check settings */
         assertEquals(DEFAULT_HOST, preferences.getString(KEY_PREF_EMAIL_HOST, null));
 
         onView(withSummary(R.string.title_host, Settings.DEFAULT_HOST)).check(matches(isDisplayed()));
@@ -124,7 +124,7 @@ public class ServerActivityTest extends BaseActivityTest {
 
         onView(withSummary(R.string.title_host, "smtp.mail.com")).check(matches(isDisplayed()));
 
-        /* check preferences */
+        /* check settings */
         assertEquals("smtp.mail.com", preferences.getString(KEY_PREF_EMAIL_HOST, null));
     }
 
@@ -132,7 +132,7 @@ public class ServerActivityTest extends BaseActivityTest {
     public void testPort() {
         onView(withText(R.string.title_email_sender)).perform(click());
 
-        /* check preferences */
+        /* check settings */
         assertEquals(DEFAULT_PORT, preferences.getString(KEY_PREF_EMAIL_PORT, null));
 
         onView(withSummary(R.string.title_port, Settings.DEFAULT_PORT)).check(matches(isDisplayed()));
@@ -155,7 +155,7 @@ public class ServerActivityTest extends BaseActivityTest {
 
         onView(withSummary(R.string.title_port, "123")).check(matches(isDisplayed()));
 
-        /* check preferences */
+        /* check settings */
         assertEquals("123", preferences.getString(KEY_PREF_EMAIL_PORT, null));
     }
 

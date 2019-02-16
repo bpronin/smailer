@@ -3,7 +3,6 @@ package com.bopr.android.smailer;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 
@@ -33,8 +32,6 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_NOTIFY_SEND_SUCCESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
-import static com.bopr.android.smailer.Settings.getDeviceName;
-import static com.bopr.android.smailer.Settings.preferences;
 import static com.bopr.android.smailer.util.AndroidUtil.hasInternetConnection;
 
 /**
@@ -46,7 +43,7 @@ class CallProcessor {
 
     private static Logger log = LoggerFactory.getLogger("CallProcessor");
 
-    private final SharedPreferences preferences;
+    private final Settings settings;
     private final Context context;
     private final MailTransport transport;
     private final Cryptor cryptor;
@@ -62,7 +59,7 @@ class CallProcessor {
         this.notifications = notifications;
         this.database = database;
         this.locator = locator;
-        preferences = Settings.preferences(context);
+        settings = new Settings(context);
     }
 
     CallProcessor(Context context, Database database, GeoLocator locator) {
@@ -80,7 +77,7 @@ class CallProcessor {
         event.setLocation(locator.getLocation());
         database.putEvent(event);
 
-        if (Settings.loadFilter(context).accept(event)) {
+        if (settings.getFilter().accept(event)) {
             sendMail(event, false);
         } else {
             event.setState(PhoneEvent.State.IGNORED);
@@ -114,11 +111,11 @@ class CallProcessor {
         if (checkInternetConnection(event, silent) && checkPreferences(event, silent)) {
             MailFormatter formatter = createFormatter(event);
 
-            String host = preferences.getString(KEY_PREF_EMAIL_HOST, "");
-            String port = preferences.getString(KEY_PREF_EMAIL_PORT, "");
-            String user = preferences.getString(KEY_PREF_SENDER_ACCOUNT, "");
-            String password = preferences.getString(KEY_PREF_SENDER_PASSWORD, "");
-            String recipients = preferences.getString(KEY_PREF_RECIPIENTS_ADDRESS, "");
+            String host = settings.getString(KEY_PREF_EMAIL_HOST, "");
+            String port = settings.getString(KEY_PREF_EMAIL_PORT, "");
+            String user = settings.getString(KEY_PREF_SENDER_ACCOUNT, "");
+            String password = settings.getString(KEY_PREF_SENDER_PASSWORD, "");
+            String recipients = settings.getString(KEY_PREF_RECIPIENTS_ADDRESS, "");
 
             transport.startSession(user, cryptor.decrypt(password), host, port);
             try {
@@ -141,10 +138,10 @@ class CallProcessor {
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(new Date());
         formatter.setContactName(getContactName(context, event.getPhone()));
-        formatter.setDeviceName(getDeviceName(context));
-        formatter.setContentOptions(preferences.getStringSet(KEY_PREF_EMAIL_CONTENT, null));
+        formatter.setDeviceName(settings.getDeviceName());
+        formatter.setContentOptions(settings.getStringSet(KEY_PREF_EMAIL_CONTENT, null));
 
-        String locale = preferences.getString(KEY_PREF_EMAIL_LOCALE, null);
+        String locale = settings.getString(KEY_PREF_EMAIL_LOCALE, null);
         if (locale != null) {
             formatter.setLocale(locale);
         }
@@ -152,16 +149,16 @@ class CallProcessor {
     }
 
     private boolean checkPreferences(PhoneEvent event, boolean silent) {
-//        if (!preferences.contains(KEY_PREF_EMAIL_HOST)) {
+//        if (!settings.contains(KEY_PREF_EMAIL_HOST)) {
 //            handleError(null, "Host not specified", event, R.string.notification_error_no_host, ACTION_SHOW_SERVER, silent);
 //            return false;
-//        } else if (!preferences.contains(KEY_PREF_EMAIL_PORT)) {
+//        } else if (!settings.contains(KEY_PREF_EMAIL_PORT)) {
 //            handleError(null, "Port not specified", event, R.string.notification_error_no_port, ACTION_SHOW_SERVER, silent);
 //            return false;
-//        } else if (!preferences.contains(KEY_PREF_SENDER_ACCOUNT)) {
+//        } else if (!settings.contains(KEY_PREF_SENDER_ACCOUNT)) {
 //            handleError(null, "Account not specified", event, R.string.notification_error_no_account, ACTION_SHOW_SERVER, silent);
 //            return false;
-//        } else if (!preferences.contains(KEY_PREF_RECIPIENTS_ADDRESS)) {
+//        } else if (!settings.contains(KEY_PREF_RECIPIENTS_ADDRESS)) {
 //            handleError(null, "Recipients not specified", event, R.string.notification_error_no_recipients, ACTION_SHOW_RECIPIENTS, silent);
 //            return false;
 //        }
@@ -210,11 +207,10 @@ class CallProcessor {
         database.putEvent(event);
         notifications.hideMailError();
 
-        SharedPreferences preferences = preferences(context);
-        if (preferences.getBoolean(KEY_PREF_NOTIFY_SEND_SUCCESS, false)) {
+        if (settings.getBoolean(KEY_PREF_NOTIFY_SEND_SUCCESS, false)) {
             notifications.showMailSuccess(event.getId());
         }
-        if (preferences.getBoolean(KEY_PREF_MARK_SMS_AS_READ, false)) {
+        if (settings.getBoolean(KEY_PREF_MARK_SMS_AS_READ, false)) {
             markSmsAsRead(event);
         }
     }

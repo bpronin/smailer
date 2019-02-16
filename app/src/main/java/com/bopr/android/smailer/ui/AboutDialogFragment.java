@@ -13,6 +13,7 @@ import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.Settings;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
@@ -26,6 +27,14 @@ import static com.bopr.android.smailer.util.TagFormatter.formatter;
  */
 public class AboutDialogFragment extends DialogFragment {
 
+    private Settings settings;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        settings = new Settings(requireContext());
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -38,7 +47,7 @@ public class AboutDialogFragment extends DialogFragment {
 
             @Override
             public boolean onLongClick(View v) {
-                Settings.BuildInfo info = Settings.getReleaseInfo(requireContext());
+                Settings.BuildInfo info = settings.getReleaseInfo();
                 dialogBuilder(getContext())
                         .setTitle("Release info")
                         .setMessage("Build number: " + info.number + "\nBuild time: " + info.time)
@@ -69,7 +78,7 @@ public class AboutDialogFragment extends DialogFragment {
 
     private String formatVersion() {
         return formatter(R.string.title_version, getResources())
-                .put("version", Settings.getReleaseVersion(requireContext()))
+                .put("version", settings.getReleaseVersion())
                 .format();
     }
 

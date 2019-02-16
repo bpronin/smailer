@@ -44,8 +44,6 @@ public class CallProcessorService extends IntentService {
         database = new Database(this);
         locator = new GeoLocator(this, database);
         callProcessor = new CallProcessor(this, database, locator);
-
-        log.debug("Created");
     }
 
     @Override

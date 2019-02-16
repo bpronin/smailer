@@ -18,13 +18,15 @@ import androidx.preference.Preference;
 
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_LOG;
 import static com.bopr.android.smailer.Settings.KEY_PREF_MORE;
 import static com.bopr.android.smailer.Settings.KEY_PREF_OUTGOING_SERVER;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
+import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RULES;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
-import static com.bopr.android.smailer.Settings.loadDefaultPreferences;
+import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
 import static com.bopr.android.smailer.util.Util.anyIsEmpty;
 import static com.bopr.android.smailer.util.Util.isEmpty;
 
@@ -53,8 +55,6 @@ public class MainFragment extends BasePreferenceFragment {
 
         backupManager = new BackupManager(getContext());
 
-        loadDefaultPreferences(getContext());
-
         addPreferencesFromResource(R.xml.pref_main);
 
         recipientsPreference = findPreference(KEY_PREF_RECIPIENTS_ADDRESS);
@@ -70,20 +70,33 @@ public class MainFragment extends BasePreferenceFragment {
 
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                updateServerPreference();
-                updateRecipientsPreference();
-                OutgoingSmsService.toggleService(getContext());
-                ResendService.toggleService(getContext());
+                switch (key){
+                    case KEY_PREF_SENDER_ACCOUNT:
+                    case KEY_PREF_SENDER_PASSWORD:
+                    case KEY_PREF_EMAIL_HOST:
+                    case KEY_PREF_EMAIL_PORT:
+                        updateServerPreference();
+                        break;
+                    case KEY_PREF_RECIPIENTS_ADDRESS:
+                        updateRecipientsPreference();
+                        break;
+                    case KEY_PREF_EMAIL_TRIGGERS:
+                        OutgoingSmsService.toggleService(getContext());
+                        break;
+                    case KEY_PREF_RESEND_UNSENT:
+                        ResendService.toggleService(getContext());
+                        break;
+                }
 
                 backupManager.dataChanged();
             }
         };
-        preferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
+        settings.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
     }
 
     @Override
     public void onDestroy() {
-        preferences.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
+        settings.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
         super.onDestroy();
     }
 
@@ -115,9 +128,9 @@ public class MainFragment extends BasePreferenceFragment {
 
     private void updateServerPreference() {
         if (!asListView) {
-            String sender = preferences.getString(KEY_PREF_SENDER_ACCOUNT, "");
-            String host = preferences.getString(KEY_PREF_EMAIL_HOST, "");
-            String port = preferences.getString(KEY_PREF_EMAIL_PORT, "");
+            String sender = settings.getString(KEY_PREF_SENDER_ACCOUNT, "");
+            String host = settings.getString(KEY_PREF_EMAIL_HOST, "");
+            String port = settings.getString(KEY_PREF_EMAIL_PORT, "");
 
             if (anyIsEmpty(sender, host, port)) {
                 updateNotSpecifiedSummary(serverPreference);
@@ -129,7 +142,7 @@ public class MainFragment extends BasePreferenceFragment {
 
     private void updateRecipientsPreference() {
         if (!asListView) {
-            String value = preferences.getString(KEY_PREF_RECIPIENTS_ADDRESS, null);
+            String value = settings.getString(KEY_PREF_RECIPIENTS_ADDRESS, null);
             if (isEmpty(value)) {
                 updateNotSpecifiedSummary(recipientsPreference);
             } else {

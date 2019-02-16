@@ -18,7 +18,7 @@ public class AppBackupAgent extends BackupAgentHelper {
     @Override
     public void onCreate() {
         log.debug("Create");
-        addHelper("preferences", new SharedPreferencesBackupHelper(this, Settings.PREFERENCES_STORAGE_NAME));
+        addHelper("settings", new SharedPreferencesBackupHelper(this, Settings.PREFERENCES_STORAGE_NAME));
 //        addHelper("database", new FileBackupHelper(this, "../databases/" + Settings.DB_NAME));
     }
 

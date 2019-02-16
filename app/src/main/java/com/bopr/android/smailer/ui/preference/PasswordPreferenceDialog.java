@@ -1,4 +1,4 @@
-package com.bopr.android.smailer.util.ui.preference;
+package com.bopr.android.smailer.ui.preference;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;

@@ -9,11 +9,11 @@ import android.view.MenuItem;
 import com.bopr.android.smailer.PreferencesPermissionsChecker;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.Settings;
+import com.bopr.android.smailer.ui.preference.EmailPreference;
+import com.bopr.android.smailer.ui.preference.EmailPreferenceDialog;
+import com.bopr.android.smailer.ui.preference.PasswordPreference;
+import com.bopr.android.smailer.ui.preference.PasswordPreferenceDialog;
 import com.bopr.android.smailer.util.AndroidUtil;
-import com.bopr.android.smailer.util.ui.preference.EmailPreference;
-import com.bopr.android.smailer.util.ui.preference.EmailPreferenceDialog;
-import com.bopr.android.smailer.util.ui.preference.PasswordPreference;
-import com.bopr.android.smailer.util.ui.preference.PasswordPreferenceDialog;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,12 +48,12 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
     private static final String DIALOG_FRAGMENT_TAG = "androidx.preference.PreferenceFragment.DIALOG";
 
     private PreferencesPermissionsChecker permissionChecker;
-    protected SharedPreferences preferences;
+    protected Settings settings;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        preferences = Settings.preferences(requireContext());
+        settings = new Settings(requireContext());
         setHasOptionsMenu(true);
     }
 
@@ -67,7 +67,7 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
         super.onStart();
         refreshPreferences();
 
-        permissionChecker = new PreferencesPermissionsChecker(getActivity(), preferences) {
+        permissionChecker = new PreferencesPermissionsChecker(getActivity(), settings) {
 
             @Override
             protected void onPermissionsDenied(Collection<String> permissions) {
@@ -149,7 +149,7 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
     }
 
     /**
-     * Reads fragment's {@link SharedPreferences} and updates preferences value.
+     * Reads fragment's {@link SharedPreferences} and updates settings value.
      */
     void refreshPreferences() {
         doRefreshPreferences(getPreferenceScreen());
@@ -157,7 +157,7 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
 
     @SuppressWarnings("unchecked")
     private void doRefreshPreferences(PreferenceGroup group) {
-        Map<String, ?> map = preferences.getAll();
+        Map<String, ?> map = settings.getAll();
         for (int i = 0; i < group.getPreferenceCount(); i++) {
             Preference preference = group.getPreference(i);
             if (preference instanceof PreferenceGroup) {

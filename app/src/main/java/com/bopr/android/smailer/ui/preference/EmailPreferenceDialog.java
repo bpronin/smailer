@@ -1,4 +1,4 @@
-package com.bopr.android.smailer.util.ui.preference;
+package com.bopr.android.smailer.ui.preference;
 
 import android.app.Activity;
 import android.content.Intent;

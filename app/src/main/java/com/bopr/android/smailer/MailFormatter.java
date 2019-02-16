@@ -76,7 +76,7 @@ class MailFormatter {
     }
 
     /**
-     * Sets email content options. See {@link Settings#DEFAULT_CONTENT}.
+     * Sets email content options.
      *
      * @param contentOptions set of options
      */

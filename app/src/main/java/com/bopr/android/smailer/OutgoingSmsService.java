@@ -96,13 +96,14 @@ public class OutgoingSmsService extends Service {
 
 
     /**
-     * Starts or stops the service depending on preferences
+     * Starts or stops the service depending on settings
      *
      * @param context context
      */
     public static void toggleService(Context context) {
         Intent intent = new Intent(context, OutgoingSmsService.class);
-        if (Settings.loadFilter(context).getTriggers().contains(VAL_PREF_TRIGGER_OUT_SMS)) {
+        PhoneEventFilter filter = new Settings(context).getFilter();
+        if (filter.getTriggers().contains(VAL_PREF_TRIGGER_OUT_SMS)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(intent);
             } else {

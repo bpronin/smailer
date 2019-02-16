@@ -25,6 +25,7 @@ import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.SmsReceiver;
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.ui.ActivityAsyncTask;
+import com.bopr.android.smailer.util.ui.LongAsyncTask;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +59,8 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
+import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_BLACKLIST;
+import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_TEXT_BLACKLIST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_NOTIFY_SEND_SUCCESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
@@ -72,9 +75,10 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
-import static com.bopr.android.smailer.Settings.getDeviceName;
 import static com.bopr.android.smailer.util.Util.asSet;
+import static com.bopr.android.smailer.util.Util.commaSeparated;
 import static com.bopr.android.smailer.util.Util.formatLocation;
+import static com.bopr.android.smailer.util.Util.quoteRegex;
 
 /**
  * For debug purposes.
@@ -108,17 +112,17 @@ public class DebugFragment extends BasePreferenceFragment {
 
         screen = getPreferenceManager().createPreferenceScreen(context);
 
-        addCategory("Preferences",
+        addCategory("Settings",
 
-                createPreference("Set default preferences", new DefaultClickListener() {
+                createPreference("Set debug settings", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        onSetDefaultPreferences();
+                        onSetDebugPreferences();
                     }
                 }),
 
-                createPreference("Clear preferences", new DefaultClickListener() {
+                createPreference("Clear settings", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
@@ -348,28 +352,32 @@ public class DebugFragment extends BasePreferenceFragment {
         Toast.makeText(context, "Done", Toast.LENGTH_SHORT).show();
     }
 
-    private void onSetDefaultPreferences() {
+    private void onSetDebugPreferences() {
         Properties properties = loadDebugProperties();
 
-        preferences
-                .edit()
+        settings.edit()
                 .putString(KEY_PREF_SENDER_ACCOUNT, properties.getProperty("default_sender"))
                 .putString(KEY_PREF_SENDER_PASSWORD, cryptor.encrypt(properties.getProperty("default_password")))
                 .putString(KEY_PREF_RECIPIENTS_ADDRESS, properties.getProperty("default_recipient"))
                 .putString(KEY_PREF_EMAIL_HOST, DEFAULT_HOST)
                 .putString(KEY_PREF_EMAIL_PORT, DEFAULT_PORT)
                 .putStringSet(KEY_PREF_EMAIL_TRIGGERS, asSet(VAL_PREF_TRIGGER_IN_SMS,
-                        VAL_PREF_TRIGGER_IN_CALLS, VAL_PREF_TRIGGER_MISSED_CALLS,
-                        VAL_PREF_TRIGGER_OUT_CALLS, VAL_PREF_TRIGGER_OUT_SMS))
+                        VAL_PREF_TRIGGER_IN_CALLS,
+                        VAL_PREF_TRIGGER_MISSED_CALLS,
+                        VAL_PREF_TRIGGER_OUT_CALLS,
+                        VAL_PREF_TRIGGER_OUT_SMS))
                 .putStringSet(KEY_PREF_EMAIL_CONTENT, asSet(VAL_PREF_EMAIL_CONTENT_CONTACT,
-                        VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_LOCATION,
+                        VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
+                        VAL_PREF_EMAIL_CONTENT_LOCATION,
                         VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME))
                 .putString(KEY_PREF_EMAIL_LOCALE, DEFAULT_LOCALE)
                 .putBoolean(KEY_PREF_NOTIFY_SEND_SUCCESS, true)
                 .putBoolean(KEY_PREF_RESEND_UNSENT, true)
+                .putString(KEY_PREF_FILTER_BLACKLIST, commaSeparated(asSet("+123456789", "+9876543*")))
+                .putString(KEY_PREF_FILTER_TEXT_BLACKLIST, commaSeparated(asSet("Bad text", quoteRegex("Expression"))))
                 .apply();
-        refreshPreferences();
 
+        refreshPreferences();
         showDone();
     }
 
@@ -402,7 +410,7 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private void onClearPreferences() {
-        preferences.edit().clear().apply();
+        settings.edit().clear().apply();
         refreshPreferences();
         showDone();
     }
@@ -441,15 +449,15 @@ public class DebugFragment extends BasePreferenceFragment {
                                            @NonNull int[] grantResults) {
         if (requestCode == PERMISSIONS_REQUEST_RECEIVE_SMS) {
             if (grantResults[0] == PERMISSION_GRANTED) {
-                AndroidUtil.showMessage(context, "Permission granted");
+                showMessage(context, "Permission granted");
             } else {
-                AndroidUtil.showMessage(context, "Permission denied");
+                showMessage(context, "Permission denied");
             }
         } else if (requestCode == PERMISSIONS_REQUEST_BROADCAST_SMS) {
             if (grantResults[0] == PERMISSION_GRANTED) {
                 onEmulateSms();
             } else {
-                AndroidUtil.showMessage(context, "Permission denied");
+                showMessage(context, "Permission denied");
             }
         }
     }
@@ -479,8 +487,8 @@ public class DebugFragment extends BasePreferenceFragment {
 
 
     private void onShowPassword() {
-        String text = cryptor.decrypt(preferences.getString(KEY_PREF_SENDER_PASSWORD, null));
-        AndroidUtil.showMessage(context, text);
+        String text = cryptor.decrypt(settings.getString(KEY_PREF_SENDER_PASSWORD, null));
+        showMessage(context, text);
     }
 
     private void onPopulateLog() {
@@ -532,7 +540,20 @@ public class DebugFragment extends BasePreferenceFragment {
                 log.debug("Concurrent package:" + activityInfo.packageName + " priority: " + resolveInfo.priority);
             }
         }
-        AndroidUtil.showMessage(context, b.toString());
+        showMessage(context, b.toString());
+    }
+
+    private static void showMessage(Context context, String message) {
+        AndroidUtil.dialogBuilder(context)
+                .setMessage(message)
+//                .setNegativeButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+//
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        dialog.cancel();
+//                    }
+//                })
+                .show();
     }
 
     private static class GetLocationTask extends ActivityAsyncTask<Void, Void, GeoCoordinates> {
@@ -551,7 +572,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
         @Override
         protected void onPostExecute(GeoCoordinates coordinates) {
-            AndroidUtil.showMessage(getActivity(),
+            showMessage(getActivity(),
                     coordinates != null ? formatLocation(coordinates) : "No location received");
         }
     }
@@ -576,7 +597,7 @@ public class DebugFragment extends BasePreferenceFragment {
             try {
                 transport.send(
                         "test subject",
-                        "test message from " + getDeviceName(getActivity()),
+                        "test message from " + AndroidUtil.getDeviceName(),
                         user,
                         properties.getProperty("default_recipient")
                 );
@@ -635,7 +656,7 @@ public class DebugFragment extends BasePreferenceFragment {
         protected void onPostExecute(String error) {
             super.onPostExecute(error);
             if (error != null) {
-                AndroidUtil.showMessage(getActivity(), error);
+                showMessage(getActivity(), error);
             } else {
                 Toast.makeText(getActivity(), "Done", Toast.LENGTH_SHORT).show();
             }

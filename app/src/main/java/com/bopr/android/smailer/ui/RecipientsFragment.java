@@ -54,12 +54,12 @@ public class RecipientsFragment extends BaseFragment {
                 loadItems();
             }
         };
-        preferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
+        settings.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
     }
 
     @Override
     public void onDestroy() {
-        preferences.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
+        settings.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
         super.onDestroy();
     }
 
@@ -138,7 +138,7 @@ public class RecipientsFragment extends BaseFragment {
         listView.setAdapter(listAdapter);
 
         List<Item> items = new ArrayList<>();
-        List<String> addresses = Util.parseSeparated(preferences.getString(KEY_PREF_RECIPIENTS_ADDRESS, ""), ",", true);
+        List<String> addresses = Util.parseSeparated(settings.getString(KEY_PREF_RECIPIENTS_ADDRESS, ""), ",", true);
         for (String address : addresses) {
             items.add(new Item(address));
         }
@@ -151,7 +151,7 @@ public class RecipientsFragment extends BaseFragment {
             addresses.add(item.address);
         }
 
-        preferences.edit()
+        settings.edit()
                 .putString(KEY_PREF_RECIPIENTS_ADDRESS, commaSeparated(addresses))
                 .apply();
     }

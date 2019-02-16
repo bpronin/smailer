@@ -79,6 +79,11 @@ dependencies {
     implementation 'com.sun.mail:android-mail:1.5.5'
     implementation 'org.slf4j:slf4j-api:1.7.25'
 
+    implementation 'com.google.firebase:firebase-messaging:17.3.4'
+//    implementation 'com.google.android.gms:play-services-auth:16.0.1'
+//    implementation 'com.google.android.gms:play-services-identity:16.0.0'
+//    implementation 'com.google.android.gms:play-services-gcm:16.0.0'
+
     implementation 'com.github.tony19:logback-android-core:1.1.1-6'
     implementation ('com.github.tony19:logback-android-classic:1.1.1-6') {
         exclude group: 'com.google.android'

@@ -49,7 +49,7 @@ public class MoreActivityTest extends BaseActivityTest {
 
         String[] titles = rule.getActivity().getResources().getStringArray(R.array.titles_email_content);
 
-         /* check preferences */
+         /* check settings */
         assertThat(preferences.getStringSet(KEY_PREF_EMAIL_CONTENT, null), equalTo(DEFAULT_CONTENT));
 
         /* check all and press cancel */
@@ -81,7 +81,7 @@ public class MoreActivityTest extends BaseActivityTest {
         String[] titles = rule.getActivity().getResources().getStringArray(R.array.titles_language);
         String[] values = rule.getActivity().getResources().getStringArray(R.array.email_locale_values);
 
-         /* check preferences */
+         /* check settings */
         assertThat(preferences.getString(KEY_PREF_EMAIL_LOCALE, null), equalTo(DEFAULT_LOCALE));
 
         onView(withSummary(R.string.title_email_language_hint, titles[0])).check(matches(isDisplayed()));
@@ -114,7 +114,7 @@ public class MoreActivityTest extends BaseActivityTest {
     public void testNotifySuccessSetting() {
         onView(withText(R.string.title_more)).perform(click());
 
-        /* check preferences */
+        /* check settings */
         assertFalse(preferences.getBoolean(KEY_PREF_NOTIFY_SEND_SUCCESS, false));
 
         onView(withPrefSwitcher(R.string.title_notify_on_send)).check(matches(isNotChecked()));
@@ -123,7 +123,7 @@ public class MoreActivityTest extends BaseActivityTest {
         onView(withText(R.string.title_notify_on_send)).perform(click());
         onView(withPrefSwitcher(R.string.title_notify_on_send)).check(matches(isChecked()));
 
-        /* check preferences */
+        /* check settings */
         assertTrue(preferences.getBoolean(KEY_PREF_NOTIFY_SEND_SUCCESS, false));
     }
 
@@ -131,7 +131,7 @@ public class MoreActivityTest extends BaseActivityTest {
     public void testResendSetting() {
         onView(withText(R.string.title_more)).perform(click());
 
-        /* check preferences */
+        /* check settings */
         assertTrue(preferences.getBoolean(KEY_PREF_RESEND_UNSENT, false));
 
         onView(withPrefSwitcher(R.string.title_resend)).check(matches(isChecked()));
@@ -140,7 +140,7 @@ public class MoreActivityTest extends BaseActivityTest {
         onView(withText(R.string.title_resend)).perform(click());
         onView(withPrefSwitcher(R.string.title_resend)).check(matches(isNotChecked()));
 
-        /* check preferences */
+        /* check settings */
         assertFalse(preferences.getBoolean(KEY_PREF_RESEND_UNSENT, false));
     }
 

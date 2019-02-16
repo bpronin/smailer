@@ -7,7 +7,10 @@ import android.content.Context;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class Formats {
+public abstract class Formats {
+
+    private Formats() {
+    }
 
     public static int eventTypeImage(PhoneEvent event) {
         if (event.isSms()) {
