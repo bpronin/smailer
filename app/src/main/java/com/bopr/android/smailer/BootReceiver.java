@@ -27,9 +27,10 @@ public class BootReceiver extends BroadcastReceiver {
 
         if (Util.safeEquals(intent.getAction(), Intent.ACTION_BOOT_COMPLETED)) {
             Fabric.with(context, new Crashlytics());
-            OutgoingSmsService.toggleService(context);
-            JobSchedulerService.toggleResendJob(context);
             MessagingService.initMessaging(context);
+            OutgoingSmsService.toggleService(context);
+//            JobSchedulerService.toggleResendJob(context);
+            ResendWorker.runResendService(context);
         }
     }
 
