@@ -36,7 +36,9 @@ public class MailTransport {
 
     private static Logger log = LoggerFactory.getLogger("MailTransport");
 
-    private static final String HTML_CONTENT = "text/html";
+    private static final String UTF_8 = "UTF-8";
+    private static final String HTML = "html";
+
     public static final int CHECK_RESULT_OK = 0;
     public static final int CHECK_RESULT_NOT_CONNECTED = 1;
     public static final int CHECK_RESULT_AUTHENTICATION = 2;
@@ -90,7 +92,8 @@ public class MailTransport {
                      @NonNull String recipients) throws MessagingException {
         MimeMessage message = new MimeMessage(session);
         message.setSender(new InternetAddress(sender));
-        message.setSubject(subject);
+        message.setSubject(subject, UTF_8);
+
 
         if (recipients.indexOf(',') > 0) {
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipients));
@@ -99,7 +102,7 @@ public class MailTransport {
         }
 
         if (attachment == null) {
-            message.setContent(body, HTML_CONTENT);
+            message.setText(body, UTF_8, HTML);
         } else {
             message.setContent(createMultipart(body, attachment));
         }
@@ -112,7 +115,7 @@ public class MailTransport {
         Multipart content = new MimeMultipart();
 
         MimeBodyPart textPart = new MimeBodyPart();
-        textPart.setContent(body, HTML_CONTENT);
+        textPart.setText(body, UTF_8, HTML);
         content.addBodyPart(textPart);
 
         for (File file : attachment) {

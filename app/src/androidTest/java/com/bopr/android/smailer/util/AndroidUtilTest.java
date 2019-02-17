@@ -4,7 +4,6 @@ import android.app.ActivityManager;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.Spannable;
@@ -18,9 +17,7 @@ import com.bopr.android.smailer.util.draw.WavyUnderlineSpan;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static android.app.ActivityManager.RunningServiceInfo;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -136,56 +133,5 @@ public class AndroidUtilTest extends BaseTest {
 
         assertFalse(isServiceRunning(context, CallProcessorService.class));
     }
-
-    @Test
-    public void testPutPreferencesOptional() throws Exception {
-        Map<String, Object> data = new HashMap<>();
-        data.put("BOOL", true);
-        data.put("NUM", 1.1);
-        data.put("DOUBLE", 2.2d);
-        data.put("FLOAT", 3.3f);
-        data.put("LONG", 10L);
-        data.put("INT", 20);
-        data.put("BYTE", 30);
-        data.put("SET", Util.asSet("A", "B", "C"));
-        data.put("STRING", "Hello");
-
-        SharedPreferences preferences = getContext().getSharedPreferences("test", Context.MODE_PRIVATE);
-        preferences.edit().clear().apply();
-
-        AndroidUtil.putPreferencesOptional(preferences, data);
-
-        assertEquals(data.size(), preferences.getAll().size());
-        assertEquals(true, preferences.getBoolean("BOOL", false));
-        assertEquals(1.1f, preferences.getFloat("NUM", 0));
-        assertEquals(2.2f, preferences.getFloat("DOUBLE", 0));
-        assertEquals(3.3f, preferences.getFloat("FLOAT", 0));
-        assertEquals(10L, preferences.getLong("LONG", 0));
-        assertEquals(20, preferences.getInt("INT", 0));
-        assertEquals(30, preferences.getInt("BYTE", 0));
-        assertEquals(Util.asSet("A", "B", "C"), preferences.getStringSet("SET", null));
-        assertEquals("Hello", preferences.getString("STRING", null));
-
-        data.put("BOOL", false);
-        data.put("NUM", 10.1);
-        data.put("DOUBLE", 20.2d);
-        data.put("FLOAT", 30.3f);
-        data.put("LONG", 100L);
-        data.put("INT", 200);
-        data.put("BYTE", 300);
-        data.put("SET", Util.asSet("A", "B", "C", "D"));
-        data.put("STRING", "Bye");
-
-        assertEquals(data.size(), preferences.getAll().size());
-        assertEquals(true, preferences.getBoolean("BOOL", false));
-        assertEquals(1.1f, preferences.getFloat("NUM", 0));
-        assertEquals(2.2f, preferences.getFloat("DOUBLE", 0));
-        assertEquals(3.3f, preferences.getFloat("FLOAT", 0));
-        assertEquals(10L, preferences.getLong("LONG", 0));
-        assertEquals(20, preferences.getInt("INT", 0));
-        assertEquals(30, preferences.getInt("BYTE", 0));
-        assertEquals(Util.asSet("A", "B", "C"), preferences.getStringSet("SET", null));
-        assertEquals("Hello", preferences.getString("STRING", null));
-    }
-
+    
 }

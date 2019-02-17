@@ -13,14 +13,14 @@ import static org.junit.Assert.assertTrue;
 public class PhoneEventFilterTest {
 
     @Test
-    public void testEmpty() throws Exception {
+    public void testEmpty() {
         PhoneEvent event = new PhoneEvent();
         PhoneEventFilter filter = new PhoneEventFilter();
         assertFalse(filter.accept(event));
     }
 
     @Test
-    public void testInSmsTrigger() throws Exception {
+    public void testInSmsTrigger() {
         PhoneEvent event = new PhoneEvent();
         event.setIncoming(true);
         event.setPhone("+123456789");
@@ -33,10 +33,9 @@ public class PhoneEventFilterTest {
     }
 
     @Test
-    public void testPhoneBlackList() throws Exception {
+    public void testPhoneBlackList() {
         PhoneEventFilter filter = new PhoneEventFilter();
         filter.setTriggers(asSet(VAL_PREF_TRIGGER_IN_SMS));
-        filter.setUsePhoneWhitelist(false);
 
         PhoneEvent event = new PhoneEvent();
         event.setText("This is a message for Bob or Ann");
@@ -63,10 +62,9 @@ public class PhoneEventFilterTest {
     }
 
     @Test
-    public void testPhoneBlackListPattern() throws Exception {
+    public void testPhoneBlackListPattern() {
         PhoneEventFilter filter = new PhoneEventFilter();
 //        filter.setTriggers(asSet(VAL_PREF_TRIGGER_IN_SMS));
-        filter.setUsePhoneWhitelist(false);
         filter.setPhoneBlacklist(asSet("+79628810***"));
 
         PhoneEvent event = new PhoneEvent();
@@ -84,10 +82,9 @@ public class PhoneEventFilterTest {
     }
 
     @Test
-    public void testPhoneWhiteList() throws Exception {
+    public void testPhoneWhiteList() {
         PhoneEventFilter filter = new PhoneEventFilter();
         filter.setTriggers(asSet(VAL_PREF_TRIGGER_IN_SMS));
-        filter.setUsePhoneWhitelist(true);
 
         PhoneEvent event = new PhoneEvent();
         event.setText("This is a message for Bob or Ann");
@@ -110,10 +107,9 @@ public class PhoneEventFilterTest {
     }
 
     @Test
-    public void testTextBlackList() throws Exception {
+    public void testTextBlackList() {
         PhoneEventFilter filter = new PhoneEventFilter();
         filter.setTriggers(asSet(VAL_PREF_TRIGGER_IN_SMS));
-        filter.setUseTextWhitelist(false);
 
         PhoneEvent event = new PhoneEvent();
         event.setPhone("111");
@@ -133,10 +129,9 @@ public class PhoneEventFilterTest {
     }
 
     @Test
-    public void testTextBlackListPattern() throws Exception {
+    public void testTextBlackListPattern() {
         PhoneEventFilter filter = new PhoneEventFilter();
         filter.setTriggers(asSet(VAL_PREF_TRIGGER_IN_SMS));
-        filter.setUseTextWhitelist(false);
 
         PhoneEvent event = new PhoneEvent();
         event.setPhone("111");
@@ -156,10 +151,9 @@ public class PhoneEventFilterTest {
     }
 
     @Test
-    public void testTextWhiteList() throws Exception {
+    public void testTextWhiteList() {
         PhoneEventFilter filter = new PhoneEventFilter();
         filter.setTriggers(asSet(VAL_PREF_TRIGGER_IN_SMS));
-        filter.setUseTextWhitelist(true);
 
         PhoneEvent event = new PhoneEvent();
         event.setPhone("111");
@@ -179,7 +173,7 @@ public class PhoneEventFilterTest {
     }
 
 //    @Test
-//    public void testPhonePattern() throws Exception {
+//    public void testPhonePattern() {
 //        PhoneEventFilter filter = new PhoneEventFilter();
 //        PhoneEvent event = new PhoneEvent();
 //

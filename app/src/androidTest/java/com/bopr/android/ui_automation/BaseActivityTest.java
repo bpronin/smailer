@@ -6,6 +6,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Switch;
 
+import com.bopr.android.smailer.Settings;
 import com.bopr.android.smailer.ui.MainActivity;
 
 import org.hamcrest.Description;
@@ -43,7 +44,6 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
-import static com.bopr.android.smailer.Settings.preferences;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
@@ -69,7 +69,7 @@ public class BaseActivityTest {
     @Before
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public void setUp() {
-        preferences = preferences(rule.getActivity());
+        preferences = new Settings(rule.getActivity());
         preferences
                 .edit()
                 .clear()

@@ -58,8 +58,8 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
     }
 
     @Override
-    public void onCreatePreferences(Bundle bundle, String s) {
-        log.warn("CREATE PREFERENCES");
+    public void onCreatePreferences(Bundle bundle, String rootKey) {
+        /* do nothing */
     }
 
     @Override

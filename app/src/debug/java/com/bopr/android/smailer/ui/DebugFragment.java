@@ -131,6 +131,25 @@ public class DebugFragment extends BasePreferenceFragment {
                 })
         );
 
+        addCategory("Mail",
+
+                createPreference("Send default mail", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onSendDefaultMail();
+                    }
+                }),
+
+                createPreference("Run mail service", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onRunMailService();
+                    }
+                })
+        );
+
         addCategory("Database",
 
                 createPreference("Populate calls log", new DefaultClickListener() {
@@ -158,25 +177,6 @@ public class DebugFragment extends BasePreferenceFragment {
                     }
                 })
 
-        );
-
-        addCategory("Mail",
-
-                createPreference("Send default mail", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        onSendDefaultMail();
-                    }
-                }),
-
-                createPreference("Run mail service", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        onRunMailService();
-                    }
-                })
         );
 
         addCategory("Permissions",
