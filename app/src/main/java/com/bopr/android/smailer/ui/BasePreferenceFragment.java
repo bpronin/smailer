@@ -41,7 +41,7 @@ import static com.bopr.android.smailer.ui.AboutDialogFragment.showAboutDialog;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class BasePreferenceFragment extends PreferenceFragmentCompat {
+public abstract class BasePreferenceFragment extends PreferenceFragmentCompat {
 
     private static Logger log = LoggerFactory.getLogger("BasePreferenceFragment");
 
@@ -59,7 +59,7 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
 
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
-        log.warn("CREATE PREFERENCES");
+        // TODO: 17.02.2019 should move creation code here?
     }
 
     @Override

@@ -2,9 +2,9 @@ package com.bopr.android.smailer.ui;
 
 import android.os.Bundle;
 
+import com.bopr.android.smailer.JobSchedulerService;
 import com.bopr.android.smailer.MessagingService;
 import com.bopr.android.smailer.OutgoingSmsService;
-import com.bopr.android.smailer.ResendService;
 import com.bopr.android.smailer.Settings;
 import com.crashlytics.android.Crashlytics;
 
@@ -38,7 +38,7 @@ public class MainActivity extends AppActivity {
         Settings.putDefaults(this);
         MessagingService.initMessaging(this);
         OutgoingSmsService.toggleService(this);
-        ResendService.toggleService(this);
+        JobSchedulerService.toggleResendJob(this);
     }
 
     @NonNull

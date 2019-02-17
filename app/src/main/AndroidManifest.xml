@@ -93,7 +93,13 @@
 
         <service android:name=".OutgoingSmsService" />
 
-        <service android:name=".ResendService" />
+        <service
+            android:name=".JobSchedulerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
+            </intent-filter>
+        </service>
 
         <service
             android:name=".MessagingService"
