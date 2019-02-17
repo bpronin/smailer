@@ -6,6 +6,8 @@ import android.database.CursorWrapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.core.util.Consumer;
+
 /**
  * Extended {@link CursorWrapper}.
  *
@@ -23,17 +25,23 @@ public abstract class XCursor<R> extends CursorWrapper {
         super(cursor);
     }
 
-    public abstract R mapRow();
+    public void iterate(Consumer<R> consumer) {
+        try {
+            moveToFirst();
+            while (!isAfterLast()) {
+                consumer.accept(getRow());
+                moveToNext();
+            }
+        } finally {
+            close();
+        }
+    }
 
     public R findFirst() {
-        if (getWrappedCursor() == null) {
-            return null;
-        }
-
         try {
             moveToFirst();
             if (!isBeforeFirst() && !isAfterLast()) {
-                return mapRow();
+                return getRow();
             }
             return null;
         } finally {
@@ -42,22 +50,18 @@ public abstract class XCursor<R> extends CursorWrapper {
     }
 
     public List<R> findAll() {
-        if (getWrappedCursor() == null) {
-            return null;
-        }
+        final List<R> list = new ArrayList<>();
+        iterate(new Consumer<R>() {
 
-        try {
-            List<R> list = new ArrayList<>();
-            moveToFirst();
-            while (!isAfterLast()) {
-                list.add(mapRow());
-                moveToNext();
+            @Override
+            public void accept(R row) {
+                list.add(row);
             }
-            return list;
-        } finally {
-            close();
-        }
+        });
+        return list;
     }
+
+    public abstract R getRow();
 
     public boolean isNull(String columnName) {
         return isNull(getColumnIndex(columnName));
@@ -83,14 +87,14 @@ public abstract class XCursor<R> extends CursorWrapper {
         return getDouble(getColumnIndex(columnName));
     }
 
-    public static XCursor<Long> forLong(Cursor cursor) {
+    public static Long forLong(Cursor cursor) {
         return new XCursor<Long>(cursor) {
 
             @Override
-            public Long mapRow() {
+            public Long getRow() {
                 return getLong(0);
             }
-        };
+        }.findFirst();
     }
 
 }

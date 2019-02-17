@@ -164,6 +164,7 @@ public class HistoryFragment extends BaseFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         database.clearEvents();
+                        database.notifyChanged();
                         loadData();
                     }
                 })
@@ -245,7 +246,7 @@ public class HistoryFragment extends BaseFragment {
         public void onBindViewHolder(@NonNull final ItemViewHolder holder, int position) {
             PhoneEvent item = getItem(position);
             if (item != null) {
-                final PhoneEvent event = cursor.mapRow();
+                final PhoneEvent event = cursor.getRow();
 
                 holder.timeView.setText(DateFormat.format(getString(R.string.event_time_pattern), event.getStartTime()));
 
@@ -307,7 +308,7 @@ public class HistoryFragment extends BaseFragment {
         PhoneEvent getItem(int position) {
             cursor.moveToPosition(position);
             if (!cursor.isBeforeFirst() && !cursor.isAfterLast()) {
-                return cursor.mapRow();
+                return cursor.getRow();
             }
             return null;
         }

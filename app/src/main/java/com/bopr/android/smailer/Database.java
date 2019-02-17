@@ -104,8 +104,15 @@ public class Database {
     }
 
     public PhoneEventCursor getEvents() {
-        return new PhoneEventCursor(helper.getReadableDatabase().query(TABLE_EVENTS,
-                null, null, null, null, null,
+        return new PhoneEventCursor(helper.getReadableDatabase().query(TABLE_EVENTS, null,
+                null, null, null, null,
+                COLUMN_START_TIME + " DESC")
+        );
+    }
+
+    public PhoneEventCursor getPendingEvents() {
+        return new PhoneEventCursor(helper.getReadableDatabase().query(TABLE_EVENTS, null,
+                COLUMN_STATE + "=?", new String[]{PhoneEvent.State.PENDING.name()}, null, null,
                 COLUMN_START_TIME + " DESC")
         );
     }
@@ -133,15 +140,6 @@ public class Database {
         event.setId(id);
 
         log.debug("Put record: " + values);
-
-        fireChanged();
-    }
-
-    public PhoneEventCursor getUnsentEvents() {
-        return new PhoneEventCursor(helper.getReadableDatabase().query(TABLE_EVENTS, null,
-                COLUMN_STATE + "='" + PhoneEvent.State.PENDING + "'", null, null, null,
-                COLUMN_START_TIME + " DESC")
-        );
     }
 
     /**
@@ -160,10 +158,24 @@ public class Database {
         }
 
         log.debug("All events removed");
-
-        fireChanged();
     }
 
+    /**
+     * Returns last saved geolocation.
+     *
+     * @return location
+     */
+    public GeoCoordinates getLastLocation() {
+        return new GeoCoordinatesCursor(helper.getReadableDatabase().query(TABLE_SYSTEM,
+                new String[]{COLUMN_LAST_LATITUDE, COLUMN_LAST_LONGITUDE}, COLUMN_ID + "=0",
+                null, null, null, null)).findFirst();
+    }
+
+    /**
+     * Saves geolocation.
+     *
+     * @param location location
+     */
     public void saveLastLocation(GeoCoordinates location) {
         ContentValues values = new ContentValues();
         values.put(COLUMN_LAST_LATITUDE, location != null ? location.getLatitude() : null);
@@ -171,41 +183,6 @@ public class Database {
         values.put(COLUMN_LAST_LOCATION_TIME, currentTimeMillis());
 
         helper.getWritableDatabase().update(TABLE_SYSTEM, values, COLUMN_ID + "=0", null);
-    }
-
-    private long getCurrentSize(SQLiteDatabase db) {
-        return XCursor.forLong(db.query(TABLE_EVENTS, new String[]{COLUMN_COUNT}, null, null,
-                null, null, null)).findFirst();
-    }
-
-    private long getLastPurgeTime(SQLiteDatabase db) {
-        return XCursor.forLong(db.query(TABLE_SYSTEM, new String[]{COLUMN_PURGE_TIME},
-                COLUMN_ID + "=0", null, null, null, null)).findFirst();
-    }
-
-    private void updateLastPurgeTime(SQLiteDatabase db) {
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_PURGE_TIME, currentTimeMillis());
-
-        db.update(TABLE_SYSTEM, values, COLUMN_ID + "=0", null);
-    }
-
-    public GeoCoordinates getLastLocation() {
-        return new XCursor<GeoCoordinates>(helper.getReadableDatabase().query(TABLE_SYSTEM,
-                new String[]{COLUMN_LAST_LATITUDE, COLUMN_LAST_LONGITUDE}, COLUMN_ID + "=0",
-                null, null, null, null)) {
-
-            @Override
-            public GeoCoordinates mapRow() {
-                if (!isNull(COLUMN_LAST_LATITUDE) && !isNull(COLUMN_LAST_LONGITUDE)) {
-                    return new GeoCoordinates(
-                            getDouble(COLUMN_LAST_LATITUDE),
-                            getDouble(COLUMN_LAST_LONGITUDE)
-                    );
-                }
-                return null;
-            }
-        }.findFirst();
     }
 
     /**
@@ -216,9 +193,9 @@ public class Database {
         log.debug("Purging");
 
         SQLiteDatabase db = helper.getWritableDatabase();
-        db.beginTransaction();
-        try {
-            if (currentTimeMillis() - getLastPurgeTime(db) >= purgePeriod && getCurrentSize(db) >= capacity) {
+        if (currentTimeMillis() - getLastPurgeTime(db) >= purgePeriod && getCurrentSize(db) >= capacity) {
+            db.beginTransaction();
+            try {
                 db.execSQL("DELETE FROM " + TABLE_EVENTS +
                         " WHERE " + COLUMN_ID + " NOT IN " +
                         "(" +
@@ -228,20 +205,24 @@ public class Database {
                         ")");
 
                 updateLastPurgeTime(db);
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
             }
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
         }
-
-        fireChanged();
     }
 
+    /**
+     * Close any open database object.
+     */
     public void close() {
         helper.close();
         log.debug("Closed");
     }
 
+    /**
+     * Physically deletes database.
+     */
     public void destroy() {
         context.deleteDatabase(name);
     }
@@ -254,7 +235,24 @@ public class Database {
         LocalBroadcastManager.getInstance(context).unregisterReceiver(listener);
     }
 
-    private void fireChanged() {
+    private long getCurrentSize(SQLiteDatabase db) {
+        return XCursor.forLong(db.query(TABLE_EVENTS, new String[]{COLUMN_COUNT}, null, null,
+                null, null, null));
+    }
+
+    private long getLastPurgeTime(SQLiteDatabase db) {
+        return XCursor.forLong(db.query(TABLE_SYSTEM, new String[]{COLUMN_PURGE_TIME},
+                COLUMN_ID + "=0", null, null, null, null));
+    }
+
+    private void updateLastPurgeTime(SQLiteDatabase db) {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_PURGE_TIME, currentTimeMillis());
+
+        db.update(TABLE_SYSTEM, values, COLUMN_ID + "=0", null);
+    }
+
+    public void notifyChanged() {
         log.debug("Broadcasting data changed");
 
         Intent intent = new Intent(DATABASE_EVENT);
@@ -322,7 +320,7 @@ public class Database {
         }
 
         @Override
-        public PhoneEvent mapRow() {
+        public PhoneEvent getRow() {
             PhoneEvent event = new PhoneEvent();
             event.setId(getLong(COLUMN_ID));
             event.setState(PhoneEvent.State.valueOf(getString(COLUMN_STATE)));
@@ -342,4 +340,21 @@ public class Database {
 
     }
 
+    private class GeoCoordinatesCursor extends XCursor<GeoCoordinates> {
+
+        public GeoCoordinatesCursor(Cursor cursor) {
+            super(cursor);
+        }
+
+        @Override
+        public GeoCoordinates getRow() {
+            if (!isNull(COLUMN_LAST_LATITUDE) && !isNull(COLUMN_LAST_LONGITUDE)) {
+                return new GeoCoordinates(
+                        getDouble(COLUMN_LAST_LATITUDE),
+                        getDouble(COLUMN_LAST_LONGITUDE)
+                );
+            }
+            return null;
+        }
+    }
 }

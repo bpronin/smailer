@@ -105,7 +105,7 @@ public class TestServerPreference extends Preference {
 
             transport.startSession(user, cryptor.decrypt(password), host, port);
 
-            int result = transport.checkConnection();
+            int result = transport.checkSession();
             if (result == CHECK_RESULT_OK) {
                 try {
                     transport.send("[" + owner.getContext().getString(R.string.app_name) + "] TEST", "This is the test message", user, user);

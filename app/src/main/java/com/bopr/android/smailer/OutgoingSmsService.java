@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.database.ContentObserver;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -72,25 +73,9 @@ public class OutgoingSmsService extends Service {
     private void processEvent(String id) {
         log.debug("Processing sms: " + id);
 
-        new XCursor<Void>(getContentResolver().query(CONTENT_SMS_SENT, null, "_id=?",
-                new String[]{id}, null)) {
-
-            @Override
-            public Void mapRow() {
-                long date = getLong("date");
-                log.debug("Starting mail service");
-
-                PhoneEvent event = new PhoneEvent();
-                event.setIncoming(false);
-                event.setPhone(getString("address"));
-                event.setStartTime(date);
-                event.setEndTime(date);
-                event.setText(getString("body"));
-
-                CallProcessorService.start(OutgoingSmsService.this, event);
-                return null;
-            }
-        }.findFirst();
+        Cursor query = getContentResolver().query(CONTENT_SMS_SENT, null, "_id=?", new String[]{id}, null);
+        PhoneEvent event = new SentSmsCursor(query).findFirst();
+        CallProcessorService.start(OutgoingSmsService.this, event);
     }
 
 
@@ -112,6 +97,28 @@ public class OutgoingSmsService extends Service {
         } else {
             context.stopService(intent);
             log.debug("Disabled");
+        }
+    }
+
+    private static class SentSmsCursor extends XCursor<PhoneEvent> {
+
+        private SentSmsCursor(Cursor query) {
+            super(query);
+        }
+
+        @Override
+        public PhoneEvent getRow() {
+            long date = getLong("date");
+            log.debug("Starting mail service");
+
+            PhoneEvent event = new PhoneEvent();
+            event.setIncoming(false);
+            event.setPhone(getString("address"));
+            event.setStartTime(date);
+            event.setEndTime(date);
+            event.setText(getString("body"));
+
+            return event;
         }
     }
 

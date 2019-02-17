@@ -390,7 +390,7 @@ public class CallProcessorTest extends BaseTest {
     }
 
     /**
-     * Test resending unsent messages.
+     * Test resending pending messages.
      *
      * @throws Exception when fails
      */
@@ -407,26 +407,26 @@ public class CallProcessorTest extends BaseTest {
         callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, new GeoCoordinates(30.0, 60.0), null, PhoneEvent.State.PENDING));
 
         assertEquals(3, database.getEvents().getCount());
-        assertEquals(3, database.getUnsentEvents().getCount());
+        assertEquals(3, database.getPendingEvents().getCount());
         assertEquals(3, errors.size());
 
         /* try resend with transport still disabled */
         errors.clear();
 
-        callProcessor.processAll();
+        callProcessor.processPending();
 
         assertEquals(3, database.getEvents().getCount());
-        assertEquals(3, database.getUnsentEvents().getCount());
+        assertEquals(3, database.getPendingEvents().getCount());
         assertTrue(errors.isEmpty()); /* no error notifications should be shown */
 
         /* enable transport an try again */
         doNothing().when(transport).send(anyString(), anyString(), anyString(), anyString());
         errors.clear();
 
-        callProcessor.processAll();
+        callProcessor.processPending();
 
         assertEquals(3, database.getEvents().getCount());
-        assertEquals(0, database.getUnsentEvents().getCount());
+        assertEquals(0, database.getPendingEvents().getCount());
         assertTrue(errors.isEmpty());
     }
 

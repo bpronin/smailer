@@ -63,12 +63,12 @@ public class Notifications {
         getManager().cancel(ID_MAIL_ERROR);
     }
 
-    public void showMailError(int messageResource, long messageId, int action) {
+    public void showMailError(int messageResource, @Nullable Long messageId, int action) {
         showMailError(context.getResources().getString(R.string.notification_error_mail_general) + " " +
                 context.getResources().getString(messageResource), messageId, action);
     }
 
-    public void showMailError(String text, long messageId, int action) {
+    public void showMailError(String text, @Nullable Long messageId, int action) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, getChannel())
                 .setContentIntent(createIntent(action, messageId))
                 .setSmallIcon(R.drawable.ic_alert)

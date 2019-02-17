@@ -209,7 +209,7 @@ public class DatabaseTest extends BaseTest {
     }
 
     /**
-     * Check {@link Database#getUnsentEvents()}} method.
+     * Check {@link Database#getPendingEvents()}} method.
      *
      * @throws Exception when failed
      */
@@ -226,7 +226,7 @@ public class DatabaseTest extends BaseTest {
         database.putEvent(new PhoneEvent("9", false, 9000L, 0L, false, null, null, "Test 4", PhoneEvent.State.PENDING));
         database.putEvent(new PhoneEvent("10", true, 10000L, 20000L, false, null, null, "Test 10", PhoneEvent.State.PENDING));
 
-        List<PhoneEvent> items = database.getUnsentEvents().findAll();
+        List<PhoneEvent> items = database.getPendingEvents().findAll();
 
         assertEquals(5, items.size());
 

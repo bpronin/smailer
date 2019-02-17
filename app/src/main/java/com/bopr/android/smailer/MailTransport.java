@@ -78,6 +78,32 @@ public class MailTransport {
     }
 
     /**
+     * Checks connection to mail server.
+     */
+    public int checkSession() {
+        log.trace("checking connection");
+        try {
+            Transport transport = session.getTransport();
+            try {
+                transport.connect();
+                return CHECK_RESULT_OK;
+            } finally {
+                try {
+                    transport.close();
+                } catch (MessagingException x) {
+                    log.warn("closing transport failed", x);
+                }
+            }
+        } catch (AuthenticationFailedException x) {
+            log.debug("authentication failed", x);
+            return CHECK_RESULT_AUTHENTICATION;
+        } catch (MessagingException x) {
+            log.debug("connection failed", x);
+            return CHECK_RESULT_NOT_CONNECTED;
+        }
+    }
+
+    /**
      * Sends email.
      */
     public void send(String subject, String body, @NonNull String sender, @NonNull String recipients)
@@ -126,32 +152,6 @@ public class MailTransport {
         }
 
         return content;
-    }
-
-    /**
-     * Checks connection to mail server.
-     */
-    public int checkConnection() {
-        log.trace("checking connection");
-        try {
-            Transport transport = session.getTransport();
-            try {
-                transport.connect();
-                return CHECK_RESULT_OK;
-            } finally {
-                try {
-                    transport.close();
-                } catch (MessagingException x) {
-                    log.warn("closing transport failed", x);
-                }
-            }
-        } catch (AuthenticationFailedException x) {
-            log.debug("authentication failed", x);
-            return CHECK_RESULT_AUTHENTICATION;
-        } catch (MessagingException x) {
-            log.debug("connection failed", x);
-            return CHECK_RESULT_NOT_CONNECTED;
-        }
     }
 
     private static class JSSEProvider extends Provider {

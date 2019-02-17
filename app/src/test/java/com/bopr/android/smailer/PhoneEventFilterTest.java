@@ -16,7 +16,7 @@ public class PhoneEventFilterTest {
     public void testEmpty() {
         PhoneEvent event = new PhoneEvent();
         PhoneEventFilter filter = new PhoneEventFilter();
-        assertFalse(filter.accept(event));
+        assertFalse(filter.test(event));
     }
 
     @Test
@@ -29,7 +29,7 @@ public class PhoneEventFilterTest {
         PhoneEventFilter filter = new PhoneEventFilter();
         filter.setTriggers(asSet(VAL_PREF_TRIGGER_IN_SMS));
 
-        assertTrue(filter.accept(event));
+        assertTrue(filter.test(event));
     }
 
     @Test
@@ -43,22 +43,22 @@ public class PhoneEventFilterTest {
 
         filter.setPhoneBlacklist(Collections.<String>emptySet());
         event.setPhone("111");
-        assertTrue(filter.accept(event));
+        assertTrue(filter.test(event));
 
         filter.setPhoneBlacklist(asSet("111", "333"));
         event.setPhone("111");
-        assertFalse(filter.accept(event));
+        assertFalse(filter.test(event));
 
         filter.setPhoneBlacklist(asSet("+1(11)", "333"));
         event.setPhone("1 11");
-        assertFalse(filter.accept(event));
+        assertFalse(filter.test(event));
 
         event.setPhone("222");
-        assertTrue(filter.accept(event));
+        assertTrue(filter.test(event));
 
         filter.setPhoneBlacklist(asSet("111", "222"));
         event.setPhone("222");
-        assertFalse(filter.accept(event));
+        assertFalse(filter.test(event));
     }
 
     @Test
@@ -72,13 +72,13 @@ public class PhoneEventFilterTest {
         event.setMissed(true);
 
         event.setPhone("+79628810559");
-        assertFalse(filter.accept(event));
+        assertFalse(filter.test(event));
 
         event.setPhone("+79628810558");
-        assertFalse(filter.accept(event));
+        assertFalse(filter.test(event));
 
         event.setPhone("+79628811111");
-        assertTrue(filter.accept(event));
+        assertTrue(filter.test(event));
     }
 
     @Test
@@ -92,18 +92,18 @@ public class PhoneEventFilterTest {
 
         filter.setPhoneWhitelist(Collections.<String>emptySet());
         event.setPhone("111");
-        assertFalse(filter.accept(event));
+        assertFalse(filter.test(event));
 
         filter.setPhoneWhitelist(asSet("111", "333"));
         event.setPhone("111");
-        assertTrue(filter.accept(event));
+        assertTrue(filter.test(event));
 
         event.setPhone("222");
-        assertFalse(filter.accept(event));
+        assertFalse(filter.test(event));
 
         filter.setPhoneWhitelist(asSet("111", "222"));
         event.setPhone("222");
-        assertTrue(filter.accept(event));
+        assertTrue(filter.test(event));
     }
 
     @Test
@@ -117,15 +117,15 @@ public class PhoneEventFilterTest {
 
         filter.setTextBlacklist(Collections.<String>emptySet());
         event.setText("This is a message for Bob or Ann");
-        assertTrue(filter.accept(event));
+        assertTrue(filter.test(event));
 
         filter.setTextBlacklist(asSet("Bob", "Ann"));
         event.setText("This is a message for Bob or Ann");
-        assertFalse(filter.accept(event));
+        assertFalse(filter.test(event));
 
         filter.setTextBlacklist(asSet("Bob", "Ann"));
         event.setText("This is a message");
-        assertTrue(filter.accept(event));
+        assertTrue(filter.test(event));
     }
 
     @Test
@@ -139,15 +139,15 @@ public class PhoneEventFilterTest {
 
         filter.setTextBlacklist(asSet(quoteRegex("(.*)Bob(.*)")));
         event.setText("This is a message for Bob or Ann");
-        assertFalse(filter.accept(event));
+        assertFalse(filter.test(event));
 
         filter.setTextBlacklist(asSet(quoteRegex("(.*)John(.*)")));
         event.setText("This is a message for Bob or Ann");
-        assertTrue(filter.accept(event));
+        assertTrue(filter.test(event));
 
         filter.setTextBlacklist(asSet("(.*)John(.*)"));
         event.setText("This is a message for (.*)John(.*)");
-        assertFalse(filter.accept(event));
+        assertFalse(filter.test(event));
     }
 
     @Test
@@ -161,15 +161,15 @@ public class PhoneEventFilterTest {
 
         filter.setTextWhitelist(Collections.<String>emptySet());
         event.setText("This is a message for Bob or Ann");
-        assertFalse(filter.accept(event));
+        assertFalse(filter.test(event));
 
         filter.setTextWhitelist(asSet("Bob", "Ann"));
         event.setText("This is a message for Bob or Ann");
-        assertTrue(filter.accept(event));
+        assertTrue(filter.test(event));
 
         filter.setTextWhitelist(asSet("Bob", "Ann"));
         event.setText("This is a message");
-        assertFalse(filter.accept(event));
+        assertFalse(filter.test(event));
     }
 
 //    @Test

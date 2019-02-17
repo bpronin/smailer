@@ -15,7 +15,7 @@ import static org.mockito.Mockito.when;
 public class CallProcessorServiceTest extends BaseTest {
 
     /**
-     * Checks that service calls {@link CallProcessor#processAll()} method.
+     * Checks that service calls {@link CallProcessor#processPending()} method.
      *
      * @throws Exception when fails
      */
@@ -24,7 +24,7 @@ public class CallProcessorServiceTest extends BaseTest {
         InvocationsCollector invocations = new InvocationsCollector();
 
         CallProcessor callProcessor = mock(CallProcessor.class);
-        doAnswer(invocations).when(callProcessor).processAll();
+        doAnswer(invocations).when(callProcessor).processPending();
 
         CallProcessorService service = new CallProcessorService();
 //        service.init(callProcessor, mock(GeoLocator.class));

@@ -74,7 +74,7 @@ public class PhoneEventFilter {
         this.textBlacklist = textBlacklist;
     }
 
-    public boolean accept(PhoneEvent event) {
+    public boolean test(PhoneEvent event) {
         return acceptTrigger(event)
                 && acceptPhone(event.getPhone())
                 && acceptText(event.getText());
@@ -143,4 +143,5 @@ public class PhoneEventFilter {
                 ", textBlacklist=" + textBlacklist +
                 '}';
     }
+
 }

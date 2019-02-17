@@ -141,11 +141,11 @@ public class DebugFragment extends BasePreferenceFragment {
                     }
                 }),
 
-                createPreference("Start process all events", new DefaultClickListener() {
+                createPreference("Start process pending events", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        onStartProcessAllEvents();
+                        onStartProcessPendingEvents();
                     }
                 }),
 
@@ -181,6 +181,7 @@ public class DebugFragment extends BasePreferenceFragment {
                     @Override
                     protected void onClick(Preference preference) {
                         database.clearEvents();
+                        database.notifyChanged();
                         showDone();
                     }
                 }),
@@ -239,7 +240,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        new Notifications(context).showMailError("Test notification text", 100, Notifications.ACTION_SHOW_CONNECTION);
+                        new Notifications(context).showMailError("Test notification text", 100L, Notifications.ACTION_SHOW_CONNECTION);
                     }
                 }),
 
@@ -247,7 +248,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        new Notifications(context).showMailError("Test notification text", 100, Notifications.ACTION_SHOW_LOG);
+                        new Notifications(context).showMailError("Test notification text", 100L, Notifications.ACTION_SHOW_LOG);
                     }
                 }),
 
@@ -438,7 +439,7 @@ public class DebugFragment extends BasePreferenceFragment {
         showDone();
     }
 
-    private void onStartProcessAllEvents() {
+    private void onStartProcessPendingEvents() {
         CallProcessorService.start(context);
         showDone();
     }
@@ -505,7 +506,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
     private void onAddLogItem() {
         database.putEvent(new PhoneEvent("+79052345670", true, System.currentTimeMillis(), null, false, "Debug message", null, null, PhoneEvent.State.PENDING));
-
+        database.notifyChanged();
         showDone();
     }
 
@@ -521,6 +522,7 @@ public class DebugFragment extends BasePreferenceFragment {
         database.putEvent(new PhoneEvent("+79052345673", true, time += 1000, time + 10000, false, null, null, "Test exception +79052345673", PhoneEvent.State.PENDING));
         database.putEvent(new PhoneEvent("+79052345674", false, time += 1000, time + 10000, false, null, null, "Test exception +79052345674", PhoneEvent.State.PENDING));
         database.putEvent(new PhoneEvent("+79052345675", true, time += 1000, time + 10000, true, null, null, "Test exception +79052345675", PhoneEvent.State.PENDING));
+        database.notifyChanged();
 
         showDone();
     }
