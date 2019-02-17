@@ -33,6 +33,7 @@ import static android.location.LocationManager.PASSIVE_PROVIDER;
 public class GeoLocator {
 
     private static Logger log = LoggerFactory.getLogger("GeoLocator");
+
     private static final int DEFAULT_TIMEOUT = 5000;
 
     private final Context context;
@@ -48,18 +49,6 @@ public class GeoLocator {
 
     void setLocationManager(LocationManager locationManager) {
         this.locationManager = locationManager;
-    }
-
-    /**
-     * Starts google API client.
-     */
-    public void start() {
-    }
-
-    /**
-     * Stops google API client.
-     */
-    public void stop() {
     }
 
     /**
@@ -99,7 +88,7 @@ public class GeoLocator {
             if (coordinates != null) {
                 log.debug("Using local database location");
             } else {
-                log.warn("Unable obtain location");
+                log.warn("Unable to obtain location from database");
             }
         }
 
@@ -118,7 +107,7 @@ public class GeoLocator {
         return null;
     }
 
-    @SuppressWarnings("ResourceType")
+    @SuppressWarnings({"ResourceType", "SameParameterValue"})
     @SuppressLint("MissingPermission")
     @Nullable
     private GeoCoordinates getLastProviderLocation(String provider) {

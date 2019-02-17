@@ -13,6 +13,7 @@ import android.util.Base64;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.bopr.android.smailer.CallProcessorService;
 import com.bopr.android.smailer.Contacts;
 import com.bopr.android.smailer.Cryptor;
 import com.bopr.android.smailer.Database;
@@ -50,7 +51,6 @@ import androidx.preference.PreferenceScreen;
 import static android.Manifest.permission.BROADCAST_SMS;
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-import static com.bopr.android.smailer.CallProcessorService.startMailService;
 import static com.bopr.android.smailer.Settings.DEFAULT_HOST;
 import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
 import static com.bopr.android.smailer.Settings.DEFAULT_PORT;
@@ -131,28 +131,44 @@ public class DebugFragment extends BasePreferenceFragment {
                 })
         );
 
-        addCategory("Mail",
+        addCategory("Call processing",
 
-                createPreference("Send default mail", new DefaultClickListener() {
+                createPreference("Start process single event", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        onSendDefaultMail();
+                        onStartProcessSingleEvent();
                     }
                 }),
 
-                createPreference("Run mail service", new DefaultClickListener() {
+                createPreference("Start process all events", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        onRunMailService();
+                        onStartProcessAllEvents();
+                    }
+                }),
+
+                createPreference("Send debug mail", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onSendDebugMail();
                     }
                 })
         );
 
         addCategory("Database",
 
-                createPreference("Populate calls log", new DefaultClickListener() {
+                createPreference("Add an item to calls log", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onAddLogItem();
+                    }
+                }),
+
+                createPreference("Add 10 items to calls log", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
@@ -299,18 +315,6 @@ public class DebugFragment extends BasePreferenceFragment {
         setPreferenceScreen(screen);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        locator.start();
-    }
-
-    @Override
-    public void onStop() {
-        locator.stop();
-        super.onStop();
-    }
-
     @NonNull
     private Properties loadDebugProperties() {
         Properties properties = new Properties();
@@ -415,20 +419,28 @@ public class DebugFragment extends BasePreferenceFragment {
         showDone();
     }
 
-    private void onSendDefaultMail() {
+    private void onSendDebugMail() {
         new SendDefaultMailTask(getActivity(), loadDebugProperties()).execute();
+        showDone();
     }
 
-    private void onRunMailService() {
+    private void onStartProcessSingleEvent() {
         long start = System.currentTimeMillis();
+
         PhoneEvent event = new PhoneEvent();
-        event.setPhone("PHONE NUMBER");
+        event.setPhone("+12345678901");
         event.setText("SMS TEXT");
         event.setIncoming(true);
         event.setStartTime(start);
         event.setEndTime(start + 10000);
 
-        startMailService(context, event);
+        CallProcessorService.start(context, event);
+        showDone();
+    }
+
+    private void onStartProcessAllEvents() {
+        CallProcessorService.start(context);
+        showDone();
     }
 
     private void onRequireReceiveSmsPermission() {
@@ -489,6 +501,12 @@ public class DebugFragment extends BasePreferenceFragment {
     private void onShowPassword() {
         String text = cryptor.decrypt(settings.getString(KEY_PREF_SENDER_PASSWORD, null));
         showMessage(context, text);
+    }
+
+    private void onAddLogItem() {
+        database.putEvent(new PhoneEvent("+79052345670", true, System.currentTimeMillis(), null, false, "Debug message", null, null, PhoneEvent.State.PENDING));
+
+        showDone();
     }
 
     private void onPopulateLog() {

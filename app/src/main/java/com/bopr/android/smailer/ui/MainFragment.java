@@ -7,8 +7,9 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.widget.ListView;
 
-import com.bopr.android.smailer.JobSchedulerService;
+import com.bopr.android.smailer.OutgoingSmsService;
 import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.ResendWorker;
 import com.bopr.android.smailer.util.validator.EmailListTextValidator;
 import com.bopr.android.smailer.util.validator.EmailTextValidator;
 
@@ -80,10 +81,10 @@ public class MainFragment extends BasePreferenceFragment {
                         updateRecipientsPreference();
                         break;
                     case KEY_PREF_EMAIL_TRIGGERS:
-//                        OutgoingSmsService.toggleService(getContext());
+                        OutgoingSmsService.toggleService(requireContext());
                         break;
                     case KEY_PREF_RESEND_UNSENT:
-                        JobSchedulerService.toggleResendJob(getContext());
+                        ResendWorker.enable(requireContext());
                         break;
                 }
 

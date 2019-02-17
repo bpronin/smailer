@@ -2,8 +2,8 @@ package com.bopr.android.smailer.ui;
 
 import android.os.Bundle;
 
-import com.bopr.android.smailer.MessagingService;
 import com.bopr.android.smailer.OutgoingSmsService;
+import com.bopr.android.smailer.RemoteControlService;
 import com.bopr.android.smailer.ResendWorker;
 import com.bopr.android.smailer.Settings;
 import com.crashlytics.android.Crashlytics;
@@ -36,10 +36,10 @@ public class MainActivity extends AppActivity {
         Fabric.with(this, new Crashlytics());
 
         Settings.putDefaults(this);
-        MessagingService.initMessaging(this);
+        RemoteControlService.enable(this);
         OutgoingSmsService.toggleService(this);
 //        JobSchedulerService.toggleResendJob(this);
-        ResendWorker.runResendService(this);
+        ResendWorker.enable(this);
     }
 
     @NonNull

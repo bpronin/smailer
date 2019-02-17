@@ -1,6 +1,11 @@
 package com.bopr.android.smailer;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.bopr.android.smailer.util.Util;
+
+import androidx.annotation.NonNull;
 
 /**
  * Represents phone call or SMS event.
@@ -8,7 +13,7 @@ import com.bopr.android.smailer.util.Util;
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 @SuppressWarnings("WeakerAccess")
-public class PhoneEvent {
+public class PhoneEvent implements Parcelable {
 
     public enum State {
         PENDING,
@@ -134,6 +139,7 @@ public class PhoneEvent {
         this.state = state;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "PhoneEvent{" +
@@ -150,4 +156,73 @@ public class PhoneEvent {
                 '}';
     }
 
+    /* Generated Parcelable stuff implementation */
+
+    protected PhoneEvent(Parcel in) {
+        if (in.readByte() == 0) {
+            id = null;
+        } else {
+            id = in.readLong();
+        }
+        incoming = in.readByte() != 0;
+        missed = in.readByte() != 0;
+        phone = in.readString();
+        if (in.readByte() == 0) {
+            startTime = null;
+        } else {
+            startTime = in.readLong();
+        }
+        if (in.readByte() == 0) {
+            endTime = null;
+        } else {
+            endTime = in.readLong();
+        }
+        text = in.readString();
+        details = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        if (id == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(id);
+        }
+        dest.writeByte((byte) (incoming ? 1 : 0));
+        dest.writeByte((byte) (missed ? 1 : 0));
+        dest.writeString(phone);
+        if (startTime == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(startTime);
+        }
+        if (endTime == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(endTime);
+        }
+        dest.writeString(text);
+        dest.writeString(details);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<PhoneEvent> CREATOR = new Creator<PhoneEvent>() {
+
+        @Override
+        public PhoneEvent createFromParcel(Parcel in) {
+            return new PhoneEvent(in);
+        }
+
+        @Override
+        public PhoneEvent[] newArray(int size) {
+            return new PhoneEvent[size];
+        }
+    };
 }

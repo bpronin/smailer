@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 
 import androidx.annotation.Nullable;
 
-import static com.bopr.android.smailer.CallProcessorService.startMailService;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
 
 /**
@@ -88,7 +87,7 @@ public class OutgoingSmsService extends Service {
                 event.setEndTime(date);
                 event.setText(getString("body"));
 
-                startMailService(OutgoingSmsService.this, event);
+                CallProcessorService.start(OutgoingSmsService.this, event);
                 return null;
             }
         }.findFirst();

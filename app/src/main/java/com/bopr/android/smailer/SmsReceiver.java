@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import androidx.annotation.NonNull;
 
-import static com.bopr.android.smailer.CallProcessorService.startMailService;
 import static com.bopr.android.smailer.util.Util.safeEquals;
 
 /**
@@ -31,7 +30,7 @@ public class SmsReceiver extends BroadcastReceiver {
         log.debug("Received intent: " + intent);
 
         if (safeEquals(intent.getAction(), SMS_RECEIVED_ACTION)) {
-            startMailService(context, parse(intent));
+            CallProcessorService.start(context, parse(intent));
         }
     }
 

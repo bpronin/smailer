@@ -77,7 +77,7 @@ public class Settings extends SharedPreferencesWrapper {
 
     private Context context;
 
-    public Settings(Context context) {
+    public Settings(@NonNull Context context) {
         super(context.getSharedPreferences(PREFERENCES_STORAGE_NAME, MODE_PRIVATE));
         this.context = context;
     }

@@ -82,6 +82,7 @@ class CallProcessor {
         } else {
             event.setState(PhoneEvent.State.IGNORED);
             database.putEvent(event);
+
             log.debug("Event ignored");
         }
     }
@@ -92,7 +93,7 @@ class CallProcessor {
     void processAll() {
         List<PhoneEvent> events = database.getUnsentEvents().findAll();
 
-        log.debug("Resending " + events.size() + " messages");
+        log.debug("Sending " + events.size() + " messages");
         // TODO: 13.02.2019 send all in one transport session
         for (PhoneEvent event : events) {
             sendMail(event, true);

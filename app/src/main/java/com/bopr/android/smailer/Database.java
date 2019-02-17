@@ -110,7 +110,7 @@ public class Database {
         );
     }
 
-    public long putEvent(PhoneEvent event) {
+    public void putEvent(PhoneEvent event) {
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -132,9 +132,9 @@ public class Database {
         long id = db.replace(TABLE_EVENTS, null, values);
         event.setId(id);
 
-        fireChanged();
+        log.debug("Put record: " + values);
 
-        return id;
+        fireChanged();
     }
 
     public PhoneEventCursor getUnsentEvents() {
