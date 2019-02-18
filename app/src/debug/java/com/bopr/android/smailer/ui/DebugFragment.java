@@ -166,7 +166,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        onAddLogItem();
+                        onAddHistoryItem();
                     }
                 }),
 
@@ -174,7 +174,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        onPopulateLog();
+                        onPopulateHistory();
                     }
                 }),
 
@@ -254,19 +254,27 @@ public class DebugFragment extends BasePreferenceFragment {
 
         addCategory("Logging",
 
+                createPreference("Send logs to developer", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        new SendLogTask(getActivity(), loadDebugProperties()).execute();
+                    }
+                }),
+
+                createPreference("Clear logs", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onClearLogs();
+                    }
+                }),
+
                 createPreference("Save logcat log", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
                         onSaveLogcatLog();
-                    }
-                }),
-
-                createPreference("Send application log", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        new SendLogTask(getActivity(), loadDebugProperties()).execute();
                     }
                 })
         );
@@ -535,19 +543,28 @@ public class DebugFragment extends BasePreferenceFragment {
         }
     }
 
+    private void onClearLogs() {
+        File[] logs = new File(requireContext().getFilesDir(), "log").listFiles();
+        for (File file : logs) {
+            if (!file.delete()){
+                log.warn("Cannot delete file");
+            }
+        }
+        showDone();
+    }
 
     private void onShowPassword() {
         String text = cryptor.decrypt(settings.getString(KEY_PREF_SENDER_PASSWORD, null));
         showMessage(context, text);
     }
 
-    private void onAddLogItem() {
+    private void onAddHistoryItem() {
         database.putEvent(new PhoneEvent("+79052345670", true, System.currentTimeMillis(), null, false, "Debug message", null, null, PhoneEvent.State.PENDING));
         database.notifyChanged();
         showDone();
     }
 
-    private void onPopulateLog() {
+    private void onPopulateHistory() {
         long time = System.currentTimeMillis();
         database.putEvent(new PhoneEvent("+79052345671", true, time, null, false, "Debug message", null, null, PhoneEvent.State.PENDING));
         database.putEvent(new PhoneEvent("+79052345672", false, time += 1000, null, false, "Debug message", null, null, PhoneEvent.State.PROCESSED));

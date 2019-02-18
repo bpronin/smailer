@@ -32,7 +32,7 @@ public class MainActivity extends AppActivity {
     protected void onCreate(Bundle savedInstanceState) {
         log.debug("Application init");
         super.onCreate(savedInstanceState);
-        
+
         Fabric.with(this, new Crashlytics());
         Settings.putDefaults(this);
         RemoteControlService.enable(this);
