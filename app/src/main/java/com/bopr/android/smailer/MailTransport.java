@@ -8,6 +8,7 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.Provider;
 import java.security.Security;
+import java.util.Collection;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
@@ -114,7 +115,7 @@ public class MailTransport {
     /**
      * Sends email with attachment.
      */
-    public void send(String subject, String body, File[] attachment, @NonNull String sender,
+    public void send(String subject, String body, Collection<File> attachment, @NonNull String sender,
                      @NonNull String recipients) throws MessagingException {
         MimeMessage message = new MimeMessage(session);
         message.setSender(new InternetAddress(sender));
@@ -137,7 +138,7 @@ public class MailTransport {
     }
 
     @NonNull
-    private Multipart createMultipart(String body, File[] attachment) throws MessagingException {
+    private Multipart createMultipart(String body, Collection<File> attachment) throws MessagingException {
         Multipart content = new MimeMultipart();
 
         MimeBodyPart textPart = new MimeBodyPart();

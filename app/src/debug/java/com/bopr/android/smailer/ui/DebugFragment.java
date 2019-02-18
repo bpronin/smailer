@@ -23,6 +23,7 @@ import com.bopr.android.smailer.MailTransport;
 import com.bopr.android.smailer.Notifications;
 import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.Settings;
 import com.bopr.android.smailer.SmsReceiver;
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.ui.ActivityAsyncTask;
@@ -37,6 +38,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -186,6 +189,23 @@ public class DebugFragment extends BasePreferenceFragment {
                             @Override
                             public void accept(PhoneEvent event) {
                                 event.setRead(false);
+                                database.putEvent(event);
+                            }
+                        });
+                        database.notifyChanged();
+                        showDone();
+                    }
+                }),
+
+                createPreference("Mark all as read", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        database.getEvents().iterate(new Consumer<PhoneEvent>() {
+
+                            @Override
+                            public void accept(PhoneEvent event) {
+                                event.setRead(true);
                                 database.putEvent(event);
                             }
                         });
@@ -658,8 +678,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
         @Override
         protected String doInBackground(Void... params) {
-            File dir = getActivity().getFilesDir();
-            File[] files = dir.listFiles(new FilenameFilter() {
+            File[] logs = getActivity().getFilesDir().listFiles(new FilenameFilter() {
 
                 @Override
                 public boolean accept(File dir, String name) {
@@ -667,9 +686,11 @@ public class DebugFragment extends BasePreferenceFragment {
                 }
             });
 
-            if (files.length == 0) {
-                return "No log files found";
-            }
+            File database = getActivity().getDatabasePath(Settings.DB_NAME);
+
+            List<File> attachment = new LinkedList<>();
+            attachment.add(database);
+            attachment.addAll(Arrays.asList(logs));
 
             try {
                 String user = properties.getProperty("default_sender");
@@ -679,7 +700,7 @@ public class DebugFragment extends BasePreferenceFragment {
                 transport.send(
                         "SMailer log",
                         "See attachment",
-                        files,
+                        attachment,
                         user,
                         properties.getProperty("developer_email")
                 );

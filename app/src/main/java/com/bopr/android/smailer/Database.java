@@ -121,7 +121,7 @@ public class Database {
 
     public long getUnreadEventsCount() {
         return XCursor.forLong(helper.getReadableDatabase().query(TABLE_EVENTS, new String[]{COLUMN_COUNT},
-                COLUMN_READ + "=0", null, null, null, null));
+                COLUMN_READ + "<>1", null, null, null, null));
     }
 
     public void putEvent(PhoneEvent event) {
@@ -293,7 +293,7 @@ public class Database {
                     COLUMN_LONGITUDE + " REAL, " +
                     COLUMN_PHONE + " TEXT(25)," +
                     COLUMN_TEXT + " TEXT(256)," +
-                    COLUMN_READ + " INTEGER, " +
+                    COLUMN_READ + " INTEGER NOT NULL DEFAULT(0), " +
                     COLUMN_DETAILS + " TEXT(256)" +
                     ")");
 
@@ -316,7 +316,7 @@ public class Database {
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             if (newVersion == 2 && oldVersion == 1) {
                 db.execSQL("ALTER TABLE " + TABLE_EVENTS  +
-                        " ADD " + COLUMN_READ + " INTEGER");
+                        " ADD " + COLUMN_READ + " INTEGER NOT NULL DEFAULT(0)");
             }
         }
 
