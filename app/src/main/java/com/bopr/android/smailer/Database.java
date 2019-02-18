@@ -26,6 +26,7 @@ import static java.lang.System.currentTimeMillis;
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 @SuppressWarnings("WeakerAccess")
+// TODO: 18.02.2019 migrate to Room. see https://developer.android.com/training/data-storage/room/
 public class Database {
 
     private static Logger log = LoggerFactory.getLogger("Database");

@@ -21,7 +21,6 @@ import androidx.annotation.NonNull;
 import androidx.core.util.Consumer;
 
 import static com.bopr.android.smailer.Contacts.getContactName;
-import static com.bopr.android.smailer.Notifications.ACTION_SHOW_CONNECTION;
 import static com.bopr.android.smailer.Notifications.ACTION_SHOW_MAIN;
 import static com.bopr.android.smailer.Notifications.ACTION_SHOW_SERVER;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
@@ -33,10 +32,9 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_NOTIFY_SEND_SUCCESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
-import static com.bopr.android.smailer.util.AndroidUtil.hasInternetConnection;
 
 /**
- * Sends out {@link PhoneEvent}.
+ * Sends out email for phone events.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
@@ -68,7 +66,7 @@ class CallProcessor {
     }
 
     /**
-     * Sends out a mail event.
+     * Sends out a mail for event.
      *
      * @param event email event
      */
@@ -79,10 +77,8 @@ class CallProcessor {
         database.putEvent(event);
 
         if (settings.getFilter().test(event)) {
-            if (checkInternetConnection(false)) {
-                startMailSession();
-                sendMail(event, false);
-            }
+            startMailSession();
+            sendMail(event, false);
         } else {
             ignoreEvent(event);
         }
@@ -91,34 +87,32 @@ class CallProcessor {
     }
 
     /**
-     * Sends out all pending events.
+     * Sends out email for all pending events.
      */
     void processPending() {
         log.debug("Processing pending events");
 
-        if (checkInternetConnection(true)) {
-            startMailSession();
+        startMailSession();
 
-            PhoneEventCursor events = database.getPendingEvents();
-            if (events.getCount() == 0) {
-                log.debug("No pending events found");
-            } else {
-                final PhoneEventFilter filter = settings.getFilter();
+        PhoneEventCursor events = database.getPendingEvents();
+        if (events.getCount() == 0) {
+            log.debug("No pending events found");
+        } else {
+            final PhoneEventFilter filter = settings.getFilter();
 
-                events.iterate(new Consumer<PhoneEvent>() {
+            events.iterate(new Consumer<PhoneEvent>() {
 
-                    @Override
-                    public void accept(PhoneEvent event) {
-                        if (filter.test(event)) {
-                            sendMail(event, true);
-                        } else {
-                            ignoreEvent(event);
-                        }
+                @Override
+                public void accept(PhoneEvent event) {
+                    if (filter.test(event)) {
+                        sendMail(event, true);
+                    } else {
+                        ignoreEvent(event);
                     }
-                });
+                }
+            });
 
-                database.notifyChanged();
-            }
+            database.notifyChanged();
         }
     }
 
@@ -156,13 +150,13 @@ class CallProcessor {
 
             handleSuccess(event);
         } catch (AuthenticationFailedException x) {
-            handleError(x, x.toString(), event, R.string.notification_error_authentication, ACTION_SHOW_SERVER, silent);
+            handleError(event, x, R.string.notification_error_authentication, ACTION_SHOW_SERVER, silent);
         } catch (MailConnectException x) {
-            handleError(x, x.toString(), event, R.string.notification_error_connect, ACTION_SHOW_SERVER, silent);
+            handleError(event, x, R.string.notification_error_connect, ACTION_SHOW_SERVER, silent);
         } catch (MessagingException x) {
-            handleError(x, x.toString(), event, R.string.notification_error_mail_general, ACTION_SHOW_SERVER, silent);
+            handleError(event, x, R.string.notification_error_mail_general, ACTION_SHOW_SERVER, silent);
         } catch (Throwable x) {
-            handleError(x, x.toString(), event, R.string.notification_error_internal, ACTION_SHOW_MAIN, silent);
+            handleError(event, x, R.string.notification_error_internal, ACTION_SHOW_MAIN, silent);
         }
     }
 
@@ -179,34 +173,6 @@ class CallProcessor {
             formatter.setLocale(locale);
         }
         return formatter;
-    }
-
-//    private boolean checkPreferences(PhoneEvent event, boolean silent) {
-//        if (!settings.contains(KEY_PREF_EMAIL_HOST)) {
-//            handleError(null, "Host not specified", event, R.string.notification_error_no_host, ACTION_SHOW_SERVER, silent);
-//            return false;
-//        } else if (!settings.contains(KEY_PREF_EMAIL_PORT)) {
-//            handleError(null, "Port not specified", event, R.string.notification_error_no_port, ACTION_SHOW_SERVER, silent);
-//            return false;
-//        } else if (!settings.contains(KEY_PREF_SENDER_ACCOUNT)) {
-//            handleError(null, "Account not specified", event, R.string.notification_error_no_account, ACTION_SHOW_SERVER, silent);
-//            return false;
-//        } else if (!settings.contains(KEY_PREF_RECIPIENTS_ADDRESS)) {
-//            handleError(null, "Recipients not specified", event, R.string.notification_error_no_recipients, ACTION_SHOW_RECIPIENTS, silent);
-//            return false;
-//        }
-//        return true;
-//    }
-
-    private boolean checkInternetConnection(boolean silent) {
-        if (!hasInternetConnection(context)) {
-            log.warn("No internet connection");
-            if (!silent) {
-                notifications.showMailError(R.string.notification_error_no_connection, null, ACTION_SHOW_CONNECTION);
-            }
-            return false;
-        }
-        return true;
     }
 
     private void markSmsAsRead(final PhoneEvent event) {
@@ -241,6 +207,7 @@ class CallProcessor {
         event.setState(PhoneEvent.State.PROCESSED);
         event.setDetails(null);
         database.putEvent(event);
+
         notifications.hideMailError();
 
         if (settings.getBoolean(KEY_PREF_NOTIFY_SEND_SUCCESS, false)) {
@@ -251,12 +218,10 @@ class CallProcessor {
         }
     }
 
-    private void handleError(Throwable error, String details, PhoneEvent event, int notification,
-                             int action, boolean silent) {
+    private void handleError(PhoneEvent event, Throwable error, int notification, int action, boolean silent) {
         log.error("Send failed: " + event, error);
 
         event.setState(PhoneEvent.State.PENDING);
-        event.setDetails(details);
         database.putEvent(event);
 
         if (!silent) {
