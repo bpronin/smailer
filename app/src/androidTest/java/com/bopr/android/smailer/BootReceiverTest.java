@@ -14,7 +14,6 @@ import java.util.Collections;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anySetOf;
 import static org.mockito.Matchers.anyString;
@@ -66,7 +65,7 @@ public class BootReceiverTest extends BaseTest {
         receiver.onReceive(context, intent);
 
         Intent result = (Intent) invocations.get(0)[0];
-        assertEquals(OutgoingSmsService.class.getName(), result.getComponent().getClassName());
+        assertEquals(ContentObserverService.class.getName(), result.getComponent().getClassName());
     }
 
     /**

@@ -109,6 +109,9 @@ public class HistoryFragment extends BaseFragment {
             case R.id.action_remove_from_lists:
                 removeFromLists();
                 return true;
+            case R.id.action_ignore:
+                markAsIgnored();
+                return true;
             default:
                 return super.onContextItemSelected(item);
         }
@@ -224,6 +227,15 @@ public class HistoryFragment extends BaseFragment {
         }
     }
 
+    private void markAsIgnored() {
+        if (selectedListItemPosition != NO_POSITION) {
+            PhoneEvent event = listAdapter.getItem(selectedListItemPosition);
+            event.setState(PhoneEvent.State.IGNORED);
+            database.putEvent(event);
+            database.notifyChanged();
+        }
+    }
+
     private class ListAdapter extends RecyclerView.Adapter<ItemViewHolder> {
 
         private Context context;
@@ -289,6 +301,15 @@ public class HistoryFragment extends BaseFragment {
                     @Override
                     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
                         requireActivity().getMenuInflater().inflate(R.menu.menu_context_history, menu);
+                        if (event.getState() == PhoneEvent.State.IGNORED) {
+                            menu.removeItem(R.id.action_ignore);
+                        }
+                        if (phoneEventFilter.getPhoneBlacklist().contains(event.getPhone())) {
+                            menu.removeItem(R.id.action_add_to_blacklist);
+                        }
+                        if (phoneEventFilter.getPhoneWhitelist().contains(event.getPhone())) {
+                            menu.removeItem(R.id.action_add_to_whitelist);
+                        }
                     }
                 });
             }

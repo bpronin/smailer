@@ -18,6 +18,11 @@
             android:id="@+id/action_remove_from_lists"
             android:title="@string/title_remove_from_filter"
             />
+
+        <item
+            android:id="@+id/action_ignore"
+            android:title="@string/title_action_ignore"
+            />
     </group>
 
 </menu>

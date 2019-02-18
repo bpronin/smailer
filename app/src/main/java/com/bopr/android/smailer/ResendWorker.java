@@ -17,11 +17,14 @@ import androidx.work.WorkerParameters;
 
 import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
 
+/**
+ * Checks internet connection every 5 minutes and tries to resend email for all pending events.
+ */
 public class ResendWorker extends Worker {
 
     private static final Logger log = LoggerFactory.getLogger("ResendWorker");
 
-    private static final String WORKER_TAG = "samiler-resend";
+    private static final String WORKER_TAG = "smailer-resend";
 
     public ResendWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);

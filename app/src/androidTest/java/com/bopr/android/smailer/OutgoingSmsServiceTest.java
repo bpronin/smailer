@@ -6,18 +6,18 @@ package com.bopr.android.smailer;
 //import android.test.suitebuilder.annotation.SmallTest;
 
 /**
- * {@link OutgoingSmsService} tester.
+ * {@link ContentObserverService} tester.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 public class OutgoingSmsServiceTest
-//        extends ServiceTestCase<OutgoingSmsService>
+//        extends ServiceTestCase<ContentObserverService>
 {
 //
 //    private final AtomicBoolean mailServiceStarted = new AtomicBoolean();
 //
 //    public OutgoingSmsServiceTest() {
-//        super(OutgoingSmsService.class);
+//        super(ContentObserverService.class);
 //    }
 //
 //    @Override
@@ -39,7 +39,7 @@ public class OutgoingSmsServiceTest
 //     */
 //    @SmallTest
 //    public void testStart() throws Exception {
-//        Intent intent = OutgoingSmsService.createServiceIntent(getContext());
+//        Intent intent = ContentObserverService.createServiceIntent(getContext());
 //        startService(intent);
 //
 //        ContentValues values = new ContentValues();
@@ -119,7 +119,7 @@ public class OutgoingSmsServiceTest
 //        }
 //    }
 //
-//    private class TestContentResolverWrapper extends OutgoingSmsService.ContentResolverWrapper {
+//    private class TestContentResolverWrapper extends ContentObserverService.ContentResolverWrapper {
 //
 //        private TestContentProvider provider;
 //

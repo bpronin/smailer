@@ -2,7 +2,7 @@ package com.bopr.android.smailer.ui;
 
 import android.os.Bundle;
 
-import com.bopr.android.smailer.OutgoingSmsService;
+import com.bopr.android.smailer.ContentObserverService;
 import com.bopr.android.smailer.RemoteControlService;
 import com.bopr.android.smailer.ResendWorker;
 import com.bopr.android.smailer.Settings;
@@ -37,7 +37,7 @@ public class MainActivity extends AppActivity {
 
         Settings.putDefaults(this);
         RemoteControlService.enable(this);
-        OutgoingSmsService.toggleService(this);
+        ContentObserverService.enable(this);
 //        JobSchedulerService.toggleResendJob(this);
         ResendWorker.enable(this);
     }

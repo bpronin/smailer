@@ -17,20 +17,23 @@ import com.bopr.android.smailer.util.db.XCursor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Set;
+
 import androidx.annotation.Nullable;
 
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
 
 /**
- * Class OutgoingSmsService.
+ * Listens to changes in sms content.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class OutgoingSmsService extends Service {
+public class ContentObserverService extends Service {
+
+    private static Logger log = LoggerFactory.getLogger("ContentObserverService");
 
     public static final Uri CONTENT_SMS_SENT = Uri.parse("content://sms/sent");
     public static final Uri CONTENT_SMS = Uri.parse("content://sms");
-    private static Logger log = LoggerFactory.getLogger("OutgoingSmsService");
 
     private ContentObserver contentObserver;
     private Looper looper;
@@ -40,7 +43,7 @@ public class OutgoingSmsService extends Service {
     public void onCreate() {
         notifications = new Notifications(this);
 
-        HandlerThread thread = new HandlerThread("OutgoingSmsService");
+        HandlerThread thread = new HandlerThread("ContentObserverService");
         thread.start();
 
         looper = thread.getLooper();
@@ -75,19 +78,18 @@ public class OutgoingSmsService extends Service {
 
         Cursor query = getContentResolver().query(CONTENT_SMS_SENT, null, "_id=?", new String[]{id}, null);
         PhoneEvent event = new SentSmsCursor(query).findFirst();
-        CallProcessorService.start(OutgoingSmsService.this, event);
+        CallProcessorService.start(ContentObserverService.this, event);
     }
-
 
     /**
      * Starts or stops the service depending on settings
      *
      * @param context context
      */
-    public static void toggleService(Context context) {
-        Intent intent = new Intent(context, OutgoingSmsService.class);
-        PhoneEventFilter filter = new Settings(context).getFilter();
-        if (filter.getTriggers().contains(VAL_PREF_TRIGGER_OUT_SMS)) {
+    public static void enable(Context context) {
+        Intent intent = new Intent(context, ContentObserverService.class);
+        Set<String> triggers = new Settings(context).getFilter().getTriggers();
+        if (triggers.contains(VAL_PREF_TRIGGER_OUT_SMS)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(intent);
             } else {
