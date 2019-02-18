@@ -301,7 +301,7 @@ public class HistoryFragment extends BaseFragment {
                     @Override
                     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
                         requireActivity().getMenuInflater().inflate(R.menu.menu_context_history, menu);
-                        if (event.getState() == PhoneEvent.State.IGNORED) {
+                        if (event.getState() != PhoneEvent.State.PENDING) {
                             menu.removeItem(R.id.action_ignore);
                         }
                         if (phoneEventFilter.getPhoneBlacklist().contains(event.getPhone())) {
