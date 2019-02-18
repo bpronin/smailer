@@ -1,7 +1,9 @@
 package com.bopr.android.smailer;
 
 import android.content.res.Resources;
+
 import junit.framework.Assert;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -96,7 +98,7 @@ public class TagFormatterUnitTest {
         String text = formatter(PATTERN_ONE, resources)
                 .put("one", "ONE")
                 .put("two", "TWO")
-                .put("three", THREE)
+                .putRes("three", THREE)
                 .format();
 
         Assert.assertEquals("ONE, TWO and THREE", text);

@@ -75,12 +75,10 @@ public class PhoneEventFilter {
     }
 
     public boolean test(PhoneEvent event) {
-        return acceptTrigger(event)
-                && acceptPhone(event.getPhone())
-                && acceptText(event.getText());
+        return testTrigger(event) && testPhone(event.getPhone()) && testText(event.getText());
     }
 
-    public boolean acceptTrigger(PhoneEvent event) {
+    public boolean testTrigger(PhoneEvent event) {
         if (triggers.isEmpty()) {
             return true;
         } else if (event.isSms()) {
@@ -100,11 +98,11 @@ public class PhoneEventFilter {
         }
     }
 
-    public boolean acceptPhone(String phone) {
+    public boolean testPhone(String phone) {
         return containsPhone(phoneWhitelist, phone) || !containsPhone(phoneBlacklist, phone);
     }
 
-    public boolean acceptText(String text) {
+    public boolean testText(String text) {
         return containsText(textWhitelist, text) || !containsText(textBlacklist, text);
     }
 

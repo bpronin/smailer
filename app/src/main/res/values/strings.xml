@@ -123,6 +123,7 @@
     <string name="title_whitelist">Whitelist</string>
     <string name="title_phone_number">Phone number</string>
     <string name="title_action_ignore">Do not process call</string>
+    <string name="count_new">{count} new</string>
 
     <string-array name="titles_triggers">
         <item>Incoming SMS</item>

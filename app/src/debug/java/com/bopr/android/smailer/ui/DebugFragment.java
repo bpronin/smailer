@@ -44,6 +44,7 @@ import java.util.Properties;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.util.Consumer;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceScreen;
@@ -176,6 +177,23 @@ public class DebugFragment extends BasePreferenceFragment {
                     }
                 }),
 
+                createPreference("Mark all as unread", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        database.getEvents().iterate(new Consumer<PhoneEvent>() {
+
+                            @Override
+                            public void accept(PhoneEvent event) {
+                                event.setRead(false);
+                                database.putEvent(event);
+                            }
+                        });
+                        database.notifyChanged();
+                        showDone();
+                    }
+                }),
+
                 createPreference("Clear calls log", new DefaultClickListener() {
 
                     @Override
@@ -185,6 +203,7 @@ public class DebugFragment extends BasePreferenceFragment {
                         showDone();
                     }
                 }),
+
                 createPreference("Destroy database", new DefaultClickListener() {
 
                     @Override

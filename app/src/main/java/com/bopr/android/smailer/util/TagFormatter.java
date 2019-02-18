@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import androidx.annotation.NonNull;
+
 import static com.bopr.android.smailer.util.Util.isEmpty;
 
 /**
@@ -28,19 +30,19 @@ public class TagFormatter {
         return new TagFormatter(pattern);
     }
 
-    public static TagFormatter formatter(String pattern, Resources resources) {
+    public static TagFormatter formatter(String pattern, @NonNull Resources resources) {
         return new TagFormatter(pattern, resources);
     }
 
-    public static TagFormatter formatter(String pattern, Context context) {
+    public static TagFormatter formatter(String pattern, @NonNull Context context) {
         return formatter(pattern, context.getResources());
     }
 
-    public static TagFormatter formatter(Integer patternResourceId, Resources resources) {
+    public static TagFormatter formatter(Integer patternResourceId, @NonNull Resources resources) {
         return new TagFormatter(patternResourceId, resources);
     }
 
-    public static TagFormatter formatter(Integer patternResourceId, Context context) {
+    public static TagFormatter formatter(Integer patternResourceId, @NonNull Context context) {
         return formatter(patternResourceId, context.getResources());
     }
 
@@ -65,7 +67,7 @@ public class TagFormatter {
         return this;
     }
 
-    public TagFormatter put(String key, int resourceId) {
+    public TagFormatter putRes(String key, int resourceId) {
         return put(key, resources.getString(resourceId));
     }
 
@@ -96,6 +98,7 @@ public class TagFormatter {
         return result;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return format();

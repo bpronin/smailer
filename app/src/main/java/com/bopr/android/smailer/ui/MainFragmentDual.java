@@ -17,7 +17,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.preference.Preference;
 import androidx.preference.Preference.OnPreferenceClickListener;
 
-import static com.bopr.android.smailer.Settings.KEY_PREF_LOG;
+import static com.bopr.android.smailer.Settings.KEY_PREF_HISTORY;
 import static com.bopr.android.smailer.Settings.KEY_PREF_MORE;
 import static com.bopr.android.smailer.Settings.KEY_PREF_OUTGOING_SERVER;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
@@ -70,7 +70,7 @@ public class MainFragmentDual extends BaseFragment {
                 case KEY_PREF_RULES:
                     fragment = new RulesFragment();
                     break;
-                case KEY_PREF_LOG:
+                case KEY_PREF_HISTORY:
                     fragment = new HistoryFragment();
                     break;
                 default:

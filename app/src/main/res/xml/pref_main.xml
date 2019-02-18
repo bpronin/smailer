@@ -23,7 +23,7 @@
 
     <androidx.preference.PreferenceScreen
         android:icon="@drawable/ic_pref_log"
-        android:key="log"
+        android:key="history"
         android:title="@string/title_activity_log" />
 
 </androidx.preference.PreferenceScreen>

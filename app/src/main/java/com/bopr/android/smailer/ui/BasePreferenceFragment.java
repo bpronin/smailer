@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.EditTextPreference;
@@ -144,8 +145,12 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
      * @param value      value
      * @param preference preference
      */
-    void updateSummary(String value, Preference preference, boolean valid) {
-        preference.setSummary(AndroidUtil.validatedUnderlinedText(getContext(), value, valid));
+    void updateSummary(@Nullable String value, Preference preference, boolean valid) {
+        if (value != null) {
+            preference.setSummary(AndroidUtil.validatedUnderlinedText(getContext(), value, valid));
+        } else {
+            preference.setSummary(null);
+        }
     }
 
     /**

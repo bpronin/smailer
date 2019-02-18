@@ -1,7 +1,9 @@
 package com.bopr.android.smailer.util;
 
 import android.content.res.Resources;
+
 import com.bopr.android.smailer.BaseTest;
+
 import org.junit.Test;
 
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
@@ -92,7 +94,7 @@ public class TagFormatterTest extends BaseTest {
         String text = formatter(PATTERN_ONE, resources)
                 .put("one", "ONE")
                 .put("two", "TWO")
-                .put("three", THREE)
+                .putRes("three", THREE)
                 .format();
 
         assertEquals("ONE, TWO and THREE", text);

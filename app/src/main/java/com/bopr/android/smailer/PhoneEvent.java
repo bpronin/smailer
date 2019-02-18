@@ -31,6 +31,7 @@ public class PhoneEvent implements Parcelable {
     private String details;
     private GeoCoordinates location;
     private State state = State.PENDING;
+    private boolean read;
 
     public PhoneEvent() {
     }
@@ -139,6 +140,14 @@ public class PhoneEvent implements Parcelable {
         this.state = state;
     }
 
+    public boolean isRead() {
+        return read;
+    }
+
+    public void setRead(boolean value) {
+        this.read = value;
+    }
+
     @NonNull
     @Override
     public String toString() {
@@ -157,7 +166,6 @@ public class PhoneEvent implements Parcelable {
     }
 
     /* Generated Parcelable stuff implementation */
-
     protected PhoneEvent(Parcel in) {
         if (in.readByte() == 0) {
             id = null;
@@ -179,6 +187,7 @@ public class PhoneEvent implements Parcelable {
         }
         text = in.readString();
         details = in.readString();
+        read = in.readByte() != 0;
     }
 
     @Override
@@ -206,6 +215,7 @@ public class PhoneEvent implements Parcelable {
         }
         dest.writeString(text);
         dest.writeString(details);
+        dest.writeByte((byte) (read ? 1 : 0));
     }
 
     @Override
@@ -214,7 +224,6 @@ public class PhoneEvent implements Parcelable {
     }
 
     public static final Creator<PhoneEvent> CREATOR = new Creator<PhoneEvent>() {
-
         @Override
         public PhoneEvent createFromParcel(Parcel in) {
             return new PhoneEvent(in);

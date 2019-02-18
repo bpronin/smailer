@@ -31,7 +31,7 @@ public class Database {
 
     private static Logger log = LoggerFactory.getLogger("Database");
 
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
 
     private static final String DATABASE_EVENT = "database-event";
 
@@ -54,6 +54,7 @@ public class Database {
     private static final String COLUMN_LAST_LATITUDE = "last_latitude";
     private static final String COLUMN_LAST_LONGITUDE = "last_longitude";
     private static final String COLUMN_LAST_LOCATION_TIME = "last_location_time";
+    private static final String COLUMN_READ = "message_read";
 
     private final String name;
     private int capacity = 10000;
@@ -118,6 +119,11 @@ public class Database {
         );
     }
 
+    public long getUnreadEventsCount() {
+        return XCursor.forLong(helper.getReadableDatabase().query(TABLE_EVENTS, new String[]{COLUMN_COUNT},
+                COLUMN_READ + "=0", null, null, null, null));
+    }
+
     public void putEvent(PhoneEvent event) {
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -131,6 +137,7 @@ public class Database {
         values.put(COLUMN_END_TIME, event.getEndTime());
         values.put(COLUMN_TEXT, event.getText());
         values.put(COLUMN_DETAILS, event.getDetails());
+        values.put(COLUMN_READ, event.isRead());
         GeoCoordinates location = event.getLocation();
         if (location != null) {
             values.put(COLUMN_LATITUDE, location.getLatitude());
@@ -228,11 +235,11 @@ public class Database {
         context.deleteDatabase(name);
     }
 
-    public void addListener(BroadcastReceiver listener) {
+    public void registerListener(BroadcastReceiver listener) {
         LocalBroadcastManager.getInstance(context).registerReceiver(listener, new IntentFilter(DATABASE_EVENT));
     }
 
-    public void removeListener(BroadcastReceiver listener) {
+    public void unregisterListener(BroadcastReceiver listener) {
         LocalBroadcastManager.getInstance(context).unregisterReceiver(listener);
     }
 
@@ -286,6 +293,7 @@ public class Database {
                     COLUMN_LONGITUDE + " REAL, " +
                     COLUMN_PHONE + " TEXT(25)," +
                     COLUMN_TEXT + " TEXT(256)," +
+                    COLUMN_READ + " INTEGER, " +
                     COLUMN_DETAILS + " TEXT(256)" +
                     ")");
 
@@ -306,7 +314,10 @@ public class Database {
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            /* no updates yet - do nothing */
+            if (newVersion == 2 && oldVersion == 1) {
+                db.execSQL("ALTER TABLE " + TABLE_EVENTS  +
+                        " ADD " + COLUMN_READ + " INTEGER");
+            }
         }
 
     }

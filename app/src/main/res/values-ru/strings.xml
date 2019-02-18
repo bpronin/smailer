@@ -120,6 +120,7 @@
     <string name="notifications_service_running">Служба запущена</string>
     <string name="title_phone_number">Телефон</string>
     <string name="title_action_ignore">Игнорировать</string>
+    <string name="count_new">{count} новых</string>
 
     <string-array name="titles_triggers">
         <item>Входящие SMS</item>

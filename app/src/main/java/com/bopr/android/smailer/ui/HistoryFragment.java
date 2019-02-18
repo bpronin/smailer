@@ -72,17 +72,9 @@ public class HistoryFragment extends BaseFragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        database.removeListener(databaseListener);
-        database.close();
-        settings.unregisterOnSharedPreferenceChangeListener(settingsChangeListener);
-    }
-
-    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         database = new Database(getContext());
-        database.addListener(databaseListener);
+        database.registerListener(databaseListener);
         View view = inflater.inflate(R.layout.fragment_log, container, false);
 
         listView = view.findViewById(android.R.id.list);
@@ -95,6 +87,14 @@ public class HistoryFragment extends BaseFragment {
     public void onStart() {
         super.onStart();
         loadData();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        database.unregisterListener(databaseListener);
+        database.close();
+        settings.unregisterOnSharedPreferenceChangeListener(settingsChangeListener);
     }
 
     @Override
@@ -263,14 +263,14 @@ public class HistoryFragment extends BaseFragment {
                 holder.timeView.setText(DateFormat.format(getString(R.string.event_time_pattern), event.getStartTime()));
 
                 holder.textView.setText(event.getText());
-                if (phoneEventFilter.acceptText(event.getText())) {
+                if (phoneEventFilter.testText(event.getText())) {
                     holder.textView.setPaintFlags(holder.defaultPhoneFlags);
                 } else {
                     holder.textView.setPaintFlags(holder.defaultPhoneFlags | Paint.STRIKE_THRU_TEXT_FLAG);
                 }
 
                 holder.phoneView.setText(event.getPhone());
-                if (phoneEventFilter.acceptPhone(event.getPhone())) {
+                if (phoneEventFilter.testPhone(event.getPhone())) {
                     holder.phoneView.setPaintFlags(holder.defaultPhoneFlags);
                 } else {
                     holder.phoneView.setPaintFlags(holder.defaultPhoneFlags | Paint.STRIKE_THRU_TEXT_FLAG);
@@ -312,6 +312,9 @@ public class HistoryFragment extends BaseFragment {
                         }
                     }
                 });
+
+                event.setRead(true);
+                database.putEvent(event);
             }
         }
 

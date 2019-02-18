@@ -112,7 +112,7 @@ public class RulesFragment extends BasePreferenceFragment {
         if (size > 0) {
             return formatter.put("size", String.valueOf(size)).format();
         } else {
-            return formatter.put("size", zeroSizeText).format();
+            return formatter.putRes("size", zeroSizeText).format();
         }
     }
 

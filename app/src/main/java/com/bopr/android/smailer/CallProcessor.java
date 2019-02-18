@@ -205,7 +205,6 @@ class CallProcessor {
 
     private void handleSuccess(PhoneEvent event) {
         event.setState(PhoneEvent.State.PROCESSED);
-        event.setDetails(null);
         database.putEvent(event);
 
         notifications.hideMailError();
@@ -219,7 +218,7 @@ class CallProcessor {
     }
 
     private void handleError(PhoneEvent event, Throwable error, int notification, int action, boolean silent) {
-        log.error("Send failed: " + event, error);
+        log.warn("Send failed: " + event, error);
 
         event.setState(PhoneEvent.State.PENDING);
         database.putEvent(event);

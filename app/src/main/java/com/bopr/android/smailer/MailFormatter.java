@@ -113,7 +113,7 @@ class MailFormatter {
     @NonNull
     String formatSubject() {
         return formatter(SUBJECT_PATTERN, resources)
-                .put("app_name", R.string.app_name)
+                .putRes("app_name", R.string.app_name)
                 .put("source", formatTrigger())
                 .put("phone", event.getPhone())
                 .format();
@@ -297,7 +297,7 @@ class MailFormatter {
                     .format();
         } else {
             return formatter(R.string.email_body_location, resources)
-                    .put("location", GeoLocator.isPermissionsDenied(context) /* base context here */
+                    .putRes("location", GeoLocator.isPermissionsDenied(context) /* base context here */
                             ? R.string.email_body_unknown_location_no_permission
                             : R.string.email_body_unknown_location)
                     .format();
