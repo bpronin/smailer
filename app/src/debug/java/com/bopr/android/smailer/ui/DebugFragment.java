@@ -34,14 +34,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Properties;
 
 import androidx.annotation.NonNull;
@@ -268,7 +266,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        onSendLog();
+                        new SendLogTask(getActivity(), loadDebugProperties()).execute();
                     }
                 })
         );
@@ -580,10 +578,6 @@ public class DebugFragment extends BasePreferenceFragment {
         }
     }
 
-    private void onSendLog() {
-        new SendLogTask(getActivity(), loadDebugProperties()).execute();
-    }
-
     private void onShowConcurrent() {
         StringBuilder b = new StringBuilder();
 
@@ -678,19 +672,9 @@ public class DebugFragment extends BasePreferenceFragment {
 
         @Override
         protected String doInBackground(Void... params) {
-            File[] logs = getActivity().getFilesDir().listFiles(new FilenameFilter() {
-
-                @Override
-                public boolean accept(File dir, String name) {
-                    return name.toLowerCase(Locale.ROOT).endsWith(".log");
-                }
-            });
-
-            File database = getActivity().getDatabasePath(Settings.DB_NAME);
-
             List<File> attachment = new LinkedList<>();
-            attachment.add(database);
-            attachment.addAll(Arrays.asList(logs));
+            attachment.add(getActivity().getDatabasePath(Settings.DB_NAME));
+            attachment.addAll(Arrays.asList(new File(getActivity().getFilesDir(), "log").listFiles()));
 
             try {
                 String user = properties.getProperty("default_sender");

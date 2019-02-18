@@ -9,9 +9,11 @@
         </encoder>
     </appender>
 
+    <property name="LOG_DIR" value="/data/data/com.bopr.android.smailer/files/log" />
+
     <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <lazy>true</lazy>
-        <file>/data/data/com.bopr.android.smailer/files/app.log</file>
+        <file>${LOG_DIR}/app.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_DIR}/app.%d.log</fileNamePattern>
             <maxHistory>7</maxHistory>

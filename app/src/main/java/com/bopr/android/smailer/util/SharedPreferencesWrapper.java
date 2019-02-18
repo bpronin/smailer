@@ -27,6 +27,13 @@ public class SharedPreferencesWrapper implements SharedPreferences {
         return wrappedPreferences.getString(key, defValue);
     }
 
+    public String requireString(String key) {
+        if (!contains(key)) {
+            throw new IllegalStateException("No required preference: " + key);
+        }
+        return getString(key, "");
+    }
+
     @Nullable
     @Override
     public Set<String> getStringSet(String key, @Nullable Set<String> defValues) {
@@ -90,19 +97,9 @@ public class SharedPreferencesWrapper implements SharedPreferences {
             return this;
         }
 
-        public EditorWrapper putStringOptional(String key, @Nullable String value) {
-            if (contains(key)) wrappedEditor.putString(key, value);
-            return this;
-        }
-
         @Override
         public EditorWrapper putStringSet(String key, @Nullable Set<String> values) {
             wrappedEditor.putStringSet(key, values);
-            return this;
-        }
-
-        public EditorWrapper putStringSetOptional(String key, @Nullable Set<String> values) {
-            if (contains(key)) wrappedEditor.putStringSet(key, values);
             return this;
         }
 
@@ -112,19 +109,9 @@ public class SharedPreferencesWrapper implements SharedPreferences {
             return this;
         }
 
-        public EditorWrapper putIntOptional(String key, int value) {
-            if (contains(key)) wrappedEditor.putInt(key, value);
-            return this;
-        }
-
         @Override
         public EditorWrapper putLong(String key, long value) {
             wrappedEditor.putLong(key, value);
-            return this;
-        }
-
-        public EditorWrapper putLongOptional(String key, long value) {
-            if (contains(key)) wrappedEditor.putLong(key, value);
             return this;
         }
 
@@ -134,19 +121,51 @@ public class SharedPreferencesWrapper implements SharedPreferences {
             return this;
         }
 
-        public EditorWrapper putFloatOptional(String key, float value) {
-            if (contains(key)) wrappedEditor.putFloat(key, value);
-            return this;
-        }
-
         @Override
         public EditorWrapper putBoolean(String key, boolean value) {
             wrappedEditor.putBoolean(key, value);
             return this;
         }
 
+        public EditorWrapper putStringOptional(String key, @Nullable String value) {
+            if (!contains(key)){
+                wrappedEditor.putString(key, value);
+            }
+            return this;
+        }
+
+        public EditorWrapper putStringSetOptional(String key, @Nullable Set<String> values) {
+            if (!contains(key)){
+                wrappedEditor.putStringSet(key, values);
+            }
+            return this;
+        }
+
+        public EditorWrapper putIntOptional(String key, int value) {
+            if (!contains(key)){
+                wrappedEditor.putInt(key, value);
+            }
+            return this;
+        }
+
+        public EditorWrapper putLongOptional(String key, long value) {
+            if (!contains(key)){
+                wrappedEditor.putLong(key, value);
+            }
+            return this;
+        }
+
+        public EditorWrapper putFloatOptional(String key, float value) {
+            if (!contains(key)){
+                wrappedEditor.putFloat(key, value);
+            }
+            return this;
+        }
+
         public EditorWrapper putBooleanOptional(String key, boolean value) {
-            if (contains(key)) wrappedEditor.putBoolean(key, value);
+            if (!contains(key)){
+                wrappedEditor.putBoolean(key, value);
+            }
             return this;
         }
 
