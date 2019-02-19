@@ -18,8 +18,10 @@ import androidx.annotation.Nullable;
 
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CONTACT;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME;
+import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_HEADER;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_LOCATION;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME;
+import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.Util.formatDuration;
 import static com.bopr.android.smailer.util.Util.isEmpty;
@@ -33,9 +35,10 @@ import static java.lang.String.valueOf;
 class MailFormatter {
 
     private static final String SUBJECT_PATTERN = "[{app_name}] {source} {phone}";
+    private static final String HEADER_PATTERN = "<strong>{header}</strong><br>";
     private static final String BODY_PATTERN = "<html>" +
             "<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
-            "<body>{message}{line}{footer}</body></html>";
+            "<body>{header}{message}{line}{footer}</body></html>";
     private static final String LINE = "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">";
     private static final String GOOGLE_MAP_LINK_PATTERN = "<a href=\"https://www.google.com/maps/" +
             "place/{latitude}+{longitude}/@{latitude},{longitude}\">{location}</a>";
@@ -128,7 +131,8 @@ class MailFormatter {
     String formatBody() {
         String footer = formatFooter();
 
-        return formatter(BODY_PATTERN)
+        return formatter(BODY_PATTERN, resources)
+                .put("header", formatHeader())
                 .put("message", formatMessage())
                 .put("footer", footer)
                 .put("line", !isEmpty(footer) ? LINE : null)
@@ -178,12 +182,22 @@ class MailFormatter {
     }
 
     @Nullable
+    private String formatHeader() {
+        if (contentOptions != null && contentOptions.contains(VAL_PREF_EMAIL_CONTENT_HEADER)) {
+            return formatter(HEADER_PATTERN, resources)
+                    .putRes("header", Formats.eventTypeText(context, event))
+                    .format();
+        }
+        return null;
+    }
+
+    @Nullable
     private String formatFooter() {
         if (contentOptions != null) {
             String callerText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_CONTACT) ? formatCaller() : null;
             String timeText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME) ? formatEventTime() : null;
             String deviceNameText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME) ? formatDeviceName() : null;
-            String sendTimeText = formatSendTime();
+            String sendTimeText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT) ? formatSendTime() : null;
             String locationText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_LOCATION) ? formatLocation() : null;
 
             StringBuilder text = new StringBuilder();
@@ -277,6 +291,7 @@ class MailFormatter {
         return null;
     }
 
+    @NonNull
     private String formatSendTime() {
         DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
         return " " + formatter(R.string.email_body_at_time, resources)

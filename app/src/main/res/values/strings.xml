@@ -134,7 +134,9 @@
     </string-array>
 
     <string-array name="titles_email_content">
-        <item>Time</item>
+        <item>Header</item>
+        <item>Call time</item>
+        <item>Sending time</item>
         <item>Caller contact name</item>
         <item>Device name</item>
         <item>Device location</item>

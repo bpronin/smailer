@@ -3,11 +3,17 @@ package com.bopr.android.smailer;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.telephony.TelephonyManager;
+import android.os.Build;
+import android.telephony.SmsMessage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import androidx.annotation.NonNull;
+
+import static android.content.Intent.ACTION_NEW_OUTGOING_CALL;
+import static android.provider.Telephony.Sms.Intents.getMessagesFromIntent;
+import static android.telephony.TelephonyManager.ACTION_PHONE_STATE_CHANGED;
 import static android.telephony.TelephonyManager.EXTRA_INCOMING_NUMBER;
 import static android.telephony.TelephonyManager.EXTRA_STATE;
 import static android.telephony.TelephonyManager.EXTRA_STATE_IDLE;
@@ -16,13 +22,15 @@ import static android.telephony.TelephonyManager.EXTRA_STATE_RINGING;
 import static java.lang.System.currentTimeMillis;
 
 /**
- * Receives phone call intents and starts mailer service.
+ * Receives phone call and sms intents and starts mailer service.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 public class CallReceiver extends BroadcastReceiver {
 
     private static Logger log = LoggerFactory.getLogger("CallReceiver");
+
+    public static final String SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED";
 
     private static String lastCallState = EXTRA_STATE_IDLE;
     private static long callStartTime;
@@ -33,14 +41,19 @@ public class CallReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         log.debug("Received intent: " + intent);
 
-        //noinspection ConstantConditions
-        switch (intent.getAction()) {
-            case Intent.ACTION_NEW_OUTGOING_CALL:
-                lastCallNumber = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
-                break;
-            case TelephonyManager.ACTION_PHONE_STATE_CHANGED:
-                onCallStateChanged(context, intent);
-                break;
+        String action = intent.getAction();
+        if (action != null) {
+            switch (action) {
+                case ACTION_NEW_OUTGOING_CALL:
+                    lastCallNumber = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
+                    break;
+                case ACTION_PHONE_STATE_CHANGED:
+                    onCallStateChanged(context, intent);
+                    break;
+                case SMS_RECEIVED:
+                    onSmsReceived(context, intent);
+                    break;
+            }
         }
     }
 
@@ -52,7 +65,7 @@ public class CallReceiver extends BroadcastReceiver {
      * @param context context
      * @param intent  call state intent
      */
-    private void onCallStateChanged(Context context, Intent intent) {
+    private void onCallStateChanged(@NonNull Context context, @NonNull Intent intent) {
         String callState = intent.getStringExtra(EXTRA_STATE);
         if (!lastCallState.equals(callState)) {
             if (callState.equals(EXTRA_STATE_RINGING)) {
@@ -82,7 +95,7 @@ public class CallReceiver extends BroadcastReceiver {
         }
     }
 
-    private void processCall(Context context, boolean incoming, boolean missed) {
+    private void processCall(@NonNull Context context, boolean incoming, boolean missed) {
         PhoneEvent event = new PhoneEvent();
         event.setPhone(lastCallNumber);
         event.setStartTime(callStartTime);
@@ -93,4 +106,45 @@ public class CallReceiver extends BroadcastReceiver {
         CallProcessorService.start(context, event);
     }
 
+    /**
+     * Processes sms intent.
+     */
+    void onSmsReceived(@NonNull Context context, @NonNull Intent intent) {
+        SmsMessage[] messages;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            messages = getMessagesFromIntent(intent);
+        } else {
+            messages = parseMessageLegacy(intent);
+        }
+
+        PhoneEvent event = new PhoneEvent();
+        event.setIncoming(true);
+        if (messages.length > 0) {
+
+            StringBuilder text = new StringBuilder();
+            for (SmsMessage message : messages) {
+                text.append(message.getDisplayMessageBody());
+            }
+
+            event.setPhone(messages[0].getDisplayOriginatingAddress());
+            event.setStartTime(messages[0].getTimestampMillis()); /* time zone on emulator may be incorrect */
+            event.setEndTime(event.getStartTime());
+            event.setText(text.toString());
+        }
+
+        CallProcessorService.start(context, event);
+    }
+
+    @NonNull
+    @SuppressWarnings("deprecation")
+    private SmsMessage[] parseMessageLegacy(Intent intent) {
+        SmsMessage[] messages;
+        Object[] pdus = (Object[]) intent.getSerializableExtra("pdus");
+        messages = new SmsMessage[pdus.length];
+        for (int i = 0; i < pdus.length; i++) {
+            byte[] pdu = (byte[]) pdus[i];
+            messages[i] = SmsMessage.createFromPdu(pdu);
+        }
+        return messages;
+    }
 }

@@ -17,6 +17,7 @@ import com.bopr.android.smailer.util.db.XCursor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Set;
 
 import androidx.annotation.Nullable;
@@ -73,8 +74,8 @@ public class ContentObserverService extends Service {
         return null;
     }
 
-    private void processEvent(String id) {
-        log.debug("Processing sms: " + id);
+    private void processOutgoingSms(String id) {
+        log.debug("Processing outgoing sms: " + id);
 
         Cursor query = getContentResolver().query(CONTENT_SMS_SENT, null, "_id=?", new String[]{id}, null);
         PhoneEvent event = new SentSmsCursor(query).findFirst();
@@ -126,7 +127,7 @@ public class ContentObserverService extends Service {
 
     private class SmsContentObserver extends ContentObserver {
 
-        private String lastProcessed;
+        private Uri lastProcessed;
 
         private SmsContentObserver(Handler handler) {
             super(handler);
@@ -138,14 +139,29 @@ public class ContentObserverService extends Service {
         }
 
         @Override
+
         public void onChange(boolean selfChange, Uri uri) {
-            /* this method can be called multiple times so we need to remember processed message */
-            if (uri != null) {
-                String id = uri.getLastPathSegment();
-                if (id != null && !id.equals(lastProcessed)) {
-                    lastProcessed = id;
-                    processEvent(id);
+            /* this method may be called multiple times so we need to remember processed uri */
+            if (uri != null && !uri.equals(lastProcessed)) {
+                log.debug("Processing uri: " + uri);
+
+                List<String> segments = uri.getPathSegments();
+                if (!segments.isEmpty()) {
+                    String segment = segments.get(0);
+                    switch (segment) {
+                        case "raw":
+                            log.debug("sms/raw changed");
+                            break;
+                        case "inbox":
+                            log.debug("sms/inbox segment changed");
+                            break;
+                        default:
+                            processOutgoingSms(segment);
+                            break;
+                    }
                 }
+
+                lastProcessed = uri;
             }
         }
     }

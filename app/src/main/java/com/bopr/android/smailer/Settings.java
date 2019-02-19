@@ -54,9 +54,11 @@ public class Settings extends SharedPreferencesWrapper {
     public static final String KEY_PREF_FIREBASE_TOKEN = "firebase_token";
 
     public static final String VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME = "time";
+    public static final String VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT = "time_sent";
     public static final String VAL_PREF_EMAIL_CONTENT_DEVICE_NAME = "device_name";
     public static final String VAL_PREF_EMAIL_CONTENT_LOCATION = "location";
     public static final String VAL_PREF_EMAIL_CONTENT_CONTACT = "contact_name";
+    public static final String VAL_PREF_EMAIL_CONTENT_HEADER = "header";
     public static final String VAL_PREF_TRIGGER_IN_SMS = "in_sms";
     public static final String VAL_PREF_TRIGGER_OUT_SMS = "out_sms";
     public static final String VAL_PREF_TRIGGER_IN_CALLS = "in_calls";
@@ -67,7 +69,9 @@ public class Settings extends SharedPreferencesWrapper {
     public static final String DEFAULT_PORT = "465";
     public static final String DEFAULT_LOCALE = "default";
     public static final Set<String> DEFAULT_CONTENT = asSet(
+            VAL_PREF_EMAIL_CONTENT_HEADER,
             VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
+            VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT,
             VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
             VAL_PREF_EMAIL_CONTENT_LOCATION,
             VAL_PREF_EMAIL_CONTENT_CONTACT);

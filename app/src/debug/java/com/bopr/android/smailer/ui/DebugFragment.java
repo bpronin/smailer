@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.bopr.android.smailer.CallProcessorService;
+import com.bopr.android.smailer.CallReceiver;
 import com.bopr.android.smailer.Contacts;
 import com.bopr.android.smailer.Cryptor;
 import com.bopr.android.smailer.Database;
@@ -24,7 +25,6 @@ import com.bopr.android.smailer.Notifications;
 import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.Settings;
-import com.bopr.android.smailer.SmsReceiver;
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.ui.ActivityAsyncTask;
 import com.bopr.android.smailer.util.ui.LongAsyncTask;
@@ -546,7 +546,7 @@ public class DebugFragment extends BasePreferenceFragment {
     private void onClearLogs() {
         File[] logs = new File(requireContext().getFilesDir(), "log").listFiles();
         for (File file : logs) {
-            if (!file.delete()){
+            if (!file.delete()) {
                 log.warn("Cannot delete file");
             }
         }
@@ -584,7 +584,7 @@ public class DebugFragment extends BasePreferenceFragment {
     private void onEmulateSms() {
         if (!AndroidUtil.isPermissionsDenied(context, BROADCAST_SMS)) {
 
-            Intent intent = new Intent(SmsReceiver.SMS_RECEIVED_ACTION);
+            Intent intent = new Intent(CallReceiver.SMS_RECEIVED);
             intent.putExtra("pdus", new Object[]{Base64.decode("ACADgSHzAABhQEASFTQhBcgym/0G", Base64.NO_WRAP)});
             intent.putExtra("format", "3gpp");
 

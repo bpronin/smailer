@@ -13,7 +13,9 @@
     </string-array>
 
     <string-array name="email_content_values" translatable="false">
+        <item>header</item>
         <item>time</item>
+        <item>time_sent</item>
         <item>contact_name</item>
         <item>device_name</item>
         <item>location</item>
