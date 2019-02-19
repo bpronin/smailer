@@ -57,7 +57,7 @@ public class RulesFragment extends BasePreferenceFragment {
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
                 updateSummary(preference, formatListAndSize((String) value, R.string.unacceptable_phone_numbers,
-                        R.string.none), STYLE_DEFAULT);
+                        R.string._none), STYLE_DEFAULT);
                 return true;
             }
         });
@@ -95,7 +95,7 @@ public class RulesFragment extends BasePreferenceFragment {
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
                 updateSummary(preference, formatListAndSize((String) value, R.string.unacceptable_words,
-                        R.string.none), STYLE_DEFAULT);
+                        R.string._none), STYLE_DEFAULT);
                 return true;
             }
         });

@@ -46,11 +46,11 @@ public class MainFragment extends BasePreferenceFragment {
     private Preference serverPreference;
     private OnSharedPreferenceChangeListener settingsListener;
     private Preference.OnPreferenceClickListener preferenceClickListener;
-    private boolean asListView;
     private BackupManager backupManager;
     private Database database;
     private BroadcastReceiver databaseListener;
     private Preference historyPreference;
+    private boolean asListView;
 
     public MainFragment() {
         setAsListView(false);
@@ -79,13 +79,7 @@ public class MainFragment extends BasePreferenceFragment {
         settings.registerOnSharedPreferenceChangeListener(settingsListener);
 
         database = new Database(getContext());
-        databaseListener = new BroadcastReceiver() {
-
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                updateHistoryPreference();
-            }
-        };
+        databaseListener = new DatabaseListener();
         database.registerListener(databaseListener);
     }
 
@@ -209,6 +203,14 @@ public class MainFragment extends BasePreferenceFragment {
             }
 
             backupManager.dataChanged();
+        }
+    }
+
+    private class DatabaseListener extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateHistoryPreference();
         }
     }
 }

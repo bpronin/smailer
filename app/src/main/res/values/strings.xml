@@ -3,6 +3,7 @@
     <string name="_any">any</string>
     <string name="_at_time">at {time}</string>
     <string name="_from_device">from {device_name}</string>
+    <string name="_none">none</string>
     <string name="_time_pattern" translatable="false">yyyy-MM-dd HH:mm:ss</string>
     <string name="about">About</string>
     <string name="acceptable_phone_numbers">Acceptable phone numbers ({size})</string>
@@ -63,7 +64,6 @@
     <string name="no_port_specified">No port specified.</string>
     <string name="no_recipients_specified">No recipients specified.</string>
     <string name="no_triggers_specified">All triggers disabled</string>
-    <string name="none">none</string>
     <string name="not_specified">Not specified</string>
     <string name="notifications">Notifications</string>
     <string name="notify_on_send">Notify of send</string>

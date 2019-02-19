@@ -3,6 +3,7 @@
     <string name="_any">любые</string>
     <string name="_at_time"> {time}</string>
     <string name="_from_device">с устройства \"{device_name}\"</string>
+    <string name="_none">отсутствуют</string>
     <string name="about">О приложении</string>
     <string name="acceptable_phone_numbers">Разрешенные номера ({size})</string>
     <string name="acceptable_words">Разрешенные фразы ({size})</string>
@@ -61,7 +62,6 @@
     <string name="no_port_specified">Не указан порт серевера исходящей почты.</string>
     <string name="no_recipients_specified">Не указан получатель.</string>
     <string name="no_triggers_specified">Все триггеры отключены</string>
-    <string name="none">отсутствуют</string>
     <string name="not_specified">Не указано</string>
     <string name="notifications">Уведомления</string>
     <string name="notify_on_send">Уведомлять об отправке</string>
