@@ -26,8 +26,6 @@ import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.Settings;
 import com.bopr.android.smailer.util.AndroidUtil;
-import com.bopr.android.smailer.util.ui.ActivityAsyncTask;
-import com.bopr.android.smailer.util.ui.LongAsyncTask;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -191,7 +189,7 @@ public class DebugFragment extends BasePreferenceFragment {
                             }
                         });
                         database.notifyChanged();
-                        showDone();
+                        showDone(context);
                     }
                 }),
 
@@ -208,7 +206,7 @@ public class DebugFragment extends BasePreferenceFragment {
                             }
                         });
                         database.notifyChanged();
-                        showDone();
+                        showDone(context);
                     }
                 }),
 
@@ -218,7 +216,7 @@ public class DebugFragment extends BasePreferenceFragment {
                     protected void onClick(Preference preference) {
                         database.clearEvents();
                         database.notifyChanged();
-                        showDone();
+                        showDone(context);
                     }
                 }),
 
@@ -227,7 +225,7 @@ public class DebugFragment extends BasePreferenceFragment {
                     @Override
                     protected void onClick(Preference preference) {
                         database.destroy();
-                        showDone();
+                        showDone(context);
                     }
                 })
 
@@ -398,10 +396,6 @@ public class DebugFragment extends BasePreferenceFragment {
         }
     }
 
-    private void showDone() {
-        Toast.makeText(context, "Done", Toast.LENGTH_SHORT).show();
-    }
-
     private void onSetDebugPreferences() {
         Properties properties = loadDebugProperties();
 
@@ -428,7 +422,7 @@ public class DebugFragment extends BasePreferenceFragment {
                 .apply();
 
         refreshPreferences();
-        showDone();
+        showDone(context);
     }
 
     private void onGetContact() {
@@ -462,12 +456,12 @@ public class DebugFragment extends BasePreferenceFragment {
     private void onClearPreferences() {
         settings.edit().clear().apply();
         refreshPreferences();
-        showDone();
+        showDone(context);
     }
 
     private void onSendDebugMail() {
         new SendDefaultMailTask(getActivity(), loadDebugProperties()).execute();
-        showDone();
+        showDone(context);
     }
 
     private void onStartProcessSingleEvent() {
@@ -481,12 +475,12 @@ public class DebugFragment extends BasePreferenceFragment {
         event.setEndTime(start + 10000);
 
         CallProcessorService.start(context, event);
-        showDone();
+        showDone(context);
     }
 
     private void onStartProcessPendingEvents() {
         CallProcessorService.start(context);
-        showDone();
+        showDone(context);
     }
 
     private void onRequireReceiveSmsPermission() {
@@ -550,7 +544,7 @@ public class DebugFragment extends BasePreferenceFragment {
                 log.warn("Cannot delete file");
             }
         }
-        showDone();
+        showDone(context);
     }
 
     private void onShowPassword() {
@@ -561,7 +555,7 @@ public class DebugFragment extends BasePreferenceFragment {
     private void onAddHistoryItem() {
         database.putEvent(new PhoneEvent("+79052345670", true, System.currentTimeMillis(), null, false, "Debug message", null, null, PhoneEvent.State.PENDING));
         database.notifyChanged();
-        showDone();
+        showDone(context);
     }
 
     private void onPopulateHistory() {
@@ -578,7 +572,7 @@ public class DebugFragment extends BasePreferenceFragment {
         database.putEvent(new PhoneEvent("+79052345675", true, time += 1000, time + 10000, true, null, null, "Test exception +79052345675", PhoneEvent.State.PENDING));
         database.notifyChanged();
 
-        showDone();
+        showDone(context);
     }
 
     private void onEmulateSms() {
@@ -613,6 +607,10 @@ public class DebugFragment extends BasePreferenceFragment {
         showMessage(context, b.toString());
     }
 
+    private static void showDone(Context context) {
+        Toast.makeText(context, "Done", Toast.LENGTH_SHORT).show();
+    }
+
     private static void showMessage(Context context, String message) {
         AndroidUtil.dialogBuilder(context)
                 .setMessage(message)
@@ -626,7 +624,8 @@ public class DebugFragment extends BasePreferenceFragment {
                 .show();
     }
 
-    private static class GetLocationTask extends ActivityAsyncTask<Void, Void, GeoCoordinates> {
+    private static class GetLocationTask extends LongAsyncTask<Void, Void, GeoCoordinates> {
+
 
         private final GeoLocator locator;
 
@@ -642,12 +641,13 @@ public class DebugFragment extends BasePreferenceFragment {
 
         @Override
         protected void onPostExecute(GeoCoordinates coordinates) {
-            showMessage(getActivity(),
-                    coordinates != null ? formatLocation(coordinates) : "No location received");
+            super.onPostExecute(coordinates);
+            showMessage(getActivity(), coordinates != null ? formatLocation(coordinates) : "No location received");
         }
     }
 
-    private static class SendDefaultMailTask extends ActivityAsyncTask<Void, Void, Void> {
+    private static class SendDefaultMailTask extends LongAsyncTask<Void, Void, Void> {
+
 
         private Properties properties;
 
@@ -676,6 +676,13 @@ public class DebugFragment extends BasePreferenceFragment {
             }
             return null;
         }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            showDone(getActivity());
+        }
+
     }
 
     private static class SendLogTask extends LongAsyncTask<Void, Void, String> {
@@ -719,7 +726,7 @@ public class DebugFragment extends BasePreferenceFragment {
             if (error != null) {
                 showMessage(getActivity(), error);
             } else {
-                Toast.makeText(getActivity(), "Done", Toast.LENGTH_SHORT).show();
+                showDone(getActivity());
             }
         }
     }
@@ -731,7 +738,6 @@ public class DebugFragment extends BasePreferenceFragment {
         @Override
         public boolean onPreferenceClick(Preference preference) {
             onClick(preference);
-            //getActivity().finish();
             return true;
         }
     }
