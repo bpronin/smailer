@@ -123,11 +123,11 @@ public class TestServerPreference extends Preference {
 
             int message;
             if (result == CHECK_RESULT_NOT_CONNECTED) {
-                message = R.string.notification_error_connect;
+                message = R.string.cannot_connect_mail_server;
             } else if (result == CHECK_RESULT_AUTHENTICATION) {
-                message = R.string.notification_error_authentication;
+                message = R.string.user_password_not_accepted;
             } else {
-                message = R.string.message_server_test_success;
+                message = R.string.server_test_success;
             }
 
             Toast.makeText(owner.getContext(), message, Toast.LENGTH_LONG).show();

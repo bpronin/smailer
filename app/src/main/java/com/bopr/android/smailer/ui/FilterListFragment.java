@@ -181,7 +181,7 @@ abstract class FilterListFragment extends BaseFragment {
             @Override
             public void onOkClick(String value) {
                 if (isItemExists(value) && (item == null || !item.value.equals(value))) {
-                    Toast.makeText(getContext(), formatter(R.string.message_list_item_already_exists, getResources())
+                    Toast.makeText(getContext(), formatter(R.string.item_already_exists, getResources())
                             .put("item", getItemText(value))
                             .format(), Toast.LENGTH_LONG)
                             .show();
@@ -213,16 +213,16 @@ abstract class FilterListFragment extends BaseFragment {
     private void showUndoAction(List<Item> removedItems, final List<Item> lastItems) {
         String title;
         if (removedItems.size() == 1) {
-            title = getString(R.string.message_item_removed);
+            title = getString(R.string.item_removed);
         } else {
-            title = formatter(R.string.message_items_removed, getResources())
+            title = formatter(R.string.items_removed, getResources())
                     .put("count", valueOf(removedItems.size()))
                     .format();
         }
 
         Snackbar.make(listView, title, Snackbar.LENGTH_LONG)
                 .setActionTextColor(ContextCompat.getColor(requireContext(), R.color.dialogButtonText))
-                .setAction(R.string.title_undo, new View.OnClickListener() {
+                .setAction(R.string.undo, new View.OnClickListener() {
 
                     @Override
                     public void onClick(View v) {

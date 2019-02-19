@@ -22,6 +22,6 @@
         android:maxLines="1"
         android:clickable="false"
         android:focusable="false"
-        android:text="@string/title_server_test"/>
+        android:text="@string/send_test_message"/>
 
 </LinearLayout>

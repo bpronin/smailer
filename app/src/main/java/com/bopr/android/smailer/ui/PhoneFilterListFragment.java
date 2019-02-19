@@ -15,7 +15,7 @@ abstract class PhoneFilterListFragment extends FilterListFragment {
     @Override
     EditFilterListItemDialogFragment createEditItemDialog(String text) {
         EditPhoneDialogFragment dialog = new EditPhoneDialogFragment();
-        dialog.setTitle(text == null ? R.string.title_add : R.string.title_edit);
+        dialog.setTitle(text == null ? R.string.add : R.string.edit);
         dialog.setInitialValue(text);
         return dialog;
     }

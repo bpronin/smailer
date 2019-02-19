@@ -161,8 +161,8 @@ public class HistoryFragment extends BaseFragment {
 
     private void clearData() {
         AndroidUtil.dialogBuilder(getContext())
-                .setMessage(R.string.message_activity_log_ask_clear)
-                .setPositiveButton(R.string.title_clear_log, new DialogInterface.OnClickListener() {
+                .setMessage(R.string.ask_clear_history)
+                .setPositiveButton(R.string.clear_history, new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -189,7 +189,7 @@ public class HistoryFragment extends BaseFragment {
             settings.putFilter(phoneEventFilter);
 
             Toast.makeText(getContext(),
-                    formatter(R.string.message_added_to_blacklist, requireContext())
+                    formatter(R.string.added_to_blacklist, requireContext())
                             .put("number", number)
                             .format(),
                     Toast.LENGTH_SHORT).show();
@@ -204,7 +204,7 @@ public class HistoryFragment extends BaseFragment {
             settings.putFilter(phoneEventFilter);
 
             Toast.makeText(getContext(),
-                    formatter(R.string.message_added_to_whitelist, requireContext())
+                    formatter(R.string.added_to_whitelist, requireContext())
                             .put("number", number)
                             .format(),
                     Toast.LENGTH_SHORT).show();
@@ -220,7 +220,7 @@ public class HistoryFragment extends BaseFragment {
             settings.putFilter(phoneEventFilter);
 
             Toast.makeText(getContext(),
-                    formatter(R.string.message_phone_removed_from_filter, requireContext())
+                    formatter(R.string.phone_removed_from_filter, requireContext())
                             .put("number", number)
                             .format(),
                     Toast.LENGTH_SHORT).show();
@@ -260,7 +260,7 @@ public class HistoryFragment extends BaseFragment {
             if (item != null) {
                 final PhoneEvent event = cursor.getRow();
 
-                holder.timeView.setText(DateFormat.format(getString(R.string.event_time_pattern), event.getStartTime()));
+                holder.timeView.setText(DateFormat.format(getString(R.string._time_pattern), event.getStartTime()));
 
                 holder.textView.setText(event.getText());
                 if (phoneEventFilter.testText(event.getText())) {

@@ -56,7 +56,7 @@ public class RemoteControlService extends FirebaseMessagingService {
 
         log.debug("Blacklisted phone number: " + number);
 
-        String message = formatter(R.string.message_added_to_blacklist_remotely, this)
+        String message = formatter(R.string.added_to_blacklist_remotely, this)
                 .put("number", number)
                 .format();
         new Notifications(this).showRemoteAction(message);

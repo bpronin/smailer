@@ -56,7 +56,7 @@ public class EditTextDialogFragment extends EditFilterListItemDialogFragment {
 
         /* custom message view. do not use setMessage() } */
         TextView messageText = view.findViewById(R.id.dialog_message);
-        messageText.setText(R.string.title_text_fragment);
+        messageText.setText(R.string.text_fragment);
 
         return view;
     }

@@ -34,7 +34,7 @@
                 android:layout_marginStart="-4dp"
                 android:layout_marginEnd="-4dp"
                 android:layout_weight="1"
-                android:hint="@string/title_email_address"
+                android:hint="@string/email_address"
                 android:inputType="textEmailAddress"
                 android:selectAllOnFocus="true" />
 
@@ -42,7 +42,7 @@
                 android:id="@+id/button_browse_contacts"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="@string/message_select_email_from_contacts"
+                android:hint="@string/select_from_contacts"
                 android:src="@drawable/ic_account"
                 tools:ignore="ContentDescription" />
 

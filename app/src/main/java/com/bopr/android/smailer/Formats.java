@@ -23,17 +23,17 @@ public abstract class Formats {
     public static int eventTypeText(Context context, PhoneEvent event) {
         if (event.isSms()) {
             if (event.isIncoming()) {
-                return R.string.event_type_incoming_sms;
+                return R.string.incoming_sms;
             } else {
-                return R.string.event_type_outgoing_sms;
+                return R.string.outgoing_sms;
             }
         } else if (event.isMissed()) {
-            return R.string.event_type_missed_call;
+            return R.string.missed_call;
         } else {
             if (event.isIncoming()) {
-                return R.string.event_type_incoming_call;
+                return R.string.incoming_call;
             } else {
-                return R.string.event_type_outgoing_call;
+                return R.string.outgoing_call;
             }
         }
     }
@@ -63,11 +63,11 @@ public abstract class Formats {
     public static int eventStateText(PhoneEvent event) {
         switch (event.getState()) {
             case PENDING:
-                return R.string.event_state_pending;
+                return R.string.pending;
             case PROCESSED:
-                return R.string.event_state_done;
+                return R.string.sent_email;
             case IGNORED:
-                return R.string.event_state_ignored;
+                return R.string.ignored;
         }
         return -1;
     }

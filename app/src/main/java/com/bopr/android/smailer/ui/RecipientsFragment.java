@@ -189,7 +189,7 @@ public class RecipientsFragment extends BaseFragment {
 
     private void showItemEditor(final Item item) {
         EditEmailDialogFragment dialog = new EditEmailDialogFragment();
-        dialog.setTitle(item == null ? R.string.title_add : R.string.title_edit);
+        dialog.setTitle(item == null ? R.string.add : R.string.edit);
         dialog.setInitialValue(item == null ? null : item.address);
         dialog.setCallback(new EditEmailDialogFragment.Callback() {
 
@@ -197,7 +197,7 @@ public class RecipientsFragment extends BaseFragment {
             public void onOkClick(String address) {
                 Log.d("", "onOkClick: ");
                 if (isItemExists(address) && (item == null || !item.address.equals(address))) {
-                    Toast.makeText(getContext(), formatter(R.string.message_recipient_already_exists, getResources())
+                    Toast.makeText(getContext(), formatter(R.string.recipient_already_exists, getResources())
                             .put("name", address)
                             .format(), Toast.LENGTH_LONG).show();
                 } else if (!Util.isTrimEmpty(address)) {
@@ -215,16 +215,16 @@ public class RecipientsFragment extends BaseFragment {
     private void showUndoAction(List<Item> removedItems, final List<Item> lastItems) {
         String title;
         if (removedItems.size() == 1) {
-            title = getString(R.string.message_item_removed);
+            title = getString(R.string.item_removed);
         } else {
-            title = formatter(R.string.message_items_removed, getResources())
+            title = formatter(R.string.items_removed, getResources())
                     .put("count", valueOf(removedItems.size()))
                     .format();
         }
 
         Snackbar.make(listView, title, Snackbar.LENGTH_LONG)
                 .setActionTextColor(ContextCompat.getColor(activity, R.color.dialogButtonText))
-                .setAction(R.string.title_undo, new View.OnClickListener() {
+                .setAction(R.string.undo, new View.OnClickListener() {
 
                     @Override
                     public void onClick(View v) {

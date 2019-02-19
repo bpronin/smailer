@@ -136,7 +136,7 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
      */
     void updateNotSpecifiedSummary(Preference preference) {
         preference.setSummary(AndroidUtil.validatedColoredText(getContext(),
-                getString(R.string.title_not_set), false));
+                getString(R.string.not_specified), false));
     }
 
     /**

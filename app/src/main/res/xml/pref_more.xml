@@ -3,41 +3,41 @@
 
     <androidx.preference.MultiSelectListPreference
         android:icon="@drawable/ic_pref_content"
-        android:dialogTitle="@string/title_email_message_content"
-        android:entries="@array/titles_email_content"
+        android:dialogTitle="@string/email_message_content"
+        android:entries="@array/email_content_names"
         android:entryValues="@array/email_content_values"
         android:key="email_content"
-        android:summary="@string/title_what_email_contain"
-        android:title="@string/title_content" />
+        android:summary="@string/what_email_contains"
+        android:title="@string/email_content" />
 
     <androidx.preference.EditTextPreference
         android:icon="@drawable/ic_pref_device"
-        android:dialogMessage="@string/title_device_alias_hint"
+        android:dialogMessage="@string/device_name_to_show"
         android:inputType="textNoSuggestions"
         android:key="device_alias"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="@string/title_device_alias" />
+        android:title="@string/device_name" />
 
     <androidx.preference.ListPreference
         android:icon="@drawable/ic_pref_language"
-        android:dialogTitle="@string/title_email_language"
-        android:entries="@array/titles_language"
+        android:dialogTitle="@string/email_language"
+        android:entries="@array/language_names"
         android:entryValues="@array/email_locale_values"
         android:key="email_locale"
-        android:title="@string/title_email_language_hint" />
+        android:title="@string/email_message_language" />
 
     <androidx.preference.SwitchPreference
         android:key="resend_unsent"
-        android:title="@string/title_resend_hint" />
+        android:title="@string/try_to_resend_unsent" />
 
     <androidx.preference.SwitchPreference
         android:key="notify_send_success"
-        android:title="@string/title_notify_send_success" />
+        android:title="@string/notify_send_success" />
 
     <androidx.preference.SwitchPreference
         android:key="mark_processed_sms_as_read"
-        android:title="@string/title_mark_processed_sms_as_read" />
+        android:title="@string/mark_processed_sms_as_read" />
 
 </androidx.preference.PreferenceScreen>

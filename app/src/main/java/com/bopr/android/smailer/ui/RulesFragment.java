@@ -41,8 +41,8 @@ public class RulesFragment extends BasePreferenceFragment {
 
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
-                updateSummary(formatListAndSize((String) value, R.string.title_unacceptable_phone_numbers,
-                        R.string.title_none), preference, true);
+                updateSummary(formatListAndSize((String) value, R.string.unacceptable_phone_numbers,
+                        R.string.none), preference, true);
                 return true;
             }
         });
@@ -60,8 +60,8 @@ public class RulesFragment extends BasePreferenceFragment {
 
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
-                updateSummary(formatListAndSize((String) value, R.string.title_acceptable_phone_numbers,
-                        R.string.title_any), preference, true);
+                updateSummary(formatListAndSize((String) value, R.string.acceptable_phone_numbers,
+                        R.string._any), preference, true);
                 return true;
             }
         });
@@ -79,8 +79,8 @@ public class RulesFragment extends BasePreferenceFragment {
 
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
-                updateSummary(formatListAndSize((String) value, R.string.title_unacceptable_text,
-                        R.string.title_none), preference, true);
+                updateSummary(formatListAndSize((String) value, R.string.unacceptable_words,
+                        R.string.none), preference, true);
                 return true;
             }
         });
@@ -98,8 +98,8 @@ public class RulesFragment extends BasePreferenceFragment {
 
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
-                updateSummary(formatListAndSize((String) value, R.string.title_acceptable_text,
-                        R.string.title_any), preference, true);
+                updateSummary(formatListAndSize((String) value, R.string.acceptable_words,
+                        R.string._any), preference, true);
                 return true;
             }
         });

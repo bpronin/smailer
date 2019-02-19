@@ -55,7 +55,7 @@ public class EditPhoneDialogFragment extends EditFilterListItemDialogFragment {
 
         /* custom message view. do not use setMessage() } */
         TextView messageText = view.findViewById(R.id.dialog_message);
-        messageText.setText(R.string.title_enter_phone_number);
+        messageText.setText(R.string.enter_phone_number);
 
         return view;
     }

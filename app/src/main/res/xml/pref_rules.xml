@@ -3,36 +3,36 @@
 
     <androidx.preference.MultiSelectListPreference
         android:icon="@drawable/ic_pref_triggers"
-        android:entries="@array/titles_triggers"
+        android:entries="@array/trigger_names"
         android:entryValues="@array/trigger_values"
         android:key="email_triggers"
-        android:summary="@string/title_triggers_hint"
-        android:title="@string/title_triggers" />
+        android:summary="@string/events_causing_sending_mail"
+        android:title="@string/triggers" />
 
     <androidx.preference.PreferenceCategory
         android:icon="@drawable/ic_call"
-        android:title="@string/title_number_filter">
+        android:title="@string/phone_number_filter">
 
         <androidx.preference.Preference
             android:key="message_filter_blacklist"
-            android:title="@string/title_blacklist" />
+            android:title="@string/blacklist" />
 
         <androidx.preference.Preference
             android:key="message_filter_whitelist"
-            android:title="@string/title_whitelist" />
+            android:title="@string/whitelist" />
     </androidx.preference.PreferenceCategory>
 
     <androidx.preference.PreferenceCategory
         android:icon="@drawable/ic_text"
-        android:title="@string/title_text_filter">
+        android:title="@string/text_filter">
 
         <androidx.preference.Preference
             android:key="message_filter_text_blacklist"
-            android:title="@string/title_blacklist" />
+            android:title="@string/blacklist" />
 
         <androidx.preference.Preference
             android:key="message_filter_text_whitelist"
-            android:title="@string/title_whitelist" />
+            android:title="@string/whitelist" />
     </androidx.preference.PreferenceCategory>
 
 

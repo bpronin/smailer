@@ -86,7 +86,7 @@ public class GeoLocator {
         } else {
             coordinates = database.getLastLocation();
             if (coordinates != null) {
-                log.debug("Using local database location");
+                log.debug("Using local database");
             } else {
                 log.warn("Unable to obtain location from database");
             }
@@ -100,7 +100,7 @@ public class GeoLocator {
         if (locationManager.isProviderEnabled(provider)) {
             GeoCoordinates coordinates = requestProviderLocation(provider, timeout);
             if (coordinates != null) {
-                log.debug("Using " + provider + " location");
+                log.debug("Using " + provider);
                 return coordinates;
             }
         }
@@ -114,7 +114,7 @@ public class GeoLocator {
         if (locationManager.isProviderEnabled(provider)) {
             Location location = locationManager.getLastKnownLocation(provider);
             if (location != null) {
-                log.debug("Using last " + provider + " location");
+                log.debug("Using last " + provider);
                 return new GeoCoordinates(location);
             }
         }

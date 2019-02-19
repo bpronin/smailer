@@ -66,14 +66,14 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
         this.settings = settings;
         this.settings.registerOnSharedPreferenceChangeListener(this);
 
-        items.put(RECEIVE_SMS, R.string.message_permission_rationale_receive_sms);
-        items.put(WRITE_SMS, R.string.message_permission_rationale_write_sms);
-        items.put(READ_SMS, R.string.message_permission_rationale_read_sms);
-        items.put(READ_PHONE_STATE, R.string.message_permission_rationale_phone_state);
-        items.put(PROCESS_OUTGOING_CALLS, R.string.message_permission_rationale_outgoing_call);
-        items.put(READ_CONTACTS, R.string.message_permission_rationale_read_contacts);
-        items.put(ACCESS_COARSE_LOCATION, R.string.message_permission_rationale_coarse_location);
-        items.put(ACCESS_FINE_LOCATION, R.string.message_permission_rationale_fine_location);
+        items.put(RECEIVE_SMS, R.string.permission_rationale_receive_sms);
+        items.put(WRITE_SMS, R.string.permission_rationale_write_sms);
+        items.put(READ_SMS, R.string.permission_rationale_read_sms);
+        items.put(READ_PHONE_STATE, R.string.permission_rationale_phone_state);
+        items.put(PROCESS_OUTGOING_CALLS, R.string.permission_rationale_outgoing_call);
+        items.put(READ_CONTACTS, R.string.permission_rationale_read_contacts);
+        items.put(ACCESS_COARSE_LOCATION, R.string.permission_rationale_coarse_location);
+        items.put(ACCESS_FINE_LOCATION, R.string.permission_rationale_fine_location);
     }
 
     public void destroy() {
@@ -106,7 +106,7 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
             }
 
             if (!deniedPermissions.isEmpty()) {
-                Toast.makeText(activity, R.string.message_permissions_denied, Toast.LENGTH_LONG).show();
+                Toast.makeText(activity, R.string.since_permissions_not_granted, Toast.LENGTH_LONG).show();
                 onPermissionsDenied(deniedPermissions);
             }
         }

@@ -70,7 +70,7 @@ public class HistoryDetailsDialogFragment extends DialogFragment {
 
             dialog = AndroidUtil.dialogBuilder(getContext())
                     .setView(view)
-                    .setPositiveButton(R.string.title_close, new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
 
                         @Override
                         public void onClick(DialogInterface dialogInterface, int which) {
@@ -90,13 +90,13 @@ public class HistoryDetailsDialogFragment extends DialogFragment {
         if (event.isSms()) {
             return event.getText();
         } else if (event.isMissed()) {
-            return getString(R.string.email_body_missed_call);
+            return getString(R.string.you_had_missed_call);
         } else {
             int pattern;
             if (event.isIncoming()) {
-                pattern = R.string.email_body_incoming_call;
+                pattern = R.string.you_had_incoming_call;
             } else {
-                pattern = R.string.email_body_outgoing_call;
+                pattern = R.string.you_had_outgoing_call;
             }
             return formatter(pattern, requireContext())
                     .put("duration", formatDuration(event.getCallDuration()))
@@ -105,6 +105,6 @@ public class HistoryDetailsDialogFragment extends DialogFragment {
     }
 
     private CharSequence formatTime(Long time) {
-        return DateFormat.format(getString(R.string.event_time_pattern), time);
+        return DateFormat.format(getString(R.string._time_pattern), time);
     }
 }

@@ -51,43 +51,43 @@
 
         <activity
             android:name=".ui.ServerActivity"
-            android:label="@string/title_email_sender" />
+            android:label="@string/sender" />
 
         <activity
             android:name=".ui.RecipientsActivity"
-            android:label="@string/title_email_recipients" />
+            android:label="@string/recipients" />
 
         <activity
             android:name=".ui.PhoneBlacklistActivity"
-            android:label="@string/title_blacklist" />
+            android:label="@string/blacklist" />
 
         <activity
             android:name=".ui.PhoneWhitelistActivity"
-            android:label="@string/title_whitelist" />
+            android:label="@string/whitelist" />
 
         <activity
             android:name=".ui.TextBlacklistActivity"
-            android:label="@string/title_blacklist" />
+            android:label="@string/blacklist" />
 
         <activity
             android:name=".ui.TextWhitelistActivity"
-            android:label="@string/title_whitelist" />
+            android:label="@string/whitelist" />
 
         <activity
             android:name=".ui.MoreActivity"
-            android:label="@string/title_more" />
+            android:label="@string/preferences" />
 
         <activity
             android:name=".ui.HistoryActivity"
-            android:label="@string/title_activity_log" />
+            android:label="@string/call_history" />
 
         <activity
             android:name=".ui.LegalInfoActivity"
-            android:label="@string/title_open_source" />
+            android:label="@string/open_source" />
 
         <activity
             android:name=".ui.RulesActivity"
-            android:label="@string/title_rules_for_sending" />
+            android:label="@string/rules_for_sending" />
 
         <service android:name=".CallProcessorService" />
 
@@ -107,7 +107,7 @@
             android:permission="android.permission.BROADCAST_SMS">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
-                <action android:name="android.provider.Telephony.SMS_DELIVER" /><!--TODO: remove?-->
+                <!--<action android:name="android.provider.Telephony.SMS_DELIVER" />&lt;!&ndash;TODO: remove?&ndash;&gt;-->
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>

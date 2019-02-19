@@ -32,6 +32,7 @@ import static java.lang.String.valueOf;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
+// TODO: 19.02.2019 Add ability to format in lain text
 class MailFormatter {
 
     private static final String SUBJECT_PATTERN = "[{app_name}] {source} {phone}";
@@ -117,7 +118,7 @@ class MailFormatter {
     String formatSubject() {
         return formatter(SUBJECT_PATTERN, resources)
                 .putRes("app_name", R.string.app_name)
-                .put("source", formatTrigger())
+                .putRes("source", formatTrigger())
                 .put("phone", event.getPhone())
                 .format();
     }
@@ -139,41 +140,40 @@ class MailFormatter {
                 .format();
     }
 
-    @NonNull
-    private String formatTrigger() {
+    private int formatTrigger() {
         int resourceId;
 
         if (event.isMissed()) {
-            resourceId = R.string.email_subject_missed_call;
+            resourceId = R.string.missed_call_from;
         } else if (event.isSms()) {
             if (event.isIncoming()) {
-                resourceId = R.string.email_subject_incoming_sms;
+                resourceId = R.string.incoming_sms_from;
             } else {
-                resourceId = R.string.email_subject_outgoing_sms;
+                resourceId = R.string.outgoing_sms_to;
             }
         } else {
             if (event.isIncoming()) {
-                resourceId = R.string.email_subject_incoming_call;
+                resourceId = R.string.incoming_call_from;
             } else {
-                resourceId = R.string.email_subject_outgoing_call;
+                resourceId = R.string.outgoing_call_to;
             }
         }
 
-        return resources.getString(resourceId);
+        return resourceId;
     }
 
     @NonNull
     private String formatMessage() {
         if (event.isMissed()) {
-            return resources.getString(R.string.email_body_missed_call);
+            return resources.getString(R.string.you_had_missed_call);
         } else if (event.isSms()) {
             return replaceUrls(event.getText());
         } else {
             int pattern;
             if (event.isIncoming()) {
-                pattern = R.string.email_body_incoming_call;
+                pattern = R.string.you_had_incoming_call;
             } else {
-                pattern = R.string.email_body_outgoing_call;
+                pattern = R.string.you_had_outgoing_call;
             }
             return formatter(pattern, resources)
                     .put("duration", formatDuration(event.getCallDuration()))
@@ -225,7 +225,7 @@ class MailFormatter {
                     text.append("<br>");
                 }
 
-                text.append(formatter(R.string.email_body_sent, resources)
+                text.append(formatter(R.string.sent_time_device, resources)
                         .put("device_name", deviceNameText)
                         .put("time", sendTimeText));
             }
@@ -244,21 +244,21 @@ class MailFormatter {
     private String formatCaller() {
         int resourceId;
         if (event.isSms()) {
-            resourceId = R.string.email_body_sender;
+            resourceId = R.string.sender_phone;
         } else {
             if (event.isIncoming()) {
-                resourceId = R.string.email_body_caller;
+                resourceId = R.string.caller_phone;
             } else {
-                resourceId = R.string.email_body_called;
+                resourceId = R.string.called_phone;
             }
         }
 
         String name = this.contactName;
         if (isEmpty(name)) {
             if (Contacts.isPermissionsDenied(context)) { /* base context here */
-                name = resources.getString(R.string.email_body_unknown_contact_no_permission);
+                name = resources.getString(R.string.contact_no_permission_read_contact);
             } else {
-                name = resources.getString(R.string.email_body_unknown_contact);
+                name = resources.getString(R.string.unknown_contact);
             }
         }
 
@@ -273,7 +273,7 @@ class MailFormatter {
     @Nullable
     private String formatDeviceName() {
         if (!isEmpty(deviceName)) {
-            return " " + formatter(R.string.email_body_from, resources)
+            return " " + formatter(R.string._from_device, resources)
                     .put("device_name", deviceName)
                     .format();
         }
@@ -284,7 +284,7 @@ class MailFormatter {
     private String formatEventTime() {
         if (event.getStartTime() != null) {
             DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
-            return " " + formatter(R.string.email_body_time, resources)
+            return " " + formatter(R.string.time_time, resources)
                     .put("time", df.format(new Date(event.getStartTime())))
                     .format();
         }
@@ -294,7 +294,7 @@ class MailFormatter {
     @NonNull
     private String formatSendTime() {
         DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
-        return " " + formatter(R.string.email_body_at_time, resources)
+        return " " + formatter(R.string._at_time, resources)
                 .put("time", df.format(sendTime))
                 .format();
     }
@@ -303,7 +303,7 @@ class MailFormatter {
     private String formatLocation() {
         GeoCoordinates location = event.getLocation();
         if (location != null) {
-            return formatter(R.string.email_body_location, resources)
+            return formatter(R.string.last_known_location, resources)
                     .put("location", formatter(GOOGLE_MAP_LINK_PATTERN)
                             .put("latitude", valueOf(location.getLatitude()))
                             .put("longitude", valueOf(location.getLongitude()))
@@ -311,10 +311,10 @@ class MailFormatter {
                             .format())
                     .format();
         } else {
-            return formatter(R.string.email_body_location, resources)
+            return formatter(R.string.last_known_location, resources)
                     .putRes("location", GeoLocator.isPermissionsDenied(context) /* base context here */
-                            ? R.string.email_body_unknown_location_no_permission
-                            : R.string.email_body_unknown_location)
+                            ? R.string.no_permission_read_location
+                            : R.string.geolocation_disabled)
                     .format();
         }
     }

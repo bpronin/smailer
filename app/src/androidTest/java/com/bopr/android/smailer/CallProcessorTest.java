@@ -165,7 +165,7 @@ public class CallProcessorTest extends BaseTest {
 
         assertTrue(inits.isEmpty());
         assertTrue(sends.isEmpty());
-        assertEquals(R.string.notification_error_no_connection, errors.get(0)[0]);
+        assertEquals(R.string.no_internet_connection, errors.get(0)[0]);
     }
 
     /**
@@ -190,7 +190,7 @@ public class CallProcessorTest extends BaseTest {
 
         assertTrue(inits.isEmpty());
         assertTrue(sends.isEmpty());
-        assertEquals(R.string.notification_error_no_account, errors.get(0)[0]);
+        assertEquals(R.string.no_account_specified, errors.get(0)[0]);
     }
 
     /**
@@ -215,7 +215,7 @@ public class CallProcessorTest extends BaseTest {
 
         assertTrue(inits.isEmpty());
         assertTrue(sends.isEmpty());
-        assertEquals(R.string.notification_error_no_recipients, errors.get(0)[0]);
+        assertEquals(R.string.no_recipients_specified, errors.get(0)[0]);
     }
 
     /**
@@ -240,7 +240,7 @@ public class CallProcessorTest extends BaseTest {
 
         assertTrue(inits.isEmpty());
         assertTrue(sends.isEmpty());
-        assertEquals(R.string.notification_error_no_host, errors.get(0)[0]);
+        assertEquals(R.string.no_host_specified, errors.get(0)[0]);
     }
 
     /**
@@ -265,7 +265,7 @@ public class CallProcessorTest extends BaseTest {
 
         assertTrue(inits.isEmpty());
         assertTrue(sends.isEmpty());
-        assertEquals(R.string.notification_error_no_port, errors.get(0)[0]);
+        assertEquals(R.string.no_port_specified, errors.get(0)[0]);
     }
 
     /**
@@ -289,7 +289,7 @@ public class CallProcessorTest extends BaseTest {
 
         assertFalse(inits.isEmpty());
         assertTrue(sends.isEmpty());
-        assertEquals(R.string.notification_error_authentication, errors.get(0)[0]);
+        assertEquals(R.string.user_password_not_accepted, errors.get(0)[0]);
     }
 
     /**
@@ -313,7 +313,7 @@ public class CallProcessorTest extends BaseTest {
 
         assertFalse(inits.isEmpty());
         assertTrue(sends.isEmpty());
-        assertEquals(R.string.notification_error_mail_general, errors.get(0)[0]);
+        assertEquals(R.string.unable_send_email, errors.get(0)[0]);
     }
 
     /**
@@ -344,7 +344,7 @@ public class CallProcessorTest extends BaseTest {
         /* bad_phone produces notification */
 
         callProcessor.process(new PhoneEvent("bad_phone", false, null, null, false, null, null, null, PhoneEvent.State.PENDING));
-        assertEquals(R.string.notification_error_mail_general, errors.get(0)[0]);
+        assertEquals(R.string.unable_send_email, errors.get(0)[0]);
         assertTrue(clears.isEmpty());
 
         /* good_phone removes it */

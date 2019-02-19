@@ -68,7 +68,7 @@ public class EditEmailDialogFragment extends DialogFragment {
 
             /* custom message view. do not use setMessage() } */
             TextView messageText = view.findViewById(android.R.id.message);
-            messageText.setText(R.string.title_email_address);
+            messageText.setText(R.string.email_address);
 
             View browseButton = view.findViewById(R.id.button_browse_contacts);
             browseButton.setOnClickListener(new View.OnClickListener() {

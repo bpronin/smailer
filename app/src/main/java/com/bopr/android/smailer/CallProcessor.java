@@ -150,13 +150,13 @@ class CallProcessor {
 
             handleSuccess(event);
         } catch (AuthenticationFailedException x) {
-            handleError(event, x, R.string.notification_error_authentication, ACTION_SHOW_SERVER, silent);
+            handleError(event, x, R.string.user_password_not_accepted, ACTION_SHOW_SERVER, silent);
         } catch (MailConnectException x) {
-            handleError(event, x, R.string.notification_error_connect, ACTION_SHOW_SERVER, silent);
+            handleError(event, x, R.string.cannot_connect_mail_server, ACTION_SHOW_SERVER, silent);
         } catch (MessagingException x) {
-            handleError(event, x, R.string.notification_error_mail_general, ACTION_SHOW_SERVER, silent);
+            handleError(event, x, R.string.unable_send_email, ACTION_SHOW_SERVER, silent);
         } catch (Throwable x) {
-            handleError(event, x, R.string.notification_error_internal, ACTION_SHOW_MAIN, silent);
+            handleError(event, x, R.string.internal_error, ACTION_SHOW_MAIN, silent);
         }
     }
 

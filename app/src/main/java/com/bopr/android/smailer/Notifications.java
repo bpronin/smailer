@@ -42,7 +42,7 @@ public class Notifications {
     }
 
     public Notification getForegroundServiceNotification() {
-        String text = context.getResources().getString(R.string.notifications_service_running);
+        String text = context.getResources().getString(R.string.service_running);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, getChannel())
                 .setContentIntent(createIntent(ACTION_SHOW_MAIN, null))
@@ -64,7 +64,7 @@ public class Notifications {
     }
 
     public void showMailError(int messageResource, @Nullable Long messageId, int action) {
-        showMailError(context.getResources().getString(R.string.notification_error_mail_general) + " " +
+        showMailError(context.getResources().getString(R.string.unable_send_email) + " " +
                 context.getResources().getString(messageResource), messageId, action);
     }
 
@@ -86,7 +86,7 @@ public class Notifications {
     }
 
     public void showMailSuccess(long messageId) {
-        String text = context.getResources().getString(R.string.notification_email_send);
+        String text = context.getResources().getString(R.string.email_send);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, getChannel())
                 .setContentIntent(createIntent(ACTION_SHOW_LOG, messageId))
@@ -156,7 +156,7 @@ public class Notifications {
 
     private String getChannel() {
         if (Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            String name = context.getResources().getString(R.string.notifications_channel);
+            String name = context.getResources().getString(R.string.notifications);
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_LOW);
             getManager().createNotificationChannel(channel);
         }

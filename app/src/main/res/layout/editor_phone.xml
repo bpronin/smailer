@@ -31,13 +31,13 @@
             android:layout_weight="1"
             android:selectAllOnFocus="true"
             android:inputType="phone"
-            android:hint="@string/title_phone_number"/>
+            android:hint="@string/phone_number"/>
 
         <ImageButton
             android:id="@+id/button_browse_contacts"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="@string/message_select_email_from_contacts"
+            android:hint="@string/select_from_contacts"
             android:src="@drawable/ic_account"
             tools:ignore="ContentDescription"/>
 

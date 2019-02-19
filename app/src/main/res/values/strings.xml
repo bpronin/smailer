@@ -1,131 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="email_body_at_time">at {time}</string>
-    <string name="email_body_called">Called: {phone} ({name})</string>
-    <string name="email_body_caller">Caller: {phone} ({name})</string>
-    <string name="email_body_from">from {device_name}</string>
-    <string name="email_body_incoming_call">You had an incoming call of {duration} duration.</string>
-    <string name="email_body_location">Last known device location: {location}</string>
-    <string name="email_body_missed_call">You had a missed call.</string>
-    <string name="email_body_outgoing_call">You had an outgoing call of {duration} duration.</string>
-    <string name="email_body_sender">Sender: {phone} ({name})</string>
-    <string name="email_body_sent">Sent{device_name}{time}</string>
-    <string name="email_body_time">Time: {time}</string>
-    <string name="email_body_unknown_contact">Unknown contact</string>
-    <string name="email_body_unknown_contact_no_permission">no permission to read contacts</string>
-    <string name="email_body_unknown_location">(location service disabled)</string>
-    <string name="email_body_unknown_location_no_permission">(no permission to read location)</string>
-    <string name="email_subject_incoming_call">Incoming call from</string>
-    <string name="email_subject_incoming_sms">Incoming SMS from</string>
-    <string name="email_subject_missed_call">Missed call from</string>
-    <string name="email_subject_outgoing_call">Outgoing call to</string>
-    <string name="email_subject_outgoing_sms">Outgoing SMS to</string>
-    <string name="event_state_done">Sent email</string>
-    <string name="event_state_ignored">Ignored</string>
-    <string name="event_state_pending" >Pending</string>
-    <string name="event_time_pattern" translatable="false">yyyy-MM-dd HH:mm:ss</string>
-    <string name="event_type_incoming_call">Incoming call</string>
-    <string name="event_type_incoming_sms">Incoming SMS</string>
-    <string name="event_type_missed_call">Missed call</string>
-    <string name="event_type_outgoing_call">Outgoing call</string>
-    <string name="event_type_outgoing_sms">Outgoing SMS</string>
-    <string name="message_activity_log_ask_clear">Clear history?</string>
-    <string name="message_added_to_blacklist">{number} added to blacklist</string>
-    <string name="message_added_to_blacklist_remotely">{number} remotely added to blacklist</string>
-    <string name="message_added_to_whitelist">{number} added to whitelist</string>
-    <string name="message_item_removed">Item removed</string>
-    <string name="message_items_removed">{count} item removed</string>
-    <string name="message_list_item_already_exists">{item} already exists</string>
-    <string name="message_permission_rationale_coarse_location">Permission to {permission} is needed to add device location into email message.</string>
-    <string name="message_permission_rationale_fine_location">Permission to {permission} is needed to add device location into email message.</string>
-    <string name="message_permission_rationale_outgoing_call">Permission to {permission} is needed to send out email when phone calls are made.</string>
-    <string name="message_permission_rationale_phone_state">Permission to {permission} is needed to send out email when phone calls are received or made.</string>
-    <string name="message_permission_rationale_read_contacts">Permission to {permission} is needed to add contact name into email message.</string>
-    <string name="message_permission_rationale_read_sms">Permission to {permission} is needed to send out email when SMS has sent.</string>
-    <string name="message_permission_rationale_receive_sms">Permission to {permission} is needed to send out email when SMS has received.</string>
-    <string name="message_permission_rationale_write_sms">Permission to {permission} is needed to mark processed SMS as read.</string>
-    <string name="message_permissions_denied">Since permissions not granted some options have been disabled.</string>
-    <string name="message_phone_removed_from_filter">{number} removed from filter</string>
-    <string name="message_recipient_already_exists">Recipient {name} already exists</string>
-    <string name="message_select_email_from_contacts">Select from contacts</string>
-    <string name="message_server_test_success">Test message has been successfully sent.\nCheck your email.</string>
-    <string name="notification_email_send">Email sent.</string>
-    <string name="notification_error_authentication">Username and password not accepted.</string>
-    <string name="notification_error_connect">Couldn\'t open connection to mail server.</string>
-    <string name="notification_error_internal">Internal error.</string>
-    <string name="notification_error_mail_general">Unable to send email.</string>
-    <string name="notification_error_no_account">No account specified.</string>
-    <string name="notification_error_no_connection">No internet connection.</string>
-    <string name="notification_error_no_host">No host specified.</string>
-    <string name="notification_error_no_port">No port specified.</string>
-    <string name="notification_error_no_recipients">No recipients specified.</string>
-    <string name="notifications_channel">Notifications</string>
-    <string name="notifications_service_running">Service is active</string>
-    <string name="title_about">About</string>
-    <string name="title_acceptable_phone_numbers">Acceptable phone numbers ({size})</string>
-    <string name="title_acceptable_text">Acceptable words ({size})</string>
-    <string name="title_account_hint">Email address to send email from.</string>
-    <string name="title_activity_log">Call history</string>
-    <string name="title_add">Add</string>
-    <string name="title_add_to_blacklist">Add number to blacklist</string>
-    <string name="title_add_to_whitelist">Add number to whitelist</string>
-    <string name="title_any">any</string>
-    <string name="title_blacklist">Blacklist</string>
-    <string name="title_clear_log">Clear history</string>
-    <string name="title_close">Close</string>
-    <string name="title_content">Email content</string>
-    <string name="title_copyright" translatable="false">Copyright © BoPr, 2016-2019</string>
-    <string name="title_device_alias">Device name</string>
-    <string name="title_device_alias_hint">Device name to be shown in email message (leave blank to use default)</string>
-    <string name="title_edit">Edit</string>
-    <string name="title_email_address">Email address</string>
-    <string name="title_email_language">Email language</string>
-    <string name="title_email_language_hint">Email message language</string>
-    <string name="title_email_message_content">Email message content</string>
-    <string name="title_email_password_hint">Password of account to send email from.</string>
-    <string name="title_email_recipients">Recipients</string>
-    <string name="title_email_sender">Account</string>
-    <string name="title_enter_phone_number">Enter phone number. You also may use * as a wildcard.</string>
-    <string name="title_host">Host</string>
-    <string name="title_list_empty">List is empty</string>
-    <string name="title_log_empty">History is empty</string>
-    <string name="title_mark_processed_sms_as_read">Mark processed SMS as read</string>
-    <string name="title_more">Preferences</string>
-    <string name="title_none">none</string>
-    <string name="title_not_set">not specified</string>
-    <string name="title_notify_on_send">Notify of send</string>
-    <string name="title_notify_send_success">Display notification when email successfully sent</string>
-    <string name="title_number_filter">Phone number filter</string>
-    <string name="title_open_source">Open source</string>
-    <string name="title_open_source_and_third_party">Open source and third party software</string>
-    <string name="title_outgoing_email_address">Outgoing email address</string>
-    <string name="title_password">Password</string>
-    <string name="title_password_asterisks" translatable="false">**********</string>
-    <string name="title_port">Port</string>
-    <string name="title_regex">Regular expression</string>
-    <string name="title_remove">Remove</string>
-    <string name="title_remove_from_filter">Exclude number from all rules</string>
-    <string name="title_resend">Resend</string>
-    <string name="title_resend_hint">Try to resend unsent messages when connection is established</string>
-    <string name="title_rules">Rules</string>
-    <string name="title_rules_for_sending">Rules for sending email</string>
-    <string name="title_sender_account">Account</string>
-    <string name="title_server_test">Send test message</string>
-    <string name="title_text_filter">Text filter</string>
-    <string name="title_text_fragment">Text fragment</string>
-    <string name="title_triggers">Triggers</string>
-    <string name="title_triggers_hint">Events causing sending email</string>
-    <string name="title_unacceptable_phone_numbers">Unacceptable phone numbers ({size})</string>
-    <string name="title_unacceptable_text">Unacceptable words ({size})</string>
-    <string name="title_undo">Undo</string>
-    <string name="title_version">Application version: {version}</string>
-    <string name="title_what_email_contain">What should the email include</string>
-    <string name="title_whitelist">Whitelist</string>
-    <string name="title_phone_number">Phone number</string>
-    <string name="title_action_ignore">Do not process call</string>
+    <string name="_any">any</string>
+    <string name="_at_time">at {time}</string>
+    <string name="_from_device">from {device_name}</string>
+    <string name="_time_pattern" translatable="false">yyyy-MM-dd HH:mm:ss</string>
+    <string name="about">About</string>
+    <string name="acceptable_phone_numbers">Acceptable phone numbers ({size})</string>
+    <string name="acceptable_words">Acceptable words ({size})</string>
+    <string name="account">Account</string>
+    <string name="add">Add</string>
+    <string name="add_number_to_blacklist">Add number to blacklist</string>
+    <string name="add_number_to_whitelist">Add number to whitelist</string>
+    <string name="added_to_blacklist">{number} added to blacklist</string>
+    <string name="added_to_blacklist_remotely">{number} remotely added to blacklist</string>
+    <string name="added_to_whitelist">{number} added to whitelist</string>
+    <string name="app_version">Application version: {version}</string>
+    <string name="ask_clear_history">Clear history?</string>
+    <string name="blacklist">Blacklist</string>
+    <string name="call_history">Call history</string>
+    <string name="called_phone">Called: {phone} ({name})</string>
+    <string name="caller_phone">Caller: {phone} ({name})</string>
+    <string name="cannot_connect_mail_server">Couldn\'t open connection to mail server.</string>
+    <string name="clear_history">Clear history</string>
+    <string name="close">Close</string>
+    <string name="contact_no_permission_read_contact">no permission to read contacts</string>
+    <string name="copyright" translatable="false">Copyright © BoPr, 2016-2019</string>
     <string name="count_new">{count} new</string>
+    <string name="device_name">Device name</string>
+    <string name="device_name_to_show">Device name to be shown in email message (leave blank to use default)</string>
+    <string name="do_not_process_call">Do not process call</string>
+    <string name="edit">Edit</string>
+    <string name="email_address">Email address</string>
+    <string name="email_address_to_send_email_from">Email address to send email from.</string>
+    <string name="email_content">Email content</string>
+    <string name="email_language">Email language</string>
+    <string name="email_message_content">Email message content</string>
+    <string name="email_message_language">Email message language</string>
+    <string name="email_send">Email sent.</string>
+    <string name="enter_phone_number">Enter phone number. You also may use * as a wildcard.</string>
+    <string name="events_causing_sending_mail">Events causing sending email</string>
+    <string name="geolocation_disabled">(location service disabled)</string>
+    <string name="history_is_empty">History is empty</string>
+    <string name="host">Host</string>
+    <string name="ignored">Ignored</string>
+    <string name="incoming_call">Incoming call</string>
+    <string name="incoming_call_from">Incoming call from</string>
+    <string name="incoming_sms">Incoming SMS</string>
+    <string name="incoming_sms_from">Incoming SMS from</string>
+    <string name="internal_error">Internal error.</string>
+    <string name="item_already_exists">{item} already exists</string>
+    <string name="item_removed">Item removed</string>
+    <string name="items_removed">{count} item removed</string>
+    <string name="last_known_location">Last known device location: {location}</string>
+    <string name="list_is_empty">List is empty</string>
+    <string name="mark_processed_sms_as_read">Mark processed SMS as read</string>
+    <string name="missed_call">Missed call</string>
+    <string name="missed_call_from">Missed call from</string>
+    <string name="no_account_specified">No account specified.</string>
+    <string name="no_host_specified">No host specified.</string>
+    <string name="no_internet_connection">No internet connection.</string>
+    <string name="no_permission_read_location">(no permission to read location)</string>
+    <string name="no_port_specified">No port specified.</string>
+    <string name="no_recipients_specified">No recipients specified.</string>
+    <string name="none">none</string>
+    <string name="not_specified">not specified</string>
+    <string name="notifications">Notifications</string>
+    <string name="notify_on_send">Notify of send</string>
+    <string name="notify_send_success">Display notification when email successfully sent</string>
+    <string name="open_source">Open source</string>
+    <string name="open_source_and_third_party">Open source and third party software</string>
+    <string name="outgoing_call">Outgoing call</string>
+    <string name="outgoing_call_to">Outgoing call to</string>
+    <string name="outgoing_email_address">Outgoing email address</string>
+    <string name="outgoing_sms">Outgoing SMS</string>
+    <string name="outgoing_sms_to">Outgoing SMS to</string>
+    <string name="password">Password</string>
+    <string name="password_asterisks" translatable="false">**********</string>
+    <string name="password_of_account_to_send">Password of account to send email from.</string>
+    <string name="pending" >Pending</string>
+    <string name="permission_rationale_coarse_location">Permission to {permission} is needed to add device location into email message.</string>
+    <string name="permission_rationale_fine_location">Permission to {permission} is needed to add device location into email message.</string>
+    <string name="permission_rationale_outgoing_call">Permission to {permission} is needed to send out email when phone calls are made.</string>
+    <string name="permission_rationale_phone_state">Permission to {permission} is needed to send out email when phone calls are received or made.</string>
+    <string name="permission_rationale_read_contacts">Permission to {permission} is needed to add contact name into email message.</string>
+    <string name="permission_rationale_read_sms">Permission to {permission} is needed to send out email when SMS has sent.</string>
+    <string name="permission_rationale_receive_sms">Permission to {permission} is needed to send out email when SMS has received.</string>
+    <string name="permission_rationale_write_sms">Permission to {permission} is needed to mark processed SMS as read.</string>
+    <string name="phone_number">Phone number</string>
+    <string name="phone_number_filter">Phone number filter</string>
+    <string name="phone_removed_from_filter">{number} removed from filter</string>
+    <string name="port">Port</string>
+    <string name="preferences">Preferences</string>
+    <string name="recipient_already_exists">Recipient {name} already exists</string>
+    <string name="recipients">Recipients</string>
+    <string name="regular_expression">Regular expression</string>
+    <string name="remove">Remove</string>
+    <string name="remove_from_filter">Remove number from all rules</string>
+    <string name="resend">Resend</string>
+    <string name="rules">Rules</string>
+    <string name="rules_for_sending">Rules for sending email</string>
+    <string name="select_from_contacts">Select from contacts</string>
+    <string name="send_test_message">Send test message</string>
+    <string name="sender">Account</string>
+    <string name="sender_phone">Sender: {phone} ({name})</string>
+    <string name="sent_email">Sent email</string>
+    <string name="sent_time_device">Sent{device_name}{time}</string>
+    <string name="server_test_success">Test message has been successfully sent.\nCheck your email.</string>
+    <string name="service_running">Service is active</string>
+    <string name="since_permissions_not_granted">Since permissions not granted some options have been disabled.</string>
+    <string name="text_filter">Text filter</string>
+    <string name="text_fragment">Text fragment</string>
+    <string name="time_time">Time: {time}</string>
+    <string name="triggers">Triggers</string>
+    <string name="try_to_resend_unsent">Try to resend unsent messages when connection is established</string>
+    <string name="unable_send_email">Unable to send email.</string>
+    <string name="unacceptable_phone_numbers">Unacceptable phone numbers ({size})</string>
+    <string name="unacceptable_words">Unacceptable words ({size})</string>
+    <string name="undo">Undo</string>
+    <string name="unknown_contact">Unknown contact</string>
+    <string name="user_password_not_accepted">Username and password not accepted.</string>
+    <string name="what_email_contains">What should the email include</string>
+    <string name="whitelist">Whitelist</string>
+    <string name="you_had_incoming_call">You had an incoming call of {duration} duration.</string>
+    <string name="you_had_missed_call">You had a missed call.</string>
+    <string name="you_had_outgoing_call">You had an outgoing call of {duration} duration.</string>
 
-    <string-array name="titles_triggers">
+    <string-array name="trigger_names">
         <item>Incoming SMS</item>
         <item>Outgoing SMS</item>
         <item>Incoming calls</item>
@@ -133,7 +133,7 @@
         <item>Missed calls</item>
     </string-array>
 
-    <string-array name="titles_email_content">
+    <string-array name="email_content_names">
         <item>Header</item>
         <item>Call time</item>
         <item>Sending time</item>
@@ -142,7 +142,7 @@
         <item>Device location</item>
     </string-array>
 
-    <string-array name="titles_language">
+    <string-array name="language_names">
         <item>Default</item>
         <item>English</item>
         <item>Russian</item>

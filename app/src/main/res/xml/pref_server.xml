@@ -3,25 +3,25 @@
 
     <com.bopr.android.smailer.ui.preference.EmailPreference
         android:dialogLayout="@layout/editor_email"
-        android:dialogMessage="@string/title_account_hint"
-        android:dialogTitle="@string/title_outgoing_email_address"
+        android:dialogMessage="@string/email_address_to_send_email_from"
+        android:dialogTitle="@string/outgoing_email_address"
         android:icon="@drawable/ic_pref_account"
         android:inputType="textEmailAddress"
         android:key="sender_account"
         android:maxLines="1"
         android:singleLine="true"
-        android:title="@string/title_sender_account" />
+        android:title="@string/sender" />
 
     <com.bopr.android.smailer.ui.preference.PasswordPreference
         android:dialogLayout="@layout/editor_password"
-        android:dialogMessage="@string/title_email_password_hint"
-        android:dialogTitle="@string/title_password"
+        android:dialogMessage="@string/password_of_account_to_send"
+        android:dialogTitle="@string/password"
         android:icon="@drawable/ic_pref_password"
         android:key="sender_password"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="@string/title_password" />
+        android:title="@string/password" />
 
     <androidx.preference.EditTextPreference
         android:inputType="textNoSuggestions"
@@ -29,7 +29,7 @@
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="@string/title_host" />
+        android:title="@string/host" />
 
     <androidx.preference.EditTextPreference
         android:digits="0123456789"
@@ -38,7 +38,7 @@
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="@string/title_port" />
+        android:title="@string/port" />
 
     <com.bopr.android.smailer.ui.preference.TestServerPreference
         android:key="test_mail_server"
