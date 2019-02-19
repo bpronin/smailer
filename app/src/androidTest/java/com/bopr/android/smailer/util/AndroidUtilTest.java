@@ -49,19 +49,19 @@ public class AndroidUtilTest extends BaseTest {
     }
 
     /**
-     * Tests {@link AndroidUtil#validatedUnderlinedText(Context, String, boolean)} method.
+     * Tests {@link AndroidUtil#underwivedText(Context, String, boolean)} method.
      *
      * @throws Exception when failed
      */
     @Test
     public void testValidateText() throws Exception {
-        Spannable spannable = AndroidUtil.validatedUnderlinedText(getContext(), "Invalid text", false);
+        Spannable spannable = AndroidUtil.underwivedText(getContext(), "Invalid text", false);
 
         assertThat(spannable, instanceOf(SpannableString.class));
         Object span = spannable.getSpans(0, spannable.length(), Object.class)[0];
         assertThat(span, instanceOf(WavyUnderlineSpan.class));
 
-        spannable = AndroidUtil.validatedUnderlinedText(getContext(), "Invalid text", true);
+        spannable = AndroidUtil.underwivedText(getContext(), "Invalid text", true);
         assertThat(spannable, instanceOf(SpannableString.class));
         Object[] spans = spannable.getSpans(0, spannable.length(), Object.class);
         assertThat(spans, emptyArray());

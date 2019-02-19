@@ -223,7 +223,7 @@ public class RecipientsFragment extends BaseFragment {
         }
 
         Snackbar.make(listView, title, Snackbar.LENGTH_LONG)
-                .setActionTextColor(ContextCompat.getColor(activity, R.color.dialogButtonText))
+                .setActionTextColor(ContextCompat.getColor(activity, R.color.colorPrimary))
                 .setAction(R.string.undo, new View.OnClickListener() {
 
                     @Override

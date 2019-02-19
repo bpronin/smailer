@@ -60,8 +60,9 @@
     <string name="no_permission_read_location">нет разрешения на определение местоположения</string>
     <string name="no_port_specified">Не указан порт серевера исходящей почты.</string>
     <string name="no_recipients_specified">Не указан получатель.</string>
+    <string name="no_triggers_specified">Все триггеры отключены</string>
     <string name="none">отсутствуют</string>
-    <string name="not_specified">не указано</string>
+    <string name="not_specified">Не указано</string>
     <string name="notifications">Уведомления</string>
     <string name="notify_on_send">Уведомлять об отправке</string>
     <string name="notify_send_success">Показывать уведомление об успешной отправке почты</string>

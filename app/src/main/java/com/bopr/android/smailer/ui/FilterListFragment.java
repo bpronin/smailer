@@ -221,7 +221,7 @@ abstract class FilterListFragment extends BaseFragment {
         }
 
         Snackbar.make(listView, title, Snackbar.LENGTH_LONG)
-                .setActionTextColor(ContextCompat.getColor(requireContext(), R.color.dialogButtonText))
+                .setActionTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
                 .setAction(R.string.undo, new View.OnClickListener() {
 
                     @Override

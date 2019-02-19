@@ -13,10 +13,6 @@ import com.bopr.android.smailer.ui.preference.EmailPreference;
 import com.bopr.android.smailer.ui.preference.EmailPreferenceDialog;
 import com.bopr.android.smailer.ui.preference.PasswordPreference;
 import com.bopr.android.smailer.ui.preference.PasswordPreferenceDialog;
-import com.bopr.android.smailer.util.AndroidUtil;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -36,6 +32,8 @@ import androidx.preference.PreferenceGroup;
 import androidx.preference.SwitchPreference;
 
 import static com.bopr.android.smailer.ui.AboutDialogFragment.showAboutDialog;
+import static com.bopr.android.smailer.util.AndroidUtil.accentedText;
+import static com.bopr.android.smailer.util.AndroidUtil.underwivedText;
 
 /**
  * Base {@link PreferenceFragmentCompat } with default behaviour.
@@ -44,7 +42,9 @@ import static com.bopr.android.smailer.ui.AboutDialogFragment.showAboutDialog;
  */
 public class BasePreferenceFragment extends PreferenceFragmentCompat {
 
-    private static Logger log = LoggerFactory.getLogger("BasePreferenceFragment");
+    static final int STYLE_NORMAL = 0;
+    static final int STYLE_UNDERLINED = 1;
+    static final int STYLE_ACCENTED = 2;
 
     private static final String DIALOG_FRAGMENT_TAG = "androidx.preference.PreferenceFragment.DIALOG";
 
@@ -130,26 +130,22 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
     }
 
     /**
-     * Sets "not specified" summary of {@link Preference}.
-     *
-     * @param preference preference
-     */
-    void updateNotSpecifiedSummary(Preference preference) {
-        preference.setSummary(AndroidUtil.validatedColoredText(getContext(),
-                getString(R.string.not_specified), false));
-    }
-
-    /**
      * Updates summary of {@link Preference}.
      *
      * @param value      value
      * @param preference preference
      */
-    void updateSummary(@Nullable String value, Preference preference, boolean valid) {
-        if (value != null) {
-            preference.setSummary(AndroidUtil.validatedUnderlinedText(getContext(), value, valid));
-        } else {
-            preference.setSummary(null);
+    void updateSummary(@NonNull Preference preference, @Nullable String value, int style) {
+        switch (style) {
+            case STYLE_NORMAL:
+                preference.setSummary(value);
+                break;
+            case STYLE_UNDERLINED:
+                preference.setSummary(underwivedText(getContext(), value));
+                break;
+            case STYLE_ACCENTED:
+                preference.setSummary(accentedText(getContext(), value));
+                break;
         }
     }
 

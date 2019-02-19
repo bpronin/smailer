@@ -6,9 +6,12 @@ import android.os.Bundle;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.TagFormatter;
 
+import java.util.Set;
+
 import androidx.preference.Preference;
 import androidx.preference.Preference.OnPreferenceChangeListener;
 
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_BLACKLIST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_TEXT_BLACKLIST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_TEXT_WHITELIST;
@@ -28,6 +31,18 @@ public class RulesFragment extends BasePreferenceFragment {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_rules);
 
+        findPreference(KEY_PREF_EMAIL_TRIGGERS).setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object value) {
+                if (((Set) value).isEmpty()) {
+                    updateSummary(preference, getString(R.string.no_triggers_specified), STYLE_ACCENTED);
+                } else {
+                    updateSummary(preference, getString(R.string.events_causing_sending_mail), STYLE_NORMAL);
+                }
+                return true;
+            }
+        });
+
         Preference phoneBlacklistPreference = findPreference(KEY_PREF_FILTER_BLACKLIST);
         phoneBlacklistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
@@ -41,8 +56,8 @@ public class RulesFragment extends BasePreferenceFragment {
 
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
-                updateSummary(formatListAndSize((String) value, R.string.unacceptable_phone_numbers,
-                        R.string.none), preference, true);
+                updateSummary(preference, formatListAndSize((String) value, R.string.unacceptable_phone_numbers,
+                        R.string.none), STYLE_NORMAL);
                 return true;
             }
         });
@@ -60,8 +75,8 @@ public class RulesFragment extends BasePreferenceFragment {
 
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
-                updateSummary(formatListAndSize((String) value, R.string.acceptable_phone_numbers,
-                        R.string._any), preference, true);
+                updateSummary(preference, formatListAndSize((String) value, R.string.acceptable_phone_numbers,
+                        R.string._any), STYLE_NORMAL);
                 return true;
             }
         });
@@ -79,8 +94,8 @@ public class RulesFragment extends BasePreferenceFragment {
 
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
-                updateSummary(formatListAndSize((String) value, R.string.unacceptable_words,
-                        R.string.none), preference, true);
+                updateSummary(preference, formatListAndSize((String) value, R.string.unacceptable_words,
+                        R.string.none), STYLE_NORMAL);
                 return true;
             }
         });
@@ -98,8 +113,8 @@ public class RulesFragment extends BasePreferenceFragment {
 
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
-                updateSummary(formatListAndSize((String) value, R.string.acceptable_words,
-                        R.string._any), preference, true);
+                updateSummary(preference, formatListAndSize((String) value, R.string.acceptable_words,
+                        R.string._any), STYLE_NORMAL);
                 return true;
             }
         });

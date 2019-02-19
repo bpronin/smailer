@@ -78,9 +78,10 @@ public class ServerFragment extends BasePreferenceFragment {
 
     private void updateAccountPreference(String value) {
         if (isEmpty(value)) {
-            updateNotSpecifiedSummary(accountPreference);
+            updateSummary(accountPreference, getString(R.string.not_specified), STYLE_ACCENTED);
         } else {
-            updateSummary(value, accountPreference, EmailTextValidator.isValidValue(value));
+            updateSummary(accountPreference, value, EmailTextValidator.isValidValue(value) ? STYLE_NORMAL : STYLE_UNDERLINED);
+
             if (!TextUtils.equals(accountPreference.getText(), value)) {
                 updateHostByAccount(value);
             }
@@ -89,25 +90,25 @@ public class ServerFragment extends BasePreferenceFragment {
 
     private void updatePasswordPreference(String value) {
         if (isEmpty(value)) {
-            updateNotSpecifiedSummary(passwordPreference);
+            updateSummary(passwordPreference, getString(R.string.not_specified), STYLE_ACCENTED);
         } else {
-            updateSummary(getString(R.string.password_asterisks), passwordPreference, true);
+            updateSummary(passwordPreference, getString(R.string.password_asterisks), STYLE_NORMAL);
         }
     }
 
     private void updateHostPreference(String value) {
         if (Util.isEmpty(value)) {
-            updateNotSpecifiedSummary(hostPreference);
+            updateSummary(hostPreference, getString(R.string.not_specified), STYLE_ACCENTED);
         } else {
-            updateSummary(value, hostPreference, true);
+            updateSummary(hostPreference, value, STYLE_NORMAL);
         }
     }
 
     private void updatePortPreference(String value) {
         if (Util.isEmpty(value)) {
-            updateNotSpecifiedSummary(portPreference);
+            updateSummary(portPreference, getString(R.string.not_specified), STYLE_ACCENTED);
         } else {
-            updateSummary(value, portPreference, true);
+            updateSummary(portPreference, value, STYLE_NORMAL);
         }
     }
 

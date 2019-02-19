@@ -155,9 +155,9 @@ public class MainFragment extends BasePreferenceFragment {
             String port = settings.getString(KEY_PREF_EMAIL_PORT, "");
 
             if (anyIsEmpty(sender, host, port)) {
-                updateNotSpecifiedSummary(serverPreference);
+                updateSummary(serverPreference, getString(R.string.not_specified), STYLE_ACCENTED);
             } else {
-                updateSummary(sender, serverPreference, EmailTextValidator.isValidValue(sender));
+                updateSummary(serverPreference, sender, EmailTextValidator.isValidValue(sender) ? STYLE_NORMAL : STYLE_UNDERLINED);
             }
         }
     }
@@ -166,9 +166,9 @@ public class MainFragment extends BasePreferenceFragment {
         if (!asListView) {
             String value = settings.getString(KEY_PREF_RECIPIENTS_ADDRESS, null);
             if (isEmpty(value)) {
-                updateNotSpecifiedSummary(recipientsPreference);
+                updateSummary(recipientsPreference, getString(R.string.not_specified), STYLE_ACCENTED);
             } else {
-                updateSummary(value.replaceAll(",", ", "), recipientsPreference, EmailListTextValidator.isValidValue(value));
+                updateSummary(recipientsPreference, value.replaceAll(",", ", "), EmailListTextValidator.isValidValue(value) ? STYLE_NORMAL : STYLE_UNDERLINED);
             }
         }
     }
@@ -179,9 +179,9 @@ public class MainFragment extends BasePreferenceFragment {
             String text = TagFormatter.formatter(R.string.count_new, requireContext())
                     .put("count", valueOf(count))
                     .format();
-            updateSummary(text, historyPreference, true);
+            updateSummary(historyPreference, text, true ? STYLE_NORMAL : STYLE_UNDERLINED);
         } else {
-            updateSummary(null, historyPreference, true);
+            updateSummary(historyPreference, null, true ? STYLE_NORMAL : STYLE_UNDERLINED);
         }
     }
 

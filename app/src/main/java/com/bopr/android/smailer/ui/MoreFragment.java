@@ -46,18 +46,18 @@ public class MoreFragment extends BasePreferenceFragment {
     private void updateLocalePreference(ListPreference preference, String value) {
         int index = preference.findIndexOfValue(value);
         if (index < 0) {
-            updateNotSpecifiedSummary(preference);
+            updateSummary(preference, getString(R.string.not_specified), STYLE_ACCENTED);
         } else {
             CharSequence cs = preference.getEntries()[index];
-            updateSummary(cs.toString(), preference, true);
+            updateSummary(preference, cs.toString(), STYLE_NORMAL);
         }
     }
 
     private void updateAlasPreference(EditTextPreference preference, String value) {
         if (Util.isEmpty(value)) {
-            updateSummary(AndroidUtil.getDeviceName(), preference, true);
+            updateSummary(preference, AndroidUtil.getDeviceName(), STYLE_NORMAL);
         } else {
-            updateSummary(value, preference, true);
+            updateSummary(preference, value, STYLE_NORMAL);
         }
     }
 

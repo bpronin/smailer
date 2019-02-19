@@ -1,7 +1,6 @@
 package com.bopr.android.smailer.util;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.Spannable;
@@ -30,27 +29,23 @@ public class AndroidUtil {
     }
 
     /**
-     * If {@code valid} parameter is false returns text underlined with wavy red line.
+     * Returns text underlined with wavy red line.
      */
-    public static Spannable validatedUnderlinedText(Context context, String value, boolean valid) {
-        Spannable result = new SpannableString(value);
-        if (!valid) {
-            WavyUnderlineSpan span = new WavyUnderlineSpan(context);
-            result.setSpan(span, 0, result.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        }
-        return result;
+    public static Spannable underwivedText(Context context, String value) {
+        Spannable spannable = new SpannableString(value);
+        WavyUnderlineSpan span = new WavyUnderlineSpan(context);
+        spannable.setSpan(span, 0, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return spannable;
     }
 
     /**
-     * If {@code valid} parameter is false returns red text.
+     * Returns text of accent color.
      */
-    public static Spannable validatedColoredText(Context context, String value, boolean valid) {
-        Spannable result = new SpannableString(value);
-        if (!valid) {
-            ForegroundColorSpan span = new ForegroundColorSpan(ContextCompat.getColor(context, R.color.colorAccent2));
-            result.setSpan(span, 0, result.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        }
-        return result;
+    public static Spannable accentedText(Context context, String value) {
+        Spannable spannable = new SpannableString(value);
+        ForegroundColorSpan span = new ForegroundColorSpan(ContextCompat.getColor(context, R.color.colorAccent));
+        spannable.setSpan(span, 0, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return spannable;
     }
 
     /**
@@ -91,14 +86,18 @@ public class AndroidUtil {
         return Util.capitalize(MANUFACTURER) + " " + MODEL;
     }
 
-    /**
-     * Helper method to determine if the device has an extra-large screen. For
-     * example, 10" tablets are extra-large.
+    /*
      */
+/**
+ * Helper method to determine if the device has an extra-large screen. For
+ * example, 10" tablets are extra-large.
+ *//*
+
     public static boolean isXLargeTablet(Context context) {
         return (context.getResources().getConfiguration().screenLayout
                 & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
     }
+*/
 
 /*
     public static String getAndroidId(Context context) {
