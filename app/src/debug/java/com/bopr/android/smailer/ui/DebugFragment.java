@@ -707,7 +707,7 @@ public class DebugFragment extends BasePreferenceFragment {
                         "smtp.gmail.com", "465");
                 transport.send(
                         "SMailer log",
-                        "See attachment",
+                        "Device: " + AndroidUtil.getDeviceName(),
                         attachment,
                         user,
                         properties.getProperty("developer_email")
