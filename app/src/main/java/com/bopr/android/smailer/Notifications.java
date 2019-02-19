@@ -46,7 +46,7 @@ public class Notifications {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, getChannel())
                 .setContentIntent(createIntent(ACTION_SHOW_MAIN, null))
-                .setSmallIcon(R.drawable.ic_service)
+                .setSmallIcon(R.drawable.ic_light_service)
                 .setTicker(context.getResources().getString(R.string.app_name))
                 .setContentTitle(context.getResources().getString(R.string.app_name))
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
@@ -71,7 +71,7 @@ public class Notifications {
     public void showMailError(String text, @Nullable Long messageId, int action) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, getChannel())
                 .setContentIntent(createIntent(action, messageId))
-                .setSmallIcon(R.drawable.ic_alert)
+                .setSmallIcon(R.drawable.ic_light_alert)
                 .setTicker(context.getResources().getString(R.string.app_name))
                 .setAutoCancel(true)
                 .setContentTitle(context.getResources().getString(R.string.app_name))
@@ -90,7 +90,7 @@ public class Notifications {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, getChannel())
                 .setContentIntent(createIntent(ACTION_SHOW_LOG, messageId))
-                .setSmallIcon(R.drawable.ic_file_send)
+                .setSmallIcon(R.drawable.ic_light_send)
                 .setTicker(context.getResources().getString(R.string.app_name))
                 .setAutoCancel(true)
                 .setContentTitle(context.getResources().getString(R.string.app_name))
@@ -107,7 +107,7 @@ public class Notifications {
     public void showRemoteAction(String message) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, getChannel())
                 .setContentIntent(createIntent(ACTION_SHOW_MAIN, null))
-                .setSmallIcon(R.drawable.ic_service)
+                .setSmallIcon(R.drawable.ic_light_service)
                 .setTicker(context.getResources().getString(R.string.app_name))
                 .setAutoCancel(true)
                 .setContentTitle(context.getResources().getString(R.string.app_name))

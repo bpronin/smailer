@@ -1,4 +1,4 @@
-<!-- drawable/plus.xml -->
+<!-- drawable/alert.xml -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
@@ -6,5 +6,5 @@
     android:viewportHeight="24">
     <path
         android:fillColor="#fff"
-        android:pathData="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
+        android:pathData="M13,14H11V10H13M13,18H11V16H13M1,21H23L12,2L1,21Z" />
 </vector>
