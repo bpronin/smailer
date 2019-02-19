@@ -49,15 +49,15 @@ public class MoreFragment extends BasePreferenceFragment {
             updateSummary(preference, getString(R.string.not_specified), STYLE_ACCENTED);
         } else {
             CharSequence cs = preference.getEntries()[index];
-            updateSummary(preference, cs.toString(), STYLE_NORMAL);
+            updateSummary(preference, cs.toString(), STYLE_DEFAULT);
         }
     }
 
     private void updateAlasPreference(EditTextPreference preference, String value) {
         if (Util.isEmpty(value)) {
-            updateSummary(preference, AndroidUtil.getDeviceName(), STYLE_NORMAL);
+            updateSummary(preference, AndroidUtil.getDeviceName(), STYLE_DEFAULT);
         } else {
-            updateSummary(preference, value, STYLE_NORMAL);
+            updateSummary(preference, value, STYLE_DEFAULT);
         }
     }
 

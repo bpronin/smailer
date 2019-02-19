@@ -75,31 +75,7 @@ public class MainFragment extends BasePreferenceFragment {
         findPreference(KEY_PREF_MORE).setOnPreferenceClickListener(preferenceClickListener);
         findPreference(KEY_PREF_RULES).setOnPreferenceClickListener(preferenceClickListener);
 
-        settingsListener = new OnSharedPreferenceChangeListener() {
-
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                switch (key) {
-                    case KEY_PREF_SENDER_ACCOUNT:
-                    case KEY_PREF_SENDER_PASSWORD:
-                    case KEY_PREF_EMAIL_HOST:
-                    case KEY_PREF_EMAIL_PORT:
-                        updateServerPreference();
-                        break;
-                    case KEY_PREF_RECIPIENTS_ADDRESS:
-                        updateRecipientsPreference();
-                        break;
-                    case KEY_PREF_EMAIL_TRIGGERS:
-                        ContentObserverService.enable(requireContext());
-                        break;
-                    case KEY_PREF_RESEND_UNSENT:
-                        ResendWorker.enable(requireContext());
-                        break;
-                }
-
-                backupManager.dataChanged();
-            }
-        };
+        settingsListener = new SettingsListener();
         settings.registerOnSharedPreferenceChangeListener(settingsListener);
 
         database = new Database(getContext());
@@ -157,7 +133,7 @@ public class MainFragment extends BasePreferenceFragment {
             if (anyIsEmpty(sender, host, port)) {
                 updateSummary(serverPreference, getString(R.string.not_specified), STYLE_ACCENTED);
             } else {
-                updateSummary(serverPreference, sender, EmailTextValidator.isValidValue(sender) ? STYLE_NORMAL : STYLE_UNDERLINED);
+                updateSummary(serverPreference, sender, EmailTextValidator.isValidValue(sender) ? STYLE_DEFAULT : STYLE_UNDERLINED);
             }
         }
     }
@@ -168,7 +144,7 @@ public class MainFragment extends BasePreferenceFragment {
             if (isEmpty(value)) {
                 updateSummary(recipientsPreference, getString(R.string.not_specified), STYLE_ACCENTED);
             } else {
-                updateSummary(recipientsPreference, value.replaceAll(",", ", "), EmailListTextValidator.isValidValue(value) ? STYLE_NORMAL : STYLE_UNDERLINED);
+                updateSummary(recipientsPreference, value.replaceAll(",", ", "), EmailListTextValidator.isValidValue(value) ? STYLE_DEFAULT : STYLE_UNDERLINED);
             }
         }
     }
@@ -179,9 +155,9 @@ public class MainFragment extends BasePreferenceFragment {
             String text = TagFormatter.formatter(R.string.count_new, requireContext())
                     .put("count", valueOf(count))
                     .format();
-            updateSummary(historyPreference, text, true ? STYLE_NORMAL : STYLE_UNDERLINED);
+            updateSummary(historyPreference, text, STYLE_DEFAULT);
         } else {
-            updateSummary(historyPreference, null, true ? STYLE_NORMAL : STYLE_UNDERLINED);
+            updateSummary(historyPreference, null, STYLE_DEFAULT);
         }
     }
 
@@ -207,6 +183,32 @@ public class MainFragment extends BasePreferenceFragment {
                     break;
             }
             return true;
+        }
+    }
+
+    private class SettingsListener implements OnSharedPreferenceChangeListener {
+
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            switch (key) {
+                case KEY_PREF_SENDER_ACCOUNT:
+                case KEY_PREF_SENDER_PASSWORD:
+                case KEY_PREF_EMAIL_HOST:
+                case KEY_PREF_EMAIL_PORT:
+                    updateServerPreference();
+                    break;
+                case KEY_PREF_RECIPIENTS_ADDRESS:
+                    updateRecipientsPreference();
+                    break;
+                case KEY_PREF_EMAIL_TRIGGERS:
+                    ContentObserverService.enable(requireContext());
+                    break;
+                case KEY_PREF_RESEND_UNSENT:
+                    ResendWorker.enable(requireContext());
+                    break;
+            }
+
+            backupManager.dataChanged();
         }
     }
 }

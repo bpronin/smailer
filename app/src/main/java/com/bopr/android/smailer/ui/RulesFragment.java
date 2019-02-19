@@ -37,7 +37,7 @@ public class RulesFragment extends BasePreferenceFragment {
                 if (((Set) value).isEmpty()) {
                     updateSummary(preference, getString(R.string.no_triggers_specified), STYLE_ACCENTED);
                 } else {
-                    updateSummary(preference, getString(R.string.events_causing_sending_mail), STYLE_NORMAL);
+                    updateSummary(preference, getString(R.string.events_causing_sending_mail), STYLE_DEFAULT);
                 }
                 return true;
             }
@@ -57,7 +57,7 @@ public class RulesFragment extends BasePreferenceFragment {
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
                 updateSummary(preference, formatListAndSize((String) value, R.string.unacceptable_phone_numbers,
-                        R.string.none), STYLE_NORMAL);
+                        R.string.none), STYLE_DEFAULT);
                 return true;
             }
         });
@@ -76,7 +76,7 @@ public class RulesFragment extends BasePreferenceFragment {
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
                 updateSummary(preference, formatListAndSize((String) value, R.string.acceptable_phone_numbers,
-                        R.string._any), STYLE_NORMAL);
+                        R.string._any), STYLE_DEFAULT);
                 return true;
             }
         });
@@ -95,7 +95,7 @@ public class RulesFragment extends BasePreferenceFragment {
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
                 updateSummary(preference, formatListAndSize((String) value, R.string.unacceptable_words,
-                        R.string.none), STYLE_NORMAL);
+                        R.string.none), STYLE_DEFAULT);
                 return true;
             }
         });
@@ -114,7 +114,7 @@ public class RulesFragment extends BasePreferenceFragment {
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
                 updateSummary(preference, formatListAndSize((String) value, R.string.acceptable_words,
-                        R.string._any), STYLE_NORMAL);
+                        R.string._any), STYLE_DEFAULT);
                 return true;
             }
         });

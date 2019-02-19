@@ -80,7 +80,7 @@ public class ServerFragment extends BasePreferenceFragment {
         if (isEmpty(value)) {
             updateSummary(accountPreference, getString(R.string.not_specified), STYLE_ACCENTED);
         } else {
-            updateSummary(accountPreference, value, EmailTextValidator.isValidValue(value) ? STYLE_NORMAL : STYLE_UNDERLINED);
+            updateSummary(accountPreference, value, EmailTextValidator.isValidValue(value) ? STYLE_DEFAULT : STYLE_UNDERLINED);
 
             if (!TextUtils.equals(accountPreference.getText(), value)) {
                 updateHostByAccount(value);
@@ -92,7 +92,7 @@ public class ServerFragment extends BasePreferenceFragment {
         if (isEmpty(value)) {
             updateSummary(passwordPreference, getString(R.string.not_specified), STYLE_ACCENTED);
         } else {
-            updateSummary(passwordPreference, getString(R.string.password_asterisks), STYLE_NORMAL);
+            updateSummary(passwordPreference, getString(R.string.password_asterisks), STYLE_DEFAULT);
         }
     }
 
@@ -100,7 +100,7 @@ public class ServerFragment extends BasePreferenceFragment {
         if (Util.isEmpty(value)) {
             updateSummary(hostPreference, getString(R.string.not_specified), STYLE_ACCENTED);
         } else {
-            updateSummary(hostPreference, value, STYLE_NORMAL);
+            updateSummary(hostPreference, value, STYLE_DEFAULT);
         }
     }
 
@@ -108,7 +108,7 @@ public class ServerFragment extends BasePreferenceFragment {
         if (Util.isEmpty(value)) {
             updateSummary(portPreference, getString(R.string.not_specified), STYLE_ACCENTED);
         } else {
-            updateSummary(portPreference, value, STYLE_NORMAL);
+            updateSummary(portPreference, value, STYLE_DEFAULT);
         }
     }
 

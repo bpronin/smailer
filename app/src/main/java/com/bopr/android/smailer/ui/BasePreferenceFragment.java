@@ -42,7 +42,7 @@ import static com.bopr.android.smailer.util.AndroidUtil.underwivedText;
  */
 public class BasePreferenceFragment extends PreferenceFragmentCompat {
 
-    static final int STYLE_NORMAL = 0;
+    static final int STYLE_DEFAULT = 0;
     static final int STYLE_UNDERLINED = 1;
     static final int STYLE_ACCENTED = 2;
 
@@ -137,7 +137,7 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
      */
     void updateSummary(@NonNull Preference preference, @Nullable String value, int style) {
         switch (style) {
-            case STYLE_NORMAL:
+            case STYLE_DEFAULT:
                 preference.setSummary(value);
                 break;
             case STYLE_UNDERLINED:
