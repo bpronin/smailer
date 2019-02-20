@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    package="com.bopr.android.smailer"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.bopr.android.smailer">
 
-    <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
     <!--<uses-permission android:name="android.permission.READ_LOGS"/>-->
     <!--<uses-permission android:name="android.permission.BROADCAST_SMS"/>-->
 
@@ -12,8 +11,8 @@
 
         <activity
             android:name=".ui.DebugActivity"
-            android:label="Debug">
-        </activity>
+            android:exported="true"
+            android:label="Debug" />
 
     </application>
 

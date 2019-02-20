@@ -1,4 +1,4 @@
-package com.bopr.android.smailer;
+package com.bopr.android.smailer.mail;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,15 +27,16 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * An utility class that sends email using SMTP transport.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class MailTransport {
+public class JavaMailTransport implements MailTransport {
 
-    private static Logger log = LoggerFactory.getLogger("MailTransport");
+    private static Logger log = LoggerFactory.getLogger("JavaMailTransport");
 
     private static final String UTF_8 = "UTF-8";
     private static final String HTML = "html";
@@ -50,32 +51,9 @@ public class MailTransport {
         Security.addProvider(new JSSEProvider());
     }
 
-    public MailTransport() {
-    }
+    private String sender;
 
-    /**
-     * Starts new delivery session.
-     */
-    public void startSession(@NonNull String user, @NonNull String password, @NonNull String host, @NonNull String port) {
-        Properties props = new Properties();
-        props.put("mail.transport.protocol", "smtp");
-        props.put("mail.host", host);
-        props.put("mail.smtp.port", port);
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.socketFactory.port", port);
-        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-        props.put("mail.smtp.socketFactory.fallback", false);
-        props.put("mail.smtp.quitwait", false);
-        props.put("mail.smtp.connectiontimeout", 10000);
-
-        final PasswordAuthentication authentication = new PasswordAuthentication(user, password);
-        session = Session.getInstance(props, new Authenticator() {
-
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return authentication;
-            }
-        });
+    public JavaMailTransport() {
     }
 
     /**
@@ -105,22 +83,41 @@ public class MailTransport {
     }
 
     /**
-     * Sends email.
+     * Starts new delivery session.
      */
-    public void send(String subject, String body, @NonNull String sender, @NonNull String recipients)
-            throws MessagingException {
-        send(subject, body, null, sender, recipients);
+    @Override
+    public void startSession(@NonNull String sender, @NonNull String password, @NonNull String host, @NonNull String port) {
+        this.sender = sender;
+
+        Properties props = new Properties();
+        props.put("mail.transport.protocol", "smtp");
+        props.put("mail.host", host);
+        props.put("mail.smtp.port", port);
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.socketFactory.port", port);
+        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        props.put("mail.smtp.socketFactory.fallback", false);
+        props.put("mail.smtp.quitwait", false);
+        props.put("mail.smtp.connectiontimeout", 10000);
+
+        final PasswordAuthentication authentication = new PasswordAuthentication(sender, password);
+        session = Session.getInstance(props, new Authenticator() {
+
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return authentication;
+            }
+        });
     }
 
     /**
      * Sends email with attachment.
      */
-    public void send(String subject, String body, Collection<File> attachment, @NonNull String sender,
+    public void send(String subject, String body, @Nullable Collection<File> attachment,
                      @NonNull String recipients) throws MessagingException {
         MimeMessage message = new MimeMessage(session);
         message.setSender(new InternetAddress(sender));
         message.setSubject(subject, UTF_8);
-
 
         if (recipients.indexOf(',') > 0) {
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipients));

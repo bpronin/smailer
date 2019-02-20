@@ -8,7 +8,7 @@ android {
     signingConfigs {
         config {
             keyAlias 'sample'
-            storeFile file('../etc/keystore.jks')
+            storeFile file('../etc/keystore.p12')
             storePassword store_password
             keyPassword key_password
         }
@@ -25,7 +25,8 @@ android {
     }
 
     lintOptions {
-        abortOnError true
+//        abortOnError true
+        abortOnError false
     }
 
     buildTypes {
@@ -59,6 +60,7 @@ android {
 
     packagingOptions {
         pickFirst 'META-INF/LICENSE.txt' // JavaMail license file
+        exclude 'META-INF/DEPENDENCIES'  // resolving conflict in gmail package
     }
 
     buildToolsVersion '28.0.3'
@@ -76,17 +78,21 @@ dependencies {
     implementation 'androidx.preference:preference:1.0.0'
     implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
     implementation 'com.google.android.material:material:1.0.0'
-    implementation 'com.sun.mail:android-mail:1.5.5'
-    implementation 'org.slf4j:slf4j-api:1.7.25'
     implementation 'android.arch.work:work-runtime:1.0.0-rc01'
+    implementation 'com.sun.mail:android-mail:1.5.5' //todo: newest 1.6.3
+    implementation 'com.google.android.gms:play-services-auth:16.0.1'
+    implementation('com.google.apis:google-api-services-gmail:v1-rev98-1.25.0') {
+        exclude group: 'com.google.guava'
+    }
+    implementation('com.google.api-client:google-api-client-android:1.25.0') {
+        exclude group: 'com.google.guava'
+    }
 
     implementation 'com.google.firebase:firebase-messaging:17.3.4'
-//    implementation 'com.google.android.gms:play-services-auth:16.0.1'
-//    implementation 'com.google.android.gms:play-services-identity:16.0.0'
-//    implementation 'com.google.android.gms:play-services-gcm:16.0.0'
 
+    implementation 'org.slf4j:slf4j-api:1.7.25'
     implementation 'com.github.tony19:logback-android-core:1.1.1-6'
-    implementation ('com.github.tony19:logback-android-classic:1.1.1-6') {
+    implementation('com.github.tony19:logback-android-classic:1.1.1-6') {
         exclude group: 'com.google.android'
     }
 

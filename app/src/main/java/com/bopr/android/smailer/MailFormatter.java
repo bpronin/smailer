@@ -36,7 +36,7 @@ import static java.lang.String.valueOf;
 class MailFormatter {
 
     private static final String SUBJECT_PATTERN = "[{app_name}] {source} {phone}";
-    private static final String HEADER_PATTERN = "<strong>{header}</strong><br>";
+    private static final String HEADER_PATTERN = "<strong>{header}</strong><br><br>";
     private static final String BODY_PATTERN = "<html>" +
             "<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
             "<body>{header}{message}{line}{footer}</body></html>";

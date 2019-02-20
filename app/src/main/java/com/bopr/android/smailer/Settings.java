@@ -8,6 +8,7 @@ import com.bopr.android.smailer.util.SharedPreferencesWrapper;
 import com.bopr.android.smailer.util.Util;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.Set;
@@ -31,6 +32,7 @@ public class Settings extends SharedPreferencesWrapper {
     public static final String PREFERENCES_STORAGE_NAME = "com.bopr.android.smailer_preferences";
     public static final String DB_NAME = "smailer.sqlite";
 
+    public static final String KEY_PREF_SELECTED_ACCOUNT = "selected_account";
     public static final String KEY_PREF_SENDER_ACCOUNT = "sender_account";
     public static final String KEY_PREF_SENDER_PASSWORD = "sender_password";
     public static final String KEY_PREF_EMAIL_HOST = "sender_host";
@@ -123,7 +125,9 @@ public class Settings extends SharedPreferencesWrapper {
     public BuildInfo getReleaseInfo() {
         Properties properties = new Properties();
         try {
-            properties.load(context.getAssets().open("release.properties"));
+            InputStream stream = context.getAssets().open("release.properties");
+            properties.load(stream);
+            stream.close();
             return new BuildInfo(
                     properties.getProperty("build_number"),
                     properties.getProperty("build_time")

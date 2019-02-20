@@ -11,7 +11,7 @@ import java.lang.ref.WeakReference;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-
+@SuppressWarnings("deprecation")
 public abstract class LongAsyncTask<Params, Progress, Result> extends AsyncTask<Params, Progress, Result> {
     
     /* Holding activity reference in nested static class throws memory leak warning. This approach avoids it.*/
@@ -24,7 +24,6 @@ public abstract class LongAsyncTask<Params, Progress, Result> extends AsyncTask<
     }
 
     @Override
-    @SuppressWarnings("Deprecation")
     protected void onPreExecute() {
         dialog = new ProgressDialog(getActivity());
         dialog.setMessage("Processing...");

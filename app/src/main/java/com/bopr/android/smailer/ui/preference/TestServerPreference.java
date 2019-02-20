@@ -9,22 +9,22 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.bopr.android.smailer.Cryptor;
-import com.bopr.android.smailer.MailTransport;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.Settings;
+import com.bopr.android.smailer.mail.JavaMailTransport;
 
 import javax.mail.MessagingException;
 
 import androidx.preference.Preference;
 import androidx.preference.PreferenceViewHolder;
 
-import static com.bopr.android.smailer.MailTransport.CHECK_RESULT_AUTHENTICATION;
-import static com.bopr.android.smailer.MailTransport.CHECK_RESULT_NOT_CONNECTED;
-import static com.bopr.android.smailer.MailTransport.CHECK_RESULT_OK;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
+import static com.bopr.android.smailer.mail.JavaMailTransport.CHECK_RESULT_AUTHENTICATION;
+import static com.bopr.android.smailer.mail.JavaMailTransport.CHECK_RESULT_NOT_CONNECTED;
+import static com.bopr.android.smailer.mail.JavaMailTransport.CHECK_RESULT_OK;
 
 /**
  * A {@link Preference} for testing server settings.
@@ -94,7 +94,7 @@ public class TestServerPreference extends Preference {
 
         @Override
         protected Integer doInBackground(Void... params) {
-            MailTransport transport = new MailTransport();
+            JavaMailTransport transport = new JavaMailTransport();
             Cryptor cryptor = new Cryptor(owner.getContext());
 
             Settings settings = new Settings(owner.getContext());
@@ -108,7 +108,7 @@ public class TestServerPreference extends Preference {
             int result = transport.checkSession();
             if (result == CHECK_RESULT_OK) {
                 try {
-                    transport.send("[" + owner.getContext().getString(R.string.app_name) + "] TEST", "This is the test message", user, user);
+                    transport.send("[" + owner.getContext().getString(R.string.app_name) + "] TEST", "This is the test message", null, user);
                 } catch (MessagingException e) {
                     result = CHECK_RESULT_NOT_CONNECTED;
                 }

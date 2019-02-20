@@ -13,6 +13,7 @@ import android.util.Base64;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.bopr.android.smailer.AuthorizationHelper;
 import com.bopr.android.smailer.CallProcessorService;
 import com.bopr.android.smailer.CallReceiver;
 import com.bopr.android.smailer.Contacts;
@@ -20,12 +21,14 @@ import com.bopr.android.smailer.Cryptor;
 import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.GeoCoordinates;
 import com.bopr.android.smailer.GeoLocator;
-import com.bopr.android.smailer.MailTransport;
 import com.bopr.android.smailer.Notifications;
 import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.Settings;
+import com.bopr.android.smailer.mail.JavaMailTransport;
+import com.bopr.android.smailer.mail.MailTransport;
 import com.bopr.android.smailer.util.AndroidUtil;
+import com.google.api.services.gmail.GmailScopes;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,6 +100,7 @@ public class DebugFragment extends BasePreferenceFragment {
     private Cryptor cryptor;
     private Database database;
     private PreferenceScreen screen;
+    private AuthorizationHelper authorizator;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -109,6 +113,7 @@ public class DebugFragment extends BasePreferenceFragment {
         database = new Database(context);
         locator = new GeoLocator(context, database);
         cryptor = new Cryptor(context);
+        authorizator = new AuthorizationHelper(this, GmailScopes.GMAIL_SEND);
 
         screen = getPreferenceManager().createPreferenceScreen(context);
 
@@ -146,6 +151,14 @@ public class DebugFragment extends BasePreferenceFragment {
                     @Override
                     protected void onClick(Preference preference) {
                         onStartProcessPendingEvents();
+                    }
+                }),
+
+                createPreference("Request google api permission", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onRequestGooglePermission();
                     }
                 }),
 
@@ -359,12 +372,21 @@ public class DebugFragment extends BasePreferenceFragment {
         setPreferenceScreen(screen);
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (authorizator.onActivityResult(requestCode, resultCode, data)) {
+//            onSendDebugMail();
+        }
+    }
+
     @NonNull
     private Properties loadDebugProperties() {
         Properties properties = new Properties();
         try {
             InputStream stream = context.getAssets().open("debug.properties");
             properties.load(stream);
+            stream.close();
         } catch (IOException x) {
             log.error("Cannot read debug properties", x);
         }
@@ -460,8 +482,11 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private void onSendDebugMail() {
-        new SendDefaultMailTask(getActivity(), loadDebugProperties()).execute();
-        showDone(context);
+        new SendDebugMailTask(getActivity(), loadDebugProperties()).execute();
+    }
+
+    private void onRequestGooglePermission() {
+        authorizator.selectAccount();
     }
 
     private void onStartProcessSingleEvent() {
@@ -646,12 +671,11 @@ public class DebugFragment extends BasePreferenceFragment {
         }
     }
 
-    private static class SendDefaultMailTask extends LongAsyncTask<Void, Void, Void> {
-
+    private static class SendDebugMailTask extends LongAsyncTask<Void, Void, Void> {
 
         private Properties properties;
 
-        private SendDefaultMailTask(Activity activity, Properties properties) {
+        private SendDebugMailTask(Activity activity, Properties properties) {
             super(activity);
             this.properties = properties;
         }
@@ -660,7 +684,7 @@ public class DebugFragment extends BasePreferenceFragment {
         protected Void doInBackground(Void... params) {
             String user = properties.getProperty("default_sender");
 
-            MailTransport transport = new MailTransport();
+            MailTransport transport = new JavaMailTransport();
             transport.startSession(user, properties.getProperty("default_password"),
                     "smtp.gmail.com", "465");
 
@@ -668,7 +692,7 @@ public class DebugFragment extends BasePreferenceFragment {
                 transport.send(
                         "test subject",
                         "test message from " + AndroidUtil.getDeviceName(),
-                        user,
+                        null,
                         properties.getProperty("default_recipient")
                 );
             } catch (Exception x) {
@@ -702,14 +726,13 @@ public class DebugFragment extends BasePreferenceFragment {
 
             try {
                 String user = properties.getProperty("default_sender");
-                MailTransport transport = new MailTransport();
+                MailTransport transport = new JavaMailTransport();
                 transport.startSession(user, properties.getProperty("default_password"),
                         "smtp.gmail.com", "465");
                 transport.send(
                         "SMailer log",
                         "Device: " + AndroidUtil.getDeviceName(),
                         attachment,
-                        user,
                         properties.getProperty("developer_email")
                 );
             } catch (Exception x) {

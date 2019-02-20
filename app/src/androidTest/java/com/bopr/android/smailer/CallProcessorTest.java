@@ -5,9 +5,13 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import com.bopr.android.smailer.mail.JavaMailTransport;
+
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+
+import java.io.File;
 
 import javax.mail.AuthenticationFailedException;
 import javax.mail.MessagingException;
@@ -46,7 +50,7 @@ public class CallProcessorTest extends BaseTest {
     private Database database;
     private Context context;
     private Cryptor cryptor;
-    private MailTransport transport;
+    private JavaMailTransport transport;
     private Notifications notifications;
     private NetworkInfo networkInfo;
     private SharedPreferences preferences;
@@ -91,7 +95,7 @@ public class CallProcessorTest extends BaseTest {
             }
         });
 
-        transport = mock(MailTransport.class);
+        transport = mock(JavaMailTransport.class);
         notifications = mock(Notifications.class);
         locator = mock(GeoLocator.class);
     }
@@ -109,7 +113,7 @@ public class CallProcessorTest extends BaseTest {
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(inits).when(transport).startSession(anyString(), anyString(), anyString(), anyString());
-        doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
+        doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
 
         CallProcessor callProcessor = new CallProcessor(context, transport, cryptor, notifications, database, locator);
         callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, new GeoCoordinates(30.0, 60.0), null, PhoneEvent.State.PENDING));
@@ -132,7 +136,7 @@ public class CallProcessorTest extends BaseTest {
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(inits).when(transport).startSession(anyString(), anyString(), anyString(), anyString());
-        doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
+        doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
 
         when(preferences.getString(eq(KEY_PREF_EMAIL_LOCALE), anyString())).thenReturn("ru_RU");
 
@@ -157,7 +161,7 @@ public class CallProcessorTest extends BaseTest {
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(inits).when(transport).startSession(anyString(), anyString(), anyString(), anyString());
-        doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
+        doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
         when(networkInfo.isConnected()).thenReturn(false);
 
         CallProcessor callProcessor = new CallProcessor(context, transport, cryptor, notifications, database, locator);
@@ -181,7 +185,7 @@ public class CallProcessorTest extends BaseTest {
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(inits).when(transport).startSession(anyString(), anyString(), anyString(), anyString());
-        doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
+        doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
 
         when(preferences.getString(eq(KEY_PREF_SENDER_ACCOUNT), anyString())).thenReturn(null);
 
@@ -206,7 +210,7 @@ public class CallProcessorTest extends BaseTest {
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(inits).when(transport).startSession(anyString(), anyString(), anyString(), anyString());
-        doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
+        doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
 
         when(preferences.getString(eq(KEY_PREF_RECIPIENTS_ADDRESS), anyString())).thenReturn(null);
 
@@ -231,7 +235,7 @@ public class CallProcessorTest extends BaseTest {
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(inits).when(transport).startSession(anyString(), anyString(), anyString(), anyString());
-        doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
+        doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
 
         when(preferences.getString(eq(KEY_PREF_EMAIL_HOST), anyString())).thenReturn(null);
 
@@ -256,7 +260,7 @@ public class CallProcessorTest extends BaseTest {
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(inits).when(transport).startSession(anyString(), anyString(), anyString(), anyString());
-        doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
+        doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
 
         when(preferences.getString(eq(KEY_PREF_EMAIL_PORT), anyString())).thenReturn(null);
 
@@ -281,8 +285,8 @@ public class CallProcessorTest extends BaseTest {
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(inits).when(transport).startSession(anyString(), anyString(), anyString(), anyString());
-        doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
-        doThrow(AuthenticationFailedException.class).when(transport).send(anyString(), anyString(), anyString(), anyString());
+        doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
+        doThrow(AuthenticationFailedException.class).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
 
         CallProcessor callProcessor = new CallProcessor(context, transport, cryptor, notifications, database, locator);
         callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, null, null, PhoneEvent.State.PENDING));
@@ -305,8 +309,8 @@ public class CallProcessorTest extends BaseTest {
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
         doAnswer(inits).when(transport).startSession(anyString(), anyString(), anyString(), anyString());
-        doAnswer(sends).when(transport).send(anyString(), anyString(), anyString(), anyString());
-        doThrow(MessagingException.class).when(transport).send(anyString(), anyString(), anyString(), anyString());
+        doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
+        doThrow(MessagingException.class).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
 
         CallProcessor callProcessor = new CallProcessor(context, transport, cryptor, notifications, database, locator);
         callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, null, null, PhoneEvent.State.PENDING));
@@ -337,7 +341,7 @@ public class CallProcessorTest extends BaseTest {
                 }
                 return null;
             }
-        }).when(transport).send(anyString(), anyString(), anyString(), anyString());
+        }).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
 
         CallProcessor callProcessor = new CallProcessor(context, transport, cryptor, notifications, database, locator);
 
@@ -399,7 +403,7 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
-        doThrow(MessagingException.class).when(transport).send(anyString(), anyString(), anyString(), anyString());
+        doThrow(MessagingException.class).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
 
         CallProcessor callProcessor = new CallProcessor(context, transport, cryptor, notifications, database, locator);
         callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, new GeoCoordinates(30.0, 60.0), null, PhoneEvent.State.PENDING));
@@ -420,7 +424,7 @@ public class CallProcessorTest extends BaseTest {
         assertTrue(errors.isEmpty()); /* no error notifications should be shown */
 
         /* enable transport an try again */
-        doNothing().when(transport).send(anyString(), anyString(), anyString(), anyString());
+        doNothing().when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
         errors.clear();
 
         callProcessor.processPending();

@@ -6,6 +6,7 @@ import android.util.Base64;
 
 import com.bopr.android.smailer.util.Util;
 
+import java.io.InputStream;
 import java.security.KeyStore;
 
 import javax.crypto.Cipher;
@@ -26,7 +27,9 @@ public class Cryptor {
     public Cryptor(Context context) {
         try {
             keyStore = KeyStore.getInstance("BKS");
-            keyStore.load(context.getAssets().open("keystore.bks"), "return".toCharArray());
+            InputStream stream = context.getAssets().open("keystore.bks");
+            keyStore.load(stream, "return".toCharArray());
+            stream.close();
         } catch (Exception x) {
             throw new RuntimeException(x);
         }

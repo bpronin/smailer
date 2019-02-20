@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.bopr.android.smailer.Database.PhoneEventCursor;
+import com.bopr.android.smailer.mail.JavaMailTransport;
 import com.sun.mail.util.MailConnectException;
 
 import org.slf4j.Logger;
@@ -44,13 +45,13 @@ class CallProcessor {
 
     private final Settings settings;
     private final Context context;
-    private final MailTransport transport;
+    private final JavaMailTransport transport;
     private final Cryptor cryptor;
     private final Notifications notifications;
     private final Database database;
     private final GeoLocator locator;
 
-    CallProcessor(Context context, MailTransport transport, Cryptor cryptor, Notifications notifications,
+    CallProcessor(Context context, JavaMailTransport transport, Cryptor cryptor, Notifications notifications,
                   Database database, GeoLocator locator) {
         this.context = context;
         this.transport = transport;
@@ -62,7 +63,7 @@ class CallProcessor {
     }
 
     CallProcessor(Context context, Database database, GeoLocator locator) {
-        this(context, new MailTransport(), new Cryptor(context), new Notifications(context), database, locator);
+        this(context, new JavaMailTransport(), new Cryptor(context), new Notifications(context), database, locator);
     }
 
     /**
@@ -144,8 +145,7 @@ class CallProcessor {
 
         try {
             MailFormatter formatter = createFormatter(event);
-            transport.send(formatter.formatSubject(), formatter.formatBody(),
-                    settings.getString(KEY_PREF_SENDER_ACCOUNT, ""),
+            transport.send(formatter.formatSubject(), formatter.formatBody(), null,
                     settings.getString(KEY_PREF_RECIPIENTS_ADDRESS, ""));
 
             handleSuccess(event);

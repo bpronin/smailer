@@ -136,7 +136,7 @@ public class CallReceiver extends BroadcastReceiver {
     }
 
     @NonNull
-    @SuppressWarnings("Deprecation")
+    @SuppressWarnings("deprecation")
     private SmsMessage[] parseMessageLegacy(Intent intent) {
         SmsMessage[] messages;
         Object[] pdus = (Object[]) intent.getSerializableExtra("pdus");

@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:context="com.bopr.android.smailer.ui.RecipientFragment"
+            tools:activity="com.bopr.android.smailer.ui.RecipientFragment"
             tools:listitem="@layout/list_item_recipient"/>
 
         <TextView
