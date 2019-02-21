@@ -16,18 +16,16 @@ import android.widget.Toast;
 import com.bopr.android.smailer.AuthorizationHelper;
 import com.bopr.android.smailer.CallProcessorService;
 import com.bopr.android.smailer.CallReceiver;
-import com.bopr.android.smailer.Contacts;
-import com.bopr.android.smailer.Cryptor;
 import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.GeoCoordinates;
 import com.bopr.android.smailer.GeoLocator;
+import com.bopr.android.smailer.GmailTransport;
 import com.bopr.android.smailer.Notifications;
 import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.Settings;
-import com.bopr.android.smailer.mail.GmailTransport;
-import com.bopr.android.smailer.mail.JavaMailTransport;
 import com.bopr.android.smailer.util.AndroidUtil;
+import com.bopr.android.smailer.util.ContactUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +41,7 @@ import java.util.List;
 import java.util.Properties;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.util.Consumer;
@@ -54,13 +53,9 @@ import static android.Manifest.permission.BROADCAST_SMS;
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static com.bopr.android.smailer.AuthorizationHelper.getDefaultGoogleAccount;
-import static com.bopr.android.smailer.Settings.DEFAULT_HOST;
 import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
-import static com.bopr.android.smailer.Settings.DEFAULT_PORT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_BLACKLIST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_TEXT_BLACKLIST;
@@ -68,7 +63,6 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_NOTIFY_SEND_SUCCESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CONTACT;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_LOCATION;
@@ -97,7 +91,6 @@ public class DebugFragment extends BasePreferenceFragment {
 
     private Context context;
     private GeoLocator locator;
-    private Cryptor cryptor;
     private Database database;
     private PreferenceScreen screen;
     private AuthorizationHelper authorizator;
@@ -112,7 +105,6 @@ public class DebugFragment extends BasePreferenceFragment {
 
         database = new Database(context);
         locator = new GeoLocator(context, database);
-        cryptor = new Cryptor(context);
         authorizator = new AuthorizationHelper(this, GmailTransport.SCOPES);
 
         screen = getPreferenceManager().createPreferenceScreen(context);
@@ -304,7 +296,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        new Notifications(context).showMailError("Test notification text", 100L, Notifications.ACTION_SHOW_LOG);
+                        new Notifications(context).showMailError("Test notification text", 100L, Notifications.ACTION_SHOW_HISTORY);
                     }
                 }),
 
@@ -341,14 +333,6 @@ public class DebugFragment extends BasePreferenceFragment {
                     @Override
                     protected void onClick(Preference preference) {
                         onGetContact();
-                    }
-                }),
-
-                createPreference("Show password", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        onShowPassword();
                     }
                 }),
 
@@ -427,10 +411,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
         settings.edit()
                 .putString(KEY_PREF_SENDER_ACCOUNT, properties.getProperty("default_sender"))
-                .putString(KEY_PREF_SENDER_PASSWORD, cryptor.encrypt(properties.getProperty("default_password")))
                 .putString(KEY_PREF_RECIPIENTS_ADDRESS, properties.getProperty("default_recipient"))
-                .putString(KEY_PREF_EMAIL_HOST, DEFAULT_HOST)
-                .putString(KEY_PREF_EMAIL_PORT, DEFAULT_PORT)
                 .putStringSet(KEY_PREF_EMAIL_TRIGGERS, asSet(VAL_PREF_TRIGGER_IN_SMS,
                         VAL_PREF_TRIGGER_IN_CALLS,
                         VAL_PREF_TRIGGER_MISSED_CALLS,
@@ -455,7 +436,7 @@ public class DebugFragment extends BasePreferenceFragment {
         final EditText input = new EditText(context);
         input.setInputType(InputType.TYPE_CLASS_PHONE);
 
-        AndroidUtil.dialogBuilder(context)
+        new AlertDialog.Builder(context)
                 .setTitle("Phone number")
                 .setView(input)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -463,7 +444,7 @@ public class DebugFragment extends BasePreferenceFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String phone = input.getText().toString();
-                        String contact = Contacts.getContactName(context, phone);
+                        String contact = ContactUtils.getContactName(context, phone);
                         String text = contact != null ? (phone + ": " + contact) : "Contact not found";
 
                         Toast.makeText(context, text, Toast.LENGTH_LONG).show();
@@ -576,11 +557,6 @@ public class DebugFragment extends BasePreferenceFragment {
         showDone(context);
     }
 
-    private void onShowPassword() {
-        String text = cryptor.decrypt(settings.getString(KEY_PREF_SENDER_PASSWORD, null));
-        showMessage(context, text);
-    }
-
     private void onAddHistoryItem() {
         database.putEvent(new PhoneEvent("+79052345670", true, System.currentTimeMillis(), null, false, "Debug message", null, null, PhoneEvent.State.PENDING));
         database.notifyChanged();
@@ -641,7 +617,7 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private static void showMessage(Context context, String message) {
-        AndroidUtil.dialogBuilder(context)
+        new AlertDialog.Builder(context)
                 .setMessage(message)
 //                .setNegativeButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 //
@@ -731,9 +707,8 @@ public class DebugFragment extends BasePreferenceFragment {
 
             try {
                 String user = properties.getProperty("default_sender");
-                JavaMailTransport transport = new JavaMailTransport();
-                transport.startSession(user, properties.getProperty("default_password"),
-                        "smtp.gmail.com", "465");
+                GmailTransport transport = new GmailTransport(getActivity());
+                transport.init(user);
                 transport.send(
                         "SMailer log",
                         "Device: " + AndroidUtil.getDeviceName(),

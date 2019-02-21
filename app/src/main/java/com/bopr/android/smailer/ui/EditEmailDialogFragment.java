@@ -11,13 +11,13 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import com.bopr.android.smailer.Contacts;
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.util.AndroidUtil;
+import com.bopr.android.smailer.util.ContactUtils;
 import com.bopr.android.smailer.util.validator.EmailTextValidator;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
@@ -75,11 +75,11 @@ public class EditEmailDialogFragment extends DialogFragment {
 
                 @Override
                 public void onClick(View v) {
-                    startActivityForResult(Contacts.createPickContactEmailIntent(), PICK_CONTACT_REQUEST);
+                    startActivityForResult(ContactUtils.createPickContactEmailIntent(), PICK_CONTACT_REQUEST);
                 }
             });
 
-            dialog = AndroidUtil.dialogBuilder(getContext())
+            dialog = new AlertDialog.Builder(getContext())
                     .setTitle(title)
                     .setView(view)
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -108,7 +108,7 @@ public class EditEmailDialogFragment extends DialogFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == PICK_CONTACT_REQUEST && resultCode == Activity.RESULT_OK) {
-            String email = Contacts.getEmailAddressFromIntent(getContext(), intent);
+            String email = ContactUtils.getEmailAddressFromIntent(getContext(), intent);
             editText.setText(email);
         }
     }

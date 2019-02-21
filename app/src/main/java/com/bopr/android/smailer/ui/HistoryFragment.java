@@ -20,14 +20,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bopr.android.smailer.Database;
-import com.bopr.android.smailer.Formats;
 import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.PhoneEventFilter;
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.util.AndroidUtil;
+import com.bopr.android.smailer.util.ResourceUtil;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -160,7 +160,7 @@ public class HistoryFragment extends BaseFragment {
     }
 
     private void clearData() {
-        AndroidUtil.dialogBuilder(getContext())
+        new AlertDialog.Builder(getContext())
                 .setMessage(R.string.ask_clear_history)
                 .setPositiveButton(R.string.clear_history, new DialogInterface.OnClickListener() {
 
@@ -276,9 +276,9 @@ public class HistoryFragment extends BaseFragment {
                     holder.phoneView.setPaintFlags(holder.defaultPhoneFlags | Paint.STRIKE_THRU_TEXT_FLAG);
                 }
 
-                holder.typeView.setImageResource(Formats.eventTypeImage(event));
-                holder.directionView.setImageResource(Formats.eventDirectionImage(event));
-                holder.stateView.setImageResource(Formats.eventStateImage(event));
+                holder.typeView.setImageResource(ResourceUtil.eventTypeImage(event));
+                holder.directionView.setImageResource(ResourceUtil.eventDirectionImage(event));
+                holder.stateView.setImageResource(ResourceUtil.eventStateImage(event));
 
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
 

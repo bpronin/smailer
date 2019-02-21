@@ -14,10 +14,10 @@ import com.bopr.android.smailer.Settings;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
-import static com.bopr.android.smailer.util.AndroidUtil.dialogBuilder;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
 
 /**
@@ -48,7 +48,7 @@ public class AboutDialogFragment extends DialogFragment {
             @Override
             public boolean onLongClick(View v) {
                 Settings.BuildInfo info = settings.getReleaseInfo();
-                dialogBuilder(getContext())
+                new AlertDialog.Builder(getContext())
                         .setTitle("Release info")
                         .setMessage("Build number: " + info.number + "\nBuild time: " + info.time)
                         .show();

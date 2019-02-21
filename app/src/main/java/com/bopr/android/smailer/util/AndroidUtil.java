@@ -3,15 +3,7 @@ package com.bopr.android.smailer.util;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
 
-import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.util.draw.WavyUnderlineSpan;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
@@ -26,34 +18,6 @@ import static android.os.Build.MODEL;
 public class AndroidUtil {
 
     private AndroidUtil() {
-    }
-
-    /**
-     * Returns text underlined with wavy red line.
-     */
-    public static Spannable underwivedText(Context context, String value) {
-        Spannable spannable = new SpannableString(value);
-        WavyUnderlineSpan span = new WavyUnderlineSpan(context);
-        spannable.setSpan(span, 0, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        return spannable;
-    }
-
-    /**
-     * Returns text of accent color.
-     */
-    public static Spannable accentedText(Context context, String value) {
-        Spannable spannable = new SpannableString(value);
-        ForegroundColorSpan span = new ForegroundColorSpan(ContextCompat.getColor(context, R.color.colorAccent));
-        spannable.setSpan(span, 0, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        return spannable;
-    }
-
-    /**
-     * Convenient method to avoid of mess in versions of AlertDialog.
-     */
-    @NonNull
-    public static AlertDialog.Builder dialogBuilder(Context context) {
-        return new AlertDialog.Builder(context);
     }
 
     /**

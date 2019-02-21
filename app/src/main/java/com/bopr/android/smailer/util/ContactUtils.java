@@ -1,11 +1,9 @@
-package com.bopr.android.smailer;
+package com.bopr.android.smailer.util;
 
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-
-import com.bopr.android.smailer.util.AndroidUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,13 +17,13 @@ import static android.provider.ContactsContract.PhoneLookup;
 import static com.bopr.android.smailer.util.Util.requireNonNull;
 
 /**
- * Contacts utilities.
+ * ContactUtils utilities.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class Contacts {
+public class ContactUtils {
 
-    private static Logger log = LoggerFactory.getLogger("Contacts");
+    private static Logger log = LoggerFactory.getLogger("ContactUtils");
 
     @Nullable
     public static String getContactName(Context context, String phoneNumber) {
@@ -76,7 +74,21 @@ public class Contacts {
         return result;
     }
 
-    static boolean isPermissionsDenied(Context context) {
+    public static Intent createPickContactEmailIntent() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType(Email.CONTENT_TYPE);
+        return intent;
+    }
+
+    public static String getEmailAddressFromIntent(Context context, Intent intent) {
+        return getEmailAddress(context, requireNonNull(intent.getData()).getLastPathSegment());
+    }
+
+    public static String getPhoneFromIntent(Context context, Intent intent) {
+        return getPhone(context, requireNonNull(intent.getData()).getLastPathSegment());
+    }
+
+    public static boolean isPermissionsDenied(Context context) {
         return AndroidUtil.isPermissionsDenied(context, READ_CONTACTS);
     }
 
@@ -86,27 +98,5 @@ public class Contacts {
             return false;
         }
         return true;
-    }
-
-    public static Intent createPickContactEmailIntent() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType(Email.CONTENT_TYPE);
-        return intent;
-    }
-
-/*
-    public static Intent createPickContactPhoneIntent() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType(Phone.CONTENT_TYPE);
-        return intent;
-    }
-*/
-
-    public static String getEmailAddressFromIntent(Context context, Intent intent) {
-        return getEmailAddress(context, requireNonNull(intent.getData()).getLastPathSegment());
-    }
-
-    public static String getPhoneFromIntent(Context context, Intent intent) {
-        return getPhone(context, requireNonNull(intent.getData()).getLastPathSegment());
     }
 }

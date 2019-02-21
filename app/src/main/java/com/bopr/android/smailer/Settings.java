@@ -33,9 +33,6 @@ public class Settings extends SharedPreferencesWrapper {
     public static final String DB_NAME = "smailer.sqlite";
 
     public static final String KEY_PREF_SENDER_ACCOUNT = "sender_account";
-    public static final String KEY_PREF_SENDER_PASSWORD = "sender_password";
-    public static final String KEY_PREF_EMAIL_HOST = "sender_host";
-    public static final String KEY_PREF_EMAIL_PORT = "sender_port";
     public static final String KEY_PREF_RECIPIENTS_ADDRESS = "recipients_address";
     public static final String KEY_PREF_OUTGOING_SERVER = "outgoing_server";
     public static final String KEY_PREF_EMAIL_CONTENT = "email_content";
@@ -92,8 +89,6 @@ public class Settings extends SharedPreferencesWrapper {
      */
     public static void putDefaults(Context context) {
         new Settings(context).edit()
-                .putStringOptional(KEY_PREF_EMAIL_HOST, DEFAULT_HOST)
-                .putStringOptional(KEY_PREF_EMAIL_PORT, DEFAULT_PORT)
                 .putStringSetOptional(KEY_PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS)
                 .putStringSetOptional(KEY_PREF_EMAIL_CONTENT, DEFAULT_CONTENT)
                 .putStringOptional(KEY_PREF_EMAIL_LOCALE, DEFAULT_LOCALE)

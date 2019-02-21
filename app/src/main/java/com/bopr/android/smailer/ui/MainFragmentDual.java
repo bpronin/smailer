@@ -58,9 +58,6 @@ public class MainFragmentDual extends BaseFragment {
         Fragment fragment = detailFragments.get(key);
         if (fragment == null) {
             switch (key) {
-                case KEY_PREF_OUTGOING_SERVER:
-                    fragment = new ServerFragment();
-                    break;
                 case KEY_PREF_RECIPIENTS_ADDRESS:
                     fragment = new RecipientsFragment();
                     break;

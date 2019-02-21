@@ -8,8 +8,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.bopr.android.smailer.Contacts;
 import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.util.ContactUtils;
 
 import androidx.annotation.NonNull;
 
@@ -63,7 +63,7 @@ public class EditPhoneDialogFragment extends EditFilterListItemDialogFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == PICK_CONTACT_REQUEST && resultCode == Activity.RESULT_OK) {
-            String phone = Contacts.getPhoneFromIntent(getContext(), intent);
+            String phone = ContactUtils.getPhoneFromIntent(getContext(), intent);
             getEditor().setText(phone);
         }
     }

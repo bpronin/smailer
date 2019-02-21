@@ -6,10 +6,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.bopr.android.smailer.util.AndroidUtil;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
@@ -48,7 +47,7 @@ abstract class EditFilterListItemDialogFragment extends DialogFragment {
         Dialog dialog = getDialog();
         if (dialog == null) {
             View view = createView();
-            dialog = AndroidUtil.dialogBuilder(getContext())
+            dialog = new AlertDialog.Builder(getContext())
                     .setTitle(title)
                     .setView(view)
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {

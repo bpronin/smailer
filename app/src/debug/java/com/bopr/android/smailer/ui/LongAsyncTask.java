@@ -1,7 +1,6 @@
 package com.bopr.android.smailer.ui;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.os.AsyncTask;
 
 import java.lang.ref.WeakReference;
@@ -13,10 +12,10 @@ import java.lang.ref.WeakReference;
  */
 @SuppressWarnings("deprecation")
 public abstract class LongAsyncTask<Params, Progress, Result> extends AsyncTask<Params, Progress, Result> {
-    
+
     /* Holding activity reference in nested static class throws memory leak warning. This approach avoids it.*/
     private final WeakReference<Activity> activityReference;
-    private ProgressDialog dialog;
+    private android.app.ProgressDialog dialog;  /* do not replace qualifier with import to avoid deprecation warning */
 
     @SuppressWarnings("WeakerAccess")
     public LongAsyncTask(Activity activity) {
@@ -25,7 +24,7 @@ public abstract class LongAsyncTask<Params, Progress, Result> extends AsyncTask<
 
     @Override
     protected void onPreExecute() {
-        dialog = new ProgressDialog(getActivity());
+        dialog = new android.app.ProgressDialog(getActivity());
         dialog.setMessage("Processing...");
         dialog.show();
     }

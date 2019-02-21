@@ -1,4 +1,4 @@
-package com.bopr.android.smailer.mail;
+package com.bopr.android.smailer;
 
 import android.content.Context;
 

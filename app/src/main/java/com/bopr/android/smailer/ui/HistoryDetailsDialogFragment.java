@@ -10,16 +10,20 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bopr.android.smailer.Formats;
 import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.util.AndroidUtil;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
+import static com.bopr.android.smailer.util.ResourceUtil.eventDirectionImage;
+import static com.bopr.android.smailer.util.ResourceUtil.eventStateImage;
+import static com.bopr.android.smailer.util.ResourceUtil.eventStateText;
+import static com.bopr.android.smailer.util.ResourceUtil.eventTypeImage;
+import static com.bopr.android.smailer.util.ResourceUtil.eventTypeText;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.Util.formatDuration;
 
@@ -59,16 +63,16 @@ public class HistoryDetailsDialogFragment extends DialogFragment {
             @SuppressLint("InflateParams")
             View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_log_details, null, false);
 
-            view.<ImageView>findViewById(R.id.image_event_type).setImageResource(Formats.eventTypeImage(value));
-            view.<ImageView>findViewById(R.id.image_event_direction).setImageResource(Formats.eventDirectionImage(value));
+            view.<ImageView>findViewById(R.id.image_event_type).setImageResource(eventTypeImage(value));
+            view.<ImageView>findViewById(R.id.image_event_direction).setImageResource(eventDirectionImage(value));
             view.<TextView>findViewById(R.id.text_title).setText(value.getPhone());
             view.<TextView>findViewById(R.id.text_message).setText(formatMessage(value));
             view.<TextView>findViewById(R.id.text_time).setText(formatTime(value.getStartTime()));
-            view.<ImageView>findViewById(R.id.image_event_result).setImageResource(Formats.eventStateImage(value));
-            view.<TextView>findViewById(R.id.text_result).setText(Formats.eventStateText(value));
-            view.<TextView>findViewById(R.id.text_type_title).setText(Formats.eventTypeText(getContext(), value));
+            view.<ImageView>findViewById(R.id.image_event_result).setImageResource(eventStateImage(value));
+            view.<TextView>findViewById(R.id.text_result).setText(eventStateText(value));
+            view.<TextView>findViewById(R.id.text_type_title).setText(eventTypeText(value));
 
-            dialog = AndroidUtil.dialogBuilder(getContext())
+            dialog = new AlertDialog.Builder(requireContext())
                     .setView(view)
                     .setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
 

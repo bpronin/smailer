@@ -1,15 +1,24 @@
-package com.bopr.android.smailer;
+package com.bopr.android.smailer.util;
 
 import android.content.Context;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+
+import com.bopr.android.smailer.PhoneEvent;
+import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.util.draw.WavyUnderlineSpan;
+
+import androidx.core.content.ContextCompat;
 
 /**
- * Miscellaneous formats.
+ * Miscellaneous resource utilities.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public abstract class Formats {
+public abstract class ResourceUtil {
 
-    private Formats() {
+    private ResourceUtil() {
     }
 
     public static int eventTypeImage(PhoneEvent event) {
@@ -20,7 +29,7 @@ public abstract class Formats {
         }
     }
 
-    public static int eventTypeText(Context context, PhoneEvent event) {
+    public static int eventTypeText(PhoneEvent event) {
         if (event.isSms()) {
             if (event.isIncoming()) {
                 return R.string.incoming_sms;
@@ -72,4 +81,23 @@ public abstract class Formats {
         return -1;
     }
 
+    /**
+     * Returns text underlined with wavy red line.
+     */
+    public static Spannable underwivedText(Context context, String value) {
+        Spannable spannable = new SpannableString(value);
+        WavyUnderlineSpan span = new WavyUnderlineSpan(context);
+        spannable.setSpan(span, 0, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return spannable;
+    }
+
+    /**
+     * Returns text of accent color.
+     */
+    public static Spannable accentedText(Context context, String value) {
+        Spannable spannable = new SpannableString(value);
+        ForegroundColorSpan span = new ForegroundColorSpan(ContextCompat.getColor(context, R.color.colorAccent));
+        spannable.setSpan(span, 0, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return spannable;
+    }
 }

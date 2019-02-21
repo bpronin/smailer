@@ -9,10 +9,6 @@ import android.view.MenuItem;
 import com.bopr.android.smailer.PreferencesPermissionsChecker;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.Settings;
-import com.bopr.android.smailer.ui.preference.EmailPreference;
-import com.bopr.android.smailer.ui.preference.EmailPreferenceDialog;
-import com.bopr.android.smailer.ui.preference.PasswordPreference;
-import com.bopr.android.smailer.ui.preference.PasswordPreferenceDialog;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -21,7 +17,6 @@ import java.util.Set;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
@@ -32,8 +27,8 @@ import androidx.preference.PreferenceGroup;
 import androidx.preference.SwitchPreference;
 
 import static com.bopr.android.smailer.ui.AboutDialogFragment.showAboutDialog;
-import static com.bopr.android.smailer.util.AndroidUtil.accentedText;
-import static com.bopr.android.smailer.util.AndroidUtil.underwivedText;
+import static com.bopr.android.smailer.util.ResourceUtil.accentedText;
+import static com.bopr.android.smailer.util.ResourceUtil.underwivedText;
 
 /**
  * Base {@link PreferenceFragmentCompat } with default behaviour.
@@ -43,7 +38,7 @@ import static com.bopr.android.smailer.util.AndroidUtil.underwivedText;
 public class BasePreferenceFragment extends PreferenceFragmentCompat {
 
     static final int STYLE_DEFAULT = 0;
-    static final int STYLE_UNDERLINED = 1;
+    static final int STYLE_UNDERWIVED = 1;
     static final int STYLE_ACCENTED = 2;
 
     private static final String DIALOG_FRAGMENT_TAG = "androidx.preference.PreferenceFragment.DIALOG";
@@ -99,19 +94,7 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
             return;
         }
 
-        DialogFragment fragment = null;
-        if (preference instanceof EmailPreference) {
-            fragment = EmailPreferenceDialog.newInstance(preference.getKey());
-        } else if (preference instanceof PasswordPreference) {
-            fragment = PasswordPreferenceDialog.newInstance(preference.getKey());
-        } else {
-            super.onDisplayPreferenceDialog(preference);
-        }
-
-        if (fragment != null) {
-            fragment.setTargetFragment(this, 0);
-            fragment.show(getFragmentManager(), DIALOG_FRAGMENT_TAG);
-        }
+        super.onDisplayPreferenceDialog(preference);
     }
 
     @Override
@@ -140,7 +123,7 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
             case STYLE_DEFAULT:
                 preference.setSummary(value);
                 break;
-            case STYLE_UNDERLINED:
+            case STYLE_UNDERWIVED:
                 preference.setSummary(underwivedText(getContext(), value));
                 break;
             case STYLE_ACCENTED:

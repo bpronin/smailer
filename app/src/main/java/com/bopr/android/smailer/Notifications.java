@@ -30,10 +30,9 @@ public class Notifications {
     private static final int ID_REMOTE_ACTION = 102;
 
     public static final int ACTION_SHOW_MAIN = 0;
-    public static final int ACTION_SHOW_SERVER = 1;
-    public static final int ACTION_SHOW_RECIPIENTS = 2;
-    public static final int ACTION_SHOW_CONNECTION = 3;
-    public static final int ACTION_SHOW_LOG = 4;
+    public static final int ACTION_SHOW_RECIPIENTS = 1;
+    public static final int ACTION_SHOW_CONNECTION = 2;
+    public static final int ACTION_SHOW_HISTORY = 3;
 
     private Context context;
 
@@ -89,7 +88,7 @@ public class Notifications {
         String text = context.getResources().getString(R.string.email_send);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, getChannel())
-                .setContentIntent(createIntent(ACTION_SHOW_LOG, messageId))
+                .setContentIntent(createIntent(ACTION_SHOW_HISTORY, messageId))
                 .setSmallIcon(R.drawable.ic_light_send)
                 .setTicker(context.getResources().getString(R.string.app_name))
                 .setAutoCancel(true)
@@ -125,9 +124,7 @@ public class Notifications {
         switch (action) {
             case ACTION_SHOW_RECIPIENTS:
 //                return createActivityIntent(RecipientsActivity.class, messageId);
-            case ACTION_SHOW_SERVER:
-//                return createActivityIntent(ServerActivity.class, messageId);
-            case ACTION_SHOW_LOG:
+            case ACTION_SHOW_HISTORY:
 //                return createActivityIntent(HistoryActivity.class, messageId);
             case ACTION_SHOW_MAIN:
                 return createActivityIntent(MainActivity.class, messageId);

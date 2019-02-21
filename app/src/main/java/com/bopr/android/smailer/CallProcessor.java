@@ -6,7 +6,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
-import com.bopr.android.smailer.mail.GmailTransport;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 
 import org.slf4j.Logger;
@@ -19,7 +18,6 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.core.util.Consumer;
 
-import static com.bopr.android.smailer.Contacts.getContactName;
 import static com.bopr.android.smailer.Notifications.ACTION_SHOW_MAIN;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
@@ -27,6 +25,7 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_MARK_SMS_AS_READ;
 import static com.bopr.android.smailer.Settings.KEY_PREF_NOTIFY_SEND_SUCCESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
+import static com.bopr.android.smailer.util.ContactUtils.getContactName;
 
 /**
  * Sends out email for phone events.
@@ -44,7 +43,7 @@ class CallProcessor {
     private final Database database;
     private final GeoLocator locator;
 
-    CallProcessor(Context context, GmailTransport transport, Cryptor cryptor, Notifications notifications,
+    CallProcessor(Context context, GmailTransport transport, Notifications notifications,
                   Database database, GeoLocator locator) {
         this.context = context;
         this.transport = transport;
@@ -55,7 +54,7 @@ class CallProcessor {
     }
 
     CallProcessor(Context context, Database database, GeoLocator locator) {
-        this(context, new GmailTransport(context), new Cryptor(context), new Notifications(context), database, locator);
+        this(context, new GmailTransport(context), new Notifications(context), database, locator);
     }
 
     /**

@@ -12,9 +12,9 @@ import android.widget.ListView;
 import com.bopr.android.smailer.AuthorizationHelper;
 import com.bopr.android.smailer.ContentObserverService;
 import com.bopr.android.smailer.Database;
+import com.bopr.android.smailer.GmailTransport;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.ResendWorker;
-import com.bopr.android.smailer.mail.GmailTransport;
 import com.bopr.android.smailer.util.TagFormatter;
 import com.bopr.android.smailer.util.validator.EmailListTextValidator;
 import com.bopr.android.smailer.util.validator.EmailTextValidator;
@@ -22,8 +22,6 @@ import com.bopr.android.smailer.util.validator.EmailTextValidator;
 import androidx.annotation.Nullable;
 import androidx.preference.Preference;
 
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_HISTORY;
 import static com.bopr.android.smailer.Settings.KEY_PREF_MORE;
@@ -32,8 +30,6 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RULES;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
-import static com.bopr.android.smailer.util.Util.anyIsEmpty;
 import static com.bopr.android.smailer.util.Util.isEmpty;
 import static java.lang.String.valueOf;
 
@@ -119,7 +115,7 @@ public class MainFragment extends BasePreferenceFragment {
     @Override
     public void onStart() {
         super.onStart();
-        updateServerPreference();
+        updateAccountPreference();
         updateRecipientsPreference();
         updateHistoryPreference();
     }
@@ -132,16 +128,13 @@ public class MainFragment extends BasePreferenceFragment {
         this.preferenceClickListener = listener;
     }
 
-    private void updateServerPreference() {
+    private void updateAccountPreference() {
         if (!asListView) {
-            String sender = settings.getString(KEY_PREF_SENDER_ACCOUNT, "");
-            String host = settings.getString(KEY_PREF_EMAIL_HOST, "");
-            String port = settings.getString(KEY_PREF_EMAIL_PORT, "");
-
-            if (anyIsEmpty(sender, host, port)) {
+            String value = settings.getString(KEY_PREF_SENDER_ACCOUNT, "");
+            if (isEmpty(value)) {
                 updateSummary(serverPreference, getString(R.string.not_specified), STYLE_ACCENTED);
             } else {
-                updateSummary(serverPreference, sender, EmailTextValidator.isValidValue(sender) ? STYLE_DEFAULT : STYLE_UNDERLINED);
+                updateSummary(serverPreference, value, EmailTextValidator.isValidValue(value) ? STYLE_DEFAULT : STYLE_UNDERWIVED);
             }
         }
     }
@@ -152,7 +145,7 @@ public class MainFragment extends BasePreferenceFragment {
             if (isEmpty(value)) {
                 updateSummary(recipientsPreference, getString(R.string.not_specified), STYLE_ACCENTED);
             } else {
-                updateSummary(recipientsPreference, value.replaceAll(",", ", "), EmailListTextValidator.isValidValue(value) ? STYLE_DEFAULT : STYLE_UNDERLINED);
+                updateSummary(recipientsPreference, value.replaceAll(",", ", "), EmailListTextValidator.isValidValue(value) ? STYLE_DEFAULT : STYLE_UNDERWIVED);
             }
         }
     }
@@ -200,10 +193,7 @@ public class MainFragment extends BasePreferenceFragment {
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             switch (key) {
                 case KEY_PREF_SENDER_ACCOUNT:
-                case KEY_PREF_SENDER_PASSWORD:
-                case KEY_PREF_EMAIL_HOST:
-                case KEY_PREF_EMAIL_PORT:
-                    updateServerPreference();
+                    updateAccountPreference();
                     break;
                 case KEY_PREF_RECIPIENTS_ADDRESS:
                     updateRecipientsPreference();

@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.PermissionInfo;
 import android.widget.Toast;
 
-import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.TagFormatter;
 import com.bopr.android.smailer.util.Util;
 
@@ -21,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
@@ -201,7 +201,7 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
                          final List<String> explainedPermissions) {
         if (!requiredPermissions.isEmpty()) {
             if (!explainedPermissions.isEmpty()) {
-                AndroidUtil.dialogBuilder(activity)
+                new AlertDialog.Builder(activity)
                         .setMessage(formatRationale(explainedPermissions))
                         .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 
