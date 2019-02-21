@@ -410,7 +410,7 @@ public class DebugFragment extends BasePreferenceFragment {
         Properties properties = loadDebugProperties();
 
         settings.edit()
-                .putString(KEY_PREF_SENDER_ACCOUNT, properties.getProperty("default_sender"))
+                .putString(KEY_PREF_SENDER_ACCOUNT, AuthorizationHelper.getDefaultGoogleAccount(context))
                 .putString(KEY_PREF_RECIPIENTS_ADDRESS, properties.getProperty("default_recipient"))
                 .putStringSet(KEY_PREF_EMAIL_TRIGGERS, asSet(VAL_PREF_TRIGGER_IN_SMS,
                         VAL_PREF_TRIGGER_IN_CALLS,
@@ -706,9 +706,8 @@ public class DebugFragment extends BasePreferenceFragment {
             attachment.addAll(Arrays.asList(new File(getActivity().getFilesDir(), "log").listFiles()));
 
             try {
-                String user = properties.getProperty("default_sender");
                 GmailTransport transport = new GmailTransport(getActivity());
-                transport.init(user);
+                transport.init(AuthorizationHelper.getDefaultGoogleAccount(getActivity()));
                 transport.send(
                         "SMailer log",
                         "Device: " + AndroidUtil.getDeviceName(),

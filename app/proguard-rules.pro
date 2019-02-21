@@ -17,3 +17,6 @@
 #}
 
 -ignorewarnings
+
+-verbose
+-dontobfuscate

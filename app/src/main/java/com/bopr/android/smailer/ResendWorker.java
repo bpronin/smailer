@@ -47,6 +47,7 @@ public class ResendWorker extends Worker {
 
     public static void enable(@NonNull Context context) {
         WorkManager manager = WorkManager.getInstance();
+        
         if (isResendEnabled(context)) {
             Constraints constraints = new Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)

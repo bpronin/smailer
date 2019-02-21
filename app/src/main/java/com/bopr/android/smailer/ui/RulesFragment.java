@@ -17,6 +17,7 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_TEXT_BLACKLIST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_TEXT_WHITELIST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_WHITELIST;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
+import static com.bopr.android.smailer.util.Util.isEmpty;
 import static com.bopr.android.smailer.util.Util.parseCommaSeparated;
 
 /**
@@ -34,7 +35,7 @@ public class RulesFragment extends BasePreferenceFragment {
         findPreference(KEY_PREF_EMAIL_TRIGGERS).setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
-                if (((Set) value).isEmpty()) {
+                if (isEmpty(((Set) value))) {
                     updateSummary(preference, getString(R.string.no_triggers_specified), STYLE_ACCENTED);
                 } else {
                     updateSummary(preference, getString(R.string.events_causing_sending_mail), STYLE_DEFAULT);

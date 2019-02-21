@@ -31,16 +31,19 @@ android {
     }
 
     buildTypes {
-        release {
-            /* NOTE: minification may break everything! do test app in release mode */
-//            minifyEnabled true
-//            shrinkResources true
+        all {
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        release {
+//            minifyEnabled true /* NOTE: minification may break everything! do test app in release mode! */
+//            shrinkResources true
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
         }
         debug {
-//            multiDexEnabled true
-            testCoverageEnabled = true
+            // testCoverageEnabled = true
         }
     }
 
@@ -64,6 +67,13 @@ android {
         exclude 'META-INF/DEPENDENCIES'  // resolving conflict in gmail package
     }
 
+    configurations {
+        all {
+            exclude group: 'commons-logging', module: 'commons-logging'
+            exclude group: 'org.apache.httpcomponents'
+        }
+    }
+
     buildToolsVersion '28.0.3'
 }
 
@@ -78,16 +88,18 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.preference:preference:1.0.0'
     implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
-    implementation 'com.google.android.material:material:1.0.0'
     implementation 'android.arch.work:work-runtime:1.0.0-rc01'
     implementation 'com.sun.mail:android-mail:1.5.5' //todo: newest 1.6.3
-    implementation 'com.google.android.gms:play-services-auth:16.0.1'
-    implementation('com.google.apis:google-api-services-gmail:v1-rev98-1.25.0') {
-        exclude group: 'com.google.guava'
-    }
+
+    implementation 'com.google.android.material:material:1.0.0'
     implementation('com.google.api-client:google-api-client-android:1.25.0') {
         exclude group: 'com.google.guava'
     }
+    implementation('com.google.apis:google-api-services-gmail:v1-rev98-1.25.0') {
+        exclude group: 'com.google.guava'
+ //       exclude group: 'com.google.http-client'
+    }
+    implementation 'com.google.android.gms:play-services-auth:16.0.1'
 
     implementation 'com.google.firebase:firebase-messaging:17.3.4'
 
