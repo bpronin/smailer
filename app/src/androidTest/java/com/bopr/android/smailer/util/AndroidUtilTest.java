@@ -49,19 +49,19 @@ public class AndroidUtilTest extends BaseTest {
     }
 
     /**
-     * Tests {@link AndroidUtil#underwivedText(Context, String, boolean)} method.
+     * Tests {@link AndroidUtil#underwivedText(Context, String)} method.
      *
      * @throws Exception when failed
      */
     @Test
     public void testValidateText() throws Exception {
-        Spannable spannable = ResourceUtil.underwivedText(getContext(), "Invalid text", false);
+        Spannable spannable = ResourceUtil.underwivedText(getContext(), "Invalid text");
 
         assertThat(spannable, instanceOf(SpannableString.class));
         Object span = spannable.getSpans(0, spannable.length(), Object.class)[0];
         assertThat(span, instanceOf(WavyUnderlineSpan.class));
 
-        spannable = ResourceUtil.underwivedText(getContext(), "Invalid text", true);
+        spannable = ResourceUtil.underwivedText(getContext(), "Invalid text");
         assertThat(spannable, instanceOf(SpannableString.class));
         Object[] spans = spannable.getSpans(0, spannable.length(), Object.class);
         assertThat(spans, emptyArray());
@@ -74,12 +74,12 @@ public class AndroidUtilTest extends BaseTest {
      */
     @Test
     public void testValidatedColoredText() throws Exception {
-        Spannable spannable = AndroidUtil.validatedColoredText(getContext(), "Invalid text", false);
+        Spannable spannable = ResourceUtil.accentedText(getContext(), "Invalid text");
         assertThat(spannable, instanceOf(SpannableString.class));
         Object span = spannable.getSpans(0, spannable.length(), Object.class)[0];
         assertThat(span, instanceOf(ForegroundColorSpan.class));
 
-        spannable = AndroidUtil.validatedColoredText(getContext(), "Invalid text", true);
+        spannable = ResourceUtil.accentedText(getContext(), "Invalid text");
         assertThat(spannable, instanceOf(SpannableString.class));
         Object[] spans = spannable.getSpans(0, spannable.length(), Object.class);
         assertThat(spans, emptyArray());

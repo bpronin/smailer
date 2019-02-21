@@ -33,6 +33,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import static androidx.recyclerview.widget.RecyclerView.NO_POSITION;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
+import static com.bopr.android.smailer.util.Util.formatDuration;
 
 
 /**
@@ -262,18 +263,24 @@ public class HistoryFragment extends BaseFragment {
 
                 holder.timeView.setText(DateFormat.format(getString(R.string._time_pattern), event.getStartTime()));
 
-                holder.textView.setText(event.getText());
+                if (event.isSms()) {
+                    holder.textView.setText(event.getText());
+                } else {
+                    holder.textView.setText(formatter(R.string.call_of_duration, context)
+                            .put("duration", formatDuration(event.getCallDuration())).format());
+                }
+
                 if (phoneEventFilter.testText(event.getText())) {
                     holder.textView.setPaintFlags(holder.defaultPhoneFlags);
                 } else {
-                    holder.textView.setPaintFlags(holder.defaultPhoneFlags | Paint.STRIKE_THRU_TEXT_FLAG);
+                    holder.textView.setPaintFlags(holder.defaultPhoneFlags | Paint.DITHER_FLAG);
                 }
 
                 holder.phoneView.setText(event.getPhone());
                 if (phoneEventFilter.testPhone(event.getPhone())) {
                     holder.phoneView.setPaintFlags(holder.defaultPhoneFlags);
                 } else {
-                    holder.phoneView.setPaintFlags(holder.defaultPhoneFlags | Paint.STRIKE_THRU_TEXT_FLAG);
+                    holder.phoneView.setPaintFlags(holder.defaultPhoneFlags | Paint.DITHER_FLAG);
                 }
 
                 holder.typeView.setImageResource(ResourceUtil.eventTypeImage(event));

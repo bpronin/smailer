@@ -181,7 +181,7 @@ abstract class FilterListFragment extends BaseFragment {
             @Override
             public void onOkClick(String value) {
                 if (isItemExists(value) && (item == null || !item.value.equals(value))) {
-                    Toast.makeText(getContext(), formatter(R.string.item_already_exists, getResources())
+                    Toast.makeText(getContext(), formatter(R.string.item_already_exists, requireContext())
                             .put("item", getItemText(value))
                             .format(), Toast.LENGTH_LONG)
                             .show();
@@ -215,7 +215,7 @@ abstract class FilterListFragment extends BaseFragment {
         if (removedItems.size() == 1) {
             title = getString(R.string.item_removed);
         } else {
-            title = formatter(R.string.items_removed, getResources())
+            title = formatter(R.string.items_removed, requireContext())
                     .put("count", valueOf(removedItems.size()))
                     .format();
         }

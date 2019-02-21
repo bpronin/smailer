@@ -34,14 +34,10 @@ import static androidx.test.espresso.matcher.ViewMatchers.withChild;
 import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.bopr.android.smailer.Settings.DEFAULT_CONTENT;
-import static com.bopr.android.smailer.Settings.DEFAULT_HOST;
 import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
-import static com.bopr.android.smailer.Settings.DEFAULT_PORT;
 import static com.bopr.android.smailer.Settings.DEFAULT_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
 import static org.hamcrest.Matchers.allOf;
@@ -73,8 +69,6 @@ public class BaseActivityTest {
         preferences
                 .edit()
                 .clear()
-                .putString(KEY_PREF_EMAIL_HOST, DEFAULT_HOST)
-                .putString(KEY_PREF_EMAIL_PORT, DEFAULT_PORT)
                 .putStringSet(KEY_PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS)
                 .putStringSet(KEY_PREF_EMAIL_CONTENT, DEFAULT_CONTENT)
                 .putString(KEY_PREF_EMAIL_LOCALE, DEFAULT_LOCALE)

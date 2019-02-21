@@ -53,7 +53,7 @@ import static java.util.Arrays.asList;
 public class PreferencesPermissionsChecker implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String WRITE_SMS = "android.permission.WRITE_SMS";
-    
+
     private static AtomicInteger nextRequestResult = new AtomicInteger(200);
 
     private Activity activity;
@@ -228,8 +228,8 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
     private String formatRationale(Collection<String> permissions) {
         StringBuilder b = new StringBuilder();
         for (String permission : permissions) {
-            Integer patternResourceId = items.get(permission);
-            TagFormatter line = formatter(patternResourceId, activity.getResources())
+            int patternResourceId = items.get(permission);
+            TagFormatter line = formatter(patternResourceId, activity)
                     .put("permission", getPermissionLabel(permission));
             b.append(line).append("\n\n");
         }

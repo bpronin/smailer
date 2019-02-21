@@ -23,40 +23,50 @@ public class TagFormatter {
     private static final String CLOSE_BRACKET = "\\}";
 
     private final Map<String, String> values = new LinkedHashMap<>();
-    private final String pattern;
-    private final Resources resources;
+    private String pattern;
+    private Resources resources;
 
     public static TagFormatter formatter(String pattern) {
-        return new TagFormatter(pattern);
-    }
-
-    public static TagFormatter formatter(String pattern, @NonNull Resources resources) {
-        return new TagFormatter(pattern, resources);
+        return new TagFormatter().pattern(pattern);
     }
 
     public static TagFormatter formatter(String pattern, @NonNull Context context) {
-        return formatter(pattern, context.getResources());
+        return new TagFormatter(context).pattern(pattern);
+    }
+    public static TagFormatter formatter(int patternResourceId, @NonNull Context context) {
+        return new TagFormatter(context).patternRes(patternResourceId);
     }
 
-    public static TagFormatter formatter(Integer patternResourceId, @NonNull Resources resources) {
-        return new TagFormatter(patternResourceId, resources);
+    public static TagFormatter formatter(String pattern, @NonNull Resources resources) {
+        return new TagFormatter(resources).pattern(pattern);
     }
 
-    public static TagFormatter formatter(Integer patternResourceId, @NonNull Context context) {
-        return formatter(patternResourceId, context.getResources());
+    public static TagFormatter formatter(int patternResourceId, @NonNull Resources resources) {
+        return new TagFormatter(resources).patternRes(patternResourceId);
     }
 
-    public TagFormatter(String pattern, Resources resources) {
-        this.pattern = pattern;
+    public static TagFormatter formatter(@NonNull Context context) {
+        return new TagFormatter(context);
+    }
+
+    public TagFormatter() {
+    }
+
+    public TagFormatter(@NonNull Resources resources) {
         this.resources = resources;
     }
 
-    public TagFormatter(Integer patternResourceId, Resources resources) {
-        this(resources.getString(patternResourceId), resources);
+    public TagFormatter(@NonNull Context context) {
+        this(context.getResources());
     }
 
-    public TagFormatter(String pattern) {
-        this(pattern, null);
+    public TagFormatter pattern(String pattern) {
+        this.pattern = pattern;
+        return this;
+    }
+
+    public TagFormatter patternRes(int resourceId) {
+        return pattern(resources.getString(resourceId));
     }
 
     public TagFormatter put(String key, String value) {

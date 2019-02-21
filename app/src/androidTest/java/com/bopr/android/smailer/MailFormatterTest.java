@@ -19,6 +19,7 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CONTACT;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_LOCATION;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME;
+import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT;
 import static com.bopr.android.smailer.util.Util.asSet;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
@@ -154,10 +155,8 @@ public class MailFormatterTest extends BaseTest {
                 "<body>" +
                 "Email body text" +
                 "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                "<small> " +
+                "<small>" +
                 "Time: February 2, 2016 3:04:05 AM EST" +
-                "<br>" +
-                "Sent at February 2, 2016 3:04:05 AM EST" +
                 "</small>" +
                 "</body>" +
                 "</html>", actual);
@@ -182,10 +181,6 @@ public class MailFormatterTest extends BaseTest {
                 "</head>" +
                 "<body>" +
                 "Email body text" +
-                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                "<small>" +
-                "Sent at February 2, 2016 3:04:05 AM EST" +
-                "</small>" +
                 "</body>" +
                 "</html>", formatter.formatBody());
     }
@@ -211,7 +206,7 @@ public class MailFormatterTest extends BaseTest {
                 "Email body text" +
                 "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
                 "<small>" +
-                "Sent from The Device at February 2, 2016 3:04:05 AM EST" +
+                "Sent from The Device" +
                 "</small>" +
                 "</body>" +
                 "</html>", formatter.formatBody());
@@ -236,10 +231,6 @@ public class MailFormatterTest extends BaseTest {
                 "</head>" +
                 "<body>" +
                 "Email body text" +
-                "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                "<small>" +
-                "Sent at February 2, 2016 3:04:05 AM EST" +
-                "</small>" +
                 "</body>" +
                 "</html>", formatter.formatBody());
     }
@@ -265,10 +256,10 @@ public class MailFormatterTest extends BaseTest {
                 "<body>" +
                 "Email body text" +
                 "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                "<small> " +
+                "<small>" +
                 "Time: February 2, 2016 3:04:05 AM EST" +
                 "<br>" +
-                "Sent from The Device at February 2, 2016 3:04:05 AM EST" +
+                "Sent from The Device" +
                 "</small>" +
                 "</body>" +
                 "</html>", formatter.formatBody());
@@ -294,8 +285,6 @@ public class MailFormatterTest extends BaseTest {
                 "Email body text<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
                 "<small>" +
                 "Last known device location: <a href=\"https://www.google.com/maps/place/60.555+30.555/@60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
-                "<br>" +
-                "Sent at February 2, 2016 3:04:05 AM EST" +
                 "</small>" +
                 "</body>" +
                 "</html>", formatter.formatBody());
@@ -316,10 +305,13 @@ public class MailFormatterTest extends BaseTest {
 
         String body = formatter.formatBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
-                "<body>Email body text<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                "<small>Last known device location: (location service disabled)" +
-                "<br>Sent at February 2, 2016 3:04:05 AM EST" +
-                "</small></body></html>", body);
+                "<body>" +
+                "Email body text<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                "<small>" +
+                "Last known device location: (location service disabled)" +
+                "</small>" +
+                "</body>" +
+                "</html>", body);
     }
 
     /**
@@ -344,7 +336,7 @@ public class MailFormatterTest extends BaseTest {
                 "</head>" +
                 "<body>" +
                 "Email body text<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                "<small>Last known device location: (no permission to read location)<br>Sent at February 2, 2016 3:04:05 AM EST" +
+                "<small>Last known device location: (no permission to read location)" +
                 "</small>" +
                 "</body>" +
                 "</html>", formatter.formatBody());
@@ -368,9 +360,9 @@ public class MailFormatterTest extends BaseTest {
                 "Email body text<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
                 "<small>" +
                 "Sender: <a href=\"tel:+12345678901\" style=\"text-decoration: none\">&#9742;</a>+12345678901 (John Dou)" +
-                "<br>" +
-                "Sent at February 2, 2016 3:04:05 AM EST" +
-                "</small></body></html>", formatter.formatBody());
+                "</small>" +
+                "</body>" +
+                "</html>", formatter.formatBody());
     }
 
     /**
@@ -391,7 +383,7 @@ public class MailFormatterTest extends BaseTest {
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
                 "<body>Email body text<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
                 "<small>Sender: <a href=\"tel:+12345678901\" style=\"text-decoration: none\">&#9742;</a>+12345678901 (no permission to read contacts)" +
-                "<br>Sent at February 2, 2016 3:04:05 AM EST</small></body></html>", body);
+                "</small></body></html>", body);
     }
 
     /**
@@ -410,7 +402,7 @@ public class MailFormatterTest extends BaseTest {
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
                 "<body>Email body text<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
                 "<small>Sender: <a href=\"tel:+12345678901\" style=\"text-decoration: none\">&#9742;</a>+12345678901 (Unknown contact)" +
-                "<br>Sent at February 2, 2016 3:04:05 AM EST</small></body></html>", formatter.formatBody());
+                "</small></body></html>", formatter.formatBody());
     }
 
     /**
@@ -479,7 +471,7 @@ public class MailFormatterTest extends BaseTest {
         formatter.setContactName("John Dou");
         formatter.setDeviceName("Device");
         formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
-                VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
+                VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT));
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
                 "<body>" +
@@ -487,7 +479,7 @@ public class MailFormatterTest extends BaseTest {
                 "<small>" +
                 "Caller: <a href=\"tel:+12345678901\" style=\"text-decoration: none\">&#9742;</a>+12345678901 (John Dou)" +
                 "<br>" +
-                " Time: February 2, 2016 3:04:05 AM EST" +
+                "Time: February 2, 2016 3:04:05 AM EST" +
                 "<br>" +
                 "Last known device location: <a href=\"https://www.google.com/maps/place/60.555+30.555/@60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "<br>" +
@@ -511,7 +503,7 @@ public class MailFormatterTest extends BaseTest {
         formatter.setContactName("John Dou");
         formatter.setDeviceName("Device");
         formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
-                VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
+                VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT));
 
         assertEquals("<html><head>" +
                 "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">" +
@@ -520,7 +512,7 @@ public class MailFormatterTest extends BaseTest {
                 "You had an outgoing call of 1:01:05 duration.<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
                 "<small>" +
                 "Called: <a href=\"tel:+12345678901\" style=\"text-decoration: none\">&#9742;</a>+12345678901 (John Dou)" +
-                "<br> Time: February 2, 2016 3:04:05 AM EST" +
+                "<br>Time: February 2, 2016 3:04:05 AM EST" +
                 "<br>Last known device location: <a href=\"https://www.google.com/maps/place/60.555+30.555/@60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "<br>Sent from Device at February 2, 2016 3:04:05 AM EST" +
                 "</small></body></html>", formatter.formatBody());
@@ -541,13 +533,13 @@ public class MailFormatterTest extends BaseTest {
         formatter.setSendTime(defaultTime);
         formatter.setDeviceName("Device");
         formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
-                VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
+                VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT));
 
         String body = formatter.formatBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
                 "<body>You had a missed call.<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
                 "<small>Caller: <a href=\"tel:+12345678901\" style=\"text-decoration: none\">&#9742;</a>+12345678901 (Unknown contact)" +
-                "<br> Time: February 2, 2016 3:04:05 AM EST" +
+                "<br>Time: February 2, 2016 3:04:05 AM EST" +
                 "<br>Last known device location: <a href=\"https://www.google.com/maps/place/60.555+30.555/@60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "<br>Sent from Device at February 2, 2016 3:04:05 AM EST" +
                 "</small></body></html>", body);
@@ -576,13 +568,14 @@ public class MailFormatterTest extends BaseTest {
         formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_CONTACT,
                 VAL_PREF_EMAIL_CONTENT_LOCATION,
                 VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
-                VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
+                VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
+                VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT));
 
         assertEquals("[SMailer] Пропущенный звонок от +12345678901", formatter.formatSubject());
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
                 "<body>Пропущенный звонок.<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
                 "<small>Вам звонил: <a href=\"tel:+12345678901\" style=\"text-decoration: none\">&#9742;</a>+12345678901 (Неизвестный контакт)" +
-                "<br> Время: 2 февраля 2016 г. 3:04:05 GMT-05:00" +
+                "<br>Время: 2 февраля 2016 г. 3:04:05 GMT-05:00" +
                 "<br>Последнее известное местоположение: <a href=\"https://www.google.com/maps/place/60.555+30.555/@60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "<br>Отправлено с устройства \"Device\" 2 февраля 2016 г. 3:04:05 GMT-05:00" +
                 "</small></body></html>", formatter.formatBody());
@@ -593,7 +586,7 @@ public class MailFormatterTest extends BaseTest {
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
                 "<body>You had a missed call.<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
                 "<small>Caller: <a href=\"tel:+12345678901\" style=\"text-decoration: none\">&#9742;</a>+12345678901 (Unknown contact)" +
-                "<br> Time: February 2, 2016 3:04:05 AM EST" +
+                "<br>Time: February 2, 2016 3:04:05 AM EST" +
                 "<br>Last known device location: <a href=\"https://www.google.com/maps/place/60.555+30.555/@60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "<br>Sent from Device at February 2, 2016 3:04:05 AM EST" +
                 "</small></body></html>", formatter.formatBody());
@@ -615,16 +608,18 @@ public class MailFormatterTest extends BaseTest {
         formatter.setDeviceName("Device");
         formatter.setLocale("blah-blah"); /* should set default locale */
         formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
-                VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
+                VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT));
 
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
                 "<body>" +
                 "You had a missed call.<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
                 "<small>Caller: <a href=\"tel:+12345678901\" style=\"text-decoration: none\">&#9742;</a>+12345678901 (Unknown contact)" +
-                "<br> Time: February 2, 2016 3:04:05 AM EST" +
+                "<br>Time: February 2, 2016 3:04:05 AM EST" +
                 "<br>Last known device location: <a href=\"https://www.google.com/maps/place/60.555+30.555/@60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "<br>Sent from Device at February 2, 2016 3:04:05 AM EST" +
-                "</small></body></html>", formatter.formatBody());
+                "</small>" +
+                "</body>" +
+                "</html>", formatter.formatBody());
     }
 
     /**

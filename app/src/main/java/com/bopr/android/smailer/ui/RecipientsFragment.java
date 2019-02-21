@@ -197,7 +197,7 @@ public class RecipientsFragment extends BaseFragment {
             public void onOkClick(String address) {
                 Log.d("", "onOkClick: ");
                 if (isItemExists(address) && (item == null || !item.address.equals(address))) {
-                    Toast.makeText(getContext(), formatter(R.string.recipient_already_exists, getResources())
+                    Toast.makeText(getContext(), formatter(R.string.recipient_already_exists, requireContext())
                             .put("name", address)
                             .format(), Toast.LENGTH_LONG).show();
                 } else if (!Util.isTrimEmpty(address)) {
@@ -217,7 +217,7 @@ public class RecipientsFragment extends BaseFragment {
         if (removedItems.size() == 1) {
             title = getString(R.string.item_removed);
         } else {
-            title = formatter(R.string.items_removed, getResources())
+            title = formatter(R.string.items_removed, requireContext())
                     .put("count", valueOf(removedItems.size()))
                     .format();
         }

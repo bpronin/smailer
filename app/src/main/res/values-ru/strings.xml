@@ -18,6 +18,7 @@
     <string name="ask_clear_history">Очистить журнал?</string>
     <string name="blacklist">Черный список</string>
     <string name="call_history">Журнал</string>
+    <string name="call_of_duration">Звонок длительностью {duration}</string>
     <string name="called_phone">Вы звонили: {phone} ({name})</string>
     <string name="caller_phone">Вам звонил: {phone} ({name})</string>
     <string name="cannot_connect_mail_server">Нет соединения с почтовым сервером.</string>
@@ -55,6 +56,7 @@
     <string name="mark_processed_sms_as_read">Отмечать обработанные SMS как прочитанные</string>
     <string name="missed_call">Пропущенный звонок</string>
     <string name="missed_call_from">Пропущенный звонок от</string>
+    <string name="need_google_permission">Необходиморазрешение на доступ приложения к аккаунту Google</string>
     <string name="no_account_specified">Не указан аккаунт исходящей почты.</string>
     <string name="no_host_specified">Не указан адрес серевера исходящей почты.</string>
     <string name="no_internet_connection">Отсутствует соединение с интернетом.</string>
@@ -103,7 +105,6 @@
     <string name="sender_phone">Отправитель: {phone} ({name})</string>
     <string name="sent_email">Отправлена почта</string>
     <string name="sent_time_device">Отправлено{device_name}{time}</string>
-    <string name="server_test_success">Тестовое сообщение отправлено.\nПроверьте вашу почту.</string>
     <string name="service_running">Служба запущена</string>
     <string name="since_permissions_not_granted">Некоторые настройки отключены, поскольку разрешения не получены.</string>
     <string name="text_filter">Фильтр текста</string>
@@ -122,7 +123,6 @@
     <string name="you_had_incoming_call">Входящий звонок длительностью {duration}.</string>
     <string name="you_had_missed_call">Пропущенный звонок.</string>
     <string name="you_had_outgoing_call">Исходящий звонок длительностью {duration}.</string>
-    <string name="need_google_permission">Access to Google account is required</string>
 
     <string-array name="trigger_names">
         <item>Входящие SMS</item>

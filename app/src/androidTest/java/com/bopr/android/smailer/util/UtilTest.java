@@ -55,7 +55,7 @@ public class UtilTest extends BaseTest {
     public void testIsEmpty() {
         assertTrue(!Util.isEmpty("A"));
         assertTrue(Util.isEmpty(""));
-        assertTrue(Util.isEmpty(null));
+        assertTrue(Util.isEmpty((String)null));
     }
 
     @Test

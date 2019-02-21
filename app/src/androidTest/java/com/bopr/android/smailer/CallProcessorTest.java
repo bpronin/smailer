@@ -17,14 +17,11 @@ import javax.mail.MessagingException;
 import static com.bopr.android.smailer.Settings.DEFAULT_CONTENT;
 import static com.bopr.android.smailer.Settings.DEFAULT_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_NOTIFY_SEND_SUCCESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
 import static org.junit.Assert.assertArrayEquals;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
@@ -47,7 +44,6 @@ public class CallProcessorTest extends BaseTest {
 
     private Database database;
     private Context context;
-    private Cryptor cryptor;
     private GmailTransport transport;
     private Notifications notifications;
     private NetworkInfo networkInfo;
@@ -61,10 +57,7 @@ public class CallProcessorTest extends BaseTest {
 
         preferences = mock(SharedPreferences.class);
         when(preferences.getString(eq(KEY_PREF_SENDER_ACCOUNT), anyString())).thenReturn("sender@mail.com");
-        when(preferences.getString(eq(KEY_PREF_SENDER_PASSWORD), anyString())).thenReturn("password");
         when(preferences.getString(eq(KEY_PREF_RECIPIENTS_ADDRESS), anyString())).thenReturn("recipient@mail.com");
-        when(preferences.getString(eq(KEY_PREF_EMAIL_HOST), anyString())).thenReturn("smtp.mail.com");
-        when(preferences.getString(eq(KEY_PREF_EMAIL_PORT), anyString())).thenReturn("111");
         when(preferences.getStringSet(eq(KEY_PREF_EMAIL_TRIGGERS), anySetOf(String.class))).thenReturn(DEFAULT_TRIGGERS);
         when(preferences.getStringSet(eq(KEY_PREF_EMAIL_CONTENT), anySetOf(String.class))).thenReturn(DEFAULT_CONTENT);
 
@@ -82,16 +75,6 @@ public class CallProcessorTest extends BaseTest {
 
         database = new Database(getContext(), "test.sqlite"); /* not mock context */
         database.destroy();
-
-        cryptor = mock(Cryptor.class);
-
-        when(cryptor.decrypt(anyString())).then(new Answer<String>() {
-
-            @Override
-            public String answer(InvocationOnMock invocation) throws Throwable {
-                return "decrypted " + invocation.getArguments()[0];
-            }
-        });
 
         transport = mock(GmailTransport.class);
         notifications = mock(Notifications.class);
@@ -218,56 +201,6 @@ public class CallProcessorTest extends BaseTest {
         assertTrue(inits.isEmpty());
         assertTrue(sends.isEmpty());
         assertEquals(R.string.no_recipients_specified, errors.get(0)[0]);
-    }
-
-    /**
-     * Check that mailer produces notification when host parameter is empty.
-     *
-     * @throws Exception when fails
-     */
-    @Test
-    public void testErrorEmptyHost() throws Exception {
-        InvocationsCollector inits = new InvocationsCollector();
-        InvocationsCollector sends = new InvocationsCollector();
-        InvocationsCollector errors = new InvocationsCollector();
-
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
-        doAnswer(inits).when(transport).init(anyString());
-        doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
-
-        when(preferences.getString(eq(KEY_PREF_EMAIL_HOST), anyString())).thenReturn(null);
-
-        CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
-        callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, null, null, PhoneEvent.State.PENDING));
-
-        assertTrue(inits.isEmpty());
-        assertTrue(sends.isEmpty());
-        assertEquals(R.string.no_host_specified, errors.get(0)[0]);
-    }
-
-    /**
-     * Check that mailer produces notification when port parameter is empty.
-     *
-     * @throws Exception when fails
-     */
-    @Test
-    public void testErrorEmptyPort() throws Exception {
-        InvocationsCollector inits = new InvocationsCollector();
-        InvocationsCollector sends = new InvocationsCollector();
-        InvocationsCollector errors = new InvocationsCollector();
-
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
-        doAnswer(inits).when(transport).init(anyString());
-        doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
-
-        when(preferences.getString(eq(KEY_PREF_EMAIL_PORT), anyString())).thenReturn(null);
-
-        CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
-        callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, null, null, PhoneEvent.State.PENDING));
-
-        assertTrue(inits.isEmpty());
-        assertTrue(sends.isEmpty());
-        assertEquals(R.string.no_port_specified, errors.get(0)[0]);
     }
 
     /**

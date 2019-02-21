@@ -286,7 +286,7 @@ class MailFormatter {
     private String formatEventTime() {
         if (event.getStartTime() != null) {
             DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
-            return " " + formatter(R.string.time_time, resources)
+            return formatter(R.string.time_time, resources)
                     .put("time", df.format(new Date(event.getStartTime())))
                     .format();
         }

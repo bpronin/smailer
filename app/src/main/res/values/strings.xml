@@ -19,6 +19,7 @@
     <string name="ask_clear_history">Clear history?</string>
     <string name="blacklist">Blacklist</string>
     <string name="call_history">Call history</string>
+    <string name="call_of_duration">Call of {duration} duration</string>
     <string name="called_phone">Called: {phone} ({name})</string>
     <string name="caller_phone">Caller: {phone} ({name})</string>
     <string name="cannot_connect_mail_server">Couldn\'t open connection to mail server.</string>
@@ -57,6 +58,7 @@
     <string name="mark_processed_sms_as_read">Mark processed SMS as read</string>
     <string name="missed_call">Missed call</string>
     <string name="missed_call_from">Missed call from</string>
+    <string name="need_google_permission">Access to Google account is required</string>
     <string name="no_account_specified">No account specified.</string>
     <string name="no_host_specified">No host specified.</string>
     <string name="no_internet_connection">No internet connection.</string>
@@ -106,7 +108,6 @@
     <string name="sender_phone">Sender: {phone} ({name})</string>
     <string name="sent_email">Sent email</string>
     <string name="sent_time_device">Sent{device_name}{time}</string>
-    <string name="server_test_success">Test message has been successfully sent.\nCheck your email.</string>
     <string name="service_running">Service is active</string>
     <string name="since_permissions_not_granted">Since permissions not granted some options have been disabled.</string>
     <string name="text_filter">Text filter</string>
@@ -125,7 +126,6 @@
     <string name="you_had_incoming_call">You had an incoming call of {duration} duration.</string>
     <string name="you_had_missed_call">You had a missed call.</string>
     <string name="you_had_outgoing_call">You had an outgoing call of {duration} duration.</string>
-    <string name="need_google_permission">Access to Google account is required</string>
 
     <string-array name="trigger_names">
         <item>Incoming SMS</item>
