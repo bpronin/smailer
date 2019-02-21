@@ -49,10 +49,6 @@
         </activity>
 
         <activity
-            android:name=".ui.ServerActivity"
-            android:label="@string/sender" />
-
-        <activity
             android:name=".ui.RecipientsActivity"
             android:label="@string/recipients" />
 
