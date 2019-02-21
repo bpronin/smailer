@@ -34,7 +34,7 @@ import androidx.annotation.Nullable;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class JavaMailTransport implements MailTransport {
+public class JavaMailTransport {
 
     private static Logger log = LoggerFactory.getLogger("JavaMailTransport");
 
@@ -85,7 +85,6 @@ public class JavaMailTransport implements MailTransport {
     /**
      * Starts new delivery session.
      */
-    @Override
     public void startSession(@NonNull String sender, @NonNull String password, @NonNull String host, @NonNull String port) {
         this.sender = sender;
 

@@ -9,10 +9,12 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.widget.ListView;
 
+import com.bopr.android.smailer.AuthorizationHelper;
 import com.bopr.android.smailer.ContentObserverService;
 import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.ResendWorker;
+import com.bopr.android.smailer.mail.GmailTransport;
 import com.bopr.android.smailer.util.TagFormatter;
 import com.bopr.android.smailer.util.validator.EmailListTextValidator;
 import com.bopr.android.smailer.util.validator.EmailTextValidator;
@@ -51,6 +53,7 @@ public class MainFragment extends BasePreferenceFragment {
     private BroadcastReceiver databaseListener;
     private Preference historyPreference;
     private boolean asListView;
+    private AuthorizationHelper authorizator;
 
     public MainFragment() {
         setAsListView(false);
@@ -62,7 +65,18 @@ public class MainFragment extends BasePreferenceFragment {
         super.onCreate(savedInstanceState);
 
         backupManager = new BackupManager(getContext());
+        authorizator = new AuthorizationHelper(this, GmailTransport.SCOPES);
 
+        settingsListener = new SettingsListener();
+        settings.registerOnSharedPreferenceChangeListener(settingsListener);
+
+        database = new Database(getContext());
+        databaseListener = new DatabaseListener();
+        database.registerListener(databaseListener);
+    }
+
+    @Override
+    public void onCreatePreferences(Bundle bundle, String rootKey) {
         addPreferencesFromResource(R.xml.pref_main);
 
         recipientsPreference = findPreference(KEY_PREF_RECIPIENTS_ADDRESS);
@@ -74,17 +88,11 @@ public class MainFragment extends BasePreferenceFragment {
         historyPreference.setOnPreferenceClickListener(preferenceClickListener);
         findPreference(KEY_PREF_MORE).setOnPreferenceClickListener(preferenceClickListener);
         findPreference(KEY_PREF_RULES).setOnPreferenceClickListener(preferenceClickListener);
-
-        settingsListener = new SettingsListener();
-        settings.registerOnSharedPreferenceChangeListener(settingsListener);
-
-        database = new Database(getContext());
-        databaseListener = new DatabaseListener();
-        database.registerListener(databaseListener);
     }
 
     @Override
     public void onDestroy() {
+        authorizator.dismiss();
         database.unregisterListener(databaseListener);
         database.close();
         settings.unregisterOnSharedPreferenceChangeListener(settingsListener);
@@ -100,6 +108,12 @@ public class MainFragment extends BasePreferenceFragment {
             listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
             listView.setItemChecked(listView.getSelectedItemPosition(), true);
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        authorizator.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -161,7 +175,7 @@ public class MainFragment extends BasePreferenceFragment {
         public boolean onPreferenceClick(Preference preference) {
             switch (preference.getKey()) {
                 case KEY_PREF_OUTGOING_SERVER:
-                    startActivity(new Intent(getContext(), ServerActivity.class));
+                    authorizator.selectAccount();
                     break;
                 case KEY_PREF_RECIPIENTS_ADDRESS:
                     startActivity(new Intent(getContext(), RecipientsActivity.class));

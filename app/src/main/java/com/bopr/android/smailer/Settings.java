@@ -32,7 +32,6 @@ public class Settings extends SharedPreferencesWrapper {
     public static final String PREFERENCES_STORAGE_NAME = "com.bopr.android.smailer_preferences";
     public static final String DB_NAME = "smailer.sqlite";
 
-    public static final String KEY_PREF_SELECTED_ACCOUNT = "selected_account";
     public static final String KEY_PREF_SENDER_ACCOUNT = "sender_account";
     public static final String KEY_PREF_SENDER_PASSWORD = "sender_password";
     public static final String KEY_PREF_EMAIL_HOST = "sender_host";

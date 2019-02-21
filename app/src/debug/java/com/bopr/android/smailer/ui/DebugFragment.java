@@ -25,10 +25,9 @@ import com.bopr.android.smailer.Notifications;
 import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.Settings;
+import com.bopr.android.smailer.mail.GmailTransport;
 import com.bopr.android.smailer.mail.JavaMailTransport;
-import com.bopr.android.smailer.mail.MailTransport;
 import com.bopr.android.smailer.util.AndroidUtil;
-import com.google.api.services.gmail.GmailScopes;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +53,7 @@ import androidx.preference.PreferenceScreen;
 import static android.Manifest.permission.BROADCAST_SMS;
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+import static com.bopr.android.smailer.AuthorizationHelper.getDefaultGoogleAccount;
 import static com.bopr.android.smailer.Settings.DEFAULT_HOST;
 import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
 import static com.bopr.android.smailer.Settings.DEFAULT_PORT;
@@ -113,7 +113,7 @@ public class DebugFragment extends BasePreferenceFragment {
         database = new Database(context);
         locator = new GeoLocator(context, database);
         cryptor = new Cryptor(context);
-        authorizator = new AuthorizationHelper(this, GmailScopes.GMAIL_SEND);
+        authorizator = new AuthorizationHelper(this, GmailTransport.SCOPES);
 
         screen = getPreferenceManager().createPreferenceScreen(context);
 
@@ -373,11 +373,15 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     @Override
+    public void onDestroy() {
+        authorizator.dismiss();
+        super.onDestroy();
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (authorizator.onActivityResult(requestCode, resultCode, data)) {
-//            onSendDebugMail();
-        }
+        authorizator.onActivityResult(requestCode, resultCode, data);
     }
 
     @NonNull
@@ -671,7 +675,7 @@ public class DebugFragment extends BasePreferenceFragment {
         }
     }
 
-    private static class SendDebugMailTask extends LongAsyncTask<Void, Void, Void> {
+    private static class SendDebugMailTask extends LongAsyncTask<Void, Void, String> {
 
         private Properties properties;
 
@@ -681,14 +685,10 @@ public class DebugFragment extends BasePreferenceFragment {
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
-            String user = properties.getProperty("default_sender");
-
-            MailTransport transport = new JavaMailTransport();
-            transport.startSession(user, properties.getProperty("default_password"),
-                    "smtp.gmail.com", "465");
-
+        protected String doInBackground(Void... params) {
+            GmailTransport transport = new GmailTransport(getActivity());
             try {
+                transport.init(getDefaultGoogleAccount(getActivity()));
                 transport.send(
                         "test subject",
                         "test message from " + AndroidUtil.getDeviceName(),
@@ -697,14 +697,19 @@ public class DebugFragment extends BasePreferenceFragment {
                 );
             } catch (Exception x) {
                 log.error("FAILED: ", x);
+                return "Sending mail failed: " + x.getMessage();
             }
             return null;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            showDone(getActivity());
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            if (result == null) {
+                showDone(getActivity());
+            } else {
+                showMessage(getActivity(), result);
+            }
         }
 
     }
@@ -726,7 +731,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
             try {
                 String user = properties.getProperty("default_sender");
-                MailTransport transport = new JavaMailTransport();
+                JavaMailTransport transport = new JavaMailTransport();
                 transport.startSession(user, properties.getProperty("default_password"),
                         "smtp.gmail.com", "465");
                 transport.send(

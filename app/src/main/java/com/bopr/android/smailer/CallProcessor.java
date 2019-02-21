@@ -6,33 +6,27 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
-import com.bopr.android.smailer.Database.PhoneEventCursor;
-import com.bopr.android.smailer.mail.JavaMailTransport;
-import com.sun.mail.util.MailConnectException;
+import com.bopr.android.smailer.mail.GmailTransport;
+import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
-
-import javax.mail.AuthenticationFailedException;
-import javax.mail.MessagingException;
+import java.util.LinkedList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.core.util.Consumer;
 
 import static com.bopr.android.smailer.Contacts.getContactName;
 import static com.bopr.android.smailer.Notifications.ACTION_SHOW_MAIN;
-import static com.bopr.android.smailer.Notifications.ACTION_SHOW_SERVER;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_HOST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_PORT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_MARK_SMS_AS_READ;
 import static com.bopr.android.smailer.Settings.KEY_PREF_NOTIFY_SEND_SUCCESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_PASSWORD;
 
 /**
  * Sends out email for phone events.
@@ -45,17 +39,15 @@ class CallProcessor {
 
     private final Settings settings;
     private final Context context;
-    private final JavaMailTransport transport;
-    private final Cryptor cryptor;
+    private final GmailTransport transport;
     private final Notifications notifications;
     private final Database database;
     private final GeoLocator locator;
 
-    CallProcessor(Context context, JavaMailTransport transport, Cryptor cryptor, Notifications notifications,
+    CallProcessor(Context context, GmailTransport transport, Cryptor cryptor, Notifications notifications,
                   Database database, GeoLocator locator) {
         this.context = context;
         this.transport = transport;
-        this.cryptor = cryptor;
         this.notifications = notifications;
         this.database = database;
         this.locator = locator;
@@ -63,7 +55,7 @@ class CallProcessor {
     }
 
     CallProcessor(Context context, Database database, GeoLocator locator) {
-        this(context, new JavaMailTransport(), new Cryptor(context), new Notifications(context), database, locator);
+        this(context, new GmailTransport(context), new Cryptor(context), new Notifications(context), database, locator);
     }
 
     /**
@@ -78,8 +70,9 @@ class CallProcessor {
         database.putEvent(event);
 
         if (settings.getFilter().test(event)) {
-            startMailSession();
-            sendMail(event, false);
+            if (startMailSession(false)) {
+                sendMail(event, false);
+            }
         } else {
             ignoreEvent(event);
         }
@@ -93,28 +86,31 @@ class CallProcessor {
     void processPending() {
         log.debug("Processing pending events");
 
-        startMailSession();
+        final PhoneEventFilter filter = settings.getFilter();
+        final List<PhoneEvent> events = new LinkedList<>();
+        database.getPendingEvents().iterate(new Consumer<PhoneEvent>() {
 
-        PhoneEventCursor events = database.getPendingEvents();
-        if (events.getCount() == 0) {
-            log.debug("No pending events found");
-        } else {
-            final PhoneEventFilter filter = settings.getFilter();
-
-            events.iterate(new Consumer<PhoneEvent>() {
-
-                @Override
-                public void accept(PhoneEvent event) {
-                    if (filter.test(event)) {
-                        sendMail(event, true);
-                    } else {
-                        ignoreEvent(event);
-                    }
+            @Override
+            public void accept(PhoneEvent event) {
+                if (filter.test(event)) {
+                    events.add(event);
+                } else {
+                    ignoreEvent(event);
                 }
-            });
+            }
+        });
 
-            database.notifyChanged();
+        if (!events.isEmpty()) {
+            if (startMailSession(true)) {
+                for (PhoneEvent event : events) {
+                    sendMail(event, true);
+                }
+            }
+        } else {
+            log.debug("No pending events found");
         }
+
+        database.notifyChanged();
     }
 
     private void ignoreEvent(PhoneEvent event) {
@@ -124,14 +120,18 @@ class CallProcessor {
         log.debug("Event ignored: " + event);
     }
 
-    private void startMailSession() {
+    private boolean startMailSession(boolean silent) {
         log.debug("Starting session");
-
-        transport.startSession(
-                settings.getString(KEY_PREF_SENDER_ACCOUNT, ""),
-                cryptor.decrypt(settings.getString(KEY_PREF_SENDER_PASSWORD, "")),
-                settings.getString(KEY_PREF_EMAIL_HOST, ""),
-                settings.getString(KEY_PREF_EMAIL_PORT, ""));
+        try {
+            transport.init(settings.getString(KEY_PREF_SENDER_ACCOUNT, ""));
+            return true;
+        } catch (IllegalAccessException x) {
+            log.error("Failed starting session: ", x);
+            if (!silent) {
+                notifications.showMailError(R.string.no_account_specified, null, ACTION_SHOW_MAIN);
+            }
+            return false;
+        }
     }
 
     /**
@@ -149,12 +149,15 @@ class CallProcessor {
                     settings.getString(KEY_PREF_RECIPIENTS_ADDRESS, ""));
 
             handleSuccess(event);
-        } catch (AuthenticationFailedException x) {
-            handleError(event, x, R.string.user_password_not_accepted, ACTION_SHOW_SERVER, silent);
-        } catch (MailConnectException x) {
-            handleError(event, x, R.string.cannot_connect_mail_server, ACTION_SHOW_SERVER, silent);
-        } catch (MessagingException x) {
-            handleError(event, x, R.string.unable_send_email, ACTION_SHOW_SERVER, silent);
+//        } catch (AuthenticationFailedException x) {
+//            handleError(event, x, R.string.user_password_not_accepted, ACTION_SHOW_SERVER, silent);
+//        } catch (MailConnectException x) {
+//            handleError(event, x, R.string.cannot_connect_mail_server, ACTION_SHOW_SERVER, silent);
+//        } catch (MessagingException x) {
+//            handleError(event, x, R.string.unable_send_email, ACTION_SHOW_SERVER, silent);
+        } catch (UserRecoverableAuthIOException x) {
+            AuthorizationHelper.removeSelectedAccount(context);
+            handleError(event, x, R.string.need_google_permission, ACTION_SHOW_MAIN, silent);
         } catch (Throwable x) {
             handleError(event, x, R.string.internal_error, ACTION_SHOW_MAIN, silent);
         }

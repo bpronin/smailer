@@ -5,7 +5,6 @@ import android.content.Context;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.http.HttpTransport;
-import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64;
 import com.google.api.services.gmail.Gmail;
@@ -36,54 +35,63 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import static java.util.Collections.singletonList;
+import static javax.mail.Message.RecipientType.TO;
 
-public class GmailTransport implements MailTransport {
+public class GmailTransport {
 
     private static Logger log = LoggerFactory.getLogger("GmailTransport");
 
+    public static List<String> SCOPES = singletonList(GmailScopes.GMAIL_SEND);
+
+    private static final String USER_ID = "me"; /* do not change */
     private static final String UTF_8 = "UTF-8";
     private static final String HTML = "html";
 
-    private Context context;
+    private final HttpTransport transport;
+    private final JacksonFactory jsonFactory;
+    private final Context context;
     private Session session;
-    private GoogleAccountCredential credential;
+    private Gmail service;
+    private String sender;
 
     public GmailTransport(Context context) {
         this.context = context;
+        jsonFactory = JacksonFactory.getDefaultInstance();
+        transport = AndroidHttp.newCompatibleTransport();
     }
 
-    @Override
-    public void startSession(@NonNull String sender, @NonNull String password, @NonNull String host, @NonNull String port) {
+    public void init(@NonNull String senderAccount) throws IllegalAccessException {
+        this.sender = senderAccount;
+        service = createService(createCredential(senderAccount));
         session = Session.getDefaultInstance(new Properties(), null);
-        credential = createCredential(sender);
     }
 
-    @Override
     public void send(String subject, String body, @Nullable Collection<File> attachment,
                      @NonNull String recipients) throws IOException, MessagingException {
-        Message message = createMessage(subject, body, attachment, credential.getSelectedAccountName(), recipients);
+        Message message = createMessage(subject, body, attachment, sender, recipients);
 
-        Message result = createService()
-                .users()
+        service.users()
                 .messages()
-                .send("smailer", message)
+                .send(USER_ID, message)
                 .execute();
 
-        log.debug("Mail sent: " + result.getSnippet());
+        log.debug("Mail sent");
     }
 
-    private Gmail createService() {
-        JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
-        HttpTransport transport = AndroidHttp.newCompatibleTransport();
+    @NonNull
+    private Gmail createService(@NonNull GoogleAccountCredential credential) {
         return new Gmail.Builder(transport, jsonFactory, credential)
-                .setApplicationName("com.bopr.android.smailer")
+                .setApplicationName("smailer")
                 .build();
     }
 
-    private GoogleAccountCredential createCredential(String accountName) {
-        List<String> scopes = singletonList(GmailScopes.GMAIL_SEND);
-        GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(context, scopes);
+    @NonNull
+    private GoogleAccountCredential createCredential(String accountName) throws IllegalAccessException {
+        GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(context, SCOPES);
         credential.setSelectedAccountName(accountName);
+        if (credential.getSelectedAccount() == null) {
+            throw new IllegalAccessException("Account does not exist: " + accountName);
+        }
         return credential;
     }
 
@@ -99,13 +107,13 @@ public class GmailTransport implements MailTransport {
     private MimeMessage createMimeMessage(String subject, String body, @Nullable Collection<File> attachment,
                                           @NonNull String sender, @NonNull String recipients) throws MessagingException {
         MimeMessage message = new MimeMessage(session);
-        message.setSender(new InternetAddress(sender));
+        message.setFrom(sender);
         message.setSubject(subject, UTF_8);
 
         if (recipients.indexOf(',') > 0) {
-            message.setRecipients(javax.mail.Message.RecipientType.TO, InternetAddress.parse(recipients));
+            message.setRecipients(TO, InternetAddress.parse(recipients));
         } else {
-            message.setRecipients(javax.mail.Message.RecipientType.TO, new InternetAddress[]{new InternetAddress(recipients)});
+            message.setRecipients(TO, new InternetAddress[]{new InternetAddress(recipients)});
         }
 
         if (attachment == null) {

@@ -4,10 +4,9 @@
     package="com.bopr.android.smailer">
 
 
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" /><!-- To auto-complete the email text field in the login form with the user's emails -->
-    <!--<uses-permission android:name="android.permission.READ_PROFILE" />-->
-    <uses-permission android:name="android.permission.READ_CONTACTS" /><!-- To add contact name into email body -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" /><!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.READ_CONTACTS" /><!-- To add contact name into email body -->
     <uses-permission android:name="android.permission.RECEIVE_SMS" /><!-- To process incoming sms -->
     <uses-permission android:name="android.permission.READ_SMS" /><!-- To process outgoing -->
     <uses-permission android:name="android.permission.WRITE_SMS" /><!-- To mark sms as read -->
@@ -18,10 +17,8 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /><!-- To restart application services at device boot -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /><!-- To check internet connection -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /><!-- To run content listener in foreground service -->
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />  <!--To use account manager for google authorization-->
 
-    <uses-permission android:name="android.permission.USE_CREDENTIALS"/>
-    <uses-permission android:name="android.permission.ACCOUNT_MANAGER" />
-    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
     <application
         android:allowBackup="true"
         android:backupAgent="AppBackupAgent"

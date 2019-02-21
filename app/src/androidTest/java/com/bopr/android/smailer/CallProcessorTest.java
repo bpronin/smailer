@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import com.bopr.android.smailer.mail.JavaMailTransport;
+import com.bopr.android.smailer.mail.GmailTransport;
 
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -50,7 +50,7 @@ public class CallProcessorTest extends BaseTest {
     private Database database;
     private Context context;
     private Cryptor cryptor;
-    private JavaMailTransport transport;
+    private GmailTransport transport;
     private Notifications notifications;
     private NetworkInfo networkInfo;
     private SharedPreferences preferences;
@@ -95,7 +95,7 @@ public class CallProcessorTest extends BaseTest {
             }
         });
 
-        transport = mock(JavaMailTransport.class);
+        transport = mock(GmailTransport.class);
         notifications = mock(Notifications.class);
         locator = mock(GeoLocator.class);
     }
@@ -112,7 +112,7 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
-        doAnswer(inits).when(transport).startSession(anyString(), anyString(), anyString(), anyString());
+        doAnswer(inits).when(transport).init(anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
 
         CallProcessor callProcessor = new CallProcessor(context, transport, cryptor, notifications, database, locator);
@@ -135,7 +135,7 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
-        doAnswer(inits).when(transport).startSession(anyString(), anyString(), anyString(), anyString());
+        doAnswer(inits).when(transport).init(anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
 
         when(preferences.getString(eq(KEY_PREF_EMAIL_LOCALE), anyString())).thenReturn("ru_RU");
@@ -160,7 +160,7 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
-        doAnswer(inits).when(transport).startSession(anyString(), anyString(), anyString(), anyString());
+        doAnswer(inits).when(transport).init(anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
         when(networkInfo.isConnected()).thenReturn(false);
 
@@ -184,7 +184,7 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
-        doAnswer(inits).when(transport).startSession(anyString(), anyString(), anyString(), anyString());
+        doAnswer(inits).when(transport).init(anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
 
         when(preferences.getString(eq(KEY_PREF_SENDER_ACCOUNT), anyString())).thenReturn(null);
@@ -209,7 +209,7 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
-        doAnswer(inits).when(transport).startSession(anyString(), anyString(), anyString(), anyString());
+        doAnswer(inits).when(transport).init(anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
 
         when(preferences.getString(eq(KEY_PREF_RECIPIENTS_ADDRESS), anyString())).thenReturn(null);
@@ -234,7 +234,7 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
-        doAnswer(inits).when(transport).startSession(anyString(), anyString(), anyString(), anyString());
+        doAnswer(inits).when(transport).init(anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
 
         when(preferences.getString(eq(KEY_PREF_EMAIL_HOST), anyString())).thenReturn(null);
@@ -259,7 +259,7 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
-        doAnswer(inits).when(transport).startSession(anyString(), anyString(), anyString(), anyString());
+        doAnswer(inits).when(transport).init(anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
 
         when(preferences.getString(eq(KEY_PREF_EMAIL_PORT), anyString())).thenReturn(null);
@@ -284,7 +284,7 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
-        doAnswer(inits).when(transport).startSession(anyString(), anyString(), anyString(), anyString());
+        doAnswer(inits).when(transport).init(anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
         doThrow(AuthenticationFailedException.class).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
 
@@ -308,7 +308,7 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
-        doAnswer(inits).when(transport).startSession(anyString(), anyString(), anyString(), anyString());
+        doAnswer(inits).when(transport).init(anyString());
         doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
         doThrow(MessagingException.class).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
 

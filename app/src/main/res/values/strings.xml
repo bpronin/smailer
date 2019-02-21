@@ -125,6 +125,7 @@
     <string name="you_had_incoming_call">You had an incoming call of {duration} duration.</string>
     <string name="you_had_missed_call">You had a missed call.</string>
     <string name="you_had_outgoing_call">You had an outgoing call of {duration} duration.</string>
+    <string name="need_google_permission">Access to Google account is required</string>
 
     <string-array name="trigger_names">
         <item>Incoming SMS</item>
