@@ -35,7 +35,7 @@ import static com.bopr.android.smailer.util.ResourceUtil.underwivedText;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class BasePreferenceFragment extends PreferenceFragmentCompat {
+public abstract class BasePreferenceFragment extends PreferenceFragmentCompat {
 
     static final int STYLE_DEFAULT = 0;
     static final int STYLE_UNDERWIVED = 1;
@@ -51,11 +51,6 @@ public class BasePreferenceFragment extends PreferenceFragmentCompat {
         super.onCreate(savedInstanceState);
         settings = new Settings(requireContext());
         setHasOptionsMenu(true);
-    }
-
-    @Override
-    public void onCreatePreferences(Bundle bundle, String rootKey) {
-        /* do nothing */
     }
 
     @Override

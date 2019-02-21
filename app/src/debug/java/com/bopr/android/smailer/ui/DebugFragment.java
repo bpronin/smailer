@@ -92,24 +92,25 @@ public class DebugFragment extends BasePreferenceFragment {
     private Context context;
     private GeoLocator locator;
     private Database database;
-    private PreferenceScreen screen;
     private AuthorizationHelper authorizator;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(false);
-
-        /* do not use fragment's context. see: https://developer.android.com/guide/topics/ui/settings/programmatic-hierarchy*/
-        context = getPreferenceManager().getContext();
-
         database = new Database(context);
         locator = new GeoLocator(context, database);
         authorizator = new AuthorizationHelper(this, GmailTransport.SCOPES);
+    }
 
-        screen = getPreferenceManager().createPreferenceScreen(context);
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        /* do not use fragment's context. see: https://developer.android.com/guide/topics/ui/settings/programmatic-hierarchy*/
+        context = getPreferenceManager().getContext();
 
-        addCategory("Settings",
+        PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(context);
+
+        addCategory(screen, "Settings",
 
                 createPreference("Set debug settings", new DefaultClickListener() {
 
@@ -128,7 +129,7 @@ public class DebugFragment extends BasePreferenceFragment {
                 })
         );
 
-        addCategory("Call processing",
+        addCategory(screen, "Call processing",
 
                 createPreference("Start process single event", new DefaultClickListener() {
 
@@ -163,7 +164,7 @@ public class DebugFragment extends BasePreferenceFragment {
                 })
         );
 
-        addCategory("Database",
+        addCategory(screen, "Database",
 
                 createPreference("Add an item to calls log", new DefaultClickListener() {
 
@@ -236,7 +237,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
         );
 
-        addCategory("Permissions",
+        addCategory(screen, "Permissions",
 
                 createPreference("Require Sms permission", new DefaultClickListener() {
 
@@ -255,7 +256,7 @@ public class DebugFragment extends BasePreferenceFragment {
                 })
         );
 
-        addCategory("Logging",
+        addCategory(screen, "Logging",
 
                 createPreference("Send logs to developer", new DefaultClickListener() {
 
@@ -282,7 +283,7 @@ public class DebugFragment extends BasePreferenceFragment {
                 })
         );
 
-        addCategory("Notifications",
+        addCategory(screen, "Notifications",
 
                 createPreference("Mail error. Show connection", new DefaultClickListener() {
 
@@ -310,7 +311,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
         );
 
-        addCategory("Other",
+        addCategory(screen, "Other",
 
                 createPreference("Emulate Sms", new DefaultClickListener() {
 
@@ -396,7 +397,7 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 */
 
-    private void addCategory(String title, Preference... preferences) {
+    private void addCategory(PreferenceScreen screen, String title, Preference... preferences) {
         PreferenceCategory category = new PreferenceCategory(context);
         screen.addPreference(category);
 

@@ -28,8 +28,7 @@ import static com.bopr.android.smailer.util.Util.parseCommaSeparated;
 public class RulesFragment extends BasePreferenceFragment {
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onCreatePreferences(Bundle bundle, String rootKey) {
         addPreferencesFromResource(R.xml.pref_rules);
 
         findPreference(KEY_PREF_EMAIL_TRIGGERS).setOnPreferenceChangeListener(new OnPreferenceChangeListener() {

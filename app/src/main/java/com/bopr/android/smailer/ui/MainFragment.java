@@ -15,7 +15,6 @@ import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.GmailTransport;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.ResendWorker;
-import com.bopr.android.smailer.util.TagFormatter;
 import com.bopr.android.smailer.util.validator.EmailListTextValidator;
 import com.bopr.android.smailer.util.validator.EmailTextValidator;
 
@@ -30,6 +29,7 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RULES;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
+import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.Util.isEmpty;
 import static java.lang.String.valueOf;
 
@@ -53,7 +53,6 @@ public class MainFragment extends BasePreferenceFragment {
 
     public MainFragment() {
         setAsListView(false);
-        setPreferenceClickListener(new PreferenceClickListener());
     }
 
     @Override
@@ -78,6 +77,8 @@ public class MainFragment extends BasePreferenceFragment {
         recipientsPreference = findPreference(KEY_PREF_RECIPIENTS_ADDRESS);
         serverPreference = findPreference(KEY_PREF_OUTGOING_SERVER);
         historyPreference = findPreference(KEY_PREF_HISTORY);
+
+        preferenceClickListener = new PreferenceClickListener();
 
         recipientsPreference.setOnPreferenceClickListener(preferenceClickListener);
         serverPreference.setOnPreferenceClickListener(preferenceClickListener);
@@ -153,7 +154,7 @@ public class MainFragment extends BasePreferenceFragment {
     private void updateHistoryPreference() {
         long count = database.getUnreadEventsCount();
         if (count > 0) {
-            String text = TagFormatter.formatter(R.string.count_new, requireContext())
+            String text = formatter(R.string.count_new, requireContext())
                     .put("count", valueOf(count))
                     .format();
             updateSummary(historyPreference, text, STYLE_DEFAULT);

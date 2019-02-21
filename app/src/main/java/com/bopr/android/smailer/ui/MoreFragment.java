@@ -21,8 +21,7 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
 public class MoreFragment extends BasePreferenceFragment {
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.pref_more);
 
         findPreference(KEY_PREF_EMAIL_LOCALE).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
