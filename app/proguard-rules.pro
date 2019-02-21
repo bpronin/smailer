@@ -18,5 +18,5 @@
 
 -ignorewarnings
 
--verbose
+#-verbose
 -dontobfuscate
