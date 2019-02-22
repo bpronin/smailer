@@ -58,7 +58,7 @@ public class UtilUnitTest {
     public void testIsEmpty() {
         assertFalse(Util.isEmpty("A"));
         assertTrue(Util.isEmpty(""));
-        assertTrue(Util.isEmpty(null));
+        assertTrue(Util.isEmpty((String) null));
     }
 
     @Test

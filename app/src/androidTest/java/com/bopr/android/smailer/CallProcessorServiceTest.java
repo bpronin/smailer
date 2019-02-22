@@ -1,11 +1,18 @@
 package com.bopr.android.smailer;
 
+import android.util.Log;
+
 import org.junit.Test;
+import org.mockito.internal.util.reflection.Whitebox;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * {@link CallProcessorService} tester.
@@ -16,209 +23,61 @@ public class CallProcessorServiceTest extends BaseTest {
 
     /**
      * Checks that service calls {@link CallProcessor#processPending()} method.
-     *
-     * @throws Exception when fails
      */
     @Test
-    public void testStartResend() throws Exception {
-        InvocationsCollector invocations = new InvocationsCollector();
+    public void testStartResend() {
+        final CountDownLatch latch = new CountDownLatch(1);
 
         CallProcessor callProcessor = mock(CallProcessor.class);
-        doAnswer(invocations).when(callProcessor).processPending();
+        doAnswer(new Answer() {
+
+            @Override
+            public Object answer(InvocationOnMock invocation) {
+                Log.d(TAG, "Method invoked");
+                latch.countDown();
+                return null;
+            }
+        }).when(callProcessor).processPending();
 
         CallProcessorService service = new CallProcessorService();
-//        service.init(callProcessor, mock(GeoLocator.class));
+        Whitebox.setInternalState(service, "callProcessor", callProcessor);
 
-/*
-        Intent intent = CallProcessorService.createResendIntent(getContext());
-        service.onHandleIntent(intent);
-*/
+        service.onHandleIntent(CallProcessorService.createResendIntent(getContext()));
 
-        assertEquals(1, invocations.size());
+        try {
+            assertTrue(latch.await(5, TimeUnit.SECONDS));
+        } catch (InterruptedException e) {
+            fail();
+        }
     }
 
     /**
      * Checks that service calls {@link CallProcessor#process(PhoneEvent)}} method on incoming sms.
-     *
-     * @throws Exception when fails
      */
     @Test
-    public void testStartSendIncomingSms() throws Exception {
-        InvocationsCollector invocations = new InvocationsCollector();
-
+    public void testStart() {
         CallProcessor callProcessor = mock(CallProcessor.class);
-        doAnswer(invocations).when(callProcessor).process(any(PhoneEvent.class));
-        GeoLocator locator = mock(GeoLocator.class);
-        when(locator.getLocation()).thenReturn(new GeoCoordinates(60, 30));
+
+        BlockingAnswer answer = new BlockingAnswer() ;
+        doAnswer(answer).when(callProcessor).process(any(PhoneEvent.class));
 
         CallProcessorService service = new CallProcessorService();
-//        service.init(callProcessor, locator);
+        Whitebox.setInternalState(service, "callProcessor", callProcessor);
 
-        //"123", (long) 100000, "Text", true
-        PhoneEvent event1 = new PhoneEvent();
-/*
-        Intent intent = CallProcessorService.createPhoneEventIntent(getContext(), event1);
-        service.onHandleIntent(intent);
-*/
+        PhoneEvent event = new PhoneEvent();
+        event.setId(100L);
+        event.setPhone("32121");
 
-        PhoneEvent event = (PhoneEvent) invocations.get(0)[0];
-        assertEquals("123", event.getPhone());
-        assertEquals(100000, event.getStartTime().longValue());
-        assertEquals("Text", event.getText());
-        assertNull(event.getEndTime());
-        assertEquals(PhoneEvent.State.PENDING, event.getState());
-        assertTrue(event.isIncoming());
-        assertFalse(event.isMissed());
-        assertTrue(event.isSms());
-        assertNull(event.getDetails());
-        assertEquals(new GeoCoordinates(60, 30), event.getLocation());
-    }
+        service.onHandleIntent(CallProcessorService.createIntent(getContext(), event));
 
-    /**
-     * Checks that service calls {@link CallProcessor#process(PhoneEvent)}} method on outgoing sms.
-     *
-     * @throws Exception when fails
-     */
-    @Test
-    public void testStartSendOutgoingSms() throws Exception {
-        InvocationsCollector invocations = new InvocationsCollector();
+        try {
+            assertTrue(answer.await(5, TimeUnit.SECONDS));
+        } catch (InterruptedException e) {
+            fail();
+        }
 
-        CallProcessor callProcessor = mock(CallProcessor.class);
-        doAnswer(invocations).when(callProcessor).process(any(PhoneEvent.class));
-        GeoLocator locator = mock(GeoLocator.class);
-        when(locator.getLocation()).thenReturn(new GeoCoordinates(60, 30));
-
-        CallProcessorService service = new CallProcessorService();
-//        service.init(callProcessor, locator);
-
-//        Intent intent = CallProcessorService.createSmsIntent(getContext(), "123", (long) 100000, "Text", false);
-/*
-        PhoneEvent event1 = new PhoneEvent();
-        Intent intent = CallProcessorService.createPhoneEventIntent(getContext(), event1);
-        service.onHandleIntent(intent);
-*/
-
-        PhoneEvent message = (PhoneEvent) invocations.get(0)[0];
-        assertEquals("123", message.getPhone());
-        assertEquals(100000, message.getStartTime().longValue());
-        assertEquals("Text", message.getText());
-//        assertFalse(message.isProcessed());
-        assertFalse(message.isIncoming());
-        assertFalse(message.isMissed());
-        assertTrue(message.isSms());
-        assertNull(message.getDetails());
-        assertEquals(new GeoCoordinates(60, 30), message.getLocation());
-    }
-
-    /**
-     * Checks that service calls {@link CallProcessor#process(PhoneEvent)}} method on incoming call.
-     *
-     * @throws Exception when fails
-     */
-    @Test
-    public void testStartSendIncomingCall() throws Exception {
-        InvocationsCollector invocations = new InvocationsCollector();
-
-        CallProcessor callProcessor = mock(CallProcessor.class);
-        doAnswer(invocations).when(callProcessor).process(any(PhoneEvent.class));
-        GeoLocator locator = mock(GeoLocator.class);
-        when(locator.getLocation()).thenReturn(new GeoCoordinates(60, 30));
-
-        CallProcessorService service = new CallProcessorService();
-//        service.init(callProcessor, locator);
-
-//        Intent intent = CallProcessorService.createIncomingCallIntent(getContext(), "123", 100000, 200000);
-/*
-        PhoneEvent event1 = new PhoneEvent();
-        Intent intent = CallProcessorService.createPhoneEventIntent(getContext(), event1);
-        service.onHandleIntent(intent);
-*/
-
-        PhoneEvent message = (PhoneEvent) invocations.get(0)[0];
-        assertEquals("123", message.getPhone());
-        assertEquals(100000, message.getStartTime().longValue());
-        assertEquals(200000, message.getEndTime().longValue());
-        assertNull(message.getText());
-//        assertFalse(message.isProcessed());
-        assertTrue(message.isIncoming());
-        assertFalse(message.isMissed());
-        assertFalse(message.isSms());
-        assertNull(message.getDetails());
-        assertEquals(new GeoCoordinates(60, 30), message.getLocation());
-    }
-
-    /**
-     * Checks that service calls {@link CallProcessor#process(PhoneEvent)}} method on outgoing call.
-     *
-     * @throws Exception when fails
-     */
-    @Test
-    public void testStartSendOutgoingCall() throws Exception {
-        InvocationsCollector invocations = new InvocationsCollector();
-
-        CallProcessor callProcessor = mock(CallProcessor.class);
-        doAnswer(invocations).when(callProcessor).process(any(PhoneEvent.class));
-        GeoLocator locator = mock(GeoLocator.class);
-        when(locator.getLocation()).thenReturn(new GeoCoordinates(60, 30));
-
-        CallProcessorService service = new CallProcessorService();
-//        service.init(callProcessor, locator);
-
-//        Intent intent = CallProcessorService.createOutgoingCallIntent(getContext(), "123", 100000, 200000);
-        PhoneEvent event1 = new PhoneEvent();
-/*
-        Intent intent = CallProcessorService.createPhoneEventIntent(getContext(), event1);
-        service.onHandleIntent(intent);
-*/
-
-        PhoneEvent message = (PhoneEvent) invocations.get(0)[0];
-        assertEquals("123", message.getPhone());
-        assertEquals(100000, message.getStartTime().longValue());
-        assertEquals(200000, message.getEndTime().longValue());
-        assertNull(message.getText());
-//        assertFalse(message.isProcessed());
-        assertFalse(message.isIncoming());
-        assertFalse(message.isMissed());
-        assertFalse(message.isSms());
-        assertNull(message.getDetails());
-        assertEquals(new GeoCoordinates(60, 30), message.getLocation());
-    }
-
-    /**
-     * Checks that service calls {@link CallProcessor#process(PhoneEvent)}} method on missed call.
-     *
-     * @throws Exception when fails
-     */
-    @Test
-    public void testStartSendMissedCall() throws Exception {
-        InvocationsCollector invocations = new InvocationsCollector();
-
-        CallProcessor callProcessor = mock(CallProcessor.class);
-        doAnswer(invocations).when(callProcessor).process(any(PhoneEvent.class));
-        GeoLocator locator = mock(GeoLocator.class);
-        when(locator.getLocation()).thenReturn(new GeoCoordinates(60, 30));
-
-        CallProcessorService service = new CallProcessorService();
-//        service.init(callProcessor, locator);
-
-//        Intent intent = CallProcessorService.createMissedCallIntent(getContext(), "123", 100000);
-        PhoneEvent event1 = new PhoneEvent();
-/*
-        Intent intent = CallProcessorService.createPhoneEventIntent(getContext(), event1);
-        service.onHandleIntent(intent);
-*/
-
-        PhoneEvent message = (PhoneEvent) invocations.get(0)[0];
-        assertEquals("123", message.getPhone());
-        assertEquals(100000, message.getStartTime().longValue());
-        assertNull(message.getEndTime());
-        assertNull(message.getText());
-//        assertFalse(message.isProcessed());
-        assertTrue(message.isIncoming());
-        assertTrue(message.isMissed());
-        assertFalse(message.isSms());
-        assertNull(message.getDetails());
-        assertEquals(new GeoCoordinates(60, 30), message.getLocation());
+        PhoneEvent result = (PhoneEvent) answer.invocation().getArguments()[0];
+        assertEquals(event, result);
     }
 
 }

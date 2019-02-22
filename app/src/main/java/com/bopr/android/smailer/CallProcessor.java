@@ -32,7 +32,8 @@ import static com.bopr.android.smailer.util.ContactUtils.getContactName;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-class CallProcessor {
+@SuppressWarnings("WeakerAccess") /* tests mocking required public */
+public class CallProcessor {
 
     private static Logger log = LoggerFactory.getLogger("CallProcessor");
 
@@ -62,7 +63,7 @@ class CallProcessor {
      *
      * @param event email event
      */
-    void process(PhoneEvent event) {
+    public void process(PhoneEvent event) {
         log.debug("Processing event: " + event);
 
         event.setLocation(locator.getLocation());
@@ -82,7 +83,7 @@ class CallProcessor {
     /**
      * Sends out email for all pending events.
      */
-    void processPending() {
+    public void processPending() {
         log.debug("Processing pending events");
 
         final PhoneEventFilter filter = settings.getFilter();

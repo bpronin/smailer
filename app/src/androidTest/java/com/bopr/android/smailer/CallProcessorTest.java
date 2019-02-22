@@ -22,7 +22,6 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_NOTIFY_SEND_SUCCESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
-import static org.junit.Assert.assertArrayEquals;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
@@ -100,8 +99,8 @@ public class CallProcessorTest extends BaseTest {
         callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, new GeoCoordinates(30.0, 60.0), null, PhoneEvent.State.PENDING));
 
         assertTrue(errors.isEmpty());
-        assertArrayEquals(new Object[]{"sender@mail.com", "decrypted password", "smtp.mail.com", "111"}, inits.get(0));
-        assertEquals("[SMailer] Outgoing call to +12345678901", sends.get(0)[0]);
+        assertArrayEquals(new Object[]{"sender@mail.com", "decrypted password", "smtp.mail.com", "111"}, inits.invocation(0));
+        assertEquals("[SMailer] Outgoing call to +12345678901", sends.invocation(0)[0]);
     }
 
     /**
@@ -125,8 +124,8 @@ public class CallProcessorTest extends BaseTest {
         callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, new GeoCoordinates(30.0, 60.0), null, PhoneEvent.State.PENDING));
 
         assertTrue(errors.isEmpty());
-        assertArrayEquals(new Object[]{"sender@mail.com", "decrypted password", "smtp.mail.com", "111"}, inits.get(0));
-        assertEquals("[SMailer] Исходящий звонок на +12345678901", sends.get(0)[0]);
+        assertArrayEquals(new Object[]{"sender@mail.com", "decrypted password", "smtp.mail.com", "111"}, inits.invocation(0));
+        assertEquals("[SMailer] Исходящий звонок на +12345678901", sends.invocation(0)[0]);
     }
 
     /**
@@ -150,7 +149,7 @@ public class CallProcessorTest extends BaseTest {
 
         assertTrue(inits.isEmpty());
         assertTrue(sends.isEmpty());
-        assertEquals(R.string.no_internet_connection, errors.get(0)[0]);
+        assertEquals(R.string.no_internet_connection, errors.invocation(0)[0]);
     }
 
     /**
@@ -175,7 +174,7 @@ public class CallProcessorTest extends BaseTest {
 
         assertTrue(inits.isEmpty());
         assertTrue(sends.isEmpty());
-        assertEquals(R.string.no_account_specified, errors.get(0)[0]);
+        assertEquals(R.string.no_account_specified, errors.invocation(0)[0]);
     }
 
     /**
@@ -200,7 +199,7 @@ public class CallProcessorTest extends BaseTest {
 
         assertTrue(inits.isEmpty());
         assertTrue(sends.isEmpty());
-        assertEquals(R.string.no_recipients_specified, errors.get(0)[0]);
+        assertEquals(R.string.no_recipients_specified, errors.invocation(0)[0]);
     }
 
     /**
@@ -224,7 +223,7 @@ public class CallProcessorTest extends BaseTest {
 
         assertFalse(inits.isEmpty());
         assertTrue(sends.isEmpty());
-        assertEquals(R.string.user_password_not_accepted, errors.get(0)[0]);
+        assertEquals(R.string.user_password_not_accepted, errors.invocation(0)[0]);
     }
 
     /**
@@ -248,7 +247,7 @@ public class CallProcessorTest extends BaseTest {
 
         assertFalse(inits.isEmpty());
         assertTrue(sends.isEmpty());
-        assertEquals(R.string.unable_send_email, errors.get(0)[0]);
+        assertEquals(R.string.unable_send_email, errors.invocation(0)[0]);
     }
 
     /**
@@ -279,7 +278,7 @@ public class CallProcessorTest extends BaseTest {
         /* bad_phone produces notification */
 
         callProcessor.process(new PhoneEvent("bad_phone", false, null, null, false, null, null, null, PhoneEvent.State.PENDING));
-        assertEquals(R.string.unable_send_email, errors.get(0)[0]);
+        assertEquals(R.string.unable_send_email, errors.invocation(0)[0]);
         assertTrue(clears.isEmpty());
 
         /* good_phone removes it */

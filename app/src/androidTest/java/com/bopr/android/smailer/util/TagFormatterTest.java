@@ -22,14 +22,14 @@ public class TagFormatterTest extends BaseTest {
     private Resources resources;
 
     @SuppressWarnings("ResourceType")
-    public void setUp() throws Exception {
+    public void setUp() {
         resources = mock(Resources.class);
         when(resources.getString(PATTERN_ONE)).thenReturn("{one}, {two} and {three}");
         when(resources.getString(THREE)).thenReturn("THREE");
     }
 
     @Test
-    public void testPut() throws Exception {
+    public void testPut() {
         String text = formatter("{one}, {two} and {three}")
                 .put("one", "ONE")
                 .put("two", "TWO")
@@ -40,7 +40,7 @@ public class TagFormatterTest extends BaseTest {
     }
 
     @Test
-    public void testPutRemoveAbsent() throws Exception {
+    public void testPutRemoveAbsent() {
         String text = formatter("{one}, {two} and {three}")
                 .put("one", "ONE")
                 .put("three", "THREE")
@@ -50,7 +50,7 @@ public class TagFormatterTest extends BaseTest {
     }
 
     @Test
-    public void testPutRemoveBlank() throws Exception {
+    public void testPutRemoveBlank() {
         String text = formatter("{one}, {two} and {three}")
                 .put("one", "ONE")
                 .put("two", "")
@@ -61,7 +61,7 @@ public class TagFormatterTest extends BaseTest {
     }
 
     @Test
-    public void testList() throws Exception {
+    public void testList() {
         String text = formatter("{list}")
                 .putList("list", " ", "ONE", "TWO", "THREE")
                 .format();
@@ -70,7 +70,7 @@ public class TagFormatterTest extends BaseTest {
     }
 
     @Test
-    public void testListNullValue() throws Exception {
+    public void testListNullValue() {
         String text = formatter("{list}")
                 .putList("list", " ", "ONE", "TWO", null, "THREE")
                 .format();
@@ -79,7 +79,7 @@ public class TagFormatterTest extends BaseTest {
     }
 
     @Test
-    public void testPutFromResource() throws Exception {
+    public void testPutFromResource() {
         String text = formatter(PATTERN_ONE, resources)
                 .put("one", "ONE")
                 .put("two", "TWO")
@@ -90,7 +90,7 @@ public class TagFormatterTest extends BaseTest {
     }
 
     @Test
-    public void testPutResource() throws Exception {
+    public void testPutResource() {
         String text = formatter(PATTERN_ONE, resources)
                 .put("one", "ONE")
                 .put("two", "TWO")

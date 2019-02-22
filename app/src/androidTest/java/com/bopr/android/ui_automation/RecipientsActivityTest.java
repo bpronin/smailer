@@ -7,8 +7,8 @@ import com.bopr.android.smailer.R;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
-import androidx.test.runner.AndroidJUnit4;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.clearText;
@@ -38,7 +38,7 @@ public class RecipientsActivityTest extends BaseActivityTest {
     @Test
     public void testAddEdit() {
          /* check settings */
-        assertThat(preferences.getString(KEY_PREF_RECIPIENTS_ADDRESS, ""), isEmptyString());
+        assertThat(settings.getString(KEY_PREF_RECIPIENTS_ADDRESS, ""), isEmptyString());
 
         onView(withText(R.string.recipients)).check(matches(isDisplayed()));
 
@@ -91,13 +91,13 @@ public class RecipientsActivityTest extends BaseActivityTest {
         assertItemNotExists("john@mail.com");
 
          /* check settings */
-        assertEquals("mary@mail.com", preferences.getString(KEY_PREF_RECIPIENTS_ADDRESS, null));
+        assertEquals("mary@mail.com", settings.getString(KEY_PREF_RECIPIENTS_ADDRESS, null));
     }
 
     @Test
     public void testAddExistent() {
          /* check settings */
-        assertThat(preferences.getString(KEY_PREF_RECIPIENTS_ADDRESS, ""), isEmptyString());
+        assertThat(settings.getString(KEY_PREF_RECIPIENTS_ADDRESS, ""), isEmptyString());
 
         onView(withText(R.string.recipients)).check(matches(isDisplayed()));
 
@@ -128,7 +128,7 @@ public class RecipientsActivityTest extends BaseActivityTest {
         onToast("Recipient john@mail.com already exists").check(matches(isDisplayed()));
 
          /* check settings */
-        assertEquals("john@mail.com", preferences.getString(KEY_PREF_RECIPIENTS_ADDRESS, null));
+        assertEquals("john@mail.com", settings.getString(KEY_PREF_RECIPIENTS_ADDRESS, null));
     }
 
     @Test
@@ -172,13 +172,13 @@ public class RecipientsActivityTest extends BaseActivityTest {
         onToast("Recipient mary@mail.com already exists").check(matches(isDisplayed()));
 
          /* check settings */
-        assertEquals("mary@mail.com,john@mail.com", preferences.getString(KEY_PREF_RECIPIENTS_ADDRESS, null));
+        assertEquals("mary@mail.com,john@mail.com", settings.getString(KEY_PREF_RECIPIENTS_ADDRESS, null));
     }
 
     @Test
     public void testRemove() {
          /* check settings */
-        assertThat(preferences.getString(KEY_PREF_RECIPIENTS_ADDRESS, ""), isEmptyString());
+        assertThat(settings.getString(KEY_PREF_RECIPIENTS_ADDRESS, ""), isEmptyString());
 
         onView(withText(R.string.recipients)).check(matches(isDisplayed()));
 
@@ -215,7 +215,7 @@ public class RecipientsActivityTest extends BaseActivityTest {
         assertItemNotExists("john@mail.com");
 
          /* check settings */
-        assertThat(preferences.getString(KEY_PREF_RECIPIENTS_ADDRESS, ""), isEmptyString());
+        assertThat(settings.getString(KEY_PREF_RECIPIENTS_ADDRESS, ""), isEmptyString());
     }
 
     @Test

@@ -21,7 +21,7 @@ class InvocationsCollector implements Answer {
         return null;
     }
 
-    public Object[] get(int index) {
+    public Object[] invocation(int index) {
         return arguments.get(index);
     }
 

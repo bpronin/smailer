@@ -81,7 +81,7 @@ public class CallReceiverTest extends BaseTest {
         intent.putExtra(EXTRA_STATE, EXTRA_STATE_IDLE);
         receiver.onReceive(context, intent);
 
-        Intent result = (Intent) invocations.get(0)[0];
+        Intent result = (Intent) invocations.invocation(0)[0];
 //        assertEquals(ACTION_SINGLE, result.getAction());
 //        assertTrue(result.getBooleanExtra(EXTRA_INCOMING, false));
 //        assertFalse(result.hasExtra(EXTRA_MISSED));
@@ -156,7 +156,7 @@ public class CallReceiverTest extends BaseTest {
         intent.putExtra(EXTRA_STATE, EXTRA_STATE_IDLE);
         receiver.onReceive(context, intent);
 
-        Intent result = (Intent) invocations.get(0)[0];
+        Intent result = (Intent) invocations.invocation(0)[0];
 //        assertEquals(ACTION_SINGLE, result.getAction());
 //        assertFalse(result.getBooleanExtra(EXTRA_INCOMING, true));
 //        assertFalse(result.hasExtra(EXTRA_MISSED));
@@ -224,7 +224,7 @@ public class CallReceiverTest extends BaseTest {
         intent.putExtra(EXTRA_STATE, EXTRA_STATE_IDLE);
         receiver.onReceive(context, intent);
 
-        Intent result = (Intent) invocations.get(0)[0];
+        Intent result = (Intent) invocations.invocation(0)[0];
 //        assertEquals(ACTION_SINGLE, result.getAction());
 //        assertFalse(result.hasExtra(EXTRA_INCOMING));
 //        assertTrue(result.getBooleanExtra(EXTRA_MISSED, false));

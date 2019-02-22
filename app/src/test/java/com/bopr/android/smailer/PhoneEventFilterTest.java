@@ -9,6 +9,7 @@ import static com.bopr.android.smailer.util.Util.asSet;
 import static com.bopr.android.smailer.util.Util.quoteRegex;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class PhoneEventFilterTest {
 
@@ -16,7 +17,13 @@ public class PhoneEventFilterTest {
     public void testEmpty() {
         PhoneEvent event = new PhoneEvent();
         PhoneEventFilter filter = new PhoneEventFilter();
-        assertFalse(filter.test(event));
+
+        try {
+            assertFalse(filter.test(event));
+            fail();
+        } catch (NullPointerException ok) {
+            /* ok */
+        }
     }
 
     @Test
@@ -92,14 +99,14 @@ public class PhoneEventFilterTest {
 
         filter.setPhoneWhitelist(Collections.<String>emptySet());
         event.setPhone("111");
-        assertFalse(filter.test(event));
+        assertTrue(filter.test(event));
 
         filter.setPhoneWhitelist(asSet("111", "333"));
         event.setPhone("111");
         assertTrue(filter.test(event));
 
         event.setPhone("222");
-        assertFalse(filter.test(event));
+        assertTrue(filter.test(event));
 
         filter.setPhoneWhitelist(asSet("111", "222"));
         event.setPhone("222");
@@ -161,7 +168,7 @@ public class PhoneEventFilterTest {
 
         filter.setTextWhitelist(Collections.<String>emptySet());
         event.setText("This is a message for Bob or Ann");
-        assertFalse(filter.test(event));
+        assertTrue(filter.test(event));
 
         filter.setTextWhitelist(asSet("Bob", "Ann"));
         event.setText("This is a message for Bob or Ann");
@@ -169,7 +176,7 @@ public class PhoneEventFilterTest {
 
         filter.setTextWhitelist(asSet("Bob", "Ann"));
         event.setText("This is a message");
-        assertFalse(filter.test(event));
+        assertTrue(filter.test(event));
     }
 
 //    @Test

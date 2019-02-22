@@ -2,16 +2,15 @@ package com.bopr.android.smailer;
 
 import android.content.Context;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 
 import java.util.Locale;
 import java.util.TimeZone;
 
-import androidx.test.InstrumentationRegistry;
-import androidx.test.runner.AndroidJUnit4;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 /**
  * Base tester.
@@ -21,13 +20,15 @@ import androidx.test.runner.AndroidJUnit4;
 @RunWith(AndroidJUnit4.class)
 public abstract class BaseTest extends Assert {
 
+    protected static final String TAG = "TEST";
+
     protected BaseTest() {
         Locale.setDefault(Locale.US);
         TimeZone.setDefault(TimeZone.getTimeZone("America/New_York"));
     }
 
     protected static Context getContext() {
-        return InstrumentationRegistry.getTargetContext();
+        return InstrumentationRegistry.getInstrumentation().getTargetContext();
     }
 
     @Before

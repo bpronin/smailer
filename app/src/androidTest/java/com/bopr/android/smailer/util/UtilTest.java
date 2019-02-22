@@ -11,7 +11,6 @@ import java.util.Set;
 import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.junit.Assert.assertArrayEquals;
 
 /**
  * {@link Util} tester.
@@ -42,7 +41,7 @@ public class UtilTest extends BaseTest {
         assertEquals("Hello", Util.capitalize("hello"));
         assertEquals("Hello", Util.capitalize("Hello"));
         assertEquals("", Util.capitalize(""));
-        assertEquals(null, Util.capitalize(null));
+        assertNull(Util.capitalize(null));
     }
 
     @Test
@@ -55,7 +54,7 @@ public class UtilTest extends BaseTest {
     public void testIsEmpty() {
         assertTrue(!Util.isEmpty("A"));
         assertTrue(Util.isEmpty(""));
-        assertTrue(Util.isEmpty((String)null));
+        assertTrue(Util.isEmpty((String) null));
     }
 
     @Test
@@ -105,13 +104,7 @@ public class UtilTest extends BaseTest {
         assertArrayEquals(new String[]{" "}, Util.parseSeparated(" ", ",", false).toArray());
         assertArrayEquals(new String[]{}, Util.parseSeparated("", ",", true).toArray());
         assertArrayEquals(new String[]{}, Util.parseSeparated(" ", ",", true).toArray());
-
-        try {
-            assertArrayEquals(new String[]{}, Util.parseSeparated(null, ",", true).toArray());
-            fail("No exception");
-        } catch (NullPointerException x) {
-            /* ok */
-        }
+        assertArrayEquals(new String[]{}, Util.parseSeparated(null, ",", true).toArray());
     }
 
     @Test

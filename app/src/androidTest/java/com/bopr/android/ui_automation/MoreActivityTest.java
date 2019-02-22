@@ -8,8 +8,8 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
-import androidx.test.runner.AndroidJUnit4;
 
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
@@ -47,10 +47,10 @@ public class MoreActivityTest extends BaseActivityTest {
     public void testContentSetting() {
         onView(withText(R.string.preferences)).perform(click());
 
-        String[] titles = rule.getActivity().getResources().getStringArray(R.array.email_content_names);
+        String[] titles = RULE.getActivity().getResources().getStringArray(R.array.email_content_names);
 
          /* check settings */
-        assertThat(preferences.getStringSet(KEY_PREF_EMAIL_CONTENT, null), equalTo(DEFAULT_CONTENT));
+        assertThat(settings.getStringSet(KEY_PREF_EMAIL_CONTENT, null), equalTo(DEFAULT_CONTENT));
 
         /* check all and press cancel */
         onView(withText(R.string.email_content)).perform(click());
@@ -61,7 +61,7 @@ public class MoreActivityTest extends BaseActivityTest {
         onData(allOf(is(instanceOf(String.class)), is(titles[3]))).perform(click());
         onView(withText(android.R.string.cancel)).perform(click());
 
-        assertThat(preferences.getStringSet(KEY_PREF_EMAIL_CONTENT, null), equalTo(DEFAULT_CONTENT));
+        assertThat(settings.getStringSet(KEY_PREF_EMAIL_CONTENT, null), equalTo(DEFAULT_CONTENT));
 
         /* check all and press ok */
         onView(withText(R.string.email_content)).perform(click());
@@ -71,18 +71,18 @@ public class MoreActivityTest extends BaseActivityTest {
         onData(allOf(is(instanceOf(String.class)), is(titles[3]))).perform(click());
         onView(withText(android.R.string.ok)).perform(click());
 
-        assertThat(preferences.getStringSet(KEY_PREF_EMAIL_CONTENT, null), Matchers.<String>empty());
+        assertThat(settings.getStringSet(KEY_PREF_EMAIL_CONTENT, null), Matchers.<String>empty());
     }
 
     @Test
     public void testLanguageSetting() {
         onView(withText(R.string.preferences)).perform(click());
 
-        String[] titles = rule.getActivity().getResources().getStringArray(R.array.language_names);
-        String[] values = rule.getActivity().getResources().getStringArray(R.array.email_locale_values);
+        String[] titles = RULE.getActivity().getResources().getStringArray(R.array.language_names);
+        String[] values = RULE.getActivity().getResources().getStringArray(R.array.email_locale_values);
 
          /* check settings */
-        assertThat(preferences.getString(KEY_PREF_EMAIL_LOCALE, null), equalTo(DEFAULT_LOCALE));
+        assertThat(settings.getString(KEY_PREF_EMAIL_LOCALE, null), equalTo(DEFAULT_LOCALE));
 
         onView(withSummary(R.string.email_message_language, titles[0])).check(matches(isDisplayed()));
 
@@ -91,7 +91,7 @@ public class MoreActivityTest extends BaseActivityTest {
         onView(withText(R.string.email_language)).check(matches(isDisplayed()));
         onView(withText(android.R.string.cancel)).perform(click());
 
-        assertThat(preferences.getString(KEY_PREF_EMAIL_LOCALE, null), equalTo(DEFAULT_LOCALE));
+        assertThat(settings.getString(KEY_PREF_EMAIL_LOCALE, null), equalTo(DEFAULT_LOCALE));
 
         /* check item 1 */
         onView(withText(R.string.email_message_language)).perform(click());
@@ -99,7 +99,7 @@ public class MoreActivityTest extends BaseActivityTest {
         onData(allOf(is(instanceOf(String.class)), is(titles[1]))).perform(click());
 
         onView(withSummary(R.string.email_message_language, titles[1])).check(matches(isDisplayed()));
-        assertThat(preferences.getString(KEY_PREF_EMAIL_LOCALE, null), equalTo(values[1]));
+        assertThat(settings.getString(KEY_PREF_EMAIL_LOCALE, null), equalTo(values[1]));
 
         /* check item 2 */
         onView(withText(R.string.email_message_language)).perform(click());
@@ -107,7 +107,7 @@ public class MoreActivityTest extends BaseActivityTest {
         onData(allOf(is(instanceOf(String.class)), is(titles[2]))).perform(click());
 
         onView(withSummary(R.string.email_message_language, titles[2])).check(matches(isDisplayed()));
-        assertThat(preferences.getString(KEY_PREF_EMAIL_LOCALE, null), equalTo(values[2]));
+        assertThat(settings.getString(KEY_PREF_EMAIL_LOCALE, null), equalTo(values[2]));
     }
 
     @Test
@@ -115,7 +115,7 @@ public class MoreActivityTest extends BaseActivityTest {
         onView(withText(R.string.preferences)).perform(click());
 
         /* check settings */
-        assertFalse(preferences.getBoolean(KEY_PREF_NOTIFY_SEND_SUCCESS, false));
+        assertFalse(settings.getBoolean(KEY_PREF_NOTIFY_SEND_SUCCESS, false));
 
         onView(withPrefSwitcher(R.string.notify_on_send)).check(matches(isNotChecked()));
         onView(withSummary(R.string.notify_send_success, R.string.notify_on_send)).check(matches(isDisplayed()));
@@ -124,7 +124,7 @@ public class MoreActivityTest extends BaseActivityTest {
         onView(withPrefSwitcher(R.string.notify_on_send)).check(matches(isChecked()));
 
         /* check settings */
-        assertTrue(preferences.getBoolean(KEY_PREF_NOTIFY_SEND_SUCCESS, false));
+        assertTrue(settings.getBoolean(KEY_PREF_NOTIFY_SEND_SUCCESS, false));
     }
 
     @Test
@@ -132,7 +132,7 @@ public class MoreActivityTest extends BaseActivityTest {
         onView(withText(R.string.preferences)).perform(click());
 
         /* check settings */
-        assertTrue(preferences.getBoolean(KEY_PREF_RESEND_UNSENT, false));
+        assertTrue(settings.getBoolean(KEY_PREF_RESEND_UNSENT, false));
 
         onView(withPrefSwitcher(R.string.resend)).check(matches(isChecked()));
         onView(withSummary(R.string.try_to_resend_unsent, R.string.resend)).check(matches(isDisplayed()));
@@ -141,7 +141,7 @@ public class MoreActivityTest extends BaseActivityTest {
         onView(withPrefSwitcher(R.string.resend)).check(matches(isNotChecked()));
 
         /* check settings */
-        assertFalse(preferences.getBoolean(KEY_PREF_RESEND_UNSENT, false));
+        assertFalse(settings.getBoolean(KEY_PREF_RESEND_UNSENT, false));
     }
 
 

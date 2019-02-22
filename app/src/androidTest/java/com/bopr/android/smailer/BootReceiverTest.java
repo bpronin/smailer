@@ -64,7 +64,7 @@ public class BootReceiverTest extends BaseTest {
         Intent intent = new Intent(Intent.ACTION_BOOT_COMPLETED);
         receiver.onReceive(context, intent);
 
-        Intent result = (Intent) invocations.get(0)[0];
+        Intent result = (Intent) invocations.invocation(0)[0];
         assertEquals(ContentObserverService.class.getName(), result.getComponent().getClassName());
     }
 

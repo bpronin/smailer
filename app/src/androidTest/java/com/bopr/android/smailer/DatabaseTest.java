@@ -23,22 +23,18 @@ public class DatabaseTest extends BaseTest {
 
     /**
      * Check default properties.
-     *
-     * @throws Exception when failed
      */
     @Test
-    public void testDefaults() throws Exception {
+    public void testDefaults() {
         assertEquals(10000L, database.getCapacity());
         assertEquals(TimeUnit.DAYS.toMillis(7), database.getPurgePeriod());
     }
 
     /**
      * Check {@link Database#putEvent(PhoneEvent)} and {@link Database#getEvents()} methods.
-     *
-     * @throws Exception when failed
      */
     @Test
-    public void testAddGet() throws Exception {
+    public void testAddGet() {
         database.putEvent(new PhoneEvent("1", true, 1000L, 0L, true, null, null, "Test 1", PhoneEvent.State.PENDING));
         database.putEvent(new PhoneEvent("2", false, 2000L, 0L, false, null, null, null, PhoneEvent.State.PENDING));
         database.putEvent(new PhoneEvent("3", true, 3000L, 0L, false, null, null, null, PhoneEvent.State.PENDING));
@@ -58,24 +54,22 @@ public class DatabaseTest extends BaseTest {
         assertNotNull(message.getId());
         assertEquals(PhoneEvent.State.PENDING, message.getState());
         assertEquals("10", message.getPhone());
-        assertEquals(true, message.isIncoming());
+        assertTrue(message.isIncoming());
         assertEquals(10000L, message.getStartTime().longValue());
         assertEquals(20000L, message.getEndTime().longValue());
-        assertEquals(false, message.isMissed());
-        assertEquals(true, message.isSms());
-        assertEquals(10.5, message.getLocation().getLatitude());
-        assertEquals(20.5, message.getLocation().getLongitude());
+        assertFalse(message.isMissed());
+        assertTrue(message.isSms());
+        assertEquals(10.5, message.getLocation().getLatitude(), 0.1);
+        assertEquals(20.5, message.getLocation().getLongitude(), 0.1);
         assertEquals("SMS text", message.getText());
         assertEquals("Test 10", message.getDetails());
     }
 
     /**
      * Check {@link Database#putEvent(PhoneEvent)} and {@link Database#getEvents()} methods.
-     *
-     * @throws Exception when failed
      */
     @Test
-    public void testUpdateGet() throws Exception {
+    public void testUpdateGet() {
         PhoneEvent message = new PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), "Test 1", PhoneEvent.State.PENDING);
         database.putEvent(message);
 
@@ -86,13 +80,13 @@ public class DatabaseTest extends BaseTest {
         assertTrue(message.getId() != -1);
         assertEquals(PhoneEvent.State.PENDING, message.getState());
         assertEquals("1", message.getPhone());
-        assertEquals(true, message.isIncoming());
+        assertTrue(message.isIncoming());
         assertEquals(1000L, message.getStartTime().longValue());
         assertEquals(2000L, message.getEndTime().longValue());
-        assertEquals(false, message.isMissed());
-        assertEquals(true, message.isSms());
-        assertEquals(10.5, message.getLocation().getLatitude());
-        assertEquals(20.5, message.getLocation().getLongitude());
+        assertFalse(message.isMissed());
+        assertTrue(message.isSms());
+        assertEquals(10.5, message.getLocation().getLatitude(), 0.1);
+        assertEquals(20.5, message.getLocation().getLongitude(), 0.1);
         assertEquals("SMS text", message.getText());
         assertEquals("Test 1", message.getDetails());
 
@@ -114,24 +108,22 @@ public class DatabaseTest extends BaseTest {
         assertTrue(message.getId() != -1);
         assertEquals(PhoneEvent.State.PENDING, message.getState());
         assertEquals("2", message.getPhone());
-        assertEquals(false, message.isIncoming());
+        assertFalse(message.isIncoming());
         assertEquals(2000L, message.getStartTime().longValue());
         assertEquals(3000L, message.getEndTime().longValue());
-        assertEquals(true, message.isMissed());
-        assertEquals(false, message.isSms());
-        assertEquals(11.5, message.getLocation().getLatitude());
-        assertEquals(21.5, message.getLocation().getLongitude());
+        assertTrue(message.isMissed());
+        assertFalse(message.isSms());
+        assertEquals(11.5, message.getLocation().getLatitude(), 0.1);
+        assertEquals(21.5, message.getLocation().getLongitude(), 0.1);
         assertEquals("New text", message.getText());
         assertEquals("New details", message.getDetails());
     }
 
     /**
      * Check {@link Database#clearEvents()}  method.
-     *
-     * @throws Exception when failed
      */
     @Test
-    public void testClear() throws Exception {
+    public void testClear() {
         database.putEvent(new PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), "Test 1", PhoneEvent.State.PENDING));
         database.putEvent(new PhoneEvent("2", false, 2000L, 0L, false, null, null, null, PhoneEvent.State.PENDING));
         database.putEvent(new PhoneEvent("3", true, 3000L, 0L, false, null, null, null, PhoneEvent.State.PENDING));
@@ -152,11 +144,9 @@ public class DatabaseTest extends BaseTest {
 
     /**
      * Check {@link Database#purge()}  method..
-     *
-     * @throws Exception when failed
      */
     @Test
-    public void testPurge() throws Exception {
+    public void testPurge() throws InterruptedException {
         database.putEvent(new PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), "Test 1", PhoneEvent.State.PENDING));
         database.putEvent(new PhoneEvent("2", false, 2000L, 0L, false, null, null, null, PhoneEvent.State.PENDING));
         database.putEvent(new PhoneEvent("3", true, 3000L, 0L, false, null, null, null, PhoneEvent.State.PENDING));
@@ -194,27 +184,23 @@ public class DatabaseTest extends BaseTest {
 
     /**
      * Check {@link Database#getLastLocation()} and {@link Database#saveLastLocation(GeoCoordinates)} methods.
-     *
-     * @throws Exception when failed
      */
     @Test
-    public void testSaveLoadLocation() throws Exception {
+    public void testSaveLoadLocation() {
         GeoCoordinates coordinates = new GeoCoordinates(30, 60);
         database.saveLastLocation(coordinates);
 
         GeoCoordinates actual = database.getLastLocation();
 
-        assertEquals(coordinates.getLatitude(), actual.getLatitude());
-        assertEquals(coordinates.getLongitude(), actual.getLongitude());
+        assertEquals(coordinates.getLatitude(), actual.getLatitude(), 0.1);
+        assertEquals(coordinates.getLongitude(), actual.getLongitude(), 0.1);
     }
 
     /**
      * Check {@link Database#getPendingEvents()}} method.
-     *
-     * @throws Exception when failed
      */
     @Test
-    public void testGetUnsentMessages() throws Exception {
+    public void testGetUnsentMessages() {
         database.putEvent(new PhoneEvent("1", true, 1000L, 0L, true, null, null, "Test 1", PhoneEvent.State.PENDING));
         database.putEvent(new PhoneEvent("2", false, 2000L, 0L, false, null, null, null, PhoneEvent.State.PENDING));
         database.putEvent(new PhoneEvent("3", true, 3000L, 0L, false, null, null, null, PhoneEvent.State.PENDING));

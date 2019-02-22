@@ -1,6 +1,5 @@
 package com.bopr.android.ui_automation;
 
-import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -15,7 +14,7 @@ import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
+import org.junit.ClassRule;
 
 import java.util.Locale;
 
@@ -52,10 +51,10 @@ import static org.hamcrest.Matchers.not;
  */
 public class BaseActivityTest {
 
-    @Rule
-    public ActivityTestRule<MainActivity> rule = new ActivityTestRule<>(MainActivity.class);
+    @ClassRule
+    public static final ActivityTestRule<MainActivity> RULE = new ActivityTestRule<>(MainActivity.class);
 
-    protected SharedPreferences preferences;
+    Settings settings;
 
     @BeforeClass
     public static void setUpClass() {
@@ -63,10 +62,9 @@ public class BaseActivityTest {
     }
 
     @Before
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     public void setUp() {
-        preferences = new Settings(rule.getActivity());
-        preferences
+        settings = new Settings(RULE.getActivity());
+        settings
                 .edit()
                 .clear()
                 .putStringSet(KEY_PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS)
@@ -77,84 +75,43 @@ public class BaseActivityTest {
     }
 
     @NonNull
-    protected ViewInteraction onDialog(Matcher<View> matcher) {
-        return onView(matcher).inRoot(withDecorView(not(is(rule.getActivity().getWindow().getDecorView()))));
+    static ViewInteraction onDialog(Matcher<View> matcher) {
+        return onView(matcher).inRoot(withDecorView(not(is(RULE.getActivity().getWindow().getDecorView()))));
     }
 
     @NonNull
-    protected ViewInteraction onToast(String text) {
+    static ViewInteraction onToast(String text) {
         return onDialog(withText(text));
     }
 
     @NonNull
-    protected ViewInteraction onToolbar(Matcher<View> matcher) {
+    static ViewInteraction onToolbar(Matcher<View> matcher) {
         return onView(allOf(isDescendantOfA(Matchers.<View>instanceOf(Toolbar.class)), matcher));
     }
 
     @NonNull
-    protected ViewInteraction onHomeButton() {
+    static ViewInteraction onHomeButton() {
         return onToolbar(withContentDescription("Navigate up"));
     }
 
     @NonNull
-    protected ViewInteraction onMenuButton() {
+    static ViewInteraction onMenuButton() {
         return onToolbar(withContentDescription("More options"));
     }
 
     @SuppressWarnings("unchecked")
-    public static ViewInteraction onRecyclerItem(Matcher<View> itemMatcher) {
+    static ViewInteraction onRecyclerItem(Matcher<View> itemMatcher) {
         Matcher<View> anyItem = isDescendantOfA(isAssignableFrom(RecyclerView.class));
         return onView(allOf(anyItem, itemMatcher));
     }
 
-/*
-    protected <T> void assertListItemDisplayed(Class<?> itemClass, Matcher<T> matcher) {
-        onData(allOf(is(instanceOf(itemClass)), matcher)).check(matches(isDisplayed()));
-    }
-*/
-
-/*
-    protected <T> void assertListItemNotExists(int listId, Matcher<T> matcher) {
-        onView(withId(listId)).check(matches(not(withList(matcher))));
-    }
-*/
-
-/*
     @NonNull
-    protected <T> Matcher<View> withList(final Matcher<T> dataMatcher) {
-        return new TypeSafeMatcher<View>() {
-
-            @Override
-            public boolean matchesSafely(View view) {
-                if (!(view instanceof AdapterView)) {
-                    return false;
-                }
-
-                Adapter adapter = ((AdapterView) view).getAdapter();
-                for (int i = 0; i < adapter.getCount(); i++) {
-                    if (dataMatcher.matches(adapter.getItem(i))) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("with class name: ");
-                dataMatcher.describeTo(description);
-            }
-        };
-    }
-*/
-
-    @NonNull
-    protected Matcher<View> emptyList() {
+    static Matcher<View> emptyList() {
         return hasListItemsCount(0);
     }
 
     @NonNull
-    protected Matcher<View> hasListItemsCount(final int count) {
+    static Matcher<View> hasListItemsCount(final int count) {
         return new TypeSafeMatcher<View>() {
 
             @Override
@@ -175,22 +132,22 @@ public class BaseActivityTest {
     }
 
     @NonNull
-    protected Matcher<View> withSummary(int title, String summary) {
+    static Matcher<View> withSummary(int title, String summary) {
         return allOf(withText(summary), hasSibling(withText(title)));
     }
 
     @NonNull
-    protected Matcher<View> withSummary(int title, int summary) {
+    static Matcher<View> withSummary(int title, int summary) {
         return allOf(withText(summary), hasSibling(withText(title)));
     }
 
     @NonNull
-    protected Matcher<View> withPrefSwitcher(int title) {
+    static Matcher<View> withPrefSwitcher(int title) {
         return allOf(instanceOf(Switch.class), isDescendantOfA(withChild(withChild(withText(title)))));
     }
 
     @NonNull
-    protected Matcher<View> withEditText() {
+    static Matcher<View> withEditText() {
         return instanceOf(EditText.class);
     }
 

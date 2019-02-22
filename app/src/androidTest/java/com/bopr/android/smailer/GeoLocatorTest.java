@@ -1,17 +1,21 @@
 package com.bopr.android.smailer;
 
-import android.annotation.SuppressLint;
+import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Looper;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import androidx.annotation.NonNull;
+import androidx.test.rule.GrantPermissionRule;
 
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
 import static android.location.LocationManager.PASSIVE_PROVIDER;
@@ -26,18 +30,21 @@ import static org.mockito.Mockito.when;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-@SuppressWarnings("ResourceType")
-@SuppressLint("MissingPermission")
 public class GeoLocatorTest extends BaseTest {
+
+    @Rule
+    public GrantPermissionRule permissionRule = GrantPermissionRule.grant(ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION);
 
     private GeoCoordinates lastPassiveLocation;
     private GeoCoordinates gpsLocation;
     private GeoCoordinates networkLocation;
     private GeoCoordinates databaseLocation;
+    private Context context;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
+        context = getContext();
 
         gpsLocation = new GeoCoordinates(10, 20);
         networkLocation = new GeoCoordinates(20, 30);
@@ -65,7 +72,7 @@ public class GeoLocatorTest extends BaseTest {
         doAnswer(
                 new Answer() {
                     @Override
-                    public Object answer(InvocationOnMock invocation) throws Throwable {
+                    public Object answer(InvocationOnMock invocation) {
                         String provider = (String) invocation.getArguments()[0];
                         LocationListener listener = (LocationListener) invocation.getArguments()[1];
                         switch (provider) {
@@ -96,32 +103,32 @@ public class GeoLocatorTest extends BaseTest {
     }
 
     @Test
-    public void testGetLocationGpsOn() throws Exception {
-        GeoLocator provider = new GeoLocator(getContext(), createMockDatabase());
+    public void testGetLocationGpsOn() {
+        GeoLocator provider = new GeoLocator(context, createMockDatabase());
         provider.setLocationManager(createMockManager(true, true, true));
 
         assertEquals(gpsLocation, provider.getLocation(1000));
     }
 
     @Test
-    public void testGetLocationNetworkOn() throws Exception {
-        GeoLocator provider = new GeoLocator(getContext(), createMockDatabase());
+    public void testGetLocationNetworkOn() {
+        GeoLocator provider = new GeoLocator(context, createMockDatabase());
         provider.setLocationManager(createMockManager(false, true, true));
 
         assertEquals(networkLocation, provider.getLocation(1000));
     }
 
     @Test
-    public void testGetLocationPassiveOn() throws Exception {
-        GeoLocator provider = new GeoLocator(getContext(), createMockDatabase());
+    public void testGetLocationPassiveOn() {
+        GeoLocator provider = new GeoLocator(context, createMockDatabase());
         provider.setLocationManager(createMockManager(false, false, true));
 
         assertEquals(lastPassiveLocation, provider.getLocation(1000));
     }
 
     @Test
-    public void testGetLocationAllOff() throws Exception {
-        GeoLocator provider = new GeoLocator(getContext(), createMockDatabase());
+    public void testGetLocationAllOff() {
+        GeoLocator provider = new GeoLocator(context, createMockDatabase());
         provider.setLocationManager(createMockManager(false, false, false));
 
         assertEquals(databaseLocation, provider.getLocation(1000));

@@ -66,6 +66,19 @@ public class CallProcessorService extends IntentService {
         }
     }
 
+    protected static Intent createIntent(Context context, PhoneEvent event) {
+        Intent intent = new Intent(context, CallProcessorService.class);
+        intent.setAction(ACTION_EVENT);
+        intent.putExtra(EXTRA_EVENT, event);
+        return intent;
+    }
+
+    protected static Intent createResendIntent(Context context) {
+        Intent intent = new Intent(context, CallProcessorService.class);
+        intent.setAction(ACTION_PENDING);
+        return intent;
+    }
+
     /**
      * Start service for single event
      *
@@ -73,11 +86,7 @@ public class CallProcessorService extends IntentService {
      * @param event   event
      */
     public static void start(Context context, PhoneEvent event) {
-        Intent intent = new Intent(context, CallProcessorService.class);
-        intent.setAction(ACTION_EVENT);
-        intent.putExtra(EXTRA_EVENT, event);
-
-        context.startService(intent);
+        context.startService(createIntent(context, event));
     }
 
     /**
@@ -86,9 +95,6 @@ public class CallProcessorService extends IntentService {
      * @param context context
      */
     public static void start(Context context) {
-        Intent intent = new Intent(context, CallProcessorService.class);
-        intent.setAction(ACTION_PENDING);
-
-        context.startService(intent);
+        context.startService(createResendIntent(context));
     }
 }
