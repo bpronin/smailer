@@ -112,7 +112,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
         addCategory(screen, "Settings",
 
-                createPreference("Set debug settings", new DefaultClickListener() {
+                createPreference("Debug settings", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
@@ -120,11 +120,11 @@ public class DebugFragment extends BasePreferenceFragment {
                     }
                 }),
 
-                createPreference("Clear settings", new DefaultClickListener() {
+                createPreference("Default settings", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        onClearPreferences();
+                        onResetPreferences();
                     }
                 })
         );
@@ -461,8 +461,10 @@ public class DebugFragment extends BasePreferenceFragment {
                 .show();
     }
 
-    private void onClearPreferences() {
+    private void onResetPreferences() {
         settings.edit().clear().apply();
+        Settings.init(context);
+
         refreshPreferences();
         showDone(context);
     }

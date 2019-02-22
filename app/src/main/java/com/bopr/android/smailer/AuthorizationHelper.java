@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.List;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import static android.accounts.AccountManager.KEY_ACCOUNT_NAME;
@@ -116,12 +117,14 @@ public class AuthorizationHelper {
         settings.edit().putString(KEY_PREF_SENDER_ACCOUNT, account).apply();
     }
 
+    @Nullable
     public static String getDefaultGoogleAccount(Context context) {
-        return new GoogleAccountManager(context).getAccounts()[0].name;
+        Account[] accounts = new GoogleAccountManager(context).getAccounts();
+        return accounts.length > 0 ? accounts[0].name : null;
     }
 
     public static void removeSelectedAccount(Context context) {
-          new Settings(context).edit().putString(KEY_PREF_SENDER_ACCOUNT, null).apply();
+        new Settings(context).edit().putString(KEY_PREF_SENDER_ACCOUNT, null).apply();
     }
 
     private class PermissionRequestCallback implements AccountManagerCallback<Bundle> {
