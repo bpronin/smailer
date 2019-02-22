@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.List;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -40,12 +39,14 @@ public class AuthorizationHelper {
     private final Fragment fragment;
     private final Settings settings;
     private final GoogleAccountManager accountManager;
+    private final String accountSetting;
     private final OnAccountsChangedListener accountsChangedListener;
-    private final List<String> scopes;
+    private final String scope;
 
-    public AuthorizationHelper(Fragment fragment, List<String> scopes) {
+    public AuthorizationHelper(Fragment fragment, String scope, String accountSetting) {
         this.fragment = fragment;
-        this.scopes = scopes;
+        this.scope = scope;
+        this.accountSetting = accountSetting;
         settings = new Settings(fragment.requireActivity());
         accountManager = new GoogleAccountManager(fragment.requireContext());
         accountsChangedListener = new OnAccountsChangedListener();
@@ -93,7 +94,6 @@ public class AuthorizationHelper {
     private void requestPermission(String accountName) {
         log.debug("Requesting permission for: " + accountName);
 
-        String scope = scopes.get(0); //todo: multiple scopes
         Account account = accountManager.getAccountByName(accountName);
         accountManager.getAccountManager().getAuthToken(
                 account,
@@ -110,11 +110,11 @@ public class AuthorizationHelper {
     }
 
     private String loadAccount() {
-        return settings.getString(KEY_PREF_SENDER_ACCOUNT, null);
+        return settings.getString(accountSetting, null);
     }
 
     private void saveAccount(String account) {
-        settings.edit().putString(KEY_PREF_SENDER_ACCOUNT, account).apply();
+        settings.edit().putString(accountSetting, account).apply();
     }
 
     @Nullable

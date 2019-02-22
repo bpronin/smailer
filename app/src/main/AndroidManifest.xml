@@ -88,14 +88,6 @@
 
         <service android:name=".ContentObserverService" />
 
-        <service
-            android:name=".RemoteControlService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-
         <receiver
             android:name=".CallReceiver"
             android:exported="true"

@@ -9,7 +9,9 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.GmailScopes;
+import com.google.api.services.gmail.model.ListMessagesResponse;
 import com.google.api.services.gmail.model.Message;
+import com.google.api.services.gmail.model.WatchRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +19,8 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
@@ -34,14 +36,14 @@ import javax.mail.internet.MimeMultipart;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import static java.util.Collections.singletonList;
+import static java.util.Collections.singleton;
 import static javax.mail.Message.RecipientType.TO;
 
 public class GmailTransport {
 
     private static Logger log = LoggerFactory.getLogger("GmailTransport");
 
-    public static List<String> SCOPES = singletonList(GmailScopes.GMAIL_SEND);
+    public static String SCOPE = GmailScopes.MAIL_GOOGLE_COM;
 
     private static final String USER_ID = "me"; /* do not change */
     private static final String UTF_8 = "UTF-8";
@@ -78,6 +80,36 @@ public class GmailTransport {
         log.debug("Mail sent");
     }
 
+    public void watch() throws IOException {
+        WatchRequest request = new WatchRequest();
+
+        service.users()
+                .watch(USER_ID, request)
+                .execute();
+
+        log.debug("Watch");
+    }
+
+    public void list() throws IOException {
+        ListMessagesResponse response = service
+                .users()
+                .messages()
+                .list(USER_ID)
+                .execute();
+
+        String id = response.getMessages().get(0).getId();
+
+        Message message = service
+                .users()
+                .messages()
+                .get(USER_ID, id)
+                .setFormat("metadata")
+                .setMetadataHeaders(Arrays.asList("subject"))
+                .execute();
+
+        log.debug(message.getRaw());
+    }
+
     @NonNull
     private Gmail createService(@NonNull GoogleAccountCredential credential) {
         return new Gmail.Builder(transport, jsonFactory, credential)
@@ -87,7 +119,7 @@ public class GmailTransport {
 
     @NonNull
     private GoogleAccountCredential createCredential(String accountName) throws IllegalAccessException {
-        GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(context, SCOPES);
+        GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(context, singleton(SCOPE));
         credential.setSelectedAccountName(accountName);
         if (credential.getSelectedAccount() == null) {
             throw new IllegalAccessException("Account does not exist: " + accountName);

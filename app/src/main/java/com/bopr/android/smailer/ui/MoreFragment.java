@@ -1,10 +1,13 @@
 package com.bopr.android.smailer.ui;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import com.bopr.android.smailer.AuthorizationHelper;
+import com.bopr.android.smailer.GmailTransport;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.AndroidUtil;
-import com.bopr.android.smailer.util.Util;
 
 import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
@@ -12,6 +15,8 @@ import androidx.preference.Preference;
 
 import static com.bopr.android.smailer.Settings.KEY_PREF_DEVICE_ALIAS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
+import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_ACCOUNT;
+import static com.bopr.android.smailer.util.Util.isEmpty;
 
 /**
  * More settings activity's fragment.
@@ -19,6 +24,19 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 public class MoreFragment extends BasePreferenceFragment {
+
+    private AuthorizationHelper authorizator;
+    private Preference accountPreference;
+    private SettingsListener settingsListener;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        authorizator = new AuthorizationHelper(this, GmailTransport.SCOPE, KEY_PREF_REMOTE_CONTROL_ACCOUNT);
+
+        settingsListener = new SettingsListener();
+        settings.registerOnSharedPreferenceChangeListener(settingsListener);
+    }
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -40,6 +58,34 @@ public class MoreFragment extends BasePreferenceFragment {
                 return true;
             }
         });
+
+        accountPreference = findPreference(KEY_PREF_REMOTE_CONTROL_ACCOUNT);
+        accountPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                authorizator.selectAccount();
+                return true;
+            }
+        });
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateAccountPreference();
+    }
+
+    @Override
+    public void onDestroy() {
+        authorizator.dismiss();
+        settings.unregisterOnSharedPreferenceChangeListener(settingsListener);
+        super.onDestroy();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        authorizator.onActivityResult(requestCode, resultCode, data);
     }
 
     private void updateLocalePreference(ListPreference preference, String value) {
@@ -53,10 +99,35 @@ public class MoreFragment extends BasePreferenceFragment {
     }
 
     private void updateAlasPreference(EditTextPreference preference, String value) {
-        if (Util.isEmpty(value)) {
+        if (isEmpty(value)) {
             updateSummary(preference, AndroidUtil.getDeviceName(), STYLE_DEFAULT);
         } else {
             updateSummary(preference, value, STYLE_DEFAULT);
+        }
+    }
+
+    private void updateAccountPreference() {
+        String value = settings.getString(KEY_PREF_REMOTE_CONTROL_ACCOUNT, "");
+        if (isEmpty(value)) {
+            updateSummary(accountPreference, getString(R.string.not_specified), STYLE_ACCENTED);
+        } else {
+            updateSummary(accountPreference, value, STYLE_DEFAULT);
+        }
+    }
+
+    private class SettingsListener extends BaseSettingsListener {
+
+        private SettingsListener() {
+            super(requireContext());
+        }
+
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if (key.equals(KEY_PREF_REMOTE_CONTROL_ACCOUNT)) {
+                updateAccountPreference();
+            }
+
+            super.onSharedPreferenceChanged(sharedPreferences, key);
         }
     }
 

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.Settings;
 import com.bopr.android.smailer.util.Util;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -40,26 +41,20 @@ public class RecipientsFragment extends BaseFragment {
 
     private ListAdapter listAdapter;
     private RecyclerView listView;
-    private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
+    private SettingsListener settingsListener;
     private Activity activity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
-        preferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                loadItems();
-            }
-        };
-        settings.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
+        settingsListener = new SettingsListener();
+        settings.registerOnSharedPreferenceChangeListener(settingsListener);
     }
 
     @Override
     public void onDestroy() {
-        settings.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
+        settings.unregisterOnSharedPreferenceChangeListener(settingsListener);
         super.onDestroy();
     }
 
@@ -323,4 +318,20 @@ public class RecipientsFragment extends BaseFragment {
         }
 
     }
+
+    private class SettingsListener extends BaseSettingsListener {
+
+        private SettingsListener() {
+            super(requireContext());
+        }
+
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if (key.equals(Settings.KEY_PREF_RECIPIENTS_ADDRESS)) {
+                loadItems();
+            }
+            super.onSharedPreferenceChanged(sharedPreferences, key);
+        }
+    }
+
 }

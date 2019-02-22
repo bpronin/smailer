@@ -18,26 +18,18 @@ import java.util.Set;
 @SuppressWarnings("WeakerAccess")
 public class TextWhitelistFragment extends TextFilterListFragment {
 
-    private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
+    private SettingsListener settingsListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        preferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                if (key.equals(Settings.KEY_PREF_FILTER_TEXT_WHITELIST)) {
-                    loadItems();
-                }
-            }
-        };
-        settings.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
+        settingsListener = new SettingsListener();
+        settings.registerOnSharedPreferenceChangeListener(settingsListener);
     }
 
     @Override
     public void onDestroy() {
-        settings.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
+        settings.unregisterOnSharedPreferenceChangeListener(settingsListener);
         super.onDestroy();
     }
 
@@ -49,5 +41,20 @@ public class TextWhitelistFragment extends TextFilterListFragment {
     @Override
     void setItemsList(PhoneEventFilter filter, List<String> list) {
         filter.setTextWhitelist(new HashSet<>(list));
+    }
+
+    private class SettingsListener extends BaseSettingsListener {
+
+        private SettingsListener() {
+            super(requireContext());
+        }
+
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if (key.equals(Settings.KEY_PREF_FILTER_TEXT_WHITELIST)) {
+                loadItems();
+            }
+            super.onSharedPreferenceChanged(sharedPreferences, key);
+        }
     }
 }

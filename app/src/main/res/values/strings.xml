@@ -94,7 +94,7 @@
     <string name="phone_number_filter">Phone number filter</string>
     <string name="phone_removed_from_filter">{number} removed from filter</string>
     <string name="port">Port</string>
-    <string name="preferences">Preferences</string>
+    <string name="preferences">Options</string>
     <string name="recipient_already_exists">Recipient {name} already exists</string>
     <string name="recipients">Recipients</string>
     <string name="regular_expression">Regular expression</string>
@@ -127,6 +127,11 @@
     <string name="you_had_incoming_call">You had an incoming call of {duration} duration.</string>
     <string name="you_had_missed_call">You had a missed call.</string>
     <string name="you_had_outgoing_call">You had an outgoing call of {duration} duration.</string>
+    <string name="service_link">Send service command back</string>
+    <string name="remote_control">Remote control</string>
+    <string name="enable_remote_control">Enable remote control</string>
+    <string name="allow_control_remotely">Allow to control application via email on service account</string>
+    <string name="remote_control_account">Service account</string>
 
     <string-array name="trigger_names">
         <item>Incoming SMS</item>

@@ -37,16 +37,16 @@ public class TagFormatter {
         return formatter(context).pattern(patternResourceId);
     }
 
-    public static TagFormatter formatter(String pattern, @NonNull Resources resources) {
-        return new TagFormatter(resources).pattern(pattern);
-    }
-
     public static TagFormatter formatter(int patternResourceId, @NonNull Resources resources) {
         return new TagFormatter(resources).pattern(patternResourceId);
     }
 
     public static TagFormatter formatter(@NonNull Context context) {
         return new TagFormatter(context);
+    }
+
+    public static TagFormatter formatter(@NonNull Resources resources) {
+        return new TagFormatter(resources);
     }
 
     public TagFormatter() {
@@ -77,7 +77,7 @@ public class TagFormatter {
         return this;
     }
 
-    public TagFormatter putRes(String key, int resourceId) {
+    public TagFormatter put(String key, int resourceId) {
         return put(key, resources.getString(resourceId));
     }
 

@@ -94,7 +94,7 @@ public class TagFormatterTest extends BaseTest {
         String text = formatter(PATTERN_ONE, resources)
                 .put("one", "ONE")
                 .put("two", "TWO")
-                .putRes("three", THREE)
+                .put("three", THREE)
                 .format();
 
         assertEquals("ONE, TWO and THREE", text);

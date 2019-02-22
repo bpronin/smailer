@@ -76,6 +76,7 @@ import static com.bopr.android.smailer.util.Util.asSet;
 import static com.bopr.android.smailer.util.Util.commaSeparated;
 import static com.bopr.android.smailer.util.Util.formatLocation;
 import static com.bopr.android.smailer.util.Util.quoteRegex;
+import static com.bopr.android.smailer.util.Util.requireNonNull;
 
 /**
  * For debug purposes.
@@ -100,7 +101,7 @@ public class DebugFragment extends BasePreferenceFragment {
         setHasOptionsMenu(false);
         database = new Database(context);
         locator = new GeoLocator(context, database);
-        authorizator = new AuthorizationHelper(this, GmailTransport.SCOPES);
+        authorizator = new AuthorizationHelper(this, GmailTransport.SCOPE, KEY_PREF_SENDER_ACCOUNT);
     }
 
     @Override
@@ -160,6 +161,14 @@ public class DebugFragment extends BasePreferenceFragment {
                     @Override
                     protected void onClick(Preference preference) {
                         onSendDebugMail();
+                    }
+                }),
+
+                createPreference("List mail", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onListMail();
                     }
                 })
         );
@@ -473,6 +482,10 @@ public class DebugFragment extends BasePreferenceFragment {
         new SendDebugMailTask(getActivity(), loadDebugProperties()).execute();
     }
 
+    private void onListMail() {
+        new ListMailTask(getActivity()).execute();
+    }
+
     private void onRequestGooglePermission() {
         authorizator.selectAccount();
     }
@@ -682,6 +695,39 @@ public class DebugFragment extends BasePreferenceFragment {
             super.onPostExecute(result);
             if (result == null) {
                 showToast(getActivity(), "Done");
+            } else {
+                showMessage(getActivity(), result);
+            }
+        }
+
+    }
+
+    private static class ListMailTask extends LongAsyncTask<Void, Void, String> {
+
+        private Properties properties;
+
+        public ListMailTask(Activity activity) {
+            super(activity);
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            GmailTransport transport = new GmailTransport(getActivity());
+            try {
+                transport.init(requireNonNull(getDefaultGoogleAccount(getActivity())));
+                transport.list();
+            } catch (Exception x) {
+                log.error("FAILED: ", x);
+                return "List mail failed: " + x.getMessage();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            if (result == null) {
+                showDone(getActivity());
             } else {
                 showMessage(getActivity(), result);
             }

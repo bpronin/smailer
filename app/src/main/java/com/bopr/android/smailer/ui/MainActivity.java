@@ -3,7 +3,6 @@ package com.bopr.android.smailer.ui;
 import android.os.Bundle;
 
 import com.bopr.android.smailer.ContentObserverService;
-import com.bopr.android.smailer.RemoteControlService;
 import com.bopr.android.smailer.ResendWorker;
 import com.bopr.android.smailer.Settings;
 import com.crashlytics.android.Crashlytics;
@@ -35,7 +34,6 @@ public class MainActivity extends AppActivity {
 
         Fabric.with(this, new Crashlytics());
         Settings.init(this);
-        RemoteControlService.enable(this);
         ContentObserverService.enable(this);
         ResendWorker.enable(this);
     }

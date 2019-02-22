@@ -1,13 +1,11 @@
 package com.bopr.android.smailer.ui;
 
-import android.app.backup.BackupManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
-import android.widget.ListView;
 
 import com.bopr.android.smailer.AuthorizationHelper;
 import com.bopr.android.smailer.ContentObserverService;
@@ -16,9 +14,7 @@ import com.bopr.android.smailer.GmailTransport;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.ResendWorker;
 import com.bopr.android.smailer.util.validator.EmailListTextValidator;
-import com.bopr.android.smailer.util.validator.EmailTextValidator;
 
-import androidx.annotation.Nullable;
 import androidx.preference.Preference;
 
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
@@ -41,26 +37,19 @@ import static java.lang.String.valueOf;
 public class MainFragment extends BasePreferenceFragment {
 
     private Preference recipientsPreference;
-    private Preference serverPreference;
+    private Preference accountPreference;
     private OnSharedPreferenceChangeListener settingsListener;
     private Preference.OnPreferenceClickListener preferenceClickListener;
-    private BackupManager backupManager;
     private Database database;
     private BroadcastReceiver databaseListener;
     private Preference historyPreference;
-    private boolean asListView;
     private AuthorizationHelper authorizator;
-
-    public MainFragment() {
-        setAsListView(false);
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        backupManager = new BackupManager(getContext());
-        authorizator = new AuthorizationHelper(this, GmailTransport.SCOPES);
+        authorizator = new AuthorizationHelper(this, GmailTransport.SCOPE, KEY_PREF_SENDER_ACCOUNT);
 
         settingsListener = new SettingsListener();
         settings.registerOnSharedPreferenceChangeListener(settingsListener);
@@ -75,13 +64,13 @@ public class MainFragment extends BasePreferenceFragment {
         addPreferencesFromResource(R.xml.pref_main);
 
         recipientsPreference = findPreference(KEY_PREF_RECIPIENTS_ADDRESS);
-        serverPreference = findPreference(KEY_PREF_OUTGOING_SERVER);
+        accountPreference = findPreference(KEY_PREF_OUTGOING_SERVER);
         historyPreference = findPreference(KEY_PREF_HISTORY);
 
         preferenceClickListener = new PreferenceClickListener();
 
         recipientsPreference.setOnPreferenceClickListener(preferenceClickListener);
-        serverPreference.setOnPreferenceClickListener(preferenceClickListener);
+        accountPreference.setOnPreferenceClickListener(preferenceClickListener);
         historyPreference.setOnPreferenceClickListener(preferenceClickListener);
         findPreference(KEY_PREF_MORE).setOnPreferenceClickListener(preferenceClickListener);
         findPreference(KEY_PREF_RULES).setOnPreferenceClickListener(preferenceClickListener);
@@ -94,17 +83,6 @@ public class MainFragment extends BasePreferenceFragment {
         database.close();
         settings.unregisterOnSharedPreferenceChangeListener(settingsListener);
         super.onDestroy();
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (asListView) {
-            @SuppressWarnings("ConstantConditions")
-            ListView listView = getView().findViewById(android.R.id.list);
-            listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-            listView.setItemChecked(listView.getSelectedItemPosition(), true);
-        }
     }
 
     @Override
@@ -121,33 +99,25 @@ public class MainFragment extends BasePreferenceFragment {
         updateHistoryPreference();
     }
 
-    void setAsListView(boolean asListView) {
-        this.asListView = asListView;
-    }
-
     void setPreferenceClickListener(Preference.OnPreferenceClickListener listener) {
         this.preferenceClickListener = listener;
     }
 
     private void updateAccountPreference() {
-        if (!asListView) {
-            String value = settings.getString(KEY_PREF_SENDER_ACCOUNT, "");
-            if (isEmpty(value)) {
-                updateSummary(serverPreference, getString(R.string.not_specified), STYLE_ACCENTED);
-            } else {
-                updateSummary(serverPreference, value, EmailTextValidator.isValidValue(value) ? STYLE_DEFAULT : STYLE_UNDERWIVED);
-            }
+        String value = settings.getString(KEY_PREF_SENDER_ACCOUNT, "");
+        if (isEmpty(value)) {
+            updateSummary(accountPreference, getString(R.string.not_specified), STYLE_ACCENTED);
+        } else {
+            updateSummary(accountPreference, value, STYLE_DEFAULT);
         }
     }
 
     private void updateRecipientsPreference() {
-        if (!asListView) {
-            String value = settings.getString(KEY_PREF_RECIPIENTS_ADDRESS, null);
-            if (isEmpty(value)) {
-                updateSummary(recipientsPreference, getString(R.string.not_specified), STYLE_ACCENTED);
-            } else {
-                updateSummary(recipientsPreference, value.replaceAll(",", ", "), EmailListTextValidator.isValidValue(value) ? STYLE_DEFAULT : STYLE_UNDERWIVED);
-            }
+        String value = settings.getString(KEY_PREF_RECIPIENTS_ADDRESS, null);
+        if (isEmpty(value)) {
+            updateSummary(recipientsPreference, getString(R.string.not_specified), STYLE_ACCENTED);
+        } else {
+            updateSummary(recipientsPreference, value.replaceAll(",", ", "), EmailListTextValidator.isValidValue(value) ? STYLE_DEFAULT : STYLE_UNDERWIVED);
         }
     }
 
@@ -188,7 +158,11 @@ public class MainFragment extends BasePreferenceFragment {
         }
     }
 
-    private class SettingsListener implements OnSharedPreferenceChangeListener {
+    private class SettingsListener extends BaseSettingsListener {
+
+        private SettingsListener() {
+            super(requireContext());
+        }
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -207,7 +181,7 @@ public class MainFragment extends BasePreferenceFragment {
                     break;
             }
 
-            backupManager.dataChanged();
+            super.onSharedPreferenceChanged(sharedPreferences, key);
         }
     }
 

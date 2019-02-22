@@ -28,7 +28,6 @@ public class BootReceiver extends BroadcastReceiver {
 
         if (ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
             Fabric.with(context, new Crashlytics());
-            RemoteControlService.enable(context);
             ContentObserverService.enable(context);
             ResendWorker.enable(context);
         }

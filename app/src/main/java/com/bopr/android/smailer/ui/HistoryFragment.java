@@ -62,30 +62,16 @@ public class HistoryFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        formatter = new TagFormatter(requireContext());
-
-        settingsChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-                loadData();
-            }
-        };
+        settingsChangeListener = new SettingsListener();
         settings.registerOnSharedPreferenceChangeListener(settingsChangeListener);
 
-        databaseListener = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                loadData();
-            }
-        };
+        database = new Database(getContext());
+        database.registerListener(databaseListener);
+        databaseListener = new DatabaseListener();
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        database = new Database(getContext());
-        database.registerListener(databaseListener);
         View view = inflater.inflate(R.layout.fragment_log, container, false);
 
         listView = view.findViewById(android.R.id.list);
@@ -403,4 +389,18 @@ public class HistoryFragment extends BaseFragment {
         }
     }
 
+    private class SettingsListener implements SharedPreferences.OnSharedPreferenceChangeListener {
+
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+            loadData();
+        }
+    }
+
+    private class DatabaseListener extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            loadData();
+        }
+    }
 }

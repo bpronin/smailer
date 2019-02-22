@@ -24,6 +24,7 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
 import static com.bopr.android.smailer.Settings.KEY_PREF_MARK_SMS_AS_READ;
 import static com.bopr.android.smailer.Settings.KEY_PREF_NOTIFY_SEND_SUCCESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
+import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.util.ContactUtils.getContactName;
 
@@ -171,8 +172,12 @@ public class CallProcessor {
         formatter.setDeviceName(settings.getDeviceName());
         formatter.setContentOptions(settings.getStringSet(KEY_PREF_EMAIL_CONTENT, null));
 
+        if (settings.getBoolean(KEY_PREF_REMOTE_CONTROL, false)) {
+            formatter.setRemoteControl(settings.getString(KEY_PREF_RECIPIENTS_ADDRESS, null));
+        }
+
         String locale = settings.getString(KEY_PREF_EMAIL_LOCALE, null);
-        if (locale != null) {
+        if (locale != null) {   //todo: why not set null locale?
             formatter.setLocale(locale);
         }
         return formatter;
