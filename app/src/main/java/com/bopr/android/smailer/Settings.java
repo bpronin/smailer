@@ -29,9 +29,11 @@ import static com.bopr.android.smailer.util.Util.toSet;
 @SuppressWarnings("WeakerAccess")
 public class Settings extends SharedPreferencesWrapper {
 
+    private static final int SETTINGS_VERSION = 2;
     public static final String PREFERENCES_STORAGE_NAME = "com.bopr.android.smailer_preferences";
     public static final String DB_NAME = "smailer.sqlite";
 
+    public static final String KEY_SETTINGS_VERSION = "settings_version";
     public static final String KEY_PREF_SENDER_ACCOUNT = "sender_account";
     public static final String KEY_PREF_RECIPIENTS_ADDRESS = "recipients_address";
     public static final String KEY_PREF_OUTGOING_SERVER = "outgoing_server";
@@ -63,8 +65,6 @@ public class Settings extends SharedPreferencesWrapper {
     public static final String VAL_PREF_TRIGGER_OUT_CALLS = "out_calls";
     public static final String VAL_PREF_TRIGGER_MISSED_CALLS = "missed_calls";
 
-    public static final String DEFAULT_HOST = "smtp.gmail.com";
-    public static final String DEFAULT_PORT = "465";
     public static final String DEFAULT_LOCALE = "default";
     public static final Set<String> DEFAULT_CONTENT = asSet(
             VAL_PREF_EMAIL_CONTENT_HEADER,
@@ -87,14 +87,26 @@ public class Settings extends SharedPreferencesWrapper {
     /**
      * Loads default settings values.
      */
-    public static void putDefaults(Context context) {
-        new Settings(context).edit()
-                .putStringSetOptional(KEY_PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS)
-                .putStringSetOptional(KEY_PREF_EMAIL_CONTENT, DEFAULT_CONTENT)
-                .putStringOptional(KEY_PREF_EMAIL_LOCALE, DEFAULT_LOCALE)
-                .putBooleanOptional(KEY_PREF_RESEND_UNSENT, true)
-                .putBooleanOptional(KEY_PREF_MARK_SMS_AS_READ, false)
-                .apply();
+    public static void init(Context context) {
+        Settings settings = new Settings(context);
+        EditorWrapper edit = settings.edit();
+
+        edit.putStringSetOptional(KEY_PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS);
+        edit.putStringOptional(KEY_PREF_EMAIL_LOCALE, DEFAULT_LOCALE);
+        edit.putBooleanOptional(KEY_PREF_RESEND_UNSENT, true);
+        edit.putBooleanOptional(KEY_PREF_MARK_SMS_AS_READ, false);
+
+        Set<String> content = settings.getStringSet(KEY_PREF_EMAIL_CONTENT, null);
+        if (content == null) {
+            edit.putStringSet(KEY_PREF_EMAIL_CONTENT, DEFAULT_CONTENT);
+        } else if (settings.getInt(Settings.KEY_SETTINGS_VERSION, 1) == 1) {
+            content.add(VAL_PREF_EMAIL_CONTENT_HEADER);
+            content.add(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT);
+            edit.putStringSet(KEY_PREF_EMAIL_CONTENT, content);
+        }
+
+        edit.putInt(KEY_SETTINGS_VERSION, SETTINGS_VERSION);
+        edit.apply();
     }
 
     /**

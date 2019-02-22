@@ -34,7 +34,7 @@ public class MainActivity extends AppActivity {
         super.onCreate(savedInstanceState);
 
         Fabric.with(this, new Crashlytics());
-        Settings.putDefaults(this);
+        Settings.init(this);
         RemoteControlService.enable(this);
         ContentObserverService.enable(this);
         ResendWorker.enable(this);
