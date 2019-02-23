@@ -1,8 +1,11 @@
 package com.bopr.android.smailer.ui;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -98,6 +102,21 @@ abstract class FilterListFragment extends BaseFragment {
         }
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_list, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_log_clear) {
+            clearData();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     abstract Set<String> getItemsList(PhoneEventFilter filter);
 
     abstract void setItemsList(PhoneEventFilter filter, List<String> list);
@@ -133,14 +152,35 @@ abstract class FilterListFragment extends BaseFragment {
 
         listView.setAdapter(listAdapter);
 
-        List<String> list = new ArrayList<>(getItemsList(settings.getFilter()));
-        Collections.sort(list);
-
+        List<String> values = new ArrayList<>(getItemsList(settings.getFilter()));
+        Collections.sort(values);
+        
         List<Item> items = new ArrayList<>();
-        for (String item : list) {
-            items.add(new Item(item));
+        for (String value : values) {
+            items.add(new Item(value));
         }
         listAdapter.setItems(items);
+    }
+
+    private void clearData() {
+        new AlertDialog.Builder(requireContext())
+                .setMessage(R.string.ask_clear_list)
+                .setPositiveButton(R.string.clear, new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        listAdapter.setItems(Collections.<Item>emptyList());
+                        persistItems();
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .show();
     }
 
     private void persistItems() {
@@ -324,7 +364,6 @@ abstract class FilterListFragment extends BaseFragment {
             }
             notifyDataSetChanged();
         }
-
     }
 
     private class ItemViewHolder extends RecyclerView.ViewHolder {

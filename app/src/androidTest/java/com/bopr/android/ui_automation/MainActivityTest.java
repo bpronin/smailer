@@ -136,7 +136,7 @@ public class MainActivityTest extends BaseActivityTest {
         onToolbar(withId(R.id.action_log_clear)).perform(click());
 
         /* in dialog click clear */
-        onDialog(withText(R.string.clear_history)).perform(click());
+        onDialog(withText(R.string.clear)).perform(click());
 
         onView(withId(android.R.id.list)).check(matches(hasListItemsCount(0)));
 

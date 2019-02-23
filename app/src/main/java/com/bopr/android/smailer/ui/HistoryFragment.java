@@ -130,7 +130,7 @@ public class HistoryFragment extends BaseFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_history, menu);
+        inflater.inflate(R.menu.menu_list, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -173,7 +173,7 @@ public class HistoryFragment extends BaseFragment {
     private void clearData() {
         new AlertDialog.Builder(requireContext())
                 .setMessage(R.string.ask_clear_history)
-                .setPositiveButton(R.string.clear_history, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.clear, new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

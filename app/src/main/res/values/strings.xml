@@ -17,13 +17,14 @@
     <string name="added_to_whitelist">{number} added to whitelist</string>
     <string name="app_version">Application version: {version}</string>
     <string name="ask_clear_history">Clear history?</string>
+    <string name="ask_clear_list">Clear list?</string>
     <string name="blacklist">Blacklist</string>
     <string name="call_history">Call history</string>
     <string name="call_of_duration">Call of {duration} duration</string>
     <string name="called_phone">Called: {phone} ({name})</string>
     <string name="caller_phone">Caller: {phone} ({name})</string>
     <string name="cannot_connect_mail_server">Couldn\'t open connection to mail server.</string>
-    <string name="clear_history">Clear history</string>
+    <string name="clear">Clear</string>
     <string name="close">Close</string>
     <string name="contact_no_permission_read_contact">no permission to read contacts</string>
     <string name="copyright" translatable="false">Copyright © BoPr, 2016-2019</string>

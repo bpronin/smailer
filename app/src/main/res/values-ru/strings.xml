@@ -16,13 +16,14 @@
     <string name="added_to_whitelist">{number} добавлен в белый список</string>
     <string name="app_version">Версия приложения: {version}</string>
     <string name="ask_clear_history">Очистить журнал?</string>
+    <string name="ask_clear_list">Очистить список?</string>
     <string name="blacklist">Черный список</string>
     <string name="call_history">Журнал</string>
     <string name="call_of_duration">Звонок длительностью {duration}</string>
     <string name="called_phone">Вы звонили: {phone} ({name})</string>
     <string name="caller_phone">Вам звонил: {phone} ({name})</string>
     <string name="cannot_connect_mail_server">Нет соединения с почтовым сервером.</string>
-    <string name="clear_history">Очистить журнал</string>
+    <string name="clear">Очистить</string>
     <string name="close">Закрыть</string>
     <string name="contact_no_permission_read_contact">нет разрешения на чтение контактов</string>
     <string name="count_new">{count} новых</string>
