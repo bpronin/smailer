@@ -729,7 +729,7 @@ public class DebugFragment extends BasePreferenceFragment {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             if (result == null) {
-                showDone(getActivity());
+                showToast(getActivity(), "Done");
             } else {
                 showMessage(getActivity(), result);
             }

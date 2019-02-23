@@ -62,6 +62,9 @@ public class HistoryFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        formatter = new TagFormatter(requireContext());
+
         settingsChangeListener = new SettingsListener();
         settings.registerOnSharedPreferenceChangeListener(settingsChangeListener);
 
