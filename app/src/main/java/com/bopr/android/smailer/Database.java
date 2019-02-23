@@ -114,7 +114,7 @@ public class Database {
 
     public PhoneEventCursor getPendingEvents() {
         return new PhoneEventCursor(helper.getReadableDatabase().query(TABLE_EVENTS, null,
-                COLUMN_STATE + "=?", new String[]{PhoneEvent.State.PENDING.name()}, null, null,
+                COLUMN_STATE + "=?", new String[]{PhoneEvent.STATE_PENDING}, null, null,
                 COLUMN_START_TIME + " DESC")
         );
     }
@@ -129,7 +129,7 @@ public class Database {
         ContentValues values = new ContentValues();
 
         values.put(COLUMN_ID, event.getId());
-        values.put(COLUMN_STATE, event.getState().name());
+        values.put(COLUMN_STATE, event.getState());
         values.put(COLUMN_IS_INCOMING, event.isIncoming());
         values.put(COLUMN_IS_MISSED, event.isMissed());
         values.put(COLUMN_PHONE, event.getPhone());
@@ -315,7 +315,7 @@ public class Database {
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             if (newVersion == 2 && oldVersion == 1) {
-                db.execSQL("ALTER TABLE " + TABLE_EVENTS  +
+                db.execSQL("ALTER TABLE " + TABLE_EVENTS +
                         " ADD " + COLUMN_READ + " INTEGER NOT NULL DEFAULT(0)");
             }
         }
@@ -335,7 +335,7 @@ public class Database {
         public PhoneEvent getRow() {
             PhoneEvent event = new PhoneEvent();
             event.setId(getLong(COLUMN_ID));
-            event.setState(PhoneEvent.State.valueOf(getString(COLUMN_STATE)));
+            event.setState(getString(COLUMN_STATE));
             event.setPhone(getString(COLUMN_PHONE));
             event.setIncoming(getBoolean(COLUMN_IS_INCOMING));
             event.setStartTime(getLong(COLUMN_START_TIME));

@@ -7,13 +7,9 @@
     <string name="about">О приложении</string>
     <string name="acceptable_phone_numbers">Разрешенные номера ({size})</string>
     <string name="acceptable_words">Разрешенные фразы ({size})</string>
-    <string name="account">Учетная запись</string>
     <string name="add">Добавить</string>
     <string name="add_number_to_blacklist">Добавить в черный список</string>
     <string name="add_number_to_whitelist">Добавить в белый список</string>
-    <string name="added_to_blacklist">{number} добавлен в черный список</string>
-    <string name="added_to_blacklist_remotely">{number} удаленно добавлен в черный список</string>
-    <string name="added_to_whitelist">{number} добавлен в белый список</string>
     <string name="app_version">Версия приложения: {version}</string>
     <string name="ask_clear_history">Очистить журнал?</string>
     <string name="ask_clear_list">Очистить список?</string>
@@ -22,7 +18,6 @@
     <string name="call_of_duration">Звонок длительностью {duration}</string>
     <string name="called_phone">Вы звонили: {phone} ({name})</string>
     <string name="caller_phone">Вам звонил: {phone} ({name})</string>
-    <string name="cannot_connect_mail_server">Нет соединения с почтовым сервером.</string>
     <string name="clear">Очистить</string>
     <string name="close">Закрыть</string>
     <string name="contact_no_permission_read_contact">нет разрешения на чтение контактов</string>
@@ -32,7 +27,6 @@
     <string name="do_not_process_call">Игнорировать</string>
     <string name="edit">Изменить</string>
     <string name="email_address">Почтовый адрес</string>
-    <string name="email_address_to_send_email_from">Адрес, с которого будет отправляться почта.</string>
     <string name="email_content">Содержание</string>
     <string name="email_language">Язык почтового сообщения</string>
     <string name="email_message_content">Влючать в почтовое сообщение</string>
@@ -42,7 +36,6 @@
     <string name="events_causing_sending_mail">События, вызывающие отправку почты</string>
     <string name="geolocation_disabled">(определение местоположения отключено)</string>
     <string name="history_is_empty">Журнал пуст</string>
-    <string name="host">Сервер</string>
     <string name="ignored">Пропущено</string>
     <string name="incoming_call">Входящий звонок</string>
     <string name="incoming_call_from">Входящий звонок от</string>
@@ -59,10 +52,8 @@
     <string name="missed_call_from">Пропущенный звонок от</string>
     <string name="need_google_permission">Необходиморазрешение на доступ приложения к аккаунту Google</string>
     <string name="no_account_specified">Не указан аккаунт исходящей почты.</string>
-    <string name="no_host_specified">Не указан адрес серевера исходящей почты.</string>
     <string name="no_internet_connection">Отсутствует соединение с интернетом.</string>
     <string name="no_permission_read_location">нет разрешения на определение местоположения</string>
-    <string name="no_port_specified">Не указан порт серевера исходящей почты.</string>
     <string name="no_recipients_specified">Не указан получатель.</string>
     <string name="no_triggers_specified">Все триггеры отключены</string>
     <string name="not_specified">Не указано</string>
@@ -73,11 +64,8 @@
     <string name="open_source_and_third_party">Открытый исходный код и ПО сторонних производителей</string>
     <string name="outgoing_call">Исходящий звонок</string>
     <string name="outgoing_call_to">Исходящий звонок на</string>
-    <string name="outgoing_email_address">Адрес исходящей почты</string>
     <string name="outgoing_sms">Исходящее SMS</string>
     <string name="outgoing_sms_to">Исходящее SMS</string>
-    <string name="password">Пароль</string>
-    <string name="password_of_account_to_send">Пароль аккаунта, с которого будет отправляться почта.</string>
     <string name="pending">Ожидание</string>
     <string name="permission_rationale_coarse_location">Чтобы отображать местоположение устройства в почтовом сообщении, необходимо разрешение \"{permission}\".</string>
     <string name="permission_rationale_fine_location">Чтобы отображать местоположение устройства в почтовом сообщении, необходимо разрешение \"{permission}\".</string>
@@ -90,7 +78,6 @@
     <string name="phone_number">Телефон</string>
     <string name="phone_number_filter">Фильтр номеров</string>
     <string name="phone_removed_from_filter">{number} удален из фильтра</string>
-    <string name="port">Порт</string>
     <string name="preferences">Дополнительно</string>
     <string name="recipient_already_exists">Получатель {name} уже существует</string>
     <string name="recipients">Получатели</string>
@@ -101,7 +88,6 @@
     <string name="rules">Правила</string>
     <string name="rules_for_sending">Условия для отправки почты</string>
     <string name="select_from_contacts">Выбрать из контактов</string>
-    <string name="send_test_message">Tестовое сообщение</string>
     <string name="sender">Отправитель</string>
     <string name="sender_phone">Отправитель: {phone} ({name})</string>
     <string name="sent_email">Отправлена почта</string>

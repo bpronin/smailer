@@ -92,9 +92,9 @@ public class HistoryFragment extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        settings.unregisterOnSharedPreferenceChangeListener(settingsChangeListener);
         database.unregisterListener(databaseListener);
         database.close();
-        settings.unregisterOnSharedPreferenceChangeListener(settingsChangeListener);
     }
 
     @Override
@@ -254,7 +254,7 @@ public class HistoryFragment extends BaseFragment {
     private void markAsIgnored() {
         if (selectedListItemPosition != NO_POSITION) {
             PhoneEvent event = listAdapter.getItem(selectedListItemPosition);
-            event.setState(PhoneEvent.State.IGNORED);
+            event.setState(PhoneEvent.STATE_IGNORED);
             database.putEvent(event);
             database.notifyChanged();
         }
@@ -332,7 +332,7 @@ public class HistoryFragment extends BaseFragment {
                     @Override
                     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
                         requireActivity().getMenuInflater().inflate(R.menu.menu_context_history, menu);
-                        if (event.getState() != PhoneEvent.State.PENDING) {
+                        if (event.getState() != PhoneEvent.STATE_PENDING) {
                             menu.removeItem(R.id.action_ignore);
                         }
                         if (phoneEventFilter.getPhoneBlacklist().contains(event.getPhone())) {

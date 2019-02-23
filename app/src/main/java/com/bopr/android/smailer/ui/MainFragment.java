@@ -77,9 +77,9 @@ public class MainFragment extends BasePreferenceFragment {
     @Override
     public void onDestroy() {
         authorizator.dismiss();
+        settings.unregisterOnSharedPreferenceChangeListener(settingsListener);
         database.unregisterListener(databaseListener);
         database.close();
-        settings.unregisterOnSharedPreferenceChangeListener(settingsListener);
         super.onDestroy();
     }
 

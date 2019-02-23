@@ -30,6 +30,7 @@ public class BootReceiver extends BroadcastReceiver {
             Fabric.with(context, new Crashlytics());
             ContentObserverService.enable(context);
             ResendWorker.enable(context);
+            RemoteControlWorker.enable(context);
         }
     }
 

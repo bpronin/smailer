@@ -119,7 +119,7 @@ public class CallProcessor {
     }
 
     private void ignoreEvent(PhoneEvent event) {
-        event.setState(PhoneEvent.State.IGNORED);
+        event.setState(PhoneEvent.STATE_IGNORED);
         database.putEvent(event);
 
         log.debug("Event ignored: " + event);
@@ -165,7 +165,7 @@ public class CallProcessor {
         } catch (AddressException x) {
             handleError(event, x, R.string.no_recipients_specified, ACTION_SHOW_MAIN, silent);
         } catch (UserRecoverableAuthIOException x) {
-            AuthorizationHelper.removeSelectedAccount(context);
+            removeSelectedAccount();
             handleError(event, x, R.string.need_google_permission, ACTION_SHOW_MAIN, silent);
         } catch (Throwable x) {
             handleError(event, x, R.string.internal_error, ACTION_SHOW_MAIN, silent);
@@ -220,7 +220,7 @@ public class CallProcessor {
     }
 
     private void handleSuccess(PhoneEvent event) {
-        event.setState(PhoneEvent.State.PROCESSED);
+        event.setState(PhoneEvent.STATE_PROCESSED);
         database.putEvent(event);
 
         notifications.hideMailError();
@@ -236,11 +236,15 @@ public class CallProcessor {
     private void handleError(PhoneEvent event, Throwable error, int notification, int action, boolean silent) {
         log.warn("Send failed: " + event, error);
 
-        event.setState(PhoneEvent.State.PENDING);
+        event.setState(PhoneEvent.STATE_PENDING);
         database.putEvent(event);
 
         if (!silent) {
             notifications.showMailError(notification, event.getId(), action);
         }
+    }
+
+    private void removeSelectedAccount() {
+        settings.edit().putString(KEY_PREF_SENDER_ACCOUNT, null).apply();
     }
 }

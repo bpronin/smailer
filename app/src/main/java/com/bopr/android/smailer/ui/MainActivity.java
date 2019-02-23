@@ -3,6 +3,7 @@ package com.bopr.android.smailer.ui;
 import android.os.Bundle;
 
 import com.bopr.android.smailer.ContentObserverService;
+import com.bopr.android.smailer.RemoteControlWorker;
 import com.bopr.android.smailer.ResendWorker;
 import com.bopr.android.smailer.Settings;
 import com.crashlytics.android.Crashlytics;
@@ -36,12 +37,12 @@ public class MainActivity extends AppActivity {
         Settings.init(this);
         ContentObserverService.enable(this);
         ResendWorker.enable(this);
+        RemoteControlWorker.enable(this);
     }
 
     @NonNull
     @Override
     protected Fragment createFragment() {
-//        return AndroidUtil.isXLargeTablet(this) ? new MainFragmentDual() : new MainFragment();
         return new MainFragment();
     }
 

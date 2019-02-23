@@ -15,6 +15,9 @@ import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.draw.WavyUnderlineSpan;
 
 import static androidx.core.content.ContextCompat.getColor;
+import static com.bopr.android.smailer.PhoneEvent.STATE_IGNORED;
+import static com.bopr.android.smailer.PhoneEvent.STATE_PENDING;
+import static com.bopr.android.smailer.PhoneEvent.STATE_PROCESSED;
 
 /**
  * Miscellaneous resource utilities.
@@ -64,11 +67,11 @@ public abstract class ResourceUtil {
 
     public static int eventStateImage(PhoneEvent event) {
         switch (event.getState()) {
-            case PENDING:
+            case STATE_PENDING:
                 return R.drawable.ic_state_pending;
-            case PROCESSED:
+            case STATE_PROCESSED:
                 return R.drawable.ic_state_done;
-            case IGNORED:
+            case STATE_IGNORED:
                 return R.drawable.ic_state_block;
         }
         return -1;
@@ -76,11 +79,11 @@ public abstract class ResourceUtil {
 
     public static int eventStateText(PhoneEvent event) {
         switch (event.getState()) {
-            case PENDING:
+            case STATE_PENDING:
                 return R.string.pending;
-            case PROCESSED:
+            case STATE_PROCESSED:
                 return R.string.sent_email;
-            case IGNORED:
+            case STATE_IGNORED:
                 return R.string.ignored;
         }
         return -1;

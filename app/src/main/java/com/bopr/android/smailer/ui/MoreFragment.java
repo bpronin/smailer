@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import com.bopr.android.smailer.AuthorizationHelper;
 import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.RemoteControlWorker;
 import com.bopr.android.smailer.util.AndroidUtil;
 
 import androidx.preference.EditTextPreference;
@@ -15,6 +16,7 @@ import androidx.preference.Preference;
 import static com.bopr.android.smailer.GmailTransport.SCOPE_ALL;
 import static com.bopr.android.smailer.Settings.KEY_PREF_DEVICE_ALIAS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
+import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL;
 import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_ACCOUNT;
 import static com.bopr.android.smailer.util.Util.isEmpty;
 
@@ -123,8 +125,13 @@ public class MoreFragment extends BasePreferenceFragment {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if (key.equals(KEY_PREF_REMOTE_CONTROL_ACCOUNT)) {
-                updateAccountPreference();
+            switch (key) {
+                case KEY_PREF_REMOTE_CONTROL_ACCOUNT:
+                    updateAccountPreference();
+                    break;
+                case KEY_PREF_REMOTE_CONTROL:
+                    RemoteControlWorker.enable(requireContext());
+                    break;
             }
 
             super.onSharedPreferenceChanged(sharedPreferences, key);

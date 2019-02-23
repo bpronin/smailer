@@ -15,11 +15,9 @@ import androidx.annotation.NonNull;
 @SuppressWarnings("WeakerAccess")
 public class PhoneEvent implements Parcelable {
 
-    public enum State {
-        PENDING,
-        PROCESSED,
-        IGNORED
-    }
+    public static final String STATE_PENDING = "PENDING";
+    public static final String STATE_PROCESSED = "PROCESSED";
+    public static final String STATE_IGNORED = "IGNORED";
 
     private Long id;
     private boolean incoming;
@@ -30,14 +28,14 @@ public class PhoneEvent implements Parcelable {
     private String text;
     private String details;
     private GeoCoordinates location;
-    private State state = State.PENDING;
+    private String state = STATE_PENDING;
     private boolean read;
 
     public PhoneEvent() {
     }
 
     public PhoneEvent(String phone, boolean incoming, Long startTime, Long endTime, boolean missed,
-                      String text, GeoCoordinates location, String details, State state) {
+                      String text, GeoCoordinates location, String details, String state) {
         this.text = text;
         this.endTime = endTime;
         this.startTime = startTime;
@@ -132,11 +130,11 @@ public class PhoneEvent implements Parcelable {
         this.location = location;
     }
 
-    public State getState() {
+    public String getState() {
         return state;
     }
 
-    public void setState(State state) {
+    public void setState(String state) {
         this.state = state;
     }
 

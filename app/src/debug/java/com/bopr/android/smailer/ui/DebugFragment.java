@@ -22,6 +22,7 @@ import com.bopr.android.smailer.GmailTransport;
 import com.bopr.android.smailer.Notifications;
 import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.RemoteControlService;
 import com.bopr.android.smailer.Settings;
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.ContactUtils;
@@ -52,7 +53,6 @@ import static android.Manifest.permission.BROADCAST_SMS;
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static com.bopr.android.smailer.AuthorizationHelper.defaultAccount;
-import static com.bopr.android.smailer.GmailTransport.SCOPE_ALL;
 import static com.bopr.android.smailer.GmailTransport.SCOPE_SEND;
 import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
@@ -134,7 +134,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
         addCategory(screen, "Call processing",
 
-                createPreference("Start process single event", new DefaultClickListener() {
+                createPreference("Process single event", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
@@ -142,7 +142,7 @@ public class DebugFragment extends BasePreferenceFragment {
                     }
                 }),
 
-                createPreference("Start process pending events", new DefaultClickListener() {
+                createPreference("Process pending events", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
@@ -150,11 +150,11 @@ public class DebugFragment extends BasePreferenceFragment {
                     }
                 }),
 
-                createPreference("Request google api permission", new DefaultClickListener() {
+                createPreference("Process service mail", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        onRequestGooglePermission();
+                        onProcessServiceMail();
                     }
                 }),
 
@@ -164,15 +164,8 @@ public class DebugFragment extends BasePreferenceFragment {
                     protected void onClick(Preference preference) {
                         onSendDebugMail();
                     }
-                }),
-
-                createPreference("List mail", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        onListMail();
-                    }
                 })
+
         );
 
         addCategory(screen, "Database",
@@ -249,6 +242,14 @@ public class DebugFragment extends BasePreferenceFragment {
         );
 
         addCategory(screen, "Permissions",
+
+                createPreference("Request gmail api permission", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onRequestGooglePermission();
+                    }
+                }),
 
                 createPreference("Require Sms permission", new DefaultClickListener() {
 
@@ -484,8 +485,8 @@ public class DebugFragment extends BasePreferenceFragment {
         new SendDebugMailTask(getActivity(), loadDebugProperties()).execute();
     }
 
-    private void onListMail() {
-        new ListMailTask(getActivity()).execute();
+    private void onProcessServiceMail() {
+        RemoteControlService.start(context);
     }
 
     private void onRequestGooglePermission() {
@@ -576,23 +577,23 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private void onAddHistoryItem() {
-        database.putEvent(new PhoneEvent("+79052345670", true, System.currentTimeMillis(), null, false, "Debug message", null, null, PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("+79052345670", true, System.currentTimeMillis(), null, false, "Debug message", null, null, PhoneEvent.STATE_PENDING));
         database.notifyChanged();
         showToast(context, "Done");
     }
 
     private void onPopulateHistory() {
         long time = System.currentTimeMillis();
-        database.putEvent(new PhoneEvent("+79052345671", true, time, null, false, "Debug message", null, null, PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("+79052345672", false, time += 1000, null, false, "Debug message", null, null, PhoneEvent.State.PROCESSED));
-        database.putEvent(new PhoneEvent("+79052345673", true, time += 1000, time + 10000, false, null, null, null, PhoneEvent.State.IGNORED));
-        database.putEvent(new PhoneEvent("+79052345674", false, time += 1000, time + 10000, false, null, null, null, PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("+79052345675", true, time += 1000, time + 10000, true, null, null, null, PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("+79052345671", true, time += 1000, null, false, "Debug message", null, "Test exception +79052345671", PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("+79052345672", false, time += 1000, null, false, "Debug message", null, "Test exception +79052345672", PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("+79052345673", true, time += 1000, time + 10000, false, null, null, "Test exception +79052345673", PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("+79052345674", false, time += 1000, time + 10000, false, null, null, "Test exception +79052345674", PhoneEvent.State.PENDING));
-        database.putEvent(new PhoneEvent("+79052345675", true, time += 1000, time + 10000, true, null, null, "Test exception +79052345675", PhoneEvent.State.PENDING));
+        database.putEvent(new PhoneEvent("+79052345671", true, time, null, false, "Debug message", null, null, PhoneEvent.STATE_PENDING));
+        database.putEvent(new PhoneEvent("+79052345672", false, time += 1000, null, false, "Debug message", null, null, PhoneEvent.STATE_PROCESSED));
+        database.putEvent(new PhoneEvent("+79052345673", true, time += 1000, time + 10000, false, null, null, null, PhoneEvent.STATE_IGNORED));
+        database.putEvent(new PhoneEvent("+79052345674", false, time += 1000, time + 10000, false, null, null, null, PhoneEvent.STATE_PENDING));
+        database.putEvent(new PhoneEvent("+79052345675", true, time += 1000, time + 10000, true, null, null, null, PhoneEvent.STATE_PENDING));
+        database.putEvent(new PhoneEvent("+79052345671", true, time += 1000, null, false, "Debug message", null, "Test exception +79052345671", PhoneEvent.STATE_PENDING));
+        database.putEvent(new PhoneEvent("+79052345672", false, time += 1000, null, false, "Debug message", null, "Test exception +79052345672", PhoneEvent.STATE_PENDING));
+        database.putEvent(new PhoneEvent("+79052345673", true, time += 1000, time + 10000, false, null, null, "Test exception +79052345673", PhoneEvent.STATE_PENDING));
+        database.putEvent(new PhoneEvent("+79052345674", false, time += 1000, time + 10000, false, null, null, "Test exception +79052345674", PhoneEvent.STATE_PENDING));
+        database.putEvent(new PhoneEvent("+79052345675", true, time += 1000, time + 10000, true, null, null, "Test exception +79052345675", PhoneEvent.STATE_PENDING));
         database.notifyChanged();
 
         showToast(context, "Done");
@@ -690,38 +691,6 @@ public class DebugFragment extends BasePreferenceFragment {
             } catch (Exception x) {
                 log.error("FAILED: ", x);
                 return "Sending mail failed: " + x.getMessage();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            if (result == null) {
-                showToast(getActivity(), "Done");
-            } else {
-                showMessage(getActivity(), result);
-            }
-        }
-
-    }
-
-    private static class ListMailTask extends LongAsyncTask<Void, Void, String> {
-
-        ListMailTask(Activity activity) {
-            super(activity);
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            GmailTransport transport = new GmailTransport(getActivity());
-            try {
-                String account = requireNonNull(defaultAccount(getActivity()));
-                transport.init(account, SCOPE_ALL);
-                transport.list();
-            } catch (Exception x) {
-                log.error("FAILED: ", x);
-                return "List mail failed: " + x.getMessage();
             }
             return null;
         }

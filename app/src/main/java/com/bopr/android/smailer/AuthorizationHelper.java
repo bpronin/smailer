@@ -26,7 +26,6 @@ import androidx.fragment.app.Fragment;
 import static android.accounts.AccountManager.KEY_ACCOUNT_NAME;
 import static android.accounts.AccountManager.newChooseAccountIntent;
 import static android.app.Activity.RESULT_OK;
-import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
 
 /*
    To compile debug flavor add SHA-1 fingerprint from <user_dir>/.android/debug.keystore  (password "android") to
@@ -123,10 +122,6 @@ public class AuthorizationHelper {
     public static String defaultAccount(Context context) {
         Account[] accounts = new GoogleAccountManager(context).getAccounts();
         return accounts.length > 0 ? accounts[0].name : null;
-    }
-
-    public static void removeSelectedAccount(Context context) {
-        new Settings(context).edit().putString(KEY_PREF_SENDER_ACCOUNT, null).apply();
     }
 
     private class PermissionRequestCallback implements AccountManagerCallback<Bundle> {

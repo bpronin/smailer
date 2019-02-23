@@ -6,12 +6,12 @@ import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.GmailScopes;
 import com.google.api.services.gmail.model.ListMessagesResponse;
 import com.google.api.services.gmail.model.Message;
-import com.google.api.services.gmail.model.WatchRequest;
+import com.google.api.services.gmail.model.MessagePart;
+import com.google.api.services.gmail.model.MessagePartHeader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +19,9 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
@@ -41,8 +41,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import static com.bopr.android.smailer.util.Util.isEmpty;
+import static com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64.decodeBase64;
+import static com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64.encodeBase64URLSafeString;
+import static com.google.api.client.repackaged.org.apache.commons.codec.binary.StringUtils.newStringUtf8;
 import static javax.mail.Message.RecipientType.TO;
 
+/**
+ * Gmail mail transport.
+ *
+ * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
+ */
 public class GmailTransport {
 
     private static Logger log = LoggerFactory.getLogger("GmailTransport");
@@ -82,37 +90,38 @@ public class GmailTransport {
                 .send(USER_ID, message)
                 .execute();
 
-        log.debug("Mail sent");
+        log.debug("Message sent");
     }
 
-    public void watch() throws IOException {
-        WatchRequest request = new WatchRequest();
-
+    public void trash(MailMessage message) throws IOException {
         service.users()
-                .watch(USER_ID, request)
+                .messages()
+                .trash(USER_ID, message.id)
                 .execute();
 
-        log.debug("Watch");
+        log.debug("Message deleted");
     }
 
-    public void list() throws IOException {
+    public List<MailMessage> list(String query) throws IOException {
         ListMessagesResponse response = service
                 .users()
                 .messages()
                 .list(USER_ID)
+                .setQ(query)
                 .execute();
 
-        String id = response.getMessages().get(0).getId();
+        LinkedList<MailMessage> result = new LinkedList<>();
+        for (Message m : response.getMessages()) {
+            Message message = service
+                    .users()
+                    .messages()
+                    .get(USER_ID, m.getId())
+//                    .setFormat("raw")
+                    .execute();
 
-        Message message = service
-                .users()
-                .messages()
-                .get(USER_ID, id)
-                .setFormat("metadata")
-                .setMetadataHeaders(Arrays.asList("subject"))
-                .execute();
-
-        log.debug(message.getRaw());
+            result.add(readMessage(message));
+        }
+        return result;
     }
 
     @NonNull
@@ -138,7 +147,7 @@ public class GmailTransport {
             throws MessagingException, IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         createMimeMessage(subject, body, attachment, sender, recipients, replyTo).writeTo(buffer);
-        return new Message().setRaw(Base64.encodeBase64URLSafeString(buffer.toByteArray()));
+        return new Message().setRaw(encodeBase64URLSafeString(buffer.toByteArray()));
     }
 
     @NonNull
@@ -162,14 +171,6 @@ public class GmailTransport {
         return message;
     }
 
-    private Address[] parseAddresses(String addresses) throws AddressException {
-        if (addresses.indexOf(',') > 0) {
-            return InternetAddress.parse(addresses);
-        } else {
-            return new InternetAddress[]{new InternetAddress(addresses)};
-        }
-    }
-
     @NonNull
     private Multipart createMultipart(String body, @NonNull Collection<File> attachment) throws MessagingException {
         Multipart content = new MimeMultipart();
@@ -187,5 +188,45 @@ public class GmailTransport {
 
         return content;
     }
+
+    private Address[] parseAddresses(String addresses) throws AddressException {
+        if (addresses.indexOf(',') > 0) {
+            return InternetAddress.parse(addresses);
+        } else {
+            return new InternetAddress[]{new InternetAddress(addresses)};
+        }
+    }
+
+/*
+    private MimeMessage toMimeMessage(Message message) throws MessagingException {
+        String raw = newStringUtf8(decodeBase64(message.getRaw()));
+        return new MimeMessage(session, new ByteArrayInputStream(raw.getBytes()));
+    }
+*/
+
+    private MailMessage readMessage(Message message) {
+        return new MailMessage(message.getId(), readHeader(message, "subject"), readBody(message));
+    }
+
+    @Nullable
+    private String readHeader(Message message, String name) {
+        for (MessagePartHeader header : message.getPayload().getHeaders()) {
+            if (header.getName().equalsIgnoreCase(name)) {
+                return header.getValue();
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    private String readBody(Message message) {
+        List<MessagePart> parts = message.getPayload().getParts();
+        if (!parts.isEmpty()) {
+            MessagePart part = parts.get(0);
+            return newStringUtf8(decodeBase64(part.getBody().getData()));
+        }
+        return null;
+    }
+
 }
 

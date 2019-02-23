@@ -61,7 +61,7 @@ public class MailFormatterTest extends BaseTest {
     @Test
     public void testIncomingSmsSubject() {
         PhoneEvent event = new PhoneEvent("+70123456789", true, null, null, false,
-                "Email body text", null, null, PhoneEvent.State.PENDING);
+                "Email body text", null, null, PhoneEvent.STATE_PENDING);
 
         MailFormatter formatter = new MailFormatter(context, event);
 
@@ -74,7 +74,7 @@ public class MailFormatterTest extends BaseTest {
     @Test
     public void testOutgoingSmsSubject() {
         PhoneEvent event = new PhoneEvent("+70123456789", false, null, null, false,
-                "Email body text", null, null, PhoneEvent.State.PENDING);
+                "Email body text", null, null, PhoneEvent.STATE_PENDING);
 
         MailFormatter formatter = new MailFormatter(context, event);
 
@@ -87,7 +87,7 @@ public class MailFormatterTest extends BaseTest {
     @Test
     public void testIncomingCallSubject() {
         PhoneEvent event = new PhoneEvent("+70123456789", true, null, null, false,
-                null, null, null, PhoneEvent.State.PENDING);
+                null, null, null, PhoneEvent.STATE_PENDING);
 
         MailFormatter formatter = new MailFormatter(context, event);
 
@@ -100,7 +100,7 @@ public class MailFormatterTest extends BaseTest {
     @Test
     public void testOutgoingCallSubject() {
         PhoneEvent event = new PhoneEvent("+70123456789", false, null, null, false,
-                null, null, null, PhoneEvent.State.PENDING);
+                null, null, null, PhoneEvent.STATE_PENDING);
 
         MailFormatter formatter = new MailFormatter(context, event);
 
@@ -113,7 +113,7 @@ public class MailFormatterTest extends BaseTest {
     @Test
     public void testMissedCallSubject() {
         PhoneEvent event = new PhoneEvent("+70123456789", false, null, null, true,
-                null, null, null, PhoneEvent.State.PENDING);
+                null, null, null, PhoneEvent.STATE_PENDING);
 
         MailFormatter formatter = new MailFormatter(context, event);
 
@@ -126,7 +126,7 @@ public class MailFormatterTest extends BaseTest {
     @Test
     public void testNoBodyFooter() {
         PhoneEvent event = new PhoneEvent("+70123456789", true, null, null, false,
-                "Email body text", null, null, PhoneEvent.State.PENDING);
+                "Email body text", null, null, PhoneEvent.STATE_PENDING);
 
         MailFormatter formatter = new MailFormatter(context, event);
 
@@ -141,7 +141,7 @@ public class MailFormatterTest extends BaseTest {
     @Test
     public void testFooterTimeOption() {
         PhoneEvent event = new PhoneEvent("+70123456789", true, defaultTime.getTime(), null, false,
-                "Email body text", null, null, PhoneEvent.State.PENDING);
+                "Email body text", null, null, PhoneEvent.STATE_PENDING);
 
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(defaultTime);
@@ -169,7 +169,7 @@ public class MailFormatterTest extends BaseTest {
     @Test
     public void testFooterNoTime() {
         PhoneEvent event = new PhoneEvent("+70123456789", true, null, null, false,
-                "Email body text", null, null, PhoneEvent.State.PENDING);
+                "Email body text", null, null, PhoneEvent.STATE_PENDING);
 
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(defaultTime);
@@ -191,7 +191,7 @@ public class MailFormatterTest extends BaseTest {
     @Test
     public void testFooterDeviceNameOption() {
         PhoneEvent event = new PhoneEvent("+70123456789", true, null, null, false,
-                "Email body text", null, null, PhoneEvent.State.PENDING);
+                "Email body text", null, null, PhoneEvent.STATE_PENDING);
 
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(defaultTime);
@@ -219,7 +219,7 @@ public class MailFormatterTest extends BaseTest {
     @Test
     public void testFooterDeviceNameOptionNoValue() {
         PhoneEvent event = new PhoneEvent("+70123456789", true, null, null, false,
-                "Email body text", null, null, PhoneEvent.State.PENDING);
+                "Email body text", null, null, PhoneEvent.STATE_PENDING);
 
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(defaultTime);
@@ -242,7 +242,7 @@ public class MailFormatterTest extends BaseTest {
     @Test
     public void testFooterDeviceNameTimeOption() {
         PhoneEvent event = new PhoneEvent("+70123456789", true, defaultTime.getTime(), null, false,
-                "Email body text", null, null, PhoneEvent.State.PENDING);
+                "Email body text", null, null, PhoneEvent.STATE_PENDING);
 
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(defaultTime);
@@ -271,7 +271,7 @@ public class MailFormatterTest extends BaseTest {
     @Test
     public void testFooterLocation() {
         PhoneEvent event = new PhoneEvent("+70123456789", true, null, null, false,
-                "Email body text", new GeoCoordinates(60.555, 30.555), null, PhoneEvent.State.PENDING);
+                "Email body text", new GeoCoordinates(60.555, 30.555), null, PhoneEvent.STATE_PENDING);
 
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(defaultTime);
@@ -297,7 +297,7 @@ public class MailFormatterTest extends BaseTest {
     @Test
     public void testFooterNoLocation() {
         PhoneEvent event = new PhoneEvent("+70123456789", true, null, null, false,
-                "Email body text", null, null, PhoneEvent.State.PENDING);
+                "Email body text", null, null, PhoneEvent.STATE_PENDING);
 
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(defaultTime);
@@ -321,7 +321,7 @@ public class MailFormatterTest extends BaseTest {
     @Test
     public void testFooterNoLocationPermissions() {
         PhoneEvent event = new PhoneEvent("+70123456789", true, null, null, false,
-                "Email body text", null, null, PhoneEvent.State.PENDING);
+                "Email body text", null, null, PhoneEvent.STATE_PENDING);
 
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(defaultTime);
@@ -348,7 +348,7 @@ public class MailFormatterTest extends BaseTest {
     @Test
     public void testContactName() {
         PhoneEvent event = new PhoneEvent("+12345678901", true, null, null, false,
-                "Email body text", null, null, PhoneEvent.State.PENDING);
+                "Email body text", null, null, PhoneEvent.STATE_PENDING);
 
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(defaultTime);
@@ -372,7 +372,7 @@ public class MailFormatterTest extends BaseTest {
     @Test
     public void testContactNameNoPermission() {
         PhoneEvent event = new PhoneEvent("+12345678901", true, null, null, false,
-                "Email body text", null, null, PhoneEvent.State.PENDING);
+                "Email body text", null, null, PhoneEvent.STATE_PENDING);
 
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(defaultTime);
@@ -393,7 +393,7 @@ public class MailFormatterTest extends BaseTest {
     @Test
     public void testUnknownContactName() {
         PhoneEvent event = new PhoneEvent("+12345678901", true, null, null, false,
-                "Email body text", null, null, PhoneEvent.State.PENDING);
+                "Email body text", null, null, PhoneEvent.STATE_PENDING);
 
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(defaultTime);
@@ -413,7 +413,7 @@ public class MailFormatterTest extends BaseTest {
         long start = defaultTime.getTime();
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
         PhoneEvent event = new PhoneEvent("+70123456789", true, start, end, false,
-                null, null, null, PhoneEvent.State.PENDING);
+                null, null, null, PhoneEvent.STATE_PENDING);
 
         MailFormatter formatter = new MailFormatter(context, event);
 
@@ -430,7 +430,7 @@ public class MailFormatterTest extends BaseTest {
         long start = defaultTime.getTime();
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 15).getTime().getTime();
         PhoneEvent event = new PhoneEvent("+70123456789", false, start, end, false,
-                null, null, null, PhoneEvent.State.PENDING);
+                null, null, null, PhoneEvent.STATE_PENDING);
 
         MailFormatter formatter = new MailFormatter(context, event);
 
@@ -446,7 +446,7 @@ public class MailFormatterTest extends BaseTest {
     public void testMissedCallBody() {
         long start = defaultTime.getTime();
         PhoneEvent event = new PhoneEvent("+70123456789", false, start, null, true,
-                null, null, null, PhoneEvent.State.PENDING);
+                null, null, null, PhoneEvent.STATE_PENDING);
 
         MailFormatter formatter = new MailFormatter(context, event);
 
@@ -464,7 +464,7 @@ public class MailFormatterTest extends BaseTest {
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
 
         PhoneEvent event = new PhoneEvent("+12345678901", true, start, end, false,
-                null, new GeoCoordinates(60.555, 30.555), null, PhoneEvent.State.PENDING);
+                null, new GeoCoordinates(60.555, 30.555), null, PhoneEvent.STATE_PENDING);
 
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(defaultTime);
@@ -496,7 +496,7 @@ public class MailFormatterTest extends BaseTest {
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
 
         PhoneEvent event = new PhoneEvent("+12345678901", false, start, end, false,
-                null, new GeoCoordinates(60.555, 30.555), null, PhoneEvent.State.PENDING);
+                null, new GeoCoordinates(60.555, 30.555), null, PhoneEvent.STATE_PENDING);
 
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(defaultTime);
@@ -527,7 +527,7 @@ public class MailFormatterTest extends BaseTest {
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
 
         PhoneEvent event = new PhoneEvent("+12345678901", true, start, end, true,
-                null, new GeoCoordinates(60.555, 30.555), null, PhoneEvent.State.PENDING);
+                null, new GeoCoordinates(60.555, 30.555), null, PhoneEvent.STATE_PENDING);
 
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(defaultTime);
@@ -559,7 +559,7 @@ public class MailFormatterTest extends BaseTest {
 
         PhoneEvent event = new PhoneEvent("+12345678901", true, start, end, true,
                 null, new GeoCoordinates(60.555, 30.555),
-                null, PhoneEvent.State.PENDING);
+                null, PhoneEvent.STATE_PENDING);
 
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(defaultTime);
@@ -601,7 +601,7 @@ public class MailFormatterTest extends BaseTest {
         long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
 
         PhoneEvent event = new PhoneEvent("+12345678901", true, start, end, true,
-                null, new GeoCoordinates(60.555, 30.555), null, PhoneEvent.State.PENDING);
+                null, new GeoCoordinates(60.555, 30.555), null, PhoneEvent.STATE_PENDING);
 
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(defaultTime);
@@ -628,7 +628,7 @@ public class MailFormatterTest extends BaseTest {
     @Test
     public void testFormatUrls() {
         PhoneEvent event = new PhoneEvent("+12345678901", true, null, null, false,
-                "Please visit http://google.com site", null, null, PhoneEvent.State.PENDING);
+                "Please visit http://google.com site", null, null, PhoneEvent.STATE_PENDING);
 
         MailFormatter formatter = new MailFormatter(context, event);
 
