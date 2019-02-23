@@ -24,6 +24,7 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anySetOf;
 import static org.mockito.Matchers.eq;
@@ -92,8 +93,8 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
-        doAnswer(inits).when(transport).init(anyString());
-        doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
+        doAnswer(inits).when(transport).init(anyString(), anyListOf(String.class));
+        doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString(), anyString());
 
         CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
         callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, new GeoCoordinates(30.0, 60.0), null, PhoneEvent.STATE_PENDING));
@@ -115,8 +116,8 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
-        doAnswer(inits).when(transport).init(anyString());
-        doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
+        doAnswer(inits).when(transport).init(anyString(), anyListOf(String.class));
+        doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString(), anyString());
 
         when(preferences.getString(eq(KEY_PREF_EMAIL_LOCALE), anyString())).thenReturn("ru_RU");
 
@@ -140,8 +141,8 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
-        doAnswer(inits).when(transport).init(anyString());
-        doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
+        doAnswer(inits).when(transport).init(anyString(), anyListOf(String.class));
+        doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString(), anyString());
         when(networkInfo.isConnected()).thenReturn(false);
 
         CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
@@ -164,8 +165,8 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
-        doAnswer(inits).when(transport).init(anyString());
-        doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
+        doAnswer(inits).when(transport).init(anyString(), anyListOf(String.class));
+        doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString(), anyString());
 
         when(preferences.getString(eq(KEY_PREF_SENDER_ACCOUNT), anyString())).thenReturn(null);
 
@@ -189,8 +190,8 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
-        doAnswer(inits).when(transport).init(anyString());
-        doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
+        doAnswer(inits).when(transport).init(anyString(), anyListOf(String.class));
+        doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString(), anyString());
 
         when(preferences.getString(eq(KEY_PREF_RECIPIENTS_ADDRESS), anyString())).thenReturn(null);
 
@@ -214,9 +215,9 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
-        doAnswer(inits).when(transport).init(anyString());
-        doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
-        doThrow(AuthenticationFailedException.class).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
+        doAnswer(inits).when(transport).init(anyString(), anyListOf(String.class));
+        doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString(), anyString());
+        doThrow(AuthenticationFailedException.class).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString(), anyString());
 
         CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
         callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, null, null, PhoneEvent.STATE_PENDING));
@@ -238,9 +239,9 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
-        doAnswer(inits).when(transport).init(anyString());
-        doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
-        doThrow(MessagingException.class).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
+        doAnswer(inits).when(transport).init(anyString(), anyListOf(String.class));
+        doAnswer(sends).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString(), anyString());
+        doThrow(MessagingException.class).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString(), anyString());
 
         CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
         callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, null, null, PhoneEvent.STATE_PENDING));
@@ -271,7 +272,7 @@ public class CallProcessorTest extends BaseTest {
                 }
                 return null;
             }
-        }).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
+        }).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString(), anyString());
 
         CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
 
@@ -298,7 +299,7 @@ public class CallProcessorTest extends BaseTest {
      * @throws Exception when fails
      */
     @Test
-    public void testSuccessNotification() throws Exception {
+    public void testSuccessNotification() {
         InvocationsCollector errors = new InvocationsCollector();
         InvocationsCollector successes = new InvocationsCollector();
 
@@ -333,7 +334,7 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyLong(), anyInt());
-        doThrow(MessagingException.class).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
+        doThrow(MessagingException.class).when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString(), anyString());
 
         CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
         callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, new GeoCoordinates(30.0, 60.0), null, PhoneEvent.STATE_PENDING));
@@ -354,7 +355,7 @@ public class CallProcessorTest extends BaseTest {
         assertTrue(errors.isEmpty()); /* no error notifications should be shown */
 
         /* enable transport an try again */
-        doNothing().when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString());
+        doNothing().when(transport).send(anyString(), anyString(), anySetOf(File.class), anyString(), anyString());
         errors.clear();
 
         callProcessor.processPending();
