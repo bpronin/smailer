@@ -75,31 +75,21 @@ public class GmailTransport {
         transport = AndroidHttp.newCompatibleTransport();
     }
 
-    public void init(@NonNull String senderAccount, List<String> scopes) throws IllegalAccessException {
-        this.sender = senderAccount;
-        service = createService(createCredential(senderAccount, scopes));
+    public void init(@NonNull String sender, List<String> scopes) throws IllegalAccessException {
+        this.sender = sender;
+        service = createService(createCredential(sender, scopes));
         session = Session.getDefaultInstance(new Properties(), null);
     }
 
-    public void send(String subject, String body, @Nullable Collection<File> attachment,
-                     @NonNull String recipients, @Nullable String replyTo) throws IOException, MessagingException {
-        Message message = createMessage(subject, body, attachment, sender, recipients, replyTo);
+    public void send(@NonNull MailMessage message) throws IOException, MessagingException {
+        Message gmailMessage = createMessage(message);
 
         service.users()
                 .messages()
-                .send(USER_ID, message)
+                .send(USER_ID, gmailMessage)
                 .execute();
 
         log.debug("Message sent");
-    }
-
-    public void trash(MailMessage message) throws IOException {
-        service.users()
-                .messages()
-                .trash(USER_ID, message.id)
-                .execute();
-
-        log.debug("Message deleted");
     }
 
     public List<MailMessage> list(String query) throws IOException {
@@ -124,6 +114,25 @@ public class GmailTransport {
         return result;
     }
 
+    public void markAsRead(MailMessage message) throws IOException {
+//        ModifyMessageRequest content = new ModifyMessageRequest();
+//        service.users()
+//                .messages()
+//                .modify(USER_ID, message.id, content)
+//                .execute();
+
+        log.debug("Message marked as read");
+    }
+
+    public void trash(MailMessage message) throws IOException {
+        service.users()
+                .messages()
+                .trash(USER_ID, message.getId())
+                .execute();
+
+        log.debug("Message deleted");
+    }
+
     @NonNull
     private Gmail createService(@NonNull GoogleAccountCredential credential) {
         return new Gmail.Builder(transport, jsonFactory, credential)
@@ -142,11 +151,10 @@ public class GmailTransport {
     }
 
     @NonNull
-    private Message createMessage(String subject, String body, @Nullable Collection<File> attachment,
-                                  @NonNull String sender, @NonNull String recipients, @Nullable String replyTo)
+    private Message createMessage(MailMessage message)
             throws MessagingException, IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        createMimeMessage(subject, body, attachment, sender, recipients, replyTo).writeTo(buffer);
+        createMimeMessage(message.getSubject(), message.getBody(), message.getAttachment(), sender, message.getRecipients(), message.getReplyTo()).writeTo(buffer);
         return new Message().setRaw(encodeBase64URLSafeString(buffer.toByteArray()));
     }
 
@@ -204,8 +212,12 @@ public class GmailTransport {
     }
 */
 
-    private MailMessage readMessage(Message message) {
-        return new MailMessage(message.getId(), readHeader(message, "subject"), readBody(message));
+    private MailMessage readMessage(Message gmailMessage) {
+        MailMessage message = new MailMessage();
+        message.setId(gmailMessage.getId());
+        message.setSubject(readHeader(gmailMessage, "subject"));
+        message.setBody(readBody(gmailMessage));
+        return message;
     }
 
     @Nullable

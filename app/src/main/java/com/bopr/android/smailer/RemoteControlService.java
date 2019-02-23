@@ -10,6 +10,14 @@ import org.slf4j.LoggerFactory;
 
 import androidx.annotation.Nullable;
 
+import static com.bopr.android.smailer.RemoteCommandParser.ADD_PHONE_TO_BLACKLIST;
+import static com.bopr.android.smailer.RemoteCommandParser.ADD_PHONE_TO_WHITELIST;
+import static com.bopr.android.smailer.RemoteCommandParser.ADD_TEXT_TO_BLACKLIST;
+import static com.bopr.android.smailer.RemoteCommandParser.ADD_TEXT_TO_WHITELIST;
+import static com.bopr.android.smailer.RemoteCommandParser.REMOVE_PHONE_FROM_BLACKLIST;
+import static com.bopr.android.smailer.RemoteCommandParser.REMOVE_PHONE_FROM_WHITELIST;
+import static com.bopr.android.smailer.RemoteCommandParser.REMOVE_TEXT_FROM_BLACKLIST;
+import static com.bopr.android.smailer.RemoteCommandParser.REMOVE_TEXT_FROM_WHITELIST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_ACCOUNT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
 
@@ -50,77 +58,81 @@ public class RemoteControlService extends IntentService {
         try {
             transport.init(account, GmailTransport.SCOPE_ALL);
             for (MailMessage message : transport.list(query)) {
-                processMessage(message);
+                if (processMessage(message)) {
+                    transport.markAsRead(message);
+                    transport.trash(message);
+                }
             }
         } catch (Exception x) {
             log.error("Remote control error", x);
         }
     }
 
-    private void processMessage(MailMessage message) {
+    private boolean processMessage(MailMessage message) {
         RemoteCommandParser.Result result = parser.parse(message);
         log.debug("Performing action: " + result);
 
         if (result != null) {
             switch (result.action) {
-                case RemoteCommandParser.ADD_PHONE_TO_BLACKLIST:
-                    addPhoneToBlacklist(result.argument);
-                    break;
-                case RemoteCommandParser.REMOVE_PHONE_FROM_BLACKLIST:
-                    removePhoneFromBlacklist(result.argument);
-                    break;
-                case RemoteCommandParser.ADD_PHONE_TO_WHITELIST:
-                    addPhoneToWhitelist(result.argument);
-                    break;
-                case RemoteCommandParser.REMOVE_PHONE_FROM_WHITELIST:
-                    removePhoneFromWhitelist(result.argument);
-                    break;
-                case RemoteCommandParser.ADD_TEXT_TO_BLACKLIST:
-                    addTextToBlacklist(result.argument);
-                    break;
-                case RemoteCommandParser.REMOVE_TEXT_FROM_BLACKLIST:
-                    removeTextFromBlacklist(result.argument);
-                    break;
-                case RemoteCommandParser.ADD_TEXT_TO_WHITELIST:
-                    addTextToWhitelist(result.argument);
-                    break;
-                case RemoteCommandParser.REMOVE_TEXT_FROM_WHITELIST:
-                    removeTextFromWhitelist(result.argument);
-                    break;
+                case ADD_PHONE_TO_BLACKLIST:
+                    return addPhoneToBlacklist(result.argument);
+                case REMOVE_PHONE_FROM_BLACKLIST:
+                    return removePhoneFromBlacklist(result.argument);
+                case ADD_PHONE_TO_WHITELIST:
+                    return addPhoneToWhitelist(result.argument);
+                case REMOVE_PHONE_FROM_WHITELIST:
+                    return removePhoneFromWhitelist(result.argument);
+                case ADD_TEXT_TO_BLACKLIST:
+                    return addTextToBlacklist(result.argument);
+                case REMOVE_TEXT_FROM_BLACKLIST:
+                    return removeTextFromBlacklist(result.argument);
+                case ADD_TEXT_TO_WHITELIST:
+                    return addTextToWhitelist(result.argument);
+                case REMOVE_TEXT_FROM_WHITELIST:
+                    return removeTextFromWhitelist(result.argument);
             }
         }
+        return false;
     }
 
-    private void removeTextFromWhitelist(String argument) {
+    private boolean removeTextFromWhitelist(String argument) {
 
+        return false;
     }
 
-    private void addTextToWhitelist(String argument) {
+    private boolean addTextToWhitelist(String argument) {
 
+        return false;
     }
 
-    private void removeTextFromBlacklist(String argument) {
+    private boolean removeTextFromBlacklist(String argument) {
 
+        return false;
     }
 
-    private void addTextToBlacklist(String argument) {
+    private boolean addTextToBlacklist(String argument) {
 
+        return false;
     }
 
-    private void removePhoneFromWhitelist(String argument) {
+    private boolean removePhoneFromWhitelist(String argument) {
 
+        return false;
     }
 
-    private void addPhoneToWhitelist(String argument) {
+    private boolean addPhoneToWhitelist(String argument) {
 
+        return false;
     }
 
-    private void removePhoneFromBlacklist(String argument) {
+    private boolean removePhoneFromBlacklist(String argument) {
 
+        return false;
     }
 
-    private void addPhoneToBlacklist(String phone) {
+    private boolean addPhoneToBlacklist(String phone) {
 
+        return false;
     }
 
     @Nullable

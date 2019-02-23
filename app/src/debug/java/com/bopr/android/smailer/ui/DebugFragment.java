@@ -19,6 +19,7 @@ import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.GeoCoordinates;
 import com.bopr.android.smailer.GeoLocator;
 import com.bopr.android.smailer.GmailTransport;
+import com.bopr.android.smailer.MailMessage;
 import com.bopr.android.smailer.Notifications;
 import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
@@ -35,7 +36,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -79,6 +79,7 @@ import static com.bopr.android.smailer.util.Util.commaJoin;
 import static com.bopr.android.smailer.util.Util.formatLocation;
 import static com.bopr.android.smailer.util.Util.quoteRegex;
 import static com.bopr.android.smailer.util.Util.requireNonNull;
+import static java.util.Arrays.asList;
 
 /**
  * For debug purposes.
@@ -679,15 +680,14 @@ public class DebugFragment extends BasePreferenceFragment {
         protected String doInBackground(Void... params) {
             GmailTransport transport = new GmailTransport(getActivity());
             try {
-                String account = requireNonNull(defaultAccount(getActivity()));
-                transport.init(account, SCOPE_SEND);
-                transport.send(
-                        "test subject",
-                        "test message from " + AndroidUtil.getDeviceName(),
-                        null,
-                        properties.getProperty("default_recipient"),
-                        null
-                );
+                transport.init(requireNonNull(defaultAccount(getActivity())), SCOPE_SEND);
+
+                MailMessage message = new MailMessage();
+                message.setSubject("test subject");
+                message.setBody("test message from " + AndroidUtil.getDeviceName());
+                message.setRecipients(properties.getProperty("default_recipient"));
+
+                transport.send(message);
             } catch (Exception x) {
                 log.error("FAILED: ", x);
                 return "Sending mail failed: " + x.getMessage();
@@ -720,21 +720,21 @@ public class DebugFragment extends BasePreferenceFragment {
         protected String doInBackground(Void... params) {
             List<File> attachment = new LinkedList<>();
             attachment.add(getActivity().getDatabasePath(Settings.DB_NAME));
-            attachment.addAll(Arrays.asList(new File(getActivity().getFilesDir(), "log").listFiles()));
+            attachment.addAll(asList(new File(getActivity().getFilesDir(), "log").listFiles()));
 
+            GmailTransport transport = new GmailTransport(getActivity());
             try {
-                GmailTransport transport = new GmailTransport(getActivity());
-                String account = requireNonNull(defaultAccount(getActivity()));
-                transport.init(account, SCOPE_SEND);
-                transport.send(
-                        "SMailer log",
-                        "Device: " + AndroidUtil.getDeviceName(),
-                        attachment,
-                        properties.getProperty("developer_email"),
-                        null
-                );
+                transport.init(requireNonNull(defaultAccount(getActivity())), SCOPE_SEND);
+
+                MailMessage message = new MailMessage();
+                message.setSubject("SMailer log");
+                message.setBody("Device: " + AndroidUtil.getDeviceName());
+                message.setAttachment(attachment);
+                message.setRecipients(properties.getProperty("developer_email"));
+
+                transport.send(message);
             } catch (Exception x) {
-                log.error("Send mail failed", x);
+                DebugFragment.log.error("Send mail failed", x);
                 return "Send mail failed";
             }
 

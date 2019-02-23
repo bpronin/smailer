@@ -31,15 +31,18 @@ class RemoteCommandParser {
     RemoteCommandParser() {
     }
 
-    @Nullable Result parse(@NonNull MailMessage message) {
-        if (isEmpty(message.body)) {
+    @Nullable
+    Result parse(@NonNull MailMessage message) {
+        if (isEmpty(message.getBody())) {
             return null;
         }
 
-        /* remove quotation and so on */
-        String text = message.body
+        /* remove quotation line separators and so on */
+        String text = message.getBody()
                 .replaceAll(">(.*)\\r\\n", "")
                 .split("\\r\\n\\r\\n")[0]
+                .replaceAll("\\r", " ")
+                .replaceAll("\\n", " ")
                 .toLowerCase(Locale.ROOT);
 
         log.debug("Action text: " + text);
@@ -48,36 +51,48 @@ class RemoteCommandParser {
             return null;
         }
 
-        String argument = null;
         if (text.contains("blacklist")) {
             if (text.contains("delete") || text.contains("remove")) {
                 if (text.contains("text")) {
-                    return new Result(REMOVE_TEXT_FROM_BLACKLIST, argument);
+                    return new Result(REMOVE_TEXT_FROM_BLACKLIST, parseTextArgument(message));
                 } else {
-                    return new Result(REMOVE_PHONE_FROM_BLACKLIST, argument);
+                    return new Result(REMOVE_PHONE_FROM_BLACKLIST, parsePhoneArgument(message));
                 }
             } else {
                 if (text.contains("text")) {
-                    return new Result(ADD_TEXT_TO_BLACKLIST, argument);
+                    return new Result(ADD_TEXT_TO_BLACKLIST, parseTextArgument(message));
                 } else {
-                    return new Result(ADD_PHONE_TO_BLACKLIST, argument);
+                    return new Result(ADD_PHONE_TO_BLACKLIST, parsePhoneArgument(message));
                 }
             }
         } else if (text.contains("whitelist")) {
             if (text.contains("delete") || text.contains("remove")) {
                 if (text.contains("text")) {
-                    return new Result(REMOVE_TEXT_FROM_WHITELIST, argument);
+                    return new Result(REMOVE_TEXT_FROM_WHITELIST, parseTextArgument(message));
                 } else {
-                    return new Result(REMOVE_PHONE_FROM_WHITELIST, argument);
+                    return new Result(REMOVE_PHONE_FROM_WHITELIST, parsePhoneArgument(message));
                 }
             } else {
                 if (text.contains("text")) {
-                    return new Result(ADD_TEXT_TO_WHITELIST, argument);
+                    return new Result(ADD_TEXT_TO_WHITELIST, parseTextArgument(message));
                 } else {
-                    return new Result(ADD_PHONE_TO_WHITELIST, argument);
+                    return new Result(ADD_PHONE_TO_WHITELIST, parsePhoneArgument(message));
                 }
             }
         }
+        return null;
+    }
+
+    private String parsePhoneArgument(MailMessage message) {
+        String argument = dpParsePhoneArgument(message.getBody());
+        return argument != null ? argument : dpParsePhoneArgument(message.getSubject());
+    }
+
+    private String dpParsePhoneArgument(String text) {
+        return null;
+    }
+
+    private String parseTextArgument(MailMessage message) {
         return null;
     }
 
