@@ -131,6 +131,7 @@
     <string name="remote_control">Remote control</string>
     <string name="allow_control_remotely">Allow to control application by sending email on service account</string>
     <string name="remote_control_account">Service account</string>
+    <string name="same_as_sender">Same as sender</string>
 
     <string-array name="trigger_names">
         <item>Incoming SMS</item>

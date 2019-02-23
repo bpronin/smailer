@@ -15,6 +15,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.mail.internet.AddressException;
+
 import androidx.annotation.NonNull;
 import androidx.core.util.Consumer;
 
@@ -160,6 +162,8 @@ public class CallProcessor {
 //            handleError(event, x, R.string.cannot_connect_mail_server, ACTION_SHOW_SERVER, silent);
 //        } catch (MessagingException x) {
 //            handleError(event, x, R.string.unable_send_email, ACTION_SHOW_SERVER, silent);
+        } catch (AddressException x) {
+            handleError(event, x, R.string.no_recipients_specified, ACTION_SHOW_MAIN, silent);
         } catch (UserRecoverableAuthIOException x) {
             AuthorizationHelper.removeSelectedAccount(context);
             handleError(event, x, R.string.need_google_permission, ACTION_SHOW_MAIN, silent);

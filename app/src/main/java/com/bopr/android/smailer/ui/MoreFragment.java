@@ -109,7 +109,7 @@ public class MoreFragment extends BasePreferenceFragment {
     private void updateAccountPreference() {
         String value = settings.getString(KEY_PREF_REMOTE_CONTROL_ACCOUNT, "");
         if (isEmpty(value)) {
-            updateSummary(accountPreference, getString(R.string.not_specified), STYLE_ACCENTED);
+            updateSummary(accountPreference, getString(R.string.same_as_sender), STYLE_DEFAULT);
         } else {
             updateSummary(accountPreference, value, STYLE_DEFAULT);
         }

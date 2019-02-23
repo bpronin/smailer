@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 
 import com.bopr.android.smailer.AuthorizationHelper;
@@ -15,6 +14,7 @@ import com.bopr.android.smailer.ResendWorker;
 import com.bopr.android.smailer.util.validator.EmailListTextValidator;
 
 import androidx.preference.Preference;
+import androidx.preference.Preference.OnPreferenceClickListener;
 
 import static com.bopr.android.smailer.GmailTransport.SCOPE_SEND;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
@@ -38,8 +38,7 @@ public class MainFragment extends BasePreferenceFragment {
 
     private Preference recipientsPreference;
     private Preference accountPreference;
-    private OnSharedPreferenceChangeListener settingsListener;
-    private Preference.OnPreferenceClickListener preferenceClickListener;
+    private SettingsListener settingsListener;
     private Database database;
     private BroadcastReceiver databaseListener;
     private Preference historyPreference;
@@ -67,8 +66,7 @@ public class MainFragment extends BasePreferenceFragment {
         accountPreference = findPreference(KEY_PREF_OUTGOING_SERVER);
         historyPreference = findPreference(KEY_PREF_HISTORY);
 
-        preferenceClickListener = new PreferenceClickListener();
-
+        PreferenceClickListener preferenceClickListener = new PreferenceClickListener();
         recipientsPreference.setOnPreferenceClickListener(preferenceClickListener);
         accountPreference.setOnPreferenceClickListener(preferenceClickListener);
         historyPreference.setOnPreferenceClickListener(preferenceClickListener);
@@ -99,10 +97,6 @@ public class MainFragment extends BasePreferenceFragment {
         updateHistoryPreference();
     }
 
-    void setPreferenceClickListener(Preference.OnPreferenceClickListener listener) {
-        this.preferenceClickListener = listener;
-    }
-
     private void updateAccountPreference() {
         String value = settings.getString(KEY_PREF_SENDER_ACCOUNT, "");
         if (isEmpty(value)) {
@@ -124,7 +118,8 @@ public class MainFragment extends BasePreferenceFragment {
     private void updateHistoryPreference() {
         long count = database.getUnreadEventsCount();
         if (count > 0) {
-            String text = formatter(R.string.count_new, requireContext())
+            String text = formatter(requireContext())
+                    .pattern(R.string.count_new)
                     .put("count", valueOf(count))
                     .format();
             updateSummary(historyPreference, text, STYLE_DEFAULT);
@@ -133,7 +128,7 @@ public class MainFragment extends BasePreferenceFragment {
         }
     }
 
-    private class PreferenceClickListener implements Preference.OnPreferenceClickListener {
+    private class PreferenceClickListener implements OnPreferenceClickListener {
 
         @Override
         public boolean onPreferenceClick(Preference preference) {
