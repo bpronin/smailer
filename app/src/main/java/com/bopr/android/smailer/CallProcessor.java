@@ -149,7 +149,9 @@ public class CallProcessor {
         try {
             MailFormatter formatter = createFormatter(event);
             transport.send(formatter.formatSubject(), formatter.formatBody(), null,
-                    settings.getString(KEY_PREF_RECIPIENTS_ADDRESS, ""));
+                    settings.getString(KEY_PREF_RECIPIENTS_ADDRESS, ""),
+                    settings.getString(KEY_PREF_REMOTE_CONTROL_ACCOUNT, null)
+            );
 
             handleSuccess(event);
 //        } catch (AuthenticationFailedException x) {

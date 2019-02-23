@@ -27,9 +27,11 @@ import java.util.Properties;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
+import javax.mail.Address;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Session;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -38,6 +40,7 @@ import javax.mail.internet.MimeMultipart;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import static com.bopr.android.smailer.util.Util.isEmpty;
 import static javax.mail.Message.RecipientType.TO;
 
 public class GmailTransport {
@@ -71,8 +74,8 @@ public class GmailTransport {
     }
 
     public void send(String subject, String body, @Nullable Collection<File> attachment,
-                     @NonNull String recipients) throws IOException, MessagingException {
-        Message message = createMessage(subject, body, attachment, sender, recipients);
+                     @NonNull String recipients, @Nullable String replyTo) throws IOException, MessagingException {
+        Message message = createMessage(subject, body, attachment, sender, recipients, replyTo);
 
         service.users()
                 .messages()
@@ -131,23 +134,23 @@ public class GmailTransport {
 
     @NonNull
     private Message createMessage(String subject, String body, @Nullable Collection<File> attachment,
-                                  @NonNull String sender, @NonNull String recipients) throws MessagingException, IOException {
+                                  @NonNull String sender, @NonNull String recipients, @Nullable String replyTo)
+            throws MessagingException, IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        createMimeMessage(subject, body, attachment, sender, recipients).writeTo(buffer);
+        createMimeMessage(subject, body, attachment, sender, recipients, replyTo).writeTo(buffer);
         return new Message().setRaw(Base64.encodeBase64URLSafeString(buffer.toByteArray()));
     }
 
     @NonNull
     private MimeMessage createMimeMessage(String subject, String body, @Nullable Collection<File> attachment,
-                                          @NonNull String sender, @NonNull String recipients) throws MessagingException {
+                                          @NonNull String sender, @NonNull String recipients, @Nullable String replyTo)
+            throws MessagingException {
         MimeMessage message = new MimeMessage(session);
         message.setFrom(sender);
         message.setSubject(subject, UTF_8);
-
-        if (recipients.indexOf(',') > 0) {
-            message.setRecipients(TO, InternetAddress.parse(recipients));
-        } else {
-            message.setRecipients(TO, new InternetAddress[]{new InternetAddress(recipients)});
+        message.setRecipients(TO, parseAddresses(recipients));
+        if (!isEmpty(replyTo)) {
+            message.setReplyTo(parseAddresses(replyTo));
         }
 
         if (attachment == null) {
@@ -157,6 +160,14 @@ public class GmailTransport {
         }
 
         return message;
+    }
+
+    private Address[] parseAddresses(String addresses) throws AddressException {
+        if (addresses.indexOf(',') > 0) {
+            return InternetAddress.parse(addresses);
+        } else {
+            return new InternetAddress[]{new InternetAddress(addresses)};
+        }
     }
 
     @NonNull

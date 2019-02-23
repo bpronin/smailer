@@ -684,7 +684,8 @@ public class DebugFragment extends BasePreferenceFragment {
                         "test subject",
                         "test message from " + AndroidUtil.getDeviceName(),
                         null,
-                        properties.getProperty("default_recipient")
+                        properties.getProperty("default_recipient"),
+                        null
                 );
             } catch (Exception x) {
                 log.error("FAILED: ", x);
@@ -760,7 +761,8 @@ public class DebugFragment extends BasePreferenceFragment {
                         "SMailer log",
                         "Device: " + AndroidUtil.getDeviceName(),
                         attachment,
-                        properties.getProperty("developer_email")
+                        properties.getProperty("developer_email"),
+                        null
                 );
             } catch (Exception x) {
                 log.error("Send mail failed", x);
