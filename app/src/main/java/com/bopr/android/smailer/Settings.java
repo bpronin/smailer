@@ -17,8 +17,8 @@ import androidx.annotation.NonNull;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.bopr.android.smailer.util.Util.asSet;
-import static com.bopr.android.smailer.util.Util.commaSeparated;
-import static com.bopr.android.smailer.util.Util.parseCommaSeparated;
+import static com.bopr.android.smailer.util.Util.commaJoin;
+import static com.bopr.android.smailer.util.Util.commaSplit;
 import static com.bopr.android.smailer.util.Util.toSet;
 
 /**
@@ -150,19 +150,19 @@ public class Settings extends SharedPreferencesWrapper {
         PhoneEventFilter filter = new PhoneEventFilter();
 
         filter.setTriggers(getStringSet(KEY_PREF_EMAIL_TRIGGERS, Collections.<String>emptySet()));
-        filter.setPhoneBlacklist(toSet(parseCommaSeparated(getString(KEY_PREF_FILTER_BLACKLIST, ""))));
-        filter.setPhoneWhitelist(toSet(parseCommaSeparated(getString(KEY_PREF_FILTER_WHITELIST, ""))));
-        filter.setTextBlacklist(toSet(parseCommaSeparated(getString(KEY_PREF_FILTER_TEXT_BLACKLIST, ""))));
-        filter.setTextWhitelist(toSet(parseCommaSeparated(getString(KEY_PREF_FILTER_TEXT_WHITELIST, ""))));
+        filter.setPhoneBlacklist(toSet(commaSplit(getString(KEY_PREF_FILTER_BLACKLIST, ""))));
+        filter.setPhoneWhitelist(toSet(commaSplit(getString(KEY_PREF_FILTER_WHITELIST, ""))));
+        filter.setTextBlacklist(toSet(commaSplit(getString(KEY_PREF_FILTER_TEXT_BLACKLIST, ""))));
+        filter.setTextWhitelist(toSet(commaSplit(getString(KEY_PREF_FILTER_TEXT_WHITELIST, ""))));
 
         return filter;
     }
 
     public void putFilter(PhoneEventFilter filter) {
-        edit().putString(KEY_PREF_FILTER_BLACKLIST, commaSeparated(filter.getPhoneBlacklist()))
-                .putString(KEY_PREF_FILTER_WHITELIST, commaSeparated(filter.getPhoneWhitelist()))
-                .putString(KEY_PREF_FILTER_TEXT_BLACKLIST, commaSeparated(filter.getTextBlacklist()))
-                .putString(KEY_PREF_FILTER_TEXT_WHITELIST, commaSeparated(filter.getTextWhitelist()))
+        edit().putString(KEY_PREF_FILTER_BLACKLIST, commaJoin(filter.getPhoneBlacklist()))
+                .putString(KEY_PREF_FILTER_WHITELIST, commaJoin(filter.getPhoneWhitelist()))
+                .putString(KEY_PREF_FILTER_TEXT_BLACKLIST, commaJoin(filter.getTextBlacklist()))
+                .putString(KEY_PREF_FILTER_TEXT_WHITELIST, commaJoin(filter.getTextWhitelist()))
                 .apply();
     }
 

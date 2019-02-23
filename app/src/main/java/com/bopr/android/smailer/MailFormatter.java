@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 
 import com.bopr.android.smailer.util.ContactUtils;
+import com.bopr.android.smailer.util.TagFormatter;
 import com.bopr.android.smailer.util.Util;
 
 import java.text.DateFormat;
@@ -60,7 +61,7 @@ class MailFormatter {
     private String deviceName;
     private Set<String> contentOptions;
     private Date sendTime;
-    private String serviceAddress;
+    private String serviceAccount;
 
     MailFormatter(Context context, PhoneEvent event) {
         this.event = event;
@@ -117,8 +118,13 @@ class MailFormatter {
         this.sendTime = sendTime;
     }
 
-    void setRemoteControl(String serviceAddress) {
-        this.serviceAddress = serviceAddress;
+    /**
+     * Sets service account email address
+     *
+     * @param serviceAddress address
+     */
+    void setServiceAccount(String serviceAddress) {
+        this.serviceAccount = serviceAddress;
     }
 
     /**
@@ -342,10 +348,11 @@ class MailFormatter {
 
     @Nullable
     private String formatServiceLink() {
-        if (!isEmpty(serviceAddress)) {
-            return formatter(resources).pattern(SERVICE_LINK_PATTERN)
-                    .put("service_address", serviceAddress)
-                    .put("service_subject", formatter(resources).pattern(SERVICE_SUBJECT_PATTERN)
+        if (!isEmpty(serviceAccount)) {
+            TagFormatter formatter = formatter(resources);
+            return formatter.pattern(SERVICE_LINK_PATTERN)
+                    .put("service_address", serviceAccount)
+                    .put("service_subject", formatter.pattern(SERVICE_SUBJECT_PATTERN)
                             .put("app_name", R.string.app_name)
                             .put("command", formatServiceCommand())
                             .format())
@@ -358,9 +365,9 @@ class MailFormatter {
 
     @NonNull
     private String formatServiceBody() {
-        return "device:" + deviceName + "\n"
-                + "action:" + "blacklist" + "\n"
-                + "phone:" + event.getPhone() + "\n";
+        return "device:" + deviceName + "\\\n"
+                + "action:" + "blacklist" + "\\\n"
+                + "phone:" + event.getPhone() + "\\\n";
     }
 
     private String formatServiceCommand() {

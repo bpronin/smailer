@@ -46,8 +46,8 @@
         <androidx.preference.SwitchPreference
             android:icon="@drawable/ic_remote"
             android:key="remote_control"
-            android:summary="@string/allow_control_remotely"
-            android:title="@string/remote_control" />
+            android:title="@string/allow_control_remotely"
+            />
 
         <androidx.preference.PreferenceScreen
             android:icon="@drawable/ic_pref_account"

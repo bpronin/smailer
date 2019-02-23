@@ -18,6 +18,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.core.util.Consumer;
 
+import static com.bopr.android.smailer.GmailTransport.SCOPE_SEND;
 import static com.bopr.android.smailer.Notifications.ACTION_SHOW_MAIN;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
@@ -25,6 +26,7 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_MARK_SMS_AS_READ;
 import static com.bopr.android.smailer.Settings.KEY_PREF_NOTIFY_SEND_SUCCESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL;
+import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_ACCOUNT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.util.ContactUtils.getContactName;
 
@@ -124,7 +126,7 @@ public class CallProcessor {
     private boolean startMailSession(boolean silent) {
         log.debug("Starting session");
         try {
-            transport.init(settings.getString(KEY_PREF_SENDER_ACCOUNT, ""));
+            transport.init(settings.getString(KEY_PREF_SENDER_ACCOUNT, ""), SCOPE_SEND);
             return true;
         } catch (IllegalAccessException x) {
             log.error("Failed starting session: ", x);
@@ -173,7 +175,7 @@ public class CallProcessor {
         formatter.setContentOptions(settings.getStringSet(KEY_PREF_EMAIL_CONTENT, null));
 
         if (settings.getBoolean(KEY_PREF_REMOTE_CONTROL, false)) {
-            formatter.setRemoteControl(settings.getString(KEY_PREF_RECIPIENTS_ADDRESS, null));
+            formatter.setServiceAccount(settings.getString(KEY_PREF_REMOTE_CONTROL_ACCOUNT, null));
         }
 
         String locale = settings.getString(KEY_PREF_EMAIL_LOCALE, null);

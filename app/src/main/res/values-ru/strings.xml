@@ -126,8 +126,7 @@
     <string name="you_had_outgoing_call">Исходящий звонок длительностью {duration}.</string>
     <string name="service_link">Отправить сервисную команду</string>
     <string name="remote_control">Удаленное управление</string>
-    <string name="enable_remote_control">Включить удаленное управление</string>
-    <string name="allow_control_remotely">Управлять приложением по почте на сервисный аккаунт</string>
+    <string name="allow_control_remotely">Позволить управлять приложением посредством отправки почты на сервисный аккаунт</string>
     <string name="remote_control_account">Сервисный аккаунт</string>
 
     <string-array name="trigger_names">
@@ -145,6 +144,7 @@
         <item>Имя звонившего</item>
         <item>Название устройства</item>
         <item>Местоположение устройства</item>
+        <item>Ссылка удаленного контроля</item>
     </string-array>
 
     <string-array name="language_names">

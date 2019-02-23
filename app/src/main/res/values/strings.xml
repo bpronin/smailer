@@ -127,10 +127,9 @@
     <string name="you_had_incoming_call">You had an incoming call of {duration} duration.</string>
     <string name="you_had_missed_call">You had a missed call.</string>
     <string name="you_had_outgoing_call">You had an outgoing call of {duration} duration.</string>
-    <string name="service_link">Send service command back</string>
+    <string name="service_link">Send service command</string>
     <string name="remote_control">Remote control</string>
-    <string name="enable_remote_control">Enable remote control</string>
-    <string name="allow_control_remotely">Allow to control application via email on service account</string>
+    <string name="allow_control_remotely">Allow to control application by sending email on service account</string>
     <string name="remote_control_account">Service account</string>
 
     <string-array name="trigger_names">
@@ -148,6 +147,7 @@
         <item>Caller contact name</item>
         <item>Device name</item>
         <item>Device location</item>
+        <item>Remote control link</item>
     </string-array>
 
     <string-array name="language_names">

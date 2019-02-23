@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.bopr.android.smailer.AuthorizationHelper;
-import com.bopr.android.smailer.GmailTransport;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.AndroidUtil;
 
@@ -13,6 +12,7 @@ import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 
+import static com.bopr.android.smailer.GmailTransport.SCOPE_ALL;
 import static com.bopr.android.smailer.Settings.KEY_PREF_DEVICE_ALIAS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
 import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_ACCOUNT;
@@ -32,7 +32,7 @@ public class MoreFragment extends BasePreferenceFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        authorizator = new AuthorizationHelper(this, GmailTransport.SCOPE, KEY_PREF_REMOTE_CONTROL_ACCOUNT);
+        authorizator = new AuthorizationHelper(this, SCOPE_ALL, KEY_PREF_REMOTE_CONTROL_ACCOUNT);
 
         settingsListener = new SettingsListener();
         settings.registerOnSharedPreferenceChangeListener(settingsListener);

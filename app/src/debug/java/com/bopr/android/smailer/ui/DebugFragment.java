@@ -51,7 +51,9 @@ import androidx.preference.PreferenceScreen;
 import static android.Manifest.permission.BROADCAST_SMS;
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-import static com.bopr.android.smailer.AuthorizationHelper.getDefaultGoogleAccount;
+import static com.bopr.android.smailer.AuthorizationHelper.defaultAccount;
+import static com.bopr.android.smailer.GmailTransport.SCOPE_ALL;
+import static com.bopr.android.smailer.GmailTransport.SCOPE_SEND;
 import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
@@ -73,7 +75,7 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
 import static com.bopr.android.smailer.util.ResourceUtil.showToast;
 import static com.bopr.android.smailer.util.Util.asSet;
-import static com.bopr.android.smailer.util.Util.commaSeparated;
+import static com.bopr.android.smailer.util.Util.commaJoin;
 import static com.bopr.android.smailer.util.Util.formatLocation;
 import static com.bopr.android.smailer.util.Util.quoteRegex;
 import static com.bopr.android.smailer.util.Util.requireNonNull;
@@ -101,7 +103,7 @@ public class DebugFragment extends BasePreferenceFragment {
         setHasOptionsMenu(false);
         database = new Database(context);
         locator = new GeoLocator(context, database);
-        authorizator = new AuthorizationHelper(this, GmailTransport.SCOPE, KEY_PREF_SENDER_ACCOUNT);
+        authorizator = new AuthorizationHelper(this, SCOPE_SEND, KEY_PREF_SENDER_ACCOUNT);
     }
 
     @Override
@@ -420,7 +422,7 @@ public class DebugFragment extends BasePreferenceFragment {
         Properties properties = loadDebugProperties();
 
         settings.edit()
-                .putString(KEY_PREF_SENDER_ACCOUNT, AuthorizationHelper.getDefaultGoogleAccount(context))
+                .putString(KEY_PREF_SENDER_ACCOUNT, defaultAccount(context))
                 .putString(KEY_PREF_RECIPIENTS_ADDRESS, properties.getProperty("default_recipient"))
                 .putStringSet(KEY_PREF_EMAIL_TRIGGERS, asSet(VAL_PREF_TRIGGER_IN_SMS,
                         VAL_PREF_TRIGGER_IN_CALLS,
@@ -434,8 +436,8 @@ public class DebugFragment extends BasePreferenceFragment {
                 .putString(KEY_PREF_EMAIL_LOCALE, DEFAULT_LOCALE)
                 .putBoolean(KEY_PREF_NOTIFY_SEND_SUCCESS, true)
                 .putBoolean(KEY_PREF_RESEND_UNSENT, true)
-                .putString(KEY_PREF_FILTER_BLACKLIST, commaSeparated(asSet("+123456789", "+9876543*")))
-                .putString(KEY_PREF_FILTER_TEXT_BLACKLIST, commaSeparated(asSet("Bad text", quoteRegex("Expression"))))
+                .putString(KEY_PREF_FILTER_BLACKLIST, commaJoin(asSet("+123456789", "+9876543*")))
+                .putString(KEY_PREF_FILTER_TEXT_BLACKLIST, commaJoin(asSet("Bad text", quoteRegex("Expression"))))
                 .apply();
 
         refreshPreferences();
@@ -676,7 +678,8 @@ public class DebugFragment extends BasePreferenceFragment {
         protected String doInBackground(Void... params) {
             GmailTransport transport = new GmailTransport(getActivity());
             try {
-                transport.init(getDefaultGoogleAccount(getActivity()));
+                String account = requireNonNull(defaultAccount(getActivity()));
+                transport.init(account, SCOPE_SEND);
                 transport.send(
                         "test subject",
                         "test message from " + AndroidUtil.getDeviceName(),
@@ -704,9 +707,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
     private static class ListMailTask extends LongAsyncTask<Void, Void, String> {
 
-        private Properties properties;
-
-        public ListMailTask(Activity activity) {
+        ListMailTask(Activity activity) {
             super(activity);
         }
 
@@ -714,7 +715,8 @@ public class DebugFragment extends BasePreferenceFragment {
         protected String doInBackground(Void... params) {
             GmailTransport transport = new GmailTransport(getActivity());
             try {
-                transport.init(requireNonNull(getDefaultGoogleAccount(getActivity())));
+                String account = requireNonNull(defaultAccount(getActivity()));
+                transport.init(account, SCOPE_ALL);
                 transport.list();
             } catch (Exception x) {
                 log.error("FAILED: ", x);
@@ -752,7 +754,8 @@ public class DebugFragment extends BasePreferenceFragment {
 
             try {
                 GmailTransport transport = new GmailTransport(getActivity());
-                transport.init(AuthorizationHelper.getDefaultGoogleAccount(getActivity()));
+                String account = requireNonNull(defaultAccount(getActivity()));
+                transport.init(account, SCOPE_SEND);
                 transport.send(
                         "SMailer log",
                         "Device: " + AndroidUtil.getDeviceName(),

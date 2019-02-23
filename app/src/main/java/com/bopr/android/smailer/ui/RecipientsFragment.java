@@ -28,7 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.util.ResourceUtil.showToast;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
-import static com.bopr.android.smailer.util.Util.commaSeparated;
+import static com.bopr.android.smailer.util.Util.commaJoin;
 import static java.lang.String.valueOf;
 
 
@@ -133,7 +133,7 @@ public class RecipientsFragment extends BaseFragment {
         listView.setAdapter(listAdapter);
 
         List<Item> items = new ArrayList<>();
-        List<String> addresses = Util.parseSeparated(settings.getString(KEY_PREF_RECIPIENTS_ADDRESS, ""), ",", true);
+        List<String> addresses = Util.split(settings.getString(KEY_PREF_RECIPIENTS_ADDRESS, ""), ",", true);
         for (String address : addresses) {
             items.add(new Item(address));
         }
@@ -147,7 +147,7 @@ public class RecipientsFragment extends BaseFragment {
         }
 
         settings.edit()
-                .putString(KEY_PREF_RECIPIENTS_ADDRESS, commaSeparated(addresses))
+                .putString(KEY_PREF_RECIPIENTS_ADDRESS, commaJoin(addresses))
                 .apply();
     }
 

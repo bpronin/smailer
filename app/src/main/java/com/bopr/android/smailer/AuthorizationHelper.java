@@ -11,12 +11,14 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.bopr.android.smailer.util.Util;
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.List;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -41,11 +43,11 @@ public class AuthorizationHelper {
     private final GoogleAccountManager accountManager;
     private final String accountSetting;
     private final OnAccountsChangedListener accountsChangedListener;
-    private final String scope;
+    private final List<String> scopes;
 
-    public AuthorizationHelper(Fragment fragment, String scope, String accountSetting) {
+    public AuthorizationHelper(Fragment fragment, List<String> scopes, String accountSetting) {
         this.fragment = fragment;
-        this.scope = scope;
+        this.scopes = scopes;
         this.accountSetting = accountSetting;
         settings = new Settings(fragment.requireActivity());
         accountManager = new GoogleAccountManager(fragment.requireContext());
@@ -97,7 +99,7 @@ public class AuthorizationHelper {
         Account account = accountManager.getAccountByName(accountName);
         accountManager.getAccountManager().getAuthToken(
                 account,
-                "oauth2: " + scope,
+                "oauth2: " + Util.join(" ", scopes),
                 null,
                 fragment.requireActivity(),
                 new PermissionRequestCallback(accountName),
@@ -118,7 +120,7 @@ public class AuthorizationHelper {
     }
 
     @Nullable
-    public static String getDefaultGoogleAccount(Context context) {
+    public static String defaultAccount(Context context) {
         Account[] accounts = new GoogleAccountManager(context).getAccounts();
         return accounts.length > 0 ? accounts[0].name : null;
     }

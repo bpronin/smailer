@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
@@ -36,14 +38,14 @@ import javax.mail.internet.MimeMultipart;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import static java.util.Collections.singleton;
 import static javax.mail.Message.RecipientType.TO;
 
 public class GmailTransport {
 
     private static Logger log = LoggerFactory.getLogger("GmailTransport");
 
-    public static String SCOPE = GmailScopes.MAIL_GOOGLE_COM;
+    public static List<String> SCOPE_SEND = Collections.singletonList(GmailScopes.GMAIL_SEND);
+    public static List<String> SCOPE_ALL = Collections.singletonList(GmailScopes.MAIL_GOOGLE_COM);
 
     private static final String USER_ID = "me"; /* do not change */
     private static final String UTF_8 = "UTF-8";
@@ -62,9 +64,9 @@ public class GmailTransport {
         transport = AndroidHttp.newCompatibleTransport();
     }
 
-    public void init(@NonNull String senderAccount) throws IllegalAccessException {
+    public void init(@NonNull String senderAccount, List<String> scopes) throws IllegalAccessException {
         this.sender = senderAccount;
-        service = createService(createCredential(senderAccount));
+        service = createService(createCredential(senderAccount, scopes));
         session = Session.getDefaultInstance(new Properties(), null);
     }
 
@@ -118,8 +120,8 @@ public class GmailTransport {
     }
 
     @NonNull
-    private GoogleAccountCredential createCredential(String accountName) throws IllegalAccessException {
-        GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(context, singleton(SCOPE));
+    private GoogleAccountCredential createCredential(String accountName, List<String> scopes) throws IllegalAccessException {
+        GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(context, scopes);
         credential.setSelectedAccountName(accountName);
         if (credential.getSelectedAccount() == null) {
             throw new IllegalAccessException("Account does not exist: " + accountName);

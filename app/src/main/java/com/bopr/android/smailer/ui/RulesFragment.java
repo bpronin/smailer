@@ -17,8 +17,8 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_TEXT_BLACKLIST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_TEXT_WHITELIST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_WHITELIST;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
+import static com.bopr.android.smailer.util.Util.commaSplit;
 import static com.bopr.android.smailer.util.Util.isEmpty;
-import static com.bopr.android.smailer.util.Util.parseCommaSeparated;
 
 /**
  * Conditions settings activity's fragment.
@@ -123,7 +123,7 @@ public class RulesFragment extends BasePreferenceFragment {
 
     private String formatListAndSize(String value, int pattern, int zeroSizeText) {
         TagFormatter formatter = formatter(pattern, requireContext());
-        int size = parseCommaSeparated(value).size();
+        int size = commaSplit(value).size();
         if (size > 0) {
             return formatter.put("size", String.valueOf(size)).format();
         } else {

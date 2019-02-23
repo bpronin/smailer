@@ -108,11 +108,11 @@ public class Util {
     }
 
     @SafeVarargs
-    public static <T> String separated(String divider, T... values) {
-        return separated(divider, Arrays.asList(values));
+    public static <T> String join(String divider, T... values) {
+        return join(divider, Arrays.asList(values));
     }
 
-    public static String separated(String divider, Collection values) {
+    public static String join(String divider, Collection values) {
         StringBuilder builder = new StringBuilder();
         for (Iterator iterator = values.iterator(); iterator.hasNext(); ) {
             builder.append(iterator.next());
@@ -123,11 +123,7 @@ public class Util {
         return builder.toString();
     }
 
-    public static String commaSeparated(Collection values) {
-        return separated(",", values);
-    }
-
-    public static List<String> parseSeparated(String value, String divider, boolean trim) {
+    public static List<String> split(String value, String divider, boolean trim) {
         if (!isEmpty(value)) {
             String s = value;
             if (trim) {
@@ -140,8 +136,12 @@ public class Util {
         return Collections.emptyList();
     }
 
-    public static List<String> parseCommaSeparated(String s) {
-        return parseSeparated(s, ",", true);
+    public static String commaJoin(Collection values) {
+        return join(",", values);
+    }
+
+    public static List<String> commaSplit(String s) {
+        return split(s, ",", true);
     }
 
     @SafeVarargs

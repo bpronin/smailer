@@ -94,19 +94,19 @@ public class UtilUnitTest {
 
     @Test
     public void testStringOf() {
-        assertEquals("1, 2, 3", Util.separated(", ", 1, 2, 3));
-        assertEquals("1, null, null", Util.separated(", ", 1, null, null));
-        assertEquals("", Util.separated(", "));
+        assertEquals("1, 2, 3", Util.join(", ", 1, 2, 3));
+        assertEquals("1, null, null", Util.join(", ", 1, null, null));
+        assertEquals("", Util.join(", "));
     }
 
     @Test
     public void testParseSeparated() {
-        assertArrayEquals(new String[]{"1", " 2", "3 "}, Util.parseSeparated("1, 2,3 ", ",", false).toArray());
-        assertArrayEquals(new String[]{"1", "2", "3"}, Util.parseSeparated("1, 2, 3 ", ",", true).toArray());
-        assertArrayEquals(new String[]{" "}, Util.parseSeparated(" ", ",", false).toArray());
-        assertArrayEquals(new String[]{}, Util.parseSeparated("", ",", true).toArray());
-        assertArrayEquals(new String[]{}, Util.parseSeparated(" ", ",", true).toArray());
-        assertArrayEquals(new String[]{}, Util.parseSeparated(null, ",", true).toArray());
+        assertArrayEquals(new String[]{"1", " 2", "3 "}, Util.split("1, 2,3 ", ",", false).toArray());
+        assertArrayEquals(new String[]{"1", "2", "3"}, Util.split("1, 2, 3 ", ",", true).toArray());
+        assertArrayEquals(new String[]{" "}, Util.split(" ", ",", false).toArray());
+        assertArrayEquals(new String[]{}, Util.split("", ",", true).toArray());
+        assertArrayEquals(new String[]{}, Util.split(" ", ",", true).toArray());
+        assertArrayEquals(new String[]{}, Util.split(null, ",", true).toArray());
     }
 
     @Test
