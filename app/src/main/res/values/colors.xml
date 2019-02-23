@@ -3,5 +3,7 @@
     <color name="colorPrimary">#4D814F</color>
     <color name="colorPrimaryDark">#367735</color>
     <color name="colorAccent">#872E3D</color>
-    <color name="errorLine">#e7291f</color>
+    <color name="toastBackground">#DA872E3D</color>
+    <color name="toastForeground">@color/primary_text_default_material_dark</color>
+    <color name="errorLine">#ff5722</color> <!-- same as private error_color_material_light -->
 </resources>

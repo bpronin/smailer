@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.PermissionInfo;
-import android.widget.Toast;
 
 import com.bopr.android.smailer.util.TagFormatter;
 import com.bopr.android.smailer.util.Util;
@@ -42,7 +41,9 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
 import static com.bopr.android.smailer.util.AndroidUtil.isPermissionsDenied;
+import static com.bopr.android.smailer.util.ResourceUtil.showToast;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
+import static com.bopr.android.smailer.util.Util.requireNonNull;
 import static java.util.Arrays.asList;
 
 /**
@@ -59,21 +60,21 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
     private Activity activity;
     private Settings settings;
     private int requestResultCode = nextRequestResult.incrementAndGet();
-    private Map<String, Integer> items = new HashMap<>();
+    private Map<String, Integer> rationales = new HashMap<>();
 
     protected PreferencesPermissionsChecker(Activity activity, Settings settings) {
         this.activity = activity;
         this.settings = settings;
         this.settings.registerOnSharedPreferenceChangeListener(this);
 
-        items.put(RECEIVE_SMS, R.string.permission_rationale_receive_sms);
-        items.put(WRITE_SMS, R.string.permission_rationale_write_sms);
-        items.put(READ_SMS, R.string.permission_rationale_read_sms);
-        items.put(READ_PHONE_STATE, R.string.permission_rationale_phone_state);
-        items.put(PROCESS_OUTGOING_CALLS, R.string.permission_rationale_outgoing_call);
-        items.put(READ_CONTACTS, R.string.permission_rationale_read_contacts);
-        items.put(ACCESS_COARSE_LOCATION, R.string.permission_rationale_coarse_location);
-        items.put(ACCESS_FINE_LOCATION, R.string.permission_rationale_fine_location);
+        rationales.put(RECEIVE_SMS, R.string.permission_rationale_receive_sms);
+        rationales.put(WRITE_SMS, R.string.permission_rationale_write_sms);
+        rationales.put(READ_SMS, R.string.permission_rationale_read_sms);
+        rationales.put(READ_PHONE_STATE, R.string.permission_rationale_phone_state);
+        rationales.put(PROCESS_OUTGOING_CALLS, R.string.permission_rationale_outgoing_call);
+        rationales.put(READ_CONTACTS, R.string.permission_rationale_read_contacts);
+        rationales.put(ACCESS_COARSE_LOCATION, R.string.permission_rationale_coarse_location);
+        rationales.put(ACCESS_FINE_LOCATION, R.string.permission_rationale_fine_location);
     }
 
     public void destroy() {
@@ -83,7 +84,7 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
     public void checkAll() {
         boolean neverRequested = false;
 
-        for (String permission : items.keySet()) {
+        for (String permission : rationales.keySet()) {
             if (isPermissionsDenied(activity, permission) && !needExplanation(permission)) {
                 neverRequested = true;
                 break;
@@ -91,7 +92,7 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
         }
 
         if (neverRequested) {
-            check(items.keySet());
+            check(rationales.keySet());
         }
     }
 
@@ -106,7 +107,7 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
             }
 
             if (!deniedPermissions.isEmpty()) {
-                Toast.makeText(activity, R.string.since_permissions_not_granted, Toast.LENGTH_LONG).show();
+                showToast(activity, R.string.since_permissions_not_granted);
                 onPermissionsDenied(deniedPermissions);
             }
         }
@@ -228,8 +229,8 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
     private String formatRationale(Collection<String> permissions) {
         StringBuilder b = new StringBuilder();
         for (String permission : permissions) {
-            int patternResourceId = items.get(permission);
-            TagFormatter line = formatter(patternResourceId, activity)
+            TagFormatter line = formatter(activity)
+                    .pattern(requireNonNull(rationales.get(permission)))
                     .put("permission", getPermissionLabel(permission));
             b.append(line).append("\n\n");
         }

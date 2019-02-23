@@ -34,7 +34,7 @@ public class TagFormatter {
         return new TagFormatter(context).pattern(pattern);
     }
     public static TagFormatter formatter(int patternResourceId, @NonNull Context context) {
-        return new TagFormatter(context).patternRes(patternResourceId);
+        return formatter(context).pattern(patternResourceId);
     }
 
     public static TagFormatter formatter(String pattern, @NonNull Resources resources) {
@@ -42,7 +42,7 @@ public class TagFormatter {
     }
 
     public static TagFormatter formatter(int patternResourceId, @NonNull Resources resources) {
-        return new TagFormatter(resources).patternRes(patternResourceId);
+        return new TagFormatter(resources).pattern(patternResourceId);
     }
 
     public static TagFormatter formatter(@NonNull Context context) {
@@ -65,7 +65,7 @@ public class TagFormatter {
         return this;
     }
 
-    public TagFormatter patternRes(int resourceId) {
+    public TagFormatter pattern(int resourceId) {
         return pattern(resources.getString(resourceId));
     }
 

@@ -17,13 +17,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.PhoneEventFilter;
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.util.ResourceUtil;
+import com.bopr.android.smailer.ui.EditFilterListItemDialogFragment.OnClose;
+import com.bopr.android.smailer.util.TagFormatter;
+
+import java.util.Set;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,8 +34,13 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import static androidx.recyclerview.widget.RecyclerView.NO_POSITION;
-import static com.bopr.android.smailer.util.TagFormatter.formatter;
+import static com.bopr.android.smailer.util.ResourceUtil.eventDirectionImage;
+import static com.bopr.android.smailer.util.ResourceUtil.eventStateImage;
+import static com.bopr.android.smailer.util.ResourceUtil.eventTypeImage;
+import static com.bopr.android.smailer.util.ResourceUtil.showToast;
 import static com.bopr.android.smailer.util.Util.formatDuration;
+import static com.bopr.android.smailer.util.Util.isEmpty;
+import static com.bopr.android.smailer.util.Util.isTrimEmpty;
 
 
 /**
@@ -50,10 +57,13 @@ public class HistoryFragment extends BaseFragment {
     private int selectedListItemPosition = NO_POSITION;
     private SharedPreferences.OnSharedPreferenceChangeListener settingsChangeListener;
     private BroadcastReceiver databaseListener;
+    private TagFormatter formatter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        formatter = new TagFormatter(requireContext());
 
         settingsChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
 
@@ -161,7 +171,7 @@ public class HistoryFragment extends BaseFragment {
     }
 
     private void clearData() {
-        new AlertDialog.Builder(getContext())
+        new AlertDialog.Builder(requireContext())
                 .setMessage(R.string.ask_clear_history)
                 .setPositiveButton(R.string.clear_history, new DialogInterface.OnClickListener() {
 
@@ -182,33 +192,59 @@ public class HistoryFragment extends BaseFragment {
                 .show();
     }
 
+    private EditFilterListItemDialogFragment createEditPhoneDialog(String number, OnClose onClose) {
+        EditPhoneDialogFragment dialog = new EditPhoneDialogFragment();
+        dialog.setTitle(R.string.add);
+        dialog.setInitialValue(number);
+        dialog.setOnClose(onClose);
+        return dialog;
+    }
+
     private void addToBlacklist() {
         if (selectedListItemPosition != NO_POSITION) {
             String number = listAdapter.getItem(selectedListItemPosition).getPhone();
+            createEditPhoneDialog(number, new OnClose() {
 
-            phoneEventFilter.getPhoneBlacklist().add(number);
-            settings.putFilter(phoneEventFilter);
-
-            Toast.makeText(getContext(),
-                    formatter(R.string.added_to_blacklist, requireContext())
-                            .put("number", number)
-                            .format(),
-                    Toast.LENGTH_SHORT).show();
+                @Override
+                public void onOkClick(String number) {
+                    if (!isEmpty(number)) {
+                        Set<String> blacklist = phoneEventFilter.getPhoneBlacklist();
+                        if (blacklist.contains(number)) {
+                            showToast(requireContext(), formatter.pattern(R.string.item_already_exists)
+                                    .put("item", number).format()
+                            );
+                        } else if (!isTrimEmpty(number)) {
+                            blacklist.add(number);
+                            settings.putFilter(phoneEventFilter);
+                        }
+                    }
+                }
+            })
+                    .showDialog(getActivity());
         }
     }
 
     private void addToWhitelist() {
         if (selectedListItemPosition != NO_POSITION) {
             String number = listAdapter.getItem(selectedListItemPosition).getPhone();
+            createEditPhoneDialog(number, new OnClose() {
 
-            phoneEventFilter.getPhoneWhitelist().add(number);
-            settings.putFilter(phoneEventFilter);
-
-            Toast.makeText(getContext(),
-                    formatter(R.string.added_to_whitelist, requireContext())
-                            .put("number", number)
-                            .format(),
-                    Toast.LENGTH_SHORT).show();
+                @Override
+                public void onOkClick(String number) {
+                    if (!isEmpty(number)) {
+                        Set<String> whitelist = phoneEventFilter.getPhoneWhitelist();
+                        if (whitelist.contains(number)) {
+                            showToast(requireContext(), formatter.pattern(R.string.item_already_exists)
+                                    .put("item", number).format()
+                            );
+                        } else if (!isTrimEmpty(number)) {
+                            whitelist.add(number);
+                            settings.putFilter(phoneEventFilter);
+                        }
+                    }
+                }
+            })
+                    .showDialog(getActivity());
         }
     }
 
@@ -220,11 +256,9 @@ public class HistoryFragment extends BaseFragment {
             phoneEventFilter.getPhoneBlacklist().remove(number);
             settings.putFilter(phoneEventFilter);
 
-            Toast.makeText(getContext(),
-                    formatter(R.string.phone_removed_from_filter, requireContext())
-                            .put("number", number)
-                            .format(),
-                    Toast.LENGTH_SHORT).show();
+            showToast(getContext(), formatter.pattern(R.string.phone_removed_from_filter)
+                    .put("number", number)
+                    .format());
         }
     }
 
@@ -266,26 +300,27 @@ public class HistoryFragment extends BaseFragment {
                 if (event.isSms()) {
                     holder.textView.setText(event.getText());
                 } else {
-                    holder.textView.setText(formatter(R.string.call_of_duration, context)
-                            .put("duration", formatDuration(event.getCallDuration())).format());
+                    holder.textView.setText(formatter.pattern(R.string.call_of_duration)
+                            .put("duration", formatDuration(event.getCallDuration()))
+                            .format());
                 }
 
                 if (phoneEventFilter.testText(event.getText())) {
-                    holder.textView.setPaintFlags(holder.defaultPhoneFlags);
+                    holder.textView.setPaintFlags(holder.phoneTextFlags);
                 } else {
-                    holder.textView.setPaintFlags(holder.defaultPhoneFlags | Paint.DITHER_FLAG);
+                    holder.textView.setPaintFlags(holder.phoneTextFlags | Paint.STRIKE_THRU_TEXT_FLAG);
                 }
 
                 holder.phoneView.setText(event.getPhone());
                 if (phoneEventFilter.testPhone(event.getPhone())) {
-                    holder.phoneView.setPaintFlags(holder.defaultPhoneFlags);
+                    holder.phoneView.setPaintFlags(holder.phoneTextFlags);
                 } else {
-                    holder.phoneView.setPaintFlags(holder.defaultPhoneFlags | Paint.DITHER_FLAG);
+                    holder.phoneView.setPaintFlags(holder.phoneTextFlags | Paint.STRIKE_THRU_TEXT_FLAG);
                 }
 
-                holder.typeView.setImageResource(ResourceUtil.eventTypeImage(event));
-                holder.directionView.setImageResource(ResourceUtil.eventDirectionImage(event));
-                holder.stateView.setImageResource(ResourceUtil.eventStateImage(event));
+                holder.typeView.setImageResource(eventTypeImage(event));
+                holder.directionView.setImageResource(eventDirectionImage(event));
+                holder.stateView.setImageResource(eventStateImage(event));
 
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
 
@@ -354,7 +389,7 @@ public class HistoryFragment extends BaseFragment {
         private final TextView timeView;
         private final TextView textView;
         private final ImageView stateView;
-        private final int defaultPhoneFlags;
+        private final int phoneTextFlags;
 
         private ItemViewHolder(View view) {
             super(view);
@@ -364,7 +399,7 @@ public class HistoryFragment extends BaseFragment {
             directionView = view.findViewById(R.id.list_item_direction);
             phoneView = view.findViewById(R.id.list_item_phone);
             stateView = view.findViewById(R.id.list_item_state);
-            defaultPhoneFlags = phoneView.getPaintFlags();
+            phoneTextFlags = phoneView.getPaintFlags();
         }
     }
 

@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.util.Base64;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.bopr.android.smailer.AuthorizationHelper;
 import com.bopr.android.smailer.CallProcessorService;
@@ -72,6 +71,7 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
+import static com.bopr.android.smailer.util.ResourceUtil.showToast;
 import static com.bopr.android.smailer.util.Util.asSet;
 import static com.bopr.android.smailer.util.Util.commaSeparated;
 import static com.bopr.android.smailer.util.Util.formatLocation;
@@ -195,7 +195,7 @@ public class DebugFragment extends BasePreferenceFragment {
                             }
                         });
                         database.notifyChanged();
-                        showDone(context);
+                        showToast(context, "Done");
                     }
                 }),
 
@@ -212,7 +212,7 @@ public class DebugFragment extends BasePreferenceFragment {
                             }
                         });
                         database.notifyChanged();
-                        showDone(context);
+                        showToast(context, "Done");
                     }
                 }),
 
@@ -222,7 +222,7 @@ public class DebugFragment extends BasePreferenceFragment {
                     protected void onClick(Preference preference) {
                         database.clearEvents();
                         database.notifyChanged();
-                        showDone(context);
+                        showToast(context, "Done");
                     }
                 }),
 
@@ -231,7 +231,7 @@ public class DebugFragment extends BasePreferenceFragment {
                     @Override
                     protected void onClick(Preference preference) {
                         database.destroy();
-                        showDone(context);
+                        showToast(context, "Done");
                     }
                 })
 
@@ -430,7 +430,7 @@ public class DebugFragment extends BasePreferenceFragment {
                 .apply();
 
         refreshPreferences();
-        showDone(context);
+        showToast(context, "Done");
     }
 
     private void onGetContact() {
@@ -448,7 +448,7 @@ public class DebugFragment extends BasePreferenceFragment {
                         String contact = ContactUtils.getContactName(context, phone);
                         String text = contact != null ? (phone + ": " + contact) : "Contact not found";
 
-                        Toast.makeText(context, text, Toast.LENGTH_LONG).show();
+                        showToast(context, text);
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -466,7 +466,7 @@ public class DebugFragment extends BasePreferenceFragment {
         Settings.init(context);
 
         refreshPreferences();
-        showDone(context);
+        showToast(context, "Done");
     }
 
     private void onSendDebugMail() {
@@ -488,19 +488,19 @@ public class DebugFragment extends BasePreferenceFragment {
         event.setEndTime(start + 10000);
 
         CallProcessorService.start(context, event);
-        showDone(context);
+        showToast(context, "Done");
     }
 
     private void onStartProcessPendingEvents() {
         CallProcessorService.start(context);
-        showDone(context);
+        showToast(context, "Done");
     }
 
     private void onRequireReceiveSmsPermission() {
         if (ContextCompat.checkSelfPermission(context, RECEIVE_SMS) == PERMISSION_GRANTED) {
             context.enforceCallingOrSelfPermission(Manifest.permission.RECEIVE_SMS, "Testing SMS permission");
         } else {
-            Toast.makeText(context, "SMS PERMISSION DENIED", Toast.LENGTH_LONG).show();
+            showToast(context, "SMS PERMISSION DENIED");
         }
     }
 
@@ -557,13 +557,13 @@ public class DebugFragment extends BasePreferenceFragment {
                 log.warn("Cannot delete file");
             }
         }
-        showDone(context);
+        showToast(context, "Done");
     }
 
     private void onAddHistoryItem() {
         database.putEvent(new PhoneEvent("+79052345670", true, System.currentTimeMillis(), null, false, "Debug message", null, null, PhoneEvent.State.PENDING));
         database.notifyChanged();
-        showDone(context);
+        showToast(context, "Done");
     }
 
     private void onPopulateHistory() {
@@ -580,7 +580,7 @@ public class DebugFragment extends BasePreferenceFragment {
         database.putEvent(new PhoneEvent("+79052345675", true, time += 1000, time + 10000, true, null, null, "Test exception +79052345675", PhoneEvent.State.PENDING));
         database.notifyChanged();
 
-        showDone(context);
+        showToast(context, "Done");
     }
 
     private void onEmulateSms() {
@@ -613,10 +613,6 @@ public class DebugFragment extends BasePreferenceFragment {
             }
         }
         showMessage(context, b.toString());
-    }
-
-    private static void showDone(Context context) {
-        Toast.makeText(context, "Done", Toast.LENGTH_SHORT).show();
     }
 
     private static void showMessage(Context context, String message) {
@@ -685,7 +681,7 @@ public class DebugFragment extends BasePreferenceFragment {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             if (result == null) {
-                showDone(getActivity());
+                showToast(getActivity(), "Done");
             } else {
                 showMessage(getActivity(), result);
             }
@@ -731,7 +727,7 @@ public class DebugFragment extends BasePreferenceFragment {
             if (error != null) {
                 showMessage(getActivity(), error);
             } else {
-                showDone(getActivity());
+                showToast(getActivity(), "Done");
             }
         }
     }

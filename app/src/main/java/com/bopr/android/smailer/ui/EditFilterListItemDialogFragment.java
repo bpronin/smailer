@@ -19,7 +19,7 @@ import androidx.fragment.app.FragmentActivity;
  */
 abstract class EditFilterListItemDialogFragment extends DialogFragment {
 
-    private Callback callback;
+    private OnClose onClose;
     private int title;
 
     public void setTitle(int title) {
@@ -47,14 +47,14 @@ abstract class EditFilterListItemDialogFragment extends DialogFragment {
         Dialog dialog = getDialog();
         if (dialog == null) {
             View view = createView();
-            dialog = new AlertDialog.Builder(getContext())
+            dialog = new AlertDialog.Builder(requireContext())
                     .setTitle(title)
                     .setView(view)
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 
                         @Override
                         public void onClick(DialogInterface dialogInterface, int which) {
-                            callback.onOkClick(getValue());
+                            onClose.onOkClick(getValue());
                         }
                     })
                     .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -81,15 +81,16 @@ abstract class EditFilterListItemDialogFragment extends DialogFragment {
     @NonNull
     protected abstract View createView();
 
-    public void showDialog(FragmentActivity activity) {
+    void showDialog(FragmentActivity activity) {
         show(activity.getSupportFragmentManager(), createTag());
     }
 
-    public void setCallback(Callback callback) {
-        this.callback = callback;
+    EditFilterListItemDialogFragment setOnClose(OnClose onClose) {
+        this.onClose = onClose;
+        return this;
     }
 
-    public interface Callback {
+    public interface OnClose {
 
         void onOkClick(String result);
 

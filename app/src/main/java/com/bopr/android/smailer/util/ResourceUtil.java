@@ -3,13 +3,18 @@ package com.bopr.android.smailer.util;
 import android.content.Context;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.style.CharacterStyle;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.ParagraphStyle;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.draw.WavyUnderlineSpan;
 
-import androidx.core.content.ContextCompat;
+import static androidx.core.content.ContextCompat.getColor;
 
 /**
  * Miscellaneous resource utilities.
@@ -86,7 +91,7 @@ public abstract class ResourceUtil {
      */
     public static Spannable underwivedText(Context context, String value) {
         Spannable spannable = new SpannableString(value);
-        WavyUnderlineSpan span = new WavyUnderlineSpan(context);
+        ParagraphStyle span = new WavyUnderlineSpan(context);
         spannable.setSpan(span, 0, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         return spannable;
     }
@@ -96,8 +101,26 @@ public abstract class ResourceUtil {
      */
     public static Spannable accentedText(Context context, String value) {
         Spannable spannable = new SpannableString(value);
-        ForegroundColorSpan span = new ForegroundColorSpan(ContextCompat.getColor(context, R.color.colorAccent));
+        CharacterStyle span = new ForegroundColorSpan(getColor(context, R.color.colorAccent));
         spannable.setSpan(span, 0, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         return spannable;
     }
+
+    public static void showToast(Context context, String text) {
+        updateToastStyle(context, Toast.makeText(context, text, Toast.LENGTH_LONG)).show();
+    }
+
+    public static void showToast(Context context, int textRes) {
+        updateToastStyle(context, Toast.makeText(context, textRes, Toast.LENGTH_LONG)).show();
+    }
+
+    private static Toast updateToastStyle(Context context, Toast toast) {
+        View view = toast.getView();
+        TextView textView = view.findViewById(android.R.id.message);
+        view.setBackgroundResource(R.drawable.toast_frame);
+        textView.setTextColor(getColor(context, R.color.toastForeground));
+//        toast.setGravity(Gravity.CENTER, 0, 0);
+        return toast;
+    }
+
 }

@@ -7,7 +7,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bopr.android.smailer.PhoneEventFilter;
 import com.bopr.android.smailer.R;
@@ -27,6 +26,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import static androidx.recyclerview.widget.RecyclerView.NO_POSITION;
+import static com.bopr.android.smailer.util.ResourceUtil.showToast;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static java.lang.String.valueOf;
 
@@ -176,15 +176,13 @@ abstract class FilterListFragment extends BaseFragment {
 
     private void editItem(final Item item) {
         EditFilterListItemDialogFragment dialog = createEditItemDialog(item == null ? null : item.value);
-        dialog.setCallback(new EditFilterListItemDialogFragment.Callback() {
+        dialog.setOnClose(new EditFilterListItemDialogFragment.OnClose() {
 
             @Override
             public void onOkClick(String value) {
                 if (isItemExists(value) && (item == null || !item.value.equals(value))) {
-                    Toast.makeText(getContext(), formatter(R.string.item_already_exists, requireContext())
-                            .put("item", getItemText(value))
-                            .format(), Toast.LENGTH_LONG)
-                            .show();
+                    showToast(getContext(), formatter(requireContext()).pattern(R.string.item_already_exists)
+                            .put("item", getItemText(value)).format());
                 } else if (!Util.isTrimEmpty(value)) {
                     /* note: if we rotated device reference to "this" is changed here */
                     listAdapter.replaceItem(item, new Item(value));

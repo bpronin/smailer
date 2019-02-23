@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.Util;
@@ -26,6 +25,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
+import static com.bopr.android.smailer.util.ResourceUtil.showToast;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.Util.commaSeparated;
 import static java.lang.String.valueOf;
@@ -197,9 +197,8 @@ public class RecipientsFragment extends BaseFragment {
             public void onOkClick(String address) {
                 Log.d("", "onOkClick: ");
                 if (isItemExists(address) && (item == null || !item.address.equals(address))) {
-                    Toast.makeText(getContext(), formatter(R.string.recipient_already_exists, requireContext())
-                            .put("name", address)
-                            .format(), Toast.LENGTH_LONG).show();
+                    showToast(getContext(), formatter(R.string.recipient_already_exists, requireContext())
+                            .put("name", address).format());
                 } else if (!Util.isTrimEmpty(address)) {
                     /* note: if we rotated device reference to "this" is changed here */
                     Item newItem = new Item(address);
