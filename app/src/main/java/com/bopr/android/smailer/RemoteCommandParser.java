@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,6 +29,9 @@ class RemoteCommandParser {
     static final int REMOVE_TEXT_FROM_BLACKLIST = 5;
     static final int ADD_TEXT_TO_WHITELIST = 6;
     static final int REMOVE_TEXT_FROM_WHITELIST = 7;
+
+    private static final Pattern QUOTED_TEXT_PATTERN = Pattern.compile("\"(.*?)\"");
+    private static final Pattern PHONE_NUMBER_PATTERN = Pattern.compile("([\\d\\-*]+)");
 
     RemoteCommandParser() {
     }
@@ -84,15 +89,32 @@ class RemoteCommandParser {
     }
 
     private String parsePhoneArgument(MailMessage message) {
-        String argument = dpParsePhoneArgument(message.getBody());
-        return argument != null ? argument : dpParsePhoneArgument(message.getSubject());
-    }
-
-    private String dpParsePhoneArgument(String text) {
-        return null;
+        String s = findNumber(message.getBody());
+        return s != null ? s : findNumber(message.getSubject());
     }
 
     private String parseTextArgument(MailMessage message) {
+        return findFirstQuotedFragment(message.getBody());
+    }
+
+    private String findNumber(String text) {
+        String s = findFirstQuotedFragment(text);
+        return s != null ? s : findFirstNumberFragment(text);
+    }
+
+    private String findFirstQuotedFragment(String text) {
+        Matcher matcher = QUOTED_TEXT_PATTERN.matcher(text);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return null;
+    }
+
+    private String findFirstNumberFragment(String text) {
+        Matcher matcher = PHONE_NUMBER_PATTERN.matcher(text);
+        if (matcher.find()) {
+            return matcher.group();
+        }
         return null;
     }
 
