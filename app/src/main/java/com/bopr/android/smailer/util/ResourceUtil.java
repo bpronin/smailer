@@ -6,8 +6,6 @@ import android.text.SpannableString;
 import android.text.style.CharacterStyle;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.ParagraphStyle;
-import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bopr.android.smailer.PhoneEvent;
@@ -117,13 +115,15 @@ public abstract class ResourceUtil {
         updateToastStyle(context, Toast.makeText(context, textRes, Toast.LENGTH_LONG)).show();
     }
 
-    // TODO: 24.02.2019 check on oder androids 
     private static Toast updateToastStyle(Context context, Toast toast) {
+/*
+        Looks ugly on older devices
+
         View view = toast.getView();
         TextView textView = view.findViewById(android.R.id.message);
         view.setBackgroundResource(R.drawable.shape_toast);
         textView.setTextColor(getColor(context, R.color.toastForeground));
-//        toast.setGravity(Gravity.CENTER, 0, 0);
+*/
         return toast;
     }
 
