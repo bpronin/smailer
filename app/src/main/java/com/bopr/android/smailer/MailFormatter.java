@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 
-import com.bopr.android.smailer.util.ContactUtils;
 import com.bopr.android.smailer.util.TagFormatter;
 import com.bopr.android.smailer.util.Util;
 
@@ -24,6 +23,7 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_HEADER;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_LOCATION;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT;
+import static com.bopr.android.smailer.util.ContentUtils.isReadContactsPermissionsDenied;
 import static com.bopr.android.smailer.util.ResourceUtil.eventTypeText;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.Util.formatDuration;
@@ -282,7 +282,7 @@ class MailFormatter {
 
         String name = this.contactName;
         if (isEmpty(name)) {
-            if (ContactUtils.isPermissionsDenied(context)) { /* base context here */
+            if (isReadContactsPermissionsDenied(context)) { /* base context here */
                 name = resources.getString(R.string.contact_no_permission_read_contact);
             } else {
                 name = resources.getString(R.string.unknown_contact);

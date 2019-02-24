@@ -2,7 +2,7 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <androidx.preference.MultiSelectListPreference
-        android:icon="@drawable/ic_pref_triggers"
+        android:icon="@drawable/ic_triggers"
         android:entries="@array/trigger_names"
         android:entryValues="@array/trigger_values"
         android:key="email_triggers"

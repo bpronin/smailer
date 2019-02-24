@@ -1,9 +1,13 @@
 package com.bopr.android.smailer.util;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+
+import com.bopr.android.smailer.PhoneEvent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,18 +21,18 @@ import static android.provider.ContactsContract.PhoneLookup;
 import static com.bopr.android.smailer.util.Util.requireNonNull;
 
 /**
- * ContactUtils utilities.
+ * Content utilities.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class ContactUtils {
+public class ContentUtils {
 
-    private static Logger log = LoggerFactory.getLogger("ContactUtils");
+    private static Logger log = LoggerFactory.getLogger("ContentUtils");
 
     @Nullable
     public static String getContactName(Context context, String phoneNumber) {
         String result = null;
-        if (requirePermission(context)) {
+        if (requireReadContactPermission(context)) {
             Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
             Cursor cursor = context.getContentResolver().query(uri,
                     new String[]{PhoneLookup.DISPLAY_NAME}, null, null, null);
@@ -45,7 +49,7 @@ public class ContactUtils {
     @Nullable
     private static String getEmailAddress(Context context, String emailId) {
         String result = null;
-        if (requirePermission(context)) {
+        if (requireReadContactPermission(context)) {
             Cursor cursor = context.getContentResolver().query(Email.CONTENT_URI, null,
                     Email._ID + "=" + emailId, null, null);
             if (cursor != null) {
@@ -61,7 +65,7 @@ public class ContactUtils {
     @Nullable
     public static String getPhone(Context context, String phoneId) {
         String result = null;
-        if (requirePermission(context)) {
+        if (requireReadContactPermission(context)) {
             Cursor cursor = context.getContentResolver().query(Phone.CONTENT_URI, null,
                     Phone._ID + "=" + phoneId, null, null);
             if (cursor != null) {
@@ -88,15 +92,43 @@ public class ContactUtils {
         return getPhone(context, requireNonNull(intent.getData()).getLastPathSegment());
     }
 
-    public static boolean isPermissionsDenied(Context context) {
+    public static boolean isReadContactsPermissionsDenied(Context context) {
         return AndroidUtil.isPermissionsDenied(context, READ_CONTACTS);
     }
 
-    private static boolean requirePermission(Context context) {
-        if (isPermissionsDenied(context)) {
+    private static boolean requireReadContactPermission(Context context) {
+        if (isReadContactsPermissionsDenied(context)) {
             log.warn("Unable read contact. Permission denied.");
             return false;
         }
         return true;
+    }
+
+    public static void markSmsAsRead(Context context, PhoneEvent event) {
+        ContentResolver contentResolver = context.getContentResolver();
+        Uri uri = Uri.parse("content://sms/inbox");
+
+        Cursor cursor = contentResolver.query(uri, null, "read = 0 AND address = ? AND date_sent = ?",
+                new String[]{event.getPhone(), String.valueOf(event.getStartTime())}, null);
+        if (cursor == null) {
+            throw new NullPointerException("Cannot obtain cursor");
+        }
+
+        try {
+            if (cursor.moveToFirst()) {
+                String id = cursor.getString(cursor.getColumnIndex("_id"));
+
+                ContentValues values = new ContentValues();
+                values.put("read", true);
+                values.put("seen", true);
+                contentResolver.update(uri, values, "_id=" + id, null);
+
+                log.debug("SMS marked as read. " + event);
+            }
+        } catch (Exception e) {
+            log.error("Mark SMS as read failed. ", e);
+        } finally {
+            cursor.close();
+        }
     }
 }

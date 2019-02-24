@@ -12,6 +12,7 @@ import com.google.api.services.gmail.model.ListMessagesResponse;
 import com.google.api.services.gmail.model.Message;
 import com.google.api.services.gmail.model.MessagePart;
 import com.google.api.services.gmail.model.MessagePartHeader;
+import com.google.api.services.gmail.model.ModifyMessageRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +21,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -44,6 +44,7 @@ import static com.bopr.android.smailer.util.Util.isEmpty;
 import static com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64.decodeBase64;
 import static com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64.encodeBase64URLSafeString;
 import static com.google.api.client.repackaged.org.apache.commons.codec.binary.StringUtils.newStringUtf8;
+import static java.util.Collections.singletonList;
 import static javax.mail.Message.RecipientType.TO;
 
 /**
@@ -55,10 +56,10 @@ public class GmailTransport {
 
     private static Logger log = LoggerFactory.getLogger("GmailTransport");
 
-    public static List<String> SCOPE_SEND = Collections.singletonList(GmailScopes.GMAIL_SEND);
-    public static List<String> SCOPE_ALL = Collections.singletonList(GmailScopes.MAIL_GOOGLE_COM);
+    public static List<String> SCOPE_SEND = singletonList(GmailScopes.GMAIL_SEND);
+    public static List<String> SCOPE_ALL = singletonList(GmailScopes.MAIL_GOOGLE_COM);
 
-    private static final String USER_ID = "me"; /* do not change */
+    private static final String ME = "me";
     private static final String UTF_8 = "UTF-8";
     private static final String HTML = "html";
 
@@ -86,7 +87,7 @@ public class GmailTransport {
 
         service.users()
                 .messages()
-                .send(USER_ID, gmailMessage)
+                .send(ME, gmailMessage)
                 .execute();
 
         log.debug("Message sent");
@@ -96,7 +97,7 @@ public class GmailTransport {
         ListMessagesResponse response = service
                 .users()
                 .messages()
-                .list(USER_ID)
+                .list(ME)
                 .setQ(query)
                 .execute();
 
@@ -107,8 +108,7 @@ public class GmailTransport {
                 Message message = service
                         .users()
                         .messages()
-                        .get(USER_ID, m.getId())
-                        //                    .setFormat("raw")
+                        .get(ME, m.getId())
                         .execute();
 
                 result.add(readMessage(message));
@@ -117,23 +117,24 @@ public class GmailTransport {
         return result;
     }
 
-    public void markAsRead(MailMessage message) throws IOException {
-//        ModifyMessageRequest content = new ModifyMessageRequest();
-//        service.users()
-//                .messages()
-//                .modify(USER_ID, message.id, content)
-//                .execute();
+    void markAsRead(MailMessage message) throws IOException {
+        ModifyMessageRequest content = new ModifyMessageRequest()
+                .setRemoveLabelIds(singletonList("UNREAD")); /* case sensitive */
+        service.users()
+                .messages()
+                .modify(ME, message.getId(), content)
+                .execute();
 
-        log.debug("Message marked as read");
+        log.debug("Message marked as read: " + message.getId());
     }
 
-    public void trash(MailMessage message) throws IOException {
-//        service.users()
-//                .messages()
-//                .trash(USER_ID, message.getId())
-//                .execute();
+    void trash(MailMessage message) throws IOException {
+        service.users()
+                .messages()
+                .trash(ME, message.getId())
+                .execute();
 
-        log.debug("Message moved to trash");
+        log.debug("Message moved to trash: " + message.getId());
     }
 
     @NonNull
@@ -161,6 +162,7 @@ public class GmailTransport {
         return new Message().setRaw(encodeBase64URLSafeString(buffer.toByteArray()));
     }
 
+    // TODO: 24.02.2019 is it possible to get rid of mime message?
     @NonNull
     private MimeMessage createMimeMessage(String subject, String body, @Nullable Collection<File> attachment,
                                           @NonNull String sender, @NonNull String recipients, @Nullable String replyTo)

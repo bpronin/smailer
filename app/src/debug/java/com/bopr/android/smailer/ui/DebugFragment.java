@@ -26,7 +26,7 @@ import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.RemoteControlService;
 import com.bopr.android.smailer.Settings;
 import com.bopr.android.smailer.util.AndroidUtil;
-import com.bopr.android.smailer.util.ContactUtils;
+import com.bopr.android.smailer.util.ContentUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -468,7 +468,7 @@ public class DebugFragment extends BasePreferenceFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String phone = input.getText().toString();
-                        String contact = ContactUtils.getContactName(context, phone);
+                        String contact = ContentUtils.getContactName(context, phone);
                         String text = contact != null ? (phone + ": " + contact) : "Contact not found";
 
                         showToast(context, text);

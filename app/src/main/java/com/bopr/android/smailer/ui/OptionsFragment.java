@@ -21,11 +21,11 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_ACCOUNT;
 import static com.bopr.android.smailer.util.Util.isEmpty;
 
 /**
- * More settings activity's fragment.
+ * Options settings activity's fragment.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class MoreFragment extends BasePreferenceFragment {
+public class OptionsFragment extends BasePreferenceFragment {
 
     private AuthorizationHelper authorizator;
     private Preference accountPreference;
@@ -42,7 +42,7 @@ public class MoreFragment extends BasePreferenceFragment {
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-        addPreferencesFromResource(R.xml.pref_more);
+        addPreferencesFromResource(R.xml.pref_options);
 
         findPreference(KEY_PREF_EMAIL_LOCALE).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -61,6 +61,7 @@ public class MoreFragment extends BasePreferenceFragment {
             }
         });
 
+        // TODO: 24.02.2019 add help icon for remote control
         accountPreference = findPreference(KEY_PREF_REMOTE_CONTROL_ACCOUNT);
         accountPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -111,7 +112,8 @@ public class MoreFragment extends BasePreferenceFragment {
     private void updateAccountPreference() {
         String value = settings.getString(KEY_PREF_REMOTE_CONTROL_ACCOUNT, "");
         if (isEmpty(value)) {
-            updateSummary(accountPreference, getString(R.string.same_as_sender), STYLE_DEFAULT);
+            /* cannot use null as "same as sender" due to gmail permission difference */
+            updateSummary(accountPreference, getString(R.string.not_specified), STYLE_ACCENTED);
         } else {
             updateSummary(accountPreference, value, STYLE_DEFAULT);
         }

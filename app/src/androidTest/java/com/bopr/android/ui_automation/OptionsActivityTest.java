@@ -3,6 +3,7 @@ package com.bopr.android.ui_automation;
 import android.annotation.SuppressLint;
 
 import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.ui.OptionsActivity;
 
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -34,14 +35,14 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 /**
- * {@link com.bopr.android.smailer.ui.MoreActivity} tester.
+ * {@link OptionsActivity} tester.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 @SuppressLint("CommitPrefEdits")
-public class MoreActivityTest extends BaseActivityTest {
+public class OptionsActivityTest extends BaseActivityTest {
 
     @Test
     public void testContentSetting() {

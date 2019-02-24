@@ -63,9 +63,9 @@ public class RemoteCommandParserTest {
         message.setSubject("Re: [SMailer] Incoming SMS from +12345678901");
         message.setBody("To the\n BLACKLIST \r\n Add This, young Padawan!!!");
 
-        RemoteCommandParser.Result result = new RemoteCommandParser().parse(message);
-        assertEquals(RemoteCommandParser.ADD_PHONE_TO_BLACKLIST, result.action);
-        assertEquals("12345678901", result.argument);
+        RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
+        assertEquals(RemoteCommandParser.ADD_PHONE_TO_BLACKLIST, task.action);
+        assertEquals("12345678901", task.argument);
     }
 
     /* phone add */
@@ -76,9 +76,9 @@ public class RemoteCommandParserTest {
         message.setSubject("Re: [SMailer] Incoming SMS from +12345678901");
         message.setBody("add to blacklist");
 
-        RemoteCommandParser.Result result = new RemoteCommandParser().parse(message);
-        assertEquals(RemoteCommandParser.ADD_PHONE_TO_BLACKLIST, result.action);
-        assertEquals("12345678901", result.argument);
+        RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
+        assertEquals(RemoteCommandParser.ADD_PHONE_TO_BLACKLIST, task.action);
+        assertEquals("12345678901", task.argument);
     }
 
     @Test
@@ -87,9 +87,9 @@ public class RemoteCommandParserTest {
         message.setSubject("Re: [SMailer] Incoming SMS from +12345678901");
         message.setBody("add phone +7905*09441 to blacklist");
 
-        RemoteCommandParser.Result result = new RemoteCommandParser().parse(message);
-        assertEquals(RemoteCommandParser.ADD_PHONE_TO_BLACKLIST, result.action);
-        assertEquals("7905*09441", result.argument);
+        RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
+        assertEquals(RemoteCommandParser.ADD_PHONE_TO_BLACKLIST, task.action);
+        assertEquals("7905*09441", task.argument);
     }
 
     @Test
@@ -98,9 +98,9 @@ public class RemoteCommandParserTest {
         message.setSubject("Re: [SMailer] Incoming SMS from +12345678901");
         message.setBody("blacklist");
 
-        RemoteCommandParser.Result result = new RemoteCommandParser().parse(message);
-        assertEquals(RemoteCommandParser.ADD_PHONE_TO_BLACKLIST, result.action);
-        assertEquals("12345678901", result.argument);
+        RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
+        assertEquals(RemoteCommandParser.ADD_PHONE_TO_BLACKLIST, task.action);
+        assertEquals("12345678901", task.argument);
     }
 
     @Test
@@ -109,9 +109,9 @@ public class RemoteCommandParserTest {
         message.setSubject("Re: [SMailer] Incoming SMS from +12345678901");
         message.setBody("\"+4-098-HELLO-87\". blacklist it");
 
-        RemoteCommandParser.Result result = new RemoteCommandParser().parse(message);
-        assertEquals(RemoteCommandParser.ADD_PHONE_TO_BLACKLIST, result.action);
-        assertEquals("+4-098-HELLO-87", result.argument);
+        RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
+        assertEquals(RemoteCommandParser.ADD_PHONE_TO_BLACKLIST, task.action);
+        assertEquals("+4-098-HELLO-87", task.argument);
     }
 
     @Test
@@ -120,9 +120,9 @@ public class RemoteCommandParserTest {
         message.setSubject("Re: [SMailer] Incoming SMS from +12345678901");
         message.setBody("add to whitelist");
 
-        RemoteCommandParser.Result result = new RemoteCommandParser().parse(message);
-        assertEquals(RemoteCommandParser.ADD_PHONE_TO_WHITELIST, result.action);
-        assertEquals("12345678901", result.argument);
+        RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
+        assertEquals(RemoteCommandParser.ADD_PHONE_TO_WHITELIST, task.action);
+        assertEquals("12345678901", task.argument);
     }
 
     @Test
@@ -131,9 +131,9 @@ public class RemoteCommandParserTest {
         message.setSubject("Re: [SMailer] Incoming SMS from +12345678901");
         message.setBody("add phone +45782 to whitelist");
 
-        RemoteCommandParser.Result result = new RemoteCommandParser().parse(message);
-        assertEquals(RemoteCommandParser.ADD_PHONE_TO_WHITELIST, result.action);
-        assertEquals("45782", result.argument);
+        RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
+        assertEquals(RemoteCommandParser.ADD_PHONE_TO_WHITELIST, task.action);
+        assertEquals("45782", task.argument);
     }
 
     @Test
@@ -142,9 +142,9 @@ public class RemoteCommandParserTest {
         message.setSubject("Re: [SMailer] Incoming SMS from +12345678901");
         message.setBody("whitelist");
 
-        RemoteCommandParser.Result result = new RemoteCommandParser().parse(message);
-        assertEquals(RemoteCommandParser.ADD_PHONE_TO_WHITELIST, result.action);
-        assertEquals("12345678901", result.argument);
+        RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
+        assertEquals(RemoteCommandParser.ADD_PHONE_TO_WHITELIST, task.action);
+        assertEquals("12345678901", task.argument);
     }
 
     @Test
@@ -153,9 +153,9 @@ public class RemoteCommandParserTest {
         message.setSubject("Re: [SMailer] Incoming SMS from +12345678901");
         message.setBody("+49847987. whitelist it");
 
-        RemoteCommandParser.Result result = new RemoteCommandParser().parse(message);
-        assertEquals(RemoteCommandParser.ADD_PHONE_TO_WHITELIST, result.action);
-        assertEquals("49847987", result.argument);
+        RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
+        assertEquals(RemoteCommandParser.ADD_PHONE_TO_WHITELIST, task.action);
+        assertEquals("49847987", task.argument);
     }
 
     /* phone remove */
@@ -166,9 +166,9 @@ public class RemoteCommandParserTest {
         message.setSubject("Re: [SMailer] Incoming SMS from +12345678901");
         message.setBody("remove from blacklist");
 
-        RemoteCommandParser.Result result = new RemoteCommandParser().parse(message);
-        assertEquals(RemoteCommandParser.REMOVE_PHONE_FROM_BLACKLIST, result.action);
-        assertEquals("12345678901", result.argument);
+        RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
+        assertEquals(RemoteCommandParser.REMOVE_PHONE_FROM_BLACKLIST, task.action);
+        assertEquals("12345678901", task.argument);
     }
 
     @Test
@@ -177,9 +177,9 @@ public class RemoteCommandParserTest {
         message.setSubject("Re: [SMailer] Incoming SMS from +12345678901");
         message.setBody("remove phone +45782 from blacklist");
 
-        RemoteCommandParser.Result result = new RemoteCommandParser().parse(message);
-        assertEquals(RemoteCommandParser.REMOVE_PHONE_FROM_BLACKLIST, result.action);
-        assertEquals("45782", result.argument);
+        RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
+        assertEquals(RemoteCommandParser.REMOVE_PHONE_FROM_BLACKLIST, task.action);
+        assertEquals("45782", task.argument);
     }
 
     @Test
@@ -188,9 +188,9 @@ public class RemoteCommandParserTest {
         message.setSubject("Re: [SMailer] Incoming SMS from +12345678901");
         message.setBody("remove from whitelist");
 
-        RemoteCommandParser.Result result = new RemoteCommandParser().parse(message);
-        assertEquals(RemoteCommandParser.REMOVE_PHONE_FROM_WHITELIST, result.action);
-        assertEquals("12345678901", result.argument);
+        RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
+        assertEquals(RemoteCommandParser.REMOVE_PHONE_FROM_WHITELIST, task.action);
+        assertEquals("12345678901", task.argument);
     }
 
     @Test
@@ -199,9 +199,9 @@ public class RemoteCommandParserTest {
         message.setSubject("Re: [SMailer] Incoming SMS from +12345678901");
         message.setBody("remove phone +45782 from whitelist");
 
-        RemoteCommandParser.Result result = new RemoteCommandParser().parse(message);
-        assertEquals(RemoteCommandParser.REMOVE_PHONE_FROM_WHITELIST, result.action);
-        assertEquals("45782", result.argument);
+        RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
+        assertEquals(RemoteCommandParser.REMOVE_PHONE_FROM_WHITELIST, task.action);
+        assertEquals("45782", task.argument);
     }
 
     /* text add */
@@ -212,9 +212,9 @@ public class RemoteCommandParserTest {
         message.setSubject("Re: [SMailer] Incoming SMS from +12345678901");
         message.setBody("add text \"spam\" to blacklist");
 
-        RemoteCommandParser.Result result = new RemoteCommandParser().parse(message);
-        assertEquals(RemoteCommandParser.ADD_TEXT_TO_BLACKLIST, result.action);
-        assertEquals("spam", result.argument);
+        RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
+        assertEquals(RemoteCommandParser.ADD_TEXT_TO_BLACKLIST, task.action);
+        assertEquals("spam", task.argument);
     }
 
     @Test
@@ -223,9 +223,9 @@ public class RemoteCommandParserTest {
         message.setSubject("Re: [SMailer] Incoming SMS from +12345678901");
         message.setBody("add text \"spam\" to blacklist \"not spam\" and \"something else\"");
 
-        RemoteCommandParser.Result result = new RemoteCommandParser().parse(message);
-        assertEquals(RemoteCommandParser.ADD_TEXT_TO_BLACKLIST, result.action);
-        assertEquals("spam", result.argument);
+        RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
+        assertEquals(RemoteCommandParser.ADD_TEXT_TO_BLACKLIST, task.action);
+        assertEquals("spam", task.argument);
     }
 
     @Test
@@ -234,9 +234,9 @@ public class RemoteCommandParserTest {
         message.setSubject("Re: [SMailer] Incoming SMS from +12345678901");
         message.setBody("blacklist text \"spam\"");
 
-        RemoteCommandParser.Result result = new RemoteCommandParser().parse(message);
-        assertEquals(RemoteCommandParser.ADD_TEXT_TO_BLACKLIST, result.action);
-        assertEquals("spam", result.argument);
+        RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
+        assertEquals(RemoteCommandParser.ADD_TEXT_TO_BLACKLIST, task.action);
+        assertEquals("spam", task.argument);
     }
 
     @Test
@@ -245,9 +245,9 @@ public class RemoteCommandParserTest {
         message.setSubject("Re: [SMailer] Incoming SMS from +12345678901");
         message.setBody("add text \"spam\" to whitelist");
 
-        RemoteCommandParser.Result result = new RemoteCommandParser().parse(message);
-        assertEquals(RemoteCommandParser.ADD_TEXT_TO_WHITELIST, result.action);
-        assertEquals("spam", result.argument);
+        RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
+        assertEquals(RemoteCommandParser.ADD_TEXT_TO_WHITELIST, task.action);
+        assertEquals("spam", task.argument);
     }
 
     @Test
@@ -256,9 +256,9 @@ public class RemoteCommandParserTest {
         message.setSubject("Re: [SMailer] Incoming SMS from +12345678901");
         message.setBody("text \"spam\". whitelist it");
 
-        RemoteCommandParser.Result result = new RemoteCommandParser().parse(message);
-        assertEquals(RemoteCommandParser.ADD_TEXT_TO_WHITELIST, result.action);
-        assertEquals("spam", result.argument);
+        RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
+        assertEquals(RemoteCommandParser.ADD_TEXT_TO_WHITELIST, task.action);
+        assertEquals("spam", task.argument);
     }
 
     /* text remove */
@@ -269,9 +269,9 @@ public class RemoteCommandParserTest {
         message.setSubject("Re: [SMailer] Incoming SMS from +12345678901");
         message.setBody("remove text \"spam\" from blacklist");
 
-        RemoteCommandParser.Result result = new RemoteCommandParser().parse(message);
-        assertEquals(RemoteCommandParser.REMOVE_TEXT_FROM_BLACKLIST, result.action);
-        assertEquals("spam", result.argument);
+        RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
+        assertEquals(RemoteCommandParser.REMOVE_TEXT_FROM_BLACKLIST, task.action);
+        assertEquals("spam", task.argument);
     }
 
     @Test
@@ -280,8 +280,8 @@ public class RemoteCommandParserTest {
         message.setSubject("Re: [SMailer] Incoming SMS from +12345678901");
         message.setBody("remove text \"spam\" from whitelist");
 
-        RemoteCommandParser.Result result = new RemoteCommandParser().parse(message);
-        assertEquals(RemoteCommandParser.REMOVE_TEXT_FROM_WHITELIST, result.action);
-        assertEquals("spam", result.argument);
+        RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
+        assertEquals(RemoteCommandParser.REMOVE_TEXT_FROM_WHITELIST, task.action);
+        assertEquals("spam", task.argument);
     }
 }

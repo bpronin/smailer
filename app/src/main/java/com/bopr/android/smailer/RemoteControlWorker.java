@@ -18,7 +18,7 @@ import androidx.work.WorkerParameters;
 import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL;
 
 /**
- * Periodically pulls email for remote commands.
+ * Periodically checks email out for remote tasks.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */

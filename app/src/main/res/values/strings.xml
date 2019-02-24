@@ -53,7 +53,7 @@
     <string name="missed_call">Missed call</string>
     <string name="missed_call_from">Missed call from</string>
     <string name="need_google_permission">Access to Google account is required</string>
-    <string name="no_account_specified">No account specified.</string>
+    <string name="no_account_specified">Account not specified.</string>
     <string name="no_internet_connection">No internet connection.</string>
     <string name="no_permission_read_location">(no permission to read location)</string>
     <string name="no_recipients_specified">No recipients specified.</string>
@@ -62,7 +62,7 @@
     <string name="notifications">Notifications</string>
     <string name="notify_on_send">Notify of send</string>
     <string name="notify_send_success">Display notification when email is successfully sent</string>
-    <string name="notify_remote_actions">Display notification when remote action is performed</string>
+    <string name="notify_remote_actions">Display notification when actions are performed</string>
     <string name="open_source">Open source</string>
     <string name="open_source_and_third_party">Open source and third party software</string>
     <string name="outgoing_call">Outgoing call</string>
@@ -117,7 +117,6 @@
     <string name="remote_control">Remote control</string>
     <string name="allow_control_remotely">Allow to control application by sending email on service account</string>
     <string name="remote_control_account">Service account</string>
-    <string name="same_as_sender">Same as sender</string>
     <string name="text_remotely_removed_from_whitelist">Text \"{text}\" remotely removed from whitelist."</string>
     <string name="text_remotely_added_to_whitelist">Text \"{text}\" remotely added to whitelist."</string>
     <string name="text_remotely_removed_from_blacklist">Text \"{text}\" remotely removed from blacklist."</string>
@@ -126,7 +125,8 @@
     <string name="phone_remotely_added_to_whitelist">Phone {text} remotely added to whitelist."</string>
     <string name="phone_remotely_removed_from_blacklist">Phone {text} remotely removed from blacklist."</string>
     <string name="phone_remotely_added_to_blacklist">Phone {text} remotely added to blacklist."</string>
-    
+    <string name="service_account_not_specified">Service account not specified.</string>
+
     <string-array name="trigger_names">
         <item>Incoming SMS</item>
         <item>Outgoing SMS</item>

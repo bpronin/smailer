@@ -120,7 +120,7 @@ public abstract class ResourceUtil {
     private static Toast updateToastStyle(Context context, Toast toast) {
         View view = toast.getView();
         TextView textView = view.findViewById(android.R.id.message);
-        view.setBackgroundResource(R.drawable.toast_frame);
+        view.setBackgroundResource(R.drawable.shape_toast);
         textView.setTextColor(getColor(context, R.color.toastForeground));
 //        toast.setGravity(Gravity.CENTER, 0, 0);
         return toast;

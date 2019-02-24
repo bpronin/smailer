@@ -2,27 +2,27 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <androidx.preference.PreferenceScreen
-        android:icon="@drawable/ic_pref_account"
+        android:icon="@drawable/ic_account_round"
         android:key="outgoing_server"
         android:title="@string/sender" />
 
     <androidx.preference.PreferenceScreen
-        android:icon="@drawable/ic_pref_recipient"
+        android:icon="@drawable/ic_recipient"
         android:key="recipients_address"
         android:title="@string/recipients" />
 
     <androidx.preference.PreferenceScreen
-        android:icon="@drawable/ic_pref_rules"
+        android:icon="@drawable/ic_rules"
         android:key="rules"
         android:title="@string/rules" />
 
     <androidx.preference.PreferenceScreen
-        android:icon="@drawable/ic_pref_more"
-        android:key="more"
+        android:icon="@drawable/ic_options"
+        android:key="options"
         android:title="@string/preferences" />
 
     <androidx.preference.PreferenceScreen
-        android:icon="@drawable/ic_pref_log"
+        android:icon="@drawable/ic_history"
         android:key="history"
         android:title="@string/call_history" />
 

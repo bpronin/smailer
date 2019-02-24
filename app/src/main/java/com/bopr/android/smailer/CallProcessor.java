@@ -1,10 +1,6 @@
 package com.bopr.android.smailer;
 
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
 
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 
@@ -30,7 +26,8 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL;
 import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_ACCOUNT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
-import static com.bopr.android.smailer.util.ContactUtils.getContactName;
+import static com.bopr.android.smailer.util.ContentUtils.getContactName;
+import static com.bopr.android.smailer.util.ContentUtils.markSmsAsRead;
 
 /**
  * Sends out email for phone events.
@@ -172,7 +169,7 @@ public class CallProcessor {
             removeSelectedAccount();
             handleError(event, x, R.string.need_google_permission, ACTION_SHOW_APP, silent);
         } catch (Throwable x) {
-            handleError(event, x, R.string.internal_error, ACTION_SHOW_APP, silent);
+            log.error("Send mail failed ", x);
         }
     }
 
@@ -195,34 +192,6 @@ public class CallProcessor {
         return formatter;
     }
 
-    private void markSmsAsRead(final PhoneEvent event) {
-        ContentResolver contentResolver = context.getContentResolver();
-        Uri uri = Uri.parse("content://sms/inbox");
-
-        Cursor cursor = contentResolver.query(uri, null, "read = 0 AND address = ? AND date_sent = ?",
-                new String[]{event.getPhone(), String.valueOf(event.getStartTime())}, null);
-        if (cursor == null) {
-            throw new NullPointerException("Cannot obtain cursor");
-        }
-
-        try {
-            if (cursor.moveToFirst()) {
-                String id = cursor.getString(cursor.getColumnIndex("_id"));
-
-                ContentValues values = new ContentValues();
-                values.put("read", true);
-                values.put("seen", true);
-                contentResolver.update(uri, values, "_id=" + id, null);
-
-                log.debug("SMS marked as read. " + event);
-            }
-        } catch (Exception e) {
-            log.error("Mark SMS as read failed. ", e);
-        } finally {
-            cursor.close();
-        }
-    }
-
     private void handleSuccess(PhoneEvent event) {
         event.setState(PhoneEvent.STATE_PROCESSED);
         database.putEvent(event);
@@ -232,8 +201,9 @@ public class CallProcessor {
         if (settings.getBoolean(KEY_PREF_NOTIFY_SEND_SUCCESS, false)) {
             notifications.showMailSuccess(event.getId());
         }
+
         if (settings.getBoolean(KEY_PREF_MARK_SMS_AS_READ, false)) {
-            markSmsAsRead(event);
+            markSmsAsRead(context, event);
         }
     }
 

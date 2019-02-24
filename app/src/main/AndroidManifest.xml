@@ -69,7 +69,7 @@
             android:label="@string/whitelist" />
 
         <activity
-            android:name=".ui.MoreActivity"
+            android:name=".ui.OptionsActivity"
             android:label="@string/preferences" />
 
         <activity

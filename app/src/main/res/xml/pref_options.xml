@@ -5,14 +5,14 @@
         android:dialogTitle="@string/email_message_content"
         android:entries="@array/email_content_names"
         android:entryValues="@array/email_content_values"
-        android:icon="@drawable/ic_pref_content"
+        android:icon="@drawable/ic_content"
         android:key="email_content"
         android:summary="@string/what_email_contains"
         android:title="@string/email_content" />
 
     <androidx.preference.EditTextPreference
         android:dialogMessage="@string/device_name_to_show"
-        android:icon="@drawable/ic_pref_device"
+        android:icon="@drawable/ic_device"
         android:inputType="textNoSuggestions"
         android:key="device_alias"
         android:maxLines="1"
@@ -24,7 +24,7 @@
         android:dialogTitle="@string/email_language"
         android:entries="@array/language_names"
         android:entryValues="@array/email_locale_values"
-        android:icon="@drawable/ic_pref_language"
+        android:icon="@drawable/ic_language"
         android:key="email_locale"
         android:title="@string/email_message_language" />
 
@@ -50,7 +50,7 @@
             />
 
         <androidx.preference.PreferenceScreen
-            android:icon="@drawable/ic_pref_account"
+            android:icon="@drawable/ic_account_round"
             android:key="remote_control_account"
             android:title="@string/remote_control_account" />
 

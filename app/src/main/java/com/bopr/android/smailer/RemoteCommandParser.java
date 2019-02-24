@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 import static com.bopr.android.smailer.util.Util.isEmpty;
 
 /**
- * Parses text to control actions.
+ * Parses mail message into remote control task.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
@@ -37,7 +37,7 @@ class RemoteCommandParser {
     }
 
     @Nullable
-    Result parse(@NonNull MailMessage message) {
+    Task parse(@NonNull MailMessage message) {
         if (isEmpty(message.getBody())) {
             return null;
         }
@@ -52,10 +52,6 @@ class RemoteCommandParser {
                 .replaceAll("\\n\\n", "\n")
                 .toLowerCase(Locale.ROOT);
 
-//        String text = message.getBody()
-//                .split("\\r\\n")[0]
-//                .toLowerCase(Locale.ROOT);
-
         log.debug("Parsing: " + body);
 
         if (isEmpty(body)) {
@@ -65,29 +61,29 @@ class RemoteCommandParser {
         if (body.contains("blacklist")) {
             if (body.contains("delete") || body.contains("remove")) {
                 if (body.contains("text")) {
-                    return new Result(REMOVE_TEXT_FROM_BLACKLIST, parseTextArgument(body));
+                    return new Task(REMOVE_TEXT_FROM_BLACKLIST, parseTextArgument(body));
                 } else {
-                    return new Result(REMOVE_PHONE_FROM_BLACKLIST, parsePhoneArgument(subject, body));
+                    return new Task(REMOVE_PHONE_FROM_BLACKLIST, parsePhoneArgument(subject, body));
                 }
             } else {
                 if (body.contains("text")) {
-                    return new Result(ADD_TEXT_TO_BLACKLIST, parseTextArgument(body));
+                    return new Task(ADD_TEXT_TO_BLACKLIST, parseTextArgument(body));
                 } else {
-                    return new Result(ADD_PHONE_TO_BLACKLIST, parsePhoneArgument(subject, body));
+                    return new Task(ADD_PHONE_TO_BLACKLIST, parsePhoneArgument(subject, body));
                 }
             }
         } else if (body.contains("whitelist")) {
             if (body.contains("delete") || body.contains("remove")) {
                 if (body.contains("text")) {
-                    return new Result(REMOVE_TEXT_FROM_WHITELIST, parseTextArgument(body));
+                    return new Task(REMOVE_TEXT_FROM_WHITELIST, parseTextArgument(body));
                 } else {
-                    return new Result(REMOVE_PHONE_FROM_WHITELIST, parsePhoneArgument(subject, body));
+                    return new Task(REMOVE_PHONE_FROM_WHITELIST, parsePhoneArgument(subject, body));
                 }
             } else {
                 if (body.contains("text")) {
-                    return new Result(ADD_TEXT_TO_WHITELIST, parseTextArgument(body));
+                    return new Task(ADD_TEXT_TO_WHITELIST, parseTextArgument(body));
                 } else {
-                    return new Result(ADD_PHONE_TO_WHITELIST, parsePhoneArgument(subject, body));
+                    return new Task(ADD_PHONE_TO_WHITELIST, parsePhoneArgument(subject, body));
                 }
             }
         }
@@ -124,11 +120,11 @@ class RemoteCommandParser {
         return null;
     }
 
-    class Result {
+    class Task {
         final int action;
         final String argument;
 
-        private Result(int action, String argument) {
+        private Task(int action, String argument) {
             this.action = action;
             this.argument = argument;
         }
@@ -136,7 +132,7 @@ class RemoteCommandParser {
         @Override
         @NonNull
         public String toString() {
-            return "Result{" +
+            return "Task{" +
                     "action=" + action +
                     ", argument='" + argument + '\'' +
                     '}';

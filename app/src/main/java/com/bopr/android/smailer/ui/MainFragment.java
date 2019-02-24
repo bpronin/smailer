@@ -19,7 +19,7 @@ import androidx.preference.Preference.OnPreferenceClickListener;
 import static com.bopr.android.smailer.GmailTransport.SCOPE_SEND;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_HISTORY;
-import static com.bopr.android.smailer.Settings.KEY_PREF_MORE;
+import static com.bopr.android.smailer.Settings.KEY_PREF_OPTIONS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_OUTGOING_SERVER;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
@@ -70,7 +70,7 @@ public class MainFragment extends BasePreferenceFragment {
         recipientsPreference.setOnPreferenceClickListener(preferenceClickListener);
         accountPreference.setOnPreferenceClickListener(preferenceClickListener);
         historyPreference.setOnPreferenceClickListener(preferenceClickListener);
-        findPreference(KEY_PREF_MORE).setOnPreferenceClickListener(preferenceClickListener);
+        findPreference(KEY_PREF_OPTIONS).setOnPreferenceClickListener(preferenceClickListener);
         findPreference(KEY_PREF_RULES).setOnPreferenceClickListener(preferenceClickListener);
     }
 
@@ -139,8 +139,8 @@ public class MainFragment extends BasePreferenceFragment {
                 case KEY_PREF_RECIPIENTS_ADDRESS:
                     startActivity(new Intent(getContext(), RecipientsActivity.class));
                     break;
-                case KEY_PREF_MORE:
-                    startActivity(new Intent(getContext(), MoreActivity.class));
+                case KEY_PREF_OPTIONS:
+                    startActivity(new Intent(getContext(), OptionsActivity.class));
                     break;
                 case KEY_PREF_RULES:
                     startActivity(new Intent(getContext(), RulesActivity.class));

@@ -49,13 +49,11 @@ public class Notifications {
                 .put("reason", messageRes)
                 .format();
 
-        Builder builder = createBuilder(text, action, eventId).setAutoCancel(true);
+        showError(text, action, eventId);
+    }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setCategory(Notification.CATEGORY_ERROR);
-        }
-
-        manager.notify("error", ++errorMessageId, builder.build());
+    public void showRemoteError(int messageRes) {
+        showError(context.getString(messageRes), ACTION_SHOW_APP, null);
     }
 
     public void hideLastError() {
@@ -97,6 +95,17 @@ public class Notifications {
         }
 
         return builder.build();
+    }
+
+    private void showError(String text, int action, Long eventId) {
+        Builder builder = createBuilder(text, action, eventId).setAutoCancel(true);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder.setCategory(Notification.CATEGORY_ERROR);
+        }
+
+        manager.notify("error", ++errorMessageId, builder.build());
+
     }
 
     private Builder createBuilder(String text, int action, @Nullable Long eventId) {

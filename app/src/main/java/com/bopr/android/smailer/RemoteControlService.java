@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 
-import com.bopr.android.smailer.util.TagFormatter;
+import com.bopr.android.smailer.RemoteCommandParser.Task;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +25,9 @@ import static com.bopr.android.smailer.RemoteCommandParser.REMOVE_TEXT_FROM_BLAC
 import static com.bopr.android.smailer.RemoteCommandParser.REMOVE_TEXT_FROM_WHITELIST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_ACCOUNT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_NOTIFICATIONS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
 
 /**
- * class RemoteControlService.
+ *  Remote control service.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
@@ -41,7 +40,6 @@ public class RemoteControlService extends IntentService {
     private String query;
     private RemoteCommandParser parser;
     private Notifications notifications;
-    private TagFormatter formatter;
 
     public RemoteControlService() {
         super("RemoteControlService");
@@ -50,13 +48,11 @@ public class RemoteControlService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-        formatter = new TagFormatter(this);
         transport = new GmailTransport(this);
         parser = new RemoteCommandParser();
         notifications = new Notifications(this);
         settings = new Settings(this);
-        query = String.format("subject:Re:[%s] label:inbox", getString(R.string.app_name)
-        );
+        query = String.format("subject:Re:[%s] label:inbox", getString(R.string.app_name));
     }
 
     @Nullable
@@ -67,19 +63,26 @@ public class RemoteControlService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        log.debug("Executing");
-        String account = settings.getString(KEY_PREF_REMOTE_CONTROL_ACCOUNT,
-                settings.getString(KEY_PREF_SENDER_ACCOUNT, "")
-        );
+        log.debug("Handling intent: " + intent);
+
+        String account = settings.getString(KEY_PREF_REMOTE_CONTROL_ACCOUNT, null);
+        if (account == null) {
+            notifications.showRemoteError(R.string.service_account_not_specified);
+            return;
+        }
 
         try {
             transport.init(account, GmailTransport.SCOPE_ALL);
             List<MailMessage> list = transport.list(query);
             if (!list.isEmpty()) {
                 for (MailMessage message : list) {
-                    if (processMessage(message)) {
-                        transport.markAsRead(message);
+                    Task task = parser.parse(message);
+                    transport.markAsRead(message);
+                    if (task != null) {
+                        performTask(task);
                         transport.trash(message);
+                    } else {
+                        log.debug("Not a service mail");
                     }
                 }
             } else {
@@ -90,91 +93,93 @@ public class RemoteControlService extends IntentService {
         }
     }
 
-    private boolean processMessage(MailMessage message) {
-        RemoteCommandParser.Result result = parser.parse(message);
-
-        if (result != null) {
-            log.debug("Processing: " + result);
-            switch (result.action) {
-                case ADD_PHONE_TO_BLACKLIST:
-                    return addPhoneToBlacklist(result.argument);
-                case REMOVE_PHONE_FROM_BLACKLIST:
-                    return removePhoneFromBlacklist(result.argument);
-                case ADD_PHONE_TO_WHITELIST:
-                    return addPhoneToWhitelist(result.argument);
-                case REMOVE_PHONE_FROM_WHITELIST:
-                    return removePhoneFromWhitelist(result.argument);
-                case ADD_TEXT_TO_BLACKLIST:
-                    return addTextToBlacklist(result.argument);
-                case REMOVE_TEXT_FROM_BLACKLIST:
-                    return removeTextFromBlacklist(result.argument);
-                case ADD_TEXT_TO_WHITELIST:
-                    return addTextToWhitelist(result.argument);
-                case REMOVE_TEXT_FROM_WHITELIST:
-                    return removeTextFromWhitelist(result.argument);
-            }
-        } else {
-            log.debug("Nothing to process");
+    private void performTask(Task task) {
+        log.debug("Processing: " + task);
+        switch (task.action) {
+            case ADD_PHONE_TO_BLACKLIST:
+                addPhoneToBlacklist(task.argument);
+                break;
+            case REMOVE_PHONE_FROM_BLACKLIST:
+                removePhoneFromBlacklist(task.argument);
+                break;
+            case ADD_PHONE_TO_WHITELIST:
+                addPhoneToWhitelist(task.argument);
+                break;
+            case REMOVE_PHONE_FROM_WHITELIST:
+                removePhoneFromWhitelist(task.argument);
+                break;
+            case ADD_TEXT_TO_BLACKLIST:
+                addTextToBlacklist(task.argument);
+                break;
+            case REMOVE_TEXT_FROM_BLACKLIST:
+                removeTextFromBlacklist(task.argument);
+                break;
+            case ADD_TEXT_TO_WHITELIST:
+                addTextToWhitelist(task.argument);
+                break;
+            case REMOVE_TEXT_FROM_WHITELIST:
+                removeTextFromWhitelist(task.argument);
+                break;
         }
-        return false;
+
     }
 
-    private boolean removeTextFromWhitelist(String text) {
+    private void removeTextFromWhitelist(String text) {
         PhoneEventFilter filter = settings.getFilter();
-        return removeFromFilterList(filter, filter.getTextWhitelist(), text, R.string.text_remotely_removed_from_whitelist);
+        removeFromFilterList(filter, filter.getTextWhitelist(), text, R.string.text_remotely_removed_from_whitelist);
     }
 
-    private boolean addTextToWhitelist(String text) {
+    private void addTextToWhitelist(String text) {
         PhoneEventFilter filter = settings.getFilter();
-        return addToFilterList(filter, filter.getTextWhitelist(), text, R.string.text_remotely_added_to_whitelist);
+        addToFilterList(filter, filter.getTextWhitelist(), text, R.string.text_remotely_added_to_whitelist);
     }
 
-    private boolean removeTextFromBlacklist(String text) {
+    private void removeTextFromBlacklist(String text) {
         PhoneEventFilter filter = settings.getFilter();
-        return removeFromFilterList(filter, filter.getTextBlacklist(), text, R.string.text_remotely_removed_from_blacklist);
+        removeFromFilterList(filter, filter.getTextBlacklist(), text, R.string.text_remotely_removed_from_blacklist);
     }
 
-    private boolean addTextToBlacklist(String text) {
+    private void addTextToBlacklist(String text) {
         PhoneEventFilter filter = settings.getFilter();
-        return addToFilterList(filter, filter.getTextBlacklist(), text, R.string.text_remotely_added_to_blacklist);
+        addToFilterList(filter, filter.getTextBlacklist(), text, R.string.text_remotely_added_to_blacklist);
     }
 
-    private boolean removePhoneFromWhitelist(String phone) {
+    private void removePhoneFromWhitelist(String phone) {
         PhoneEventFilter filter = settings.getFilter();
-        return removeFromFilterList(filter, filter.getPhoneWhitelist(), phone, R.string.phone_remotely_removed_from_whitelist);
+        removeFromFilterList(filter, filter.getPhoneWhitelist(), phone, R.string.phone_remotely_removed_from_whitelist);
     }
 
-    private boolean addPhoneToWhitelist(String phone) {
+    private void addPhoneToWhitelist(String phone) {
         PhoneEventFilter filter = settings.getFilter();
-        return addToFilterList(filter, filter.getPhoneWhitelist(), phone, R.string.phone_remotely_added_to_whitelist);
+        addToFilterList(filter, filter.getPhoneWhitelist(), phone, R.string.phone_remotely_added_to_whitelist);
     }
 
-    private boolean removePhoneFromBlacklist(String phone) {
+    private void removePhoneFromBlacklist(String phone) {
         PhoneEventFilter filter = settings.getFilter();
-        return removeFromFilterList(filter, filter.getPhoneBlacklist(), phone, R.string.phone_remotely_removed_from_blacklist);
+        removeFromFilterList(filter, filter.getPhoneBlacklist(), phone, R.string.phone_remotely_removed_from_blacklist);
     }
 
-    private boolean addPhoneToBlacklist(String phone) {
+    private void addPhoneToBlacklist(String phone) {
         PhoneEventFilter filter = settings.getFilter();
-        return addToFilterList(filter, filter.getPhoneBlacklist(), phone, R.string.phone_remotely_added_to_blacklist);
+        addToFilterList(filter, filter.getPhoneBlacklist(), phone, R.string.phone_remotely_added_to_blacklist);
     }
 
-    private boolean addToFilterList(PhoneEventFilter filter, Set<String> list, String text, int messageRes) {
+    private void addToFilterList(PhoneEventFilter filter, Set<String> list, String text, int messageRes) {
         if (!list.contains(text)) {
             list.add(text);
             saveFilter(filter, text, messageRes);
-            return true;
+        } else {
+            log.debug("Already in list");
         }
-        return false;
     }
 
-    private boolean removeFromFilterList(PhoneEventFilter filter, Set<String> list, String text, int messageRes) {
+    private void removeFromFilterList(PhoneEventFilter filter, Set<String> list, String text, int messageRes) {
         if (list.contains(text)) {
             list.remove(text);
             saveFilter(filter, text, messageRes);
-            return true;
+        } else {
+            log.debug("Not in list");
         }
-        return false;
     }
 
     private void saveFilter(PhoneEventFilter filter, String text, int messageRes) {
