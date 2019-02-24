@@ -15,7 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.core.util.Consumer;
 
 import static com.bopr.android.smailer.GmailTransport.SCOPE_SEND;
-import static com.bopr.android.smailer.Notifications.ACTION_SHOW_APP;
+import static com.bopr.android.smailer.Notifications.ACTION_SHOW_MAIN;
+import static com.bopr.android.smailer.Notifications.ACTION_SHOW_RECIPIENTS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
 import static com.bopr.android.smailer.Settings.KEY_PREF_MARK_SMS_AS_READ;
@@ -137,7 +138,7 @@ public class CallProcessor {
         } catch (IllegalArgumentException x) {
             log.error("Failed starting session: ", x);
             if (!silent) {
-                notifications.showMailError(R.string.account_not_registered, ACTION_SHOW_APP, null);
+                notifications.showMailError(R.string.account_not_registered, ACTION_SHOW_MAIN);
             }
             return false;
         }
@@ -157,18 +158,12 @@ public class CallProcessor {
 
             transport.send(message);
 
-            handleSuccess(event);
-//        } catch (AuthenticationFailedException x) {
-//            handleError(event, x, R.string.user_password_not_accepted, ACTION_SHOW_SERVER, silent);
-//        } catch (MailConnectException x) {
-//            handleError(event, x, R.string.cannot_connect_mail_server, ACTION_SHOW_SERVER, silent);
-//        } catch (MessagingException x) {
-//            handleError(event, x, R.string.unable_send_email, ACTION_SHOW_SERVER, silent);
+            handleSendSuccess(event);
         } catch (UserRecoverableAuthIOException x) {
             removeSelectedAccount();
-            handleError(event, x, R.string.need_google_permission, ACTION_SHOW_APP, silent);
+            handleSendError(event, x, R.string.need_google_permission, silent);
         } catch (Throwable x) {
-            handleError(event, x, R.string.check_your_settings, ACTION_SHOW_APP, silent);
+            handleSendError(event, x, R.string.check_your_settings, silent);
         }
     }
 
@@ -177,7 +172,7 @@ public class CallProcessor {
         String s = settings.getString(KEY_PREF_SENDER_ACCOUNT, null);
         if (isEmpty(s)) {
             if (!silent) {
-                notifications.showMailError(R.string.no_account_specified, ACTION_SHOW_APP, null);
+                notifications.showMailError(R.string.no_account_specified, ACTION_SHOW_MAIN);
             }
             throw new IllegalArgumentException("Account not specified");
         }
@@ -190,14 +185,14 @@ public class CallProcessor {
 
         if (isEmpty(s)) {
             if (!silent) {
-                notifications.showMailError(R.string.no_recipients_specified, ACTION_SHOW_APP, null);
+                notifications.showMailError(R.string.no_recipients_specified, ACTION_SHOW_RECIPIENTS);
             }
             throw new IllegalArgumentException("Recipients not specified");
         }
 
         if (!isValidEmailAddressList(s)) {
             if (!silent) {
-                notifications.showMailError(R.string.invalid_recipient, ACTION_SHOW_APP, null);
+                notifications.showMailError(R.string.invalid_recipient, ACTION_SHOW_RECIPIENTS);
             }
             throw new IllegalArgumentException("Recipients are invalid");
         }
@@ -224,14 +219,14 @@ public class CallProcessor {
         return formatter;
     }
 
-    private void handleSuccess(PhoneEvent event) {
+    private void handleSendSuccess(PhoneEvent event) {
         event.setState(PhoneEvent.STATE_PROCESSED);
         database.putEvent(event);
 
         notifications.hideLastError();
 
         if (settings.getBoolean(KEY_PREF_NOTIFY_SEND_SUCCESS, false)) {
-            notifications.showMailSuccess(event.getId());
+            notifications.showMailSuccess();
         }
 
         if (settings.getBoolean(KEY_PREF_MARK_SMS_AS_READ, false)) {
@@ -239,14 +234,14 @@ public class CallProcessor {
         }
     }
 
-    private void handleError(PhoneEvent event, Throwable error, int notification, int action, boolean silent) {
+    private void handleSendError(PhoneEvent event, Throwable error, int notification, boolean silent) {
         log.warn("Send failed: " + event, error);
 
         event.setState(PhoneEvent.STATE_PENDING);
         database.putEvent(event);
 
         if (!silent) {
-            notifications.showMailError(notification, action, event.getId());
+            notifications.showMailError(notification, Notifications.ACTION_SHOW_MAIN);
         }
     }
 

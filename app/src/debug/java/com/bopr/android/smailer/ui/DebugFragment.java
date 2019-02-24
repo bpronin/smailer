@@ -293,7 +293,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        new Notifications(context).showMailError(R.string.no_internet_connection, Notifications.ACTION_SHOW_CONNECTION_OPTIONS, 100L);
+                        new Notifications(context).showMailError(R.string.no_internet_connection, Notifications.ACTION_SHOW_CONNECTION_OPTIONS);
                     }
                 }),
 
@@ -301,7 +301,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        new Notifications(context).showMailError(R.string.no_recipients_specified, Notifications.ACTION_SHOW_APP, 100L);
+                        new Notifications(context).showMailError(R.string.no_recipients_specified, Notifications.ACTION_SHOW_RULES);
                     }
                 }),
 
@@ -317,7 +317,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        new Notifications(context).showMailSuccess(100);
+                        new Notifications(context).showMailSuccess();
                     }
                 }),
 
