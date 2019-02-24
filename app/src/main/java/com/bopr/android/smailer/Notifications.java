@@ -17,6 +17,7 @@ import com.bopr.android.smailer.ui.RulesActivity;
 import com.bopr.android.smailer.util.TagFormatter;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationCompat.Builder;
 import androidx.core.app.TaskStackBuilder;
@@ -129,6 +130,7 @@ public class Notifications {
                 .setContentText(text);
     }
 
+    @Nullable
     private PendingIntent createIntent(int action) {
         switch (action) {
             case ACTION_SHOW_MAIN:

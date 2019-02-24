@@ -10,8 +10,6 @@ import java.util.regex.Pattern;
 
 import androidx.annotation.NonNull;
 
-import static com.bopr.android.smailer.util.Util.isEmpty;
-
 /**
  * Tagged string formatter.
  *
@@ -19,8 +17,7 @@ import static com.bopr.android.smailer.util.Util.isEmpty;
  */
 public class TagFormatter {
 
-    private static final String OPEN_BRACKET = "\\{";
-    private static final String CLOSE_BRACKET = "\\}";
+    private static final Pattern PATTERN = Pattern.compile("\\{(.*?)}");
 
     private final Map<String, String> values = new LinkedHashMap<>();
     private String pattern;
@@ -33,6 +30,7 @@ public class TagFormatter {
     public static TagFormatter formatter(String pattern, @NonNull Context context) {
         return new TagFormatter(context).pattern(pattern);
     }
+
     public static TagFormatter formatter(int patternResourceId, @NonNull Context context) {
         return formatter(context).pattern(patternResourceId);
     }
@@ -70,10 +68,7 @@ public class TagFormatter {
     }
 
     public TagFormatter put(String key, String value) {
-        values.remove(key);
-        if (!isEmpty(value)) {
-            values.put(key, value);
-        }
+        values.put(key, value);
         return this;
     }
 
@@ -96,16 +91,16 @@ public class TagFormatter {
     }
 
     public String format() {
-        String result = pattern;
+        StringBuffer sb = new StringBuffer();
 
-        Matcher matcher = Pattern.compile(OPEN_BRACKET + "(.*?)" + CLOSE_BRACKET).matcher(pattern);
+        Matcher matcher = PATTERN.matcher(pattern);
         while (matcher.find()) {
-            String tag = matcher.group(1);
-            String value = values.get(tag);
-            result = result.replaceAll(OPEN_BRACKET + tag + CLOSE_BRACKET, (value != null) ? value : "");
+            String replacement = values.get(matcher.group(1));
+            matcher.appendReplacement(sb, replacement != null ? replacement : "");
         }
+        matcher.appendTail(sb);
 
-        return result;
+        return sb.toString();
     }
 
     @NonNull

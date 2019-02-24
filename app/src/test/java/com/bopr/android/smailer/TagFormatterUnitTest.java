@@ -43,14 +43,24 @@ public class TagFormatterUnitTest {
     }
 
     @Test
-    public void testPutRemoveAbsent() {
-        String text = formatter("{one}, {two} and {three}")
+    public void testPutMultiple() {
+        String text = formatter("{one}, {two} and {three} and {one} again")
                 .put("one", "ONE")
+                .put("two", "TWO")
                 .put("three", "THREE")
                 .format();
 
-        Assert.assertEquals("ONE,  and THREE", text);
+        Assert.assertEquals("ONE, TWO and THREE and ONE again", text);
     }
+
+/*
+    @Test
+    public void testPutPerformance() {
+        for (int i = 0; i < 10000000; i++) {
+             testPut();
+        }
+    }
+*/
 
     @Test
     public void testPutRemoveBlank() {
@@ -63,6 +73,27 @@ public class TagFormatterUnitTest {
         Assert.assertEquals("ONE,  and THREE", text);
     }
 
+    @Test
+    public void testPutRemoveNull() {
+        String text = formatter("{one}, {two} and {three}")
+                .put("one", "ONE")
+                .put("two", null)
+                .put("three", "THREE")
+                .format();
+
+        Assert.assertEquals("ONE,  and THREE", text);
+    }
+
+    @Test
+    public void testPutRemoveAbsent() {
+        String text = formatter("{one}, {two} and {three}")
+                .put("one", "ONE")
+                .put("three", "THREE")
+                .format();
+
+        Assert.assertEquals("ONE,  and THREE", text);
+    }
+    
     @Test
     public void testList() {
         String text = formatter("{list}")
