@@ -9,12 +9,10 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.Base64;
 import android.widget.EditText;
 
 import com.bopr.android.smailer.AuthorizationHelper;
 import com.bopr.android.smailer.CallProcessorService;
-import com.bopr.android.smailer.CallReceiver;
 import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.GeoCoordinates;
 import com.bopr.android.smailer.GeoLocator;
@@ -33,9 +31,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -49,7 +49,6 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceScreen;
 
-import static android.Manifest.permission.BROADCAST_SMS;
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static com.bopr.android.smailer.AuthorizationHelper.defaultAccount;
@@ -92,7 +91,6 @@ public class DebugFragment extends BasePreferenceFragment {
     private static Logger log = LoggerFactory.getLogger("DebugFragment");
 
     private static final int PERMISSIONS_REQUEST_RECEIVE_SMS = 100;
-    private static final int PERMISSIONS_REQUEST_BROADCAST_SMS = 101;
 
     private Context context;
     private GeoLocator locator;
@@ -286,14 +284,6 @@ public class DebugFragment extends BasePreferenceFragment {
                     protected void onClick(Preference preference) {
                         onClearLogs();
                     }
-                }),
-
-                createPreference("Save logcat log", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        onSaveLogcatLog();
-                    }
                 })
         );
 
@@ -342,14 +332,6 @@ public class DebugFragment extends BasePreferenceFragment {
         );
 
         addCategory(screen, "Other",
-
-                createPreference("Emulate Sms", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        onEmulateSms();
-                    }
-                }),
 
                 createPreference("Get location", new DefaultClickListener() {
 
@@ -499,7 +481,8 @@ public class DebugFragment extends BasePreferenceFragment {
     private void onProcessServiceMail() {
         if (new Settings(context).getBoolean(KEY_PREF_REMOTE_CONTROL, false)) {
             RemoteControlService.start(context);
-        }else {
+            showToast(context, "Done");
+        } else {
             showToast(context, "Feature disabled");
         }
     }
@@ -549,35 +532,6 @@ public class DebugFragment extends BasePreferenceFragment {
             } else {
                 showMessage(context, "Permission denied");
             }
-        } else if (requestCode == PERMISSIONS_REQUEST_BROADCAST_SMS) {
-            if (grantResults[0] == PERMISSION_GRANTED) {
-                onEmulateSms();
-            } else {
-                showMessage(context, "Permission denied");
-            }
-        }
-    }
-
-    private void onSaveLogcatLog() {
-        try {
-            Process process = Runtime.getRuntime().exec("logcat -d");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-            StringBuilder log = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                log.append(line).append("\n");
-            }
-
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("text/plain");
-            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"boprsoft.dev@gmail.com"});
-            intent.putExtra(Intent.EXTRA_SUBJECT, "SMailer log");
-            intent.putExtra(Intent.EXTRA_TEXT, log.toString());
-
-            startActivity(Intent.createChooser(intent, "Send Email"));
-        } catch (IOException x) {
-            log.error("Save log failed", x);
         }
     }
 
@@ -612,20 +566,6 @@ public class DebugFragment extends BasePreferenceFragment {
         database.notifyChanged();
 
         showToast(context, "Done");
-    }
-
-    private void onEmulateSms() {
-        if (!AndroidUtil.isPermissionsDenied(context, BROADCAST_SMS)) {
-
-            Intent intent = new Intent(CallReceiver.SMS_RECEIVED);
-            intent.putExtra("pdus", new Object[]{Base64.decode("ACADgSHzAABhQEASFTQhBcgym/0G", Base64.NO_WRAP)});
-            intent.putExtra("format", "3gpp");
-
-            context.sendBroadcast(intent);
-        } else {
-            ActivityCompat.requestPermissions(requireActivity(), new String[]{BROADCAST_SMS},
-                    PERMISSIONS_REQUEST_BROADCAST_SMS);
-        }
     }
 
     private void onShowConcurrent() {
@@ -734,6 +674,7 @@ public class DebugFragment extends BasePreferenceFragment {
         protected String doInBackground(Void... params) {
             List<File> attachment = new LinkedList<>();
             attachment.add(getActivity().getDatabasePath(Settings.DB_NAME));
+            attachment.add(getLogcatLog());
             attachment.addAll(asList(new File(getActivity().getFilesDir(), "log").listFiles()));
 
             GmailTransport transport = new GmailTransport(getActivity());
@@ -748,7 +689,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                 transport.send(message);
             } catch (Exception x) {
-                DebugFragment.log.error("Send mail failed", x);
+                log.error("Send mail failed", x);
                 return "Send mail failed";
             }
 
@@ -763,6 +704,24 @@ public class DebugFragment extends BasePreferenceFragment {
             } else {
                 showToast(getActivity(), "Done");
             }
+        }
+
+        private File getLogcatLog() {
+            File file = new File(getActivity().getFilesDir(), "logcat.log");
+            try {
+                Process process = Runtime.getRuntime().exec("logcat -d");
+                BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                PrintWriter out = new PrintWriter(new FileOutputStream(file));
+                String line;
+                while ((line = in.readLine()) != null) {
+                    out.println(line);
+                }
+                in.close();
+                out.close();
+            } catch (IOException x) {
+                log.error("Cannot get logcat ", x);
+            }
+            return file;
         }
     }
 
