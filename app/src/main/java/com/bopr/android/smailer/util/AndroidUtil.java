@@ -3,6 +3,7 @@ package com.bopr.android.smailer.util;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Patterns;
 
 import androidx.core.content.ContextCompat;
 
@@ -48,6 +49,19 @@ public class AndroidUtil {
      */
     public static String getDeviceName() {
         return Util.capitalize(MANUFACTURER) + " " + MODEL;
+    }
+
+    public static boolean isValidEmailAddress(String text) {
+        return Patterns.EMAIL_ADDRESS.matcher(text).matches();
+    }
+
+    public static boolean isValidEmailAddressList(String text) {
+        for (String s : Util.commaSplit(text)) {
+            if (!isValidEmailAddress(s)){
+                return false;
+            }
+        }
+        return true;
     }
 
     /*

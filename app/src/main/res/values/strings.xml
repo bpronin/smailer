@@ -126,6 +126,9 @@
     <string name="phone_remotely_removed_from_blacklist">Phone {text} remotely removed from blacklist."</string>
     <string name="phone_remotely_added_to_blacklist">Phone {text} remotely added to blacklist."</string>
     <string name="service_account_not_specified">Service account not specified.</string>
+    <string name="account_not_registered">Account not registered on device</string>
+    <string name="check_your_settings">Check your settings</string>
+    <string name="invalid_recipient">Invalid recipient specified</string>
 
     <string-array name="trigger_names">
         <item>Incoming SMS</item>

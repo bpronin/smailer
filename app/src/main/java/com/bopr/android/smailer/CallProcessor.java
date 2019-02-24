@@ -11,8 +11,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.mail.internet.AddressException;
-
 import androidx.annotation.NonNull;
 import androidx.core.util.Consumer;
 
@@ -26,8 +24,10 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL;
 import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_ACCOUNT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
+import static com.bopr.android.smailer.util.AndroidUtil.isValidEmailAddressList;
 import static com.bopr.android.smailer.util.ContentUtils.getContactName;
 import static com.bopr.android.smailer.util.ContentUtils.markSmsAsRead;
+import static com.bopr.android.smailer.util.Util.isEmpty;
 
 /**
  * Sends out email for phone events.
@@ -124,24 +124,25 @@ public class CallProcessor {
 
     private boolean startMailSession(boolean silent) {
         log.debug("Starting session");
+
         try {
-            transport.init(settings.getString(KEY_PREF_SENDER_ACCOUNT, ""), SCOPE_SEND);
+            requireRecipient(silent);
+        } catch (Exception x) {
+            return false;
+        }
+
+        try {
+            transport.init(requireSender(silent), SCOPE_SEND);
             return true;
-        } catch (IllegalAccessException x) {
+        } catch (IllegalArgumentException x) {
             log.error("Failed starting session: ", x);
             if (!silent) {
-                notifications.showMailError(R.string.no_account_specified, ACTION_SHOW_APP, null);
+                notifications.showMailError(R.string.account_not_registered, ACTION_SHOW_APP, null);
             }
             return false;
         }
     }
 
-    /**
-     * Sends out a event.
-     *
-     * @param event  email event
-     * @param silent if true do not show notifications
-     */
     private void sendMail(PhoneEvent event, boolean silent) {
         log.debug("Sending mail: " + event);
 
@@ -151,7 +152,7 @@ public class CallProcessor {
             MailMessage message = new MailMessage();
             message.setSubject(formatter.formatSubject());
             message.setBody(formatter.formatBody());
-            message.setRecipients(settings.getString(KEY_PREF_RECIPIENTS_ADDRESS, null));
+            message.setRecipients(requireRecipient(silent));
             message.setReplyTo(settings.getString(KEY_PREF_REMOTE_CONTROL_ACCOUNT, null));
 
             transport.send(message);
@@ -163,14 +164,45 @@ public class CallProcessor {
 //            handleError(event, x, R.string.cannot_connect_mail_server, ACTION_SHOW_SERVER, silent);
 //        } catch (MessagingException x) {
 //            handleError(event, x, R.string.unable_send_email, ACTION_SHOW_SERVER, silent);
-        } catch (AddressException x) {
-            handleError(event, x, R.string.no_recipients_specified, ACTION_SHOW_APP, silent);
         } catch (UserRecoverableAuthIOException x) {
             removeSelectedAccount();
             handleError(event, x, R.string.need_google_permission, ACTION_SHOW_APP, silent);
         } catch (Throwable x) {
-            log.error("Send mail failed ", x);
+            handleError(event, x, R.string.check_your_settings, ACTION_SHOW_APP, silent);
         }
+    }
+
+    @NonNull
+    private String requireSender(boolean silent) {
+        String s = settings.getString(KEY_PREF_SENDER_ACCOUNT, null);
+        if (isEmpty(s)) {
+            if (!silent) {
+                notifications.showMailError(R.string.no_account_specified, ACTION_SHOW_APP, null);
+            }
+            throw new IllegalArgumentException("Account not specified");
+        }
+        return s;
+    }
+
+    @NonNull
+    private String requireRecipient(boolean silent) {
+        String s = settings.getString(KEY_PREF_RECIPIENTS_ADDRESS, null);
+
+        if (isEmpty(s)) {
+            if (!silent) {
+                notifications.showMailError(R.string.no_recipients_specified, ACTION_SHOW_APP, null);
+            }
+            throw new IllegalArgumentException("Recipients not specified");
+        }
+
+        if (!isValidEmailAddressList(s)) {
+            if (!silent) {
+                notifications.showMailError(R.string.invalid_recipient, ACTION_SHOW_APP, null);
+            }
+            throw new IllegalArgumentException("Recipients are invalid");
+        }
+
+        return s;
     }
 
     @NonNull
@@ -186,7 +218,7 @@ public class CallProcessor {
         }
 
         String locale = settings.getString(KEY_PREF_EMAIL_LOCALE, null);
-        if (locale != null) {   //todo: why not set null locale?
+        if (locale != null) {   //todo: why not to set null locale?
             formatter.setLocale(locale);
         }
         return formatter;

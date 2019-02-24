@@ -117,6 +117,7 @@ public abstract class ResourceUtil {
         updateToastStyle(context, Toast.makeText(context, textRes, Toast.LENGTH_LONG)).show();
     }
 
+    // TODO: 24.02.2019 check on oder androids 
     private static Toast updateToastStyle(Context context, Toast toast) {
         View view = toast.getView();
         TextView textView = view.findViewById(android.R.id.message);

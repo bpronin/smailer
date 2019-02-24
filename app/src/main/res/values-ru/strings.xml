@@ -124,6 +124,9 @@
     <string name="phone_remotely_removed_from_blacklist">Номер {text} удаленно удален из черного списка."</string>
     <string name="phone_remotely_added_to_blacklist">Номер {text} удаленно добавлен в черный список."</string>
     <string name="service_account_not_specified">Не указан сервисный аккаунт.</string>
+    <string name="account_not_registered">Аккаунт не зарегистрирован на устройстве</string>
+    <string name="check_your_settings">Проверьте настройки приложения</string>
+    <string name="invalid_recipient">Указан неверный получатель</string>
 
     <string-array name="trigger_names">
         <item>Входящие SMS</item>

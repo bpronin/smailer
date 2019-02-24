@@ -16,8 +16,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
+import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import static com.bopr.android.smailer.util.Util.requireNonNull;
 import static java.lang.System.currentTimeMillis;
 
 /**
@@ -235,12 +237,22 @@ public class Database {
         context.deleteDatabase(name);
     }
 
-    public void registerListener(BroadcastReceiver listener) {
-        LocalBroadcastManager.getInstance(context).registerReceiver(listener, new IntentFilter(DATABASE_EVENT));
+    public BroadcastReceiver registerListener(@NonNull BroadcastReceiver listener) {
+        IntentFilter filter = new IntentFilter(DATABASE_EVENT);
+        LocalBroadcastManager.getInstance(context).registerReceiver(requireNonNull(listener), filter);
+        return listener;
     }
 
-    public void unregisterListener(BroadcastReceiver listener) {
+    public void unregisterListener(@NonNull BroadcastReceiver listener) {
         LocalBroadcastManager.getInstance(context).unregisterReceiver(listener);
+    }
+
+    public void notifyChanged() {
+        log.debug("Broadcasting data changed");
+
+        Intent intent = new Intent(DATABASE_EVENT);
+       // , parse("database://all")
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
     private long getCurrentSize(SQLiteDatabase db) {
@@ -258,14 +270,6 @@ public class Database {
         values.put(COLUMN_PURGE_TIME, currentTimeMillis());
 
         db.update(TABLE_SYSTEM, values, COLUMN_ID + "=0", null);
-    }
-
-    public void notifyChanged() {
-        log.debug("Broadcasting data changed");
-
-        Intent intent = new Intent(DATABASE_EVENT);
-        intent.putExtra("message", "changed");
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
     private class DbHelper extends SQLiteOpenHelper {

@@ -11,7 +11,6 @@ import com.bopr.android.smailer.ContentObserverService;
 import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.ResendWorker;
-import com.bopr.android.smailer.util.validator.EmailListTextValidator;
 
 import androidx.preference.Preference;
 import androidx.preference.Preference.OnPreferenceClickListener;
@@ -25,6 +24,7 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RULES;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
+import static com.bopr.android.smailer.util.AndroidUtil.isValidEmailAddressList;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.Util.isEmpty;
 import static java.lang.String.valueOf;
@@ -54,8 +54,7 @@ public class MainFragment extends BasePreferenceFragment {
         settings.registerOnSharedPreferenceChangeListener(settingsListener);
 
         database = new Database(getContext());
-        databaseListener = new DatabaseListener();
-        database.registerListener(databaseListener);
+        databaseListener = database.registerListener(new DatabaseListener());
     }
 
     @Override
@@ -111,7 +110,8 @@ public class MainFragment extends BasePreferenceFragment {
         if (isEmpty(value)) {
             updateSummary(recipientsPreference, getString(R.string.not_specified), STYLE_ACCENTED);
         } else {
-            updateSummary(recipientsPreference, value.replaceAll(",", ", "), EmailListTextValidator.isValidValue(value) ? STYLE_DEFAULT : STYLE_UNDERWIVED);
+            updateSummary(recipientsPreference, value.replaceAll(",", ", "),
+                    isValidEmailAddressList(value) ? STYLE_DEFAULT : STYLE_UNDERWIVED);
         }
     }
 

@@ -76,7 +76,7 @@ public class GmailTransport {
         transport = AndroidHttp.newCompatibleTransport();
     }
 
-    public void init(@NonNull String sender, List<String> scopes) throws IllegalAccessException {
+    public void init(@NonNull String sender, List<String> scopes) {
         this.sender = sender;
         service = createService(createCredential(sender, scopes));
         session = Session.getDefaultInstance(new Properties(), null);
@@ -145,11 +145,11 @@ public class GmailTransport {
     }
 
     @NonNull
-    private GoogleAccountCredential createCredential(String accountName, List<String> scopes) throws IllegalAccessException {
+    private GoogleAccountCredential createCredential(String accountName, List<String> scopes) {
         GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(context, scopes);
         credential.setSelectedAccountName(accountName);
         if (credential.getSelectedAccount() == null) {
-            throw new IllegalAccessException("Account does not exist: " + accountName);
+            throw new IllegalArgumentException("Account does not exist: " + accountName);
         }
         return credential;
     }
@@ -202,7 +202,7 @@ public class GmailTransport {
         return content;
     }
 
-    private Address[] parseAddresses(String addresses) throws AddressException {
+    private Address[] parseAddresses(@NonNull String addresses) throws AddressException {
         if (addresses.indexOf(',') > 0) {
             return InternetAddress.parse(addresses);
         } else {

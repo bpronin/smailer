@@ -26,7 +26,9 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
+import static com.bopr.android.smailer.util.AndroidUtil.isValidEmailAddress;
 import static com.bopr.android.smailer.util.ResourceUtil.showToast;
+import static com.bopr.android.smailer.util.ResourceUtil.underwivedText;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.Util.commaJoin;
 import static java.lang.String.valueOf;
@@ -251,7 +253,10 @@ public class RecipientsFragment extends BaseFragment {
         @Override
         public void onBindViewHolder(@NonNull final ItemViewHolder holder, int position) {
             final Item item = getItem(position);
-            holder.textView.setText(item != null ? item.address : null);
+
+            String address = item != null ? item.address : null;
+            holder.textView.setText(isValidEmailAddress(address) ? address : underwivedText(requireContext(), address));
+
             holder.itemView.setOnClickListener(new View.OnClickListener() {
 
                 @Override

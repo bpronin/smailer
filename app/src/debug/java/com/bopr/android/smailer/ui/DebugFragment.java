@@ -699,7 +699,7 @@ public class DebugFragment extends BasePreferenceFragment {
                 MailMessage message = new MailMessage();
                 message.setSubject("test subject");
                 message.setBody("test message from " + AndroidUtil.getDeviceName());
-                message.setRecipients(properties.getProperty("default_recipient"));
+                message.setRecipients(requireNonNull(properties.getProperty("default_recipient")));
 
                 transport.send(message);
             } catch (Exception x) {

@@ -69,8 +69,7 @@ public class HistoryFragment extends BaseFragment {
         settings.registerOnSharedPreferenceChangeListener(settingsChangeListener);
 
         database = new Database(getContext());
-        database.registerListener(databaseListener);
-        databaseListener = new DatabaseListener();
+        databaseListener = database.registerListener(new DatabaseListener());
     }
 
     @Override
@@ -401,6 +400,7 @@ public class HistoryFragment extends BaseFragment {
     }
 
     private class DatabaseListener extends BroadcastReceiver {
+
         @Override
         public void onReceive(Context context, Intent intent) {
             loadData();

@@ -31,7 +31,9 @@ class RemoteCommandParser {
     static final int REMOVE_TEXT_FROM_WHITELIST = 7;
 
     private static final Pattern QUOTED_TEXT_PATTERN = Pattern.compile("\"(.*?)\"");
+
     private static final Pattern PHONE_NUMBER_PATTERN = Pattern.compile("([\\d\\-*]+)");
+    //todo consider android.util.Patterns.PHONE
 
     RemoteCommandParser() {
     }
