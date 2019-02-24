@@ -19,7 +19,7 @@ android {
         minSdkVersion 18
         targetSdkVersion 28
         versionCode 49
-        versionName '1.4.4'
+        versionName '1.5.0'
         archivesBaseName = "smailer-${versionName}"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         multiDexEnabled true
