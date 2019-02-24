@@ -61,7 +61,8 @@
     <string name="not_specified">Not specified</string>
     <string name="notifications">Notifications</string>
     <string name="notify_on_send">Notify of send</string>
-    <string name="notify_send_success">Display notification when email successfully sent</string>
+    <string name="notify_send_success">Display notification when email is successfully sent</string>
+    <string name="notify_remote_actions">Display notification when remote action is performed</string>
     <string name="open_source">Open source</string>
     <string name="open_source_and_third_party">Open source and third party software</string>
     <string name="outgoing_call">Outgoing call</string>
@@ -101,7 +102,7 @@
     <string name="time_time">Time: {time}</string>
     <string name="triggers">Triggers</string>
     <string name="try_to_resend_unsent">Try to resend unsent messages when connection is established</string>
-    <string name="unable_send_email">Unable to send email.</string>
+    <string name="unable_send_email">Unable to send email. {reason}</string>
     <string name="unacceptable_phone_numbers">Unacceptable phone numbers ({size})</string>
     <string name="unacceptable_words">Unacceptable words ({size})</string>
     <string name="undo">Undo</string>
@@ -117,7 +118,15 @@
     <string name="allow_control_remotely">Allow to control application by sending email on service account</string>
     <string name="remote_control_account">Service account</string>
     <string name="same_as_sender">Same as sender</string>
-
+    <string name="text_remotely_removed_from_whitelist">Text \"{text}\" remotely removed from whitelist."</string>
+    <string name="text_remotely_added_to_whitelist">Text \"{text}\" remotely added to whitelist."</string>
+    <string name="text_remotely_removed_from_blacklist">Text \"{text}\" remotely removed from blacklist."</string>
+    <string name="text_remotely_added_to_blacklist">Text \"{text}\" remotely added to blacklist."</string>
+    <string name="phone_remotely_removed_from_whitelist">Phone {text} remotely removed from whitelist."</string>
+    <string name="phone_remotely_added_to_whitelist">Phone {text} remotely added to whitelist."</string>
+    <string name="phone_remotely_removed_from_blacklist">Phone {text} remotely removed from blacklist."</string>
+    <string name="phone_remotely_added_to_blacklist">Phone {text} remotely added to blacklist."</string>
+    
     <string-array name="trigger_names">
         <item>Incoming SMS</item>
         <item>Outgoing SMS</item>

@@ -101,15 +101,18 @@ public class GmailTransport {
                 .execute();
 
         LinkedList<MailMessage> result = new LinkedList<>();
-        for (Message m : response.getMessages()) {
-            Message message = service
-                    .users()
-                    .messages()
-                    .get(USER_ID, m.getId())
-//                    .setFormat("raw")
-                    .execute();
+        List<Message> messages = response.getMessages();
+        if (messages != null) {
+            for (Message m : messages) {
+                Message message = service
+                        .users()
+                        .messages()
+                        .get(USER_ID, m.getId())
+                        //                    .setFormat("raw")
+                        .execute();
 
-            result.add(readMessage(message));
+                result.add(readMessage(message));
+            }
         }
         return result;
     }
@@ -125,12 +128,12 @@ public class GmailTransport {
     }
 
     public void trash(MailMessage message) throws IOException {
-        service.users()
-                .messages()
-                .trash(USER_ID, message.getId())
-                .execute();
+//        service.users()
+//                .messages()
+//                .trash(USER_ID, message.getId())
+//                .execute();
 
-        log.debug("Message deleted");
+        log.debug("Message moved to trash");
     }
 
     @NonNull

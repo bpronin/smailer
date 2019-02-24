@@ -60,6 +60,7 @@
     <string name="notifications">Уведомления</string>
     <string name="notify_on_send">Уведомлять об отправке</string>
     <string name="notify_send_success">Показывать уведомление об успешной отправке почты</string>
+    <string name="notify_remote_actions">Показывать уведомление о выполнении удаленных операций</string>
     <string name="open_source">Открытый исходный код</string>
     <string name="open_source_and_third_party">Открытый исходный код и ПО сторонних производителей</string>
     <string name="outgoing_call">Исходящий звонок</string>
@@ -99,7 +100,7 @@
     <string name="time_time">Время: {time}</string>
     <string name="triggers">Триггеры</string>
     <string name="try_to_resend_unsent">Заново отправлять неотправленные сообщения при появлении соединения</string>
-    <string name="unable_send_email">Не удалось отправить почту.</string>
+    <string name="unable_send_email">Не удалось отправить почту. {reason}</string>
     <string name="unacceptable_phone_numbers">Заблокированные номера ({size})</string>
     <string name="unacceptable_words">Запрещеные фразы ({size})</string>
     <string name="undo">Отмена</string>
@@ -115,7 +116,15 @@
     <string name="allow_control_remotely">Позволить управлять приложением посредством отправки почты на сервисный аккаунт</string>
     <string name="remote_control_account">Сервисный аккаунт</string>
     <string name="same_as_sender">Такой же как отправитель</string>
-
+    <string name="text_remotely_removed_from_whitelist">Текст \"{text}\" удаленно удален из белого списка."</string>
+    <string name="text_remotely_added_to_whitelist">Текст \"{text}\" удаленно добавлен в белый список."</string>
+    <string name="text_remotely_removed_from_blacklist">Текст \"{text}\" удаленно удален из черного списка."</string>
+    <string name="text_remotely_added_to_blacklist">Текст \"{text}\" удаленно добавлен в черный список."</string>
+    <string name="phone_remotely_removed_from_whitelist">Номер {text} удаленно удален из белого списка."</string>
+    <string name="phone_remotely_added_to_whitelist">Номер {text} удаленно добавлен в белый список."</string>
+    <string name="phone_remotely_removed_from_blacklist">Номер {text} удаленно удален из черного списка."</string>
+    <string name="phone_remotely_added_to_blacklist">Номер {text} удаленно добавлен в черный список."</string>
+    
     <string-array name="trigger_names">
         <item>Входящие SMS</item>
         <item>Исходящие SMS</item>

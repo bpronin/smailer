@@ -9,9 +9,11 @@ import android.content.Intent;
 import android.os.Build;
 
 import com.bopr.android.smailer.ui.MainActivity;
+import com.bopr.android.smailer.util.TagFormatter;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationCompat.Builder;
 import androidx.core.app.TaskStackBuilder;
 
 /**
@@ -25,31 +27,70 @@ public class Notifications {
     private static final String CHANNEL_ID = "com.bopr.android.smailer";
     private static final String EXTRA_MESSAGE_ID = "message_id";
 
-    private static final int ID_MAIL_SUCCESS = 100;
-    private static final int ID_MAIL_ERROR = 101;
-    private static final int ID_REMOTE_ACTION = 102;
+    public static final int ACTION_SHOW_APP = 0;
+    public static final int ACTION_SHOW_CONNECTION_OPTIONS = 1;
 
-    public static final int ACTION_SHOW_MAIN = 0;
-    public static final int ACTION_SHOW_RECIPIENTS = 1;
-    public static final int ACTION_SHOW_CONNECTION = 2;
-    public static final int ACTION_SHOW_HISTORY = 3;
+    private static int messageId = -1;
+    private static int errorMessageId = -1;
 
     private Context context;
+    private NotificationManager manager;
+    private TagFormatter formatter;
 
     public Notifications(Context context) {
         this.context = context;
+        manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        formatter = new TagFormatter(context);
+    }
+
+    public void showMailError(int messageRes, int action, @Nullable Long eventId) {
+        String text = formatter
+                .pattern(R.string.unable_send_email)
+                .put("reason", messageRes)
+                .format();
+
+        Builder builder = createBuilder(text, action, eventId).setAutoCancel(true);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder.setCategory(Notification.CATEGORY_ERROR);
+        }
+
+        manager.notify("error", ++errorMessageId, builder.build());
+    }
+
+    public void hideLastError() {
+        manager.cancel("error", errorMessageId--);
+    }
+
+    public void showMailSuccess(long eventId) {
+        String text = context.getString(R.string.email_send);
+
+        Builder builder = createBuilder(text, ACTION_SHOW_APP, eventId).setAutoCancel(true);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder.setCategory(Notification.CATEGORY_MESSAGE);
+        }
+
+        manager.notify("success", ++messageId, builder.build());
+    }
+
+    public void showRemoteAction(int messageRes, String argument) {
+        String text = formatter
+                .pattern(messageRes)
+                .put("text", argument)
+                .format();
+
+        Builder builder = createBuilder(text, ACTION_SHOW_APP, null).setAutoCancel(true);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder.setCategory(Notification.CATEGORY_MESSAGE);
+        }
+
+        manager.notify("remote", ++messageId, builder.build());
     }
 
     public Notification getForegroundServiceNotification() {
-        String text = context.getResources().getString(R.string.service_running);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, getChannel())
-                .setContentIntent(createIntent(ACTION_SHOW_MAIN, null))
-                .setSmallIcon(R.drawable.ic_light_service)
-                .setTicker(context.getResources().getString(R.string.app_name))
-                .setContentTitle(context.getResources().getString(R.string.app_name))
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
-                .setContentText(text);
+        Builder builder = createBuilder(context.getString(R.string.service_running), ACTION_SHOW_APP, null);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setCategory(Notification.CATEGORY_SERVICE);
@@ -58,77 +99,21 @@ public class Notifications {
         return builder.build();
     }
 
-    public void hideMailError() {
-        getManager().cancel(ID_MAIL_ERROR);
-    }
-
-    public void showMailError(int messageResource, @Nullable Long messageId, int action) {
-        showMailError(context.getResources().getString(R.string.unable_send_email) + " " +
-                context.getResources().getString(messageResource), messageId, action);
-    }
-
-    public void showMailError(String text, @Nullable Long messageId, int action) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, getChannel())
-                .setContentIntent(createIntent(action, messageId))
-                .setSmallIcon(R.drawable.ic_light_alert)
-                .setTicker(context.getResources().getString(R.string.app_name))
-                .setAutoCancel(true)
-                .setContentTitle(context.getResources().getString(R.string.app_name))
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
-                .setContentText(text);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setCategory(Notification.CATEGORY_ERROR);
-        }
-
-        getManager().notify(ID_MAIL_ERROR, builder.build());
-    }
-
-    public void showMailSuccess(long messageId) {
-        String text = context.getResources().getString(R.string.email_send);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, getChannel())
-                .setContentIntent(createIntent(ACTION_SHOW_HISTORY, messageId))
-                .setSmallIcon(R.drawable.ic_light_send)
-                .setTicker(context.getResources().getString(R.string.app_name))
-                .setAutoCancel(true)
-                .setContentTitle(context.getResources().getString(R.string.app_name))
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
-                .setContentText(text);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setCategory(Notification.CATEGORY_MESSAGE);
-        }
-
-        getManager().notify(ID_MAIL_SUCCESS, builder.build());
-    }
-
-    public void showRemoteAction(String message) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, getChannel())
-                .setContentIntent(createIntent(ACTION_SHOW_MAIN, null))
+    private Builder createBuilder(String text, int action, @Nullable Long eventId) {
+        return new Builder(context, getChannel())
+                .setContentIntent(createIntent(action, eventId))
                 .setSmallIcon(R.drawable.ic_light_service)
-                .setTicker(context.getResources().getString(R.string.app_name))
-                .setAutoCancel(true)
-                .setContentTitle(context.getResources().getString(R.string.app_name))
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
-                .setContentText(message);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setCategory(Notification.CATEGORY_MESSAGE);
-        }
-
-        getManager().notify(ID_REMOTE_ACTION, builder.build());
+                .setTicker(context.getString(R.string.app_name))
+                .setContentTitle(context.getString(R.string.app_name))
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
+                .setContentText(text);
     }
 
-    private PendingIntent createIntent(int action, @Nullable Long messageId) {
+    private PendingIntent createIntent(int action, @Nullable Long eventId) {
         switch (action) {
-            case ACTION_SHOW_RECIPIENTS:
-//                return createActivityIntent(RecipientsActivity.class, messageId);
-            case ACTION_SHOW_HISTORY:
-//                return createActivityIntent(HistoryActivity.class, messageId);
-            case ACTION_SHOW_MAIN:
-                return createActivityIntent(MainActivity.class, messageId);
-            case ACTION_SHOW_CONNECTION:
+            case ACTION_SHOW_APP:
+                return createActivityIntent(MainActivity.class, eventId);
+            case ACTION_SHOW_CONNECTION_OPTIONS:
                 Intent intent = new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS);
                 return PendingIntent.getActivities(context, 0, new Intent[]{intent}, PendingIntent.FLAG_UPDATE_CURRENT);
         }
@@ -141,22 +126,19 @@ public class Notifications {
             intent.putExtra(EXTRA_MESSAGE_ID, messageId);
         }
 
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-        stackBuilder.addParentStack(activityClass);
-        stackBuilder.addNextIntent(intent);
-        return stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-    }
-
-    private NotificationManager getManager() {
-        return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        return TaskStackBuilder.create(context)
+                .addParentStack(activityClass)
+                .addNextIntent(intent)
+                .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     private String getChannel() {
         if (Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            String name = context.getResources().getString(R.string.notifications);
+            String name = context.getString(R.string.notifications);
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_LOW);
-            getManager().createNotificationChannel(channel);
+            manager.createNotificationChannel(channel);
         }
         return CHANNEL_ID;
     }
+
 }

@@ -44,7 +44,7 @@ public class RemoteControlWorker extends Worker {
     }
 
     private static boolean isFeatureEnabled(@NonNull Context context) {
-        return new Settings(context).getBoolean(KEY_PREF_REMOTE_CONTROL, true);
+        return new Settings(context).getBoolean(KEY_PREF_REMOTE_CONTROL, false);
     }
 
     public static void enable(@NonNull Context context) {
@@ -54,7 +54,7 @@ public class RemoteControlWorker extends Worker {
             Constraints constraints = new Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)
                     .build();
-            PeriodicWorkRequest request = new PeriodicWorkRequest.Builder(RemoteControlWorker.class, 1, TimeUnit.MINUTES)
+            PeriodicWorkRequest request = new PeriodicWorkRequest.Builder(RemoteControlWorker.class, 5, TimeUnit.MINUTES)
                     .addTag(WORKER_TAG)
                     .setConstraints(constraints)
                     .build();

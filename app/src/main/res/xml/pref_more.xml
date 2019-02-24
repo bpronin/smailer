@@ -54,6 +54,11 @@
             android:key="remote_control_account"
             android:title="@string/remote_control_account" />
 
+        <androidx.preference.SwitchPreference
+            android:key="remote_control_notifications"
+            android:title="@string/notify_remote_actions"
+            />
+
     </androidx.preference.PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

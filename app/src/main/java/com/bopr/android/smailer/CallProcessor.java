@@ -21,7 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.core.util.Consumer;
 
 import static com.bopr.android.smailer.GmailTransport.SCOPE_SEND;
-import static com.bopr.android.smailer.Notifications.ACTION_SHOW_MAIN;
+import static com.bopr.android.smailer.Notifications.ACTION_SHOW_APP;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
 import static com.bopr.android.smailer.Settings.KEY_PREF_MARK_SMS_AS_READ;
@@ -133,7 +133,7 @@ public class CallProcessor {
         } catch (IllegalAccessException x) {
             log.error("Failed starting session: ", x);
             if (!silent) {
-                notifications.showMailError(R.string.no_account_specified, null, ACTION_SHOW_MAIN);
+                notifications.showMailError(R.string.no_account_specified, ACTION_SHOW_APP, null);
             }
             return false;
         }
@@ -167,12 +167,12 @@ public class CallProcessor {
 //        } catch (MessagingException x) {
 //            handleError(event, x, R.string.unable_send_email, ACTION_SHOW_SERVER, silent);
         } catch (AddressException x) {
-            handleError(event, x, R.string.no_recipients_specified, ACTION_SHOW_MAIN, silent);
+            handleError(event, x, R.string.no_recipients_specified, ACTION_SHOW_APP, silent);
         } catch (UserRecoverableAuthIOException x) {
             removeSelectedAccount();
-            handleError(event, x, R.string.need_google_permission, ACTION_SHOW_MAIN, silent);
+            handleError(event, x, R.string.need_google_permission, ACTION_SHOW_APP, silent);
         } catch (Throwable x) {
-            handleError(event, x, R.string.internal_error, ACTION_SHOW_MAIN, silent);
+            handleError(event, x, R.string.internal_error, ACTION_SHOW_APP, silent);
         }
     }
 
@@ -227,7 +227,7 @@ public class CallProcessor {
         event.setState(PhoneEvent.STATE_PROCESSED);
         database.putEvent(event);
 
-        notifications.hideMailError();
+        notifications.hideLastError();
 
         if (settings.getBoolean(KEY_PREF_NOTIFY_SEND_SUCCESS, false)) {
             notifications.showMailSuccess(event.getId());
@@ -244,7 +244,7 @@ public class CallProcessor {
         database.putEvent(event);
 
         if (!silent) {
-            notifications.showMailError(notification, event.getId(), action);
+            notifications.showMailError(notification, action, event.getId());
         }
     }
 

@@ -62,6 +62,7 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_BLACKLIST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_TEXT_BLACKLIST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_NOTIFY_SEND_SUCCESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
+import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CONTACT;
@@ -298,27 +299,43 @@ public class DebugFragment extends BasePreferenceFragment {
 
         addCategory(screen, "Notifications",
 
-                createPreference("Mail error. Show connection", new DefaultClickListener() {
+                createPreference("Show error. Open connection option", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        new Notifications(context).showMailError("Test notification text", 100L, Notifications.ACTION_SHOW_CONNECTION);
+                        new Notifications(context).showMailError(R.string.no_internet_connection, Notifications.ACTION_SHOW_CONNECTION_OPTIONS, 100L);
                     }
                 }),
 
-                createPreference("Mail error. Show log", new DefaultClickListener() {
+                createPreference("Show error. Open application", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        new Notifications(context).showMailError("Test notification text", 100L, Notifications.ACTION_SHOW_HISTORY);
+                        new Notifications(context).showMailError(R.string.no_recipients_specified, Notifications.ACTION_SHOW_APP, 100L);
                     }
                 }),
 
-                createPreference("Mail success", new DefaultClickListener() {
+                createPreference("Hide last error", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        new Notifications(context).hideLastError();
+                    }
+                }),
+
+                createPreference("Show mail success", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
                         new Notifications(context).showMailSuccess(100);
+                    }
+                }),
+
+                createPreference("Show remote action", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        new Notifications(context).showRemoteAction(R.string.text_remotely_added_to_blacklist, "spam text");
                     }
                 })
 
@@ -403,13 +420,6 @@ public class DebugFragment extends BasePreferenceFragment {
         return preference;
     }
 
-/*
-    private void addPreference(String title, Preference.OnPreferenceClickListener listener) {
-        Preference preference = createPreference(title, listener);
-        screen.addPreference(preference);
-    }
-*/
-
     private void addCategory(PreferenceScreen screen, String title, Preference... preferences) {
         PreferenceCategory category = new PreferenceCategory(context);
         screen.addPreference(category);
@@ -487,7 +497,11 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private void onProcessServiceMail() {
-        RemoteControlService.start(context);
+        if (new Settings(context).getBoolean(KEY_PREF_REMOTE_CONTROL, false)) {
+            RemoteControlService.start(context);
+        }else {
+            showToast(context, "Feature disabled");
+        }
     }
 
     private void onRequestGooglePermission() {

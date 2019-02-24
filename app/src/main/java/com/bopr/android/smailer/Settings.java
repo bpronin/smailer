@@ -53,6 +53,7 @@ public class Settings extends SharedPreferencesWrapper {
     public static final String KEY_PREF_DEVICE_ALIAS = "device_alias";
     public static final String KEY_PREF_REMOTE_CONTROL = "remote_control";
     public static final String KEY_PREF_REMOTE_CONTROL_ACCOUNT = "remote_control_account";
+    public static final String KEY_PREF_REMOTE_CONTROL_NOTIFICATIONS = "remote_control_notifications";
 
     public static final String VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME = "time";
     public static final String VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT = "time_sent";
@@ -97,6 +98,7 @@ public class Settings extends SharedPreferencesWrapper {
         edit.putBooleanOptional(KEY_PREF_RESEND_UNSENT, true);
         edit.putBooleanOptional(KEY_PREF_MARK_SMS_AS_READ, false);
         edit.putBooleanOptional(KEY_PREF_REMOTE_CONTROL, false);
+        edit.putBooleanOptional(KEY_PREF_REMOTE_CONTROL_NOTIFICATIONS, true);
 
         Set<String> content = settings.getStringSet(KEY_PREF_EMAIL_CONTENT, null);
         if (content == null) {

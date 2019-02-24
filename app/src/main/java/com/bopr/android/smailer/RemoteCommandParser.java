@@ -42,59 +42,65 @@ class RemoteCommandParser {
             return null;
         }
 
-        /* remove quotation line separators and so on */
-        String text = message.getBody()
+        String subject = message.getSubject();
+        /* remove quotations, line separators and so on */
+        String body = message.getBody()
                 .replaceAll(">(.*)\\r\\n", "")
                 .split("\\r\\n\\r\\n")[0]
-                .replaceAll("\\r", " ")
+                .replaceAll("\\r", "")
                 .replaceAll("\\n", " ")
+                .replaceAll("\\n\\n", "\n")
                 .toLowerCase(Locale.ROOT);
 
-        log.debug("Action text: " + text);
+//        String text = message.getBody()
+//                .split("\\r\\n")[0]
+//                .toLowerCase(Locale.ROOT);
 
-        if (isEmpty(text)) {
+        log.debug("Parsing: " + body);
+
+        if (isEmpty(body)) {
             return null;
         }
 
-        if (text.contains("blacklist")) {
-            if (text.contains("delete") || text.contains("remove")) {
-                if (text.contains("text")) {
-                    return new Result(REMOVE_TEXT_FROM_BLACKLIST, parseTextArgument(message));
+        if (body.contains("blacklist")) {
+            if (body.contains("delete") || body.contains("remove")) {
+                if (body.contains("text")) {
+                    return new Result(REMOVE_TEXT_FROM_BLACKLIST, parseTextArgument(body));
                 } else {
-                    return new Result(REMOVE_PHONE_FROM_BLACKLIST, parsePhoneArgument(message));
+                    return new Result(REMOVE_PHONE_FROM_BLACKLIST, parsePhoneArgument(subject, body));
                 }
             } else {
-                if (text.contains("text")) {
-                    return new Result(ADD_TEXT_TO_BLACKLIST, parseTextArgument(message));
+                if (body.contains("text")) {
+                    return new Result(ADD_TEXT_TO_BLACKLIST, parseTextArgument(body));
                 } else {
-                    return new Result(ADD_PHONE_TO_BLACKLIST, parsePhoneArgument(message));
+                    return new Result(ADD_PHONE_TO_BLACKLIST, parsePhoneArgument(subject, body));
                 }
             }
-        } else if (text.contains("whitelist")) {
-            if (text.contains("delete") || text.contains("remove")) {
-                if (text.contains("text")) {
-                    return new Result(REMOVE_TEXT_FROM_WHITELIST, parseTextArgument(message));
+        } else if (body.contains("whitelist")) {
+            if (body.contains("delete") || body.contains("remove")) {
+                if (body.contains("text")) {
+                    return new Result(REMOVE_TEXT_FROM_WHITELIST, parseTextArgument(body));
                 } else {
-                    return new Result(REMOVE_PHONE_FROM_WHITELIST, parsePhoneArgument(message));
+                    return new Result(REMOVE_PHONE_FROM_WHITELIST, parsePhoneArgument(subject, body));
                 }
             } else {
-                if (text.contains("text")) {
-                    return new Result(ADD_TEXT_TO_WHITELIST, parseTextArgument(message));
+                if (body.contains("text")) {
+                    return new Result(ADD_TEXT_TO_WHITELIST, parseTextArgument(body));
                 } else {
-                    return new Result(ADD_PHONE_TO_WHITELIST, parsePhoneArgument(message));
+                    return new Result(ADD_PHONE_TO_WHITELIST, parsePhoneArgument(subject, body));
                 }
             }
         }
         return null;
     }
 
-    private String parsePhoneArgument(MailMessage message) {
-        String s = findNumber(message.getBody());
-        return s != null ? s : findNumber(message.getSubject());
+    private String parsePhoneArgument(String subject, String body) {
+        String s = findNumber(body);
+        return s != null ? s : findNumber(subject);
     }
 
-    private String parseTextArgument(MailMessage message) {
-        return findFirstQuotedFragment(message.getBody());
+    private String parseTextArgument(String body) {
+        return findFirstQuotedFragment(body);
     }
 
     private String findNumber(String text) {
