@@ -18,6 +18,8 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_DEVICE_ALIAS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
 import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL;
 import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_ACCOUNT;
+import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_FILTER_RECIPIENTS;
+import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_NOTIFICATIONS;
 import static com.bopr.android.smailer.util.Util.isEmpty;
 
 /**
@@ -76,6 +78,7 @@ public class OptionsFragment extends BasePreferenceFragment {
     public void onStart() {
         super.onStart();
         updateAccountPreference();
+        updateRemoteControlPreferences();
     }
 
     @Override
@@ -119,6 +122,13 @@ public class OptionsFragment extends BasePreferenceFragment {
         }
     }
 
+    private void updateRemoteControlPreferences() {
+        boolean enabled = settings.getBoolean(KEY_PREF_REMOTE_CONTROL, false);
+        accountPreference.setEnabled(enabled);
+        findPreference(KEY_PREF_REMOTE_CONTROL_NOTIFICATIONS).setEnabled(enabled);
+        findPreference(KEY_PREF_REMOTE_CONTROL_FILTER_RECIPIENTS).setEnabled(enabled);
+    }
+
     private class SettingsListener extends BaseSettingsListener {
 
         private SettingsListener() {
@@ -132,6 +142,7 @@ public class OptionsFragment extends BasePreferenceFragment {
                     updateAccountPreference();
                     break;
                 case KEY_PREF_REMOTE_CONTROL:
+                    updateRemoteControlPreferences();
                     RemoteControlWorker.enable(requireContext());
                     break;
             }

@@ -2,6 +2,8 @@ package com.bopr.android.smailer.util;
 
 import org.junit.Test;
 
+import static com.bopr.android.smailer.util.PhoneUtil.escapePhone;
+import static com.bopr.android.smailer.util.PhoneUtil.extractPhone;
 import static com.bopr.android.smailer.util.PhoneUtil.phoneToRegEx;
 import static com.bopr.android.smailer.util.PhoneUtil.phonesEqual;
 import static org.junit.Assert.assertEquals;
@@ -19,6 +21,17 @@ public class PhoneUtilTest {
     @Test
     public void testPhoneToRegex() {
         assertEquals("1(.*)56HE..O", phoneToRegEx("1-*-56 - (HE..O)"));
+    }
+
+    @Test
+    public void testExtractPhone() {
+        assertEquals("+7-(905)-230-94-41", extractPhone("Tel: <+7-(905)-230-94-41> specified"));
+    }
+
+    @Test
+    public void testEscapePhone() {
+        assertEquals("+7-(905)-230-94-41", escapePhone("+7-(905)-230-94-41"));
+        assertEquals("\"SomeCompanyPhone\"", escapePhone("SomeCompanyPhone"));
     }
 
 }

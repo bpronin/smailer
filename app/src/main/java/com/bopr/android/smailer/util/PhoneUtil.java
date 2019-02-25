@@ -1,9 +1,13 @@
 package com.bopr.android.smailer.util;
 
+import android.util.Patterns;
+
 import java.util.Collection;
 import java.util.Locale;
+import java.util.regex.Matcher;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import static com.bopr.android.smailer.util.Util.safeEquals;
 
@@ -18,6 +22,7 @@ public class PhoneUtil {
     private PhoneUtil() {
     }
 
+    @NonNull
     public static String normalizePhone(@NonNull String phone) {
 //        return phone.toUpperCase(Locale.ROOT).replaceAll("[^A-Z0-9]", "");
         return phone.replaceAll("[^A-Za-z0-9*.]", "").toUpperCase(Locale.ROOT);
@@ -31,6 +36,7 @@ public class PhoneUtil {
         return safeEquals(p1, p2) || comparePhones(p1, p2) == 0;
     }
 
+    @Nullable
     public static String findPhone(@NonNull Collection<String> list, String phone) {
         for (String n : list) {
             if (phonesEqual(n, phone)) {
@@ -44,8 +50,26 @@ public class PhoneUtil {
         return findPhone(list, phone) != null;
     }
 
+    @NonNull
     public static String phoneToRegEx(@NonNull String phone) {
         return normalizePhone(phone).replaceAll("\\*", "(.*)");
     }
 
+    @Nullable
+    public static String extractPhone(String text) {
+        Matcher matcher = Patterns.PHONE.matcher(text);
+        if (matcher.find()) {
+            return matcher.group();
+        }
+        return null;
+    }
+
+    /**
+     * Returns phone as is if it is regular or quoted otherwise
+     */
+    public static String escapePhone(String phone) {
+        return Patterns.PHONE.matcher(phone).matches()
+                ? phone
+                : ("\"" + phone + "\"");
+    }
 }

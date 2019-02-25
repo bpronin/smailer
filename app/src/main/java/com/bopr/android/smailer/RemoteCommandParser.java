@@ -1,15 +1,17 @@
 package com.bopr.android.smailer;
 
+import com.bopr.android.smailer.util.PhoneUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import static com.bopr.android.smailer.util.Util.QUOTED_TEXT_REGEX;
+import static com.bopr.android.smailer.util.Util.extractQuoted;
 import static com.bopr.android.smailer.util.Util.isEmpty;
 
 /**
@@ -21,18 +23,14 @@ class RemoteCommandParser {
 
     private static Logger log = LoggerFactory.getLogger("RemoteCommandParser");
 
-    static final int ADD_PHONE_TO_BLACKLIST = 0;
-    static final int REMOVE_PHONE_FROM_BLACKLIST = 1;
-    static final int ADD_PHONE_TO_WHITELIST = 2;
-    static final int REMOVE_PHONE_FROM_WHITELIST = 3;
-    static final int ADD_TEXT_TO_BLACKLIST = 4;
-    static final int REMOVE_TEXT_FROM_BLACKLIST = 5;
-    static final int ADD_TEXT_TO_WHITELIST = 6;
-    static final int REMOVE_TEXT_FROM_WHITELIST = 7;
-
-    private static final String QUOTED_TEXT_REGEX = "\"(.*?)\"";
-    private static final Pattern QUOTED_TEXT_PATTERN = Pattern.compile(QUOTED_TEXT_REGEX);
-    private static final Pattern PHONE_NUMBER_PATTERN = Pattern.compile("([\\d\\+\\-*]+)");
+    static final String ADD_PHONE_TO_BLACKLIST = "add_phone_to_blacklist";
+    static final String REMOVE_PHONE_FROM_BLACKLIST = "remove_phone_from_blacklist";
+    static final String ADD_PHONE_TO_WHITELIST = "add_phone_to_whitelist";
+    static final String REMOVE_PHONE_FROM_WHITELIST = "remove_phone_from_whitelist";
+    static final String ADD_TEXT_TO_BLACKLIST = "add_text_to_blacklist";
+    static final String REMOVE_TEXT_FROM_BLACKLIST = "remove_text_from_blacklist";
+    static final String ADD_TEXT_TO_WHITELIST = "add_text_to_whitelist";
+    static final String REMOVE_TEXT_FROM_WHITELIST = "remove_text_from_whitelist";
 
     RemoteCommandParser() {
     }
@@ -63,73 +61,54 @@ class RemoteCommandParser {
                 .replaceAll(QUOTED_TEXT_REGEX, "") /* remove all quoted text */
                 .toLowerCase(Locale.ROOT);
 
+        //todo: replace with tokenizer
         if (command.contains("blacklist")) {
             if (command.contains("delete") || command.contains("remove")) {
                 if (command.contains("text")) {
-                    return new Task(REMOVE_TEXT_FROM_BLACKLIST, parseTextArgument(body));
+                    return new Task(REMOVE_TEXT_FROM_BLACKLIST, extractQuoted(body));
                 } else {
-                    return new Task(REMOVE_PHONE_FROM_BLACKLIST, parsePhoneArgument(subject, body));
+                    return new Task(REMOVE_PHONE_FROM_BLACKLIST, extractPhone(subject, body));
                 }
             } else {
                 if (command.contains("text")) {
-                    return new Task(ADD_TEXT_TO_BLACKLIST, parseTextArgument(body));
+                    return new Task(ADD_TEXT_TO_BLACKLIST, extractQuoted(body));
                 } else {
-                    return new Task(ADD_PHONE_TO_BLACKLIST, parsePhoneArgument(subject, body));
+                    return new Task(ADD_PHONE_TO_BLACKLIST, extractPhone(subject, body));
                 }
             }
         } else if (command.contains("whitelist")) {
             if (command.contains("delete") || command.contains("remove")) {
                 if (command.contains("text")) {
-                    return new Task(REMOVE_TEXT_FROM_WHITELIST, parseTextArgument(body));
+                    return new Task(REMOVE_TEXT_FROM_WHITELIST, extractQuoted(body));
                 } else {
-                    return new Task(REMOVE_PHONE_FROM_WHITELIST, parsePhoneArgument(subject, body));
+                    return new Task(REMOVE_PHONE_FROM_WHITELIST, extractPhone(subject, body));
                 }
             } else {
                 if (command.contains("text")) {
-                    return new Task(ADD_TEXT_TO_WHITELIST, parseTextArgument(body));
+                    return new Task(ADD_TEXT_TO_WHITELIST, extractQuoted(body));
                 } else {
-                    return new Task(ADD_PHONE_TO_WHITELIST, parsePhoneArgument(subject, body));
+                    return new Task(ADD_PHONE_TO_WHITELIST, extractPhone(subject, body));
                 }
             }
         }
         return null;
     }
 
-    private String parsePhoneArgument(String subject, String body) {
-        String s = findNumber(body);
-        return s != null ? s : findNumber(subject);
+    private String extractPhone(String subject, String body) {
+        String s = extractPhoneFromText(body);
+        return s != null ? s : extractPhoneFromText(subject);
     }
 
-    private String parseTextArgument(String body) {
-        return findFirstQuotedFragment(body);
-    }
-
-    private String findNumber(String text) {
-        String s = findFirstQuotedFragment(text);
-        return s != null ? s : findFirstNumberFragment(text);
-    }
-
-    private String findFirstQuotedFragment(String text) {
-        Matcher matcher = QUOTED_TEXT_PATTERN.matcher(text);
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-        return null;
-    }
-
-    private String findFirstNumberFragment(String text) {
-        Matcher matcher = PHONE_NUMBER_PATTERN.matcher(text);
-        if (matcher.find()) {
-            return matcher.group();
-        }
-        return null;
+    private String extractPhoneFromText(String text) {
+        String s = extractQuoted(text);
+        return s != null ? s : PhoneUtil.extractPhone(text);
     }
 
     class Task {
-        final int action;
+        final String action;
         final String argument;
 
-        private Task(int action, String argument) {
+        private Task(String action, String argument) {
             this.action = action;
             this.argument = argument;
         }

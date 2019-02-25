@@ -10,9 +10,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import static androidx.core.util.PatternsCompat.EMAIL_ADDRESS;
 
 /**
  * Miscellaneous utilities.
@@ -23,6 +27,8 @@ import androidx.annotation.Nullable;
 public class Util {
 
     public static final String DEFAULT = "default";
+    public static final String QUOTED_TEXT_REGEX = "\"(.*?)\"";
+    public static final Pattern QUOTED_TEXT_PATTERN = Pattern.compile(QUOTED_TEXT_REGEX);
 
     private Util() {
     }
@@ -207,4 +213,21 @@ public class Util {
         return null;
     }
 
+    @Nullable
+    public static String extractQuoted(String text) {
+        Matcher matcher = QUOTED_TEXT_PATTERN.matcher(text);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return null;
+    }
+
+    @Nullable
+    public static String extractEmailAddress(String text) {
+        Matcher matcher = EMAIL_ADDRESS.matcher(text);
+        if (matcher.find()) {
+            return matcher.group();
+        }
+        return null;
+    }
 }

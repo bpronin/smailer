@@ -28,6 +28,10 @@ public class RemoteControlWorker extends Worker {
 
     private static final String WORKER_TAG = "smailer-email";
 
+    static {
+        WorkManager.getInstance().cancelAllWorkByTag(WORKER_TAG);
+    }
+
     public RemoteControlWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }

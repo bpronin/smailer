@@ -59,6 +59,11 @@
             android:title="@string/notify_remote_actions"
             />
 
+        <androidx.preference.SwitchPreference
+            android:key="remote_control_filter_recipients"
+            android:title="@string/allow_only_recipients"
+            />
+
     </androidx.preference.PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

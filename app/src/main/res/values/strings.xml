@@ -8,9 +8,12 @@
     <string name="about">About</string>
     <string name="acceptable_phone_numbers">Acceptable phone numbers ({size})</string>
     <string name="acceptable_words">Acceptable words ({size})</string>
+    <string name="account_not_registered">Account not registered on device</string>
     <string name="add">Add</string>
     <string name="add_number_to_blacklist">Add number to blacklist</string>
     <string name="add_number_to_whitelist">Add number to whitelist</string>
+    <string name="allow_control_remotely">Allow to control application by sending email on service account</string>
+    <string name="allow_only_recipients">Accept service mail only from recipients</string>
     <string name="app_version">Application version: {version}</string>
     <string name="ask_clear_history">Clear history?</string>
     <string name="ask_clear_list">Clear list?</string>
@@ -19,6 +22,7 @@
     <string name="call_of_duration">Call of {duration} duration</string>
     <string name="called_phone">Called: {phone} ({name})</string>
     <string name="caller_phone">Caller: {phone} ({name})</string>
+    <string name="check_your_settings">Check your settings</string>
     <string name="clear">Clear</string>
     <string name="close">Close</string>
     <string name="contact_no_permission_read_contact">no permission to read contacts</string>
@@ -44,6 +48,7 @@
     <string name="incoming_sms">Incoming SMS</string>
     <string name="incoming_sms_from">Incoming SMS from</string>
     <string name="internal_error">Internal error.</string>
+    <string name="invalid_recipient">Invalid recipient specified</string>
     <string name="item_already_exists">{item} already exists</string>
     <string name="item_removed">Item removed</string>
     <string name="items_removed">{count} item removed</string>
@@ -61,8 +66,8 @@
     <string name="not_specified">Not specified</string>
     <string name="notifications">Notifications</string>
     <string name="notify_on_send">Notify of send</string>
-    <string name="notify_send_success">Display notification when email is successfully sent</string>
     <string name="notify_remote_actions">Display notification when actions are performed</string>
+    <string name="notify_send_success">Display notification when email is successfully sent</string>
     <string name="open_source">Open source</string>
     <string name="open_source_and_third_party">Open source and third party software</string>
     <string name="outgoing_call">Outgoing call</string>
@@ -80,11 +85,17 @@
     <string name="permission_rationale_write_sms">Permission to {permission} is needed to mark processed SMS as read.</string>
     <string name="phone_number">Phone number</string>
     <string name="phone_number_filter">Phone number filter</string>
+    <string name="phone_remotely_added_to_blacklist">Phone {text} remotely added to blacklist."</string>
+    <string name="phone_remotely_added_to_whitelist">Phone {text} remotely added to whitelist."</string>
+    <string name="phone_remotely_removed_from_blacklist">Phone {text} remotely removed from blacklist."</string>
+    <string name="phone_remotely_removed_from_whitelist">Phone {text} remotely removed from whitelist."</string>
     <string name="phone_removed_from_filter">{number} removed from filter</string>
     <string name="preferences">Options</string>
     <string name="recipient_already_exists">Recipient {name} already exists</string>
     <string name="recipients">Recipients</string>
     <string name="regular_expression">Regular expression</string>
+    <string name="remote_control">Remote control</string>
+    <string name="remote_control_account">Service account</string>
     <string name="remove">Remove</string>
     <string name="remove_from_filter">Remove number from all rules</string>
     <string name="resend">Resend</string>
@@ -95,10 +106,16 @@
     <string name="sender_phone">Sender: {phone} ({name})</string>
     <string name="sent_email">Sent email</string>
     <string name="sent_time_device">Sent{device_name}{time}</string>
+    <string name="service_account_not_specified">Service account not specified.</string>
+    <string name="service_link">Send service command</string>
     <string name="service_running">Service is active</string>
     <string name="since_permissions_not_granted">Since permissions not granted some options have been disabled.</string>
     <string name="text_filter">Text filter</string>
     <string name="text_fragment">Text fragment</string>
+    <string name="text_remotely_added_to_blacklist">Text \"{text}\" remotely added to blacklist."</string>
+    <string name="text_remotely_added_to_whitelist">Text \"{text}\" remotely added to whitelist."</string>
+    <string name="text_remotely_removed_from_blacklist">Text \"{text}\" remotely removed from blacklist."</string>
+    <string name="text_remotely_removed_from_whitelist">Text \"{text}\" remotely removed from whitelist."</string>
     <string name="time_time">Time: {time}</string>
     <string name="triggers">Triggers</string>
     <string name="try_to_resend_unsent">Try to resend unsent messages when connection is established</string>
@@ -113,22 +130,6 @@
     <string name="you_had_incoming_call">You had an incoming call of {duration} duration.</string>
     <string name="you_had_missed_call">You had a missed call.</string>
     <string name="you_had_outgoing_call">You had an outgoing call of {duration} duration.</string>
-    <string name="service_link">Send service command</string>
-    <string name="remote_control">Remote control</string>
-    <string name="allow_control_remotely">Allow to control application by sending email on service account</string>
-    <string name="remote_control_account">Service account</string>
-    <string name="text_remotely_removed_from_whitelist">Text \"{text}\" remotely removed from whitelist."</string>
-    <string name="text_remotely_added_to_whitelist">Text \"{text}\" remotely added to whitelist."</string>
-    <string name="text_remotely_removed_from_blacklist">Text \"{text}\" remotely removed from blacklist."</string>
-    <string name="text_remotely_added_to_blacklist">Text \"{text}\" remotely added to blacklist."</string>
-    <string name="phone_remotely_removed_from_whitelist">Phone {text} remotely removed from whitelist."</string>
-    <string name="phone_remotely_added_to_whitelist">Phone {text} remotely added to whitelist."</string>
-    <string name="phone_remotely_removed_from_blacklist">Phone {text} remotely removed from blacklist."</string>
-    <string name="phone_remotely_added_to_blacklist">Phone {text} remotely added to blacklist."</string>
-    <string name="service_account_not_specified">Service account not specified.</string>
-    <string name="account_not_registered">Account not registered on device</string>
-    <string name="check_your_settings">Check your settings</string>
-    <string name="invalid_recipient">Invalid recipient specified</string>
 
     <string-array name="trigger_names">
         <item>Incoming SMS</item>
@@ -145,7 +146,7 @@
         <item>Caller contact name</item>
         <item>Device name</item>
         <item>Device location</item>
-        <item>Remote control link</item>
+        <!--<item>Remote control link</item>-->
     </string-array>
 
     <string-array name="language_names">

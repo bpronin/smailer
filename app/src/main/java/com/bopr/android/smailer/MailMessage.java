@@ -19,6 +19,7 @@ public class MailMessage {
     private Collection<File> attachment;
     private String recipients;
     private String replyTo;
+    private String from;
 
     public MailMessage() {
     }
@@ -71,6 +72,14 @@ public class MailMessage {
         this.replyTo = replyTo;
     }
 
+    public String getFrom() {
+        return from;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
+    }
+
     @Override
     @NonNull
     public String toString() {
@@ -81,6 +90,7 @@ public class MailMessage {
                 ", attachment=" + attachment +
                 ", recipients='" + recipients + '\'' +
                 ", replyTo='" + replyTo + '\'' +
+                ", from='" + from + '\'' +
                 '}';
     }
 }

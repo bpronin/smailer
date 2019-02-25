@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 
-import com.bopr.android.smailer.util.TagFormatter;
+import com.bopr.android.smailer.util.PhoneUtil;
 import com.bopr.android.smailer.util.Util;
 
 import java.text.DateFormat;
@@ -49,9 +49,6 @@ class MailFormatter {
     private static final String PHONE_LINK_PATTERN = "<a href=\"tel:{phone}\" style=\"text-decoration: none\">&#9742;</a>{phone}";
     private static final String SERVICE_LINK_PATTERN = "<a href=\"mailto:{service_address}?" +
             "subject={service_subject}&amp;body={service_body}&amp;device=1234567890\">{service_link_text}</a>";
-    private static final String SERVICE_SUBJECT_PATTERN = "[{app_name} command] {command}";
-    private static final String SERVICE_BLACKLIST_PATTERN = "add {phone} to blacklist on {device}";
-    private static final String SERVICE_WHITELIST_PATTERN = "add {phone} to whitelist on {device}";
 
     private final PhoneEvent event;
     private final Context context;
@@ -61,7 +58,7 @@ class MailFormatter {
     private String deviceName;
     private Set<String> contentOptions;
     private Date sendTime;
-    private String serviceAccount;
+//    private String serviceAccount;
 
     MailFormatter(Context context, PhoneEvent event) {
         this.event = event;
@@ -118,14 +115,14 @@ class MailFormatter {
         this.sendTime = sendTime;
     }
 
-    /**
-     * Sets service account email address
-     *
-     * @param serviceAddress address
-     */
-    void setServiceAccount(String serviceAddress) {
-        this.serviceAccount = serviceAddress;
-    }
+//    /**
+//     * Sets service account email address
+//     *
+//     * @param serviceAddress address
+//     */
+//    void setServiceAccount(String serviceAddress) {
+//        this.serviceAccount = serviceAddress;
+//    }
 
     /**
      * Returns formatted email subject.
@@ -137,7 +134,7 @@ class MailFormatter {
         return formatter(resources).pattern(SUBJECT_PATTERN)
                 .put("app_name", R.string.app_name)
                 .put("source", formatTrigger())
-                .put("phone", event.getPhone())
+                .put("phone", PhoneUtil.escapePhone(event.getPhone()))
                 .format();
     }
 
@@ -217,7 +214,6 @@ class MailFormatter {
             String deviceNameText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME) ? formatDeviceName() : null;
             String sendTimeText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT) ? formatSendTime() : null;
             String locationText = contentOptions.contains(VAL_PREF_EMAIL_CONTENT_LOCATION) ? formatLocation() : null;
-            String serviceText = formatServiceLink();
 
             StringBuilder text = new StringBuilder();
 
@@ -249,6 +245,8 @@ class MailFormatter {
                         .put("time", sendTimeText));
             }
 
+/*
+            String serviceText = formatServiceLink();
             if (!isEmpty(serviceText)) {
                 if (!isEmpty(text)) {
                     text.append("<br>");
@@ -256,6 +254,7 @@ class MailFormatter {
 
                 text.append(serviceText);
             }
+*/
 
             if (!isEmpty(text)) {
                 text.insert(0, "<small>");
@@ -346,6 +345,11 @@ class MailFormatter {
         }
     }
 
+/*
+    private static final String SERVICE_SUBJECT_PATTERN = "[{app_name} command] {command}";
+    private static final String SERVICE_BLACKLIST_PATTERN = "add {phone} to blacklist on {device}";
+    private static final String SERVICE_WHITELIST_PATTERN = "add {phone} to whitelist on {device}";
+
     @Nullable
     private String formatServiceLink() {
         if (!isEmpty(serviceAccount)) {
@@ -370,12 +374,14 @@ class MailFormatter {
                 + "phone:" + event.getPhone() + "\\\n";
     }
 
+    @NonNull
     private String formatServiceCommand() {
         return formatter(resources).pattern(SERVICE_BLACKLIST_PATTERN)
                 .put("phone", event.getPhone())
                 .put("device", deviceName)
                 .format();
     }
+*/
 
     private String replaceUrls(String s) {
         Matcher matcher = Pattern.compile("((?i:http|https|rtsp|ftp|file)://[\\S]+)").matcher(s);

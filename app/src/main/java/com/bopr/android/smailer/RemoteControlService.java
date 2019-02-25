@@ -6,11 +6,13 @@ import android.content.Intent;
 import android.os.IBinder;
 
 import com.bopr.android.smailer.RemoteCommandParser.Task;
+import com.bopr.android.smailer.util.Util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import androidx.annotation.Nullable;
@@ -24,7 +26,9 @@ import static com.bopr.android.smailer.RemoteCommandParser.REMOVE_PHONE_FROM_BLA
 import static com.bopr.android.smailer.RemoteCommandParser.REMOVE_PHONE_FROM_WHITELIST;
 import static com.bopr.android.smailer.RemoteCommandParser.REMOVE_TEXT_FROM_BLACKLIST;
 import static com.bopr.android.smailer.RemoteCommandParser.REMOVE_TEXT_FROM_WHITELIST;
+import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_ACCOUNT;
+import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_FILTER_RECIPIENTS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_NOTIFICATIONS;
 import static com.bopr.android.smailer.util.PhoneUtil.findPhone;
 
@@ -72,13 +76,17 @@ public class RemoteControlService extends IntentService {
             List<MailMessage> list = transport.list(query);
             if (!list.isEmpty()) {
                 for (MailMessage message : list) {
-                    Task task = parser.parse(message);
-                    transport.markAsRead(message);
-                    if (task != null) {
-                        performTask(task);
-                        transport.trash(message);
+                    if (acceptMessage(message)) {
+                        Task task = parser.parse(message);
+                        transport.markAsRead(message);
+                        if (task != null) {
+                            performTask(task);
+                            transport.trash(message);
+                        } else {
+                            log.debug("Not a service mail");
+                        }
                     } else {
-                        log.debug("Not a service mail");
+                        log.debug("Rejected");
                     }
                 }
             } else {
@@ -87,6 +95,15 @@ public class RemoteControlService extends IntentService {
         } catch (Exception x) {
             log.error("Remote control error", x);
         }
+    }
+
+    private boolean acceptMessage(MailMessage message) {
+        if (settings.getBoolean(KEY_PREF_REMOTE_CONTROL_FILTER_RECIPIENTS, false)) {
+            String address = Util.extractEmailAddress(message.getFrom());
+            String recipients = settings.getString(KEY_PREF_RECIPIENTS_ADDRESS, "").toLowerCase(Locale.ROOT);
+            return address != null && recipients.contains(address.toLowerCase(Locale.ROOT));
+        }
+        return true;
     }
 
     private String requireAccount() {
@@ -126,7 +143,6 @@ public class RemoteControlService extends IntentService {
                 removeTextFromWhitelist(task.argument);
                 break;
         }
-
     }
 
     private void removeTextFromWhitelist(String text) {

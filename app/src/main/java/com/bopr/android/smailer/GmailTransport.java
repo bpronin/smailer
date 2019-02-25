@@ -223,6 +223,7 @@ public class GmailTransport {
         MailMessage message = new MailMessage();
         message.setId(gmailMessage.getId());
         message.setSubject(readHeader(gmailMessage, "subject"));
+        message.setFrom(readHeader(gmailMessage, "from"));
         message.setBody(readBody(gmailMessage));
         return message;
     }
