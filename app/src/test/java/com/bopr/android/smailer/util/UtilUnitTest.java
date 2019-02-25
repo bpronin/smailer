@@ -13,7 +13,6 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -139,26 +138,5 @@ public class UtilUnitTest {
         assertEquals(Locale.getDefault(), Util.stringToLocale("default"));
         assertNull(Util.stringToLocale(null));
     }
-
-    @Test
-    public void testNormalizePhone() {
-        assertEquals("123", Util.normalizePhone("123"));
-        assertEquals("123456HELLO", Util.normalizePhone("+1 234-56-(HeLl*.O)"));
-        assertNotEquals("BCS Online", Util.normalizePhone("Beeline"));
-    }
-
-    @Test
-    public void testNormalizePhonePattern() {
-        assertEquals("123456", Util.normalizePhonePattern("123456"));
-        assertEquals("123456(.*)(.*)56", Util.normalizePhonePattern("123456 * *56"));
-        assertEquals("1(.*)3456HE(.*)O", Util.normalizePhonePattern("+1 * 34-56-(He*o)"));
-    }
-
-    @Test
-    public void testPhoneMatches() {
-        assertTrue(Util.normalizePhone("1234").matches(Util.normalizePhonePattern("1234")));
-        assertTrue(Util.normalizePhone("+1 2 34-56-(Hello)").matches(Util.normalizePhonePattern("+1*34-56-(HE**O)")));
-        assertTrue(Util.normalizePhone("*1 2 34-56-*Hello*").matches(Util.normalizePhonePattern("1*34-56-(HE * O)")));
-    }
-
+    
 }

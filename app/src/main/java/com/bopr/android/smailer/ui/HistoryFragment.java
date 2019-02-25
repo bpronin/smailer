@@ -34,6 +34,9 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import static androidx.recyclerview.widget.RecyclerView.NO_POSITION;
+import static com.bopr.android.smailer.PhoneEvent.STATE_PENDING;
+import static com.bopr.android.smailer.util.PhoneUtil.containsPhone;
+import static com.bopr.android.smailer.util.PhoneUtil.findPhone;
 import static com.bopr.android.smailer.util.ResourceUtil.eventDirectionImage;
 import static com.bopr.android.smailer.util.ResourceUtil.eventStateImage;
 import static com.bopr.android.smailer.util.ResourceUtil.eventTypeImage;
@@ -240,14 +243,18 @@ public class HistoryFragment extends BaseFragment {
         if (selectedListItemPosition != NO_POSITION) {
             String number = listAdapter.getItem(selectedListItemPosition).getPhone();
 
-            phoneEventFilter.getPhoneWhitelist().remove(number);
-            phoneEventFilter.getPhoneBlacklist().remove(number);
+            removeFromPhoneLists(phoneEventFilter.getPhoneWhitelist(), number);
+            removeFromPhoneLists(phoneEventFilter.getPhoneBlacklist(), number);
             settings.putFilter(phoneEventFilter);
 
             showToast(getContext(), formatter.pattern(R.string.phone_removed_from_filter)
                     .put("number", number)
                     .format());
         }
+    }
+
+    private void removeFromPhoneLists(Set<String> list, String number) {
+        list.remove(findPhone(list, number));
     }
 
     private void markAsIgnored() {
@@ -331,16 +338,27 @@ public class HistoryFragment extends BaseFragment {
                     @Override
                     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
                         requireActivity().getMenuInflater().inflate(R.menu.menu_context_history, menu);
-                        if (event.getState() != PhoneEvent.STATE_PENDING) {
+
+                        if (!event.getState().equals(STATE_PENDING)) {
                             menu.removeItem(R.id.action_ignore);
                         }
-                        if (phoneEventFilter.getPhoneBlacklist().contains(event.getPhone())) {
+
+                        boolean blacklisted = containsPhone(phoneEventFilter.getPhoneBlacklist(), event.getPhone());
+                        boolean whitelisted = containsPhone(phoneEventFilter.getPhoneWhitelist(), event.getPhone());
+
+                        if (blacklisted) {
                             menu.removeItem(R.id.action_add_to_blacklist);
                         }
-                        if (phoneEventFilter.getPhoneWhitelist().contains(event.getPhone())) {
+
+                        if (whitelisted) {
                             menu.removeItem(R.id.action_add_to_whitelist);
                         }
+
+                        if (!blacklisted && !whitelisted) {
+                            menu.removeItem(R.id.action_remove_from_lists);
+                        }
                     }
+
                 });
 
                 event.setRead(true);

@@ -185,20 +185,13 @@ public class Util {
         return (a == b) || (a != null && a.equals(b));
     }
 
-    public static String normalizePhone(@NonNull String phone) {
-        return phone.toUpperCase(Locale.ROOT).replaceAll("[^A-Z0-9]", "");
-    }
-
-    public static String normalizePhonePattern(@NonNull String pattern) {
-        return pattern.toUpperCase(Locale.ROOT).replaceAll("[^A-Z0-9*.]", "").replaceAll("\\*", "(.*)");
-    }
-
     public static <T> T requireNonNull(T obj) {
         if (obj == null)
             throw new NullPointerException();
         return obj;
     }
 
+    @NonNull
     public static String quoteRegex(String s) {
         return "REGEX:" + s;
     }
@@ -213,6 +206,5 @@ public class Util {
         }
         return null;
     }
-
 
 }

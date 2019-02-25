@@ -30,10 +30,9 @@ class RemoteCommandParser {
     static final int ADD_TEXT_TO_WHITELIST = 6;
     static final int REMOVE_TEXT_FROM_WHITELIST = 7;
 
-    private static final Pattern QUOTED_TEXT_PATTERN = Pattern.compile("\"(.*?)\"");
-
-    private static final Pattern PHONE_NUMBER_PATTERN = Pattern.compile("([\\d\\-*]+)");
-    //todo consider android.util.Patterns.PHONE
+    private static final String QUOTED_TEXT_REGEX = "\"(.*?)\"";
+    private static final Pattern QUOTED_TEXT_PATTERN = Pattern.compile(QUOTED_TEXT_REGEX);
+    private static final Pattern PHONE_NUMBER_PATTERN = Pattern.compile("([\\d\\+\\-*]+)");
 
     RemoteCommandParser() {
     }
@@ -45,14 +44,14 @@ class RemoteCommandParser {
         }
 
         String subject = message.getSubject();
-        /* remove quotations, line separators and so on */
+
+        /* remove quotations, line separators etc. */
         String body = message.getBody()
                 .replaceAll(">(.*)\\r\\n", "")
                 .split("\\r\\n\\r\\n")[0]
                 .replaceAll("\\r", "")
-                .replaceAll("\\n", " ")
                 .replaceAll("\\n\\n", "\n")
-                .toLowerCase(Locale.ROOT);
+                .replaceAll("\\n", " ");
 
         log.debug("Parsing: " + body);
 
@@ -60,29 +59,33 @@ class RemoteCommandParser {
             return null;
         }
 
-        if (body.contains("blacklist")) {
-            if (body.contains("delete") || body.contains("remove")) {
-                if (body.contains("text")) {
+        String command = body
+                .replaceAll(QUOTED_TEXT_REGEX, "") /* remove all quoted text */
+                .toLowerCase(Locale.ROOT);
+
+        if (command.contains("blacklist")) {
+            if (command.contains("delete") || command.contains("remove")) {
+                if (command.contains("text")) {
                     return new Task(REMOVE_TEXT_FROM_BLACKLIST, parseTextArgument(body));
                 } else {
                     return new Task(REMOVE_PHONE_FROM_BLACKLIST, parsePhoneArgument(subject, body));
                 }
             } else {
-                if (body.contains("text")) {
+                if (command.contains("text")) {
                     return new Task(ADD_TEXT_TO_BLACKLIST, parseTextArgument(body));
                 } else {
                     return new Task(ADD_PHONE_TO_BLACKLIST, parsePhoneArgument(subject, body));
                 }
             }
-        } else if (body.contains("whitelist")) {
-            if (body.contains("delete") || body.contains("remove")) {
-                if (body.contains("text")) {
+        } else if (command.contains("whitelist")) {
+            if (command.contains("delete") || command.contains("remove")) {
+                if (command.contains("text")) {
                     return new Task(REMOVE_TEXT_FROM_WHITELIST, parseTextArgument(body));
                 } else {
                     return new Task(REMOVE_PHONE_FROM_WHITELIST, parsePhoneArgument(subject, body));
                 }
             } else {
-                if (body.contains("text")) {
+                if (command.contains("text")) {
                     return new Task(ADD_TEXT_TO_WHITELIST, parseTextArgument(body));
                 } else {
                     return new Task(ADD_PHONE_TO_WHITELIST, parsePhoneArgument(subject, body));

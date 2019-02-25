@@ -1,7 +1,5 @@
 package com.bopr.android.smailer;
 
-import com.bopr.android.smailer.util.Util;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -13,9 +11,10 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
+import static com.bopr.android.smailer.util.PhoneUtil.normalizePhone;
+import static com.bopr.android.smailer.util.PhoneUtil.phoneToRegEx;
 import static com.bopr.android.smailer.util.Util.isEmpty;
-import static com.bopr.android.smailer.util.Util.normalizePhone;
-import static com.bopr.android.smailer.util.Util.normalizePhonePattern;
+import static com.bopr.android.smailer.util.Util.unquoteRegex;
 
 /**
  * Filters phone events by various criteria.
@@ -99,30 +98,30 @@ public class PhoneEventFilter {
     }
 
     public boolean testPhone(String phone) {
-        return containsPhone(phoneWhitelist, phone) || !containsPhone(phoneBlacklist, phone);
+        return matchesPhone(phoneWhitelist, phone) || !matchesPhone(phoneBlacklist, phone);
     }
 
     public boolean testText(String text) {
-        return containsText(textWhitelist, text) || !containsText(textBlacklist, text);
+        return matchesText(textWhitelist, text) || !matchesText(textBlacklist, text);
     }
 
-    private boolean containsPhone(Collection<String> patterns, String phone) {
+    private boolean matchesPhone(Collection<String> patterns, String phone) {
         String p = normalizePhone(phone);
         for (String pattern : patterns) {
-            if (p.matches(normalizePhonePattern(pattern))) {
+            if (p.matches(phoneToRegEx(pattern))) {
                 return true;
             }
         }
         return false;
     }
 
-    private boolean containsText(Collection<String> patterns, String text) {
+    private boolean matchesText(Collection<String> patterns, String text) {
         if (!isEmpty(text)) {
-            for (String pattern : patterns) {
-                String p = Util.unquoteRegex(pattern);
-                if (p != null && text.matches(p)) {
+            for (String s : patterns) {
+                String pattern = unquoteRegex(s);
+                if (pattern != null && text.matches(pattern)) {
                     return true;
-                } else if (text.contains(pattern)) {
+                } else if (text.contains(s)) {
                     return true;
                 }
             }

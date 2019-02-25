@@ -26,9 +26,10 @@ import static com.bopr.android.smailer.RemoteCommandParser.REMOVE_TEXT_FROM_BLAC
 import static com.bopr.android.smailer.RemoteCommandParser.REMOVE_TEXT_FROM_WHITELIST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_ACCOUNT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_NOTIFICATIONS;
+import static com.bopr.android.smailer.util.PhoneUtil.findPhone;
 
 /**
- *  Remote control service.
+ * Remote control service.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
@@ -130,7 +131,7 @@ public class RemoteControlService extends IntentService {
 
     private void removeTextFromWhitelist(String text) {
         PhoneEventFilter filter = settings.getFilter();
-        removeFromFilterList(filter, filter.getTextWhitelist(), text, R.string.text_remotely_removed_from_whitelist);
+        removeFromTextList(filter, filter.getTextWhitelist(), text, R.string.text_remotely_removed_from_whitelist);
     }
 
     private void addTextToWhitelist(String text) {
@@ -140,7 +141,7 @@ public class RemoteControlService extends IntentService {
 
     private void removeTextFromBlacklist(String text) {
         PhoneEventFilter filter = settings.getFilter();
-        removeFromFilterList(filter, filter.getTextBlacklist(), text, R.string.text_remotely_removed_from_blacklist);
+        removeFromTextList(filter, filter.getTextBlacklist(), text, R.string.text_remotely_removed_from_blacklist);
     }
 
     private void addTextToBlacklist(String text) {
@@ -150,7 +151,7 @@ public class RemoteControlService extends IntentService {
 
     private void removePhoneFromWhitelist(String phone) {
         PhoneEventFilter filter = settings.getFilter();
-        removeFromFilterList(filter, filter.getPhoneWhitelist(), phone, R.string.phone_remotely_removed_from_whitelist);
+        removeFromPhoneList(filter, filter.getPhoneWhitelist(), phone, R.string.phone_remotely_removed_from_whitelist);
     }
 
     private void addPhoneToWhitelist(String phone) {
@@ -160,7 +161,7 @@ public class RemoteControlService extends IntentService {
 
     private void removePhoneFromBlacklist(String phone) {
         PhoneEventFilter filter = settings.getFilter();
-        removeFromFilterList(filter, filter.getPhoneBlacklist(), phone, R.string.phone_remotely_removed_from_blacklist);
+        removeFromPhoneList(filter, filter.getPhoneBlacklist(), phone, R.string.phone_remotely_removed_from_blacklist);
     }
 
     private void addPhoneToBlacklist(String phone) {
@@ -177,10 +178,20 @@ public class RemoteControlService extends IntentService {
         }
     }
 
-    private void removeFromFilterList(PhoneEventFilter filter, Set<String> list, String text, int messageRes) {
+    private void removeFromTextList(PhoneEventFilter filter, Set<String> list, String text, int messageRes) {
         if (list.contains(text)) {
             list.remove(text);
             saveFilter(filter, text, messageRes);
+        } else {
+            log.debug("Not in list");
+        }
+    }
+
+    private void removeFromPhoneList(PhoneEventFilter filter, Set<String> list, String number, int messageRes) {
+        String existingNumber = findPhone(list, number);
+        if (existingNumber != null) {
+            list.remove(existingNumber);
+            saveFilter(filter, number, messageRes);
         } else {
             log.debug("Not in list");
         }
