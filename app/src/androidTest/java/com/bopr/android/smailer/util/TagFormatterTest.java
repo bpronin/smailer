@@ -40,14 +40,24 @@ public class TagFormatterTest extends BaseTest {
     }
 
     @Test
-    public void testPutRemoveAbsent() {
-        String text = formatter("{one}, {two} and {three}")
+    public void testPutMultiple() {
+        String text = formatter("{one}, {two} and {three} and {one} again")
                 .put("one", "ONE")
+                .put("two", "TWO")
                 .put("three", "THREE")
                 .format();
 
-        assertEquals("ONE,  and THREE", text);
+        assertEquals("ONE, TWO and THREE and ONE again", text);
     }
+
+/*
+    @Test
+    public void testPutPerformance() {
+        for (int i = 0; i < 10000000; i++) {
+             testPut();
+        }
+    }
+*/
 
     @Test
     public void testPutRemoveBlank() {
@@ -61,21 +71,24 @@ public class TagFormatterTest extends BaseTest {
     }
 
     @Test
-    public void testList() {
-        String text = formatter("{list}")
-                .putList("list", " ", "ONE", "TWO", "THREE")
+    public void testPutRemoveNull() {
+        String text = formatter("{one}, {two} and {three}")
+                .put("one", "ONE")
+                .put("two", null)
+                .put("three", "THREE")
                 .format();
 
-        assertEquals("ONE TWO THREE", text);
+        assertEquals("ONE,  and THREE", text);
     }
 
     @Test
-    public void testListNullValue() {
-        String text = formatter("{list}")
-                .putList("list", " ", "ONE", "TWO", null, "THREE")
+    public void testPutRemoveAbsent() {
+        String text = formatter("{one}, {two} and {three}")
+                .put("one", "ONE")
+                .put("three", "THREE")
                 .format();
 
-        assertEquals("ONE TWO THREE", text);
+        assertEquals("ONE,  and THREE", text);
     }
 
     @Test
@@ -100,4 +113,15 @@ public class TagFormatterTest extends BaseTest {
         assertEquals("ONE, TWO and THREE", text);
     }
 
+    @Test
+    public void testEscape() {
+//        String text = formatter("/{three/}")
+////                .put("one", "ONE")
+//                .put("three", "THREE")
+//                .format();
+//        String text = "{three}".replaceAll("\\{(.*?)\\}", "text");
+        String text = "{/{three".replaceAll("\\{(?!/\\{)", "*");
+        System.out.println(text);
+//        assertEquals("{three}", text);
+    }
 }

@@ -58,15 +58,15 @@ public class AuthorizationHelper {
         accountManager.getAccountManager().removeOnAccountsUpdatedListener(accountsChangedListener);
     }
 
+    /* todo: see https://developer.android.com/reference/android/accounts/AccountManager
     public void checkSelectedAccount() {
-     /* todo: see https://developer.android.com/reference/android/accounts/AccountManager
      try
         makeSomeRequest())
      except
         invalidateToken(accountName);
         requestPermission(accountName);
-    */
     }
+    */
 
     @SuppressWarnings("deprecation")
     public void selectAccount() {

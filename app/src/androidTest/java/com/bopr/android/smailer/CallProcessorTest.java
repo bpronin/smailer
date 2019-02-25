@@ -24,7 +24,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anySetOf;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.anyString;
@@ -91,7 +90,7 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector sends = new InvocationsCollector();
         InvocationsCollector errors = new InvocationsCollector();
 
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt(), anyLong());
+        doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt());
         doAnswer(inits).when(transport).init(anyString(), anyListOf(String.class));
         doAnswer(sends).when(transport).send(any(MailMessage.class));
 
@@ -114,7 +113,7 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector sends = new InvocationsCollector();
         InvocationsCollector errors = new InvocationsCollector();
 
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt(), anyLong());
+        doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt());
         doAnswer(inits).when(transport).init(anyString(), anyListOf(String.class));
         doAnswer(sends).when(transport).send(any(MailMessage.class));
 
@@ -139,7 +138,7 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector sends = new InvocationsCollector();
         InvocationsCollector errors = new InvocationsCollector();
 
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt(), anyLong());
+        doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt());
         doAnswer(inits).when(transport).init(anyString(), anyListOf(String.class));
         doAnswer(sends).when(transport).send(any(MailMessage.class));
         when(networkInfo.isConnected()).thenReturn(false);
@@ -163,7 +162,7 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector sends = new InvocationsCollector();
         InvocationsCollector errors = new InvocationsCollector();
 
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt(), anyLong());
+        doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt());
         doAnswer(inits).when(transport).init(anyString(), anyListOf(String.class));
         doAnswer(sends).when(transport).send(any(MailMessage.class));
 
@@ -188,7 +187,7 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector sends = new InvocationsCollector();
         InvocationsCollector errors = new InvocationsCollector();
 
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt(), anyLong());
+        doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt());
         doAnswer(inits).when(transport).init(anyString(), anyListOf(String.class));
         doAnswer(sends).when(transport).send(any(MailMessage.class));
 
@@ -213,7 +212,7 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector sends = new InvocationsCollector();
         InvocationsCollector errors = new InvocationsCollector();
 
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt(), anyLong());
+        doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt());
         doAnswer(inits).when(transport).init(anyString(), anyListOf(String.class));
         doAnswer(sends).when(transport).send(any(MailMessage.class));
         doThrow(AuthenticationFailedException.class).when(transport).send(any(MailMessage.class));
@@ -237,7 +236,7 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector sends = new InvocationsCollector();
         InvocationsCollector errors = new InvocationsCollector();
 
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt(), anyLong());
+        doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt());
         doAnswer(inits).when(transport).init(anyString(), anyListOf(String.class));
         doAnswer(sends).when(transport).send(any(MailMessage.class));
         doThrow(MessagingException.class).when(transport).send(any(MailMessage.class));
@@ -260,7 +259,7 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
         InvocationsCollector clears = new InvocationsCollector();
 
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt(), anyLong());
+        doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt());
         doAnswer(clears).when(notifications).hideLastError();
         doAnswer(new Answer() {
             @Override
@@ -300,8 +299,8 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
         InvocationsCollector successes = new InvocationsCollector();
 
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt(), anyLong());
-        doAnswer(successes).when(notifications).showMailSuccess(anyLong());
+        doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt());
+        doAnswer(successes).when(notifications).showMailSuccess();
 
         CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
 
@@ -330,7 +329,7 @@ public class CallProcessorTest extends BaseTest {
     public void testSendUnsent() throws Exception {
         InvocationsCollector errors = new InvocationsCollector();
 
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt(), anyLong());
+        doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt());
         doThrow(MessagingException.class).when(transport).send(any(MailMessage.class));
 
         CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);

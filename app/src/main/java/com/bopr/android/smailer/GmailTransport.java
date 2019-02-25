@@ -2,6 +2,7 @@ package com.bopr.android.smailer;
 
 import android.content.Context;
 
+import com.bopr.android.smailer.util.Util;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.http.HttpTransport;
@@ -40,7 +41,6 @@ import javax.mail.internet.MimeMultipart;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import static com.bopr.android.smailer.util.Util.isEmpty;
 import static com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64.decodeBase64;
 import static com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64.encodeBase64URLSafeString;
 import static com.google.api.client.repackaged.org.apache.commons.codec.binary.StringUtils.newStringUtf8;
@@ -83,11 +83,9 @@ public class GmailTransport {
     }
 
     public void send(@NonNull MailMessage message) throws IOException, MessagingException {
-        Message gmailMessage = createMessage(message);
-
         service.users()
                 .messages()
-                .send(ME, gmailMessage)
+                .send(ME, createGmailMessage(message))
                 .execute();
 
         log.debug("Message sent");
@@ -155,33 +153,37 @@ public class GmailTransport {
     }
 
     @NonNull
-    private Message createMessage(MailMessage message)
-            throws MessagingException, IOException {
+    private Message createGmailMessage(MailMessage message) throws MessagingException, IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        createMimeMessage(message.getSubject(), message.getBody(), message.getAttachment(), sender, message.getRecipients(), message.getReplyTo()).writeTo(buffer);
+        createMimeMessage(message, sender).writeTo(buffer);
         return new Message().setRaw(encodeBase64URLSafeString(buffer.toByteArray()));
+
+//        MessagePart payload = new MessagePart();
+//        payload.setHeaders()
+//        Message m = new Message();
+//        m.setPayload(payload);
+//        return m;
     }
 
     // TODO: 24.02.2019 is it possible to get rid of mime message?
     @NonNull
-    private MimeMessage createMimeMessage(String subject, String body, @Nullable Collection<File> attachment,
-                                          @NonNull String sender, @NonNull String recipients, @Nullable String replyTo)
+    private MimeMessage createMimeMessage(@NonNull MailMessage message, @NonNull String sender)
             throws MessagingException {
-        MimeMessage message = new MimeMessage(session);
-        message.setFrom(sender);
-        message.setSubject(subject, UTF_8);
-        message.setRecipients(TO, parseAddresses(recipients));
-        if (!isEmpty(replyTo)) {
-            message.setReplyTo(parseAddresses(replyTo));
+        MimeMessage mimeMessage = new MimeMessage(session);
+        mimeMessage.setFrom(sender);
+        mimeMessage.setSubject(message.getSubject(), UTF_8);
+        mimeMessage.setRecipients(TO, parseAddresses(message.getRecipients()));
+        if (!Util.isEmpty(message.getReplyTo())) {
+            mimeMessage.setReplyTo(parseAddresses(message.getReplyTo()));
         }
 
-        if (attachment == null) {
-            message.setText(body, UTF_8, HTML);
+        if (message.getAttachment() == null) {
+            mimeMessage.setText(message.getBody(), UTF_8, HTML);
         } else {
-            message.setContent(createMultipart(body, attachment));
+            mimeMessage.setContent(createMultipart(message.getBody(), message.getAttachment()));
         }
 
-        return message;
+        return mimeMessage;
     }
 
     @NonNull

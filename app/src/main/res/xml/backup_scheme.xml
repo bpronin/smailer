@@ -2,11 +2,13 @@
 <full-backup-content>
     <include
         domain="sharedpref"/>
-<!-- TODO: move device name reference here
+
+<!-- TODO: move device name preference in different file
     <exclude
         domain="sharedpref" path="device_local.xml"/>
 -->
     <!--<include-->
         <!--domain="database"-->
         <!--path="smailer.sqlite"/>-->
+
 </full-backup-content>

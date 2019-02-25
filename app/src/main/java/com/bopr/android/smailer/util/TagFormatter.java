@@ -17,7 +17,8 @@ import androidx.annotation.NonNull;
  */
 public class TagFormatter {
 
-    private static final Pattern PATTERN = Pattern.compile("\\{(.*?)}");
+    @SuppressWarnings("RegExpRedundantEscape") /* "\\}" works differently in android and pure java */
+    private static final Pattern PATTERN = Pattern.compile("\\{(.*?)\\}");
 
     private final Map<String, String> values = new LinkedHashMap<>();
     private String pattern;
@@ -74,20 +75,6 @@ public class TagFormatter {
 
     public TagFormatter put(String key, int resourceId) {
         return put(key, resources.getString(resourceId));
-    }
-
-    public TagFormatter putList(String key, String separator, Object... values) {
-        StringBuilder list = new StringBuilder();
-        for (int i = 0; i < values.length; i++) {
-            Object value = values[i];
-            if (value != null) {
-                list.append(value);
-                if (i < values.length - 1) {
-                    list.append(separator);
-                }
-            }
-        }
-        return put(key, list.toString());
     }
 
     public String format() {
