@@ -222,7 +222,7 @@ public class CallProcessor {
         notifications.hideLastError();
 
         if (settings.getBoolean(KEY_PREF_NOTIFY_SEND_SUCCESS, false)) {
-            notifications.showMailSuccess();
+            notifications.showMessage(R.string.email_send, ACTION_SHOW_MAIN);
         }
 
         if (settings.getBoolean(KEY_PREF_MARK_SMS_AS_READ, false)) {

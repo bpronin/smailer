@@ -13,6 +13,7 @@ import com.bopr.android.smailer.ui.HistoryActivity;
 import com.bopr.android.smailer.ui.MainActivity;
 import com.bopr.android.smailer.ui.OptionsActivity;
 import com.bopr.android.smailer.ui.RecipientsActivity;
+import com.bopr.android.smailer.ui.RemoteControlActivity;
 import com.bopr.android.smailer.ui.RulesActivity;
 import com.bopr.android.smailer.util.TagFormatter;
 
@@ -42,9 +43,10 @@ public class Notifications {
     public static final int ACTION_SHOW_HISTORY = 3;
     public static final int ACTION_SHOW_RECIPIENTS = 4;
     public static final int ACTION_SHOW_OPTIONS = 5;
+    public static final int ACTION_SHOW_REMOTE_CONTROL = 6;
 
     private static int messageId = -1;
-    private static int errorMessageId = -1;
+    private static int errorId = -1;
 
     private Context context;
     private NotificationManager manager;
@@ -60,62 +62,6 @@ public class Notifications {
         return new Notifications(context);
     }
 
-    public void showMailError(int messageRes, int action) {
-        String text = formatter
-                .pattern(R.string.unable_send_email)
-                .put("reason", messageRes)
-                .format();
-
-        showError(text, action);
-    }
-
-    public void showRemoteError(int messageRes) {
-        showError(context.getString(messageRes), ACTION_SHOW_OPTIONS);
-    }
-
-    public void hideLastError() {
-        manager.cancel("error", errorMessageId--);
-    }
-
-    public void showMailSuccess() {
-        String text = context.getString(R.string.email_send);
-
-        Builder builder = createBuilder(text, ACTION_SHOW_MAIN).setAutoCancel(true);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setCategory(CATEGORY_MESSAGE);
-        }
-
-        manager.notify("success", ++messageId, builder.build());
-    }
-
-    public void showRemoteAction(int messageRes, String argument) {
-        String text = formatter
-                .pattern(messageRes)
-                .put("text", argument)
-                .format();
-
-        Builder builder = createBuilder(text, ACTION_SHOW_HISTORY).setAutoCancel(true);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setCategory(CATEGORY_MESSAGE);
-        }
-
-        manager.notify("remote", ++messageId, builder.build());
-    }
-
-    public void showMessage(int messageRes, int action) {
-        String text = context.getString(messageRes);
-
-        Builder builder = createBuilder(text, action).setAutoCancel(true);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setCategory(CATEGORY_MESSAGE);
-        }
-
-        manager.notify("message", ++messageId, builder.build());
-    }
-
     public Notification getForegroundServiceNotification() {
         Builder builder = createBuilder(context.getString(R.string.service_running), ACTION_SHOW_MAIN);
 
@@ -126,6 +72,44 @@ public class Notifications {
         return builder.build();
     }
 
+    public void showMessage(int messageRes, int action) {
+        showMessage(context.getString(messageRes), action);
+    }
+
+    public void showError(int messageRes, int action) {
+        showError(context.getString(messageRes), action);
+    }
+
+    public void showMailError(int reasonRes, int action) {
+        showError(formatter
+                        .pattern(R.string.unable_send_email)
+                        .put("reason", reasonRes)
+                        .format(),
+                action);
+    }
+
+    public void showRemoteAction(int messageRes, String argument) {
+        showMessage(formatter
+                        .pattern(messageRes)
+                        .put("text", argument)
+                        .format(),
+                ACTION_SHOW_HISTORY);
+    }
+
+    public void hideLastError() {
+        manager.cancel("error", errorId--);
+    }
+
+    private void showMessage(String text, int action) {
+        Builder builder = createBuilder(text, action).setAutoCancel(true);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder.setCategory(CATEGORY_MESSAGE);
+        }
+
+        manager.notify("message", ++messageId, builder.build());
+    }
+
     private void showError(String text, int action) {
         Builder builder = createBuilder(text, action).setAutoCancel(true);
 
@@ -133,7 +117,7 @@ public class Notifications {
             builder.setCategory(CATEGORY_ERROR);
         }
 
-        manager.notify("error", ++errorMessageId, builder.build());
+        manager.notify("error", ++errorId, builder.build());
     }
 
     private Builder createBuilder(String text, int action) {
@@ -157,6 +141,8 @@ public class Notifications {
                 return createActivityIntent(RecipientsActivity.class);
             case ACTION_SHOW_OPTIONS:
                 return createActivityIntent(OptionsActivity.class);
+            case ACTION_SHOW_REMOTE_CONTROL:
+                return createActivityIntent(RemoteControlActivity.class);
             case ACTION_SHOW_RULES:
                 return createActivityIntent(RulesActivity.class);
             case ACTION_SHOW_CONNECTION_OPTIONS:

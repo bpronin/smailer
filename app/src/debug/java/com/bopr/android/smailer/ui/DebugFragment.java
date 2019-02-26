@@ -322,7 +322,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        notifications.showMailSuccess();
+                        notifications.showMessage(R.string.email_send, Notifications.ACTION_SHOW_MAIN);
                     }
                 }),
 

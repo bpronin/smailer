@@ -16,6 +16,7 @@ import java.util.Set;
 import androidx.annotation.Nullable;
 
 import static com.bopr.android.smailer.GmailTransport.SCOPE_ALL;
+import static com.bopr.android.smailer.Notifications.ACTION_SHOW_REMOTE_CONTROL;
 import static com.bopr.android.smailer.RemoteCommandParser.ADD_PHONE_TO_BLACKLIST;
 import static com.bopr.android.smailer.RemoteCommandParser.ADD_PHONE_TO_WHITELIST;
 import static com.bopr.android.smailer.RemoteCommandParser.ADD_TEXT_TO_BLACKLIST;
@@ -111,7 +112,7 @@ public class RemoteControlService extends IntentService {
     private String requireAccount() {
         String account = settings.getString(KEY_PREF_REMOTE_CONTROL_ACCOUNT, null);
         if (account == null) {
-            notifications.showRemoteError(R.string.service_account_not_specified);
+            notifications.showError(R.string.service_account_not_specified, ACTION_SHOW_REMOTE_CONTROL);
             throw new IllegalArgumentException("Service account not specified");
         }
         return account;

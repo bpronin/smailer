@@ -26,7 +26,7 @@ import androidx.fragment.app.Fragment;
 import static android.accounts.AccountManager.KEY_ACCOUNT_NAME;
 import static android.accounts.AccountManager.newChooseAccountIntent;
 import static android.app.Activity.RESULT_OK;
-import static com.bopr.android.smailer.Notifications.ACTION_SHOW_OPTIONS;
+import static com.bopr.android.smailer.Notifications.ACTION_SHOW_REMOTE_CONTROL;
 import static com.bopr.android.smailer.Notifications.notifications;
 
 /*
@@ -159,7 +159,7 @@ public class AuthorizationHelper {
             if (loadAccount() != null && getSelectedAccount() == null) {
                 saveAccount(null);
                 notifications(fragment.requireContext())
-                        .showMessage(R.string.remote_control_account_removed, ACTION_SHOW_OPTIONS);
+                        .showMessage(R.string.remote_control_account_removed, ACTION_SHOW_REMOTE_CONTROL);
                 log.warn("Account removed");
             }
         }

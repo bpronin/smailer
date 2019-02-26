@@ -300,7 +300,7 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector successes = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt());
-        doAnswer(successes).when(notifications).showMailSuccess();
+        doAnswer(successes).when(notifications).showMessage(R.string.email_send, Notifications.ACTION_SHOW_MAIN);
 
         CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
 

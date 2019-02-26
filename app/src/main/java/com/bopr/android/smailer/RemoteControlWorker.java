@@ -59,7 +59,8 @@ public class RemoteControlWorker extends Worker {
             Constraints constraints = new Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)
                     .build();
-            PeriodicWorkRequest request = new PeriodicWorkRequest.Builder(RemoteControlWorker.class, 5, TimeUnit.MINUTES)
+            PeriodicWorkRequest request = new PeriodicWorkRequest.Builder(RemoteControlWorker.class,
+                    15, TimeUnit.MINUTES) /* interval must be lesser than PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS */
                     .addTag(WORKER_TAG)
                     .setConstraints(constraints)
                     .build();
