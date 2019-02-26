@@ -66,7 +66,7 @@ public abstract class ResourceUtil {
     public static int eventStateImage(PhoneEvent event) {
         switch (event.getState()) {
             case STATE_PENDING:
-                return R.drawable.ic_state_pending;
+                return R.drawable.ic_hourglass;
             case STATE_PROCESSED:
                 return R.drawable.ic_state_done;
             case STATE_IGNORED:

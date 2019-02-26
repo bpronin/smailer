@@ -78,7 +78,7 @@
     <string name="outgoing_call_to">Outgoing call to</string>
     <string name="outgoing_sms">Outgoing SMS</string>
     <string name="outgoing_sms_to">Outgoing SMS to</string>
-    <string name="pending" >Pending</string>
+    <string name="pending">Pending</string>
     <string name="permission_rationale_coarse_location">Permission to {permission} is needed to add device location into email message.</string>
     <string name="permission_rationale_fine_location">Permission to {permission} is needed to add device location into email message.</string>
     <string name="permission_rationale_outgoing_call">Permission to {permission} is needed to send out email when phone calls are made.</string>

@@ -76,7 +76,7 @@
     <string name="outgoing_call_to">Исходящий звонок на</string>
     <string name="outgoing_sms">Исходящее SMS</string>
     <string name="outgoing_sms_to">Исходящее SMS</string>
-    <string name="pending">Ожидание</string>
+    <string name="pending">Ожидание обработки</string>
     <string name="permission_rationale_coarse_location">Чтобы отображать местоположение устройства в почтовом сообщении, необходимо разрешение \"{permission}\".</string>
     <string name="permission_rationale_fine_location">Чтобы отображать местоположение устройства в почтовом сообщении, необходимо разрешение \"{permission}\".</string>
     <string name="permission_rationale_outgoing_call">Чтобы отправлять почтовое сообщение при исходящих вызовах, необходимо разрешение \"{permission}\".</string>
