@@ -26,6 +26,8 @@ import androidx.fragment.app.Fragment;
 import static android.accounts.AccountManager.KEY_ACCOUNT_NAME;
 import static android.accounts.AccountManager.newChooseAccountIntent;
 import static android.app.Activity.RESULT_OK;
+import static com.bopr.android.smailer.Notifications.ACTION_SHOW_OPTIONS;
+import static com.bopr.android.smailer.Notifications.notifications;
 
 /*
    To compile debug flavor add SHA-1 fingerprint from <user_dir>/.android/debug.keystore  (password "android") to
@@ -48,7 +50,7 @@ public class AuthorizationHelper {
         this.fragment = fragment;
         this.scopes = scopes;
         this.accountSetting = accountSetting;
-        settings = new Settings(fragment.requireActivity());
+        settings = new Settings(fragment.requireContext());
         accountManager = new GoogleAccountManager(fragment.requireContext());
         accountsChangedListener = new OnAccountsChangedListener();
         accountManager.getAccountManager().addOnAccountsUpdatedListener(accountsChangedListener, null, true);
@@ -154,8 +156,10 @@ public class AuthorizationHelper {
         @Override
         public void onAccountsUpdated(Account[] accounts) {
             /* clear setting when account removed*/
-            if (getSelectedAccount() == null) {
+            if (loadAccount() != null && getSelectedAccount() == null) {
                 saveAccount(null);
+                notifications(fragment.requireContext())
+                        .showMessage(R.string.remote_control_account_removed, ACTION_SHOW_OPTIONS);
                 log.warn("Account removed");
             }
         }

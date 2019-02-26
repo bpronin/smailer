@@ -16,6 +16,8 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL;
+import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_ACCOUNT;
+import static com.bopr.android.smailer.Settings.settings;
 
 /**
  * Periodically checks email out for remote tasks.
@@ -48,13 +50,12 @@ public class RemoteControlWorker extends Worker {
     }
 
     private static boolean isFeatureEnabled(@NonNull Context context) {
-        return new Settings(context).getBoolean(KEY_PREF_REMOTE_CONTROL, false);
+        return settings(context).getBoolean(KEY_PREF_REMOTE_CONTROL, false);
     }
 
     public static void enable(@NonNull Context context) {
         WorkManager manager = WorkManager.getInstance();
-
-        if (isFeatureEnabled(context)) {
+        if (isFeatureEnabled(context) && !settings(context).isNull(KEY_PREF_REMOTE_CONTROL_ACCOUNT)) {
             Constraints constraints = new Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)
                     .build();

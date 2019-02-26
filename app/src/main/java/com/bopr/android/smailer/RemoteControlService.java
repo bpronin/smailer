@@ -109,12 +109,12 @@ public class RemoteControlService extends IntentService {
     }
 
     private String requireAccount() {
-        String s = settings.getString(KEY_PREF_REMOTE_CONTROL_ACCOUNT, null);
-        if (s == null) {
+        String account = settings.getString(KEY_PREF_REMOTE_CONTROL_ACCOUNT, null);
+        if (account == null) {
             notifications.showRemoteError(R.string.service_account_not_specified);
             throw new IllegalArgumentException("Service account not specified");
         }
-        return s;
+        return account;
     }
 
     private void performTask(Task task) {

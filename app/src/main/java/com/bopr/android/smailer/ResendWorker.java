@@ -16,6 +16,7 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
+import static com.bopr.android.smailer.Settings.settings;
 
 /**
  * Checks internet connection every 5 minutes and tries to resend email for all pending events.
@@ -44,7 +45,7 @@ public class ResendWorker extends Worker {
     }
 
     private static boolean isFeatureEnabled(@NonNull Context context) {
-        return new Settings(context).getBoolean(KEY_PREF_RESEND_UNSENT, true);
+        return settings(context).getBoolean(KEY_PREF_RESEND_UNSENT, true);
     }
 
     public static void enable(@NonNull Context context) {

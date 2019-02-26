@@ -99,6 +99,7 @@ public class DebugFragment extends BasePreferenceFragment {
     private GeoLocator locator;
     private Database database;
     private AuthorizationHelper authorizator;
+    private Notifications notifications;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -107,6 +108,7 @@ public class DebugFragment extends BasePreferenceFragment {
         database = new Database(context);
         locator = new GeoLocator(context, database);
         authorizator = new AuthorizationHelper(this, SCOPE_SEND, KEY_PREF_SENDER_ACCOUNT);
+        notifications = notifications;
     }
 
     @Override
@@ -296,7 +298,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        new Notifications(context).showMailError(R.string.no_internet_connection, Notifications.ACTION_SHOW_CONNECTION_OPTIONS);
+                        notifications.showMailError(R.string.no_internet_connection, Notifications.ACTION_SHOW_CONNECTION_OPTIONS);
                     }
                 }),
 
@@ -304,7 +306,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        new Notifications(context).showMailError(R.string.no_recipients_specified, Notifications.ACTION_SHOW_RULES);
+                        notifications.showMailError(R.string.no_recipients_specified, Notifications.ACTION_SHOW_RULES);
                     }
                 }),
 
@@ -312,7 +314,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        new Notifications(context).hideLastError();
+                        notifications.hideLastError();
                     }
                 }),
 
@@ -320,7 +322,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        new Notifications(context).showMailSuccess();
+                        notifications.showMailSuccess();
                     }
                 }),
 
@@ -328,7 +330,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        new Notifications(context).showRemoteAction(R.string.text_remotely_added_to_blacklist, "spam text");
+                        notifications.showRemoteAction(R.string.text_remotely_added_to_blacklist, "spam text");
                     }
                 })
 
@@ -487,7 +489,7 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private void onProcessServiceMail() {
-        if (new Settings(context).getBoolean(KEY_PREF_REMOTE_CONTROL, false)) {
+        if (settings.getBoolean(KEY_PREF_REMOTE_CONTROL, false)) {
             RemoteControlService.start(context);
             showToast(context, "Done");
         } else {

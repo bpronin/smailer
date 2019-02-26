@@ -83,6 +83,10 @@ public class SharedPreferencesWrapper implements SharedPreferences {
         wrappedPreferences.unregisterOnSharedPreferenceChangeListener(listener);
     }
 
+    public boolean isNull(String key) {
+        return getString(key, null) == null;
+    }
+
     public class EditorWrapper implements Editor {
 
         private final Editor wrappedEditor;
@@ -128,42 +132,42 @@ public class SharedPreferencesWrapper implements SharedPreferences {
         }
 
         public EditorWrapper putStringOptional(String key, @Nullable String value) {
-            if (!contains(key)){
+            if (!contains(key)) {
                 wrappedEditor.putString(key, value);
             }
             return this;
         }
 
         public EditorWrapper putStringSetOptional(String key, @Nullable Set<String> values) {
-            if (!contains(key)){
+            if (!contains(key)) {
                 wrappedEditor.putStringSet(key, values);
             }
             return this;
         }
 
         public EditorWrapper putIntOptional(String key, int value) {
-            if (!contains(key)){
+            if (!contains(key)) {
                 wrappedEditor.putInt(key, value);
             }
             return this;
         }
 
         public EditorWrapper putLongOptional(String key, long value) {
-            if (!contains(key)){
+            if (!contains(key)) {
                 wrappedEditor.putLong(key, value);
             }
             return this;
         }
 
         public EditorWrapper putFloatOptional(String key, float value) {
-            if (!contains(key)){
+            if (!contains(key)) {
                 wrappedEditor.putFloat(key, value);
             }
             return this;
         }
 
         public EditorWrapper putBooleanOptional(String key, boolean value) {
-            if (!contains(key)){
+            if (!contains(key)) {
                 wrappedEditor.putBoolean(key, value);
             }
             return this;

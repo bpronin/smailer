@@ -56,6 +56,10 @@ public class Notifications {
         formatter = new TagFormatter(context);
     }
 
+    public static Notifications notifications(Context context) {
+        return new Notifications(context);
+    }
+
     public void showMailError(int messageRes, int action) {
         String text = formatter
                 .pattern(R.string.unable_send_email)
@@ -98,6 +102,18 @@ public class Notifications {
         }
 
         manager.notify("remote", ++messageId, builder.build());
+    }
+
+    public void showMessage(int messageRes, int action) {
+        String text = context.getString(messageRes);
+
+        Builder builder = createBuilder(text, action).setAutoCancel(true);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder.setCategory(CATEGORY_MESSAGE);
+        }
+
+        manager.notify("message", ++messageId, builder.build());
     }
 
     public Notification getForegroundServiceNotification() {

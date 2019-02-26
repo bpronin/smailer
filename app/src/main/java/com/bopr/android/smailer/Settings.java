@@ -89,6 +89,10 @@ public class Settings extends SharedPreferencesWrapper {
         this.context = context;
     }
 
+    public static Settings settings(@NonNull Context context) {
+        return new Settings(context);
+    }
+
     /**
      * Loads default settings values.
      */

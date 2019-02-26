@@ -23,6 +23,7 @@ import java.util.Set;
 import androidx.annotation.Nullable;
 
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
+import static com.bopr.android.smailer.Settings.settings;
 
 /**
  * Listens to changes in sms content.
@@ -89,7 +90,7 @@ public class ContentObserverService extends Service {
      */
     public static void enable(Context context) {
         Intent intent = new Intent(context, ContentObserverService.class);
-        Set<String> triggers = new Settings(context).getFilter().getTriggers();
+        Set<String> triggers = settings(context).getFilter().getTriggers();
         if (triggers.contains(VAL_PREF_TRIGGER_OUT_SMS)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(intent);
