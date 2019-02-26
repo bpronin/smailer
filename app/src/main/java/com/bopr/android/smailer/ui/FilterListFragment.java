@@ -221,8 +221,10 @@ abstract class FilterListFragment extends BaseFragment {
             @Override
             public void onOkClick(String value) {
                 if (isItemExists(value) && (item == null || !item.value.equals(value))) {
-                    showToast(getContext(), formatter(requireContext()).pattern(R.string.item_already_exists)
-                            .put("item", getItemText(value)).format());
+                    showToast(getContext(), formatter(requireContext())
+                            .pattern(R.string.item_already_exists)
+                            .put("item", getItemText(value))
+                            .format());
                 } else if (!Util.isTrimEmpty(value)) {
                     /* note: if we rotated device reference to "this" is changed here */
                     listAdapter.replaceItem(item, new Item(value));
@@ -253,7 +255,8 @@ abstract class FilterListFragment extends BaseFragment {
         if (removedItems.size() == 1) {
             title = getString(R.string.item_removed);
         } else {
-            title = formatter(R.string.items_removed, requireContext())
+            title = formatter(requireContext())
+                    .pattern(R.string.items_removed)
                     .put("count", valueOf(removedItems.size()))
                     .format();
         }

@@ -16,8 +16,6 @@ import java.util.regex.Pattern;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import static androidx.core.util.PatternsCompat.EMAIL_ADDRESS;
-
 /**
  * Miscellaneous utilities.
  *
@@ -222,12 +220,7 @@ public class Util {
         return null;
     }
 
-    @Nullable
-    public static String extractEmailAddress(String text) {
-        Matcher matcher = EMAIL_ADDRESS.matcher(text);
-        if (matcher.find()) {
-            return matcher.group();
-        }
-        return null;
+    public static boolean isQuoted(String s) {
+        return QUOTED_TEXT_PATTERN.matcher(s).matches();
     }
 }

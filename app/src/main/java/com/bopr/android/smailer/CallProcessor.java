@@ -206,10 +206,7 @@ public class CallProcessor {
         formatter.setContactName(getContactName(context, event.getPhone()));
         formatter.setDeviceName(settings.getDeviceName());
         formatter.setContentOptions(settings.getStringSet(KEY_PREF_EMAIL_CONTENT, null));
-
-//        if (settings.getBoolean(KEY_PREF_REMOTE_CONTROL, false)) {
-//            formatter.setServiceAccount(settings.getString(KEY_PREF_REMOTE_CONTROL_ACCOUNT, null));
-//        }
+        formatter.setServiceAccount(settings.getString(KEY_PREF_REMOTE_CONTROL_ACCOUNT, null));
 
         String locale = settings.getString(KEY_PREF_EMAIL_LOCALE, null);
         if (locale != null) {   //todo: why not to set null locale?

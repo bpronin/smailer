@@ -19,7 +19,7 @@
         <item>contact_name</item>
         <item>device_name</item>
         <item>location</item>
-        <!--<item>remote_control_link</item>-->
+        <item>remote_control_links</item>
     </string-array>
 
     <string-array name="email_locale_values" translatable="false">

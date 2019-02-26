@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.PermissionInfo;
 
-import com.bopr.android.smailer.util.TagFormatter;
 import com.bopr.android.smailer.util.Util;
 
 import java.util.ArrayList;
@@ -229,9 +228,10 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
     private String formatRationale(Collection<String> permissions) {
         StringBuilder b = new StringBuilder();
         for (String permission : permissions) {
-            TagFormatter line = formatter(activity)
+            String line = formatter(activity)
                     .pattern(requireNonNull(rationales.get(permission)))
-                    .put("permission", getPermissionLabel(permission));
+                    .put("permission", getPermissionLabel(permission))
+                    .format();
             b.append(line).append("\n\n");
         }
         return b.toString();

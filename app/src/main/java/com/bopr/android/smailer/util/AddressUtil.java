@@ -9,6 +9,8 @@ import java.util.regex.Matcher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import static androidx.core.util.PatternsCompat.EMAIL_ADDRESS;
+import static com.bopr.android.smailer.util.Util.isQuoted;
 import static com.bopr.android.smailer.util.Util.safeEquals;
 
 /**
@@ -17,9 +19,9 @@ import static com.bopr.android.smailer.util.Util.safeEquals;
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 @SuppressWarnings("WeakerAccess")
-public class PhoneUtil {
+public class AddressUtil {
 
-    private PhoneUtil() {
+    private AddressUtil() {
     }
 
     @NonNull
@@ -71,5 +73,43 @@ public class PhoneUtil {
         return Patterns.PHONE.matcher(phone).matches()
                 ? phone
                 : ("\"" + phone + "\"");
+    }
+
+    @NonNull
+    public static String normalizeEmail(@NonNull String email) {
+        String localPart = email.split("@")[0];
+        String part = isQuoted(localPart) ? localPart : localPart.replaceAll("\\.", "");
+        return email.replaceFirst(localPart, part).toLowerCase(Locale.ROOT);
+    }
+
+    public static int compareEmails(String e1, String e2) {
+        return normalizeEmail(e1).compareTo(normalizeEmail(e2));
+    }
+
+    public static boolean emailsEqual(String e1, String e2) {
+        return safeEquals(e1, e2) || compareEmails(e1, e2) == 0;
+    }
+
+    @Nullable
+    public static String findEmail(@NonNull Collection<String> list, String email) {
+        for (String n : list) {
+            if (emailsEqual(n, email)) {
+                return n;
+            }
+        }
+        return null;
+    }
+
+    public static boolean containsEmail(Collection<String> list, String email) {
+        return findEmail(list, email) != null;
+    }
+
+    @Nullable
+    public static String extractEmail(String text) {
+        Matcher matcher = EMAIL_ADDRESS.matcher(text);
+        if (matcher.find()) {
+            return matcher.group();
+        }
+        return null;
     }
 }

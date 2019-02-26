@@ -35,8 +35,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import static androidx.recyclerview.widget.RecyclerView.NO_POSITION;
 import static com.bopr.android.smailer.PhoneEvent.STATE_PENDING;
-import static com.bopr.android.smailer.util.PhoneUtil.containsPhone;
-import static com.bopr.android.smailer.util.PhoneUtil.findPhone;
+import static com.bopr.android.smailer.util.AddressUtil.containsPhone;
+import static com.bopr.android.smailer.util.AddressUtil.findPhone;
 import static com.bopr.android.smailer.util.ResourceUtil.eventDirectionImage;
 import static com.bopr.android.smailer.util.ResourceUtil.eventStateImage;
 import static com.bopr.android.smailer.util.ResourceUtil.eventTypeImage;

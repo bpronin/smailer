@@ -25,7 +25,6 @@ import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
 import static com.bopr.android.smailer.Settings.KEY_PREF_NOTIFY_SEND_SUCCESS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.CoreMatchers.allOf;
@@ -127,23 +126,5 @@ public class OptionsActivityTest extends BaseActivityTest {
         /* check settings */
         assertTrue(settings.getBoolean(KEY_PREF_NOTIFY_SEND_SUCCESS, false));
     }
-
-    @Test
-    public void testResendSetting() {
-        onView(withText(R.string.preferences)).perform(click());
-
-        /* check settings */
-        assertTrue(settings.getBoolean(KEY_PREF_RESEND_UNSENT, false));
-
-        onView(withPrefSwitcher(R.string.resend)).check(matches(isChecked()));
-        onView(withSummary(R.string.try_to_resend_unsent, R.string.resend)).check(matches(isDisplayed()));
-
-        onView(withText(R.string.resend)).perform(click());
-        onView(withPrefSwitcher(R.string.resend)).check(matches(isNotChecked()));
-
-        /* check settings */
-        assertFalse(settings.getBoolean(KEY_PREF_RESEND_UNSENT, false));
-    }
-
 
 }

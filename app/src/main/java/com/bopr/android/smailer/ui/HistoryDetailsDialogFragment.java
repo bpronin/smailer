@@ -102,7 +102,8 @@ public class HistoryDetailsDialogFragment extends DialogFragment {
             } else {
                 pattern = R.string.you_had_outgoing_call;
             }
-            return formatter(pattern, requireContext())
+            return formatter(requireContext())
+                    .pattern(pattern)
                     .put("duration", formatDuration(event.getCallDuration()))
                     .format();
         }

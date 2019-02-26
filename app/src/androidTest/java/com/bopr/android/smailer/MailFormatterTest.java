@@ -505,6 +505,7 @@ public class MailFormatterTest extends BaseTest {
         formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
                 VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT));
 
+        String body = formatter.formatBody();
         assertEquals("<html><head>" +
                 "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">" +
                 "</head>" +
@@ -515,7 +516,7 @@ public class MailFormatterTest extends BaseTest {
                 "<br>Time: February 2, 2016 3:04:05 AM EST" +
                 "<br>Last known device location: <a href=\"https://www.google.com/maps/place/60.555+30.555/@60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "<br>Sent from Device at February 2, 2016 3:04:05 AM EST" +
-                "</small></body></html>", formatter.formatBody());
+                "</small></body></html>", body);
     }
 
     /**

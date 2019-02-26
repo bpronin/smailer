@@ -30,7 +30,7 @@ public class TagFormatterTest extends BaseTest {
 
     @Test
     public void testPut() {
-        String text = formatter("{one}, {two} and {three}")
+        String text = formatter(resources).pattern("{one}, {two} and {three}")
                 .put("one", "ONE")
                 .put("two", "TWO")
                 .put("three", "THREE")
@@ -41,7 +41,7 @@ public class TagFormatterTest extends BaseTest {
 
     @Test
     public void testPutMultiple() {
-        String text = formatter("{one}, {two} and {three} and {one} again")
+        String text = formatter(resources).pattern("{one}, {two} and {three} and {one} again")
                 .put("one", "ONE")
                 .put("two", "TWO")
                 .put("three", "THREE")
@@ -61,7 +61,7 @@ public class TagFormatterTest extends BaseTest {
 
     @Test
     public void testPutRemoveBlank() {
-        String text = formatter("{one}, {two} and {three}")
+        String text = formatter(resources).pattern("{one}, {two} and {three}")
                 .put("one", "ONE")
                 .put("two", "")
                 .put("three", "THREE")
@@ -72,9 +72,9 @@ public class TagFormatterTest extends BaseTest {
 
     @Test
     public void testPutRemoveNull() {
-        String text = formatter("{one}, {two} and {three}")
+        String text = formatter(resources).pattern("{one}, {two} and {three}")
                 .put("one", "ONE")
-                .put("two", null)
+                .put("two", (String) null)
                 .put("three", "THREE")
                 .format();
 
@@ -83,7 +83,7 @@ public class TagFormatterTest extends BaseTest {
 
     @Test
     public void testPutRemoveAbsent() {
-        String text = formatter("{one}, {two} and {three}")
+        String text = formatter(resources).pattern("{one}, {two} and {three}")
                 .put("one", "ONE")
                 .put("three", "THREE")
                 .format();
@@ -93,7 +93,7 @@ public class TagFormatterTest extends BaseTest {
 
     @Test
     public void testPutFromResource() {
-        String text = formatter(PATTERN_ONE, resources)
+        String text = formatter(resources).pattern(PATTERN_ONE)
                 .put("one", "ONE")
                 .put("two", "TWO")
                 .put("three", "THREE")
@@ -104,7 +104,7 @@ public class TagFormatterTest extends BaseTest {
 
     @Test
     public void testPutResource() {
-        String text = formatter(PATTERN_ONE, resources)
+        String text = formatter(resources).pattern(PATTERN_ONE)
                 .put("one", "ONE")
                 .put("two", "TWO")
                 .put("three", THREE)
@@ -115,7 +115,7 @@ public class TagFormatterTest extends BaseTest {
 
     @Test
     public void testEscape() {
-//        String text = formatter("/{three/}")
+//        String text = formatter(resources).pattern("/{three/}")
 ////                .put("one", "ONE")
 //                .put("three", "THREE")
 //                .format();

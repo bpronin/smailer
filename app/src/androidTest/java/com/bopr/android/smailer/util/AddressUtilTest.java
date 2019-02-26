@@ -2,14 +2,16 @@ package com.bopr.android.smailer.util;
 
 import org.junit.Test;
 
-import static com.bopr.android.smailer.util.PhoneUtil.escapePhone;
-import static com.bopr.android.smailer.util.PhoneUtil.extractPhone;
-import static com.bopr.android.smailer.util.PhoneUtil.phoneToRegEx;
-import static com.bopr.android.smailer.util.PhoneUtil.phonesEqual;
+import static com.bopr.android.smailer.util.AddressUtil.emailsEqual;
+import static com.bopr.android.smailer.util.AddressUtil.escapePhone;
+import static com.bopr.android.smailer.util.AddressUtil.extractPhone;
+import static com.bopr.android.smailer.util.AddressUtil.phoneToRegEx;
+import static com.bopr.android.smailer.util.AddressUtil.phonesEqual;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class PhoneUtilTest {
+public class AddressUtilTest {
 
     @Test
     public void testPhonesEqual() {
@@ -32,6 +34,15 @@ public class PhoneUtilTest {
     public void testEscapePhone() {
         assertEquals("+7-(905)-230-94-41", escapePhone("+7-(905)-230-94-41"));
         assertEquals("\"SomeCompanyPhone\"", escapePhone("SomeCompanyPhone"));
+    }
+
+    @Test
+    public void testEmailEqual() {
+        assertTrue(emailsEqual(null, null));
+        assertTrue(emailsEqual("bobson@mail.com", "bobson@mail.com"));
+        assertTrue(emailsEqual("bobson@mail.com", "bob.son@mail.com"));
+        assertFalse(emailsEqual("bobson@mail.com", "\"bob.son\"@mail.com"));
+        assertTrue(emailsEqual("b.o.b.s.on@mail.com", "bobson@mail.com"));
     }
 
 }

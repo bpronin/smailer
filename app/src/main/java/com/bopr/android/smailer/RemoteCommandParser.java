@@ -1,6 +1,6 @@
 package com.bopr.android.smailer;
 
-import com.bopr.android.smailer.util.PhoneUtil;
+import com.bopr.android.smailer.util.AddressUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,7 +101,7 @@ class RemoteCommandParser {
 
     private String extractPhoneFromText(String text) {
         String s = extractQuoted(text);
-        return s != null ? s : PhoneUtil.extractPhone(text);
+        return s != null ? s : AddressUtil.extractPhone(text);
     }
 
     class Task {

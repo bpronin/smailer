@@ -29,10 +29,6 @@
         android:title="@string/email_message_language" />
 
     <androidx.preference.SwitchPreference
-        android:key="resend_unsent"
-        android:title="@string/try_to_resend_unsent" />
-
-    <androidx.preference.SwitchPreference
         android:key="notify_send_success"
         android:title="@string/notify_send_success" />
 

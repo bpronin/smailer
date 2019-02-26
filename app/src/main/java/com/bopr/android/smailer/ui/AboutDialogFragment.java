@@ -77,7 +77,7 @@ public class AboutDialogFragment extends DialogFragment {
     }
 
     private String formatVersion() {
-        return formatter(R.string.app_version, requireContext())
+        return formatter(requireContext()).pattern(R.string.app_version)
                 .put("version", settings.getReleaseVersion())
                 .format();
     }

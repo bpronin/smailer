@@ -21,24 +21,7 @@ public class TagFormatter {
     private static final Pattern PATTERN = Pattern.compile("\\{(.*?)\\}");
 
     private final Map<String, String> values = new LinkedHashMap<>();
-    private String pattern;
     private Resources resources;
-
-    public static TagFormatter formatter(String pattern) {
-        return new TagFormatter().pattern(pattern);
-    }
-
-    public static TagFormatter formatter(String pattern, @NonNull Context context) {
-        return new TagFormatter(context).pattern(pattern);
-    }
-
-    public static TagFormatter formatter(int patternResourceId, @NonNull Context context) {
-        return formatter(context).pattern(patternResourceId);
-    }
-
-    public static TagFormatter formatter(int patternResourceId, @NonNull Resources resources) {
-        return new TagFormatter(resources).pattern(patternResourceId);
-    }
 
     public static TagFormatter formatter(@NonNull Context context) {
         return new TagFormatter(context);
@@ -46,9 +29,6 @@ public class TagFormatter {
 
     public static TagFormatter formatter(@NonNull Resources resources) {
         return new TagFormatter(resources);
-    }
-
-    public TagFormatter() {
     }
 
     public TagFormatter(@NonNull Resources resources) {
@@ -59,41 +39,62 @@ public class TagFormatter {
         this(context.getResources());
     }
 
-    public TagFormatter pattern(String pattern) {
-        this.pattern = pattern;
-        return this;
+    public TagPattern pattern(String pattern) {
+        return new TagPattern(pattern);
     }
 
-    public TagFormatter pattern(int resourceId) {
+    @Override
+    @NonNull
+    public String toString() {
+        return "TagFormatter{" +
+                "values=" + values +
+                ", resources=" + resources +
+                '}';
+    }
+
+    public TagPattern pattern(int resourceId) {
         return pattern(resources.getString(resourceId));
     }
 
-    public TagFormatter put(String key, String value) {
-        values.put(key, value);
-        return this;
-    }
+    public class TagPattern {
 
-    public TagFormatter put(String key, int resourceId) {
-        return put(key, resources.getString(resourceId));
-    }
+        private String pattern;
 
-    public String format() {
-        StringBuffer sb = new StringBuffer();
-
-        Matcher matcher = PATTERN.matcher(pattern);
-        while (matcher.find()) {
-            String replacement = values.get(matcher.group(1));
-            matcher.appendReplacement(sb, replacement != null ? replacement : "");
+        private TagPattern(String pattern) {
+            this.pattern = pattern;
         }
-        matcher.appendTail(sb);
 
-        return sb.toString();
+        public TagPattern put(String key, String value) {
+            values.put(key, value);
+            return this;
+        }
+
+        public TagPattern put(String key, TagPattern value) {
+            values.put(key, value.format());
+            return this;
+        }
+
+        public TagPattern put(String key, int resourceId) {
+            return put(key, resources.getString(resourceId));
+        }
+
+        public String format() {
+            StringBuffer sb = new StringBuffer();
+
+            Matcher matcher = PATTERN.matcher(pattern);
+            while (matcher.find()) {
+                String replacement = values.get(matcher.group(1));
+                matcher.appendReplacement(sb, replacement != null ? replacement : "");
+            }
+            matcher.appendTail(sb);
+
+            return sb.toString();
+        }
+
+        @Override
+        @NonNull
+        public String toString() {
+            return format();
+        }
     }
-
-    @NonNull
-    @Override
-    public String toString() {
-        return format();
-    }
-
 }

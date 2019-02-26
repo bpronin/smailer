@@ -11,8 +11,8 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
-import static com.bopr.android.smailer.util.PhoneUtil.normalizePhone;
-import static com.bopr.android.smailer.util.PhoneUtil.phoneToRegEx;
+import static com.bopr.android.smailer.util.AddressUtil.normalizePhone;
+import static com.bopr.android.smailer.util.AddressUtil.phoneToRegEx;
 import static com.bopr.android.smailer.util.Util.isEmpty;
 import static com.bopr.android.smailer.util.Util.unquoteRegex;
 

@@ -11,6 +11,10 @@
     <string name="add">Добавить</string>
     <string name="add_number_to_blacklist">Добавить в черный список</string>
     <string name="add_number_to_whitelist">Добавить в белый список</string>
+    <string name="add_phone_to_blacklist">Добавить номер в черный список"</string>
+    <string name="add_phone_to_whitelist">Добавить номер в белый список"</string>
+    <string name="add_text_to_blacklist">Добавить текст в черный список"</string>
+    <string name="add_text_to_whitelist">Добавить текст в белый список"</string>
     <string name="allow_control_remotely">Позволить управлять приложением посредством отправки почты на сервисный аккаунт</string>
     <string name="allow_only_recipients">Принимать сервисную почту только от получателей</string>
     <string name="app_version">Версия приложения: {version}</string>
@@ -96,6 +100,7 @@
     <string name="remote_control_account">Сервисный аккаунт</string>
     <string name="remove">Удалить</string>
     <string name="remove_from_filter">Исключить номер из правил</string>
+    <string name="reply_ot_app">Ответить {app_name}</string>
     <string name="resend">Повторная отправка</string>
     <string name="rules">Правила</string>
     <string name="rules_for_sending">Условия для отправки почты</string>
@@ -116,7 +121,6 @@
     <string name="text_remotely_removed_from_whitelist">Текст \"{text}\" удаленно удален из белого списка."</string>
     <string name="time_time">Время: {time}</string>
     <string name="triggers">Триггеры</string>
-    <string name="try_to_resend_unsent">Заново отправлять неотправленные сообщения при появлении соединения</string>
     <string name="unable_send_email">Не удалось отправить почту. {reason}</string>
     <string name="unacceptable_phone_numbers">Заблокированные номера ({size})</string>
     <string name="unacceptable_words">Запрещеные фразы ({size})</string>
@@ -144,7 +148,7 @@
         <item>Имя звонившего</item>
         <item>Название устройства</item>
         <item>Местоположение устройства</item>
-        <!--<item>Ссылка удаленного управления</item>-->
+        <item>Ссылки удаленного управления</item>
     </string-array>
 
     <string-array name="language_names">

@@ -194,8 +194,10 @@ public class RecipientsFragment extends BaseFragment {
             public void onOkClick(String address) {
                 Log.d("", "onOkClick: ");
                 if (isItemExists(address) && (item == null || !item.address.equals(address))) {
-                    showToast(getContext(), formatter(R.string.recipient_already_exists, requireContext())
-                            .put("name", address).format());
+                    showToast(getContext(), formatter(requireContext())
+                            .pattern(R.string.recipient_already_exists)
+                            .put("name", address)
+                            .format());
                 } else if (!Util.isTrimEmpty(address)) {
                     /* note: if we rotated device reference to "this" is changed here */
                     Item newItem = new Item(address);
@@ -213,7 +215,8 @@ public class RecipientsFragment extends BaseFragment {
         if (removedItems.size() == 1) {
             title = getString(R.string.item_removed);
         } else {
-            title = formatter(R.string.items_removed, requireContext())
+            title = formatter(requireContext())
+                    .pattern(R.string.items_removed)
                     .put("count", valueOf(removedItems.size()))
                     .format();
         }

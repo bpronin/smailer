@@ -66,8 +66,11 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CONTACT;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME;
+import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_HEADER;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_LOCATION;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME;
+import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT;
+import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS;
@@ -127,7 +130,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        onResetPreferences();
+                        onClearPreferences();
                     }
                 })
         );
@@ -418,14 +421,19 @@ public class DebugFragment extends BasePreferenceFragment {
         settings.edit()
                 .putString(KEY_PREF_SENDER_ACCOUNT, defaultAccount(context))
                 .putString(KEY_PREF_RECIPIENTS_ADDRESS, properties.getProperty("default_recipient"))
-                .putStringSet(KEY_PREF_EMAIL_TRIGGERS, asSet(VAL_PREF_TRIGGER_IN_SMS,
+                .putStringSet(KEY_PREF_EMAIL_TRIGGERS, asSet(
+                        VAL_PREF_TRIGGER_IN_SMS,
                         VAL_PREF_TRIGGER_IN_CALLS,
                         VAL_PREF_TRIGGER_MISSED_CALLS,
                         VAL_PREF_TRIGGER_OUT_CALLS,
                         VAL_PREF_TRIGGER_OUT_SMS))
-                .putStringSet(KEY_PREF_EMAIL_CONTENT, asSet(VAL_PREF_EMAIL_CONTENT_CONTACT,
+                .putStringSet(KEY_PREF_EMAIL_CONTENT, asSet(
+                        VAL_PREF_EMAIL_CONTENT_CONTACT,
                         VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
                         VAL_PREF_EMAIL_CONTENT_LOCATION,
+                        VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT,
+                        VAL_PREF_EMAIL_CONTENT_HEADER,
+                        VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS,
                         VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME))
                 .putString(KEY_PREF_EMAIL_LOCALE, DEFAULT_LOCALE)
                 .putBoolean(KEY_PREF_NOTIFY_SEND_SUCCESS, true)
@@ -466,7 +474,7 @@ public class DebugFragment extends BasePreferenceFragment {
                 .show();
     }
 
-    private void onResetPreferences() {
+    private void onClearPreferences() {
         settings.edit().clear().apply();
         Settings.init(context);
 

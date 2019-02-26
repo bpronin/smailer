@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.util.TagFormatter;
+import com.bopr.android.smailer.util.TagFormatter.TagPattern;
 
 import java.util.Set;
 
@@ -121,14 +121,15 @@ public class RulesFragment extends BasePreferenceFragment {
 
     }
 
-    private String formatListAndSize(String value, int pattern, int zeroSizeText) {
-        TagFormatter formatter = formatter(pattern, requireContext());
+    private String formatListAndSize(String value, int patternRes, int emptyTextRes) {
+        TagPattern pattern = formatter(requireContext()).pattern(patternRes);
         int size = commaSplit(value).size();
         if (size > 0) {
-            return formatter.put("size", String.valueOf(size)).format();
+            pattern.put("size", String.valueOf(size));
         } else {
-            return formatter.put("size", zeroSizeText).format();
+            pattern.put("size", emptyTextRes);
         }
+        return pattern.format();
     }
 
 }

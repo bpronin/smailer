@@ -8,7 +8,7 @@ import org.junit.Test;
 import java.util.Locale;
 import java.util.Set;
 
-import static com.bopr.android.smailer.util.Util.extractEmailAddress;
+import static com.bopr.android.smailer.util.AddressUtil.extractEmail;
 import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -149,8 +149,8 @@ public class UtilTest extends BaseTest {
 
     @Test
     public void testExtractEmail() {
-        assertNull(extractEmailAddress("From address"));
-        assertEquals("mail@mail.com", extractEmailAddress("From: <mail@mail.com> address"));
+        assertNull(extractEmail("From address"));
+        assertEquals("mail@mail.com", extractEmail("From: <mail@mail.com> address"));
     }
 
 

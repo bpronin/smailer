@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 
-import com.bopr.android.smailer.util.PhoneUtil;
+import com.bopr.android.smailer.util.TagFormatter;
 import com.bopr.android.smailer.util.Util;
 
 import java.text.DateFormat;
@@ -17,15 +17,17 @@ import java.util.regex.Pattern;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import static android.text.TextUtils.htmlEncode;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CONTACT;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_HEADER;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_LOCATION;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT;
+import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS;
+import static com.bopr.android.smailer.util.AddressUtil.escapePhone;
 import static com.bopr.android.smailer.util.ContentUtils.isReadContactsPermissionsDenied;
 import static com.bopr.android.smailer.util.ResourceUtil.eventTypeText;
-import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.Util.formatDuration;
 import static com.bopr.android.smailer.util.Util.isEmpty;
 import static java.lang.String.valueOf;
@@ -39,16 +41,15 @@ import static java.lang.String.valueOf;
 class MailFormatter {
 
     private static final String SUBJECT_PATTERN = "[{app_name}] {source} {phone}";
-    private static final String HEADER_PATTERN = "<strong>{header}</strong><br><br>";
-    private static final String BODY_PATTERN = "<html>" +
-            "<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
-            "<body>{header}{message}{service_link}{line}{footer}</body></html>";
+    private static final String BODY_PATTERN = "<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">" +
+            "</head><body>{header}{message}{remote_line}{remote_links}{footer_line}{footer}</body></html>";
     private static final String LINE = "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">";
+    private static final String HEADER_PATTERN = "<strong>{header}</strong><br><br>";
     private static final String GOOGLE_MAP_LINK_PATTERN = "<a href=\"https://www.google.com/maps/" +
             "place/{latitude}+{longitude}/@{latitude},{longitude}\">{location}</a>";
     private static final String PHONE_LINK_PATTERN = "<a href=\"tel:{phone}\" style=\"text-decoration: none\">&#9742;</a>{phone}";
-    private static final String SERVICE_LINK_PATTERN = "<a href=\"mailto:{service_address}?" +
-            "subject={service_subject}&amp;body={service_body}&amp;device=1234567890\">{service_link_text}</a>";
+    private static final String REPLY_LINKS_PATTERN = "<small><strong>{title}</strong><ul>{links}<ul></small>";
+    private static final String MAIL_TO_PATTERN = "<a href=\"mailto:{address}?subject={subject}&amp;body={body}\">{text}</a>";
 
     private final PhoneEvent event;
     private final Context context;
@@ -58,13 +59,15 @@ class MailFormatter {
     private String deviceName;
     private Set<String> contentOptions;
     private Date sendTime;
-//    private String serviceAccount;
+    private String serviceAccount;
+    private TagFormatter formatter;
 
     MailFormatter(Context context, PhoneEvent event) {
         this.event = event;
         this.context = context;
-        this.resources = context.getResources();
-        this.locale = Locale.getDefault();
+        locale = Locale.getDefault();
+        resources = context.getResources();
+        formatter = new TagFormatter(resources);
     }
 
     /**
@@ -115,14 +118,14 @@ class MailFormatter {
         this.sendTime = sendTime;
     }
 
-//    /**
-//     * Sets service account email address
-//     *
-//     * @param serviceAddress address
-//     */
-//    void setServiceAccount(String serviceAddress) {
-//        this.serviceAccount = serviceAddress;
-//    }
+    /**
+     * Sets service account email address
+     *
+     * @param serviceAddress address
+     */
+    void setServiceAccount(String serviceAddress) {
+        this.serviceAccount = serviceAddress;
+    }
 
     /**
      * Returns formatted email subject.
@@ -131,10 +134,10 @@ class MailFormatter {
      */
     @NonNull
     String formatSubject() {
-        return formatter(resources).pattern(SUBJECT_PATTERN)
+        return formatter.pattern(SUBJECT_PATTERN)
                 .put("app_name", R.string.app_name)
                 .put("source", formatTrigger())
-                .put("phone", PhoneUtil.escapePhone(event.getPhone()))
+                .put("phone", escapePhone(event.getPhone()))
                 .format();
     }
 
@@ -146,12 +149,16 @@ class MailFormatter {
     @NonNull
     String formatBody() {
         String footer = formatFooter();
+        String remoteLinks = formatRemoteLinks();
 
-        return formatter(resources).pattern(BODY_PATTERN)
+        return formatter
+                .pattern(BODY_PATTERN)
                 .put("header", formatHeader())
                 .put("message", formatMessage())
+                .put("footer_line", !isEmpty(footer) ? LINE : null)
                 .put("footer", footer)
-                .put("line", !isEmpty(footer) ? LINE : null)
+                .put("remote_line", !isEmpty(remoteLinks) ? LINE : null)
+                .put("remote_links", remoteLinks)
                 .format();
     }
 
@@ -190,7 +197,8 @@ class MailFormatter {
             } else {
                 pattern = R.string.you_had_outgoing_call;
             }
-            return formatter(pattern, resources)
+            return formatter
+                    .pattern(pattern)
                     .put("duration", formatDuration(event.getCallDuration()))
                     .format();
         }
@@ -199,7 +207,8 @@ class MailFormatter {
     @Nullable
     private String formatHeader() {
         if (contentOptions != null && contentOptions.contains(VAL_PREF_EMAIL_CONTENT_HEADER)) {
-            return formatter(resources).pattern(HEADER_PATTERN)
+            return formatter
+                    .pattern(HEADER_PATTERN)
                     .put("header", eventTypeText(event))
                     .format();
         }
@@ -240,21 +249,10 @@ class MailFormatter {
                     text.append("<br>");
                 }
 
-                text.append(formatter(R.string.sent_time_device, resources)
+                text.append(formatter.pattern(R.string.sent_time_device)
                         .put("device_name", deviceNameText)
                         .put("time", sendTimeText));
             }
-
-/*
-            String serviceText = formatServiceLink();
-            if (!isEmpty(serviceText)) {
-                if (!isEmpty(text)) {
-                    text.append("<br>");
-                }
-
-                text.append(serviceText);
-            }
-*/
 
             if (!isEmpty(text)) {
                 text.insert(0, "<small>");
@@ -288,8 +286,8 @@ class MailFormatter {
             }
         }
 
-        return formatter(resourceId, resources)
-                .put("phone", formatter(PHONE_LINK_PATTERN)
+        return formatter.pattern(resourceId)
+                .put("phone", formatter.pattern(PHONE_LINK_PATTERN)
                         .put("phone", event.getPhone())
                         .format())
                 .put("name", name)
@@ -299,7 +297,7 @@ class MailFormatter {
     @Nullable
     private String formatDeviceName() {
         if (!isEmpty(deviceName)) {
-            return " " + formatter(R.string._from_device, resources)
+            return " " + formatter.pattern(R.string._from_device)
                     .put("device_name", deviceName)
                     .format();
         }
@@ -310,7 +308,7 @@ class MailFormatter {
     private String formatEventTime() {
         if (event.getStartTime() != null) {
             DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
-            return formatter(R.string.time_time, resources)
+            return formatter.pattern(R.string.time_time)
                     .put("time", df.format(new Date(event.getStartTime())))
                     .format();
         }
@@ -320,7 +318,7 @@ class MailFormatter {
     @NonNull
     private String formatSendTime() {
         DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
-        return " " + formatter(R.string._at_time, resources)
+        return " " + formatter.pattern(R.string._at_time)
                 .put("time", df.format(sendTime))
                 .format();
     }
@@ -329,15 +327,16 @@ class MailFormatter {
     private String formatLocation() {
         GeoCoordinates location = event.getLocation();
         if (location != null) {
-            return formatter(R.string.last_known_location, resources)
-                    .put("location", formatter(GOOGLE_MAP_LINK_PATTERN)
+            return formatter.pattern(R.string.last_known_location)
+                    .put("location", formatter
+                            .pattern(GOOGLE_MAP_LINK_PATTERN)
                             .put("latitude", valueOf(location.getLatitude()))
                             .put("longitude", valueOf(location.getLongitude()))
                             .put("location", Util.formatLocation(location, "&#176;", "\'", "\"", "N", "S", "W", "E"))
                             .format())
                     .format();
         } else {
-            return formatter(R.string.last_known_location, resources)
+            return formatter.pattern(R.string.last_known_location)
                     .put("location", GeoLocator.isPermissionsDenied(context) /* base context here */
                             ? R.string.no_permission_read_location
                             : R.string.geolocation_disabled)
@@ -345,43 +344,41 @@ class MailFormatter {
         }
     }
 
-/*
-    private static final String SERVICE_SUBJECT_PATTERN = "[{app_name} command] {command}";
-    private static final String SERVICE_BLACKLIST_PATTERN = "add {phone} to blacklist on {device}";
-    private static final String SERVICE_WHITELIST_PATTERN = "add {phone} to whitelist on {device}";
-
     @Nullable
-    private String formatServiceLink() {
-        if (!isEmpty(serviceAccount)) {
-            TagFormatter formatter = formatter(resources);
-            return formatter.pattern(SERVICE_LINK_PATTERN)
-                    .put("service_address", serviceAccount)
-                    .put("service_subject", formatter.pattern(SERVICE_SUBJECT_PATTERN)
-                            .put("app_name", R.string.app_name)
-                            .put("command", formatServiceCommand())
-                            .format())
-                    .put("service_body", formatServiceBody())
-                    .put("service_link_text", R.string.service_link)
+    private String formatRemoteLinks() {
+        if (contentOptions.contains(VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS) && !isEmpty(serviceAccount)) {
+            return formatter
+                    .pattern(REPLY_LINKS_PATTERN)
+                    .put("title", formatter
+                            .pattern(R.string.reply_ot_app)
+                            .put("app_name", R.string.app_name))
+                    .put("links", formatRemoteLinksList())
                     .format();
         }
         return null;
     }
 
     @NonNull
-    private String formatServiceBody() {
-        return "device:" + deviceName + "\\\n"
-                + "action:" + "blacklist" + "\\\n"
-                + "phone:" + event.getPhone() + "\\\n";
+    private String formatRemoteLinksList() {
+        return formatRemoteLink(R.string.add_phone_to_blacklist, R.string.add_phone_to_blacklist_reply, escapePhone(event.getPhone())) +
+                formatRemoteLink(R.string.add_text_to_blacklist, R.string.add_text_to_blacklist_reply, event.getText()) +
+                formatRemoteLink(R.string.add_phone_to_whitelist, R.string.add_phone_to_whitelist_reply, escapePhone(event.getPhone())) +
+                formatRemoteLink(R.string.add_text_to_whitelist, R.string.add_text_to_whitelist_reply, event.getText());
     }
 
     @NonNull
-    private String formatServiceCommand() {
-        return formatter(resources).pattern(SERVICE_BLACKLIST_PATTERN)
-                .put("phone", event.getPhone())
-                .put("device", deviceName)
-                .format();
+    private String formatRemoteLink(int titleRes, int bodyRes, String argument) {
+        return "<li>" +
+                formatter
+                        .pattern(MAIL_TO_PATTERN)
+                        .put("address", serviceAccount)
+                        .put("subject", htmlEncode("Re: " + formatSubject()))
+                        .put("body", htmlEncode(formatter.pattern(bodyRes)
+                                .put("text", argument).format()))
+                        .put("text", titleRes)
+                        .format() +
+                "</li>";
     }
-*/
 
     private String replaceUrls(String s) {
         Matcher matcher = Pattern.compile("((?i:http|https|rtsp|ftp|file)://[\\S]+)").matcher(s);
@@ -404,6 +401,7 @@ class MailFormatter {
         } else {
             resources = context.getResources();
         }
+        formatter = new TagFormatter(resources);
     }
 
 }

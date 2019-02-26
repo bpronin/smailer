@@ -45,7 +45,7 @@ public class Settings extends SharedPreferencesWrapper {
     public static final String KEY_PREF_RULES = "rules";
     public static final String KEY_PREF_HISTORY = "history";
     public static final String KEY_PREF_MARK_SMS_AS_READ = "mark_processed_sms_as_read";
-    public static final String KEY_PREF_RESEND_UNSENT = "resend_unsent";
+    public static final String KEY_PREF_RESEND_UNSENT = "resend_unsent"; /* hidden */
     public static final String KEY_PREF_FILTER_BLACKLIST = "message_filter_blacklist";
     public static final String KEY_PREF_FILTER_WHITELIST = "message_filter_whitelist";
     public static final String KEY_PREF_FILTER_TEXT_BLACKLIST = "message_filter_text_blacklist";
@@ -62,6 +62,7 @@ public class Settings extends SharedPreferencesWrapper {
     public static final String VAL_PREF_EMAIL_CONTENT_LOCATION = "location";
     public static final String VAL_PREF_EMAIL_CONTENT_CONTACT = "contact_name";
     public static final String VAL_PREF_EMAIL_CONTENT_HEADER = "header";
+    public static final String VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS = "remote_control_links";
     public static final String VAL_PREF_TRIGGER_IN_SMS = "in_sms";
     public static final String VAL_PREF_TRIGGER_OUT_SMS = "out_sms";
     public static final String VAL_PREF_TRIGGER_IN_CALLS = "in_calls";
@@ -75,7 +76,8 @@ public class Settings extends SharedPreferencesWrapper {
             VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT,
             VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
             VAL_PREF_EMAIL_CONTENT_LOCATION,
-            VAL_PREF_EMAIL_CONTENT_CONTACT);
+            VAL_PREF_EMAIL_CONTENT_CONTACT,
+            VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS);
     public static final Set<String> DEFAULT_TRIGGERS = asSet(
             VAL_PREF_TRIGGER_IN_SMS,
             VAL_PREF_TRIGGER_MISSED_CALLS);

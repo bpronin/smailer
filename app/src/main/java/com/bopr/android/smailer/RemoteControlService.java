@@ -6,13 +6,11 @@ import android.content.Intent;
 import android.os.IBinder;
 
 import com.bopr.android.smailer.RemoteCommandParser.Task;
-import com.bopr.android.smailer.util.Util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 import androidx.annotation.Nullable;
@@ -30,7 +28,10 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_ACCOUNT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_FILTER_RECIPIENTS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_NOTIFICATIONS;
-import static com.bopr.android.smailer.util.PhoneUtil.findPhone;
+import static com.bopr.android.smailer.util.AddressUtil.containsEmail;
+import static com.bopr.android.smailer.util.AddressUtil.extractEmail;
+import static com.bopr.android.smailer.util.AddressUtil.findPhone;
+import static com.bopr.android.smailer.util.Util.commaSplit;
 
 /**
  * Remote control service.
@@ -85,8 +86,6 @@ public class RemoteControlService extends IntentService {
                         } else {
                             log.debug("Not a service mail");
                         }
-                    } else {
-                        log.debug("Rejected");
                     }
                 }
             } else {
@@ -99,9 +98,12 @@ public class RemoteControlService extends IntentService {
 
     private boolean acceptMessage(MailMessage message) {
         if (settings.getBoolean(KEY_PREF_REMOTE_CONTROL_FILTER_RECIPIENTS, false)) {
-            String address = Util.extractEmailAddress(message.getFrom());
-            String recipients = settings.getString(KEY_PREF_RECIPIENTS_ADDRESS, "").toLowerCase(Locale.ROOT);
-            return address != null && recipients.contains(address.toLowerCase(Locale.ROOT));
+            String address = extractEmail(message.getFrom());
+            List<String> recipients = commaSplit(settings.getString(KEY_PREF_RECIPIENTS_ADDRESS, ""));
+            if (!containsEmail(recipients, address)) {
+                log.debug("Address " + address + " rejected");
+                return false;
+            }
         }
         return true;
     }

@@ -12,6 +12,10 @@
     <string name="add">Add</string>
     <string name="add_number_to_blacklist">Add number to blacklist</string>
     <string name="add_number_to_whitelist">Add number to whitelist</string>
+    <string name="add_phone_to_blacklist">add phone to blacklist"</string>
+    <string name="add_phone_to_whitelist">add phone to whitelist"</string>
+    <string name="add_text_to_blacklist">add text to blacklist"</string>
+    <string name="add_text_to_whitelist">add text to whitelist"</string>
     <string name="allow_control_remotely">Allow to control application by sending email on service account</string>
     <string name="allow_only_recipients">Accept service mail only from recipients</string>
     <string name="app_version">Application version: {version}</string>
@@ -98,6 +102,7 @@
     <string name="remote_control_account">Service account</string>
     <string name="remove">Remove</string>
     <string name="remove_from_filter">Remove number from all rules</string>
+    <string name="reply_ot_app">Reply to {app_name}:</string>
     <string name="resend">Resend</string>
     <string name="rules">Rules</string>
     <string name="rules_for_sending">Rules for sending email</string>
@@ -118,7 +123,6 @@
     <string name="text_remotely_removed_from_whitelist">Text \"{text}\" remotely removed from whitelist."</string>
     <string name="time_time">Time: {time}</string>
     <string name="triggers">Triggers</string>
-    <string name="try_to_resend_unsent">Try to resend unsent messages when connection is established</string>
     <string name="unable_send_email">Unable to send email. {reason}</string>
     <string name="unacceptable_phone_numbers">Unacceptable phone numbers ({size})</string>
     <string name="unacceptable_words">Unacceptable words ({size})</string>
@@ -130,6 +134,10 @@
     <string name="you_had_incoming_call">You had an incoming call of {duration} duration.</string>
     <string name="you_had_missed_call">You had a missed call.</string>
     <string name="you_had_outgoing_call">You had an outgoing call of {duration} duration.</string>
+    <string translatable="false" name="add_phone_to_blacklist_reply">Add phone {text} to blacklist"</string>
+    <string translatable="false" name="add_phone_to_whitelist_reply">Add phone {text} to whitelist"</string>
+    <string translatable="false" name="add_text_to_blacklist_reply">Add text \"{text}\" to blacklist"</string>
+    <string translatable="false" name="add_text_to_whitelist_reply">Add text \"{text}\" to whitelist"</string>
 
     <string-array name="trigger_names">
         <item>Incoming SMS</item>
@@ -146,7 +154,7 @@
         <item>Caller contact name</item>
         <item>Device name</item>
         <item>Device location</item>
-        <!--<item>Remote control link</item>-->
+        <item>Remote control links</item>
     </string-array>
 
     <string-array name="language_names">

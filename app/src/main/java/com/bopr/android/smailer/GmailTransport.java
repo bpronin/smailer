@@ -240,10 +240,14 @@ public class GmailTransport {
 
     @Nullable
     private String readBody(Message message) {
-        List<MessagePart> parts = message.getPayload().getParts();
-        if (!parts.isEmpty()) {
-            MessagePart part = parts.get(0);
-            return newStringUtf8(decodeBase64(part.getBody().getData()));
+        MessagePart payload = message.getPayload();
+        if (payload != null) {
+            List<MessagePart> parts = payload.getParts();
+            if (parts == null) {
+                return newStringUtf8(decodeBase64(payload.getBody().getData()));
+            } else if (!parts.isEmpty()) {
+                return newStringUtf8(decodeBase64(parts.get(0).getBody().getData()));
+            }
         }
         return null;
     }
