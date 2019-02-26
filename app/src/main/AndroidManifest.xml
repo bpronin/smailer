@@ -84,6 +84,11 @@
             android:parentActivityName=".ui.MainActivity" />
 
         <activity
+            android:name=".ui.RemoteControlActivity"
+            android:label="@string/remote_control"
+            android:parentActivityName=".ui.OptionsActivity" />
+
+        <activity
             android:name=".ui.HistoryActivity"
             android:label="@string/call_history"
             android:parentActivityName=".ui.MainActivity" />

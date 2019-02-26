@@ -61,7 +61,7 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_BLACKLIST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_TEXT_BLACKLIST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_NOTIFY_SEND_SUCCESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL;
+import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_ENABLED;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CONTACT;
@@ -489,7 +489,7 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private void onProcessServiceMail() {
-        if (settings.getBoolean(KEY_PREF_REMOTE_CONTROL, false)) {
+        if (settings.getBoolean(KEY_PREF_REMOTE_CONTROL_ENABLED, false)) {
             RemoteControlService.start(context);
             showToast(context, "Done");
         } else {

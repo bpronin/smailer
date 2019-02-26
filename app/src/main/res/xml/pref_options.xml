@@ -36,30 +36,9 @@
         android:key="mark_processed_sms_as_read"
         android:title="@string/mark_processed_sms_as_read" />
 
-    <androidx.preference.PreferenceCategory
-        android:title="@string/remote_control">
-
-        <androidx.preference.SwitchPreference
-            android:icon="@drawable/ic_remote"
-            android:key="remote_control"
-            android:title="@string/allow_control_remotely"
-            />
-
-        <androidx.preference.PreferenceScreen
-            android:icon="@drawable/ic_account_round"
-            android:key="remote_control_account"
-            android:title="@string/remote_control_account" />
-
-        <androidx.preference.SwitchPreference
-            android:key="remote_control_notifications"
-            android:title="@string/notify_remote_actions"
-            />
-
-        <androidx.preference.SwitchPreference
-            android:key="remote_control_filter_recipients"
-            android:title="@string/allow_only_recipients"
-            />
-
-    </androidx.preference.PreferenceCategory>
+    <androidx.preference.PreferenceScreen
+        android:key="remote_control"
+        android:icon="@drawable/ic_remote"
+        android:title="@string/remote_control" />
 
 </androidx.preference.PreferenceScreen>
