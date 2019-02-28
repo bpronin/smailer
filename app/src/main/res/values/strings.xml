@@ -66,7 +66,7 @@
     <string name="no_internet_connection">No internet connection.</string>
     <string name="no_permission_read_location">(no permission to read location)</string>
     <string name="no_recipients_specified">No recipients specified.</string>
-    <string name="no_triggers_specified">All triggers disabled</string>
+    <string name="no_triggers_specified">All triggers are disabled</string>
     <string name="not_specified">Not specified</string>
     <string name="notifications">Notifications</string>
     <string name="notify_on_send">Notify of send</string>
