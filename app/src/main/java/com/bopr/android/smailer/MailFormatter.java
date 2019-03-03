@@ -42,13 +42,13 @@ class MailFormatter {
 
     private static final String SUBJECT_PATTERN = "[{app_name}] {source} {phone}";
     private static final String BODY_PATTERN = "<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">" +
-            "</head><body>{header}{message}{remote_line}{remote_links}{footer_line}{footer}</body></html>";
+            "</head><body>{header}{message}{footer_line}{footer}{remote_line}{remote_links}</body></html>";
     private static final String LINE = "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">";
     private static final String HEADER_PATTERN = "<strong>{header}</strong><br><br>";
     private static final String GOOGLE_MAP_LINK_PATTERN = "<a href=\"https://www.google.com/maps/" +
             "place/{latitude}+{longitude}/@{latitude},{longitude}\">{location}</a>";
     private static final String PHONE_LINK_PATTERN = "<a href=\"tel:{phone}\" style=\"text-decoration: none\">&#9742;</a>{phone}";
-    private static final String REPLY_LINKS_PATTERN = "<small><strong>{title}</strong><ul>{links}<ul></small>";
+    private static final String REPLY_LINKS_PATTERN = "<small><small><strong>{title}</strong><ul>{links}</ul></small></small>";
     private static final String MAIL_TO_PATTERN = "<a href=\"mailto:{address}?subject={subject}&amp;body={body}\">{text}</a>";
 
     private final PhoneEvent event;

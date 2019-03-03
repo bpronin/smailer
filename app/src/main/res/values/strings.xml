@@ -100,6 +100,7 @@
     <string name="regular_expression">Regular expression</string>
     <string name="remote_control">Remote control</string>
     <string name="remote_control_account">Service account</string>
+    <string name="remote_control_account_removed">Service account removed from device</string>
     <string name="remove">Remove</string>
     <string name="remove_from_filter">Remove number from all rules</string>
     <string name="reply_ot_app">Reply to {app_name}:</string>
@@ -138,7 +139,6 @@
     <string translatable="false" name="add_phone_to_whitelist_reply">Add phone {text} to whitelist"</string>
     <string translatable="false" name="add_text_to_blacklist_reply">Add text \"{text}\" to blacklist"</string>
     <string translatable="false" name="add_text_to_whitelist_reply">Add text \"{text}\" to whitelist"</string>
-    <string name="remote_control_account_removed">Service account removed from device</string>
 
     <string-array name="trigger_names">
         <item>Incoming SMS</item>

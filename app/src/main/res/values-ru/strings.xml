@@ -101,7 +101,7 @@
     <string name="remote_control_account_removed">Сервисный аккаунт удален</string>
     <string name="remove">Удалить</string>
     <string name="remove_from_filter">Исключить номер из правил</string>
-    <string name="reply_ot_app">Ответить {app_name}</string>
+    <string name="reply_ot_app">Ответить {app_name}:</string>
     <string name="resend">Повторная отправка</string>
     <string name="rules">Правила</string>
     <string name="rules_for_sending">Условия для отправки почты</string>
