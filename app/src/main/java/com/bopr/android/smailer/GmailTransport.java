@@ -42,7 +42,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import static com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64.decodeBase64;
-import static com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64.encodeBase64URLSafeString;
 import static com.google.api.client.repackaged.org.apache.commons.codec.binary.StringUtils.newStringUtf8;
 import static java.util.Collections.singletonList;
 import static javax.mail.Message.RecipientType.TO;
@@ -156,10 +155,24 @@ public class GmailTransport {
     private Message createGmailMessage(MailMessage message) throws MessagingException, IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         createMimeMessage(message, sender).writeTo(buffer);
-        return new Message().setRaw(encodeBase64URLSafeString(buffer.toByteArray()));
+        return new Message().encodeRaw(buffer.toByteArray());
 
+//        return new Message().setRaw(encodeBase64URLSafeString(buffer.toByteArray()));
+
+//        List<MessagePartHeader> headers = new ArrayList<>();
+//        headers.add(new MessagePartHeader().set("Content-Type", "text/html; charset=UTF-8"));
+//        headers.add(new MessagePartHeader().set("Subject", message.getSubject()));
+//        headers.add(new MessagePartHeader().set("From", message.getFrom()));
+//        headers.add(new MessagePartHeader().set("To", message.getRecipients()));
+//
+//        MessagePartBody body = new MessagePartBody();
+//        body.setData(message.getBody());
+//
 //        MessagePart payload = new MessagePart();
-//        payload.setHeaders()
+//        payload.setMimeType("text/html");
+//        payload.setHeaders(headers);
+//        payload.setBody(body);
+//
 //        Message m = new Message();
 //        m.setPayload(payload);
 //        return m;
