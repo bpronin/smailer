@@ -83,6 +83,7 @@ import static com.bopr.android.smailer.util.Util.formatLocation;
 import static com.bopr.android.smailer.util.Util.quoteRegex;
 import static com.bopr.android.smailer.util.Util.requireNonNull;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singleton;
 
 /**
  * For debug purposes.
@@ -707,13 +708,15 @@ public class DebugFragment extends BasePreferenceFragment {
             try {
                 transport.init(requireNonNull(defaultAccount(getActivity())), SCOPE_SEND);
 
-                MailMessage message = new MailMessage();
-                message.setSubject("SMailer log");
-                message.setBody("Device: " + AndroidUtil.getDeviceName());
-                message.setAttachment(attachment);
-                message.setRecipients(properties.getProperty("developer_email"));
+                for (File file : attachment) {
+                    MailMessage message = new MailMessage();
+                    message.setSubject("SMailer log");
+                    message.setBody("Device: " + AndroidUtil.getDeviceName());
+                    message.setAttachment(singleton(file));
+                    message.setRecipients(properties.getProperty("developer_email"));
 
-                transport.send(message);
+                    transport.send(message);
+                }
             } catch (Exception x) {
                 log.error("Send mail failed", x);
                 return x;

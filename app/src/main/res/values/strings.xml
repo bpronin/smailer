@@ -24,6 +24,7 @@
     <string name="blacklist">Blacklist</string>
     <string name="call_history">Call history</string>
     <string name="call_of_duration">Call of {duration} duration</string>
+    <string name="call_of_duration_short">Call: {duration}</string>
     <string name="called_phone">Called: {phone} ({name})</string>
     <string name="caller_phone">Caller: {phone} ({name})</string>
     <string name="check_your_settings">Check your settings</string>

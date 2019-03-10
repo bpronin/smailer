@@ -23,6 +23,7 @@
     <string name="blacklist">Черный список</string>
     <string name="call_history">Журнал</string>
     <string name="call_of_duration">Звонок длительностью {duration}</string>
+    <string name="call_of_duration_short">Звонок: {duration}</string>
     <string name="called_phone">Вы звонили: {phone} ({name})</string>
     <string name="caller_phone">Вам звонил: {phone} ({name})</string>
     <string name="check_your_settings">Проверьте настройки приложения</string>

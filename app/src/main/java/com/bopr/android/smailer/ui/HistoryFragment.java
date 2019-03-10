@@ -41,6 +41,7 @@ import static com.bopr.android.smailer.util.ResourceUtil.eventDirectionImage;
 import static com.bopr.android.smailer.util.ResourceUtil.eventStateImage;
 import static com.bopr.android.smailer.util.ResourceUtil.eventTypeImage;
 import static com.bopr.android.smailer.util.ResourceUtil.showToast;
+import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.Util.formatDuration;
 import static com.bopr.android.smailer.util.Util.isEmpty;
 import static com.bopr.android.smailer.util.Util.isTrimEmpty;
@@ -291,14 +292,7 @@ public class HistoryFragment extends BaseFragment {
                 final PhoneEvent event = cursor.getRow();
 
                 holder.timeView.setText(DateFormat.format(getString(R.string._time_pattern), event.getStartTime()));
-
-                if (event.isSms()) {
-                    holder.textView.setText(event.getText());
-                } else {
-                    holder.textView.setText(formatter.pattern(R.string.call_of_duration)
-                            .put("duration", formatDuration(event.getCallDuration()))
-                            .format());
-                }
+                holder.textView.setText(formatSummary(event));
 
                 if (phoneEventFilter.testText(event.getText())) {
                     holder.textView.setPaintFlags(holder.phoneTextFlags);
@@ -385,6 +379,19 @@ public class HistoryFragment extends BaseFragment {
             return null;
         }
 
+        private CharSequence formatSummary(PhoneEvent event) {
+            if (event.isSms()) {
+                return event.getText();
+            } else if (event.isMissed()) {
+                return getString(R.string.missed_call);
+            } else {
+                int pattern = R.string.call_of_duration_short;
+                return formatter(requireContext())
+                        .pattern(pattern)
+                        .put("duration", formatDuration(event.getCallDuration()))
+                        .format();
+            }
+        }
     }
 
     private class ItemViewHolder extends RecyclerView.ViewHolder {
