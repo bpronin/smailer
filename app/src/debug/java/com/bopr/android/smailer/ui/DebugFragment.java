@@ -108,7 +108,7 @@ public class DebugFragment extends BasePreferenceFragment {
         database = new Database(context);
         locator = new GeoLocator(context, database);
         authorizator = new AuthorizationHelper(this, SCOPE_SEND, KEY_PREF_SENDER_ACCOUNT);
-        notifications = notifications;
+        notifications = new Notifications(requireContext());
     }
 
     @Override
@@ -133,6 +133,22 @@ public class DebugFragment extends BasePreferenceFragment {
                     @Override
                     protected void onClick(Preference preference) {
                         onClearPreferences();
+                    }
+                }),
+
+                createPreference("Require optimisation disabled", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        AndroidUtil.requireBatteryOptimizationDisabled(requireContext());
+                    }
+                }),
+
+                createPreference("Launch optimisation settings", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        AndroidUtil.launchBatteryOptimizationSettings(requireContext());
                     }
                 })
         );
@@ -671,7 +687,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
     }
 
-    private static class SendLogTask extends LongAsyncTask<Void, Void, String> {
+    private static class SendLogTask extends LongAsyncTask<Void, Void, Exception> {
 
         private Properties properties;
 
@@ -681,7 +697,7 @@ public class DebugFragment extends BasePreferenceFragment {
         }
 
         @Override
-        protected String doInBackground(Void... params) {
+        protected Exception doInBackground(Void... params) {
             List<File> attachment = new LinkedList<>();
             attachment.add(getActivity().getDatabasePath(Settings.DB_NAME));
             attachment.add(getLogcatLog());
@@ -700,17 +716,17 @@ public class DebugFragment extends BasePreferenceFragment {
                 transport.send(message);
             } catch (Exception x) {
                 log.error("Send mail failed", x);
-                return "Send mail failed";
+                return x;
             }
 
             return null;
         }
 
         @Override
-        protected void onPostExecute(String error) {
+        protected void onPostExecute(Exception error) {
             super.onPostExecute(error);
             if (error != null) {
-                showMessage(getActivity(), error);
+                showMessage(getActivity(), error.toString());
             } else {
                 showToast(getActivity(), "Done");
             }

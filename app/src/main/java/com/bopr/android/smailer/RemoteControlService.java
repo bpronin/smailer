@@ -21,6 +21,8 @@ import static com.bopr.android.smailer.RemoteCommandParser.ADD_PHONE_TO_BLACKLIS
 import static com.bopr.android.smailer.RemoteCommandParser.ADD_PHONE_TO_WHITELIST;
 import static com.bopr.android.smailer.RemoteCommandParser.ADD_TEXT_TO_BLACKLIST;
 import static com.bopr.android.smailer.RemoteCommandParser.ADD_TEXT_TO_WHITELIST;
+import static com.bopr.android.smailer.RemoteCommandParser.DISABLE_OPTION;
+import static com.bopr.android.smailer.RemoteCommandParser.ENABLE_OPTION;
 import static com.bopr.android.smailer.RemoteCommandParser.REMOVE_PHONE_FROM_BLACKLIST;
 import static com.bopr.android.smailer.RemoteCommandParser.REMOVE_PHONE_FROM_WHITELIST;
 import static com.bopr.android.smailer.RemoteCommandParser.REMOVE_TEXT_FROM_BLACKLIST;
@@ -75,22 +77,24 @@ public class RemoteControlService extends IntentService {
 
         try {
             transport.init(requireAccount(), SCOPE_ALL);
-            List<MailMessage> list = transport.list(query);
-            if (!list.isEmpty()) {
-                for (MailMessage message : list) {
-                    if (acceptMessage(message)) {
-                        Task task = parser.parse(message);
-                        transport.markAsRead(message);
-                        if (task != null) {
-                            performTask(task);
-                            transport.trash(message);
-                        } else {
-                            log.debug("Not a service mail");
-                        }
+            List<MailMessage> messages = transport.list(query);
+
+            if (messages.isEmpty()) {
+                log.debug("No service mail");
+                return;
+            }
+
+            for (MailMessage message : messages) {
+                if (acceptMessage(message)) {
+                    Task task = parser.parse(message);
+                    transport.markAsRead(message);
+                    if (task == null) {
+                        log.debug("Not a service mail");
+                    } else {
+                        performTask(task);
+                        transport.trash(message);
                     }
                 }
-            } else {
-                log.debug("No service mail");
             }
         } catch (Exception x) {
             log.error("Remote control error", x);
@@ -144,6 +148,12 @@ public class RemoteControlService extends IntentService {
                 break;
             case REMOVE_TEXT_FROM_WHITELIST:
                 removeTextFromWhitelist(task.argument);
+                break;
+            case ENABLE_OPTION:
+                enableOption(task.argument, true);
+                break;
+            case DISABLE_OPTION:
+                enableOption(task.argument, true);
                 break;
         }
     }
@@ -214,6 +224,11 @@ public class RemoteControlService extends IntentService {
         } else {
             log.debug("Not in list");
         }
+    }
+
+    private void enableOption(String key, boolean enable) {
+//       if (settings.contains(key)
+//        settings.edit().putBoolean(key, enable).apply();
     }
 
     private void saveFilter(PhoneEventFilter filter, String text, int messageRes) {

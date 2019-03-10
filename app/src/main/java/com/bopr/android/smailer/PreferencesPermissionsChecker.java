@@ -95,6 +95,9 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
         }
     }
 
+    /**
+     * To be added into activity's onRequestPermissionsResult()
+     */
     public void handleRequestResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == requestResultCode) {
             Set<String> deniedPermissions = new HashSet<>();
