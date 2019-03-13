@@ -48,7 +48,7 @@ public class AboutDialogFragment extends DialogFragment {
             @Override
             public boolean onLongClick(View v) {
                 Settings.BuildInfo info = settings.getReleaseInfo();
-                new AlertDialog.Builder(getContext())
+                new AlertDialog.Builder(requireContext())
                         .setTitle("Release info")
                         .setMessage("Build number: " + info.number + "\nBuild time: " + info.time)
                         .show();

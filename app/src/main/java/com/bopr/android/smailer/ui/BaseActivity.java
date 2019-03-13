@@ -20,7 +20,7 @@ import androidx.fragment.app.FragmentManager;
  */
 public abstract class BaseActivity extends AppCompatActivity {
 
-    public static final String TAG_FRAGMENT = "activity_fragment";
+    private static final String TAG_FRAGMENT = "activity_fragment";
 
     private Fragment fragment;
     private boolean closable = true;
@@ -44,14 +44,14 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     @SuppressWarnings("SameParameterValue")
-    public void setClosable(boolean closable) {
+    void setClosable(boolean closable) {
         this.closable = closable;
     }
 
     @NonNull
     protected abstract Fragment createFragment();
 
-    protected void setupActionBar() {
+    private void setupActionBar() {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(closable);

@@ -44,7 +44,7 @@ public abstract class BasePreferenceFragment extends PreferenceFragmentCompat {
     private static final String DIALOG_FRAGMENT_TAG = "androidx.preference.PreferenceFragment.DIALOG";
 
     private PreferencesPermissionsChecker permissionChecker;
-    protected Settings settings;
+    Settings settings;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

@@ -27,13 +27,6 @@ public class SharedPreferencesWrapper implements SharedPreferences {
         return wrappedPreferences.getString(key, defValue);
     }
 
-    public String requireString(String key) {
-        if (!contains(key)) {
-            throw new IllegalStateException("No required preference: " + key);
-        }
-        return getString(key, "");
-    }
-
     @Nullable
     @Override
     public Set<String> getStringSet(String key, @Nullable Set<String> defValues) {
@@ -87,6 +80,7 @@ public class SharedPreferencesWrapper implements SharedPreferences {
         return getString(key, null) == null;
     }
 
+    @SuppressWarnings({"UnusedReturnValue", "unused"})
     public class EditorWrapper implements Editor {
 
         private final Editor wrappedEditor;
@@ -193,6 +187,10 @@ public class SharedPreferencesWrapper implements SharedPreferences {
         @Override
         public void apply() {
             wrappedEditor.apply();
+        }
+
+        public void put(String key, String value) {
+            //TODO: Implement method.
         }
     }
 }

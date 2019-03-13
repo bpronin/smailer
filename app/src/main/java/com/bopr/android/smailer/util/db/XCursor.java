@@ -63,6 +63,7 @@ public abstract class XCursor<R> extends CursorWrapper {
 
     public abstract R getRow();
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isNull(String columnName) {
         return isNull(getColumnIndex(columnName));
     }

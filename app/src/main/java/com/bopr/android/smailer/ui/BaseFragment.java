@@ -15,7 +15,7 @@ import static com.bopr.android.smailer.ui.AboutDialogFragment.showAboutDialog;
 
 public class BaseFragment extends Fragment {
 
-    protected Settings settings;
+    Settings settings;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

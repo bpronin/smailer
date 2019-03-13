@@ -33,6 +33,7 @@ class RemoteCommandParser {
     static final String REMOVE_TEXT_FROM_WHITELIST = "remove_text_from_whitelist";
     static final String ENABLE_OPTION = "enable_option";
     static final String DISABLE_OPTION = "disable_option";
+    static final String SET_OPTION = "set_option";
 
     RemoteCommandParser() {
     }
@@ -63,7 +64,6 @@ class RemoteCommandParser {
                 .replaceAll(QUOTED_TEXT_REGEX, "") /* remove all quoted text */
                 .toLowerCase(Locale.ROOT);
 
-        //todo: replace with tokenizer
         if (command.contains("blacklist")) {
             if (command.contains("delete") || command.contains("remove")) {
                 if (command.contains("text")) {
@@ -95,8 +95,10 @@ class RemoteCommandParser {
         } else if (command.contains("option")) {
             if (command.contains("enable")) {
                 return new Task(ENABLE_OPTION, extractQuoted(body));
-            } else {
+            } else if (command.contains("disable")) {
                 return new Task(DISABLE_OPTION, extractQuoted(body));
+            }  else if (command.contains("set")) {
+                return new Task(SET_OPTION, extractQuoted(body));
             }
         }
         return null;

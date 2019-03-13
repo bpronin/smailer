@@ -85,9 +85,8 @@ abstract class EditFilterListItemDialogFragment extends DialogFragment {
         show(activity.getSupportFragmentManager(), createTag());
     }
 
-    EditFilterListItemDialogFragment setOnClose(OnClose onClose) {
+    void setOnClose(OnClose onClose) {
         this.onClose = onClose;
-        return this;
     }
 
     public interface OnClose {

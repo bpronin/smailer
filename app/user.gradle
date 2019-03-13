@@ -19,7 +19,7 @@ def updateReleaseInfo = {
     props.setProperty('build_time', String.valueOf(buildTime))
     props.store(new FileOutputStream(propFile), 'Release properties')
 
-    println(':updateReleaseInfo current build=' + buildNumber);
+    println(':updateReleaseInfo current build=' + buildNumber)
 }
 
 assemble.doLast {

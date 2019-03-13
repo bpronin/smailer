@@ -63,7 +63,7 @@ public class ContentUtils {
     }
 
     @Nullable
-    public static String getPhone(Context context, String phoneId) {
+    private static String getPhone(Context context, String phoneId) {
         String result = null;
         if (requireReadContactPermission(context)) {
             Cursor cursor = context.getContentResolver().query(Phone.CONTENT_URI, null,

@@ -79,7 +79,7 @@ public class EditEmailDialogFragment extends DialogFragment {
                 }
             });
 
-            dialog = new AlertDialog.Builder(getContext())
+            dialog = new AlertDialog.Builder(requireContext())
                     .setTitle(title)
                     .setView(view)
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -113,7 +113,7 @@ public class EditEmailDialogFragment extends DialogFragment {
         }
     }
 
-    public void setCallback(Callback callback) {
+    void setCallback(Callback callback) {
         this.callback = callback;
     }
 
@@ -121,7 +121,7 @@ public class EditEmailDialogFragment extends DialogFragment {
         this.title = title;
     }
 
-    public void setInitialValue(String address) {
+    void setInitialValue(String address) {
         this.initialValue = address;
     }
 

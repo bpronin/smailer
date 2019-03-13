@@ -8,7 +8,7 @@ public class BaseSettingsListener implements SharedPreferences.OnSharedPreferenc
 
     private BackupManager backupManager;
 
-    public BaseSettingsListener(Context context) {
+    BaseSettingsListener(Context context) {
         backupManager = new BackupManager(context);
     }
 

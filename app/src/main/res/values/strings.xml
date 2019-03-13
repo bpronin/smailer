@@ -7,7 +7,7 @@
     <string name="_time_pattern" translatable="false">yyyy-MM-dd HH:mm:ss</string>
     <string name="about">About</string>
     <string name="acceptable_phone_numbers">Acceptable phone numbers ({size})</string>
-    <string name="acceptable_words">Acceptable words ({size})</string>
+    <string name="acceptable_words">Acceptable phrases ({size})</string>
     <string name="account_not_registered">Account not registered on device</string>
     <string name="add">Add</string>
     <string name="add_number_to_blacklist">Add number to blacklist</string>
@@ -127,7 +127,7 @@
     <string name="triggers">Triggers</string>
     <string name="unable_send_email">Unable to send email. {reason}</string>
     <string name="unacceptable_phone_numbers">Unacceptable phone numbers ({size})</string>
-    <string name="unacceptable_words">Unacceptable words ({size})</string>
+    <string name="unacceptable_words">Unacceptable phrases ({size})</string>
     <string name="undo">Undo</string>
     <string name="unknown_contact">Unknown contact</string>
     <string name="user_password_not_accepted">Username and password not accepted.</string>

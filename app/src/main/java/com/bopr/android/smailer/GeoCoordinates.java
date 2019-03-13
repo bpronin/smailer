@@ -2,6 +2,8 @@ package com.bopr.android.smailer;
 
 import android.location.Location;
 
+import androidx.annotation.NonNull;
+
 /**
  * Geolocation coordinates.
  *
@@ -30,6 +32,7 @@ public class GeoCoordinates {
     }
 
     @Override
+    @NonNull
     public String toString() {
         return "GeoCoordinates{" +
                 "latitude=" + latitude +

@@ -21,7 +21,6 @@ import java.util.List;
 
 import static android.app.ActivityManager.RunningServiceInfo;
 import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.emptyArray;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
@@ -49,12 +48,11 @@ public class AndroidUtilTest extends BaseTest {
     }
 
     /**
-     * Tests {@link AndroidUtil#underwivedText(Context, String)} method.
+     * Tests {@link ResourceUtil#underwivedText(Context, String)} method.
      *
-     * @throws Exception when failed
      */
     @Test
-    public void testValidateText() throws Exception {
+    public void testUnderwivedText() {
         Spannable spannable = ResourceUtil.underwivedText(getContext(), "Invalid text");
 
         assertThat(spannable, instanceOf(SpannableString.class));
@@ -68,12 +66,12 @@ public class AndroidUtilTest extends BaseTest {
     }
 
     /**
-     * Tests {@link AndroidUtil#validatedColoredText(Context, String, boolean)} method.
+     * Tests {@link ResourceUtil#accentedText(Context, String)} method.
      *
      * @throws Exception when failed
      */
     @Test
-    public void testValidatedColoredText() throws Exception {
+    public void testAccentedTextText() throws Exception {
         Spannable spannable = ResourceUtil.accentedText(getContext(), "Invalid text");
         assertThat(spannable, instanceOf(SpannableString.class));
         Object span = spannable.getSpans(0, spannable.length(), Object.class)[0];

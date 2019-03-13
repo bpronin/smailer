@@ -94,36 +94,4 @@ public class AndroidUtil {
         }
     }
 
-    /*
-     */
-/**
- * Helper method to determine if the device has an extra-large screen. For
- * example, 10" tablets are extra-large.
- *//*
-
-    public static boolean isXLargeTablet(Context context) {
-        return (context.getResources().getConfiguration().screenLayout
-                & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
-    }
-*/
-
-/*
-    public static String getAndroidId(Context context) {
-        return Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-    }
-*/
-
-/*
-    public static String getDeviceUuid(Context context) {
-        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-
-        String deviceId = tm.getDeviceId();
-        String serialNumber = tm.getSimSerialNumber();
-        String androidId = getAndroidId(context);
-
-        UUID uuid = new UUID(androidId.hashCode(), (long) deviceId.hashCode() << 32 | serialNumber.hashCode());
-        return uuid.toString();
-    }
-*/
-
 }

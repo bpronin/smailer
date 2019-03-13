@@ -27,6 +27,7 @@ import static com.bopr.android.smailer.RemoteCommandParser.REMOVE_PHONE_FROM_BLA
 import static com.bopr.android.smailer.RemoteCommandParser.REMOVE_PHONE_FROM_WHITELIST;
 import static com.bopr.android.smailer.RemoteCommandParser.REMOVE_TEXT_FROM_BLACKLIST;
 import static com.bopr.android.smailer.RemoteCommandParser.REMOVE_TEXT_FROM_WHITELIST;
+import static com.bopr.android.smailer.RemoteCommandParser.SET_OPTION;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_ACCOUNT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_FILTER_RECIPIENTS;
@@ -149,11 +150,14 @@ public class RemoteControlService extends IntentService {
             case REMOVE_TEXT_FROM_WHITELIST:
                 removeTextFromWhitelist(task.argument);
                 break;
+            case SET_OPTION:
+                setOption(task.argument);
+                break;
             case ENABLE_OPTION:
-                enableOption(task.argument, true);
+                setOption(task.argument + "=true");
                 break;
             case DISABLE_OPTION:
-                enableOption(task.argument, true);
+                setOption(task.argument + "=false");
                 break;
         }
     }
@@ -226,9 +230,13 @@ public class RemoteControlService extends IntentService {
         }
     }
 
-    private void enableOption(String key, boolean enable) {
-//       if (settings.contains(key)
-//        settings.edit().putBoolean(key, enable).apply();
+    private void setOption(String expression) {
+     /*   String[] ss = expression.split("=");
+        if (ss.length < 1) {
+            if (settings.contains(ss[0])) {
+                settings.edit().put(ss[0], ss[1]).apply();
+            }
+        }*/
     }
 
     private void saveFilter(PhoneEventFilter filter, String text, int messageRes) {
