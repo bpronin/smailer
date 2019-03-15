@@ -58,10 +58,11 @@ public class Database {
     private static final String COLUMN_READ = "message_read";
 
     private final String name;
-    private int capacity = 10000;
     private long purgePeriod = TimeUnit.DAYS.toMillis(7);
     private final DbHelper helper;
     private final Context context;
+    private int capacity = 10000;
+    private long updatesCounter;
 
     public Database(Context context) {
         this(context, Settings.DB_NAME);
@@ -148,6 +149,8 @@ public class Database {
         long id = db.replace(TABLE_EVENTS, null, values);
         event.setId(id);
 
+        updatesCounter++;
+
         log.debug("Put record: " + values);
     }
 
@@ -160,6 +163,7 @@ public class Database {
         try {
             db.delete(TABLE_EVENTS, null, null);
             updateLastPurgeTime(db);
+            updatesCounter++;
 
             db.setTransactionSuccessful();
         } finally {
@@ -247,11 +251,15 @@ public class Database {
     }
 
     public void notifyChanged() {
-        log.debug("Broadcasting data changed");
+        if (updatesCounter > 0) {
+            log.debug("Broadcasting data changed");
 
-        Intent intent = new Intent(DATABASE_EVENT);
-       // , parse("database://all")
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+            Intent intent = new Intent(DATABASE_EVENT);
+            // , parse("database://all")
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
+            updatesCounter = 0;
+        }
     }
 
     private long getCurrentSize(SQLiteDatabase db) {

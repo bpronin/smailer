@@ -40,7 +40,7 @@ public class CallProcessorService extends IntentService {
     public void onStart(Intent intent, int startId) {
         super.onStart(intent, startId);
 
-        log.debug("Running");
+        log.debug("Started");
     }
 
     @Override

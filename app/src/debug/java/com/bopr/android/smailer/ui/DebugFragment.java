@@ -315,7 +315,8 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        notifications.showMailError(R.string.no_internet_connection, Notifications.ACTION_SHOW_CONNECTION_OPTIONS);
+                        notifications.showMailError(R.string.no_internet_connection,
+                                Notifications.ACTION_SHOW_CONNECTION_OPTIONS);
                     }
                 }),
 
@@ -323,7 +324,8 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        notifications.showMailError(R.string.no_recipients_specified, Notifications.ACTION_SHOW_RULES);
+                        notifications.showMailError(R.string.no_recipients_specified,
+                                Notifications.ACTION_SHOW_RULES);
                     }
                 }),
 
@@ -347,7 +349,8 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        notifications.showRemoteAction(R.string.text_remotely_added_to_blacklist, "spam text");
+                        notifications.showRemoteAction(R.string.text_remotely_added_to_blacklist,
+                                "spam text");
                     }
                 })
 
@@ -569,7 +572,7 @@ public class DebugFragment extends BasePreferenceFragment {
                 log.warn("Cannot delete file");
             }
         }
-        showToast(context, "Done");
+        showToast(context, "Removed " + logs.length + " log files");
     }
 
     private void onAddHistoryItem() {
@@ -607,7 +610,8 @@ public class DebugFragment extends BasePreferenceFragment {
                         .append(" : ")
                         .append(resolveInfo.priority)
                         .append("\n");
-                log.debug("Concurrent package:" + activityInfo.packageName + " priority: " + resolveInfo.priority);
+                log.debug("Concurrent package:" + activityInfo.packageName + " priority: " +
+                        resolveInfo.priority);
             }
         }
         showMessage(context, b.toString());
@@ -644,7 +648,8 @@ public class DebugFragment extends BasePreferenceFragment {
         @Override
         protected void onPostExecute(GeoCoordinates coordinates) {
             super.onPostExecute(coordinates);
-            showMessage(getActivity(), coordinates != null ? formatLocation(coordinates) : "No location received");
+            showMessage(getActivity(), coordinates != null ?
+                    formatLocation(coordinates) : "No location received");
         }
     }
 

@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
 import androidx.work.Constraints;
+import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
@@ -29,10 +30,6 @@ public class RemoteControlWorker extends Worker {
     private static final Logger log = LoggerFactory.getLogger("RemoteControlWorker");
 
     private static final String WORKER_TAG = "smailer-email";
-
-    static {
-        WorkManager.getInstance().cancelAllWorkByTag(WORKER_TAG);
-    }
 
     public RemoteControlWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -55,6 +52,9 @@ public class RemoteControlWorker extends Worker {
 
     public static void enable(@NonNull Context context) {
         WorkManager manager = WorkManager.getInstance();
+
+        manager.cancelAllWorkByTag(WORKER_TAG);
+
         if (isFeatureEnabled(context) && !settings(context).isNull(KEY_PREF_REMOTE_CONTROL_ACCOUNT)) {
             Constraints constraints = new Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -64,10 +64,9 @@ public class RemoteControlWorker extends Worker {
                     .addTag(WORKER_TAG)
                     .setConstraints(constraints)
                     .build();
-            manager.enqueue(request);
+            manager.enqueueUniquePeriodicWork(WORKER_TAG, ExistingPeriodicWorkPolicy.REPLACE, request);
             log.debug("Enabled");
         } else {
-            manager.cancelAllWorkByTag(WORKER_TAG);
             log.debug("Disabled");
         }
     }
