@@ -1,6 +1,10 @@
 package com.bopr.android.smailer.util;
 
+import android.util.Log;
+
 import com.bopr.android.smailer.GeoCoordinates;
+
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,6 +33,22 @@ public class Util {
     public static final Pattern QUOTED_TEXT_PATTERN = Pattern.compile(QUOTED_TEXT_REGEX);
 
     private Util() {
+    }
+
+    public static void registerUncaughtExceptionHandler() {
+        final Thread.UncaughtExceptionHandler defaultHandler = Thread.getDefaultUncaughtExceptionHandler();
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+
+            @Override
+            public void uncaughtException(Thread thread, Throwable throwable) {
+                try {
+                    LoggerFactory.getLogger("application").error("Application crashed", throwable);
+                } catch (Throwable x) {
+                    Log.e("main", "Failed to handle uncaught exception");
+                }
+                defaultHandler.uncaughtException(thread, throwable);
+            }
+        });
     }
 
     public static String formatLocation(@NonNull GeoCoordinates location, String degreeSymbol,

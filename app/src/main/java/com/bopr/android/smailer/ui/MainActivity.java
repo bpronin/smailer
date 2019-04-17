@@ -15,6 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import io.fabric.sdk.android.Fabric;
 
+import static com.bopr.android.smailer.util.Util.registerUncaughtExceptionHandler;
+
 /**
  * An activity that presents a set of application settings.
  *
@@ -23,6 +25,10 @@ import io.fabric.sdk.android.Fabric;
 public class MainActivity extends AppActivity {
 
     private static Logger log = LoggerFactory.getLogger("MainActivity");
+
+    static {
+        registerUncaughtExceptionHandler();
+    }
 
     public MainActivity() {
         setClosable(false);

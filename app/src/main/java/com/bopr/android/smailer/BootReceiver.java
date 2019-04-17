@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import io.fabric.sdk.android.Fabric;
 
 import static android.content.Intent.ACTION_BOOT_COMPLETED;
+import static com.bopr.android.smailer.util.Util.registerUncaughtExceptionHandler;
 
 /**
  * Starts outgoing sms service device boot.
@@ -19,6 +20,10 @@ import static android.content.Intent.ACTION_BOOT_COMPLETED;
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 public class BootReceiver extends BroadcastReceiver {
+
+    static {
+        registerUncaughtExceptionHandler();
+    }
 
     private static Logger log = LoggerFactory.getLogger("BootReceiver");
 
