@@ -11,6 +11,15 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.util.Consumer;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceCategory;
+import androidx.preference.PreferenceScreen;
+
 import com.bopr.android.smailer.AuthorizationHelper;
 import com.bopr.android.smailer.CallProcessorService;
 import com.bopr.android.smailer.Database;
@@ -39,15 +48,6 @@ import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.util.Consumer;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceCategory;
-import androidx.preference.PreferenceScreen;
 
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
@@ -129,7 +129,7 @@ public class DebugFragment extends BasePreferenceFragment {
                     }
                 }),
 
-                createPreference("Default settings", new DefaultClickListener() {
+                createPreference("Clear settings", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {

@@ -4,4 +4,5 @@
 .gradle
 **/build/
 /app/src/debug/assets/debug.properties
-/etc/keystore.p12
+/app/google-services.json
+/app/keystore.p12

@@ -1,16 +1,25 @@
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
+apply plugin: 'com.google.gms.google-services'
 apply from: 'user.gradle'
 apply from: 'local.gradle'
 
+/*  Some additional files are required to build the project:
+    1. Google configuration from
+        https://console.firebase.google.com/u/0/project/smailer-24874/settings/general/android:com.bopr.android.smailer
+        should be put into app/google-services.json
+    2.  Signing keystore should be put into/app/keystore.p12
+    3.  (Optional) Authentication data for debugging should be put into /app/src/debug/assets/debug.properties
+*/
+
 android {
     compileSdkVersion 28
-//    buildToolsVersion '28.0.3'
+    buildToolsVersion '28.0.3'
 
     signingConfigs {
         config {
             keyAlias 'sample'
-            storeFile file('../etc/keystore.p12')
+            storeFile file('keystore.p12')
             storePassword store_password
             keyPassword key_password
         }
@@ -69,7 +78,6 @@ android {
     configurations {
         all {
             exclude group: 'commons-logging', module: 'commons-logging'
-            exclude group: 'com.google.guava', module: 'listenablefuture'
             exclude group: 'org.apache.httpcomponents'
         }
     }
