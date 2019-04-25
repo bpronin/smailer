@@ -2,7 +2,6 @@
 <resources>
 
     <string name="app_name" translatable="false">SMailer</string>
-    <!--<string name="google_app_id" translatable="false" tools:ignore="UnusedResources">376904884028</string>-->
 
     <string-array name="trigger_values" translatable="false">
         <item>in_sms</item>

@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Set;
 
-import static com.bopr.android.smailer.GoogleMailSupport.SCOPE_ALL;
 import static com.bopr.android.smailer.Notifications.ACTION_SHOW_REMOTE_CONTROL;
 import static com.bopr.android.smailer.RemoteCommandParser.ADD_PHONE_TO_BLACKLIST;
 import static com.bopr.android.smailer.RemoteCommandParser.ADD_PHONE_TO_WHITELIST;
@@ -36,6 +35,7 @@ import static com.bopr.android.smailer.util.AddressUtil.containsEmail;
 import static com.bopr.android.smailer.util.AddressUtil.extractEmail;
 import static com.bopr.android.smailer.util.AddressUtil.findPhone;
 import static com.bopr.android.smailer.util.Util.commaSplit;
+import static com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM;
 
 /**
  * Remote control service.
@@ -77,7 +77,7 @@ public class RemoteControlService extends IntentService {
         log.debug("Handling intent: " + intent);
 
         try {
-            transport.init(requireAccount(), SCOPE_ALL);
+            transport.init(requireAccount(), MAIL_GOOGLE_COM);
             List<MailMessage> messages = transport.list(query);
 
             if (messages.isEmpty()) {

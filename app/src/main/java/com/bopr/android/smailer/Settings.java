@@ -3,6 +3,8 @@ package com.bopr.android.smailer;
 import android.content.Context;
 import android.content.pm.PackageManager;
 
+import androidx.annotation.NonNull;
+
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.SharedPreferencesWrapper;
 import com.bopr.android.smailer.util.Util;
@@ -12,8 +14,6 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.Set;
-
-import androidx.annotation.NonNull;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.bopr.android.smailer.util.Util.asSet;
@@ -31,7 +31,6 @@ public class Settings extends SharedPreferencesWrapper {
 
     private static final int SETTINGS_VERSION = 2;
     public static final String PREFERENCES_STORAGE_NAME = "com.bopr.android.smailer_preferences";
-    public static final String DB_NAME = "smailer.sqlite";
 
     public static final String KEY_SETTINGS_VERSION = "settings_version";
     public static final String KEY_PREF_SENDER_ACCOUNT = "sender_account";

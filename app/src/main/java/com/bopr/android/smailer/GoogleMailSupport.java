@@ -11,7 +11,6 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.gmail.Gmail;
-import com.google.api.services.gmail.GmailScopes;
 import com.google.api.services.gmail.model.ListMessagesResponse;
 import com.google.api.services.gmail.model.Message;
 import com.google.api.services.gmail.model.MessagePart;
@@ -55,15 +54,11 @@ public class GoogleMailSupport {
 
     private static Logger log = LoggerFactory.getLogger("GoogleMailSupport");
 
-    public static String SCOPE_SEND = GmailScopes.GMAIL_SEND;
-    public static String SCOPE_ALL = GmailScopes.MAIL_GOOGLE_COM;
-
-    private static final String ME = "me";
+    private static final String ME = "me"; /* exact "me" */
     private static final String UTF_8 = "UTF-8";
     private static final String HTML = "html";
 
     private final HttpTransport transport;
-    private final JacksonFactory jsonFactory;
     private final Context context;
     private Session session;
     private Gmail service;
@@ -71,13 +66,12 @@ public class GoogleMailSupport {
 
     public GoogleMailSupport(Context context) {
         this.context = context;
-        jsonFactory = JacksonFactory.getDefaultInstance();
         transport = AndroidHttp.newCompatibleTransport();
     }
 
     public void init(@NonNull String sender, String... scopes) {
         this.sender = sender;
-        service = createService(AuthorizationHelper.createCredential(context, sender, scopes));
+        service = createService(GoogleAuthorizationHelper.createCredential(context, sender, scopes));
         session = Session.getDefaultInstance(new Properties(), null);
     }
 
@@ -136,7 +130,7 @@ public class GoogleMailSupport {
 
     @NonNull
     private Gmail createService(@NonNull GoogleAccountCredential credential) {
-        return new Gmail.Builder(transport, jsonFactory, credential)
+        return new Gmail.Builder(transport, JacksonFactory.getDefaultInstance(), credential)
                 .setApplicationName("smailer")
                 .build();
     }

@@ -15,7 +15,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.bopr.android.smailer.util.Util;
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
@@ -23,22 +22,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Collection;
 
 import static android.accounts.AccountManager.KEY_ACCOUNT_NAME;
 import static android.accounts.AccountManager.newChooseAccountIntent;
 import static android.app.Activity.RESULT_OK;
 import static com.bopr.android.smailer.Notifications.ACTION_SHOW_REMOTE_CONTROL;
 import static com.bopr.android.smailer.Notifications.notifications;
+import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
+import static com.bopr.android.smailer.Settings.settings;
+import static com.bopr.android.smailer.util.Util.join;
 import static java.util.Arrays.asList;
 
-/*
-   To compile debug flavor add SHA-1 fingerprint from <user_dir>/.android/debug.keystore  (password "android") to
-   https://console.developers.google.com/apis/credentials/oauthclient/376904884028-f0m6ki37c8b4cf93aktk0jgag3tiu922.apps.googleusercontent.com?project=smailer-24874
-*/
-public class AuthorizationHelper {
+/**
+ * Convenient class to deal with Google authentication.
+ *
+ * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
+ */
+public class GoogleAuthorizationHelper {
 
-    private static Logger log = LoggerFactory.getLogger("AuthorizationHelper");
+    private static Logger log = LoggerFactory.getLogger("GoogleAuthorizationHelper");
 
     private static final int REQUEST_ACCOUNT_CHOOSER = 117;
 
@@ -47,9 +50,12 @@ public class AuthorizationHelper {
     private final GoogleAccountManager accountManager;
     private final String accountSetting;
     private final OnAccountsChangedListener accountsChangedListener;
-    private final List<String> scopes;
+    private final Collection<String> scopes;
 
-    public AuthorizationHelper(Fragment fragment, String accountSetting, String... scopes) {
+    public GoogleAuthorizationHelper(Fragment fragment, String accountSetting, String... scopes) {
+        if (scopes.length == 0) {
+            throw new IllegalArgumentException("Scopes cannot be empty");
+        }
         this.fragment = fragment;
         this.scopes = asList(scopes);
         this.accountSetting = accountSetting;
@@ -73,7 +79,10 @@ public class AuthorizationHelper {
     }
     */
 
-    @SuppressWarnings("deprecation")
+    /**
+     * Brings up system account selection dialog.
+     */
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     public void selectAccount() {
         Intent intent;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -87,7 +96,7 @@ public class AuthorizationHelper {
     }
 
     /**
-     * Must be placed in fragment's  onActivityResult
+     * Should be placed to owner fragment or activity onActivityResult().
      */
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_ACCOUNT_CHOOSER && resultCode == RESULT_OK
@@ -103,7 +112,7 @@ public class AuthorizationHelper {
         Account account = accountManager.getAccountByName(accountName);
         accountManager.getAccountManager().getAuthToken(
                 account,
-                "oauth2: " + Util.join(" ", scopes),
+                "oauth2: " + join(" ", scopes),
                 null,
                 fragment.requireActivity(),
                 new PermissionRequestCallback(accountName),
@@ -124,9 +133,14 @@ public class AuthorizationHelper {
     }
 
     @Nullable
-    public static String defaultAccount(Context context) {
-        Account[] accounts = new GoogleAccountManager(context).getAccounts();
-        return accounts.length > 0 ? accounts[0].name : null;
+    public static Account selectedAccount(Context context) {
+        String accountName = settings(context).getString(KEY_PREF_SENDER_ACCOUNT, null);
+        return new GoogleAccountManager(context).getAccountByName(accountName);
+    }
+
+    @NonNull
+    public static Account primaryAccount(Context context) {
+        return new GoogleAccountManager(context).getAccounts()[0];
     }
 
     @NonNull

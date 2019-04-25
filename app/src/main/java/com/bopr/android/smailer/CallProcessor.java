@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.core.util.Consumer;
 
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
+import com.google.api.services.gmail.GmailScopes;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +15,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.bopr.android.smailer.GoogleMailSupport.SCOPE_SEND;
 import static com.bopr.android.smailer.Notifications.ACTION_SHOW_MAIN;
 import static com.bopr.android.smailer.Notifications.ACTION_SHOW_RECIPIENTS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
@@ -132,7 +132,7 @@ public class CallProcessor {
         }
 
         try {
-            transport.init(requireSender(silent), SCOPE_SEND);
+            transport.init(requireSender(silent), GmailScopes.GMAIL_SEND);
             return true;
         } catch (IllegalArgumentException x) {
             log.error("Failed starting session: ", x);

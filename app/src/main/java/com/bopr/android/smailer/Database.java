@@ -9,15 +9,15 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import androidx.annotation.NonNull;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import com.bopr.android.smailer.util.db.XCursor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
-
-import androidx.annotation.NonNull;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import static com.bopr.android.smailer.util.Util.requireNonNull;
 import static java.lang.System.currentTimeMillis;
@@ -32,6 +32,7 @@ public class Database {
 
     private static Logger log = LoggerFactory.getLogger("Database");
 
+    public static final String DATABASE_NAME = "smailer.sqlite";
     private static final int DB_VERSION = 2;
 
     private static final String DATABASE_EVENT = "database-event";
@@ -65,7 +66,7 @@ public class Database {
     private long updatesCounter;
 
     public Database(Context context) {
-        this(context, Settings.DB_NAME);
+        this(context, DATABASE_NAME);
     }
 
     public Database(Context context, String name) {
