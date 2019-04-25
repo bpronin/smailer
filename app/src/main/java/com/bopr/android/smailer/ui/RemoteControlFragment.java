@@ -4,13 +4,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.preference.Preference;
+
 import com.bopr.android.smailer.AuthorizationHelper;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.RemoteControlWorker;
 
-import androidx.preference.Preference;
-
-import static com.bopr.android.smailer.GmailTransport.SCOPE_ALL;
+import static com.bopr.android.smailer.GoogleMailSupport.SCOPE_ALL;
 import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_ACCOUNT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_ENABLED;
 import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_FILTER_RECIPIENTS;
@@ -26,7 +26,7 @@ public class RemoteControlFragment extends BasePreferenceFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        authorizator = new AuthorizationHelper(this, SCOPE_ALL, KEY_PREF_REMOTE_CONTROL_ACCOUNT);
+        authorizator = new AuthorizationHelper(this, KEY_PREF_REMOTE_CONTROL_ACCOUNT, SCOPE_ALL);
         settingsListener = new SettingsListener();
         settings.registerOnSharedPreferenceChangeListener(settingsListener);
     }

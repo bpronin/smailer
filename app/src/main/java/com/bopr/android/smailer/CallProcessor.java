@@ -2,6 +2,9 @@ package com.bopr.android.smailer;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+import androidx.core.util.Consumer;
+
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 
 import org.slf4j.Logger;
@@ -11,10 +14,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.core.util.Consumer;
-
-import static com.bopr.android.smailer.GmailTransport.SCOPE_SEND;
+import static com.bopr.android.smailer.GoogleMailSupport.SCOPE_SEND;
 import static com.bopr.android.smailer.Notifications.ACTION_SHOW_MAIN;
 import static com.bopr.android.smailer.Notifications.ACTION_SHOW_RECIPIENTS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
@@ -41,12 +41,12 @@ public class CallProcessor {
 
     private final Settings settings;
     private final Context context;
-    private final GmailTransport transport;
+    private final GoogleMailSupport transport;
     private final Notifications notifications;
     private final Database database;
     private final GeoLocator locator;
 
-    CallProcessor(Context context, GmailTransport transport, Notifications notifications,
+    CallProcessor(Context context, GoogleMailSupport transport, Notifications notifications,
                   Database database, GeoLocator locator) {
         this.context = context;
         this.transport = transport;
@@ -57,7 +57,7 @@ public class CallProcessor {
     }
 
     CallProcessor(Context context, Database database, GeoLocator locator) {
-        this(context, new GmailTransport(context), new Notifications(context), database, locator);
+        this(context, new GoogleMailSupport(context), new Notifications(context), database, locator);
     }
 
     /**

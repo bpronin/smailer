@@ -11,8 +11,13 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import com.bopr.android.smailer.util.Util;
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,14 +25,12 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.List;
 
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import static android.accounts.AccountManager.KEY_ACCOUNT_NAME;
 import static android.accounts.AccountManager.newChooseAccountIntent;
 import static android.app.Activity.RESULT_OK;
 import static com.bopr.android.smailer.Notifications.ACTION_SHOW_REMOTE_CONTROL;
 import static com.bopr.android.smailer.Notifications.notifications;
+import static java.util.Arrays.asList;
 
 /*
    To compile debug flavor add SHA-1 fingerprint from <user_dir>/.android/debug.keystore  (password "android") to
@@ -46,9 +49,9 @@ public class AuthorizationHelper {
     private final OnAccountsChangedListener accountsChangedListener;
     private final List<String> scopes;
 
-    public AuthorizationHelper(Fragment fragment, List<String> scopes, String accountSetting) {
+    public AuthorizationHelper(Fragment fragment, String accountSetting, String... scopes) {
         this.fragment = fragment;
-        this.scopes = scopes;
+        this.scopes = asList(scopes);
         this.accountSetting = accountSetting;
         settings = new Settings(fragment.requireContext());
         accountManager = new GoogleAccountManager(fragment.requireContext());
@@ -124,6 +127,17 @@ public class AuthorizationHelper {
     public static String defaultAccount(Context context) {
         Account[] accounts = new GoogleAccountManager(context).getAccounts();
         return accounts.length > 0 ? accounts[0].name : null;
+    }
+
+    @NonNull
+    public static GoogleAccountCredential createCredential(Context context, String accountName,
+                                                           String... scopes) {
+        GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(context, asList(scopes));
+        credential.setSelectedAccountName(accountName);
+        if (credential.getSelectedAccount() == null) {
+            throw new IllegalArgumentException("Account does not exist: " + accountName);
+        }
+        return credential;
     }
 
     private class PermissionRequestCallback implements AccountManagerCallback<Bundle> {

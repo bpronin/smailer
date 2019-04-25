@@ -42,7 +42,7 @@ public class CallProcessorTest extends BaseTest {
 
     private Database database;
     private Context context;
-    private GmailTransport transport;
+    private GoogleMailSupport transport;
     private Notifications notifications;
     private NetworkInfo networkInfo;
     private SharedPreferences preferences;
@@ -74,7 +74,7 @@ public class CallProcessorTest extends BaseTest {
         database = new Database(getContext(), "test.sqlite"); /* not mock context */
         database.destroy();
 
-        transport = mock(GmailTransport.class);
+        transport = mock(GoogleMailSupport.class);
         notifications = mock(Notifications.class);
         locator = mock(GeoLocator.class);
     }

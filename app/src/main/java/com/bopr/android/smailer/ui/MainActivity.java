@@ -1,6 +1,10 @@
 package com.bopr.android.smailer.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
 import com.bopr.android.smailer.ContentObserverService;
 import com.bopr.android.smailer.RemoteControlWorker;
@@ -11,8 +15,6 @@ import com.crashlytics.android.Crashlytics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import io.fabric.sdk.android.Fabric;
 
 import static com.bopr.android.smailer.util.Util.registerUncaughtExceptionHandler;
@@ -24,11 +26,11 @@ import static com.bopr.android.smailer.util.Util.registerUncaughtExceptionHandle
  */
 public class MainActivity extends AppActivity {
 
-    private static Logger log = LoggerFactory.getLogger("MainActivity");
-
     static {
         registerUncaughtExceptionHandler();
     }
+
+    private static Logger log = LoggerFactory.getLogger("MainActivity");
 
     public MainActivity() {
         setClosable(false);
@@ -44,6 +46,8 @@ public class MainActivity extends AppActivity {
         ContentObserverService.enable(this);
         ResendWorker.enable(this);
         RemoteControlWorker.enable(this);
+
+        handleStartupParams(getIntent());
     }
 
     @NonNull
@@ -52,4 +56,13 @@ public class MainActivity extends AppActivity {
         return new MainFragment();
     }
 
+    private void handleStartupParams(Intent intent) {
+        if (intent.hasExtra("screen")) {
+            switch (intent.getStringExtra("screen")) {
+                case "debug":
+                    startActivity(new Intent(this, DebugActivity.class));
+                    break;
+            }
+        }
+    }
 }

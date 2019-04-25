@@ -25,7 +25,8 @@ import com.bopr.android.smailer.CallProcessorService;
 import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.GeoCoordinates;
 import com.bopr.android.smailer.GeoLocator;
-import com.bopr.android.smailer.GmailTransport;
+import com.bopr.android.smailer.GoogleDriveSupport;
+import com.bopr.android.smailer.GoogleMailSupport;
 import com.bopr.android.smailer.MailMessage;
 import com.bopr.android.smailer.Notifications;
 import com.bopr.android.smailer.PhoneEvent;
@@ -34,6 +35,8 @@ import com.bopr.android.smailer.RemoteControlService;
 import com.bopr.android.smailer.Settings;
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.ContentUtils;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +55,7 @@ import java.util.Properties;
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static com.bopr.android.smailer.AuthorizationHelper.defaultAccount;
-import static com.bopr.android.smailer.GmailTransport.SCOPE_SEND;
+import static com.bopr.android.smailer.GoogleMailSupport.SCOPE_SEND;
 import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
@@ -108,7 +111,7 @@ public class DebugFragment extends BasePreferenceFragment {
         setHasOptionsMenu(false);
         database = new Database(context);
         locator = new GeoLocator(context, database);
-        authorizator = new AuthorizationHelper(this, SCOPE_SEND, KEY_PREF_SENDER_ACCOUNT);
+        authorizator = new AuthorizationHelper(this, KEY_PREF_SENDER_ACCOUNT);
         notifications = new Notifications(requireContext());
     }
 
@@ -356,6 +359,25 @@ public class DebugFragment extends BasePreferenceFragment {
 
         );
 
+        addCategory(screen, "Google drive",
+
+                createPreference("Save data", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onSaveToCloud();
+                    }
+                }),
+
+                createPreference("Load data", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onLoadFromCloud();
+                    }
+                })
+        );
+
         addCategory(screen, "Other",
 
                 createPreference("Get location", new DefaultClickListener() {
@@ -392,6 +414,30 @@ public class DebugFragment extends BasePreferenceFragment {
         );
 
         setPreferenceScreen(screen);
+    }
+
+    private void onSaveToCloud() {
+        GoogleDriveSupport drive = new GoogleDriveSupport(context);
+        drive.init(AuthorizationHelper.defaultAccount(context));
+        drive.save(new OnCompleteListener<String>() {
+
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                if (task.isSuccessful()) {
+                    showToast(context, "Success");
+                } else {
+                    Exception exception = task.getException();
+                    if (exception != null) {
+                        showToast(context, exception.toString());
+                        log.error("Save failed", exception);
+                    }
+                }
+            }
+        });
+    }
+
+    private void onLoadFromCloud() {
+        //TODO: Implement method.
     }
 
     @Override
@@ -664,7 +710,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
         @Override
         protected String doInBackground(Void... params) {
-            GmailTransport transport = new GmailTransport(getActivity());
+            GoogleMailSupport transport = new GoogleMailSupport(getActivity());
             try {
                 transport.init(requireNonNull(defaultAccount(getActivity())), SCOPE_SEND);
 
@@ -709,7 +755,7 @@ public class DebugFragment extends BasePreferenceFragment {
             attachment.add(getLogcatLog());
             attachment.addAll(asList(new File(getActivity().getFilesDir(), "log").listFiles()));
 
-            GmailTransport transport = new GmailTransport(getActivity());
+            GoogleMailSupport transport = new GoogleMailSupport(getActivity());
             try {
                 transport.init(requireNonNull(defaultAccount(getActivity())), SCOPE_SEND);
 

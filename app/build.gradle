@@ -77,8 +77,9 @@ android {
 
     configurations {
         all {
-            exclude group: 'commons-logging', module: 'commons-logging'
             exclude group: 'org.apache.httpcomponents'
+            exclude group: 'commons-logging', module: 'commons-logging'
+            exclude group: 'com.google.guava', module: 'listenablefuture'
         }
     }
 

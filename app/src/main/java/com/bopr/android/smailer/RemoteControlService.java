@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 
+import androidx.annotation.Nullable;
+
 import com.bopr.android.smailer.RemoteCommandParser.Task;
 
 import org.slf4j.Logger;
@@ -13,9 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Set;
 
-import androidx.annotation.Nullable;
-
-import static com.bopr.android.smailer.GmailTransport.SCOPE_ALL;
+import static com.bopr.android.smailer.GoogleMailSupport.SCOPE_ALL;
 import static com.bopr.android.smailer.Notifications.ACTION_SHOW_REMOTE_CONTROL;
 import static com.bopr.android.smailer.RemoteCommandParser.ADD_PHONE_TO_BLACKLIST;
 import static com.bopr.android.smailer.RemoteCommandParser.ADD_PHONE_TO_WHITELIST;
@@ -46,7 +46,7 @@ public class RemoteControlService extends IntentService {
 
     private static Logger log = LoggerFactory.getLogger("RemoteControlService");
 
-    private GmailTransport transport;
+    private GoogleMailSupport transport;
     private Settings settings;
     private String query;
     private RemoteCommandParser parser;
@@ -59,7 +59,7 @@ public class RemoteControlService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-        transport = new GmailTransport(this);
+        transport = new GoogleMailSupport(this);
         parser = new RemoteCommandParser();
         notifications = new Notifications(this);
         settings = new Settings(this);

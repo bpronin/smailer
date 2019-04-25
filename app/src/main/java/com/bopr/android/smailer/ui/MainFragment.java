@@ -6,16 +6,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.preference.Preference;
+import androidx.preference.Preference.OnPreferenceClickListener;
+
 import com.bopr.android.smailer.AuthorizationHelper;
 import com.bopr.android.smailer.ContentObserverService;
 import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.ResendWorker;
 
-import androidx.preference.Preference;
-import androidx.preference.Preference.OnPreferenceClickListener;
-
-import static com.bopr.android.smailer.GmailTransport.SCOPE_SEND;
+import static com.bopr.android.smailer.GoogleMailSupport.SCOPE_SEND;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_HISTORY;
 import static com.bopr.android.smailer.Settings.KEY_PREF_OPTIONS;
@@ -48,7 +48,7 @@ public class MainFragment extends BasePreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        authorizator = new AuthorizationHelper(this, SCOPE_SEND, KEY_PREF_SENDER_ACCOUNT);
+        authorizator = new AuthorizationHelper(this, KEY_PREF_SENDER_ACCOUNT, SCOPE_SEND);
 
         settingsListener = new SettingsListener();
         settings.registerOnSharedPreferenceChangeListener(settingsListener);
