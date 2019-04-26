@@ -9,15 +9,16 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import androidx.annotation.NonNull;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import com.bopr.android.smailer.util.db.DbUtil;
 import com.bopr.android.smailer.util.db.XCursor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
-
-import androidx.annotation.NonNull;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import static com.bopr.android.smailer.util.Util.requireNonNull;
 import static java.lang.System.currentTimeMillis;
@@ -116,13 +117,13 @@ public class Database {
 
     public PhoneEventCursor getPendingEvents() {
         return new PhoneEventCursor(helper.getReadableDatabase().query(TABLE_EVENTS, null,
-                COLUMN_STATE + "=?", new String[]{PhoneEvent.STATE_PENDING}, null, null,
+                COLUMN_STATE + "=?", DbUtil.args(PhoneEvent.STATE_PENDING), null, null,
                 COLUMN_START_TIME + " DESC")
         );
     }
 
     public long getUnreadEventsCount() {
-        return XCursor.forLong(helper.getReadableDatabase().query(TABLE_EVENTS, new String[]{COLUMN_COUNT},
+        return XCursor.forLong(helper.getReadableDatabase().query(TABLE_EVENTS, DbUtil.args(COLUMN_COUNT),
                 COLUMN_READ + "<>1", null, null, null, null));
     }
 
@@ -180,7 +181,7 @@ public class Database {
      */
     public GeoCoordinates getLastLocation() {
         return new GeoCoordinatesCursor(helper.getReadableDatabase().query(TABLE_SYSTEM,
-                new String[]{COLUMN_LAST_LATITUDE, COLUMN_LAST_LONGITUDE}, COLUMN_ID + "=0",
+                DbUtil.args(COLUMN_LAST_LATITUDE, COLUMN_LAST_LONGITUDE), COLUMN_ID + "=0",
                 null, null, null, null)).findFirst();
     }
 
@@ -263,12 +264,12 @@ public class Database {
     }
 
     private long getCurrentSize(SQLiteDatabase db) {
-        return XCursor.forLong(db.query(TABLE_EVENTS, new String[]{COLUMN_COUNT}, null, null,
+        return XCursor.forLong(db.query(TABLE_EVENTS, DbUtil.args(COLUMN_COUNT), null, null,
                 null, null, null));
     }
 
     private long getLastPurgeTime(SQLiteDatabase db) {
-        return XCursor.forLong(db.query(TABLE_SYSTEM, new String[]{COLUMN_PURGE_TIME},
+        return XCursor.forLong(db.query(TABLE_SYSTEM, DbUtil.args(COLUMN_PURGE_TIME),
                 COLUMN_ID + "=0", null, null, null, null));
     }
 
@@ -346,7 +347,7 @@ public class Database {
         public PhoneEvent getRow() {
             PhoneEvent event = new PhoneEvent();
             event.setId(getLong(COLUMN_ID));
-            event.setState(getString(COLUMN_STATE));
+            event.setState(getInt(COLUMN_STATE));
             event.setPhone(getString(COLUMN_PHONE));
             event.setIncoming(getBoolean(COLUMN_IS_INCOMING));
             event.setStartTime(getLong(COLUMN_START_TIME));

@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.bopr.android.smailer.util.TagFormatter;
 import com.bopr.android.smailer.util.Util;
 
@@ -13,9 +16,6 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import static android.text.TextUtils.htmlEncode;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CONTACT;
@@ -306,13 +306,10 @@ class MailFormatter {
 
     @Nullable
     private String formatEventTime() {
-        if (event.getStartTime() != null) {
-            DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
-            return formatter.pattern(R.string.time_time)
-                    .put("time", df.format(new Date(event.getStartTime())))
-                    .format();
-        }
-        return null;
+        DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
+        return formatter.pattern(R.string.time_time)
+                .put("time", df.format(new Date(event.getStartTime())))
+                .format();
     }
 
     @NonNull

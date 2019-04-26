@@ -18,6 +18,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.PhoneEventFilter;
@@ -26,12 +32,6 @@ import com.bopr.android.smailer.ui.EditFilterListItemDialogFragment.OnClose;
 import com.bopr.android.smailer.util.TagFormatter;
 
 import java.util.Set;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.RecyclerView;
 
 import static androidx.recyclerview.widget.RecyclerView.NO_POSITION;
 import static com.bopr.android.smailer.PhoneEvent.STATE_PENDING;
@@ -333,7 +333,7 @@ public class HistoryFragment extends BaseFragment {
                     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
                         requireActivity().getMenuInflater().inflate(R.menu.menu_context_history, menu);
 
-                        if (!event.getState().equals(STATE_PENDING)) {
+                        if (event.getState() != STATE_PENDING) {
                             menu.removeItem(R.id.action_ignore);
                         }
 
