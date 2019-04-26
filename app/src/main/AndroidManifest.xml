@@ -110,6 +110,17 @@
 
         <service android:name=".RemoteControlService" />
 
+        <service
+            android:name=".sync.AuthenticatorService"
+            android:permission="com.bopr.android.smailer.SYNC">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+
         <!--<service-->
         <!--android:name=".sync.SyncService"-->
         <!--android:exported="true"-->
