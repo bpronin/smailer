@@ -39,7 +39,6 @@ public class PhoneEvent implements Parcelable {
     public static final int STATE_PROCESSED = 1;
     public static final int STATE_IGNORED = 2;
 
-    private Long id;
     @Key(COLUMN_IS_INCOMING)
     private boolean incoming;
     @Key(COLUMN_IS_MISSED)
@@ -47,7 +46,7 @@ public class PhoneEvent implements Parcelable {
     @Key(COLUMN_PHONE)
     private String phone;
     @Key(COLUMN_START_TIME)
-    private Long startTime;
+    private long startTime;
     @Key(COLUMN_END_TIME)
     private Long endTime;
     @Key(COLUMN_TEXT)
@@ -65,7 +64,7 @@ public class PhoneEvent implements Parcelable {
     public PhoneEvent() {
     }
 
-    public PhoneEvent(String phone, boolean incoming, Long startTime, Long endTime, boolean missed,
+    public PhoneEvent(String phone, boolean incoming, long startTime, Long endTime, boolean missed,
                       String text, GeoCoordinates location, String details, @EventState int state) {
         this.text = text;
         this.endTime = endTime;
@@ -76,14 +75,6 @@ public class PhoneEvent implements Parcelable {
         this.location = location;
         this.details = details;
         this.state = state;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public boolean isSms() {
@@ -106,6 +97,7 @@ public class PhoneEvent implements Parcelable {
         this.missed = missed;
     }
 
+    @NonNull
     public String getPhone() {
         return phone;
     }
@@ -114,11 +106,11 @@ public class PhoneEvent implements Parcelable {
         this.phone = phone;
     }
 
-    public Long getStartTime() {
+    public long getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Long startTime) {
+    public void setStartTime(long startTime) {
         this.startTime = startTime;
     }
 
@@ -139,7 +131,7 @@ public class PhoneEvent implements Parcelable {
     }
 
     public long getCallDuration() {
-        if (startTime != null && endTime != null) {
+        if (endTime != null) {
             return endTime - startTime;
         }
         return 0;
@@ -178,12 +170,11 @@ public class PhoneEvent implements Parcelable {
         this.read = value;
     }
 
-    @NonNull
     @Override
+    @NonNull
     public String toString() {
         return "PhoneEvent{" +
-                "id=" + id +
-                ", incoming=" + incoming +
+                "incoming=" + incoming +
                 ", missed=" + missed +
                 ", phone='" + phone + '\'' +
                 ", startTime=" + startTime +
@@ -192,25 +183,17 @@ public class PhoneEvent implements Parcelable {
                 ", details='" + details + '\'' +
                 ", location=" + location +
                 ", state=" + state +
+                ", read=" + read +
                 '}';
     }
 
-    /* Generated Parcelable stuff implementation/ Alt+Enter on "implements Parcelable" to update */
+    /* Generated Parcelable stuff. Alt+Enter on "implements Parcelable" to update */
 
     protected PhoneEvent(Parcel in) {
-        if (in.readByte() == 0) {
-            id = null;
-        } else {
-            id = in.readLong();
-        }
         incoming = in.readByte() != 0;
         missed = in.readByte() != 0;
         phone = in.readString();
-        if (in.readByte() == 0) {
-            startTime = null;
-        } else {
-            startTime = in.readLong();
-        }
+        startTime = in.readLong();
         if (in.readByte() == 0) {
             endTime = null;
         } else {
@@ -218,27 +201,17 @@ public class PhoneEvent implements Parcelable {
         }
         text = in.readString();
         details = in.readString();
+        location = in.readParcelable(GeoCoordinates.class.getClassLoader());
         state = in.readInt();
         read = in.readByte() != 0;
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        if (id == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(id);
-        }
         dest.writeByte((byte) (incoming ? 1 : 0));
         dest.writeByte((byte) (missed ? 1 : 0));
         dest.writeString(phone);
-        if (startTime == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(startTime);
-        }
+        dest.writeLong(startTime);
         if (endTime == null) {
             dest.writeByte((byte) 0);
         } else {
@@ -247,6 +220,7 @@ public class PhoneEvent implements Parcelable {
         }
         dest.writeString(text);
         dest.writeString(details);
+        dest.writeParcelable(location, flags);
         dest.writeInt(state);
         dest.writeByte((byte) (read ? 1 : 0));
     }

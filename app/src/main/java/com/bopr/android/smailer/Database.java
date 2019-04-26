@@ -19,7 +19,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
+import static android.database.sqlite.SQLiteDatabase.CONFLICT_IGNORE;
 import static com.bopr.android.smailer.util.Util.requireNonNull;
+import static com.bopr.android.smailer.util.db.DbUtil.replaceTable;
 import static java.lang.System.currentTimeMillis;
 
 /**
@@ -33,7 +35,7 @@ public class Database {
     private static Logger log = LoggerFactory.getLogger("Database");
 
     public static final String DATABASE_NAME = "smailer.sqlite";
-    private static final int DB_VERSION = 2;
+    private static final int DB_VERSION = 3;
 
     private static final String DATABASE_EVENT = "database-event";
 
@@ -132,7 +134,6 @@ public class Database {
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        values.put(COLUMN_ID, event.getId());
         values.put(COLUMN_STATE, event.getState());
         values.put(COLUMN_IS_INCOMING, event.isIncoming());
         values.put(COLUMN_IS_MISSED, event.isMissed());
@@ -148,12 +149,15 @@ public class Database {
             values.put(COLUMN_LONGITUDE, location.getLongitude());
         }
 
-        long id = db.replace(TABLE_EVENTS, null, values);
-        event.setId(id);
+        if (db.insertWithOnConflict(TABLE_EVENTS, null, values, CONFLICT_IGNORE) == -1) {
+            db.update(TABLE_EVENTS, values, COLUMN_START_TIME + "=? AND " + COLUMN_PHONE + "=?",
+                    strings(event.getStartTime(), event.getPhone()));
+            log.debug("Updated: " + values);
+        } else {
+            log.debug("Inserted: " + values);
+        }
 
         updatesCounter++;
-
-        log.debug("Put record: " + values);
     }
 
     /**
@@ -311,58 +315,54 @@ public class Database {
 
     private class DbHelper extends SQLiteOpenHelper {
 
+        private static final String EVENTS_TABLE_SQL =
+                "CREATE TABLE " + TABLE_EVENTS + " (" +
+                        COLUMN_STATE + " INTEGER, " +
+                        COLUMN_IS_INCOMING + " INTEGER, " +
+                        COLUMN_IS_MISSED + " INTEGER, " +
+                        COLUMN_START_TIME + " INTEGER NOT NULL, " +
+                        COLUMN_END_TIME + " INTEGER, " +
+                        COLUMN_LATITUDE + " REAL, " +
+                        COLUMN_LONGITUDE + " REAL, " +
+                        COLUMN_PHONE + " TEXT(25) NOT NULL," +
+                        COLUMN_TEXT + " TEXT(256)," +
+                        COLUMN_READ + " INTEGER NOT NULL DEFAULT(0), " +
+                        COLUMN_DETAILS + " TEXT(256), " +
+                        "PRIMARY KEY (" + COLUMN_START_TIME + ", " + COLUMN_PHONE + ")" +
+                        ")";
+
+        private static final String SYSTEM_TABLE_SQL =
+                "CREATE TABLE " + TABLE_SYSTEM + " (" +
+                        COLUMN_ID + " INTEGER PRIMARY KEY, " +
+                        COLUMN_PURGE_TIME + " INTEGER," +
+                        COLUMN_LAST_LATITUDE + " REAL," +
+                        COLUMN_LAST_LONGITUDE + " REAL," +
+                        COLUMN_LAST_LOCATION_TIME + " INTEGER" +
+                        ")";
+
         public DbHelper(Context context) {
             super(context, name, null, DB_VERSION);
         }
 
         @Override
-        public void onOpen(SQLiteDatabase db) {
-            super.onOpen(db);
-            db.execSQL("PRAGMA foreign_keys = ON");
-        }
-
-        @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL("CREATE TABLE " + TABLE_EVENTS + " (" +
-                    COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    COLUMN_STATE + " INTEGER, " +
-                    COLUMN_IS_INCOMING + " INTEGER, " +
-                    COLUMN_IS_MISSED + " INTEGER, " +
-                    COLUMN_START_TIME + " INTEGER, " +
-                    COLUMN_END_TIME + " INTEGER, " +
-                    COLUMN_LATITUDE + " REAL, " +
-                    COLUMN_LONGITUDE + " REAL, " +
-                    COLUMN_PHONE + " TEXT(25)," +
-                    COLUMN_TEXT + " TEXT(256)," +
-                    COLUMN_READ + " INTEGER NOT NULL DEFAULT(0), " +
-                    COLUMN_DETAILS + " TEXT(256)" +
-                    ")");
-
-            db.execSQL("CREATE TABLE " + TABLE_SYSTEM + " (" +
-                    COLUMN_ID + " INTEGER PRIMARY KEY, " +
-                    COLUMN_PURGE_TIME + " INTEGER," +
-                    COLUMN_LAST_LATITUDE + " REAL," +
-                    COLUMN_LAST_LONGITUDE + " REAL," +
-                    COLUMN_LAST_LOCATION_TIME + " INTEGER" +
-                    ")");
+            db.execSQL(EVENTS_TABLE_SQL);
+            db.execSQL(SYSTEM_TABLE_SQL);
 
             ContentValues values = new ContentValues();
             values.put(COLUMN_ID, 0);
             db.insert(TABLE_SYSTEM, null, values);
 
             updateLastPurgeTime(db);
+
+            log.debug("Created");
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            if (newVersion == 2 && oldVersion < 2) {
-                db.execSQL("ALTER TABLE " + TABLE_EVENTS +
-                        " ADD " + COLUMN_READ + " INTEGER NOT NULL DEFAULT(0)");
-            }
-            if (newVersion == 3 && oldVersion < 3) {
-                db.execSQL("ALTER TABLE " + TABLE_EVENTS +
-                        " ADD " + COLUMN_READ + " INTEGER NOT NULL DEFAULT(0)");
-            }
+            /* see https://www.techonthenet.com/sqlite/tables/alter_table.php */
+            replaceTable(db, TABLE_EVENTS, EVENTS_TABLE_SQL);
+            log.debug("Upgraded");
         }
 
     }
@@ -377,9 +377,8 @@ public class Database {
         }
 
         @Override
-        public PhoneEvent getRow() {
+        public PhoneEvent get() {
             PhoneEvent event = new PhoneEvent();
-            event.setId(getLong(COLUMN_ID));
             event.setState(getInt(COLUMN_STATE));
             event.setPhone(getString(COLUMN_PHONE));
             event.setIncoming(getBoolean(COLUMN_IS_INCOMING));
@@ -404,7 +403,7 @@ public class Database {
         }
 
         @Override
-        public GeoCoordinates getRow() {
+        public GeoCoordinates get() {
             if (!isNull(COLUMN_LAST_LATITUDE) && !isNull(COLUMN_LAST_LONGITUDE)) {
                 return new GeoCoordinates(
                         getDouble(COLUMN_LAST_LATITUDE),

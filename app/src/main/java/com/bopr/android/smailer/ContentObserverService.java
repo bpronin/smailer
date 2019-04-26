@@ -12,6 +12,8 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 
+import androidx.annotation.Nullable;
+
 import com.bopr.android.smailer.util.db.XCursor;
 
 import org.slf4j.Logger;
@@ -19,8 +21,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Set;
-
-import androidx.annotation.Nullable;
 
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
 import static com.bopr.android.smailer.Settings.settings;
@@ -111,7 +111,7 @@ public class ContentObserverService extends Service {
         }
 
         @Override
-        public PhoneEvent getRow() {
+        public PhoneEvent get() {
             long date = getLong("date");
             log.debug("Starting mail service");
 

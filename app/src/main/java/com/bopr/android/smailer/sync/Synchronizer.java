@@ -3,6 +3,8 @@ package com.bopr.android.smailer.sync;
 import android.accounts.Account;
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.PhoneEvent;
 import com.google.api.client.json.JsonGenerator;
@@ -12,6 +14,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,43 +25,39 @@ class Synchronizer {
     private final GoogleDrive drive;
     private final Database database;
 
-    public Synchronizer(Context context, Account account, Database database) {
+    Synchronizer(Context context, Account account, Database database) {
         drive = new GoogleDrive(context, account);
         this.database = database;
     }
 
-    public void execute() throws IOException {
-        download();
-//        merge();
-        //  upload();
+    void execute() throws IOException {
+        List<PhoneEvent> events = download();
+        for (PhoneEvent event : events) {
+            database.putEvent(event);
+        }
+        upload(database.getEvents().toList());
     }
 
-    private void download() throws IOException {
+    @NonNull
+    private List<PhoneEvent> download() throws IOException {
+        List<PhoneEvent> events = new ArrayList<>();
         InputStream stream = drive.open(FILE_EVENTS);
         if (stream != null) {
             JsonParser parser = JacksonFactory.getDefaultInstance().createJsonParser(stream);
-            List<PhoneEvent> events = new ArrayList<>();
             parser.parseArrayAndClose(events, PhoneEvent.class);
-            stream.close();
-
-            for (PhoneEvent event : events) {
-                database.putEvent(event);
-            }
         }
+        return events;
     }
 
-    private void upload() throws IOException {
-        StringWriter writer = new StringWriter();
-        serializeEvents(writer);
+    private void upload(@NonNull List<PhoneEvent> events) throws IOException {
+        Writer writer = new StringWriter();
+        JsonGenerator generator = JacksonFactory.getDefaultInstance().createJsonGenerator(writer);
+        generator.serialize(events);
+        generator.flush();
+
         String data = writer.toString();
         drive.write(FILE_EVENTS, data);
-        writer.close();
-    }
 
-    private void serializeEvents(StringWriter writer) throws IOException {
-        JsonGenerator generator = JacksonFactory.getDefaultInstance().createJsonGenerator(writer);
-        generator.enablePrettyPrint();
-        generator.serialize(database.getEvents().asList());
-        generator.flush();
+        generator.close();
     }
 }

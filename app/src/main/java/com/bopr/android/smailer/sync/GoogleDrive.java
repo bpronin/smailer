@@ -36,11 +36,9 @@ public class GoogleDrive {
     private static final String APP_DATA_FOLDER = "appDataFolder";
     private static final String MIME_JSON = "text/json";
 
-    private final Context context;
     private final Drive service;
 
-    public GoogleDrive(Context context, Account account) {
-        this.context = context;
+    GoogleDrive(Context context, Account account) {
         GoogleAccountCredential credential = usingOAuth2(context, ImmutableSet.of(DRIVE_APPDATA))
                 .setSelectedAccount(account);
 
@@ -51,7 +49,7 @@ public class GoogleDrive {
     }
 
     @Nullable
-    public InputStream open(String filename) throws IOException {
+    InputStream open(String filename) throws IOException {
         String fileId = find(filename);
         if (fileId != null) {
             return service.files().get(fileId).executeMediaAsInputStream();
@@ -59,7 +57,7 @@ public class GoogleDrive {
         return null;
     }
 
-    public void write(String filename, String data) throws IOException {
+    void write(String filename, String data) throws IOException {
         String fileId = find(filename);
         if (fileId == null) {
             create(filename, data);
@@ -68,21 +66,20 @@ public class GoogleDrive {
         }
     }
 
-    public String create(String filename, String data) throws IOException {
+    private void create(String filename, String data) throws IOException {
         File metadata = new File()
                 .setParents(ImmutableList.of(APP_DATA_FOLDER))
                 .setMimeType(MIME_JSON)
                 .setName(filename);
         ByteArrayContent content = ByteArrayContent.fromString(MIME_JSON, data);
 
-        return service.files()
+        service.files()
                 .create(metadata, content)
                 .setFields("id")
-                .execute()
-                .getId();
+                .execute();
     }
 
-    public void update(String fileId, String filename, String data) throws IOException {
+    private void update(String fileId, String filename, String data) throws IOException {
         File metadata = new File()
                 .setName(filename);
         ByteArrayContent content = ByteArrayContent.fromString(MIME_JSON, data);
@@ -93,7 +90,7 @@ public class GoogleDrive {
     }
 
     @Nullable
-    public String find(String filename) throws IOException {
+    private String find(String filename) throws IOException {
         List<File> files = service.files().list()
                 .setSpaces(APP_DATA_FOLDER)
                 .setQ("name='" + filename + "'")
@@ -109,39 +106,5 @@ public class GoogleDrive {
         }
         return null;
     }
-
-//    public void saveConfiguration(OnCompleteListener<String> listener) {
-//        Tasks.call(executor, new Callable<String>() {
-//
-//            @Override
-//            public String call() throws Exception {
-//                return doSave(DATABASE_NAME, new FileContent("application/octet-stream",
-//                        context.getDatabasePath(DATABASE_NAME)));
-//            }
-//        }).addOnCompleteListener(listener);
-//    }
-
-//    public void loadConfiguration(OnCompleteListener<String> listener) {
-//        Tasks.call(executor, new Callable<String>() {
-//
-//            @Override
-//            public String call() throws Exception {
-//                return doload(DATABASE_NAME, new FileContent("application/octet-stream",
-//                        context.getDatabasePath(DATABASE_NAME)));
-//            }
-//        }).addOnCompleteListener(listener);
-//    }
-
-    //    private String doSave(String filename, FileContent content) throws java.io.IOException {
-//        File meta = new File();
-//        meta.setParents(singletonList(APP_DATA_FOLDER));
-//        meta.setName(filename);
-//
-//        return service.files().create(meta, content)
-//                .setFields("id")
-//                .execute()
-//                .getId();
-//    }
-//
 
 }

@@ -129,6 +129,7 @@ public class DebugFragment extends BasePreferenceFragment {
                     @Override
                     protected void onClick(Preference preference) {
                         SyncUtil.syncNow(context);
+                        showToast(context, "Done");
                     }
                 })
 

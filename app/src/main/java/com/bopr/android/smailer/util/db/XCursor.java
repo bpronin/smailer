@@ -6,6 +6,7 @@ import android.database.CursorWrapper;
 import androidx.core.util.Consumer;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -13,7 +14,6 @@ import java.util.List;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-@SuppressWarnings("WeakerAccess")
 public abstract class XCursor<R> extends CursorWrapper {
 
     /**
@@ -25,11 +25,11 @@ public abstract class XCursor<R> extends CursorWrapper {
         super(cursor);
     }
 
-    public void forEach(Consumer<R> consumer) {
+    public void forEach(Consumer<? super R> action) {
         try {
             moveToFirst();
             while (!isAfterLast()) {
-                consumer.accept(getRow());
+                action.accept(get());
                 moveToNext();
             }
         } finally {
@@ -41,7 +41,7 @@ public abstract class XCursor<R> extends CursorWrapper {
         try {
             moveToFirst();
             if (!isBeforeFirst() && !isAfterLast()) {
-                return getRow();
+                return get();
             }
             return null;
         } finally {
@@ -49,19 +49,22 @@ public abstract class XCursor<R> extends CursorWrapper {
         }
     }
 
-    public List<R> asList() {
-        final List<R> list = new ArrayList<>();
+    public <C extends Collection<R>> C collect(final C collection) {
         forEach(new Consumer<R>() {
 
             @Override
             public void accept(R row) {
-                list.add(row);
+                collection.add(row);
             }
         });
-        return list;
+        return collection;
     }
 
-    public abstract R getRow();
+    public List<R> toList() {
+        return collect(new ArrayList<R>());
+    }
+
+    public abstract R get();
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isNull(String columnName) {
@@ -92,7 +95,7 @@ public abstract class XCursor<R> extends CursorWrapper {
         return new XCursor<Long>(cursor) {
 
             @Override
-            public Long getRow() {
+            public Long get() {
                 return getLong(0);
             }
         }.findFirst();

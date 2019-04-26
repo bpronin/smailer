@@ -289,7 +289,7 @@ public class HistoryFragment extends BaseFragment {
         public void onBindViewHolder(@NonNull final ItemViewHolder holder, int position) {
             PhoneEvent item = getItem(position);
             if (item != null) {
-                final PhoneEvent event = cursor.getRow();
+                final PhoneEvent event = cursor.get();
 
                 holder.timeView.setText(DateFormat.format(getString(R.string._time_pattern), event.getStartTime()));
                 holder.textView.setText(formatSummary(event));
@@ -360,11 +360,11 @@ public class HistoryFragment extends BaseFragment {
             }
         }
 
-        @Override
-        public long getItemId(int position) {
-            PhoneEvent item = getItem(position);
-            return item != null ? item.getId() : -1;
-        }
+//        @Override
+//        public long getItemId(int position) {
+//            PhoneEvent item = getItem(position);
+//            return item != null ? item.getStartTime() : -1;
+//        }
 
         @Override
         public int getItemCount() {
@@ -374,7 +374,7 @@ public class HistoryFragment extends BaseFragment {
         PhoneEvent getItem(int position) {
             cursor.moveToPosition(position);
             if (!cursor.isBeforeFirst() && !cursor.isAfterLast()) {
-                return cursor.getRow();
+                return cursor.get();
             }
             return null;
         }
