@@ -16,7 +16,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager;
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -141,17 +140,6 @@ public class GoogleAuthorizationHelper {
     @NonNull
     public static Account primaryAccount(Context context) {
         return new GoogleAccountManager(context).getAccounts()[0];
-    }
-
-    @NonNull
-    public static GoogleAccountCredential createCredential(Context context, String accountName,
-                                                           String... scopes) {
-        GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(context, asList(scopes));
-        credential.setSelectedAccountName(accountName);
-        if (credential.getSelectedAccount() == null) {
-            throw new IllegalArgumentException("Account does not exist: " + accountName);
-        }
-        return credential;
     }
 
     private class PermissionRequestCallback implements AccountManagerCallback<Bundle> {

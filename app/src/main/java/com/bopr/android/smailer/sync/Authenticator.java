@@ -9,6 +9,10 @@ import android.os.Bundle;
 
 /**
  * Authenticator stub.
+ * <p>
+ * Required by synchronization framework.
+ *
+ * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 @SuppressWarnings("RedundantThrows")
 class Authenticator extends AbstractAccountAuthenticator {

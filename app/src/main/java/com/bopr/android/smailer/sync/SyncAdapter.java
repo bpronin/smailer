@@ -6,17 +6,23 @@ import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
-import android.util.Log;
+
+import com.bopr.android.smailer.Database;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handle the transfer of data between a server and an app, using the Android sync adapter framework.
+ * <p>
+ * Required by synchronization framework.
+ *
+ * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-
-/* To debug place sync process (put breakpoints) remove android:process=":sync" from AndroidManifest */
-
+/* To debug it (to put breakpoints) remove android:process=":sync" from AndroidManifest */
 class SyncAdapter extends AbstractThreadedSyncAdapter {
 
-    private static final String TAG = "SyncAdapter";
+    private static final Logger log = LoggerFactory.getLogger("SyncAdapter");
 
     SyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -25,7 +31,15 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority,
                               ContentProviderClient provider, SyncResult syncResult) {
-        Log.d(TAG, "onPerformSync: " + account);
+        Database database = new Database(getContext());
+        Synchronizer synchronizer = new Synchronizer(getContext(), account, database);
+        try {
+            synchronizer.execute();
+        } catch (Exception x) {
+            log.error("Synchronization failed ", x);
+        }
     }
 
 }
+
+

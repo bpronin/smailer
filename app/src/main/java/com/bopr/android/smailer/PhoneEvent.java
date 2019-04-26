@@ -3,9 +3,24 @@ package com.bopr.android.smailer;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.bopr.android.smailer.util.Util;
-
+import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
+
+import com.bopr.android.smailer.util.Util;
+import com.google.api.client.util.Key;
+
+import java.lang.annotation.Retention;
+
+import static com.bopr.android.smailer.Database.COLUMN_DETAILS;
+import static com.bopr.android.smailer.Database.COLUMN_END_TIME;
+import static com.bopr.android.smailer.Database.COLUMN_IS_INCOMING;
+import static com.bopr.android.smailer.Database.COLUMN_IS_MISSED;
+import static com.bopr.android.smailer.Database.COLUMN_LOCATION;
+import static com.bopr.android.smailer.Database.COLUMN_PHONE;
+import static com.bopr.android.smailer.Database.COLUMN_START_TIME;
+import static com.bopr.android.smailer.Database.COLUMN_STATE;
+import static com.bopr.android.smailer.Database.COLUMN_TEXT;
+import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 /**
  * Represents phone call or SMS event.
@@ -15,27 +30,43 @@ import androidx.annotation.NonNull;
 @SuppressWarnings("WeakerAccess")
 public class PhoneEvent implements Parcelable {
 
-    public static final String STATE_PENDING = "PENDING";
-    public static final String STATE_PROCESSED = "PROCESSED";
-    public static final String STATE_IGNORED = "IGNORED";
+    @Retention(SOURCE)
+    @IntDef({STATE_PENDING, STATE_PROCESSED, STATE_IGNORED})
+    @interface EventState {
+    }
+
+    public static final int STATE_PENDING = 0;
+    public static final int STATE_PROCESSED = 1;
+    public static final int STATE_IGNORED = 2;
 
     private Long id;
+    @Key(COLUMN_IS_INCOMING)
     private boolean incoming;
+    @Key(COLUMN_IS_MISSED)
     private boolean missed;
+    @Key(COLUMN_PHONE)
     private String phone;
+    @Key(COLUMN_START_TIME)
     private Long startTime;
+    @Key(COLUMN_END_TIME)
     private Long endTime;
+    @Key(COLUMN_TEXT)
     private String text;
+    @Key(COLUMN_DETAILS)
     private String details;
+    @Key(COLUMN_LOCATION)
     private GeoCoordinates location;
-    private String state = STATE_PENDING;
+    @EventState
+    @Key(COLUMN_STATE)
+    private int state = STATE_PENDING;
     private boolean read;
 
+    /* Required by Jackson */
     public PhoneEvent() {
     }
 
     public PhoneEvent(String phone, boolean incoming, Long startTime, Long endTime, boolean missed,
-                      String text, GeoCoordinates location, String details, String state) {
+                      String text, GeoCoordinates location, String details, @EventState int state) {
         this.text = text;
         this.endTime = endTime;
         this.startTime = startTime;
@@ -130,11 +161,12 @@ public class PhoneEvent implements Parcelable {
         this.location = location;
     }
 
-    public String getState() {
+    @EventState
+    public int getState() {
         return state;
     }
 
-    public void setState(String state) {
+    public void setState(@EventState int state) {
         this.state = state;
     }
 

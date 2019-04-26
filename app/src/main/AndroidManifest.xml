@@ -159,7 +159,7 @@
 
         <provider
             android:name=".sync.AppContentProvider"
-            android:authorities="com.bopr.android.smailer.provider"
+            android:authorities="com.bopr.android.smailer"
             android:exported="false"
             android:syncable="true" />
 

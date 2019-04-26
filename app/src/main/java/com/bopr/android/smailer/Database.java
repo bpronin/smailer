@@ -40,23 +40,24 @@ public class Database {
     private static final String TABLE_SYSTEM = "system_data";
     private static final String TABLE_EVENTS = "phone_events";
 
-    private static final String COLUMN_COUNT = "COUNT(*)";
-    private static final String COLUMN_ID = "_id";
-    private static final String COLUMN_PURGE_TIME = "messages_purge_time";
-    private static final String COLUMN_IS_INCOMING = "is_incoming";
-    private static final String COLUMN_IS_MISSED = "is_missed";
-    private static final String COLUMN_PHONE = "phone";
-    private static final String COLUMN_LATITUDE = "latitude";
-    private static final String COLUMN_LONGITUDE = "longitude";
-    private static final String COLUMN_TEXT = "message_text";
-    private static final String COLUMN_DETAILS = "details";
-    private static final String COLUMN_START_TIME = "start_time";
-    private static final String COLUMN_END_TIME = "end_time";
-    private static final String COLUMN_STATE = "state";
-    private static final String COLUMN_LAST_LATITUDE = "last_latitude";
-    private static final String COLUMN_LAST_LONGITUDE = "last_longitude";
-    private static final String COLUMN_LAST_LOCATION_TIME = "last_location_time";
-    private static final String COLUMN_READ = "message_read";
+    public static final String COLUMN_COUNT = "COUNT(*)";
+    public static final String COLUMN_ID = "_id";
+    public static final String COLUMN_PURGE_TIME = "messages_purge_time";
+    public static final String COLUMN_IS_INCOMING = "is_incoming";
+    public static final String COLUMN_IS_MISSED = "is_missed";
+    public static final String COLUMN_PHONE = "phone";
+    public static final String COLUMN_LATITUDE = "latitude";
+    public static final String COLUMN_LONGITUDE = "longitude";
+    public static final String COLUMN_TEXT = "message_text";
+    public static final String COLUMN_DETAILS = "details";
+    public static final String COLUMN_LOCATION = "location";
+    public static final String COLUMN_START_TIME = "start_time";
+    public static final String COLUMN_END_TIME = "end_time";
+    public static final String COLUMN_STATE = "state";
+    public static final String COLUMN_LAST_LATITUDE = "last_latitude";
+    public static final String COLUMN_LAST_LONGITUDE = "last_longitude";
+    public static final String COLUMN_LAST_LOCATION_TIME = "last_location_time";
+    public static final String COLUMN_READ = "message_read";
 
     private final String name;
     private long purgePeriod = TimeUnit.DAYS.toMillis(7);
@@ -117,13 +118,13 @@ public class Database {
 
     public PhoneEventCursor getPendingEvents() {
         return new PhoneEventCursor(helper.getReadableDatabase().query(TABLE_EVENTS, null,
-                COLUMN_STATE + "=?", new String[]{PhoneEvent.STATE_PENDING}, null, null,
+                COLUMN_STATE + "=?", strings(PhoneEvent.STATE_PENDING), null, null,
                 COLUMN_START_TIME + " DESC")
         );
     }
 
     public long getUnreadEventsCount() {
-        return XCursor.forLong(helper.getReadableDatabase().query(TABLE_EVENTS, new String[]{COLUMN_COUNT},
+        return XCursor.forLong(helper.getReadableDatabase().query(TABLE_EVENTS, strings(COLUMN_COUNT),
                 COLUMN_READ + "<>1", null, null, null, null));
     }
 
@@ -181,7 +182,7 @@ public class Database {
      */
     public GeoCoordinates getLastLocation() {
         return new GeoCoordinatesCursor(helper.getReadableDatabase().query(TABLE_SYSTEM,
-                new String[]{COLUMN_LAST_LATITUDE, COLUMN_LAST_LONGITUDE}, COLUMN_ID + "=0",
+                strings(COLUMN_LAST_LATITUDE, COLUMN_LAST_LONGITUDE), COLUMN_ID + "=0",
                 null, null, null, null)).findFirst();
     }
 
@@ -241,6 +242,26 @@ public class Database {
         context.deleteDatabase(name);
     }
 
+
+    /* Content provider support */
+    public Cursor query(String table, String[] projection, String selection, String[] selectionArgs,
+                        String sortOrder) {
+        return helper.getReadableDatabase().query(table, projection, selection, selectionArgs,
+                null, null, sortOrder);
+    }
+
+    public long put(String table, ContentValues values) {
+        return helper.getWritableDatabase().replace(table, null, values);
+    }
+
+    public int delete(String table, String selection, String[] selectionArgs) {
+        return helper.getWritableDatabase().delete(table, selection, selectionArgs);
+    }
+
+    public int update(String table, ContentValues values, String selection, String[] selectionArgs) {
+        return helper.getWritableDatabase().update(table, values, selection, selectionArgs);
+    }
+
     public BroadcastReceiver registerListener(@NonNull BroadcastReceiver listener) {
         IntentFilter filter = new IntentFilter(DATABASE_EVENT);
         LocalBroadcastManager.getInstance(context).registerReceiver(requireNonNull(listener), filter);
@@ -264,12 +285,12 @@ public class Database {
     }
 
     private long getCurrentSize(SQLiteDatabase db) {
-        return XCursor.forLong(db.query(TABLE_EVENTS, new String[]{COLUMN_COUNT}, null, null,
+        return XCursor.forLong(db.query(TABLE_EVENTS, strings(COLUMN_COUNT), null, null,
                 null, null, null));
     }
 
     private long getLastPurgeTime(SQLiteDatabase db) {
-        return XCursor.forLong(db.query(TABLE_SYSTEM, new String[]{COLUMN_PURGE_TIME},
+        return XCursor.forLong(db.query(TABLE_SYSTEM, strings(COLUMN_PURGE_TIME),
                 COLUMN_ID + "=0", null, null, null, null));
     }
 
@@ -278,6 +299,14 @@ public class Database {
         values.put(COLUMN_PURGE_TIME, currentTimeMillis());
 
         db.update(TABLE_SYSTEM, values, COLUMN_ID + "=0", null);
+    }
+
+    private String[] strings(Object... values) {
+        String[] strings = new String[values.length];
+        for (int i = 0; i < values.length; i++) {
+            strings[i] = String.valueOf(values[i]);
+        }
+        return strings;
     }
 
     private class DbHelper extends SQLiteOpenHelper {
@@ -326,7 +355,11 @@ public class Database {
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            if (newVersion == 2 && oldVersion == 1) {
+            if (newVersion == 2 && oldVersion < 2) {
+                db.execSQL("ALTER TABLE " + TABLE_EVENTS +
+                        " ADD " + COLUMN_READ + " INTEGER NOT NULL DEFAULT(0)");
+            }
+            if (newVersion == 3 && oldVersion < 3) {
                 db.execSQL("ALTER TABLE " + TABLE_EVENTS +
                         " ADD " + COLUMN_READ + " INTEGER NOT NULL DEFAULT(0)");
             }
@@ -337,7 +370,7 @@ public class Database {
     /**
      * Cursor that returns values of {@link PhoneEvent}.
      */
-    public class PhoneEventCursor extends XCursor<PhoneEvent> {
+    public static class PhoneEventCursor extends XCursor<PhoneEvent> {
 
         public PhoneEventCursor(Cursor cursor) {
             super(cursor);
@@ -347,7 +380,7 @@ public class Database {
         public PhoneEvent getRow() {
             PhoneEvent event = new PhoneEvent();
             event.setId(getLong(COLUMN_ID));
-            event.setState(getString(COLUMN_STATE));
+            event.setState(getInt(COLUMN_STATE));
             event.setPhone(getString(COLUMN_PHONE));
             event.setIncoming(getBoolean(COLUMN_IS_INCOMING));
             event.setStartTime(getLong(COLUMN_START_TIME));

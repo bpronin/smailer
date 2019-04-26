@@ -1,4 +1,4 @@
-package com.bopr.android.smailer.util;
+package com.bopr.android.smailer.sync;
 
 import android.content.ContentResolver;
 import android.content.Intent;

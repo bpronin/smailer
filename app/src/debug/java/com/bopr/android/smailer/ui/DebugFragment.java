@@ -32,12 +32,10 @@ import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.RemoteControlService;
 import com.bopr.android.smailer.Settings;
-import com.bopr.android.smailer.sync.GoogleDriveSupport;
 import com.bopr.android.smailer.sync.SyncUtil;
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.ContentUtils;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.google.common.collect.ImmutableSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,7 +87,6 @@ import static com.google.api.services.drive.DriveScopes.DRIVE_APPDATA;
 import static com.google.api.services.gmail.GmailScopes.GMAIL_SEND;
 import static com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM;
 import static java.util.Arrays.asList;
-import static java.util.Collections.singleton;
 
 /**
  * For debug purposes.
@@ -125,6 +122,17 @@ public class DebugFragment extends BasePreferenceFragment {
         context = getPreferenceManager().getContext();
 
         PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(context);
+        addCategory(screen, "Google drive",
+
+                createPreference("Sync data", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        SyncUtil.syncNow(context);
+                    }
+                })
+
+        );
 
         addCategory(screen, "Settings",
 
@@ -219,7 +227,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        database.getEvents().iterate(new Consumer<PhoneEvent>() {
+                        database.getEvents().forEach(new Consumer<PhoneEvent>() {
 
                             @Override
                             public void accept(PhoneEvent event) {
@@ -236,7 +244,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        database.getEvents().iterate(new Consumer<PhoneEvent>() {
+                        database.getEvents().forEach(new Consumer<PhoneEvent>() {
 
                             @Override
                             public void accept(PhoneEvent event) {
@@ -363,40 +371,6 @@ public class DebugFragment extends BasePreferenceFragment {
 
         );
 
-        addCategory(screen, "Google drive",
-                createPreference("Sync data", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        onSyncData();
-                    }
-                }),
-
-                createPreference("List files", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        onListCloud();
-                    }
-                }),
-
-                createPreference("Save data", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        onSaveToCloud();
-                    }
-                }),
-
-                createPreference("Load data", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        onLoadFromCloud();
-                    }
-                })
-        );
-
         addCategory(screen, "Other",
 
                 createPreference("Get location", new DefaultClickListener() {
@@ -433,56 +407,6 @@ public class DebugFragment extends BasePreferenceFragment {
         );
 
         setPreferenceScreen(screen);
-    }
-
-    private void onSyncData() {
-        SyncUtil.syncNow(context);
-    }
-
-    private void onSaveToCloud() {
-        GoogleDriveSupport drive = new GoogleDriveSupport(context);
-        drive.init(primaryAccount(context).name);
-        drive.saveConfiguration(new OnCompleteListener<String>() {
-
-            @Override
-            public void onComplete(@NonNull Task<String> task) {
-                if (task.isSuccessful()) {
-                    showToast(context, "Success");
-                } else {
-                    Exception exception = task.getException();
-                    if (exception != null) {
-                        showToast(context, exception.toString());
-                        log.error("Save failed", exception);
-                    }
-                }
-            }
-        });
-    }
-
-    private void onListCloud() {
-        GoogleDriveSupport drive = new GoogleDriveSupport(context);
-        drive.init(primaryAccount(context).name);
-        drive.list(new OnCompleteListener<List<com.google.api.services.drive.model.File>>() {
-
-            @Override
-            public void onComplete(@NonNull Task<List<com.google.api.services.drive.model.File>> task) {
-                if (task.isSuccessful()) {
-//                    com.google.api.services.drive.model.File file = task.getResult().get(0);
-                    showToast(context, "Success: " + requireNonNull(task.getResult()).size());
-
-                } else {
-                    Exception exception = task.getException();
-                    if (exception != null) {
-                        showToast(context, exception.toString());
-                        log.error("Save failed", exception);
-                    }
-                }
-            }
-        });
-    }
-
-    private void onLoadFromCloud() {
-        //TODO: Implement method.
     }
 
     @Override
@@ -808,7 +732,7 @@ public class DebugFragment extends BasePreferenceFragment {
                     MailMessage message = new MailMessage();
                     message.setSubject("SMailer log");
                     message.setBody("Device: " + AndroidUtil.getDeviceName());
-                    message.setAttachment(singleton(file));
+                    message.setAttachment(ImmutableSet.of(file));
                     message.setRecipients(properties.getProperty("developer_email"));
 
                     transport.send(message);

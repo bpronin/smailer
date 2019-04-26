@@ -16,6 +16,7 @@ import com.google.api.services.gmail.model.Message;
 import com.google.api.services.gmail.model.MessagePart;
 import com.google.api.services.gmail.model.MessagePartHeader;
 import com.google.api.services.gmail.model.ModifyMessageRequest;
+import com.google.common.collect.ImmutableList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,9 +41,10 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import static com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential.usingOAuth2;
 import static com.google.api.client.util.Base64.decodeBase64;
 import static com.google.api.client.util.StringUtils.newStringUtf8;
-import static java.util.Collections.singletonList;
+import static java.util.Arrays.asList;
 import static javax.mail.Message.RecipientType.TO;
 
 /**
@@ -69,9 +71,9 @@ public class GoogleMailSupport {
         transport = AndroidHttp.newCompatibleTransport();
     }
 
-    public void init(@NonNull String sender, String... scopes) {
-        this.sender = sender;
-        service = createService(GoogleAuthorizationHelper.createCredential(context, sender, scopes));
+    public void init(@NonNull String accountName, String... scopes) {
+        this.sender = accountName;
+        service = createService(createCredential(accountName, scopes));
         session = Session.getDefaultInstance(new Properties(), null);
     }
 
@@ -110,7 +112,7 @@ public class GoogleMailSupport {
 
     void markAsRead(MailMessage message) throws IOException {
         ModifyMessageRequest content = new ModifyMessageRequest()
-                .setRemoveLabelIds(singletonList("UNREAD")); /* case sensitive */
+                .setRemoveLabelIds(ImmutableList.of("UNREAD")); /* case sensitive */
         service.users()
                 .messages()
                 .modify(ME, message.getId(), content)
@@ -126,6 +128,16 @@ public class GoogleMailSupport {
                 .execute();
 
         log.debug("Message moved to trash: " + message.getId());
+    }
+
+    @NonNull
+    private GoogleAccountCredential createCredential(String accountName, String... scopes) {
+        GoogleAccountCredential credential = usingOAuth2(context, asList(scopes));
+        credential.setSelectedAccountName(accountName);
+        if (credential.getSelectedAccount() == null) {
+            throw new IllegalArgumentException("Account does not exist: " + accountName);
+        }
+        return credential;
     }
 
     @NonNull

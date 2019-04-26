@@ -90,7 +90,7 @@ public class CallProcessor {
 
         final PhoneEventFilter filter = settings.getFilter();
         final List<PhoneEvent> events = new LinkedList<>();
-        database.getPendingEvents().iterate(new Consumer<PhoneEvent>() {
+        database.getPendingEvents().forEach(new Consumer<PhoneEvent>() {
 
             @Override
             public void accept(PhoneEvent event) {
@@ -128,6 +128,7 @@ public class CallProcessor {
         try {
             requireRecipient(silent);
         } catch (Exception x) {
+            log.warn("Invalid recipients");
             return false;
         }
 

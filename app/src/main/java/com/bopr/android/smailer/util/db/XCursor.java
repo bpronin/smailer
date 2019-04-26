@@ -3,10 +3,10 @@ package com.bopr.android.smailer.util.db;
 import android.database.Cursor;
 import android.database.CursorWrapper;
 
+import androidx.core.util.Consumer;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.core.util.Consumer;
 
 /**
  * Extended {@link CursorWrapper}.
@@ -25,7 +25,7 @@ public abstract class XCursor<R> extends CursorWrapper {
         super(cursor);
     }
 
-    public void iterate(Consumer<R> consumer) {
+    public void forEach(Consumer<R> consumer) {
         try {
             moveToFirst();
             while (!isAfterLast()) {
@@ -49,9 +49,9 @@ public abstract class XCursor<R> extends CursorWrapper {
         }
     }
 
-    public List<R> findAll() {
+    public List<R> asList() {
         final List<R> list = new ArrayList<>();
-        iterate(new Consumer<R>() {
+        forEach(new Consumer<R>() {
 
             @Override
             public void accept(R row) {

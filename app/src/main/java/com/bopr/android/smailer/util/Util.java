@@ -2,10 +2,14 @@ package com.bopr.android.smailer.util;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.bopr.android.smailer.GeoCoordinates;
 
 import org.slf4j.LoggerFactory;
 
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -13,12 +17,10 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 /**
  * Miscellaneous utilities.
@@ -242,5 +244,11 @@ public class Util {
 
     public static boolean isQuoted(String s) {
         return QUOTED_TEXT_PATTERN.matcher(s).matches();
+    }
+
+    @Nullable
+    public static String readStream(InputStream stream) {
+        Scanner s = new Scanner(stream).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : null;
     }
 }

@@ -4,6 +4,11 @@ import android.location.Location;
 
 import androidx.annotation.NonNull;
 
+import com.google.api.client.util.Key;
+
+import static com.bopr.android.smailer.Database.COLUMN_LATITUDE;
+import static com.bopr.android.smailer.Database.COLUMN_LONGITUDE;
+
 /**
  * Geolocation coordinates.
  *
@@ -11,8 +16,14 @@ import androidx.annotation.NonNull;
  */
 public class GeoCoordinates {
 
-    private final double latitude;
-    private final double longitude;
+    @Key(COLUMN_LATITUDE)
+    private double latitude;
+    @Key(COLUMN_LONGITUDE)
+    private double longitude;
+
+    /* Required by Jackson */
+    public GeoCoordinates() {
+    }
 
     public GeoCoordinates(double latitude, double longitude) {
         this.latitude = latitude;
