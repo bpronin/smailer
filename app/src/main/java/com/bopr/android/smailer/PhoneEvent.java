@@ -195,7 +195,8 @@ public class PhoneEvent implements Parcelable {
                 '}';
     }
 
-    /* Generated Parcelable stuff implementation */
+    /* Generated Parcelable stuff implementation/ Alt+Enter on "implements Parcelable" to update */
+
     protected PhoneEvent(Parcel in) {
         if (in.readByte() == 0) {
             id = null;
@@ -217,6 +218,7 @@ public class PhoneEvent implements Parcelable {
         }
         text = in.readString();
         details = in.readString();
+        state = in.readInt();
         read = in.readByte() != 0;
     }
 
@@ -245,6 +247,7 @@ public class PhoneEvent implements Parcelable {
         }
         dest.writeString(text);
         dest.writeString(details);
+        dest.writeInt(state);
         dest.writeByte((byte) (read ? 1 : 0));
     }
 
@@ -264,4 +267,5 @@ public class PhoneEvent implements Parcelable {
             return new PhoneEvent[size];
         }
     };
+
 }
