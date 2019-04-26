@@ -32,7 +32,7 @@ import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.RemoteControlService;
 import com.bopr.android.smailer.Settings;
-import com.bopr.android.smailer.sync.SyncUtil;
+import com.bopr.android.smailer.sync.SyncAdapter;
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.ContentUtils;
 import com.google.common.collect.ImmutableSet;
@@ -128,7 +128,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        SyncUtil.syncNow(context);
+                        SyncAdapter.syncNow(context);
                         showToast(context, "Done");
                     }
                 })

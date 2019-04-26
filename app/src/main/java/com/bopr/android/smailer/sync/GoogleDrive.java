@@ -57,21 +57,21 @@ public class GoogleDrive {
         return null;
     }
 
-    void write(String filename, String data) throws IOException {
+    void write(String filename, String json) throws IOException {
         String fileId = find(filename);
         if (fileId == null) {
-            create(filename, data);
+            create(filename, json);
         } else {
-            update(fileId, filename, data);
+            update(fileId, filename, json);
         }
     }
 
-    private void create(String filename, String data) throws IOException {
+    private void create(String filename, String json) throws IOException {
         File metadata = new File()
                 .setParents(ImmutableList.of(APP_DATA_FOLDER))
                 .setMimeType(MIME_JSON)
                 .setName(filename);
-        ByteArrayContent content = ByteArrayContent.fromString(MIME_JSON, data);
+        ByteArrayContent content = ByteArrayContent.fromString(MIME_JSON, json);
 
         service.files()
                 .create(metadata, content)
@@ -79,10 +79,10 @@ public class GoogleDrive {
                 .execute();
     }
 
-    private void update(String fileId, String filename, String data) throws IOException {
+    private void update(String fileId, String filename, String json) throws IOException {
         File metadata = new File()
                 .setName(filename);
-        ByteArrayContent content = ByteArrayContent.fromString(MIME_JSON, data);
+        ByteArrayContent content = ByteArrayContent.fromString(MIME_JSON, json);
 
         service.files()
                 .update(fileId, metadata, content)

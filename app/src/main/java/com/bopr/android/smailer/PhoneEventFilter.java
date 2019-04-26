@@ -1,10 +1,12 @@
 package com.bopr.android.smailer;
 
+import androidx.annotation.NonNull;
+
+import com.google.api.client.util.Key;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
-
-import androidx.annotation.NonNull;
 
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
@@ -25,11 +27,16 @@ import static com.bopr.android.smailer.util.Util.unquoteRegex;
 public class PhoneEventFilter {
 
     private Set<String> triggers = Collections.emptySet();
+    @Key("phone_whitelist")
     private Set<String> phoneWhitelist = Collections.emptySet();
+    @Key("phone_blacklist")
     private Set<String> phoneBlacklist = Collections.emptySet();
+    @Key("text_whitelist")
     private Set<String> textWhitelist = Collections.emptySet();
+    @Key("text_blacklist")
     private Set<String> textBlacklist = Collections.emptySet();
 
+    /* */
     public PhoneEventFilter() {
     }
 
