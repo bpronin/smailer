@@ -10,7 +10,7 @@ android {
     signingConfigs {
         config {
             keyAlias 'sample'
-            storeFile file('../etc/keystore.p12')
+            storeFile file('keystore.p12')
             storePassword store_password
             keyPassword key_password
         }
