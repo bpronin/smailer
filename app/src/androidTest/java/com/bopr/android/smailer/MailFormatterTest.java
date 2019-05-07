@@ -336,7 +336,7 @@ public class MailFormatterTest extends BaseTest {
                 "</head><body>" +
                 "Email body text<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
                 "<small>" +
-                "Sender: <a href=\"tel:+12345678901\" style=\"text-decoration: none\">&#9742;</a>+12345678901 (John Dou)" +
+                "Sender: <a href=\"tel:%2B12345678901\" style=\"text-decoration: none\">&#9742;</a>+12345678901 (John Dou)" +
                 "</small>" +
                 "</body>" +
                 "</html>", formatter.formatBody());
@@ -359,7 +359,7 @@ public class MailFormatterTest extends BaseTest {
         String body = formatter.formatBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
                 "<body>Email body text<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                "<small>Sender: <a href=\"tel:+12345678901\" style=\"text-decoration: none\">&#9742;</a>+12345678901 (no permission to read contacts)" +
+                "<small>Sender: <a href=\"tel:%2B12345678901\" style=\"text-decoration: none\">&#9742;</a>+12345678901 (no permission to read contacts)" +
                 "</small></body></html>", body);
     }
 
@@ -369,17 +369,24 @@ public class MailFormatterTest extends BaseTest {
      */
     @Test
     public void testUnknownContactName() {
-        PhoneEvent event = new PhoneEvent("+12345678901", true, 0, null, false,
+        PhoneEvent event = new PhoneEvent("+1234 5678-901", true, 0, null, false,
                 "Email body text", null, null, PhoneEvent.STATE_PENDING);
 
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(defaultTime);
         formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_CONTACT));
 
-        assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
-                "<body>Email body text<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                "<small>Sender: <a href=\"tel:+12345678901\" style=\"text-decoration: none\">&#9742;</a>+12345678901 (Unknown contact)" +
-                "</small></body></html>", formatter.formatBody());
+        String body = formatter.formatBody();
+        assertEquals("<html>" +
+                "<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
+                "<body>" +
+                "Email body text<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
+                "<small>" +
+                "Sender: <a href=\"tel:%2B1234+5678-901\" style=\"text-decoration: none\">&#9742;</a>+1234 5678-901 " +
+                "(<a href=\"https://www.google.com/search?q=%2B1234+5678-901\">Unknown contact</a>)" +
+                "</small>" +
+                "</body>" +
+                "</html>", body);
     }
 
     /**
@@ -454,7 +461,7 @@ public class MailFormatterTest extends BaseTest {
                 "<body>" +
                 "You had an incoming call of 1:01:05 duration.<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
                 "<small>" +
-                "Caller: <a href=\"tel:+12345678901\" style=\"text-decoration: none\">&#9742;</a>+12345678901 (John Dou)" +
+                "Caller: <a href=\"tel:%2B12345678901\" style=\"text-decoration: none\">&#9742;</a>+12345678901 (John Dou)" +
                 "<br>" +
                 "Time: February 2, 2016 3:04:05 AM EST" +
                 "<br>" +
@@ -489,7 +496,7 @@ public class MailFormatterTest extends BaseTest {
                 "<body>" +
                 "You had an outgoing call of 1:01:05 duration.<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
                 "<small>" +
-                "Called: <a href=\"tel:+12345678901\" style=\"text-decoration: none\">&#9742;</a>+12345678901 (John Dou)" +
+                "Called: <a href=\"tel:%2B12345678901\" style=\"text-decoration: none\">&#9742;</a>+12345678901 (John Dou)" +
                 "<br>Time: February 2, 2016 3:04:05 AM EST" +
                 "<br>Last known device location: <a href=\"https://www.google.com/maps/place/60.555+30.555/@60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "<br>Sent from Device at February 2, 2016 3:04:05 AM EST" +
@@ -516,7 +523,8 @@ public class MailFormatterTest extends BaseTest {
         String body = formatter.formatBody();
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
                 "<body>You had a missed call.<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                "<small>Caller: <a href=\"tel:+12345678901\" style=\"text-decoration: none\">&#9742;</a>+12345678901 (Unknown contact)" +
+                "<small>Caller: <a href=\"tel:%2B12345678901\" style=\"text-decoration: none\">&#9742;</a>+12345678901 " +
+                "(<a href=\"https://www.google.com/search?q=%2B12345678901\">Unknown contact</a>)" +
                 "<br>Time: February 2, 2016 3:04:05 AM EST" +
                 "<br>Last known device location: <a href=\"https://www.google.com/maps/place/60.555+30.555/@60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "<br>Sent from Device at February 2, 2016 3:04:05 AM EST" +
@@ -552,7 +560,8 @@ public class MailFormatterTest extends BaseTest {
         assertEquals("[SMailer] Пропущенный звонок от +12345678901", formatter.formatSubject());
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
                 "<body>Пропущенный звонок.<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                "<small>Вам звонил: <a href=\"tel:+12345678901\" style=\"text-decoration: none\">&#9742;</a>+12345678901 (Неизвестный контакт)" +
+                "<small>Вам звонил: <a href=\"tel:%2B12345678901\" style=\"text-decoration: none\">&#9742;</a>+12345678901 " +
+                "(<a href=\"https://www.google.com/search?q=%2B12345678901\">Неизвестный контакт</a>)" +
                 "<br>Время: 2 февраля 2016 г. 3:04:05 GMT-05:00" +
                 "<br>Последнее известное местоположение: <a href=\"https://www.google.com/maps/place/60.555+30.555/@60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "<br>Отправлено с устройства \"Device\" 2 февраля 2016 г. 3:04:05 GMT-05:00" +
@@ -563,7 +572,8 @@ public class MailFormatterTest extends BaseTest {
         assertEquals("[SMailer] Missed call from +12345678901", formatter.formatSubject());
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
                 "<body>You had a missed call.<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                "<small>Caller: <a href=\"tel:+12345678901\" style=\"text-decoration: none\">&#9742;</a>+12345678901 (Unknown contact)" +
+                "<small>Caller: <a href=\"tel:%2B12345678901\" style=\"text-decoration: none\">&#9742;</a>+12345678901 " +
+                "(<a href=\"https://www.google.com/search?q=%2B12345678901\">Unknown contact</a>)" +
                 "<br>Time: February 2, 2016 3:04:05 AM EST" +
                 "<br>Last known device location: <a href=\"https://www.google.com/maps/place/60.555+30.555/@60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "<br>Sent from Device at February 2, 2016 3:04:05 AM EST" +
@@ -591,7 +601,8 @@ public class MailFormatterTest extends BaseTest {
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" +
                 "<body>" +
                 "You had a missed call.<hr style=\"border: none; background-color: #cccccc; height: 1px;\">" +
-                "<small>Caller: <a href=\"tel:+12345678901\" style=\"text-decoration: none\">&#9742;</a>+12345678901 (Unknown contact)" +
+                "<small>Caller: <a href=\"tel:%2B12345678901\" style=\"text-decoration: none\">&#9742;</a>+12345678901 " +
+                "(<a href=\"https://www.google.com/search?q=%2B12345678901\">Unknown contact</a>)" +
                 "<br>Time: February 2, 2016 3:04:05 AM EST" +
                 "<br>Last known device location: <a href=\"https://www.google.com/maps/place/60.555+30.555/@60.555,30.555\">60&#176;33'17\"N, 30&#176;33'17\"W</a>" +
                 "<br>Sent from Device at February 2, 2016 3:04:05 AM EST" +

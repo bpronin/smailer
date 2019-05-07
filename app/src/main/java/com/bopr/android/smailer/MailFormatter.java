@@ -11,6 +11,8 @@ import com.bopr.android.smailer.util.TagFormatter;
 import com.bopr.android.smailer.util.Util;
 import com.google.common.collect.ImmutableSet;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -48,7 +50,7 @@ class MailFormatter {
     private static final String HEADER_PATTERN = "<strong>{header}</strong><br><br>";
     private static final String GOOGLE_MAP_LINK_PATTERN = "<a href=\"https://www.google.com/maps/" +
             "place/{latitude}+{longitude}/@{latitude},{longitude}\">{location}</a>";
-    private static final String PHONE_LINK_PATTERN = "<a href=\"tel:{phone}\" style=\"text-decoration: none\">&#9742;</a>{phone}";
+    private static final String PHONE_LINK_PATTERN = "<a href=\"tel:{phone}\" style=\"text-decoration: none\">&#9742;</a>{text}";
     private static final String REPLY_LINKS_PATTERN = "<small><small><strong>{title}</strong><ul>{links}</ul></small></small>";
     private static final String MAIL_TO_PATTERN = "<a href=\"mailto:{address}?subject={subject}&amp;body={body}\">{text}</a>";
     private static final String GOOGLE_SEARCH_PATTERN = "<a href=\"https://www.google.com/search?q={query}\">{text}</a>";
@@ -281,24 +283,25 @@ class MailFormatter {
         }
 
         String name = this.contactName;
+        String phoneQuery = encodeUrl(event.getPhone());
         if (isEmpty(name)) {
             if (isReadContactsPermissionsDenied(context)) { /* base context here */
                 name = resources.getString(R.string.contact_no_permission_read_contact);
             } else {
-                name = formatPhoneSearchLink();
+                name = formatter.pattern(GOOGLE_SEARCH_PATTERN)
+                        .put("query", phoneQuery)
+                        .put("text", R.string.unknown_contact)
+                        .format();
             }
         }
 
         return formatter.pattern(resourceId)
                 .put("phone", formatter.pattern(PHONE_LINK_PATTERN)
-                        .put("phone", event.getPhone())
+                        .put("phone", phoneQuery)
+                        .put("text", event.getPhone())
                         .format())
                 .put("name", name)
                 .format();
-    }
-
-    private String formatPhoneSearchLink() {
-        return resources.getString(R.string.unknown_contact);
     }
 
     @Nullable
@@ -384,6 +387,7 @@ class MailFormatter {
                 "</li>";
     }
 
+    @NonNull
     private String replaceUrls(String s) {
         Matcher matcher = Pattern.compile("((?i:http|https|rtsp|ftp|file)://[\\S]+)").matcher(s);
 
@@ -395,6 +399,15 @@ class MailFormatter {
         matcher.appendTail(sb);
 
         return sb.toString();
+    }
+
+    @NonNull
+    private String encodeUrl(String text) {
+        try {
+            return URLEncoder.encode(text, "UTF-8");
+        } catch (UnsupportedEncodingException x) {
+            throw new RuntimeException(x);
+        }
     }
 
     private void updateResources() {
