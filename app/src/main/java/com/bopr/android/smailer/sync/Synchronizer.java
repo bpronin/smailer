@@ -13,6 +13,7 @@ import com.bopr.android.smailer.Settings;
 import com.google.api.client.json.JsonGenerator;
 import com.google.api.client.json.JsonParser;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.common.collect.ImmutableSet;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,6 +21,11 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import static com.bopr.android.smailer.Settings.KEY_PREF_SYNC_ITEMS;
+import static com.bopr.android.smailer.Settings.VAL_PREF_SYNC_EVENTS;
+import static com.bopr.android.smailer.Settings.VAL_PREF_SYNC_FILTER_LISTS;
 
 class Synchronizer {
 
@@ -37,17 +43,23 @@ class Synchronizer {
     }
 
     void execute() throws IOException {
-        List<PhoneEvent> events = downloadEvents();
-        for (PhoneEvent event : events) {
-            database.putEvent(event);
-        }
-        uploadJson(FILE_EVENTS, database.getEvents().toList());
+        Set<String> items = settings.getStringSet(KEY_PREF_SYNC_ITEMS, ImmutableSet.<String>of());
 
-        PhoneEventFilter filter = downloadFilters();
-        if (filter != null) {
-            mergeFilter(filter, settings);
+        if (items.contains(VAL_PREF_SYNC_EVENTS)) {
+            List<PhoneEvent> events = downloadEvents();
+            for (PhoneEvent event : events) {
+                database.putEvent(event);
+            }
+            uploadJson(FILE_EVENTS, database.getEvents().toList());
         }
-        uploadJson(FILE_FILTERS, settings.getFilter());
+
+        if (items.contains(VAL_PREF_SYNC_FILTER_LISTS)) {
+            PhoneEventFilter filter = downloadFilters();
+            if (filter != null) {
+                mergeFilter(filter, settings);
+            }
+            uploadJson(FILE_FILTERS, settings.getFilter());
+        }
     }
 
     private void mergeFilter(PhoneEventFilter newFilter, Settings settings) {

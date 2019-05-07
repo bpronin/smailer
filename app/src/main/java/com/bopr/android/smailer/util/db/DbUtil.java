@@ -80,7 +80,10 @@ public class DbUtil {
             while (!cursor.isAfterLast()) {
                 ContentValues values = new ContentValues();
                 for (int i = 0; i < cursor.getColumnCount(); i++) {
-                     values.put(cursor.getColumnName(i), cursor.getString(i));
+                    // TODO: 07.05.2019 check column exists 
+//                    if () {
+                        values.put(cursor.getColumnName(i), cursor.getString(i));
+//                    }
                 }
                 db.insert(tableTo, null, values);
 

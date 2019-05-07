@@ -55,6 +55,7 @@ public class Settings extends SharedPreferencesWrapper {
     public static final String KEY_PREF_REMOTE_CONTROL_ACCOUNT = "remote_control_account";
     public static final String KEY_PREF_REMOTE_CONTROL_NOTIFICATIONS = "remote_control_notifications";
     public static final String KEY_PREF_REMOTE_CONTROL_FILTER_RECIPIENTS = "remote_control_filter_recipients";
+    public static final String KEY_PREF_SYNC_ITEMS = "sync_items";
 
     public static final String VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME = "time";
     public static final String VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT = "time_sent";
@@ -68,6 +69,8 @@ public class Settings extends SharedPreferencesWrapper {
     public static final String VAL_PREF_TRIGGER_IN_CALLS = "in_calls";
     public static final String VAL_PREF_TRIGGER_OUT_CALLS = "out_calls";
     public static final String VAL_PREF_TRIGGER_MISSED_CALLS = "missed_calls";
+    public static final String VAL_PREF_SYNC_EVENTS = "sync_events";
+    public static final String VAL_PREF_SYNC_FILTER_LISTS = "sync_filter_lists";
 
     public static final String DEFAULT_LOCALE = "default";
     public static final Set<String> DEFAULT_CONTENT = asSet(
@@ -116,6 +119,8 @@ public class Settings extends SharedPreferencesWrapper {
             content.add(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT);
             edit.putStringSet(KEY_PREF_EMAIL_CONTENT, content);
         }
+        edit.putStringSetOptional(KEY_PREF_SYNC_ITEMS, asSet(VAL_PREF_SYNC_EVENTS,
+                VAL_PREF_SYNC_FILTER_LISTS));
 
         edit.putInt(KEY_SETTINGS_VERSION, SETTINGS_VERSION);
         edit.apply();
