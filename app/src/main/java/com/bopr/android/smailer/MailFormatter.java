@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 
 import com.bopr.android.smailer.util.TagFormatter;
 import com.bopr.android.smailer.util.Util;
+import com.google.common.collect.ImmutableSet;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -50,6 +51,7 @@ class MailFormatter {
     private static final String PHONE_LINK_PATTERN = "<a href=\"tel:{phone}\" style=\"text-decoration: none\">&#9742;</a>{phone}";
     private static final String REPLY_LINKS_PATTERN = "<small><small><strong>{title}</strong><ul>{links}</ul></small></small>";
     private static final String MAIL_TO_PATTERN = "<a href=\"mailto:{address}?subject={subject}&amp;body={body}\">{text}</a>";
+    private static final String GOOGLE_SEARCH_PATTERN = "<a href=\"https://www.google.com/search?q={query}\">{text}</a>";
 
     private final PhoneEvent event;
     private final Context context;
@@ -68,6 +70,7 @@ class MailFormatter {
         locale = Locale.getDefault();
         resources = context.getResources();
         formatter = new TagFormatter(resources);
+        contentOptions = ImmutableSet.of();
     }
 
     /**
@@ -149,7 +152,7 @@ class MailFormatter {
     @NonNull
     String formatBody() {
         String footer = formatFooter();
-        String remoteLinks = formatRemoteLinks();
+        String remoteLinks = formatRemoteControlLinks();
 
         return formatter
                 .pattern(BODY_PATTERN)
@@ -282,7 +285,7 @@ class MailFormatter {
             if (isReadContactsPermissionsDenied(context)) { /* base context here */
                 name = resources.getString(R.string.contact_no_permission_read_contact);
             } else {
-                name = resources.getString(R.string.unknown_contact);
+                name = formatPhoneSearchLink();
             }
         }
 
@@ -292,6 +295,10 @@ class MailFormatter {
                         .format())
                 .put("name", name)
                 .format();
+    }
+
+    private String formatPhoneSearchLink() {
+        return resources.getString(R.string.unknown_contact);
     }
 
     @Nullable
@@ -342,21 +349,21 @@ class MailFormatter {
     }
 
     @Nullable
-    private String formatRemoteLinks() {
+    private String formatRemoteControlLinks() {
         if (contentOptions.contains(VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS) && !isEmpty(serviceAccount)) {
             return formatter
                     .pattern(REPLY_LINKS_PATTERN)
                     .put("title", formatter
                             .pattern(R.string.reply_ot_app)
                             .put("app_name", R.string.app_name))
-                    .put("links", formatRemoteLinksList())
+                    .put("links", formatRemoteControlLinksList())
                     .format();
         }
         return null;
     }
 
     @NonNull
-    private String formatRemoteLinksList() {
+    private String formatRemoteControlLinksList() {
         return formatRemoteLink(R.string.add_phone_to_blacklist, R.string.add_phone_to_blacklist_reply, escapePhone(event.getPhone())) +
                 formatRemoteLink(R.string.add_text_to_blacklist, R.string.add_text_to_blacklist_reply, event.getText()) +
                 formatRemoteLink(R.string.add_phone_to_whitelist, R.string.add_phone_to_whitelist_reply, escapePhone(event.getPhone())) +

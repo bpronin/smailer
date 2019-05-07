@@ -1,8 +1,5 @@
 package com.bopr.android.smailer.util;
 
-import android.app.ActivityManager;
-import android.app.Service;
-import android.content.ComponentName;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -11,18 +8,12 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 
 import com.bopr.android.smailer.BaseTest;
-import com.bopr.android.smailer.CallProcessorService;
 import com.bopr.android.smailer.util.draw.WavyUnderlineSpan;
 
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static android.app.ActivityManager.RunningServiceInfo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.emptyArray;
-import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -35,21 +26,7 @@ import static org.mockito.Mockito.when;
 public class AndroidUtilTest extends BaseTest {
 
     /**
-     * Returns true if specified service is running.
-     */
-    private static boolean isServiceRunning(Context context, Class<? extends Service> serviceClass) {
-        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo info : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(info.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Tests {@link ResourceUtil#underwivedText(Context, String)} method.
-     *
      */
     @Test
     public void testUnderwivedText() {
@@ -67,11 +44,9 @@ public class AndroidUtilTest extends BaseTest {
 
     /**
      * Tests {@link ResourceUtil#accentedText(Context, String)} method.
-     *
-     * @throws Exception when failed
      */
     @Test
-    public void testAccentedTextText() throws Exception {
+    public void testAccentedTextText() {
         Spannable spannable = ResourceUtil.accentedText(getContext(), "Invalid text");
         assertThat(spannable, instanceOf(SpannableString.class));
         Object span = spannable.getSpans(0, spannable.length(), Object.class)[0];
@@ -85,12 +60,10 @@ public class AndroidUtilTest extends BaseTest {
 
     /**
      * Tests {@link AndroidUtil#hasInternetConnection(Context)}} method.
-     *
-     * @throws Exception when failed
      */
     @SuppressWarnings("ResourceType")
     @Test
-    public void testHasInternetConnection() throws Exception {
+    public void testHasInternetConnection() {
         NetworkInfo info = mock(NetworkInfo.class);
 
         ConnectivityManager manager = mock(ConnectivityManager.class);
@@ -109,27 +82,4 @@ public class AndroidUtilTest extends BaseTest {
         assertFalse(AndroidUtil.hasInternetConnection(context));
     }
 
-    @SuppressWarnings("ResourceType")
-    @Test
-    public void testIsServiceRunning() throws Exception {
-        Context context = mock(Context.class);
-
-        List<RunningServiceInfo> runningServices = new ArrayList<>();
-
-        ActivityManager manager = mock(ActivityManager.class);
-        when(manager.getRunningServices(anyInt())).thenReturn(runningServices);
-
-        when(context.getSystemService(eq(Context.ACTIVITY_SERVICE))).thenReturn(manager);
-
-        RunningServiceInfo info = new RunningServiceInfo();
-        info.service = new ComponentName(context, CallProcessorService.class.getName());
-        runningServices.add(info);
-
-        assertTrue(isServiceRunning(context, CallProcessorService.class));
-
-        runningServices.clear();
-
-        assertFalse(isServiceRunning(context, CallProcessorService.class));
-    }
-    
 }

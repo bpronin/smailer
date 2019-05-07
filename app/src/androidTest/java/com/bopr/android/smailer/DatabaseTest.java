@@ -55,7 +55,7 @@ public class DatabaseTest extends BaseTest {
         assertEquals(PhoneEvent.STATE_PENDING, message.getState());
         assertEquals("10", message.getPhone());
         assertTrue(message.isIncoming());
-        assertEquals(10000L, message.getStartTime().longValue());
+        assertEquals(10000L, message.getStartTime());
         assertEquals(20000L, message.getEndTime().longValue());
         assertFalse(message.isMissed());
         assertTrue(message.isSms());
@@ -81,7 +81,7 @@ public class DatabaseTest extends BaseTest {
         assertEquals(PhoneEvent.STATE_PENDING, message.getState());
         assertEquals("1", message.getPhone());
         assertTrue(message.isIncoming());
-        assertEquals(1000L, message.getStartTime().longValue());
+        assertEquals(1000L, message.getStartTime());
         assertEquals(2000L, message.getEndTime().longValue());
         assertFalse(message.isMissed());
         assertTrue(message.isSms());
@@ -109,7 +109,7 @@ public class DatabaseTest extends BaseTest {
         assertEquals(PhoneEvent.STATE_PENDING, message.getState());
         assertEquals("2", message.getPhone());
         assertFalse(message.isIncoming());
-        assertEquals(2000L, message.getStartTime().longValue());
+        assertEquals(2000L, message.getStartTime());
         assertEquals(3000L, message.getEndTime().longValue());
         assertTrue(message.isMissed());
         assertFalse(message.isSms());

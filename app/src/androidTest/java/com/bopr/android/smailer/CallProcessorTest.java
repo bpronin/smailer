@@ -95,7 +95,8 @@ public class CallProcessorTest extends BaseTest {
         doAnswer(sends).when(transport).send(any(MailMessage.class));
 
         CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
-        callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, new GeoCoordinates(30.0, 60.0), null, PhoneEvent.STATE_PENDING));
+        callProcessor.process(new PhoneEvent("+12345678901", false, 0, null, false, null,
+                new GeoCoordinates(30.0, 60.0), null, PhoneEvent.STATE_PENDING));
 
         assertTrue(errors.isEmpty());
         assertArrayEquals(new Object[]{"sender@mail.com", "decrypted password", "smtp.mail.com", "111"}, inits.invocation(0));
@@ -120,7 +121,8 @@ public class CallProcessorTest extends BaseTest {
         when(preferences.getString(eq(KEY_PREF_EMAIL_LOCALE), anyString())).thenReturn("ru_RU");
 
         CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
-        callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, new GeoCoordinates(30.0, 60.0), null, PhoneEvent.STATE_PENDING));
+        callProcessor.process(new PhoneEvent("+12345678901", false, 0, null, false, null,
+                new GeoCoordinates(30.0, 60.0), null, PhoneEvent.STATE_PENDING));
 
         assertTrue(errors.isEmpty());
         assertArrayEquals(new Object[]{"sender@mail.com", "decrypted password", "smtp.mail.com", "111"}, inits.invocation(0));
@@ -144,7 +146,8 @@ public class CallProcessorTest extends BaseTest {
         when(networkInfo.isConnected()).thenReturn(false);
 
         CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
-        callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, null, null, PhoneEvent.STATE_PENDING));
+        callProcessor.process(new PhoneEvent("+12345678901", false, 0, null, false, null,
+                null, null, PhoneEvent.STATE_PENDING));
 
         assertTrue(inits.isEmpty());
         assertTrue(sends.isEmpty());
@@ -169,7 +172,8 @@ public class CallProcessorTest extends BaseTest {
         when(preferences.getString(eq(KEY_PREF_SENDER_ACCOUNT), anyString())).thenReturn(null);
 
         CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
-        callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, null, null, PhoneEvent.STATE_PENDING));
+        callProcessor.process(new PhoneEvent("+12345678901", false, 0, null, false, null, null,
+                null, PhoneEvent.STATE_PENDING));
 
         assertTrue(inits.isEmpty());
         assertTrue(sends.isEmpty());
@@ -194,7 +198,8 @@ public class CallProcessorTest extends BaseTest {
         when(preferences.getString(eq(KEY_PREF_RECIPIENTS_ADDRESS), anyString())).thenReturn(null);
 
         CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
-        callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, null, null, PhoneEvent.STATE_PENDING));
+        callProcessor.process(new PhoneEvent("+12345678901", false, 0, null, false, null, null,
+                null, PhoneEvent.STATE_PENDING));
 
         assertTrue(inits.isEmpty());
         assertTrue(sends.isEmpty());
@@ -218,7 +223,8 @@ public class CallProcessorTest extends BaseTest {
         doThrow(AuthenticationFailedException.class).when(transport).send(any(MailMessage.class));
 
         CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
-        callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, null, null, PhoneEvent.STATE_PENDING));
+        callProcessor.process(new PhoneEvent("+12345678901", false, 0, null, false, null,
+                null, null, PhoneEvent.STATE_PENDING));
 
         assertFalse(inits.isEmpty());
         assertTrue(sends.isEmpty());
@@ -242,7 +248,8 @@ public class CallProcessorTest extends BaseTest {
         doThrow(MessagingException.class).when(transport).send(any(MailMessage.class));
 
         CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
-        callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, null, null, PhoneEvent.STATE_PENDING));
+        callProcessor.process(new PhoneEvent("+12345678901", false, 0, null, false, null, null,
+                null, PhoneEvent.STATE_PENDING));
 
         assertFalse(inits.isEmpty());
         assertTrue(sends.isEmpty());
@@ -276,7 +283,8 @@ public class CallProcessorTest extends BaseTest {
 
         /* bad_phone produces notification */
 
-        callProcessor.process(new PhoneEvent("bad_phone", false, null, null, false, null, null, null, PhoneEvent.STATE_PENDING));
+        callProcessor.process(new PhoneEvent("bad_phone", false, 0, null, false, null, null, null,
+                PhoneEvent.STATE_PENDING));
         assertEquals(R.string.unable_send_email, errors.invocation(0)[0]);
         assertTrue(clears.isEmpty());
 
@@ -285,7 +293,8 @@ public class CallProcessorTest extends BaseTest {
         errors.clear();
         clears.clear();
 
-        callProcessor.process(new PhoneEvent("good_phone", false, null, null, false, null, null, null, PhoneEvent.STATE_PENDING));
+        callProcessor.process(new PhoneEvent("good_phone", false, 0, null, false, null, null, null,
+                PhoneEvent.STATE_PENDING));
 
         assertTrue(errors.isEmpty());
         assertFalse(clears.isEmpty());
@@ -307,14 +316,14 @@ public class CallProcessorTest extends BaseTest {
         /* settings is off */
         when(preferences.getBoolean(eq(KEY_PREF_NOTIFY_SEND_SUCCESS), anyBoolean())).thenReturn(false);
 
-        callProcessor.process(new PhoneEvent("1", false, null, null, false, null, null, null, PhoneEvent.STATE_PENDING));
+        callProcessor.process(new PhoneEvent("1", false, 0, null, false, null, null, null, PhoneEvent.STATE_PENDING));
 
         assertTrue(errors.isEmpty());
         assertTrue(successes.isEmpty());
 
         /* settings is on */
         when(preferences.getBoolean(eq(KEY_PREF_NOTIFY_SEND_SUCCESS), anyBoolean())).thenReturn(true);
-        callProcessor.process(new PhoneEvent("1", false, null, null, false, null, null, null, PhoneEvent.STATE_PENDING));
+        callProcessor.process(new PhoneEvent("1", false, 0, null, false, null, null, null, PhoneEvent.STATE_PENDING));
 
         assertTrue(errors.isEmpty());
         assertFalse(successes.isEmpty());
@@ -333,9 +342,12 @@ public class CallProcessorTest extends BaseTest {
         doThrow(MessagingException.class).when(transport).send(any(MailMessage.class));
 
         CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
-        callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, new GeoCoordinates(30.0, 60.0), null, PhoneEvent.STATE_PENDING));
-        callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, new GeoCoordinates(30.0, 60.0), null, PhoneEvent.STATE_PENDING));
-        callProcessor.process(new PhoneEvent("+12345678901", false, null, null, false, null, new GeoCoordinates(30.0, 60.0), null, PhoneEvent.STATE_PENDING));
+        callProcessor.process(new PhoneEvent("+12345678901", false, 0, null, false, null,
+                new GeoCoordinates(30.0, 60.0), null, PhoneEvent.STATE_PENDING));
+        callProcessor.process(new PhoneEvent("+12345678901", false, 0, null, false, null,
+                new GeoCoordinates(30.0, 60.0), null, PhoneEvent.STATE_PENDING));
+        callProcessor.process(new PhoneEvent("+12345678901", false, 0, null, false, null,
+                new GeoCoordinates(30.0, 60.0), null, PhoneEvent.STATE_PENDING));
 
         assertEquals(3, database.getEvents().getCount());
         assertEquals(3, database.getPendingEvents().getCount());

@@ -2,13 +2,13 @@ package com.bopr.android.ui_automation;
 
 import android.annotation.SuppressLint;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.filters.LargeTest;
+
 import com.bopr.android.smailer.R;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.filters.LargeTest;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.clearText;
@@ -22,8 +22,8 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
-import static junit.framework.Assert.assertEquals;
 import static org.hamcrest.Matchers.isEmptyString;
+import static org.junit.Assert.assertEquals;
 
 /**
  * {@link com.bopr.android.smailer.ui.RecipientsActivity} tester.
