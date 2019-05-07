@@ -7,9 +7,19 @@ import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 
 import com.bopr.android.smailer.util.Util;
+import com.google.api.client.util.Key;
 
 import java.lang.annotation.Retention;
 
+import static com.bopr.android.smailer.Database.COLUMN_DETAILS;
+import static com.bopr.android.smailer.Database.COLUMN_END_TIME;
+import static com.bopr.android.smailer.Database.COLUMN_IS_INCOMING;
+import static com.bopr.android.smailer.Database.COLUMN_IS_MISSED;
+import static com.bopr.android.smailer.Database.COLUMN_LOCATION;
+import static com.bopr.android.smailer.Database.COLUMN_PHONE;
+import static com.bopr.android.smailer.Database.COLUMN_START_TIME;
+import static com.bopr.android.smailer.Database.COLUMN_STATE;
+import static com.bopr.android.smailer.Database.COLUMN_TEXT;
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 /**
@@ -23,26 +33,34 @@ public class PhoneEvent implements Parcelable {
     @Retention(SOURCE)
     @IntDef({STATE_PENDING, STATE_PROCESSED, STATE_IGNORED})
     @interface EventState {
-
     }
 
     public static final int STATE_PENDING = 0;
     public static final int STATE_PROCESSED = 1;
     public static final int STATE_IGNORED = 2;
 
-    private Long id;
+    @Key(COLUMN_IS_INCOMING)
     private boolean incoming;
+    @Key(COLUMN_IS_MISSED)
     private boolean missed;
+    @Key(COLUMN_PHONE)
     private String phone;
-    private Long startTime;
+    @Key(COLUMN_START_TIME)
+    private long startTime;
+    @Key(COLUMN_END_TIME)
     private Long endTime;
+    @Key(COLUMN_TEXT)
     private String text;
+    @Key(COLUMN_DETAILS)
     private String details;
+    @Key(COLUMN_LOCATION)
     private GeoCoordinates location;
     @EventState
+    @Key(COLUMN_STATE)
     private int state = STATE_PENDING;
     private boolean read;
 
+    /* Required by Jackson */
     public PhoneEvent() {
     }
 
@@ -57,14 +75,6 @@ public class PhoneEvent implements Parcelable {
         this.location = location;
         this.details = details;
         this.state = state;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public boolean isSms() {
@@ -199,7 +209,7 @@ public class PhoneEvent implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeByte((byte) (incoming ? 1 : 0));
-        dest.writeByte((byte) (missed ? 1 : 0));            
+        dest.writeByte((byte) (missed ? 1 : 0));
         dest.writeString(phone);
         dest.writeLong(startTime);
         if (endTime == null) {

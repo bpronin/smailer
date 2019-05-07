@@ -1,11 +1,25 @@
+/*
+    Some additional files are required to build the project:
+    1. Google configuration from
+        https://console.firebase.google.com/u/0/project/smailer-24874/settings/general/android:com.bopr.android.smailer
+        should be put into app/google-services.json
+    2.  Signing keystore should be put into/app/keystore.p12
+    3.  (Optional) Authentication data for debugging should be put into /app/src/debug/assets/debug.properties
+
+    To run debug flavor add SHA-1 fingerprint from
+    <user_dir>/.android/debug.keystore (password "android") to  api console:
+    https://console.developers.google.com/apis/credentials/oauthclient/376904884028-f0m6ki37c8b4cf93aktk0jgag3tiu922.apps.googleusercontent.com?project=smailer-24874
+*/
+
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
+apply plugin: 'com.google.gms.google-services'
 apply from: 'user.gradle'
 apply from: 'local.gradle'
 
 android {
     compileSdkVersion 28
-//    buildToolsVersion '28.0.3'
+    buildToolsVersion '28.0.3'
 
     signingConfigs {
         config {
@@ -68,13 +82,14 @@ android {
 
     configurations {
         all {
+            exclude group: 'org.apache.httpcomponents'
             exclude group: 'commons-logging', module: 'commons-logging'
             exclude group: 'com.google.guava', module: 'listenablefuture'
-            exclude group: 'org.apache.httpcomponents'
         }
     }
 
 }
+
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -88,6 +103,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
     implementation 'com.google.api-client:google-api-client-android:1.25.0'
     implementation 'com.google.apis:google-api-services-gmail:v1-rev103-1.25.0'
+    implementation 'com.google.apis:google-api-services-drive:v3-rev160-1.25.0'
 
     implementation 'org.slf4j:slf4j-api:1.7.25'
     implementation 'com.github.tony19:logback-android-core:1.1.1-6'

@@ -11,20 +11,31 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.widget.EditText;
 
-import com.bopr.android.smailer.AuthorizationHelper;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.util.Consumer;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceCategory;
+import androidx.preference.PreferenceScreen;
+
 import com.bopr.android.smailer.CallProcessorService;
 import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.GeoCoordinates;
 import com.bopr.android.smailer.GeoLocator;
-import com.bopr.android.smailer.GmailTransport;
+import com.bopr.android.smailer.GoogleAuthorizationHelper;
+import com.bopr.android.smailer.GoogleMailSupport;
 import com.bopr.android.smailer.MailMessage;
 import com.bopr.android.smailer.Notifications;
 import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.RemoteControlService;
 import com.bopr.android.smailer.Settings;
+import com.bopr.android.smailer.sync.SyncAdapter;
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.ContentUtils;
+import com.google.common.collect.ImmutableSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,19 +51,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.util.Consumer;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceCategory;
-import androidx.preference.PreferenceScreen;
-
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-import static com.bopr.android.smailer.AuthorizationHelper.defaultAccount;
-import static com.bopr.android.smailer.GmailTransport.SCOPE_SEND;
+import static com.bopr.android.smailer.GoogleAuthorizationHelper.primaryAccount;
 import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
@@ -82,8 +83,10 @@ import static com.bopr.android.smailer.util.Util.commaJoin;
 import static com.bopr.android.smailer.util.Util.formatLocation;
 import static com.bopr.android.smailer.util.Util.quoteRegex;
 import static com.bopr.android.smailer.util.Util.requireNonNull;
+import static com.google.api.services.drive.DriveScopes.DRIVE_APPDATA;
+import static com.google.api.services.gmail.GmailScopes.GMAIL_SEND;
+import static com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM;
 import static java.util.Arrays.asList;
-import static java.util.Collections.singleton;
 
 /**
  * For debug purposes.
@@ -99,7 +102,7 @@ public class DebugFragment extends BasePreferenceFragment {
     private Context context;
     private GeoLocator locator;
     private Database database;
-    private AuthorizationHelper authorizator;
+    private GoogleAuthorizationHelper authorizator;
     private Notifications notifications;
 
     @Override
@@ -108,7 +111,8 @@ public class DebugFragment extends BasePreferenceFragment {
         setHasOptionsMenu(false);
         database = new Database(context);
         locator = new GeoLocator(context, database);
-        authorizator = new AuthorizationHelper(this, SCOPE_SEND, KEY_PREF_SENDER_ACCOUNT);
+        authorizator = new GoogleAuthorizationHelper(this, KEY_PREF_SENDER_ACCOUNT,
+                MAIL_GOOGLE_COM, DRIVE_APPDATA);
         notifications = new Notifications(requireContext());
     }
 
@@ -118,6 +122,18 @@ public class DebugFragment extends BasePreferenceFragment {
         context = getPreferenceManager().getContext();
 
         PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(context);
+        addCategory(screen, "Google drive",
+
+                createPreference("Sync data", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        SyncAdapter.syncNow(context);
+                        showToast(context, "Done");
+                    }
+                })
+
+        );
 
         addCategory(screen, "Settings",
 
@@ -129,7 +145,7 @@ public class DebugFragment extends BasePreferenceFragment {
                     }
                 }),
 
-                createPreference("Default settings", new DefaultClickListener() {
+                createPreference("Clear settings", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
@@ -212,7 +228,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        database.getEvents().iterate(new Consumer<PhoneEvent>() {
+                        database.getEvents().forEach(new Consumer<PhoneEvent>() {
 
                             @Override
                             public void accept(PhoneEvent event) {
@@ -229,7 +245,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        database.getEvents().iterate(new Consumer<PhoneEvent>() {
+                        database.getEvents().forEach(new Consumer<PhoneEvent>() {
 
                             @Override
                             public void accept(PhoneEvent event) {
@@ -441,7 +457,7 @@ public class DebugFragment extends BasePreferenceFragment {
         Properties properties = loadDebugProperties();
 
         settings.edit()
-                .putString(KEY_PREF_SENDER_ACCOUNT, defaultAccount(context))
+                .putString(KEY_PREF_SENDER_ACCOUNT, primaryAccount(context).name)
                 .putString(KEY_PREF_RECIPIENTS_ADDRESS, properties.getProperty("default_recipient"))
                 .putStringSet(KEY_PREF_EMAIL_TRIGGERS, asSet(
                         VAL_PREF_TRIGGER_IN_SMS,
@@ -664,9 +680,9 @@ public class DebugFragment extends BasePreferenceFragment {
 
         @Override
         protected String doInBackground(Void... params) {
-            GmailTransport transport = new GmailTransport(getActivity());
+            GoogleMailSupport transport = new GoogleMailSupport(getActivity());
             try {
-                transport.init(requireNonNull(defaultAccount(getActivity())), SCOPE_SEND);
+                transport.init(primaryAccount(getActivity()).name, GMAIL_SEND);
 
                 MailMessage message = new MailMessage();
                 message.setSubject("test subject");
@@ -705,19 +721,19 @@ public class DebugFragment extends BasePreferenceFragment {
         @Override
         protected Exception doInBackground(Void... params) {
             List<File> attachment = new LinkedList<>();
-            attachment.add(getActivity().getDatabasePath(Settings.DB_NAME));
+            attachment.add(getActivity().getDatabasePath(Database.DATABASE_NAME));
             attachment.add(getLogcatLog());
             attachment.addAll(asList(new File(getActivity().getFilesDir(), "log").listFiles()));
 
-            GmailTransport transport = new GmailTransport(getActivity());
+            GoogleMailSupport transport = new GoogleMailSupport(getActivity());
             try {
-                transport.init(requireNonNull(defaultAccount(getActivity())), SCOPE_SEND);
+                transport.init(primaryAccount(getActivity()).name, GMAIL_SEND);
 
                 for (File file : attachment) {
                     MailMessage message = new MailMessage();
                     message.setSubject("SMailer log");
                     message.setBody("Device: " + AndroidUtil.getDeviceName());
-                    message.setAttachment(singleton(file));
+                    message.setAttachment(ImmutableSet.of(file));
                     message.setRecipients(properties.getProperty("developer_email"));
 
                     transport.send(message);

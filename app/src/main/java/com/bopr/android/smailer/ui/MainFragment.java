@@ -6,16 +6,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import com.bopr.android.smailer.AuthorizationHelper;
-import com.bopr.android.smailer.ContentObserverService;
-import com.bopr.android.smailer.Database;
-import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.ResendWorker;
-
 import androidx.preference.Preference;
 import androidx.preference.Preference.OnPreferenceClickListener;
 
-import static com.bopr.android.smailer.GmailTransport.SCOPE_SEND;
+import com.bopr.android.smailer.ContentObserverService;
+import com.bopr.android.smailer.Database;
+import com.bopr.android.smailer.GoogleAuthorizationHelper;
+import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.ResendWorker;
+
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_HISTORY;
 import static com.bopr.android.smailer.Settings.KEY_PREF_OPTIONS;
@@ -27,6 +26,7 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.util.AndroidUtil.isValidEmailAddressList;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.Util.isEmpty;
+import static com.google.api.services.gmail.GmailScopes.GMAIL_SEND;
 import static java.lang.String.valueOf;
 
 /**
@@ -42,13 +42,13 @@ public class MainFragment extends BasePreferenceFragment {
     private Database database;
     private BroadcastReceiver databaseListener;
     private Preference historyPreference;
-    private AuthorizationHelper authorizator;
+    private GoogleAuthorizationHelper authorizator;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        authorizator = new AuthorizationHelper(this, SCOPE_SEND, KEY_PREF_SENDER_ACCOUNT);
+        authorizator = new GoogleAuthorizationHelper(this, KEY_PREF_SENDER_ACCOUNT, GMAIL_SEND);
 
         settingsListener = new SettingsListener();
         settings.registerOnSharedPreferenceChangeListener(settingsListener);

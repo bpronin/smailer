@@ -2,18 +2,21 @@ package com.bopr.android.smailer;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.bopr.android.smailer.util.Util;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.gmail.Gmail;
-import com.google.api.services.gmail.GmailScopes;
 import com.google.api.services.gmail.model.ListMessagesResponse;
 import com.google.api.services.gmail.model.Message;
 import com.google.api.services.gmail.model.MessagePart;
 import com.google.api.services.gmail.model.MessagePartHeader;
 import com.google.api.services.gmail.model.ModifyMessageRequest;
+import com.google.common.collect.ImmutableList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,12 +41,10 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import static com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64.decodeBase64;
-import static com.google.api.client.repackaged.org.apache.commons.codec.binary.StringUtils.newStringUtf8;
-import static java.util.Collections.singletonList;
+import static com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential.usingOAuth2;
+import static com.google.api.client.util.Base64.decodeBase64;
+import static com.google.api.client.util.StringUtils.newStringUtf8;
+import static java.util.Arrays.asList;
 import static javax.mail.Message.RecipientType.TO;
 
 /**
@@ -51,33 +52,28 @@ import static javax.mail.Message.RecipientType.TO;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class GmailTransport {
+public class GoogleMailSupport {
 
-    private static Logger log = LoggerFactory.getLogger("GmailTransport");
+    private static Logger log = LoggerFactory.getLogger("GoogleMailSupport");
 
-    public static List<String> SCOPE_SEND = singletonList(GmailScopes.GMAIL_SEND);
-    public static List<String> SCOPE_ALL = singletonList(GmailScopes.MAIL_GOOGLE_COM);
-
-    private static final String ME = "me";
+    private static final String ME = "me"; /* exact "me" */
     private static final String UTF_8 = "UTF-8";
     private static final String HTML = "html";
 
     private final HttpTransport transport;
-    private final JacksonFactory jsonFactory;
     private final Context context;
     private Session session;
     private Gmail service;
     private String sender;
 
-    public GmailTransport(Context context) {
+    public GoogleMailSupport(Context context) {
         this.context = context;
-        jsonFactory = JacksonFactory.getDefaultInstance();
         transport = AndroidHttp.newCompatibleTransport();
     }
 
-    public void init(@NonNull String sender, List<String> scopes) {
-        this.sender = sender;
-        service = createService(createCredential(sender, scopes));
+    public void init(@NonNull String accountName, String... scopes) {
+        this.sender = accountName;
+        service = createService(createCredential(accountName, scopes));
         session = Session.getDefaultInstance(new Properties(), null);
     }
 
@@ -116,7 +112,7 @@ public class GmailTransport {
 
     void markAsRead(MailMessage message) throws IOException {
         ModifyMessageRequest content = new ModifyMessageRequest()
-                .setRemoveLabelIds(singletonList("UNREAD")); /* case sensitive */
+                .setRemoveLabelIds(ImmutableList.of("UNREAD")); /* case sensitive */
         service.users()
                 .messages()
                 .modify(ME, message.getId(), content)
@@ -135,20 +131,20 @@ public class GmailTransport {
     }
 
     @NonNull
-    private Gmail createService(@NonNull GoogleAccountCredential credential) {
-        return new Gmail.Builder(transport, jsonFactory, credential)
-                .setApplicationName("smailer")
-                .build();
-    }
-
-    @NonNull
-    private GoogleAccountCredential createCredential(String accountName, List<String> scopes) {
-        GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(context, scopes);
+    private GoogleAccountCredential createCredential(String accountName, String... scopes) {
+        GoogleAccountCredential credential = usingOAuth2(context, asList(scopes));
         credential.setSelectedAccountName(accountName);
         if (credential.getSelectedAccount() == null) {
             throw new IllegalArgumentException("Account does not exist: " + accountName);
         }
         return credential;
+    }
+
+    @NonNull
+    private Gmail createService(@NonNull GoogleAccountCredential credential) {
+        return new Gmail.Builder(transport, JacksonFactory.getDefaultInstance(), credential)
+                .setApplicationName("smailer")
+                .build();
     }
 
     @NonNull

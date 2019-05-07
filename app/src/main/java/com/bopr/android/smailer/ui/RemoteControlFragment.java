@@ -4,29 +4,29 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import com.bopr.android.smailer.AuthorizationHelper;
+import androidx.preference.Preference;
+
+import com.bopr.android.smailer.GoogleAuthorizationHelper;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.RemoteControlWorker;
 
-import androidx.preference.Preference;
-
-import static com.bopr.android.smailer.GmailTransport.SCOPE_ALL;
 import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_ACCOUNT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_ENABLED;
 import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_FILTER_RECIPIENTS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_NOTIFICATIONS;
 import static com.bopr.android.smailer.util.Util.isEmpty;
+import static com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM;
 
 public class RemoteControlFragment extends BasePreferenceFragment {
 
-    private AuthorizationHelper authorizator;
+    private GoogleAuthorizationHelper authorizator;
     private Preference accountPreference;
     private SettingsListener settingsListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        authorizator = new AuthorizationHelper(this, SCOPE_ALL, KEY_PREF_REMOTE_CONTROL_ACCOUNT);
+        authorizator = new GoogleAuthorizationHelper(this, KEY_PREF_REMOTE_CONTROL_ACCOUNT, MAIL_GOOGLE_COM);
         settingsListener = new SettingsListener();
         settings.registerOnSharedPreferenceChangeListener(settingsListener);
     }

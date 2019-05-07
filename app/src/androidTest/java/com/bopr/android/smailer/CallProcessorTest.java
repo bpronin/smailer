@@ -23,7 +23,6 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anySetOf;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.anyString;
@@ -42,7 +41,7 @@ public class CallProcessorTest extends BaseTest {
 
     private Database database;
     private Context context;
-    private GmailTransport transport;
+    private GoogleMailSupport transport;
     private Notifications notifications;
     private NetworkInfo networkInfo;
     private SharedPreferences preferences;
@@ -74,15 +73,13 @@ public class CallProcessorTest extends BaseTest {
         database = new Database(getContext(), "test.sqlite"); /* not mock context */
         database.destroy();
 
-        transport = mock(GmailTransport.class);
+        transport = mock(GoogleMailSupport.class);
         notifications = mock(Notifications.class);
         locator = mock(GeoLocator.class);
     }
 
     /**
      * Tests normal mailer behaviour.
-     *
-     * @throws Exception when fails
      */
     @Test
     public void testSend() throws Exception {
@@ -91,7 +88,7 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt());
-        doAnswer(inits).when(transport).init(anyString(), anyListOf(String.class));
+        doAnswer(inits).when(transport).init(anyString(), anyString());
         doAnswer(sends).when(transport).send(any(MailMessage.class));
 
         CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
@@ -115,7 +112,7 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt());
-        doAnswer(inits).when(transport).init(anyString(), anyListOf(String.class));
+        doAnswer(inits).when(transport).init(anyString(), anyString());
         doAnswer(sends).when(transport).send(any(MailMessage.class));
 
         when(preferences.getString(eq(KEY_PREF_EMAIL_LOCALE), anyString())).thenReturn("ru_RU");
@@ -141,7 +138,7 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt());
-        doAnswer(inits).when(transport).init(anyString(), anyListOf(String.class));
+        doAnswer(inits).when(transport).init(anyString(), anyString());
         doAnswer(sends).when(transport).send(any(MailMessage.class));
         when(networkInfo.isConnected()).thenReturn(false);
 
@@ -166,7 +163,7 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt());
-        doAnswer(inits).when(transport).init(anyString(), anyListOf(String.class));
+        doAnswer(inits).when(transport).init(anyString(), anyString());
         doAnswer(sends).when(transport).send(any(MailMessage.class));
 
         when(preferences.getString(eq(KEY_PREF_SENDER_ACCOUNT), anyString())).thenReturn(null);
@@ -192,7 +189,7 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt());
-        doAnswer(inits).when(transport).init(anyString(), anyListOf(String.class));
+        doAnswer(inits).when(transport).init(anyString(), anyString());
         doAnswer(sends).when(transport).send(any(MailMessage.class));
 
         when(preferences.getString(eq(KEY_PREF_RECIPIENTS_ADDRESS), anyString())).thenReturn(null);
@@ -218,7 +215,7 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt());
-        doAnswer(inits).when(transport).init(anyString(), anyListOf(String.class));
+        doAnswer(inits).when(transport).init(anyString(), anyString());
         doAnswer(sends).when(transport).send(any(MailMessage.class));
         doThrow(AuthenticationFailedException.class).when(transport).send(any(MailMessage.class));
 
@@ -243,7 +240,7 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector errors = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt());
-        doAnswer(inits).when(transport).init(anyString(), anyListOf(String.class));
+        doAnswer(inits).when(transport).init(anyString(), anyString());
         doAnswer(sends).when(transport).send(any(MailMessage.class));
         doThrow(MessagingException.class).when(transport).send(any(MailMessage.class));
 

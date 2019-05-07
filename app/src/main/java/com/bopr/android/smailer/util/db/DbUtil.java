@@ -66,12 +66,10 @@ public class DbUtil {
         return requireNonNull(getDouble(cursor, columnName));
     }
 
-    public static String[] args(Object... values) {
-        String[] strings = new String[values.length];
-        for (int i = 0; i < values.length; i++) {
-            strings[i] = String.valueOf(values[i]);
-        }
-        return strings;
+    public static String backupTable(SQLiteDatabase db, String tableName) {
+        String newTableName = tableName + "_back";
+        db.execSQL("ALTER TABLE " + tableName + " RENAME TO " + newTableName);
+        return newTableName;
     }
 
     @SuppressWarnings("TryFinallyCanBeTryWithResources")
@@ -82,7 +80,10 @@ public class DbUtil {
             while (!cursor.isAfterLast()) {
                 ContentValues values = new ContentValues();
                 for (int i = 0; i < cursor.getColumnCount(); i++) {
-                     values.put(cursor.getColumnName(i), cursor.getString(i));
+                    // TODO: 07.05.2019 check column exists 
+//                    if () {
+                        values.put(cursor.getColumnName(i), cursor.getString(i));
+//                    }
                 }
                 db.insert(tableTo, null, values);
 
@@ -107,4 +108,5 @@ public class DbUtil {
             db.endTransaction();
         }
     }
+
 }
