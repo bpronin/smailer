@@ -107,4 +107,19 @@ public class GoogleDrive {
         return null;
     }
 
+    public void clear() throws IOException {
+        for (File file : list()) {
+            service.files()
+                    .delete(file.getId())
+                    .execute();
+        }
+    }
+
+    public List<File> list() throws IOException {
+        return service.files().list()
+                .setSpaces(APP_DATA_FOLDER)
+                .setFields("files(id, name)")
+                .execute()
+                .getFiles();
+    }
 }

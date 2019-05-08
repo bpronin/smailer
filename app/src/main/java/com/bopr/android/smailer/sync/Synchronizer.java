@@ -13,24 +13,15 @@ import com.bopr.android.smailer.Settings;
 import com.google.api.client.json.JsonGenerator;
 import com.google.api.client.json.JsonParser;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.common.collect.ImmutableSet;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import static com.bopr.android.smailer.Settings.KEY_PREF_SYNC_ITEMS;
-import static com.bopr.android.smailer.Settings.VAL_PREF_SYNC_EVENTS;
-import static com.bopr.android.smailer.Settings.VAL_PREF_SYNC_FILTER_LISTS;
 
 class Synchronizer {
 
-    private static final String FILE_EVENTS = "events.json";
-    private static final String FILE_FILTERS = "filters.json";
+    private static final String FILENAME = "data.json";
 
     private final GoogleDrive drive;
     private final Database database;
@@ -43,64 +34,60 @@ class Synchronizer {
     }
 
     void execute() throws IOException {
-        Set<String> items = settings.getStringSet(KEY_PREF_SYNC_ITEMS, ImmutableSet.<String>of());
-
-        if (items.contains(VAL_PREF_SYNC_EVENTS)) {
-            List<PhoneEvent> events = downloadEvents();
-            for (PhoneEvent event : events) {
-                database.putEvent(event);
-            }
-            uploadJson(FILE_EVENTS, database.getEvents().toList());
-        }
-
-        if (items.contains(VAL_PREF_SYNC_FILTER_LISTS)) {
-            PhoneEventFilter filter = downloadFilters();
-            if (filter != null) {
-                mergeFilter(filter, settings);
-            }
-            uploadJson(FILE_FILTERS, settings.getFilter());
+        SyncData remoteData = downloadData();
+        SyncData localData = createData();
+        if (remoteData != null && remoteData.time > localData.time) {
+            applyData(remoteData);
+        } else {
+            uploadData(localData);
         }
     }
 
-    private void mergeFilter(PhoneEventFilter newFilter, Settings settings) {
+    private SyncData createData() {
         PhoneEventFilter filter = settings.getFilter();
-        filter.getPhoneWhitelist().addAll(newFilter.getPhoneWhitelist());
-        filter.getPhoneBlacklist().addAll(newFilter.getPhoneBlacklist());
-        filter.getTextWhitelist().addAll(newFilter.getTextWhitelist());
-        filter.getTextBlacklist().addAll(newFilter.getTextBlacklist());
-        settings.putFilter(filter);
+
+        SyncData data = new SyncData();
+        data.time = settings.getLastSyncTime();
+        data.phoneBlacklist = filter.getPhoneBlacklist();
+        data.phoneWhitelist = filter.getPhoneWhitelist();
+        data.textBlacklist = filter.getTextBlacklist();
+        data.textWhitelist = filter.getTextWhitelist();
+        data.events = database.getEvents().toList();
+
+        return data;
     }
 
-    @NonNull
-    private List<PhoneEvent> downloadEvents() throws IOException {
-        List<PhoneEvent> events = new ArrayList<>();
-        InputStream stream = drive.open(FILE_EVENTS);
-        if (stream != null) {
-            JsonParser parser = JacksonFactory.getDefaultInstance().createJsonParser(stream);
-            parser.parseArrayAndClose(events, PhoneEvent.class);
+    private void applyData(SyncData data) {
+        for (PhoneEvent event : data.events) {
+            database.putEvent(event);
         }
-        return events;
+
+        PhoneEventFilter filter = settings.getFilter();
+        filter.getPhoneWhitelist().addAll(data.phoneWhitelist);
+        filter.getPhoneBlacklist().addAll(data.phoneBlacklist);
+        filter.getTextWhitelist().addAll(data.textWhitelist);
+        filter.getTextBlacklist().addAll(data.textBlacklist);
+        settings.putFilter(filter);
+
+        settings.setLastSyncTime(data.time);
     }
 
     @Nullable
-    private PhoneEventFilter downloadFilters() throws IOException {
-        InputStream stream = drive.open(FILE_FILTERS);
+    private SyncData downloadData() throws IOException {
+        InputStream stream = drive.open(FILENAME);
         if (stream != null) {
             JsonParser parser = JacksonFactory.getDefaultInstance().createJsonParser(stream);
-            return parser.parseAndClose(PhoneEventFilter.class);
+            return parser.parseAndClose(SyncData.class);
         }
         return null;
     }
 
-    private void uploadJson(String filename, @NonNull Object value) throws IOException {
+    private void uploadData(@NonNull SyncData data) throws IOException {
         Writer writer = new StringWriter();
         JsonGenerator generator = JacksonFactory.getDefaultInstance().createJsonGenerator(writer);
-        generator.serialize(value);
+        generator.serialize(data);
         generator.flush();
-
-        String data = writer.toString();
-        drive.write(filename, data);
-
+        drive.write(FILENAME, writer.toString());
         generator.close();
     }
 

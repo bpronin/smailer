@@ -65,7 +65,7 @@ public class CallProcessorServiceTest extends BaseTest {
         Whitebox.setInternalState(service, "callProcessor", callProcessor);
 
         PhoneEvent event = new PhoneEvent();
-        event.setId(100L);
+        event.setStartTime(100L);
         event.setPhone("32121");
 
         service.onHandleIntent(CallProcessorService.createIntent(getContext(), event));

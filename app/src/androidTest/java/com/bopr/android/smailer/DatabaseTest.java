@@ -46,12 +46,11 @@ public class DatabaseTest extends BaseTest {
         database.putEvent(new PhoneEvent("9", false, 9000L, 0L, false, null, null, "Test 4", PhoneEvent.STATE_PENDING));
         database.putEvent(new PhoneEvent("10", true, 10000L, 20000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), "Test 10", PhoneEvent.STATE_PENDING));
 
-        List<PhoneEvent> items = database.getEvents().asList();
+        List<PhoneEvent> items = database.getEvents().toList();
 
         assertEquals(10, items.size());
 
         PhoneEvent message = items.get(0); /* descending order so it should be the last */
-        assertNotNull(message.getId());
         assertEquals(PhoneEvent.STATE_PENDING, message.getState());
         assertEquals("10", message.getPhone());
         assertTrue(message.isIncoming());
@@ -73,11 +72,10 @@ public class DatabaseTest extends BaseTest {
         PhoneEvent message = new PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), "Test 1", PhoneEvent.STATE_PENDING);
         database.putEvent(message);
 
-        List<PhoneEvent> items = database.getEvents().asList();
+        List<PhoneEvent> items = database.getEvents().toList();
         assertEquals(1, items.size());
 
         message = items.get(0);
-        assertTrue(message.getId() != -1);
         assertEquals(PhoneEvent.STATE_PENDING, message.getState());
         assertEquals("1", message.getPhone());
         assertTrue(message.isIncoming());
@@ -101,11 +99,10 @@ public class DatabaseTest extends BaseTest {
         message.setDetails("New details");
         database.putEvent(message);
 
-        items = database.getEvents().asList();
+        items = database.getEvents().toList();
         assertEquals(1, items.size());
 
         message = items.get(0);
-        assertTrue(message.getId() != -1);
         assertEquals(PhoneEvent.STATE_PENDING, message.getState());
         assertEquals("2", message.getPhone());
         assertFalse(message.isIncoming());
@@ -212,12 +209,11 @@ public class DatabaseTest extends BaseTest {
         database.putEvent(new PhoneEvent("9", false, 9000L, 0L, false, null, null, "Test 4", PhoneEvent.STATE_PENDING));
         database.putEvent(new PhoneEvent("10", true, 10000L, 20000L, false, null, null, "Test 10", PhoneEvent.STATE_PENDING));
 
-        List<PhoneEvent> items = database.getPendingEvents().asList();
+        List<PhoneEvent> items = database.getPendingEvents().toList();
 
         assertEquals(5, items.size());
 
         PhoneEvent message = items.get(0); /* descending order so it should be the last */
-        assertNotNull(message.getId());
         assertEquals("Test 10", message.getDetails());
     }
 
