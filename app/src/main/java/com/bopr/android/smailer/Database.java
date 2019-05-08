@@ -12,6 +12,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.bopr.android.smailer.util.db.FieldDataConverter;
 import com.bopr.android.smailer.util.db.XCursor;
 
 import org.slf4j.Logger;
@@ -20,8 +21,12 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.TimeUnit;
 
 import static android.database.sqlite.SQLiteDatabase.CONFLICT_IGNORE;
+import static com.bopr.android.smailer.PhoneEvent.STATE_IGNORED;
+import static com.bopr.android.smailer.PhoneEvent.STATE_PENDING;
+import static com.bopr.android.smailer.PhoneEvent.STATE_PROCESSED;
 import static com.bopr.android.smailer.util.Util.requireNonNull;
 import static com.bopr.android.smailer.util.db.DbUtil.replaceTable;
+import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
 
 /**
@@ -120,7 +125,7 @@ public class Database {
 
     public PhoneEventCursor getPendingEvents() {
         return new PhoneEventCursor(helper.getReadableDatabase().query(TABLE_EVENTS, null,
-                COLUMN_STATE + "=?", strings(PhoneEvent.STATE_PENDING), null, null,
+                COLUMN_STATE + "=?", strings(STATE_PENDING), null, null,
                 COLUMN_START_TIME + " DESC")
         );
     }
@@ -308,7 +313,7 @@ public class Database {
     private String[] strings(Object... values) {
         String[] strings = new String[values.length];
         for (int i = 0; i < values.length; i++) {
-            strings[i] = String.valueOf(values[i]);
+            strings[i] = valueOf(values[i]);
         }
         return strings;
     }
@@ -361,7 +366,27 @@ public class Database {
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             /* see https://www.techonthenet.com/sqlite/tables/alter_table.php */
-            replaceTable(db, TABLE_EVENTS, EVENTS_TABLE_SQL);
+            if (oldVersion < 3) {
+                replaceTable(db, TABLE_EVENTS, EVENTS_TABLE_SQL, new FieldDataConverter() {
+
+                    @Override
+                    public String convert(String column, Cursor cursor) {
+                        String s = super.convert(column, cursor);
+                        if (column.equals(COLUMN_STATE)) {
+                            switch (s) {
+                                case "PENDING":
+                                    return valueOf(STATE_PENDING);
+                                case "IGNORED":
+                                    return valueOf(STATE_IGNORED);
+                                case "PROCESSED":
+                                    return valueOf(STATE_PROCESSED);
+                            }
+                        }
+                        return s;
+                    }
+                });
+            }
+
             log.debug("Upgraded");
         }
 

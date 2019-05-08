@@ -60,7 +60,11 @@ public class MainActivity extends AppActivity {
         if (intent.hasExtra("screen")) {
             switch (intent.getStringExtra("screen")) {
                 case "debug":
-                    startActivity(new Intent(this, DebugActivity.class));
+                    try {
+                        startActivity(new Intent(this, Class.forName("com.bopr.android.smailer.ui.DebugActivity")));
+                    } catch (ClassNotFoundException x) {
+                        throw new IllegalArgumentException(x);
+                    }
                     break;
             }
         }

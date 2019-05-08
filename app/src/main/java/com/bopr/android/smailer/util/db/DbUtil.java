@@ -73,35 +73,37 @@ public class DbUtil {
     }
 
     @SuppressWarnings("TryFinallyCanBeTryWithResources")
-    public static void copyTable(SQLiteDatabase db, String tableFrom, String tableTo) {
-        Cursor cursor = db.query(tableFrom, null, null, null, null, null, null);
+    public static void copyTable(SQLiteDatabase db, String tableFrom, String tableTo,
+                                 FieldDataConverter converter) {
+        Cursor cursorTo = db.query(tableTo, null, null, null, null, null, null);
+        Cursor cursorFrom = db.query(tableFrom, null, null, null, null, null, null);
         try {
-            cursor.moveToFirst();
-            while (!cursor.isAfterLast()) {
+            cursorFrom.moveToFirst();
+            while (!cursorFrom.isAfterLast()) {
                 ContentValues values = new ContentValues();
-                for (int i = 0; i < cursor.getColumnCount(); i++) {
-                    // TODO: 07.05.2019 check column exists 
-//                    if () {
-                        values.put(cursor.getColumnName(i), cursor.getString(i));
-//                    }
+                for (String column : cursorTo.getColumnNames()) {
+                    values.put(column, converter.convert(column, cursorFrom));
                 }
+
                 db.insert(tableTo, null, values);
 
-                cursor.moveToNext();
+                cursorFrom.moveToNext();
             }
         } finally {
-            cursor.close();
+            cursorFrom.close();
+            cursorTo.close();
         }
     }
 
-    public static void replaceTable(SQLiteDatabase db, String table, String createSql) {
+    public static void replaceTable(SQLiteDatabase db, String table, String createSql,
+                                    FieldDataConverter converter) {
         db.beginTransaction();
         try {
             String old = table + "_old";
             db.execSQL("ALTER TABLE " + table + " RENAME TO " + old);
             db.execSQL(createSql);
-            copyTable(db, old, table);
-            db.execSQL("DROP TABLE " + old);
+            copyTable(db, old, table, converter);
+//            db.execSQL("DROP TABLE " + old);
 
             db.setTransactionSuccessful();
         } finally {
