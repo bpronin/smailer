@@ -2,6 +2,9 @@ package com.bopr.android.ui_automation;
 
 import android.annotation.SuppressLint;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.filters.LargeTest;
+
 import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.GeoCoordinates;
 import com.bopr.android.smailer.PhoneEvent;
@@ -10,9 +13,6 @@ import com.bopr.android.smailer.ui.MainActivity;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.filters.LargeTest;
 
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
@@ -115,7 +115,7 @@ public class MainActivityTest extends BaseActivityTest {
     public void testLogView() {
         Database database = new Database(RULE.getActivity());
         database.clearEvents();
-        database.putEvent(new PhoneEvent("10", true, 10000L, 20000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), "Test 10", PhoneEvent.STATE_PENDING));
+        database.putEvent(new PhoneEvent("10", true, 10000L, 20000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), "Test 10", PhoneEvent.STATE_PENDING, ));
 
         onMenuButton().perform(click());
         onView(withText(R.string.call_history)).perform(click());

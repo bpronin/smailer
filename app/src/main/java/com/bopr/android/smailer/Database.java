@@ -12,6 +12,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.db.FieldDataConverter;
 import com.bopr.android.smailer.util.db.XCursor;
 
@@ -40,7 +41,7 @@ public class Database {
     private static Logger log = LoggerFactory.getLogger("Database");
 
     public static final String DATABASE_NAME = "smailer.sqlite";
-    private static final int DB_VERSION = 3;
+    private static final int DB_VERSION = 4;
 
     private static final String DATABASE_EVENT = "database-event";
 
@@ -65,6 +66,7 @@ public class Database {
     public static final String COLUMN_LAST_LONGITUDE = "last_longitude";
     public static final String COLUMN_LAST_LOCATION_TIME = "last_location_time";
     public static final String COLUMN_READ = "message_read";
+    public static final String COLUMN_RECIPIENT = "recipient";
 
     private final String name;
     private long purgePeriod = TimeUnit.DAYS.toMillis(7);
@@ -148,6 +150,7 @@ public class Database {
         values.put(COLUMN_TEXT, event.getText());
         values.put(COLUMN_DETAILS, event.getDetails());
         values.put(COLUMN_READ, event.isRead());
+        values.put(COLUMN_RECIPIENT, event.getRecipient());
         GeoCoordinates location = event.getLocation();
         if (location != null) {
             values.put(COLUMN_LATITUDE, location.getLatitude());
@@ -155,8 +158,8 @@ public class Database {
         }
 
         if (db.insertWithOnConflict(TABLE_EVENTS, null, values, CONFLICT_IGNORE) == -1) {
-            db.update(TABLE_EVENTS, values, COLUMN_START_TIME + "=? AND " + COLUMN_PHONE + "=?",
-                    strings(event.getStartTime(), event.getPhone()));
+            db.update(TABLE_EVENTS, values, COLUMN_START_TIME + "=? AND " + COLUMN_RECIPIENT + "=?",
+                    strings(event.getStartTime(), event.getRecipient()));
             log.debug("Updated: " + values);
         } else {
             log.debug("Inserted: " + values);
@@ -330,10 +333,11 @@ public class Database {
                         COLUMN_LATITUDE + " REAL, " +
                         COLUMN_LONGITUDE + " REAL, " +
                         COLUMN_PHONE + " TEXT(25) NOT NULL," +
+                        COLUMN_RECIPIENT + " TEXT(25) NOT NULL," +
                         COLUMN_TEXT + " TEXT(256)," +
                         COLUMN_READ + " INTEGER NOT NULL DEFAULT(0), " +
                         COLUMN_DETAILS + " TEXT(256), " +
-                        "PRIMARY KEY (" + COLUMN_START_TIME + ", " + COLUMN_PHONE + ")" +
+                        "PRIMARY KEY (" + COLUMN_START_TIME + ", " + COLUMN_RECIPIENT + ")" +
                         ")";
 
         private static final String SYSTEM_TABLE_SQL =
@@ -366,7 +370,7 @@ public class Database {
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             /* see https://www.techonthenet.com/sqlite/tables/alter_table.php */
-            if (oldVersion < 3) {
+            if (oldVersion < DB_VERSION) {
                 replaceTable(db, TABLE_EVENTS, EVENTS_TABLE_SQL, new FieldDataConverter() {
 
                     @Override
@@ -380,8 +384,17 @@ public class Database {
                                     return valueOf(STATE_IGNORED);
                                 case "PROCESSED":
                                     return valueOf(STATE_PROCESSED);
+                                default:
+                                    return s;
+                            }
+                        } else if (column.equals(COLUMN_RECIPIENT)) {
+                            if (s == null) {
+                                return AndroidUtil.devicePhoneNumber(context);
+                            } else {
+                                return s;
                             }
                         }
+
                         return s;
                     }
                 });
@@ -412,6 +425,8 @@ public class Database {
             event.setMissed(getBoolean(COLUMN_IS_MISSED));
             event.setText(getString(COLUMN_TEXT));
             event.setDetails(getString(COLUMN_DETAILS));
+            event.setRecipient(getString(COLUMN_RECIPIENT));
+            event.setRead(getBoolean(COLUMN_READ));
             event.setLocation(new GeoCoordinates(
                     getDouble(COLUMN_LATITUDE),
                     getDouble(COLUMN_LONGITUDE)

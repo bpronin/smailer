@@ -17,6 +17,7 @@ import static com.bopr.android.smailer.Database.COLUMN_IS_INCOMING;
 import static com.bopr.android.smailer.Database.COLUMN_IS_MISSED;
 import static com.bopr.android.smailer.Database.COLUMN_LOCATION;
 import static com.bopr.android.smailer.Database.COLUMN_PHONE;
+import static com.bopr.android.smailer.Database.COLUMN_RECIPIENT;
 import static com.bopr.android.smailer.Database.COLUMN_START_TIME;
 import static com.bopr.android.smailer.Database.COLUMN_STATE;
 import static com.bopr.android.smailer.Database.COLUMN_TEXT;
@@ -45,6 +46,8 @@ public class PhoneEvent implements Parcelable {
     private boolean missed;
     @Key(COLUMN_PHONE)
     private String phone;
+    @Key(COLUMN_RECIPIENT)
+    private String recipient;
     @Key(COLUMN_START_TIME)
     private long startTime;
     @Key(COLUMN_END_TIME)
@@ -65,7 +68,8 @@ public class PhoneEvent implements Parcelable {
     }
 
     public PhoneEvent(String phone, boolean incoming, long startTime, Long endTime, boolean missed,
-                      String text, GeoCoordinates location, String details, @EventState int state) {
+                      String text, GeoCoordinates location, String details, @EventState int state,
+                      String recipient) {
         this.text = text;
         this.endTime = endTime;
         this.startTime = startTime;
@@ -75,6 +79,7 @@ public class PhoneEvent implements Parcelable {
         this.location = location;
         this.details = details;
         this.state = state;
+        this.recipient = recipient;
     }
 
     public boolean isSms() {
@@ -170,6 +175,14 @@ public class PhoneEvent implements Parcelable {
         this.read = value;
     }
 
+    public String getRecipient() {
+        return recipient;
+    }
+
+    public void setRecipient(String recipient) {
+        this.recipient = recipient;
+    }
+
     @Override
     @NonNull
     public String toString() {
@@ -177,6 +190,7 @@ public class PhoneEvent implements Parcelable {
                 "incoming=" + incoming +
                 ", missed=" + missed +
                 ", phone='" + phone + '\'' +
+                ", recipient='" + recipient + '\'' +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
                 ", text='" + text + '\'' +
@@ -193,6 +207,7 @@ public class PhoneEvent implements Parcelable {
         incoming = in.readByte() != 0;
         missed = in.readByte() != 0;
         phone = in.readString();
+        recipient = in.readString();
         startTime = in.readLong();
         if (in.readByte() == 0) {
             endTime = null;
@@ -211,6 +226,7 @@ public class PhoneEvent implements Parcelable {
         dest.writeByte((byte) (incoming ? 1 : 0));
         dest.writeByte((byte) (missed ? 1 : 0));
         dest.writeString(phone);
+        dest.writeString(recipient);
         dest.writeLong(startTime);
         if (endTime == null) {
             dest.writeByte((byte) 0);

@@ -6,10 +6,10 @@ import android.content.Intent;
 import android.os.Build;
 import android.telephony.SmsMessage;
 
+import androidx.annotation.NonNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import androidx.annotation.NonNull;
 
 import static android.content.Intent.ACTION_NEW_OUTGOING_CALL;
 import static android.provider.Telephony.Sms.Intents.getMessagesFromIntent;
@@ -19,6 +19,7 @@ import static android.telephony.TelephonyManager.EXTRA_STATE;
 import static android.telephony.TelephonyManager.EXTRA_STATE_IDLE;
 import static android.telephony.TelephonyManager.EXTRA_STATE_OFFHOOK;
 import static android.telephony.TelephonyManager.EXTRA_STATE_RINGING;
+import static com.bopr.android.smailer.util.AndroidUtil.devicePhoneNumber;
 import static java.lang.System.currentTimeMillis;
 
 /**
@@ -97,6 +98,7 @@ public class CallReceiver extends BroadcastReceiver {
 
     private void processCall(@NonNull Context context, boolean incoming, boolean missed) {
         PhoneEvent event = new PhoneEvent();
+        event.setRecipient(devicePhoneNumber(context));
         event.setPhone(lastCallNumber);
         event.setStartTime(callStartTime);
         event.setEndTime(currentTimeMillis());
@@ -120,13 +122,13 @@ public class CallReceiver extends BroadcastReceiver {
         PhoneEvent event = new PhoneEvent();
         event.setIncoming(true);
         if (messages.length > 0) {
-
             StringBuilder text = new StringBuilder();
             for (SmsMessage message : messages) {
                 text.append(message.getDisplayMessageBody());
             }
 
             event.setPhone(messages[0].getDisplayOriginatingAddress());
+            event.setRecipient(devicePhoneNumber(context));
             event.setStartTime(messages[0].getTimestampMillis()); /* time zone on emulator may be incorrect */
             event.setEndTime(event.getStartTime());
             event.setText(text.toString());

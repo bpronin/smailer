@@ -28,9 +28,11 @@ class Synchronizer {
 
     private final GoogleDrive drive;
     private final Database database;
+    private final Context context;
     private final Settings settings;
 
     Synchronizer(Context context, Account account, Database database, Settings settings) {
+        this.context = context;
         this.settings = settings;
         this.database = database;
         drive = new GoogleDrive(context, account);
@@ -41,6 +43,7 @@ class Synchronizer {
     }
 
     void synchronize() throws IOException {
+//        setLastSyncTime(0);
         SyncDto remoteData = downloadData();
         if (remoteData == null || remoteData.time <= getLastSyncTime()) {
             SyncDto localData = createData();
@@ -68,6 +71,9 @@ class Synchronizer {
 
     private void applyData(SyncDto data) {
         for (PhoneEvent event : data.events) {
+//            if (event.getRecipient() == null){
+//                event.setRecipient(AndroidUtil.devicePhoneNumber(context));
+//            }
             database.putEvent(event);
         }
 

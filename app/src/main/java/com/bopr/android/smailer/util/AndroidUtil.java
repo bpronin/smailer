@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.util.Patterns;
 
 import androidx.core.content.ContextCompat;
@@ -94,4 +95,9 @@ public class AndroidUtil {
         }
     }
 
+    @SuppressLint({"MissingPermission", "HardwareIds"})
+    public static String devicePhoneNumber(Context context) {
+        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        return tm != null ? tm.getLine1Number() : null;
+    }
 }

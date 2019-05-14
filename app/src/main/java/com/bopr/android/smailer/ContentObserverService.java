@@ -24,6 +24,7 @@ import java.util.Set;
 
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
 import static com.bopr.android.smailer.Settings.settings;
+import static com.bopr.android.smailer.util.AndroidUtil.devicePhoneNumber;
 
 /**
  * Listens to changes in sms content.
@@ -79,7 +80,7 @@ public class ContentObserverService extends Service {
         log.debug("Processing outgoing sms: " + id);
 
         Cursor query = getContentResolver().query(CONTENT_SMS_SENT, null, "_id=?", new String[]{id}, null);
-        PhoneEvent event = new SentSmsCursor(query).findFirst();
+        PhoneEvent event = new SentSmsCursor(this, query).findFirst();
         CallProcessorService.start(ContentObserverService.this, event);
     }
 
@@ -106,8 +107,11 @@ public class ContentObserverService extends Service {
 
     private static class SentSmsCursor extends XCursor<PhoneEvent> {
 
-        private SentSmsCursor(Cursor query) {
+        private final Context context;
+
+        private SentSmsCursor(Context context, Cursor query) {
             super(query);
+            this.context = context;
         }
 
         @Override
@@ -117,6 +121,7 @@ public class ContentObserverService extends Service {
 
             PhoneEvent event = new PhoneEvent();
             event.setIncoming(false);
+            event.setRecipient(devicePhoneNumber(context));
             event.setPhone(getString("address"));
             event.setStartTime(date);
             event.setEndTime(date);

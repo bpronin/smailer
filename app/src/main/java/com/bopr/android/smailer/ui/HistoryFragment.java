@@ -355,8 +355,10 @@ public class HistoryFragment extends BaseFragment {
 
                 });
 
-                event.setRead(true);
-                database.putEvent(event);
+                if (!event.isRead()) {
+                    event.setRead(true);
+                    database.putEvent(event);
+                }
             }
         }
 

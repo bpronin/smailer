@@ -81,6 +81,7 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
+import static com.bopr.android.smailer.util.AndroidUtil.devicePhoneNumber;
 import static com.bopr.android.smailer.util.ResourceUtil.showToast;
 import static com.bopr.android.smailer.util.Util.asSet;
 import static com.bopr.android.smailer.util.Util.commaJoin;
@@ -188,7 +189,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        onStartProcessSingleEvent();
+                        onProcessSingleEvent();
                     }
                 }),
 
@@ -549,10 +550,11 @@ public class DebugFragment extends BasePreferenceFragment {
         authorizator.selectAccount();
     }
 
-    private void onStartProcessSingleEvent() {
+    private void onProcessSingleEvent() {
         long start = System.currentTimeMillis();
 
         PhoneEvent event = new PhoneEvent();
+        event.setRecipient(devicePhoneNumber(context));
         event.setPhone("+12345678901");
         event.setText("SMS TEXT");
         event.setIncoming(true);
@@ -604,23 +606,25 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private void onAddHistoryItem() {
-        database.putEvent(new PhoneEvent("+79052345670", true, System.currentTimeMillis(), null, false, "Debug message", null, null, PhoneEvent.STATE_PENDING));
+        database.putEvent(new PhoneEvent("+79052345670", true, System.currentTimeMillis(), null, false,
+                "Debug message", null, null, PhoneEvent.STATE_PENDING, devicePhoneNumber(context)));
         database.notifyChanged();
         showToast(context, "Done");
     }
 
     private void onPopulateHistory() {
         long time = System.currentTimeMillis();
-        database.putEvent(new PhoneEvent("+79052345671", true, time, null, false, "Debug message", null, null, PhoneEvent.STATE_PENDING));
-        database.putEvent(new PhoneEvent("+79052345672", false, time += 1000, null, false, "Debug message", null, null, PhoneEvent.STATE_PROCESSED));
-        database.putEvent(new PhoneEvent("+79052345673", true, time += 1000, time + 10000, false, null, null, null, PhoneEvent.STATE_IGNORED));
-        database.putEvent(new PhoneEvent("+79052345674", false, time += 1000, time + 10000, false, null, null, null, PhoneEvent.STATE_PENDING));
-        database.putEvent(new PhoneEvent("+79052345675", true, time += 1000, time + 10000, true, null, null, null, PhoneEvent.STATE_PENDING));
-        database.putEvent(new PhoneEvent("+79052345671", true, time += 1000, null, false, "Debug message", null, "Test exception +79052345671", PhoneEvent.STATE_PENDING));
-        database.putEvent(new PhoneEvent("+79052345672", false, time += 1000, null, false, "Debug message", null, "Test exception +79052345672", PhoneEvent.STATE_PENDING));
-        database.putEvent(new PhoneEvent("+79052345673", true, time += 1000, time + 10000, false, null, null, "Test exception +79052345673", PhoneEvent.STATE_PENDING));
-        database.putEvent(new PhoneEvent("+79052345674", false, time += 1000, time + 10000, false, null, null, "Test exception +79052345674", PhoneEvent.STATE_PENDING));
-        database.putEvent(new PhoneEvent("+79052345675", true, time += 1000, time + 10000, true, null, null, "Test exception +79052345675", PhoneEvent.STATE_PENDING));
+        String recipient = devicePhoneNumber(context);
+        database.putEvent(new PhoneEvent("+79052345671", true, time, null, false, "Debug message", null, null, PhoneEvent.STATE_PENDING, recipient));
+        database.putEvent(new PhoneEvent("+79052345672", false, time += 1000, null, false, "Debug message", null, null, PhoneEvent.STATE_PROCESSED, recipient));
+        database.putEvent(new PhoneEvent("+79052345673", true, time += 1000, time + 10000, false, null, null, null, PhoneEvent.STATE_IGNORED, recipient));
+        database.putEvent(new PhoneEvent("+79052345674", false, time += 1000, time + 10000, false, null, null, null, PhoneEvent.STATE_PENDING, recipient));
+        database.putEvent(new PhoneEvent("+79052345675", true, time += 1000, time + 10000, true, null, null, null, PhoneEvent.STATE_PENDING, recipient));
+        database.putEvent(new PhoneEvent("+79052345671", true, time += 1000, null, false, "Debug message", null, "Test exception +79052345671", PhoneEvent.STATE_PENDING, recipient));
+        database.putEvent(new PhoneEvent("+79052345672", false, time += 1000, null, false, "Debug message", null, "Test exception +79052345672", PhoneEvent.STATE_PENDING, recipient));
+        database.putEvent(new PhoneEvent("+79052345673", true, time += 1000, time + 10000, false, null, null, "Test exception +79052345673", PhoneEvent.STATE_PENDING, recipient));
+        database.putEvent(new PhoneEvent("+79052345674", false, time += 1000, time + 10000, false, null, null, "Test exception +79052345674", PhoneEvent.STATE_PENDING, recipient));
+        database.putEvent(new PhoneEvent("+79052345675", true, time += 1000, time + 10000, true, null, null, "Test exception +79052345675", PhoneEvent.STATE_PENDING, recipient));
         database.notifyChanged();
 
         showToast(context, "Done");
