@@ -32,8 +32,7 @@ public class Settings extends SharedPreferencesWrapper {
     private static final int SETTINGS_VERSION = 2;
     public static final String PREFERENCES_STORAGE_NAME = "com.bopr.android.smailer_preferences";
 
-    public static final String KEY_UPDATE_TIME = "update_time";
-
+    public static final String KEY_SYNC_TIME = "sync_time"; /* hidden */
     public static final String KEY_SETTINGS_VERSION = "settings_version";
     public static final String KEY_PREF_SENDER_ACCOUNT = "sender_account";
     public static final String KEY_PREF_RECIPIENTS_ADDRESS = "recipients_address";
@@ -181,14 +180,6 @@ public class Settings extends SharedPreferencesWrapper {
                 .putString(KEY_PREF_FILTER_TEXT_BLACKLIST, commaJoin(filter.getTextBlacklist()))
                 .putString(KEY_PREF_FILTER_TEXT_WHITELIST, commaJoin(filter.getTextWhitelist()))
                 .apply();
-    }
-
-    public long getLastSyncTime() {
-        return getLong(KEY_UPDATE_TIME, System.currentTimeMillis());
-    }
-
-    public void setLastSyncTime(long time) {
-        edit().putLong(KEY_UPDATE_TIME, time).apply();
     }
 
     public static class BuildInfo {

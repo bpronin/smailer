@@ -114,7 +114,7 @@ public class GoogleAuthorizationHelper {
                 "oauth2: " + join(" ", scopes),
                 null,
                 fragment.requireActivity(),
-                new PermissionRequestCallback(accountName),
+                new AuthTokenAcquireCallback(accountName),
                 null  /* callback executing in main thread */
         );
     }
@@ -142,9 +142,9 @@ public class GoogleAuthorizationHelper {
         return new GoogleAccountManager(context).getAccounts()[0];
     }
 
-    private class PermissionRequestCallback implements AccountManagerCallback<Bundle> {
+    private class AuthTokenAcquireCallback implements AccountManagerCallback<Bundle> {
 
-        private PermissionRequestCallback(String accountName) {
+        private AuthTokenAcquireCallback(String accountName) {
             this.accountName = accountName;
         }
 

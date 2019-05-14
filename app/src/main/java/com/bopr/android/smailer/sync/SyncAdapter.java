@@ -7,9 +7,7 @@ import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
 
-import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.GoogleAuthorizationHelper;
-import com.bopr.android.smailer.Settings;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,11 +35,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority,
                               ContentProviderClient provider, SyncResult syncResult) {
-        Database database = new Database(getContext());
-        Settings settings = new Settings(getContext());
-        Synchronizer synchronizer = new Synchronizer(getContext(), account, database, settings);
         try {
-            synchronizer.execute();
+            new Synchronizer(getContext(), account).synchronize();
         } catch (Exception x) {
             log.error("Synchronization failed ", x);
         }

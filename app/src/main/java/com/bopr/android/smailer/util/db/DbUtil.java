@@ -7,6 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.Set;
+
+import static com.bopr.android.smailer.util.Util.asSet;
 import static com.bopr.android.smailer.util.Util.requireNonNull;
 
 /**
@@ -66,32 +69,29 @@ public class DbUtil {
         return requireNonNull(getDouble(cursor, columnName));
     }
 
-    public static String backupTable(SQLiteDatabase db, String tableName) {
-        String newTableName = tableName + "_back";
-        db.execSQL("ALTER TABLE " + tableName + " RENAME TO " + newTableName);
-        return newTableName;
-    }
-
     @SuppressWarnings("TryFinallyCanBeTryWithResources")
     public static void copyTable(SQLiteDatabase db, String tableFrom, String tableTo,
                                  FieldDataConverter converter) {
-        Cursor cursorTo = db.query(tableTo, null, null, null, null, null, null);
-        Cursor cursorFrom = db.query(tableFrom, null, null, null, null, null, null);
+        Cursor dest = db.query(tableTo, null, null, null, null, null, null);
+        Cursor src = db.query(tableFrom, null, null, null, null, null, null);
+        Set<String> srcColumns = asSet(src.getColumnNames());
         try {
-            cursorFrom.moveToFirst();
-            while (!cursorFrom.isAfterLast()) {
+            src.moveToFirst();
+            while (!src.isAfterLast()) {
                 ContentValues values = new ContentValues();
-                for (String column : cursorTo.getColumnNames()) {
-                    values.put(column, converter.convert(column, cursorFrom));
+                for (String column : dest.getColumnNames()) {
+                    if (srcColumns.contains(column)) {
+                        values.put(column, converter.convert(column, src));
+                    }
                 }
 
                 db.insert(tableTo, null, values);
 
-                cursorFrom.moveToNext();
+                src.moveToNext();
             }
         } finally {
-            cursorFrom.close();
-            cursorTo.close();
+            src.close();
+            dest.close();
         }
     }
 
@@ -103,7 +103,7 @@ public class DbUtil {
             db.execSQL("ALTER TABLE " + table + " RENAME TO " + old);
             db.execSQL(createSql);
             copyTable(db, old, table, converter);
-//            db.execSQL("DROP TABLE " + old);
+            db.execSQL("DROP TABLE " + old);
 
             db.setTransactionSuccessful();
         } finally {

@@ -38,7 +38,7 @@ public class GoogleDrive {
 
     private final Drive service;
 
-    GoogleDrive(Context context, Account account) {
+    public GoogleDrive(Context context, Account account) {
         GoogleAccountCredential credential = usingOAuth2(context, ImmutableSet.of(DRIVE_APPDATA))
                 .setSelectedAccount(account);
 

@@ -26,6 +26,6 @@ public class SynchronizerTest {
         Account account = GoogleAuthorizationHelper.primaryAccount(context);
         Database database = new Database(context);
         Synchronizer synchronizer = new Synchronizer(context, account, database, settings);
-        synchronizer.execute();
+        synchronizer.synchronize();
     }
 }

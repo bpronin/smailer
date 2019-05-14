@@ -1,6 +1,7 @@
 package com.bopr.android.smailer.ui;
 
 import android.Manifest;
+import android.accounts.Account;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -32,9 +33,11 @@ import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.RemoteControlService;
 import com.bopr.android.smailer.Settings;
+import com.bopr.android.smailer.sync.GoogleDrive;
 import com.bopr.android.smailer.sync.SyncAdapter;
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.ContentUtils;
+import com.google.android.gms.tasks.Tasks;
 import com.google.common.collect.ImmutableSet;
 
 import org.slf4j.Logger;
@@ -50,6 +53,7 @@ import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.Callable;
 
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
@@ -123,6 +127,14 @@ public class DebugFragment extends BasePreferenceFragment {
 
         PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(context);
         addCategory(screen, "Google drive",
+
+                createPreference("Clear data", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onGoogleDriveClear();
+                    }
+                }),
 
                 createPreference("Sync data", new DefaultClickListener() {
 
@@ -631,6 +643,35 @@ public class DebugFragment extends BasePreferenceFragment {
             }
         }
         showMessage(context, b.toString());
+    }
+
+    private void onGoogleDriveClear() {
+        Tasks.call(new Callable<String>() {
+
+            @Override
+            public String call() throws Exception {
+                Account account = GoogleAuthorizationHelper.selectedAccount(context);
+                GoogleDrive drive = new GoogleDrive(context, account);
+                drive.clear();
+                return null;
+            }
+        });
+
+        showToast(context, "Done");
+    }
+
+    private void onGoogleDriveList() {
+        Tasks.call(new Callable<String>() {
+
+            @Override
+            public String call() throws Exception {
+                Account account = GoogleAuthorizationHelper.selectedAccount(context);
+                GoogleDrive drive = new GoogleDrive(context, account);
+                List<com.google.api.services.drive.model.File> files = drive.list();
+                return null;
+            }
+        });
+
     }
 
     private static void showMessage(Context context, String message) {

@@ -6,8 +6,11 @@ import com.google.api.client.util.Key;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Synchronization data transfer object.
+ */
 @SuppressWarnings("WeakerAccess")
-public class SyncData {
+public class SyncDto {
 
     @Key("time")
     public long time;

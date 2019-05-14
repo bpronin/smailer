@@ -19,6 +19,9 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 
+import static com.bopr.android.smailer.Settings.KEY_SYNC_TIME;
+import static java.lang.System.currentTimeMillis;
+
 class Synchronizer {
 
     private static final String FILENAME = "data.json";
@@ -33,21 +36,27 @@ class Synchronizer {
         drive = new GoogleDrive(context, account);
     }
 
-    void execute() throws IOException {
-        SyncData remoteData = downloadData();
-        SyncData localData = createData();
-        if (remoteData != null && remoteData.time > localData.time) {
-            applyData(remoteData);
-        } else {
+    Synchronizer(Context context, Account account) {
+        this(context, account, new Database(context), new Settings(context));
+    }
+
+    void synchronize() throws IOException {
+        SyncDto remoteData = downloadData();
+        if (remoteData == null || remoteData.time <= getLastSyncTime()) {
+            SyncDto localData = createData();
             uploadData(localData);
+            setLastSyncTime(localData.time);
+        } else {
+            applyData(remoteData);
+            setLastSyncTime(remoteData.time);
         }
     }
 
-    private SyncData createData() {
+    private SyncDto createData() {
         PhoneEventFilter filter = settings.getFilter();
 
-        SyncData data = new SyncData();
-        data.time = settings.getLastSyncTime();
+        SyncDto data = new SyncDto();
+        data.time = currentTimeMillis();
         data.phoneBlacklist = filter.getPhoneBlacklist();
         data.phoneWhitelist = filter.getPhoneWhitelist();
         data.textBlacklist = filter.getTextBlacklist();
@@ -57,7 +66,7 @@ class Synchronizer {
         return data;
     }
 
-    private void applyData(SyncData data) {
+    private void applyData(SyncDto data) {
         for (PhoneEvent event : data.events) {
             database.putEvent(event);
         }
@@ -68,27 +77,33 @@ class Synchronizer {
         filter.getTextWhitelist().addAll(data.textWhitelist);
         filter.getTextBlacklist().addAll(data.textBlacklist);
         settings.putFilter(filter);
-
-        settings.setLastSyncTime(data.time);
     }
 
     @Nullable
-    private SyncData downloadData() throws IOException {
+    private SyncDto downloadData() throws IOException {
         InputStream stream = drive.open(FILENAME);
         if (stream != null) {
             JsonParser parser = JacksonFactory.getDefaultInstance().createJsonParser(stream);
-            return parser.parseAndClose(SyncData.class);
+            return parser.parseAndClose(SyncDto.class);
         }
         return null;
     }
 
-    private void uploadData(@NonNull SyncData data) throws IOException {
+    private void uploadData(@NonNull SyncDto data) throws IOException {
         Writer writer = new StringWriter();
         JsonGenerator generator = JacksonFactory.getDefaultInstance().createJsonGenerator(writer);
         generator.serialize(data);
         generator.flush();
         drive.write(FILENAME, writer.toString());
         generator.close();
+    }
+
+    private long getLastSyncTime() {
+        return settings.getLong(KEY_SYNC_TIME, 0);
+    }
+
+    private void setLastSyncTime(long time) {
+        settings.edit().putLong(KEY_SYNC_TIME, time).apply();
     }
 
 }

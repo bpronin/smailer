@@ -26,6 +26,7 @@ import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.util.AndroidUtil.isValidEmailAddressList;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.Util.isEmpty;
+import static com.google.api.services.drive.DriveScopes.DRIVE_APPDATA;
 import static com.google.api.services.gmail.GmailScopes.GMAIL_SEND;
 import static java.lang.String.valueOf;
 
@@ -48,7 +49,8 @@ public class MainFragment extends BasePreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        authorizator = new GoogleAuthorizationHelper(this, KEY_PREF_SENDER_ACCOUNT, GMAIL_SEND);
+        authorizator = new GoogleAuthorizationHelper(this, KEY_PREF_SENDER_ACCOUNT, GMAIL_SEND,
+                DRIVE_APPDATA);
 
         settingsListener = new SettingsListener();
         settings.registerOnSharedPreferenceChangeListener(settingsListener);
