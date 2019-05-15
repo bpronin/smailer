@@ -129,7 +129,15 @@ public class DebugFragment extends BasePreferenceFragment {
         PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(context);
         addCategory(screen, "Google drive",
 
-                createPreference("Clear data", new DefaultClickListener() {
+//                createPreference("Upload data", new DefaultClickListener() {
+//
+//                    @Override
+//                    protected void onClick(Preference preference) {
+//                        onGoogleDriveUpload();
+//                    }
+//                }),
+//
+                createPreference("Clear remote data", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
@@ -650,19 +658,33 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private void onGoogleDriveClear() {
-        Tasks.call(new Callable<String>() {
+        Tasks.call(new Callable<Void>() {
 
             @Override
-            public String call() throws Exception {
+            public Void call() throws Exception {
                 Account account = GoogleAuthorizationHelper.selectedAccount(context);
-                GoogleDrive drive = new GoogleDrive(context, account);
-                drive.clear();
+                new GoogleDrive(context, account).clear();
                 return null;
             }
         });
 
         showToast(context, "Done");
     }
+
+//    private void onGoogleDriveUpload() {
+//        Tasks.call(new Callable<Void>() {
+//
+//            @Override
+//            public Void call() throws Exception {
+//                Account account = GoogleAuthorizationHelper.selectedAccount(context);
+//                GoogleDrive drive = new GoogleDrive(context, account);
+//                drive.clear();
+//                return null;
+//            }
+//        });
+//
+//        showToast(context, "Done");
+//    }
 
     private void onGoogleDriveList() {
         Tasks.call(new Callable<String>() {

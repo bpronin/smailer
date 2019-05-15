@@ -21,6 +21,15 @@
         android:key="options"
         android:title="@string/preferences" />
 
+    <androidx.preference.Preference
+        android:icon="@drawable/ic_remote"
+        android:key="remote_control"
+        android:title="@string/remote_control">
+        <intent
+            android:targetClass="com.bopr.android.smailer.ui.RemoteControlActivity"
+            android:targetPackage="com.bopr.android.smailer" />
+    </androidx.preference.Preference>
+
     <androidx.preference.PreferenceScreen
         android:icon="@drawable/ic_history"
         android:key="history"

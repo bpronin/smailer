@@ -44,9 +44,9 @@ class Synchronizer {
 
     void synchronize() throws IOException {
 //        setLastSyncTime(0);
-        SyncDto remoteData = downloadData();
+        SyncData remoteData = downloadData();
         if (remoteData == null || remoteData.time <= getLastSyncTime()) {
-            SyncDto localData = createData();
+            SyncData localData = createData();
             uploadData(localData);
             setLastSyncTime(localData.time);
         } else {
@@ -55,10 +55,10 @@ class Synchronizer {
         }
     }
 
-    private SyncDto createData() {
+    private SyncData createData() {
         PhoneEventFilter filter = settings.getFilter();
 
-        SyncDto data = new SyncDto();
+        SyncData data = new SyncData();
         data.time = currentTimeMillis();
         data.phoneBlacklist = filter.getPhoneBlacklist();
         data.phoneWhitelist = filter.getPhoneWhitelist();
@@ -69,7 +69,7 @@ class Synchronizer {
         return data;
     }
 
-    private void applyData(SyncDto data) {
+    private void applyData(SyncData data) {
         for (PhoneEvent event : data.events) {
 //            if (event.getRecipient() == null){
 //                event.setRecipient(AndroidUtil.devicePhoneNumber(context));
@@ -86,16 +86,16 @@ class Synchronizer {
     }
 
     @Nullable
-    private SyncDto downloadData() throws IOException {
+    private SyncData downloadData() throws IOException {
         InputStream stream = drive.open(FILENAME);
         if (stream != null) {
             JsonParser parser = JacksonFactory.getDefaultInstance().createJsonParser(stream);
-            return parser.parseAndClose(SyncDto.class);
+            return parser.parseAndClose(SyncData.class);
         }
         return null;
     }
 
-    private void uploadData(@NonNull SyncDto data) throws IOException {
+    private void uploadData(@NonNull SyncData data) throws IOException {
         Writer writer = new StringWriter();
         JsonGenerator generator = JacksonFactory.getDefaultInstance().createJsonGenerator(writer);
         generator.serialize(data);

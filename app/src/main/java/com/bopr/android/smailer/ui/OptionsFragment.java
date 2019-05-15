@@ -1,18 +1,16 @@
 package com.bopr.android.smailer.ui;
 
-import android.content.Intent;
 import android.os.Bundle;
-
-import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.util.AndroidUtil;
 
 import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 
+import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.util.AndroidUtil;
+
 import static com.bopr.android.smailer.Settings.KEY_PREF_DEVICE_ALIAS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
-import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL;
 import static com.bopr.android.smailer.util.Util.isEmpty;
 
 /**
@@ -52,14 +50,6 @@ public class OptionsFragment extends BasePreferenceFragment {
             }
         });
 
-        findPreference(KEY_PREF_REMOTE_CONTROL).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                startActivity(new Intent(getContext(), RemoteControlActivity.class));
-                return true;
-            }
-        });
     }
 
     @Override

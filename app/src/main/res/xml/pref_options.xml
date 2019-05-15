@@ -36,9 +36,4 @@
         android:key="mark_processed_sms_as_read"
         android:title="@string/mark_processed_sms_as_read" />
 
-    <androidx.preference.PreferenceScreen
-        android:key="remote_control"
-        android:icon="@drawable/ic_remote"
-        android:title="@string/remote_control" />
-
 </androidx.preference.PreferenceScreen>

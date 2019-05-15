@@ -33,7 +33,7 @@ public class PhoneEvent implements Parcelable {
 
     @Retention(SOURCE)
     @IntDef({STATE_PENDING, STATE_PROCESSED, STATE_IGNORED})
-    @interface EventState {
+    public @interface EventState {
     }
 
     public static final int STATE_PENDING = 0;
