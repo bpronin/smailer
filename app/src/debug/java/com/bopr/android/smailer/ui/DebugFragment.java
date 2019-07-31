@@ -62,7 +62,7 @@ import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_BLACKLIST;
+import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_PHONE_BLACKLIST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_TEXT_BLACKLIST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_NOTIFY_SEND_SUCCESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
@@ -92,6 +92,7 @@ import static com.google.api.services.drive.DriveScopes.DRIVE_APPDATA;
 import static com.google.api.services.gmail.GmailScopes.GMAIL_SEND;
 import static com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM;
 import static java.util.Arrays.asList;
+import static java.util.concurrent.Executors.newSingleThreadExecutor;
 
 /**
  * For debug purposes.
@@ -497,7 +498,7 @@ public class DebugFragment extends BasePreferenceFragment {
                 .putString(KEY_PREF_EMAIL_LOCALE, DEFAULT_LOCALE)
                 .putBoolean(KEY_PREF_NOTIFY_SEND_SUCCESS, true)
                 .putBoolean(KEY_PREF_RESEND_UNSENT, true)
-                .putString(KEY_PREF_FILTER_BLACKLIST, commaJoin(asSet("+123456789", "+9876543*")))
+                .putString(KEY_PREF_FILTER_PHONE_BLACKLIST, commaJoin(asSet("+123456789", "+9876543*")))
                 .putString(KEY_PREF_FILTER_TEXT_BLACKLIST, commaJoin(asSet("Bad text", quoteRegex("Expression"))))
                 .apply();
 
@@ -658,7 +659,7 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private void onGoogleDriveClear() {
-        Tasks.call(new Callable<Void>() {
+        Tasks.call(newSingleThreadExecutor(), new Callable<Void>() {
 
             @Override
             public Void call() throws Exception {

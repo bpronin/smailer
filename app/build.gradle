@@ -100,7 +100,7 @@ dependencies {
     implementation 'android.arch.work:work-runtime:1.0.1'
     implementation 'com.sun.mail:android-mail:1.6.3'
     implementation 'com.google.android.material:material:1.0.0'
-    implementation 'com.google.android.gms:play-services-auth:16.0.1'
+    implementation 'com.google.android.gms:play-services-auth:17.0.0'
     implementation 'com.google.api-client:google-api-client-android:1.25.0'
     implementation 'com.google.apis:google-api-services-gmail:v1-rev103-1.25.0'
     implementation 'com.google.apis:google-api-services-drive:v3-rev160-1.25.0'
@@ -115,7 +115,7 @@ dependencies {
         transitive = true
     }
 
-    freeImplementation 'com.google.android.gms:play-services-ads:17.2.0'
+    freeImplementation 'com.google.android.gms:play-services-ads:18.1.1'
 
     /* NOTE: uninstall all application apk from device before running tests.
        they may interfere and lead to unpredictable results */
@@ -126,7 +126,7 @@ dependencies {
 
     androidTestImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.google.dexmaker:dexmaker-mockito:1.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.0'
-    androidTestImplementation 'androidx.test:rules:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test:rules:1.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }

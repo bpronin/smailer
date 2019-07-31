@@ -46,8 +46,8 @@ public class Settings extends SharedPreferencesWrapper {
     public static final String KEY_PREF_HISTORY = "history";
     public static final String KEY_PREF_MARK_SMS_AS_READ = "mark_processed_sms_as_read";
     public static final String KEY_PREF_RESEND_UNSENT = "resend_unsent"; /* hidden */
-    public static final String KEY_PREF_FILTER_BLACKLIST = "message_filter_blacklist";
-    public static final String KEY_PREF_FILTER_WHITELIST = "message_filter_whitelist";
+    public static final String KEY_PREF_FILTER_PHONE_BLACKLIST = "message_filter_blacklist";
+    public static final String KEY_PREF_FILTER_PHONE_WHITELIST = "message_filter_whitelist";
     public static final String KEY_PREF_FILTER_TEXT_BLACKLIST = "message_filter_text_blacklist";
     public static final String KEY_PREF_FILTER_TEXT_WHITELIST = "message_filter_text_whitelist";
     public static final String KEY_PREF_DEVICE_ALIAS = "device_alias";
@@ -166,8 +166,8 @@ public class Settings extends SharedPreferencesWrapper {
         PhoneEventFilter filter = new PhoneEventFilter();
 
         filter.setTriggers(getStringSet(KEY_PREF_EMAIL_TRIGGERS, Collections.<String>emptySet()));
-        filter.setPhoneBlacklist(toSet(commaSplit(getString(KEY_PREF_FILTER_BLACKLIST, ""))));
-        filter.setPhoneWhitelist(toSet(commaSplit(getString(KEY_PREF_FILTER_WHITELIST, ""))));
+        filter.setPhoneBlacklist(toSet(commaSplit(getString(KEY_PREF_FILTER_PHONE_BLACKLIST, ""))));
+        filter.setPhoneWhitelist(toSet(commaSplit(getString(KEY_PREF_FILTER_PHONE_WHITELIST, ""))));
         filter.setTextBlacklist(toSet(commaSplit(getString(KEY_PREF_FILTER_TEXT_BLACKLIST, ""))));
         filter.setTextWhitelist(toSet(commaSplit(getString(KEY_PREF_FILTER_TEXT_WHITELIST, ""))));
 
@@ -175,8 +175,8 @@ public class Settings extends SharedPreferencesWrapper {
     }
 
     public void putFilter(PhoneEventFilter filter) {
-        edit().putString(KEY_PREF_FILTER_BLACKLIST, commaJoin(filter.getPhoneBlacklist()))
-                .putString(KEY_PREF_FILTER_WHITELIST, commaJoin(filter.getPhoneWhitelist()))
+        edit().putString(KEY_PREF_FILTER_PHONE_BLACKLIST, commaJoin(filter.getPhoneBlacklist()))
+                .putString(KEY_PREF_FILTER_PHONE_WHITELIST, commaJoin(filter.getPhoneWhitelist()))
                 .putString(KEY_PREF_FILTER_TEXT_BLACKLIST, commaJoin(filter.getTextBlacklist()))
                 .putString(KEY_PREF_FILTER_TEXT_WHITELIST, commaJoin(filter.getTextWhitelist()))
                 .apply();

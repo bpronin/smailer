@@ -3,19 +3,19 @@ package com.bopr.android.smailer.ui;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.preference.Preference;
+import androidx.preference.Preference.OnPreferenceChangeListener;
+
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.TagFormatter.TagPattern;
 
 import java.util.Set;
 
-import androidx.preference.Preference;
-import androidx.preference.Preference.OnPreferenceChangeListener;
-
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_BLACKLIST;
+import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_PHONE_BLACKLIST;
+import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_PHONE_WHITELIST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_TEXT_BLACKLIST;
 import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_TEXT_WHITELIST;
-import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_WHITELIST;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.Util.commaSplit;
 import static com.bopr.android.smailer.util.Util.isEmpty;
@@ -43,7 +43,7 @@ public class RulesFragment extends BasePreferenceFragment {
             }
         });
 
-        Preference phoneBlacklistPreference = findPreference(KEY_PREF_FILTER_BLACKLIST);
+        Preference phoneBlacklistPreference = findPreference(KEY_PREF_FILTER_PHONE_BLACKLIST);
         phoneBlacklistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
             @Override
@@ -62,7 +62,7 @@ public class RulesFragment extends BasePreferenceFragment {
             }
         });
 
-        Preference phoneWhitelistPreference = findPreference(KEY_PREF_FILTER_WHITELIST);
+        Preference phoneWhitelistPreference = findPreference(KEY_PREF_FILTER_PHONE_WHITELIST);
         phoneWhitelistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
             @Override

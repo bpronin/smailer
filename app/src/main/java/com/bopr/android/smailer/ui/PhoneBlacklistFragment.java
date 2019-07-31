@@ -51,7 +51,7 @@ public class PhoneBlacklistFragment extends PhoneFilterListFragment {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if (key.equals(Settings.KEY_PREF_FILTER_BLACKLIST)) {
+            if (key.equals(Settings.KEY_PREF_FILTER_PHONE_BLACKLIST)) {
                 loadItems();
             }
             super.onSharedPreferenceChanged(sharedPreferences, key);

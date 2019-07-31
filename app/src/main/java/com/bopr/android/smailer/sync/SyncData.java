@@ -9,11 +9,9 @@ import java.util.Set;
 /**
  * Data transfer object for synchronization.
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class SyncData {
 
-    @Key("time")
-    public long time;
     @Key("phone_black_list")
     public Set<String> phoneBlacklist;
     @Key("text_black_list")
@@ -23,11 +21,10 @@ public class SyncData {
     @Key("text_white_list")
     public Set<String> textWhitelist;
     @Key("phone_events")
-    public List<PhoneEvent> events;
+    public List<Event> events;
 
-/*
-    public static class Event{
-        
+    public static class Event {
+
         @Key("is_incoming")
         public boolean incoming;
         @Key("is_missed")
@@ -53,35 +50,4 @@ public class SyncData {
         public int state;
     }
 
-    private Event serializeEvent(PhoneEvent event) {
-        Event data = new Event();
-        data.state = event.getState();
-        data.phone = event.getPhone();
-        data.text = event.getText();
-        data.incoming = event.isIncoming();
-        data.missed = event.isMissed();
-        data.details = event.getDetails();
-        data.startTime = event.getStartTime();
-        data.endTime = event.getEndTime();
-        data.recipient = event.getRecipient();
-        data.latitude = event.getLocation().getLatitude();
-        data.longitude = event.getLocation().getLongitude();
-        return data;
-    }
-
-    private PhoneEvent deserializeEvent(Event data) {
-        PhoneEvent event = new PhoneEvent();
-        event.setState(data.state);
-        event.setPhone(data.phone);
-        event.setText(data.text);
-        event.setIncoming(data.incoming);
-        event.setMissed(data.missed);
-        event.setStartTime(data.startTime);
-        event.setEndTime(data.endTime);
-        event.setDetails(data.details);
-        event.setRecipient(data.recipient);
-        event.setLocation(new GeoCoordinates(data.latitude, data.longitude));
-        return event;
-    }
-*/
 }

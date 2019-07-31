@@ -7,14 +7,13 @@ import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
 
-import com.bopr.android.smailer.GoogleAuthorizationHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static android.content.ContentResolver.SYNC_EXTRAS_EXPEDITED;
 import static android.content.ContentResolver.SYNC_EXTRAS_MANUAL;
 import static android.content.ContentResolver.requestSync;
+import static com.bopr.android.smailer.GoogleAuthorizationHelper.selectedAccount;
 
 /**
  * Handle the transfer of data between a server and an app, using the Android sync adapter framework.
@@ -42,12 +41,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
-    private static Account getSyncAccount(Context context) {
-        return GoogleAuthorizationHelper.selectedAccount(context);
-    }
-
     public static void syncNow(Context context) {
-        Account account = getSyncAccount(context);
+        Account account = selectedAccount(context);
         if (account != null) {
             Bundle bundle = new Bundle();
             bundle.putBoolean(SYNC_EXTRAS_MANUAL, true);

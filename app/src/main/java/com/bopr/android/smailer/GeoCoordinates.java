@@ -6,11 +6,6 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
-import com.google.api.client.util.Key;
-
-import static com.bopr.android.smailer.Database.COLUMN_LATITUDE;
-import static com.bopr.android.smailer.Database.COLUMN_LONGITUDE;
-
 /**
  * Geolocation coordinates.
  *
@@ -18,9 +13,7 @@ import static com.bopr.android.smailer.Database.COLUMN_LONGITUDE;
  */
 public class GeoCoordinates implements Parcelable {
 
-    @Key(COLUMN_LATITUDE)
     private double latitude;
-    @Key(COLUMN_LONGITUDE)
     private double longitude;
 
     /* Required by Jackson */
