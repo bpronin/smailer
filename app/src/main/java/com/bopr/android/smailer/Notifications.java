@@ -9,19 +9,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 
-import com.bopr.android.smailer.ui.HistoryActivity;
-import com.bopr.android.smailer.ui.MainActivity;
-import com.bopr.android.smailer.ui.OptionsActivity;
-import com.bopr.android.smailer.ui.RecipientsActivity;
-import com.bopr.android.smailer.ui.RemoteControlActivity;
-import com.bopr.android.smailer.ui.RulesActivity;
-import com.bopr.android.smailer.util.TagFormatter;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationCompat.Builder;
 import androidx.core.app.TaskStackBuilder;
+
+import com.bopr.android.smailer.ui.HistoryActivity;
+import com.bopr.android.smailer.ui.MainActivity;
+import com.bopr.android.smailer.ui.RecipientsActivity;
+import com.bopr.android.smailer.ui.RemoteControlActivity;
+import com.bopr.android.smailer.ui.RulesActivity;
+import com.bopr.android.smailer.util.TagFormatter;
 
 import static android.app.Notification.CATEGORY_ERROR;
 import static android.app.Notification.CATEGORY_MESSAGE;
@@ -139,8 +138,8 @@ public class Notifications {
                 return createActivityIntent(HistoryActivity.class);
             case ACTION_SHOW_RECIPIENTS:
                 return createActivityIntent(RecipientsActivity.class);
-            case ACTION_SHOW_OPTIONS:
-                return createActivityIntent(OptionsActivity.class);
+//            case ACTION_SHOW_OPTIONS:
+//                return createActivityIntent(OptionsActivity.class);
             case ACTION_SHOW_REMOTE_CONTROL:
                 return createActivityIntent(RemoteControlActivity.class);
             case ACTION_SHOW_RULES:

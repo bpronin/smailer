@@ -130,6 +130,7 @@
     <string name="unknown_contact">Неизвестный контакт</string>
     <string name="user_password_not_accepted">Неверное имя пользователя или пароль.</string>
     <string name="what_email_contains">Содержание почтового сообщения</string>
+    <string name="when_send_email">Условия отправки почты</string>
     <string name="whitelist">Белый список</string>
     <string name="you_had_incoming_call">Входящий звонок длительностью {duration}.</string>
     <string name="you_had_missed_call">Пропущенный звонок.</string>

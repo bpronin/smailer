@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
+@Deprecated
 public class OptionsActivity extends AppActivity {
 
     @NonNull

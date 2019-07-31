@@ -132,6 +132,7 @@
     <string name="unknown_contact">Unknown contact</string>
     <string name="user_password_not_accepted">Username and password not accepted.</string>
     <string name="what_email_contains">What should the email include</string>
+    <string name="when_send_email">When email should be sent</string>
     <string name="whitelist">Whitelist</string>
     <string name="you_had_incoming_call">You had an incoming call of {duration} duration.</string>
     <string name="you_had_missed_call">You had a missed call.</string>

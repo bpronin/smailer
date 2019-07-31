@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.preference.EditTextPreference;
+import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.Preference.OnPreferenceClickListener;
 
@@ -14,10 +16,12 @@ import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.GoogleAuthorizationHelper;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.ResendWorker;
+import com.bopr.android.smailer.util.AndroidUtil;
 
+import static com.bopr.android.smailer.Settings.KEY_PREF_DEVICE_ALIAS;
+import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
 import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_HISTORY;
-import static com.bopr.android.smailer.Settings.KEY_PREF_OPTIONS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_OUTGOING_SERVER;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
@@ -71,8 +75,25 @@ public class MainFragment extends BasePreferenceFragment {
         recipientsPreference.setOnPreferenceClickListener(preferenceClickListener);
         accountPreference.setOnPreferenceClickListener(preferenceClickListener);
         historyPreference.setOnPreferenceClickListener(preferenceClickListener);
-        findPreference(KEY_PREF_OPTIONS).setOnPreferenceClickListener(preferenceClickListener);
+//        findPreference(KEY_PREF_OPTIONS).setOnPreferenceClickListener(preferenceClickListener);
         findPreference(KEY_PREF_RULES).setOnPreferenceClickListener(preferenceClickListener);
+
+        findPreference(KEY_PREF_EMAIL_LOCALE).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object value) {
+                updateLocalePreference((ListPreference) preference, (String) value);
+                return true;
+            }
+        });
+
+        findPreference(KEY_PREF_DEVICE_ALIAS).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object value) {
+                updateAlasPreference((EditTextPreference) preference, (String) value);
+                return true;
+            }
+        });
     }
 
     @Override
@@ -130,6 +151,24 @@ public class MainFragment extends BasePreferenceFragment {
         }
     }
 
+    private void updateLocalePreference(ListPreference preference, String value) {
+        int index = preference.findIndexOfValue(value);
+        if (index < 0) {
+            updateSummary(preference, getString(R.string.not_specified), STYLE_ACCENTED);
+        } else {
+            CharSequence cs = preference.getEntries()[index];
+            updateSummary(preference, cs.toString(), STYLE_DEFAULT);
+        }
+    }
+
+    private void updateAlasPreference(EditTextPreference preference, String value) {
+        if (isEmpty(value)) {
+            updateSummary(preference, AndroidUtil.getDeviceName(), STYLE_DEFAULT);
+        } else {
+            updateSummary(preference, value, STYLE_DEFAULT);
+        }
+    }
+
     private class PreferenceClickListener implements OnPreferenceClickListener {
 
         @Override
@@ -141,9 +180,9 @@ public class MainFragment extends BasePreferenceFragment {
                 case KEY_PREF_RECIPIENTS_ADDRESS:
                     startActivity(new Intent(getContext(), RecipientsActivity.class));
                     break;
-                case KEY_PREF_OPTIONS:
-                    startActivity(new Intent(getContext(), OptionsActivity.class));
-                    break;
+//                case KEY_PREF_OPTIONS:
+//                    startActivity(new Intent(getContext(), OptionsActivity.class));
+//                    break;
                 case KEY_PREF_RULES:
                     startActivity(new Intent(getContext(), RulesActivity.class));
                     break;

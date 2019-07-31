@@ -84,10 +84,10 @@
             android:label="@string/whitelist"
             android:parentActivityName=".ui.RulesActivity" />
 
-        <activity
-            android:name=".ui.OptionsActivity"
-            android:label="@string/preferences"
-            android:parentActivityName=".ui.MainActivity" />
+        <!--<activity-->
+            <!--android:name=".ui.OptionsActivity"-->
+            <!--android:label="@string/preferences"-->
+            <!--android:parentActivityName=".ui.MainActivity" />-->
 
         <activity
             android:name=".ui.RemoteControlActivity"

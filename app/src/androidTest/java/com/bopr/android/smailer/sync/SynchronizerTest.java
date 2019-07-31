@@ -20,9 +20,12 @@ public class SynchronizerTest {
     @Test
     public void testExecute() throws Exception {
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+
         Settings settings = new Settings(context);
-        settings.edit().putStringSetOptional(KEY_PREF_SYNC_ITEMS,
-                asSet(VAL_PREF_SYNC_FILTER_LISTS)).apply();
+        settings.edit()
+                .putStringSetOptional(KEY_PREF_SYNC_ITEMS, asSet(VAL_PREF_SYNC_FILTER_LISTS))
+                .apply();
+
         Account account = GoogleAuthorizationHelper.primaryAccount(context);
         Database database = new Database(context);
         Synchronizer synchronizer = new Synchronizer(context, account, database, settings);
