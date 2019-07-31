@@ -98,9 +98,6 @@ class Synchronizer {
 
     private void putData(@NonNull SyncData data) {
         for (SyncData.Event event : data.events) {
-//            if (event.getRecipient() == null){
-//                event.setRecipient(AndroidUtil.devicePhoneNumber(context));
-//            }
             database.putEvent(deserializeEvent(event));
         }
 

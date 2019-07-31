@@ -104,6 +104,7 @@
     <string name="remote_control_account_removed">Service account removed from device</string>
     <string name="remove">Remove</string>
     <string name="remove_from_filter">Remove number from all rules</string>
+    <string name="recipient_device">Recipient:</string>
     <string name="reply_ot_app">Reply to {app_name}:</string>
     <string name="resend">Resend</string>
     <string name="rules">Rules</string>
@@ -123,6 +124,7 @@
     <string name="text_remotely_added_to_whitelist">Text \"{text}\" remotely added to whitelist."</string>
     <string name="text_remotely_removed_from_blacklist">Text \"{text}\" remotely removed from blacklist."</string>
     <string name="text_remotely_removed_from_whitelist">Text \"{text}\" remotely removed from whitelist."</string>
+    <string name="time">Time:</string>
     <string name="time_time">Time: {time}</string>
     <string name="triggers">Triggers</string>
     <string name="unable_send_email">Unable to send email. {reason}</string>

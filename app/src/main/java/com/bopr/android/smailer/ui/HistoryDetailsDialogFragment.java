@@ -10,14 +10,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bopr.android.smailer.PhoneEvent;
-import com.bopr.android.smailer.R;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
+
+import com.bopr.android.smailer.PhoneEvent;
+import com.bopr.android.smailer.R;
 
 import static com.bopr.android.smailer.util.ResourceUtil.eventDirectionImage;
 import static com.bopr.android.smailer.util.ResourceUtil.eventStateImage;
@@ -71,6 +71,7 @@ public class HistoryDetailsDialogFragment extends DialogFragment {
             view.<ImageView>findViewById(R.id.image_event_result).setImageResource(eventStateImage(value));
             view.<TextView>findViewById(R.id.text_result).setText(eventStateText(value));
             view.<TextView>findViewById(R.id.text_type_title).setText(eventTypeText(value));
+            view.<TextView>findViewById(R.id.text_recipient).setText(value.getRecipient());
 
             dialog = new AlertDialog.Builder(requireContext())
                     .setView(view)
@@ -108,6 +109,13 @@ public class HistoryDetailsDialogFragment extends DialogFragment {
                     .format();
         }
     }
+
+//    private String formatRecipient(PhoneEvent event) {
+//        return formatter(requireContext())
+//                .pattern(R.string.recipient_device)
+//                .put("recipient", event.getRecipient())
+//                .format();
+//    }
 
     private CharSequence formatTime(Long time) {
         return DateFormat.format(getString(R.string._time_pattern), time);
