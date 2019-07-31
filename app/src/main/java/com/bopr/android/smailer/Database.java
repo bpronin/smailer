@@ -289,7 +289,6 @@ public class Database {
             log.debug("Broadcasting data changed");
 
             Intent intent = new Intent(DATABASE_EVENT);
-            // , parse("database://all")
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
             updatesCounter = 0;

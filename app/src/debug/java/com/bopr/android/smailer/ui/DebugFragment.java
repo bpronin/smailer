@@ -34,7 +34,7 @@ import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.RemoteControlService;
 import com.bopr.android.smailer.Settings;
 import com.bopr.android.smailer.sync.GoogleDrive;
-import com.bopr.android.smailer.sync.SyncAdapter;
+import com.bopr.android.smailer.sync.SyncManager;
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.ContentUtils;
 import com.google.android.gms.tasks.Tasks;
@@ -150,7 +150,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        SyncAdapter.syncNow(context);
+                        SyncManager.syncNow(context);
                         showToast(context, "Done");
                     }
                 })

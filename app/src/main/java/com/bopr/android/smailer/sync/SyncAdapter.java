@@ -10,11 +10,6 @@ import android.os.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static android.content.ContentResolver.SYNC_EXTRAS_EXPEDITED;
-import static android.content.ContentResolver.SYNC_EXTRAS_MANUAL;
-import static android.content.ContentResolver.requestSync;
-import static com.bopr.android.smailer.GoogleAuthorizationHelper.selectedAccount;
-
 /**
  * Handle the transfer of data between a server and an app, using the Android sync adapter framework.
  * <p>
@@ -38,18 +33,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             new Synchronizer(getContext(), account).synchronize();
         } catch (Exception x) {
             log.error("Synchronization failed ", x);
-        }
-    }
-
-    public static void syncNow(Context context) {
-        Account account = selectedAccount(context);
-        if (account != null) {
-            Bundle bundle = new Bundle();
-            bundle.putBoolean(SYNC_EXTRAS_MANUAL, true);
-            bundle.putBoolean(SYNC_EXTRAS_EXPEDITED, true);
-            requestSync(account, AppContentProvider.AUTHORITY, bundle);
-        } else {
-            log.warn("No sync account specified");
         }
     }
 

@@ -10,6 +10,7 @@ import com.bopr.android.smailer.ContentObserverService;
 import com.bopr.android.smailer.RemoteControlWorker;
 import com.bopr.android.smailer.ResendWorker;
 import com.bopr.android.smailer.Settings;
+import com.bopr.android.smailer.sync.SyncManager;
 import com.crashlytics.android.Crashlytics;
 
 import org.slf4j.Logger;
@@ -32,6 +33,8 @@ public class MainActivity extends AppActivity {
 
     private static Logger log = LoggerFactory.getLogger("MainActivity");
 
+    private SyncManager syncManager;
+
     public MainActivity() {
         setClosable(false);
     }
@@ -46,8 +49,15 @@ public class MainActivity extends AppActivity {
         ContentObserverService.enable(this);
         ResendWorker.enable(this);
         RemoteControlWorker.enable(this);
+        syncManager = new SyncManager(this);
 
         handleStartupParams(getIntent());
+    }
+
+    @Override
+    protected void onDestroy() {
+        syncManager.dispose();
+        super.onDestroy();
     }
 
     @NonNull
