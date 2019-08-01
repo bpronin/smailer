@@ -11,11 +11,11 @@ import com.bopr.android.smailer.util.TagFormatter.TagPattern;
 
 import java.util.Set;
 
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_PHONE_BLACKLIST;
-import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_PHONE_WHITELIST;
-import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_TEXT_BLACKLIST;
-import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_TEXT_WHITELIST;
+import static com.bopr.android.smailer.Settings.PREF_EMAIL_TRIGGERS;
+import static com.bopr.android.smailer.Settings.PREF_FILTER_PHONE_BLACKLIST;
+import static com.bopr.android.smailer.Settings.PREF_FILTER_PHONE_WHITELIST;
+import static com.bopr.android.smailer.Settings.PREF_FILTER_TEXT_BLACKLIST;
+import static com.bopr.android.smailer.Settings.PREF_FILTER_TEXT_WHITELIST;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.Util.commaSplit;
 import static com.bopr.android.smailer.util.Util.isEmpty;
@@ -31,7 +31,7 @@ public class RulesFragment extends BasePreferenceFragment {
     public void onCreatePreferences(Bundle bundle, String rootKey) {
         addPreferencesFromResource(R.xml.pref_rules);
 
-        findPreference(KEY_PREF_EMAIL_TRIGGERS).setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+        findPreference(PREF_EMAIL_TRIGGERS).setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
                 if (isEmpty(((Set) value))) {
@@ -43,7 +43,7 @@ public class RulesFragment extends BasePreferenceFragment {
             }
         });
 
-        Preference phoneBlacklistPreference = findPreference(KEY_PREF_FILTER_PHONE_BLACKLIST);
+        Preference phoneBlacklistPreference = findPreference(PREF_FILTER_PHONE_BLACKLIST);
         phoneBlacklistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
             @Override
@@ -62,7 +62,7 @@ public class RulesFragment extends BasePreferenceFragment {
             }
         });
 
-        Preference phoneWhitelistPreference = findPreference(KEY_PREF_FILTER_PHONE_WHITELIST);
+        Preference phoneWhitelistPreference = findPreference(PREF_FILTER_PHONE_WHITELIST);
         phoneWhitelistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
             @Override
@@ -81,7 +81,7 @@ public class RulesFragment extends BasePreferenceFragment {
             }
         });
 
-        Preference textBlacklistPreference = findPreference(KEY_PREF_FILTER_TEXT_BLACKLIST);
+        Preference textBlacklistPreference = findPreference(PREF_FILTER_TEXT_BLACKLIST);
         textBlacklistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
             @Override
@@ -100,7 +100,7 @@ public class RulesFragment extends BasePreferenceFragment {
             }
         });
 
-        Preference textWhitelistPreference = findPreference(KEY_PREF_FILTER_TEXT_WHITELIST);
+        Preference textWhitelistPreference = findPreference(PREF_FILTER_TEXT_WHITELIST);
         textWhitelistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
             @Override

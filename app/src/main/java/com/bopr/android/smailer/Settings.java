@@ -32,31 +32,27 @@ public class Settings extends SharedPreferencesWrapper {
     private static final int SETTINGS_VERSION = 2;
     public static final String PREFERENCES_STORAGE_NAME = "com.bopr.android.smailer_preferences";
 
-    public static final String KEY_SYNC_TIME = "sync_time"; /* hidden */
-    public static final String KEY_SETTINGS_VERSION = "settings_version";
-    public static final String KEY_PREF_SENDER_ACCOUNT = "sender_account";
-    public static final String KEY_PREF_RECIPIENTS_ADDRESS = "recipients_address";
-    public static final String KEY_PREF_OUTGOING_SERVER = "outgoing_server";
-    public static final String KEY_PREF_EMAIL_CONTENT = "email_content";
-    public static final String KEY_PREF_EMAIL_TRIGGERS = "email_triggers";
-    public static final String KEY_PREF_EMAIL_LOCALE = "email_locale";
-    public static final String KEY_PREF_NOTIFY_SEND_SUCCESS = "notify_send_success";
-//    public static final String KEY_PREF_OPTIONS = "options";
-    public static final String KEY_PREF_RULES = "rules";
-    public static final String KEY_PREF_HISTORY = "history";
-    public static final String KEY_PREF_MARK_SMS_AS_READ = "mark_processed_sms_as_read";
-    public static final String KEY_PREF_RESEND_UNSENT = "resend_unsent"; /* hidden */
-    public static final String KEY_PREF_FILTER_PHONE_BLACKLIST = "message_filter_blacklist";
-    public static final String KEY_PREF_FILTER_PHONE_WHITELIST = "message_filter_whitelist";
-    public static final String KEY_PREF_FILTER_TEXT_BLACKLIST = "message_filter_text_blacklist";
-    public static final String KEY_PREF_FILTER_TEXT_WHITELIST = "message_filter_text_whitelist";
-    public static final String KEY_PREF_DEVICE_ALIAS = "device_alias";
-    public static final String KEY_PREF_REMOTE_CONTROL = "remote_control";
-    public static final String KEY_PREF_REMOTE_CONTROL_ENABLED = "remote_control_enabled";
-    public static final String KEY_PREF_REMOTE_CONTROL_ACCOUNT = "remote_control_account";
-    public static final String KEY_PREF_REMOTE_CONTROL_NOTIFICATIONS = "remote_control_notifications";
-    public static final String KEY_PREF_REMOTE_CONTROL_FILTER_RECIPIENTS = "remote_control_filter_recipients";
-    public static final String KEY_PREF_SYNC_ITEMS = "sync_items";
+    public static final String PREF_SYNC_TIME = "sync_time"; /* hidden */
+    public static final String PREF_SETTINGS_VERSION = "settings_version";
+    public static final String PREF_SENDER_ACCOUNT = "sender_account";
+    public static final String PREF_RECIPIENTS_ADDRESS = "recipients_address";
+    public static final String PREF_EMAIL_CONTENT = "email_content";
+    public static final String PREF_EMAIL_TRIGGERS = "email_triggers";
+    public static final String PREF_EMAIL_LOCALE = "email_locale";
+    public static final String PREF_NOTIFY_SEND_SUCCESS = "notify_send_success";
+    public static final String PREF_RULES = "rules";
+    public static final String PREF_HISTORY = "history";
+    public static final String PREF_MARK_SMS_AS_READ = "mark_processed_sms_as_read";
+    public static final String PREF_RESEND_UNSENT = "resend_unsent"; /* hidden */
+    public static final String PREF_FILTER_PHONE_BLACKLIST = "message_filter_blacklist";
+    public static final String PREF_FILTER_PHONE_WHITELIST = "message_filter_whitelist";
+    public static final String PREF_FILTER_TEXT_BLACKLIST = "message_filter_text_blacklist";
+    public static final String PREF_FILTER_TEXT_WHITELIST = "message_filter_text_whitelist";
+    public static final String PREF_DEVICE_ALIAS = "device_alias";
+    public static final String PREF_REMOTE_CONTROL_ENABLED = "remote_control_enabled";
+    public static final String PREF_REMOTE_CONTROL_ACCOUNT = "remote_control_account";
+    public static final String PREF_REMOTE_CONTROL_NOTIFICATIONS = "remote_control_notifications";
+    public static final String PREF_REMOTE_CONTROL_FILTER_RECIPIENTS = "remote_control_filter_recipients";
 
     public static final String VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME = "time";
     public static final String VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT = "time_sent";
@@ -70,8 +66,6 @@ public class Settings extends SharedPreferencesWrapper {
     public static final String VAL_PREF_TRIGGER_IN_CALLS = "in_calls";
     public static final String VAL_PREF_TRIGGER_OUT_CALLS = "out_calls";
     public static final String VAL_PREF_TRIGGER_MISSED_CALLS = "missed_calls";
-    public static final String VAL_PREF_SYNC_EVENTS = "sync_events";
-    public static final String VAL_PREF_SYNC_FILTER_LISTS = "sync_filter_lists";
 
     public static final String DEFAULT_LOCALE = "default";
     public static final Set<String> DEFAULT_CONTENT = asSet(
@@ -104,26 +98,24 @@ public class Settings extends SharedPreferencesWrapper {
         Settings settings = new Settings(context);
         EditorWrapper edit = settings.edit();
 
-        edit.putStringSetOptional(KEY_PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS);
-        edit.putStringOptional(KEY_PREF_EMAIL_LOCALE, DEFAULT_LOCALE);
-        edit.putBooleanOptional(KEY_PREF_RESEND_UNSENT, true);
-        edit.putBooleanOptional(KEY_PREF_MARK_SMS_AS_READ, false);
-        edit.putBooleanOptional(KEY_PREF_REMOTE_CONTROL_ENABLED, false);
-        edit.putBooleanOptional(KEY_PREF_REMOTE_CONTROL_NOTIFICATIONS, true);
-        edit.putBooleanOptional(KEY_PREF_REMOTE_CONTROL_FILTER_RECIPIENTS, true);
+        edit.putStringSetOptional(PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS);
+        edit.putStringOptional(PREF_EMAIL_LOCALE, DEFAULT_LOCALE);
+        edit.putBooleanOptional(PREF_RESEND_UNSENT, true);
+        edit.putBooleanOptional(PREF_MARK_SMS_AS_READ, false);
+        edit.putBooleanOptional(PREF_REMOTE_CONTROL_ENABLED, false);
+        edit.putBooleanOptional(PREF_REMOTE_CONTROL_NOTIFICATIONS, true);
+        edit.putBooleanOptional(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS, true);
 
-        Set<String> content = settings.getStringSet(KEY_PREF_EMAIL_CONTENT, null);
+        Set<String> content = settings.getStringSet(PREF_EMAIL_CONTENT, null);
         if (content == null) {
-            edit.putStringSet(KEY_PREF_EMAIL_CONTENT, DEFAULT_CONTENT);
-        } else if (settings.getInt(Settings.KEY_SETTINGS_VERSION, 1) == 1) {
+            edit.putStringSet(PREF_EMAIL_CONTENT, DEFAULT_CONTENT);
+        } else if (settings.getInt(Settings.PREF_SETTINGS_VERSION, 1) == 1) {
             content.add(VAL_PREF_EMAIL_CONTENT_HEADER);
             content.add(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT);
-            edit.putStringSet(KEY_PREF_EMAIL_CONTENT, content);
+            edit.putStringSet(PREF_EMAIL_CONTENT, content);
         }
-        edit.putStringSetOptional(KEY_PREF_SYNC_ITEMS, asSet(VAL_PREF_SYNC_EVENTS,
-                VAL_PREF_SYNC_FILTER_LISTS));
 
-        edit.putInt(KEY_SETTINGS_VERSION, SETTINGS_VERSION);
+        edit.putInt(PREF_SETTINGS_VERSION, SETTINGS_VERSION);
         edit.apply();
     }
 
@@ -131,7 +123,7 @@ public class Settings extends SharedPreferencesWrapper {
      * Returns device name.
      */
     public String getDeviceName() {
-        String name = getString(KEY_PREF_DEVICE_ALIAS, "");
+        String name = getString(PREF_DEVICE_ALIAS, "");
         if (!Util.isEmpty(name)) {
             return name;
         }
@@ -165,20 +157,20 @@ public class Settings extends SharedPreferencesWrapper {
     public PhoneEventFilter getFilter() {
         PhoneEventFilter filter = new PhoneEventFilter();
 
-        filter.setTriggers(getStringSet(KEY_PREF_EMAIL_TRIGGERS, Collections.<String>emptySet()));
-        filter.setPhoneBlacklist(toSet(commaSplit(getString(KEY_PREF_FILTER_PHONE_BLACKLIST, ""))));
-        filter.setPhoneWhitelist(toSet(commaSplit(getString(KEY_PREF_FILTER_PHONE_WHITELIST, ""))));
-        filter.setTextBlacklist(toSet(commaSplit(getString(KEY_PREF_FILTER_TEXT_BLACKLIST, ""))));
-        filter.setTextWhitelist(toSet(commaSplit(getString(KEY_PREF_FILTER_TEXT_WHITELIST, ""))));
+        filter.setTriggers(getStringSet(PREF_EMAIL_TRIGGERS, Collections.<String>emptySet()));
+        filter.setPhoneBlacklist(toSet(commaSplit(getString(PREF_FILTER_PHONE_BLACKLIST, ""))));
+        filter.setPhoneWhitelist(toSet(commaSplit(getString(PREF_FILTER_PHONE_WHITELIST, ""))));
+        filter.setTextBlacklist(toSet(commaSplit(getString(PREF_FILTER_TEXT_BLACKLIST, ""))));
+        filter.setTextWhitelist(toSet(commaSplit(getString(PREF_FILTER_TEXT_WHITELIST, ""))));
 
         return filter;
     }
 
     public void putFilter(PhoneEventFilter filter) {
-        edit().putString(KEY_PREF_FILTER_PHONE_BLACKLIST, commaJoin(filter.getPhoneBlacklist()))
-                .putString(KEY_PREF_FILTER_PHONE_WHITELIST, commaJoin(filter.getPhoneWhitelist()))
-                .putString(KEY_PREF_FILTER_TEXT_BLACKLIST, commaJoin(filter.getTextBlacklist()))
-                .putString(KEY_PREF_FILTER_TEXT_WHITELIST, commaJoin(filter.getTextWhitelist()))
+        edit().putString(PREF_FILTER_PHONE_BLACKLIST, commaJoin(filter.getPhoneBlacklist()))
+                .putString(PREF_FILTER_PHONE_WHITELIST, commaJoin(filter.getPhoneWhitelist()))
+                .putString(PREF_FILTER_TEXT_BLACKLIST, commaJoin(filter.getTextBlacklist()))
+                .putString(PREF_FILTER_TEXT_WHITELIST, commaJoin(filter.getTextWhitelist()))
                 .apply();
     }
 

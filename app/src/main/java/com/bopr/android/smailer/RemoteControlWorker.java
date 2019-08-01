@@ -2,11 +2,6 @@ package com.bopr.android.smailer;
 
 import android.content.Context;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.TimeUnit;
-
 import androidx.annotation.NonNull;
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
@@ -16,8 +11,13 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_ACCOUNT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_ENABLED;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.TimeUnit;
+
+import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_ACCOUNT;
+import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_ENABLED;
 import static com.bopr.android.smailer.Settings.settings;
 
 /**
@@ -47,7 +47,7 @@ public class RemoteControlWorker extends Worker {
     }
 
     private static boolean isFeatureEnabled(@NonNull Context context) {
-        return settings(context).getBoolean(KEY_PREF_REMOTE_CONTROL_ENABLED, false);
+        return settings(context).getBoolean(PREF_REMOTE_CONTROL_ENABLED, false);
     }
 
     public static void enable(@NonNull Context context) {
@@ -55,7 +55,7 @@ public class RemoteControlWorker extends Worker {
 
         manager.cancelAllWorkByTag(WORKER_TAG);
 
-        if (isFeatureEnabled(context) && !settings(context).isNull(KEY_PREF_REMOTE_CONTROL_ACCOUNT)) {
+        if (isFeatureEnabled(context) && !settings(context).isNull(PREF_REMOTE_CONTROL_ACCOUNT)) {
             Constraints constraints = new Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)
                     .build();

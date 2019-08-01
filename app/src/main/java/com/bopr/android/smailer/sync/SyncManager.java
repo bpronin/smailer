@@ -20,11 +20,12 @@ import static android.content.ContentResolver.removePeriodicSync;
 import static android.content.ContentResolver.requestSync;
 import static android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import static com.bopr.android.smailer.GoogleAuthorizationHelper.primaryAccount;
-import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_PHONE_BLACKLIST;
-import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_PHONE_WHITELIST;
-import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_TEXT_BLACKLIST;
-import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_TEXT_WHITELIST;
-import static com.bopr.android.smailer.Settings.KEY_SYNC_TIME;
+import static com.bopr.android.smailer.Settings.PREF_FILTER_PHONE_BLACKLIST;
+import static com.bopr.android.smailer.Settings.PREF_FILTER_PHONE_WHITELIST;
+import static com.bopr.android.smailer.Settings.PREF_FILTER_TEXT_BLACKLIST;
+import static com.bopr.android.smailer.Settings.PREF_FILTER_TEXT_WHITELIST;
+import static com.bopr.android.smailer.Settings.PREF_SYNC_TIME;
+import static com.bopr.android.smailer.sync.AppContentProvider.AUTHORITY;
 import static java.lang.System.currentTimeMillis;
 
 public class SyncManager {
@@ -45,17 +46,17 @@ public class SyncManager {
         settings.registerOnSharedPreferenceChangeListener(settingsListener);
 
         account = primaryAccount(context);
-        addPeriodicSync(account, AppContentProvider.AUTHORITY, Bundle.EMPTY, 0);
+        addPeriodicSync(account, AUTHORITY, Bundle.EMPTY, 0);
     }
 
     public void dispose() {
-        removePeriodicSync(account, AppContentProvider.AUTHORITY, Bundle.EMPTY);
+        removePeriodicSync(account, AUTHORITY, Bundle.EMPTY);
         settings.unregisterOnSharedPreferenceChangeListener(settingsListener);
         database.unregisterListener(databaseListener);
     }
 
     private void updateMetaData() {
-        settings.edit().putLong(KEY_SYNC_TIME, currentTimeMillis()).apply();
+        settings.edit().putLong(PREF_SYNC_TIME, currentTimeMillis()).apply();
         log.debug("Metadata updated");
     }
 
@@ -64,7 +65,7 @@ public class SyncManager {
         Bundle bundle = new Bundle();
         bundle.putBoolean(SYNC_EXTRAS_MANUAL, true);
         bundle.putBoolean(SYNC_EXTRAS_EXPEDITED, true);
-        requestSync(account, AppContentProvider.AUTHORITY, bundle);
+        requestSync(account, AUTHORITY, bundle);
     }
 
     private class DatabaseListener extends BroadcastReceiver {
@@ -81,10 +82,10 @@ public class SyncManager {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             switch (key) {
-                case KEY_PREF_FILTER_PHONE_BLACKLIST:
-                case KEY_PREF_FILTER_PHONE_WHITELIST:
-                case KEY_PREF_FILTER_TEXT_BLACKLIST:
-                case KEY_PREF_FILTER_TEXT_WHITELIST:
+                case PREF_FILTER_PHONE_BLACKLIST:
+                case PREF_FILTER_PHONE_WHITELIST:
+                case PREF_FILTER_TEXT_BLACKLIST:
+                case PREF_FILTER_TEXT_WHITELIST:
                     updateMetaData();
             }
         }

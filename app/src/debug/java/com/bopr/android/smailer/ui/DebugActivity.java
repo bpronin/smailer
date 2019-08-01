@@ -1,8 +1,6 @@
 package com.bopr.android.smailer.ui;
 
 
-import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 
 /**
@@ -11,12 +9,6 @@ import androidx.annotation.NonNull;
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 public class DebugActivity extends BaseActivity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        setClosable(true);
-        super.onCreate(savedInstanceState);
-    }
 
     @NonNull
     @Override

@@ -3,7 +3,7 @@
 
     <androidx.preference.PreferenceScreen
         android:icon="@drawable/ic_account_round"
-        android:key="outgoing_server"
+        android:key="sender_account"
         android:title="@string/sender" />
 
     <androidx.preference.PreferenceScreen

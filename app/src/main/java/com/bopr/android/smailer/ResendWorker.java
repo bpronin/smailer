@@ -2,11 +2,6 @@ package com.bopr.android.smailer;
 
 import android.content.Context;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.TimeUnit;
-
 import androidx.annotation.NonNull;
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
@@ -16,7 +11,12 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.TimeUnit;
+
+import static com.bopr.android.smailer.Settings.PREF_RESEND_UNSENT;
 import static com.bopr.android.smailer.Settings.settings;
 
 /**
@@ -46,7 +46,7 @@ public class ResendWorker extends Worker {
     }
 
     private static boolean isFeatureEnabled(@NonNull Context context) {
-        return settings(context).getBoolean(KEY_PREF_RESEND_UNSENT, true);
+        return settings(context).getBoolean(PREF_RESEND_UNSENT, true);
     }
 
     public static void enable(@NonNull Context context) {

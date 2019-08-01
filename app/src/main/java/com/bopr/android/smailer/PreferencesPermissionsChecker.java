@@ -6,6 +6,9 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.PermissionInfo;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+
 import com.bopr.android.smailer.util.Util;
 
 import java.util.ArrayList;
@@ -18,9 +21,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
-
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.PROCESS_OUTGOING_CALLS;
@@ -29,9 +29,9 @@ import static android.Manifest.permission.READ_PHONE_STATE;
 import static android.Manifest.permission.READ_SMS;
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_MARK_SMS_AS_READ;
+import static com.bopr.android.smailer.Settings.PREF_EMAIL_CONTENT;
+import static com.bopr.android.smailer.Settings.PREF_EMAIL_TRIGGERS;
+import static com.bopr.android.smailer.Settings.PREF_MARK_SMS_AS_READ;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CONTACT;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_LOCATION;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_CALLS;
@@ -120,8 +120,8 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
         Set<String> requiredPermissions = new HashSet<>();
 
         switch (key) {
-            case KEY_PREF_EMAIL_TRIGGERS:
-                Set<String> triggers = preferences.getStringSet(KEY_PREF_EMAIL_TRIGGERS, Collections.<String>emptySet());
+            case PREF_EMAIL_TRIGGERS:
+                Set<String> triggers = preferences.getStringSet(PREF_EMAIL_TRIGGERS, Collections.<String>emptySet());
                 if (triggers.contains(VAL_PREF_TRIGGER_IN_SMS)) {
                     requiredPermissions.add(RECEIVE_SMS);
                 }
@@ -135,8 +135,8 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
                     requiredPermissions.add(PROCESS_OUTGOING_CALLS);
                 }
                 break;
-            case KEY_PREF_EMAIL_CONTENT:
-                Set<String> content = preferences.getStringSet(KEY_PREF_EMAIL_CONTENT, Collections.<String>emptySet());
+            case PREF_EMAIL_CONTENT:
+                Set<String> content = preferences.getStringSet(PREF_EMAIL_CONTENT, Collections.<String>emptySet());
                 if (content.contains(VAL_PREF_EMAIL_CONTENT_CONTACT)) {
                     requiredPermissions.add(READ_CONTACTS);
                 }
@@ -145,7 +145,7 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
                     requiredPermissions.add(ACCESS_FINE_LOCATION);
                 }
                 break;
-            case KEY_PREF_MARK_SMS_AS_READ:
+            case PREF_MARK_SMS_AS_READ:
                 requiredPermissions.add(WRITE_SMS);
                 break;
         }
@@ -157,26 +157,26 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
         for (String permission : permissions) {
             switch (permission) {
                 case RECEIVE_SMS:
-                    removeSetPreferenceValue(settings, KEY_PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_IN_SMS);
+                    removeSetPreferenceValue(settings, PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_IN_SMS);
                     break;
                 case READ_SMS:
-                    removeSetPreferenceValue(settings, KEY_PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_OUT_SMS);
+                    removeSetPreferenceValue(settings, PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_OUT_SMS);
                     break;
                 case WRITE_SMS:
-                    removeSetPreferenceValue(settings, KEY_PREF_MARK_SMS_AS_READ);
+                    removeSetPreferenceValue(settings, PREF_MARK_SMS_AS_READ);
                     break;
                 case READ_PHONE_STATE:
-                    removeSetPreferenceValue(settings, KEY_PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_IN_CALLS, VAL_PREF_TRIGGER_MISSED_CALLS);
+                    removeSetPreferenceValue(settings, PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_IN_CALLS, VAL_PREF_TRIGGER_MISSED_CALLS);
                     break;
                 case PROCESS_OUTGOING_CALLS:
-                    removeSetPreferenceValue(settings, KEY_PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_OUT_CALLS);
+                    removeSetPreferenceValue(settings, PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_OUT_CALLS);
                     break;
                 case READ_CONTACTS:
-                    removeSetPreferenceValue(settings, KEY_PREF_EMAIL_CONTENT, VAL_PREF_EMAIL_CONTENT_CONTACT);
+                    removeSetPreferenceValue(settings, PREF_EMAIL_CONTENT, VAL_PREF_EMAIL_CONTENT_CONTACT);
                     break;
                 case ACCESS_COARSE_LOCATION:
                 case ACCESS_FINE_LOCATION:
-                    removeSetPreferenceValue(settings, KEY_PREF_EMAIL_CONTENT, VAL_PREF_EMAIL_CONTENT_LOCATION);
+                    removeSetPreferenceValue(settings, PREF_EMAIL_CONTENT, VAL_PREF_EMAIL_CONTENT_LOCATION);
                     break;
             }
         }

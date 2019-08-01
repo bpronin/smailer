@@ -27,10 +27,10 @@ import static com.bopr.android.smailer.RemoteCommandParser.REMOVE_PHONE_FROM_WHI
 import static com.bopr.android.smailer.RemoteCommandParser.REMOVE_TEXT_FROM_BLACKLIST;
 import static com.bopr.android.smailer.RemoteCommandParser.REMOVE_TEXT_FROM_WHITELIST;
 import static com.bopr.android.smailer.RemoteCommandParser.SET_OPTION;
-import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_ACCOUNT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_FILTER_RECIPIENTS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_NOTIFICATIONS;
+import static com.bopr.android.smailer.Settings.PREF_RECIPIENTS_ADDRESS;
+import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_ACCOUNT;
+import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS;
+import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_NOTIFICATIONS;
 import static com.bopr.android.smailer.util.AddressUtil.containsEmail;
 import static com.bopr.android.smailer.util.AddressUtil.extractEmail;
 import static com.bopr.android.smailer.util.AddressUtil.findPhone;
@@ -103,9 +103,9 @@ public class RemoteControlService extends IntentService {
     }
 
     private boolean acceptMessage(MailMessage message) {
-        if (settings.getBoolean(KEY_PREF_REMOTE_CONTROL_FILTER_RECIPIENTS, false)) {
+        if (settings.getBoolean(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS, false)) {
             String address = extractEmail(message.getFrom());
-            List<String> recipients = commaSplit(settings.getString(KEY_PREF_RECIPIENTS_ADDRESS, ""));
+            List<String> recipients = commaSplit(settings.getString(PREF_RECIPIENTS_ADDRESS, ""));
             if (!containsEmail(recipients, address)) {
                 log.debug("Address " + address + " rejected");
                 return false;
@@ -115,7 +115,7 @@ public class RemoteControlService extends IntentService {
     }
 
     private String requireAccount() {
-        String account = settings.getString(KEY_PREF_REMOTE_CONTROL_ACCOUNT, null);
+        String account = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT, null);
         if (account == null) {
             notifications.showError(R.string.service_account_not_specified, ACTION_SHOW_REMOTE_CONTROL);
             throw new IllegalArgumentException("Service account not specified");
@@ -241,7 +241,7 @@ public class RemoteControlService extends IntentService {
 
     private void saveFilter(PhoneEventFilter filter, String text, int messageRes) {
         settings.putFilter(filter);
-        if (settings.getBoolean(KEY_PREF_REMOTE_CONTROL_NOTIFICATIONS, false)) {
+        if (settings.getBoolean(PREF_REMOTE_CONTROL_NOTIFICATIONS, false)) {
             notifications.showRemoteAction(messageRes, text);
         }
     }

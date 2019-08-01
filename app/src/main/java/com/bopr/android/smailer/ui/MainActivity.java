@@ -35,15 +35,12 @@ public class MainActivity extends AppActivity {
 
     private SyncManager syncManager;
 
-    public MainActivity() {
-        setClosable(false);
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         log.debug("Application init");
         super.onCreate(savedInstanceState);
-
+        setHomeButtonEnabled(false);
+        
         Fabric.with(this, new Crashlytics());
         Settings.init(this);
         ContentObserverService.enable(this);

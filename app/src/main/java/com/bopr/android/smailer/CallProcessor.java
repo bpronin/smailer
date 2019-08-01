@@ -17,13 +17,13 @@ import java.util.List;
 
 import static com.bopr.android.smailer.Notifications.ACTION_SHOW_MAIN;
 import static com.bopr.android.smailer.Notifications.ACTION_SHOW_RECIPIENTS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
-import static com.bopr.android.smailer.Settings.KEY_PREF_MARK_SMS_AS_READ;
-import static com.bopr.android.smailer.Settings.KEY_PREF_NOTIFY_SEND_SUCCESS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_ACCOUNT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
+import static com.bopr.android.smailer.Settings.PREF_EMAIL_CONTENT;
+import static com.bopr.android.smailer.Settings.PREF_EMAIL_LOCALE;
+import static com.bopr.android.smailer.Settings.PREF_MARK_SMS_AS_READ;
+import static com.bopr.android.smailer.Settings.PREF_NOTIFY_SEND_SUCCESS;
+import static com.bopr.android.smailer.Settings.PREF_RECIPIENTS_ADDRESS;
+import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_ACCOUNT;
+import static com.bopr.android.smailer.Settings.PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.util.AndroidUtil.isValidEmailAddressList;
 import static com.bopr.android.smailer.util.ContentUtils.getContactName;
 import static com.bopr.android.smailer.util.ContentUtils.markSmsAsRead;
@@ -154,7 +154,7 @@ public class CallProcessor {
             message.setSubject(formatter.formatSubject());
             message.setBody(formatter.formatBody());
             message.setRecipients(requireRecipient(silent));
-            message.setReplyTo(settings.getString(KEY_PREF_REMOTE_CONTROL_ACCOUNT, null));
+            message.setReplyTo(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT, null));
 
             transport.send(message);
 
@@ -169,7 +169,7 @@ public class CallProcessor {
 
     @NonNull
     private String requireSender(boolean silent) {
-        String s = settings.getString(KEY_PREF_SENDER_ACCOUNT, null);
+        String s = settings.getString(PREF_SENDER_ACCOUNT, null);
         if (isEmpty(s)) {
             if (!silent) {
                 notifications.showMailError(R.string.no_account_specified, ACTION_SHOW_MAIN);
@@ -181,7 +181,7 @@ public class CallProcessor {
 
     @NonNull
     private String requireRecipient(boolean silent) {
-        String s = settings.getString(KEY_PREF_RECIPIENTS_ADDRESS, null);
+        String s = settings.getString(PREF_RECIPIENTS_ADDRESS, null);
 
         if (isEmpty(s)) {
             if (!silent) {
@@ -206,10 +206,10 @@ public class CallProcessor {
         formatter.setSendTime(new Date());
         formatter.setContactName(getContactName(context, event.getPhone()));
         formatter.setDeviceName(settings.getDeviceName());
-        formatter.setContentOptions(settings.getStringSet(KEY_PREF_EMAIL_CONTENT, null));
-        formatter.setServiceAccount(settings.getString(KEY_PREF_REMOTE_CONTROL_ACCOUNT, null));
+        formatter.setContentOptions(settings.getStringSet(PREF_EMAIL_CONTENT, null));
+        formatter.setServiceAccount(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT, null));
 
-        String locale = settings.getString(KEY_PREF_EMAIL_LOCALE, null);
+        String locale = settings.getString(PREF_EMAIL_LOCALE, null);
         if (locale != null) {   //todo: why not to set null locale?
             formatter.setLocale(locale);
         }
@@ -222,11 +222,11 @@ public class CallProcessor {
 
         notifications.hideLastError();
 
-        if (settings.getBoolean(KEY_PREF_NOTIFY_SEND_SUCCESS, false)) {
+        if (settings.getBoolean(PREF_NOTIFY_SEND_SUCCESS, false)) {
             notifications.showMessage(R.string.email_send, ACTION_SHOW_MAIN);
         }
 
-        if (settings.getBoolean(KEY_PREF_MARK_SMS_AS_READ, false)) {
+        if (settings.getBoolean(PREF_MARK_SMS_AS_READ, false)) {
             markSmsAsRead(context, event);
         }
     }
@@ -243,6 +243,6 @@ public class CallProcessor {
     }
 
     private void removeSelectedAccount() {
-        settings.edit().putString(KEY_PREF_SENDER_ACCOUNT, null).apply();
+        settings.edit().putString(PREF_SENDER_ACCOUNT, null).apply();
     }
 }

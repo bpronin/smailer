@@ -51,7 +51,7 @@ public class TextBlacklistFragment extends TextFilterListFragment {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if (key.equals(Settings.KEY_PREF_FILTER_TEXT_BLACKLIST)) {
+            if (key.equals(Settings.PREF_FILTER_TEXT_BLACKLIST)) {
                 loadItems();
             }
             super.onSharedPreferenceChanged(sharedPreferences, key);

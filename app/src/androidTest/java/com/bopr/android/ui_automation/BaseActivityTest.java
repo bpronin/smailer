@@ -5,6 +5,12 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Switch;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.test.espresso.ViewInteraction;
+import androidx.test.rule.ActivityTestRule;
+
 import com.bopr.android.smailer.Settings;
 import com.bopr.android.smailer.ui.MainActivity;
 
@@ -18,12 +24,6 @@ import org.junit.ClassRule;
 
 import java.util.Locale;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.test.espresso.ViewInteraction;
-import androidx.test.rule.ActivityTestRule;
-
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.matcher.RootMatchers.withDecorView;
 import static androidx.test.espresso.matcher.ViewMatchers.hasSibling;
@@ -35,10 +35,10 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.bopr.android.smailer.Settings.DEFAULT_CONTENT;
 import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
 import static com.bopr.android.smailer.Settings.DEFAULT_TRIGGERS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
+import static com.bopr.android.smailer.Settings.PREF_EMAIL_CONTENT;
+import static com.bopr.android.smailer.Settings.PREF_EMAIL_LOCALE;
+import static com.bopr.android.smailer.Settings.PREF_EMAIL_TRIGGERS;
+import static com.bopr.android.smailer.Settings.PREF_RESEND_UNSENT;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
@@ -67,10 +67,10 @@ public class BaseActivityTest {
         settings
                 .edit()
                 .clear()
-                .putStringSet(KEY_PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS)
-                .putStringSet(KEY_PREF_EMAIL_CONTENT, DEFAULT_CONTENT)
-                .putString(KEY_PREF_EMAIL_LOCALE, DEFAULT_LOCALE)
-                .putBoolean(KEY_PREF_RESEND_UNSENT, true)
+                .putStringSet(PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS)
+                .putStringSet(PREF_EMAIL_CONTENT, DEFAULT_CONTENT)
+                .putString(PREF_EMAIL_LOCALE, DEFAULT_LOCALE)
+                .putBoolean(PREF_RESEND_UNSENT, true)
                 .apply();
     }
 

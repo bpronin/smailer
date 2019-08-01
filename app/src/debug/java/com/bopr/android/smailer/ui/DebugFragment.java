@@ -59,16 +59,16 @@ import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static com.bopr.android.smailer.GoogleAuthorizationHelper.primaryAccount;
 import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_PHONE_BLACKLIST;
-import static com.bopr.android.smailer.Settings.KEY_PREF_FILTER_TEXT_BLACKLIST;
-import static com.bopr.android.smailer.Settings.KEY_PREF_NOTIFY_SEND_SUCCESS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_REMOTE_CONTROL_ENABLED;
-import static com.bopr.android.smailer.Settings.KEY_PREF_RESEND_UNSENT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
+import static com.bopr.android.smailer.Settings.PREF_EMAIL_CONTENT;
+import static com.bopr.android.smailer.Settings.PREF_EMAIL_LOCALE;
+import static com.bopr.android.smailer.Settings.PREF_EMAIL_TRIGGERS;
+import static com.bopr.android.smailer.Settings.PREF_FILTER_PHONE_BLACKLIST;
+import static com.bopr.android.smailer.Settings.PREF_FILTER_TEXT_BLACKLIST;
+import static com.bopr.android.smailer.Settings.PREF_NOTIFY_SEND_SUCCESS;
+import static com.bopr.android.smailer.Settings.PREF_RECIPIENTS_ADDRESS;
+import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_ENABLED;
+import static com.bopr.android.smailer.Settings.PREF_RESEND_UNSENT;
+import static com.bopr.android.smailer.Settings.PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CONTACT;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_HEADER;
@@ -117,7 +117,7 @@ public class DebugFragment extends BasePreferenceFragment {
         setHasOptionsMenu(false);
         database = new Database(context);
         locator = new GeoLocator(context, database);
-        authorizator = new GoogleAuthorizationHelper(this, KEY_PREF_SENDER_ACCOUNT,
+        authorizator = new GoogleAuthorizationHelper(this, PREF_SENDER_ACCOUNT,
                 MAIL_GOOGLE_COM, DRIVE_APPDATA);
         notifications = new Notifications(requireContext());
     }
@@ -479,15 +479,15 @@ public class DebugFragment extends BasePreferenceFragment {
         Properties properties = loadDebugProperties();
 
         settings.edit()
-                .putString(KEY_PREF_SENDER_ACCOUNT, primaryAccount(context).name)
-                .putString(KEY_PREF_RECIPIENTS_ADDRESS, properties.getProperty("default_recipient"))
-                .putStringSet(KEY_PREF_EMAIL_TRIGGERS, asSet(
+                .putString(PREF_SENDER_ACCOUNT, primaryAccount(context).name)
+                .putString(PREF_RECIPIENTS_ADDRESS, properties.getProperty("default_recipient"))
+                .putStringSet(PREF_EMAIL_TRIGGERS, asSet(
                         VAL_PREF_TRIGGER_IN_SMS,
                         VAL_PREF_TRIGGER_IN_CALLS,
                         VAL_PREF_TRIGGER_MISSED_CALLS,
                         VAL_PREF_TRIGGER_OUT_CALLS,
                         VAL_PREF_TRIGGER_OUT_SMS))
-                .putStringSet(KEY_PREF_EMAIL_CONTENT, asSet(
+                .putStringSet(PREF_EMAIL_CONTENT, asSet(
                         VAL_PREF_EMAIL_CONTENT_CONTACT,
                         VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
                         VAL_PREF_EMAIL_CONTENT_LOCATION,
@@ -495,11 +495,11 @@ public class DebugFragment extends BasePreferenceFragment {
                         VAL_PREF_EMAIL_CONTENT_HEADER,
                         VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS,
                         VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME))
-                .putString(KEY_PREF_EMAIL_LOCALE, DEFAULT_LOCALE)
-                .putBoolean(KEY_PREF_NOTIFY_SEND_SUCCESS, true)
-                .putBoolean(KEY_PREF_RESEND_UNSENT, true)
-                .putString(KEY_PREF_FILTER_PHONE_BLACKLIST, commaJoin(asSet("+123456789", "+9876543*")))
-                .putString(KEY_PREF_FILTER_TEXT_BLACKLIST, commaJoin(asSet("Bad text", quoteRegex("Expression"))))
+                .putString(PREF_EMAIL_LOCALE, DEFAULT_LOCALE)
+                .putBoolean(PREF_NOTIFY_SEND_SUCCESS, true)
+                .putBoolean(PREF_RESEND_UNSENT, true)
+                .putString(PREF_FILTER_PHONE_BLACKLIST, commaJoin(asSet("+123456789", "+9876543*")))
+                .putString(PREF_FILTER_TEXT_BLACKLIST, commaJoin(asSet("Bad text", quoteRegex("Expression"))))
                 .apply();
 
         refreshPreferences();
@@ -547,7 +547,7 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private void onProcessServiceMail() {
-        if (settings.getBoolean(KEY_PREF_REMOTE_CONTROL_ENABLED, false)) {
+        if (settings.getBoolean(PREF_REMOTE_CONTROL_ENABLED, false)) {
             RemoteControlService.start(context);
             showToast(context, "Done");
         } else {

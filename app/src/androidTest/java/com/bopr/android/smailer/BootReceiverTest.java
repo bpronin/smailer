@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import java.util.Collections;
 
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
+import static com.bopr.android.smailer.Settings.PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
@@ -56,7 +56,7 @@ public class BootReceiverTest extends BaseTest {
         InvocationsCollector invocations = new InvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
 
-        when(preferences.getStringSet(eq(KEY_PREF_EMAIL_TRIGGERS), anySetOf(String.class)))
+        when(preferences.getStringSet(eq(PREF_EMAIL_TRIGGERS), anySetOf(String.class)))
                 .thenReturn(Util.asSet(VAL_PREF_TRIGGER_OUT_SMS));
 
         BootReceiver receiver = new BootReceiver();
@@ -78,7 +78,7 @@ public class BootReceiverTest extends BaseTest {
         InvocationsCollector invocations = new InvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
 
-        when(preferences.getStringSet(eq(KEY_PREF_EMAIL_TRIGGERS), anySetOf(String.class)))
+        when(preferences.getStringSet(eq(PREF_EMAIL_TRIGGERS), anySetOf(String.class)))
                 .thenReturn(Collections.<String>emptySet());
 
         BootReceiver receiver = new BootReceiver();

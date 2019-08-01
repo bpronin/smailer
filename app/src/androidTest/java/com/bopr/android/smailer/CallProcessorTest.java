@@ -15,12 +15,12 @@ import javax.mail.MessagingException;
 import static com.bopr.android.smailer.PhoneEvent.STATE_PENDING;
 import static com.bopr.android.smailer.Settings.DEFAULT_CONTENT;
 import static com.bopr.android.smailer.Settings.DEFAULT_TRIGGERS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_CONTENT;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_LOCALE;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_NOTIFY_SEND_SUCCESS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
-import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
+import static com.bopr.android.smailer.Settings.PREF_EMAIL_CONTENT;
+import static com.bopr.android.smailer.Settings.PREF_EMAIL_LOCALE;
+import static com.bopr.android.smailer.Settings.PREF_EMAIL_TRIGGERS;
+import static com.bopr.android.smailer.Settings.PREF_NOTIFY_SEND_SUCCESS;
+import static com.bopr.android.smailer.Settings.PREF_RECIPIENTS_ADDRESS;
+import static com.bopr.android.smailer.Settings.PREF_SENDER_ACCOUNT;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
@@ -54,10 +54,10 @@ public class CallProcessorTest extends BaseTest {
         super.setUp();
 
         preferences = mock(SharedPreferences.class);
-        when(preferences.getString(eq(KEY_PREF_SENDER_ACCOUNT), anyString())).thenReturn("sender@mail.com");
-        when(preferences.getString(eq(KEY_PREF_RECIPIENTS_ADDRESS), anyString())).thenReturn("recipient@mail.com");
-        when(preferences.getStringSet(eq(KEY_PREF_EMAIL_TRIGGERS), anySetOf(String.class))).thenReturn(DEFAULT_TRIGGERS);
-        when(preferences.getStringSet(eq(KEY_PREF_EMAIL_CONTENT), anySetOf(String.class))).thenReturn(DEFAULT_CONTENT);
+        when(preferences.getString(eq(PREF_SENDER_ACCOUNT), anyString())).thenReturn("sender@mail.com");
+        when(preferences.getString(eq(PREF_RECIPIENTS_ADDRESS), anyString())).thenReturn("recipient@mail.com");
+        when(preferences.getStringSet(eq(PREF_EMAIL_TRIGGERS), anySetOf(String.class))).thenReturn(DEFAULT_TRIGGERS);
+        when(preferences.getStringSet(eq(PREF_EMAIL_CONTENT), anySetOf(String.class))).thenReturn(DEFAULT_CONTENT);
 
         networkInfo = mock(NetworkInfo.class);
         when(networkInfo.isConnected()).thenReturn(true);
@@ -116,7 +116,7 @@ public class CallProcessorTest extends BaseTest {
         doAnswer(inits).when(transport).init(anyString(), anyString());
         doAnswer(sends).when(transport).send(any(MailMessage.class));
 
-        when(preferences.getString(eq(KEY_PREF_EMAIL_LOCALE), anyString())).thenReturn("ru_RU");
+        when(preferences.getString(eq(PREF_EMAIL_LOCALE), anyString())).thenReturn("ru_RU");
 
         CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
         callProcessor.process(new PhoneEvent("+12345678901", false, 0, null, false, null,
@@ -166,7 +166,7 @@ public class CallProcessorTest extends BaseTest {
         doAnswer(inits).when(transport).init(anyString(), anyString());
         doAnswer(sends).when(transport).send(any(MailMessage.class));
 
-        when(preferences.getString(eq(KEY_PREF_SENDER_ACCOUNT), anyString())).thenReturn(null);
+        when(preferences.getString(eq(PREF_SENDER_ACCOUNT), anyString())).thenReturn(null);
 
         CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
         callProcessor.process(new PhoneEvent("+12345678901", false, 0, null, false, null, null, null, STATE_PENDING, null));
@@ -191,7 +191,7 @@ public class CallProcessorTest extends BaseTest {
         doAnswer(inits).when(transport).init(anyString(), anyString());
         doAnswer(sends).when(transport).send(any(MailMessage.class));
 
-        when(preferences.getString(eq(KEY_PREF_RECIPIENTS_ADDRESS), anyString())).thenReturn(null);
+        when(preferences.getString(eq(PREF_RECIPIENTS_ADDRESS), anyString())).thenReturn(null);
 
         CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
         callProcessor.process(new PhoneEvent("+12345678901", false, 0, null, false, null, null, null, STATE_PENDING, null));
@@ -292,7 +292,7 @@ public class CallProcessorTest extends BaseTest {
     }
 
     /**
-     * When {@link Settings#KEY_PREF_NOTIFY_SEND_SUCCESS} set to true success notification should be shown.
+     * When {@link Settings#PREF_NOTIFY_SEND_SUCCESS} set to true success notification should be shown.
      */
     @Test
     public void testSuccessNotification() {
@@ -305,7 +305,7 @@ public class CallProcessorTest extends BaseTest {
         CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
 
         /* settings is off */
-        when(preferences.getBoolean(eq(KEY_PREF_NOTIFY_SEND_SUCCESS), anyBoolean())).thenReturn(false);
+        when(preferences.getBoolean(eq(PREF_NOTIFY_SEND_SUCCESS), anyBoolean())).thenReturn(false);
 
         callProcessor.process(new PhoneEvent("1", false, 0, null, false, null, null, null, STATE_PENDING, null));
 
@@ -313,7 +313,7 @@ public class CallProcessorTest extends BaseTest {
         assertTrue(successes.isEmpty());
 
         /* settings is on */
-        when(preferences.getBoolean(eq(KEY_PREF_NOTIFY_SEND_SUCCESS), anyBoolean())).thenReturn(true);
+        when(preferences.getBoolean(eq(PREF_NOTIFY_SEND_SUCCESS), anyBoolean())).thenReturn(true);
         callProcessor.process(new PhoneEvent("1", false, 0, null, false, null, null, null, STATE_PENDING, null));
 
         assertTrue(errors.isEmpty());

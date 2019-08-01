@@ -28,7 +28,7 @@ import static android.accounts.AccountManager.newChooseAccountIntent;
 import static android.app.Activity.RESULT_OK;
 import static com.bopr.android.smailer.Notifications.ACTION_SHOW_REMOTE_CONTROL;
 import static com.bopr.android.smailer.Notifications.notifications;
-import static com.bopr.android.smailer.Settings.KEY_PREF_SENDER_ACCOUNT;
+import static com.bopr.android.smailer.Settings.PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.Settings.settings;
 import static com.bopr.android.smailer.util.Util.join;
 import static java.util.Arrays.asList;
@@ -133,7 +133,7 @@ public class GoogleAuthorizationHelper {
 
     @Nullable
     public static Account selectedAccount(Context context) {
-        String accountName = settings(context).getString(KEY_PREF_SENDER_ACCOUNT, null);
+        String accountName = settings(context).getString(PREF_SENDER_ACCOUNT, null);
         return new GoogleAccountManager(context).getAccountByName(accountName);
     }
 

@@ -51,7 +51,7 @@ public class TextWhitelistFragment extends TextFilterListFragment {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if (key.equals(Settings.KEY_PREF_FILTER_TEXT_WHITELIST)) {
+            if (key.equals(Settings.PREF_FILTER_TEXT_WHITELIST)) {
                 loadItems();
             }
             super.onSharedPreferenceChanged(sharedPreferences, key);

@@ -5,13 +5,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import com.bopr.android.smailer.R;
-
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+
+import com.bopr.android.smailer.R;
+
+import static com.bopr.android.smailer.util.Util.requireNonNull;
 
 /**
  * Base Activity with default behaviour.
@@ -23,11 +24,11 @@ public abstract class BaseActivity extends AppCompatActivity {
     private static final String TAG_FRAGMENT = "activity_fragment";
 
     private Fragment fragment;
-    private boolean closable = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHomeButtonEnabled(true);
         setContentView(R.layout.activity_default);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -40,28 +41,20 @@ public abstract class BaseActivity extends AppCompatActivity {
                     .commit();
         }
 
-        setupActionBar();
-    }
-
-    @SuppressWarnings("SameParameterValue")
-    void setClosable(boolean closable) {
-        this.closable = closable;
     }
 
     @NonNull
     protected abstract Fragment createFragment();
 
-    private void setupActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(closable);
-        }
+    protected void setHomeButtonEnabled(boolean enabled) {
+        requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(enabled);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (closable && item.getItemId() == android.R.id.home) {
-            finish();
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

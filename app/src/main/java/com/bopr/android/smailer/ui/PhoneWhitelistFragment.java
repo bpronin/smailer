@@ -51,7 +51,7 @@ public class PhoneWhitelistFragment extends PhoneFilterListFragment {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if (key.equals(Settings.KEY_PREF_FILTER_PHONE_WHITELIST)) {
+            if (key.equals(Settings.PREF_FILTER_PHONE_WHITELIST)) {
                 loadItems();
             }
             super.onSharedPreferenceChanged(sharedPreferences, key);

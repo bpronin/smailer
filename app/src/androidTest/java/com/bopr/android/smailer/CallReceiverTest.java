@@ -15,7 +15,7 @@ import static android.telephony.TelephonyManager.EXTRA_STATE;
 import static android.telephony.TelephonyManager.EXTRA_STATE_IDLE;
 import static android.telephony.TelephonyManager.EXTRA_STATE_OFFHOOK;
 import static android.telephony.TelephonyManager.EXTRA_STATE_RINGING;
-import static com.bopr.android.smailer.Settings.KEY_PREF_EMAIL_TRIGGERS;
+import static com.bopr.android.smailer.Settings.PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
@@ -57,7 +57,7 @@ public class CallReceiverTest extends BaseTest {
     public void testReceiveIncomingCall() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
-        when(preferences.getStringSet(eq(KEY_PREF_EMAIL_TRIGGERS), anySetOf(String.class))).thenReturn(Util.asSet(VAL_PREF_TRIGGER_IN_CALLS));
+        when(preferences.getStringSet(eq(PREF_EMAIL_TRIGGERS), anySetOf(String.class))).thenReturn(Util.asSet(VAL_PREF_TRIGGER_IN_CALLS));
 
         CallReceiver receiver = new CallReceiver();
 
@@ -133,7 +133,7 @@ public class CallReceiverTest extends BaseTest {
     public void testReceiveOutgoingCall() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
-        when(preferences.getStringSet(eq(KEY_PREF_EMAIL_TRIGGERS), anySetOf(String.class))).thenReturn(Util.asSet(VAL_PREF_TRIGGER_OUT_CALLS));
+        when(preferences.getStringSet(eq(PREF_EMAIL_TRIGGERS), anySetOf(String.class))).thenReturn(Util.asSet(VAL_PREF_TRIGGER_OUT_CALLS));
 
         CallReceiver receiver = new CallReceiver();
 
@@ -207,7 +207,7 @@ public class CallReceiverTest extends BaseTest {
     public void testReceiveMissedCall() throws Exception {
         InvocationsCollector invocations = new InvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
-        when(preferences.getStringSet(eq(KEY_PREF_EMAIL_TRIGGERS), anySetOf(String.class))).thenReturn(Util.asSet(VAL_PREF_TRIGGER_MISSED_CALLS));
+        when(preferences.getStringSet(eq(PREF_EMAIL_TRIGGERS), anySetOf(String.class))).thenReturn(Util.asSet(VAL_PREF_TRIGGER_MISSED_CALLS));
 
         CallReceiver receiver = new CallReceiver();
 

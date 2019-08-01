@@ -9,6 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.Settings;
 import com.bopr.android.smailer.util.Util;
@@ -19,13 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.RecyclerView;
-
-import static com.bopr.android.smailer.Settings.KEY_PREF_RECIPIENTS_ADDRESS;
+import static com.bopr.android.smailer.Settings.PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.util.AndroidUtil.isValidEmailAddress;
 import static com.bopr.android.smailer.util.ResourceUtil.showToast;
 import static com.bopr.android.smailer.util.ResourceUtil.underwivedText;
@@ -135,7 +135,7 @@ public class RecipientsFragment extends BaseFragment {
         listView.setAdapter(listAdapter);
 
         List<Item> items = new ArrayList<>();
-        List<String> addresses = Util.split(settings.getString(KEY_PREF_RECIPIENTS_ADDRESS, ""), ",", true);
+        List<String> addresses = Util.split(settings.getString(PREF_RECIPIENTS_ADDRESS, ""), ",", true);
         for (String address : addresses) {
             items.add(new Item(address));
         }
@@ -149,7 +149,7 @@ public class RecipientsFragment extends BaseFragment {
         }
 
         settings.edit()
-                .putString(KEY_PREF_RECIPIENTS_ADDRESS, commaJoin(addresses))
+                .putString(PREF_RECIPIENTS_ADDRESS, commaJoin(addresses))
                 .apply();
     }
 
@@ -335,7 +335,7 @@ public class RecipientsFragment extends BaseFragment {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if (key.equals(Settings.KEY_PREF_RECIPIENTS_ADDRESS)) {
+            if (key.equals(Settings.PREF_RECIPIENTS_ADDRESS)) {
                 loadItems();
             }
             super.onSharedPreferenceChanged(sharedPreferences, key);
