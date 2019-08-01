@@ -52,7 +52,7 @@ public class MainActivity extends AppActivity {
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         syncManager.dispose();
         super.onDestroy();
     }
