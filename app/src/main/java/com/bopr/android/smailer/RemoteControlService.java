@@ -1,11 +1,10 @@
 package com.bopr.android.smailer;
 
-import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import android.os.IBinder;
 
-import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.core.app.JobIntentService;
 
 import com.bopr.android.smailer.RemoteCommandParser.Task;
 
@@ -42,19 +41,17 @@ import static com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class RemoteControlService extends IntentService {
+public class RemoteControlService extends JobIntentService {
 
     private static Logger log = LoggerFactory.getLogger("RemoteControlService");
+
+    private static final int JOB_ID = 2;
 
     private GoogleMailSupport transport;
     private Settings settings;
     private String query;
     private RemoteCommandParser parser;
     private Notifications notifications;
-
-    public RemoteControlService() {
-        super("RemoteControlService");
-    }
 
     @Override
     public void onCreate() {
@@ -66,14 +63,8 @@ public class RemoteControlService extends IntentService {
         query = String.format("subject:Re:[%s] label:inbox", getString(R.string.app_name));
     }
 
-    @Nullable
     @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-    @Override
-    protected void onHandleIntent(@Nullable Intent intent) {
+    protected void onHandleWork(@NonNull Intent intent) {
         log.debug("Handling intent: " + intent);
 
         try {
@@ -247,6 +238,7 @@ public class RemoteControlService extends IntentService {
     }
 
     public static void start(Context context) {
-        context.startService(new Intent(context, RemoteControlService.class));
+        enqueueWork(context, RemoteControlService.class, JOB_ID,
+                new Intent(context, RemoteControlService.class));
     }
 }

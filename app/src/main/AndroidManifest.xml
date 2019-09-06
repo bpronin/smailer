@@ -99,11 +99,13 @@
             android:label="@string/open_source"
             android:parentActivityName=".ui.MainActivity" />
 
-        <service android:name=".CallProcessorService" />
+        <service android:name=".CallProcessorService"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
 
         <service android:name=".ContentObserverService" />
 
-        <service android:name=".RemoteControlService" />
+        <service android:name=".RemoteControlService"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
 
         <service
             android:name=".sync.AuthenticatorService"

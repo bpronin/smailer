@@ -1,8 +1,11 @@
 package com.bopr.android.smailer;
 
-import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.JobIntentService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,20 +17,17 @@ import static com.bopr.android.smailer.util.Util.requireNonNull;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class CallProcessorService extends IntentService {
+public class CallProcessorService extends JobIntentService {
 
     private static Logger log = LoggerFactory.getLogger("CallProcessorService");
 
+    private static final int JOB_ID = 1;
     private static final String ACTION_EVENT = "event";
     private static final String ACTION_PENDING = "pending";
     private static final String EXTRA_EVENT = "event";
 
     private CallProcessor callProcessor;
     private Database database;
-
-    public CallProcessorService() {
-        super("CallProcessorService");
-    }
 
     @Override
     public void onCreate() {
@@ -37,10 +37,9 @@ public class CallProcessorService extends IntentService {
     }
 
     @Override
-    public void onStart(Intent intent, int startId) {
-        super.onStart(intent, startId);
-
+    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
         log.debug("Started");
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
@@ -52,7 +51,7 @@ public class CallProcessorService extends IntentService {
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
+    protected void onHandleWork(@NonNull Intent intent) {
         log.debug("Handling intent: " + intent);
 
         switch (requireNonNull(intent.getAction())) {
@@ -86,7 +85,7 @@ public class CallProcessorService extends IntentService {
      * @param event   event
      */
     public static void start(Context context, PhoneEvent event) {
-        context.startService(createIntent(context, event));
+        enqueueWork(context, CallProcessorService.class, JOB_ID, createIntent(context, event));
     }
 
     /**
@@ -95,6 +94,6 @@ public class CallProcessorService extends IntentService {
      * @param context context
      */
     public static void start(Context context) {
-        context.startService(createResendIntent(context));
+        enqueueWork(context, CallProcessorService.class, JOB_ID, createResendIntent(context));
     }
 }
