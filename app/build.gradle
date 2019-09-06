@@ -34,8 +34,8 @@ android {
         applicationId 'com.bopr.android.smailer'
         minSdkVersion 18
         targetSdkVersion 28
-        versionCode 57
-        versionName '1.6.0'
+        versionCode 58
+        versionName '1.6.1'
         archivesBaseName = "smailer-${versionName}"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         multiDexEnabled true
@@ -115,13 +115,13 @@ dependencies {
         transitive = true
     }
 
-    freeImplementation 'com.google.android.gms:play-services-ads:18.1.1'
+    freeImplementation 'com.google.android.gms:play-services-ads:18.2.0'
 
     /* NOTE: uninstall all application apk from device before running tests.
        they may interfere and lead to unpredictable results */
 
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.robolectric:robolectric:3.0'
+    testImplementation 'org.robolectric:robolectric:4.2.1'
     testImplementation 'org.mockito:mockito-core:2.7.22'
 
     androidTestImplementation 'junit:junit:4.12'

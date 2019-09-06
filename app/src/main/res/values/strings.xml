@@ -101,7 +101,7 @@
     <string name="regular_expression">Regular expression</string>
     <string name="remote_control">Remote control</string>
     <string name="remote_control_account">Service account</string>
-    <string name="remote_control_account_removed">Service account removed from device</string>
+    <string name="remote_control_account_removed">Service account removed or not specified</string>
     <string name="remove">Remove</string>
     <string name="remove_from_filter">Remove number from all rules</string>
     <string name="recipient_device">Recipient:</string>

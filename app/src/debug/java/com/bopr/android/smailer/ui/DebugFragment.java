@@ -1,7 +1,6 @@
 package com.bopr.android.smailer.ui;
 
 import android.Manifest;
-import android.accounts.Account;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -34,6 +33,7 @@ import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.RemoteControlService;
 import com.bopr.android.smailer.Settings;
 import com.bopr.android.smailer.sync.GoogleDrive;
+import com.bopr.android.smailer.sync.SyncAdapter;
 import com.bopr.android.smailer.sync.SyncManager;
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.ContentUtils;
@@ -58,6 +58,7 @@ import java.util.concurrent.Callable;
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static com.bopr.android.smailer.GoogleAuthorizationHelper.primaryAccount;
+import static com.bopr.android.smailer.GoogleAuthorizationHelper.selectedAccount;
 import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_LOCALE;
@@ -66,6 +67,7 @@ import static com.bopr.android.smailer.Settings.PREF_FILTER_PHONE_BLACKLIST;
 import static com.bopr.android.smailer.Settings.PREF_FILTER_TEXT_BLACKLIST;
 import static com.bopr.android.smailer.Settings.PREF_NOTIFY_SEND_SUCCESS;
 import static com.bopr.android.smailer.Settings.PREF_RECIPIENTS_ADDRESS;
+import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_ACCOUNT;
 import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_ENABLED;
 import static com.bopr.android.smailer.Settings.PREF_RESEND_UNSENT;
 import static com.bopr.android.smailer.Settings.PREF_SENDER_ACCOUNT;
@@ -130,14 +132,22 @@ public class DebugFragment extends BasePreferenceFragment {
         PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(context);
         addCategory(screen, "Google drive",
 
-//                createPreference("Upload data", new DefaultClickListener() {
-//
-//                    @Override
-//                    protected void onClick(Preference preference) {
-//                        onGoogleDriveUpload();
-//                    }
-//                }),
-//
+                createPreference("Download from drive", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onGoogleDriveDownload();
+                    }
+                }),
+
+                createPreference("Upload to drive", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onGoogleDriveUpload();
+                    }
+                }),
+
                 createPreference("Clear remote data", new DefaultClickListener() {
 
                     @Override
@@ -150,8 +160,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        SyncManager.syncNow(context);
-                        showToast(context, "Done");
+                        onGoogleDriveSync();
                     }
                 })
 
@@ -480,6 +489,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
         settings.edit()
                 .putString(PREF_SENDER_ACCOUNT, primaryAccount(context).name)
+                .putString(PREF_REMOTE_CONTROL_ACCOUNT, properties.getProperty("remote_control_account"))
                 .putString(PREF_RECIPIENTS_ADDRESS, properties.getProperty("default_recipient"))
                 .putStringSet(PREF_EMAIL_TRIGGERS, asSet(
                         VAL_PREF_TRIGGER_IN_SMS,
@@ -663,8 +673,8 @@ public class DebugFragment extends BasePreferenceFragment {
 
             @Override
             public Void call() throws Exception {
-                Account account = GoogleAuthorizationHelper.selectedAccount(context);
-                new GoogleDrive(context, account).clear();
+                GoogleDrive drive = new GoogleDrive(context, selectedAccount(context));
+                drive.clear();
                 return null;
             }
         });
@@ -672,28 +682,54 @@ public class DebugFragment extends BasePreferenceFragment {
         showToast(context, "Done");
     }
 
-//    private void onGoogleDriveUpload() {
-//        Tasks.call(new Callable<Void>() {
-//
-//            @Override
-//            public Void call() throws Exception {
-//                Account account = GoogleAuthorizationHelper.selectedAccount(context);
-//                GoogleDrive drive = new GoogleDrive(context, account);
-//                drive.clear();
-//                return null;
-//            }
-//        });
-//
-//        showToast(context, "Done");
-//    }
+    private void onGoogleDriveSync() {
+        Tasks.call(newSingleThreadExecutor(), new Callable<Void>() {
+
+            @Override
+            public Void call() throws Exception {
+//                new SyncAdapter(context, false).sync(context, selectedAccount(context));
+                SyncManager.syncNow(context);
+                return null;
+            }
+        });
+
+        showToast(context, "Done");
+    }
+
+    private void onGoogleDriveDownload() {
+        Tasks.call(newSingleThreadExecutor(), new Callable<Void>() {
+
+            @Override
+            public Void call() throws Exception {
+                GoogleDrive drive = new GoogleDrive(context, selectedAccount(context));
+                new SyncAdapter(context, false).download(drive);
+                return null;
+            }
+        });
+
+        showToast(context, "Done");
+    }
+
+    private void onGoogleDriveUpload() {
+        Tasks.call(newSingleThreadExecutor(), new Callable<Void>() {
+
+            @Override
+            public Void call() throws Exception {
+                GoogleDrive drive = new GoogleDrive(context, selectedAccount(context));
+                new SyncAdapter(context, false).upload(drive);
+                return null;
+            }
+        });
+
+        showToast(context, "Done");
+    }
 
     private void onGoogleDriveList() {
-        Tasks.call(new Callable<String>() {
+        Tasks.call(newSingleThreadExecutor(), new Callable<String>() {
 
             @Override
             public String call() throws Exception {
-                Account account = GoogleAuthorizationHelper.selectedAccount(context);
-                GoogleDrive drive = new GoogleDrive(context, account);
+                GoogleDrive drive = new GoogleDrive(context, selectedAccount(context));
                 List<com.google.api.services.drive.model.File> files = drive.list();
                 return null;
             }

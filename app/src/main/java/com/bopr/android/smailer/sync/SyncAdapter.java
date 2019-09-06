@@ -8,7 +8,6 @@ import android.content.SyncResult;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.util.Consumer;
 
 import com.bopr.android.smailer.Database;
@@ -16,22 +15,15 @@ import com.bopr.android.smailer.GeoCoordinates;
 import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.PhoneEventFilter;
 import com.bopr.android.smailer.Settings;
-import com.google.api.client.json.JsonGenerator;
-import com.google.api.client.json.JsonParser;
-import com.google.api.client.json.jackson2.JacksonFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.bopr.android.smailer.Settings.PREF_SYNC_TIME;
-import static com.bopr.android.smailer.util.Util.requireNonNull;
 
 /**
  * Handle the transfer of data between a server and an app, using the Android sync adapter framework.
@@ -51,7 +43,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     private final Database database;
     private final Settings settings;
 
-    SyncAdapter(Context context, boolean autoInitialize) {
+    public SyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
         this.settings = new Settings(context);
         this.database = new Database(context);
@@ -61,26 +53,39 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     public void onPerformSync(Account account, Bundle extras, String authority,
                               ContentProviderClient provider, SyncResult syncResult) {
         try {
-            performSync(new GoogleDrive(getContext(), account));
+            sync(getContext(), account);
         } catch (Exception x) {
             log.error("Synchronization failed ", x);
         }
     }
 
-    private void performSync(GoogleDrive drive) throws IOException {
+    public void sync(Context context, Account account) throws IOException {
+        GoogleDrive drive = new GoogleDrive(context, account);
         MetaData meta = getMetaData();
-        MetaData remoteMeta = download(drive, META_FILE, MetaData.class);
+        MetaData remoteMeta = drive.download(META_FILE, MetaData.class);
         if (remoteMeta == null || meta.syncTime >= remoteMeta.syncTime) {
-            upload(drive, META_FILE, meta);
-            upload(drive, DATA_FILE, getData());
-
-            log.debug("Update remote data");
+            upload(drive);
         } else {
-            SyncData data = requireNonNull(download(drive, DATA_FILE, SyncData.class));
+            download(drive);
+        }
+    }
+
+    public void download(GoogleDrive drive) throws IOException {
+        SyncData data = drive.download(DATA_FILE, SyncData.class);
+        if (data != null) {
             putData(data);
 
-            log.debug("Update local data");
+            log.debug("Downloaded remote data");
+        } else {
+            log.debug("No remote data");
         }
+    }
+
+    public void upload(GoogleDrive drive) throws IOException {
+        drive.upload(META_FILE, getMetaData());
+        drive.upload(DATA_FILE, getData());
+
+        log.debug("Uploaded local data");
     }
 
     @NonNull
@@ -159,26 +164,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         return event;
     }
 
-    @Nullable
-    private <T> T download(GoogleDrive drive, @NonNull String filename,
-                           @NonNull Class<? extends T> objectClass) throws IOException {
-        InputStream stream = drive.open(filename);
-        if (stream != null) {
-            JsonParser parser = JacksonFactory.getDefaultInstance().createJsonParser(stream);
-            return parser.parseAndClose(objectClass);
-        } else {
-            return null;
-        }
-    }
-
-    private void upload(GoogleDrive drive, @NonNull String filename, @NonNull Object object) throws IOException {
-        Writer writer = new StringWriter();
-        JsonGenerator generator = JacksonFactory.getDefaultInstance().createJsonGenerator(writer);
-        generator.serialize(object);
-        generator.flush();
-        drive.write(filename, writer.toString());
-        generator.close();
-    }
 
 }
 

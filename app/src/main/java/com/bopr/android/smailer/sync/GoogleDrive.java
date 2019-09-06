@@ -3,10 +3,13 @@ package com.bopr.android.smailer.sync;
 import android.accounts.Account;
 import android.content.Context;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.http.ByteArrayContent;
+import com.google.api.client.json.JsonGenerator;
+import com.google.api.client.json.JsonParser;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
@@ -18,6 +21,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.List;
 
 import static com.google.api.client.extensions.android.http.AndroidHttp.newCompatibleTransport;
@@ -49,7 +54,7 @@ public class GoogleDrive {
     }
 
     @Nullable
-    InputStream open(String filename) throws IOException {
+    private InputStream open(String filename) throws IOException {
         String fileId = find(filename);
         if (fileId != null) {
             return service.files().get(fileId).executeMediaAsInputStream();
@@ -57,7 +62,7 @@ public class GoogleDrive {
         return null;
     }
 
-    void write(String filename, String json) throws IOException {
+    private void write(String filename, String json) throws IOException {
         String fileId = find(filename);
         if (fileId == null) {
             create(filename, json);
@@ -121,5 +126,26 @@ public class GoogleDrive {
                 .setFields("files(id, name)")
                 .execute()
                 .getFiles();
+    }
+
+    void upload(@NonNull String filename, @NonNull Object object) throws IOException {
+        Writer writer = new StringWriter();
+        JsonGenerator generator = JacksonFactory.getDefaultInstance().createJsonGenerator(writer);
+        generator.serialize(object);
+        generator.flush();
+        write(filename, writer.toString());
+        generator.close();
+    }
+
+    @Nullable
+    <T> T download(@NonNull String filename, @NonNull Class<? extends T> objectClass)
+            throws IOException {
+        InputStream stream = open(filename);
+        if (stream != null) {
+            JsonParser parser = JacksonFactory.getDefaultInstance().createJsonParser(stream);
+            return parser.parseAndClose(objectClass);
+        } else {
+            return null;
+        }
     }
 }

@@ -133,8 +133,8 @@ public class GoogleAuthorizationHelper {
 
     @Nullable
     public static Account selectedAccount(Context context) {
-        String accountName = settings(context).getString(PREF_SENDER_ACCOUNT, null);
-        return new GoogleAccountManager(context).getAccountByName(accountName);
+        String name = settings(context).getString(PREF_SENDER_ACCOUNT, null);
+        return new GoogleAccountManager(context).getAccountByName(name);
     }
 
     @NonNull

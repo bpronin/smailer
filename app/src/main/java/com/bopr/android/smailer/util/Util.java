@@ -33,6 +33,7 @@ public class Util {
     public static final String DEFAULT = "default";
     public static final String QUOTED_TEXT_REGEX = "\"(.*?)\"";
     public static final Pattern QUOTED_TEXT_PATTERN = Pattern.compile(QUOTED_TEXT_REGEX);
+    private static final String REGEX_ = "REGEX:";
 
     private Util() {
     }
@@ -219,13 +220,13 @@ public class Util {
 
     @NonNull
     public static String quoteRegex(String s) {
-        return "REGEX:" + s;
+        return REGEX_ + s;
     }
 
     @Nullable
     public static String unquoteRegex(String s) {
         if (!isEmpty(s)) {
-            String[] ss = s.split("REGEX:");
+            String[] ss = s.split(REGEX_);
             if (ss.length > 1) {
                 return ss[1];
             }

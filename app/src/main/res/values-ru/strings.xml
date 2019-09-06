@@ -99,7 +99,7 @@
     <string name="regular_expression">Регулярное выражение</string>
     <string name="remote_control">Удаленное управление</string>
     <string name="remote_control_account">Сервисный аккаунт</string>
-    <string name="remote_control_account_removed">Сервисный аккаунт удален</string>
+    <string name="remote_control_account_removed">Сервисный аккаунт не указан или удален</string>
     <string name="remove">Удалить</string>
     <string name="remove_from_filter">Исключить номер из правил</string>
     <string name="reply_ot_app">Ответить {app_name}:</string>
