@@ -138,13 +138,12 @@ public class CallReceiver extends BroadcastReceiver {
     }
 
     @NonNull
-    @SuppressWarnings("deprecation")
     private SmsMessage[] parseMessageLegacy(Intent intent) {
         SmsMessage[] messages;
-        Object[] pdus = (Object[]) intent.getSerializableExtra("pdus");
-        messages = new SmsMessage[pdus.length];
-        for (int i = 0; i < pdus.length; i++) {
-            byte[] pdu = (byte[]) pdus[i];
+        Object[] pduList = (Object[]) intent.getSerializableExtra("pdus");
+        messages = new SmsMessage[pduList.length];
+        for (int i = 0; i < pduList.length; i++) {
+            byte[] pdu = (byte[]) pduList[i];
             messages[i] = SmsMessage.createFromPdu(pdu);
         }
         return messages;
