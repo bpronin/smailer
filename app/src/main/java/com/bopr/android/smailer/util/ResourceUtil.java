@@ -8,6 +8,8 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.ParagraphStyle;
 import android.widget.Toast;
 
+import androidx.annotation.StringRes;
+
 import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.draw.WavyUnderlineSpan;
@@ -75,6 +77,7 @@ public abstract class ResourceUtil {
         return -1;
     }
 
+    @StringRes
     public static int eventStateText(PhoneEvent event) {
         switch (event.getState()) {
             case STATE_PENDING:
@@ -126,5 +129,4 @@ public abstract class ResourceUtil {
 */
         return toast;
     }
-
 }

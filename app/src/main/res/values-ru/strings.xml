@@ -71,6 +71,7 @@
     <string name="notify_on_send">Уведомлять об отправке</string>
     <string name="notify_remote_actions">Показывать уведомление о выполнении операций</string>
     <string name="notify_send_success">Показывать уведомление об успешной отправке почты</string>
+    <string name="number_in_blacklist">номер в черном списке</string>
     <string name="open_source">Открытый исходный код</string>
     <string name="open_source_and_third_party">Открытый исходный код и ПО сторонних производителей</string>
     <string name="outgoing_call">Исходящий звонок</string>
@@ -95,6 +96,7 @@
     <string name="phone_removed_from_filter">{number} удален из фильтра</string>
     <string name="preferences">Дополнительно</string>
     <string name="recipient_already_exists">Получатель {name} уже существует</string>
+    <string name="recipient_device">Получатель:</string>
     <string name="recipients">Получатели</string>
     <string name="regular_expression">Регулярное выражение</string>
     <string name="remote_control">Удаленное управление</string>
@@ -104,7 +106,6 @@
     <string name="remove_from_filter">Исключить номер из правил</string>
     <string name="reply_ot_app">Ответить {app_name}:</string>
     <string name="resend">Повторная отправка</string>
-    <string name="recipient_device">Получатель:</string>
     <string name="rules">Правила</string>
     <string name="rules_for_sending">Условия для отправки почты</string>
     <string name="select_from_contacts">Выбрать из контактов</string>
@@ -118,6 +119,7 @@
     <string name="since_permissions_not_granted">Некоторые настройки отключены, поскольку разрешения не получены.</string>
     <string name="text_filter">Фильтр текста</string>
     <string name="text_fragment">Фрагмент текста</string>
+    <string name="text_in_blacklist">текст в черном списке</string>
     <string name="text_remotely_added_to_blacklist">Текст \"{text}\" удаленно добавлен в черный список."</string>
     <string name="text_remotely_added_to_whitelist">Текст \"{text}\" удаленно добавлен в белый список."</string>
     <string name="text_remotely_removed_from_blacklist">Текст \"{text}\" удаленно удален из черного списка."</string>

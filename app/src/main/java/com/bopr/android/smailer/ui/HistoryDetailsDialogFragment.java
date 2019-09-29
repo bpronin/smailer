@@ -17,7 +17,9 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.bopr.android.smailer.PhoneEvent;
+import com.bopr.android.smailer.PhoneEventFilter;
 import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.Settings;
 
 import static com.bopr.android.smailer.util.ResourceUtil.eventDirectionImage;
 import static com.bopr.android.smailer.util.ResourceUtil.eventStateImage;
@@ -35,6 +37,7 @@ import static com.bopr.android.smailer.util.Util.formatDuration;
 public class HistoryDetailsDialogFragment extends DialogFragment {
 
     private PhoneEvent value;
+    private PhoneEventFilter filter;
 
     void showDialog(FragmentActivity activity) {
         show(activity.getSupportFragmentManager(), "log_details_dialog");
@@ -44,6 +47,7 @@ public class HistoryDetailsDialogFragment extends DialogFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        filter = new Settings(requireContext()).getFilter();
     }
 
     @Override
@@ -70,6 +74,7 @@ public class HistoryDetailsDialogFragment extends DialogFragment {
             view.<TextView>findViewById(R.id.text_time).setText(formatTime(value.getStartTime()));
             view.<ImageView>findViewById(R.id.image_event_result).setImageResource(eventStateImage(value));
             view.<TextView>findViewById(R.id.text_result).setText(eventStateText(value));
+            view.<TextView>findViewById(R.id.text_result_reason).setText(formatReason(value));
             view.<TextView>findViewById(R.id.text_type_title).setText(eventTypeText(value));
             view.<TextView>findViewById(R.id.text_recipient).setText(value.getRecipient());
 
@@ -85,6 +90,17 @@ public class HistoryDetailsDialogFragment extends DialogFragment {
                     .create();
         }
         return dialog;
+    }
+
+    private CharSequence formatReason(PhoneEvent event) {
+        if (event.getState() == PhoneEvent.STATE_IGNORED) {
+            if (!filter.testPhone(event.getPhone())) {
+                return "(" + getString(R.string.number_in_blacklist) + ")";
+            } else if (!filter.testText(event.getText())) {
+                return "(" + getString(R.string.text_in_blacklist) + ")";
+            }
+        }
+        return null;
     }
 
     public void setValue(PhoneEvent value) {

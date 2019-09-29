@@ -117,6 +117,16 @@
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
             android:text="Sent email" />
+
+        <TextView
+            android:id="@+id/text_result_reason"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingLeft="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:text="(number in blacklist)" />
     </LinearLayout>
 
 
