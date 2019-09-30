@@ -19,7 +19,7 @@ import static android.telephony.TelephonyManager.EXTRA_STATE;
 import static android.telephony.TelephonyManager.EXTRA_STATE_IDLE;
 import static android.telephony.TelephonyManager.EXTRA_STATE_OFFHOOK;
 import static android.telephony.TelephonyManager.EXTRA_STATE_RINGING;
-import static com.bopr.android.smailer.util.AndroidUtil.devicePhoneNumber;
+import static com.bopr.android.smailer.util.AndroidUtil.deviceName;
 import static java.lang.System.currentTimeMillis;
 
 /**
@@ -98,7 +98,7 @@ public class CallReceiver extends BroadcastReceiver {
 
     private void processCall(@NonNull Context context, boolean incoming, boolean missed) {
         PhoneEvent event = new PhoneEvent();
-        event.setRecipient(devicePhoneNumber(context));
+        event.setRecipient(deviceName());
         event.setPhone(lastCallNumber);
         event.setStartTime(callStartTime);
         event.setEndTime(currentTimeMillis());
@@ -128,7 +128,7 @@ public class CallReceiver extends BroadcastReceiver {
             }
 
             event.setPhone(messages[0].getDisplayOriginatingAddress());
-            event.setRecipient(devicePhoneNumber(context));
+            event.setRecipient(deviceName());
             event.setStartTime(messages[0].getTimestampMillis()); /* time zone on emulator may be incorrect */
             event.setEndTime(event.getStartTime());
             event.setText(text.toString());

@@ -24,7 +24,7 @@ import java.util.Set;
 
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
 import static com.bopr.android.smailer.Settings.settings;
-import static com.bopr.android.smailer.util.AndroidUtil.devicePhoneNumber;
+import static com.bopr.android.smailer.util.AndroidUtil.deviceName;
 
 /**
  * Listens to changes in sms content.
@@ -121,7 +121,7 @@ public class ContentObserverService extends Service {
 
             PhoneEvent event = new PhoneEvent();
             event.setIncoming(false);
-            event.setRecipient(devicePhoneNumber(context));
+            event.setRecipient(deviceName());
             event.setPhone(getString("address"));
             event.setStartTime(date);
             event.setEndTime(date);

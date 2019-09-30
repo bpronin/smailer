@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.PowerManager;
 import android.provider.Settings;
-import android.telephony.TelephonyManager;
 import android.util.Patterns;
 
 import androidx.core.content.ContextCompat;
@@ -55,7 +54,7 @@ public class AndroidUtil {
     /**
      * Returns denice name.
      */
-    public static String getDeviceName() {
+    public static String deviceName() {
         return Util.capitalize(MANUFACTURER) + " " + MODEL;
     }
 
@@ -95,11 +94,11 @@ public class AndroidUtil {
         }
     }
 
-    @SuppressLint({"MissingPermission", "HardwareIds"})
+/*    @SuppressLint({"MissingPermission", "HardwareIds"})
     public static String devicePhoneNumber(Context context) {
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         return tm != null ? tm.getLine1Number() : null;
-    }
+    }*/
 
     public static void startService(Context context, Intent intent) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

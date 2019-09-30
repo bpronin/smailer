@@ -12,7 +12,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.db.FieldDataConverter;
 import com.bopr.android.smailer.util.db.XCursor;
 
@@ -25,6 +24,7 @@ import static android.database.sqlite.SQLiteDatabase.CONFLICT_IGNORE;
 import static com.bopr.android.smailer.PhoneEvent.STATE_IGNORED;
 import static com.bopr.android.smailer.PhoneEvent.STATE_PENDING;
 import static com.bopr.android.smailer.PhoneEvent.STATE_PROCESSED;
+import static com.bopr.android.smailer.util.AndroidUtil.deviceName;
 import static com.bopr.android.smailer.util.Util.requireNonNull;
 import static com.bopr.android.smailer.util.db.DbUtil.replaceTable;
 import static java.lang.String.valueOf;
@@ -391,7 +391,7 @@ public class Database {
                             }
                         } else if (column.equals(COLUMN_RECIPIENT)) {
                             if (s == null) {
-                                return AndroidUtil.devicePhoneNumber(context);
+                                return deviceName();
                             } else {
                                 return s;
                             }

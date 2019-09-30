@@ -83,7 +83,7 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
-import static com.bopr.android.smailer.util.AndroidUtil.devicePhoneNumber;
+import static com.bopr.android.smailer.util.AndroidUtil.deviceName;
 import static com.bopr.android.smailer.util.ResourceUtil.showToast;
 import static com.bopr.android.smailer.util.Util.asSet;
 import static com.bopr.android.smailer.util.Util.commaJoin;
@@ -573,7 +573,7 @@ public class DebugFragment extends BasePreferenceFragment {
         long start = System.currentTimeMillis();
 
         PhoneEvent event = new PhoneEvent();
-        event.setRecipient(devicePhoneNumber(context));
+        event.setRecipient(deviceName());
         event.setPhone("+12345678901");
         event.setText("SMS TEXT");
         event.setIncoming(true);
@@ -626,14 +626,14 @@ public class DebugFragment extends BasePreferenceFragment {
 
     private void onAddHistoryItem() {
         database.putEvent(new PhoneEvent("+79052345670", true, System.currentTimeMillis(), null, false,
-                "Debug message", null, null, PhoneEvent.STATE_PENDING, devicePhoneNumber(context)));
+                "Debug message", null, null, PhoneEvent.STATE_PENDING, deviceName()));
         database.notifyChanged();
         showToast(context, "Done");
     }
 
     private void onPopulateHistory() {
         long time = System.currentTimeMillis();
-        String recipient = devicePhoneNumber(context);
+        String recipient = deviceName();
         database.putEvent(new PhoneEvent("+79052345671", true, time, null, false, "Debug message", null, null, PhoneEvent.STATE_PENDING, recipient));
         database.putEvent(new PhoneEvent("+79052345672", false, time += 1000, null, false, "Debug message", null, null, PhoneEvent.STATE_PROCESSED, recipient));
         database.putEvent(new PhoneEvent("+79052345673", true, time += 1000, time + 10000, false, null, null, null, PhoneEvent.STATE_IGNORED, recipient));
@@ -790,7 +790,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                 MailMessage message = new MailMessage();
                 message.setSubject("test subject");
-                message.setBody("test message from " + AndroidUtil.getDeviceName());
+                message.setBody("test message from " + AndroidUtil.deviceName());
                 message.setRecipients(requireNonNull(properties.getProperty("default_recipient")));
 
                 transport.send(message);
@@ -836,7 +836,7 @@ public class DebugFragment extends BasePreferenceFragment {
                 for (File file : attachment) {
                     MailMessage message = new MailMessage();
                     message.setSubject("SMailer log");
-                    message.setBody("Device: " + AndroidUtil.getDeviceName());
+                    message.setBody("Device: " + AndroidUtil.deviceName());
                     message.setAttachment(ImmutableSet.of(file));
                     message.setRecipients(properties.getProperty("developer_email"));
 

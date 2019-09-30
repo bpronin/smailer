@@ -127,7 +127,7 @@ public class Settings extends SharedPreferencesWrapper {
         if (!Util.isEmpty(name)) {
             return name;
         }
-        return AndroidUtil.getDeviceName();
+        return AndroidUtil.deviceName();
     }
 
     public String getReleaseVersion() {

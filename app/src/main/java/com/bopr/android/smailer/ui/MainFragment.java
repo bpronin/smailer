@@ -161,7 +161,7 @@ public class MainFragment extends BasePreferenceFragment {
 
     private void updateAlasPreference(EditTextPreference preference, String value) {
         if (isEmpty(value)) {
-            updateSummary(preference, AndroidUtil.getDeviceName(), STYLE_DEFAULT);
+            updateSummary(preference, AndroidUtil.deviceName(), STYLE_DEFAULT);
         } else {
             updateSummary(preference, value, STYLE_DEFAULT);
         }
