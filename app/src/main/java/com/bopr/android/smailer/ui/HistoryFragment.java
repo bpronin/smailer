@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.ContextMenu;
@@ -293,19 +292,22 @@ public class HistoryFragment extends BaseFragment {
 
                 holder.timeView.setText(DateFormat.format(getString(R.string._time_pattern), event.getStartTime()));
                 holder.textView.setText(formatSummary(event));
-
-                if (phoneEventFilter.testText(event.getText())) {
-                    holder.textView.setPaintFlags(holder.phoneTextFlags);
-                } else {
-                    holder.textView.setPaintFlags(holder.phoneTextFlags | Paint.STRIKE_THRU_TEXT_FLAG);
-                }
-
                 holder.phoneView.setText(event.getPhone());
-                if (phoneEventFilter.testPhone(event.getPhone())) {
-                    holder.phoneView.setPaintFlags(holder.phoneTextFlags);
-                } else {
-                    holder.phoneView.setPaintFlags(holder.phoneTextFlags | Paint.STRIKE_THRU_TEXT_FLAG);
-                }
+
+                holder.textView.setEnabled(phoneEventFilter.testText(event.getText()));
+                holder.phoneView.setEnabled(phoneEventFilter.testPhone(event.getPhone()));
+
+//                if (phoneEventFilter.testText(event.getText())) {
+//                    holder.textView.setPaintFlags(holder.phoneTextFlags);
+//                } else {
+//                    holder.textView.setPaintFlags(holder.phoneTextFlags | Paint.STRIKE_THRU_TEXT_FLAG);
+//                }
+//
+//                if (phoneEventFilter.testPhone(event.getPhone())) {
+//                    holder.phoneView.setPaintFlags(holder.phoneTextFlags);
+//                } else {
+//                    holder.phoneView.setPaintFlags(holder.phoneTextFlags | Paint.STRIKE_THRU_TEXT_FLAG);
+//                }
 
                 holder.typeView.setImageResource(eventTypeImage(event));
                 holder.directionView.setImageResource(eventDirectionImage(event));

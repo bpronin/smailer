@@ -42,7 +42,7 @@
     <string name="email_message_language">Язык почтового сообщения</string>
     <string name="email_send">Почта отправлена.</string>
     <string name="enter_phone_number">Укажите номер телефона. Допустимо использование символа * для пропуска группы знаков</string>
-    <string name="events_causing_sending_mail">События, вызывающие отправку почты</string>
+    <string name="events_causing_sending_mail">События для отправки почты</string>
     <string name="geolocation_disabled">(определение местоположения отключено)</string>
     <string name="history_is_empty">Журнал пуст</string>
     <string name="ignored">Пропущено</string>
@@ -129,7 +129,7 @@
     <string name="triggers">Триггеры</string>
     <string name="unable_send_email">Не удалось отправить почту. {reason}</string>
     <string name="unacceptable_phone_numbers">Заблокированные номера ({size})</string>
-    <string name="unacceptable_words">Запрещеные фразы ({size})</string>
+    <string name="unacceptable_words">Заблокированные фразы ({size})</string>
     <string name="undo">Отмена</string>
     <string name="unknown_contact">Неизвестный контакт</string>
     <string name="user_password_not_accepted">Неверное имя пользователя или пароль.</string>
