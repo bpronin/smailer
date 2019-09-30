@@ -41,7 +41,7 @@ public class Database {
     private static Logger log = LoggerFactory.getLogger("Database");
 
     public static final String DATABASE_NAME = "smailer.sqlite";
-    private static final int DB_VERSION = 4;
+    private static final int DB_VERSION = 5;
 
     private static final String DATABASE_EVENT = "database-event";
 
@@ -62,6 +62,7 @@ public class Database {
     public static final String COLUMN_START_TIME = "start_time";
     public static final String COLUMN_END_TIME = "end_time";
     public static final String COLUMN_STATE = "state";
+    public static final String COLUMN_STATE_REASON = "state_reason";
     public static final String COLUMN_LAST_LATITUDE = "last_latitude";
     public static final String COLUMN_LAST_LONGITUDE = "last_longitude";
     public static final String COLUMN_LAST_LOCATION_TIME = "last_location_time";
@@ -142,6 +143,7 @@ public class Database {
         ContentValues values = new ContentValues();
 
         values.put(COLUMN_STATE, event.getState());
+        values.put(COLUMN_STATE_REASON, event.getStateReason());
         values.put(COLUMN_IS_INCOMING, event.isIncoming());
         values.put(COLUMN_IS_MISSED, event.isMissed());
         values.put(COLUMN_PHONE, event.getPhone());
@@ -325,6 +327,7 @@ public class Database {
         private static final String EVENTS_TABLE_SQL =
                 "CREATE TABLE " + TABLE_EVENTS + " (" +
                         COLUMN_STATE + " INTEGER, " +
+                        COLUMN_STATE_REASON + " INTEGER, " +
                         COLUMN_IS_INCOMING + " INTEGER, " +
                         COLUMN_IS_MISSED + " INTEGER, " +
                         COLUMN_START_TIME + " INTEGER NOT NULL, " +
@@ -417,6 +420,7 @@ public class Database {
         public PhoneEvent get() {
             PhoneEvent event = new PhoneEvent();
             event.setState(getInt(COLUMN_STATE));
+            event.setStateReason(getInt(COLUMN_STATE_REASON));
             event.setPhone(getString(COLUMN_PHONE));
             event.setIncoming(getBoolean(COLUMN_IS_INCOMING));
             event.setStartTime(getLong(COLUMN_START_TIME));

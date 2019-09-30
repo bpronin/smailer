@@ -33,6 +33,9 @@ import com.bopr.android.smailer.util.TagFormatter;
 import java.util.Set;
 
 import static androidx.recyclerview.widget.RecyclerView.NO_POSITION;
+import static com.bopr.android.smailer.PhoneEvent.REASON_NUMBER_BLACKLISTED;
+import static com.bopr.android.smailer.PhoneEvent.REASON_TEXT_BLACKLISTED;
+import static com.bopr.android.smailer.PhoneEvent.REASON_TRIGGER_OFF;
 import static com.bopr.android.smailer.PhoneEvent.STATE_PENDING;
 import static com.bopr.android.smailer.util.AddressUtil.containsPhone;
 import static com.bopr.android.smailer.util.AddressUtil.findPhone;
@@ -293,25 +296,14 @@ public class HistoryFragment extends BaseFragment {
                 holder.timeView.setText(DateFormat.format(getString(R.string._time_pattern), event.getStartTime()));
                 holder.textView.setText(formatSummary(event));
                 holder.phoneView.setText(event.getPhone());
-
-                holder.textView.setEnabled(phoneEventFilter.testText(event.getText()));
-                holder.phoneView.setEnabled(phoneEventFilter.testPhone(event.getPhone()));
-
-//                if (phoneEventFilter.testText(event.getText())) {
-//                    holder.textView.setPaintFlags(holder.phoneTextFlags);
-//                } else {
-//                    holder.textView.setPaintFlags(holder.phoneTextFlags | Paint.STRIKE_THRU_TEXT_FLAG);
-//                }
-//
-//                if (phoneEventFilter.testPhone(event.getPhone())) {
-//                    holder.phoneView.setPaintFlags(holder.phoneTextFlags);
-//                } else {
-//                    holder.phoneView.setPaintFlags(holder.phoneTextFlags | Paint.STRIKE_THRU_TEXT_FLAG);
-//                }
-
                 holder.typeView.setImageResource(eventTypeImage(event));
                 holder.directionView.setImageResource(eventDirectionImage(event));
                 holder.stateView.setImageResource(eventStateImage(event));
+
+                holder.typeView.setEnabled((event.getStateReason() & REASON_TRIGGER_OFF) == 0);
+                holder.directionView.setEnabled((event.getStateReason() & REASON_TRIGGER_OFF) == 0);
+                holder.textView.setEnabled((event.getStateReason() & REASON_TEXT_BLACKLISTED) == 0);
+                holder.phoneView.setEnabled((event.getStateReason() & REASON_NUMBER_BLACKLISTED) == 0);
 
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
 

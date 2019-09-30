@@ -17,10 +17,11 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.bopr.android.smailer.PhoneEvent;
-import com.bopr.android.smailer.PhoneEventFilter;
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.Settings;
 
+import static com.bopr.android.smailer.PhoneEvent.REASON_NUMBER_BLACKLISTED;
+import static com.bopr.android.smailer.PhoneEvent.REASON_TEXT_BLACKLISTED;
+import static com.bopr.android.smailer.PhoneEvent.REASON_TRIGGER_OFF;
 import static com.bopr.android.smailer.util.ResourceUtil.eventDirectionImage;
 import static com.bopr.android.smailer.util.ResourceUtil.eventStateImage;
 import static com.bopr.android.smailer.util.ResourceUtil.eventStateText;
@@ -37,7 +38,6 @@ import static com.bopr.android.smailer.util.Util.formatDuration;
 public class HistoryDetailsDialogFragment extends DialogFragment {
 
     private PhoneEvent value;
-    private PhoneEventFilter filter;
 
     void showDialog(FragmentActivity activity) {
         show(activity.getSupportFragmentManager(), "log_details_dialog");
@@ -47,7 +47,6 @@ public class HistoryDetailsDialogFragment extends DialogFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        filter = new Settings(requireContext()).getFilter();
     }
 
     @Override
@@ -94,10 +93,12 @@ public class HistoryDetailsDialogFragment extends DialogFragment {
 
     private CharSequence formatReason(PhoneEvent event) {
         if (event.getState() == PhoneEvent.STATE_IGNORED) {
-            if (!filter.testPhone(event.getPhone())) {
+            if ((event.getStateReason() & REASON_NUMBER_BLACKLISTED) != 0) {
                 return "(" + getString(R.string.number_in_blacklist) + ")";
-            } else if (!filter.testText(event.getText())) {
+            } else if ((event.getStateReason() & REASON_TEXT_BLACKLISTED) != 0) {
                 return "(" + getString(R.string.text_in_blacklist) + ")";
+            } else if ((event.getStateReason() & REASON_TRIGGER_OFF) != 0) {
+                return "(" + getString(R.string.trigger_off) + ")";
             }
         }
         return null;

@@ -100,7 +100,7 @@ public class DbUtil {
         db.beginTransaction();
         try {
             String old = table + "_old";
-            db.execSQL("DROP TABLE " + old);
+            db.execSQL("DROP TABLE IF EXISTS " + old);
             db.execSQL("ALTER TABLE " + table + " RENAME TO " + old);
             db.execSQL(createSql);
             copyTable(db, old, table, converter);

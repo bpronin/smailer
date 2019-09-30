@@ -28,6 +28,11 @@ public class PhoneEvent implements Parcelable {
     public static final int STATE_PROCESSED = 1;
     public static final int STATE_IGNORED = 2;
 
+    public static final int REASON_ACCEPT = 0;
+    public static final int REASON_NUMBER_BLACKLISTED = 1;
+    public static final int REASON_TEXT_BLACKLISTED = 1 << 1;
+    public static final int REASON_TRIGGER_OFF = 1 << 2;
+
     private boolean incoming;
     private boolean missed;
     private String phone;
@@ -39,6 +44,7 @@ public class PhoneEvent implements Parcelable {
     private GeoCoordinates location;
     @EventState
     private int state = STATE_PENDING;
+    private int stateReason = REASON_ACCEPT;
     private boolean read;
 
     /* Required by Jackson */
@@ -145,6 +151,14 @@ public class PhoneEvent implements Parcelable {
         this.state = state;
     }
 
+    public int getStateReason() {
+        return stateReason;
+    }
+
+    public void setStateReason(int stateReason) {
+        this.stateReason = stateReason;
+    }
+
     public boolean isRead() {
         return read;
     }
@@ -175,10 +189,10 @@ public class PhoneEvent implements Parcelable {
                 ", details='" + details + '\'' +
                 ", location=" + location +
                 ", state=" + state +
+                ", stateReason=" + stateReason +
                 ", read=" + read +
                 '}';
     }
-
     /* Generated Parcelable stuff. Alt+Enter on "implements Parcelable" to update */
 
     protected PhoneEvent(Parcel in) {
@@ -196,6 +210,7 @@ public class PhoneEvent implements Parcelable {
         details = in.readString();
         location = in.readParcelable(GeoCoordinates.class.getClassLoader());
         state = in.readInt();
+        stateReason = in.readInt();
         read = in.readByte() != 0;
     }
 
@@ -216,6 +231,7 @@ public class PhoneEvent implements Parcelable {
         dest.writeString(details);
         dest.writeParcelable(location, flags);
         dest.writeInt(state);
+        dest.writeInt(stateReason);
         dest.writeByte((byte) (read ? 1 : 0));
     }
 

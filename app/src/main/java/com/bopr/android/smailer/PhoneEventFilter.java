@@ -6,6 +6,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
+import static com.bopr.android.smailer.PhoneEvent.REASON_ACCEPT;
+import static com.bopr.android.smailer.PhoneEvent.REASON_NUMBER_BLACKLISTED;
+import static com.bopr.android.smailer.PhoneEvent.REASON_TEXT_BLACKLISTED;
+import static com.bopr.android.smailer.PhoneEvent.REASON_TRIGGER_OFF;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS;
@@ -73,11 +77,21 @@ public class PhoneEventFilter {
         this.textBlacklist = textBlacklist;
     }
 
-    public boolean test(PhoneEvent event) {
-        return testTrigger(event) && testPhone(event.getPhone()) && testText(event.getText());
+    public int test(PhoneEvent event) {
+        int reason =  REASON_ACCEPT;
+        if (!testTrigger(event)){
+            reason |= REASON_TRIGGER_OFF;
+        }
+        if (!testPhone(event.getPhone())){
+            reason |= REASON_NUMBER_BLACKLISTED;
+        }
+        if (!testText(event.getText())){
+            reason |= REASON_TEXT_BLACKLISTED;
+        }
+        return reason;
     }
 
-    public boolean testTrigger(PhoneEvent event) {
+    private boolean testTrigger(PhoneEvent event) {
         if (triggers.isEmpty()) {
             return true;
         } else if (event.isSms()) {
@@ -97,11 +111,11 @@ public class PhoneEventFilter {
         }
     }
 
-    public boolean testPhone(String phone) {
+    private boolean testPhone(String phone) {
         return matchesPhone(phoneWhitelist, phone) || !matchesPhone(phoneBlacklist, phone);
     }
 
-    public boolean testText(String text) {
+    private boolean testText(String text) {
         return matchesText(textWhitelist, text) || !matchesText(textBlacklist, text);
     }
 

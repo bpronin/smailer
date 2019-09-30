@@ -17,6 +17,10 @@ import java.util.List;
 
 import static com.bopr.android.smailer.Notifications.ACTION_SHOW_MAIN;
 import static com.bopr.android.smailer.Notifications.ACTION_SHOW_RECIPIENTS;
+import static com.bopr.android.smailer.PhoneEvent.REASON_ACCEPT;
+import static com.bopr.android.smailer.PhoneEvent.STATE_IGNORED;
+import static com.bopr.android.smailer.PhoneEvent.STATE_PENDING;
+import static com.bopr.android.smailer.PhoneEvent.STATE_PROCESSED;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_LOCALE;
 import static com.bopr.android.smailer.Settings.PREF_MARK_SMS_AS_READ;
@@ -69,9 +73,10 @@ public class CallProcessor {
         log.debug("Processing event: " + event);
 
         event.setLocation(locator.getLocation());
+        event.setStateReason(settings.getFilter().test(event));
         database.putEvent(event);
 
-        if (settings.getFilter().test(event)) {
+        if (event.getStateReason() == REASON_ACCEPT) {
             if (startMailSession(false)) {
                 sendMail(event, false);
             }
@@ -88,13 +93,12 @@ public class CallProcessor {
     public void processPending() {
         log.debug("Processing pending events");
 
-        final PhoneEventFilter filter = settings.getFilter();
         final List<PhoneEvent> events = new LinkedList<>();
         database.getPendingEvents().forEach(new Consumer<PhoneEvent>() {
 
             @Override
             public void accept(PhoneEvent event) {
-                if (filter.test(event)) {
+                if (event.getStateReason() == REASON_ACCEPT) {
                     events.add(event);
                 } else {
                     ignoreEvent(event);
@@ -116,7 +120,7 @@ public class CallProcessor {
     }
 
     private void ignoreEvent(PhoneEvent event) {
-        event.setState(PhoneEvent.STATE_IGNORED);
+        event.setState(STATE_IGNORED);
         database.putEvent(event);
 
         log.debug("Event ignored: " + event);
@@ -217,7 +221,7 @@ public class CallProcessor {
     }
 
     private void handleSendSuccess(PhoneEvent event) {
-        event.setState(PhoneEvent.STATE_PROCESSED);
+        event.setState(STATE_PROCESSED);
         database.putEvent(event);
 
         notifications.hideLastError();
@@ -234,7 +238,7 @@ public class CallProcessor {
     private void handleSendError(PhoneEvent event, Throwable error, int notification, boolean silent) {
         log.warn("Send failed: " + event, error);
 
-        event.setState(PhoneEvent.STATE_PENDING);
+        event.setState(STATE_PENDING);
         database.putEvent(event);
 
         if (!silent) {

@@ -96,7 +96,7 @@
     <string name="phone_removed_from_filter">{number} удален из фильтра</string>
     <string name="preferences">Дополнительно</string>
     <string name="recipient_already_exists">Получатель {name} уже существует</string>
-    <string name="recipient_device">Получатель:</string>
+    <string name="recipient_device">Адресат:</string>
     <string name="recipients">Получатели</string>
     <string name="regular_expression">Регулярное выражение</string>
     <string name="remote_control">Удаленное управление</string>
@@ -139,6 +139,7 @@
     <string name="you_had_incoming_call">Входящий звонок длительностью {duration}.</string>
     <string name="you_had_missed_call">Пропущенный звонок.</string>
     <string name="you_had_outgoing_call">Исходящий звонок длительностью {duration}.</string>
+    <string name="trigger_off">триггер выключен</string>
 
     <string-array name="trigger_names">
         <item>Входящие SMS</item>

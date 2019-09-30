@@ -145,6 +145,7 @@
     <string translatable="false" name="add_phone_to_whitelist_reply">Add phone {text} to whitelist"</string>
     <string translatable="false" name="add_text_to_blacklist_reply">Add text \"{text}\" to blacklist"</string>
     <string translatable="false" name="add_text_to_whitelist_reply">Add text \"{text}\" to whitelist"</string>
+    <string name="trigger_off">trigger is off</string>
 
     <string-array name="trigger_names">
         <item>Incoming SMS</item>
