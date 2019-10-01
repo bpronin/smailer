@@ -26,7 +26,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
-            android:selectAllOnFocus="true" />
+            android:hint="@string/text_fragment"
+            android:selectAllOnFocus="true"
+            android:importantForAutofill="no" />
 
         <CheckBox
             android:id="@+id/checkbox_regex"

@@ -22,7 +22,6 @@
     <string name="ask_clear_list">Очистить список?</string>
     <string name="blacklist">Черный список</string>
     <string name="call_history">Журнал</string>
-    <string name="call_of_duration">Звонок длительностью {duration}</string>
     <string name="call_of_duration_short">Звонок: {duration}</string>
     <string name="called_phone">Вы звонили: {phone} ({name})</string>
     <string name="caller_phone">Вам звонил: {phone} ({name})</string>
@@ -50,7 +49,6 @@
     <string name="incoming_call_from">Входящий звонок от</string>
     <string name="incoming_sms">Входящее SMS</string>
     <string name="incoming_sms_from">Входящее SMS от</string>
-    <string name="internal_error">Внутренняя ошибка.</string>
     <string name="invalid_recipient">Указан неверный получатель</string>
     <string name="item_already_exists">{item} уже существует</string>
     <string name="item_removed">Запись удалена</string>
@@ -68,7 +66,6 @@
     <string name="no_triggers_specified">Все триггеры отключены</string>
     <string name="not_specified">Не указано</string>
     <string name="notifications">Уведомления</string>
-    <string name="notify_on_send">Уведомлять об отправке</string>
     <string name="notify_remote_actions">Показывать уведомление о выполнении операций</string>
     <string name="notify_send_success">Показывать уведомление об успешной отправке почты</string>
     <string name="number_in_blacklist">номер в черном списке</string>
@@ -94,7 +91,6 @@
     <string name="phone_remotely_removed_from_blacklist">Номер {text} удаленно удален из черного списка."</string>
     <string name="phone_remotely_removed_from_whitelist">Номер {text} удаленно удален из белого списка."</string>
     <string name="phone_removed_from_filter">{number} удален из фильтра</string>
-    <string name="preferences">Дополнительно</string>
     <string name="recipient_already_exists">Получатель {name} уже существует</string>
     <string name="recipient_device">Адресат:</string>
     <string name="recipients">Получатели</string>
@@ -105,7 +101,6 @@
     <string name="remove">Удалить</string>
     <string name="remove_from_filter">Исключить номер из правил</string>
     <string name="reply_ot_app">Ответить {app_name}:</string>
-    <string name="resend">Повторная отправка</string>
     <string name="rules">Правила</string>
     <string name="rules_for_sending">Условия для отправки почты</string>
     <string name="select_from_contacts">Выбрать из контактов</string>
@@ -114,7 +109,6 @@
     <string name="sent_email">Отправлена почта</string>
     <string name="sent_time_device">Отправлено{device_name}{time}</string>
     <string name="service_account_not_specified">Не указан сервисный аккаунт.</string>
-    <string name="service_link">Отправить сервисную команду</string>
     <string name="service_running">Служба запущена</string>
     <string name="since_permissions_not_granted">Некоторые настройки отключены, поскольку разрешения не получены.</string>
     <string name="text_filter">Фильтр текста</string>

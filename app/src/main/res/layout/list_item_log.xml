@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -22,7 +23,7 @@
             android:layout_gravity="center"
             android:contentDescription="Event type"
             android:paddingTop="1dp"
-            android:src="@drawable/ic_call" />
+            app:srcCompat="@drawable/ic_call" />
 
         <ImageView
             android:id="@+id/list_item_direction"
@@ -31,7 +32,7 @@
             android:layout_gravity="center"
             android:contentDescription="Call direction"
             android:paddingTop="1dp"
-            android:src="@drawable/ic_call_in" />
+            app:srcCompat="@drawable/ic_call_in" />
 
         <TextView
             android:id="@+id/list_item_phone"
@@ -46,7 +47,7 @@
             android:layout_width="20sp"
             android:layout_height="20sp"
             android:contentDescription="Event state"
-            android:src="@drawable/ic_state_done" />
+            app:srcCompat="@drawable/ic_state_done" />
     </LinearLayout>
 
     <LinearLayout

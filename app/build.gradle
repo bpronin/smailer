@@ -39,6 +39,7 @@ android {
         archivesBaseName = "smailer-${versionName}"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true
     }
 
     lintOptions {
@@ -94,8 +95,8 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'androidx.preference:preference:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.preference:preference:1.1.0'
     implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
     implementation 'android.arch.work:work-runtime:1.0.1'
     implementation 'com.sun.mail:android-mail:1.6.3'
@@ -111,13 +112,13 @@ dependencies {
         exclude group: 'com.google.android'
     }
 
-    implementation('com.crashlytics.sdk.android:crashlytics:2.9.9@aar') {
+    implementation('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
         transitive = true
     }
 
     freeImplementation 'com.google.android.gms:play-services-ads:18.2.0'
 
-    /* NOTE: uninstall all application apk from device before running tests.
+    /* NOTE: uninstall all application apk-s from device before running tests.
        they may interfere and lead to unpredictable results */
 
     testImplementation 'junit:junit:4.12'

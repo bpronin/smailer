@@ -23,7 +23,6 @@
     <string name="ask_clear_list">Clear list?</string>
     <string name="blacklist">Blacklist</string>
     <string name="call_history">Call history</string>
-    <string name="call_of_duration">Call of {duration} duration</string>
     <string name="call_of_duration_short">Call: {duration}</string>
     <string name="called_phone">Called: {phone} ({name})</string>
     <string name="caller_phone">Caller: {phone} ({name})</string>
@@ -52,7 +51,6 @@
     <string name="incoming_call_from">Incoming call from</string>
     <string name="incoming_sms">Incoming SMS</string>
     <string name="incoming_sms_from">Incoming SMS from</string>
-    <string name="internal_error">Internal error.</string>
     <string name="invalid_recipient">Invalid recipient specified</string>
     <string name="item_already_exists">{item} already exists</string>
     <string name="item_removed">Item removed</string>
@@ -70,7 +68,6 @@
     <string name="no_triggers_specified">All triggers are disabled</string>
     <string name="not_specified">Not specified</string>
     <string name="notifications">Notifications</string>
-    <string name="notify_on_send">Notify of send</string>
     <string name="notify_remote_actions">Display notification when actions are performed</string>
     <string name="notify_send_success">Display notification when email is successfully sent</string>
     <string name="number_in_blacklist">number is in blacklist</string>
@@ -96,7 +93,6 @@
     <string name="phone_remotely_removed_from_blacklist">Phone {text} remotely removed from blacklist."</string>
     <string name="phone_remotely_removed_from_whitelist">Phone {text} remotely removed from whitelist."</string>
     <string name="phone_removed_from_filter">{number} removed from filter</string>
-    <string name="preferences">Options</string>
     <string name="recipient_already_exists">Recipient {name} already exists</string>
     <string name="recipient_device">Recipient:</string>
     <string name="recipients">Recipients</string>
@@ -107,7 +103,6 @@
     <string name="remove">Remove</string>
     <string name="remove_from_filter">Remove number from all rules</string>
     <string name="reply_ot_app">Reply to {app_name}:</string>
-    <string name="resend">Resend</string>
     <string name="rules">Rules</string>
     <string name="rules_for_sending">Rules for sending email</string>
     <string name="select_from_contacts">Select from contacts</string>
@@ -116,7 +111,6 @@
     <string name="sent_email">Sent email</string>
     <string name="sent_time_device">Sent{device_name}{time}</string>
     <string name="service_account_not_specified">Service account not specified.</string>
-    <string name="service_link">Send service command</string>
     <string name="service_running">Service is active</string>
     <string name="since_permissions_not_granted">Since permissions not granted some options have been disabled.</string>
     <string name="text_filter">Text filter</string>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
@@ -27,7 +28,7 @@
             android:layout_height="32sp"
             android:layout_gravity="center"
             android:contentDescription="Event type"
-            android:src="@drawable/ic_call" />
+            app:srcCompat="@drawable/ic_call" />
 
         <ImageView
             android:id="@+id/image_event_direction"
@@ -35,7 +36,7 @@
             android:layout_height="32sp"
             android:layout_gravity="center"
             android:contentDescription="Call direction"
-            android:src="@drawable/ic_call_in" />
+            app:srcCompat="@drawable/ic_call_in" />
 
         <TextView
             android:id="@+id/text_title"
@@ -107,7 +108,7 @@
             android:layout_gravity="center"
             android:contentDescription="Result"
             android:padding="4dp"
-            android:src="@drawable/ic_state_block" />
+            app:srcCompat="@drawable/ic_state_block" />
 
         <TextView
             android:id="@+id/text_result"
@@ -123,7 +124,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:paddingLeft="8dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="0dp"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
             android:text="(number in blacklist)" />

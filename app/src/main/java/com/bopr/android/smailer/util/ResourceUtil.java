@@ -111,22 +111,10 @@ public abstract class ResourceUtil {
     }
 
     public static void showToast(Context context, String text) {
-        updateToastStyle(context, Toast.makeText(context, text, Toast.LENGTH_LONG)).show();
+        Toast.makeText(context, text, Toast.LENGTH_LONG).show();
     }
 
     public static void showToast(Context context, int textRes) {
-        updateToastStyle(context, Toast.makeText(context, textRes, Toast.LENGTH_LONG)).show();
-    }
-
-    private static Toast updateToastStyle(Context context, Toast toast) {
-/*
-        Looks ugly on older devices
-
-        View view = toast.getView();
-        TextView textView = view.findViewById(android.R.id.message);
-        view.setBackgroundResource(R.drawable.shape_toast);
-        textView.setTextColor(getColor(context, R.color.toastForeground));
-*/
-        return toast;
+        Toast.makeText(context, textRes, Toast.LENGTH_LONG).show();
     }
 }
