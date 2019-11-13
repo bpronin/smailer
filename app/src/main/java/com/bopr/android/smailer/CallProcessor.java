@@ -224,7 +224,7 @@ public class CallProcessor {
         event.setState(STATE_PROCESSED);
         database.putEvent(event);
 
-        notifications.hideLastError();
+        notifications.hideAllErrors();
 
         if (settings.getBoolean(PREF_NOTIFY_SEND_SUCCESS, false)) {
             notifications.showMessage(R.string.email_send, ACTION_SHOW_MAIN);

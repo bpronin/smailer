@@ -48,9 +48,11 @@
         android:key="notify_send_success"
         android:title="@string/notify_send_success" />
 
+<!--
     <androidx.preference.SwitchPreference
         android:key="mark_processed_sms_as_read"
         android:title="@string/mark_processed_sms_as_read" />
+-->
 
     <androidx.preference.Preference
         android:icon="@drawable/ic_remote"

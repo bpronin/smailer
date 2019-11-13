@@ -380,7 +380,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        notifications.hideLastError();
+                        notifications.hideAllErrors();
                     }
                 }),
 

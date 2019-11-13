@@ -260,7 +260,7 @@ public class CallProcessorTest extends BaseTest {
         InvocationsCollector clears = new InvocationsCollector();
 
         doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt());
-        doAnswer(clears).when(notifications).hideLastError();
+        doAnswer(clears).when(notifications).hideAllErrors();
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {

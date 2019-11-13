@@ -41,7 +41,6 @@ public class Notifications {
     public static final int ACTION_SHOW_RULES = 2;
     public static final int ACTION_SHOW_HISTORY = 3;
     public static final int ACTION_SHOW_RECIPIENTS = 4;
-    public static final int ACTION_SHOW_OPTIONS = 5;
     public static final int ACTION_SHOW_REMOTE_CONTROL = 6;
 
     private static int messageId = -1;
@@ -95,8 +94,10 @@ public class Notifications {
                 ACTION_SHOW_HISTORY); // TODO: 26.02.2019 navigate to black/white list
     }
 
-    public void hideLastError() {
-        manager.cancel("error", errorId--);
+    public void hideAllErrors() {
+        while (errorId >= 0) {
+            manager.cancel("error", errorId--);
+        }
     }
 
     private void showMessage(String text, int action) {
