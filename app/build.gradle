@@ -34,8 +34,8 @@ android {
         applicationId 'com.bopr.android.smailer'
         minSdkVersion 18
         targetSdkVersion 28
-        versionCode 62
-        versionName '1.6.5'
+        versionCode 63
+        versionName '1.6.6'
         archivesBaseName = "smailer-${versionName}"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         multiDexEnabled true
@@ -43,7 +43,6 @@ android {
     }
 
     lintOptions {
-//        abortOnError true
         abortOnError false
     }
 
@@ -77,8 +76,8 @@ android {
     }
 
     packagingOptions {
-        pickFirst 'META-INF/LICENSE.txt' // JavaMail license file
-        exclude 'META-INF/DEPENDENCIES'  // resolving conflict in gmail package
+        pickFirst 'META-INF/LICENSE.txt' /* JavaMail license file*/
+        exclude 'META-INF/DEPENDENCIES'  /* resolves conflict in gmail package */
     }
 
     configurations {
@@ -90,7 +89,6 @@ android {
     }
 
 }
-
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -116,9 +114,9 @@ dependencies {
         transitive = true
     }
 
-    freeImplementation 'com.google.android.gms:play-services-ads:18.2.0'
+    freeImplementation 'com.google.android.gms:play-services-ads:18.3.0'
 
-    /* NOTE: uninstall all application apk-s from device before running tests.
+    /* NOTE: uninstall all application's apk-s from device before running tests.
        they may interfere and lead to unpredictable results */
 
     testImplementation 'junit:junit:4.12'

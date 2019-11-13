@@ -1,13 +1,12 @@
 package com.bopr.android.smailer.util;
 
-import android.util.Patterns;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.Collection;
 import java.util.Locale;
 import java.util.regex.Matcher;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import java.util.regex.Pattern;
 
 import static androidx.core.util.PatternsCompat.EMAIL_ADDRESS;
 import static com.bopr.android.smailer.util.Util.isQuoted;
@@ -21,12 +20,18 @@ import static com.bopr.android.smailer.util.Util.safeEquals;
 @SuppressWarnings("WeakerAccess")
 public class AddressUtil {
 
+    @SuppressWarnings("RegExpRedundantEscape")
+    public static final Pattern PHONE_PATTERN
+            = Pattern.compile(                      // sdd = space, dot, or dash
+            "(\\+[0-9]+[\\- \\.]*)?"                // +<digits><sdd>*
+                    + "(\\([0-9]+\\)[\\- \\.]*)?"   // (<digits>)<sdd>*
+                    + "([0-9][0-9\\- \\.]+[0-9])"); // <digit><digit|sdd>+<digit>
+
     private AddressUtil() {
     }
 
     @NonNull
     public static String normalizePhone(@NonNull String phone) {
-//        return phone.toUpperCase(Locale.ROOT).replaceAll("[^A-Z0-9]", "");
         return phone.replaceAll("[^A-Za-z0-9*.]", "").toUpperCase(Locale.ROOT);
     }
 
@@ -59,7 +64,7 @@ public class AddressUtil {
 
     @Nullable
     public static String extractPhone(String text) {
-        Matcher matcher = Patterns.PHONE.matcher(text);
+        Matcher matcher = PHONE_PATTERN.matcher(text);
         if (matcher.find()) {
             return matcher.group();
         }
@@ -70,7 +75,7 @@ public class AddressUtil {
      * Returns phone as is if it is regular or quoted otherwise
      */
     public static String escapePhone(String phone) {
-        return Patterns.PHONE.matcher(phone).matches()
+        return PHONE_PATTERN.matcher(phone).matches()
                 ? phone
                 : ("\"" + phone + "\"");
     }

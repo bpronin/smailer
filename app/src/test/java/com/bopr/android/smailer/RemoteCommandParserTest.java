@@ -8,7 +8,7 @@ import static org.junit.Assert.assertNull;
 
 @SuppressWarnings("ConstantConditions")
 public class RemoteCommandParserTest {
-    
+
     @Test
     public void testParseEmpty() {
         RemoteCommandParser parser = new RemoteCommandParser();
@@ -81,11 +81,12 @@ public class RemoteCommandParserTest {
         assertEquals(RemoteCommandParser.ADD_PHONE_TO_BLACKLIST, task.action);
         assertEquals("+12345678901", task.argument);
     }
+
     @Test
     public void testParseAddPhoneToBlacklistFromBody() {
         MailMessage message = new MailMessage();
         message.setSubject("Re: [SMailer] Incoming SMS from +12345678901");
-        message.setBody("add phone +7905*09441 to blacklist");
+        message.setBody("add phone \"+7905*09441\" to blacklist");
 
         RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
         assertEquals(RemoteCommandParser.ADD_PHONE_TO_BLACKLIST, task.action);
@@ -227,6 +228,7 @@ public class RemoteCommandParserTest {
         assertEquals(ADD_TEXT_TO_BLACKLIST, task.action);
         assertEquals("spam", task.argument);
     }
+
     @Test
     public void testParseAddTextToBlacklistMultipleQuotations() {
         MailMessage message = new MailMessage();
@@ -317,9 +319,10 @@ public class RemoteCommandParserTest {
         assertEquals("spam", task.argument);
     }
 
+/*
     @Test
     public void testParseMultipleCommands() {
-        // TODO: 25.02.2019 implement multiple commands
+        // TODO: 25.02.2019 implement multiple remote commands parsing
         MailMessage message = new MailMessage();
         message.setSubject("Re: [SMailer] Incoming SMS from 12345678901");
         message.setBody("add text \"spam\" to whitelist remove text \"not spam\" from blacklist");
@@ -328,4 +331,5 @@ public class RemoteCommandParserTest {
         assertEquals(ADD_TEXT_TO_BLACKLIST, task.action);
         assertEquals("spam", task.argument);
     }
+*/
 }
