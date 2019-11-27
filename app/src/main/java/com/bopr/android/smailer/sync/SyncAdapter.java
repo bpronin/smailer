@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import static com.bopr.android.smailer.Settings.PREF_SYNC_TIME;
 
@@ -97,7 +96,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
     @NonNull
     private SyncData getData() {
-        SyncData data = new SyncData();
+        final SyncData data = new SyncData();
 
         PhoneEventFilter filter = settings.getFilter();
         data.phoneBlacklist = filter.getPhoneBlacklist();
@@ -105,22 +104,21 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         data.textBlacklist = filter.getTextBlacklist();
         data.textWhitelist = filter.getTextWhitelist();
 
-        final List<SyncData.Event> events = new ArrayList<>();
+        data.events = new ArrayList<>();
         database.getEvents().forEach(new Consumer<PhoneEvent>() {
 
             @Override
             public void accept(PhoneEvent event) {
-                events.add(serializeEvent(event));
+                data.events.add(eventToData(event));
             }
         });
-        data.events = events;
 
         return data;
     }
 
     private void putData(@NonNull SyncData data) {
         for (SyncData.Event event : data.events) {
-            database.putEvent(deserializeEvent(event));
+            database.putEvent(dataToEvent(event));
         }
 
         PhoneEventFilter filter = settings.getFilter();
@@ -132,7 +130,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     @NonNull
-    private SyncData.Event serializeEvent(@NonNull PhoneEvent event) {
+    private SyncData.Event eventToData(@NonNull PhoneEvent event) {
         SyncData.Event data = new SyncData.Event();
         data.state = event.getState();
         data.phone = event.getPhone();
@@ -149,7 +147,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     @NonNull
-    private PhoneEvent deserializeEvent(@NonNull SyncData.Event data) {
+    private PhoneEvent dataToEvent(@NonNull SyncData.Event data) {
         PhoneEvent event = new PhoneEvent();
         event.setState(data.state);
         event.setPhone(data.phone);

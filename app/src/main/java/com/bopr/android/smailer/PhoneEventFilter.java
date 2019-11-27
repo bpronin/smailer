@@ -77,15 +77,21 @@ public class PhoneEventFilter {
         this.textBlacklist = textBlacklist;
     }
 
+    /**
+     * Tests if the filter accepts given event.
+     *
+     * @param event event
+     * @return {@link PhoneEvent#REASON_ACCEPT} if event was accepted or reason code if not
+     */
     public int test(PhoneEvent event) {
-        int reason =  REASON_ACCEPT;
-        if (!testTrigger(event)){
+        int reason = REASON_ACCEPT;
+        if (!testTrigger(event)) {
             reason |= REASON_TRIGGER_OFF;
         }
-        if (!testPhone(event.getPhone())){
+        if (!testPhone(event.getPhone())) {
             reason |= REASON_NUMBER_BLACKLISTED;
         }
-        if (!testText(event.getText())){
+        if (!testText(event.getText())) {
             reason |= REASON_TEXT_BLACKLISTED;
         }
         return reason;
@@ -93,7 +99,7 @@ public class PhoneEventFilter {
 
     private boolean testTrigger(PhoneEvent event) {
         if (triggers.isEmpty()) {
-            return true;
+            return false;
         } else if (event.isSms()) {
             if (event.isIncoming()) {
                 return triggers.contains(VAL_PREF_TRIGGER_IN_SMS);
@@ -133,9 +139,7 @@ public class PhoneEventFilter {
         if (!isEmpty(text)) {
             for (String s : patterns) {
                 String pattern = unquoteRegex(s);
-                if (pattern != null && text.matches(pattern)) {
-                    return true;
-                } else if (text.contains(s)) {
+                if (((pattern != null) && text.matches(pattern)) || text.contains(s)) {
                     return true;
                 }
             }

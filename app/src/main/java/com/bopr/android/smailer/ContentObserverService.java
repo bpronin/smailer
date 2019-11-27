@@ -10,7 +10,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
-import android.os.Looper;
 
 import androidx.annotation.Nullable;
 
@@ -27,7 +26,7 @@ import static com.bopr.android.smailer.Settings.settings;
 import static com.bopr.android.smailer.util.AndroidUtil.deviceName;
 
 /**
- * Listens to changes in sms content.
+ * Listens to changes in sms content. Used to process outgoing SMS.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
@@ -35,28 +34,26 @@ public class ContentObserverService extends Service {
 
     private static Logger log = LoggerFactory.getLogger("ContentObserverService");
 
-    public static final Uri CONTENT_SMS_SENT = Uri.parse("content://sms/sent");
-    public static final Uri CONTENT_SMS = Uri.parse("content://sms");
+    private static final Uri CONTENT_SMS_SENT = Uri.parse("content://sms/sent");
+    private static final Uri CONTENT_SMS = Uri.parse("content://sms");
 
     private ContentObserver contentObserver;
-    private Looper looper;
     private Notifications notifications;
+    private HandlerThread thread;
 
     @Override
     public void onCreate() {
         notifications = new Notifications(this);
 
-        HandlerThread thread = new HandlerThread("ContentObserverService");
+        thread = new HandlerThread("ContentObserverService");
         thread.start();
-
-        looper = thread.getLooper();
-        Handler handler = new Handler(looper);
-        contentObserver = new SmsContentObserver(handler);
+        contentObserver = new SmsContentObserver(new Handler(thread.getLooper()));
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         log.debug("Running");
+
         getContentResolver().registerContentObserver(CONTENT_SMS, true, contentObserver);
         startForeground(1, notifications.getForegroundServiceNotification());
         return super.onStartCommand(intent, flags, startId);
@@ -64,9 +61,10 @@ public class ContentObserverService extends Service {
 
     @Override
     public void onDestroy() {
-        looper.quit();
+        thread.quit();
         getContentResolver().unregisterContentObserver(contentObserver);
         super.onDestroy();
+
         log.debug("Destroyed");
     }
 
@@ -79,9 +77,10 @@ public class ContentObserverService extends Service {
     private void processOutgoingSms(String id) {
         log.debug("Processing outgoing sms: " + id);
 
-        Cursor query = getContentResolver().query(CONTENT_SMS_SENT, null, "_id=?", new String[]{id}, null);
-        PhoneEvent event = new SentSmsCursor(this, query).findFirst();
-        CallProcessorService.start(ContentObserverService.this, event);
+        Cursor query = getContentResolver().query(CONTENT_SMS_SENT, null, "_id=?",
+                new String[]{id}, null);
+        PhoneEvent event = new SentSmsCursor(query).findFirst();
+        CallProcessorService.start(this, event);
     }
 
     /**
@@ -98,26 +97,24 @@ public class ContentObserverService extends Service {
             } else {
                 context.startService(intent);
             }
+
             log.debug("Enabled");
         } else {
             context.stopService(intent);
+
             log.debug("Disabled");
         }
     }
 
     private static class SentSmsCursor extends XCursor<PhoneEvent> {
 
-        private final Context context;
-
-        private SentSmsCursor(Context context, Cursor query) {
+        private SentSmsCursor(Cursor query) {
             super(query);
-            this.context = context;
         }
 
         @Override
         public PhoneEvent get() {
             long date = getLong("date");
-            log.debug("Starting mail service");
 
             PhoneEvent event = new PhoneEvent();
             event.setIncoming(false);
@@ -145,7 +142,6 @@ public class ContentObserverService extends Service {
         }
 
         @Override
-
         public void onChange(boolean selfChange, Uri uri) {
             /* this method may be called multiple times so we need to remember processed uri */
             if (uri != null && !uri.equals(lastProcessed)) {
