@@ -6,6 +6,8 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import java.util.Arrays;
+
 /**
  * Geolocation coordinates.
  *
@@ -38,15 +40,6 @@ public class GeoCoordinates implements Parcelable {
     }
 
     @Override
-    @NonNull
-    public String toString() {
-        return "GeoCoordinates{" +
-                "latitude=" + latitude +
-                ", longitude=" + longitude +
-                '}';
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o)
             return true;
@@ -55,6 +48,20 @@ public class GeoCoordinates implements Parcelable {
 
         GeoCoordinates that = (GeoCoordinates) o;
         return Double.compare(that.latitude, latitude) == 0 && Double.compare(that.longitude, longitude) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(new double[]{latitude, longitude});
+    }
+
+    @Override
+    @NonNull
+    public String toString() {
+        return "GeoCoordinates{" +
+                "latitude=" + latitude +
+                ", longitude=" + longitude +
+                '}';
     }
 
     /* Generated Parcelable stuff. Alt+Enter on "implements Parcelable" to update */
