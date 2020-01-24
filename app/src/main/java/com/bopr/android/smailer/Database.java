@@ -190,6 +190,48 @@ public class Database {
     }
 
     /**
+     * Marks all events as read.
+     */
+    public void markAllAsRead(boolean read) {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_READ, read);
+
+            db.update(TABLE_EVENTS, values, null, null);
+            updatesCounter++;
+
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+
+        log.debug("All marked as read");
+    }
+
+    /**
+     * Marks event as read.
+     */
+    public void markAsRead(boolean read) {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_READ, read);
+
+            db.update(TABLE_EVENTS, values, null, null);
+            updatesCounter++;
+
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+
+        log.debug("All marked as read");
+    }
+
+    /**
      * Returns last saved geolocation.
      *
      * @return location

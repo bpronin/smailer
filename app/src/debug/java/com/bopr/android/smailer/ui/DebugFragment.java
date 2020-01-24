@@ -15,7 +15,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.util.Consumer;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceScreen;
@@ -260,14 +259,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        database.getEvents().forEach(new Consumer<PhoneEvent>() {
-
-                            @Override
-                            public void accept(PhoneEvent event) {
-                                event.setRead(false);
-                                database.putEvent(event);
-                            }
-                        });
+                        database.markAllAsRead(false);
                         database.notifyChanged();
                         showToast(context, "Done");
                     }
@@ -277,14 +269,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        database.getEvents().forEach(new Consumer<PhoneEvent>() {
-
-                            @Override
-                            public void accept(PhoneEvent event) {
-                                event.setRead(true);
-                                database.putEvent(event);
-                            }
-                        });
+                        database.markAllAsRead(true);
                         database.notifyChanged();
                         showToast(context, "Done");
                     }

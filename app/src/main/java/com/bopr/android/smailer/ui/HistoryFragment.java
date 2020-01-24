@@ -104,26 +104,6 @@ public class HistoryFragment extends BaseFragment {
     }
 
     @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_add_to_blacklist:
-                addToBlacklist();
-                return true;
-            case R.id.action_add_to_whitelist:
-                addToWhitelist();
-                return true;
-            case R.id.action_remove_from_lists:
-                removeFromLists();
-                return true;
-            case R.id.action_ignore:
-                markAsIgnored();
-                return true;
-            default:
-                return super.onContextItemSelected(item);
-        }
-    }
-
-    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_list, menu);
         super.onCreateOptionsMenu(menu, inflater);
@@ -131,11 +111,36 @@ public class HistoryFragment extends BaseFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_log_clear) {
-            clearData();
+        switch (item.getItemId()) {
+            case R.id.action_log_clear:
+                onClearData();
+                return true;
+            case R.id.action_log_mar_all_read:
+                onMarkAllAsRead();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
+    }
 
-        return super.onOptionsItemSelected(item);
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_add_to_blacklist:
+                onAddToBlacklist();
+                return true;
+            case R.id.action_add_to_whitelist:
+                onAddToWhitelist();
+                return true;
+            case R.id.action_remove_from_lists:
+                onRemoveFromLists();
+                return true;
+            case R.id.action_ignore:
+                onMarkAsIgnored();
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
     }
 
     private void loadData() {
@@ -165,7 +170,7 @@ public class HistoryFragment extends BaseFragment {
         }
     }
 
-    private void clearData() {
+    private void onClearData() {
         new AlertDialog.Builder(requireContext())
                 .setMessage(R.string.ask_clear_history)
                 .setPositiveButton(R.string.clear, new DialogInterface.OnClickListener() {
@@ -174,7 +179,6 @@ public class HistoryFragment extends BaseFragment {
                     public void onClick(DialogInterface dialog, int which) {
                         database.clearEvents();
                         database.notifyChanged();
-                        loadData();
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -187,6 +191,11 @@ public class HistoryFragment extends BaseFragment {
                 .show();
     }
 
+    private void onMarkAllAsRead() {
+        database.markAllAsRead(true);
+        database.notifyChanged();
+    }
+
     private EditFilterListItemDialogFragment createEditPhoneDialog(String number, OnClose onClose) {
         EditPhoneDialogFragment dialog = new EditPhoneDialogFragment();
         dialog.setTitle(R.string.add);
@@ -195,7 +204,7 @@ public class HistoryFragment extends BaseFragment {
         return dialog;
     }
 
-    private void addToBlacklist() {
+    private void onAddToBlacklist() {
         if (selectedListItemPosition != NO_POSITION) {
             String number = listAdapter.getItem(selectedListItemPosition).getPhone();
             createEditPhoneDialog(number, new OnClose() {
@@ -219,7 +228,7 @@ public class HistoryFragment extends BaseFragment {
         }
     }
 
-    private void addToWhitelist() {
+    private void onAddToWhitelist() {
         if (selectedListItemPosition != NO_POSITION) {
             String number = listAdapter.getItem(selectedListItemPosition).getPhone();
             createEditPhoneDialog(number, new OnClose() {
@@ -243,7 +252,7 @@ public class HistoryFragment extends BaseFragment {
         }
     }
 
-    private void removeFromLists() {
+    private void onRemoveFromLists() {
         if (selectedListItemPosition != NO_POSITION) {
             String number = listAdapter.getItem(selectedListItemPosition).getPhone();
 
@@ -261,7 +270,7 @@ public class HistoryFragment extends BaseFragment {
         list.remove(findPhone(list, number));
     }
 
-    private void markAsIgnored() {
+    private void onMarkAsIgnored() {
         if (selectedListItemPosition != NO_POSITION) {
             PhoneEvent event = listAdapter.getItem(selectedListItemPosition);
             event.setState(PhoneEvent.STATE_IGNORED);
@@ -345,10 +354,14 @@ public class HistoryFragment extends BaseFragment {
 
                 });
 
-                if (!event.isRead()) {
-                    event.setRead(true);
-                    database.putEvent(event);
-                }
+                markAsRead(event);
+            }
+        }
+
+        private void markAsRead(PhoneEvent event) {
+            if (!event.isRead()) {
+                event.setRead(true);
+                database.putEvent(event);
             }
         }
 

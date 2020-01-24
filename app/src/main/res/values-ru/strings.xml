@@ -55,6 +55,7 @@
     <string name="items_removed">{count} записей удалено</string>
     <string name="last_known_location">Последнее известное местоположение: {location}</string>
     <string name="list_is_empty">Список пуст</string>
+    <string name="mark_all_as_read">Отметить все как прочитанные</string>
     <string name="mark_processed_sms_as_read">Отмечать обработанные SMS как прочитанные</string>
     <string name="missed_call">Пропущенный звонок</string>
     <string name="missed_call_from">Пропущенный звонок от</string>
@@ -120,6 +121,7 @@
     <string name="text_remotely_removed_from_whitelist">Текст \"{text}\" удаленно удален из белого списка."</string>
     <string name="time">Время:</string>
     <string name="time_time">Время: {time}</string>
+    <string name="trigger_off">триггер выключен</string>
     <string name="triggers">Триггеры</string>
     <string name="unable_send_email">Не удалось отправить почту. {reason}</string>
     <string name="unacceptable_phone_numbers">Заблокированные номера ({size})</string>
@@ -133,7 +135,6 @@
     <string name="you_had_incoming_call">Входящий звонок длительностью {duration}.</string>
     <string name="you_had_missed_call">Пропущенный звонок.</string>
     <string name="you_had_outgoing_call">Исходящий звонок длительностью {duration}.</string>
-    <string name="trigger_off">триггер выключен</string>
 
     <string-array name="trigger_names">
         <item>Входящие SMS</item>

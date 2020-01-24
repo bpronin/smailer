@@ -57,6 +57,7 @@
     <string name="items_removed">{count} item removed</string>
     <string name="last_known_location">Last known device location: {location}</string>
     <string name="list_is_empty">List is empty</string>
+    <string name="mark_all_as_read">Mark all as read</string>
     <string name="mark_processed_sms_as_read">Mark processed SMS as read</string>
     <string name="missed_call">Missed call</string>
     <string name="missed_call_from">Missed call from</string>
@@ -122,6 +123,7 @@
     <string name="text_remotely_removed_from_whitelist">Text \"{text}\" remotely removed from whitelist."</string>
     <string name="time">Time:</string>
     <string name="time_time">Time: {time}</string>
+    <string name="trigger_off">trigger is off</string>
     <string name="triggers">Triggers</string>
     <string name="unable_send_email">Unable to send email. {reason}</string>
     <string name="unacceptable_phone_numbers">Unacceptable phone numbers ({size})</string>
@@ -139,7 +141,6 @@
     <string translatable="false" name="add_phone_to_whitelist_reply">Add phone {text} to whitelist"</string>
     <string translatable="false" name="add_text_to_blacklist_reply">Add text \"{text}\" to blacklist"</string>
     <string translatable="false" name="add_text_to_whitelist_reply">Add text \"{text}\" to whitelist"</string>
-    <string name="trigger_off">trigger is off</string>
 
     <string-array name="trigger_names">
         <item>Incoming SMS</item>
