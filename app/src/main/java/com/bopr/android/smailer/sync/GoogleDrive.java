@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.http.ByteArrayContent;
+import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonGenerator;
 import com.google.api.client.json.JsonParser;
 import com.google.api.client.json.jackson2.JacksonFactory;
@@ -25,7 +26,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.List;
 
-import static com.google.api.client.extensions.android.http.AndroidHttp.newCompatibleTransport;
 import static com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential.usingOAuth2;
 import static com.google.api.services.drive.DriveScopes.DRIVE_APPDATA;
 
@@ -43,12 +43,12 @@ public class GoogleDrive {
 
     private final Drive service;
 
-    public GoogleDrive(Context context, Account account) {
+    public GoogleDrive(@NonNull Context context, @NonNull Account account) {
         GoogleAccountCredential credential = usingOAuth2(context, ImmutableSet.of(DRIVE_APPDATA))
                 .setSelectedAccount(account);
 
-        service = new Drive.Builder(
-                newCompatibleTransport(), JacksonFactory.getDefaultInstance(), credential)
+        service = new Drive.Builder(new NetHttpTransport(),
+                JacksonFactory.getDefaultInstance(), credential)
                 .setApplicationName("smailer")
                 .build();
     }

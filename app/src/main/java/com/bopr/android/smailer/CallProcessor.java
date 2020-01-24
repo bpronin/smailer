@@ -45,12 +45,12 @@ public class CallProcessor {
 
     private final Settings settings;
     private final Context context;
-    private final GoogleMailSupport transport;
+    private final GoogleMail transport;
     private final Notifications notifications;
     private final Database database;
     private final GeoLocator locator;
 
-    CallProcessor(Context context, GoogleMailSupport transport, Notifications notifications,
+    CallProcessor(Context context, GoogleMail transport, Notifications notifications,
                   Database database, GeoLocator locator) {
         this.context = context;
         this.transport = transport;
@@ -61,7 +61,7 @@ public class CallProcessor {
     }
 
     CallProcessor(Context context, Database database, GeoLocator locator) {
-        this(context, new GoogleMailSupport(context), new Notifications(context), database, locator);
+        this(context, new GoogleMail(context), new Notifications(context), database, locator);
     }
 
     /**

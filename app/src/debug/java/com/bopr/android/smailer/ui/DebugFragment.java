@@ -24,7 +24,7 @@ import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.GeoCoordinates;
 import com.bopr.android.smailer.GeoLocator;
 import com.bopr.android.smailer.GoogleAuthorizationHelper;
-import com.bopr.android.smailer.GoogleMailSupport;
+import com.bopr.android.smailer.GoogleMail;
 import com.bopr.android.smailer.MailMessage;
 import com.bopr.android.smailer.Notifications;
 import com.bopr.android.smailer.PendingCallProcessorService;
@@ -770,7 +770,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
         @Override
         protected String doInBackground(Void... params) {
-            GoogleMailSupport transport = new GoogleMailSupport(getActivity());
+            GoogleMail transport = new GoogleMail(getActivity());
             try {
                 transport.init(primaryAccount(getActivity()).name, GMAIL_SEND);
 
@@ -815,14 +815,14 @@ public class DebugFragment extends BasePreferenceFragment {
             attachment.add(getLogcatLog());
             attachment.addAll(asList(new File(getActivity().getFilesDir(), "log").listFiles()));
 
-            GoogleMailSupport transport = new GoogleMailSupport(getActivity());
             try {
+                GoogleMail transport = new GoogleMail(getActivity());
                 transport.init(primaryAccount(getActivity()).name, GMAIL_SEND);
 
                 for (File file : attachment) {
                     MailMessage message = new MailMessage();
-                    message.setSubject("SMailer log");
-                    message.setBody("Device: " + AndroidUtil.deviceName());
+                    message.setSubject("[SMailer] log: " + file.getName());
+                    message.setBody("Device: " + AndroidUtil.deviceName() + "<br>File: " + file.getName());
                     message.setAttachment(ImmutableSet.of(file));
                     message.setRecipients(properties.getProperty("developer_email"));
 

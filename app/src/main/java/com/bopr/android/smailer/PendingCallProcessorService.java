@@ -49,9 +49,9 @@ public class PendingCallProcessorService extends JobIntentService {
      * @param context context
      */
     public static void start(Context context) {
-        Intent work = new Intent(context, PendingCallProcessorService.class);
-        enqueueWork(context, PendingCallProcessorService.class, JOB_ID, work);
+        log.debug("Starting service");
 
-        log.debug("Work enqueued: " + work);
+        enqueueWork(context, PendingCallProcessorService.class, JOB_ID,
+                new Intent(context, PendingCallProcessorService.class));
     }
 }

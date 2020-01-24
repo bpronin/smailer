@@ -27,7 +27,7 @@ public class CallProcessorService extends IntentService {
      * Creates an IntentService.  Invoked by your subclass's constructor.
      */
     public CallProcessorService() {
-        super("call-processor-service");
+        super("call-processor");
     }
 
     @Override

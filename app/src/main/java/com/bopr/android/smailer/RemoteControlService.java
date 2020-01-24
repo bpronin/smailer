@@ -45,9 +45,9 @@ public class RemoteControlService extends JobIntentService {
 
     private static Logger log = LoggerFactory.getLogger("RemoteControlService");
 
-    private static final int JOB_ID = 2;
+    private static final int JOB_ID = 1002;
 
-    private GoogleMailSupport transport;
+    private GoogleMail transport;
     private Settings settings;
     private String query;
     private RemoteCommandParser parser;
@@ -56,7 +56,7 @@ public class RemoteControlService extends JobIntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-        transport = new GoogleMailSupport(this);
+        transport = new GoogleMail(this);
         parser = new RemoteCommandParser();
         notifications = new Notifications(this);
         settings = new Settings(this);
@@ -238,6 +238,8 @@ public class RemoteControlService extends JobIntentService {
     }
 
     public static void start(Context context) {
+        log.debug("Starting service");
+
         enqueueWork(context, RemoteControlService.class, JOB_ID,
                 new Intent(context, RemoteControlService.class));
     }

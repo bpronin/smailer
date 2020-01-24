@@ -6,9 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.bopr.android.smailer.util.Util;
-import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.ListMessagesResponse;
@@ -52,23 +51,21 @@ import static javax.mail.Message.RecipientType.TO;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class GoogleMailSupport {
+public class GoogleMail {
 
-    private static Logger log = LoggerFactory.getLogger("GoogleMailSupport");
+    private static Logger log = LoggerFactory.getLogger("GoogleMail");
 
-    private static final String ME = "me"; /* exact "me" */
+    private static final String ME = "me"; /* exact lowercase "me" */
     private static final String UTF_8 = "UTF-8";
     private static final String HTML = "html";
 
-    private final HttpTransport transport;
     private final Context context;
     private Session session;
     private Gmail service;
     private String sender;
 
-    public GoogleMailSupport(Context context) {
+    public GoogleMail(@NonNull Context context) {
         this.context = context;
-        transport = AndroidHttp.newCompatibleTransport();
     }
 
     public void init(@NonNull String accountName, String... scopes) {
@@ -142,7 +139,8 @@ public class GoogleMailSupport {
 
     @NonNull
     private Gmail createService(@NonNull GoogleAccountCredential credential) {
-        return new Gmail.Builder(transport, JacksonFactory.getDefaultInstance(), credential)
+        return new Gmail.Builder(new NetHttpTransport(),
+                JacksonFactory.getDefaultInstance(), credential)
                 .setApplicationName("smailer")
                 .build();
     }
