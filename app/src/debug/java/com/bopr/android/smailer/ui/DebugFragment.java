@@ -28,6 +28,7 @@ import com.bopr.android.smailer.GoogleAuthorizationHelper;
 import com.bopr.android.smailer.GoogleMailSupport;
 import com.bopr.android.smailer.MailMessage;
 import com.bopr.android.smailer.Notifications;
+import com.bopr.android.smailer.PendingCallProcessorService;
 import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.RemoteControlService;
@@ -585,7 +586,7 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private void onStartProcessPendingEvents() {
-        CallProcessorService.start(context);
+        PendingCallProcessorService.start(context);
         showToast(context, "Done");
     }
 

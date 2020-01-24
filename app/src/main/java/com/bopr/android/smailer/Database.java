@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.bopr.android.smailer.util.db.FieldDataConverter;
-import com.bopr.android.smailer.util.db.XCursor;
+import com.bopr.android.smailer.util.db.RowSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,22 +119,22 @@ public class Database {
         this.purgePeriod = purgePeriod;
     }
 
-    public PhoneEventCursor getEvents() {
-        return new PhoneEventCursor(helper.getReadableDatabase().query(TABLE_EVENTS, null,
+    public PhoneEventRowSet getEvents() {
+        return new PhoneEventRowSet(helper.getReadableDatabase().query(TABLE_EVENTS, null,
                 null, null, null, null,
                 COLUMN_START_TIME + " DESC")
         );
     }
 
-    public PhoneEventCursor getPendingEvents() {
-        return new PhoneEventCursor(helper.getReadableDatabase().query(TABLE_EVENTS, null,
+    public PhoneEventRowSet getPendingEvents() {
+        return new PhoneEventRowSet(helper.getReadableDatabase().query(TABLE_EVENTS, null,
                 COLUMN_STATE + "=?", strings(STATE_PENDING), null, null,
                 COLUMN_START_TIME + " DESC")
         );
     }
 
     public long getUnreadEventsCount() {
-        return XCursor.forLong(helper.getReadableDatabase().query(TABLE_EVENTS, strings(COLUMN_COUNT),
+        return RowSet.forLong(helper.getReadableDatabase().query(TABLE_EVENTS, strings(COLUMN_COUNT),
                 COLUMN_READ + "<>1", null, null, null, null));
     }
 
@@ -195,7 +195,7 @@ public class Database {
      * @return location
      */
     public GeoCoordinates getLastLocation() {
-        return new GeoCoordinatesCursor(helper.getReadableDatabase().query(TABLE_SYSTEM,
+        return new GeoCoordinatesRowSet(helper.getReadableDatabase().query(TABLE_SYSTEM,
                 strings(COLUMN_LAST_LATITUDE, COLUMN_LAST_LONGITUDE), COLUMN_ID + "=0",
                 null, null, null, null)).findFirst();
     }
@@ -298,12 +298,12 @@ public class Database {
     }
 
     private long getCurrentSize(SQLiteDatabase db) {
-        return XCursor.forLong(db.query(TABLE_EVENTS, strings(COLUMN_COUNT), null, null,
+        return RowSet.forLong(db.query(TABLE_EVENTS, strings(COLUMN_COUNT), null, null,
                 null, null, null));
     }
 
     private long getLastPurgeTime(SQLiteDatabase db) {
-        return XCursor.forLong(db.query(TABLE_SYSTEM, strings(COLUMN_PURGE_TIME),
+        return RowSet.forLong(db.query(TABLE_SYSTEM, strings(COLUMN_PURGE_TIME),
                 COLUMN_ID + "=0", null, null, null, null));
     }
 
@@ -410,9 +410,9 @@ public class Database {
     /**
      * Cursor that returns values of {@link PhoneEvent}.
      */
-    public static class PhoneEventCursor extends XCursor<PhoneEvent> {
+    public static class PhoneEventRowSet extends RowSet<PhoneEvent> {
 
-        public PhoneEventCursor(Cursor cursor) {
+        public PhoneEventRowSet(Cursor cursor) {
             super(cursor);
         }
 
@@ -439,9 +439,9 @@ public class Database {
 
     }
 
-    private class GeoCoordinatesCursor extends XCursor<GeoCoordinates> {
+    private class GeoCoordinatesRowSet extends RowSet<GeoCoordinates> {
 
-        public GeoCoordinatesCursor(Cursor cursor) {
+        public GeoCoordinatesRowSet(Cursor cursor) {
             super(cursor);
         }
 

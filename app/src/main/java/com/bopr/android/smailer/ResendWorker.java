@@ -20,7 +20,7 @@ import static com.bopr.android.smailer.Settings.PREF_RESEND_UNSENT;
 import static com.bopr.android.smailer.Settings.settings;
 
 /**
- * Checks internet connection every 5 minutes and tries to resend email for all pending events.
+ * Checks internet connection every 15 minutes and tries to resend email for all pending events.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
@@ -38,9 +38,10 @@ public class ResendWorker extends Worker {
     @Override
     public Result doWork() {
         log.debug("Working");
+
         Context context = getApplicationContext();
         if (isFeatureEnabled(context)) {
-            CallProcessorService.start(context);
+            PendingCallProcessorService.start(context);
         }
         return Result.success();
     }

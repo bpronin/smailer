@@ -30,6 +30,7 @@ import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.ui.EditFilterListItemDialogFragment.OnClose;
 import com.bopr.android.smailer.util.TagFormatter;
 
+import java.util.List;
 import java.util.Set;
 
 import static androidx.recyclerview.widget.RecyclerView.NO_POSITION;
@@ -138,7 +139,7 @@ public class HistoryFragment extends BaseFragment {
     }
 
     private void loadData() {
-        listAdapter = new ListAdapter(getContext(), database.getEvents());
+        listAdapter = new ListAdapter(database.getEvents().toList());
         listView.setAdapter(listAdapter);
         phoneEventFilter = settings.getFilter();
         updateEmptyText();
@@ -160,7 +161,7 @@ public class HistoryFragment extends BaseFragment {
         if (selectedListItemPosition != NO_POSITION) {
             HistoryDetailsDialogFragment fragment = new HistoryDetailsDialogFragment();
             fragment.setValue(listAdapter.getItem(selectedListItemPosition));
-            fragment.showDialog(getActivity());
+            fragment.showDialog(requireActivity());
         }
     }
 
@@ -214,7 +215,7 @@ public class HistoryFragment extends BaseFragment {
                     }
                 }
             })
-                    .showDialog(getActivity());
+                    .showDialog(requireActivity());
         }
     }
 
@@ -238,7 +239,7 @@ public class HistoryFragment extends BaseFragment {
                     }
                 }
             })
-                    .showDialog(getActivity());
+                    .showDialog(requireActivity());
         }
     }
 
@@ -271,28 +272,23 @@ public class HistoryFragment extends BaseFragment {
 
     private class ListAdapter extends RecyclerView.Adapter<ItemViewHolder> {
 
-        private Context context;
+        private final List<PhoneEvent> items;
 
-        private Database.PhoneEventCursor cursor;
-
-        private ListAdapter(Context context, Database.PhoneEventCursor cursor) {
-            this.context = context;
-            this.cursor = cursor;
+        private ListAdapter(List<PhoneEvent> items) {
+            this.items = items;
         }
 
         @NonNull
         @Override
         public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            LayoutInflater inflater = LayoutInflater.from(context);
+            LayoutInflater inflater = LayoutInflater.from(requireContext());
             return new ItemViewHolder(inflater.inflate(R.layout.list_item_log, parent, false));
         }
 
         @Override
         public void onBindViewHolder(@NonNull final ItemViewHolder holder, int position) {
-            PhoneEvent item = getItem(position);
-            if (item != null) {
-                final PhoneEvent event = cursor.get();
-
+            final PhoneEvent event = getItem(position);
+            if (event != null) {
                 holder.timeView.setText(DateFormat.format(getString(R.string._time_pattern), event.getStartTime()));
                 holder.textView.setText(formatSummary(event));
                 holder.phoneView.setText(event.getPhone());
@@ -356,23 +352,13 @@ public class HistoryFragment extends BaseFragment {
             }
         }
 
-//        @Override
-//        public long getItemId(int position) {
-//            PhoneEvent item = getItem(position);
-//            return item != null ? item.getStartTime() : -1;
-//        }
-
         @Override
         public int getItemCount() {
-            return cursor.getCount();
+            return items.size();
         }
 
         PhoneEvent getItem(int position) {
-            cursor.moveToPosition(position);
-            if (!cursor.isBeforeFirst() && !cursor.isAfterLast()) {
-                return cursor.get();
-            }
-            return null;
+            return items.get(position);
         }
 
         private CharSequence formatSummary(PhoneEvent event) {
@@ -388,6 +374,7 @@ public class HistoryFragment extends BaseFragment {
                         .format();
             }
         }
+
     }
 
     private class ItemViewHolder extends RecyclerView.ViewHolder {
@@ -398,7 +385,6 @@ public class HistoryFragment extends BaseFragment {
         private final TextView timeView;
         private final TextView textView;
         private final ImageView stateView;
-        private final int phoneTextFlags;
 
         private ItemViewHolder(View view) {
             super(view);
@@ -408,7 +394,6 @@ public class HistoryFragment extends BaseFragment {
             directionView = view.findViewById(R.id.list_item_direction);
             phoneView = view.findViewById(R.id.list_item_phone);
             stateView = view.findViewById(R.id.list_item_state);
-            phoneTextFlags = phoneView.getPaintFlags();
         }
     }
 

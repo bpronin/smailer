@@ -5,8 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
-
-import java.util.Arrays;
+import androidx.core.util.ObjectsCompat;
 
 /**
  * Geolocation coordinates.
@@ -52,7 +51,7 @@ public class GeoCoordinates implements Parcelable {
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(new double[]{latitude, longitude});
+        return ObjectsCompat.hash(latitude, longitude);
     }
 
     @Override

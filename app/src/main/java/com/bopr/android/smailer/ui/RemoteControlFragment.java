@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.preference.Preference;
 
 import com.bopr.android.smailer.GoogleAuthorizationHelper;
@@ -15,6 +16,7 @@ import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_ENABLED;
 import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS;
 import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_NOTIFICATIONS;
 import static com.bopr.android.smailer.util.Util.isEmpty;
+import static com.bopr.android.smailer.util.Util.requireNonNull;
 import static com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM;
 
 public class RemoteControlFragment extends BasePreferenceFragment {
@@ -36,7 +38,7 @@ public class RemoteControlFragment extends BasePreferenceFragment {
         addPreferencesFromResource(R.xml.pref_remote);
 
         // TODO: 24.02.2019 add help icon for remote control
-        accountPreference = findPreference(PREF_REMOTE_CONTROL_ACCOUNT);
+        accountPreference = requirePreference(PREF_REMOTE_CONTROL_ACCOUNT);
         accountPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -79,8 +81,13 @@ public class RemoteControlFragment extends BasePreferenceFragment {
     private void updatePreferences() {
         boolean enabled = settings.getBoolean(PREF_REMOTE_CONTROL_ENABLED, false);
         accountPreference.setEnabled(enabled);
-        findPreference(PREF_REMOTE_CONTROL_NOTIFICATIONS).setEnabled(enabled);
-        findPreference(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS).setEnabled(enabled);
+        requirePreference(PREF_REMOTE_CONTROL_NOTIFICATIONS).setEnabled(enabled);
+        requirePreference(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS).setEnabled(enabled);
+    }
+
+    @NonNull
+    private Preference requirePreference(String name) {
+        return requireNonNull(findPreference(name));
     }
 
     private class SettingsListener extends BaseSettingsListener {

@@ -14,38 +14,43 @@ import java.util.List;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public abstract class XCursor<R> extends CursorWrapper {
+@SuppressWarnings("WeakerAccess")
+public abstract class RowSet<R> {
+
+    protected final Cursor cursor;
 
     /**
      * Creates a cursor wrapper.
      *
      * @param cursor The underlying cursor to wrap.
      */
-    public XCursor(Cursor cursor) {
-        super(cursor);
+    public RowSet(Cursor cursor) {
+        this.cursor = cursor;
     }
+
+    public abstract R get();
 
     public void forEach(Consumer<? super R> action) {
         try {
-            moveToFirst();
-            while (!isAfterLast()) {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
                 action.accept(get());
-                moveToNext();
+                cursor.moveToNext();
             }
         } finally {
-            close();
+            cursor.close();
         }
     }
 
     public R findFirst() {
         try {
-            moveToFirst();
-            if (!isBeforeFirst() && !isAfterLast()) {
+            cursor.moveToFirst();
+            if (!cursor.isBeforeFirst() && !cursor.isAfterLast()) {
                 return get();
             }
             return null;
         } finally {
-            close();
+            cursor.close();
         }
     }
 
@@ -64,39 +69,37 @@ public abstract class XCursor<R> extends CursorWrapper {
         return collect(new ArrayList<R>());
     }
 
-    public abstract R get();
-
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public boolean isNull(String columnName) {
-        return isNull(getColumnIndex(columnName));
+    protected boolean isNull(String columnName) {
+        return cursor.isNull(cursor.getColumnIndex(columnName));
     }
 
-    public String getString(String columnName) {
-        return getString(getColumnIndex(columnName));
+    protected String getString(String columnName) {
+        return cursor.getString(cursor.getColumnIndex(columnName));
     }
 
-    public boolean getBoolean(String columnName) {
+    protected boolean getBoolean(String columnName) {
         return getInt(columnName) != 0;
     }
 
-    public int getInt(String columnName) {
-        return getInt(getColumnIndex(columnName));
+    protected int getInt(String columnName) {
+        return cursor.getInt(cursor.getColumnIndex(columnName));
     }
 
-    public long getLong(String columnName) {
-        return getLong(getColumnIndex(columnName));
+    protected long getLong(String columnName) {
+        return cursor.getLong(cursor.getColumnIndex(columnName));
     }
 
-    public double getDouble(String columnName) {
-        return getDouble(getColumnIndex(columnName));
+    protected double getDouble(String columnName) {
+        return cursor.getDouble(cursor.getColumnIndex(columnName));
     }
 
     public static Long forLong(Cursor cursor) {
-        return new XCursor<Long>(cursor) {
+        return new RowSet<Long>(cursor) {
 
             @Override
             public Long get() {
-                return getLong(0);
+                return cursor.getLong(0);
             }
         }.findFirst();
     }

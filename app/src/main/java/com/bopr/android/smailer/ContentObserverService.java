@@ -13,7 +13,7 @@ import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 
-import com.bopr.android.smailer.util.db.XCursor;
+import com.bopr.android.smailer.util.db.RowSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +79,7 @@ public class ContentObserverService extends Service {
 
         Cursor query = getContentResolver().query(CONTENT_SMS_SENT, null, "_id=?",
                 new String[]{id}, null);
-        PhoneEvent event = new SentSmsCursor(query).findFirst();
+        PhoneEvent event = new SentSmsRowSet(query).findFirst();
         CallProcessorService.start(this, event);
     }
 
@@ -106,9 +106,9 @@ public class ContentObserverService extends Service {
         }
     }
 
-    private static class SentSmsCursor extends XCursor<PhoneEvent> {
+    private static class SentSmsRowSet extends RowSet<PhoneEvent> {
 
-        private SentSmsCursor(Cursor query) {
+        private SentSmsRowSet(Cursor query) {
             super(query);
         }
 
