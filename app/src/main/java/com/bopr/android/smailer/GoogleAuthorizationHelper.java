@@ -4,7 +4,6 @@ import android.accounts.Account;
 import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
-import android.accounts.OnAccountsUpdateListener;
 import android.accounts.OperationCanceledException;
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +11,6 @@ import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager;
@@ -26,10 +24,6 @@ import java.util.Collection;
 import static android.accounts.AccountManager.KEY_ACCOUNT_NAME;
 import static android.accounts.AccountManager.newChooseAccountIntent;
 import static android.app.Activity.RESULT_OK;
-import static com.bopr.android.smailer.Notifications.ACTION_SHOW_REMOTE_CONTROL;
-import static com.bopr.android.smailer.Notifications.notifications;
-import static com.bopr.android.smailer.Settings.PREF_SENDER_ACCOUNT;
-import static com.bopr.android.smailer.Settings.settings;
 import static com.bopr.android.smailer.util.Util.join;
 import static java.util.Arrays.asList;
 
@@ -47,25 +41,18 @@ public class GoogleAuthorizationHelper {
     private final Fragment fragment;
     private final Settings settings;
     private final GoogleAccountManager accountManager;
-    private final String accountSetting;
-    private final OnAccountsChangedListener accountsChangedListener;
+    private final String settingName;
     private final Collection<String> scopes;
 
-    public GoogleAuthorizationHelper(Fragment fragment, String accountSetting, String... scopes) {
+    public GoogleAuthorizationHelper(Fragment fragment, String accountSettingName, String... scopes) {
         if (scopes.length == 0) {
             throw new IllegalArgumentException("Scopes cannot be empty");
         }
         this.fragment = fragment;
         this.scopes = asList(scopes);
-        this.accountSetting = accountSetting;
+        this.settingName = accountSettingName;
         settings = new Settings(fragment.requireContext());
         accountManager = new GoogleAccountManager(fragment.requireContext());
-        accountsChangedListener = new OnAccountsChangedListener();
-        accountManager.getAccountManager().addOnAccountsUpdatedListener(accountsChangedListener, null, true);
-    }
-
-    public void dismiss() {
-        accountManager.getAccountManager().removeOnAccountsUpdatedListener(accountsChangedListener);
     }
 
     /* todo: see https://developer.android.com/reference/android/accounts/AccountManager
@@ -120,21 +107,8 @@ public class GoogleAuthorizationHelper {
     }
 
     private Account getSelectedAccount() {
-        return accountManager.getAccountByName(loadAccount());
-    }
-
-    private String loadAccount() {
-        return settings.getString(accountSetting, null);
-    }
-
-    private void saveAccount(String account) {
-        settings.edit().putString(accountSetting, account).apply();
-    }
-
-    @Nullable
-    public static Account selectedAccount(Context context) {
-        String name = settings(context).getString(PREF_SENDER_ACCOUNT, null);
-        return new GoogleAccountManager(context).getAccountByName(name);
+        String accountName = settings.getString(settingName, null);
+        return accountManager.getAccountByName(accountName);
     }
 
     @NonNull
@@ -154,7 +128,7 @@ public class GoogleAuthorizationHelper {
         public void run(AccountManagerFuture<Bundle> future) {
             try {
                 future.getResult();
-                saveAccount(accountName);
+                settings.edit().putString(settingName, accountName).apply();
 
                 log.debug("Selected account: " + accountName);
             } catch (AuthenticatorException x) {
@@ -165,21 +139,6 @@ public class GoogleAuthorizationHelper {
                 log.warn("Permission request canceled");
             }
         }
-    }
-
-    private class OnAccountsChangedListener implements OnAccountsUpdateListener {
-
-        @Override
-        public void onAccountsUpdated(Account[] accounts) {
-            /* clear setting when account removed*/
-            if (loadAccount() != null && getSelectedAccount() == null) {
-                saveAccount(null);
-                notifications(fragment.requireContext())
-                        .showMessage(R.string.remote_control_account_removed, ACTION_SHOW_REMOTE_CONTROL);
-                log.warn("Account removed");
-            }
-        }
-
     }
 
 }

@@ -6,15 +6,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.bopr.android.smailer.PreferencesPermissionsChecker;
-import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.Settings;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.CheckBoxPreference;
@@ -26,9 +17,19 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceGroup;
 import androidx.preference.SwitchPreference;
 
+import com.bopr.android.smailer.PreferencesPermissionsChecker;
+import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.Settings;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+
 import static com.bopr.android.smailer.ui.AboutDialogFragment.showAboutDialog;
 import static com.bopr.android.smailer.util.ResourceUtil.accentedText;
 import static com.bopr.android.smailer.util.ResourceUtil.underwivedText;
+import static com.bopr.android.smailer.util.Util.requireNonNull;
 
 /**
  * Base {@link PreferenceFragmentCompat } with default behaviour.
@@ -93,7 +94,7 @@ public abstract class BasePreferenceFragment extends PreferenceFragmentCompat {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_main, menu);
     }
@@ -164,4 +165,8 @@ public abstract class BasePreferenceFragment extends PreferenceFragmentCompat {
         }
     }
 
+    @NonNull
+    <T extends Preference> T requirePreference(@NonNull CharSequence key) {
+        return requireNonNull(this.<T>findPreference(key));
+    }
 }

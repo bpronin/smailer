@@ -7,6 +7,7 @@ import com.bopr.android.smailer.BaseTest;
 import org.junit.Test;
 
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

@@ -66,17 +66,17 @@ public class MainFragment extends BasePreferenceFragment {
     public void onCreatePreferences(Bundle bundle, String rootKey) {
         addPreferencesFromResource(R.xml.pref_main);
 
-        recipientsPreference = findPreference(PREF_RECIPIENTS_ADDRESS);
-        accountPreference = findPreference(PREF_SENDER_ACCOUNT);
-        historyPreference = findPreference(PREF_HISTORY);
+        recipientsPreference = requirePreference(PREF_RECIPIENTS_ADDRESS);
+        accountPreference = requirePreference(PREF_SENDER_ACCOUNT);
+        historyPreference = requirePreference(PREF_HISTORY);
 
         PreferenceClickListener preferenceClickListener = new PreferenceClickListener();
         recipientsPreference.setOnPreferenceClickListener(preferenceClickListener);
         accountPreference.setOnPreferenceClickListener(preferenceClickListener);
         historyPreference.setOnPreferenceClickListener(preferenceClickListener);
-        findPreference(PREF_RULES).setOnPreferenceClickListener(preferenceClickListener);
+        requirePreference(PREF_RULES).setOnPreferenceClickListener(preferenceClickListener);
 
-        findPreference(PREF_EMAIL_LOCALE).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+        requirePreference(PREF_EMAIL_LOCALE).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
                 updateLocalePreference((ListPreference) preference, (String) value);
@@ -84,7 +84,7 @@ public class MainFragment extends BasePreferenceFragment {
             }
         });
 
-        findPreference(PREF_DEVICE_ALIAS).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+        requirePreference(PREF_DEVICE_ALIAS).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
@@ -96,7 +96,6 @@ public class MainFragment extends BasePreferenceFragment {
 
     @Override
     public void onDestroy() {
-        authorizator.dismiss();
         settings.unregisterOnSharedPreferenceChangeListener(settingsListener);
         database.unregisterListener(databaseListener);
         database.close();

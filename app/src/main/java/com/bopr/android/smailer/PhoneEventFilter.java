@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-import static com.bopr.android.smailer.PhoneEvent.REASON_ACCEPT;
+import static com.bopr.android.smailer.PhoneEvent.REASON_ACCEPTED;
 import static com.bopr.android.smailer.PhoneEvent.REASON_NUMBER_BLACKLISTED;
 import static com.bopr.android.smailer.PhoneEvent.REASON_TEXT_BLACKLISTED;
 import static com.bopr.android.smailer.PhoneEvent.REASON_TRIGGER_OFF;
@@ -81,10 +81,10 @@ public class PhoneEventFilter {
      * Tests if the filter accepts given event.
      *
      * @param event event
-     * @return {@link PhoneEvent#REASON_ACCEPT} if event was accepted or reason code if not
+     * @return {@link PhoneEvent#REASON_ACCEPTED} if event was accepted or reason code if not
      */
     public int test(PhoneEvent event) {
-        int reason = REASON_ACCEPT;
+        int reason = REASON_ACCEPTED;
         if (!testTrigger(event)) {
             reason |= REASON_TRIGGER_OFF;
         }

@@ -12,6 +12,12 @@ import static com.bopr.android.smailer.util.AddressUtil.extractEmail;
 import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * {@link Util} tester.
@@ -53,35 +59,35 @@ public class UtilTest extends BaseTest {
 
     @Test
     public void testIsEmpty() {
-        assertTrue(!Util.isEmpty("A"));
+        assertFalse(Util.isEmpty("A"));
         assertTrue(Util.isEmpty(""));
         assertTrue(Util.isEmpty((String) null));
     }
 
     @Test
     public void testIsTrimEmpty() {
-        assertTrue(!Util.isTrimEmpty("A"));
+        assertFalse(Util.isTrimEmpty("A"));
         assertTrue(Util.isTrimEmpty(""));
         assertTrue(Util.isTrimEmpty(null));
-        assertTrue(!Util.isTrimEmpty(" A "));
+        assertFalse(Util.isTrimEmpty(" A "));
         assertTrue(Util.isTrimEmpty("    "));
     }
 
     @Test
     public void testIsAllEmpty() {
-        assertTrue(!Util.allIsEmpty("A", "B", "C"));
-        assertTrue(!Util.allIsEmpty("", "B", "C"));
-        assertTrue(!Util.allIsEmpty("A", "", "C"));
+        assertFalse(Util.allIsEmpty("A", "B", "C"));
+        assertFalse(Util.allIsEmpty("", "B", "C"));
+        assertFalse(Util.allIsEmpty("A", "", "C"));
         assertTrue(Util.allIsEmpty("", "", ""));
-        assertTrue(!Util.allIsEmpty(null, "B", "C"));
-        assertTrue(!Util.allIsEmpty("A", null, "C"));
+        assertFalse(Util.allIsEmpty(null, "B", "C"));
+        assertFalse(Util.allIsEmpty("A", null, "C"));
         assertTrue(Util.allIsEmpty("", null, null));
         assertTrue(Util.allIsEmpty(null, null, null));
     }
 
     @Test
     public void testIsAnyEmpty() {
-        assertTrue(!Util.anyIsEmpty("A", "B", "C"));
+        assertFalse(Util.anyIsEmpty("A", "B", "C"));
         assertTrue(Util.anyIsEmpty("", "B", "C"));
         assertTrue(Util.anyIsEmpty("A", "", "C"));
         assertTrue(Util.anyIsEmpty("", "", ""));

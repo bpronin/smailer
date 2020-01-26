@@ -28,7 +28,7 @@ public class PhoneEvent implements Parcelable {
     public static final int STATE_PROCESSED = 1;
     public static final int STATE_IGNORED = 2;
 
-    public static final int REASON_ACCEPT = 0;
+    public static final int REASON_ACCEPTED = 0;
     public static final int REASON_NUMBER_BLACKLISTED = 1;
     public static final int REASON_TEXT_BLACKLISTED = 1 << 1;
     public static final int REASON_TRIGGER_OFF = 1 << 2;
@@ -44,11 +44,11 @@ public class PhoneEvent implements Parcelable {
     private GeoCoordinates location;
     @EventState
     private int state = STATE_PENDING;
-    private int stateReason = REASON_ACCEPT;
+    private int stateReason = REASON_ACCEPTED;
     private boolean read;
 
-    /* Required by Jackson */
     public PhoneEvent() {
+        /* Default constructor required by Jackson */
     }
 
     public PhoneEvent(String phone, boolean incoming, long startTime, Long endTime, boolean missed,

@@ -6,19 +6,20 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Looper;
 
+import androidx.annotation.NonNull;
+import androidx.test.rule.GrantPermissionRule;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-
-import androidx.annotation.NonNull;
-import androidx.test.rule.GrantPermissionRule;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
 import static android.location.LocationManager.PASSIVE_PROVIDER;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;

@@ -94,7 +94,7 @@ public class Settings extends SharedPreferencesWrapper {
     /**
      * Loads default settings values.
      */
-    public static void init(Context context) {
+    public static void initSettings(Context context) {
         Settings settings = new Settings(context);
         EditorWrapper edit = settings.edit();
 

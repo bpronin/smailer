@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.preference.Preference;
 
 import com.bopr.android.smailer.GoogleAuthorizationHelper;
@@ -16,7 +15,6 @@ import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_ENABLED;
 import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS;
 import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_NOTIFICATIONS;
 import static com.bopr.android.smailer.util.Util.isEmpty;
-import static com.bopr.android.smailer.util.Util.requireNonNull;
 import static com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM;
 
 public class RemoteControlFragment extends BasePreferenceFragment {
@@ -57,7 +55,6 @@ public class RemoteControlFragment extends BasePreferenceFragment {
 
     @Override
     public void onDestroy() {
-        authorizator.dismiss();
         settings.unregisterOnSharedPreferenceChangeListener(settingsListener);
         super.onDestroy();
     }
@@ -83,11 +80,6 @@ public class RemoteControlFragment extends BasePreferenceFragment {
         accountPreference.setEnabled(enabled);
         requirePreference(PREF_REMOTE_CONTROL_NOTIFICATIONS).setEnabled(enabled);
         requirePreference(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS).setEnabled(enabled);
-    }
-
-    @NonNull
-    private Preference requirePreference(String name) {
-        return requireNonNull(findPreference(name));
     }
 
     private class SettingsListener extends BaseSettingsListener {

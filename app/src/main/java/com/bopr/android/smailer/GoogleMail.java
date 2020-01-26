@@ -1,11 +1,11 @@
 package com.bopr.android.smailer;
 
+import android.accounts.AccountsException;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.bopr.android.smailer.util.Util;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
@@ -40,6 +40,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import static com.bopr.android.smailer.util.Util.isEmpty;
 import static com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential.usingOAuth2;
 import static com.google.api.client.util.Base64.decodeBase64;
 import static com.google.api.client.util.StringUtils.newStringUtf8;
@@ -68,16 +69,16 @@ public class GoogleMail {
         this.context = context;
     }
 
-    public void init(@NonNull String accountName, String... scopes) {
+    public void init(@NonNull String accountName, String... scopes) throws AccountsException {
         this.sender = accountName;
         service = createService(createCredential(accountName, scopes));
         session = Session.getDefaultInstance(new Properties(), null);
     }
 
-    public void send(@NonNull MailMessage message) throws IOException, MessagingException {
+    public void send(@NonNull MailMessage message) throws IOException {
         service.users()
                 .messages()
-                .send(ME, createGmailMessage(message))
+                .send(ME, createContent(message))
                 .execute();
 
         log.debug("Message sent");
@@ -128,11 +129,11 @@ public class GoogleMail {
     }
 
     @NonNull
-    private GoogleAccountCredential createCredential(String accountName, String... scopes) {
+    private GoogleAccountCredential createCredential(String accountName, String... scopes) throws AccountsException {
         GoogleAccountCredential credential = usingOAuth2(context, asList(scopes));
         credential.setSelectedAccountName(accountName);
         if (credential.getSelectedAccount() == null) {
-            throw new IllegalArgumentException("Account does not exist: " + accountName);
+            throw new AccountsException("Account does not exist: " + accountName);
         }
         return credential;
     }
@@ -146,30 +147,30 @@ public class GoogleMail {
     }
 
     @NonNull
-    private Message createGmailMessage(MailMessage message) throws MessagingException, IOException {
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        createMimeMessage(message, sender).writeTo(buffer);
-        return new Message().encodeRaw(buffer.toByteArray());
-    }
+    private Message createContent(MailMessage message) {
+        try {
+            MimeMessage mimeMessage = new MimeMessage(session);
+            mimeMessage.setFrom(sender);
+            mimeMessage.setSubject(message.getSubject(), UTF_8);
+            mimeMessage.setRecipients(TO, parseAddresses(message.getRecipients()));
 
-    @NonNull
-    private MimeMessage createMimeMessage(@NonNull MailMessage message, @NonNull String sender)
-            throws MessagingException {
-        MimeMessage mimeMessage = new MimeMessage(session);
-        mimeMessage.setFrom(sender);
-        mimeMessage.setSubject(message.getSubject(), UTF_8);
-        mimeMessage.setRecipients(TO, parseAddresses(message.getRecipients()));
-        if (!Util.isEmpty(message.getReplyTo())) {
-            mimeMessage.setReplyTo(parseAddresses(message.getReplyTo()));
+            if (!isEmpty(message.getReplyTo())) {
+                mimeMessage.setReplyTo(parseAddresses(message.getReplyTo()));
+            }
+
+            if (message.getAttachment() == null) {
+                mimeMessage.setText(message.getBody(), UTF_8, HTML);
+            } else {
+                mimeMessage.setContent(createMultipart(message.getBody(), message.getAttachment()));
+            }
+
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            mimeMessage.writeTo(buffer);
+            return new Message().encodeRaw(buffer.toByteArray());
+
+        } catch (IOException | MessagingException x) {
+            throw new RuntimeException("Message creation failed", x);
         }
-
-        if (message.getAttachment() == null) {
-            mimeMessage.setText(message.getBody(), UTF_8, HTML);
-        } else {
-            mimeMessage.setContent(createMultipart(message.getBody(), message.getAttachment()));
-        }
-
-        return mimeMessage;
     }
 
     @NonNull

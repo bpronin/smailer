@@ -18,6 +18,7 @@ import static com.bopr.android.smailer.GoogleAuthorizationHelper.primaryAccount;
 import static com.bopr.android.smailer.Settings.PREF_FILTER_PHONE_BLACKLIST;
 import static com.bopr.android.smailer.Settings.PREF_SYNC_TIME;
 import static com.bopr.android.smailer.util.Util.asSet;
+import static org.junit.Assert.assertEquals;
 
 public class SyncAdapterTest extends BaseTest {
 
@@ -25,7 +26,7 @@ public class SyncAdapterTest extends BaseTest {
     public GrantPermissionRule permissionRule = GrantPermissionRule.grant(GET_ACCOUNTS, READ_CONTACTS);
 
     @Test
-    public void testUpdateRemote() throws Exception {
+    public void testUpdateRemote() {
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         Settings settings = new Settings(context);
         Account account = primaryAccount(context);

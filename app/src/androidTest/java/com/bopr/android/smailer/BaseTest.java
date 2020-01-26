@@ -2,15 +2,14 @@ package com.bopr.android.smailer;
 
 import android.content.Context;
 
-import org.junit.Assert;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
+
 import org.junit.Before;
 import org.junit.runner.RunWith;
 
 import java.util.Locale;
 import java.util.TimeZone;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.platform.app.InstrumentationRegistry;
 
 /**
  * Base tester.
@@ -18,7 +17,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 @RunWith(AndroidJUnit4.class)
-public abstract class BaseTest extends Assert {
+public abstract class BaseTest {
 
     protected static final String TAG = "TEST";
 

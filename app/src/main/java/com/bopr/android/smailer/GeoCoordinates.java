@@ -17,8 +17,8 @@ public class GeoCoordinates implements Parcelable {
     private double latitude;
     private double longitude;
 
-    /* Required by Jackson */
     public GeoCoordinates() {
+        /* Default constructor required by Jackson */
     }
 
     public GeoCoordinates(double latitude, double longitude) {

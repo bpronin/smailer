@@ -1,6 +1,7 @@
 package com.bopr.android.smailer.ui;
 
 import android.Manifest;
+import android.accounts.Account;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -37,6 +38,7 @@ import com.bopr.android.smailer.sync.SyncManager;
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.ContentUtils;
 import com.google.android.gms.tasks.Tasks;
+import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager;
 import com.google.common.collect.ImmutableSet;
 
 import org.slf4j.Logger;
@@ -58,7 +60,6 @@ import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static com.bopr.android.smailer.CallProcessorService.startCallProcessingService;
 import static com.bopr.android.smailer.GoogleAuthorizationHelper.primaryAccount;
-import static com.bopr.android.smailer.GoogleAuthorizationHelper.selectedAccount;
 import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_LOCALE;
@@ -119,8 +120,8 @@ public class DebugFragment extends BasePreferenceFragment {
         setHasOptionsMenu(false);
         database = new Database(context);
         locator = new GeoLocator(context, database);
-        authorizator = new GoogleAuthorizationHelper(this, PREF_SENDER_ACCOUNT,
-                MAIL_GOOGLE_COM, DRIVE_APPDATA);
+        authorizator = new GoogleAuthorizationHelper(this, PREF_SENDER_ACCOUNT, MAIL_GOOGLE_COM,
+                DRIVE_APPDATA);
         notifications = new Notifications(requireContext());
     }
 
@@ -428,12 +429,6 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     @Override
-    public void onDestroy() {
-        authorizator.dismiss();
-        super.onDestroy();
-    }
-
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         authorizator.onActivityResult(requestCode, resultCode, data);
@@ -532,7 +527,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
     private void onClearPreferences() {
         settings.edit().clear().apply();
-        Settings.init(context);
+        Settings.initSettings(context);
 
         refreshPreferences();
         showToast(context, "Done");
@@ -659,7 +654,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
             @Override
             public Void call() throws Exception {
-                GoogleDrive drive = new GoogleDrive(context, selectedAccount(context));
+                GoogleDrive drive = new GoogleDrive(context, senderAccount());
                 drive.clear();
                 return null;
             }
@@ -687,7 +682,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
             @Override
             public Void call() throws Exception {
-                GoogleDrive drive = new GoogleDrive(context, selectedAccount(context));
+                GoogleDrive drive = new GoogleDrive(context, senderAccount());
                 new SyncAdapter(context, false).download(drive);
                 return null;
             }
@@ -701,7 +696,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
             @Override
             public Void call() throws Exception {
-                GoogleDrive drive = new GoogleDrive(context, selectedAccount(context));
+                GoogleDrive drive = new GoogleDrive(context, senderAccount());
                 new SyncAdapter(context, false).upload(drive);
                 return null;
             }
@@ -715,12 +710,17 @@ public class DebugFragment extends BasePreferenceFragment {
 
             @Override
             public String call() throws Exception {
-                GoogleDrive drive = new GoogleDrive(context, selectedAccount(context));
+                GoogleDrive drive = new GoogleDrive(context, senderAccount());
                 List<com.google.api.services.drive.model.File> files = drive.list();
                 return null;
             }
         });
 
+    }
+
+    private Account senderAccount() {
+        String name = settings.getString(PREF_SENDER_ACCOUNT, null);
+        return new GoogleAccountManager(context).getAccountByName(name);
     }
 
     private static void showMessage(Context context, String message) {
@@ -813,7 +813,7 @@ public class DebugFragment extends BasePreferenceFragment {
             List<File> attachment = new LinkedList<>();
             attachment.add(getActivity().getDatabasePath(Database.DATABASE_NAME));
             attachment.add(getLogcatLog());
-            
+
             File[] files = new File(getActivity().getFilesDir(), "log").listFiles();
             attachment.addAll(asList(requireNonNull(files)));
 

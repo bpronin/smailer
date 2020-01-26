@@ -1,5 +1,6 @@
 package com.bopr.android.smailer;
 
+import android.accounts.AccountsException;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
@@ -16,7 +17,7 @@ import java.util.List;
 
 import static com.bopr.android.smailer.Notifications.ACTION_SHOW_MAIN;
 import static com.bopr.android.smailer.Notifications.ACTION_SHOW_RECIPIENTS;
-import static com.bopr.android.smailer.PhoneEvent.REASON_ACCEPT;
+import static com.bopr.android.smailer.PhoneEvent.REASON_ACCEPTED;
 import static com.bopr.android.smailer.PhoneEvent.STATE_IGNORED;
 import static com.bopr.android.smailer.PhoneEvent.STATE_PENDING;
 import static com.bopr.android.smailer.PhoneEvent.STATE_PROCESSED;
@@ -76,7 +77,7 @@ public class CallProcessor {
         event.setStateReason(settings.getFilter().test(event));
         database.putEvent(event);
 
-        if (event.getStateReason() == REASON_ACCEPT) {
+        if (event.getStateReason() == REASON_ACCEPTED) {
             if (startMailSession(false)) {
                 sendMail(event, false);
             }
@@ -98,7 +99,7 @@ public class CallProcessor {
 
             @Override
             public void accept(PhoneEvent event) {
-                if (event.getStateReason() == REASON_ACCEPT) {
+                if (event.getStateReason() == REASON_ACCEPTED) {
                     events.add(event);
                 } else {
                     ignoreEvent(event);
@@ -131,25 +132,15 @@ public class CallProcessor {
 
         try {
             requireRecipient(silent);
-        } catch (Exception x) {
-            return false;
-        }
-
-        String accountName;
-        try {
-            accountName = requireSender(silent);
-        } catch (Exception x) {
-            return false;
-        }
-
-        try {
-            transport.init(accountName, GMAIL_SEND);
+            transport.init(requireSender(silent), GMAIL_SEND);
             return true;
-        } catch (IllegalArgumentException x) {
+        } catch (AccountsException x) {
             log.error("Failed starting session: ", x);
             if (!silent) {
                 notifications.showMailError(R.string.account_not_registered, ACTION_SHOW_MAIN);
             }
+            return false;
+        } catch (Exception x) {
             return false;
         }
     }
@@ -172,7 +163,7 @@ public class CallProcessor {
         } catch (UserRecoverableAuthIOException x) {
             removeSelectedAccount();
             handleSendError(event, x, R.string.need_google_permission, silent);
-        } catch (Throwable x) {
+        } catch (Exception x) {
             handleSendError(event, x, R.string.check_your_settings, silent);
         }
     }

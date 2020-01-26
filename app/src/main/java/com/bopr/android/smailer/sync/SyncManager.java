@@ -9,6 +9,7 @@ import android.os.Bundle;
 
 import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.Settings;
+import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,13 +20,13 @@ import static android.content.ContentResolver.addPeriodicSync;
 import static android.content.ContentResolver.removePeriodicSync;
 import static android.content.ContentResolver.requestSync;
 import static android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import static com.bopr.android.smailer.GoogleAuthorizationHelper.selectedAccount;
 import static com.bopr.android.smailer.Settings.PREF_FILTER_PHONE_BLACKLIST;
 import static com.bopr.android.smailer.Settings.PREF_FILTER_PHONE_WHITELIST;
 import static com.bopr.android.smailer.Settings.PREF_FILTER_TEXT_BLACKLIST;
 import static com.bopr.android.smailer.Settings.PREF_FILTER_TEXT_WHITELIST;
 import static com.bopr.android.smailer.Settings.PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.Settings.PREF_SYNC_TIME;
+import static com.bopr.android.smailer.Settings.settings;
 import static com.bopr.android.smailer.sync.AppContentProvider.AUTHORITY;
 import static java.lang.System.currentTimeMillis;
 
@@ -40,25 +41,23 @@ public class SyncManager {
     private final SettingsListener settingsListener = new SettingsListener();
     private Account account;
 
-    public SyncManager(Context context) {
+    private SyncManager(Context context) {
         this.context = context;
         database = new Database(context);
         database.registerListener(databaseListener);
 
         settings = new Settings(context);
         settings.registerOnSharedPreferenceChangeListener(settingsListener);
-
-        start();
     }
 
-    public void dispose() {
-        stop();
-        settings.unregisterOnSharedPreferenceChangeListener(settingsListener);
-        database.unregisterListener(databaseListener);
-    }
+//    public void dispose() {
+//        stop();
+//        settings.unregisterOnSharedPreferenceChangeListener(settingsListener);
+//        database.unregisterListener(databaseListener);
+//    }
 
-    protected void start() {
-        account = selectedAccount(context);
+    private void start() {
+        account = syncAccount(context);
         if (account != null) {
             Bundle bundle = new Bundle();
             bundle.putBoolean(SYNC_EXTRAS_MANUAL, true);
@@ -66,27 +65,43 @@ public class SyncManager {
             requestSync(account, AUTHORITY, bundle);
 
             addPeriodicSync(account, AUTHORITY, Bundle.EMPTY, 0);
+
+            log.debug("Running");
+        } else {
+            log.debug("No selected account");
         }
     }
 
     private void stop() {
         if (account != null) {
             removePeriodicSync(account, AUTHORITY, Bundle.EMPTY);
+
+            log.debug("Stopped");
         }
     }
 
+    private void updateMetaData() {
+        settings.edit().putLong(PREF_SYNC_TIME, currentTimeMillis()).apply();
+
+        log.debug("Metadata updated");
+    }
+
+    private static Account syncAccount(Context context) {
+        String name = settings(context).getString(PREF_SENDER_ACCOUNT, null);
+        return new GoogleAccountManager(context).getAccountByName(name);
+    }
+
+    public static void enable(Context context) {
+        new SyncManager(context).start();
+    }
+
     public static void syncNow(Context context) {
-        Account account = selectedAccount(context);
+        Account account = syncAccount(context);
 
         Bundle bundle = new Bundle();
         bundle.putBoolean(SYNC_EXTRAS_MANUAL, true);
         bundle.putBoolean(SYNC_EXTRAS_EXPEDITED, true);
         requestSync(account, AUTHORITY, bundle);
-    }
-
-    private void updateMetaData() {
-        settings.edit().putLong(PREF_SYNC_TIME, currentTimeMillis()).apply();
-        log.debug("Metadata updated");
     }
 
     private class DatabaseListener extends BroadcastReceiver {

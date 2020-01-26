@@ -62,7 +62,7 @@
     <string name="missed_call">Missed call</string>
     <string name="missed_call_from">Missed call from</string>
     <string name="need_google_permission">Access to Google account is required</string>
-    <string name="no_account_specified">Account not specified.</string>
+    <string name="no_account_specified">Sender account not specified.</string>
     <string name="no_internet_connection">No internet connection.</string>
     <string name="no_permission_read_location">(no permission to read location)</string>
     <string name="no_recipients_specified">No recipients specified.</string>
@@ -100,7 +100,7 @@
     <string name="regular_expression">Regular expression</string>
     <string name="remote_control">Remote control</string>
     <string name="remote_control_account">Service account</string>
-    <string name="remote_control_account_removed">Service account removed or not specified</string>
+    <string name="remote_control_account_removed">Service account has been removed.</string>
     <string name="remove">Remove</string>
     <string name="remove_from_filter">Remove number from all rules</string>
     <string name="reply_ot_app">Reply to {app_name}:</string>
@@ -108,6 +108,7 @@
     <string name="rules_for_sending">Rules for sending email</string>
     <string name="select_from_contacts">Select from contacts</string>
     <string name="sender">Account</string>
+    <string name="sender_account_removed">Sender account has been removed.</string>
     <string name="sender_phone">Sender: {phone} ({name})</string>
     <string name="sent_email">Sent email</string>
     <string name="sent_time_device">Sent{device_name}{time}</string>

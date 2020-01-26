@@ -1,17 +1,14 @@
 package com.bopr.android.smailer;
 
+import android.accounts.AccountsException;
 import android.content.Context;
 import android.content.SharedPreferences;
 
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import java.io.IOException;
 
-import javax.mail.MessagingException;
-
-import static com.bopr.android.smailer.PhoneEvent.REASON_ACCEPT;
+import static com.bopr.android.smailer.PhoneEvent.REASON_ACCEPTED;
 import static com.bopr.android.smailer.PhoneEvent.REASON_TRIGGER_OFF;
 import static com.bopr.android.smailer.PhoneEvent.STATE_IGNORED;
 import static com.bopr.android.smailer.PhoneEvent.STATE_PENDING;
@@ -24,6 +21,8 @@ import static com.bopr.android.smailer.Settings.PREF_NOTIFY_SEND_SUCCESS;
 import static com.bopr.android.smailer.Settings.PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.PREF_SENDER_ACCOUNT;
 import static java.lang.System.currentTimeMillis;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
@@ -119,7 +118,7 @@ public class CallProcessorTest extends BaseTest {
         assertEquals(event.getStartTime(), savedEvent.getStartTime());
         assertEquals(event.getPhone(), savedEvent.getPhone());
         assertEquals(STATE_PROCESSED, savedEvent.getState());
-        assertEquals(REASON_ACCEPT, savedEvent.getStateReason());
+        assertEquals(REASON_ACCEPTED, savedEvent.getStateReason());
         assertEquals(new GeoCoordinates(60, 30), event.getLocation());
     }
 
@@ -187,7 +186,7 @@ public class CallProcessorTest extends BaseTest {
         assertEquals(event.getStartTime(), savedEvent.getStartTime());
         assertEquals(event.getPhone(), savedEvent.getPhone());
         assertEquals(STATE_PENDING, savedEvent.getState());
-        assertEquals(REASON_ACCEPT, savedEvent.getStateReason());
+        assertEquals(REASON_ACCEPTED, savedEvent.getStateReason());
         assertEquals(new GeoCoordinates(60, 30), event.getLocation());
     }
 
@@ -223,7 +222,7 @@ public class CallProcessorTest extends BaseTest {
         assertEquals(event.getStartTime(), savedEvent.getStartTime());
         assertEquals(event.getPhone(), savedEvent.getPhone());
         assertEquals(STATE_PENDING, savedEvent.getState());
-        assertEquals(REASON_ACCEPT, savedEvent.getStateReason());
+        assertEquals(REASON_ACCEPTED, savedEvent.getStateReason());
         assertEquals(new GeoCoordinates(60, 30), event.getLocation());
     }
 
@@ -237,15 +236,7 @@ public class CallProcessorTest extends BaseTest {
 
         doAnswer(sendInvocations).when(transport).send(any(MailMessage.class));
         doAnswer(showErrorInvocations).when(notifications).showMailError(anyInt(), anyInt());
-
-//        doThrow(IllegalArgumentException.class).when(transport).init(anyString(), anyString());
-        doAnswer(new Answer() {
-
-            @Override
-            public Object answer(InvocationOnMock invocation) {
-                throw new IllegalArgumentException();
-            }
-        }).when(transport).init(anyString(), anyString());
+        doThrow(new AccountsException()).when(transport).init(anyString(), anyString());
 
         PhoneEvent event = newPhoneEvent();
 
@@ -263,7 +254,7 @@ public class CallProcessorTest extends BaseTest {
         assertEquals(event.getStartTime(), savedEvent.getStartTime());
         assertEquals(event.getPhone(), savedEvent.getPhone());
         assertEquals(STATE_PENDING, savedEvent.getState());
-        assertEquals(REASON_ACCEPT, savedEvent.getStateReason());
+        assertEquals(REASON_ACCEPTED, savedEvent.getStateReason());
         assertEquals(new GeoCoordinates(60, 30), event.getLocation());
     }
 
@@ -277,7 +268,7 @@ public class CallProcessorTest extends BaseTest {
 
         doAnswer(showErrorInvocations).when(notifications).showMailError(anyInt(), anyInt());
         doAnswer(initInvocations).when(transport).init(anyString(), anyString());
-        doThrow(IOException.class).when(transport).send(any(MailMessage.class));
+        doThrow(new IOException()).when(transport).send(any(MailMessage.class));
 
         PhoneEvent event = newPhoneEvent();
 
@@ -297,7 +288,7 @@ public class CallProcessorTest extends BaseTest {
         assertEquals(event.getStartTime(), savedEvent.getStartTime());
         assertEquals(event.getPhone(), savedEvent.getPhone());
         assertEquals(STATE_PENDING, savedEvent.getState());
-        assertEquals(REASON_ACCEPT, savedEvent.getStateReason());
+        assertEquals(REASON_ACCEPTED, savedEvent.getStateReason());
         assertEquals(new GeoCoordinates(60, 30), event.getLocation());
     }
 
@@ -315,7 +306,7 @@ public class CallProcessorTest extends BaseTest {
         CallProcessor processor = new CallProcessor(context, transport, notifications, database, geoLocator);
 
         /* error while sending produces error notification */
-        doThrow(MessagingException.class).when(transport).send(any(MailMessage.class));
+        doThrow(new IOException()).when(transport).send(any(MailMessage.class));
         processor.process(newPhoneEvent());
 
         assertEquals(1, showInvocations.count());
@@ -373,7 +364,7 @@ public class CallProcessorTest extends BaseTest {
         doAnswer(showErrorInvocations).when(notifications).showMailError(anyInt(), anyInt());
 
         /* disable transport */
-        doThrow(MessagingException.class).when(transport).send(any(MailMessage.class));
+        doThrow(new IOException()).when(transport).send(any(MailMessage.class));
 
         CallProcessor processor = new CallProcessor(context, transport, notifications, database, geoLocator);
 

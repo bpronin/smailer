@@ -31,7 +31,7 @@ public class RulesFragment extends BasePreferenceFragment {
     public void onCreatePreferences(Bundle bundle, String rootKey) {
         addPreferencesFromResource(R.xml.pref_rules);
 
-        findPreference(PREF_EMAIL_TRIGGERS).setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+        requirePreference(PREF_EMAIL_TRIGGERS).setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
                 if (isEmpty(((Set) value))) {
@@ -43,7 +43,7 @@ public class RulesFragment extends BasePreferenceFragment {
             }
         });
 
-        Preference phoneBlacklistPreference = findPreference(PREF_FILTER_PHONE_BLACKLIST);
+        Preference phoneBlacklistPreference = requirePreference(PREF_FILTER_PHONE_BLACKLIST);
         phoneBlacklistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
             @Override
@@ -62,7 +62,7 @@ public class RulesFragment extends BasePreferenceFragment {
             }
         });
 
-        Preference phoneWhitelistPreference = findPreference(PREF_FILTER_PHONE_WHITELIST);
+        Preference phoneWhitelistPreference = requirePreference(PREF_FILTER_PHONE_WHITELIST);
         phoneWhitelistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
             @Override
@@ -81,7 +81,7 @@ public class RulesFragment extends BasePreferenceFragment {
             }
         });
 
-        Preference textBlacklistPreference = findPreference(PREF_FILTER_TEXT_BLACKLIST);
+        Preference textBlacklistPreference = requirePreference(PREF_FILTER_TEXT_BLACKLIST);
         textBlacklistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
             @Override
@@ -100,7 +100,7 @@ public class RulesFragment extends BasePreferenceFragment {
             }
         });
 
-        Preference textWhitelistPreference = findPreference(PREF_FILTER_TEXT_WHITELIST);
+        Preference textWhitelistPreference = requirePreference(PREF_FILTER_TEXT_WHITELIST);
         textWhitelistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
             @Override
