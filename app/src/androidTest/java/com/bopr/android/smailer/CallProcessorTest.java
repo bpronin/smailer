@@ -2,25 +2,28 @@ package com.bopr.android.smailer;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import javax.mail.AuthenticationFailedException;
+import java.io.IOException;
+
 import javax.mail.MessagingException;
 
+import static com.bopr.android.smailer.PhoneEvent.REASON_ACCEPT;
+import static com.bopr.android.smailer.PhoneEvent.REASON_TRIGGER_OFF;
+import static com.bopr.android.smailer.PhoneEvent.STATE_IGNORED;
 import static com.bopr.android.smailer.PhoneEvent.STATE_PENDING;
+import static com.bopr.android.smailer.PhoneEvent.STATE_PROCESSED;
 import static com.bopr.android.smailer.Settings.DEFAULT_CONTENT;
 import static com.bopr.android.smailer.Settings.DEFAULT_TRIGGERS;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_CONTENT;
-import static com.bopr.android.smailer.Settings.PREF_EMAIL_LOCALE;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.PREF_NOTIFY_SEND_SUCCESS;
 import static com.bopr.android.smailer.Settings.PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.PREF_SENDER_ACCOUNT;
+import static java.lang.System.currentTimeMillis;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
@@ -44,9 +47,8 @@ public class CallProcessorTest extends BaseTest {
     private Context context;
     private GoogleMail transport;
     private Notifications notifications;
-    private NetworkInfo networkInfo;
     private SharedPreferences preferences;
-    private GeoLocator locator;
+    private GeoLocator geoLocator;
 
     @Override
     @SuppressWarnings("ResourceType")
@@ -59,306 +61,351 @@ public class CallProcessorTest extends BaseTest {
         when(preferences.getStringSet(eq(PREF_EMAIL_TRIGGERS), anySetOf(String.class))).thenReturn(DEFAULT_TRIGGERS);
         when(preferences.getStringSet(eq(PREF_EMAIL_CONTENT), anySetOf(String.class))).thenReturn(DEFAULT_CONTENT);
 
-        networkInfo = mock(NetworkInfo.class);
-        when(networkInfo.isConnected()).thenReturn(true);
-
-        ConnectivityManager connectivityManager = mock(ConnectivityManager.class);
-        when(connectivityManager.getActiveNetworkInfo()).thenReturn(networkInfo);
-
         context = mock(Context.class);
-        when(context.getSystemService(eq(Context.CONNECTIVITY_SERVICE))).thenReturn(connectivityManager);
         when(context.getContentResolver()).thenReturn(getContext().getContentResolver());
         when(context.getResources()).thenReturn(getContext().getResources());
         when(context.getSharedPreferences(anyString(), anyInt())).thenReturn(preferences);
 
-        database = new Database(getContext(), "test.sqlite"); /* not mock context */
-        database.destroy();
+        geoLocator = mock(GeoLocator.class);
+        when(geoLocator.getLocation()).thenReturn(new GeoCoordinates(60, 30));
 
         transport = mock(GoogleMail.class);
         notifications = mock(Notifications.class);
-        locator = mock(GeoLocator.class);
+
+        database = new Database(getContext(), "test.sqlite"); /* not a mock context here! */
+        database.destroy();
+    }
+
+    private PhoneEvent newPhoneEvent() {
+        PhoneEvent event = new PhoneEvent();
+        event.setStartTime(currentTimeMillis());
+        event.setRecipient("device");
+        event.setPhone("+123");
+        event.setIncoming(true);
+        event.setMissed(true);
+        return event;
     }
 
     /**
-     * Tests normal mailer behaviour.
+     * Tests successful processing - mail sent.
      */
     @Test
-    public void testSend() throws Exception {
-        InvocationsCollector inits = new InvocationsCollector();
-        InvocationsCollector sends = new InvocationsCollector();
-        InvocationsCollector errors = new InvocationsCollector();
+    public void testProcessMailSent() throws Exception {
+        MethodInvocationsCollector initInvocations = new MethodInvocationsCollector();
+        MethodInvocationsCollector sendInvocations = new MethodInvocationsCollector();
+        MethodInvocationsCollector showErrorInvocations = new MethodInvocationsCollector();
 
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt());
-        doAnswer(inits).when(transport).init(anyString(), anyString());
-        doAnswer(sends).when(transport).send(any(MailMessage.class));
+        doAnswer(initInvocations).when(transport).init(anyString(), anyString());
+        doAnswer(sendInvocations).when(transport).send(any(MailMessage.class));
+        doAnswer(showErrorInvocations).when(notifications).showMailError(anyInt(), anyInt());
 
-        CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
-        callProcessor.process(new PhoneEvent("+12345678901", false, 0, null, false, null,
-                new GeoCoordinates(30.0, 60.0), null, STATE_PENDING, null));
+        PhoneEvent event = newPhoneEvent();
 
-        assertTrue(errors.isEmpty());
-        assertArrayEquals(new Object[]{"sender@mail.com", "decrypted password", "smtp.mail.com", "111"}, inits.invocation(0));
-        assertEquals("[SMailer] Outgoing call to +12345678901", sends.invocation(0)[0]);
+        CallProcessor processor = new CallProcessor(context, transport, notifications, database, geoLocator);
+        processor.process(event);
+
+        assertTrue(showErrorInvocations.isEmpty());
+
+        assertEquals(1, initInvocations.count());
+        String sender = initInvocations.getArgument(0, 0);
+        assertEquals("sender@mail.com", sender);
+
+        assertEquals(1, sendInvocations.count());
+        MailMessage message = sendInvocations.getArgument(0, 0);
+        assertEquals("[SMailer] Missed call from \"+123\"", message.getSubject());
+
+        PhoneEvent savedEvent = database.getEvents().findFirst();
+        assertEquals(event.getRecipient(), savedEvent.getRecipient());
+        assertEquals(event.getStartTime(), savedEvent.getStartTime());
+        assertEquals(event.getPhone(), savedEvent.getPhone());
+        assertEquals(STATE_PROCESSED, savedEvent.getState());
+        assertEquals(REASON_ACCEPT, savedEvent.getStateReason());
+        assertEquals(new GeoCoordinates(60, 30), event.getLocation());
     }
 
     /**
-     * Tests normal mailer behaviour with non-default locale.
-     *
-     * @throws Exception when fails
+     * Tests successful processing - event ignored.
      */
     @Test
-    public void testSendLocalized() throws Exception {
-        InvocationsCollector inits = new InvocationsCollector();
-        InvocationsCollector sends = new InvocationsCollector();
-        InvocationsCollector errors = new InvocationsCollector();
+    public void testProcessIgnored() throws Exception {
+        MethodInvocationsCollector initInvocations = new MethodInvocationsCollector();
+        MethodInvocationsCollector sendInvocations = new MethodInvocationsCollector();
+        MethodInvocationsCollector showErrorInvocations = new MethodInvocationsCollector();
 
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt());
-        doAnswer(inits).when(transport).init(anyString(), anyString());
-        doAnswer(sends).when(transport).send(any(MailMessage.class));
+        doAnswer(initInvocations).when(transport).init(anyString(), anyString());
+        doAnswer(sendInvocations).when(transport).send(any(MailMessage.class));
+        doAnswer(showErrorInvocations).when(notifications).showMailError(anyInt(), anyInt());
 
-        when(preferences.getString(eq(PREF_EMAIL_LOCALE), anyString())).thenReturn("ru_RU");
+        PhoneEvent event = newPhoneEvent();
+        event.setMissed(false); /* make it not missed (default filter denies it) */
 
-        CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
-        callProcessor.process(new PhoneEvent("+12345678901", false, 0, null, false, null,
-                new GeoCoordinates(30.0, 60.0), null, STATE_PENDING, null));
+        CallProcessor processor = new CallProcessor(context, transport, notifications, database, geoLocator);
+        processor.process(event);
 
-        assertTrue(errors.isEmpty());
-        assertArrayEquals(new Object[]{"sender@mail.com", "decrypted password", "smtp.mail.com", "111"}, inits.invocation(0));
-        assertEquals("[SMailer] Исходящий звонок на +12345678901", sends.invocation(0)[0]);
+        assertTrue(showErrorInvocations.isEmpty());
+        assertTrue(initInvocations.isEmpty());
+        assertTrue(sendInvocations.isEmpty());
+
+        PhoneEvent savedEvent = database.getEvents().findFirst();
+        assertEquals(event.getRecipient(), savedEvent.getRecipient());
+        assertEquals(event.getStartTime(), savedEvent.getStartTime());
+        assertEquals(event.getPhone(), savedEvent.getPhone());
+        assertEquals(STATE_IGNORED, savedEvent.getState());
+        assertEquals(REASON_TRIGGER_OFF, savedEvent.getStateReason());
+        assertEquals(new GeoCoordinates(60, 30), event.getLocation());
     }
 
     /**
-     * Check that mailer produces notification without internet connection.
-     *
-     * @throws Exception when fails
+     * Test processing when sender is not specified.
      */
     @Test
-    public void testErrorNotConnected() throws Exception {
-        InvocationsCollector inits = new InvocationsCollector();
-        InvocationsCollector sends = new InvocationsCollector();
-        InvocationsCollector errors = new InvocationsCollector();
+    public void testProcessNoSender() throws Exception {
+        MethodInvocationsCollector initInvocations = new MethodInvocationsCollector();
+        MethodInvocationsCollector sendInvocations = new MethodInvocationsCollector();
+        MethodInvocationsCollector showErrorInvocations = new MethodInvocationsCollector();
 
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt());
-        doAnswer(inits).when(transport).init(anyString(), anyString());
-        doAnswer(sends).when(transport).send(any(MailMessage.class));
-        when(networkInfo.isConnected()).thenReturn(false);
-
-        CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
-        callProcessor.process(new PhoneEvent("+12345678901", false, 0, null, false, null, null, null, STATE_PENDING, null));
-
-        assertTrue(inits.isEmpty());
-        assertTrue(sends.isEmpty());
-        assertEquals(R.string.no_internet_connection, errors.invocation(0)[0]);
-    }
-
-    /**
-     * Check that mailer produces notification when user parameter is empty.
-     *
-     * @throws Exception when fails
-     */
-    @Test
-    public void testErrorEmptyUser() throws Exception {
-        InvocationsCollector inits = new InvocationsCollector();
-        InvocationsCollector sends = new InvocationsCollector();
-        InvocationsCollector errors = new InvocationsCollector();
-
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt());
-        doAnswer(inits).when(transport).init(anyString(), anyString());
-        doAnswer(sends).when(transport).send(any(MailMessage.class));
+        doAnswer(initInvocations).when(transport).init(anyString(), anyString());
+        doAnswer(sendInvocations).when(transport).send(any(MailMessage.class));
+        doAnswer(showErrorInvocations).when(notifications).showMailError(anyInt(), anyInt());
 
         when(preferences.getString(eq(PREF_SENDER_ACCOUNT), anyString())).thenReturn(null);
 
-        CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
-        callProcessor.process(new PhoneEvent("+12345678901", false, 0, null, false, null, null, null, STATE_PENDING, null));
+        PhoneEvent event = newPhoneEvent();
 
-        assertTrue(inits.isEmpty());
-        assertTrue(sends.isEmpty());
-        assertEquals(R.string.no_account_specified, errors.invocation(0)[0]);
+        CallProcessor processor = new CallProcessor(context, transport, notifications, database, geoLocator);
+        processor.process(event);
+
+        assertEquals(1, showErrorInvocations.count());
+        int notificationText = showErrorInvocations.getArgument(0, 0);
+        assertEquals(R.string.no_account_specified, notificationText);
+
+        assertTrue(initInvocations.isEmpty());
+        assertTrue(sendInvocations.isEmpty());
+
+        PhoneEvent savedEvent = database.getEvents().findFirst();
+        assertEquals(event.getRecipient(), savedEvent.getRecipient());
+        assertEquals(event.getStartTime(), savedEvent.getStartTime());
+        assertEquals(event.getPhone(), savedEvent.getPhone());
+        assertEquals(STATE_PENDING, savedEvent.getState());
+        assertEquals(REASON_ACCEPT, savedEvent.getStateReason());
+        assertEquals(new GeoCoordinates(60, 30), event.getLocation());
     }
 
     /**
-     * Check that mailer produces notification when recipient parameter is empty.
-     *
-     * @throws Exception when fails
+     * Test processing when no recipients specified.
      */
     @Test
-    public void testErrorEmptyRecipients() throws Exception {
-        InvocationsCollector inits = new InvocationsCollector();
-        InvocationsCollector sends = new InvocationsCollector();
-        InvocationsCollector errors = new InvocationsCollector();
+    public void testProcessNoRecipients() throws Exception {
+        MethodInvocationsCollector initInvocations = new MethodInvocationsCollector();
+        MethodInvocationsCollector sendInvocations = new MethodInvocationsCollector();
+        MethodInvocationsCollector showErrorInvocations = new MethodInvocationsCollector();
 
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt());
-        doAnswer(inits).when(transport).init(anyString(), anyString());
-        doAnswer(sends).when(transport).send(any(MailMessage.class));
+        doAnswer(initInvocations).when(transport).init(anyString(), anyString());
+        doAnswer(sendInvocations).when(transport).send(any(MailMessage.class));
+        doAnswer(showErrorInvocations).when(notifications).showMailError(anyInt(), anyInt());
 
         when(preferences.getString(eq(PREF_RECIPIENTS_ADDRESS), anyString())).thenReturn(null);
 
-        CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
-        callProcessor.process(new PhoneEvent("+12345678901", false, 0, null, false, null, null, null, STATE_PENDING, null));
+        PhoneEvent event = newPhoneEvent();
 
-        assertTrue(inits.isEmpty());
-        assertTrue(sends.isEmpty());
-        assertEquals(R.string.no_recipients_specified, errors.invocation(0)[0]);
+        CallProcessor processor = new CallProcessor(context, transport, notifications, database, geoLocator);
+        processor.process(event);
+
+        assertEquals(1, showErrorInvocations.count());
+        int notificationText = showErrorInvocations.getArgument(0, 0);
+        assertEquals(R.string.no_recipients_specified, notificationText);
+
+        assertTrue(initInvocations.isEmpty());
+        assertTrue(sendInvocations.isEmpty());
+
+        PhoneEvent savedEvent = database.getEvents().findFirst();
+        assertEquals(event.getRecipient(), savedEvent.getRecipient());
+        assertEquals(event.getStartTime(), savedEvent.getStartTime());
+        assertEquals(event.getPhone(), savedEvent.getPhone());
+        assertEquals(STATE_PENDING, savedEvent.getState());
+        assertEquals(REASON_ACCEPT, savedEvent.getStateReason());
+        assertEquals(new GeoCoordinates(60, 30), event.getLocation());
     }
 
     /**
-     * Check that mailer produces notification on authorisation exceptions.
-     *
-     * @throws Exception when fails
+     * Tests processing when mail transport produces init error.
      */
     @Test
-    public void testErrorAuthenticationFailedException() throws Exception {
-        InvocationsCollector inits = new InvocationsCollector();
-        InvocationsCollector sends = new InvocationsCollector();
-        InvocationsCollector errors = new InvocationsCollector();
+    public void testProcessTransportInitFailed() throws Exception {
+        MethodInvocationsCollector showErrorInvocations = new MethodInvocationsCollector();
+        MethodInvocationsCollector sendInvocations = new MethodInvocationsCollector();
 
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt());
-        doAnswer(inits).when(transport).init(anyString(), anyString());
-        doAnswer(sends).when(transport).send(any(MailMessage.class));
-        doThrow(AuthenticationFailedException.class).when(transport).send(any(MailMessage.class));
+        doAnswer(sendInvocations).when(transport).send(any(MailMessage.class));
+        doAnswer(showErrorInvocations).when(notifications).showMailError(anyInt(), anyInt());
 
-        CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
-        callProcessor.process(new PhoneEvent("+12345678901", false, 0, null, false, null, null, null, STATE_PENDING, null));
-
-        assertFalse(inits.isEmpty());
-        assertTrue(sends.isEmpty());
-        assertEquals(R.string.user_password_not_accepted, errors.invocation(0)[0]);
-    }
-
-    /**
-     * Check that mailer produces notification on other transport exceptions.
-     *
-     * @throws Exception when fails
-     */
-    @Test
-    public void testErrorOtherExceptions() throws Exception {
-        InvocationsCollector inits = new InvocationsCollector();
-        InvocationsCollector sends = new InvocationsCollector();
-        InvocationsCollector errors = new InvocationsCollector();
-
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt());
-        doAnswer(inits).when(transport).init(anyString(), anyString());
-        doAnswer(sends).when(transport).send(any(MailMessage.class));
-        doThrow(MessagingException.class).when(transport).send(any(MailMessage.class));
-
-        CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
-        callProcessor.process(new PhoneEvent("+12345678901", false, 0, null, false, null, null, null, STATE_PENDING, null));
-
-        assertFalse(inits.isEmpty());
-        assertTrue(sends.isEmpty());
-        assertEquals(R.string.unable_send_email, errors.invocation(0)[0]);
-    }
-
-    /**
-     * When mailer parameters goes back to normal last notification should be removed.
-     *
-     * @throws Exception when fails
-     */
-    @Test
-    public void testClearNotificationExceptions() throws Exception {
-        InvocationsCollector errors = new InvocationsCollector();
-        InvocationsCollector clears = new InvocationsCollector();
-
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt());
-        doAnswer(clears).when(notifications).hideAllErrors();
+//        doThrow(IllegalArgumentException.class).when(transport).init(anyString(), anyString());
         doAnswer(new Answer() {
+
             @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                String subject = (String) invocation.getArguments()[0];
-                if (subject.equals("[SMailer] Outgoing call to bad_phone")) {
-                    throw new MessagingException("bad_phone");
-                }
-                return null;
+            public Object answer(InvocationOnMock invocation) {
+                throw new IllegalArgumentException();
             }
-        }).when(transport).send(any(MailMessage.class));
+        }).when(transport).init(anyString(), anyString());
 
-        CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
+        PhoneEvent event = newPhoneEvent();
 
-        /* bad_phone produces notification */
+        CallProcessor processor = new CallProcessor(context, transport, notifications, database, geoLocator);
+        processor.process(event);
 
-        callProcessor.process(new PhoneEvent("bad_phone", false, 0, null, false, null, null, null, STATE_PENDING, null));
-        assertEquals(R.string.unable_send_email, errors.invocation(0)[0]);
-        assertTrue(clears.isEmpty());
+        assertTrue(sendInvocations.isEmpty());
 
-        /* good_phone removes it */
+        assertEquals(1, showErrorInvocations.count());
+        int notificationText = showErrorInvocations.getArgument(0, 0);
+        assertEquals(R.string.account_not_registered, notificationText);
 
-        errors.clear();
-        clears.clear();
-
-        callProcessor.process(new PhoneEvent("good_phone", false, 0, null, false, null, null, null, STATE_PENDING, null));
-
-        assertTrue(errors.isEmpty());
-        assertFalse(clears.isEmpty());
+        PhoneEvent savedEvent = database.getEvents().findFirst();
+        assertEquals(event.getRecipient(), savedEvent.getRecipient());
+        assertEquals(event.getStartTime(), savedEvent.getStartTime());
+        assertEquals(event.getPhone(), savedEvent.getPhone());
+        assertEquals(STATE_PENDING, savedEvent.getState());
+        assertEquals(REASON_ACCEPT, savedEvent.getStateReason());
+        assertEquals(new GeoCoordinates(60, 30), event.getLocation());
     }
 
     /**
-     * When {@link Settings#PREF_NOTIFY_SEND_SUCCESS} set to true success notification should be shown.
+     * Tests processing when mail transport produces send error.
+     */
+    @Test
+    public void testProcessTransportSendFailed() throws Exception {
+        MethodInvocationsCollector initInvocations = new MethodInvocationsCollector();
+        MethodInvocationsCollector showErrorInvocations = new MethodInvocationsCollector();
+
+        doAnswer(showErrorInvocations).when(notifications).showMailError(anyInt(), anyInt());
+        doAnswer(initInvocations).when(transport).init(anyString(), anyString());
+        doThrow(IOException.class).when(transport).send(any(MailMessage.class));
+
+        PhoneEvent event = newPhoneEvent();
+
+        CallProcessor processor = new CallProcessor(context, transport, notifications, database, geoLocator);
+        processor.process(event);
+
+        assertEquals(1, initInvocations.count());
+        String sender = initInvocations.getArgument(0, 0);
+        assertEquals("sender@mail.com", sender);
+
+        assertEquals(1, showErrorInvocations.count());
+        int notificationText = showErrorInvocations.getArgument(0, 0);
+        assertEquals(R.string.check_your_settings, notificationText);
+
+        PhoneEvent savedEvent = database.getEvents().findFirst();
+        assertEquals(event.getRecipient(), savedEvent.getRecipient());
+        assertEquals(event.getStartTime(), savedEvent.getStartTime());
+        assertEquals(event.getPhone(), savedEvent.getPhone());
+        assertEquals(STATE_PENDING, savedEvent.getState());
+        assertEquals(REASON_ACCEPT, savedEvent.getStateReason());
+        assertEquals(new GeoCoordinates(60, 30), event.getLocation());
+    }
+
+    /**
+     * When settings goes back to normal last error notification should be removed.
+     */
+    @Test
+    public void testClearNotifications() throws Exception {
+        MethodInvocationsCollector showInvocations = new MethodInvocationsCollector();
+        MethodInvocationsCollector hideInvocations = new MethodInvocationsCollector();
+
+        doAnswer(showInvocations).when(notifications).showMailError(anyInt(), anyInt());
+        doAnswer(hideInvocations).when(notifications).hideAllErrors();
+
+        CallProcessor processor = new CallProcessor(context, transport, notifications, database, geoLocator);
+
+        /* error while sending produces error notification */
+        doThrow(MessagingException.class).when(transport).send(any(MailMessage.class));
+        processor.process(newPhoneEvent());
+
+        assertEquals(1, showInvocations.count());
+        int notificationText = showInvocations.getArgument(0, 0);
+        assertEquals(R.string.check_your_settings, notificationText);
+
+        assertTrue(hideInvocations.isEmpty());
+
+        showInvocations.reset();
+        hideInvocations.reset();
+
+        /* sending without errors hides all previous error notifications */
+        doNothing().when(transport).send(any(MailMessage.class));
+        processor.process(newPhoneEvent());
+
+        assertTrue(showInvocations.isEmpty());
+        assertEquals(1, hideInvocations.count());
+    }
+
+    /**
+     * When {@link Settings#PREF_NOTIFY_SEND_SUCCESS} setting is set to true success notification should be shown.
      */
     @Test
     public void testSuccessNotification() {
-        InvocationsCollector errors = new InvocationsCollector();
-        InvocationsCollector successes = new InvocationsCollector();
+        MethodInvocationsCollector showSuccessInvocation = new MethodInvocationsCollector();
 
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt());
-        doAnswer(successes).when(notifications).showMessage(R.string.email_send, Notifications.ACTION_SHOW_MAIN);
+        doAnswer(showSuccessInvocation).when(notifications).showMessage(R.string.email_send, Notifications.ACTION_SHOW_MAIN);
 
-        CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
+        CallProcessor processor = new CallProcessor(context, transport, notifications, database, geoLocator);
 
-        /* settings is off */
+        /* the setting is OFF */
         when(preferences.getBoolean(eq(PREF_NOTIFY_SEND_SUCCESS), anyBoolean())).thenReturn(false);
 
-        callProcessor.process(new PhoneEvent("1", false, 0, null, false, null, null, null, STATE_PENDING, null));
+        processor.process(newPhoneEvent());
 
-        assertTrue(errors.isEmpty());
-        assertTrue(successes.isEmpty());
+        assertTrue(showSuccessInvocation.isEmpty());
 
-        /* settings is on */
+        /* the setting is ON */
         when(preferences.getBoolean(eq(PREF_NOTIFY_SEND_SUCCESS), anyBoolean())).thenReturn(true);
-        callProcessor.process(new PhoneEvent("1", false, 0, null, false, null, null, null, STATE_PENDING, null));
 
-        assertTrue(errors.isEmpty());
-        assertFalse(successes.isEmpty());
+        processor.process(newPhoneEvent());
+
+        assertEquals(1, showSuccessInvocation.count());
+        int notificationText = showSuccessInvocation.getArgument(0, 0);
+        assertEquals(R.string.email_send, notificationText);
     }
 
     /**
      * Test resending pending messages.
-     *
-     * @throws Exception when fails
      */
     @Test
-    public void testSendUnsent() throws Exception {
-        InvocationsCollector errors = new InvocationsCollector();
+    public void testProcessPending() throws Exception {
+        MethodInvocationsCollector showErrorInvocations = new MethodInvocationsCollector();
 
-        doAnswer(errors).when(notifications).showMailError(anyInt(), anyInt());
+        doAnswer(showErrorInvocations).when(notifications).showMailError(anyInt(), anyInt());
+
+        /* disable transport */
         doThrow(MessagingException.class).when(transport).send(any(MailMessage.class));
 
-        CallProcessor callProcessor = new CallProcessor(context, transport, notifications, database, locator);
-        callProcessor.process(new PhoneEvent("+12345678901", false, 0, null, false, null, new GeoCoordinates(30.0, 60.0), null, STATE_PENDING, null));
-        callProcessor.process(new PhoneEvent("+12345678901", false, 0, null, false, null, new GeoCoordinates(30.0, 60.0), null, STATE_PENDING, null));
-        callProcessor.process(new PhoneEvent("+12345678901", false, 0, null, false, null, new GeoCoordinates(30.0, 60.0), null, STATE_PENDING, null));
+        CallProcessor processor = new CallProcessor(context, transport, notifications, database, geoLocator);
+
+        processor.process(newPhoneEvent());
+        processor.process(newPhoneEvent());
+        processor.process(newPhoneEvent());
 
         assertEquals(3, database.getEvents().getCount());
         assertEquals(3, database.getPendingEvents().getCount());
-        assertEquals(3, errors.size());
+        assertEquals(3, showErrorInvocations.count());
 
-        /* try resend with transport still disabled */
-        errors.clear();
+        /* try resend with disabled transport */
 
-        callProcessor.processPending();
+        showErrorInvocations.reset();
+
+        processor.processPending();
 
         assertEquals(3, database.getEvents().getCount());
         assertEquals(3, database.getPendingEvents().getCount());
-        assertTrue(errors.isEmpty()); /* no error notifications should be shown */
+        assertTrue(showErrorInvocations.isEmpty()); /* no error notifications should be shown */
 
         /* enable transport an try again */
-        doNothing().when(transport).send(any(MailMessage.class));
-        errors.clear();
 
-        callProcessor.processPending();
+        doNothing().when(transport).send(any(MailMessage.class));
+
+        showErrorInvocations.reset();
+
+        processor.processPending();
 
         assertEquals(3, database.getEvents().getCount());
         assertEquals(0, database.getPendingEvents().getCount());
-        assertTrue(errors.isEmpty());
+        assertTrue(showErrorInvocations.isEmpty());
     }
 
 }

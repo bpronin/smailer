@@ -28,7 +28,7 @@ public abstract class RowSet<R> {
         this.cursor = cursor;
     }
 
-    public abstract R get();
+    protected abstract R get();
 
     public void forEach(Consumer<? super R> action) {
         try {
@@ -49,6 +49,14 @@ public abstract class RowSet<R> {
                 return get();
             }
             return null;
+        } finally {
+            cursor.close();
+        }
+    }
+
+    public long getCount() {
+        try {
+            return cursor.getCount();
         } finally {
             cursor.close();
         }
@@ -98,7 +106,7 @@ public abstract class RowSet<R> {
         return new RowSet<Long>(cursor) {
 
             @Override
-            public Long get() {
+            protected Long get() {
                 return cursor.getLong(0);
             }
         }.findFirst();

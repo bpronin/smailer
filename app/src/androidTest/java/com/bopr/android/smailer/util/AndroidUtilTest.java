@@ -1,8 +1,6 @@
 package com.bopr.android.smailer.util;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -14,9 +12,6 @@ import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.emptyArray;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * {@link AndroidUtil} tester.
@@ -58,28 +53,28 @@ public class AndroidUtilTest extends BaseTest {
         assertThat(spans, emptyArray());
     }
 
-    /**
-     * Tests {@link AndroidUtil#hasInternetConnection(Context)}} method.
-     */
-    @SuppressWarnings("ResourceType")
-    @Test
-    public void testHasInternetConnection() {
-        NetworkInfo info = mock(NetworkInfo.class);
-
-        ConnectivityManager manager = mock(ConnectivityManager.class);
-        when(manager.getActiveNetworkInfo()).thenReturn(info);
-
-        Context context = mock(Context.class);
-        when(context.getSystemService(eq(Context.CONNECTIVITY_SERVICE))).thenReturn(manager);
-
-        when(info.isConnected()).thenReturn(true);
-        assertTrue(AndroidUtil.hasInternetConnection(context));
-
-        when(info.isConnected()).thenReturn(false);
-        assertFalse(AndroidUtil.hasInternetConnection(context));
-
-        when(manager.getActiveNetworkInfo()).thenReturn(null);
-        assertFalse(AndroidUtil.hasInternetConnection(context));
-    }
+//    /**
+//     * Tests {@link AndroidUtil#hasInternetConnection(Context)}} method.
+//     */
+//    @SuppressWarnings("ResourceType")
+//    @Test
+//    public void testHasInternetConnection() {
+//        NetworkInfo info = mock(NetworkInfo.class);
+//
+//        ConnectivityManager manager = mock(ConnectivityManager.class);
+//        when(manager.getActiveNetworkInfo()).thenReturn(info);
+//
+//        Context context = mock(Context.class);
+//        when(context.getSystemService(eq(Context.CONNECTIVITY_SERVICE))).thenReturn(manager);
+//
+//        when(info.isConnected()).thenReturn(true);
+//        assertTrue(AndroidUtil.hasInternetConnection(context));
+//
+//        when(info.isConnected()).thenReturn(false);
+//        assertFalse(AndroidUtil.hasInternetConnection(context));
+//
+//        when(manager.getActiveNetworkInfo()).thenReturn(null);
+//        assertFalse(AndroidUtil.hasInternetConnection(context));
+//    }
 
 }

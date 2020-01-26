@@ -74,7 +74,7 @@ public abstract class ResourceUtil {
             case STATE_IGNORED:
                 return R.drawable.ic_state_block;
         }
-        return -1;
+        throw new IllegalArgumentException("Unknown state");
     }
 
     @StringRes
@@ -87,7 +87,7 @@ public abstract class ResourceUtil {
             case STATE_IGNORED:
                 return R.string.ignored;
         }
-        return -1;
+        throw new IllegalArgumentException("Unknown state");
     }
 
     /**

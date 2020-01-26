@@ -50,12 +50,10 @@ public class CallReceiverTest extends BaseTest {
 
     /**
      * Checks that receiver starts service on incoming call.
-     *
-     * @throws Exception when fails
      */
     @Test
-    public void testReceiveIncomingCall() throws Exception {
-        InvocationsCollector invocations = new InvocationsCollector();
+    public void testReceiveIncomingCall() {
+        MethodInvocationsCollector invocations = new MethodInvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
         when(preferences.getStringSet(eq(PREF_EMAIL_TRIGGERS), anySetOf(String.class))).thenReturn(Util.asSet(VAL_PREF_TRIGGER_IN_CALLS));
 
@@ -81,7 +79,7 @@ public class CallReceiverTest extends BaseTest {
         intent.putExtra(EXTRA_STATE, EXTRA_STATE_IDLE);
         receiver.onReceive(context, intent);
 
-        Intent result = (Intent) invocations.invocation(0)[0];
+        Intent result = (Intent) invocations.getArguments(0)[0];
 //        assertEquals(ACTION_SINGLE, result.getAction());
 //        assertTrue(result.getBooleanExtra(EXTRA_INCOMING, false));
 //        assertFalse(result.hasExtra(EXTRA_MISSED));
@@ -91,13 +89,11 @@ public class CallReceiverTest extends BaseTest {
     }
 
     /**
-     * Checks that receiver do not starts mail service on incoming call when corresponding setting is disabled.
-     *
-     * @throws Exception when fails
+     * Checks that receiver does not start service on incoming call when corresponding setting is disabled.
      */
     @Test
-    public void testReceiveIncomingCallDisabled() throws Exception {
-        InvocationsCollector invocations = new InvocationsCollector();
+    public void testReceiveIncomingCallDisabled() {
+        MethodInvocationsCollector invocations = new MethodInvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
 
         CallReceiver receiver = new CallReceiver();
@@ -126,12 +122,10 @@ public class CallReceiverTest extends BaseTest {
 
     /**
      * Checks that receiver starts service on outgoing call.
-     *
-     * @throws Exception when fails
      */
     @Test
-    public void testReceiveOutgoingCall() throws Exception {
-        InvocationsCollector invocations = new InvocationsCollector();
+    public void testReceiveOutgoingCall() {
+        MethodInvocationsCollector invocations = new MethodInvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
         when(preferences.getStringSet(eq(PREF_EMAIL_TRIGGERS), anySetOf(String.class))).thenReturn(Util.asSet(VAL_PREF_TRIGGER_OUT_CALLS));
 
@@ -156,7 +150,7 @@ public class CallReceiverTest extends BaseTest {
         intent.putExtra(EXTRA_STATE, EXTRA_STATE_IDLE);
         receiver.onReceive(context, intent);
 
-        Intent result = (Intent) invocations.invocation(0)[0];
+        Intent result = (Intent) invocations.getArguments(0)[0];
 //        assertEquals(ACTION_SINGLE, result.getAction());
 //        assertFalse(result.getBooleanExtra(EXTRA_INCOMING, true));
 //        assertFalse(result.hasExtra(EXTRA_MISSED));
@@ -167,17 +161,15 @@ public class CallReceiverTest extends BaseTest {
 
     /**
      * Checks that receiver do not starts mail service on outgoing call when corresponding setting is disabled.
-     *
-     * @throws Exception when fails
      */
     @Test
-    public void testReceiveOutgoingCallDisabled() throws Exception {
-        InvocationsCollector invocations = new InvocationsCollector();
+    public void testReceiveOutgoingCallDisabled() {
+        MethodInvocationsCollector invocations = new MethodInvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
 
         CallReceiver receiver = new CallReceiver();
 
-         /* ringing */
+        /* ringing */
         Intent intent = new Intent(ACTION_NEW_OUTGOING_CALL);
         receiver.onReceive(context, intent);
 
@@ -200,12 +192,10 @@ public class CallReceiverTest extends BaseTest {
 
     /**
      * Checks that receiver starts service on missed call.
-     *
-     * @throws Exception when fails
      */
     @Test
-    public void testReceiveMissedCall() throws Exception {
-        InvocationsCollector invocations = new InvocationsCollector();
+    public void testReceiveMissedCall() {
+        MethodInvocationsCollector invocations = new MethodInvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
         when(preferences.getStringSet(eq(PREF_EMAIL_TRIGGERS), anySetOf(String.class))).thenReturn(Util.asSet(VAL_PREF_TRIGGER_MISSED_CALLS));
 
@@ -224,7 +214,7 @@ public class CallReceiverTest extends BaseTest {
         intent.putExtra(EXTRA_STATE, EXTRA_STATE_IDLE);
         receiver.onReceive(context, intent);
 
-        Intent result = (Intent) invocations.invocation(0)[0];
+        Intent result = (Intent) invocations.getArguments(0)[0];
 //        assertEquals(ACTION_SINGLE, result.getAction());
 //        assertFalse(result.hasExtra(EXTRA_INCOMING));
 //        assertTrue(result.getBooleanExtra(EXTRA_MISSED, false));
@@ -235,12 +225,10 @@ public class CallReceiverTest extends BaseTest {
 
     /**
      * Checks that receiver do not starts mail service on missed call when corresponding setting is disabled.
-     *
-     * @throws Exception when fails
      */
     @Test
-    public void testReceiveMissedCallDisabled() throws Exception {
-        InvocationsCollector invocations = new InvocationsCollector();
+    public void testReceiveMissedCallDisabled() {
+        MethodInvocationsCollector invocations = new MethodInvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
 
         CallReceiver receiver = new CallReceiver();

@@ -59,7 +59,7 @@ public class CallProcessorService extends IntentService {
      * @param context context
      * @param event   event
      */
-    public static void start(Context context, PhoneEvent event) {
+    public static void startCallProcessingService(Context context, PhoneEvent event) {
         log.debug("Starting service for: " + event);
 
         context.startService(new Intent(context, CallProcessorService.class)

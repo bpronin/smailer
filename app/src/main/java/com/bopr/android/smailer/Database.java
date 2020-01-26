@@ -58,7 +58,6 @@ public class Database {
     public static final String COLUMN_LONGITUDE = "longitude";
     public static final String COLUMN_TEXT = "message_text";
     public static final String COLUMN_DETAILS = "details";
-    public static final String COLUMN_LOCATION = "location";
     public static final String COLUMN_START_TIME = "start_time";
     public static final String COLUMN_END_TIME = "end_time";
     public static final String COLUMN_STATE = "state";
@@ -207,28 +206,7 @@ public class Database {
             db.endTransaction();
         }
 
-        log.debug("All marked as read");
-    }
-
-    /**
-     * Marks event as read.
-     */
-    public void markAsRead(boolean read) {
-        SQLiteDatabase db = helper.getWritableDatabase();
-        db.beginTransaction();
-        try {
-            ContentValues values = new ContentValues();
-            values.put(COLUMN_READ, read);
-
-            db.update(TABLE_EVENTS, values, null, null);
-            updatesCounter++;
-
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
-
-        log.debug("All marked as read");
+        log.debug("All events marked as read");
     }
 
     /**
@@ -299,24 +277,24 @@ public class Database {
     }
 
 
-    /* Content provider support */
-    public Cursor query(String table, String[] projection, String selection, String[] selectionArgs,
-                        String sortOrder) {
-        return helper.getReadableDatabase().query(table, projection, selection, selectionArgs,
-                null, null, sortOrder);
-    }
+//    /* Content provider support */
+//    public Cursor query(String table, String[] projection, String selection, String[] selectionArgs,
+//                        String sortOrder) {
+//        return helper.getReadableDatabase().query(table, projection, selection, selectionArgs,
+//                null, null, sortOrder);
+//    }
 
     public long put(String table, ContentValues values) {
         return helper.getWritableDatabase().replace(table, null, values);
     }
 
-    public int delete(String table, String selection, String[] selectionArgs) {
-        return helper.getWritableDatabase().delete(table, selection, selectionArgs);
-    }
+//    public int delete(String table, String selection, String[] selectionArgs) {
+//        return helper.getWritableDatabase().delete(table, selection, selectionArgs);
+//    }
 
-    public int update(String table, ContentValues values, String selection, String[] selectionArgs) {
-        return helper.getWritableDatabase().update(table, values, selection, selectionArgs);
-    }
+//    public int update(String table, ContentValues values, String selection, String[] selectionArgs) {
+//        return helper.getWritableDatabase().update(table, values, selection, selectionArgs);
+//    }
 
     public BroadcastReceiver registerListener(@NonNull BroadcastReceiver listener) {
         IntentFilter filter = new IntentFilter(DATABASE_EVENT);
@@ -459,7 +437,7 @@ public class Database {
         }
 
         @Override
-        public PhoneEvent get() {
+        protected PhoneEvent get() {
             PhoneEvent event = new PhoneEvent();
             event.setState(getInt(COLUMN_STATE));
             event.setStateReason(getInt(COLUMN_STATE_REASON));
@@ -488,7 +466,7 @@ public class Database {
         }
 
         @Override
-        public GeoCoordinates get() {
+        protected GeoCoordinates get() {
             if (!isNull(COLUMN_LAST_LATITUDE) && !isNull(COLUMN_LAST_LONGITUDE)) {
                 return new GeoCoordinates(
                         getDouble(COLUMN_LAST_LATITUDE),

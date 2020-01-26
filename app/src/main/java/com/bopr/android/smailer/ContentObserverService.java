@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Set;
 
+import static com.bopr.android.smailer.CallProcessorService.startCallProcessingService;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
 import static com.bopr.android.smailer.Settings.settings;
 import static com.bopr.android.smailer.util.AndroidUtil.deviceName;
@@ -80,7 +81,7 @@ public class ContentObserverService extends Service {
         Cursor query = getContentResolver().query(CONTENT_SMS_SENT, null, "_id=?",
                 new String[]{id}, null);
         PhoneEvent event = new SentSmsRowSet(query).findFirst();
-        CallProcessorService.start(this, event);
+        startCallProcessingService(this, event);
     }
 
     /**
@@ -113,7 +114,7 @@ public class ContentObserverService extends Service {
         }
 
         @Override
-        public PhoneEvent get() {
+        protected PhoneEvent get() {
             long date = getLong("date");
 
             PhoneEvent event = new PhoneEvent();

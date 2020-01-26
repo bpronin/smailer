@@ -19,7 +19,6 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceScreen;
 
-import com.bopr.android.smailer.CallProcessorService;
 import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.GeoCoordinates;
 import com.bopr.android.smailer.GeoLocator;
@@ -57,6 +56,7 @@ import java.util.concurrent.Callable;
 
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+import static com.bopr.android.smailer.CallProcessorService.startCallProcessingService;
 import static com.bopr.android.smailer.GoogleAuthorizationHelper.primaryAccount;
 import static com.bopr.android.smailer.GoogleAuthorizationHelper.selectedAccount;
 import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
@@ -566,7 +566,7 @@ public class DebugFragment extends BasePreferenceFragment {
         event.setStartTime(start);
         event.setEndTime(start + 10000);
 
-        CallProcessorService.start(context, event);
+        startCallProcessingService(context, event);
         showToast(context, "Done");
     }
 
@@ -813,7 +813,9 @@ public class DebugFragment extends BasePreferenceFragment {
             List<File> attachment = new LinkedList<>();
             attachment.add(getActivity().getDatabasePath(Database.DATABASE_NAME));
             attachment.add(getLogcatLog());
-            attachment.addAll(asList(new File(getActivity().getFilesDir(), "log").listFiles()));
+            
+            File[] files = new File(getActivity().getFilesDir(), "log").listFiles();
+            attachment.addAll(asList(requireNonNull(files)));
 
             try {
                 GoogleMail transport = new GoogleMail(getActivity());

@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 import androidx.core.util.Consumer;
 
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
-import com.google.api.services.gmail.GmailScopes;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +31,7 @@ import static com.bopr.android.smailer.util.AndroidUtil.isValidEmailAddressList;
 import static com.bopr.android.smailer.util.ContentUtils.getContactName;
 import static com.bopr.android.smailer.util.ContentUtils.markSmsAsRead;
 import static com.bopr.android.smailer.util.Util.isEmpty;
+import static com.google.api.services.gmail.GmailScopes.GMAIL_SEND;
 
 /**
  * Sends out email for phone events.
@@ -132,12 +132,18 @@ public class CallProcessor {
         try {
             requireRecipient(silent);
         } catch (Exception x) {
-            log.warn("Invalid recipients");
+            return false;
+        }
+
+        String accountName;
+        try {
+            accountName = requireSender(silent);
+        } catch (Exception x) {
             return false;
         }
 
         try {
-            transport.init(requireSender(silent), GmailScopes.GMAIL_SEND);
+            transport.init(accountName, GMAIL_SEND);
             return true;
         } catch (IllegalArgumentException x) {
             log.error("Failed starting session: ", x);
@@ -172,33 +178,33 @@ public class CallProcessor {
     }
 
     @NonNull
-    private String requireSender(boolean silent) {
+    private String requireSender(boolean silent) throws Exception {
         String s = settings.getString(PREF_SENDER_ACCOUNT, null);
         if (isEmpty(s)) {
             if (!silent) {
                 notifications.showMailError(R.string.no_account_specified, ACTION_SHOW_MAIN);
             }
-            throw new IllegalArgumentException("Account not specified");
+            throw new Exception("Account not specified");
         }
         return s;
     }
 
     @NonNull
-    private String requireRecipient(boolean silent) {
+    private String requireRecipient(boolean silent) throws Exception {
         String s = settings.getString(PREF_RECIPIENTS_ADDRESS, null);
 
         if (isEmpty(s)) {
             if (!silent) {
                 notifications.showMailError(R.string.no_recipients_specified, ACTION_SHOW_RECIPIENTS);
             }
-            throw new IllegalArgumentException("Recipients not specified");
+            throw new Exception("Recipients not specified");
         }
 
         if (!isValidEmailAddressList(s)) {
             if (!silent) {
                 notifications.showMailError(R.string.invalid_recipient, ACTION_SHOW_RECIPIENTS);
             }
-            throw new IllegalArgumentException("Recipients are invalid");
+            throw new Exception("Recipients are invalid");
         }
 
         return s;

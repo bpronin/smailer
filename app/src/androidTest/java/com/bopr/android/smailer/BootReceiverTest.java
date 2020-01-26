@@ -53,7 +53,7 @@ public class BootReceiverTest extends BaseTest {
      */
     @Test
     public void testReceiveEnabled() throws Exception {
-        InvocationsCollector invocations = new InvocationsCollector();
+        MethodInvocationsCollector invocations = new MethodInvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
 
         when(preferences.getStringSet(eq(PREF_EMAIL_TRIGGERS), anySetOf(String.class)))
@@ -64,7 +64,7 @@ public class BootReceiverTest extends BaseTest {
         Intent intent = new Intent(Intent.ACTION_BOOT_COMPLETED);
         receiver.onReceive(context, intent);
 
-        Intent result = (Intent) invocations.invocation(0)[0];
+        Intent result = (Intent) invocations.getArguments(0)[0];
         assertEquals(ContentObserverService.class.getName(), result.getComponent().getClassName());
     }
 
@@ -75,7 +75,7 @@ public class BootReceiverTest extends BaseTest {
      */
     @Test
     public void testReceiveDisabled() throws Exception {
-        InvocationsCollector invocations = new InvocationsCollector();
+        MethodInvocationsCollector invocations = new MethodInvocationsCollector();
         doAnswer(invocations).when(context).startService(any(Intent.class));
 
         when(preferences.getStringSet(eq(PREF_EMAIL_TRIGGERS), anySetOf(String.class)))

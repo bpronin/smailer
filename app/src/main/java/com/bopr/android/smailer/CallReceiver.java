@@ -19,6 +19,7 @@ import static android.telephony.TelephonyManager.EXTRA_STATE;
 import static android.telephony.TelephonyManager.EXTRA_STATE_IDLE;
 import static android.telephony.TelephonyManager.EXTRA_STATE_OFFHOOK;
 import static android.telephony.TelephonyManager.EXTRA_STATE_RINGING;
+import static com.bopr.android.smailer.CallProcessorService.startCallProcessingService;
 import static com.bopr.android.smailer.util.AndroidUtil.deviceName;
 import static java.lang.System.currentTimeMillis;
 
@@ -105,7 +106,7 @@ public class CallReceiver extends BroadcastReceiver {
         event.setIncoming(incoming);
         event.setMissed(missed);
 
-        CallProcessorService.start(context, event);
+        startCallProcessingService(context, event);
     }
 
     /**
@@ -134,7 +135,7 @@ public class CallReceiver extends BroadcastReceiver {
             event.setText(text.toString());
         }
 
-        CallProcessorService.start(context, event);
+        startCallProcessingService(context, event);
     }
 
     @NonNull

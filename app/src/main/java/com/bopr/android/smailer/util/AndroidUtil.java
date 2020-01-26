@@ -3,8 +3,6 @@ package com.bopr.android.smailer.util;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.PowerManager;
@@ -28,20 +26,27 @@ public class AndroidUtil {
     private AndroidUtil() {
     }
 
-    /**
-     * Returns true if device is connected ty internet.
-     */
-    public static boolean hasInternetConnection(Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (cm != null) {
-            NetworkInfo info = cm.getActiveNetworkInfo();
-            if (info != null) {
-                return info.isConnected();
-            }
-        }
-        return false;
-    }
+//    /**
+//     * Returns true if device is connected ty internet.
+//     */
+//    public static boolean hasInternetConnection(Context context) {
+//        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+//        if (cm != null) {
+//            NetworkInfo info = cm.getActiveNetworkInfo();
+//            if (info != null) {
+//                return info.isConnected();
+//            }
+//        }
+//        return false;
+//    }
 
+    /**
+     * Checks if listed permissions denied.
+     *
+     * @param context     context
+     * @param permissions permissions
+     * @return true if any of listed permissions denied
+     */
     public static boolean isPermissionsDenied(Context context, String... permissions) {
         for (String permission : permissions) {
             if (ContextCompat.checkSelfPermission(context, permission) != PERMISSION_GRANTED) {
@@ -85,7 +90,7 @@ public class AndroidUtil {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             PowerManager pm = (PowerManager) context.getSystemService(POWER_SERVICE);
             String packageName = context.getApplicationContext().getPackageName();
-            if (pm!= null && !pm.isIgnoringBatteryOptimizations(packageName)) {
+            if (pm != null && !pm.isIgnoringBatteryOptimizations(packageName)) {
                 Intent intent = new Intent();
                 intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
                 intent.setData(Uri.parse("package:" + packageName));
@@ -94,17 +99,18 @@ public class AndroidUtil {
         }
     }
 
-/*    @SuppressLint({"MissingPermission", "HardwareIds"})
-    public static String devicePhoneNumber(Context context) {
-        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        return tm != null ? tm.getLine1Number() : null;
-    }*/
+//    @SuppressLint({"MissingPermission", "HardwareIds"})
+//    public static String devicePhoneNumber(Context context) {
+//        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+//        return tm != null ? tm.getLine1Number() : null;
+//    }
 
-    public static void startService(Context context, Intent intent) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(intent);
-        } else {
-            context.startService(intent);
-        }
-    }
+//    public static void startServiceCompat(Context context, Intent intent) {
+//        /* this is to avoid https://stackoverflow.com/questions/46445265/android-8-0-java-lang-illegalstateexception-not-allowed-to-start-service-inten*/
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            context.startForegroundService(intent);
+//        } else {
+//            context.startService(intent);
+//        }
+//    }
 }

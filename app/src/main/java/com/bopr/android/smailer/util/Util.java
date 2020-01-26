@@ -204,6 +204,11 @@ public class Util {
         return null;
     }
 
+//    @SafeVarargs
+//    public static <T> T[] asArray(T... values) {
+//        return values;
+//    }
+
     public static String[] toArray(Collection<String> collection) {
         return collection.toArray(new String[0]);
     }
@@ -252,4 +257,5 @@ public class Util {
         Scanner s = new Scanner(stream).useDelimiter("\\A");
         return s.hasNext() ? s.next() : null;
     }
+
 }
