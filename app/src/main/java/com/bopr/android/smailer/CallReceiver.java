@@ -21,6 +21,7 @@ import static android.telephony.TelephonyManager.EXTRA_STATE_OFFHOOK;
 import static android.telephony.TelephonyManager.EXTRA_STATE_RINGING;
 import static com.bopr.android.smailer.CallProcessorService.startCallProcessingService;
 import static com.bopr.android.smailer.util.AndroidUtil.deviceName;
+import static com.bopr.android.smailer.util.Util.requireNonNull;
 import static java.lang.System.currentTimeMillis;
 
 /**
@@ -69,7 +70,7 @@ public class CallReceiver extends BroadcastReceiver {
      */
     private void onCallStateChanged(@NonNull Context context, @NonNull Intent intent) {
         String callState = intent.getStringExtra(EXTRA_STATE);
-        if (!lastCallState.equals(callState)) {
+        if (callState != null && !lastCallState.equals(callState)) {
             if (callState.equals(EXTRA_STATE_RINGING)) {
                 isIncomingCall = true;
                 callStartTime = currentTimeMillis();
@@ -97,22 +98,10 @@ public class CallReceiver extends BroadcastReceiver {
         }
     }
 
-    private void processCall(@NonNull Context context, boolean incoming, boolean missed) {
-        PhoneEvent event = new PhoneEvent();
-        event.setRecipient(deviceName());
-        event.setPhone(lastCallNumber);
-        event.setStartTime(callStartTime);
-        event.setEndTime(currentTimeMillis());
-        event.setIncoming(incoming);
-        event.setMissed(missed);
-
-        startCallProcessingService(context, event);
-    }
-
     /**
      * Processes sms intent.
      */
-    void onSmsReceived(@NonNull Context context, @NonNull Intent intent) {
+    private void onSmsReceived(@NonNull Context context, @NonNull Intent intent) {
         SmsMessage[] messages;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             messages = getMessagesFromIntent(intent);
@@ -138,12 +127,23 @@ public class CallReceiver extends BroadcastReceiver {
         startCallProcessingService(context, event);
     }
 
+    private void processCall(@NonNull Context context, boolean incoming, boolean missed) {
+        PhoneEvent event = new PhoneEvent();
+        event.setRecipient(deviceName());
+        event.setPhone(lastCallNumber);
+        event.setStartTime(callStartTime);
+        event.setEndTime(currentTimeMillis());
+        event.setIncoming(incoming);
+        event.setMissed(missed);
+
+        startCallProcessingService(context, event);
+    }
+
     @NonNull
     @SuppressWarnings({"deprecation", "RedundantSuppression"})
     private SmsMessage[] parseMessageLegacy(Intent intent) {
-        SmsMessage[] messages;
-        Object[] pdus = (Object[]) intent.getSerializableExtra("pdus");
-        messages = new SmsMessage[pdus.length];
+        Object[] pdus = (Object[]) requireNonNull(intent.getSerializableExtra("pdus"));
+        SmsMessage[] messages = new SmsMessage[pdus.length];
         for (int i = 0; i < pdus.length; i++) {
             byte[] pdu = (byte[]) pdus[i];
             messages[i] = SmsMessage.createFromPdu(pdu);
