@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment;
 
 import static com.bopr.android.smailer.Environment.setupEnvironment;
 import static com.bopr.android.smailer.Settings.initSettings;
-import static com.bopr.android.smailer.util.Util.requireNonNull;
 
 /**
  * An activity that presents a set of application settings.
@@ -34,13 +33,14 @@ public class MainActivity extends AppActivity {
 
     @SuppressWarnings("SwitchStatementWithTooFewBranches")
     private void handleStartupParams(Intent intent) {
-        if (intent.hasExtra("screen")) {
-            switch (requireNonNull(intent.getStringExtra("screen"))) {
+        String stringExtra = intent.getStringExtra("screen");
+        if (stringExtra != null) {
+            switch (stringExtra) {
                 case "debug":
                     try {
                         startActivity(new Intent(this, Class.forName("com.bopr.android.smailer.ui.DebugActivity")));
                     } catch (ClassNotFoundException x) {
-                        throw new IllegalArgumentException(x);
+                        throw new RuntimeException(x);
                     }
                     break;
             }
