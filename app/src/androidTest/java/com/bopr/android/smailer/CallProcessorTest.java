@@ -236,7 +236,7 @@ public class CallProcessorTest extends BaseTest {
 
         doAnswer(sendInvocations).when(transport).send(any(MailMessage.class));
         doAnswer(showErrorInvocations).when(notifications).showMailError(anyInt(), anyInt());
-        doThrow(new AccountsException()).when(transport).startSession(anyString(), anyString());
+        doThrow(new AccountsException("Test error")).when(transport).startSession(anyString(), anyString());
 
         PhoneEvent event = newPhoneEvent();
 
@@ -264,11 +264,13 @@ public class CallProcessorTest extends BaseTest {
     @Test
     public void testProcessTransportSendFailed() throws Exception {
         MethodInvocationsCollector initInvocations = new MethodInvocationsCollector();
+        MethodInvocationsCollector sendInvocations = new MethodInvocationsCollector();
         MethodInvocationsCollector showErrorInvocations = new MethodInvocationsCollector();
 
-        doAnswer(showErrorInvocations).when(notifications).showMailError(anyInt(), anyInt());
         doAnswer(initInvocations).when(transport).startSession(anyString(), anyString());
-        doThrow(new IOException()).when(transport).send(any(MailMessage.class));
+        doAnswer(sendInvocations).when(transport).send(any(MailMessage.class));
+        doAnswer(showErrorInvocations).when(notifications).showMailError(anyInt(), anyInt());
+        doThrow(new IOException("Test error")).when(transport).send(any(MailMessage.class));
 
         PhoneEvent event = newPhoneEvent();
 
@@ -276,12 +278,8 @@ public class CallProcessorTest extends BaseTest {
         processor.process(event);
 
         assertEquals(1, initInvocations.count());
-        String sender = initInvocations.getArgument(0, 0);
-        assertEquals("sender@mail.com", sender);
-
-        assertEquals(1, showErrorInvocations.count());
-        int notificationText = showErrorInvocations.getArgument(0, 0);
-        assertEquals(R.string.check_your_settings, notificationText);
+        assertTrue(sendInvocations.isEmpty());
+        assertTrue(showErrorInvocations.isEmpty());
 
         PhoneEvent savedEvent = database.getEvents().findFirst();
         assertEquals(event.getRecipient(), savedEvent.getRecipient());
@@ -306,13 +304,10 @@ public class CallProcessorTest extends BaseTest {
         CallProcessor processor = new CallProcessor(context, transport, notifications, database, geoLocator);
 
         /* error while sending produces error notification */
-        doThrow(new IOException()).when(transport).send(any(MailMessage.class));
+        doThrow(new IOException("Test error")).when(transport).send(any(MailMessage.class));
         processor.process(newPhoneEvent());
 
-        assertEquals(1, showInvocations.count());
-        int notificationText = showInvocations.getArgument(0, 0);
-        assertEquals(R.string.check_your_settings, notificationText);
-
+        assertTrue(showInvocations.isEmpty());
         assertTrue(hideInvocations.isEmpty());
 
         showInvocations.reset();
@@ -364,7 +359,7 @@ public class CallProcessorTest extends BaseTest {
         doAnswer(showErrorInvocations).when(notifications).showMailError(anyInt(), anyInt());
 
         /* disable transport */
-        doThrow(new IOException()).when(transport).send(any(MailMessage.class));
+        doThrow(new IOException("Test error")).when(transport).send(any(MailMessage.class));
 
         CallProcessor processor = new CallProcessor(context, transport, notifications, database, geoLocator);
 
@@ -374,7 +369,7 @@ public class CallProcessorTest extends BaseTest {
 
         assertEquals(3, database.getEvents().getCount());
         assertEquals(3, database.getPendingEvents().getCount());
-        assertEquals(3, showErrorInvocations.count());
+        assertTrue(showErrorInvocations.isEmpty());
 
         /* try resend with disabled transport */
 

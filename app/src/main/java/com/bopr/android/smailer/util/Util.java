@@ -5,9 +5,7 @@ import androidx.annotation.Nullable;
 
 import com.bopr.android.smailer.GeoCoordinates;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -15,6 +13,10 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableSet;
 
 /**
  * Miscellaneous utilities.
@@ -114,7 +116,7 @@ public class Util {
 
     @SafeVarargs
     public static <T> String join(String divider, T... values) {
-        return join(divider, Arrays.asList(values));
+        return join(divider, asList(values));
     }
 
     public static String join(String divider, Collection values) {
@@ -135,10 +137,10 @@ public class Util {
                 s = value.replaceAll(" ", "");
             }
             if (!isEmpty(s)) {
-                return Arrays.asList(s.split(divider));
+                return asList(s.split(divider));
             }
         }
-        return Collections.emptyList();
+        return emptyList();
     }
 
     public static String commaJoin(Collection values) {
@@ -151,7 +153,7 @@ public class Util {
 
     @SafeVarargs
     public static <T> Set<T> asSet(T... values) {
-        return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(values)));
+        return unmodifiableSet(toSet(asList(values)));
     }
 
     public static <T> Set<T> toSet(final Collection<T> collection) {
@@ -191,11 +193,11 @@ public class Util {
         return collection.toArray(new String[0]);
     }
 
-    public static boolean safeEquals(Object a, Object b) {
+    public static boolean safeEquals(@Nullable Object a, @Nullable Object b) {
         return (a == b) || (a != null && a.equals(b));
     }
 
-    public static <T> T requireNonNull(T obj) {
+    public static <T> T requireNonNull(@Nullable T obj) {
         if (obj == null)
             throw new NullPointerException();
         return obj;

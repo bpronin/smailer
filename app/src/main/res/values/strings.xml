@@ -26,7 +26,7 @@
     <string name="call_of_duration_short">Call: {duration}</string>
     <string name="called_phone">Called: {phone} ({name})</string>
     <string name="caller_phone">Caller: {phone} ({name})</string>
-    <string name="check_your_settings">Check your settings</string>
+    <string name="check_your_settings">Please check your settings</string>
     <string name="clear">Clear</string>
     <string name="close">Close</string>
     <string name="contact_no_permission_read_contact">no permission to read contacts</string>

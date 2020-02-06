@@ -27,7 +27,7 @@ public class PendingCallProcessorService extends JobIntentService {
     public void onCreate() {
         super.onCreate();
         database = new Database(this);
-        callProcessor = new CallProcessor(this, database, new GeoLocator(this, database));
+        callProcessor = new CallProcessor(this, database);
     }
 
     @Override

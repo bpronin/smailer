@@ -4,22 +4,19 @@ import android.accounts.AccountsException;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
-import androidx.core.util.Consumer;
 
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 import static com.bopr.android.smailer.Notifications.ACTION_SHOW_MAIN;
-import static com.bopr.android.smailer.Notifications.ACTION_SHOW_RECIPIENTS;
 import static com.bopr.android.smailer.PhoneEvent.REASON_ACCEPTED;
 import static com.bopr.android.smailer.PhoneEvent.STATE_IGNORED;
-import static com.bopr.android.smailer.PhoneEvent.STATE_PENDING;
 import static com.bopr.android.smailer.PhoneEvent.STATE_PROCESSED;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_LOCALE;
@@ -51,6 +48,11 @@ public class CallProcessor {
     private final Database database;
     private final GeoLocator locator;
 
+    CallProcessor(Context context, Database database) {
+        this(context, new GoogleMail(context), new Notifications(context), database,
+                new GeoLocator(context, database));
+    }
+
     CallProcessor(Context context, GoogleMail transport, Notifications notifications,
                   Database database, GeoLocator locator) {
         this.context = context;
@@ -59,10 +61,6 @@ public class CallProcessor {
         this.database = database;
         this.locator = locator;
         settings = new Settings(context);
-    }
-
-    CallProcessor(Context context, Database database, GeoLocator locator) {
-        this(context, new GoogleMail(context), new Notifications(context), database, locator);
     }
 
     /**
@@ -75,16 +73,13 @@ public class CallProcessor {
 
         event.setLocation(locator.getLocation());
         event.setStateReason(settings.getFilter().test(event));
-        database.putEvent(event);
-
-        if (event.getStateReason() == REASON_ACCEPTED) {
-            if (startMailSession(false)) {
-                sendMail(event, false);
-            }
-        } else {
-            ignoreEvent(event);
+        if (event.getStateReason() != REASON_ACCEPTED) {
+            event.setState(STATE_IGNORED);
+        } else if (startMailSession(false) && sendMail(event, false)) {
+            event.setState(STATE_PROCESSED);
         }
 
+        database.putEvent(event);
         database.notifyChanged();
     }
 
@@ -94,37 +89,22 @@ public class CallProcessor {
     public void processPending() {
         log.debug("Processing pending events");
 
-        final List<PhoneEvent> events = new LinkedList<>();
-        database.getPendingEvents().forEach(new Consumer<PhoneEvent>() {
+        List<PhoneEvent> events = database.getPendingEvents().toList();
 
-            @Override
-            public void accept(PhoneEvent event) {
-                if (event.getStateReason() == REASON_ACCEPTED) {
-                    events.add(event);
-                } else {
-                    ignoreEvent(event);
-                }
-            }
-        });
-
-        if (!events.isEmpty()) {
+        if (events.isEmpty()) {
+            log.debug("No pending events");
+        } else {
             if (startMailSession(true)) {
                 for (PhoneEvent event : events) {
-                    sendMail(event, true);
+                    if (sendMail(event, true)) {
+                        event.setState(STATE_PROCESSED);
+                        database.putEvent(event);
+                    }
                 }
             }
-        } else {
-            log.debug("No pending events found");
+
+            database.notifyChanged();
         }
-
-        database.notifyChanged();
-    }
-
-    private void ignoreEvent(PhoneEvent event) {
-        event.setState(STATE_IGNORED);
-        database.putEvent(event);
-
-        log.debug("Event ignored: " + event);
     }
 
     private boolean startMailSession(boolean silent) {
@@ -135,46 +115,54 @@ public class CallProcessor {
             transport.startSession(requireSender(silent), GMAIL_SEND);
             return true;
         } catch (AccountsException x) {
-            log.error("Failed starting session: ", x);
-            if (!silent) {
-                notifications.showMailError(R.string.account_not_registered, ACTION_SHOW_MAIN);
-            }
+            log.warn("Failed starting mail session: ", x);
+
+            showErrorNotification(R.string.account_not_registered, silent);
             return false;
         } catch (Exception x) {
+            log.warn("Failed starting mail session: ", x);
+
             return false;
         }
     }
 
-    private void sendMail(PhoneEvent event, boolean silent) {
+    private boolean sendMail(PhoneEvent event, boolean silent) {
         log.debug("Sending mail: " + event);
 
         try {
-            MailFormatter formatter = createFormatter(event);
+            sendMessage(event, requireRecipient(silent));
 
-            MailMessage message = new MailMessage();
-            message.setSubject(formatter.formatSubject());
-            message.setBody(formatter.formatBody());
-            message.setRecipients(requireRecipient(silent));
-            message.setReplyTo(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT, null));
+            notifications.hideAllErrors();
 
-            transport.send(message);
+            if (settings.getBoolean(PREF_NOTIFY_SEND_SUCCESS, false)) {
+                notifications.showMessage(R.string.email_send, ACTION_SHOW_MAIN);
+            }
 
-            handleSendSuccess(event);
+            if (settings.getBoolean(PREF_MARK_SMS_AS_READ, false)) {
+                markSmsAsRead(context, event);
+            }
+
+            return true;
         } catch (UserRecoverableAuthIOException x) {
-            removeSelectedAccount();
-            handleSendError(event, x, R.string.need_google_permission, silent);
+            log.warn("Failed sending mail: ", x);
+
+            showErrorNotification(R.string.need_google_permission, silent);
+            /* remove invalid account */
+            settings.edit().putString(PREF_SENDER_ACCOUNT, null).apply();
+            return false;
         } catch (Exception x) {
-            handleSendError(event, x, R.string.check_your_settings, silent);
+            log.warn("Failed sending mail: ", x);
+
+            return false;
         }
     }
 
     @NonNull
     private String requireSender(boolean silent) throws Exception {
         String s = settings.getString(PREF_SENDER_ACCOUNT, null);
+
         if (isEmpty(s)) {
-            if (!silent) {
-                notifications.showMailError(R.string.no_account_specified, ACTION_SHOW_MAIN);
-            }
+            showErrorNotification(R.string.no_account_specified, silent);
             throw new Exception("Account not specified");
         }
         return s;
@@ -185,65 +173,43 @@ public class CallProcessor {
         String s = settings.getString(PREF_RECIPIENTS_ADDRESS, null);
 
         if (isEmpty(s)) {
-            if (!silent) {
-                notifications.showMailError(R.string.no_recipients_specified, ACTION_SHOW_RECIPIENTS);
-            }
+            showErrorNotification(R.string.no_recipients_specified, silent);
             throw new Exception("Recipients not specified");
         }
 
         if (!isValidEmailAddressList(s)) {
-            if (!silent) {
-                notifications.showMailError(R.string.invalid_recipient, ACTION_SHOW_RECIPIENTS);
-            }
+            showErrorNotification(R.string.invalid_recipient, silent);
             throw new Exception("Recipients are invalid");
         }
 
         return s;
     }
 
-    @NonNull
-    private MailFormatter createFormatter(PhoneEvent event) {
+    private void sendMessage(PhoneEvent event, String recipient) throws IOException {
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(new Date());
         formatter.setContactName(getContactName(context, event.getPhone()));
         formatter.setDeviceName(settings.getDeviceName());
         formatter.setContentOptions(settings.getStringSet(PREF_EMAIL_CONTENT, null));
         formatter.setServiceAccount(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT, null));
-
         String locale = settings.getString(PREF_EMAIL_LOCALE, null);
         if (locale != null) {   //todo: why not to set null locale?
             formatter.setLocale(locale);
         }
-        return formatter;
+
+        MailMessage message = new MailMessage();
+        message.setSubject(formatter.formatSubject());
+        message.setBody(formatter.formatBody());
+        message.setRecipients(recipient);
+        message.setReplyTo(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT, null));
+
+        transport.send(message);
     }
 
-    private void handleSendSuccess(PhoneEvent event) {
-        event.setState(STATE_PROCESSED);
-        database.putEvent(event);
-
-        notifications.hideAllErrors();
-
-        if (settings.getBoolean(PREF_NOTIFY_SEND_SUCCESS, false)) {
-            notifications.showMessage(R.string.email_send, ACTION_SHOW_MAIN);
-        }
-
-        if (settings.getBoolean(PREF_MARK_SMS_AS_READ, false)) {
-            markSmsAsRead(context, event);
-        }
-    }
-
-    private void handleSendError(PhoneEvent event, Throwable error, int notification, boolean silent) {
-        log.warn("Send failed: " + event, error);
-
-        event.setState(STATE_PENDING);
-        database.putEvent(event);
-
+    private void showErrorNotification(int reason, boolean silent) {
         if (!silent) {
-            notifications.showMailError(notification, Notifications.ACTION_SHOW_MAIN);
+            notifications.showMailError(reason, ACTION_SHOW_MAIN);
         }
     }
 
-    private void removeSelectedAccount() {
-        settings.edit().putString(PREF_SENDER_ACCOUNT, null).apply();
-    }
 }
