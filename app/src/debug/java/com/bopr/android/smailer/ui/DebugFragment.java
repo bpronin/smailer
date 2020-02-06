@@ -772,7 +772,7 @@ public class DebugFragment extends BasePreferenceFragment {
         protected String doInBackground(Void... params) {
             GoogleMail transport = new GoogleMail(getActivity());
             try {
-                transport.init(primaryAccount(getActivity()).name, GMAIL_SEND);
+                transport.startSession(primaryAccount(getActivity()).name, GMAIL_SEND);
 
                 MailMessage message = new MailMessage();
                 message.setSubject("test subject");
@@ -819,7 +819,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
             try {
                 GoogleMail transport = new GoogleMail(getActivity());
-                transport.init(primaryAccount(getActivity()).name, GMAIL_SEND);
+                transport.startSession(primaryAccount(getActivity()).name, GMAIL_SEND);
 
                 for (File file : attachment) {
                     MailMessage message = new MailMessage();

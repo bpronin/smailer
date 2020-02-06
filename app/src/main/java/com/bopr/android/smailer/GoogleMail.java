@@ -69,9 +69,9 @@ public class GoogleMail {
         this.context = context;
     }
 
-    public void init(@NonNull String accountName, String... scopes) throws AccountsException {
-        this.sender = accountName;
-        service = createService(createCredential(accountName, scopes));
+    public void startSession(@NonNull String accoun, @NonNull String... scopes) throws AccountsException {
+        this.sender = accoun;
+        service = createService(createCredential(accoun, scopes));
         session = Session.getDefaultInstance(new Properties(), null);
     }
 
@@ -84,7 +84,7 @@ public class GoogleMail {
         log.debug("Message sent");
     }
 
-    public List<MailMessage> list(String query) throws IOException {
+    public List<MailMessage> list(@NonNull String query) throws IOException {
         ListMessagesResponse response = service
                 .users()
                 .messages()
@@ -108,7 +108,7 @@ public class GoogleMail {
         return result;
     }
 
-    void markAsRead(MailMessage message) throws IOException {
+    void markAsRead(@NonNull MailMessage message) throws IOException {
         ModifyMessageRequest content = new ModifyMessageRequest()
                 .setRemoveLabelIds(ImmutableList.of("UNREAD")); /* case sensitive */
         service.users()
@@ -119,7 +119,7 @@ public class GoogleMail {
         log.debug("Message marked as read: " + message.getId());
     }
 
-    void trash(MailMessage message) throws IOException {
+    void trash(@NonNull MailMessage message) throws IOException {
         service.users()
                 .messages()
                 .trash(ME, message.getId())

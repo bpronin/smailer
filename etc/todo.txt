@@ -1,2 +1,3 @@
-[TODO] Add "mark all as read" button on log screen
+[DONE] Add "mark all as read" button on log screen
 [TODO] Add "question mark" button on message details dialog showing why message have been ignored
+[TODO] Add "sent time" label on message details screen 

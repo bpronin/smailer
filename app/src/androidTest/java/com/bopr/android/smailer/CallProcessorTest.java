@@ -94,7 +94,7 @@ public class CallProcessorTest extends BaseTest {
         MethodInvocationsCollector sendInvocations = new MethodInvocationsCollector();
         MethodInvocationsCollector showErrorInvocations = new MethodInvocationsCollector();
 
-        doAnswer(initInvocations).when(transport).init(anyString(), anyString());
+        doAnswer(initInvocations).when(transport).startSession(anyString(), anyString());
         doAnswer(sendInvocations).when(transport).send(any(MailMessage.class));
         doAnswer(showErrorInvocations).when(notifications).showMailError(anyInt(), anyInt());
 
@@ -131,7 +131,7 @@ public class CallProcessorTest extends BaseTest {
         MethodInvocationsCollector sendInvocations = new MethodInvocationsCollector();
         MethodInvocationsCollector showErrorInvocations = new MethodInvocationsCollector();
 
-        doAnswer(initInvocations).when(transport).init(anyString(), anyString());
+        doAnswer(initInvocations).when(transport).startSession(anyString(), anyString());
         doAnswer(sendInvocations).when(transport).send(any(MailMessage.class));
         doAnswer(showErrorInvocations).when(notifications).showMailError(anyInt(), anyInt());
 
@@ -163,7 +163,7 @@ public class CallProcessorTest extends BaseTest {
         MethodInvocationsCollector sendInvocations = new MethodInvocationsCollector();
         MethodInvocationsCollector showErrorInvocations = new MethodInvocationsCollector();
 
-        doAnswer(initInvocations).when(transport).init(anyString(), anyString());
+        doAnswer(initInvocations).when(transport).startSession(anyString(), anyString());
         doAnswer(sendInvocations).when(transport).send(any(MailMessage.class));
         doAnswer(showErrorInvocations).when(notifications).showMailError(anyInt(), anyInt());
 
@@ -199,7 +199,7 @@ public class CallProcessorTest extends BaseTest {
         MethodInvocationsCollector sendInvocations = new MethodInvocationsCollector();
         MethodInvocationsCollector showErrorInvocations = new MethodInvocationsCollector();
 
-        doAnswer(initInvocations).when(transport).init(anyString(), anyString());
+        doAnswer(initInvocations).when(transport).startSession(anyString(), anyString());
         doAnswer(sendInvocations).when(transport).send(any(MailMessage.class));
         doAnswer(showErrorInvocations).when(notifications).showMailError(anyInt(), anyInt());
 
@@ -236,7 +236,7 @@ public class CallProcessorTest extends BaseTest {
 
         doAnswer(sendInvocations).when(transport).send(any(MailMessage.class));
         doAnswer(showErrorInvocations).when(notifications).showMailError(anyInt(), anyInt());
-        doThrow(new AccountsException()).when(transport).init(anyString(), anyString());
+        doThrow(new AccountsException()).when(transport).startSession(anyString(), anyString());
 
         PhoneEvent event = newPhoneEvent();
 
@@ -267,7 +267,7 @@ public class CallProcessorTest extends BaseTest {
         MethodInvocationsCollector showErrorInvocations = new MethodInvocationsCollector();
 
         doAnswer(showErrorInvocations).when(notifications).showMailError(anyInt(), anyInt());
-        doAnswer(initInvocations).when(transport).init(anyString(), anyString());
+        doAnswer(initInvocations).when(transport).startSession(anyString(), anyString());
         doThrow(new IOException()).when(transport).send(any(MailMessage.class));
 
         PhoneEvent event = newPhoneEvent();

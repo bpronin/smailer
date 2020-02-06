@@ -70,7 +70,7 @@ public class CallProcessor {
      *
      * @param event email event
      */
-    public void process(PhoneEvent event) {
+    public void process(@NonNull PhoneEvent event) {
         log.debug("Processing event: " + event);
 
         event.setLocation(locator.getLocation());
@@ -132,7 +132,7 @@ public class CallProcessor {
 
         try {
             requireRecipient(silent);
-            transport.init(requireSender(silent), GMAIL_SEND);
+            transport.startSession(requireSender(silent), GMAIL_SEND);
             return true;
         } catch (AccountsException x) {
             log.error("Failed starting session: ", x);

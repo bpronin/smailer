@@ -1,15 +1,10 @@
 package com.bopr.android.smailer.util;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.bopr.android.smailer.GeoCoordinates;
 
-import org.slf4j.LoggerFactory;
-
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,7 +12,6 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,22 +30,6 @@ public class Util {
     private static final String REGEX_ = "REGEX:";
 
     private Util() {
-    }
-
-    public static void registerUncaughtExceptionHandler() {
-        final Thread.UncaughtExceptionHandler defaultHandler = Thread.getDefaultUncaughtExceptionHandler();
-        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-
-            @Override
-            public void uncaughtException(Thread thread, Throwable throwable) {
-                try {
-                    LoggerFactory.getLogger("application").error("Application crashed", throwable);
-                } catch (Throwable x) {
-                    Log.e("main", "Failed to handle uncaught exception");
-                }
-                defaultHandler.uncaughtException(thread, throwable);
-            }
-        });
     }
 
     public static String formatLocation(@NonNull GeoCoordinates location, String degreeSymbol,
@@ -252,10 +230,10 @@ public class Util {
         return QUOTED_TEXT_PATTERN.matcher(s).matches();
     }
 
-    @Nullable
-    public static String readStream(InputStream stream) {
-        Scanner s = new Scanner(stream).useDelimiter("\\A");
-        return s.hasNext() ? s.next() : null;
-    }
+//    @Nullable
+//    public static String readStream(InputStream stream) {
+//        Scanner s = new Scanner(stream).useDelimiter("\\A");
+//        return s.hasNext() ? s.next() : null;
+//    }
 
 }

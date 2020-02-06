@@ -1,14 +1,14 @@
 package com.bopr.android.smailer;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.bopr.android.smailer.util.AddressUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import static com.bopr.android.smailer.util.Util.QUOTED_TEXT_REGEX;
 import static com.bopr.android.smailer.util.Util.extractQuoted;
@@ -31,9 +31,6 @@ class RemoteCommandParser {
     static final String REMOVE_TEXT_FROM_BLACKLIST = "remove_text_from_blacklist";
     static final String ADD_TEXT_TO_WHITELIST = "add_text_to_whitelist";
     static final String REMOVE_TEXT_FROM_WHITELIST = "remove_text_from_whitelist";
-    static final String ENABLE_OPTION = "enable_option";
-    static final String DISABLE_OPTION = "disable_option";
-    static final String SET_OPTION = "set_option";
 
     RemoteCommandParser() {
     }
@@ -91,14 +88,6 @@ class RemoteCommandParser {
                 } else {
                     return new Task(ADD_PHONE_TO_WHITELIST, extractPhone(subject, body));
                 }
-            }
-        } else if (command.contains("option")) {
-            if (command.contains("enable")) {
-                return new Task(ENABLE_OPTION, extractQuoted(body));
-            } else if (command.contains("disable")) {
-                return new Task(DISABLE_OPTION, extractQuoted(body));
-            }  else if (command.contains("set")) {
-                return new Task(SET_OPTION, extractQuoted(body));
             }
         }
         return null;
