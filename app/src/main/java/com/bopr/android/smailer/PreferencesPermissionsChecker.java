@@ -28,6 +28,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 import static android.Manifest.permission.READ_PHONE_STATE;
 import static android.Manifest.permission.READ_SMS;
 import static android.Manifest.permission.RECEIVE_SMS;
+import static android.Manifest.permission.SEND_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_TRIGGERS;
@@ -59,21 +60,22 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
     private Activity activity;
     private Settings settings;
     private int requestResultCode = nextRequestResult.incrementAndGet();
-    private Map<String, Integer> rationales = new HashMap<>();
+    private Map<String, Integer> items = new HashMap<>();
 
     protected PreferencesPermissionsChecker(Activity activity, Settings settings) {
         this.activity = activity;
         this.settings = settings;
         this.settings.registerOnSharedPreferenceChangeListener(this);
 
-        rationales.put(RECEIVE_SMS, R.string.permission_rationale_receive_sms);
-        rationales.put(WRITE_SMS, R.string.permission_rationale_write_sms);
-        rationales.put(READ_SMS, R.string.permission_rationale_read_sms);
-        rationales.put(READ_PHONE_STATE, R.string.permission_rationale_phone_state);
-        rationales.put(PROCESS_OUTGOING_CALLS, R.string.permission_rationale_outgoing_call);   // TODO: 06.02.2020 deprecated
-        rationales.put(READ_CONTACTS, R.string.permission_rationale_read_contacts);
-        rationales.put(ACCESS_COARSE_LOCATION, R.string.permission_rationale_coarse_location);
-        rationales.put(ACCESS_FINE_LOCATION, R.string.permission_rationale_fine_location);
+        items.put(RECEIVE_SMS, R.string.permission_rationale_receive_sms);
+        items.put(WRITE_SMS, R.string.permission_rationale_write_sms);
+        items.put(READ_SMS, R.string.permission_rationale_read_sms);
+        items.put(READ_PHONE_STATE, R.string.permission_rationale_phone_state);
+        items.put(PROCESS_OUTGOING_CALLS, R.string.permission_rationale_outgoing_call);   // TODO: 06.02.2020 deprecated
+        items.put(READ_CONTACTS, R.string.permission_rationale_read_contacts);
+        items.put(ACCESS_COARSE_LOCATION, R.string.permission_rationale_coarse_location);
+        items.put(ACCESS_FINE_LOCATION, R.string.permission_rationale_fine_location);
+        items.put(SEND_SMS, R.string.permission_rationale_send_sms);
     }
 
     public void destroy() {
@@ -81,18 +83,21 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
     }
 
     public void checkAll() {
-        boolean neverRequested = false;
-
-        for (String permission : rationales.keySet()) {
-            if (isPermissionsDenied(activity, permission) && !needExplanation(permission)) {
-                neverRequested = true;
-                break;
-            }
-        }
-
-        if (neverRequested) {
-            check(rationales.keySet());
-        }
+//        boolean neverRequested = false;
+//
+//        for (String permission : items.keySet()) {
+//            if (isPermissionsDenied(activity, permission)) {
+//                if (!needExplanation(permission)) {
+//                    neverRequested = true;
+//                    break;
+//                }
+//            }
+//        }
+//
+//        if (neverRequested) {
+//            check(items.keySet());
+//        }
+        check(items.keySet());
     }
 
     /**
@@ -232,7 +237,7 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
         StringBuilder b = new StringBuilder();
         for (String permission : permissions) {
             String line = formatter(activity)
-                    .pattern(requireNonNull(rationales.get(permission)))
+                    .pattern(requireNonNull(items.get(permission)))
                     .put("permission", getPermissionLabel(permission))
                     .format();
             b.append(line).append("\n\n");

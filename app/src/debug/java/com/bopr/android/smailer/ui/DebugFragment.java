@@ -2,13 +2,18 @@ package com.bopr.android.smailer.ui;
 
 import android.Manifest;
 import android.accounts.Account;
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.text.InputType;
 import android.widget.EditText;
 
@@ -32,10 +37,10 @@ import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.RemoteControlService;
 import com.bopr.android.smailer.Settings;
+import com.bopr.android.smailer.SmsTransport;
 import com.bopr.android.smailer.sync.GoogleDrive;
 import com.bopr.android.smailer.sync.SyncAdapter;
 import com.bopr.android.smailer.sync.SyncManager;
-import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.ContentUtils;
 import com.google.android.gms.tasks.Tasks;
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager;
@@ -57,7 +62,14 @@ import java.util.Properties;
 import java.util.concurrent.Callable;
 
 import static android.Manifest.permission.RECEIVE_SMS;
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
+import static android.app.PendingIntent.getBroadcast;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+import static android.telephony.SmsManager.RESULT_ERROR_GENERIC_FAILURE;
+import static android.telephony.SmsManager.RESULT_ERROR_NO_SERVICE;
+import static android.telephony.SmsManager.RESULT_ERROR_NULL_PDU;
+import static android.telephony.SmsManager.RESULT_ERROR_RADIO_OFF;
 import static com.bopr.android.smailer.CallProcessorService.startCallProcessingService;
 import static com.bopr.android.smailer.GoogleAuthorizationHelper.primaryAccount;
 import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
@@ -85,6 +97,8 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
 import static com.bopr.android.smailer.util.AndroidUtil.deviceName;
+import static com.bopr.android.smailer.util.AndroidUtil.launchBatteryOptimizationSettings;
+import static com.bopr.android.smailer.util.AndroidUtil.requireBatteryOptimizationDisabled;
 import static com.bopr.android.smailer.util.ResourceUtil.showToast;
 import static com.bopr.android.smailer.util.Util.asSet;
 import static com.bopr.android.smailer.util.Util.commaJoin;
@@ -113,6 +127,8 @@ public class DebugFragment extends BasePreferenceFragment {
     private Database database;
     private GoogleAuthorizationHelper authorizator;
     private Notifications notifications;
+    private BroadcastReceiver sentStatusReceiver;
+    private BroadcastReceiver deliveredStatusReceiver;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -123,6 +139,18 @@ public class DebugFragment extends BasePreferenceFragment {
         authorizator = new GoogleAuthorizationHelper(this, PREF_SENDER_ACCOUNT, MAIL_GOOGLE_COM,
                 DRIVE_APPDATA);
         notifications = new Notifications(requireContext());
+
+        sentStatusReceiver = new SentStatusReceiver();
+        deliveredStatusReceiver = new DeliveryStatusReceiver();
+        context.registerReceiver(sentStatusReceiver, new IntentFilter(SmsTransport.ACTION_SMS_SENT));
+        context.registerReceiver(deliveredStatusReceiver, new IntentFilter(SmsTransport.ACTION_SMS_DELIVERED));
+    }
+
+    @Override
+    public void onDestroy() {
+        context.unregisterReceiver(sentStatusReceiver);
+        context.unregisterReceiver(deliveredStatusReceiver);
+        super.onDestroy();
     }
 
     @Override
@@ -169,7 +197,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
         addCategory(screen, "Settings",
 
-                createPreference("Debug settings", new DefaultClickListener() {
+                createPreference("Populate settings", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
@@ -185,19 +213,19 @@ public class DebugFragment extends BasePreferenceFragment {
                     }
                 }),
 
-                createPreference("Require optimisation disabled", new DefaultClickListener() {
+                createPreference("Require battery optimisation disabled", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        AndroidUtil.requireBatteryOptimizationDisabled(requireContext());
+                        requireBatteryOptimizationDisabled(requireContext());
                     }
                 }),
 
-                createPreference("Launch optimisation settings", new DefaultClickListener() {
+                createPreference("Launch battery optimisation dialog", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        AndroidUtil.launchBatteryOptimizationSettings(requireContext());
+                        launchBatteryOptimizationSettings(requireContext());
                     }
                 })
         );
@@ -234,9 +262,17 @@ public class DebugFragment extends BasePreferenceFragment {
                     protected void onClick(Preference preference) {
                         onSendDebugMail();
                     }
+                }),
+
+                createPreference("Send SMS", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onSendSms();
+                    }
                 })
 
-        );
+                );
 
         addCategory(screen, "Database",
 
@@ -434,6 +470,18 @@ public class DebugFragment extends BasePreferenceFragment {
         authorizator.onActivityResult(requestCode, resultCode, data);
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == PERMISSIONS_REQUEST_RECEIVE_SMS) {
+            if (grantResults[0] == PERMISSION_GRANTED) {
+                showMessage(context, "Permission granted");
+            } else {
+                showMessage(context, "Permission denied");
+            }
+        }
+    }
+
     @NonNull
     private Properties loadDebugProperties() {
         Properties properties = new Properties();
@@ -583,18 +631,6 @@ public class DebugFragment extends BasePreferenceFragment {
                 PERMISSIONS_REQUEST_RECEIVE_SMS);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if (requestCode == PERMISSIONS_REQUEST_RECEIVE_SMS) {
-            if (grantResults[0] == PERMISSION_GRANTED) {
-                showMessage(context, "Permission granted");
-            } else {
-                showMessage(context, "Permission denied");
-            }
-        }
-    }
-
     private void onClearLogs() {
         File[] logs = new File(requireContext().getFilesDir(), "log").listFiles();
         for (File file : logs) {
@@ -718,6 +754,41 @@ public class DebugFragment extends BasePreferenceFragment {
 
     }
 
+    @SuppressLint("SetTextI18n")
+    private void onSendSms() {
+        final EditText input = new EditText(context);
+        input.setText("5556");
+        input.setInputType(InputType.TYPE_CLASS_PHONE);
+
+        new AlertDialog.Builder(context)
+                .setTitle("Phone number")
+                .setView(input)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String phone = input.getText().toString();
+                        PendingIntent sentIntent = getBroadcast(context, 0, new Intent("SMS_SENT"), 0);
+                        PendingIntent deliveredIntent = getBroadcast(context, 0, new Intent("SMS_DELIVERED"), 0);
+
+                        try {
+                            SmsManager.getDefault().sendTextMessage(phone, null, "Debug message", sentIntent, deliveredIntent);
+                        } catch (Throwable x) {
+                            log.error("Failed: ", x);
+                            showToast(context, "Failed");
+                        }
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .show();
+    }
+
     private Account senderAccount() {
         String name = settings.getString(PREF_SENDER_ACCOUNT, null);
         return new GoogleAccountManager(context).getAccountByName(name);
@@ -776,7 +847,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                 MailMessage message = new MailMessage();
                 message.setSubject("test subject");
-                message.setBody("test message from " + AndroidUtil.deviceName());
+                message.setBody("test message from " + deviceName());
                 message.setRecipients(requireNonNull(properties.getProperty("default_recipient")));
 
                 transport.send(message);
@@ -824,7 +895,7 @@ public class DebugFragment extends BasePreferenceFragment {
                 for (File file : attachment) {
                     MailMessage message = new MailMessage();
                     message.setSubject("[SMailer] log: " + file.getName());
-                    message.setBody("Device: " + AndroidUtil.deviceName() + "<br>File: " + file.getName());
+                    message.setBody("Device: " + deviceName() + "<br>File: " + file.getName());
                     message.setAttachment(ImmutableSet.of(file));
                     message.setRecipients(properties.getProperty("developer_email"));
 
@@ -876,6 +947,58 @@ public class DebugFragment extends BasePreferenceFragment {
             onClick(preference);
             return true;
         }
+    }
+
+    private class SentStatusReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String message;
+            switch (getResultCode()) {
+                case RESULT_OK:
+                    message = "Message sent successfully";
+                    break;
+                case RESULT_ERROR_GENERIC_FAILURE:
+                    message = "Generic failure error";
+                    break;
+                case RESULT_ERROR_NO_SERVICE:
+                    message = "No service available";
+                    break;
+                case RESULT_ERROR_NULL_PDU:
+                    message = "Null PDU";
+                    break;
+                case RESULT_ERROR_RADIO_OFF:
+                    message = "Radio is off";
+                    break;
+                default:
+                    message = "Unknown error";
+                    break;
+            }
+            showToast(context, message);
+            log.debug(message);
+        }
+    }
+
+    private class DeliveryStatusReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String message;
+            switch (getResultCode()) {
+                case RESULT_OK:
+                    message = "Message delivered successfully";
+                    break;
+                case RESULT_CANCELED:
+                    message = "Delivery cancelled";
+                    break;
+                default:
+                    message = "Message not delivered";
+                    break;
+            }
+            showToast(context, message);
+            log.debug(message);
+        }
+
     }
 
 }

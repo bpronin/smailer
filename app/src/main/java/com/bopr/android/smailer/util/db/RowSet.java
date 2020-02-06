@@ -3,6 +3,7 @@ package com.bopr.android.smailer.util.db;
 import android.database.Cursor;
 import android.database.CursorWrapper;
 
+import androidx.annotation.Nullable;
 import androidx.core.util.Consumer;
 
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ public abstract class RowSet<R> {
         }
     }
 
+    @Nullable
     public R findFirst() {
         try {
             cursor.moveToFirst();

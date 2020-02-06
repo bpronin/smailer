@@ -84,6 +84,7 @@
     <string name="permission_rationale_read_contacts">Чтобы отображать имя звонившего в почтовом сообщении, необходимо разрешение \"{permission}\".</string>
     <string name="permission_rationale_read_sms">Чтобы отправлять почтовое сообщение при отправлеии SMS, необходимо разрешение \"{permission}\".</string>
     <string name="permission_rationale_receive_sms">Чтобы отправлять почтовое сообщение при приеме SMS, необходимо разрешение \"{permission}\".</string>
+    <string name="permission_rationale_send_sms">Чтобы удаленно отправлять SMS сообщения, необходимо разрешение \"{permission}\".</string>
     <string name="permission_rationale_write_sms">Чтобы отмечать обработанные SMS как прочитанные, необходимо разрешение \"{permission}\".</string>
     <string name="phone_number">Телефон</string>
     <string name="phone_number_filter">Фильтр номеров</string>
@@ -105,6 +106,7 @@
     <string name="rules">Правила</string>
     <string name="rules_for_sending">Условия для отправки почты</string>
     <string name="select_from_contacts">Выбрать из контактов</string>
+    <string name="send_sms_to_sender">отправить SMS звонившему</string>
     <string name="sender">Отправитель</string>
     <string name="sender_account_removed">Аккаунт исходящей почты был удален.</string>
     <string name="sender_phone">Отправитель: {phone} ({name})</string>

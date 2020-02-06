@@ -78,10 +78,11 @@ public class ContentObserverService extends Service {
     private void processOutgoingSms(String id) {
         log.debug("Processing outgoing sms: " + id);
 
-        Cursor query = getContentResolver().query(CONTENT_SMS_SENT, null, "_id=?",
-                new String[]{id}, null);
+        Cursor query = getContentResolver().query(CONTENT_SMS_SENT, null, "_id=?", new String[]{id}, null);
         PhoneEvent event = new SentSmsRowSet(query).findFirst();
-        startCallProcessingService(this, event);
+        if (event != null) {
+            startCallProcessingService(this, event);
+        }
     }
 
     /**
@@ -157,6 +158,9 @@ public class ContentObserverService extends Service {
                             break;
                         case "inbox":
                             log.debug("sms/inbox segment changed");
+                            break;
+                        case "sent":
+                            processOutgoingSms(segments.get(1));
                             break;
                         default:
                             processOutgoingSms(segment);

@@ -8,6 +8,7 @@ import com.bopr.android.smailer.util.AddressUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.Locale;
 
 import static com.bopr.android.smailer.util.Util.QUOTED_TEXT_REGEX;
@@ -31,6 +32,7 @@ class RemoteCommandParser {
     static final String REMOVE_TEXT_FROM_BLACKLIST = "remove_text_from_blacklist";
     static final String ADD_TEXT_TO_WHITELIST = "add_text_to_whitelist";
     static final String REMOVE_TEXT_FROM_WHITELIST = "remove_text_from_whitelist";
+    static final String SEND_SMS = "send_sms";
 
     RemoteCommandParser() {
     }
@@ -89,6 +91,8 @@ class RemoteCommandParser {
                     return new Task(ADD_PHONE_TO_WHITELIST, extractPhone(subject, body));
                 }
             }
+        } else if (command.contains("send sms")) {
+            return new Task(SEND_SMS, extractQuoted(body), extractPhoneFromText(subject));
         }
         return null;
     }
@@ -105,11 +109,11 @@ class RemoteCommandParser {
 
     class Task {
         final String action;
-        final String argument;
+        final String[] arguments;
 
-        private Task(String action, String argument) {
+        private Task(String action, String... arguments) {
             this.action = action;
-            this.argument = argument;
+            this.arguments = arguments;
         }
 
         @Override
@@ -117,7 +121,7 @@ class RemoteCommandParser {
         public String toString() {
             return "Task{" +
                     "action=" + action +
-                    ", argument='" + argument + '\'' +
+                    ", arguments='" + Arrays.toString(arguments) + '\'' +
                     '}';
         }
     }

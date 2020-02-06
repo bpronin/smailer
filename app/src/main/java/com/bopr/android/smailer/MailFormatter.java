@@ -367,10 +367,9 @@ class MailFormatter {
 
     @NonNull
     private String formatRemoteControlLinksList() {
-        return formatRemoteLink(R.string.add_phone_to_blacklist, R.string.add_phone_to_blacklist_reply, escapePhone(event.getPhone())) +
-                formatRemoteLink(R.string.add_text_to_blacklist, R.string.add_text_to_blacklist_reply, event.getText()) +
-                formatRemoteLink(R.string.add_phone_to_whitelist, R.string.add_phone_to_whitelist_reply, escapePhone(event.getPhone())) +
-                formatRemoteLink(R.string.add_text_to_whitelist, R.string.add_text_to_whitelist_reply, event.getText());
+        return formatRemoteLink(R.string.add_phone_to_blacklist, R.string.add_phone_to_blacklist_reply_body, escapePhone(event.getPhone())) +
+                formatRemoteLink(R.string.add_text_to_blacklist, R.string.add_text_to_blacklist_reply_body, event.getText()) +
+                formatRemoteLink(R.string.send_sms_to_sender, R.string.send_sms_to_sender_reply_body, "Sample text");
     }
 
     @NonNull

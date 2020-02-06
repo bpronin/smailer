@@ -2,6 +2,7 @@ package com.bopr.android.smailer;
 
 import android.content.Context;
 import android.content.Intent;
+import android.telephony.SmsManager;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.JobIntentService;
@@ -23,6 +24,7 @@ import static com.bopr.android.smailer.RemoteCommandParser.REMOVE_PHONE_FROM_BLA
 import static com.bopr.android.smailer.RemoteCommandParser.REMOVE_PHONE_FROM_WHITELIST;
 import static com.bopr.android.smailer.RemoteCommandParser.REMOVE_TEXT_FROM_BLACKLIST;
 import static com.bopr.android.smailer.RemoteCommandParser.REMOVE_TEXT_FROM_WHITELIST;
+import static com.bopr.android.smailer.RemoteCommandParser.SEND_SMS;
 import static com.bopr.android.smailer.Settings.PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_ACCOUNT;
 import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS;
@@ -114,28 +116,31 @@ public class RemoteControlService extends JobIntentService {
         log.debug("Processing: " + task);
         switch (task.action) {
             case ADD_PHONE_TO_BLACKLIST:
-                addPhoneToBlacklist(task.argument);
+                addPhoneToBlacklist(task.arguments[0]);
                 break;
             case REMOVE_PHONE_FROM_BLACKLIST:
-                removePhoneFromBlacklist(task.argument);
+                removePhoneFromBlacklist(task.arguments[0]);
                 break;
             case ADD_PHONE_TO_WHITELIST:
-                addPhoneToWhitelist(task.argument);
+                addPhoneToWhitelist(task.arguments[0]);
                 break;
             case REMOVE_PHONE_FROM_WHITELIST:
-                removePhoneFromWhitelist(task.argument);
+                removePhoneFromWhitelist(task.arguments[0]);
                 break;
             case ADD_TEXT_TO_BLACKLIST:
-                addTextToBlacklist(task.argument);
+                addTextToBlacklist(task.arguments[0]);
                 break;
             case REMOVE_TEXT_FROM_BLACKLIST:
-                removeTextFromBlacklist(task.argument);
+                removeTextFromBlacklist(task.arguments[0]);
                 break;
             case ADD_TEXT_TO_WHITELIST:
-                addTextToWhitelist(task.argument);
+                addTextToWhitelist(task.arguments[0]);
                 break;
             case REMOVE_TEXT_FROM_WHITELIST:
-                removeTextFromWhitelist(task.argument);
+                removeTextFromWhitelist(task.arguments[0]);
+                break;
+            case SEND_SMS:
+                sendSms(task.arguments[0], task.arguments[1]);
                 break;
         }
     }
@@ -205,6 +210,17 @@ public class RemoteControlService extends JobIntentService {
             saveFilter(filter, number, messageRes);
         } else {
             log.debug("Not in list");
+        }
+    }
+
+    private void sendSms(String message, String phone) {
+        try {
+            SmsManager manager = SmsManager.getDefault();
+            manager.sendMultipartTextMessage(phone, null, manager.divideMessage(message), null, null);
+
+            log.debug("Sent SMS: " + message + " to " + phone);
+        } catch (Throwable x) {
+            log.warn("Cannot send SMS: ", x);
         }
     }
 

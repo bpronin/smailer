@@ -86,6 +86,7 @@
     <string name="permission_rationale_read_contacts">Permission to {permission} is needed to add contact name into email message.</string>
     <string name="permission_rationale_read_sms">Permission to {permission} is needed to send out email when SMS has sent.</string>
     <string name="permission_rationale_receive_sms">Permission to {permission} is needed to send out email when SMS has received.</string>
+    <string name="permission_rationale_send_sms">Permission to {permission} is needed to remotely send out SMS.</string>
     <string name="permission_rationale_write_sms">Permission to {permission} is needed to mark processed SMS as read.</string>
     <string name="phone_number">Phone number</string>
     <string name="phone_number_filter">Phone number filter</string>
@@ -107,6 +108,7 @@
     <string name="rules">Rules</string>
     <string name="rules_for_sending">Rules for sending email</string>
     <string name="select_from_contacts">Select from contacts</string>
+    <string name="send_sms_to_sender">send SMS to the caller</string>
     <string name="sender">Account</string>
     <string name="sender_account_removed">Sender account has been removed.</string>
     <string name="sender_phone">Sender: {phone} ({name})</string>
@@ -138,10 +140,11 @@
     <string name="you_had_incoming_call">You had an incoming call of {duration} duration.</string>
     <string name="you_had_missed_call">You had a missed call.</string>
     <string name="you_had_outgoing_call">You had an outgoing call of {duration} duration.</string>
-    <string translatable="false" name="add_phone_to_blacklist_reply">Add phone {text} to blacklist"</string>
-    <string translatable="false" name="add_phone_to_whitelist_reply">Add phone {text} to whitelist"</string>
-    <string translatable="false" name="add_text_to_blacklist_reply">Add text \"{text}\" to blacklist"</string>
-    <string translatable="false" name="add_text_to_whitelist_reply">Add text \"{text}\" to whitelist"</string>
+    <string translatable="false" name="add_phone_to_blacklist_reply_body">Add phone {text} to blacklist"</string>
+    <string translatable="false" name="add_phone_to_whitelist_reply_body">Add phone {text} to whitelist"</string>
+    <string translatable="false" name="add_text_to_blacklist_reply_body">Add text \"{text}\" to blacklist"</string>
+    <string translatable="false" name="add_text_to_whitelist_reply_body">Add text \"{text}\" to whitelist"</string>
+    <string translatable="false" name="send_sms_to_sender_reply_body">Send SMS message \"{text}\" to caller"</string>
 
     <string-array name="trigger_names">
         <item>Incoming SMS</item>

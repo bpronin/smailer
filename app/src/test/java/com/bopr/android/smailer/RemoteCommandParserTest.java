@@ -3,6 +3,7 @@ package com.bopr.android.smailer;
 import org.junit.Test;
 
 import static com.bopr.android.smailer.RemoteCommandParser.ADD_TEXT_TO_BLACKLIST;
+import static com.bopr.android.smailer.RemoteCommandParser.SEND_SMS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -66,7 +67,7 @@ public class RemoteCommandParserTest {
 
         RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
         assertEquals(RemoteCommandParser.ADD_PHONE_TO_BLACKLIST, task.action);
-        assertEquals("+12345678901", task.argument);
+        assertEquals("+12345678901", task.arguments[0]);
     }
 
     /* phone add */
@@ -79,7 +80,7 @@ public class RemoteCommandParserTest {
 
         RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
         assertEquals(RemoteCommandParser.ADD_PHONE_TO_BLACKLIST, task.action);
-        assertEquals("+12345678901", task.argument);
+        assertEquals("+12345678901", task.arguments[0]);
     }
 
     @Test
@@ -90,7 +91,7 @@ public class RemoteCommandParserTest {
 
         RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
         assertEquals(RemoteCommandParser.ADD_PHONE_TO_BLACKLIST, task.action);
-        assertEquals("+7905*09441", task.argument);
+        assertEquals("+7905*09441", task.arguments[0]);
     }
 
     @Test
@@ -101,7 +102,7 @@ public class RemoteCommandParserTest {
 
         RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
         assertEquals(RemoteCommandParser.ADD_PHONE_TO_BLACKLIST, task.action);
-        assertEquals("+12345678901", task.argument);
+        assertEquals("+12345678901", task.arguments[0]);
     }
 
     @Test
@@ -112,7 +113,7 @@ public class RemoteCommandParserTest {
 
         RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
         assertEquals(RemoteCommandParser.ADD_PHONE_TO_BLACKLIST, task.action);
-        assertEquals("+4-098-Hello-87", task.argument);
+        assertEquals("+4-098-Hello-87", task.arguments[0]);
     }
 
     @Test
@@ -123,7 +124,7 @@ public class RemoteCommandParserTest {
 
         RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
         assertEquals(RemoteCommandParser.ADD_PHONE_TO_WHITELIST, task.action);
-        assertEquals("+12345678901", task.argument);
+        assertEquals("+12345678901", task.arguments[0]);
     }
 
     @Test
@@ -134,7 +135,7 @@ public class RemoteCommandParserTest {
 
         RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
         assertEquals(RemoteCommandParser.ADD_PHONE_TO_WHITELIST, task.action);
-        assertEquals("+45782", task.argument);
+        assertEquals("+45782", task.arguments[0]);
     }
 
     @Test
@@ -145,7 +146,7 @@ public class RemoteCommandParserTest {
 
         RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
         assertEquals(RemoteCommandParser.ADD_PHONE_TO_WHITELIST, task.action);
-        assertEquals("+12345678901", task.argument);
+        assertEquals("+12345678901", task.arguments[0]);
     }
 
     @Test
@@ -156,7 +157,7 @@ public class RemoteCommandParserTest {
 
         RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
         assertEquals(RemoteCommandParser.ADD_PHONE_TO_WHITELIST, task.action);
-        assertEquals("+49847987", task.argument);
+        assertEquals("+49847987", task.arguments[0]);
     }
 
     @Test
@@ -167,7 +168,7 @@ public class RemoteCommandParserTest {
 
         RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
         assertEquals(RemoteCommandParser.ADD_PHONE_TO_BLACKLIST, task.action);
-        assertNull(task.argument);
+        assertNull(task.arguments[0]);
     }
 
     /* phone remove */
@@ -180,7 +181,7 @@ public class RemoteCommandParserTest {
 
         RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
         assertEquals(RemoteCommandParser.REMOVE_PHONE_FROM_BLACKLIST, task.action);
-        assertEquals("12345678901", task.argument);
+        assertEquals("12345678901", task.arguments[0]);
     }
 
     @Test
@@ -191,7 +192,7 @@ public class RemoteCommandParserTest {
 
         RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
         assertEquals(RemoteCommandParser.REMOVE_PHONE_FROM_BLACKLIST, task.action);
-        assertEquals("45782", task.argument);
+        assertEquals("45782", task.arguments[0]);
     }
 
     @Test
@@ -202,7 +203,7 @@ public class RemoteCommandParserTest {
 
         RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
         assertEquals(RemoteCommandParser.REMOVE_PHONE_FROM_WHITELIST, task.action);
-        assertEquals("12345678901", task.argument);
+        assertEquals("12345678901", task.arguments[0]);
     }
 
     @Test
@@ -213,7 +214,7 @@ public class RemoteCommandParserTest {
 
         RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
         assertEquals(RemoteCommandParser.REMOVE_PHONE_FROM_WHITELIST, task.action);
-        assertEquals("+45782", task.argument);
+        assertEquals("+45782", task.arguments[0]);
     }
 
     /* text add */
@@ -226,7 +227,7 @@ public class RemoteCommandParserTest {
 
         RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
         assertEquals(ADD_TEXT_TO_BLACKLIST, task.action);
-        assertEquals("spam", task.argument);
+        assertEquals("spam", task.arguments[0]);
     }
 
     @Test
@@ -237,7 +238,7 @@ public class RemoteCommandParserTest {
 
         RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
         assertEquals(ADD_TEXT_TO_BLACKLIST, task.action);
-        assertEquals("spam", task.argument);
+        assertEquals("spam", task.arguments[0]);
     }
 
     @Test
@@ -248,7 +249,7 @@ public class RemoteCommandParserTest {
 
         RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
         assertEquals(ADD_TEXT_TO_BLACKLIST, task.action);
-        assertEquals("spam", task.argument);
+        assertEquals("spam", task.arguments[0]);
     }
 
     @Test
@@ -259,7 +260,7 @@ public class RemoteCommandParserTest {
 
         RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
         assertEquals(RemoteCommandParser.ADD_TEXT_TO_WHITELIST, task.action);
-        assertEquals("spam", task.argument);
+        assertEquals("spam", task.arguments[0]);
     }
 
     @Test
@@ -270,7 +271,7 @@ public class RemoteCommandParserTest {
 
         RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
         assertEquals(RemoteCommandParser.ADD_TEXT_TO_WHITELIST, task.action);
-        assertEquals("spam", task.argument);
+        assertEquals("spam", task.arguments[0]);
     }
 
     @Test
@@ -281,7 +282,7 @@ public class RemoteCommandParserTest {
 
         RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
         assertEquals(ADD_TEXT_TO_BLACKLIST, task.action);
-        assertNull(task.argument);
+        assertNull(task.arguments[0]);
     }
 
     @Test
@@ -292,9 +293,8 @@ public class RemoteCommandParserTest {
 
         RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
         assertEquals(ADD_TEXT_TO_BLACKLIST, task.action);
-        assertEquals("remove text", task.argument);
+        assertEquals("remove text", task.arguments[0]);
     }
-
 
     /* text remove */
     @Test
@@ -305,7 +305,7 @@ public class RemoteCommandParserTest {
 
         RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
         assertEquals(RemoteCommandParser.REMOVE_TEXT_FROM_BLACKLIST, task.action);
-        assertEquals("spam", task.argument);
+        assertEquals("spam", task.arguments[0]);
     }
 
     @Test
@@ -316,7 +316,18 @@ public class RemoteCommandParserTest {
 
         RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
         assertEquals(RemoteCommandParser.REMOVE_TEXT_FROM_WHITELIST, task.action);
-        assertEquals("spam", task.argument);
+        assertEquals("spam", task.arguments[0]);
+    }
+
+    @Test
+    public void testParseSendSms() {
+        MailMessage message = new MailMessage();
+        message.setSubject("SMS");
+        message.setBody("send sms \"Hello\" to 987654");
+
+        RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
+        assertEquals(SEND_SMS, task.action);
+        assertEquals("Hello", task.arguments[0]);
     }
 
 /*
@@ -329,7 +340,7 @@ public class RemoteCommandParserTest {
 
         RemoteCommandParser.Task task = new RemoteCommandParser().parse(message);
         assertEquals(ADD_TEXT_TO_BLACKLIST, task.action);
-        assertEquals("spam", task.argument);
+        assertEquals("spam", task.arguments[0]);
     }
 */
 }
