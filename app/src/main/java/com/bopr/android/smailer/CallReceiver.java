@@ -47,7 +47,7 @@ public class CallReceiver extends BroadcastReceiver {
         String action = intent.getAction();
         if (action != null) {
             switch (action) {
-                case ACTION_NEW_OUTGOING_CALL:
+                case ACTION_NEW_OUTGOING_CALL: // TODO: 06.02.2020 deprecated
                     lastCallNumber = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
                     break;
                 case ACTION_PHONE_STATE_CHANGED:
@@ -74,7 +74,7 @@ public class CallReceiver extends BroadcastReceiver {
             if (callState.equals(EXTRA_STATE_RINGING)) {
                 isIncomingCall = true;
                 callStartTime = currentTimeMillis();
-                lastCallNumber = intent.getStringExtra(EXTRA_INCOMING_NUMBER);
+                lastCallNumber = intent.getStringExtra(EXTRA_INCOMING_NUMBER);  // TODO: 06.02.2020 deprecated
                 log.debug("Call received");
             } else if (callState.equals(EXTRA_STATE_OFFHOOK)) {
                 isIncomingCall = lastCallState.equals(EXTRA_STATE_RINGING);

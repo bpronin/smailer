@@ -1,4 +1,4 @@
-package com.bopr.android.smailer;
+package com.bopr.android.smailer.util;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

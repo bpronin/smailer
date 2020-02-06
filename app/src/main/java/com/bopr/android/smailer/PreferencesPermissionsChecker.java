@@ -70,7 +70,7 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
         rationales.put(WRITE_SMS, R.string.permission_rationale_write_sms);
         rationales.put(READ_SMS, R.string.permission_rationale_read_sms);
         rationales.put(READ_PHONE_STATE, R.string.permission_rationale_phone_state);
-        rationales.put(PROCESS_OUTGOING_CALLS, R.string.permission_rationale_outgoing_call);
+        rationales.put(PROCESS_OUTGOING_CALLS, R.string.permission_rationale_outgoing_call);   // TODO: 06.02.2020 deprecated
         rationales.put(READ_CONTACTS, R.string.permission_rationale_read_contacts);
         rationales.put(ACCESS_COARSE_LOCATION, R.string.permission_rationale_coarse_location);
         rationales.put(ACCESS_FINE_LOCATION, R.string.permission_rationale_fine_location);
@@ -132,7 +132,7 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
                     requiredPermissions.add(READ_PHONE_STATE);
                 }
                 if (triggers.contains(VAL_PREF_TRIGGER_OUT_CALLS)) {
-                    requiredPermissions.add(PROCESS_OUTGOING_CALLS);
+                    requiredPermissions.add(PROCESS_OUTGOING_CALLS); // TODO: 06.02.2020 deprecated
                 }
                 break;
             case PREF_EMAIL_CONTENT:
@@ -168,7 +168,7 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
                 case READ_PHONE_STATE:
                     removeSetPreferenceValue(settings, PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_IN_CALLS, VAL_PREF_TRIGGER_MISSED_CALLS);
                     break;
-                case PROCESS_OUTGOING_CALLS:
+                case PROCESS_OUTGOING_CALLS: // TODO: 06.02.2020 deprecated
                     removeSetPreferenceValue(settings, PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_OUT_CALLS);
                     break;
                 case READ_CONTACTS:

@@ -157,7 +157,6 @@ public class CallProcessor {
         }
     }
 
-    @NonNull
     private String requireSender(boolean silent) throws Exception {
         String s = settings.getString(PREF_SENDER_ACCOUNT, null);
 
@@ -168,7 +167,6 @@ public class CallProcessor {
         return s;
     }
 
-    @NonNull
     private String requireRecipient(boolean silent) throws Exception {
         String s = settings.getString(PREF_RECIPIENTS_ADDRESS, null);
 
