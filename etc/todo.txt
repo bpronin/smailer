@@ -1,6 +1,6 @@
 [DONE] Add "mark all as read" button on log screen
 [TODO] Add "question mark" button on message details dialog showing why message have been ignored
 [TODO] Add "sent time" label on message details screen
-[TODO] Add possibility to send SMS from service mail
+[DONE] Add possibility to send SMS from service mail
 [TODO] Mail is not being sent when device is dozing
-[TODO] Permission are being asked twice at startup
+[TODO] Checking permissions twice at startup

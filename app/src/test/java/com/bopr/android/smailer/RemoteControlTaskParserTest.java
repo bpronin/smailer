@@ -235,13 +235,13 @@ public class RemoteControlTaskParserTest {
     @Test
     public void testParseSendSms() {
         MailMessage message = new MailMessage();
-        message.setBody("To device \"The Device\": send SMS \"Message to caller\" to +12345");
+        message.setBody("To device \"The Device\": send SMS \"Message\nto caller\" to +12345");
 
         RemoteControlTask task = new RemoteControlTaskParser().parse(message.getBody());
 
         assertEquals(SEND_SMS_TO_CALLER, task.getAction());
         assertEquals("The Device", task.getAcceptor());
-        assertEquals("Message to caller", task.getArgument("text"));
+        assertEquals("Message\nto caller", task.getArgument("text"));
         assertEquals("+12345", task.getArgument("phone"));
     }
 

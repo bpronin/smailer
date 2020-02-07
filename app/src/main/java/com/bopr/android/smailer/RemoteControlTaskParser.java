@@ -22,7 +22,7 @@ import static com.bopr.android.smailer.util.Util.QUOTED_TEXT_PATTERN;
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 public class RemoteControlTaskParser {
-
+    
     public RemoteControlTask parse(String text) {
         RemoteControlTask task = new RemoteControlTask();
         Scanner scanner = new Scanner(text).useDelimiter("\\W+");

@@ -29,7 +29,7 @@ import static java.util.Collections.unmodifiableSet;
 public class Util {
 
     public static final String DEFAULT = "default";
-    public static final String QUOTED_TEXT_REGEX = "\"(.*?)\"";
+    public static final String QUOTED_TEXT_REGEX = "\"([^\"]*)\"";
     public static final Pattern QUOTED_TEXT_PATTERN = Pattern.compile(QUOTED_TEXT_REGEX);
     private static final String REGEX_ = "REGEX:";
 

@@ -218,14 +218,10 @@ public class RemoteControlService extends JobIntentService {
     }
 
     private void sendSms(@Nullable String message, @Nullable String phone) {
-        try {
-            SmsManager manager = SmsManager.getDefault();
-            manager.sendMultipartTextMessage(phone, null, manager.divideMessage(message), null, null);
+        SmsManager manager = SmsManager.getDefault();
+        manager.sendMultipartTextMessage(phone, null, manager.divideMessage(message), null, null);
 
-            log.debug("Sent SMS: " + message + " to " + phone);
-        } catch (Throwable x) {
-            log.warn("Cannot send SMS: ", x);
-        }
+        log.debug("Sent SMS: " + message + " to " + phone);
     }
 
     private void saveFilter(PhoneEventFilter filter, String text, int messageRes) {
