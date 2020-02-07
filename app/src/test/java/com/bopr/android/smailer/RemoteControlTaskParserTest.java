@@ -271,17 +271,4 @@ public class RemoteControlTaskParserTest {
         assertEquals("+12345", task.getArgument("phone"));
     }
 
-/*
-    @Test
-    public void testParseMultipleCommands() {
-        // TODO: 25.02.2019 implement multiple remote commands parsing
-        MailMessage message = new MailMessage();
-        message.setSubject("Re: [SMailer] Incoming SMS from 12345678901");
-        message.setBody("add text \"spam\" to whitelist remove text \"not spam\" from blacklist");
-
-        RemoteControlTaskParser.RemoteControlTask task = new RemoteControlTaskParser().parse(message);
-        assertEquals(ADD_TEXT_TO_BLACKLIST, task.getAction());
-        assertEquals("spam", task.getArgument());
-    }
-*/
 }

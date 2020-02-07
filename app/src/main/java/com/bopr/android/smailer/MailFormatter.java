@@ -40,7 +40,6 @@ import static java.lang.String.valueOf;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-// TODO: 19.02.2019 Add ability to format in lain text
 class MailFormatter {
 
     private static final String SUBJECT_PATTERN = "[{app_name}] {source} {phone}";

@@ -63,15 +63,15 @@ public class GoogleMail {
     private final Context context;
     private Session session;
     private Gmail service;
-    private String sender;
+    private String account;
 
     public GoogleMail(@NonNull Context context) {
         this.context = context;
     }
 
-    public void startSession(@NonNull String accoun, @NonNull String... scopes) throws AccountsException {
-        this.sender = accoun;
-        service = createService(createCredential(accoun, scopes));
+    public void startSession(@NonNull String account, @NonNull String... scopes) throws AccountsException {
+        this.account = account;
+        service = createService(createCredential(account, scopes));
         session = Session.getDefaultInstance(new Properties(), null);
     }
 
@@ -150,7 +150,7 @@ public class GoogleMail {
     private Message createContent(MailMessage message) {
         try {
             MimeMessage mimeMessage = new MimeMessage(session);
-            mimeMessage.setFrom(sender);
+            mimeMessage.setFrom(account);
             mimeMessage.setSubject(message.getSubject(), UTF_8);
             mimeMessage.setRecipients(TO, parseAddresses(message.getRecipients()));
 

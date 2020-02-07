@@ -14,6 +14,14 @@
             android:exported="true"
             android:label="Debug" />
 
+        <receiver
+            android:name=".DebugReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="PROCESS_EVENT" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

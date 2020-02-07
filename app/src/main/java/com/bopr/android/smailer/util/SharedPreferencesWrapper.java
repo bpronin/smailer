@@ -2,11 +2,11 @@ package com.bopr.android.smailer.util;
 
 import android.content.SharedPreferences;
 
+import androidx.annotation.Nullable;
+
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-
-import androidx.annotation.Nullable;
 
 public class SharedPreferencesWrapper implements SharedPreferences {
 
@@ -189,8 +189,5 @@ public class SharedPreferencesWrapper implements SharedPreferences {
             wrappedEditor.apply();
         }
 
-        public void put(String key, String value) {
-            //TODO: Implement method.
-        }
     }
 }
