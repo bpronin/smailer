@@ -5,9 +5,8 @@ import android.content.Intent;
 import android.telephony.SmsManager;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.JobIntentService;
-
-import com.bopr.android.smailer.RemoteCommandParser.Task;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,15 +15,15 @@ import java.util.List;
 import java.util.Set;
 
 import static com.bopr.android.smailer.Notifications.ACTION_SHOW_REMOTE_CONTROL;
-import static com.bopr.android.smailer.RemoteCommandParser.ADD_PHONE_TO_BLACKLIST;
-import static com.bopr.android.smailer.RemoteCommandParser.ADD_PHONE_TO_WHITELIST;
-import static com.bopr.android.smailer.RemoteCommandParser.ADD_TEXT_TO_BLACKLIST;
-import static com.bopr.android.smailer.RemoteCommandParser.ADD_TEXT_TO_WHITELIST;
-import static com.bopr.android.smailer.RemoteCommandParser.REMOVE_PHONE_FROM_BLACKLIST;
-import static com.bopr.android.smailer.RemoteCommandParser.REMOVE_PHONE_FROM_WHITELIST;
-import static com.bopr.android.smailer.RemoteCommandParser.REMOVE_TEXT_FROM_BLACKLIST;
-import static com.bopr.android.smailer.RemoteCommandParser.REMOVE_TEXT_FROM_WHITELIST;
-import static com.bopr.android.smailer.RemoteCommandParser.SEND_SMS;
+import static com.bopr.android.smailer.RemoteControlTask.ADD_PHONE_TO_BLACKLIST;
+import static com.bopr.android.smailer.RemoteControlTask.ADD_PHONE_TO_WHITELIST;
+import static com.bopr.android.smailer.RemoteControlTask.ADD_TEXT_TO_BLACKLIST;
+import static com.bopr.android.smailer.RemoteControlTask.ADD_TEXT_TO_WHITELIST;
+import static com.bopr.android.smailer.RemoteControlTask.REMOVE_PHONE_FROM_BLACKLIST;
+import static com.bopr.android.smailer.RemoteControlTask.REMOVE_PHONE_FROM_WHITELIST;
+import static com.bopr.android.smailer.RemoteControlTask.REMOVE_TEXT_FROM_BLACKLIST;
+import static com.bopr.android.smailer.RemoteControlTask.REMOVE_TEXT_FROM_WHITELIST;
+import static com.bopr.android.smailer.RemoteControlTask.SEND_SMS_TO_CALLER;
 import static com.bopr.android.smailer.Settings.PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_ACCOUNT;
 import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS;
@@ -33,6 +32,8 @@ import static com.bopr.android.smailer.util.AddressUtil.containsEmail;
 import static com.bopr.android.smailer.util.AddressUtil.extractEmail;
 import static com.bopr.android.smailer.util.AddressUtil.findPhone;
 import static com.bopr.android.smailer.util.Util.commaSplit;
+import static com.bopr.android.smailer.util.Util.requireNonNull;
+import static com.bopr.android.smailer.util.Util.safeEquals;
 import static com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM;
 
 /**
@@ -48,13 +49,13 @@ public class RemoteControlService extends JobIntentService {
 
     private Settings settings;
     private String query;
-    private RemoteCommandParser parser;
+    private RemoteControlTaskParser parser;
     private Notifications notifications;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        parser = new RemoteCommandParser();
+        parser = new RemoteControlTaskParser();
         notifications = new Notifications(this);
         settings = new Settings(this);
         query = String.format("subject:Re:[%s] label:inbox", getString(R.string.app_name));
@@ -76,11 +77,13 @@ public class RemoteControlService extends JobIntentService {
 
             for (MailMessage message : messages) {
                 if (acceptMessage(message)) {
-                    Task task = parser.parse(message);
-                    transport.markAsRead(message);
-                    if (task == null) {
+                    RemoteControlTask task = parser.parse(message.getBody());
+                    if (task.getAction() == null) {
                         log.debug("Not a service mail");
+                    } else if (!safeEquals(task.getAcceptor(), settings.getDeviceName())) {
+                        log.debug("Not my service mail");
                     } else {
+                        transport.markAsRead(message);
                         performTask(task);
                         transport.trash(message);
                     }
@@ -112,35 +115,36 @@ public class RemoteControlService extends JobIntentService {
         return account;
     }
 
-    private void performTask(Task task) {
+    private void performTask(RemoteControlTask task) {
         log.debug("Processing: " + task);
-        switch (task.action) {
+
+        switch (requireNonNull(task.getAction())) {
             case ADD_PHONE_TO_BLACKLIST:
-                addPhoneToBlacklist(task.arguments[0]);
+                addPhoneToBlacklist(task.getArgument());
                 break;
             case REMOVE_PHONE_FROM_BLACKLIST:
-                removePhoneFromBlacklist(task.arguments[0]);
+                removePhoneFromBlacklist(task.getArgument());
                 break;
             case ADD_PHONE_TO_WHITELIST:
-                addPhoneToWhitelist(task.arguments[0]);
+                addPhoneToWhitelist(task.getArgument());
                 break;
             case REMOVE_PHONE_FROM_WHITELIST:
-                removePhoneFromWhitelist(task.arguments[0]);
+                removePhoneFromWhitelist(task.getArgument());
                 break;
             case ADD_TEXT_TO_BLACKLIST:
-                addTextToBlacklist(task.arguments[0]);
+                addTextToBlacklist(task.getArgument());
                 break;
             case REMOVE_TEXT_FROM_BLACKLIST:
-                removeTextFromBlacklist(task.arguments[0]);
+                removeTextFromBlacklist(task.getArgument());
                 break;
             case ADD_TEXT_TO_WHITELIST:
-                addTextToWhitelist(task.arguments[0]);
+                addTextToWhitelist(task.getArgument());
                 break;
             case REMOVE_TEXT_FROM_WHITELIST:
-                removeTextFromWhitelist(task.arguments[0]);
+                removeTextFromWhitelist(task.getArgument());
                 break;
-            case SEND_SMS:
-                sendSms(task.arguments[0], task.arguments[1]);
+            case SEND_SMS_TO_CALLER:
+                sendSms(task.getArgument("text"), task.getArgument("phone"));
                 break;
         }
     }
@@ -213,7 +217,7 @@ public class RemoteControlService extends JobIntentService {
         }
     }
 
-    private void sendSms(String message, String phone) {
+    private void sendSms(@Nullable String message, @Nullable String phone) {
         try {
             SmsManager manager = SmsManager.getDefault();
             manager.sendMultipartTextMessage(phone, null, manager.divideMessage(message), null, null);

@@ -5,11 +5,13 @@ import androidx.annotation.Nullable;
 
 import com.bopr.android.smailer.GeoCoordinates;
 
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -232,10 +234,10 @@ public class Util {
         return QUOTED_TEXT_PATTERN.matcher(s).matches();
     }
 
-//    @Nullable
-//    public static String readStream(InputStream stream) {
-//        Scanner s = new Scanner(stream).useDelimiter("\\A");
-//        return s.hasNext() ? s.next() : null;
-//    }
+    @Nullable
+    public static String readStream(InputStream stream) {
+        Scanner s = new Scanner(stream).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : null;
+    }
 
 }

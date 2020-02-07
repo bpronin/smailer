@@ -15,13 +15,16 @@ import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.READ_CONTACTS;
 import static android.content.pm.PackageManager.PERMISSION_DENIED;
+import static com.bopr.android.smailer.HtmlMatcher.htmlEqualsRes;
 import static com.bopr.android.smailer.PhoneEvent.STATE_PENDING;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CONTACT;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_LOCATION;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT;
+import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS;
 import static com.bopr.android.smailer.util.Util.asSet;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
@@ -601,6 +604,23 @@ public class MailFormatterTest extends BaseTest {
         assertEquals("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>" +
                 "Please visit <a href=\"http://google.com\">http://google.com</a> site" +
                 "</body></html>", formatter.formatBody());
+    }
+
+    @Test
+    public void testRemoteControlLinks() {
+        long start = defaultTime.getTime();
+        long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
+
+        PhoneEvent event = new PhoneEvent("+12345678901", true, start, end,
+                false, "Message", new GeoCoordinates(60.555, 30.555), null, STATE_PENDING, null);
+
+        MailFormatter formatter = new MailFormatter(context, event);
+        formatter.setDeviceName("Device");
+        formatter.setServiceAccount("service@mail.com");
+        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS));
+
+        String actual = formatter.formatBody();
+        assertThat(actual, htmlEqualsRes("remote_control_links.html"));
     }
 
 }

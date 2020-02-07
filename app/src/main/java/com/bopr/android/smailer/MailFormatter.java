@@ -52,7 +52,8 @@ class MailFormatter {
             "place/{latitude}+{longitude}/@{latitude},{longitude}\">{location}</a>";
     private static final String PHONE_LINK_PATTERN = "<a href=\"tel:{phone}\" style=\"text-decoration: none\">&#9742;</a>{text}";
     private static final String REPLY_LINKS_PATTERN = "<small><small><strong>{title}</strong><ul>{links}</ul></small></small>";
-    private static final String MAIL_TO_PATTERN = "<a href=\"mailto:{address}?subject={subject}&amp;body={body}\">{text}</a>";
+    private static final String MAIL_TO_PATTERN = "<a href=\"mailto:{address}?subject={subject}&amp;body={body}\">{link_title}</a>";
+    private static final String REMOTE_CONTROL_LINK_PATTERN = "<li>" + MAIL_TO_PATTERN + "</li>";
     private static final String GOOGLE_SEARCH_PATTERN = "<a href=\"https://www.google.com/search?q={query}\">{text}</a>";
 
     private final PhoneEvent event;
@@ -367,23 +368,52 @@ class MailFormatter {
 
     @NonNull
     private String formatRemoteControlLinksList() {
-        return formatRemoteLink(R.string.add_phone_to_blacklist, R.string.add_phone_to_blacklist_reply_body, escapePhone(event.getPhone())) +
-                formatRemoteLink(R.string.add_text_to_blacklist, R.string.add_text_to_blacklist_reply_body, event.getText()) +
-                formatRemoteLink(R.string.send_sms_to_sender, R.string.send_sms_to_sender_reply_body, "Sample text");
+        String phone = escapePhone(event.getPhone());
+
+        String phoneTask = formatCommonTaskBody(R.string.add_phone_to_blacklist_reply_body, phone);
+        String textTask = formatCommonTaskBody(R.string.add_text_to_blacklist_reply_body, event.getText());
+        String sentTask = formatSendSmsRemoteTaskBody(phone);
+
+        return formatRemoteControlLink(R.string.add_phone_to_blacklist, phoneTask) +
+                formatRemoteControlLink(R.string.add_text_to_blacklist, textTask) +
+                formatRemoteControlLink(R.string.send_sms_to_sender, sentTask);
     }
 
     @NonNull
-    private String formatRemoteLink(int titleRes, int bodyRes, String argument) {
-        return "<li>" +
-                formatter
-                        .pattern(MAIL_TO_PATTERN)
-                        .put("address", serviceAccount)
-                        .put("subject", htmlEncode("Re: " + formatSubject()))
-                        .put("body", htmlEncode(formatter.pattern(bodyRes)
-                                .put("text", argument).format()))
-                        .put("text", titleRes)
-                        .format() +
-                "</li>";
+    private String formatRemoteControlLink(int titleRes, String body) {
+        return formatter
+                .pattern(REMOTE_CONTROL_LINK_PATTERN)
+                .put("address", serviceAccount)
+                .put("subject", htmlEncode("Re: " + formatSubject()))
+                .put("body", htmlEncode(formatServiceMailBody(body)))
+                .put("link_title", titleRes)
+                .format();
+    }
+
+    @NonNull
+    private String formatCommonTaskBody(int patternRes, String argument) {
+        return formatter
+                .pattern(patternRes)
+                .put("argument", argument)
+                .format();
+    }
+
+    @NonNull
+    private String formatSendSmsRemoteTaskBody(String phone) {
+        return formatter
+                .pattern(R.string.send_sms_to_sender_reply_body)
+                .put("sms_text", "Sample text")
+                .put("phone", phone)
+                .format();
+    }
+
+    @NonNull
+    private String formatServiceMailBody(String task) {
+        return formatter
+                .pattern("To device \"{device}\": {task}")
+                .put("device", deviceName)
+                .put("task", task)
+                .format();
     }
 
     @NonNull

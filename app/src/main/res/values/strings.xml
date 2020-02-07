@@ -140,11 +140,11 @@
     <string name="you_had_incoming_call">You had an incoming call of {duration} duration.</string>
     <string name="you_had_missed_call">You had a missed call.</string>
     <string name="you_had_outgoing_call">You had an outgoing call of {duration} duration.</string>
-    <string translatable="false" name="add_phone_to_blacklist_reply_body">Add phone {text} to blacklist"</string>
-    <string translatable="false" name="add_phone_to_whitelist_reply_body">Add phone {text} to whitelist"</string>
-    <string translatable="false" name="add_text_to_blacklist_reply_body">Add text \"{text}\" to blacklist"</string>
-    <string translatable="false" name="add_text_to_whitelist_reply_body">Add text \"{text}\" to whitelist"</string>
-    <string translatable="false" name="send_sms_to_sender_reply_body">Send SMS message \"{text}\" to caller"</string>
+    <string translatable="false" name="add_phone_to_blacklist_reply_body">add phone {argument} to blacklist"</string>
+    <string translatable="false" name="add_phone_to_whitelist_reply_body">add phone {argument} to whitelist"</string>
+    <string translatable="false" name="add_text_to_blacklist_reply_body">add text \"{argument}\" to blacklist"</string>
+    <string translatable="false" name="add_text_to_whitelist_reply_body">add text \"{argument}\" to whitelist"</string>
+    <string translatable="false" name="send_sms_to_sender_reply_body">send SMS message \"{sms_text}\" to {phone}"</string>
 
     <string-array name="trigger_names">
         <item>Incoming SMS</item>

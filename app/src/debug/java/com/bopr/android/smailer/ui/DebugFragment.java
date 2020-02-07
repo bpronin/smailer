@@ -37,7 +37,6 @@ import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.RemoteControlService;
 import com.bopr.android.smailer.Settings;
-import com.bopr.android.smailer.SmsTransport;
 import com.bopr.android.smailer.sync.GoogleDrive;
 import com.bopr.android.smailer.sync.SyncAdapter;
 import com.bopr.android.smailer.sync.SyncManager;
@@ -142,8 +141,8 @@ public class DebugFragment extends BasePreferenceFragment {
 
         sentStatusReceiver = new SentStatusReceiver();
         deliveredStatusReceiver = new DeliveryStatusReceiver();
-        context.registerReceiver(sentStatusReceiver, new IntentFilter(SmsTransport.ACTION_SMS_SENT));
-        context.registerReceiver(deliveredStatusReceiver, new IntentFilter(SmsTransport.ACTION_SMS_DELIVERED));
+        context.registerReceiver(sentStatusReceiver, new IntentFilter("SMS_SENT"));
+        context.registerReceiver(deliveredStatusReceiver, new IntentFilter("SMS_DELIVERED"));
     }
 
     @Override
@@ -603,7 +602,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
         PhoneEvent event = new PhoneEvent();
         event.setRecipient(deviceName());
-        event.setPhone("+12345678901");
+        event.setPhone("5556");
         event.setText("SMS TEXT");
         event.setIncoming(true);
         event.setStartTime(start);
