@@ -4,8 +4,6 @@
     package="com.bopr.android.smailer">
 
     <uses-permission android:name="android.permission.WRITE_CONTACTS" />
-    <!--<uses-permission android:name="android.permission.READ_LOGS"/>-->
-    <!--<uses-permission android:name="android.permission.BROADCAST_SMS"/>-->
 
     <application tools:ignore="AllowBackup,GoogleAppIndexingWarning">
 
@@ -16,7 +14,8 @@
 
         <receiver
             android:name=".DebugReceiver"
-            android:exported="true">
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
             <intent-filter>
                 <action android:name="PROCESS_EVENT" />
             </intent-filter>

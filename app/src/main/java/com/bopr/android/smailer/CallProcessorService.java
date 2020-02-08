@@ -26,9 +26,6 @@ public class CallProcessorService extends IntentService {
     private CallProcessor callProcessor;
     private Database database;
 
-    /**
-     * Creates an IntentService.  Invoked by your subclass's constructor.
-     */
     public CallProcessorService() {
         super("call-processor");
     }
@@ -44,11 +41,13 @@ public class CallProcessorService extends IntentService {
     public void onDestroy() {
         database.close();
         super.onDestroy();
+
+        log.debug("Destroyed");
     }
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        log.debug("Handling intent: " + intent);
+        log.debug("Running");
 
         if (intent != null) {
             PhoneEvent event = intent.getParcelableExtra(EXTRA_EVENT);

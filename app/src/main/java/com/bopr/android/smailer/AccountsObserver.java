@@ -36,7 +36,7 @@ class AccountsObserver implements OnAccountsUpdateListener {
         notifications = new Notifications(context);
     }
 
-    public static void enable(Context context) {
+    static void enable(Context context) {
         new AccountsObserver(context);
     }
 
