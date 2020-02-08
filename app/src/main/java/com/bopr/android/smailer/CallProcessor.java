@@ -147,7 +147,7 @@ public class CallProcessor {
             log.warn("Failed sending mail: ", x);
 
             showErrorNotification(R.string.need_google_permission, silent);
-            /* remove invalid account */
+            /* remove invalid account from settings */
             settings.edit().putString(PREF_SENDER_ACCOUNT, null).apply();
             return false;
         } catch (Exception x) {
@@ -190,10 +190,7 @@ public class CallProcessor {
         formatter.setDeviceName(settings.getDeviceName());
         formatter.setContentOptions(settings.getStringSet(PREF_EMAIL_CONTENT, null));
         formatter.setServiceAccount(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT, null));
-        String locale = settings.getString(PREF_EMAIL_LOCALE, null);
-        if (locale != null) {   //todo: why not to set null locale?
-            formatter.setLocale(locale);
-        }
+        formatter.setLocale(settings.getString(PREF_EMAIL_LOCALE, null));
 
         MailMessage message = new MailMessage();
         message.setSubject(formatter.formatSubject());

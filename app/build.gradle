@@ -102,7 +102,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
     implementation 'android.arch.work:work-runtime:1.0.1'
     implementation 'com.sun.mail:android-mail:1.6.4'
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.google.android.material:material:1.1.0'
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
     implementation 'com.google.api-client:google-api-client-android:1.30.7'
     implementation 'com.google.apis:google-api-services-gmail:v1-rev98-1.25.0'

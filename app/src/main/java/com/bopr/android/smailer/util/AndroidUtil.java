@@ -1,9 +1,7 @@
 package com.bopr.android.smailer.util;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.PowerManager;
 import android.provider.Settings;
@@ -76,27 +74,23 @@ public class AndroidUtil {
         return true;
     }
 
-    public static void launchBatteryOptimizationSettings(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Intent intent = new Intent();
-            intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
-            context.startActivity(intent);
-        }
-    }
-
     // TODO:copy explanation from: https://www.techrepublic.com/article/how-to-remove-android-apps-from-the-battery-optimization-list/
-    @SuppressLint("BatteryLife")
-    public static void requireBatteryOptimizationDisabled(Context context) {
+    // @SuppressLint("BatteryLife")
+    public static boolean requireIgnoreBatteryOptimization(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            PowerManager pm = (PowerManager) context.getSystemService(POWER_SERVICE);
             String packageName = context.getApplicationContext().getPackageName();
+            PowerManager pm = (PowerManager) context.getSystemService(POWER_SERVICE);
             if (pm != null && !pm.isIgnoringBatteryOptimizations(packageName)) {
                 Intent intent = new Intent();
-                intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-                intent.setData(Uri.parse("package:" + packageName));
+//                intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+//                intent.setData(Uri.parse("package:" + packageName));
+
+                intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
                 context.startActivity(intent);
+                return true;
             }
         }
+        return false;
     }
 
 //    @SuppressLint({"MissingPermission", "HardwareIds"})

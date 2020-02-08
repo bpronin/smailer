@@ -96,8 +96,7 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
 import static com.bopr.android.smailer.util.AndroidUtil.deviceName;
-import static com.bopr.android.smailer.util.AndroidUtil.launchBatteryOptimizationSettings;
-import static com.bopr.android.smailer.util.AndroidUtil.requireBatteryOptimizationDisabled;
+import static com.bopr.android.smailer.util.AndroidUtil.requireIgnoreBatteryOptimization;
 import static com.bopr.android.smailer.util.ResourceUtil.showToast;
 import static com.bopr.android.smailer.util.Util.asSet;
 import static com.bopr.android.smailer.util.Util.commaJoin;
@@ -216,17 +215,17 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        requireBatteryOptimizationDisabled(requireContext());
-                    }
-                }),
-
-                createPreference("Launch battery optimisation dialog", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        launchBatteryOptimizationSettings(requireContext());
+                        if (!requireIgnoreBatteryOptimization(context)){
+                            showToast(context, "Battery optimization already ignored");
+                        }
                     }
                 })
+
+//                    @Override
+//                    protected void onClick(Preference preference) {
+//                        launchBatteryOptimizationSettings(context);
+//                    }
+//                })
         );
 
         addCategory(screen, "Call processing",
@@ -271,7 +270,7 @@ public class DebugFragment extends BasePreferenceFragment {
                     }
                 })
 
-                );
+        );
 
         addCategory(screen, "Database",
 
@@ -631,10 +630,11 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private void onClearLogs() {
-        File[] logs = new File(requireContext().getFilesDir(), "log").listFiles();
+        File dir = new File(context.getFilesDir(), "log");
+        File[] logs = requireNonNull(dir.listFiles());
         for (File file : logs) {
             if (!file.delete()) {
-                log.warn("Cannot delete file");
+                DebugFragment.log.warn("Cannot delete file");
             }
         }
         showToast(context, "Removed " + logs.length + " log files");
@@ -702,7 +702,7 @@ public class DebugFragment extends BasePreferenceFragment {
         Tasks.call(newSingleThreadExecutor(), new Callable<Void>() {
 
             @Override
-            public Void call() throws Exception {
+            public Void call() {
 //                new SyncAdapter(context, false).sync(context, selectedAccount(context));
                 SyncManager.syncNow(context);
                 return null;
@@ -740,6 +740,7 @@ public class DebugFragment extends BasePreferenceFragment {
         showToast(context, "Done");
     }
 
+/*
     private void onGoogleDriveList() {
         Tasks.call(newSingleThreadExecutor(), new Callable<String>() {
 
@@ -752,6 +753,7 @@ public class DebugFragment extends BasePreferenceFragment {
         });
 
     }
+*/
 
     @SuppressLint("SetTextI18n")
     private void onSendSms() {
