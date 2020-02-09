@@ -1,16 +1,18 @@
 package com.bopr.android.smailer;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Bundle;
-import android.os.HandlerThread;
+import android.os.Looper;
 
 import androidx.annotation.Nullable;
 
 import com.bopr.android.smailer.util.AndroidUtil;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,39 +23,31 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
-import static android.location.LocationManager.GPS_PROVIDER;
-import static android.location.LocationManager.NETWORK_PROVIDER;
-import static android.location.LocationManager.PASSIVE_PROVIDER;
+import static com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY;
 
 /**
  * Provides last device location.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-// TODO: 08.02.2020 use Google services to detect location 
 public class GeoLocator {
 
     private static Logger log = LoggerFactory.getLogger("GeoLocator");
 
-    private static final int DEFAULT_TIMEOUT = 5000;
+    private static final int DEFAULT_TIMEOUT = 2000;
 
     private final Context context;
+    private final FusedLocationProviderClient client;
     private final Database database;
-    private LocationManager locationManager;
 
     public GeoLocator(Context context, Database database) {
         this.context = context;
         this.database = database;
-
-        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-    }
-
-    void setLocationManager(LocationManager locationManager) {
-        this.locationManager = locationManager;
+        client = LocationServices.getFusedLocationProviderClient(context);
     }
 
     /**
-     * Tries to retrieve device location from different providers.
+     * Retrieve device location.
      *
      * @return last known device location or null when it cannot be found
      */
@@ -63,23 +57,15 @@ public class GeoLocator {
     }
 
     /**
-     * Tries to retrieve device location from different providers.
+     * Retrieve device location.
      *
      * @return last known device location or null when it cannot be found
      */
     @Nullable
     public GeoCoordinates getLocation(long timeout) {
-        if (isPermissionsDenied(context)) {
-            log.warn("Unable read location. Permission denied.");
-            return null;
-        }
-
-        GeoCoordinates coordinates = getProviderLocation(GPS_PROVIDER, timeout);
+        GeoCoordinates coordinates = getCurrentLocation(timeout);
         if (coordinates == null) {
-            coordinates = getProviderLocation(NETWORK_PROVIDER, timeout);
-            if (coordinates == null) {
-                coordinates = getLastProviderLocation(PASSIVE_PROVIDER);
-            }
+            coordinates = getLastLocation(timeout);
         }
 
         if (coordinates != null) {
@@ -87,9 +73,9 @@ public class GeoLocator {
         } else {
             coordinates = database.getLastLocation();
             if (coordinates != null) {
-                log.debug("Using local database");
+                log.debug("Using location from local database");
             } else {
-                log.warn("Unable to obtain location from database");
+                log.error("Unable to obtain location from database");
             }
         }
 
@@ -97,91 +83,77 @@ public class GeoLocator {
     }
 
     @Nullable
-    private GeoCoordinates getProviderLocation(String provider, long timeout) {
-        if (locationManager.isProviderEnabled(provider)) {
-            GeoCoordinates coordinates = requestProviderLocation(provider, timeout);
-            if (coordinates != null) {
-                log.debug("Using " + provider);
-                return coordinates;
-            }
+    private GeoCoordinates getCurrentLocation(long timeout) {
+        if (isPermissionsDenied(context)) {
+            log.warn("Unable to read current location. Permission denied.");
+            return null;
         }
-        return null;
-    }
 
-    @SuppressWarnings({"ResourceType", "SameParameterValue"})
-    @SuppressLint("MissingPermission")
-    @Nullable
-    private GeoCoordinates getLastProviderLocation(String provider) {
-        if (locationManager.isProviderEnabled(provider)) {
-            Location location = locationManager.getLastKnownLocation(provider);
-            if (location != null) {
-                log.debug("Using last " + provider);
-                return new GeoCoordinates(location);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Requests provider for location updates and waits until first update.
-     * If timeout expired returns null.
-     * Caution: this method blocks caller thread for "timeout" time.
-     *
-     * @param provider location provider name
-     * @param timeout  max await time in seconds
-     * @return location or null if timeout expired
-     */
-    @SuppressWarnings("ResourceType")
-    @SuppressLint("MissingPermission")
-    @Nullable
-    private GeoCoordinates requestProviderLocation(String provider, long timeout) {
-        log.debug("Requesting location from: " + provider);
-
-        final AtomicReference<GeoCoordinates> result = new AtomicReference<>();
+        final AtomicReference<GeoCoordinates> coordinates = new AtomicReference<>();
         final CountDownLatch completeSignal = new CountDownLatch(1);
 
-        LocationListener listener = new LocationListener() {
+        final LocationRequest request = new LocationRequest()
+                .setFastestInterval(1500)
+                .setInterval(3000)
+                .setPriority(PRIORITY_HIGH_ACCURACY);
+
+        LocationCallback callback = new LocationCallback() {
 
             @Override
-            public void onLocationChanged(Location location) {
-                log.debug("Received location: " + location);
-                result.set(new GeoCoordinates(location));
+            public void onLocationResult(LocationResult result) {
+                if (result != null) {
+                    Location location = result.getLastLocation();
+                    coordinates.set(new GeoCoordinates(location));
+
+                    log.debug("Received current location: " + location);
+                }
                 completeSignal.countDown();
-            }
-
-            @Override
-            @Deprecated
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-                /* do nothing*/
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-                /* do nothing*/
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-                /* do nothing*/
             }
         };
 
-        HandlerThread thread = new HandlerThread("location_request");
-        thread.start();
-        locationManager.requestSingleUpdate(provider, listener, thread.getLooper());
+        client.requestLocationUpdates(request, callback, Looper.getMainLooper());
+        awaitCompletion(completeSignal, timeout, "Current location request");
+        client.removeLocationUpdates(callback);
 
-        try {
-            if (!completeSignal.await(timeout, TimeUnit.MILLISECONDS)) {
-                log.warn("Location request timeout expired");
-            }
-        } catch (InterruptedException x) {
-            log.warn("Location request interrupted", x);
-        } finally {
-            locationManager.removeUpdates(listener);
-            thread.quit();
+        return coordinates.get();
+    }
+
+    @Nullable
+    private GeoCoordinates getLastLocation(long timeout) {
+        if (isPermissionsDenied(context)) {
+            log.warn("Unable to read last location. Permission denied.");
+            return null;
         }
 
-        return result.get();
+        final AtomicReference<GeoCoordinates> coordinates = new AtomicReference<>();
+        final CountDownLatch completeSignal = new CountDownLatch(1);
+
+        client.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+
+            @Override
+            public void onSuccess(Location location) {
+                if (location != null) {
+                    coordinates.set(new GeoCoordinates(location));
+                    completeSignal.countDown();
+
+                    log.debug("Received last location: " + location);
+                }
+            }
+        });
+
+        awaitCompletion(completeSignal, timeout, "Last location request");
+
+        return coordinates.get();
+    }
+
+    private void awaitCompletion(CountDownLatch latch, long timeout, String requestName) {
+        try {
+            if (!latch.await(timeout, TimeUnit.MILLISECONDS)) {
+                log.warn(requestName + " timeout expired");
+            }
+        } catch (InterruptedException x) {
+            log.warn(requestName + " interrupted", x);
+        }
     }
 
     static boolean isPermissionsDenied(Context context) {
