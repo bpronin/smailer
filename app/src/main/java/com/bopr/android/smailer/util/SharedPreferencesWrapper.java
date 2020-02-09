@@ -4,9 +4,12 @@ import android.content.SharedPreferences;
 
 import androidx.annotation.Nullable;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+
+import static java.util.Arrays.asList;
 
 public class SharedPreferencesWrapper implements SharedPreferences {
 
@@ -78,6 +81,12 @@ public class SharedPreferencesWrapper implements SharedPreferences {
 
     public boolean isNull(String key) {
         return getString(key, null) == null;
+    }
+
+    public void removeStringSet(String key, String... values) {
+        Set<String> set = getStringSet(key, Collections.<String>emptySet());
+        set.removeAll(asList(values));
+        edit().putStringSet(key, set).apply();
     }
 
     @SuppressWarnings({"UnusedReturnValue", "unused"})

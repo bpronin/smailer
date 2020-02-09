@@ -116,7 +116,7 @@
     <string name="sent_time_device">Sent{device_name}{time}</string>
     <string name="service_account_not_specified">Service account not specified.</string>
     <string name="service_running">Service is active</string>
-    <string name="since_permissions_not_granted">Since permissions not granted some options have been disabled.</string>
+    <string name="since_permissions_not_granted">Since not all required permissions is granted, some options have been disabled.</string>
     <string name="text_filter">Text filter</string>
     <string name="text_fragment">Text fragment</string>
     <string name="text_in_blacklist">text is in blacklist</string>

@@ -17,7 +17,7 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceGroup;
 import androidx.preference.SwitchPreference;
 
-import com.bopr.android.smailer.PreferencesPermissionsChecker;
+import com.bopr.android.smailer.PermissionsHelper;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.Settings;
 
@@ -44,7 +44,7 @@ public abstract class BasePreferenceFragment extends PreferenceFragmentCompat {
 
     private static final String DIALOG_FRAGMENT_TAG = "androidx.preference.PreferenceFragment.DIALOG";
 
-    private PreferencesPermissionsChecker permissionChecker;
+    PermissionsHelper permissionsHelper;
     Settings settings;
 
     @Override
@@ -57,29 +57,28 @@ public abstract class BasePreferenceFragment extends PreferenceFragmentCompat {
     @Override
     public void onStart() {
         super.onStart();
-        refreshPreferences();
+        refreshPreferenceViews();
 
-        permissionChecker = new PreferencesPermissionsChecker(getActivity(), settings) {
+        permissionsHelper = new PermissionsHelper(getActivity(), settings) {
 
             @Override
             protected void onPermissionsDenied(Collection<String> permissions) {
                 super.onPermissionsDenied(permissions);
-                refreshPreferences();
+                refreshPreferenceViews();
             }
         };
-        permissionChecker.checkAll();
     }
 
     @Override
     public void onStop() {
-        permissionChecker.destroy();
+        permissionsHelper.dispose();
         super.onStop();
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        permissionChecker.handleRequestResult(requestCode, permissions, grantResults);
+        permissionsHelper.handleRequestResult(requestCode, permissions, grantResults);
     }
 
     @Override
@@ -131,17 +130,17 @@ public abstract class BasePreferenceFragment extends PreferenceFragmentCompat {
     /**
      * Reads fragment's {@link SharedPreferences} and updates settings value.
      */
-    void refreshPreferences() {
-        doRefreshPreferences(getPreferenceScreen());
+    void refreshPreferenceViews() {
+        doRefreshPreferenceViews(getPreferenceScreen());
     }
 
     @SuppressWarnings("unchecked")
-    private void doRefreshPreferences(PreferenceGroup group) {
+    private void doRefreshPreferenceViews(PreferenceGroup group) {
         Map<String, ?> map = settings.getAll();
         for (int i = 0; i < group.getPreferenceCount(); i++) {
             Preference preference = group.getPreference(i);
             if (preference instanceof PreferenceGroup) {
-                doRefreshPreferences((PreferenceGroup) preference);
+                doRefreshPreferenceViews((PreferenceGroup) preference);
             } else {
                 Object value = map.get(preference.getKey());
                 Preference.OnPreferenceChangeListener listener = preference.getOnPreferenceChangeListener();

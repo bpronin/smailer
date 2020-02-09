@@ -539,7 +539,7 @@ public class DebugFragment extends BasePreferenceFragment {
                 .putString(PREF_FILTER_TEXT_BLACKLIST, commaJoin(asSet("Bad text", quoteRegex("Expression"))))
                 .apply();
 
-        refreshPreferences();
+        refreshPreferenceViews();
         showToast(context, "Done");
     }
 
@@ -575,7 +575,7 @@ public class DebugFragment extends BasePreferenceFragment {
         settings.edit().clear().apply();
         Settings.initSettings(context);
 
-        refreshPreferences();
+        refreshPreferenceViews();
         showToast(context, "Done");
     }
 

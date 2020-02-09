@@ -114,6 +114,7 @@ public class MainFragment extends BasePreferenceFragment {
         updateAccountPreference();
         updateRecipientsPreference();
         updateHistoryPreference();
+        permissionsHelper.checkAll();
     }
 
     private void updateAccountPreference() {

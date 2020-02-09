@@ -9,7 +9,8 @@ import android.content.pm.PermissionInfo;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 
-import com.bopr.android.smailer.util.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,7 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
@@ -30,6 +30,8 @@ import static android.Manifest.permission.READ_SMS;
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.Manifest.permission.SEND_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+import static androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale;
+import static androidx.core.content.ContextCompat.checkSelfPermission;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.PREF_MARK_SMS_AS_READ;
@@ -40,29 +42,29 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
-import static com.bopr.android.smailer.util.AndroidUtil.isPermissionsDenied;
-import static com.bopr.android.smailer.util.ResourceUtil.showToast;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.Util.requireNonNull;
-import static java.util.Arrays.asList;
+import static com.bopr.android.smailer.util.Util.toArray;
 
 /**
  * Responsible for permissions checking.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class PreferencesPermissionsChecker implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class PermissionsHelper implements SharedPreferences.OnSharedPreferenceChangeListener {
+
+    private static Logger log = LoggerFactory.getLogger("PermissionsHelper");
 
     private static final String WRITE_SMS = "android.permission.WRITE_SMS";
 
-    private static AtomicInteger nextRequestResult = new AtomicInteger(200);
+    private static int nextRequestResult = 200;
 
+    private int requestResultCode = nextRequestResult++;
     private Activity activity;
     private Settings settings;
-    private int requestResultCode = nextRequestResult.incrementAndGet();
     private Map<String, Integer> items = new HashMap<>();
 
-    protected PreferencesPermissionsChecker(Activity activity, Settings settings) {
+    protected PermissionsHelper(Activity activity, Settings settings) {
         this.activity = activity;
         this.settings = settings;
         this.settings.registerOnSharedPreferenceChangeListener(this);
@@ -78,26 +80,15 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
         items.put(SEND_SMS, R.string.permission_rationale_send_sms);
     }
 
-    public void destroy() {
+    public void dispose() {
         settings.unregisterOnSharedPreferenceChangeListener(this);
+        log.debug("Disposed");
     }
 
     public void checkAll() {
-//        boolean neverRequested = false;
-//
-//        for (String permission : items.keySet()) {
-//            if (isPermissionsDenied(activity, permission)) {
-//                if (!needExplanation(permission)) {
-//                    neverRequested = true;
-//                    break;
-//                }
-//            }
-//        }
-//
-//        if (neverRequested) {
-//            check(items.keySet());
-//        }
-        check(items.keySet());
+        log.debug("Checking all");
+
+        doCheck(items.keySet());
     }
 
     /**
@@ -114,123 +105,124 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
             }
 
             if (!deniedPermissions.isEmpty()) {
-                showToast(activity, R.string.since_permissions_not_granted);
                 onPermissionsDenied(deniedPermissions);
+                showDenialImpact();
             }
         }
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
-        Set<String> requiredPermissions = new HashSet<>();
+    public void onSharedPreferenceChanged(SharedPreferences preferences, String preference) {
+        Set<String> deniedPermissions = new HashSet<>();
 
-        switch (key) {
+        switch (preference) {
             case PREF_EMAIL_TRIGGERS:
                 Set<String> triggers = preferences.getStringSet(PREF_EMAIL_TRIGGERS, Collections.<String>emptySet());
                 if (triggers.contains(VAL_PREF_TRIGGER_IN_SMS)) {
-                    requiredPermissions.add(RECEIVE_SMS);
+                    deniedPermissions.add(RECEIVE_SMS);
                 }
                 if (triggers.contains(VAL_PREF_TRIGGER_OUT_SMS)) {
-                    requiredPermissions.add(READ_SMS);
+                    deniedPermissions.add(READ_SMS);
                 }
                 if (triggers.contains(VAL_PREF_TRIGGER_IN_CALLS) || preferences.contains(VAL_PREF_TRIGGER_MISSED_CALLS)) {
-                    requiredPermissions.add(READ_PHONE_STATE);
+                    deniedPermissions.add(READ_PHONE_STATE);
                 }
                 if (triggers.contains(VAL_PREF_TRIGGER_OUT_CALLS)) {
-                    requiredPermissions.add(PROCESS_OUTGOING_CALLS); // TODO: 06.02.2020 deprecated
+                    deniedPermissions.add(PROCESS_OUTGOING_CALLS); // TODO: 06.02.2020 deprecated
                 }
                 break;
             case PREF_EMAIL_CONTENT:
                 Set<String> content = preferences.getStringSet(PREF_EMAIL_CONTENT, Collections.<String>emptySet());
                 if (content.contains(VAL_PREF_EMAIL_CONTENT_CONTACT)) {
-                    requiredPermissions.add(READ_CONTACTS);
+                    deniedPermissions.add(READ_CONTACTS);
                 }
                 if (content.contains(VAL_PREF_EMAIL_CONTENT_LOCATION)) {
-                    requiredPermissions.add(ACCESS_COARSE_LOCATION);
-                    requiredPermissions.add(ACCESS_FINE_LOCATION);
+                    deniedPermissions.add(ACCESS_COARSE_LOCATION);
+                    deniedPermissions.add(ACCESS_FINE_LOCATION);
                 }
                 break;
             case PREF_MARK_SMS_AS_READ:
-                requiredPermissions.add(WRITE_SMS);
+                deniedPermissions.add(WRITE_SMS);
                 break;
         }
 
-        check(requiredPermissions);
+        doCheck(deniedPermissions);
     }
 
     protected void onPermissionsDenied(Collection<String> permissions) {
+        log.debug("Denied: " + permissions);
+
         for (String permission : permissions) {
             switch (permission) {
                 case RECEIVE_SMS:
-                    removeSetPreferenceValue(settings, PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_IN_SMS);
+                    settings.removeStringSet(PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_IN_SMS);
                     break;
                 case READ_SMS:
-                    removeSetPreferenceValue(settings, PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_OUT_SMS);
+                    settings.removeStringSet(PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_OUT_SMS);
                     break;
                 case WRITE_SMS:
-                    removeSetPreferenceValue(settings, PREF_MARK_SMS_AS_READ);
+                    settings.removeStringSet(PREF_MARK_SMS_AS_READ);
                     break;
                 case READ_PHONE_STATE:
-                    removeSetPreferenceValue(settings, PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_IN_CALLS, VAL_PREF_TRIGGER_MISSED_CALLS);
+                    settings.removeStringSet(PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_IN_CALLS, VAL_PREF_TRIGGER_MISSED_CALLS);
                     break;
                 case PROCESS_OUTGOING_CALLS: // TODO: 06.02.2020 deprecated
-                    removeSetPreferenceValue(settings, PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_OUT_CALLS);
+                    settings.removeStringSet(PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_OUT_CALLS);
                     break;
                 case READ_CONTACTS:
-                    removeSetPreferenceValue(settings, PREF_EMAIL_CONTENT, VAL_PREF_EMAIL_CONTENT_CONTACT);
+                    settings.removeStringSet(PREF_EMAIL_CONTENT, VAL_PREF_EMAIL_CONTENT_CONTACT);
                     break;
                 case ACCESS_COARSE_LOCATION:
                 case ACCESS_FINE_LOCATION:
-                    removeSetPreferenceValue(settings, PREF_EMAIL_CONTENT, VAL_PREF_EMAIL_CONTENT_LOCATION);
+                    settings.removeStringSet(PREF_EMAIL_CONTENT, VAL_PREF_EMAIL_CONTENT_LOCATION);
                     break;
             }
         }
     }
 
-    private void check(Collection<String> permissions) {
+    private void doCheck(Collection<String> permissions) {
         if (!permissions.isEmpty()) {
-            List<String> requiredPermissions = new ArrayList<>();
-            List<String> explainedPermissions = new ArrayList<>();
+            List<String> deniedPermissions = new ArrayList<>();
+            List<String> unexplainedPermissions = new ArrayList<>();
 
             for (String permission : permissions) {
-                if (isPermissionsDenied(activity, permission)) {
-                    requiredPermissions.add(permission);
-                    if (needExplanation(permission)) {
-                        explainedPermissions.add(permission);
+                if (checkSelfPermission(activity, permission) != PERMISSION_GRANTED) {
+                    deniedPermissions.add(permission);
+                    if (shouldShowRequestPermissionRationale(activity, permission)) {
+                        unexplainedPermissions.add(permission);
                     }
                 }
             }
 
-            request(requiredPermissions, explainedPermissions);
-        }
-    }
-
-    private void request(final List<String> requiredPermissions,
-                         final List<String> explainedPermissions) {
-        if (!requiredPermissions.isEmpty()) {
-            if (!explainedPermissions.isEmpty()) {
-                new AlertDialog.Builder(activity)
-                        .setMessage(formatRationale(explainedPermissions))
-                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                request(requiredPermissions);
-                            }
-                        })
-                        .show();
-            } else {
-                request(requiredPermissions);
+            if (!deniedPermissions.isEmpty()) {
+                if (!unexplainedPermissions.isEmpty()) {
+                    explainPermissions(unexplainedPermissions);
+                } else {
+                    requestPermissions(deniedPermissions);
+                }
             }
         }
     }
 
-    private boolean needExplanation(String permission) {
-        return ActivityCompat.shouldShowRequestPermissionRationale(activity, permission);
+    private void requestPermissions(List<String> permissions) {
+        log.debug("Requesting : " + permissions);
+
+        ActivityCompat.requestPermissions(activity, toArray(permissions), requestResultCode);
     }
 
-    private void request(Collection<String> permissions) {
-        ActivityCompat.requestPermissions(activity, Util.toArray(permissions), requestResultCode);
+    private void explainPermissions(final List<String> permissions) {
+        log.debug("Explaining : " + permissions);
+
+        new AlertDialog.Builder(activity)
+                .setMessage(formatRationale(permissions))
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        requestPermissions(permissions);
+                    }
+                })
+                .show();
     }
 
     private String formatRationale(Collection<String> permissions) {
@@ -251,14 +243,15 @@ public class PreferencesPermissionsChecker implements SharedPreferences.OnShared
             PermissionInfo info = packageManager.getPermissionInfo(permission, 0);
             return info.loadLabel(packageManager).toString();
         } catch (PackageManager.NameNotFoundException x) {
-            throw new Error(x);
+            throw new RuntimeException(x);
         }
     }
 
-    private void removeSetPreferenceValue(Settings settings, String key, String... values) {
-        Set<String> set = settings.getStringSet(key, Collections.<String>emptySet());
-        set.removeAll(asList(values));
-        settings.edit().putStringSet(key, set).apply();
+    private void showDenialImpact() {
+        new AlertDialog.Builder(activity)
+                .setMessage(R.string.since_permissions_not_granted)
+                .setPositiveButton(android.R.string.ok, null)
+                .show();
     }
 
 }
