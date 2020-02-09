@@ -30,6 +30,7 @@ import static android.location.LocationManager.PASSIVE_PROVIDER;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
+// TODO: 08.02.2020 use Google services to detect location 
 public class GeoLocator {
 
     private static Logger log = LoggerFactory.getLogger("GeoLocator");
