@@ -50,9 +50,10 @@ class MailFormatter {
     private static final String GOOGLE_MAP_LINK_PATTERN = "<a href=\"https://www.google.com/maps/" +
             "place/{latitude}+{longitude}/@{latitude},{longitude}\">{location}</a>";
     private static final String PHONE_LINK_PATTERN = "<a href=\"tel:{phone}\" style=\"text-decoration: none\">&#9742;</a>{text}";
-    private static final String REPLY_LINKS_PATTERN = "<small><small><strong>{title}</strong><ul>{links}</ul></small></small>";
+//    private static final String REPLY_LINKS_PATTERN = "<br><small><strong>{title}</strong></small><ul>{links}</ul>";
+    private static final String REPLY_LINKS_PATTERN = "<ul>{links}</ul>";
     private static final String MAIL_TO_PATTERN = "<a href=\"mailto:{address}?subject={subject}&amp;body={body}\">{link_title}</a>";
-    private static final String REMOTE_CONTROL_LINK_PATTERN = "<li>" + MAIL_TO_PATTERN + "</li>";
+    private static final String REMOTE_CONTROL_LINK_PATTERN = "<li><small>" + MAIL_TO_PATTERN + "</small></li>";
     private static final String GOOGLE_SEARCH_PATTERN = "<a href=\"https://www.google.com/search?q={query}\">{text}</a>";
 
     private final PhoneEvent event;
@@ -409,7 +410,7 @@ class MailFormatter {
     @NonNull
     private String formatServiceMailBody(String task) {
         return formatter
-                .pattern("To device \"{device}\": {task}")
+                .pattern("To device \"{device}\": %0d%0a {task}")
                 .put("device", deviceName)
                 .put("task", task)
                 .format();

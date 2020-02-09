@@ -157,6 +157,50 @@ public class DebugFragment extends BasePreferenceFragment {
         context = getPreferenceManager().getContext();
 
         PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(context);
+        addCategory(screen, "Call processing",
+
+                createPreference("Process single event", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onProcessSingleEvent();
+                    }
+                }),
+
+                createPreference("Process pending events", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onStartProcessPendingEvents();
+                    }
+                }),
+
+                createPreference("Process service mail", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onProcessServiceMail();
+                    }
+                }),
+
+                createPreference("Send debug mail", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onSendDebugMail();
+                    }
+                }),
+
+                createPreference("Send SMS", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onSendSms();
+                    }
+                })
+
+        );
+
         addCategory(screen, "Google drive",
 
                 createPreference("Download from drive", new DefaultClickListener() {
@@ -226,50 +270,6 @@ public class DebugFragment extends BasePreferenceFragment {
 //                        launchBatteryOptimizationSettings(context);
 //                    }
 //                })
-        );
-
-        addCategory(screen, "Call processing",
-
-                createPreference("Process single event", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        onProcessSingleEvent();
-                    }
-                }),
-
-                createPreference("Process pending events", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        onStartProcessPendingEvents();
-                    }
-                }),
-
-                createPreference("Process service mail", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        onProcessServiceMail();
-                    }
-                }),
-
-                createPreference("Send debug mail", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        onSendDebugMail();
-                    }
-                }),
-
-                createPreference("Send SMS", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        onSendSms();
-                    }
-                })
-
         );
 
         addCategory(screen, "Database",
