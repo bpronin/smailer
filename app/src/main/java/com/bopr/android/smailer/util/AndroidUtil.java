@@ -1,18 +1,19 @@
 package com.bopr.android.smailer.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
-import android.os.Build;
-import android.os.PowerManager;
-import android.provider.Settings;
 import android.util.Patterns;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.core.content.ContextCompat;
 
-import static android.content.Context.POWER_SERVICE;
+import com.bopr.android.smailer.R;
+
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.os.Build.MANUFACTURER;
 import static android.os.Build.MODEL;
+import static android.view.LayoutInflater.from;
 
 /**
  * Utilities dependent of android app context .
@@ -74,26 +75,14 @@ public class AndroidUtil {
         return true;
     }
 
-    // TODO:copy explanation from: https://www.techrepublic.com/article/how-to-remove-android-apps-from-the-battery-optimization-list/
-    // @SuppressLint("BatteryLife")
-    public static boolean requireIgnoreBatteryOptimization(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            String packageName = context.getApplicationContext().getPackageName();
-            PowerManager pm = (PowerManager) context.getSystemService(POWER_SERVICE);
-            if (pm != null && !pm.isIgnoringBatteryOptimizations(packageName)) {
-                Intent intent = new Intent();
-//                intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-//                intent.setData(Uri.parse("package:" + packageName));
-
-                intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
-                context.startActivity(intent);
-                return true;
-            }
-        }
-        return false;
+    @SuppressLint("InflateParams")
+    public static View alertDialogView(View view) {
+        ViewGroup container = (ViewGroup) from(view.getContext()).inflate(R.layout.alert_dialog_view_container, null);
+        container.addView(view);
+        return container;
     }
 
-//    @SuppressLint({"MissingPermission", "HardwareIds"})
+    //    @SuppressLint({"MissingPermission", "HardwareIds"})
 //    public static String devicePhoneNumber(Context context) {
 //        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 //        return tm != null ? tm.getLine1Number() : null;

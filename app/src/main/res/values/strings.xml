@@ -21,6 +21,7 @@
     <string name="app_version">Application version: {version}</string>
     <string name="ask_clear_history">Clear history?</string>
     <string name="ask_clear_list">Clear list?</string>
+    <string name="battery_optimization_reason">To make the application work properly when device is in standby mode please turn off battery optimization for it.</string>
     <string name="blacklist">Blacklist</string>
     <string name="call_history">Call history</string>
     <string name="call_of_duration_short">Call: {duration}</string>
@@ -34,6 +35,7 @@
     <string name="count_new">{count} new</string>
     <string name="device_name">Device name</string>
     <string name="device_name_to_show">Device name to be shown in email message (leave blank to use default)</string>
+    <string name="do_not_ask_again">Don\'t ask again</string>
     <string name="do_not_process_call">Do not process call</string>
     <string name="edit">Edit</string>
     <string name="email_address">Email address</string>

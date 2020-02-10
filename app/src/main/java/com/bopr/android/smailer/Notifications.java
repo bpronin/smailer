@@ -91,7 +91,7 @@ public class Notifications {
                         .pattern(messageRes)
                         .put("text", argument)
                         .format(),
-                ACTION_SHOW_HISTORY); // TODO: 26.02.2019 navigate to black/white list
+                ACTION_SHOW_HISTORY);
     }
 
     public void hideAllErrors() {

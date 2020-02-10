@@ -3,4 +3,4 @@
 [TODO] Add "sent time" label on message details screen
 [DONE] Add possibility to send SMS from service mail
 [TODO] Mail is not being sent when device is dozing
-[TODO] Checking permissions twice at startup
+[DONE] Checking permissions twice at startup

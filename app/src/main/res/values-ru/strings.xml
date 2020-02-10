@@ -20,6 +20,7 @@
     <string name="app_version">Версия приложения: {version}</string>
     <string name="ask_clear_history">Очистить журнал?</string>
     <string name="ask_clear_list">Очистить список?</string>
+    <string name="battery_optimization_reason">Чтобы приложение корректно работало когда устройство находиться в спящем режиме, отключите для него оптимизацию питания.</string>
     <string name="blacklist">Черный список</string>
     <string name="call_history">Журнал</string>
     <string name="call_of_duration_short">Звонок: {duration}</string>
@@ -32,6 +33,7 @@
     <string name="count_new">{count} новых</string>
     <string name="device_name">Имя устройства</string>
     <string name="device_name_to_show">Имя устройства в почтовом сообщении (оставьте пустым, чтобы использовать имя по умолчанию)</string>
+    <string name="do_not_ask_again">Больше не спрашивать</string>
     <string name="do_not_process_call">Игнорировать</string>
     <string name="edit">Изменить</string>
     <string name="email_address">Почтовый адрес</string>

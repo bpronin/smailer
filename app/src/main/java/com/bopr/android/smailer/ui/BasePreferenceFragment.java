@@ -50,14 +50,8 @@ public abstract class BasePreferenceFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        settings = new Settings(requireContext());
         setHasOptionsMenu(true);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        refreshPreferenceViews();
+        settings = new Settings(requireContext());
 
         permissionsHelper = new PermissionsHelper(getActivity(), settings) {
 
@@ -67,6 +61,12 @@ public abstract class BasePreferenceFragment extends PreferenceFragmentCompat {
                 refreshPreferenceViews();
             }
         };
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        refreshPreferenceViews();
     }
 
     @Override

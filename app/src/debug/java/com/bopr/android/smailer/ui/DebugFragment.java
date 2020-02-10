@@ -95,8 +95,10 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
+import static com.bopr.android.smailer.ui.BatteryOptimizationHelper.isIgnoreBatteryOptimizationRequired;
+import static com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization;
+import static com.bopr.android.smailer.util.AndroidUtil.alertDialogView;
 import static com.bopr.android.smailer.util.AndroidUtil.deviceName;
-import static com.bopr.android.smailer.util.AndroidUtil.requireIgnoreBatteryOptimization;
 import static com.bopr.android.smailer.util.ResourceUtil.showToast;
 import static com.bopr.android.smailer.util.Util.asSet;
 import static com.bopr.android.smailer.util.Util.commaJoin;
@@ -259,8 +261,10 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        if (!requireIgnoreBatteryOptimization(context)){
+                        if (isIgnoreBatteryOptimizationRequired(context)) {
                             showToast(context, "Battery optimization already ignored");
+                        } else {
+                            requireIgnoreBatteryOptimization(context);
                         }
                     }
                 })
@@ -549,7 +553,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
         new AlertDialog.Builder(context)
                 .setTitle("Phone number")
-                .setView(input)
+                .setView(alertDialogView(input))
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 
                     @Override

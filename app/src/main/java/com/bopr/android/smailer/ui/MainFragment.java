@@ -26,6 +26,7 @@ import static com.bopr.android.smailer.Settings.PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.PREF_RESEND_UNSENT;
 import static com.bopr.android.smailer.Settings.PREF_RULES;
 import static com.bopr.android.smailer.Settings.PREF_SENDER_ACCOUNT;
+import static com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization;
 import static com.bopr.android.smailer.util.AndroidUtil.isValidEmailAddressList;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.Util.isEmpty;
@@ -60,6 +61,9 @@ public class MainFragment extends BasePreferenceFragment {
 
         database = new Database(getContext());
         databaseListener = database.registerListener(new DatabaseListener());
+        
+        permissionsHelper.checkAll();
+        requireIgnoreBatteryOptimization(requireContext());
     }
 
     @Override
@@ -114,7 +118,6 @@ public class MainFragment extends BasePreferenceFragment {
         updateAccountPreference();
         updateRecipientsPreference();
         updateHistoryPreference();
-        permissionsHelper.checkAll();
     }
 
     private void updateAccountPreference() {
@@ -169,6 +172,7 @@ public class MainFragment extends BasePreferenceFragment {
 
     private class PreferenceClickListener implements OnPreferenceClickListener {
 
+
         @Override
         public boolean onPreferenceClick(Preference preference) {
             switch (preference.getKey()) {
@@ -188,8 +192,8 @@ public class MainFragment extends BasePreferenceFragment {
             return true;
         }
     }
-
     private class SettingsListener extends BaseSettingsListener {
+
 
         private SettingsListener() {
             super(requireContext());
@@ -215,8 +219,8 @@ public class MainFragment extends BasePreferenceFragment {
             super.onSharedPreferenceChanged(sharedPreferences, key);
         }
     }
-
     private class DatabaseListener extends BroadcastReceiver {
+
 
         @Override
         public void onReceive(Context context, Intent intent) {
