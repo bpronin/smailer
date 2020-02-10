@@ -54,7 +54,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         try {
             sync(getContext(), account);
         } catch (Exception x) {
-            log.error("Synchronization failed ", x);
+            log.warn("Synchronization failed ", x);
         }
     }
 

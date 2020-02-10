@@ -56,10 +56,6 @@ public class Notifications {
         formatter = new TagFormatter(context);
     }
 
-    public static Notifications notifications(Context context) {
-        return new Notifications(context);
-    }
-
     public Notification getForegroundServiceNotification() {
         Builder builder = createBuilder(context.getString(R.string.service_running), ACTION_SHOW_MAIN);
 
@@ -123,7 +119,7 @@ public class Notifications {
     private Builder createBuilder(String text, int action) {
         return new Builder(context, getChannel())
                 .setContentIntent(createIntent(action))
-                .setSmallIcon(R.drawable.ic_light_service)
+                .setSmallIcon(R.drawable.ic_notification)
                 .setTicker(context.getString(R.string.app_name))
                 .setContentTitle(context.getString(R.string.app_name))
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
