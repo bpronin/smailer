@@ -32,7 +32,7 @@ public class DebugReceiver extends BroadcastReceiver {
         long start = System.currentTimeMillis();
 
         PhoneEvent event = new PhoneEvent();
-        event.setRecipient(deviceName());
+        event.setAcceptor(deviceName());
         event.setPhone("5556");
         event.setText("SMS TEXT");
         event.setIncoming(true);

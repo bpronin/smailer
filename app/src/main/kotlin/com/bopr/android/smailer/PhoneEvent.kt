@@ -21,7 +21,7 @@ data class PhoneEvent(
         var location: GeoCoordinates? = null,
         var details: String? = null,
         @EventState var state: Int = STATE_PENDING,
-        var recipient: String? = null,
+        var acceptor: String? = null,
         var stateReason: Int = REASON_ACCEPTED,
         var isRead: Boolean = false
 ) : Parcelable {

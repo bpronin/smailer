@@ -32,7 +32,6 @@ class RemoteControlService : JobIntentService() {
     private lateinit var parser: RemoteControlTaskParser
     private lateinit var notifications: Notifications
 
-    @Override
     override fun onCreate() {
         super.onCreate()
         parser = RemoteControlTaskParser()
@@ -41,7 +40,6 @@ class RemoteControlService : JobIntentService() {
         query = String.format("subject:Re:[%s] label:inbox", getString(R.string.app_name))
     }
 
-    @Override
     override fun onHandleWork(intent: Intent) {
         log.debug("Handling intent: $intent")
 

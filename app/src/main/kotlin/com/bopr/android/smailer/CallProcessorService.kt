@@ -48,6 +48,7 @@ class CallProcessorService : IntentService("call-processor") {
          */
         fun startCallProcessingService(context: Context, event: PhoneEvent) {
             log.debug("Starting service for: $event")
+
             context.startService(Intent(context, CallProcessorService::class.java)
                     .putExtra(EXTRA_EVENT, event))
         }

@@ -78,7 +78,7 @@ public class CallProcessorTest extends BaseTest {
     private PhoneEvent newPhoneEvent() {
         PhoneEvent event = new PhoneEvent();
         event.setStartTime(currentTimeMillis());
-        event.setRecipient("device");
+        event.setAcceptor("device");
         event.setPhone("+123");
         event.setIncoming(true);
         event.setMissed(true);
@@ -114,7 +114,7 @@ public class CallProcessorTest extends BaseTest {
         assertEquals("[SMailer] Missed call from \"+123\"", message.getSubject());
 
         PhoneEvent savedEvent = database.getEvents().findFirst();
-        assertEquals(event.getRecipient(), savedEvent.getRecipient());
+        assertEquals(event.getAcceptor(), savedEvent.getAcceptor());
         assertEquals(event.getStartTime(), savedEvent.getStartTime());
         assertEquals(event.getPhone(), savedEvent.getPhone());
         assertEquals(STATE_PROCESSED, savedEvent.getState());
@@ -146,7 +146,7 @@ public class CallProcessorTest extends BaseTest {
         assertTrue(sendInvocations.isEmpty());
 
         PhoneEvent savedEvent = database.getEvents().findFirst();
-        assertEquals(event.getRecipient(), savedEvent.getRecipient());
+        assertEquals(event.getAcceptor(), savedEvent.getAcceptor());
         assertEquals(event.getStartTime(), savedEvent.getStartTime());
         assertEquals(event.getPhone(), savedEvent.getPhone());
         assertEquals(STATE_IGNORED, savedEvent.getState());
@@ -182,7 +182,7 @@ public class CallProcessorTest extends BaseTest {
         assertTrue(sendInvocations.isEmpty());
 
         PhoneEvent savedEvent = database.getEvents().findFirst();
-        assertEquals(event.getRecipient(), savedEvent.getRecipient());
+        assertEquals(event.getAcceptor(), savedEvent.getAcceptor());
         assertEquals(event.getStartTime(), savedEvent.getStartTime());
         assertEquals(event.getPhone(), savedEvent.getPhone());
         assertEquals(STATE_PENDING, savedEvent.getState());
@@ -218,7 +218,7 @@ public class CallProcessorTest extends BaseTest {
         assertTrue(sendInvocations.isEmpty());
 
         PhoneEvent savedEvent = database.getEvents().findFirst();
-        assertEquals(event.getRecipient(), savedEvent.getRecipient());
+        assertEquals(event.getAcceptor(), savedEvent.getAcceptor());
         assertEquals(event.getStartTime(), savedEvent.getStartTime());
         assertEquals(event.getPhone(), savedEvent.getPhone());
         assertEquals(STATE_PENDING, savedEvent.getState());
@@ -250,7 +250,7 @@ public class CallProcessorTest extends BaseTest {
         assertEquals(R.string.account_not_registered, notificationText);
 
         PhoneEvent savedEvent = database.getEvents().findFirst();
-        assertEquals(event.getRecipient(), savedEvent.getRecipient());
+        assertEquals(event.getAcceptor(), savedEvent.getAcceptor());
         assertEquals(event.getStartTime(), savedEvent.getStartTime());
         assertEquals(event.getPhone(), savedEvent.getPhone());
         assertEquals(STATE_PENDING, savedEvent.getState());
@@ -282,7 +282,7 @@ public class CallProcessorTest extends BaseTest {
         assertTrue(showErrorInvocations.isEmpty());
 
         PhoneEvent savedEvent = database.getEvents().findFirst();
-        assertEquals(event.getRecipient(), savedEvent.getRecipient());
+        assertEquals(event.getAcceptor(), savedEvent.getAcceptor());
         assertEquals(event.getStartTime(), savedEvent.getStartTime());
         assertEquals(event.getPhone(), savedEvent.getPhone());
         assertEquals(STATE_PENDING, savedEvent.getState());

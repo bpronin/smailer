@@ -70,7 +70,7 @@ class ContentObserverService : Service() {
             val date = getLong("date")
             val event = PhoneEvent()
             event.isIncoming = false
-            event.recipient = AndroidUtil.deviceName()
+            event.acceptor = AndroidUtil.deviceName()
             event.phone = getString("address")
             event.startTime = date
             event.endTime = date

@@ -150,7 +150,7 @@ public class Database {
         values.put(COLUMN_TEXT, event.getText());
         values.put(COLUMN_DETAILS, event.getDetails());
         values.put(COLUMN_READ, event.isRead());
-        values.put(COLUMN_RECIPIENT, event.getRecipient());
+        values.put(COLUMN_RECIPIENT, event.getAcceptor());
         GeoCoordinates location = event.getLocation();
         if (location != null) {
             values.put(COLUMN_LATITUDE, location.getLatitude());
@@ -159,7 +159,7 @@ public class Database {
 
         if (db.insertWithOnConflict(TABLE_EVENTS, null, values, CONFLICT_IGNORE) == -1) {
             db.update(TABLE_EVENTS, values, COLUMN_START_TIME + "=? AND " + COLUMN_RECIPIENT + "=?",
-                    strings(event.getStartTime(), event.getRecipient()));
+                    strings(event.getStartTime(), event.getAcceptor()));
             log.debug("Updated: " + values);
         } else {
             log.debug("Inserted: " + values);
@@ -433,7 +433,7 @@ public class Database {
             event.setMissed(getBoolean(COLUMN_IS_MISSED));
             event.setText(getString(COLUMN_TEXT));
             event.setDetails(getString(COLUMN_DETAILS));
-            event.setRecipient(getString(COLUMN_RECIPIENT));
+            event.setAcceptor(getString(COLUMN_RECIPIENT));
             event.setRead(getBoolean(COLUMN_READ));
             event.setLocation(new GeoCoordinates(
                     getDouble(COLUMN_LATITUDE),

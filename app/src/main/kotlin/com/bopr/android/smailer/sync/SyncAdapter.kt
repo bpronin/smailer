@@ -106,7 +106,7 @@ class SyncAdapter(context: Context, autoInitialize: Boolean) : AbstractThreadedS
                     isIncoming,
                     isMissed,
                     phone,
-                    recipient,
+                    acceptor,
                     startTime,
                     endTime,
                     text,
@@ -128,7 +128,7 @@ class SyncAdapter(context: Context, autoInitialize: Boolean) : AbstractThreadedS
             event.startTime = startTime
             event.endTime = endTime
             event.details = details
-            event.recipient = recipient
+            event.acceptor = recipient
             event.location = geoCoordinatesOf(latitude, longitude)
         }
         return event

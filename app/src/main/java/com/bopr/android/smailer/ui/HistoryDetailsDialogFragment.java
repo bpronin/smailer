@@ -75,7 +75,7 @@ public class HistoryDetailsDialogFragment extends DialogFragment {
             view.<TextView>findViewById(R.id.text_result).setText(eventStateText(value));
             view.<TextView>findViewById(R.id.text_result_reason).setText(formatReason(value));
             view.<TextView>findViewById(R.id.text_type_title).setText(eventTypeText(value));
-            view.<TextView>findViewById(R.id.text_recipient).setText(value.getRecipient());
+            view.<TextView>findViewById(R.id.text_recipient).setText(value.getAcceptor());
 
             dialog = new AlertDialog.Builder(requireContext())
                     .setView(view)
