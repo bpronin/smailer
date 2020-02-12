@@ -6,12 +6,9 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.bopr.android.smailer.sync.SyncManager;
-import com.crashlytics.android.Crashlytics;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import io.fabric.sdk.android.Fabric;
 
 import static com.bopr.android.smailer.util.Util.requireNonNull;
 import static java.lang.Thread.UncaughtExceptionHandler;
@@ -41,7 +38,6 @@ public class Environment {
     public static void setupEnvironment(Context context) {
         log.debug("Application init");
 
-        Fabric.with(context, new Crashlytics());
         AccountsObserver.enable(context);
         ContentObserverService.enable(context);
         ResendWorker.enable(context);

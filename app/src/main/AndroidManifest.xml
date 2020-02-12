@@ -42,10 +42,6 @@
             android:name="com.google.android.backup.api_key"
             android:value="AEdPqrEAAAAI4Ju-ayl5GJi0GgUprqv9f4BpIq7lr3-NFUwctw" />
 
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="0826344a90cfbc5883d6103b68cd8441cc4eede1" />
-
         <activity
             android:name=".ui.MainActivity"
             android:label="@string/app_name">
