@@ -6,7 +6,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import static com.bopr.android.smailer.Environment.setupEnvironment;
+import com.bopr.android.smailer.Environment;
+
 import static com.bopr.android.smailer.Settings.initSettings;
 
 /**
@@ -20,7 +21,7 @@ public class MainActivity extends AppActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initSettings(this);
-        setupEnvironment(this);
+        Environment.INSTANCE.setupEnvironment(this);
         setHomeButtonEnabled(false);
         handleStartupParams(getIntent());
     }

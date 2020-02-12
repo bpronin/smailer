@@ -97,7 +97,7 @@ public class RemoteControlFragment extends BasePreferenceFragment {
                     break;
                 case PREF_REMOTE_CONTROL_ENABLED:
                     updatePreferences();
-                    RemoteControlWorker.enable(requireContext());
+                    RemoteControlWorker.Companion.enable(requireContext());
                     break;
             }
 

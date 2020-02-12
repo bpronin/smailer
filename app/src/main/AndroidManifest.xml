@@ -28,7 +28,7 @@
 
     <application
         android:allowBackup="true"
-        android:backupAgent="AppBackupAgent"
+        android:backupAgent=".AppBackupAgent"
         android:fullBackupContent="@xml/backup_scheme"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"

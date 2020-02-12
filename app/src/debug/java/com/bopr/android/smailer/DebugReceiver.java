@@ -7,7 +7,6 @@ import android.content.Intent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.bopr.android.smailer.CallProcessorService.startCallProcessingService;
 import static com.bopr.android.smailer.util.AndroidUtil.deviceName;
 
 public class DebugReceiver extends BroadcastReceiver {
@@ -40,7 +39,7 @@ public class DebugReceiver extends BroadcastReceiver {
         event.setStartTime(start);
         event.setEndTime(start + 10000);
 
-        startCallProcessingService(context, event);
+        CallProcessorService.Companion.startCallProcessingService(context, event);
     }
 
 }

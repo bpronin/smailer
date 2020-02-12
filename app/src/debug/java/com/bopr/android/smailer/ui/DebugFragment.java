@@ -25,6 +25,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceScreen;
 
+import com.bopr.android.smailer.CallProcessorService;
 import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.GeoCoordinates;
 import com.bopr.android.smailer.GeoLocator;
@@ -69,7 +70,6 @@ import static android.telephony.SmsManager.RESULT_ERROR_GENERIC_FAILURE;
 import static android.telephony.SmsManager.RESULT_ERROR_NO_SERVICE;
 import static android.telephony.SmsManager.RESULT_ERROR_NULL_PDU;
 import static android.telephony.SmsManager.RESULT_ERROR_RADIO_OFF;
-import static com.bopr.android.smailer.CallProcessorService.startCallProcessingService;
 import static com.bopr.android.smailer.GoogleAuthorizationHelper.primaryAccount;
 import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_CONTENT;
@@ -611,7 +611,7 @@ public class DebugFragment extends BasePreferenceFragment {
         event.setStartTime(start);
         event.setEndTime(start + 10000);
 
-        startCallProcessingService(context, event);
+        CallProcessorService.Companion.startCallProcessingService(context, event);
         showToast(context, "Done");
     }
 
@@ -708,7 +708,11 @@ public class DebugFragment extends BasePreferenceFragment {
             @Override
             public Void call() {
 //                new SyncAdapter(context, false).sync(context, selectedAccount(context));
-                SyncManager.syncNow(context);
+                try {
+                    SyncManager.Companion.syncNow(context);
+                } catch (Throwable x) {
+                    log.error("Sync error: ", x);
+                }
                 return null;
             }
         });
@@ -722,7 +726,11 @@ public class DebugFragment extends BasePreferenceFragment {
             @Override
             public Void call() throws Exception {
                 GoogleDrive drive = new GoogleDrive(context, senderAccount());
-                new SyncAdapter(context, false).download(drive);
+                try {
+                    new SyncAdapter(context, false).download(drive);
+                } catch (Throwable x) {
+                    log.error("Download error: ", x);
+                }
                 return null;
             }
         });
@@ -736,7 +744,11 @@ public class DebugFragment extends BasePreferenceFragment {
             @Override
             public Void call() throws Exception {
                 GoogleDrive drive = new GoogleDrive(context, senderAccount());
-                new SyncAdapter(context, false).upload(drive);
+                try {
+                    new SyncAdapter(context, false).upload(drive);
+                } catch (Throwable x) {
+                    log.error("Upload error: ", x);
+                }
                 return null;
             }
         });
