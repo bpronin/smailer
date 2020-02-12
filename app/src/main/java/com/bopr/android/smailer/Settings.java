@@ -87,6 +87,7 @@ public class Settings extends SharedPreferencesWrapper {
         this.context = context;
     }
 
+    @NonNull
     public static Settings settings(@NonNull Context context) {
         return new Settings(context);
     }
@@ -122,6 +123,7 @@ public class Settings extends SharedPreferencesWrapper {
     /**
      * Returns device name.
      */
+    @NonNull
     public String getDeviceName() {
         String name = getString(PREF_DEVICE_ALIAS, "");
         if (!TextUtil.isNullOrEmpty(name)) {
@@ -130,6 +132,7 @@ public class Settings extends SharedPreferencesWrapper {
         return AndroidUtil.deviceName();
     }
 
+    @NonNull
     public String getReleaseVersion() {
         try {
             return context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
@@ -138,6 +141,7 @@ public class Settings extends SharedPreferencesWrapper {
         }
     }
 
+    @NonNull
     public BuildInfo getReleaseInfo() {
         Properties properties = new Properties();
         try {

@@ -30,15 +30,15 @@ import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.GeoCoordinates;
 import com.bopr.android.smailer.GeoLocator;
 import com.bopr.android.smailer.GoogleAuthorizationHelper;
+import com.bopr.android.smailer.GoogleDrive;
 import com.bopr.android.smailer.GoogleMail;
 import com.bopr.android.smailer.MailMessage;
 import com.bopr.android.smailer.Notifications;
 import com.bopr.android.smailer.PendingCallProcessorService;
 import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.RemoteControlService;
 import com.bopr.android.smailer.Settings;
-import com.bopr.android.smailer.sync.GoogleDrive;
+import com.bopr.android.smailer.remote.RemoteControlService;
 import com.bopr.android.smailer.sync.SyncAdapter;
 import com.bopr.android.smailer.sync.SyncManager;
 import com.bopr.android.smailer.util.ContentUtils;
@@ -71,6 +71,10 @@ import static android.telephony.SmsManager.RESULT_ERROR_NO_SERVICE;
 import static android.telephony.SmsManager.RESULT_ERROR_NULL_PDU;
 import static android.telephony.SmsManager.RESULT_ERROR_RADIO_OFF;
 import static com.bopr.android.smailer.GoogleAuthorizationHelper.primaryAccount;
+import static com.bopr.android.smailer.PhoneEvent.REASON_ACCEPTED;
+import static com.bopr.android.smailer.PhoneEvent.STATE_IGNORED;
+import static com.bopr.android.smailer.PhoneEvent.STATE_PENDING;
+import static com.bopr.android.smailer.PhoneEvent.STATE_PROCESSED;
 import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_LOCALE;
@@ -589,7 +593,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
     private void onProcessServiceMail() {
         if (settings.getBoolean(PREF_REMOTE_CONTROL_ENABLED, false)) {
-            RemoteControlService.startRemoteControlService(context);
+            RemoteControlService.Companion.start(context);
             showToast(context, "Done");
         } else {
             showToast(context, "Feature disabled");
@@ -616,7 +620,7 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private void onStartProcessPendingEvents() {
-        PendingCallProcessorService.startPendingCallProcessorService(context);
+        PendingCallProcessorService.start(context);
         showToast(context, "Done");
     }
 
@@ -646,7 +650,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
     private void onAddHistoryItem() {
         database.putEvent(new PhoneEvent("+79052345670", true, System.currentTimeMillis(), null, false,
-                "Debug message", null, null, PhoneEvent.STATE_PENDING, deviceName()));
+                "Debug message", null, null, STATE_PENDING, deviceName(), REASON_ACCEPTED, false));
         database.notifyChanged();
         showToast(context, "Done");
     }
@@ -654,16 +658,16 @@ public class DebugFragment extends BasePreferenceFragment {
     private void onPopulateHistory() {
         long time = System.currentTimeMillis();
         String recipient = deviceName();
-        database.putEvent(new PhoneEvent("+79052345671", true, time, null, false, "Debug message", null, null, PhoneEvent.STATE_PENDING, recipient));
-        database.putEvent(new PhoneEvent("+79052345672", false, time += 1000, null, false, "Debug message", null, null, PhoneEvent.STATE_PROCESSED, recipient));
-        database.putEvent(new PhoneEvent("+79052345673", true, time += 1000, time + 10000, false, null, null, null, PhoneEvent.STATE_IGNORED, recipient));
-        database.putEvent(new PhoneEvent("+79052345674", false, time += 1000, time + 10000, false, null, null, null, PhoneEvent.STATE_PENDING, recipient));
-        database.putEvent(new PhoneEvent("+79052345675", true, time += 1000, time + 10000, true, null, null, null, PhoneEvent.STATE_PENDING, recipient));
-        database.putEvent(new PhoneEvent("+79052345671", true, time += 1000, null, false, "Debug message", null, "Test exception +79052345671", PhoneEvent.STATE_PENDING, recipient));
-        database.putEvent(new PhoneEvent("+79052345672", false, time += 1000, null, false, "Debug message", null, "Test exception +79052345672", PhoneEvent.STATE_PENDING, recipient));
-        database.putEvent(new PhoneEvent("+79052345673", true, time += 1000, time + 10000, false, null, null, "Test exception +79052345673", PhoneEvent.STATE_PENDING, recipient));
-        database.putEvent(new PhoneEvent("+79052345674", false, time += 1000, time + 10000, false, null, null, "Test exception +79052345674", PhoneEvent.STATE_PENDING, recipient));
-        database.putEvent(new PhoneEvent("+79052345675", true, time += 1000, time + 10000, true, null, null, "Test exception +79052345675", PhoneEvent.STATE_PENDING, recipient));
+        database.putEvent(new PhoneEvent("+79052345671", true, time, null, false, "Debug message", null, null, STATE_PENDING, recipient, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("+79052345672", false, time += 1000, null, false, "Debug message", null, null, STATE_PROCESSED, recipient, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("+79052345673", true, time += 1000, time + 10000, false, null, null, null, STATE_IGNORED, recipient, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("+79052345674", false, time += 1000, time + 10000, false, null, null, null, STATE_PENDING, recipient, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("+79052345675", true, time += 1000, time + 10000, true, null, null, null, STATE_PENDING, recipient, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("+79052345671", true, time += 1000, null, false, "Debug message", null, "Test exception +79052345671", STATE_PENDING, recipient, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("+79052345672", false, time += 1000, null, false, "Debug message", null, "Test exception +79052345672", STATE_PENDING, recipient, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("+79052345673", true, time += 1000, time + 10000, false, null, null, "Test exception +79052345673", STATE_PENDING, recipient, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("+79052345674", false, time += 1000, time + 10000, false, null, null, "Test exception +79052345674", STATE_PENDING, recipient, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("+79052345675", true, time += 1000, time + 10000, true, null, null, "Test exception +79052345675", STATE_PENDING, recipient, REASON_ACCEPTED, false));
         database.notifyChanged();
 
         showToast(context, "Done");
@@ -724,7 +728,7 @@ public class DebugFragment extends BasePreferenceFragment {
         Tasks.call(newSingleThreadExecutor(), new Callable<Void>() {
 
             @Override
-            public Void call() throws Exception {
+            public Void call() {
                 GoogleDrive drive = new GoogleDrive(context, senderAccount());
                 try {
                     new SyncAdapter(context, false).download(drive);
@@ -742,7 +746,7 @@ public class DebugFragment extends BasePreferenceFragment {
         Tasks.call(newSingleThreadExecutor(), new Callable<Void>() {
 
             @Override
-            public Void call() throws Exception {
+            public Void call() {
                 GoogleDrive drive = new GoogleDrive(context, senderAccount());
                 try {
                     new SyncAdapter(context, false).upload(drive);

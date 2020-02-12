@@ -84,7 +84,7 @@ public class PhoneEventFilter {
      * @param event event
      * @return {@link PhoneEvent#REASON_ACCEPTED} if event was accepted or reason code if not
      */
-    public int test(PhoneEvent event) {
+    public int test(@NonNull PhoneEvent event) {
         int reason = REASON_ACCEPTED;
         if (!testTrigger(event)) {
             reason |= REASON_TRIGGER_OFF;

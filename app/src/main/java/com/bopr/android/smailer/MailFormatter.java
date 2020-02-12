@@ -344,7 +344,7 @@ class MailFormatter {
                     .format();
         } else {
             return formatter.pattern(R.string.last_known_location)
-                    .put("location", GeoLocator.isPermissionsDenied(context) /* base context here */
+                    .put("location", GeoLocator.Companion.isPermissionsDenied(context) /* base context here */
                             ? R.string.no_permission_read_location
                             : R.string.geolocation_disabled)
                     .format();
