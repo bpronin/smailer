@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 
-import com.bopr.android.smailer.util.TextUtil;
+import com.bopr.android.smailer.util.Util;
 
 import java.lang.annotation.Retention;
 
@@ -17,7 +17,6 @@ import static java.lang.annotation.RetentionPolicy.SOURCE;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-@SuppressWarnings("WeakerAccess")
 public class PhoneEvent implements Parcelable {
 
     @Retention(SOURCE)
@@ -68,7 +67,7 @@ public class PhoneEvent implements Parcelable {
     }
 
     public boolean isSms() {
-        return !TextUtil.isNullOrEmpty(text);
+        return !Util.isEmpty(text);
     }
 
     public boolean isIncoming() {

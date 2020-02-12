@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static com.bopr.android.smailer.PhoneEvent.REASON_ACCEPTED;
 import static com.bopr.android.smailer.PhoneEvent.STATE_PENDING;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -40,16 +41,16 @@ public class DatabaseTest extends BaseTest {
      */
     @Test
     public void testAddGet() {
-        database.putEvent(new PhoneEvent("1", true, 1000L, 0L, true, null, null, "Test 1", STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("2", false, 2000L, 0L, false, null, null, null, STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("3", true, 3000L, 0L, false, null, null, null, STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("4", false, 4000L, 0L, false, null, null, null, STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("5", true, 5000L, 0L, true, null, null, null, STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("6", true, 6000L, 7000L, false, null, null, "Test 1", STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("7", false, 7000L, 0L, false, null, null, "Test 2", STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("8", true, 8000L, 0L, false, null, null, "Test 3", STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("9", false, 9000L, 0L, false, null, null, "Test 4", STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("10", true, 10000L, 20000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), "Test 10", STATE_PENDING, null));
+        database.putEvent(new PhoneEvent("1", true, 1000L, 0L, true, null, null, "Test 1", STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("2", false, 2000L, 0L, false, null, null, null, STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("3", true, 3000L, 0L, false, null, null, null, STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("4", false, 4000L, 0L, false, null, null, null, STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("5", true, 5000L, 0L, true, null, null, null, STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("6", true, 6000L, 7000L, false, null, null, "Test 1", STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("7", false, 7000L, 0L, false, null, null, "Test 2", STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("8", true, 8000L, 0L, false, null, null, "Test 3", STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("9", false, 9000L, 0L, false, null, null, "Test 4", STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("10", true, 10000L, 20000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), "Test 10", STATE_PENDING, null, REASON_ACCEPTED, false));
 
         List<PhoneEvent> items = database.getEvents().toList();
 
@@ -74,7 +75,7 @@ public class DatabaseTest extends BaseTest {
      */
     @Test
     public void testUpdateGet() {
-        PhoneEvent message = new PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), "Test 1", STATE_PENDING, null);
+        PhoneEvent message = new PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), "Test 1", STATE_PENDING, null, REASON_ACCEPTED, false);
         database.putEvent(message);
 
         List<PhoneEvent> items = database.getEvents().toList();
@@ -126,16 +127,16 @@ public class DatabaseTest extends BaseTest {
      */
     @Test
     public void testClear() {
-        database.putEvent(new PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), "Test 1", STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("2", false, 2000L, 0L, false, null, null, null, STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("3", true, 3000L, 0L, false, null, null, null, STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("4", false, 4000L, 0L, false, null, null, null, STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("5", true, 5000L, 0L, true, null, null, null, STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("6", true, 6000L, 7000L, false, null, null, "Test 1", STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("7", false, 7000L, 0L, false, null, null, "Test 2", STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("8", true, 8000L, 0L, false, null, null, "Test 3", STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("9", false, 9000L, 0L, false, null, null, "Test 4", STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("10", true, 10000L, 0L, true, null, null, "Test 5", STATE_PENDING, null));
+        database.putEvent(new PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), "Test 1", STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("2", false, 2000L, 0L, false, null, null, null, STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("3", true, 3000L, 0L, false, null, null, null, STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("4", false, 4000L, 0L, false, null, null, null, STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("5", true, 5000L, 0L, true, null, null, null, STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("6", true, 6000L, 7000L, false, null, null, "Test 1", STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("7", false, 7000L, 0L, false, null, null, "Test 2", STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("8", true, 8000L, 0L, false, null, null, "Test 3", STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("9", false, 9000L, 0L, false, null, null, "Test 4", STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("10", true, 10000L, 0L, true, null, null, "Test 5", STATE_PENDING, null, REASON_ACCEPTED, false));
 
         assertEquals(10, database.getEvents().getCount());
 
@@ -149,16 +150,16 @@ public class DatabaseTest extends BaseTest {
      */
     @Test
     public void testPurge() throws InterruptedException {
-        database.putEvent(new PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), "Test 1", STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("2", false, 2000L, 0L, false, null, null, null, STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("3", true, 3000L, 0L, false, null, null, null, STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("4", false, 4000L, 0L, false, null, null, null, STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("5", true, 5000L, 0L, true, null, null, null, STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("6", true, 6000L, 7000L, false, null, null, "Test 1", STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("7", false, 7000L, 0L, false, null, null, "Test 2", STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("8", true, 8000L, 0L, false, null, null, "Test 3", STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("9", false, 9000L, 0L, false, null, null, "Test 4", STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("10", true, 10000L, 0L, true, null, null, "Test 5", STATE_PENDING, null));
+        database.putEvent(new PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), "Test 1", STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("2", false, 2000L, 0L, false, null, null, null, STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("3", true, 3000L, 0L, false, null, null, null, STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("4", false, 4000L, 0L, false, null, null, null, STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("5", true, 5000L, 0L, true, null, null, null, STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("6", true, 6000L, 7000L, false, null, null, "Test 1", STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("7", false, 7000L, 0L, false, null, null, "Test 2", STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("8", true, 8000L, 0L, false, null, null, "Test 3", STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("9", false, 9000L, 0L, false, null, null, "Test 4", STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("10", true, 10000L, 0L, true, null, null, "Test 5", STATE_PENDING, null, REASON_ACCEPTED, false));
 
         /* first we have 9 records */
         assertEquals(10, database.getEvents().getCount());
@@ -203,16 +204,16 @@ public class DatabaseTest extends BaseTest {
      */
     @Test
     public void testGetUnsentMessages() {
-        database.putEvent(new PhoneEvent("1", true, 1000L, 0L, true, null, null, "Test 1", STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("2", false, 2000L, 0L, false, null, null, null, STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("3", true, 3000L, 0L, false, null, null, null, STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("4", false, 4000L, 0L, false, null, null, null, STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("5", true, 5000L, 0L, true, null, null, null, STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("6", true, 6000L, 7000L, false, null, null, "Test 1", STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("7", false, 7000L, 0L, false, null, null, "Test 2", STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("8", true, 8000L, 0L, false, null, null, "Test 3", STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("9", false, 9000L, 0L, false, null, null, "Test 4", STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("10", true, 10000L, 20000L, false, null, null, "Test 10", STATE_PENDING, null));
+        database.putEvent(new PhoneEvent("1", true, 1000L, 0L, true, null, null, "Test 1", STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("2", false, 2000L, 0L, false, null, null, null, STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("3", true, 3000L, 0L, false, null, null, null, STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("4", false, 4000L, 0L, false, null, null, null, STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("5", true, 5000L, 0L, true, null, null, null, STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("6", true, 6000L, 7000L, false, null, null, "Test 1", STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("7", false, 7000L, 0L, false, null, null, "Test 2", STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("8", true, 8000L, 0L, false, null, null, "Test 3", STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("9", false, 9000L, 0L, false, null, null, "Test 4", STATE_PENDING, null, REASON_ACCEPTED, false));
+        database.putEvent(new PhoneEvent("10", true, 10000L, 20000L, false, null, null, "Test 10", STATE_PENDING, null, REASON_ACCEPTED, false));
 
         List<PhoneEvent> items = database.getPendingEvents().toList();
 

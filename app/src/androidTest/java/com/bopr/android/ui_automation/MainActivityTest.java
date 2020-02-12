@@ -21,6 +21,8 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static com.bopr.android.smailer.PhoneEvent.REASON_ACCEPTED;
+import static com.bopr.android.smailer.PhoneEvent.STATE_PENDING;
 import static com.bopr.android.smailer.Settings.DEFAULT_TRIGGERS;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_CALLS;
@@ -116,7 +118,7 @@ public class MainActivityTest extends BaseActivityTest {
         Database database = new Database(RULE.getActivity());
         database.clearEvents();
         database.putEvent(new PhoneEvent("10", true, 10000L, 20000L, false, "SMS text",
-                new GeoCoordinates(10.5, 20.5), "Test 10", PhoneEvent.STATE_PENDING, null));
+                new GeoCoordinates(10.5, 20.5), "Test 10", STATE_PENDING, null, REASON_ACCEPTED, false));
 
         onMenuButton().perform(click());
         onView(withText(R.string.call_history)).perform(click());
