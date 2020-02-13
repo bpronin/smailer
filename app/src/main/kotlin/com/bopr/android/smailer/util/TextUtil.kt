@@ -149,15 +149,14 @@ object TextUtil {
     }
 
     @JvmStatic
-    fun isValidEmailAddress(text: String): Boolean {
-        return EMAIL_ADDRESS.matcher(text).matches()
+    fun isValidEmailAddress(text: String?): Boolean {
+        return !text.isNullOrBlank() && EMAIL_ADDRESS.matcher(text).matches()
     }
 
     @JvmStatic
-    fun isValidEmailAddressList(text: String): Boolean {
-        val list = commaSplit(text)
-        if (list.isNotEmpty()) {
-            for (s in list) {
+    fun isValidEmailAddressList(text: String?): Boolean {
+        if (!text.isNullOrBlank()) {
+            for (s in commaSplit(text)) {
                 if (!isValidEmailAddress(s)) {
                     return false
                 }

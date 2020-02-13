@@ -29,10 +29,10 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_T
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS;
 import static com.bopr.android.smailer.util.AddressUtil.escapePhone;
 import static com.bopr.android.smailer.util.ContentUtils.isReadContactsPermissionsDenied;
-import static com.bopr.android.smailer.util.ResourceUtil.eventTypeText;
 import static com.bopr.android.smailer.util.TextUtil.formatDuration;
 import static com.bopr.android.smailer.util.TextUtil.isStringEmpty;
 import static com.bopr.android.smailer.util.TextUtil.stringToLocale;
+import static com.bopr.android.smailer.util.UiUtil.eventTypeText;
 import static java.lang.String.valueOf;
 
 /**

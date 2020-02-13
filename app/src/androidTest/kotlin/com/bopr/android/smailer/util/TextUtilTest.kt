@@ -121,9 +121,11 @@ class TextUtilTest {
         assertTrue(isValidEmailAddress("bob@mail.com"))
         assertFalse(isValidEmailAddress("bobmail.com"))
         assertFalse(isValidEmailAddress(""))
+        assertFalse(isValidEmailAddress(null))
         assertTrue(isValidEmailAddressList("anna@mail.com, bob@mail.com"))
         assertFalse(isValidEmailAddressList("annamail.com, bobmail.com"))
         assertFalse(isValidEmailAddressList(",,,"))
         assertFalse(isValidEmailAddressList(""))
+        assertFalse(isValidEmailAddressList(null))
     }
 }
