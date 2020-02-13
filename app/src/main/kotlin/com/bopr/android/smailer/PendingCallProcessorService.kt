@@ -1,0 +1,47 @@
+package com.bopr.android.smailer
+
+import android.content.Context
+import android.content.Intent
+import androidx.core.app.JobIntentService
+import org.slf4j.LoggerFactory
+
+/**
+ * Service that processes pending phone events.
+ *
+ * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ */
+class PendingCallProcessorService : JobIntentService() {
+
+    private lateinit var callProcessor: CallProcessor
+    private lateinit var database: Database
+
+    override fun onCreate() {
+        super.onCreate()
+        database = Database(this)
+        callProcessor = CallProcessor(this, database)
+    }
+
+    override fun onDestroy() {
+        database.close()
+        super.onDestroy()
+    }
+
+    override fun onHandleWork(intent: Intent) {
+        log.debug("Handling intent: $intent")
+
+        callProcessor.processPending()
+    }
+
+    companion object {
+
+        private val log = LoggerFactory.getLogger("PendingCallProcessorService")
+        private const val JOB_ID = 1000
+
+        fun start(context: Context) {
+            log.debug("Starting service")
+
+            enqueueWork(context, PendingCallProcessorService::class.java, JOB_ID,
+                    Intent(context, PendingCallProcessorService::class.java))
+        }
+    }
+}

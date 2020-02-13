@@ -387,15 +387,6 @@ public class DebugFragment extends BasePreferenceFragment {
 
         addCategory(screen, "Notifications",
 
-                createPreference("Show error. Open connection option", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        notifications.showMailError(R.string.no_internet_connection,
-                                Notifications.ACTION_SHOW_CONNECTION_OPTIONS);
-                    }
-                }),
-
                 createPreference("Show error. Open application", new DefaultClickListener() {
 
                     @Override
@@ -620,7 +611,7 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private void onStartProcessPendingEvents() {
-        PendingCallProcessorService.start(context);
+        PendingCallProcessorService.Companion.start(context);
         showToast(context, "Done");
     }
 

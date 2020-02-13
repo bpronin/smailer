@@ -28,7 +28,7 @@ object Environment {
 
         setUpDefaultExceptionHandler()
 
-        AccountsObserver.enable(context)
+//        AccountsObserver.enable(context)
         ContentObserverService.enable(context)
         ResendWorker.enable(context)
         RemoteControlWorker.enable(context)
