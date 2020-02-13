@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.bopr.android.smailer.util.TagFormatter;
-import com.bopr.android.smailer.util.TextUtil;
 import com.google.common.collect.ImmutableSet;
 
 import java.io.UnsupportedEncodingException;
@@ -30,12 +29,14 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_T
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS;
 import static com.bopr.android.smailer.util.AddressUtil.escapePhone;
 import static com.bopr.android.smailer.util.ContentUtils.isReadContactsPermissionsDenied;
+import static com.bopr.android.smailer.util.ResourceUtil.eventTypeText;
 import static com.bopr.android.smailer.util.TextUtil.formatDuration;
-import static com.bopr.android.smailer.util.UiUtil.eventTypeText;
+import static com.bopr.android.smailer.util.TextUtil.isStringEmpty;
+import static com.bopr.android.smailer.util.TextUtil.stringToLocale;
 import static java.lang.String.valueOf;
 
 /**
- * UiUtil email subject and body.
+ * ResourceUtil email subject and body.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
@@ -49,7 +50,7 @@ class MailFormatter {
     private static final String GOOGLE_MAP_LINK_PATTERN = "<a href=\"https://www.google.com/maps/" +
             "place/{latitude}+{longitude}/@{latitude},{longitude}\">{location}</a>";
     private static final String PHONE_LINK_PATTERN = "<a href=\"tel:{phone}\" style=\"text-decoration: none\">&#9742;</a>{text}";
-//    private static final String REPLY_LINKS_PATTERN = "<br><small><strong>{title}</strong></small><ul>{links}</ul>";
+    //    private static final String REPLY_LINKS_PATTERN = "<br><small><strong>{title}</strong></small><ul>{links}</ul>";
     private static final String REPLY_LINKS_PATTERN = "<ul>{links}</ul>";
     private static final String MAIL_TO_PATTERN = "<a href=\"mailto:{address}?subject={subject}&amp;body={body}\">{link_title}</a>";
     private static final String REMOTE_CONTROL_LINK_PATTERN = "<li><small>" + MAIL_TO_PATTERN + "</small></li>";
@@ -108,9 +109,8 @@ class MailFormatter {
      * @param code locale code as "en_EN"
      */
     void setLocale(@Nullable String code) {
-        Locale locale = TextUtil.stringToLocale(code);
+        Locale locale = stringToLocale(code);
         this.locale = locale != null ? locale : Locale.getDefault();
-
         updateResources();
     }
 
@@ -160,9 +160,9 @@ class MailFormatter {
                 .pattern(BODY_PATTERN)
                 .put("header", formatHeader())
                 .put("message", formatMessage())
-                .put("footer_line", !TextUtil.isNullOrEmpty(footer) ? LINE : null)
+                .put("footer_line", !isStringEmpty(footer) ? LINE : null)
                 .put("footer", footer)
-                .put("remote_line", !TextUtil.isNullOrEmpty(remoteLinks) ? LINE : null)
+                .put("remote_line", !isStringEmpty(remoteLinks) ? LINE : null)
                 .put("remote_links", remoteLinks)
                 .format();
     }
@@ -231,26 +231,26 @@ class MailFormatter {
 
             StringBuilder text = new StringBuilder();
 
-            if (!TextUtil.isNullOrEmpty(callerText)) {
+            if (!isStringEmpty(callerText)) {
                 text.append(callerText);
             }
 
-            if (!TextUtil.isNullOrEmpty(timeText)) {
-                if (!TextUtil.isNullOrEmpty(text)) {
+            if (!isStringEmpty(timeText)) {
+                if (!isStringEmpty(text)) {
                     text.append("<br>");
                 }
                 text.append(timeText);
             }
 
-            if (!TextUtil.isNullOrEmpty(locationText)) {
-                if (!TextUtil.isNullOrEmpty(text)) {
+            if (!isStringEmpty(locationText)) {
+                if (!isStringEmpty(text)) {
                     text.append("<br>");
                 }
                 text.append(locationText);
             }
 
-            if (!TextUtil.isNullOrEmpty(deviceNameText) || !TextUtil.isNullOrEmpty(sendTimeText)) {
-                if (!TextUtil.isNullOrEmpty(text)) {
+            if (!isStringEmpty(deviceNameText) || !isStringEmpty(sendTimeText)) {
+                if (!isStringEmpty(text)) {
                     text.append("<br>");
                 }
 
@@ -259,7 +259,7 @@ class MailFormatter {
                         .put("time", sendTimeText));
             }
 
-            if (!TextUtil.isNullOrEmpty(text)) {
+            if (!isStringEmpty(text)) {
                 text.insert(0, "<small>");
                 text.append("</small>");
             }
@@ -284,7 +284,7 @@ class MailFormatter {
 
         String name = this.contactName;
         String phoneQuery = encodeUrl(event.getPhone());
-        if (TextUtil.isNullOrEmpty(name)) {
+        if (isStringEmpty(name)) {
             if (isReadContactsPermissionsDenied(context)) { /* base context here */
                 name = resources.getString(R.string.contact_no_permission_read_contact);
             } else {
@@ -306,7 +306,7 @@ class MailFormatter {
 
     @Nullable
     private String formatDeviceName() {
-        if (!TextUtil.isNullOrEmpty(deviceName)) {
+        if (!isStringEmpty(deviceName)) {
             return " " + formatter.pattern(R.string._from_device)
                     .put("device_name", deviceName)
                     .format();
@@ -332,14 +332,14 @@ class MailFormatter {
 
     @NonNull
     private String formatLocation() {
-        GeoCoordinates location = event.getLocation();
-        if (location != null) {
+        GeoCoordinates coordinates = event.getLocation();
+        if (coordinates != null) {
             return formatter.pattern(R.string.last_known_location)
                     .put("location", formatter
                             .pattern(GOOGLE_MAP_LINK_PATTERN)
-                            .put("latitude", valueOf(location.getLatitude()))
-                            .put("longitude", valueOf(location.getLongitude()))
-                            .put("location", TextUtil.formatLocation(location, "&#176;", "\'", "\"", "N", "S", "W", "E"))
+                            .put("latitude", valueOf(coordinates.getLatitude()))
+                            .put("longitude", valueOf(coordinates.getLongitude()))
+                            .put("location", coordinates.format("&#176;", "\'", "\"", "N", "S", "W", "E"))
                             .format())
                     .format();
         } else {
@@ -353,7 +353,7 @@ class MailFormatter {
 
     @Nullable
     private String formatRemoteControlLinks() {
-        if (contentOptions.contains(VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS) && !TextUtil.isNullOrEmpty(serviceAccount)) {
+        if (contentOptions.contains(VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS) && !isStringEmpty(serviceAccount)) {
             return formatter
                     .pattern(REPLY_LINKS_PATTERN)
                     .put("title", formatter

@@ -1,13 +1,15 @@
-package com.bopr.android.smailer
+package com.bopr.android.smailer.util
 
+import com.bopr.android.smailer.PhoneEvent
 import com.bopr.android.smailer.PhoneEvent.Companion.REASON_ACCEPTED
 import com.bopr.android.smailer.PhoneEvent.Companion.REASON_NUMBER_BLACKLISTED
 import com.bopr.android.smailer.PhoneEvent.Companion.REASON_TEXT_BLACKLISTED
 import com.bopr.android.smailer.PhoneEvent.Companion.REASON_TRIGGER_OFF
+import com.bopr.android.smailer.PhoneEventFilter
 import com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS
+import com.bopr.android.smailer.util.TextUtil.quoteRegex
 import com.bopr.android.smailer.util.Util.asSet
-import com.bopr.android.smailer.util.Util.quoteRegex
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -17,7 +19,7 @@ class PhoneEventFilterTest {
     fun testEmpty() {
         val event = PhoneEvent()
         val filter = PhoneEventFilter()
-        
+
         assertEquals(REASON_TRIGGER_OFF, filter.test(event))
     }
 

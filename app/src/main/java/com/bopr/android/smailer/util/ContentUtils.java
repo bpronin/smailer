@@ -19,6 +19,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 import static android.provider.ContactsContract.CommonDataKinds.Email;
 import static android.provider.ContactsContract.CommonDataKinds.Phone;
 import static android.provider.ContactsContract.PhoneLookup;
+import static com.bopr.android.smailer.util.TextUtil.isStringEmpty;
 import static com.bopr.android.smailer.util.Util.requireNonNull;
 
 /**
@@ -26,17 +27,14 @@ import static com.bopr.android.smailer.util.Util.requireNonNull;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public abstract class ContentUtils {
+public class ContentUtils {
 
     private static Logger log = LoggerFactory.getLogger("ContentUtils");
-
-    private ContentUtils() {
-    }
 
     @Nullable
     public static String getContactName(@NonNull Context context, @NonNull String phone) {
         String result = null;
-        if (requireReadContactPermission(context) && !TextUtil.isNullOrEmpty(phone)) {
+        if (requireReadContactPermission(context) && !isStringEmpty(phone)) {
             Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phone));
             Cursor cursor = context.getContentResolver().query(uri,
                     new String[]{PhoneLookup.DISPLAY_NAME}, null, null, null);
@@ -51,7 +49,7 @@ public abstract class ContentUtils {
     }
 
     @Nullable
-    private static String getEmailAddress(@NonNull Context context, @NonNull String emailId) {
+    private static String getEmailAddress(Context context, String emailId) {
         String result = null;
         if (requireReadContactPermission(context)) {
             Cursor cursor = context.getContentResolver().query(Email.CONTENT_URI, null,
@@ -67,7 +65,7 @@ public abstract class ContentUtils {
     }
 
     @Nullable
-    private static String getPhone(@NonNull Context context, @NonNull String phoneId) {
+    private static String getPhone(Context context, String phoneId) {
         String result = null;
         if (requireReadContactPermission(context)) {
             Cursor cursor = context.getContentResolver().query(Phone.CONTENT_URI, null,
@@ -88,19 +86,19 @@ public abstract class ContentUtils {
         return intent;
     }
 
-    public static String getEmailAddressFromIntent(@NonNull Context context, @NonNull Intent intent) {
+    public static String getEmailAddressFromIntent(Context context, Intent intent) {
         return getEmailAddress(context, requireNonNull(intent.getData()).getLastPathSegment());
     }
 
-    public static String getPhoneFromIntent(@NonNull Context context, @NonNull Intent intent) {
+    public static String getPhoneFromIntent(Context context, Intent intent) {
         return getPhone(context, requireNonNull(intent.getData()).getLastPathSegment());
     }
 
-    public static boolean isReadContactsPermissionsDenied(@NonNull Context context) {
+    public static boolean isReadContactsPermissionsDenied(Context context) {
         return AndroidUtil.isPermissionsDenied(context, READ_CONTACTS);
     }
 
-    private static boolean requireReadContactPermission(@NonNull Context context) {
+    private static boolean requireReadContactPermission(Context context) {
         if (isReadContactsPermissionsDenied(context)) {
             log.warn("Unable read contact. Permission denied.");
             return false;
@@ -108,7 +106,7 @@ public abstract class ContentUtils {
         return true;
     }
 
-    public static void markSmsAsRead(@NonNull Context context, @NonNull PhoneEvent event) {
+    public static void markSmsAsRead(Context context, PhoneEvent event) {
         ContentResolver contentResolver = context.getContentResolver();
         Uri uri = Uri.parse("content://sms/inbox");
 

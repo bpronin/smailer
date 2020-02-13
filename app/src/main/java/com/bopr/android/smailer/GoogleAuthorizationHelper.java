@@ -106,7 +106,7 @@ public class GoogleAuthorizationHelper {
         Account account = accountManager.getAccountByName(accountName);
         accountManager.getAccountManager().getAuthToken(
                 account,
-                "oauth2: " + join(" ", scopes),
+                "oauth2: " + join(scopes, " "),
                 null,
                 fragment.requireActivity(),
                 new AuthTokenAcquireCallback(accountName),

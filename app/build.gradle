@@ -43,7 +43,7 @@ android {
 
     defaultConfig {
         versionCode 68
-        versionName "1.7.1"
+        versionName "1.7.1-kotlin"
         applicationId "com.bopr.android.smailer"
         minSdkVersion 18
         targetSdkVersion 29

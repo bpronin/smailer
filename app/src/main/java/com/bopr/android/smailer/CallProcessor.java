@@ -29,6 +29,8 @@ import static com.bopr.android.smailer.Settings.PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.util.AddressUtil.isValidEmailAddressList;
 import static com.bopr.android.smailer.util.ContentUtils.getContactName;
 import static com.bopr.android.smailer.util.ContentUtils.markSmsAsRead;
+import static com.bopr.android.smailer.util.TextUtil.isStringEmpty;
+import static com.bopr.android.smailer.util.TextUtil.isValidEmailAddressList;
 import static com.google.api.services.gmail.GmailScopes.GMAIL_SEND;
 
 /**
@@ -160,6 +162,7 @@ public class CallProcessor {
     private String requireSender(boolean silent) throws Exception {
         String s = settings.getString(PREF_SENDER_ACCOUNT, null);
 
+        if (isStringEmpty(s)) {
         if (TextUtil.isNullOrEmpty(s)) {
             showErrorNotification(R.string.no_account_specified, silent);
             throw new Exception("Account not specified");
@@ -170,6 +173,7 @@ public class CallProcessor {
     private String requireRecipient(boolean silent) throws Exception {
         String s = settings.getString(PREF_RECIPIENTS_ADDRESS, null);
 
+        if (isStringEmpty(s)) {
         if (TextUtil.isNullOrEmpty(s)) {
             showErrorNotification(R.string.no_recipients_specified, silent);
             throw new Exception("Recipients not specified");

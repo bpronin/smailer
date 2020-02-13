@@ -1,7 +1,5 @@
 package com.bopr.android.smailer.util;
 
-import android.util.Patterns;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -11,7 +9,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static androidx.core.util.PatternsCompat.EMAIL_ADDRESS;
-import static com.bopr.android.smailer.util.TextUtil.commaSplit;
 import static com.bopr.android.smailer.util.TextUtil.isQuoted;
 import static com.bopr.android.smailer.util.Util.safeEquals;
 
@@ -21,13 +18,14 @@ import static com.bopr.android.smailer.util.Util.safeEquals;
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 @SuppressWarnings("WeakerAccess")
-public abstract class AddressUtil {
+public class AddressUtil {
 
     @SuppressWarnings("RegExpRedundantEscape")
-    public static final Pattern PHONE_PATTERN = Pattern.compile(    // sdd = space, dot, or dash
-            "(\\+[0-9]+[\\- \\.]*)?"                                // +<digits><sdd>*
-                    + "(\\([0-9]+\\)[\\- \\.]*)?"                   // (<digits>)<sdd>*
-                    + "([0-9][0-9\\- \\.]+[0-9])");                 // <digit><digit|sdd>+<digit>
+    public static final Pattern PHONE_PATTERN
+            = Pattern.compile(                      // sdd = space, dot, or dash
+            "(\\+[0-9]+[\\- \\.]*)?"                // +<digits><sdd>*
+                    + "(\\([0-9]+\\)[\\- \\.]*)?"   // (<digits>)<sdd>*
+                    + "([0-9][0-9\\- \\.]+[0-9])"); // <digit><digit|sdd>+<digit>
 
     private AddressUtil() {
     }
@@ -118,18 +116,5 @@ public abstract class AddressUtil {
             return matcher.group();
         }
         return null;
-    }
-
-    public static boolean isValidEmailAddress(String text) {
-        return Patterns.EMAIL_ADDRESS.matcher(text).matches();
-    }
-
-    public static boolean isValidEmailAddressList(String text) {
-        for (String s : commaSplit(text)) {
-            if (!isValidEmailAddress(s)) {
-                return false;
-            }
-        }
-        return true;
     }
 }

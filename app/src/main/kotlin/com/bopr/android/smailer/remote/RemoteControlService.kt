@@ -16,7 +16,7 @@ import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_TEXT_F
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_TEXT_FROM_WHITELIST
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.SEND_SMS_TO_CALLER
 import com.bopr.android.smailer.util.AddressUtil
-import com.bopr.android.smailer.util.Util.commaSplit
+import com.bopr.android.smailer.util.TextUtil.commaSplit
 import com.google.api.services.gmail.GmailScopes
 import org.slf4j.LoggerFactory
 
@@ -79,7 +79,7 @@ class RemoteControlService : JobIntentService() {
     private fun acceptMessage(message: MailMessage): Boolean {
         if (settings.getBoolean(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS, false)) {
             val address = AddressUtil.extractEmail(message.from)
-            val recipients = commaSplit(settings.getString(PREF_RECIPIENTS_ADDRESS, ""))
+            val recipients = commaSplit(settings.getString(PREF_RECIPIENTS_ADDRESS, "")!!)
             if (!AddressUtil.containsEmail(recipients, address)) {
                 log.debug("Address $address rejected")
                 return false

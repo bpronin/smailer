@@ -10,7 +10,7 @@ import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_TEXT_F
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_TEXT_FROM_WHITELIST
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.SEND_SMS_TO_CALLER
 import com.bopr.android.smailer.util.AddressUtil.PHONE_PATTERN
-import com.bopr.android.smailer.util.Util.QUOTED_TEXT_PATTERN
+import com.bopr.android.smailer.util.TextUtil.QUOTATION_PATTERN
 import java.util.*
 
 /**
@@ -97,7 +97,7 @@ internal class RemoteControlTaskParser {
     }
 
     private fun nextQuoted(scanner: Scanner): String? {
-        return scanner.findWithinHorizon(QUOTED_TEXT_PATTERN, 0)?.let {
+        return scanner.findWithinHorizon(QUOTATION_PATTERN, 0)?.let {
             scanner.match().group(1)
         }
     }

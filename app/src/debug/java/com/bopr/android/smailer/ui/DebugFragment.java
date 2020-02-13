@@ -104,10 +104,9 @@ import static com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnor
 import static com.bopr.android.smailer.util.AndroidUtil.alertDialogView;
 import static com.bopr.android.smailer.util.AndroidUtil.deviceName;
 import static com.bopr.android.smailer.util.ResourceUtil.showToast;
+import static com.bopr.android.smailer.util.TextUtil.commaJoin;
+import static com.bopr.android.smailer.util.TextUtil.quoteRegex;
 import static com.bopr.android.smailer.util.Util.asSet;
-import static com.bopr.android.smailer.util.Util.commaJoin;
-import static com.bopr.android.smailer.util.Util.formatLocation;
-import static com.bopr.android.smailer.util.Util.quoteRegex;
 import static com.bopr.android.smailer.util.Util.requireNonNull;
 import static com.google.api.services.drive.DriveScopes.DRIVE_APPDATA;
 import static com.google.api.services.gmail.GmailScopes.GMAIL_SEND;
@@ -837,8 +836,7 @@ public class DebugFragment extends BasePreferenceFragment {
         @Override
         protected void onPostExecute(GeoCoordinates coordinates) {
             super.onPostExecute(coordinates);
-            showMessage(getActivity(), coordinates != null ?
-                    formatLocation(coordinates) : "No location received");
+            showMessage(getActivity(), coordinates != null ? coordinates.format() : "No location received");
         }
     }
 

@@ -2,7 +2,6 @@ package com.bopr.android.smailer
 
 import android.accounts.AccountsException
 import android.content.Context
-import com.bopr.android.smailer.util.Util
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
@@ -114,22 +113,22 @@ class GoogleMail(private val context: Context) {
     }
 
     private fun createContent(message: MailMessage): com.google.api.services.gmail.model.Message {
-        return try {
-            val mimeMessage = MimeMessage(session)
-            mimeMessage.setFrom(account)
-            mimeMessage.setSubject(message.subject, UTF_8)
-            mimeMessage.setRecipients(Message.RecipientType.TO, parseAddresses(message.recipients!!))
-            if (!Util.isEmpty(message.replyTo)) {
-                mimeMessage.replyTo = parseAddresses(message.replyTo!!)
+        try {
+            val mime = MimeMessage(session)
+            mime.setFrom(account)
+            mime.setSubject(message.subject, UTF_8)
+            mime.setRecipients(Message.RecipientType.TO, parseAddresses(message.recipients!!))
+            if (!message.replyTo.isNullOrBlank()) {
+                mime.replyTo = parseAddresses(message.replyTo!!)
             }
-            if (message.attachment == null) {
-                mimeMessage.setText(message.body, UTF_8, HTML)
+            if (!message.attachment.isNullOrEmpty()) {
+                mime.setContent(createMultipart(message.body, message.attachment!!))
             } else {
-                mimeMessage.setContent(createMultipart(message.body, message.attachment!!))
+                mime.setText(message.body, UTF_8, HTML)
             }
             val buffer = ByteArrayOutputStream()
-            mimeMessage.writeTo(buffer)
-            Message().encodeRaw(buffer.toByteArray())
+            mime.writeTo(buffer)
+            return Message().encodeRaw(buffer.toByteArray())
         } catch (x: IOException) {
             throw RuntimeException("Message creation failed", x)
         } catch (x: MessagingException) {

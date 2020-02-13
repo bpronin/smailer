@@ -10,7 +10,7 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
-import static com.bopr.android.smailer.util.Util.readStream;
+import static com.bopr.android.smailer.util.TextUtil.readStream;
 
 class HtmlMatcher extends CustomTypeSafeMatcher<String> {
 
@@ -18,16 +18,12 @@ class HtmlMatcher extends CustomTypeSafeMatcher<String> {
     private String expectedToken;
     private String actualToken;
 
-    static Matcher<String> htmlEquals(String expected) {
-        return new HtmlMatcher(expected);
-    }
-
     static Matcher<String> htmlEqualsRes(String resource) {
         try {
             InputStream stream = getInstrumentation().getContext().getAssets().open(resource);
             String expected = readStream(stream);
             stream.close();
-            return htmlEquals(expected);
+            return new HtmlMatcher(expected);
         } catch (IOException x) {
             throw new IllegalArgumentException(x);
         }

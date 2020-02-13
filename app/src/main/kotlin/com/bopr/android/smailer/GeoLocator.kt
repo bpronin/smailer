@@ -123,7 +123,7 @@ class GeoLocator(private val context: Context, private val database: Database) {
         private val log = LoggerFactory.getLogger("GeoLocator")
         private const val DEFAULT_TIMEOUT = 1000
 
-        fun isPermissionsDenied(context: Context?): Boolean {
+        fun isPermissionsDenied(context: Context): Boolean {
             return isPermissionsDenied(context, ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION)
         }
     }

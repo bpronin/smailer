@@ -27,9 +27,10 @@ import static com.bopr.android.smailer.Settings.PREF_RESEND_UNSENT;
 import static com.bopr.android.smailer.Settings.PREF_RULES;
 import static com.bopr.android.smailer.Settings.PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization;
-import static com.bopr.android.smailer.util.AndroidUtil.isValidEmailAddressList;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
-import static com.bopr.android.smailer.util.Util.isEmpty;
+import static com.bopr.android.smailer.util.TextUtil.isStringEmpty;
+import static com.bopr.android.smailer.util.TextUtil.isTrimEmpty;
+import static com.bopr.android.smailer.util.TextUtil.isValidEmailAddressList;
 import static com.google.api.services.drive.DriveScopes.DRIVE_APPDATA;
 import static com.google.api.services.gmail.GmailScopes.GMAIL_SEND;
 import static java.lang.String.valueOf;
@@ -122,7 +123,7 @@ public class MainFragment extends BasePreferenceFragment {
 
     private void updateAccountPreference() {
         String value = settings.getString(PREF_SENDER_ACCOUNT, "");
-        if (isEmpty(value)) {
+        if (isTrimEmpty(value)) {
             updateSummary(accountPreference, getString(R.string.not_specified), STYLE_ACCENTED);
         } else {
             updateSummary(accountPreference, value, STYLE_DEFAULT);
@@ -131,7 +132,7 @@ public class MainFragment extends BasePreferenceFragment {
 
     private void updateRecipientsPreference() {
         String value = settings.getString(PREF_RECIPIENTS_ADDRESS, null);
-        if (isEmpty(value)) {
+        if (isTrimEmpty(value)) {
             updateSummary(recipientsPreference, getString(R.string.not_specified), STYLE_ACCENTED);
         } else {
             updateSummary(recipientsPreference, value.replaceAll(",", ", "),
@@ -163,7 +164,7 @@ public class MainFragment extends BasePreferenceFragment {
     }
 
     private void updateAlasPreference(EditTextPreference preference, String value) {
-        if (isEmpty(value)) {
+        if (isStringEmpty(value)) {
             updateSummary(preference, AndroidUtil.deviceName(), STYLE_DEFAULT);
         } else {
             updateSummary(preference, value, STYLE_DEFAULT);
