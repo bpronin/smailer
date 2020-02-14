@@ -133,7 +133,8 @@ public class Database {
     }
 
     public long getUnreadEventsCount() {
-        return RowSet.forLong(helper.getReadableDatabase().query(TABLE_EVENTS, strings(COLUMN_COUNT),
+        SQLiteDatabase db = helper.getReadableDatabase();
+        return RowSet.forLong(db.query(TABLE_EVENTS, strings(COLUMN_COUNT),
                 COLUMN_READ + "<>1", null, null, null, null));
     }
 
@@ -292,8 +293,8 @@ public class Database {
     }
 
     private long getCurrentSize(SQLiteDatabase db) {
-        return RowSet.forLong(db.query(TABLE_EVENTS, strings(COLUMN_COUNT), null, null,
-                null, null, null));
+        return RowSet.forLong(db.query(TABLE_EVENTS, strings(COLUMN_COUNT),
+                null, null, null, null, null));
     }
 
     private long getLastPurgeTime(SQLiteDatabase db) {

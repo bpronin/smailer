@@ -15,7 +15,9 @@ import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_PHONE_
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_TEXT_FROM_BLACKLIST
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_TEXT_FROM_WHITELIST
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.SEND_SMS_TO_CALLER
-import com.bopr.android.smailer.util.AddressUtil
+import com.bopr.android.smailer.util.AddressUtil.containsEmail
+import com.bopr.android.smailer.util.AddressUtil.extractEmail
+import com.bopr.android.smailer.util.AddressUtil.findPhone
 import com.bopr.android.smailer.util.TextUtil.commaSplit
 import com.google.api.services.gmail.GmailScopes
 import org.slf4j.LoggerFactory
@@ -78,10 +80,11 @@ class RemoteControlService : JobIntentService() {
 
     private fun acceptMessage(message: MailMessage): Boolean {
         if (settings.getBoolean(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS, false)) {
-            val address = AddressUtil.extractEmail(message.from)
+            val address = extractEmail(message.from)!!
             val recipients = commaSplit(settings.getString(PREF_RECIPIENTS_ADDRESS, "")!!)
-            if (!AddressUtil.containsEmail(recipients, address)) {
+            if (!containsEmail(recipients, address)) {
                 log.debug("Address $address rejected")
+
                 return false
             }
         }
@@ -205,7 +208,7 @@ class RemoteControlService : JobIntentService() {
     }
 
     private fun removeFromPhoneList(filter: PhoneEventFilter, list: MutableSet<String>, number: String, messageRes: Int) {
-        AddressUtil.findPhone(list, number)?.let {
+        findPhone(list, number)?.let {
             list.remove(it)
             saveFilter(filter, number, messageRes)
         } ?: log.debug("Not in list")
