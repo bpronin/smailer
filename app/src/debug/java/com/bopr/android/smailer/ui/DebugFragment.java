@@ -29,15 +29,15 @@ import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.GeoCoordinates;
 import com.bopr.android.smailer.GeoLocator;
 import com.bopr.android.smailer.GoogleAuthorizationHelper;
+import com.bopr.android.smailer.GoogleDrive;
 import com.bopr.android.smailer.GoogleMail;
 import com.bopr.android.smailer.MailMessage;
 import com.bopr.android.smailer.Notifications;
 import com.bopr.android.smailer.PendingCallProcessorService;
 import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.RemoteControlService;
 import com.bopr.android.smailer.Settings;
-import com.bopr.android.smailer.sync.GoogleDrive;
+import com.bopr.android.smailer.remote.RemoteControlService;
 import com.bopr.android.smailer.sync.SyncAdapter;
 import com.bopr.android.smailer.sync.SyncManager;
 import com.bopr.android.smailer.util.ContentUtils;
@@ -70,7 +70,6 @@ import static android.telephony.SmsManager.RESULT_ERROR_NO_SERVICE;
 import static android.telephony.SmsManager.RESULT_ERROR_NULL_PDU;
 import static android.telephony.SmsManager.RESULT_ERROR_RADIO_OFF;
 import static com.bopr.android.smailer.CallProcessorService.startCallProcessingService;
-import static com.bopr.android.smailer.GoogleAuthorizationHelper.primaryAccount;
 import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_LOCALE;
@@ -97,9 +96,10 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
 import static com.bopr.android.smailer.ui.BatteryOptimizationHelper.isIgnoreBatteryOptimizationRequired;
 import static com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization;
-import static com.bopr.android.smailer.util.AndroidUtil.alertDialogView;
 import static com.bopr.android.smailer.util.AndroidUtil.deviceName;
+import static com.bopr.android.smailer.util.AndroidUtil.primaryAccount;
 import static com.bopr.android.smailer.util.ResourceUtil.showToast;
+import static com.bopr.android.smailer.util.UiUtil.alertDialogView;
 import static com.bopr.android.smailer.util.Util.asSet;
 import static com.bopr.android.smailer.util.Util.commaJoin;
 import static com.bopr.android.smailer.util.Util.formatLocation;
@@ -589,7 +589,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
     private void onProcessServiceMail() {
         if (settings.getBoolean(PREF_REMOTE_CONTROL_ENABLED, false)) {
-            RemoteControlService.start(context);
+            RemoteControlService.startRemoteControlService(context);
             showToast(context, "Done");
         } else {
             showToast(context, "Feature disabled");
@@ -616,7 +616,7 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private void onStartProcessPendingEvents() {
-        PendingCallProcessorService.start(context);
+        PendingCallProcessorService.startPendingCallProcessorService(context);
         showToast(context, "Done");
     }
 

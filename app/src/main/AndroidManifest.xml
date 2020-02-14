@@ -103,7 +103,7 @@
         <service android:name=".PendingCallProcessorService"
             android:permission="android.permission.BIND_JOB_SERVICE"/>
 
-        <service android:name=".RemoteControlService"
+        <service android:name=".remote.RemoteControlService"
             android:permission="android.permission.BIND_JOB_SERVICE"/>
 
         <service

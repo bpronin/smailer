@@ -64,6 +64,7 @@ public class PermissionsHelper implements SharedPreferences.OnSharedPreferenceCh
     private Settings settings;
     private Map<String, Integer> items = new HashMap<>();
 
+    @SuppressWarnings({"deprecation", "RedundantSuppression"}) // TODO: 06.02.2020 deprecated
     protected PermissionsHelper(Activity activity, Settings settings) {
         this.activity = activity;
         this.settings = settings;
@@ -73,7 +74,7 @@ public class PermissionsHelper implements SharedPreferences.OnSharedPreferenceCh
         items.put(WRITE_SMS, R.string.permission_rationale_write_sms);
         items.put(READ_SMS, R.string.permission_rationale_read_sms);
         items.put(READ_PHONE_STATE, R.string.permission_rationale_phone_state);
-        items.put(PROCESS_OUTGOING_CALLS, R.string.permission_rationale_outgoing_call);   // TODO: 06.02.2020 deprecated
+        items.put(PROCESS_OUTGOING_CALLS, R.string.permission_rationale_outgoing_call);
         items.put(READ_CONTACTS, R.string.permission_rationale_read_contacts);
         items.put(ACCESS_COARSE_LOCATION, R.string.permission_rationale_coarse_location);
         items.put(ACCESS_FINE_LOCATION, R.string.permission_rationale_fine_location);
@@ -94,7 +95,7 @@ public class PermissionsHelper implements SharedPreferences.OnSharedPreferenceCh
     /**
      * To be added into activity's onRequestPermissionsResult()
      */
-    public void handleRequestResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == requestResultCode) {
             Set<String> deniedPermissions = new HashSet<>();
 
@@ -112,6 +113,7 @@ public class PermissionsHelper implements SharedPreferences.OnSharedPreferenceCh
     }
 
     @Override
+    @SuppressWarnings({"deprecation", "RedundantSuppression"}) // TODO: 06.02.2020 deprecated
     public void onSharedPreferenceChanged(SharedPreferences preferences, String preference) {
         Set<String> deniedPermissions = new HashSet<>();
 
@@ -128,7 +130,7 @@ public class PermissionsHelper implements SharedPreferences.OnSharedPreferenceCh
                     deniedPermissions.add(READ_PHONE_STATE);
                 }
                 if (triggers.contains(VAL_PREF_TRIGGER_OUT_CALLS)) {
-                    deniedPermissions.add(PROCESS_OUTGOING_CALLS); // TODO: 06.02.2020 deprecated
+                    deniedPermissions.add(PROCESS_OUTGOING_CALLS);
                 }
                 break;
             case PREF_EMAIL_CONTENT:
@@ -148,7 +150,7 @@ public class PermissionsHelper implements SharedPreferences.OnSharedPreferenceCh
 
         doCheck(deniedPermissions);
     }
-
+    @SuppressWarnings({"deprecation", "RedundantSuppression"}) // TODO: 06.02.2020 deprecated
     protected void onPermissionsDenied(Collection<String> permissions) {
         log.debug("Denied: " + permissions);
 
@@ -166,7 +168,7 @@ public class PermissionsHelper implements SharedPreferences.OnSharedPreferenceCh
                 case READ_PHONE_STATE:
                     settings.removeStringSet(PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_IN_CALLS, VAL_PREF_TRIGGER_MISSED_CALLS);
                     break;
-                case PROCESS_OUTGOING_CALLS: // TODO: 06.02.2020 deprecated
+                case PROCESS_OUTGOING_CALLS:
                     settings.removeStringSet(PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_OUT_CALLS);
                     break;
                 case READ_CONTACTS:

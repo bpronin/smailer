@@ -48,7 +48,7 @@ public class PendingCallProcessorService extends JobIntentService {
      *
      * @param context context
      */
-    public static void start(Context context) {
+    public static void startPendingCallProcessorService(Context context) {
         log.debug("Starting service");
 
         enqueueWork(context, PendingCallProcessorService.class, JOB_ID,

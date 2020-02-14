@@ -1,16 +1,19 @@
 package com.bopr.android.smailer;
 
+import com.bopr.android.smailer.remote.RemoteControlTask;
+import com.bopr.android.smailer.remote.RemoteControlTaskParser;
+
 import org.junit.Test;
 
-import static com.bopr.android.smailer.RemoteControlTask.ADD_PHONE_TO_BLACKLIST;
-import static com.bopr.android.smailer.RemoteControlTask.ADD_PHONE_TO_WHITELIST;
-import static com.bopr.android.smailer.RemoteControlTask.ADD_TEXT_TO_BLACKLIST;
-import static com.bopr.android.smailer.RemoteControlTask.ADD_TEXT_TO_WHITELIST;
-import static com.bopr.android.smailer.RemoteControlTask.REMOVE_PHONE_FROM_BLACKLIST;
-import static com.bopr.android.smailer.RemoteControlTask.REMOVE_PHONE_FROM_WHITELIST;
-import static com.bopr.android.smailer.RemoteControlTask.REMOVE_TEXT_FROM_BLACKLIST;
-import static com.bopr.android.smailer.RemoteControlTask.REMOVE_TEXT_FROM_WHITELIST;
-import static com.bopr.android.smailer.RemoteControlTask.SEND_SMS_TO_CALLER;
+import static com.bopr.android.smailer.remote.RemoteControlTask.ADD_PHONE_TO_BLACKLIST;
+import static com.bopr.android.smailer.remote.RemoteControlTask.ADD_PHONE_TO_WHITELIST;
+import static com.bopr.android.smailer.remote.RemoteControlTask.ADD_TEXT_TO_BLACKLIST;
+import static com.bopr.android.smailer.remote.RemoteControlTask.ADD_TEXT_TO_WHITELIST;
+import static com.bopr.android.smailer.remote.RemoteControlTask.REMOVE_PHONE_FROM_BLACKLIST;
+import static com.bopr.android.smailer.remote.RemoteControlTask.REMOVE_PHONE_FROM_WHITELIST;
+import static com.bopr.android.smailer.remote.RemoteControlTask.REMOVE_TEXT_FROM_BLACKLIST;
+import static com.bopr.android.smailer.remote.RemoteControlTask.REMOVE_TEXT_FROM_WHITELIST;
+import static com.bopr.android.smailer.remote.RemoteControlTask.SEND_SMS_TO_CALLER;
 import static junit.framework.TestCase.assertNotNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

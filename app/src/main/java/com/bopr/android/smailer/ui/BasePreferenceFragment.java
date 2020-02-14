@@ -38,9 +38,9 @@ import static com.bopr.android.smailer.util.Util.requireNonNull;
  */
 public abstract class BasePreferenceFragment extends PreferenceFragmentCompat {
 
-    static final int STYLE_DEFAULT = 0;
-    static final int STYLE_UNDERWIVED = 1;
-    static final int STYLE_ACCENTED = 2;
+    static final int SUMMARY_STYLE_DEFAULT = 0;
+    static final int SUMMARY_STYLE_UNDERWIVED = 1;
+    static final int SUMMARY_STYLE_ACCENTED = 2;
 
     private static final String DIALOG_FRAGMENT_TAG = "androidx.preference.PreferenceFragment.DIALOG";
 
@@ -78,7 +78,7 @@ public abstract class BasePreferenceFragment extends PreferenceFragmentCompat {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        permissionsHelper.handleRequestResult(requestCode, permissions, grantResults);
+        permissionsHelper.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
@@ -115,13 +115,13 @@ public abstract class BasePreferenceFragment extends PreferenceFragmentCompat {
      */
     void updateSummary(@NonNull Preference preference, @Nullable String value, int style) {
         switch (style) {
-            case STYLE_DEFAULT:
+            case SUMMARY_STYLE_DEFAULT:
                 preference.setSummary(value);
                 break;
-            case STYLE_UNDERWIVED:
+            case SUMMARY_STYLE_UNDERWIVED:
                 preference.setSummary(underwivedText(getContext(), value));
                 break;
-            case STYLE_ACCENTED:
+            case SUMMARY_STYLE_ACCENTED:
                 preference.setSummary(accentedText(getContext(), value));
                 break;
         }

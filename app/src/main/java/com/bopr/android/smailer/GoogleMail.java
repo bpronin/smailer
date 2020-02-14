@@ -6,6 +6,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.bopr.android.smailer.util.Util;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
@@ -40,7 +41,6 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-import static com.bopr.android.smailer.util.Util.isEmpty;
 import static com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential.usingOAuth2;
 import static com.google.api.client.util.Base64.decodeBase64;
 import static com.google.api.client.util.StringUtils.newStringUtf8;
@@ -108,7 +108,7 @@ public class GoogleMail {
         return result;
     }
 
-    void markAsRead(@NonNull MailMessage message) throws IOException {
+    public void markAsRead(@NonNull MailMessage message) throws IOException {
         ModifyMessageRequest content = new ModifyMessageRequest()
                 .setRemoveLabelIds(ImmutableList.of("UNREAD")); /* case sensitive */
         service.users()
@@ -119,7 +119,7 @@ public class GoogleMail {
         log.debug("Message marked as read: " + message.getId());
     }
 
-    void trash(@NonNull MailMessage message) throws IOException {
+    public void trash(@NonNull MailMessage message) throws IOException {
         service.users()
                 .messages()
                 .trash(ME, message.getId())
@@ -154,7 +154,7 @@ public class GoogleMail {
             mimeMessage.setSubject(message.getSubject(), UTF_8);
             mimeMessage.setRecipients(TO, parseAddresses(message.getRecipients()));
 
-            if (!isEmpty(message.getReplyTo())) {
+            if (!Util.isNullOrEmpty(message.getReplyTo())) {
                 mimeMessage.setReplyTo(parseAddresses(message.getReplyTo()));
             }
 

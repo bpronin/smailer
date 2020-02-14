@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.bopr.android.smailer.remote.RemoteControlWorker;
 import com.bopr.android.smailer.sync.SyncManager;
 
 import org.slf4j.Logger;
@@ -38,7 +39,6 @@ public class Environment {
     public static void setupEnvironment(Context context) {
         log.debug("Application init");
 
-        AccountsObserver.enable(context);
         ContentObserverService.enable(context);
         ResendWorker.enable(context);
         RemoteControlWorker.enable(context);

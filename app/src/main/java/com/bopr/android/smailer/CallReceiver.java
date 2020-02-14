@@ -41,13 +41,14 @@ public class CallReceiver extends BroadcastReceiver {
     private static String lastCallNumber;
 
     @Override
+    @SuppressWarnings({"deprecation", "RedundantSuppression"}) // TODO: 06.02.2020 deprecated
     public void onReceive(Context context, Intent intent) {
         log.debug("Received intent: " + intent);
 
         String action = intent.getAction();
         if (action != null) {
             switch (action) {
-                case ACTION_NEW_OUTGOING_CALL: // TODO: 06.02.2020 deprecated
+                case ACTION_NEW_OUTGOING_CALL:
                     lastCallNumber = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
                     break;
                 case ACTION_PHONE_STATE_CHANGED:
@@ -68,13 +69,14 @@ public class CallReceiver extends BroadcastReceiver {
      * @param context context
      * @param intent  call state intent
      */
+    @SuppressWarnings({"deprecation", "RedundantSuppression"}) // TODO: 06.02.2020 deprecated
     private void onCallStateChanged(@NonNull Context context, @NonNull Intent intent) {
         String callState = intent.getStringExtra(EXTRA_STATE);
         if (callState != null && !lastCallState.equals(callState)) {
             if (callState.equals(EXTRA_STATE_RINGING)) {
                 isIncomingCall = true;
                 callStartTime = currentTimeMillis();
-                lastCallNumber = intent.getStringExtra(EXTRA_INCOMING_NUMBER);  // TODO: 06.02.2020 deprecated
+                lastCallNumber = intent.getStringExtra(EXTRA_INCOMING_NUMBER);
                 log.debug("Call received");
             } else if (callState.equals(EXTRA_STATE_OFFHOOK)) {
                 isIncomingCall = lastCallState.equals(EXTRA_STATE_RINGING);

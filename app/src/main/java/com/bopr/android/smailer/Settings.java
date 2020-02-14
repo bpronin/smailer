@@ -124,7 +124,7 @@ public class Settings extends SharedPreferencesWrapper {
      */
     public String getDeviceName() {
         String name = getString(PREF_DEVICE_ALIAS, "");
-        if (!Util.isEmpty(name)) {
+        if (!Util.isNullOrEmpty(name)) {
             return name;
         }
         return AndroidUtil.deviceName();

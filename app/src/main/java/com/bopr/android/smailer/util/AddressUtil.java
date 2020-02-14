@@ -1,5 +1,7 @@
 package com.bopr.android.smailer.util;
 
+import android.util.Patterns;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -9,6 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static androidx.core.util.PatternsCompat.EMAIL_ADDRESS;
+import static com.bopr.android.smailer.util.Util.commaSplit;
 import static com.bopr.android.smailer.util.Util.isQuoted;
 import static com.bopr.android.smailer.util.Util.safeEquals;
 
@@ -116,5 +119,18 @@ public class AddressUtil {
             return matcher.group();
         }
         return null;
+    }
+
+    public static boolean isValidEmailAddress(String text) {
+        return Patterns.EMAIL_ADDRESS.matcher(text).matches();
+    }
+
+    public static boolean isValidEmailAddressList(String text) {
+        for (String s : commaSplit(text)) {
+            if (!isValidEmailAddress(s)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

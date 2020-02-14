@@ -8,13 +8,13 @@ import androidx.preference.Preference;
 
 import com.bopr.android.smailer.GoogleAuthorizationHelper;
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.RemoteControlWorker;
+import com.bopr.android.smailer.remote.RemoteControlWorker;
 
 import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_ACCOUNT;
 import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_ENABLED;
 import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS;
 import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_NOTIFICATIONS;
-import static com.bopr.android.smailer.util.Util.isEmpty;
+import static com.bopr.android.smailer.util.Util.isNullOrEmpty;
 import static com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM;
 
 public class RemoteControlFragment extends BasePreferenceFragment {
@@ -67,11 +67,12 @@ public class RemoteControlFragment extends BasePreferenceFragment {
 
     private void updateAccountPreference() {
         String value = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT, "");
-        if (isEmpty(value)) {
-            /* cannot use null as "same as sender" due to gmail permission difference */
-            updateSummary(accountPreference, getString(R.string.not_specified), STYLE_ACCENTED);
+        if (isNullOrEmpty(value)) {
+            updateSummary(accountPreference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED);
+        } else if (!authorizator.isAccountExists(value)) {
+            updateSummary(accountPreference, value, SUMMARY_STYLE_UNDERWIVED);
         } else {
-            updateSummary(accountPreference, value, STYLE_DEFAULT);
+            updateSummary(accountPreference, value, SUMMARY_STYLE_DEFAULT);
         }
     }
 

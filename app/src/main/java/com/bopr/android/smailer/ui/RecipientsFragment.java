@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.bopr.android.smailer.Settings.PREF_RECIPIENTS_ADDRESS;
-import static com.bopr.android.smailer.util.AndroidUtil.isValidEmailAddress;
+import static com.bopr.android.smailer.util.AddressUtil.isValidEmailAddress;
 import static com.bopr.android.smailer.util.ResourceUtil.showToast;
 import static com.bopr.android.smailer.util.ResourceUtil.underwivedText;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
@@ -198,7 +198,7 @@ public class RecipientsFragment extends BaseFragment {
                             .pattern(R.string.recipient_already_exists)
                             .put("name", address)
                             .format());
-                } else if (!Util.isTrimEmpty(address)) {
+                } else if (!Util.isNullOrBlank(address)) {
                     /* note: if we rotated device reference to "this" is changed here */
                     Item newItem = new Item(address);
                     listAdapter.replaceItem(item, newItem);

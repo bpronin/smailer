@@ -1,4 +1,4 @@
-package com.bopr.android.smailer.sync;
+package com.bopr.android.smailer;
 
 import android.accounts.Account;
 import android.content.Context;
@@ -128,7 +128,7 @@ public class GoogleDrive {
                 .getFiles();
     }
 
-    void upload(@NonNull String filename, @NonNull Object object) throws IOException {
+    public void upload(@NonNull String filename, @NonNull Object object) throws IOException {
         Writer writer = new StringWriter();
         JsonGenerator generator = JacksonFactory.getDefaultInstance().createJsonGenerator(writer);
         generator.serialize(object);
@@ -138,7 +138,7 @@ public class GoogleDrive {
     }
 
     @Nullable
-    <T> T download(@NonNull String filename, @NonNull Class<? extends T> objectClass)
+    public <T> T download(@NonNull String filename, @NonNull Class<? extends T> objectClass)
             throws IOException {
         InputStream stream = open(filename);
         if (stream != null) {

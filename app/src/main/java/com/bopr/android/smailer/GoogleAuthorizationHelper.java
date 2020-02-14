@@ -5,12 +5,10 @@ import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager;
@@ -55,6 +53,10 @@ public class GoogleAuthorizationHelper {
         accountManager = new GoogleAccountManager(fragment.requireContext());
     }
 
+    public boolean isAccountExists(String accountName) {
+        return accountManager.getAccountByName(accountName) != null;
+    }
+
     /* todo: see https://developer.android.com/reference/android/accounts/AccountManager
     public void checkSelectedAccount() {
      try
@@ -92,6 +94,11 @@ public class GoogleAuthorizationHelper {
         }
     }
 
+    private Account getSelectedAccount() {
+        String accountName = settings.getString(settingName, null);
+        return accountManager.getAccountByName(accountName);
+    }
+
     private void requestPermission(String accountName) {
         log.debug("Requesting permission for: " + accountName);
 
@@ -104,16 +111,6 @@ public class GoogleAuthorizationHelper {
                 new AuthTokenAcquireCallback(accountName),
                 null  /* callback executing in main thread */
         );
-    }
-
-    private Account getSelectedAccount() {
-        String accountName = settings.getString(settingName, null);
-        return accountManager.getAccountByName(accountName);
-    }
-
-    @NonNull
-    public static Account primaryAccount(Context context) {
-        return new GoogleAccountManager(context).getAccounts()[0];
     }
 
     private class AuthTokenAcquireCallback implements AccountManagerCallback<Bundle> {

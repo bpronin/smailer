@@ -1,18 +1,18 @@
-package com.bopr.android.smailer;
+package com.bopr.android.smailer.remote;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.Scanner;
 
-import static com.bopr.android.smailer.RemoteControlTask.ADD_PHONE_TO_BLACKLIST;
-import static com.bopr.android.smailer.RemoteControlTask.ADD_PHONE_TO_WHITELIST;
-import static com.bopr.android.smailer.RemoteControlTask.ADD_TEXT_TO_BLACKLIST;
-import static com.bopr.android.smailer.RemoteControlTask.ADD_TEXT_TO_WHITELIST;
-import static com.bopr.android.smailer.RemoteControlTask.REMOVE_PHONE_FROM_BLACKLIST;
-import static com.bopr.android.smailer.RemoteControlTask.REMOVE_PHONE_FROM_WHITELIST;
-import static com.bopr.android.smailer.RemoteControlTask.REMOVE_TEXT_FROM_BLACKLIST;
-import static com.bopr.android.smailer.RemoteControlTask.REMOVE_TEXT_FROM_WHITELIST;
+import static com.bopr.android.smailer.remote.RemoteControlTask.ADD_PHONE_TO_BLACKLIST;
+import static com.bopr.android.smailer.remote.RemoteControlTask.ADD_PHONE_TO_WHITELIST;
+import static com.bopr.android.smailer.remote.RemoteControlTask.ADD_TEXT_TO_BLACKLIST;
+import static com.bopr.android.smailer.remote.RemoteControlTask.ADD_TEXT_TO_WHITELIST;
+import static com.bopr.android.smailer.remote.RemoteControlTask.REMOVE_PHONE_FROM_BLACKLIST;
+import static com.bopr.android.smailer.remote.RemoteControlTask.REMOVE_PHONE_FROM_WHITELIST;
+import static com.bopr.android.smailer.remote.RemoteControlTask.REMOVE_TEXT_FROM_BLACKLIST;
+import static com.bopr.android.smailer.remote.RemoteControlTask.REMOVE_TEXT_FROM_WHITELIST;
 import static com.bopr.android.smailer.util.AddressUtil.PHONE_PATTERN;
 import static com.bopr.android.smailer.util.Util.QUOTED_TEXT_PATTERN;
 
@@ -21,9 +21,9 @@ import static com.bopr.android.smailer.util.Util.QUOTED_TEXT_PATTERN;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public class RemoteControlTaskParser {
+class RemoteControlTaskParser {
     
-    public RemoteControlTask parse(String text) {
+    RemoteControlTask parse(String text) {
         RemoteControlTask task = new RemoteControlTask();
         Scanner scanner = new Scanner(text).useDelimiter("\\W+");
 

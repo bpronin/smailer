@@ -14,9 +14,9 @@ import org.junit.Test;
 
 import static android.Manifest.permission.GET_ACCOUNTS;
 import static android.Manifest.permission.READ_CONTACTS;
-import static com.bopr.android.smailer.GoogleAuthorizationHelper.primaryAccount;
 import static com.bopr.android.smailer.Settings.PREF_FILTER_PHONE_BLACKLIST;
 import static com.bopr.android.smailer.Settings.PREF_SYNC_TIME;
+import static com.bopr.android.smailer.util.AndroidUtil.primaryAccount;
 import static com.bopr.android.smailer.util.Util.asSet;
 import static org.junit.Assert.assertEquals;
 

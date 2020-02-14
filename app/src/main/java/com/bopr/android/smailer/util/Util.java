@@ -72,7 +72,7 @@ public class Util {
     }
 
     public static String capitalize(String text) {
-        if (Util.isEmpty(text)) {
+        if (Util.isNullOrEmpty(text)) {
             return text;
         }
         return text.substring(0, 1).toUpperCase(Locale.getDefault()) + text.substring(1);
@@ -83,24 +83,24 @@ public class Util {
         return String.format(Locale.US, "%d:%02d:%02d", seconds / 3600, (seconds % 3600) / 60, seconds % 60);
     }
 
-    public static boolean isEmpty(Set set) {
+    public static boolean isNullOrEmpty(Set set) {
         return set == null || set.isEmpty();
     }
 
     /**
      * Returns true if string is empty or null.
      */
-    public static boolean isEmpty(CharSequence s) {
+    public static boolean isNullOrEmpty(CharSequence s) {
         return s == null || s.length() == 0;
     }
 
-    public static boolean isTrimEmpty(String s) {
-        return isEmpty(s) || isEmpty(s.trim());
+    public static boolean isNullOrBlank(String s) {
+        return isNullOrEmpty(s) || isNullOrEmpty(s.trim());
     }
 
     public static boolean allIsEmpty(String... ss) {
         for (String s : ss) {
-            if (!isEmpty(s)) {
+            if (!isNullOrEmpty(s)) {
                 return false;
             }
         }
@@ -109,7 +109,7 @@ public class Util {
 
     public static boolean anyIsEmpty(String... ss) {
         for (String s : ss) {
-            if (isEmpty(s)) {
+            if (isNullOrEmpty(s)) {
                 return true;
             }
         }
@@ -133,12 +133,12 @@ public class Util {
     }
 
     public static List<String> split(String value, String divider, boolean trim) {
-        if (!isEmpty(value)) {
+        if (!isNullOrEmpty(value)) {
             String s = value;
             if (trim) {
                 s = value.replaceAll(" ", "");
             }
-            if (!isEmpty(s)) {
+            if (!isNullOrEmpty(s)) {
                 return asList(s.split(divider));
             }
         }
@@ -173,7 +173,7 @@ public class Util {
     }
 
     public static Locale stringToLocale(String s) {
-        if (!isEmpty(s)) {
+        if (!isNullOrEmpty(s)) {
             if (s.equals(DEFAULT)) {
                 return Locale.getDefault();
             } else {
@@ -212,7 +212,7 @@ public class Util {
 
     @Nullable
     public static String unquoteRegex(String s) {
-        if (!isEmpty(s)) {
+        if (!isNullOrEmpty(s)) {
             String[] ss = s.split(REGEX_);
             if (ss.length > 1) {
                 return ss[1];

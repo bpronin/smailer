@@ -29,11 +29,14 @@ import com.bopr.android.smailer.PhoneEventFilter;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.ui.EditFilterListItemDialogFragment.OnClose;
 import com.bopr.android.smailer.util.TagFormatter;
+import com.bopr.android.smailer.util.Util;
 
 import java.util.List;
 import java.util.Set;
 
 import static androidx.recyclerview.widget.RecyclerView.NO_POSITION;
+import static com.bopr.android.smailer.Database.registerDatabaseListener;
+import static com.bopr.android.smailer.Database.unregisterDatabaseListener;
 import static com.bopr.android.smailer.PhoneEvent.REASON_NUMBER_BLACKLISTED;
 import static com.bopr.android.smailer.PhoneEvent.REASON_TEXT_BLACKLISTED;
 import static com.bopr.android.smailer.PhoneEvent.REASON_TRIGGER_OFF;
@@ -46,8 +49,7 @@ import static com.bopr.android.smailer.util.ResourceUtil.eventTypeImage;
 import static com.bopr.android.smailer.util.ResourceUtil.showToast;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.Util.formatDuration;
-import static com.bopr.android.smailer.util.Util.isEmpty;
-import static com.bopr.android.smailer.util.Util.isTrimEmpty;
+import static com.bopr.android.smailer.util.Util.isNullOrBlank;
 
 
 /**
@@ -76,7 +78,7 @@ public class HistoryFragment extends BaseFragment {
         settings.registerOnSharedPreferenceChangeListener(settingsChangeListener);
 
         database = new Database(getContext());
-        databaseListener = database.registerListener(new DatabaseListener());
+        databaseListener = registerDatabaseListener(requireContext(), new DatabaseListener());
     }
 
     @Override
@@ -99,7 +101,7 @@ public class HistoryFragment extends BaseFragment {
     public void onDestroy() {
         super.onDestroy();
         settings.unregisterOnSharedPreferenceChangeListener(settingsChangeListener);
-        database.unregisterListener(databaseListener);
+        unregisterDatabaseListener(requireContext(), databaseListener);
         database.close();
     }
 
@@ -211,13 +213,13 @@ public class HistoryFragment extends BaseFragment {
 
                 @Override
                 public void onOkClick(String number) {
-                    if (!isEmpty(number)) {
+                    if (!Util.isNullOrEmpty(number)) {
                         Set<String> blacklist = phoneEventFilter.getPhoneBlacklist();
                         if (blacklist.contains(number)) {
                             showToast(requireContext(), formatter.pattern(R.string.item_already_exists)
                                     .put("item", number).format()
                             );
-                        } else if (!isTrimEmpty(number)) {
+                        } else if (!isNullOrBlank(number)) {
                             blacklist.add(number);
                             settings.putFilter(phoneEventFilter);
                         }
@@ -235,13 +237,13 @@ public class HistoryFragment extends BaseFragment {
 
                 @Override
                 public void onOkClick(String number) {
-                    if (!isEmpty(number)) {
+                    if (!Util.isNullOrEmpty(number)) {
                         Set<String> whitelist = phoneEventFilter.getPhoneWhitelist();
                         if (whitelist.contains(number)) {
                             showToast(requireContext(), formatter.pattern(R.string.item_already_exists)
                                     .put("item", number).format()
                             );
-                        } else if (!isTrimEmpty(number)) {
+                        } else if (!isNullOrBlank(number)) {
                             whitelist.add(number);
                             settings.putFilter(phoneEventFilter);
                         }

@@ -11,6 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bopr.android.smailer.PhoneEventFilter;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.util.Util;
@@ -21,13 +28,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.RecyclerView;
 
 import static androidx.recyclerview.widget.RecyclerView.NO_POSITION;
 import static com.bopr.android.smailer.util.ResourceUtil.showToast;
@@ -225,7 +225,7 @@ abstract class FilterListFragment extends BaseFragment {
                             .pattern(R.string.item_already_exists)
                             .put("item", getItemText(value))
                             .format());
-                } else if (!Util.isTrimEmpty(value)) {
+                } else if (!Util.isNullOrBlank(value)) {
                     /* note: if we rotated device reference to "this" is changed here */
                     listAdapter.replaceItem(item, new Item(value));
                     persistItems();

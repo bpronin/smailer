@@ -25,7 +25,6 @@ import static com.bopr.android.smailer.PhoneEvent.STATE_IGNORED;
 import static com.bopr.android.smailer.PhoneEvent.STATE_PENDING;
 import static com.bopr.android.smailer.PhoneEvent.STATE_PROCESSED;
 import static com.bopr.android.smailer.util.AndroidUtil.deviceName;
-import static com.bopr.android.smailer.util.Util.requireNonNull;
 import static com.bopr.android.smailer.util.db.DbUtil.replaceTable;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
@@ -276,34 +275,8 @@ public class Database {
         context.deleteDatabase(name);
     }
 
-
-//    /* Content provider support */
-//    public Cursor query(String table, String[] projection, String selection, String[] selectionArgs,
-//                        String sortOrder) {
-//        return helper.getReadableDatabase().query(table, projection, selection, selectionArgs,
-//                null, null, sortOrder);
-//    }
-
     public long put(String table, ContentValues values) {
         return helper.getWritableDatabase().replace(table, null, values);
-    }
-
-//    public int delete(String table, String selection, String[] selectionArgs) {
-//        return helper.getWritableDatabase().delete(table, selection, selectionArgs);
-//    }
-
-//    public int update(String table, ContentValues values, String selection, String[] selectionArgs) {
-//        return helper.getWritableDatabase().update(table, values, selection, selectionArgs);
-//    }
-
-    public BroadcastReceiver registerListener(@NonNull BroadcastReceiver listener) {
-        IntentFilter filter = new IntentFilter(DATABASE_EVENT);
-        LocalBroadcastManager.getInstance(context).registerReceiver(requireNonNull(listener), filter);
-        return listener;
-    }
-
-    public void unregisterListener(@NonNull BroadcastReceiver listener) {
-        LocalBroadcastManager.getInstance(context).unregisterReceiver(listener);
     }
 
     public void notifyChanged() {
@@ -340,6 +313,18 @@ public class Database {
             strings[i] = valueOf(values[i]);
         }
         return strings;
+    }
+
+    public static BroadcastReceiver registerDatabaseListener(@NonNull Context context,
+                                                             @NonNull BroadcastReceiver listener) {
+        IntentFilter filter = new IntentFilter(DATABASE_EVENT);
+        LocalBroadcastManager.getInstance(context).registerReceiver(listener, filter);
+        return listener;
+    }
+
+    public static void unregisterDatabaseListener(@NonNull Context context,
+                                                  @NonNull BroadcastReceiver listener) {
+        LocalBroadcastManager.getInstance(context).unregisterReceiver(listener);
     }
 
     private class DbHelper extends SQLiteOpenHelper {

@@ -67,7 +67,7 @@ public class PhoneEvent implements Parcelable {
     }
 
     public boolean isSms() {
-        return !Util.isEmpty(text);
+        return !Util.isNullOrEmpty(text);
     }
 
     public boolean isIncoming() {

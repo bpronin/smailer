@@ -1,4 +1,4 @@
-package com.bopr.android.smailer;
+package com.bopr.android.smailer.remote;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +8,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.JobIntentService;
 
+import com.bopr.android.smailer.GoogleMail;
+import com.bopr.android.smailer.MailMessage;
+import com.bopr.android.smailer.Notifications;
+import com.bopr.android.smailer.PhoneEventFilter;
+import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.Settings;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,19 +22,19 @@ import java.util.List;
 import java.util.Set;
 
 import static com.bopr.android.smailer.Notifications.ACTION_SHOW_REMOTE_CONTROL;
-import static com.bopr.android.smailer.RemoteControlTask.ADD_PHONE_TO_BLACKLIST;
-import static com.bopr.android.smailer.RemoteControlTask.ADD_PHONE_TO_WHITELIST;
-import static com.bopr.android.smailer.RemoteControlTask.ADD_TEXT_TO_BLACKLIST;
-import static com.bopr.android.smailer.RemoteControlTask.ADD_TEXT_TO_WHITELIST;
-import static com.bopr.android.smailer.RemoteControlTask.REMOVE_PHONE_FROM_BLACKLIST;
-import static com.bopr.android.smailer.RemoteControlTask.REMOVE_PHONE_FROM_WHITELIST;
-import static com.bopr.android.smailer.RemoteControlTask.REMOVE_TEXT_FROM_BLACKLIST;
-import static com.bopr.android.smailer.RemoteControlTask.REMOVE_TEXT_FROM_WHITELIST;
-import static com.bopr.android.smailer.RemoteControlTask.SEND_SMS_TO_CALLER;
 import static com.bopr.android.smailer.Settings.PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_ACCOUNT;
 import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS;
 import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_NOTIFICATIONS;
+import static com.bopr.android.smailer.remote.RemoteControlTask.ADD_PHONE_TO_BLACKLIST;
+import static com.bopr.android.smailer.remote.RemoteControlTask.ADD_PHONE_TO_WHITELIST;
+import static com.bopr.android.smailer.remote.RemoteControlTask.ADD_TEXT_TO_BLACKLIST;
+import static com.bopr.android.smailer.remote.RemoteControlTask.ADD_TEXT_TO_WHITELIST;
+import static com.bopr.android.smailer.remote.RemoteControlTask.REMOVE_PHONE_FROM_BLACKLIST;
+import static com.bopr.android.smailer.remote.RemoteControlTask.REMOVE_PHONE_FROM_WHITELIST;
+import static com.bopr.android.smailer.remote.RemoteControlTask.REMOVE_TEXT_FROM_BLACKLIST;
+import static com.bopr.android.smailer.remote.RemoteControlTask.REMOVE_TEXT_FROM_WHITELIST;
+import static com.bopr.android.smailer.remote.RemoteControlTask.SEND_SMS_TO_CALLER;
 import static com.bopr.android.smailer.util.AddressUtil.containsEmail;
 import static com.bopr.android.smailer.util.AddressUtil.extractEmail;
 import static com.bopr.android.smailer.util.AddressUtil.findPhone;
@@ -189,6 +196,13 @@ public class RemoteControlService extends JobIntentService {
         addToFilterList(filter, filter.getPhoneBlacklist(), phone, R.string.phone_remotely_added_to_blacklist);
     }
 
+    private void sendSms(@Nullable String message, @Nullable String phone) {
+        SmsManager manager = SmsManager.getDefault();
+        manager.sendMultipartTextMessage(phone, null, manager.divideMessage(message), null, null);
+
+        log.debug("Sent SMS: " + message + " to " + phone);
+    }
+
     private void addToFilterList(PhoneEventFilter filter, Set<String> list, String text, int messageRes) {
         if (!list.contains(text)) {
             list.add(text);
@@ -217,13 +231,6 @@ public class RemoteControlService extends JobIntentService {
         }
     }
 
-    private void sendSms(@Nullable String message, @Nullable String phone) {
-        SmsManager manager = SmsManager.getDefault();
-        manager.sendMultipartTextMessage(phone, null, manager.divideMessage(message), null, null);
-
-        log.debug("Sent SMS: " + message + " to " + phone);
-    }
-
     private void saveFilter(PhoneEventFilter filter, String text, int messageRes) {
         settings.putFilter(filter);
         if (settings.getBoolean(PREF_REMOTE_CONTROL_NOTIFICATIONS, false)) {
@@ -231,7 +238,7 @@ public class RemoteControlService extends JobIntentService {
         }
     }
 
-    public static void start(Context context) {
+    public static void startRemoteControlService(Context context) {
         log.debug("Starting service");
 
         enqueueWork(context, RemoteControlService.class, JOB_ID,

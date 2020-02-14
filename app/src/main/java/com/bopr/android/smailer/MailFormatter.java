@@ -32,7 +32,6 @@ import static com.bopr.android.smailer.util.AddressUtil.escapePhone;
 import static com.bopr.android.smailer.util.ContentUtils.isReadContactsPermissionsDenied;
 import static com.bopr.android.smailer.util.ResourceUtil.eventTypeText;
 import static com.bopr.android.smailer.util.Util.formatDuration;
-import static com.bopr.android.smailer.util.Util.isEmpty;
 import static java.lang.String.valueOf;
 
 /**
@@ -161,9 +160,9 @@ class MailFormatter {
                 .pattern(BODY_PATTERN)
                 .put("header", formatHeader())
                 .put("message", formatMessage())
-                .put("footer_line", !isEmpty(footer) ? LINE : null)
+                .put("footer_line", !Util.isNullOrEmpty(footer) ? LINE : null)
                 .put("footer", footer)
-                .put("remote_line", !isEmpty(remoteLinks) ? LINE : null)
+                .put("remote_line", !Util.isNullOrEmpty(remoteLinks) ? LINE : null)
                 .put("remote_links", remoteLinks)
                 .format();
     }
@@ -232,26 +231,26 @@ class MailFormatter {
 
             StringBuilder text = new StringBuilder();
 
-            if (!isEmpty(callerText)) {
+            if (!Util.isNullOrEmpty(callerText)) {
                 text.append(callerText);
             }
 
-            if (!isEmpty(timeText)) {
-                if (!isEmpty(text)) {
+            if (!Util.isNullOrEmpty(timeText)) {
+                if (!Util.isNullOrEmpty(text)) {
                     text.append("<br>");
                 }
                 text.append(timeText);
             }
 
-            if (!isEmpty(locationText)) {
-                if (!isEmpty(text)) {
+            if (!Util.isNullOrEmpty(locationText)) {
+                if (!Util.isNullOrEmpty(text)) {
                     text.append("<br>");
                 }
                 text.append(locationText);
             }
 
-            if (!isEmpty(deviceNameText) || !isEmpty(sendTimeText)) {
-                if (!isEmpty(text)) {
+            if (!Util.isNullOrEmpty(deviceNameText) || !Util.isNullOrEmpty(sendTimeText)) {
+                if (!Util.isNullOrEmpty(text)) {
                     text.append("<br>");
                 }
 
@@ -260,7 +259,7 @@ class MailFormatter {
                         .put("time", sendTimeText));
             }
 
-            if (!isEmpty(text)) {
+            if (!Util.isNullOrEmpty(text)) {
                 text.insert(0, "<small>");
                 text.append("</small>");
             }
@@ -285,7 +284,7 @@ class MailFormatter {
 
         String name = this.contactName;
         String phoneQuery = encodeUrl(event.getPhone());
-        if (isEmpty(name)) {
+        if (Util.isNullOrEmpty(name)) {
             if (isReadContactsPermissionsDenied(context)) { /* base context here */
                 name = resources.getString(R.string.contact_no_permission_read_contact);
             } else {
@@ -307,7 +306,7 @@ class MailFormatter {
 
     @Nullable
     private String formatDeviceName() {
-        if (!isEmpty(deviceName)) {
+        if (!Util.isNullOrEmpty(deviceName)) {
             return " " + formatter.pattern(R.string._from_device)
                     .put("device_name", deviceName)
                     .format();
@@ -354,7 +353,7 @@ class MailFormatter {
 
     @Nullable
     private String formatRemoteControlLinks() {
-        if (contentOptions.contains(VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS) && !isEmpty(serviceAccount)) {
+        if (contentOptions.contains(VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS) && !Util.isNullOrEmpty(serviceAccount)) {
             return formatter
                     .pattern(REPLY_LINKS_PATTERN)
                     .put("title", formatter

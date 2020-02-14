@@ -2,6 +2,8 @@ package com.bopr.android.smailer;
 
 import androidx.annotation.NonNull;
 
+import com.bopr.android.smailer.util.Util;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -17,7 +19,6 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
 import static com.bopr.android.smailer.util.AddressUtil.normalizePhone;
 import static com.bopr.android.smailer.util.AddressUtil.phoneToRegEx;
-import static com.bopr.android.smailer.util.Util.isEmpty;
 import static com.bopr.android.smailer.util.Util.unquoteRegex;
 
 /**
@@ -136,7 +137,7 @@ public class PhoneEventFilter {
     }
 
     private boolean matchesText(Collection<String> patterns, String text) {
-        if (!isEmpty(text)) {
+        if (!Util.isNullOrEmpty(text)) {
             for (String s : patterns) {
                 String pattern = unquoteRegex(s);
                 if (((pattern != null) && text.matches(pattern)) || text.contains(s)) {

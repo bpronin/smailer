@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
+import static com.bopr.android.smailer.PendingCallProcessorService.startPendingCallProcessorService;
 import static com.bopr.android.smailer.Settings.PREF_RESEND_UNSENT;
 import static com.bopr.android.smailer.Settings.settings;
 
@@ -41,7 +42,7 @@ public class ResendWorker extends Worker {
 
         Context context = getApplicationContext();
         if (isFeatureEnabled(context)) {
-            PendingCallProcessorService.start(context);
+            startPendingCallProcessorService(context);
         }
         return Result.success();
     }
@@ -65,6 +66,7 @@ public class ResendWorker extends Worker {
                     .setConstraints(constraints)
                     .build();
             manager.enqueueUniquePeriodicWork(WORKER_TAG, ExistingPeriodicWorkPolicy.REPLACE, request);
+
             log.debug("Enabled");
         } else {
             log.debug("Disabled");

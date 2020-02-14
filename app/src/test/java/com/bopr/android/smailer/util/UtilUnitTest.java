@@ -55,16 +55,16 @@ public class UtilUnitTest {
 
     @Test
     public void testIsEmpty() {
-        assertFalse(Util.isEmpty("A"));
-        assertTrue(Util.isEmpty(""));
-        assertTrue(Util.isEmpty((String) null));
+        assertFalse(Util.isNullOrEmpty("A"));
+        assertTrue(Util.isNullOrEmpty(""));
+        assertTrue(Util.isNullOrEmpty((String) null));
     }
 
     @Test
     public void testIsTrimEmpty() {
-        assertFalse(Util.isTrimEmpty("A"));
-        assertTrue(Util.isTrimEmpty("  "));
-        assertTrue(Util.isTrimEmpty(null));
+        assertFalse(Util.isNullOrBlank("A"));
+        assertTrue(Util.isNullOrBlank("  "));
+        assertTrue(Util.isNullOrBlank(null));
     }
 
     @Test

@@ -1,4 +1,4 @@
-package com.bopr.android.smailer;
+package com.bopr.android.smailer.remote;
 
 import android.content.Context;
 
@@ -16,9 +16,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_ACCOUNT;
 import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_ENABLED;
 import static com.bopr.android.smailer.Settings.settings;
+import static com.bopr.android.smailer.remote.RemoteControlService.startRemoteControlService;
 
 /**
  * Periodically checks email out for remote tasks.
@@ -39,9 +39,10 @@ public class RemoteControlWorker extends Worker {
     @Override
     public Result doWork() {
         log.debug("Working");
+
         Context context = getApplicationContext();
         if (isFeatureEnabled(context)) {
-            RemoteControlService.start(context);
+            startRemoteControlService(context);
         }
         return Result.success();
     }
@@ -55,7 +56,7 @@ public class RemoteControlWorker extends Worker {
 
         manager.cancelAllWorkByTag(WORKER_TAG);
 
-        if (isFeatureEnabled(context) && !settings(context).isNull(PREF_REMOTE_CONTROL_ACCOUNT)) {
+        if (isFeatureEnabled(context)) {
             Constraints constraints = new Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)
                     .build();
@@ -65,6 +66,7 @@ public class RemoteControlWorker extends Worker {
                     .setConstraints(constraints)
                     .build();
             manager.enqueueUniquePeriodicWork(WORKER_TAG, ExistingPeriodicWorkPolicy.REPLACE, request);
+
             log.debug("Enabled");
         } else {
             log.debug("Disabled");

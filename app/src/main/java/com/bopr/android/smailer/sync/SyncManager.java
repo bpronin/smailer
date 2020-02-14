@@ -20,6 +20,7 @@ import static android.content.ContentResolver.addPeriodicSync;
 import static android.content.ContentResolver.removePeriodicSync;
 import static android.content.ContentResolver.requestSync;
 import static android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import static com.bopr.android.smailer.Database.registerDatabaseListener;
 import static com.bopr.android.smailer.Settings.PREF_FILTER_PHONE_BLACKLIST;
 import static com.bopr.android.smailer.Settings.PREF_FILTER_PHONE_WHITELIST;
 import static com.bopr.android.smailer.Settings.PREF_FILTER_TEXT_BLACKLIST;
@@ -44,7 +45,7 @@ public class SyncManager {
     private SyncManager(Context context) {
         this.context = context;
         database = new Database(context);
-        database.registerListener(databaseListener);
+        registerDatabaseListener(context, databaseListener);
 
         settings = new Settings(context);
         settings.registerOnSharedPreferenceChangeListener(settingsListener);
