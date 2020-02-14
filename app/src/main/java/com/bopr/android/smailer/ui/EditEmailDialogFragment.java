@@ -18,8 +18,10 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.util.ContentUtils;
 import com.bopr.android.smailer.util.validator.EmailTextValidator;
+
+import static com.bopr.android.smailer.util.ContentUtils.createPickContactEmailIntent;
+import static com.bopr.android.smailer.util.ContentUtils.getEmailAddressFromIntent;
 
 /**
  * Email editor dialog.
@@ -75,7 +77,7 @@ public class EditEmailDialogFragment extends DialogFragment {
 
                 @Override
                 public void onClick(View v) {
-                    startActivityForResult(ContentUtils.createPickContactEmailIntent(), PICK_CONTACT_REQUEST);
+                    startActivityForResult(createPickContactEmailIntent(), PICK_CONTACT_REQUEST);
                 }
             });
 
@@ -108,7 +110,7 @@ public class EditEmailDialogFragment extends DialogFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == PICK_CONTACT_REQUEST && resultCode == Activity.RESULT_OK) {
-            String email = ContentUtils.getEmailAddressFromIntent(requireContext(), intent);
+            String email = getEmailAddressFromIntent(requireContext(), intent);
             editText.setText(email);
         }
     }

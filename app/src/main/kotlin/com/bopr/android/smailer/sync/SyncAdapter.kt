@@ -71,7 +71,8 @@ class SyncAdapter(context: Context, autoInitialize: Boolean) : AbstractThreadedS
 
     private fun getData(): SyncData {
         val events = mutableListOf<SyncData.Event>()
-        database.events.forEach { event ->
+        val rowSet = database.events
+        rowSet.forEach { event ->
             events.add(eventToData(event))
         }
 

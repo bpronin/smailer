@@ -12,13 +12,14 @@ import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.bopr.android.smailer.util.db.FieldDataConverter;
 import com.bopr.android.smailer.util.db.RowSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
+
+import kotlin.jvm.functions.Function2;
 
 import static android.database.sqlite.SQLiteDatabase.CONFLICT_IGNORE;
 import static com.bopr.android.smailer.PhoneEvent.STATE_IGNORED;
@@ -378,33 +379,35 @@ public class Database {
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             /* see https://www.techonthenet.com/sqlite/tables/alter_table.php */
             if (oldVersion < DB_VERSION) {
-                replaceTable(db, TABLE_EVENTS, EVENTS_TABLE_SQL, new FieldDataConverter() {
+                replaceTable(db, TABLE_EVENTS, EVENTS_TABLE_SQL,
+                        new Function2<String, Cursor, String>() {
 
-                    @Override
-                    public String convert(String column, Cursor cursor) {
-                        String s = super.convert(column, cursor);
-                        if (column.equals(COLUMN_STATE)) {
-                            switch (s) {
-                                case "PENDING":
-                                    return valueOf(STATE_PENDING);
-                                case "IGNORED":
-                                    return valueOf(STATE_IGNORED);
-                                case "PROCESSED":
-                                    return valueOf(STATE_PROCESSED);
-                                default:
-                                    return s;
-                            }
-                        } else if (column.equals(COLUMN_RECIPIENT)) {
-                            if (s == null) {
-                                return deviceName();
-                            } else {
+                            @Override
+                            public String invoke(@NonNull String column, @NonNull Cursor cursor) {
+                                String s = cursor.getString(cursor.getColumnIndex(column));
+                                if (column.equals(COLUMN_STATE)) {
+                                    if (s != null) {
+                                        switch (s) {
+                                            case "PENDING":
+                                                return valueOf(STATE_PENDING);
+                                            case "IGNORED":
+                                                return valueOf(STATE_IGNORED);
+                                            case "PROCESSED":
+                                                return valueOf(STATE_PROCESSED);
+                                            default:
+                                                return s;
+                                        }
+                                    }
+                                } else if (column.equals(COLUMN_RECIPIENT)) {
+                                    if (s == null) {
+                                        return deviceName();
+                                    } else {
+                                        return s;
+                                    }
+                                }
                                 return s;
                             }
-                        }
-
-                        return s;
-                    }
-                });
+                        });
             }
 
             log.debug("Upgraded");
@@ -417,7 +420,7 @@ public class Database {
      */
     public static class PhoneEventRowSet extends RowSet<PhoneEvent> {
 
-        public PhoneEventRowSet(Cursor cursor) {
+        public PhoneEventRowSet(@NonNull Cursor cursor) {
             super(cursor);
         }
 

@@ -1,5 +1,6 @@
 package com.bopr.android.smailer
 
+import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Context
 import android.content.Intent
@@ -54,25 +55,25 @@ class ContentObserverService : Service() {
         return null
     }
 
+    @SuppressLint("Recycle")
     private fun processOutgoingSms(id: String) {
         log.debug("Processing outgoing sms: $id")
 
-        val query = contentResolver.query(CONTENT_SMS_SENT, null, "_id=?", arrayOf(id), null)
-        val event = SentSmsRowSet(query).findFirst()
-        if (event != null) {
-            startCallProcessingService(this, event)
+        val cursor = contentResolver.query(CONTENT_SMS_SENT, null, "_id=?", arrayOf(id), null)
+        SentSmsRowSet(cursor!!).findFirst()?.let {
+            startCallProcessingService(this, it)
         }
     }
 
-    private inner class SentSmsRowSet(query: Cursor?) : RowSet<PhoneEvent?>(query) {
+    private inner class SentSmsRowSet(cursor: Cursor) : RowSet<PhoneEvent>(cursor) {
 
         override fun get(): PhoneEvent {
             val date = getLong("date")
             val event = PhoneEvent()
             event.isIncoming = false
             event.acceptor = AndroidUtil.deviceName()
-            event.phone = getString("address")
-            event.startTime = date
+            event.phone = getString("address")!!
+            event.startTime = date!!
             event.endTime = date
             event.text = getString("body")
             return event
