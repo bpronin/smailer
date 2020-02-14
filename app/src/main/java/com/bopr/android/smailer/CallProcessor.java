@@ -5,7 +5,6 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import com.bopr.android.smailer.util.TextUtil;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 
 import org.slf4j.Logger;
@@ -26,10 +25,9 @@ import static com.bopr.android.smailer.Settings.PREF_NOTIFY_SEND_SUCCESS;
 import static com.bopr.android.smailer.Settings.PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_ACCOUNT;
 import static com.bopr.android.smailer.Settings.PREF_SENDER_ACCOUNT;
-import static com.bopr.android.smailer.util.AddressUtil.isValidEmailAddressList;
 import static com.bopr.android.smailer.util.ContentUtils.getContactName;
 import static com.bopr.android.smailer.util.ContentUtils.markSmsAsRead;
-import static com.bopr.android.smailer.util.TextUtil.isStringEmpty;
+import static com.bopr.android.smailer.util.TextUtil.isNullOrEmpty;
 import static com.bopr.android.smailer.util.TextUtil.isValidEmailAddressList;
 import static com.google.api.services.gmail.GmailScopes.GMAIL_SEND;
 
@@ -38,7 +36,7 @@ import static com.google.api.services.gmail.GmailScopes.GMAIL_SEND;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-@SuppressWarnings("WeakerAccess") /* tests mocking required public */
+@SuppressWarnings({"WeakerAccess", "RedundantSuppression"}) /* tests mocking required public */
 public class CallProcessor {
 
     private static Logger log = LoggerFactory.getLogger("CallProcessor");
@@ -162,8 +160,7 @@ public class CallProcessor {
     private String requireSender(boolean silent) throws Exception {
         String s = settings.getString(PREF_SENDER_ACCOUNT, null);
 
-        if (isStringEmpty(s)) {
-        if (TextUtil.isNullOrEmpty(s)) {
+        if (isNullOrEmpty(s)) {
             showErrorNotification(R.string.no_account_specified, silent);
             throw new Exception("Account not specified");
         }
@@ -173,8 +170,7 @@ public class CallProcessor {
     private String requireRecipient(boolean silent) throws Exception {
         String s = settings.getString(PREF_RECIPIENTS_ADDRESS, null);
 
-        if (isStringEmpty(s)) {
-        if (TextUtil.isNullOrEmpty(s)) {
+        if (isNullOrEmpty(s)) {
             showErrorNotification(R.string.no_recipients_specified, silent);
             throw new Exception("Recipients not specified");
         }

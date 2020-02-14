@@ -95,7 +95,7 @@ public class PermissionsHelper implements SharedPreferences.OnSharedPreferenceCh
     /**
      * To be added into activity's onRequestPermissionsResult()
      */
-    public void handleRequestResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == requestResultCode) {
             Set<String> deniedPermissions = new HashSet<>();
 

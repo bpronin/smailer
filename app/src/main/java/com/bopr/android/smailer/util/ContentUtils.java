@@ -19,7 +19,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 import static android.provider.ContactsContract.CommonDataKinds.Email;
 import static android.provider.ContactsContract.CommonDataKinds.Phone;
 import static android.provider.ContactsContract.PhoneLookup;
-import static com.bopr.android.smailer.util.TextUtil.isStringEmpty;
+import static com.bopr.android.smailer.util.TextUtil.isNullOrEmpty;
 import static com.bopr.android.smailer.util.Util.requireNonNull;
 
 /**
@@ -34,7 +34,7 @@ public class ContentUtils {
     @Nullable
     public static String getContactName(@NonNull Context context, @NonNull String phone) {
         String result = null;
-        if (requireReadContactPermission(context) && !isStringEmpty(phone)) {
+        if (requireReadContactPermission(context) && !isNullOrEmpty(phone)) {
             Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phone));
             Cursor cursor = context.getContentResolver().query(uri,
                     new String[]{PhoneLookup.DISPLAY_NAME}, null, null, null);

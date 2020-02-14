@@ -8,7 +8,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
-import com.bopr.android.smailer.Database
+import com.bopr.android.smailer.Database.registerDatabaseListener
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.*
 import com.bopr.android.smailer.sync.AppContentProvider.Companion.AUTHORITY
@@ -17,16 +17,15 @@ import org.slf4j.LoggerFactory
 
 class SyncManager private constructor(context: Context) {
 
-    private val database: Database = Database(context)
     private val settings: Settings = Settings(context)
     private val databaseListener = DatabaseListener()
     private val settingsListener = SettingsListener()
     private var account: Account? = null
 
     init {
-        database.registerListener(databaseListener)
-        settings.registerOnSharedPreferenceChangeListener(settingsListener)
         account = syncAccount(context)
+        settings.registerOnSharedPreferenceChangeListener(settingsListener)
+        registerDatabaseListener(context, databaseListener)
     }
 
 /*

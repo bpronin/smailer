@@ -14,10 +14,10 @@ object TextUtil {
     private const val REGEX_ = "REGEX:"
 
     @JvmStatic
-    fun isStringEmpty(s: CharSequence?): Boolean = s.isNullOrEmpty()
+    fun isNullOrEmpty(s: CharSequence?): Boolean = s.isNullOrEmpty()
 
     @JvmStatic
-    fun isTrimEmpty(s: CharSequence?): Boolean = s.isNullOrBlank()
+    fun isNullOrBlank(s: CharSequence?): Boolean = s.isNullOrBlank()
 
     @JvmStatic
     fun quoteRegex(s: String): String {

@@ -18,6 +18,8 @@ import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.ResendWorker;
 import com.bopr.android.smailer.util.AndroidUtil;
 
+import static com.bopr.android.smailer.Database.registerDatabaseListener;
+import static com.bopr.android.smailer.Database.unregisterDatabaseListener;
 import static com.bopr.android.smailer.Settings.PREF_DEVICE_ALIAS;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_LOCALE;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_TRIGGERS;
@@ -28,8 +30,8 @@ import static com.bopr.android.smailer.Settings.PREF_RULES;
 import static com.bopr.android.smailer.Settings.PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
-import static com.bopr.android.smailer.util.TextUtil.isStringEmpty;
-import static com.bopr.android.smailer.util.TextUtil.isTrimEmpty;
+import static com.bopr.android.smailer.util.TextUtil.isNullOrBlank;
+import static com.bopr.android.smailer.util.TextUtil.isNullOrEmpty;
 import static com.bopr.android.smailer.util.TextUtil.isValidEmailAddressList;
 import static com.google.api.services.drive.DriveScopes.DRIVE_APPDATA;
 import static com.google.api.services.gmail.GmailScopes.GMAIL_SEND;
@@ -61,7 +63,7 @@ public class MainFragment extends BasePreferenceFragment {
         settings.registerOnSharedPreferenceChangeListener(settingsListener);
 
         database = new Database(getContext());
-        databaseListener = database.registerListener(new DatabaseListener());
+        databaseListener = registerDatabaseListener(requireContext(), new DatabaseListener());
 
         permissionsHelper.checkAll();
         requireIgnoreBatteryOptimization(requireContext());
@@ -102,8 +104,8 @@ public class MainFragment extends BasePreferenceFragment {
     @Override
     public void onDestroy() {
         settings.unregisterOnSharedPreferenceChangeListener(settingsListener);
-        database.unregisterListener(databaseListener);
         database.close();
+        unregisterDatabaseListener(requireContext(), databaseListener);
         super.onDestroy();
     }
 
@@ -123,20 +125,22 @@ public class MainFragment extends BasePreferenceFragment {
 
     private void updateAccountPreference() {
         String value = settings.getString(PREF_SENDER_ACCOUNT, "");
-        if (isTrimEmpty(value)) {
-            updateSummary(accountPreference, getString(R.string.not_specified), STYLE_ACCENTED);
+        if (isNullOrBlank(value)) {
+            updateSummary(accountPreference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED);
+        } else if (!authorizator.isAccountExists(value)) {
+            updateSummary(accountPreference, value, SUMMARY_STYLE_UNDERWIVED);
         } else {
-            updateSummary(accountPreference, value, STYLE_DEFAULT);
+            updateSummary(accountPreference, value, SUMMARY_STYLE_DEFAULT);
         }
     }
 
     private void updateRecipientsPreference() {
-        String value = settings.getString(PREF_RECIPIENTS_ADDRESS, null);
-        if (isTrimEmpty(value)) {
-            updateSummary(recipientsPreference, getString(R.string.not_specified), STYLE_ACCENTED);
+        String value = settings.getString(PREF_RECIPIENTS_ADDRESS, "");
+        if (isNullOrBlank(value)) {
+            updateSummary(recipientsPreference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED);
         } else {
             updateSummary(recipientsPreference, value.replaceAll(",", ", "),
-                    isValidEmailAddressList(value) ? STYLE_DEFAULT : STYLE_UNDERWIVED);
+                    isValidEmailAddressList(value) ? SUMMARY_STYLE_DEFAULT : SUMMARY_STYLE_UNDERWIVED);
         }
     }
 
@@ -147,27 +151,27 @@ public class MainFragment extends BasePreferenceFragment {
                     .pattern(R.string.count_new)
                     .put("count", valueOf(count))
                     .format();
-            updateSummary(historyPreference, text, STYLE_DEFAULT);
+            updateSummary(historyPreference, text, SUMMARY_STYLE_DEFAULT);
         } else {
-            updateSummary(historyPreference, null, STYLE_DEFAULT);
+            updateSummary(historyPreference, null, SUMMARY_STYLE_DEFAULT);
         }
     }
 
     private void updateLocalePreference(ListPreference preference, String value) {
         int index = preference.findIndexOfValue(value);
         if (index < 0) {
-            updateSummary(preference, getString(R.string.not_specified), STYLE_ACCENTED);
+            updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED);
         } else {
             CharSequence cs = preference.getEntries()[index];
-            updateSummary(preference, cs.toString(), STYLE_DEFAULT);
+            updateSummary(preference, cs.toString(), SUMMARY_STYLE_DEFAULT);
         }
     }
 
     private void updateAlasPreference(EditTextPreference preference, String value) {
-        if (isStringEmpty(value)) {
-            updateSummary(preference, AndroidUtil.deviceName(), STYLE_DEFAULT);
+        if (isNullOrEmpty(value)) {
+            updateSummary(preference, AndroidUtil.deviceName(), SUMMARY_STYLE_DEFAULT);
         } else {
-            updateSummary(preference, value, STYLE_DEFAULT);
+            updateSummary(preference, value, SUMMARY_STYLE_DEFAULT);
         }
     }
 

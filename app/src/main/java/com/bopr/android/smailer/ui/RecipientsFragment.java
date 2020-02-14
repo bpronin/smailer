@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.Settings;
-import com.bopr.android.smailer.util.TextUtil;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -26,9 +25,11 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.bopr.android.smailer.Settings.PREF_RECIPIENTS_ADDRESS;
-import static com.bopr.android.smailer.util.AddressUtil.isValidEmailAddress;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.TextUtil.commaJoin;
+import static com.bopr.android.smailer.util.TextUtil.isNullOrBlank;
+import static com.bopr.android.smailer.util.TextUtil.isValidEmailAddress;
+import static com.bopr.android.smailer.util.TextUtil.split;
 import static com.bopr.android.smailer.util.UiUtil.showToast;
 import static com.bopr.android.smailer.util.UiUtil.underwivedText;
 import static java.lang.String.valueOf;
@@ -135,7 +136,7 @@ public class RecipientsFragment extends BaseFragment {
         listView.setAdapter(listAdapter);
 
         List<Item> items = new ArrayList<>();
-        List<String> addresses = TextUtil.split(settings.getString(PREF_RECIPIENTS_ADDRESS, ""), ",", true);
+        List<String> addresses = split(settings.getString(PREF_RECIPIENTS_ADDRESS, ""), ",", true);
         for (String address : addresses) {
             items.add(new Item(address));
         }
@@ -198,7 +199,7 @@ public class RecipientsFragment extends BaseFragment {
                             .pattern(R.string.recipient_already_exists)
                             .put("name", address)
                             .format());
-                } else if (!TextUtil.isNullOrBlank(address)) {
+                } else if (!isNullOrBlank(address)) {
                     /* note: if we rotated device reference to "this" is changed here */
                     Item newItem = new Item(address);
                     listAdapter.replaceItem(item, newItem);

@@ -4,7 +4,8 @@ import android.text.Editable;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import static com.bopr.android.smailer.util.AddressUtil.isValidEmailAddress;
+import static com.bopr.android.smailer.util.TextUtil.isValidEmailAddress;
+
 
 /**
  * Checks that {@link EditText}'s input matches email address format.

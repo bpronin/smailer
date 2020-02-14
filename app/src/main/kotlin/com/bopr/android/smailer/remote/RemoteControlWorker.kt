@@ -2,7 +2,8 @@ package com.bopr.android.smailer.remote
 
 import android.content.Context
 import androidx.work.*
-import com.bopr.android.smailer.Settings.*
+import com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_ENABLED
+import com.bopr.android.smailer.Settings.settings
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
 
@@ -34,7 +35,7 @@ internal class RemoteControlWorker(context: Context, workerParams: WorkerParamet
         fun enable(context: Context) {
             val manager = WorkManager.getInstance()
             manager.cancelAllWorkByTag(WORKER_TAG)
-            if (isFeatureEnabled(context) && !settings(context).isNull(PREF_REMOTE_CONTROL_ACCOUNT)) {
+            if (isFeatureEnabled(context)) {
                 val constraints = Constraints.Builder()
                         .setRequiredNetworkType(NetworkType.CONNECTED)
                         .build()

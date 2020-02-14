@@ -17,7 +17,7 @@ import java.util.Set;
 import static android.content.Context.MODE_PRIVATE;
 import static com.bopr.android.smailer.util.TextUtil.commaJoin;
 import static com.bopr.android.smailer.util.TextUtil.commaSplit;
-import static com.bopr.android.smailer.util.TextUtil.isStringEmpty;
+import static com.bopr.android.smailer.util.TextUtil.isNullOrEmpty;
 import static com.bopr.android.smailer.util.Util.asSet;
 import static com.bopr.android.smailer.util.Util.toSet;
 
@@ -126,7 +126,7 @@ public class Settings extends SharedPreferencesWrapper {
     @NonNull
     public String getDeviceName() {
         String name = getString(PREF_DEVICE_ALIAS, "");
-        if (!isStringEmpty(name)) {
+        if (!isNullOrEmpty(name)) {
             return name;
         }
         return AndroidUtil.deviceName();

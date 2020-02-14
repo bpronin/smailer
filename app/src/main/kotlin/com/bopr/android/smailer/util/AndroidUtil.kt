@@ -1,10 +1,12 @@
 package com.bopr.android.smailer.util
 
+import android.accounts.Account
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.content.ContextCompat
 import com.bopr.android.smailer.util.TextUtil.capitalize
+import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager
 
 /**
  * Utilities dependent of android app context .
@@ -32,11 +34,19 @@ object AndroidUtil {
     }
 
     /**
-     * Returns denice name.
+     * Returns device name.
      */
     @JvmStatic
     fun deviceName(): String {
         return capitalize(Build.MANUFACTURER) + " " + Build.MODEL
+    }
+
+    /**
+     * Returns primary device account.
+     */
+    @JvmStatic
+    fun primaryAccount(context: Context): Account {
+        return GoogleAccountManager(context).accounts[0]
     }
 
 }
