@@ -14,7 +14,7 @@ import static com.bopr.android.smailer.remote.RemoteControlTask.REMOVE_PHONE_FRO
 import static com.bopr.android.smailer.remote.RemoteControlTask.REMOVE_TEXT_FROM_BLACKLIST;
 import static com.bopr.android.smailer.remote.RemoteControlTask.REMOVE_TEXT_FROM_WHITELIST;
 import static com.bopr.android.smailer.util.AddressUtil.PHONE_PATTERN;
-import static com.bopr.android.smailer.util.Util.QUOTED_TEXT_PATTERN;
+import static com.bopr.android.smailer.util.TextUtil.QUOTED_TEXT_PATTERN;
 
 /**
  * Parses text into remote control task.

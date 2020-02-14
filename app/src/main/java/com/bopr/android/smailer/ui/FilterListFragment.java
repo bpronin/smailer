@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bopr.android.smailer.PhoneEventFilter;
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.util.Util;
+import com.bopr.android.smailer.util.TextUtil;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -30,8 +30,8 @@ import java.util.List;
 import java.util.Set;
 
 import static androidx.recyclerview.widget.RecyclerView.NO_POSITION;
-import static com.bopr.android.smailer.util.ResourceUtil.showToast;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
+import static com.bopr.android.smailer.util.UiUtil.showToast;
 import static java.lang.String.valueOf;
 
 /**
@@ -103,13 +103,13 @@ abstract class FilterListFragment extends BaseFragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu,@NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.menu_list, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_log_clear) {
             clearData();
         }
@@ -221,11 +221,11 @@ abstract class FilterListFragment extends BaseFragment {
             @Override
             public void onOkClick(String value) {
                 if (isItemExists(value) && (item == null || !item.value.equals(value))) {
-                    showToast(getContext(), formatter(requireContext())
+                    showToast(requireContext(), formatter(requireContext())
                             .pattern(R.string.item_already_exists)
                             .put("item", getItemText(value))
                             .format());
-                } else if (!Util.isNullOrBlank(value)) {
+                } else if (!TextUtil.isNullOrBlank(value)) {
                     /* note: if we rotated device reference to "this" is changed here */
                     listAdapter.replaceItem(item, new Item(value));
                     persistItems();
@@ -233,7 +233,7 @@ abstract class FilterListFragment extends BaseFragment {
             }
         });
 
-        dialog.showDialog(getActivity());
+        dialog.showDialog(requireActivity());
     }
 
     private void removeSelectedItem() {

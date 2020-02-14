@@ -31,7 +31,7 @@ import static com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnor
 import static com.bopr.android.smailer.util.AddressUtil.isValidEmailAddressList;
 import static com.bopr.android.smailer.util.AndroidUtil.deviceName;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
-import static com.bopr.android.smailer.util.Util.isNullOrEmpty;
+import static com.bopr.android.smailer.util.TextUtil.isNullOrEmpty;
 import static com.google.api.services.drive.DriveScopes.DRIVE_APPDATA;
 import static com.google.api.services.gmail.GmailScopes.GMAIL_SEND;
 import static java.lang.String.valueOf;

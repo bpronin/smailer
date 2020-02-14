@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.SharedPreferencesWrapper;
-import com.bopr.android.smailer.util.Util;
+import com.bopr.android.smailer.util.TextUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,9 +16,9 @@ import java.util.Properties;
 import java.util.Set;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.bopr.android.smailer.util.TextUtil.commaJoin;
+import static com.bopr.android.smailer.util.TextUtil.commaSplit;
 import static com.bopr.android.smailer.util.Util.asSet;
-import static com.bopr.android.smailer.util.Util.commaJoin;
-import static com.bopr.android.smailer.util.Util.commaSplit;
 import static com.bopr.android.smailer.util.Util.toSet;
 
 /**
@@ -124,7 +124,7 @@ public class Settings extends SharedPreferencesWrapper {
      */
     public String getDeviceName() {
         String name = getString(PREF_DEVICE_ALIAS, "");
-        if (!Util.isNullOrEmpty(name)) {
+        if (!TextUtil.isNullOrEmpty(name)) {
             return name;
         }
         return AndroidUtil.deviceName();

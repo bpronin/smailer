@@ -7,10 +7,10 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.util.Util;
-
 import androidx.annotation.NonNull;
+
+import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.util.TextUtil;
 
 /**
  * Phone number editor dialog.
@@ -32,7 +32,7 @@ public class EditTextDialogFragment extends EditFilterListItemDialogFragment {
     }
 
     void setInitialValue(String text) {
-        String s = Util.unquoteRegex(text);
+        String s = TextUtil.unquoteRegex(text);
         initialRegex = (s != null);
         initialText = initialRegex ? s : text;
     }
@@ -40,7 +40,7 @@ public class EditTextDialogFragment extends EditFilterListItemDialogFragment {
     @Override
     protected String getValue() {
         String s = editText.getText().toString();
-        return checkBox.isChecked() ? Util.quoteRegex(s) : s;
+        return checkBox.isChecked() ? TextUtil.quoteRegex(s) : s;
     }
 
     @NonNull

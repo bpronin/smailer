@@ -61,7 +61,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     @TargetApi(Build.VERSION_CODES.M)
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 

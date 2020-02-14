@@ -5,7 +5,7 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import com.bopr.android.smailer.util.Util;
+import com.bopr.android.smailer.util.TextUtil;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 
 import org.slf4j.Logger;
@@ -160,7 +160,7 @@ public class CallProcessor {
     private String requireSender(boolean silent) throws Exception {
         String s = settings.getString(PREF_SENDER_ACCOUNT, null);
 
-        if (Util.isNullOrEmpty(s)) {
+        if (TextUtil.isNullOrEmpty(s)) {
             showErrorNotification(R.string.no_account_specified, silent);
             throw new Exception("Account not specified");
         }
@@ -170,7 +170,7 @@ public class CallProcessor {
     private String requireRecipient(boolean silent) throws Exception {
         String s = settings.getString(PREF_RECIPIENTS_ADDRESS, null);
 
-        if (Util.isNullOrEmpty(s)) {
+        if (TextUtil.isNullOrEmpty(s)) {
             showErrorNotification(R.string.no_recipients_specified, silent);
             throw new Exception("Recipients not specified");
         }

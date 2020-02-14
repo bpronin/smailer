@@ -15,7 +15,6 @@ import java.util.Set;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-@SuppressWarnings("WeakerAccess")
 public class PhoneBlacklistFragment extends PhoneFilterListFragment {
 
     private SettingsListener settingsListener;

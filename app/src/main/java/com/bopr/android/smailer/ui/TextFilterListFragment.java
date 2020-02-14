@@ -1,9 +1,9 @@
 package com.bopr.android.smailer.ui;
 
-import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.util.Util;
-
 import androidx.annotation.NonNull;
+
+import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.util.TextUtil;
 
 /**
  * Text filter list activity fragment.
@@ -23,7 +23,7 @@ abstract class TextFilterListFragment extends FilterListFragment {
 
     @Override
     String getItemText(String value) {
-        String regex = Util.unquoteRegex(value);
+        String regex = TextUtil.unquoteRegex(value);
         return regex != null ? regex : value;
     }
 

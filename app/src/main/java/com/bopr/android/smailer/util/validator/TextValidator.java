@@ -12,6 +12,7 @@ import com.bopr.android.smailer.util.draw.WavyUnderlineSpan;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
+@SuppressWarnings("WeakerAccess")
 public abstract class TextValidator implements TextWatcher {
 
     private final TextView view;

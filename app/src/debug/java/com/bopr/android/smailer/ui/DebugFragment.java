@@ -98,12 +98,12 @@ import static com.bopr.android.smailer.ui.BatteryOptimizationHelper.isIgnoreBatt
 import static com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization;
 import static com.bopr.android.smailer.util.AndroidUtil.deviceName;
 import static com.bopr.android.smailer.util.AndroidUtil.primaryAccount;
-import static com.bopr.android.smailer.util.ResourceUtil.showToast;
+import static com.bopr.android.smailer.util.TextUtil.commaJoin;
+import static com.bopr.android.smailer.util.TextUtil.formatLocation;
+import static com.bopr.android.smailer.util.TextUtil.quoteRegex;
 import static com.bopr.android.smailer.util.UiUtil.alertDialogView;
+import static com.bopr.android.smailer.util.UiUtil.showToast;
 import static com.bopr.android.smailer.util.Util.asSet;
-import static com.bopr.android.smailer.util.Util.commaJoin;
-import static com.bopr.android.smailer.util.Util.formatLocation;
-import static com.bopr.android.smailer.util.Util.quoteRegex;
 import static com.bopr.android.smailer.util.Util.requireNonNull;
 import static com.google.api.services.drive.DriveScopes.DRIVE_APPDATA;
 import static com.google.api.services.gmail.GmailScopes.GMAIL_SEND;

@@ -22,7 +22,7 @@ import java.util.Collection;
 import static android.accounts.AccountManager.KEY_ACCOUNT_NAME;
 import static android.accounts.AccountManager.newChooseAccountIntent;
 import static android.app.Activity.RESULT_OK;
-import static com.bopr.android.smailer.util.Util.join;
+import static com.bopr.android.smailer.util.TextUtil.join;
 import static java.util.Arrays.asList;
 
 /**
@@ -53,6 +53,7 @@ public class GoogleAuthorizationHelper {
         accountManager = new GoogleAccountManager(fragment.requireContext());
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isAccountExists(String accountName) {
         return accountManager.getAccountByName(accountName) != null;
     }

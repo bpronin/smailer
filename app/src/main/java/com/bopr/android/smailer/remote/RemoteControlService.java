@@ -38,7 +38,7 @@ import static com.bopr.android.smailer.remote.RemoteControlTask.SEND_SMS_TO_CALL
 import static com.bopr.android.smailer.util.AddressUtil.containsEmail;
 import static com.bopr.android.smailer.util.AddressUtil.extractEmail;
 import static com.bopr.android.smailer.util.AddressUtil.findPhone;
-import static com.bopr.android.smailer.util.Util.commaSplit;
+import static com.bopr.android.smailer.util.TextUtil.commaSplit;
 import static com.bopr.android.smailer.util.Util.requireNonNull;
 import static com.bopr.android.smailer.util.Util.safeEquals;
 import static com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM;

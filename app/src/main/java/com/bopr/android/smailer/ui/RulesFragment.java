@@ -17,8 +17,7 @@ import static com.bopr.android.smailer.Settings.PREF_FILTER_PHONE_WHITELIST;
 import static com.bopr.android.smailer.Settings.PREF_FILTER_TEXT_BLACKLIST;
 import static com.bopr.android.smailer.Settings.PREF_FILTER_TEXT_WHITELIST;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
-import static com.bopr.android.smailer.util.Util.commaSplit;
-import static com.bopr.android.smailer.util.Util.isNullOrEmpty;
+import static com.bopr.android.smailer.util.TextUtil.commaSplit;
 
 /**
  * Conditions settings activity's fragment.
@@ -32,9 +31,10 @@ public class RulesFragment extends BasePreferenceFragment {
         addPreferencesFromResource(R.xml.pref_rules);
 
         requirePreference(PREF_EMAIL_TRIGGERS).setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
-                if (isNullOrEmpty(((Set) value))) {
+                if (value == null || ((Set) value).isEmpty()) {
                     updateSummary(preference, getString(R.string.no_triggers_specified), SUMMARY_STYLE_ACCENTED);
                 } else {
                     updateSummary(preference, getString(R.string.events_causing_sending_mail), SUMMARY_STYLE_DEFAULT);

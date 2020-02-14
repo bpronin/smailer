@@ -27,8 +27,8 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.bopr.android.smailer.ui.AboutDialogFragment.showAboutDialog;
-import static com.bopr.android.smailer.util.ResourceUtil.accentedText;
-import static com.bopr.android.smailer.util.ResourceUtil.underwivedText;
+import static com.bopr.android.smailer.util.UiUtil.accentedText;
+import static com.bopr.android.smailer.util.UiUtil.underwivedText;
 import static com.bopr.android.smailer.util.Util.requireNonNull;
 
 /**

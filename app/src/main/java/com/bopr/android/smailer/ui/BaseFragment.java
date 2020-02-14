@@ -5,11 +5,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.Settings;
-
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.Settings;
 
 import static com.bopr.android.smailer.ui.AboutDialogFragment.showAboutDialog;
 
@@ -25,13 +26,13 @@ public class BaseFragment extends Fragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.menu_main, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
-    
+
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_about) {
             showAboutDialog(requireActivity());
         }

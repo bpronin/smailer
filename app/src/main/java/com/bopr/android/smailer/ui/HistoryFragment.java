@@ -29,7 +29,7 @@ import com.bopr.android.smailer.PhoneEventFilter;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.ui.EditFilterListItemDialogFragment.OnClose;
 import com.bopr.android.smailer.util.TagFormatter;
-import com.bopr.android.smailer.util.Util;
+import com.bopr.android.smailer.util.TextUtil;
 
 import java.util.List;
 import java.util.Set;
@@ -43,13 +43,13 @@ import static com.bopr.android.smailer.PhoneEvent.REASON_TRIGGER_OFF;
 import static com.bopr.android.smailer.PhoneEvent.STATE_PENDING;
 import static com.bopr.android.smailer.util.AddressUtil.containsPhone;
 import static com.bopr.android.smailer.util.AddressUtil.findPhone;
-import static com.bopr.android.smailer.util.ResourceUtil.eventDirectionImage;
-import static com.bopr.android.smailer.util.ResourceUtil.eventStateImage;
-import static com.bopr.android.smailer.util.ResourceUtil.eventTypeImage;
-import static com.bopr.android.smailer.util.ResourceUtil.showToast;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
-import static com.bopr.android.smailer.util.Util.formatDuration;
-import static com.bopr.android.smailer.util.Util.isNullOrBlank;
+import static com.bopr.android.smailer.util.TextUtil.formatDuration;
+import static com.bopr.android.smailer.util.TextUtil.isNullOrBlank;
+import static com.bopr.android.smailer.util.UiUtil.eventDirectionImage;
+import static com.bopr.android.smailer.util.UiUtil.eventStateImage;
+import static com.bopr.android.smailer.util.UiUtil.eventTypeImage;
+import static com.bopr.android.smailer.util.UiUtil.showToast;
 
 
 /**
@@ -106,13 +106,13 @@ public class HistoryFragment extends BaseFragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.menu_list, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_log_clear:
                 onClearData();
@@ -213,7 +213,7 @@ public class HistoryFragment extends BaseFragment {
 
                 @Override
                 public void onOkClick(String number) {
-                    if (!Util.isNullOrEmpty(number)) {
+                    if (!TextUtil.isNullOrEmpty(number)) {
                         Set<String> blacklist = phoneEventFilter.getPhoneBlacklist();
                         if (blacklist.contains(number)) {
                             showToast(requireContext(), formatter.pattern(R.string.item_already_exists)
@@ -237,7 +237,7 @@ public class HistoryFragment extends BaseFragment {
 
                 @Override
                 public void onOkClick(String number) {
-                    if (!Util.isNullOrEmpty(number)) {
+                    if (!TextUtil.isNullOrEmpty(number)) {
                         Set<String> whitelist = phoneEventFilter.getPhoneWhitelist();
                         if (whitelist.contains(number)) {
                             showToast(requireContext(), formatter.pattern(R.string.item_already_exists)
@@ -262,7 +262,7 @@ public class HistoryFragment extends BaseFragment {
             removeFromPhoneLists(phoneEventFilter.getPhoneBlacklist(), number);
             settings.putFilter(phoneEventFilter);
 
-            showToast(getContext(), formatter.pattern(R.string.phone_removed_from_filter)
+            showToast(requireContext(), formatter.pattern(R.string.phone_removed_from_filter)
                     .put("number", number)
                     .format());
         }

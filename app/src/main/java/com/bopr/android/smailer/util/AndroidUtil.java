@@ -11,7 +11,7 @@ import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccoun
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.os.Build.MANUFACTURER;
 import static android.os.Build.MODEL;
-import static com.bopr.android.smailer.util.Util.capitalize;
+import static com.bopr.android.smailer.util.TextUtil.capitalize;
 
 /**
  * Utilities dependent of android app context.

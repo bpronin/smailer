@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.bopr.android.smailer.util.TagFormatter;
-import com.bopr.android.smailer.util.Util;
+import com.bopr.android.smailer.util.TextUtil;
 import com.google.common.collect.ImmutableSet;
 
 import java.io.UnsupportedEncodingException;
@@ -30,12 +30,12 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_T
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS;
 import static com.bopr.android.smailer.util.AddressUtil.escapePhone;
 import static com.bopr.android.smailer.util.ContentUtils.isReadContactsPermissionsDenied;
-import static com.bopr.android.smailer.util.ResourceUtil.eventTypeText;
-import static com.bopr.android.smailer.util.Util.formatDuration;
+import static com.bopr.android.smailer.util.TextUtil.formatDuration;
+import static com.bopr.android.smailer.util.UiUtil.eventTypeText;
 import static java.lang.String.valueOf;
 
 /**
- * ResourceUtil email subject and body.
+ * UiUtil email subject and body.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
@@ -108,7 +108,7 @@ class MailFormatter {
      * @param code locale code as "en_EN"
      */
     void setLocale(@Nullable String code) {
-        Locale locale = Util.stringToLocale(code);
+        Locale locale = TextUtil.stringToLocale(code);
         this.locale = locale != null ? locale : Locale.getDefault();
 
         updateResources();
@@ -160,9 +160,9 @@ class MailFormatter {
                 .pattern(BODY_PATTERN)
                 .put("header", formatHeader())
                 .put("message", formatMessage())
-                .put("footer_line", !Util.isNullOrEmpty(footer) ? LINE : null)
+                .put("footer_line", !TextUtil.isNullOrEmpty(footer) ? LINE : null)
                 .put("footer", footer)
-                .put("remote_line", !Util.isNullOrEmpty(remoteLinks) ? LINE : null)
+                .put("remote_line", !TextUtil.isNullOrEmpty(remoteLinks) ? LINE : null)
                 .put("remote_links", remoteLinks)
                 .format();
     }
@@ -231,26 +231,26 @@ class MailFormatter {
 
             StringBuilder text = new StringBuilder();
 
-            if (!Util.isNullOrEmpty(callerText)) {
+            if (!TextUtil.isNullOrEmpty(callerText)) {
                 text.append(callerText);
             }
 
-            if (!Util.isNullOrEmpty(timeText)) {
-                if (!Util.isNullOrEmpty(text)) {
+            if (!TextUtil.isNullOrEmpty(timeText)) {
+                if (!TextUtil.isNullOrEmpty(text)) {
                     text.append("<br>");
                 }
                 text.append(timeText);
             }
 
-            if (!Util.isNullOrEmpty(locationText)) {
-                if (!Util.isNullOrEmpty(text)) {
+            if (!TextUtil.isNullOrEmpty(locationText)) {
+                if (!TextUtil.isNullOrEmpty(text)) {
                     text.append("<br>");
                 }
                 text.append(locationText);
             }
 
-            if (!Util.isNullOrEmpty(deviceNameText) || !Util.isNullOrEmpty(sendTimeText)) {
-                if (!Util.isNullOrEmpty(text)) {
+            if (!TextUtil.isNullOrEmpty(deviceNameText) || !TextUtil.isNullOrEmpty(sendTimeText)) {
+                if (!TextUtil.isNullOrEmpty(text)) {
                     text.append("<br>");
                 }
 
@@ -259,7 +259,7 @@ class MailFormatter {
                         .put("time", sendTimeText));
             }
 
-            if (!Util.isNullOrEmpty(text)) {
+            if (!TextUtil.isNullOrEmpty(text)) {
                 text.insert(0, "<small>");
                 text.append("</small>");
             }
@@ -284,7 +284,7 @@ class MailFormatter {
 
         String name = this.contactName;
         String phoneQuery = encodeUrl(event.getPhone());
-        if (Util.isNullOrEmpty(name)) {
+        if (TextUtil.isNullOrEmpty(name)) {
             if (isReadContactsPermissionsDenied(context)) { /* base context here */
                 name = resources.getString(R.string.contact_no_permission_read_contact);
             } else {
@@ -306,7 +306,7 @@ class MailFormatter {
 
     @Nullable
     private String formatDeviceName() {
-        if (!Util.isNullOrEmpty(deviceName)) {
+        if (!TextUtil.isNullOrEmpty(deviceName)) {
             return " " + formatter.pattern(R.string._from_device)
                     .put("device_name", deviceName)
                     .format();
@@ -339,7 +339,7 @@ class MailFormatter {
                             .pattern(GOOGLE_MAP_LINK_PATTERN)
                             .put("latitude", valueOf(location.getLatitude()))
                             .put("longitude", valueOf(location.getLongitude()))
-                            .put("location", Util.formatLocation(location, "&#176;", "\'", "\"", "N", "S", "W", "E"))
+                            .put("location", TextUtil.formatLocation(location, "&#176;", "\'", "\"", "N", "S", "W", "E"))
                             .format())
                     .format();
         } else {
@@ -353,7 +353,7 @@ class MailFormatter {
 
     @Nullable
     private String formatRemoteControlLinks() {
-        if (contentOptions.contains(VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS) && !Util.isNullOrEmpty(serviceAccount)) {
+        if (contentOptions.contains(VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS) && !TextUtil.isNullOrEmpty(serviceAccount)) {
             return formatter
                     .pattern(REPLY_LINKS_PATTERN)
                     .put("title", formatter

@@ -79,10 +79,6 @@ public class SharedPreferencesWrapper implements SharedPreferences {
         wrappedPreferences.unregisterOnSharedPreferenceChangeListener(listener);
     }
 
-    public boolean isNull(String key) {
-        return getString(key, null) == null;
-    }
-
     public void removeStringSet(String key, String... values) {
         Set<String> set = getStringSet(key, Collections.<String>emptySet());
         set.removeAll(asList(values));

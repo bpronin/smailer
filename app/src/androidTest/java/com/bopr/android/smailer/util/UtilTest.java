@@ -28,90 +28,66 @@ public class UtilTest extends BaseTest {
 
     @Test
     public void testFormatLocation() {
-        assertEquals("30d33m59sn, 60d33m59sw", Util.formatLocation(new GeoCoordinates(30.5664, 60.5664),
+        assertEquals("30d33m59sn, 60d33m59sw", TextUtil.formatLocation(new GeoCoordinates(30.5664, 60.5664),
                 "d", "m", "s", "n", "s", "w", "e"));
     }
 
     @Test
     public void testFormatLocation1() {
-        assertEquals("30°33'59\"N, 60°33'59\"W", Util.formatLocation(new GeoCoordinates(30.5664, 60.5664)));
-        assertEquals("30°33'59\"S, 60°33'59\"E", Util.formatLocation(new GeoCoordinates(-30.5664, -60.5664)));
+        assertEquals("30°33'59\"N, 60°33'59\"W", TextUtil.formatLocation(new GeoCoordinates(30.5664, 60.5664)));
+        assertEquals("30°33'59\"S, 60°33'59\"E", TextUtil.formatLocation(new GeoCoordinates(-30.5664, -60.5664)));
     }
 
     @Test
     public void testDecimalToDMS() {
-        assertEquals("90D33M59S", Util.decimalToDMS(90.5664, "D", "M", "S"));
+        assertEquals("90D33M59S", TextUtil.decimalToDMS(90.5664, "D", "M", "S"));
     }
 
     @Test
     public void testCapitalize() {
-        assertEquals("Hello", Util.capitalize("hello"));
-        assertEquals("Hello", Util.capitalize("Hello"));
-        assertEquals("", Util.capitalize(""));
-        assertNull(Util.capitalize(null));
+        assertEquals("Hello", TextUtil.capitalize("hello"));
+        assertEquals("Hello", TextUtil.capitalize("Hello"));
+        assertEquals("", TextUtil.capitalize(""));
+        assertNull(TextUtil.capitalize(null));
     }
 
     @Test
     public void testFormatDuration() {
         long duration = HOURS.toMillis(15) + MINUTES.toMillis(15) + SECONDS.toMillis(15);
-        assertEquals("15:15:15", Util.formatDuration(duration));
+        assertEquals("15:15:15", TextUtil.formatDuration(duration));
     }
 
     @Test
     public void testIsEmpty() {
-        assertFalse(Util.isNullOrEmpty("A"));
-        assertTrue(Util.isNullOrEmpty(""));
-        assertTrue(Util.isNullOrEmpty((String) null));
+        assertFalse(TextUtil.isNullOrEmpty("A"));
+        assertTrue(TextUtil.isNullOrEmpty(""));
+        assertTrue(TextUtil.isNullOrEmpty((String) null));
     }
 
     @Test
     public void testIsTrimEmpty() {
-        assertFalse(Util.isNullOrBlank("A"));
-        assertTrue(Util.isNullOrBlank(""));
-        assertTrue(Util.isNullOrBlank(null));
-        assertFalse(Util.isNullOrBlank(" A "));
-        assertTrue(Util.isNullOrBlank("    "));
-    }
-
-    @Test
-    public void testIsAllEmpty() {
-        assertFalse(Util.allIsEmpty("A", "B", "C"));
-        assertFalse(Util.allIsEmpty("", "B", "C"));
-        assertFalse(Util.allIsEmpty("A", "", "C"));
-        assertTrue(Util.allIsEmpty("", "", ""));
-        assertFalse(Util.allIsEmpty(null, "B", "C"));
-        assertFalse(Util.allIsEmpty("A", null, "C"));
-        assertTrue(Util.allIsEmpty("", null, null));
-        assertTrue(Util.allIsEmpty(null, null, null));
-    }
-
-    @Test
-    public void testIsAnyEmpty() {
-        assertFalse(Util.anyIsEmpty("A", "B", "C"));
-        assertTrue(Util.anyIsEmpty("", "B", "C"));
-        assertTrue(Util.anyIsEmpty("A", "", "C"));
-        assertTrue(Util.anyIsEmpty("", "", ""));
-        assertTrue(Util.anyIsEmpty(null, "B", "C"));
-        assertTrue(Util.anyIsEmpty("A", null, "C"));
-        assertTrue(Util.anyIsEmpty("", null, null));
-        assertTrue(Util.anyIsEmpty(null, null, null));
+        assertFalse(TextUtil.isNullOrBlank("A"));
+        assertTrue(TextUtil.isNullOrBlank(""));
+        assertTrue(TextUtil.isNullOrBlank(null));
+        assertFalse(TextUtil.isNullOrBlank(" A "));
+        assertTrue(TextUtil.isNullOrBlank("    "));
     }
 
     @Test
     public void testStringOf() {
-        assertEquals("1, 2, 3", Util.join(", ", 1, 2, 3));
-        assertEquals("1, null, null", Util.join(", ", 1, null, null));
-        assertEquals("", Util.join(", "));
+        assertEquals("1, 2, 3", TextUtil.join(", ", 1, 2, 3));
+        assertEquals("1, null, null", TextUtil.join(", ", 1, null, null));
+        assertEquals("", TextUtil.join(", "));
     }
 
     @Test
     public void testListOf() {
-        assertArrayEquals(new String[]{"1", " 2", "3 "}, Util.split("1, 2,3 ", ",", false).toArray());
-        assertArrayEquals(new String[]{"1", "2", "3"}, Util.split("1, 2, 3 ", ",", true).toArray());
-        assertArrayEquals(new String[]{" "}, Util.split(" ", ",", false).toArray());
-        assertArrayEquals(new String[]{}, Util.split("", ",", true).toArray());
-        assertArrayEquals(new String[]{}, Util.split(" ", ",", true).toArray());
-        assertArrayEquals(new String[]{}, Util.split(null, ",", true).toArray());
+        assertArrayEquals(new String[]{"1", " 2", "3 "}, TextUtil.split("1, 2,3 ", ",", false).toArray());
+        assertArrayEquals(new String[]{"1", "2", "3"}, TextUtil.split("1, 2, 3 ", ",", true).toArray());
+        assertArrayEquals(new String[]{" "}, TextUtil.split(" ", ",", false).toArray());
+        assertArrayEquals(new String[]{}, TextUtil.split("", ",", true).toArray());
+        assertArrayEquals(new String[]{}, TextUtil.split(" ", ",", true).toArray());
+        assertArrayEquals(new String[]{}, TextUtil.split(null, ",", true).toArray());
     }
 
     @Test
@@ -140,17 +116,17 @@ public class UtilTest extends BaseTest {
 
     @Test
     public void testStringToLocale() {
-        assertEquals(new Locale("ru", "RU"), Util.stringToLocale("ru_RU"));
-        assertEquals(Locale.getDefault(), Util.stringToLocale("default"));
-        assertNull(Util.stringToLocale(""));
-        assertNull(Util.stringToLocale(null));
+        assertEquals(new Locale("ru", "RU"), TextUtil.stringToLocale("ru_RU"));
+        assertEquals(Locale.getDefault(), TextUtil.stringToLocale("default"));
+        assertNull(TextUtil.stringToLocale(""));
+        assertNull(TextUtil.stringToLocale(null));
     }
 
     @Test
     public void testLocaleToString() {
-        assertEquals("ru_RU", Util.localeToString(new Locale("ru", "RU")));
-        assertEquals("default", Util.localeToString(Locale.getDefault()));
-        assertNull(Util.localeToString(null));
+        assertEquals("ru_RU", TextUtil.localeToString(new Locale("ru", "RU")));
+        assertEquals("default", TextUtil.localeToString(Locale.getDefault()));
+        assertNull(TextUtil.localeToString(null));
     }
 
     @Test

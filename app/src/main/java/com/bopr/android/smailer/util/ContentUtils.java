@@ -36,7 +36,7 @@ public abstract class ContentUtils {
     @Nullable
     public static String getContactName(@NonNull Context context, @NonNull String phone) {
         String result = null;
-        if (requireReadContactPermission(context) && !Util.isNullOrEmpty(phone)) {
+        if (requireReadContactPermission(context) && !TextUtil.isNullOrEmpty(phone)) {
             Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phone));
             Cursor cursor = context.getContentResolver().query(uri,
                     new String[]{PhoneLookup.DISPLAY_NAME}, null, null, null);

@@ -4,7 +4,7 @@ import android.text.Editable;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.bopr.android.smailer.util.AddressUtil;
+import static com.bopr.android.smailer.util.AddressUtil.isValidEmailAddress;
 
 /**
  * Checks that {@link EditText}'s input matches email address format.
@@ -19,7 +19,7 @@ public class EmailTextValidator extends TextValidator {
 
     @Override
     public boolean isValidInput(TextView textView, Editable editable, String text) {
-        return AddressUtil.isValidEmailAddress(text);
+        return isValidEmailAddress(text);
     }
 
 }

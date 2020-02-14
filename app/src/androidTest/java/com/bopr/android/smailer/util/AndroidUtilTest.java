@@ -22,33 +22,33 @@ import static org.hamcrest.Matchers.emptyArray;
 public class AndroidUtilTest extends BaseTest {
 
     /**
-     * Tests {@link ResourceUtil#underwivedText(Context, String)} method.
+     * Tests {@link UiUtil#underwivedText(Context, String)} method.
      */
     @Test
     public void testUnderwivedText() {
-        Spannable spannable = ResourceUtil.underwivedText(getContext(), "Invalid text");
+        Spannable spannable = UiUtil.underwivedText(getContext(), "Invalid text");
 
         assertThat(spannable, instanceOf(SpannableString.class));
         Object span = spannable.getSpans(0, spannable.length(), Object.class)[0];
         assertThat(span, instanceOf(WavyUnderlineSpan.class));
 
-        spannable = ResourceUtil.underwivedText(getContext(), "Invalid text");
+        spannable = UiUtil.underwivedText(getContext(), "Invalid text");
         assertThat(spannable, instanceOf(SpannableString.class));
         Object[] spans = spannable.getSpans(0, spannable.length(), Object.class);
         assertThat(spans, emptyArray());
     }
 
     /**
-     * Tests {@link ResourceUtil#accentedText(Context, String)} method.
+     * Tests {@link UiUtil#accentedText(Context, String)} method.
      */
     @Test
     public void testAccentedTextText() {
-        Spannable spannable = ResourceUtil.accentedText(getContext(), "Invalid text");
+        Spannable spannable = UiUtil.accentedText(getContext(), "Invalid text");
         assertThat(spannable, instanceOf(SpannableString.class));
         Object span = spannable.getSpans(0, spannable.length(), Object.class)[0];
         assertThat(span, instanceOf(ForegroundColorSpan.class));
 
-        spannable = ResourceUtil.accentedText(getContext(), "Invalid text");
+        spannable = UiUtil.accentedText(getContext(), "Invalid text");
         assertThat(spannable, instanceOf(SpannableString.class));
         Object[] spans = spannable.getSpans(0, spannable.length(), Object.class);
         assertThat(spans, emptyArray());

@@ -9,13 +9,14 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.ListFragment;
+
 import com.bopr.android.smailer.R;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.ListFragment;
 
 /**
  * Legal info fragment. Displays list of used open source libs.
@@ -25,7 +26,8 @@ import androidx.fragment.app.ListFragment;
 public class LegalInfoFragment extends ListFragment {
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedState) {
         List<Item> data = new ArrayList<>();
         for (String line : getResources().getStringArray(R.array.open_source)) {
             String[] s = line.split("\\|");
@@ -37,8 +39,8 @@ public class LegalInfoFragment extends ListFragment {
     }
 
     @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        Item item = (Item) getListAdapter().getItem(position);
+    public void onListItemClick(@NonNull ListView l,@NonNull View v, int position, long id) {
+        Item item = (Item) requireListAdapter().getItem(position);
         startActivity(new Intent(Intent.ACTION_VIEW, item.url));
     }
 

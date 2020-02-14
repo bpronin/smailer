@@ -22,13 +22,13 @@ import com.bopr.android.smailer.R;
 import static com.bopr.android.smailer.PhoneEvent.REASON_NUMBER_BLACKLISTED;
 import static com.bopr.android.smailer.PhoneEvent.REASON_TEXT_BLACKLISTED;
 import static com.bopr.android.smailer.PhoneEvent.REASON_TRIGGER_OFF;
-import static com.bopr.android.smailer.util.ResourceUtil.eventDirectionImage;
-import static com.bopr.android.smailer.util.ResourceUtil.eventStateImage;
-import static com.bopr.android.smailer.util.ResourceUtil.eventStateText;
-import static com.bopr.android.smailer.util.ResourceUtil.eventTypeImage;
-import static com.bopr.android.smailer.util.ResourceUtil.eventTypeText;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
-import static com.bopr.android.smailer.util.Util.formatDuration;
+import static com.bopr.android.smailer.util.TextUtil.formatDuration;
+import static com.bopr.android.smailer.util.UiUtil.eventDirectionImage;
+import static com.bopr.android.smailer.util.UiUtil.eventStateImage;
+import static com.bopr.android.smailer.util.UiUtil.eventStateText;
+import static com.bopr.android.smailer.util.UiUtil.eventTypeImage;
+import static com.bopr.android.smailer.util.UiUtil.eventTypeText;
 
 /**
  * Log item details dialog.

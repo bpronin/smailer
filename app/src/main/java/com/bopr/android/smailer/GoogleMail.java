@@ -6,7 +6,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.bopr.android.smailer.util.Util;
+import com.bopr.android.smailer.util.TextUtil;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
@@ -154,7 +154,7 @@ public class GoogleMail {
             mimeMessage.setSubject(message.getSubject(), UTF_8);
             mimeMessage.setRecipients(TO, parseAddresses(message.getRecipients()));
 
-            if (!Util.isNullOrEmpty(message.getReplyTo())) {
+            if (!TextUtil.isNullOrEmpty(message.getReplyTo())) {
                 mimeMessage.setReplyTo(parseAddresses(message.getReplyTo()));
             }
 

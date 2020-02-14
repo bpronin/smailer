@@ -5,15 +5,17 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.text.style.LineBackgroundSpan;
 
-import com.bopr.android.smailer.R;
-
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+
+import com.bopr.android.smailer.R;
 
 /**
  * Draws wavy line under the text.
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
+@SuppressWarnings("WeakerAccess")
 public class WavyUnderlineSpan implements LineBackgroundSpan {
 
     private int color;
@@ -35,9 +37,9 @@ public class WavyUnderlineSpan implements LineBackgroundSpan {
     }
 
     @Override
-    public void drawBackground(Canvas canvas, Paint paint, int left, int right, int top,
+    public void drawBackground(@NonNull Canvas canvas,@NonNull Paint paint, int left, int right, int top,
                                int baseline, int bottom,
-                               CharSequence text, int start, int end, int lnum) {
+                               @NonNull CharSequence text, int start, int end, int lnum) {
         Paint p = new Paint(paint);
         p.setColor(color);
         p.setStrokeWidth(lineWidth);

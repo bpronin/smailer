@@ -8,8 +8,8 @@ import static com.bopr.android.smailer.PhoneEvent.REASON_ACCEPTED;
 import static com.bopr.android.smailer.PhoneEvent.REASON_NUMBER_BLACKLISTED;
 import static com.bopr.android.smailer.PhoneEvent.REASON_TEXT_BLACKLISTED;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
+import static com.bopr.android.smailer.util.TextUtil.quoteRegex;
 import static com.bopr.android.smailer.util.Util.asSet;
-import static com.bopr.android.smailer.util.Util.quoteRegex;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
