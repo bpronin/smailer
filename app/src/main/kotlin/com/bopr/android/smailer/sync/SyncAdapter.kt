@@ -23,10 +23,13 @@ class SyncAdapter(context: Context, autoInitialize: Boolean) : AbstractThreadedS
 
     override fun onPerformSync(account: Account, extras: Bundle?, authority: String?,
                                provider: ContentProviderClient?, syncResult: SyncResult?) {
+        val synchronizer = Synchronizer(context, account)
         try {
-            Synchronizer(context, account).sync().dispose()
+            synchronizer.sync()
         } catch (x: Exception) {
             log.warn("Synchronization failed ", x)
+        } finally {
+            synchronizer.dispose()
         }
     }
 

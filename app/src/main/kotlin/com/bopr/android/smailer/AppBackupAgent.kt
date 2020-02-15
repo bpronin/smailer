@@ -11,13 +11,11 @@ import org.slf4j.LoggerFactory
  */
 class AppBackupAgent : BackupAgentHelper() {
 
+    private val log = LoggerFactory.getLogger("Backup")
+
     override fun onCreate() {
         log.debug("Create")
         addHelper("settings", SharedPreferencesBackupHelper(this, Settings.PREFERENCES_STORAGE_NAME))
         //        addHelper("database", new FileBackupHelper(this, "../databases/" + Settings.DB_NAME));
-    }
-
-    companion object {
-        private val log = LoggerFactory.getLogger("Backup")
     }
 }

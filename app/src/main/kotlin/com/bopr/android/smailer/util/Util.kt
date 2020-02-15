@@ -27,12 +27,7 @@ object Util {
     }
 
     @JvmStatic
-    fun <T> requireNonNull(obj: T?): T {
-        if (obj == null) {
-            throw NullPointerException()
-        }
-        return obj
-    }
+    fun <T : Any> requireNonNull(obj: T?): T = requireNotNull(obj)
 
 }
 

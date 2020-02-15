@@ -116,8 +116,8 @@ class Database @JvmOverloads constructor(private val context: Context, private v
      */
     fun clearEvents() {
         helper.writableDatabase.batch {
-            it.delete(TABLE_EVENTS, null, null)
-            updateLastPurgeTime(it)
+            delete(TABLE_EVENTS, null, null)
+            updateLastPurgeTime(this)
             updatesCounter++
         }
 
@@ -133,7 +133,7 @@ class Database @JvmOverloads constructor(private val context: Context, private v
                 put(COLUMN_READ, read)
             }
 
-            it.update(TABLE_EVENTS, values, null, null)
+            update(TABLE_EVENTS, values, null, null)
 
             updatesCounter++
         }
@@ -163,15 +163,15 @@ class Database @JvmOverloads constructor(private val context: Context, private v
         log.debug("Purging")
 
         helper.writableDatabase.batch {
-            if (currentTimeMillis() - lastPurgeTime(it) >= purgePeriod && currentSize(it) >= capacity) {
-                it.execSQL("DELETE FROM " + TABLE_EVENTS +
+            if (currentTimeMillis() - lastPurgeTime(this) >= purgePeriod && currentSize(this) >= capacity) {
+                execSQL("DELETE FROM " + TABLE_EVENTS +
                         " WHERE " + COLUMN_ID + " NOT IN " +
                         "(" +
                         "SELECT " + COLUMN_ID + " FROM " + TABLE_EVENTS +
                         " ORDER BY " + COLUMN_ID + " DESC " +
                         "LIMIT " + capacity +
                         ")")
-                updateLastPurgeTime(it)
+                updateLastPurgeTime(this)
             }
         }
     }

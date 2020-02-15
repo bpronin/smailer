@@ -11,10 +11,10 @@ import android.database.sqlite.SQLiteDatabase
  */
 object DbUtil {
 
-    inline fun SQLiteDatabase.batch(action: (db: SQLiteDatabase) -> Unit) {
+    inline fun SQLiteDatabase.batch(action: SQLiteDatabase.() -> Unit) {
         this.beginTransaction()
         try {
-            action(this)
+            action()
             this.setTransactionSuccessful()
         } finally {
             this.endTransaction()

@@ -30,6 +30,8 @@ import javax.mail.internet.*
  */
 class GoogleMail(private val context: Context) {
 
+    private val log = LoggerFactory.getLogger("GoogleMail")
+
     private lateinit var service: Gmail
     private lateinit var session: Session
     private lateinit var account: String
@@ -187,7 +189,6 @@ class GoogleMail(private val context: Context) {
     }
 
     companion object {
-        private val log = LoggerFactory.getLogger("GoogleMail")
         private const val ME = "me" /* exact lowercase "me" */
         private const val UTF_8 = "UTF-8"
         private const val HTML = "html"

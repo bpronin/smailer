@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicReference
  */
 class GeoLocator(private val context: Context, private val database: Database) {
 
+    private val log = LoggerFactory.getLogger("GeoLocator")
     private val client: FusedLocationProviderClient = getFusedLocationProviderClient(context)
 
     /**
@@ -120,7 +121,6 @@ class GeoLocator(private val context: Context, private val database: Database) {
     }
 
     companion object {
-        private val log = LoggerFactory.getLogger("GeoLocator")
         private const val DEFAULT_TIMEOUT = 1000
 
         fun isPermissionsDenied(context: Context): Boolean {

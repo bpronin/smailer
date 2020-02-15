@@ -21,6 +21,8 @@ import java.lang.System.currentTimeMillis
  */
 class CallReceiver : BroadcastReceiver() {
 
+    private val log = LoggerFactory.getLogger("CallReceiver")
+
     override fun onReceive(context: Context, intent: Intent) {
         log.debug("Received intent: $intent")
 
@@ -132,7 +134,6 @@ class CallReceiver : BroadcastReceiver() {
 
     companion object {
         const val SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED"
-        private val log = LoggerFactory.getLogger("CallReceiver")
 
         private var lastCallNumber: String? = null
         private var lastCallState = EXTRA_STATE_IDLE

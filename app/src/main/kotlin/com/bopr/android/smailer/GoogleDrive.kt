@@ -24,6 +24,7 @@ import java.io.Writer
  */
 class GoogleDrive(context: Context, account: Account) {
 
+    private val log = LoggerFactory.getLogger("GoogleDrive")
     private val service: Drive
 
     init {
@@ -140,8 +141,6 @@ class GoogleDrive(context: Context, account: Account) {
     }
 
     companion object {
-        private val log = LoggerFactory.getLogger("GoogleDrive")
-
         private const val APP_DATA_FOLDER = "appDataFolder"
         private const val MIME_JSON = "text/json"
     }

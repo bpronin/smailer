@@ -13,15 +13,13 @@ import org.slf4j.LoggerFactory
  */
 class BootReceiver : BroadcastReceiver() {
 
+    private val log = LoggerFactory.getLogger("BootReceiver")
+
     override fun onReceive(context: Context, intent: Intent) {
         log.debug("Received intent: $intent")
 
         if (Intent.ACTION_BOOT_COMPLETED == intent.action) {
             setupEnvironment(context)
         }
-    }
-
-    companion object {
-        private val log = LoggerFactory.getLogger("BootReceiver")
     }
 }

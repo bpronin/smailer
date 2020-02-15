@@ -41,7 +41,7 @@ object TextUtil {
     }
 
     @JvmStatic
-    fun join(values: Collection<*>, divider: String): String = values.joinToString(divider)
+    fun join(values: Collection<*>, divider: String) = values.joinToString(divider)
 
     @JvmStatic
     fun split(value: String, divider: String, trim: Boolean): List<String> {
