@@ -35,3 +35,7 @@ object Util {
     }
 
 }
+
+//fun Any?.safeEquals(other: Any?): Boolean {
+//    return this?.equals(other) ?: (other === null)
+//}

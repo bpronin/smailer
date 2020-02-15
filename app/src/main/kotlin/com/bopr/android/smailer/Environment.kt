@@ -3,7 +3,7 @@ package com.bopr.android.smailer
 import android.content.Context
 import android.util.Log
 import com.bopr.android.smailer.remote.RemoteControlWorker
-import com.bopr.android.smailer.sync.SyncManager
+import com.bopr.android.smailer.sync.SyncEngine
 import com.bopr.android.smailer.util.Util.requireNonNull
 import org.slf4j.LoggerFactory
 
@@ -31,6 +31,6 @@ object Environment {
         ContentObserverService.enable(context)
         ResendWorker.enable(context)
         RemoteControlWorker.enable(context)
-        SyncManager.enable(context)
+        SyncEngine.enable(context)
     }
 }

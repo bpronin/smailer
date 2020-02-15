@@ -10,10 +10,12 @@ import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.util.AndroidUtil.deviceName
+import com.bopr.android.smailer.util.db.DbUtil.batch
 import com.bopr.android.smailer.util.db.DbUtil.replaceTable
 import com.bopr.android.smailer.util.db.RowSet
 import com.bopr.android.smailer.util.db.RowSet.Companion.forLong
 import org.slf4j.LoggerFactory
+import java.lang.System.currentTimeMillis
 import java.util.concurrent.TimeUnit
 
 /**
@@ -67,6 +69,18 @@ class Database @JvmOverloads constructor(private val context: Context, private v
                 null, null, null, null)).findFirst()
 
     fun putEvent(event: PhoneEvent) {
+        putEvent(event, helper.writableDatabase)
+    }
+
+    fun putEvents(events: Collection<PhoneEvent>) {
+        helper.writableDatabase.batch {
+            for (event in events) {
+                putEvent(event)
+            }
+        }
+    }
+
+    private fun putEvent(event: PhoneEvent, db: SQLiteDatabase) {
         val values = ContentValues().apply {
             put(COLUMN_PHONE, event.phone)
             put(COLUMN_RECIPIENT, event.acceptor)
@@ -85,7 +99,6 @@ class Database @JvmOverloads constructor(private val context: Context, private v
             }
         }
 
-        val db = helper.writableDatabase
         if (db.insertWithOnConflict(TABLE_EVENTS, null, values, CONFLICT_IGNORE) == -1L) {
             db.update(TABLE_EVENTS, values, "$COLUMN_START_TIME=? AND $COLUMN_RECIPIENT=?",
                     strings(event.startTime, event.acceptor))
@@ -102,15 +115,10 @@ class Database @JvmOverloads constructor(private val context: Context, private v
      * Removes all records from log.
      */
     fun clearEvents() {
-        val db = helper.writableDatabase
-        db.beginTransaction()
-        try {
-            db.delete(TABLE_EVENTS, null, null)
-            updateLastPurgeTime(db)
+        helper.writableDatabase.batch {
+            it.delete(TABLE_EVENTS, null, null)
+            updateLastPurgeTime(it)
             updatesCounter++
-            db.setTransactionSuccessful()
-        } finally {
-            db.endTransaction()
         }
 
         log.debug("All events removed")
@@ -120,17 +128,14 @@ class Database @JvmOverloads constructor(private val context: Context, private v
      * Marks all events as read.
      */
     fun markAllAsRead(read: Boolean) {
-        val db = helper.writableDatabase
-        db.beginTransaction()
-        try {
+        helper.writableDatabase.batch {
             val values = ContentValues().apply {
                 put(COLUMN_READ, read)
             }
-            db.update(TABLE_EVENTS, values, null, null)
+
+            it.update(TABLE_EVENTS, values, null, null)
+
             updatesCounter++
-            db.setTransactionSuccessful()
-        } finally {
-            db.endTransaction()
         }
 
         log.debug("All events marked as read")
@@ -145,7 +150,7 @@ class Database @JvmOverloads constructor(private val context: Context, private v
         val values = ContentValues()
         values.put(COLUMN_LAST_LATITUDE, coordinates.latitude)
         values.put(COLUMN_LAST_LONGITUDE, coordinates.longitude)
-        values.put(COLUMN_LAST_LOCATION_TIME, System.currentTimeMillis())
+        values.put(COLUMN_LAST_LOCATION_TIME, currentTimeMillis())
 
         helper.writableDatabase.update(TABLE_SYSTEM, values, "$COLUMN_ID=0", null)
     }
@@ -157,22 +162,16 @@ class Database @JvmOverloads constructor(private val context: Context, private v
     fun purge() {
         log.debug("Purging")
 
-        val db = helper.writableDatabase
-        if (System.currentTimeMillis() - lastPurgeTime(db) >= purgePeriod && currentSize(db) >= capacity) {
-            db.beginTransaction()
-            try {
-                db.execSQL("DELETE FROM " + TABLE_EVENTS +
+        helper.writableDatabase.batch {
+            if (currentTimeMillis() - lastPurgeTime(it) >= purgePeriod && currentSize(it) >= capacity) {
+                it.execSQL("DELETE FROM " + TABLE_EVENTS +
                         " WHERE " + COLUMN_ID + " NOT IN " +
                         "(" +
                         "SELECT " + COLUMN_ID + " FROM " + TABLE_EVENTS +
                         " ORDER BY " + COLUMN_ID + " DESC " +
                         "LIMIT " + capacity +
                         ")")
-                updateLastPurgeTime(db)
-
-                db.setTransactionSuccessful()
-            } finally {
-                db.endTransaction()
+                updateLastPurgeTime(it)
             }
         }
     }
@@ -219,7 +218,7 @@ class Database @JvmOverloads constructor(private val context: Context, private v
 
     private fun updateLastPurgeTime(db: SQLiteDatabase) {
         val values = ContentValues()
-        values.put(COLUMN_PURGE_TIME, System.currentTimeMillis())
+        values.put(COLUMN_PURGE_TIME, currentTimeMillis())
         db.update(TABLE_SYSTEM, values, "$COLUMN_ID=0", null)
     }
 

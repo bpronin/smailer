@@ -1,60 +1,52 @@
-package com.bopr.android.smailer;
+package com.bopr.android.smailer
 
-import androidx.annotation.NonNull;
-import androidx.test.rule.GrantPermissionRule;
-
-import org.junit.Rule;
-import org.junit.Test;
-
-import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
-import static android.Manifest.permission.ACCESS_FINE_LOCATION;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import android.Manifest.permission.ACCESS_COARSE_LOCATION
+import android.Manifest.permission.ACCESS_FINE_LOCATION
+import androidx.test.rule.GrantPermissionRule
+import org.junit.Assert
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+import org.mockito.Mockito
 
 /**
- * {@link GeoLocator} class tester.
+ * [GeoLocator] class tester.
  *
- * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
+ * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-public class GeoLocatorTest extends BaseTest {
+//todo: implement
+class GeoLocatorTest : BaseTest() {
 
     @Rule
-    public GrantPermissionRule permissionRule = GrantPermissionRule.grant(ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION);
+    @JvmField
+    val permissionRule = GrantPermissionRule.grant(ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION)
 
-//    private GeoCoordinates lastPassiveLocation;
-//    private GeoCoordinates networkLocation;
-    private GeoCoordinates databaseLocation;
+    private var databaseLocation: GeoCoordinates? = null
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-//        gpsLocation = new GeoCoordinates(10, 20);
-//        networkLocation = new GeoCoordinates(20, 30);
-//        lastPassiveLocation = new GeoCoordinates(30, 40);
-        databaseLocation = new GeoCoordinates(50, 60);
+    @Before
+    @Throws(Exception::class)
+    fun setUp() {
+        databaseLocation = GeoCoordinates(50.0, 60.0)
     }
 
-    @NonNull
-    private Database createMockDatabase() {
-        Database database = mock(Database.class);
-        when(database.getLastLocation()).thenReturn(databaseLocation);
-        return database;
+    private fun createMockDatabase(): Database {
+        val database = Mockito.mock(Database::class.java)
+        Mockito.`when`(database.lastLocation).thenReturn(databaseLocation)
+        return database
     }
 
     @Test
-    public void testGetLocationGpsOn() {
-        GeoLocator provider = new GeoLocator(getContext(), createMockDatabase());
-        GeoCoordinates location = provider.getLocation();
-        assertNotNull(location);
+    fun testGetLocationGpsOn() {
+        val provider = GeoLocator(targetContext, createMockDatabase())
+        val location = provider.getLocation()
+        Assert.assertNotNull(location)
     }
-//    private Location location(GeoCoordinates coordinates) {
+
+    //    private Location location(GeoCoordinates coordinates) {
 //        Location location = new Location("");
 //        location.setLatitude(coordinates.getLatitude());
 //        location.setLongitude(coordinates.getLongitude());
 //        return location;
-
 //    }
 //    private LocationManager createMockManager(boolean gpsEnabled, boolean networkEnabled,
 //                                              boolean passiveEnabled) {
@@ -125,6 +117,4 @@ public class GeoLocatorTest extends BaseTest {
 //
 //        assertEquals(databaseLocation, provider.getLocation(1000));
 //    }
-
 }
-

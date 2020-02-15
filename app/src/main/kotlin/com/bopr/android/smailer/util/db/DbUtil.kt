@@ -11,6 +11,16 @@ import android.database.sqlite.SQLiteDatabase
  */
 object DbUtil {
 
+    inline fun SQLiteDatabase.batch(action: (db: SQLiteDatabase) -> Unit) {
+        this.beginTransaction()
+        try {
+            action(this)
+            this.setTransactionSuccessful()
+        } finally {
+            this.endTransaction()
+        }
+    }
+
     @JvmStatic
     fun copyTable(db: SQLiteDatabase, tableFrom: String, tableTo: String,
                   convert: (column: String, cursor: Cursor) -> String?) {

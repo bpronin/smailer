@@ -17,14 +17,12 @@ class SyncService : Service() {
 
     override fun onCreate() {
         synchronized(lock) {
-            if (adapter == null) {
-                adapter = SyncAdapter(applicationContext, true)
-            }
+            adapter = adapter ?: SyncAdapter(applicationContext, true)
         }
     }
 
     override fun onBind(intent: Intent): IBinder? {
-        return adapter!!.syncAdapterBinder
+       return adapter?.syncAdapterBinder ?: throw IllegalStateException()
     }
 
     companion object {

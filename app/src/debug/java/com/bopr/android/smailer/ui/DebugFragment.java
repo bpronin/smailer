@@ -39,8 +39,8 @@ import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.Settings;
 import com.bopr.android.smailer.remote.RemoteControlService;
-import com.bopr.android.smailer.sync.SyncAdapter;
-import com.bopr.android.smailer.sync.SyncManager;
+import com.bopr.android.smailer.sync.SyncEngine;
+import com.bopr.android.smailer.sync.Synchronizer;
 import com.bopr.android.smailer.util.ContentUtils;
 import com.google.android.gms.tasks.Tasks;
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager;
@@ -698,7 +698,7 @@ public class DebugFragment extends BasePreferenceFragment {
             public Void call() {
 //                new SyncAdapter(context, false).sync(context, selectedAccount(context));
                 try {
-                    SyncManager.Companion.syncNow(context);
+                    SyncEngine.Companion.syncNow(context);
                 } catch (Throwable x) {
                     log.error("Sync error: ", x);
                 }
@@ -714,9 +714,8 @@ public class DebugFragment extends BasePreferenceFragment {
 
             @Override
             public Void call() {
-                GoogleDrive drive = new GoogleDrive(context, senderAccount());
                 try {
-                    new SyncAdapter(context, false).download(drive);
+                    new Synchronizer(context, senderAccount()).download().dispose();
                 } catch (Throwable x) {
                     log.error("Download error: ", x);
                 }
@@ -732,9 +731,8 @@ public class DebugFragment extends BasePreferenceFragment {
 
             @Override
             public Void call() {
-                GoogleDrive drive = new GoogleDrive(context, senderAccount());
                 try {
-                    new SyncAdapter(context, false).upload(drive);
+                    new Synchronizer(context, senderAccount()).upload().dispose();
                 } catch (Throwable x) {
                     log.error("Upload error: ", x);
                 }

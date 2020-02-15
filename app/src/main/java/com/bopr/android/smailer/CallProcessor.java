@@ -72,7 +72,7 @@ public class CallProcessor {
         log.debug("Processing event: " + event);
 
         event.setLocation(locator.getLocation());
-        event.setStateReason(settings.getFilter().test(event));
+        event.setStateReason(settings.readFilter().test(event));
         if (event.getStateReason() != REASON_ACCEPTED) {
             event.setState(STATE_IGNORED);
         } else if (startMailSession(false) && sendMail(event, false)) {

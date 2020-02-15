@@ -158,7 +158,7 @@ public class Settings extends SharedPreferencesWrapper {
     }
 
     @NonNull
-    public PhoneEventFilter getFilter() {
+    public PhoneEventFilter readFilter() {
         PhoneEventFilter filter = new PhoneEventFilter();
 
         filter.setTriggers(getStringSet(PREF_EMAIL_TRIGGERS, Collections.<String>emptySet()));
@@ -170,7 +170,7 @@ public class Settings extends SharedPreferencesWrapper {
         return filter;
     }
 
-    public void putFilter(PhoneEventFilter filter) {
+    public void writeFilter(@NonNull PhoneEventFilter filter) {
         edit().putString(PREF_FILTER_PHONE_BLACKLIST, commaJoin(filter.getPhoneBlacklist()))
                 .putString(PREF_FILTER_PHONE_WHITELIST, commaJoin(filter.getPhoneWhitelist()))
                 .putString(PREF_FILTER_TEXT_BLACKLIST, commaJoin(filter.getTextBlacklist()))

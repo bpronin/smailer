@@ -1,0 +1,51 @@
+{
+  "phone_black_list": [
+    "A",
+    "B",
+    "C"
+  ],
+  "phone_white_list": [],
+  "text_black_list": [
+    "REGEX:Expression",
+    "Badtext"
+  ],
+  "text_white_list": [],
+  "phone_events": [
+    {
+      "end_time": 0,
+      "is_incoming": true,
+      "is_missed": false,
+      "latitude": 0.0,
+      "longitude": 0.0,
+      "message_text": "M1",
+      "phone": "+79052345670",
+      "recipient": "D1",
+      "start_time": 1581729916916,
+      "state": 2
+    },
+    {
+      "end_time": 1581729831533,
+      "is_incoming": true,
+      "is_missed": false,
+      "latitude": -79.24746,
+      "longitude": 90.3693967,
+      "message_text": "SMS TEXT",
+      "phone": "5556",
+      "recipient": "D1",
+      "start_time": 1581729821533,
+      "state": 1
+    },
+    {
+      "end_time": 1581722237000,
+      "is_incoming": true,
+      "is_missed": false,
+      "latitude": -79.24746,
+      "longitude": 90.3693967,
+      "message_text": "Text",
+      "phone": "+15555215556",
+      "recipient": "D2",
+      "start_time": 1581722237000,
+      "state": 1
+    }
+  ]
+}

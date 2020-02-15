@@ -148,7 +148,7 @@ public class HistoryFragment extends BaseFragment {
     private void loadData() {
         listAdapter = new ListAdapter(database.getEvents().toList());
         listView.setAdapter(listAdapter);
-        phoneEventFilter = settings.getFilter();
+        phoneEventFilter = settings.readFilter();
         updateEmptyText();
     }
 
@@ -221,7 +221,7 @@ public class HistoryFragment extends BaseFragment {
                             );
                         } else if (!isNullOrBlank(number)) {
                             blacklist.add(number);
-                            settings.putFilter(phoneEventFilter);
+                            settings.writeFilter(phoneEventFilter);
                         }
                     }
                 }
@@ -245,7 +245,7 @@ public class HistoryFragment extends BaseFragment {
                             );
                         } else if (!isNullOrBlank(number)) {
                             whitelist.add(number);
-                            settings.putFilter(phoneEventFilter);
+                            settings.writeFilter(phoneEventFilter);
                         }
                     }
                 }
@@ -260,7 +260,7 @@ public class HistoryFragment extends BaseFragment {
 
             removeFromPhoneLists(phoneEventFilter.getPhoneWhitelist(), number);
             removeFromPhoneLists(phoneEventFilter.getPhoneBlacklist(), number);
-            settings.putFilter(phoneEventFilter);
+            settings.writeFilter(phoneEventFilter);
 
             showToast(requireContext(), formatter.pattern(R.string.phone_removed_from_filter)
                     .put("number", number)

@@ -15,7 +15,7 @@ import com.bopr.android.smailer.sync.AppContentProvider.Companion.AUTHORITY
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager
 import org.slf4j.LoggerFactory
 
-class SyncManager private constructor(context: Context) {
+class SyncEngine private constructor(context: Context) {
 
     private val settings: Settings = Settings(context)
     private val databaseListener = DatabaseListener()
@@ -37,19 +37,22 @@ class SyncManager private constructor(context: Context) {
 */
 
     private fun start() {
-        account?.let {
+        if (account != null) {
             val bundle = Bundle()
             bundle.putBoolean(SYNC_EXTRAS_MANUAL, true)
             bundle.putBoolean(SYNC_EXTRAS_EXPEDITED, true)
+
             requestSync(account, AUTHORITY, bundle)
             addPeriodicSync(account, AUTHORITY, Bundle.EMPTY, 0)
 
             log.debug("Running")
-        } ?: log.debug("No selected account")
+        } else {
+            log.debug("No selected account")
+        }
     }
 
     private fun stop() {
-        account?.let {
+        if (account != null) {
             removePeriodicSync(account, AUTHORITY, Bundle.EMPTY)
 
             log.debug("Stopped")
@@ -96,7 +99,7 @@ class SyncManager private constructor(context: Context) {
         }
 
         fun enable(context: Context) {
-            SyncManager(context).start()
+            SyncEngine(context).start()
         }
 
         fun syncNow(context: Context) {

@@ -5,6 +5,7 @@ import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
 import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Test
 import java.util.concurrent.TimeUnit
 
@@ -17,10 +18,9 @@ class DatabaseTest : BaseTest() {
 
     private lateinit var database: Database
 
-    @Throws(Exception::class)
-    override fun setUp() {
-        super.setUp()
-        database = Database(getContext(), "test.sqlite")
+    @Before
+    fun setUp() {
+        database = Database(targetContext, "test.sqlite")
         database.destroy()
     }
 
@@ -33,9 +33,6 @@ class DatabaseTest : BaseTest() {
         assertEquals(TimeUnit.DAYS.toMillis(7), database.purgePeriod)
     }
 
-    /**
-     * Check [Database.putEvent] and [Database.getEvents] methods.
-     */
     @Test
     fun testAddGet() {
         database.putEvent(PhoneEvent("1", true, 1000L, 0L, true, null, null, "Test 1", STATE_PENDING, "device", REASON_ACCEPTED, false))
@@ -68,9 +65,6 @@ class DatabaseTest : BaseTest() {
         assertEquals("Test 10", message.details)
     }
 
-    /**
-     * Check [Database.putEvent] and [Database.getEvents] methods.
-     */
     @Test
     fun testUpdateGet() {
         var event = PhoneEvent(
@@ -185,9 +179,6 @@ class DatabaseTest : BaseTest() {
 //        /* last addition should trigger purge process cause total elapsed time exceeds purge period */assertEquals(5, database.events.getCount())
 //    }
 
-    /**
-     * Check [Database.getLastLocation] and [Database.saveLastLocation] methods.
-     */
     @Test
     fun testSaveLoadLocation() {
         database.saveLastLocation(GeoCoordinates(30.0, 60.0))
@@ -197,9 +188,6 @@ class DatabaseTest : BaseTest() {
         assertEquals(60.0, actual.longitude, 0.1)
     }
 
-    /**
-     * Check [Database.getPendingEvents]} method.
-     */
     @Test
     fun testGetUnsentMessages() {
         database.putEvent(PhoneEvent("1", true, 1000L, 0L, true, null, null, "Test 1", STATE_PROCESSED, "device", REASON_ACCEPTED, false))

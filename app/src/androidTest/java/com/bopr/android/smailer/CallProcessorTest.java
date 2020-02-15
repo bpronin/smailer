@@ -4,6 +4,7 @@ import android.accounts.AccountsException;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -49,11 +50,9 @@ public class CallProcessorTest extends BaseTest {
     private SharedPreferences preferences;
     private GeoLocator geoLocator;
 
-    @Override
+    @Before
     @SuppressWarnings("ResourceType")
-    public void setUp() throws Exception {
-        super.setUp();
-
+    public void setUp() {
         preferences = mock(SharedPreferences.class);
         when(preferences.getString(eq(PREF_SENDER_ACCOUNT), anyString())).thenReturn("sender@mail.com");
         when(preferences.getString(eq(PREF_RECIPIENTS_ADDRESS), anyString())).thenReturn("recipient@mail.com");
@@ -61,8 +60,8 @@ public class CallProcessorTest extends BaseTest {
         when(preferences.getStringSet(eq(PREF_EMAIL_CONTENT), anySetOf(String.class))).thenReturn(DEFAULT_CONTENT);
 
         context = mock(Context.class);
-        when(context.getContentResolver()).thenReturn(getContext().getContentResolver());
-        when(context.getResources()).thenReturn(getContext().getResources());
+        when(context.getContentResolver()).thenReturn(getTargetContext().getContentResolver());
+        when(context.getResources()).thenReturn(getTargetContext().getResources());
         when(context.getSharedPreferences(anyString(), anyInt())).thenReturn(preferences);
 
         geoLocator = mock(GeoLocator.class);
@@ -71,7 +70,7 @@ public class CallProcessorTest extends BaseTest {
         transport = mock(GoogleMail.class);
         notifications = mock(Notifications.class);
 
-        database = new Database(getContext(), "test.sqlite"); /* not a mock context here! */
+        database = new Database(getTargetContext(), "test.sqlite"); /* not a mock context here! */
         database.destroy();
     }
 

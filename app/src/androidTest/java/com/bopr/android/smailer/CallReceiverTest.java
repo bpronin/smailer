@@ -3,6 +3,7 @@ package com.bopr.android.smailer;
 import android.content.Context;
 import android.content.Intent;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import static android.content.Intent.ACTION_NEW_OUTGOING_CALL;
@@ -33,12 +34,10 @@ public class CallReceiverTest extends BaseTest {
 
     private Context context;
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
+    @Before
+    public void setUp() {
         context = mock(Context.class);
-        when(context.getResources()).thenReturn(getContext().getResources());
+        when(context.getResources()).thenReturn(getTargetContext().getResources());
     }
 
     /**

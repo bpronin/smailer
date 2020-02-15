@@ -126,7 +126,7 @@ class RemoteControlService : JobIntentService() {
     }
 
     private fun removeTextFromWhitelist(text: String?) {
-        with(settings.filter) {
+        with(settings.readFilter()) {
             text?.let {
                 removeFromTextList(this, textWhitelist, it, R.string.text_remotely_removed_from_whitelist)
             }
@@ -134,7 +134,7 @@ class RemoteControlService : JobIntentService() {
     }
 
     private fun addTextToWhitelist(text: String?) {
-        with(settings.filter) {
+        with(settings.readFilter()) {
             text?.let {
                 addToFilterList(this, textWhitelist, it, R.string.text_remotely_added_to_whitelist)
             }
@@ -142,7 +142,7 @@ class RemoteControlService : JobIntentService() {
     }
 
     private fun removeTextFromBlacklist(text: String?) {
-        with(settings.filter) {
+        with(settings.readFilter()) {
             text?.let {
                 removeFromTextList(this, textBlacklist, it, R.string.text_remotely_removed_from_blacklist)
             }
@@ -150,7 +150,7 @@ class RemoteControlService : JobIntentService() {
     }
 
     private fun addTextToBlacklist(text: String?) {
-        with(settings.filter) {
+        with(settings.readFilter()) {
             text?.let {
                 addToFilterList(this, textBlacklist, it, R.string.text_remotely_added_to_blacklist)
             }
@@ -158,7 +158,7 @@ class RemoteControlService : JobIntentService() {
     }
 
     private fun removePhoneFromWhitelist(phone: String?) {
-        with(settings.filter) {
+        with(settings.readFilter()) {
             phone?.let {
                 removeFromPhoneList(this, phoneWhitelist, it, R.string.phone_remotely_removed_from_whitelist)
             }
@@ -166,7 +166,7 @@ class RemoteControlService : JobIntentService() {
     }
 
     private fun addPhoneToWhitelist(phone: String?) {
-        with(settings.filter) {
+        with(settings.readFilter()) {
             phone?.let {
                 addToFilterList(this, phoneWhitelist, it, R.string.phone_remotely_added_to_whitelist)
             }
@@ -174,7 +174,7 @@ class RemoteControlService : JobIntentService() {
     }
 
     private fun removePhoneFromBlacklist(phone: String?) {
-        with(settings.filter) {
+        with(settings.readFilter()) {
             phone?.let {
                 removeFromPhoneList(this, phoneBlacklist, it, R.string.phone_remotely_removed_from_blacklist)
             }
@@ -182,7 +182,7 @@ class RemoteControlService : JobIntentService() {
     }
 
     private fun addPhoneToBlacklist(phone: String?) {
-        with(settings.filter) {
+        with(settings.readFilter()) {
             phone?.let {
                 addToFilterList(this, phoneBlacklist, it, R.string.phone_remotely_added_to_blacklist)
             }
@@ -221,7 +221,7 @@ class RemoteControlService : JobIntentService() {
     }
 
     private fun saveFilter(filter: PhoneEventFilter, text: String?, messageRes: Int) {
-        settings.putFilter(filter)
+        settings.writeFilter(filter)
         if (settings.getBoolean(PREF_REMOTE_CONTROL_NOTIFICATIONS, false)) {
             notifications.showRemoteAction(messageRes, text)
         }
