@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.EditText;
 
+import androidx.annotation.NonNull;
 import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
@@ -16,7 +18,6 @@ import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.GoogleAuthorizationHelper;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.ResendWorker;
-import com.bopr.android.smailer.util.AndroidUtil;
 
 import static com.bopr.android.smailer.Database.registerDatabaseListener;
 import static com.bopr.android.smailer.Database.unregisterDatabaseListener;
@@ -29,6 +30,7 @@ import static com.bopr.android.smailer.Settings.PREF_RESEND_UNSENT;
 import static com.bopr.android.smailer.Settings.PREF_RULES;
 import static com.bopr.android.smailer.Settings.PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization;
+import static com.bopr.android.smailer.util.AndroidUtil.deviceName;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.TextUtil.isNullOrBlank;
 import static com.bopr.android.smailer.util.TextUtil.isNullOrEmpty;
@@ -87,7 +89,15 @@ public class MainFragment extends BasePreferenceFragment {
             }
         });
 
-        requirePreference(PREF_DEVICE_ALIAS).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+        EditTextPreference deviceNamePreference = requirePreference(PREF_DEVICE_ALIAS);
+        deviceNamePreference.setOnBindEditTextListener(new EditTextPreference.OnBindEditTextListener() {
+
+            @Override
+            public void onBindEditText(@NonNull EditText editText) {
+                editText.setHint(deviceName());
+            }
+        });
+        deviceNamePreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
@@ -184,7 +194,7 @@ public class MainFragment extends BasePreferenceFragment {
 
     private void updateDeviceNamePreferenceSummary(EditTextPreference preference, String value) {
         if (isNullOrEmpty(value)) {
-            updateSummary(preference, AndroidUtil.deviceName(), SUMMARY_STYLE_DEFAULT);
+            updateSummary(preference, deviceName(), SUMMARY_STYLE_DEFAULT);
         } else {
             updateSummary(preference, value, SUMMARY_STYLE_DEFAULT);
         }
