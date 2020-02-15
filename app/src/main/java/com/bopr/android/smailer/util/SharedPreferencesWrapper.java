@@ -4,7 +4,6 @@ import android.content.SharedPreferences;
 
 import androidx.annotation.Nullable;
 
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -79,12 +78,6 @@ public class SharedPreferencesWrapper implements SharedPreferences {
         wrappedPreferences.unregisterOnSharedPreferenceChangeListener(listener);
     }
 
-    public void removeStringSet(String key, String... values) {
-        Set<String> set = getStringSet(key, Collections.<String>emptySet());
-        set.removeAll(asList(values));
-        edit().putStringSet(key, set).apply();
-    }
-
     @SuppressWarnings({"UnusedReturnValue", "unused"})
     public class EditorWrapper implements Editor {
 
@@ -104,6 +97,14 @@ public class SharedPreferencesWrapper implements SharedPreferences {
         public EditorWrapper putStringSet(String key, @Nullable Set<String> values) {
             wrappedEditor.putStringSet(key, values);
             return this;
+        }
+
+        public void removeFromStringSet(String key, String... values) {
+            Set<String> set = getStringSet(key, null);
+            if (set != null && !set.isEmpty()) {
+                set.removeAll(asList(values));
+                putStringSet(key, set);
+            }
         }
 
         @Override

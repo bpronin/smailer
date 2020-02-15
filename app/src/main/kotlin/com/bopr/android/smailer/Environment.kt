@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import com.bopr.android.smailer.remote.RemoteControlWorker
 import com.bopr.android.smailer.sync.SyncEngine
-import com.bopr.android.smailer.util.Util.requireNonNull
 import org.slf4j.LoggerFactory
 
 object Environment {
@@ -12,7 +11,7 @@ object Environment {
     private val log = LoggerFactory.getLogger("Environment")
 
     private fun setUpDefaultExceptionHandler() {
-        val defaultHandler = requireNonNull(Thread.getDefaultUncaughtExceptionHandler())
+        val defaultHandler = requireNotNull(Thread.getDefaultUncaughtExceptionHandler())
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
             try {
                 log.error("Application crashed", throwable)

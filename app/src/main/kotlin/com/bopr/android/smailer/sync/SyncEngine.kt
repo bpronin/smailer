@@ -14,6 +14,7 @@ import com.bopr.android.smailer.Settings.*
 import com.bopr.android.smailer.sync.AppContentProvider.Companion.AUTHORITY
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager
 import org.slf4j.LoggerFactory
+import java.lang.System.currentTimeMillis
 
 class SyncEngine private constructor(context: Context) {
 
@@ -60,7 +61,7 @@ class SyncEngine private constructor(context: Context) {
     }
 
     private fun updateMetaData() {
-        settings.edit().putLong(PREF_SYNC_TIME, System.currentTimeMillis()).apply()
+        settings.edit().putLong(PREF_SYNC_TIME, currentTimeMillis()).apply()
 
         log.debug("Metadata updated")
     }

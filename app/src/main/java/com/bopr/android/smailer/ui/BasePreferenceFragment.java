@@ -21,7 +21,6 @@ import com.bopr.android.smailer.PermissionsHelper;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.Settings;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -36,7 +35,8 @@ import static com.bopr.android.smailer.util.Util.requireNonNull;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-public abstract class BasePreferenceFragment extends PreferenceFragmentCompat {
+public abstract class BasePreferenceFragment extends PreferenceFragmentCompat
+        implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     static final int SUMMARY_STYLE_DEFAULT = 0;
     static final int SUMMARY_STYLE_UNDERWIVED = 1;
@@ -52,27 +52,21 @@ public abstract class BasePreferenceFragment extends PreferenceFragmentCompat {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         settings = new Settings(requireContext());
+        settings.registerOnSharedPreferenceChangeListener(this);
+        permissionsHelper = new PermissionsHelper(requireActivity());
+    }
 
-        permissionsHelper = new PermissionsHelper(getActivity(), settings) {
-
-            @Override
-            protected void onPermissionsDenied(Collection<String> permissions) {
-                super.onPermissionsDenied(permissions);
-                refreshPreferenceViews();
-            }
-        };
+    @Override
+    public void onDestroy() {
+        permissionsHelper.dispose();
+        settings.unregisterOnSharedPreferenceChangeListener(this);
+        super.onDestroy();
     }
 
     @Override
     public void onStart() {
         super.onStart();
         refreshPreferenceViews();
-    }
-
-    @Override
-    public void onStop() {
-        permissionsHelper.dispose();
-        super.onStop();
     }
 
     @Override
@@ -107,6 +101,11 @@ public abstract class BasePreferenceFragment extends PreferenceFragmentCompat {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        refreshPreferenceViews();
+    }
+
     /**
      * Updates summary of {@link Preference}.
      *
@@ -119,10 +118,10 @@ public abstract class BasePreferenceFragment extends PreferenceFragmentCompat {
                 preference.setSummary(value);
                 break;
             case SUMMARY_STYLE_UNDERWIVED:
-                preference.setSummary(underwivedText(getContext(), value));
+                preference.setSummary(underwivedText(requireContext(), value));
                 break;
             case SUMMARY_STYLE_ACCENTED:
-                preference.setSummary(accentedText(getContext(), value));
+                preference.setSummary(accentedText(requireContext(), value));
                 break;
         }
     }
@@ -168,4 +167,5 @@ public abstract class BasePreferenceFragment extends PreferenceFragmentCompat {
     <T extends Preference> T requirePreference(@NonNull CharSequence key) {
         return requireNonNull(this.<T>findPreference(key));
     }
+
 }
