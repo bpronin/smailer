@@ -58,7 +58,7 @@ class PhoneEventFilterTest {
     fun testPhoneBlackList() {
         val filter = PhoneEventFilter().apply {
             triggers = asSet(VAL_PREF_TRIGGER_IN_SMS)
-            phoneBlacklist = emptySet()
+            phoneBlacklist = mutableSetOf()
         }
 
         var event = createEvent(
@@ -117,7 +117,7 @@ class PhoneEventFilterTest {
     fun testPhoneWhiteList() {
         val filter = PhoneEventFilter().apply {
             triggers = asSet(VAL_PREF_TRIGGER_IN_SMS)
-            phoneWhitelist = emptySet()
+            phoneWhitelist = mutableSetOf()
         }
 
         var event = createEvent(
@@ -147,7 +147,7 @@ class PhoneEventFilterTest {
     fun testTextBlackList() {
         val filter = PhoneEventFilter()
         filter.triggers = asSet(VAL_PREF_TRIGGER_IN_SMS)
-        filter.textBlacklist = emptySet()
+        filter.textBlacklist = mutableSetOf()
 
         var event = createEvent(
                 phone = "111",
@@ -195,7 +195,7 @@ class PhoneEventFilterTest {
     fun testTextWhiteList() {
         val filter = PhoneEventFilter()
         filter.triggers = asSet(VAL_PREF_TRIGGER_IN_SMS)
-        filter.textWhitelist = emptySet()
+        filter.textWhitelist = mutableSetOf()
 
         var event = createEvent(
                 phone = "111",

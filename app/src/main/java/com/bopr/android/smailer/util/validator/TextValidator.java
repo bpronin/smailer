@@ -5,7 +5,7 @@ import android.text.TextWatcher;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.bopr.android.smailer.util.draw.WavyUnderlineSpan;
+import com.bopr.android.smailer.ui.WavyUnderlineSpan;
 
 /**
  * Abstract {@link EditText} validator.

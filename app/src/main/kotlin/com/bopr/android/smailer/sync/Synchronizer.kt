@@ -96,10 +96,10 @@ class Synchronizer @JvmOverloads constructor(context: Context,
         data.events?.map { e -> dataToEvent(e) }?.apply { database.putEvents(this) }
 
         with(settings.readFilter()) {
-            phoneBlacklist = data.phoneBlacklist
-            textBlacklist = data.textBlacklist
-            phoneWhitelist = data.phoneWhitelist
-            textWhitelist = data.textWhitelist
+            phoneBlacklist = data.phoneBlacklist?.toMutableSet() ?: mutableSetOf()
+            textBlacklist = data.textBlacklist?.toMutableSet() ?: mutableSetOf()
+            phoneWhitelist = data.phoneWhitelist?.toMutableSet() ?: mutableSetOf()
+            textWhitelist = data.textWhitelist?.toMutableSet() ?: mutableSetOf()
 
             settings.writeFilter(this)
         }

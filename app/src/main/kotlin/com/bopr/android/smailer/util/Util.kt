@@ -10,7 +10,7 @@ object Util {
 
     @JvmStatic
     @SafeVarargs
-    fun <T> asSet(vararg values: T): Set<T> = values.toSet()
+    fun <T> asSet(vararg values: T): MutableSet<T> = values.toMutableSet()
 
     @JvmStatic
     fun <T> toSet(collection: Collection<T>): Set<T> = collection.toSet()

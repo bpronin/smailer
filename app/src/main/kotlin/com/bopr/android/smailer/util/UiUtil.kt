@@ -19,7 +19,7 @@ import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.util.draw.WavyUnderlineSpan
+import com.bopr.android.smailer.ui.WavyUnderlineSpan
 
 /**
  * Miscellaneous UI and resources utilities.
