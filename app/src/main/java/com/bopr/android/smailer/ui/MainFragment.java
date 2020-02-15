@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.EditText;
 
+import androidx.annotation.NonNull;
 import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
@@ -85,16 +87,24 @@ public class MainFragment extends BasePreferenceFragment {
         requirePreference(PREF_EMAIL_LOCALE).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
-                updateLocalePreference((ListPreference) preference, (String) value);
+                updateLocalePreferenceSummary((ListPreference) preference, (String) value);
                 return true;
             }
         });
 
-        requirePreference(PREF_DEVICE_ALIAS).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+        EditTextPreference deviceNamePreference = requirePreference(PREF_DEVICE_ALIAS);
+        deviceNamePreference.setOnBindEditTextListener(new EditTextPreference.OnBindEditTextListener() {
+
+            @Override
+            public void onBindEditText(@NonNull EditText editText) {
+                editText.setHint(deviceName());
+            }
+        });
+        deviceNamePreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
-                updateAlasPreference((EditTextPreference) preference, (String) value);
+                updateDeviceNamePreferenceSummary((EditTextPreference) preference, (String) value);
                 return true;
             }
         });
@@ -117,12 +127,12 @@ public class MainFragment extends BasePreferenceFragment {
     @Override
     public void onStart() {
         super.onStart();
-        updateAccountPreference();
-        updateRecipientsPreference();
-        updateHistoryPreference();
+        updateAccountPreferenceSummary();
+        updateRecipientsPreferenceSummary();
+        updateHistoryPreferenceSummary();
     }
 
-    private void updateAccountPreference() {
+    private void updateAccountPreferenceSummary() {
         String value = settings.getString(PREF_SENDER_ACCOUNT, "");
         if (isNullOrEmpty(value)) {
             updateSummary(accountPreference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED);
@@ -133,7 +143,7 @@ public class MainFragment extends BasePreferenceFragment {
         }
     }
 
-    private void updateRecipientsPreference() {
+    private void updateRecipientsPreferenceSummary() {
         String value = settings.getString(PREF_RECIPIENTS_ADDRESS, null);
         if (isNullOrEmpty(value)) {
             updateSummary(recipientsPreference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED);
@@ -143,7 +153,7 @@ public class MainFragment extends BasePreferenceFragment {
         }
     }
 
-    private void updateHistoryPreference() {
+    private void updateHistoryPreferenceSummary() {
         long count = database.getUnreadEventsCount();
         if (count > 0) {
             String text = formatter(requireContext())
@@ -156,7 +166,7 @@ public class MainFragment extends BasePreferenceFragment {
         }
     }
 
-    private void updateLocalePreference(ListPreference preference, String value) {
+    private void updateLocalePreferenceSummary(ListPreference preference, String value) {
         int index = preference.findIndexOfValue(value);
         if (index < 0) {
             updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED);
@@ -166,7 +176,7 @@ public class MainFragment extends BasePreferenceFragment {
         }
     }
 
-    private void updateAlasPreference(EditTextPreference preference, String value) {
+    private void updateDeviceNamePreferenceSummary(EditTextPreference preference, String value) {
         if (isNullOrEmpty(value)) {
             updateSummary(preference, deviceName(), SUMMARY_STYLE_DEFAULT);
         } else {
@@ -206,10 +216,10 @@ public class MainFragment extends BasePreferenceFragment {
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             switch (key) {
                 case PREF_SENDER_ACCOUNT:
-                    updateAccountPreference();
+                    updateAccountPreferenceSummary();
                     break;
                 case PREF_RECIPIENTS_ADDRESS:
-                    updateRecipientsPreference();
+                    updateRecipientsPreferenceSummary();
                     break;
                 case PREF_EMAIL_TRIGGERS:
                     ContentObserverService.enable(requireContext());
@@ -227,7 +237,7 @@ public class MainFragment extends BasePreferenceFragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            updateHistoryPreference();
+            updateHistoryPreferenceSummary();
         }
     }
 }

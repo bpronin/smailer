@@ -9,6 +9,8 @@ import android.content.pm.PermissionInfo;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 
+import com.bopr.android.smailer.util.SharedPreferencesWrapper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -154,31 +156,37 @@ public class PermissionsHelper implements SharedPreferences.OnSharedPreferenceCh
     protected void onPermissionsDenied(Collection<String> permissions) {
         log.debug("Denied: " + permissions);
 
-        for (String permission : permissions) {
-            switch (permission) {
-                case RECEIVE_SMS:
-                    settings.removeStringSet(PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_IN_SMS);
-                    break;
-                case READ_SMS:
-                    settings.removeStringSet(PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_OUT_SMS);
-                    break;
-                case WRITE_SMS:
-                    settings.removeStringSet(PREF_MARK_SMS_AS_READ);
-                    break;
-                case READ_PHONE_STATE:
-                    settings.removeStringSet(PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_IN_CALLS, VAL_PREF_TRIGGER_MISSED_CALLS);
-                    break;
-                case PROCESS_OUTGOING_CALLS:
-                    settings.removeStringSet(PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_OUT_CALLS);
-                    break;
-                case READ_CONTACTS:
-                    settings.removeStringSet(PREF_EMAIL_CONTENT, VAL_PREF_EMAIL_CONTENT_CONTACT);
-                    break;
-                case ACCESS_COARSE_LOCATION:
-                case ACCESS_FINE_LOCATION:
-                    settings.removeStringSet(PREF_EMAIL_CONTENT, VAL_PREF_EMAIL_CONTENT_LOCATION);
-                    break;
+        if (!permissions.isEmpty()) {
+            SharedPreferencesWrapper.EditorWrapper edit = settings.edit();
+
+            for (String permission : permissions) {
+                switch (permission) {
+                    case RECEIVE_SMS:
+                        edit.removeFromStringSet(PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_IN_SMS);
+                        break;
+                    case READ_SMS:
+                        edit.removeFromStringSet(PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_OUT_SMS);
+                        break;
+                    case WRITE_SMS:
+                        edit.removeFromStringSet(PREF_MARK_SMS_AS_READ);
+                        break;
+                    case READ_PHONE_STATE:
+                        edit.removeFromStringSet(PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_IN_CALLS, VAL_PREF_TRIGGER_MISSED_CALLS);
+                        break;
+                    case PROCESS_OUTGOING_CALLS:
+                        edit.removeFromStringSet(PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_OUT_CALLS);
+                        break;
+                    case READ_CONTACTS:
+                        edit.removeFromStringSet(PREF_EMAIL_CONTENT, VAL_PREF_EMAIL_CONTENT_CONTACT);
+                        break;
+                    case ACCESS_COARSE_LOCATION:
+                    case ACCESS_FINE_LOCATION:
+                        edit.removeFromStringSet(PREF_EMAIL_CONTENT, VAL_PREF_EMAIL_CONTENT_LOCATION);
+                        break;
+                }
             }
+            
+            edit.apply();
         }
     }
 
