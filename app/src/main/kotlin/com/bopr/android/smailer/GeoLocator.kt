@@ -49,7 +49,7 @@ class GeoLocator(private val context: Context, private val database: Database) {
             if (coordinates != null) {
                 log.debug("Using location from local database")
             } else {
-                log.error("Unable to obtain location from database")
+                log.warn("Unable to obtain location from database")
             }
         } else {
             database.saveLastLocation(coordinates)

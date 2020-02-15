@@ -75,14 +75,10 @@ public class CallProcessorTest extends BaseTest {
         database.destroy();
     }
 
-    private PhoneEvent newPhoneEvent() {
-        PhoneEvent event = new PhoneEvent();
-        event.setStartTime(currentTimeMillis());
-        event.setAcceptor("device");
-        event.setPhone("+123");
-        event.setIncoming(true);
-        event.setMissed(true);
-        return event;
+    private PhoneEvent newPhoneEvent(boolean missed) {
+        long time = currentTimeMillis();
+        return new PhoneEvent("+123", true, time, time + 1000, missed,
+                "SMS TEXT", null, null, STATE_PENDING, "device", REASON_ACCEPTED, false);
     }
 
     /**
@@ -98,7 +94,7 @@ public class CallProcessorTest extends BaseTest {
         doAnswer(sendInvocations).when(transport).send(any(MailMessage.class));
         doAnswer(showErrorInvocations).when(notifications).showMailError(anyInt(), anyInt());
 
-        PhoneEvent event = newPhoneEvent();
+        PhoneEvent event = newPhoneEvent(true);
 
         CallProcessor processor = new CallProcessor(context, transport, notifications, database, geoLocator);
         processor.process(event);
@@ -135,8 +131,7 @@ public class CallProcessorTest extends BaseTest {
         doAnswer(sendInvocations).when(transport).send(any(MailMessage.class));
         doAnswer(showErrorInvocations).when(notifications).showMailError(anyInt(), anyInt());
 
-        PhoneEvent event = newPhoneEvent();
-        event.setMissed(false); /* make it not missed (default filter denies it) */
+        PhoneEvent event = newPhoneEvent(false); /* make it not missed (default filter denies it) */
 
         CallProcessor processor = new CallProcessor(context, transport, notifications, database, geoLocator);
         processor.process(event);
@@ -169,7 +164,7 @@ public class CallProcessorTest extends BaseTest {
 
         when(preferences.getString(eq(PREF_SENDER_ACCOUNT), anyString())).thenReturn(null);
 
-        PhoneEvent event = newPhoneEvent();
+        PhoneEvent event = newPhoneEvent(true);
 
         CallProcessor processor = new CallProcessor(context, transport, notifications, database, geoLocator);
         processor.process(event);
@@ -205,7 +200,7 @@ public class CallProcessorTest extends BaseTest {
 
         when(preferences.getString(eq(PREF_RECIPIENTS_ADDRESS), anyString())).thenReturn(null);
 
-        PhoneEvent event = newPhoneEvent();
+        PhoneEvent event = newPhoneEvent(true);
 
         CallProcessor processor = new CallProcessor(context, transport, notifications, database, geoLocator);
         processor.process(event);
@@ -238,7 +233,7 @@ public class CallProcessorTest extends BaseTest {
         doAnswer(showErrorInvocations).when(notifications).showMailError(anyInt(), anyInt());
         doThrow(new AccountsException("Test error")).when(transport).startSession(anyString(), anyString());
 
-        PhoneEvent event = newPhoneEvent();
+        PhoneEvent event = newPhoneEvent(true);
 
         CallProcessor processor = new CallProcessor(context, transport, notifications, database, geoLocator);
         processor.process(event);
@@ -272,7 +267,7 @@ public class CallProcessorTest extends BaseTest {
         doAnswer(showErrorInvocations).when(notifications).showMailError(anyInt(), anyInt());
         doThrow(new IOException("Test error")).when(transport).send(any(MailMessage.class));
 
-        PhoneEvent event = newPhoneEvent();
+        PhoneEvent event = newPhoneEvent(true);
 
         CallProcessor processor = new CallProcessor(context, transport, notifications, database, geoLocator);
         processor.process(event);
@@ -305,7 +300,7 @@ public class CallProcessorTest extends BaseTest {
 
         /* error while sending produces error notification */
         doThrow(new IOException("Test error")).when(transport).send(any(MailMessage.class));
-        processor.process(newPhoneEvent());
+        processor.process(newPhoneEvent(true));
 
         assertTrue(showInvocations.isEmpty());
         assertTrue(hideInvocations.isEmpty());
@@ -315,7 +310,7 @@ public class CallProcessorTest extends BaseTest {
 
         /* sending without errors hides all previous error notifications */
         doNothing().when(transport).send(any(MailMessage.class));
-        processor.process(newPhoneEvent());
+        processor.process(newPhoneEvent(true));
 
         assertTrue(showInvocations.isEmpty());
         assertEquals(1, hideInvocations.count());
@@ -335,14 +330,14 @@ public class CallProcessorTest extends BaseTest {
         /* the setting is OFF */
         when(preferences.getBoolean(eq(PREF_NOTIFY_SEND_SUCCESS), anyBoolean())).thenReturn(false);
 
-        processor.process(newPhoneEvent());
+        processor.process(newPhoneEvent(true));
 
         assertTrue(showSuccessInvocation.isEmpty());
 
         /* the setting is ON */
         when(preferences.getBoolean(eq(PREF_NOTIFY_SEND_SUCCESS), anyBoolean())).thenReturn(true);
 
-        processor.process(newPhoneEvent());
+        processor.process(newPhoneEvent(true));
 
         assertEquals(1, showSuccessInvocation.count());
         int notificationText = showSuccessInvocation.getArgument(0, 0);
@@ -363,9 +358,9 @@ public class CallProcessorTest extends BaseTest {
 
         CallProcessor processor = new CallProcessor(context, transport, notifications, database, geoLocator);
 
-        processor.process(newPhoneEvent());
-        processor.process(newPhoneEvent());
-        processor.process(newPhoneEvent());
+        processor.process(newPhoneEvent(true));
+        processor.process(newPhoneEvent(true));
+        processor.process(newPhoneEvent(true));
 
         assertEquals(3, database.getEvents().getCount());
         assertEquals(3, database.getPendingEvents().getCount());

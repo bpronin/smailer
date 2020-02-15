@@ -12,7 +12,7 @@ class AppContentProvider : ContentProvider() {
     private lateinit var database: Database
 
     override fun onCreate(): Boolean {
-        database = Database(context)
+        database = Database(context!!)
         return true
     }
 

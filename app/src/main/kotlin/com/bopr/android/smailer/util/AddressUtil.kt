@@ -17,9 +17,11 @@ object AddressUtil {
                     + "(\\([0-9]+\\)[\\- \\.]*)?" // (<digits>)<sdd>*
                     + "([0-9][0-9\\- \\.]+[0-9])") // <digit><digit|sdd>+<digit>
 
+    private val NON_PHONE_SYMBOLS = Regex("[^A-Za-z0-9*.]")
+
     @JvmStatic
     fun normalizePhone(phone: String): String {
-        return phone.replace("[^A-Za-z0-9*.]", "").toUpperCase(Locale.ROOT)
+        return phone.replace(NON_PHONE_SYMBOLS, "").toUpperCase(Locale.ROOT)
     }
 
     @JvmStatic
@@ -49,7 +51,7 @@ object AddressUtil {
 
     @JvmStatic
     fun phoneToRegEx(phone: String): String {
-        return normalizePhone(phone).replace("\\*", "(.*)")
+        return normalizePhone(phone).replace("*", "(.*)")
     }
 
     @JvmStatic
@@ -74,7 +76,11 @@ object AddressUtil {
     @JvmStatic
     fun normalizeEmail(email: String): String {
         val localPart = email.split("@")[0]
-        val part = if (isQuoted(localPart)) localPart else localPart.replace("\\.", "")
+        val part = if (isQuoted(localPart)) {
+            localPart
+        } else {
+            localPart.replace(".", "")
+        }
         return email.replaceFirst(localPart, part).toLowerCase(Locale.ROOT)
     }
 

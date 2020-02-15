@@ -41,17 +41,7 @@ object TextUtil {
     }
 
     @JvmStatic
-    fun join(values: Collection<*>, divider: String): String {
-        val builder = StringBuilder()
-        val iterator = values.iterator()
-        while (iterator.hasNext()) {
-            builder.append(iterator.next())
-            if (iterator.hasNext()) {
-                builder.append(divider)
-            }
-        }
-        return builder.toString()
-    }
+    fun join(values: Collection<*>, divider: String): String = values.joinToString(divider)
 
     @JvmStatic
     fun split(value: String, divider: String, trim: Boolean): List<String> {
@@ -69,6 +59,7 @@ object TextUtil {
 
     @JvmStatic
     fun commaJoin(values: Collection<*>): String {
+//        return values.joinToString()
         return join(values, ",")
     }
 

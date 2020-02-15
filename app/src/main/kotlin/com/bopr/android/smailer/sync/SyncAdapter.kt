@@ -102,37 +102,33 @@ class SyncAdapter(context: Context, autoInitialize: Boolean) : AbstractThreadedS
     }
 
     private fun eventToData(event: PhoneEvent): SyncData.Event {
-        with(event) {
-            return SyncData.Event(
-                    isIncoming,
-                    isMissed,
-                    phone,
-                    acceptor,
-                    startTime,
-                    endTime,
-                    text,
-                    details,
-                    location?.latitude,
-                    location?.longitude,
-                    state)
-        }
+        return SyncData.Event(
+                incoming = event.isIncoming,
+                missed = event.isMissed,
+                phone = event.phone,
+                recipient = event.acceptor,
+                startTime = event.startTime,
+                endTime = event.endTime,
+                text = event.text,
+                details = event.details,
+                latitude = event.location?.latitude,
+                longitude = event.location?.longitude,
+                state = event.state)
     }
 
     private fun dataToEvent(data: SyncData.Event): PhoneEvent {
-        val event = PhoneEvent()
-        with(data) {
-            event.state = state
-            event.phone = phone
-            event.text = text
-            event.isIncoming = incoming
-            event.isMissed = missed
-            event.startTime = startTime
-            event.endTime = endTime
-            event.details = details
-            event.acceptor = recipient
-            event.location = geoCoordinatesOf(latitude, longitude)
-        }
-        return event
+        return PhoneEvent(
+                state = data.state,
+                phone = data.phone,
+                text = data.text,
+                isIncoming = data.incoming,
+                isMissed = data.missed,
+                startTime = data.startTime,
+                endTime = data.endTime,
+                details = data.details,
+                acceptor = data.recipient,
+                location = geoCoordinatesOf(data.latitude, data.longitude)
+        )
     }
 
 

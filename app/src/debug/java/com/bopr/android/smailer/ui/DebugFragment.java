@@ -597,13 +597,8 @@ public class DebugFragment extends BasePreferenceFragment {
     private void onProcessSingleEvent() {
         long start = System.currentTimeMillis();
 
-        PhoneEvent event = new PhoneEvent();
-        event.setAcceptor(deviceName());
-        event.setPhone("5556");
-        event.setText("SMS TEXT");
-        event.setIncoming(true);
-        event.setStartTime(start);
-        event.setEndTime(start + 10000);
+        PhoneEvent event = new PhoneEvent("5556", true, start, start + 10000, false,
+                "SMS TEXT", null, null, STATE_PENDING, deviceName(), REASON_ACCEPTED, false);
 
         CallProcessorService.Companion.startCallProcessingService(context, event);
         showToast(context, "Done");

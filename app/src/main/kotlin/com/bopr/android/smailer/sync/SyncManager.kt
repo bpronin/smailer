@@ -8,7 +8,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
-import com.bopr.android.smailer.Database.registerDatabaseListener
+import com.bopr.android.smailer.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.*
 import com.bopr.android.smailer.sync.AppContentProvider.Companion.AUTHORITY

@@ -19,7 +19,7 @@ data class SyncData(
             @Key("is_incoming") var incoming: Boolean = false,
             @Key("is_missed") var missed: Boolean = false,
             @Key("phone") var phone: String = "",
-            @Key("recipient") var recipient: String? = null,
+            @Key("recipient") var recipient: String,
             @Key("start_time") var startTime: Long = 0,
             @Key("end_time") var endTime: Long? = null,
             @Key("message_text") var text: String? = null,

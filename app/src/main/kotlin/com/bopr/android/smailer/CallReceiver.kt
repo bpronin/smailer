@@ -94,23 +94,18 @@ class CallReceiver : BroadcastReceiver() {
             parseMessageLegacy(intent)
         }
 
-        val event = PhoneEvent(isIncoming = true)
         if (messages.isNotEmpty()) {
-            val sb = StringBuilder()
-            for (message in messages) {
-                sb.append(message.displayMessageBody)
-            }
+            val time = messages[0].timestampMillis  /* NOTE: time zone on emulator may be incorrect */
+            val event = PhoneEvent(isIncoming = true,
+                    phone = messages[0].displayOriginatingAddress,
+                    acceptor = deviceName(),
+                    startTime = time,
+                    endTime = time,
+                    text = messages.joinToString(separator = "", transform = { m -> m.displayMessageBody })
+            )
 
-            event.apply {
-                acceptor = deviceName()
-                phone = messages[0].displayOriginatingAddress
-                startTime = messages[0].timestampMillis /* time zone on emulator may be incorrect */
-                endTime = event.startTime
-                text = sb.toString()
-            }
+            startCallProcessingService(context, event)
         }
-
-        startCallProcessingService(context, event)
     }
 
     private fun processCall(context: Context, incoming: Boolean, missed: Boolean) {

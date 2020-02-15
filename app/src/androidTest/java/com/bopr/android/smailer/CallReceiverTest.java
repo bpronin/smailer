@@ -28,6 +28,7 @@ import static org.mockito.Mockito.when;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
+@SuppressWarnings({"deprecation", "RedundantSuppression"})
 public class CallReceiverTest extends BaseTest {
 
     private Context context;

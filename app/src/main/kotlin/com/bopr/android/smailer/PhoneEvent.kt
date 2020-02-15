@@ -12,16 +12,16 @@ import kotlin.annotation.AnnotationRetention.SOURCE
  */
 @Parcelize
 data class PhoneEvent(
-        var phone: String = "",
-        var isIncoming: Boolean = false,
-        var startTime: Long = 0,
-        var endTime: Long? = null,
-        var isMissed: Boolean = false,
-        var text: String? = null,
+        val phone: String,
+        val isIncoming: Boolean = false,
+        val startTime: Long,
+        val endTime: Long? = null,
+        val isMissed: Boolean = false,
+        val text: String? = null,
         var location: GeoCoordinates? = null,
         var details: String? = null,
         @EventState var state: Int = STATE_PENDING,
-        var acceptor: String? = null,
+        val acceptor: String,
         var stateReason: Int = REASON_ACCEPTED,
         var isRead: Boolean = false
 ) : Parcelable {

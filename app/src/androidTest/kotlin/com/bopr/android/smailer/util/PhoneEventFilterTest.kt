@@ -15,9 +15,26 @@ import org.junit.Test
 
 class PhoneEventFilterTest {
 
+    private fun createEvent(phone: String, acceptor: String = "Device",
+                            startTime: Long = 1000,
+                            isIncoming: Boolean = true,
+                            isMissed: Boolean = true,
+                            isRead: Boolean = true,
+                            text: String? = null): PhoneEvent {
+        return PhoneEvent(
+                phone = phone,
+                acceptor = acceptor,
+                startTime = startTime,
+                isIncoming = isIncoming,
+                isMissed = isMissed,
+                isRead = isRead,
+                text = text
+        )
+    }
+
     @Test
     fun testEmpty() {
-        val event = PhoneEvent()
+        val event = createEvent("123")
         val filter = PhoneEventFilter()
 
         assertEquals(REASON_TRIGGER_OFF, filter.test(event))
@@ -28,10 +45,11 @@ class PhoneEventFilterTest {
         val filter = PhoneEventFilter()
         filter.triggers = asSet(VAL_PREF_TRIGGER_IN_SMS)
 
-        val event = PhoneEvent()
-        event.isIncoming = true
-        event.phone = "+123456789"
-        event.text = "This is a message for Bob or Ann"
+        val event = createEvent(
+                isIncoming = true,
+                phone = "+123456789",
+                text = "This is a message for Bob or Ann"
+        )
 
         assertEquals(REASON_ACCEPTED, filter.test(event))
     }
@@ -43,30 +61,30 @@ class PhoneEventFilterTest {
             phoneBlacklist = emptySet()
         }
 
-        val event = PhoneEvent().apply {
-            text = "This is a message for Bob or Ann"
-            isIncoming = true
-            phone = "111"
-        }
+        var event = createEvent(
+                text = "This is a message for Bob or Ann",
+                isIncoming = true,
+                phone = "111"
+        )
 
         assertEquals(REASON_ACCEPTED, filter.test(event))
 
         filter.phoneBlacklist = asSet("111", "333")
-        event.phone = "111"
+        event = event.copy(phone = "111")
 
         assertEquals(REASON_NUMBER_BLACKLISTED, filter.test(event))
 
         filter.phoneBlacklist = asSet("+1(11)", "333")
-        event.phone = "1 11"
+        event = event.copy(phone = "1 11")
 
         assertEquals(REASON_NUMBER_BLACKLISTED, filter.test(event))
 
-        event.phone = "222"
+        event = event.copy(phone = "222")
 
         assertEquals(REASON_ACCEPTED, filter.test(event))
 
         filter.phoneBlacklist = asSet("111", "222")
-        event.phone = "222"
+        event = event.copy(phone = "222")
 
         assertEquals(REASON_NUMBER_BLACKLISTED, filter.test(event))
     }
@@ -78,19 +96,19 @@ class PhoneEventFilterTest {
             phoneBlacklist = asSet("+79628810***")
         }
 
-        val event = PhoneEvent().apply {
-            isIncoming = true
-            isMissed = true
-            phone = "+79628810559"
-        }
+        var event = createEvent(
+                isIncoming = true,
+                isMissed = true,
+                phone = "+79628810559"
+        )
 
         assertEquals(REASON_NUMBER_BLACKLISTED, filter.test(event))
 
-        event.phone = "+79628810558"
+        event = event.copy(phone = "+79628810558")
 
         assertEquals(REASON_NUMBER_BLACKLISTED, filter.test(event))
 
-        event.phone = "+79628811111"
+        event = event.copy(phone = "+79628811111")
 
         assertEquals(REASON_ACCEPTED, filter.test(event))
     }
@@ -102,25 +120,25 @@ class PhoneEventFilterTest {
             phoneWhitelist = emptySet()
         }
 
-        val event = PhoneEvent().apply {
-            text = "This is a message for Bob or Ann"
-            isIncoming = true
-            phone = "111"
-        }
+        var event = createEvent(
+                text = "This is a message for Bob or Ann",
+                isIncoming = true,
+                phone = "111"
+        )
 
         assertEquals(REASON_ACCEPTED, filter.test(event))
 
         filter.phoneWhitelist = asSet("111", "333")
-        event.phone = "111"
+        event = event.copy(phone = "111")
 
         assertEquals(REASON_ACCEPTED, filter.test(event))
 
-        event.phone = "222"
+        event = event.copy(phone = "222")
 
         assertEquals(REASON_ACCEPTED, filter.test(event))
 
         filter.phoneWhitelist = asSet("111", "222")
-        event.phone = "222"
+        event = event.copy(phone = "222")
 
         assertEquals(REASON_ACCEPTED, filter.test(event))
     }
@@ -131,20 +149,20 @@ class PhoneEventFilterTest {
         filter.triggers = asSet(VAL_PREF_TRIGGER_IN_SMS)
         filter.textBlacklist = emptySet()
 
-        val event = PhoneEvent()
-        event.phone = "111"
-        event.isIncoming = true
-        event.text = "This is a message for Bob or Ann"
-
+        var event = createEvent(
+                phone = "111",
+                isIncoming = true,
+                text = "This is a message for Bob or Ann"
+        )
         assertEquals(REASON_ACCEPTED, filter.test(event))
 
         filter.textBlacklist = asSet("Bob", "Ann")
-        event.text = "This is a message for Bob or Ann"
+        event = event.copy(text = "This is a message for Bob or Ann")
 
         assertEquals(REASON_TEXT_BLACKLISTED, filter.test(event))
 
         filter.textBlacklist = asSet("Bob", "Ann")
-        event.text = "This is a message"
+        event = event.copy(text = "This is a message")
 
         assertEquals(REASON_ACCEPTED, filter.test(event))
     }
@@ -155,20 +173,20 @@ class PhoneEventFilterTest {
         filter.triggers = asSet(VAL_PREF_TRIGGER_IN_SMS)
         filter.textBlacklist = asSet(quoteRegex("(.*)Bob(.*)"))
 
-        val event = PhoneEvent()
-        event.phone = "111"
-        event.isIncoming = true
-        event.text = "This is a message for Bob or Ann"
-
+        var event = createEvent(
+                phone = "111",
+                isIncoming = true,
+                text = "This is a message for Bob or Ann"
+        )
         assertEquals(REASON_TEXT_BLACKLISTED, filter.test(event))
 
         filter.textBlacklist = asSet(quoteRegex("(.*)John(.*)"))
-        event.text = "This is a message for Bob or Ann"
+        event = event.copy(text = "This is a message for Bob or Ann")
 
         assertEquals(REASON_ACCEPTED, filter.test(event))
 
         filter.textBlacklist = asSet("(.*)John(.*)")
-        event.text = "This is a message for (.*)John(.*)"
+        event = event.copy(text = "This is a message for (.*)John(.*)")
 
         assertEquals(REASON_TEXT_BLACKLISTED, filter.test(event))
     }
@@ -179,26 +197,26 @@ class PhoneEventFilterTest {
         filter.triggers = asSet(VAL_PREF_TRIGGER_IN_SMS)
         filter.textWhitelist = emptySet()
 
-        val event = PhoneEvent()
-        event.phone = "111"
-        event.isIncoming = true
-        event.text = "This is a message for Bob or Ann"
+        var event = createEvent(
+                phone = "111",
+                isIncoming = true,
+                text = "This is a message for Bob or Ann"
+        )
+        assertEquals(REASON_ACCEPTED, filter.test(event))
+
+        filter.textWhitelist = asSet("Bob", "Ann")
+        event = event.copy(text = "This is a message for Bob or Ann")
 
         assertEquals(REASON_ACCEPTED, filter.test(event))
 
         filter.textWhitelist = asSet("Bob", "Ann")
-        event.text = "This is a message for Bob or Ann"
-
-        assertEquals(REASON_ACCEPTED, filter.test(event))
-
-        filter.textWhitelist = asSet("Bob", "Ann")
-        event.text = "This is a message"
+        event = event.copy(text = "This is a message")
 
         assertEquals(REASON_ACCEPTED, filter.test(event))
     }
 
 
-    //    @Test
+//    @Test
 //    public void testPhonePattern() {
 //        PhoneEventFilter filter = new PhoneEventFilter();
 //        PhoneEvent event = new PhoneEvent();

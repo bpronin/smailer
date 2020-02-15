@@ -12,7 +12,7 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.os.IBinder
 import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
-import com.bopr.android.smailer.util.AndroidUtil
+import com.bopr.android.smailer.util.AndroidUtil.deviceName
 import com.bopr.android.smailer.util.db.RowSet
 import org.slf4j.LoggerFactory
 
@@ -69,14 +69,14 @@ class ContentObserverService : Service() {
 
         override fun get(): PhoneEvent {
             val date = getLong("date")
-            val event = PhoneEvent()
-            event.isIncoming = false
-            event.acceptor = AndroidUtil.deviceName()
-            event.phone = getString("address")!!
-            event.startTime = date!!
-            event.endTime = date
-            event.text = getString("body")
-            return event
+            return PhoneEvent(
+                    phone = getString("address")!!,
+                    acceptor = deviceName(),
+                    isIncoming = false,
+                    startTime = date!!,
+                    endTime = date,
+                    text = getString("body")
+            )
         }
     }
 
