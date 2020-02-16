@@ -63,7 +63,7 @@ public class MainActivityTest extends BaseActivityTest {
     public void testTriggersSetting() {
         String[] titles = RULE.getActivity().getResources().getStringArray(R.array.trigger_names);
 
-         /* check settings */
+        /* check settings */
         assertThat(settings.getStringSet(PREF_EMAIL_TRIGGERS, null), equalTo(DEFAULT_TRIGGERS));
 
         /* check all and press cancel */
@@ -118,7 +118,7 @@ public class MainActivityTest extends BaseActivityTest {
         Database database = new Database(RULE.getActivity());
         database.clearEvents();
         database.putEvent(new PhoneEvent("10", true, 10000L, 20000L, false, "SMS text",
-                new GeoCoordinates(10.5, 20.5), "Test 10", STATE_PENDING, null, REASON_ACCEPTED, false));
+                new GeoCoordinates(10.5, 20.5), "Test 10", STATE_PENDING, "device", REASON_ACCEPTED, false));
 
         onMenuButton().perform(click());
         onView(withText(R.string.call_history)).perform(click());

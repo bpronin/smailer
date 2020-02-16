@@ -152,7 +152,7 @@ abstract class FilterListFragment extends BaseFragment {
 
         listView.setAdapter(listAdapter);
 
-        List<String> values = new ArrayList<>(getItemsList(settings.readFilter()));
+        List<String> values = new ArrayList<>(getItemsList(settings.getFilter()));
         Collections.sort(values);
         
         List<Item> items = new ArrayList<>();
@@ -189,9 +189,9 @@ abstract class FilterListFragment extends BaseFragment {
             items.add(item.value);
         }
 
-        PhoneEventFilter filter = settings.readFilter();
+        PhoneEventFilter filter = settings.getFilter();
         setItemsList(filter, items);
-        settings.writeFilter(filter);
+        settings.edit().putFilter(filter).apply();
     }
 
     private boolean isItemExists(String text) {

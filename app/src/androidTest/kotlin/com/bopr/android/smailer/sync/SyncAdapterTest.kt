@@ -6,8 +6,8 @@ import androidx.test.rule.GrantPermissionRule
 import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.Database
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.Settings.PREF_FILTER_PHONE_BLACKLIST
-import com.bopr.android.smailer.Settings.PREF_SYNC_TIME
+import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_BLACKLIST
+import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_TIME
 import com.bopr.android.smailer.util.AndroidUtil.primaryAccount
 import com.bopr.android.smailer.util.Util.asSet
 import org.junit.Assert.assertEquals
@@ -47,7 +47,7 @@ class SyncAdapterTest : BaseTest() {
                 .apply()
         sync.sync()
 
-        assertEquals(asSet("A", "B", "C"), settings.readFilter().phoneBlacklist)
+        assertEquals(asSet("A", "B", "C"), settings.getFilter().phoneBlacklist)
 
         settings.edit()
                 .putLong(PREF_SYNC_TIME, 1) /* earlier than previous */
@@ -55,7 +55,7 @@ class SyncAdapterTest : BaseTest() {
                 .apply()
         sync.sync()
 
-        assertEquals(asSet("A", "B", "C"), settings.readFilter().phoneBlacklist)
+        assertEquals(asSet("A", "B", "C"), settings.getFilter().phoneBlacklist)
 
         settings.edit()
                 .putLong(PREF_SYNC_TIME, 3) /* later than previous */
@@ -63,7 +63,7 @@ class SyncAdapterTest : BaseTest() {
                 .apply()
         sync.sync()
 
-        assertEquals(asSet("A", "B"), settings.readFilter().phoneBlacklist)
+        assertEquals(asSet("A", "B"), settings.getFilter().phoneBlacklist)
 
         sync.dispose()
     }

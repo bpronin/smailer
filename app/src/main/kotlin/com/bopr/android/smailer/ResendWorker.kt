@@ -2,6 +2,7 @@ package com.bopr.android.smailer
 
 import android.content.Context
 import androidx.work.*
+import com.bopr.android.smailer.Settings.Companion.PREF_RESEND_UNSENT
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
 
@@ -27,7 +28,7 @@ internal class ResendWorker(context: Context, workerParams: WorkerParameters) : 
         private const val WORKER_TAG = "smailer-resend"
 
         private fun isFeatureEnabled(context: Context): Boolean {
-            return Settings.settings(context).getBoolean(Settings.PREF_RESEND_UNSENT, true)
+            return Settings(context).getBoolean(PREF_RESEND_UNSENT, true)
         }
 
         fun enable(context: Context) {

@@ -104,31 +104,19 @@ object TextUtil {
         return String.format(Locale.US, "%d:%02d:%02d", seconds / 3600, seconds % 3600 / 60, seconds % 60)
     }
 
-    @JvmStatic
-    fun localeToString(locale: Locale?): String? {
-        return locale?.let {
-            if (locale == Locale.getDefault()) {
-                "default"
-            } else {
-                locale.language + "_" + locale.country
-            }
-        }
-    }
-
-    @JvmStatic
-    fun stringToLocale(s: String?): Locale? {
-        if (!s.isNullOrEmpty()) {
-            if (s == "default") {
-                return Locale.getDefault()
-            } else {
-                val ss = s.split("_")
-                if (ss.size == 2) {
-                    return Locale(ss[0], ss[1])
-                }
-            }
-        }
-        return null
-    }
+//    @JvmStatic
+//    fun stringToLocale(s: String): Locale {
+//        return if (s == "default") {
+//            Locale.getDefault()
+//        } else {
+//            val ss = s.split("_")
+//            if (ss.size == 2) {
+//                Locale(ss[0], ss[1])
+//            } else {
+//                throw IllegalArgumentException("Invalid locale code: $s")
+//            }
+//        }
+//    }
 
     @JvmStatic
     fun readStream(stream: InputStream?): String? {

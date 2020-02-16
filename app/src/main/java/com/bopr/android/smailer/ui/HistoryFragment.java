@@ -77,7 +77,7 @@ public class HistoryFragment extends BaseFragment {
         settingsChangeListener = new SettingsListener();
         settings.registerOnSharedPreferenceChangeListener(settingsChangeListener);
 
-        database = new Database(getContext());
+        database = new Database(requireContext());
         databaseListener = registerDatabaseListener(requireContext(), new DatabaseListener());
     }
 
@@ -148,7 +148,7 @@ public class HistoryFragment extends BaseFragment {
     private void loadData() {
         listAdapter = new ListAdapter(database.getEvents().toList());
         listView.setAdapter(listAdapter);
-        phoneEventFilter = settings.readFilter();
+        phoneEventFilter = settings.getFilter();
         updateEmptyText();
     }
 
@@ -221,7 +221,7 @@ public class HistoryFragment extends BaseFragment {
                             );
                         } else if (!isNullOrBlank(number)) {
                             blacklist.add(number);
-                            settings.writeFilter(phoneEventFilter);
+                            settings.edit().putFilter(phoneEventFilter).apply();
                         }
                     }
                 }
@@ -245,7 +245,7 @@ public class HistoryFragment extends BaseFragment {
                             );
                         } else if (!isNullOrBlank(number)) {
                             whitelist.add(number);
-                            settings.writeFilter(phoneEventFilter);
+                            settings.edit().putFilter(phoneEventFilter).apply();
                         }
                     }
                 }
@@ -260,7 +260,7 @@ public class HistoryFragment extends BaseFragment {
 
             removeFromPhoneLists(phoneEventFilter.getPhoneWhitelist(), number);
             removeFromPhoneLists(phoneEventFilter.getPhoneBlacklist(), number);
-            settings.writeFilter(phoneEventFilter);
+            settings.edit().putFilter(phoneEventFilter).apply();
 
             showToast(requireContext(), formatter.pattern(R.string.phone_removed_from_filter)
                     .put("number", number)

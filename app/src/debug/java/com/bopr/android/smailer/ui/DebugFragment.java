@@ -37,7 +37,6 @@ import com.bopr.android.smailer.Notifications;
 import com.bopr.android.smailer.PendingCallProcessorService;
 import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.Settings;
 import com.bopr.android.smailer.remote.RemoteControlService;
 import com.bopr.android.smailer.sync.SyncEngine;
 import com.bopr.android.smailer.sync.Synchronizer;
@@ -74,7 +73,6 @@ import static com.bopr.android.smailer.PhoneEvent.REASON_ACCEPTED;
 import static com.bopr.android.smailer.PhoneEvent.STATE_IGNORED;
 import static com.bopr.android.smailer.PhoneEvent.STATE_PENDING;
 import static com.bopr.android.smailer.PhoneEvent.STATE_PROCESSED;
-import static com.bopr.android.smailer.Settings.DEFAULT_LOCALE;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_LOCALE;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_TRIGGERS;
@@ -86,6 +84,7 @@ import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_ACCOUNT;
 import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_ENABLED;
 import static com.bopr.android.smailer.Settings.PREF_RESEND_UNSENT;
 import static com.bopr.android.smailer.Settings.PREF_SENDER_ACCOUNT;
+import static com.bopr.android.smailer.Settings.VAL_PREF_DEFAULT;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CONTACT;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_HEADER;
@@ -257,6 +256,14 @@ public class DebugFragment extends BasePreferenceFragment {
                     @Override
                     protected void onClick(Preference preference) {
                         onClearPreferences();
+                    }
+                }),
+
+                createPreference("Load default settings", new DefaultClickListener() {
+
+                    @Override
+                    protected void onClick(Preference preference) {
+                        onResetPreferences();
                     }
                 }),
 
@@ -513,6 +520,7 @@ public class DebugFragment extends BasePreferenceFragment {
         Properties properties = loadDebugProperties();
 
         settings.edit()
+                .clear()
                 .putString(PREF_SENDER_ACCOUNT, primaryAccount(context).name)
                 .putString(PREF_REMOTE_CONTROL_ACCOUNT, properties.getProperty("remote_control_account"))
                 .putString(PREF_RECIPIENTS_ADDRESS, properties.getProperty("default_recipient"))
@@ -530,7 +538,7 @@ public class DebugFragment extends BasePreferenceFragment {
                         VAL_PREF_EMAIL_CONTENT_HEADER,
                         VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS,
                         VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME))
-                .putString(PREF_EMAIL_LOCALE, DEFAULT_LOCALE)
+                .putString(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)
                 .putBoolean(PREF_NOTIFY_SEND_SUCCESS, true)
                 .putBoolean(PREF_RESEND_UNSENT, true)
                 .putString(PREF_FILTER_PHONE_BLACKLIST, commaJoin(asSet("+123456789", "+9876543*")))
@@ -571,7 +579,13 @@ public class DebugFragment extends BasePreferenceFragment {
 
     private void onClearPreferences() {
         settings.edit().clear().apply();
-        Settings.initSettings(context);
+
+        refreshPreferenceViews();
+        showToast(context, "Done");
+    }
+
+    private void onResetPreferences() {
+        settings.loadDefaults();
 
         refreshPreferenceViews();
         showToast(context, "Done");

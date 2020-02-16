@@ -19,7 +19,6 @@ import static com.bopr.android.smailer.PhoneEvent.REASON_ACCEPTED;
 import static com.bopr.android.smailer.PhoneEvent.STATE_IGNORED;
 import static com.bopr.android.smailer.PhoneEvent.STATE_PROCESSED;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_CONTENT;
-import static com.bopr.android.smailer.Settings.PREF_EMAIL_LOCALE;
 import static com.bopr.android.smailer.Settings.PREF_MARK_SMS_AS_READ;
 import static com.bopr.android.smailer.Settings.PREF_NOTIFY_SEND_SUCCESS;
 import static com.bopr.android.smailer.Settings.PREF_RECIPIENTS_ADDRESS;
@@ -72,7 +71,7 @@ public class CallProcessor {
         log.debug("Processing event: " + event);
 
         event.setLocation(locator.getLocation());
-        event.setStateReason(settings.readFilter().test(event));
+        event.setStateReason(settings.getFilter().test(event));
         if (event.getStateReason() != REASON_ACCEPTED) {
             event.setState(STATE_IGNORED);
         } else if (startMailSession(false) && sendMail(event, false)) {
@@ -147,8 +146,6 @@ public class CallProcessor {
             log.warn("Failed sending mail: ", x);
 
             showErrorNotification(R.string.need_google_permission, silent);
-            /* remove invalid account from settings */
-            settings.edit().putString(PREF_SENDER_ACCOUNT, null).apply();
             return false;
         } catch (Exception x) {
             log.warn("Failed sending mail: ", x);
@@ -190,7 +187,7 @@ public class CallProcessor {
         formatter.setDeviceName(settings.getDeviceName());
         formatter.setContentOptions(settings.getStringSet(PREF_EMAIL_CONTENT, null));
         formatter.setServiceAccount(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT, null));
-        formatter.setLocale(settings.getString(PREF_EMAIL_LOCALE, null));
+        formatter.setLocale(settings.getLocale());
 
         MailMessage message = new MailMessage();
         message.setSubject(formatter.formatSubject());

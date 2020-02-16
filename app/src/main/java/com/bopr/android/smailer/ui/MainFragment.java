@@ -82,6 +82,7 @@ public class MainFragment extends BasePreferenceFragment {
         requirePreference(PREF_RULES).setOnPreferenceClickListener(preferenceClickListener);
 
         requirePreference(PREF_EMAIL_LOCALE).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
                 updateLocalePreferenceSummary((ListPreference) preference, (String) value);
@@ -187,8 +188,7 @@ public class MainFragment extends BasePreferenceFragment {
         if (index < 0) {
             updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED);
         } else {
-            CharSequence cs = preference.getEntries()[index];
-            updateSummary(preference, cs.toString(), SUMMARY_STYLE_DEFAULT);
+            updateSummary(preference, preference.getEntries()[index], SUMMARY_STYLE_DEFAULT);
         }
     }
 

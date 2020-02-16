@@ -31,7 +31,6 @@ import static com.bopr.android.smailer.util.AddressUtil.escapePhone;
 import static com.bopr.android.smailer.util.ContentUtils.isReadContactsPermissionsDenied;
 import static com.bopr.android.smailer.util.TextUtil.formatDuration;
 import static com.bopr.android.smailer.util.TextUtil.isNullOrEmpty;
-import static com.bopr.android.smailer.util.TextUtil.stringToLocale;
 import static com.bopr.android.smailer.util.UiUtil.eventTypeText;
 import static java.lang.String.valueOf;
 
@@ -103,14 +102,21 @@ class MailFormatter {
         this.contentOptions = contentOptions;
     }
 
+//    /**
+//     * Sets custom mail locale.
+//     *
+//     * @param code locale code as "en_EN"
+//     */
+//    void setLocale(@NonNull String code) {
+//        this.locale = stringToLocale(code);
+//        updateResources();
+//    }
+
     /**
-     * Sets custom mail locale.
-     *
-     * @param code locale code as "en_EN"
+     * Sets mail locale.
      */
-    void setLocale(@Nullable String code) {
-        Locale locale = stringToLocale(code);
-        this.locale = locale != null ? locale : Locale.getDefault();
+    void setLocale(@NonNull Locale locale) {
+        this.locale = locale;
         updateResources();
     }
 

@@ -18,7 +18,6 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.util.validator.EmailTextValidator;
 
 import static com.bopr.android.smailer.util.ContentUtils.createPickContactEmailIntent;
 import static com.bopr.android.smailer.util.ContentUtils.getEmailAddressFromIntent;

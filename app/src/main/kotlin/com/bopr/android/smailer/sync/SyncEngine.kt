@@ -10,7 +10,12 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import com.bopr.android.smailer.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.Settings.*
+import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_BLACKLIST
+import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_WHITELIST
+import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_BLACKLIST
+import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_WHITELIST
+import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_TIME
 import com.bopr.android.smailer.sync.AppContentProvider.Companion.AUTHORITY
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager
 import org.slf4j.LoggerFactory
@@ -95,7 +100,7 @@ class SyncEngine private constructor(context: Context) {
         private val log = LoggerFactory.getLogger("SyncManager")
 
         private fun syncAccount(context: Context): Account? {
-            val name = settings(context).getString(PREF_SENDER_ACCOUNT, null)
+            val name = Settings(context).getString(PREF_SENDER_ACCOUNT, null)
             return GoogleAccountManager(context).getAccountByName(name)
         }
 

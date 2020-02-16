@@ -9,14 +9,14 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.TextView;
 
-import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.Settings;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
+
+import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.Settings;
 
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
 
@@ -50,7 +50,7 @@ public class AboutDialogFragment extends DialogFragment {
                 Settings.BuildInfo info = settings.getReleaseInfo();
                 new AlertDialog.Builder(requireContext())
                         .setTitle("Release info")
-                        .setMessage("Build number: " + info.number + "\nBuild time: " + info.time)
+                        .setMessage("Build number: " + info.getNumber() + "\nBuild time: " + info.getTime())
                         .show();
                 return true;
             }

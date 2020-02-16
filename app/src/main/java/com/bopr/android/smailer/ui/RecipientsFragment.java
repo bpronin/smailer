@@ -149,9 +149,7 @@ public class RecipientsFragment extends BaseFragment {
             addresses.add(item.address);
         }
 
-        settings.edit()
-                .putString(PREF_RECIPIENTS_ADDRESS, commaJoin(addresses))
-                .apply();
+        settings.edit().putString(PREF_RECIPIENTS_ADDRESS, commaJoin(addresses)).apply();
     }
 
     private void addItem() {

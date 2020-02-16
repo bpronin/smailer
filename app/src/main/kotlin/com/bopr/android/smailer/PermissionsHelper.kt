@@ -8,7 +8,16 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.bopr.android.smailer.Settings.*
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
+import com.bopr.android.smailer.Settings.Companion.PREF_MARK_SMS_AS_READ
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_CONTACT
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_LOCATION
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_CALLS
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
 import com.bopr.android.smailer.util.TagFormatter
 import com.bopr.android.smailer.util.Util.requireNonNull
 import org.slf4j.LoggerFactory
@@ -130,7 +139,7 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
                         edit.removeFromStringSet(PREF_EMAIL_CONTENT, VAL_PREF_EMAIL_CONTENT_LOCATION)
                 }
             }
-            
+
             edit.apply()
         }
     }

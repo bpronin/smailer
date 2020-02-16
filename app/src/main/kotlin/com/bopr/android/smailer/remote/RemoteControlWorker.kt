@@ -2,8 +2,8 @@ package com.bopr.android.smailer.remote
 
 import android.content.Context
 import androidx.work.*
-import com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_ENABLED
-import com.bopr.android.smailer.Settings.settings
+import com.bopr.android.smailer.Settings
+import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
 
@@ -29,7 +29,7 @@ internal class RemoteControlWorker(context: Context, workerParams: WorkerParamet
         private const val WORKER_TAG = "smailer-email"
 
         private fun isFeatureEnabled(context: Context): Boolean {
-            return settings(context).getBoolean(PREF_REMOTE_CONTROL_ENABLED, false)
+            return Settings(context).getBoolean(PREF_REMOTE_CONTROL_ENABLED, false)
         }
 
         fun enable(context: Context) {

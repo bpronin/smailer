@@ -7,7 +7,7 @@ import com.bopr.android.smailer.GeoCoordinates.Companion.geoCoordinatesOf
 import com.bopr.android.smailer.GoogleDrive
 import com.bopr.android.smailer.PhoneEvent
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.Settings.PREF_SYNC_TIME
+import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_TIME
 import org.slf4j.LoggerFactory
 import java.io.IOException
 
@@ -82,7 +82,7 @@ class Synchronizer @JvmOverloads constructor(context: Context,
             events.add(eventToData(event))
         }
 
-        with(settings.readFilter()) {
+        with(settings.getFilter()) {
             return SyncData(
                     phoneBlacklist,
                     textBlacklist,
@@ -95,13 +95,13 @@ class Synchronizer @JvmOverloads constructor(context: Context,
     private fun writeData(data: SyncData) {
         data.events?.map { e -> dataToEvent(e) }?.apply { database.putEvents(this) }
 
-        with(settings.readFilter()) {
+        with(settings.getFilter()) {
             phoneBlacklist = data.phoneBlacklist?.toMutableSet() ?: mutableSetOf()
             textBlacklist = data.textBlacklist?.toMutableSet() ?: mutableSetOf()
             phoneWhitelist = data.phoneWhitelist?.toMutableSet() ?: mutableSetOf()
             textWhitelist = data.textWhitelist?.toMutableSet() ?: mutableSetOf()
 
-            settings.writeFilter(this)
+            settings.edit().putFilter(this).apply()
         }
     }
 

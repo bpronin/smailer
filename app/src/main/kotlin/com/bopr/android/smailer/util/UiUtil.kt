@@ -105,7 +105,7 @@ object UiUtil {
      * Returns text underlined with wavy red line.
      */
     @JvmStatic
-    fun underwivedText(context: Context, value: String?): Spannable {
+    fun underwivedText(context: Context, value: CharSequence?): Spannable {
         val spannable: Spannable = SpannableString(value)
         val span: ParagraphStyle = WavyUnderlineSpan(context)
         spannable.setSpan(span, 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
@@ -117,7 +117,7 @@ object UiUtil {
      * Returns text of accent color.
      */
     @JvmStatic
-    fun accentedText(context: Context, value: String?): Spannable {
+    fun accentedText(context: Context, value: CharSequence?): Spannable {
         val spannable: Spannable = SpannableString(value)
         val span: CharacterStyle = ForegroundColorSpan(ContextCompat.getColor(context, R.color.colorAccent))
         spannable.setSpan(span, 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)

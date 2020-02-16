@@ -3,6 +3,7 @@ package com.bopr.android.smailer.ui;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.preference.Preference;
 import androidx.preference.Preference.OnPreferenceChangeListener;
 
@@ -56,7 +57,7 @@ public class RulesFragment extends BasePreferenceFragment {
 
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
-                updateSummary(preference, formatListAndSize((String) value, R.string.unacceptable_phone_numbers,
+                updateSummary(preference, formatSummary((String) value, R.string.unacceptable_phone_numbers,
                         R.string._none), SUMMARY_STYLE_DEFAULT);
                 return true;
             }
@@ -75,7 +76,7 @@ public class RulesFragment extends BasePreferenceFragment {
 
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
-                updateSummary(preference, formatListAndSize((String) value, R.string.acceptable_phone_numbers,
+                updateSummary(preference, formatSummary((String) value, R.string.acceptable_phone_numbers,
                         R.string._any), SUMMARY_STYLE_DEFAULT);
                 return true;
             }
@@ -94,7 +95,7 @@ public class RulesFragment extends BasePreferenceFragment {
 
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
-                updateSummary(preference, formatListAndSize((String) value, R.string.unacceptable_words,
+                updateSummary(preference, formatSummary((String) value, R.string.unacceptable_words,
                         R.string._none), SUMMARY_STYLE_DEFAULT);
                 return true;
             }
@@ -113,7 +114,7 @@ public class RulesFragment extends BasePreferenceFragment {
 
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
-                updateSummary(preference, formatListAndSize((String) value, R.string.acceptable_words,
+                updateSummary(preference, formatSummary((String) value, R.string.acceptable_words,
                         R.string._any), SUMMARY_STYLE_DEFAULT);
                 return true;
             }
@@ -121,13 +122,14 @@ public class RulesFragment extends BasePreferenceFragment {
 
     }
 
-    private String formatListAndSize(String value, int patternRes, int emptyTextRes) {
+    private String formatSummary(@Nullable String value, int patternRes, int emptyTextRes) {
         TagPattern pattern = formatter(requireContext()).pattern(patternRes);
-        int size = commaSplit(value).size();
-        if (size > 0) {
-            pattern.put("size", String.valueOf(size));
-        } else {
-            pattern.put("size", emptyTextRes);
+        pattern.put("size", emptyTextRes);
+        if (value != null) {
+            int size = commaSplit(value).size();
+            if (size > 0) {
+                pattern.put("size", String.valueOf(size));
+            }
         }
         return pattern.format();
     }

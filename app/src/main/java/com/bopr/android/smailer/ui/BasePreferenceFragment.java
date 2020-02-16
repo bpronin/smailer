@@ -112,7 +112,7 @@ public abstract class BasePreferenceFragment extends PreferenceFragmentCompat
      * @param value      value
      * @param preference preference
      */
-    void updateSummary(@NonNull Preference preference, @Nullable String value, int style) {
+    void updateSummary(@NonNull Preference preference, @Nullable CharSequence value, int style) {
         switch (style) {
             case SUMMARY_STYLE_DEFAULT:
                 preference.setSummary(value);
