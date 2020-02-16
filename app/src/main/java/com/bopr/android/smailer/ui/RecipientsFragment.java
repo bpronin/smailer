@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.Settings;
+import com.bopr.android.smailer.util.TagFormatter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -25,7 +26,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.bopr.android.smailer.Settings.PREF_RECIPIENTS_ADDRESS;
-import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.TextUtil.commaJoin;
 import static com.bopr.android.smailer.util.TextUtil.isNullOrBlank;
 import static com.bopr.android.smailer.util.TextUtil.isValidEmailAddress;
@@ -193,7 +193,7 @@ public class RecipientsFragment extends BaseFragment {
             public void onOkClick(String address) {
                 Log.d("", "onOkClick: ");
                 if (isItemExists(address) && (item == null || !item.address.equals(address))) {
-                    showToast(requireContext(), formatter(requireContext())
+                    showToast(requireContext(), new TagFormatter(requireContext())
                             .pattern(R.string.recipient_already_exists)
                             .put("name", address)
                             .format());
@@ -214,7 +214,7 @@ public class RecipientsFragment extends BaseFragment {
         if (removedItems.size() == 1) {
             title = getString(R.string.item_removed);
         } else {
-            title = formatter(requireContext())
+            title = new TagFormatter(requireContext())
                     .pattern(R.string.items_removed)
                     .put("count", valueOf(removedItems.size()))
                     .format();

@@ -23,7 +23,7 @@ abstract class TextFilterListFragment extends FilterListFragment {
 
     @Override
     String getItemText(String value) {
-        String regex = TextUtil.unquoteRegex(value);
+        String regex = TextUtil.unescapeRegex(value);
         return regex != null ? regex : value;
     }
 

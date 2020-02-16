@@ -218,12 +218,14 @@ class RemoteControlService : JobIntentService() {
     }
 
     private fun sendSms(message: String?, phone: String?) {
-        val manager = SmsManager.getDefault()
-        manager.sendMultipartTextMessage(phone, null, manager.divideMessage(message), null, null)
+        with(SmsManager.getDefault()) {
+            sendMultipartTextMessage(phone, null, divideMessage(message), null, null)
+        }
+
         log.debug("Sent SMS: $message to $phone")
     }
 
-    private fun saveFilter(filter: PhoneEventFilter, text: String?, messageRes: Int) {
+    private fun saveFilter(filter: PhoneEventFilter, text: String, messageRes: Int) {
         settings.edit().putFilter(filter).apply()
         if (settings.getBoolean(PREF_REMOTE_CONTROL_NOTIFICATIONS, false)) {
             notifications.showRemoteAction(messageRes, text)

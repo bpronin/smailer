@@ -8,7 +8,7 @@ import com.bopr.android.smailer.PhoneEvent.Companion.REASON_TRIGGER_OFF
 import com.bopr.android.smailer.PhoneEventFilter
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
-import com.bopr.android.smailer.util.TextUtil.quoteRegex
+import com.bopr.android.smailer.util.TextUtil.escapeRegex
 import com.bopr.android.smailer.util.Util.asSet
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -171,7 +171,7 @@ class PhoneEventFilterTest {
     fun testTextBlackListPattern() {
         val filter = PhoneEventFilter()
         filter.triggers = asSet(VAL_PREF_TRIGGER_IN_SMS)
-        filter.textBlacklist = asSet(quoteRegex("(.*)Bob(.*)"))
+        filter.textBlacklist = asSet(escapeRegex("(.*)Bob(.*)"))
 
         var event = createEvent(
                 phone = "111",
@@ -180,7 +180,7 @@ class PhoneEventFilterTest {
         )
         assertEquals(REASON_TEXT_BLACKLISTED, filter.test(event))
 
-        filter.textBlacklist = asSet(quoteRegex("(.*)John(.*)"))
+        filter.textBlacklist = asSet(escapeRegex("(.*)John(.*)"))
         event = event.copy(text = "This is a message for Bob or Ann")
 
         assertEquals(REASON_ACCEPTED, filter.test(event))

@@ -14,18 +14,21 @@ object TextUtil {
     private const val REGEX_ = "REGEX:"
 
     @JvmStatic
+    fun isNotEmpty(s: CharSequence): Boolean = s.isNotEmpty()
+
+    @JvmStatic
     fun isNullOrEmpty(s: CharSequence?): Boolean = s.isNullOrEmpty()
 
     @JvmStatic
     fun isNullOrBlank(s: CharSequence?): Boolean = s.isNullOrBlank()
 
     @JvmStatic
-    fun quoteRegex(s: String): String {
+    fun escapeRegex(s: String): String {
         return REGEX_ + s
     }
 
     @JvmStatic
-    fun unquoteRegex(s: String): String? {
+    fun unescapeRegex(s: String): String? {
         if (s.isNotEmpty()) {
             val ss = s.split(REGEX_)
             if (ss.size > 1) {
@@ -103,20 +106,6 @@ object TextUtil {
         val seconds = duration / 1000
         return String.format(Locale.US, "%d:%02d:%02d", seconds / 3600, seconds % 3600 / 60, seconds % 60)
     }
-
-//    @JvmStatic
-//    fun stringToLocale(s: String): Locale {
-//        return if (s == "default") {
-//            Locale.getDefault()
-//        } else {
-//            val ss = s.split("_")
-//            if (ss.size == 2) {
-//                Locale(ss[0], ss[1])
-//            } else {
-//                throw IllegalArgumentException("Invalid locale code: $s")
-//            }
-//        }
-//    }
 
     @JvmStatic
     fun readStream(stream: InputStream?): String? {

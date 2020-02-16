@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="_any">любые</string>
-    <string name="_at_time"> {time}</string>
+    <string name="_at_time">{time}</string>
     <string name="_from_device">с устройства \"{device_name}\"</string>
     <string name="_none">отсутствуют</string>
     <string name="about">О приложении</string>

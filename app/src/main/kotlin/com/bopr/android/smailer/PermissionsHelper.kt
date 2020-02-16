@@ -186,7 +186,7 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
     private fun formatRationale(permissions: Collection<String>): String {
         val b = StringBuilder()
         for (permission in permissions) {
-            val line = TagFormatter.formatter(activity)
+            val line = TagFormatter(activity)
                     .pattern(requireNonNull(items[permission]))
                     .put("permission", permissionLabel(permission))
                     .format()

@@ -4,15 +4,15 @@ import com.bopr.android.smailer.util.TextUtil.capitalize
 import com.bopr.android.smailer.util.TextUtil.commaJoin
 import com.bopr.android.smailer.util.TextUtil.commaSplit
 import com.bopr.android.smailer.util.TextUtil.decimalToDMS
+import com.bopr.android.smailer.util.TextUtil.escapeRegex
 import com.bopr.android.smailer.util.TextUtil.formatDuration
 import com.bopr.android.smailer.util.TextUtil.isQuoted
 import com.bopr.android.smailer.util.TextUtil.isValidEmailAddress
 import com.bopr.android.smailer.util.TextUtil.isValidEmailAddressList
 import com.bopr.android.smailer.util.TextUtil.join
-import com.bopr.android.smailer.util.TextUtil.quoteRegex
 import com.bopr.android.smailer.util.TextUtil.readStream
 import com.bopr.android.smailer.util.TextUtil.split
-import com.bopr.android.smailer.util.TextUtil.unquoteRegex
+import com.bopr.android.smailer.util.TextUtil.unescapeRegex
 import org.junit.Assert.*
 import org.junit.Test
 import java.io.ByteArrayInputStream
@@ -22,14 +22,14 @@ class TextUtilTest {
 
     @Test
     fun testQuoteRegex() {
-        assertEquals("REGEX:(.*)", quoteRegex("(.*)"))
+        assertEquals("REGEX:(.*)", escapeRegex("(.*)"))
     }
 
     @Test
     fun testUnquoteRegex() {
-        assertEquals("(.*)", unquoteRegex("REGEX:(.*)"))
-        assertNull(unquoteRegex("(.*)"))
-        assertNull(unquoteRegex(""))
+        assertEquals("(.*)", unescapeRegex("REGEX:(.*)"))
+        assertNull(unescapeRegex("(.*)"))
+        assertNull(unescapeRegex(""))
     }
 
     @Test

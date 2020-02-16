@@ -43,7 +43,6 @@ import static com.bopr.android.smailer.PhoneEvent.REASON_TRIGGER_OFF;
 import static com.bopr.android.smailer.PhoneEvent.STATE_PENDING;
 import static com.bopr.android.smailer.util.AddressUtil.containsPhone;
 import static com.bopr.android.smailer.util.AddressUtil.findPhone;
-import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.TextUtil.formatDuration;
 import static com.bopr.android.smailer.util.TextUtil.isNullOrBlank;
 import static com.bopr.android.smailer.util.UiUtil.eventDirectionImage;
@@ -383,7 +382,7 @@ public class HistoryFragment extends BaseFragment {
                 return getString(R.string.missed_call);
             } else {
                 int pattern = R.string.call_of_duration_short;
-                return formatter(requireContext())
+                return formatter
                         .pattern(pattern)
                         .put("duration", formatDuration(event.getCallDuration()))
                         .format();

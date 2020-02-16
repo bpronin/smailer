@@ -18,11 +18,11 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.util.TagFormatter;
 
 import static com.bopr.android.smailer.PhoneEvent.REASON_NUMBER_BLACKLISTED;
 import static com.bopr.android.smailer.PhoneEvent.REASON_TEXT_BLACKLISTED;
 import static com.bopr.android.smailer.PhoneEvent.REASON_TRIGGER_OFF;
-import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.TextUtil.formatDuration;
 import static com.bopr.android.smailer.util.UiUtil.eventDirectionImage;
 import static com.bopr.android.smailer.util.UiUtil.eventStateImage;
@@ -120,7 +120,7 @@ public class HistoryDetailsDialogFragment extends DialogFragment {
             } else {
                 pattern = R.string.you_had_outgoing_call;
             }
-            return formatter(requireContext())
+            return new TagFormatter(requireContext())
                     .pattern(pattern)
                     .put("duration", formatDuration(event.getCallDuration()))
                     .format();

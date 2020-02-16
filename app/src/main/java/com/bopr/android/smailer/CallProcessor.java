@@ -6,6 +6,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
+import com.google.common.collect.ImmutableSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -185,7 +186,7 @@ public class CallProcessor {
         formatter.setSendTime(new Date());
         formatter.setContactName(getContactName(context, event.getPhone()));
         formatter.setDeviceName(settings.getDeviceName());
-        formatter.setContentOptions(settings.getStringSet(PREF_EMAIL_CONTENT, null));
+        formatter.setContentOptions(settings.getStringSet(PREF_EMAIL_CONTENT, ImmutableSet.<String>of()));
         formatter.setServiceAccount(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT, null));
         formatter.setLocale(settings.getLocale());
 

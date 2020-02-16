@@ -7,7 +7,7 @@ import com.bopr.android.smailer.PhoneEvent.Companion.REASON_TRIGGER_OFF
 import com.bopr.android.smailer.util.AddressUtil.normalizePhone
 import com.bopr.android.smailer.util.AddressUtil.phoneToRegEx
 import com.bopr.android.smailer.util.TextUtil.isNullOrEmpty
-import com.bopr.android.smailer.util.TextUtil.unquoteRegex
+import com.bopr.android.smailer.util.TextUtil.unescapeRegex
 
 /**
  * Filters phone events by various criteria.
@@ -88,7 +88,7 @@ class PhoneEventFilter {
     private fun matchesText(patterns: Collection<String>, text: String?): Boolean {
         if (!isNullOrEmpty(text)) {
             for (pt in patterns) {
-                val pattern = unquoteRegex(pt)
+                val pattern = unescapeRegex(pt)
                 if (pattern != null && text!!.matches(pattern.toRegex()) || text!!.contains(pt)) {
                     return true
                 }

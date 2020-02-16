@@ -8,6 +8,7 @@ import androidx.preference.Preference;
 import androidx.preference.Preference.OnPreferenceChangeListener;
 
 import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.util.TagFormatter;
 import com.bopr.android.smailer.util.TagFormatter.TagPattern;
 
 import java.util.Set;
@@ -17,7 +18,6 @@ import static com.bopr.android.smailer.Settings.PREF_FILTER_PHONE_BLACKLIST;
 import static com.bopr.android.smailer.Settings.PREF_FILTER_PHONE_WHITELIST;
 import static com.bopr.android.smailer.Settings.PREF_FILTER_TEXT_BLACKLIST;
 import static com.bopr.android.smailer.Settings.PREF_FILTER_TEXT_WHITELIST;
-import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.TextUtil.commaSplit;
 
 /**
@@ -123,7 +123,7 @@ public class RulesFragment extends BasePreferenceFragment {
     }
 
     private String formatSummary(@Nullable String value, int patternRes, int emptyTextRes) {
-        TagPattern pattern = formatter(requireContext()).pattern(patternRes);
+        TagPattern pattern = new TagFormatter(requireContext()).pattern(patternRes);
         pattern.put("size", emptyTextRes);
         if (value != null) {
             int size = commaSplit(value).size();

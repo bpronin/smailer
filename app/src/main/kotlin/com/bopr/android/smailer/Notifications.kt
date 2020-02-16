@@ -23,23 +23,23 @@ class Notifications(private val context: Context) {
     private val manager: NotificationManager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
     private val formatter: TagFormatter = TagFormatter(context)
 
-    private val channel: String
-        get() {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val channel = NotificationChannel(CHANNEL_ID,
-                        context.getString(R.string.notifications), IMPORTANCE_LOW)
-                manager.createNotificationChannel(channel)
-            }
-            return CHANNEL_ID
+    private fun getChannel(): String {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(CHANNEL_ID,
+                    context.getString(R.string.notifications), IMPORTANCE_LOW)
+            manager.createNotificationChannel(channel)
         }
-
-    internal val foregroundServiceNotification: Notification get(){
-        val builder = createBuilder(context.getString(R.string.service_running), ACTION_SHOW_MAIN)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setCategory(CATEGORY_SERVICE)
-        }
-        return builder.build()
+        return CHANNEL_ID
     }
+
+    internal val foregroundServiceNotification: Notification
+        get() {
+            val builder = createBuilder(context.getString(R.string.service_running), ACTION_SHOW_MAIN)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder.setCategory(CATEGORY_SERVICE)
+            }
+            return builder.build()
+        }
 
     fun showMessage(@StringRes messageRes: Int, action: Int) {
         showMessage(context.getString(messageRes), action)
@@ -57,7 +57,7 @@ class Notifications(private val context: Context) {
                 action)
     }
 
-    fun showRemoteAction(@StringRes messageRes: Int, argument: String?) {
+    fun showRemoteAction(@StringRes messageRes: Int, argument: String) {
         showMessage(formatter
                 .pattern(messageRes)
                 .put("text", argument)
@@ -88,7 +88,7 @@ class Notifications(private val context: Context) {
     }
 
     private fun createBuilder(text: String, action: Int): NotificationCompat.Builder {
-        return NotificationCompat.Builder(context, channel)
+        return NotificationCompat.Builder(context, getChannel())
                 .setContentIntent(createIntent(action))
                 .setSmallIcon(R.drawable.ic_notification)
                 .setTicker(context.getString(R.string.app_name))
@@ -114,11 +114,10 @@ class Notifications(private val context: Context) {
         }
     }
 
-    private fun createActivityIntent(activityClass: Class<out Activity?>): PendingIntent? {
-        val intent = Intent(context, activityClass)
+    private fun createActivityIntent(activityClass: Class<out Activity>): PendingIntent {
         return TaskStackBuilder.create(context)
-                .addNextIntentWithParentStack(intent)
-                .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
+                .addNextIntentWithParentStack(Intent(context, activityClass))
+                .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)!!
     }
 
     companion object {

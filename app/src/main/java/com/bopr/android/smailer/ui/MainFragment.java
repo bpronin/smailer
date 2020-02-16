@@ -18,6 +18,7 @@ import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.GoogleAuthorizationHelper;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.ResendWorker;
+import com.bopr.android.smailer.util.TagFormatter;
 
 import static com.bopr.android.smailer.Database.registerDatabaseListener;
 import static com.bopr.android.smailer.Database.unregisterDatabaseListener;
@@ -31,7 +32,6 @@ import static com.bopr.android.smailer.Settings.PREF_RULES;
 import static com.bopr.android.smailer.Settings.PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization;
 import static com.bopr.android.smailer.util.AndroidUtil.deviceName;
-import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.TextUtil.isNullOrBlank;
 import static com.bopr.android.smailer.util.TextUtil.isNullOrEmpty;
 import static com.bopr.android.smailer.util.TextUtil.isValidEmailAddressList;
@@ -173,7 +173,7 @@ public class MainFragment extends BasePreferenceFragment {
     private void updateHistoryPreferenceSummary() {
         long count = database.getUnreadEventsCount();
         if (count > 0) {
-            String text = formatter(requireContext())
+            String text = new TagFormatter(requireContext())
                     .pattern(R.string.count_new)
                     .put("count", valueOf(count))
                     .format();

@@ -32,7 +32,7 @@ public class EditTextDialogFragment extends EditFilterListItemDialogFragment {
     }
 
     void setInitialValue(String text) {
-        String s = TextUtil.unquoteRegex(text);
+        String s = TextUtil.unescapeRegex(text);
         initialRegex = (s != null);
         initialText = initialRegex ? s : text;
     }
@@ -40,7 +40,7 @@ public class EditTextDialogFragment extends EditFilterListItemDialogFragment {
     @Override
     protected String getValue() {
         String s = editText.getText().toString();
-        return checkBox.isChecked() ? TextUtil.quoteRegex(s) : s;
+        return checkBox.isChecked() ? TextUtil.escapeRegex(s) : s;
     }
 
     @NonNull

@@ -17,8 +17,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.Settings;
-
-import static com.bopr.android.smailer.util.TagFormatter.formatter;
+import com.bopr.android.smailer.util.TagFormatter;
 
 /**
  * About dialog fragment.
@@ -77,7 +76,8 @@ public class AboutDialogFragment extends DialogFragment {
     }
 
     private String formatVersion() {
-        return formatter(requireContext()).pattern(R.string.app_version)
+        return new TagFormatter(requireContext())
+                .pattern(R.string.app_version)
                 .put("version", settings.getReleaseVersion())
                 .format();
     }

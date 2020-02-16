@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bopr.android.smailer.PhoneEventFilter;
 import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.util.TagFormatter;
 import com.bopr.android.smailer.util.TextUtil;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -30,7 +31,6 @@ import java.util.List;
 import java.util.Set;
 
 import static androidx.recyclerview.widget.RecyclerView.NO_POSITION;
-import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.UiUtil.showToast;
 import static java.lang.String.valueOf;
 
@@ -103,7 +103,7 @@ abstract class FilterListFragment extends BaseFragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu,@NonNull MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.menu_list, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -154,7 +154,7 @@ abstract class FilterListFragment extends BaseFragment {
 
         List<String> values = new ArrayList<>(getItemsList(settings.getFilter()));
         Collections.sort(values);
-        
+
         List<Item> items = new ArrayList<>();
         for (String value : values) {
             items.add(new Item(value));
@@ -221,7 +221,7 @@ abstract class FilterListFragment extends BaseFragment {
             @Override
             public void onOkClick(String value) {
                 if (isItemExists(value) && (item == null || !item.value.equals(value))) {
-                    showToast(requireContext(), formatter(requireContext())
+                    showToast(requireContext(), new TagFormatter(requireContext())
                             .pattern(R.string.item_already_exists)
                             .put("item", getItemText(value))
                             .format());
@@ -255,7 +255,7 @@ abstract class FilterListFragment extends BaseFragment {
         if (removedItems.size() == 1) {
             title = getString(R.string.item_removed);
         } else {
-            title = formatter(requireContext())
+            title = new TagFormatter(requireContext())
                     .pattern(R.string.items_removed)
                     .put("count", valueOf(removedItems.size()))
                     .format();

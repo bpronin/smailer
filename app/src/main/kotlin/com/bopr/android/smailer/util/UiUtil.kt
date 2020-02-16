@@ -49,12 +49,28 @@ object UiUtil {
             }
         } else if (event.isMissed) {
             R.string.missed_call
+        } else if (event.isIncoming) {
+            R.string.incoming_call
         } else {
+            R.string.outgoing_call
+        }
+    }
+
+    @JvmStatic
+    @StringRes
+    fun eventTypePrefix(event: PhoneEvent): Int {
+        return if (event.isSms) {
             if (event.isIncoming) {
-                R.string.incoming_call
+                R.string.incoming_sms_from
             } else {
-                R.string.outgoing_call
+                R.string.outgoing_sms_to
             }
+        } else if (event.isMissed) {
+            R.string.missed_call_from
+        } else if (event.isIncoming) {
+            R.string.incoming_call_from
+        } else {
+            R.string.outgoing_call_to
         }
     }
 
