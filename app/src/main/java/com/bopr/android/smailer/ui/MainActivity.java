@@ -6,8 +6,9 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.bopr.android.smailer.Settings;
+
 import static com.bopr.android.smailer.Environment.setupEnvironment;
-import static com.bopr.android.smailer.Settings.initSettings;
 
 /**
  * An activity that presents a set of application settings.
@@ -19,7 +20,7 @@ public class MainActivity extends AppActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initSettings(this);
+        new Settings(this).loadDefaults();
         setupEnvironment(this);
         setHomeButtonEnabled(false);
         handleStartupParams(getIntent());

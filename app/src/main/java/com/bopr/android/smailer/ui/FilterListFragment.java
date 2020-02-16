@@ -191,7 +191,7 @@ abstract class FilterListFragment extends BaseFragment {
 
         PhoneEventFilter filter = settings.getFilter();
         setItemsList(filter, items);
-        settings.putFilter(filter);
+        settings.edit().putFilter(filter).apply();
     }
 
     private boolean isItemExists(String text) {

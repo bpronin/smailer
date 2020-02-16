@@ -133,32 +133,6 @@ public abstract class TextUtil {
         return split(s, ",", true);
     }
 
-    @Nullable
-    public static String localeToString(@Nullable Locale locale) {
-        if (locale == null) {
-            return null;
-        } else if (locale == Locale.getDefault()) {
-            return DEFAULT;
-        } else {
-            return locale.getLanguage() + "_" + locale.getCountry();
-        }
-    }
-
-    @Nullable
-    public static Locale stringToLocale(@Nullable String s) {
-        if (!isNullOrEmpty(s)) {
-            if (s.equals(DEFAULT)) {
-                return Locale.getDefault();
-            } else {
-                String[] ss = s.split("_");
-                if (ss.length == 2) {
-                    return new Locale(ss[0], ss[1]);
-                }
-            }
-        }
-        return null;
-    }
-
     @NonNull
     public static String quoteRegex(@NonNull String s) {
         return REGEX_ + s;

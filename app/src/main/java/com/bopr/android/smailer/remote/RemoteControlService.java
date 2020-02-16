@@ -232,7 +232,7 @@ public class RemoteControlService extends JobIntentService {
     }
 
     private void saveFilter(PhoneEventFilter filter, String text, int messageRes) {
-        settings.putFilter(filter);
+        settings.edit().putFilter(filter).apply();
         if (settings.getBoolean(PREF_REMOTE_CONTROL_NOTIFICATIONS, false)) {
             notifications.showRemoteAction(messageRes, text);
         }

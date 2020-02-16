@@ -83,7 +83,7 @@ public class SharedPreferencesWrapper implements SharedPreferences {
 
         private final Editor wrappedEditor;
 
-        private EditorWrapper(Editor wrappedEditor) {
+        protected EditorWrapper(Editor wrappedEditor) {
             this.wrappedEditor = wrappedEditor;
         }
 

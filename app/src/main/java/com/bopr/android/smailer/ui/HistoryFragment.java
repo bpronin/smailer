@@ -221,7 +221,7 @@ public class HistoryFragment extends BaseFragment {
                             );
                         } else if (!isNullOrBlank(number)) {
                             blacklist.add(number);
-                            settings.putFilter(phoneEventFilter);
+                            settings.edit().putFilter(phoneEventFilter).apply();
                         }
                     }
                 }
@@ -245,7 +245,7 @@ public class HistoryFragment extends BaseFragment {
                             );
                         } else if (!isNullOrBlank(number)) {
                             whitelist.add(number);
-                            settings.putFilter(phoneEventFilter);
+                            settings.edit().putFilter(phoneEventFilter).apply();
                         }
                     }
                 }
@@ -260,7 +260,7 @@ public class HistoryFragment extends BaseFragment {
 
             removeFromPhoneLists(phoneEventFilter.getPhoneWhitelist(), number);
             removeFromPhoneLists(phoneEventFilter.getPhoneBlacklist(), number);
-            settings.putFilter(phoneEventFilter);
+            settings.edit().putFilter(phoneEventFilter).apply();
 
             showToast(requireContext(), formatter.pattern(R.string.phone_removed_from_filter)
                     .put("number", number)

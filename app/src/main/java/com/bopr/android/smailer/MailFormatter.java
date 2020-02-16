@@ -49,7 +49,7 @@ class MailFormatter {
     private static final String GOOGLE_MAP_LINK_PATTERN = "<a href=\"https://www.google.com/maps/" +
             "place/{latitude}+{longitude}/@{latitude},{longitude}\">{location}</a>";
     private static final String PHONE_LINK_PATTERN = "<a href=\"tel:{phone}\" style=\"text-decoration: none\">&#9742;</a>{text}";
-//    private static final String REPLY_LINKS_PATTERN = "<br><small><strong>{title}</strong></small><ul>{links}</ul>";
+    //    private static final String REPLY_LINKS_PATTERN = "<br><small><strong>{title}</strong></small><ul>{links}</ul>";
     private static final String REPLY_LINKS_PATTERN = "<ul>{links}</ul>";
     private static final String MAIL_TO_PATTERN = "<a href=\"mailto:{address}?subject={subject}&amp;body={body}\">{link_title}</a>";
     private static final String REMOTE_CONTROL_LINK_PATTERN = "<li><small>" + MAIL_TO_PATTERN + "</small></li>";
@@ -103,14 +103,10 @@ class MailFormatter {
     }
 
     /**
-     * Sets custom mail locale.
-     *
-     * @param code locale code as "en_EN"
+     * Sets mail locale.
      */
-    void setLocale(@Nullable String code) {
-        Locale locale = TextUtil.stringToLocale(code);
-        this.locale = locale != null ? locale : Locale.getDefault();
-
+    void setLocale(@NonNull Locale locale) {
+        this.locale = locale;
         updateResources();
     }
 

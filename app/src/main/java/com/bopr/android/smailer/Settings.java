@@ -12,6 +12,7 @@ import com.bopr.android.smailer.util.TextUtil;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 
@@ -54,6 +55,7 @@ public class Settings extends SharedPreferencesWrapper {
     public static final String PREF_REMOTE_CONTROL_NOTIFICATIONS = "remote_control_notifications";
     public static final String PREF_REMOTE_CONTROL_FILTER_RECIPIENTS = "remote_control_filter_recipients";
 
+    public static final String VAL_PREF_DEFAULT = "default";
     public static final String VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME = "time";
     public static final String VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT = "time_sent";
     public static final String VAL_PREF_EMAIL_CONTENT_DEVICE_NAME = "device_name";
@@ -67,7 +69,6 @@ public class Settings extends SharedPreferencesWrapper {
     public static final String VAL_PREF_TRIGGER_OUT_CALLS = "out_calls";
     public static final String VAL_PREF_TRIGGER_MISSED_CALLS = "missed_calls";
 
-    public static final String DEFAULT_LOCALE = "default";
     public static final Set<String> DEFAULT_CONTENT = asSet(
             VAL_PREF_EMAIL_CONTENT_HEADER,
             VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
@@ -94,22 +95,21 @@ public class Settings extends SharedPreferencesWrapper {
     /**
      * Loads default settings values.
      */
-    public static void initSettings(Context context) {
-        Settings settings = new Settings(context);
-        EditorWrapper edit = settings.edit();
+    public void loadDefaults() {
+        EditorWrapper edit = edit();
 
         edit.putStringSetOptional(PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS);
-        edit.putStringOptional(PREF_EMAIL_LOCALE, DEFAULT_LOCALE);
+        edit.putStringOptional(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT);
         edit.putBooleanOptional(PREF_RESEND_UNSENT, true);
         edit.putBooleanOptional(PREF_MARK_SMS_AS_READ, false);
         edit.putBooleanOptional(PREF_REMOTE_CONTROL_ENABLED, false);
         edit.putBooleanOptional(PREF_REMOTE_CONTROL_NOTIFICATIONS, true);
         edit.putBooleanOptional(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS, true);
 
-        Set<String> content = settings.getStringSet(PREF_EMAIL_CONTENT, null);
+        Set<String> content = getStringSet(PREF_EMAIL_CONTENT, null);
         if (content == null) {
             edit.putStringSet(PREF_EMAIL_CONTENT, DEFAULT_CONTENT);
-        } else if (settings.getInt(Settings.PREF_SETTINGS_VERSION, 1) == 1) {
+        } else if (getInt(Settings.PREF_SETTINGS_VERSION, 1) == 1) {
             content.add(VAL_PREF_EMAIL_CONTENT_HEADER);
             content.add(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT);
             edit.putStringSet(PREF_EMAIL_CONTENT, content);
@@ -119,9 +119,22 @@ public class Settings extends SharedPreferencesWrapper {
         edit.apply();
     }
 
-    /**
-     * Returns device name.
-     */
+    @NonNull
+    public Locale getLocale() {
+        String value = getString(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT);
+        if (value.equals(VAL_PREF_DEFAULT)) {
+            return Locale.getDefault();
+        } else {
+            String[] ss = value.split("_");
+            if (ss.length == 2) {
+                return new Locale(ss[0], ss[1]);
+            } else {
+                throw new IllegalArgumentException("Invalid locale code: " + value);
+            }
+        }
+    }
+
+    @NonNull
     public String getDeviceName() {
         String name = getString(PREF_DEVICE_ALIAS, "");
         if (!TextUtil.isNullOrEmpty(name)) {
@@ -130,6 +143,7 @@ public class Settings extends SharedPreferencesWrapper {
         return AndroidUtil.deviceName();
     }
 
+    @NonNull
     public String getReleaseVersion() {
         try {
             return context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
@@ -138,6 +152,7 @@ public class Settings extends SharedPreferencesWrapper {
         }
     }
 
+    @NonNull
     public BuildInfo getReleaseInfo() {
         Properties properties = new Properties();
         try {
@@ -166,12 +181,25 @@ public class Settings extends SharedPreferencesWrapper {
         return filter;
     }
 
-    public void putFilter(PhoneEventFilter filter) {
-        edit().putString(PREF_FILTER_PHONE_BLACKLIST, commaJoin(filter.getPhoneBlacklist()))
-                .putString(PREF_FILTER_PHONE_WHITELIST, commaJoin(filter.getPhoneWhitelist()))
-                .putString(PREF_FILTER_TEXT_BLACKLIST, commaJoin(filter.getTextBlacklist()))
-                .putString(PREF_FILTER_TEXT_WHITELIST, commaJoin(filter.getTextWhitelist()))
-                .apply();
+    @Override
+    public Editor edit() {
+        return new Editor(super.edit());
+    }
+
+    public class Editor extends EditorWrapper {
+
+        private Editor(EditorWrapper edit) {
+            super(edit);
+        }
+
+        public Editor putFilter(PhoneEventFilter filter) {
+            putString(PREF_FILTER_PHONE_BLACKLIST, commaJoin(filter.getPhoneBlacklist()));
+            putString(PREF_FILTER_PHONE_WHITELIST, commaJoin(filter.getPhoneWhitelist()));
+            putString(PREF_FILTER_TEXT_BLACKLIST, commaJoin(filter.getTextBlacklist()));
+            putString(PREF_FILTER_TEXT_WHITELIST, commaJoin(filter.getTextWhitelist()));
+            return this;
+        }
+
     }
 
     public static class BuildInfo {

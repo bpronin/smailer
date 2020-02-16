@@ -127,7 +127,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         filter.setPhoneBlacklist(data.phoneBlacklist);
         filter.setTextWhitelist(data.textWhitelist);
         filter.setTextBlacklist(data.textBlacklist);
-        settings.putFilter(filter);
+        settings.edit().putFilter(filter).apply();
     }
 
     @NonNull
