@@ -19,10 +19,16 @@ public abstract class TextUtil {
 
     private static final String QUOTED_TEXT_REGEX = "\"([^\"]*)\"";
     private static final String REGEX_ = "REGEX:";
-    private static final String DEFAULT = "default";
     public static final Pattern QUOTED_TEXT_PATTERN = Pattern.compile(QUOTED_TEXT_REGEX);
 
     private TextUtil() {
+    }
+
+    /**
+     * Returns true if string is not empty or null.
+     */
+    public static boolean isNotEmpty(@Nullable CharSequence s) {
+        return !isNullOrEmpty(s);
     }
 
     /**
@@ -40,10 +46,10 @@ public abstract class TextUtil {
     }
 
     @NonNull
-    public static String formatLocation(@NonNull GeoCoordinates location, String degreeSymbol,
-                                        String minuteSymbol, String secondSymbol,
-                                        String northSymbol, String southSymbol,
-                                        String westSymbol, String eastSymbol) {
+    public static String formatCoordinates(@NonNull GeoCoordinates location, String degreeSymbol,
+                                           String minuteSymbol, String secondSymbol,
+                                           String northSymbol, String southSymbol,
+                                           String westSymbol, String eastSymbol) {
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
         return decimalToDMS(latitude, degreeSymbol, minuteSymbol, secondSymbol)
@@ -54,25 +60,23 @@ public abstract class TextUtil {
     }
 
     @NonNull
-    public static String formatLocation(@NonNull GeoCoordinates location) {
-        return formatLocation(location, "°", "\'", "\"", "N", "S", "W", "E");
+    public static String formatCoordinates(@NonNull GeoCoordinates location) {
+        return formatCoordinates(location, "°", "\'", "\"", "N", "S", "W", "E");
     }
 
     @NonNull
     public static String decimalToDMS(double coordinate, String degreeSymbol, String minuteSymbol,
                                       String secondSymbol) {
-        double mod = coordinate % 1;
-        int intPart = (int) coordinate;
-        int degrees = Math.abs(intPart);
+        double crd = coordinate;
+        double mod = crd % 1;
+        int degrees = Math.abs((int) crd);
 
-        coordinate = mod * 60;
-        mod = coordinate % 1;
-        intPart = (int) coordinate;
-        int minutes = Math.abs(intPart);
+        crd = mod * 60;
+        mod = crd % 1;
+        int minutes = Math.abs((int) crd);
 
-        coordinate = mod * 60;
-        intPart = (int) coordinate;
-        int seconds = Math.abs(intPart);
+        crd = mod * 60;
+        int seconds = Math.abs((int) crd);
 
         return degrees + degreeSymbol + minutes + minuteSymbol + seconds + secondSymbol;
     }

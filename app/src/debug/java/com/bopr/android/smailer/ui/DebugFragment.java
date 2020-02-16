@@ -98,7 +98,7 @@ import static com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnor
 import static com.bopr.android.smailer.util.AndroidUtil.deviceName;
 import static com.bopr.android.smailer.util.AndroidUtil.primaryAccount;
 import static com.bopr.android.smailer.util.TextUtil.commaJoin;
-import static com.bopr.android.smailer.util.TextUtil.formatLocation;
+import static com.bopr.android.smailer.util.TextUtil.formatCoordinates;
 import static com.bopr.android.smailer.util.TextUtil.quoteRegex;
 import static com.bopr.android.smailer.util.UiUtil.alertDialogView;
 import static com.bopr.android.smailer.util.UiUtil.showToast;
@@ -838,7 +838,7 @@ public class DebugFragment extends BasePreferenceFragment {
         protected void onPostExecute(GeoCoordinates coordinates) {
             super.onPostExecute(coordinates);
             showMessage(getActivity(), coordinates != null ?
-                    formatLocation(coordinates) : "No location received");
+                    formatCoordinates(coordinates) : "No location received");
         }
     }
 

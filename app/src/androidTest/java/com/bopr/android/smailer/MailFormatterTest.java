@@ -9,6 +9,7 @@ import org.mockito.stubbing.Answer;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
@@ -427,7 +428,7 @@ public class MailFormatterTest extends BaseTest {
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(defaultTime);
         formatter.setDeviceName("Device");
-        formatter.setLocale("ru_RU");
+        formatter.setLocale(new Locale("ru", "ru"));
         formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_CONTACT,
                 VAL_PREF_EMAIL_CONTENT_LOCATION,
                 VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
@@ -437,31 +438,9 @@ public class MailFormatterTest extends BaseTest {
         assertEquals("[SMailer] Пропущенный звонок от +12345678901", formatter.formatSubject());
         assertThat(formatter.formatBody(), htmlEqualsRes("missed_call_ru.html"));
 
-        formatter.setLocale(null); /* set default locale */
+        formatter.setLocale(Locale.getDefault());
 
         assertEquals("[SMailer] Missed call from +12345678901", formatter.formatSubject());
-        assertThat(formatter.formatBody(), htmlEqualsRes("missed_call_en.html"));
-    }
-
-    /**
-     * Check email body with invalid non-default locale specified.
-     */
-    @Test
-    public void testInvalidLocale() {
-        long start = defaultTime.getTime();
-        long end = new GregorianCalendar(2016, 1, 2, 4, 5, 10).getTime().getTime();
-
-        PhoneEvent event = new PhoneEvent("+12345678901", true, start, end, true, null,
-                new GeoCoordinates(60.555, 30.555), null, STATE_PENDING, null);
-
-        MailFormatter formatter = new MailFormatter(context, event);
-        formatter.setSendTime(defaultTime);
-        formatter.setDeviceName("Device");
-        formatter.setLocale("blah-blah"); /* should set default locale */
-        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
-                VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
-                VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT));
-
         assertThat(formatter.formatBody(), htmlEqualsRes("missed_call_en.html"));
     }
 

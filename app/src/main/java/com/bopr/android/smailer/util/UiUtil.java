@@ -63,6 +63,23 @@ public abstract class UiUtil {
         }
     }
 
+    @StringRes
+    public static int eventTypePrefix(@NonNull PhoneEvent event) {
+        if (event.isSms()) {
+            if (event.isIncoming()) {
+                return R.string.incoming_sms_from;
+            } else {
+                return R.string.outgoing_sms_to;
+            }
+        } else if (event.isMissed()) {
+            return R.string.missed_call_from;
+        } else if (event.isIncoming()) {
+            return R.string.incoming_call_from;
+        } else {
+            return R.string.outgoing_call_to;
+        }
+    }
+
     @DrawableRes
     public static int eventDirectionImage(@NonNull PhoneEvent event) {
         if (event.isMissed()) {
