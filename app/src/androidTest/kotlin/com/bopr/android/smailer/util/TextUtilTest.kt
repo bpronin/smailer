@@ -111,4 +111,24 @@ class TextUtilTest {
         assertFalse(isValidEmailAddressList(""))
         assertFalse(isValidEmailAddressList(null))
     }
+
+    @Test
+    fun testEscapeRegex() {
+        assertEquals("REGEX:text", escapeRegex("text"))
+        assertEquals("REGEX:", escapeRegex(""))
+        assertEquals("REGEX:   ", escapeRegex("   "))
+        assertEquals("REGEX:REGEX:", escapeRegex("REGEX:"))
+    }
+
+    @Test
+    fun testUnescapeRegex() {
+        assertNull(unescapeRegex(null))
+        assertNull(unescapeRegex(""))
+        assertNull(unescapeRegex("   "))
+        assertNull(unescapeRegex("text"))
+        assertEquals("text", unescapeRegex("REGEX:text"))
+        assertEquals("REGEX:", unescapeRegex("REGEX:REGEX:"))
+        assertEquals("", unescapeRegex("REGEX:"))
+    }
+
 }

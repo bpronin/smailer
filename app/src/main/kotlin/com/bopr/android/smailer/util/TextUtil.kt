@@ -29,10 +29,10 @@ object TextUtil {
 
     @JvmStatic
     fun unescapeRegex(s: String?): String? {
-        if (!s.isNullOrEmpty()) {
-            val ss = s.split(REGEX_)
-            if (ss.size > 1) {
-                return ss[1]
+        if (s != null) {
+            val ix = s.indexOf(REGEX_)
+            if (ix != -1) {
+                return s.substring(ix + REGEX_.length)
             }
         }
         return null
