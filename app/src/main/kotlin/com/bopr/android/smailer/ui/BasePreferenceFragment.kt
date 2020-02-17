@@ -87,7 +87,7 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPref
         }
     }
 
-    fun <T : Preference> requirePreference(key: CharSequence): T {
+    fun requirePreference(key: CharSequence): Preference {
         return findPreference(key)!!
     }
 

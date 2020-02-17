@@ -90,7 +90,7 @@ public class MainFragment extends BasePreferenceFragment {
             }
         });
 
-        EditTextPreference deviceNamePreference = requirePreference(PREF_DEVICE_ALIAS);
+        EditTextPreference deviceNamePreference = findPreference(PREF_DEVICE_ALIAS);
         deviceNamePreference.setOnBindEditTextListener(new EditTextPreference.OnBindEditTextListener() {
 
             @Override

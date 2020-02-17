@@ -3,7 +3,6 @@ package com.bopr.android.smailer.ui
 import android.content.Intent
 import android.os.Bundle
 import androidx.annotation.StringRes
-import androidx.preference.Preference
 import androidx.preference.Preference.OnPreferenceChangeListener
 import androidx.preference.Preference.OnPreferenceClickListener
 import com.bopr.android.smailer.R
@@ -25,7 +24,7 @@ class RulesFragment : BasePreferenceFragment() {
     override fun onCreatePreferences(bundle: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_rules)
 
-        findPreference<Preference>(PREF_EMAIL_TRIGGERS)!!.apply {
+        requirePreference(PREF_EMAIL_TRIGGERS).apply {
             onPreferenceChangeListener = OnPreferenceChangeListener { preference, value ->
                 if (value == null || (value as Set<*>).isEmpty()) {
                     updateSummary(preference, getString(R.string.no_triggers_specified), SUMMARY_STYLE_ACCENTED)
@@ -36,7 +35,7 @@ class RulesFragment : BasePreferenceFragment() {
             }
         }
 
-        findPreference<Preference>(PREF_FILTER_PHONE_BLACKLIST)!!.apply {
+        requirePreference(PREF_FILTER_PHONE_BLACKLIST).apply {
             onPreferenceClickListener = OnPreferenceClickListener {
                 startActivity(Intent(context, PhoneBlacklistActivity::class.java))
                 true
@@ -48,7 +47,7 @@ class RulesFragment : BasePreferenceFragment() {
             }
         }
 
-        findPreference<Preference>(PREF_FILTER_PHONE_WHITELIST)!!.apply {
+        requirePreference(PREF_FILTER_PHONE_WHITELIST).apply {
             onPreferenceClickListener = OnPreferenceClickListener {
                 startActivity(Intent(context, PhoneWhitelistActivity::class.java))
                 true
@@ -60,7 +59,7 @@ class RulesFragment : BasePreferenceFragment() {
             }
         }
 
-        findPreference<Preference>(PREF_FILTER_TEXT_BLACKLIST)!!.apply {
+        requirePreference(PREF_FILTER_TEXT_BLACKLIST).apply {
             onPreferenceClickListener = OnPreferenceClickListener {
                 startActivity(Intent(context, TextBlacklistActivity::class.java))
                 true
@@ -72,7 +71,7 @@ class RulesFragment : BasePreferenceFragment() {
             }
         }
 
-        findPreference<Preference>(PREF_FILTER_TEXT_WHITELIST)!!.apply {
+        requirePreference(PREF_FILTER_TEXT_WHITELIST).apply {
             onPreferenceClickListener = OnPreferenceClickListener {
                 startActivity(Intent(context, TextWhitelistActivity::class.java))
                 true
