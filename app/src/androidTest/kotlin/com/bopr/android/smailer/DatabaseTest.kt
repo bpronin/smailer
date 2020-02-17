@@ -4,6 +4,7 @@ import com.bopr.android.smailer.PhoneEvent.Companion.REASON_ACCEPTED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
+import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -22,6 +23,11 @@ class DatabaseTest : BaseTest() {
     fun setUp() {
         database = Database(targetContext, "test.sqlite")
         database.destroy()
+    }
+
+    @After
+    fun tearDown() {
+        database.close()
     }
 
     /**
@@ -181,7 +187,7 @@ class DatabaseTest : BaseTest() {
 
     @Test
     fun testSaveLoadLocation() {
-        database.saveLastLocation(GeoCoordinates(30.0, 60.0))
+        database.putLastLocation(GeoCoordinates(30.0, 60.0))
         val actual = database.lastLocation!!
 
         assertEquals(30.0, actual.latitude, 0.1)

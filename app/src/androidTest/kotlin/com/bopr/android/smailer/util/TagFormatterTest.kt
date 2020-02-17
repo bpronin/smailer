@@ -2,24 +2,25 @@ package com.bopr.android.smailer.util
 
 import android.content.res.Resources
 import com.bopr.android.smailer.BaseTest
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.mock
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.mock
 
 /**
  * [TagFormatter] tester.
  */
 class TagFormatterTest : BaseTest() {
-    
+
     private lateinit var resources: Resources
 
     @Before
     fun setUp() {
-        resources = mock(Resources::class.java)
-        `when`(resources.getString(RESOURCE_PATTERN)).thenReturn("{one}, {two} and {three}")
-        `when`(resources.getString(RESOURCE_THREE)).thenReturn("THREE")
+        resources = mock {
+            on { getString(RESOURCE_PATTERN) }.doReturn("{one}, {two} and {three}")
+            on { getString(RESOURCE_THREE) }.doReturn("THREE")
+        }
     }
 
     @Test

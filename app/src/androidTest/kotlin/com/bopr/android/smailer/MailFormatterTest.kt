@@ -13,11 +13,12 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_LOCATI
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT
 import com.bopr.android.smailer.util.Util.asSet
+import com.nhaarman.mockitokotlin2.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.*
+import org.mockito.ArgumentMatchers.anyInt
 import java.util.*
 
 /**
@@ -33,11 +34,12 @@ class MailFormatterTest : BaseTest() {
 
     @Before
     fun setUp() {
-        context = mock(Context::class.java)
-        `when`(context.resources).thenReturn(targetContext.resources)
-        `when`(context.createConfigurationContext(any(Configuration::class.java))).thenAnswer { invocation ->
-            val parameter = invocation.arguments[0] as Configuration
-            targetContext.createConfigurationContext(parameter)
+        context = mock {
+            on { resources } doReturn (targetContext.resources)
+            on { createConfigurationContext(anyOrNull()) } doAnswer { invocation ->
+                val parameter = invocation.arguments[0] as Configuration
+                targetContext.createConfigurationContext(parameter)
+            }
         }
     }
 
@@ -224,8 +226,8 @@ class MailFormatterTest : BaseTest() {
         val event = PhoneEvent("+70123456789", true, 0, null, false, "Email body text",
                 null, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
 
-        `when`(context.checkPermission(eq(ACCESS_COARSE_LOCATION), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED)
-        `when`(context.checkPermission(eq(ACCESS_FINE_LOCATION), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED)
+        whenever(context.checkPermission(eq(ACCESS_COARSE_LOCATION), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED)
+        whenever(context.checkPermission(eq(ACCESS_FINE_LOCATION), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED)
 
         val formatter = MailFormatter(context, event)
         formatter.setSendTime(defaultTime)
@@ -259,7 +261,7 @@ class MailFormatterTest : BaseTest() {
         val event = PhoneEvent("+12345678901", true, 0, null, false, "Email body text",
                 null, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
 
-        `when`(context.checkPermission(eq(READ_CONTACTS), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED)
+        whenever(context.checkPermission(eq(READ_CONTACTS), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED)
 
         val formatter = MailFormatter(context, event)
         formatter.setSendTime(defaultTime)

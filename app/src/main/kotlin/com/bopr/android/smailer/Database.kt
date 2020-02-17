@@ -146,11 +146,12 @@ class Database @JvmOverloads constructor(private val context: Context, private v
      *
      * @param coordinates location
      */
-    fun saveLastLocation(coordinates: GeoCoordinates) {
-        val values = ContentValues()
-        values.put(COLUMN_LAST_LATITUDE, coordinates.latitude)
-        values.put(COLUMN_LAST_LONGITUDE, coordinates.longitude)
-        values.put(COLUMN_LAST_LOCATION_TIME, currentTimeMillis())
+    fun putLastLocation(coordinates: GeoCoordinates) {
+        val values = ContentValues().apply {
+            put(COLUMN_LAST_LATITUDE, coordinates.latitude)
+            put(COLUMN_LAST_LONGITUDE, coordinates.longitude)
+            put(COLUMN_LAST_LOCATION_TIME, currentTimeMillis())
+        }
 
         helper.writableDatabase.update(TABLE_SYSTEM, values, "$COLUMN_ID=0", null)
     }

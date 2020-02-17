@@ -4,10 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.telephony.SmsMessage
 import android.telephony.TelephonyManager.*
-import org.junit.Assert.*
+import com.bopr.android.smailer.util.AndroidUtil.deviceName
+import com.nhaarman.mockitokotlin2.*
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.*
 
 /**
  * [CallReceiver] tester.
@@ -20,8 +20,9 @@ class CallReceiverTest : BaseTest() {
 
     @Before
     fun setUp() {
-        context = mock(Context::class.java)
-        `when`(context.resources).thenReturn(targetContext.resources)
+        context = mock {
+            on { resources }.doReturn(targetContext.resources)
+        }
     }
 
     /**
@@ -29,8 +30,6 @@ class CallReceiverTest : BaseTest() {
      */
     @Test
     fun testReceiveIncomingCall() {
-        val invocations = MethodInvocationsCollector()
-        doAnswer(invocations).`when`(context)!!.startService(any(Intent::class.java))
         val receiver = CallReceiver()
 
         /* ringing */
@@ -41,7 +40,8 @@ class CallReceiverTest : BaseTest() {
 
         receiver.onReceive(context, intent)
 
-        assertTrue(invocations.isEmpty)
+        /* not yet */
+        verify(context, never()).startService(anyOrNull())
 
         /* off hook */
         intent = Intent(ACTION_PHONE_STATE_CHANGED)
@@ -49,7 +49,8 @@ class CallReceiverTest : BaseTest() {
 
         receiver.onReceive(context, intent)
 
-        assertTrue(invocations.isEmpty)
+        /* not yet */
+        verify(context, never()).startService(anyOrNull())
 
         /* end call */
         intent = Intent(ACTION_PHONE_STATE_CHANGED)
@@ -57,12 +58,12 @@ class CallReceiverTest : BaseTest() {
 
         receiver.onReceive(context, intent)
 
-        val result = invocations.getArgument<Intent>(0, 0)
-        val event: PhoneEvent = result.getParcelableExtra("event")!!
-
-        assertNotNull(event)
-        assertEquals("123", event.phone)
-        assertTrue(event.isIncoming)
+        verify(context).startService(argThat {
+            val event: PhoneEvent = getParcelableExtra("event")!!
+            event.isIncoming
+                    && event.phone == "123"
+                    && event.acceptor == deviceName()
+        })
     }
 
     /**
@@ -70,8 +71,6 @@ class CallReceiverTest : BaseTest() {
      */
     @Test
     fun testReceiveOutgoingCall() {
-        val invocations = MethodInvocationsCollector()
-        doAnswer(invocations).`when`(context)!!.startService(any(Intent::class.java))
         val receiver = CallReceiver()
 
         /* ringing */
@@ -81,7 +80,8 @@ class CallReceiverTest : BaseTest() {
 
         receiver.onReceive(context, intent)
 
-        assertTrue(invocations.isEmpty)
+        /* not yet */
+        verify(context, never()).startService(anyOrNull())
 
         /* off hook */
         intent = Intent(ACTION_PHONE_STATE_CHANGED)
@@ -89,7 +89,8 @@ class CallReceiverTest : BaseTest() {
 
         receiver.onReceive(context, intent)
 
-        assertTrue(invocations.isEmpty)
+        /* not yet */
+        verify(context, never()).startService(anyOrNull())
 
         /* end call */
         intent = Intent(ACTION_PHONE_STATE_CHANGED)
@@ -97,11 +98,12 @@ class CallReceiverTest : BaseTest() {
 
         receiver.onReceive(context, intent)
 
-        val result = invocations.getArgument<Intent>(0, 0)
-        val event: PhoneEvent = result.getParcelableExtra("event")!!
-        assertNotNull(event)
-        assertEquals("123", event.phone)
-        assertFalse(event.isIncoming)
+        verify(context).startService(argThat {
+            val event: PhoneEvent = getParcelableExtra("event")!!
+            !event.isIncoming
+                    && event.phone == "123"
+                    && event.acceptor == deviceName()
+        })
     }
 
     /**
@@ -109,8 +111,6 @@ class CallReceiverTest : BaseTest() {
      */
     @Test
     fun testReceiveMissedCall() {
-        val invocations = MethodInvocationsCollector()
-        doAnswer(invocations).`when`(context)!!.startService(any(Intent::class.java))
         val receiver = CallReceiver()
 
         /* ringing */
@@ -121,7 +121,8 @@ class CallReceiverTest : BaseTest() {
 
         receiver.onReceive(context, intent)
 
-        assertTrue(invocations.isEmpty)
+        /* not yet */
+        verify(context, never()).startService(anyOrNull())
 
         /* end call */
         intent = Intent(ACTION_PHONE_STATE_CHANGED)
@@ -129,12 +130,12 @@ class CallReceiverTest : BaseTest() {
 
         receiver.onReceive(context, intent)
 
-        val result = invocations.getArgument<Intent>(0, 0)
-        val event: PhoneEvent = result.getParcelableExtra("event")!!
-
-        assertNotNull(event)
-        assertEquals("123", event.phone)
-        assertTrue(event.isMissed)
+        verify(context).startService(argThat {
+            val event: PhoneEvent = getParcelableExtra("event")!!
+            event.isMissed
+                    && event.phone == "123"
+                    && event.acceptor == deviceName()
+        })
     }
 
     /**
@@ -142,8 +143,6 @@ class CallReceiverTest : BaseTest() {
      */
     @Test
     fun testReceiveSms() {
-        val invocations = MethodInvocationsCollector()
-        doAnswer(invocations).`when`(context)!!.startService(any(Intent::class.java))
         val receiver = CallReceiver()
 
         val intent = Intent(CallReceiver.SMS_RECEIVED)
@@ -153,11 +152,12 @@ class CallReceiverTest : BaseTest() {
 
         receiver.onReceive(context, intent)
 
-        val result = invocations.getArgument<Intent>(0, 0)
-        val event: PhoneEvent = result.getParcelableExtra("event")!!
-
-        assertNotNull(event)
-        assertEquals("+15555215556", event.phone)
-        assertEquals("Text message", event.text)
+        verify(context).startService(argThat {
+            val event: PhoneEvent = getParcelableExtra("event")!!
+            event.isSms
+                    && event.phone == "+15555215556"
+                    && event.text == "Text message"
+                    && event.acceptor == deviceName()
+        })
     }
 }

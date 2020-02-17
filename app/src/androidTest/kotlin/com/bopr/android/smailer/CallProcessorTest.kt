@@ -20,6 +20,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 import com.nhaarman.mockitokotlin2.*
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -83,6 +84,11 @@ class CallProcessorTest : BaseTest() {
         database.destroy()
 
         processor = CallProcessor(context, database, transport, notifications, geoLocator)
+    }
+
+    @After
+    fun tearDown() {
+        database.close()
     }
 
     /**

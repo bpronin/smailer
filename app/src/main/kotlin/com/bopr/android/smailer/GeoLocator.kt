@@ -54,7 +54,7 @@ class GeoLocator(private val context: Context, private val database: Database) {
                 log.warn("Unable to obtain location from database")
             }
         } else {
-            database.saveLastLocation(coordinates)
+            database.putLastLocation(coordinates)
         }
 
         return coordinates

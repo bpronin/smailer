@@ -3,12 +3,11 @@ package com.bopr.android.smailer
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import androidx.test.rule.GrantPermissionRule
-import org.junit.Assert
+import org.junit.After
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.mock
 
 /**
  * [GeoLocator] class tester.
@@ -20,27 +19,28 @@ class GeoLocatorTest : BaseTest() {
 
     @Rule
     @JvmField
-    val permissionRule = GrantPermissionRule.grant(ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION)
+    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION)
 
-    private var databaseLocation: GeoCoordinates? = null
+    private lateinit var database: Database
+    private val databaseLocation = GeoCoordinates(50.0, 60.0)
 
     @Before
-    @Throws(Exception::class)
     fun setUp() {
-        databaseLocation = GeoCoordinates(50.0, 60.0)
+        database = Database(targetContext, "test.sqlite")
+        database.destroy()
+        database.putLastLocation(databaseLocation)
     }
 
-    private fun createMockDatabase(): Database {
-        val database = mock(Database::class.java)
-        `when`(database.lastLocation).thenReturn(databaseLocation)
-        return database
+    @After
+    fun tearDown() {
+        database.close()
     }
 
     @Test
     fun testGetLocationGpsOn() {
-        val provider = GeoLocator(targetContext, createMockDatabase())
+        val provider = GeoLocator(targetContext, database)
         val location = provider.getLocation()
-        Assert.assertNotNull(location)
+        assertNotNull(location)
     }
 
     //    private Location location(GeoCoordinates coordinates) {

@@ -18,7 +18,6 @@ abstract class BaseTest protected constructor() {
 
     companion object {
 
-        @JvmStatic
         val targetContext: Context = InstrumentationRegistry.getInstrumentation().targetContext
 
         @BeforeClass
@@ -26,7 +25,8 @@ abstract class BaseTest protected constructor() {
         fun setUpClass() {
             Locale.setDefault(Locale.US)
             TimeZone.setDefault(TimeZone.getTimeZone("America/New_York"))
-            System.setProperty("dexmaker.dexcache", targetContext.cacheDir.path)
+//            System.setProperty("dexmaker.dexcache", targetContext.cacheDir.path)
+
             /* cancel all running jobs to prevent interference */
             WorkManager.getInstance().cancelAllWork()
         }
