@@ -25,7 +25,7 @@ object ContentUtils {
     private val log = LoggerFactory.getLogger("ContentUtils")
     
     @JvmStatic
-    fun getContactName(context: Context, phone: String): String? {
+    fun contactName(context: Context, phone: String): String? {
         var result: String? = null
         if (requireReadContactPermission(context) && phone.isNotEmpty()) {
             val uri = withAppendedPath(CONTENT_FILTER_URI, encode(phone))
@@ -43,8 +43,8 @@ object ContentUtils {
     }
 
     @JvmStatic
-    fun getEmailAddressFromIntent(context: Context, intent: Intent): String? {
-        return intent.data?.lastPathSegment?.let { getEmailAddress(context, it) }
+    fun emailAddressFromIntent(context: Context, intent: Intent): String? {
+        return intent.data?.lastPathSegment?.let { emailAddress(context, it) }
     }
 
     @JvmStatic
@@ -55,13 +55,13 @@ object ContentUtils {
     }
 
     @JvmStatic
-    fun getPhoneFromIntent(context: Context, intent: Intent): String? {
-        return intent.data?.lastPathSegment?.let { getPhone(context, it) }
+    fun phoneFromIntent(context: Context, intent: Intent?): String? {
+        return intent?.data?.lastPathSegment?.let { phone(context, it) }
     }
 
     @JvmStatic
-    fun isReadContactsPermissionsDenied(context: Context?): Boolean {
-        return isPermissionsDenied(context!!, permission.READ_CONTACTS)
+    fun isReadContactsPermissionsDenied(context: Context): Boolean {
+        return isPermissionsDenied(context, permission.READ_CONTACTS)
     }
 
     @JvmStatic
@@ -85,7 +85,7 @@ object ContentUtils {
         }
     }
 
-    private fun getEmailAddress(context: Context, emailId: String): String? {
+    private fun emailAddress(context: Context, emailId: String): String? {
         var result: String? = null
         if (requireReadContactPermission(context) && emailId.isNotEmpty()) {
             val cursor = context.contentResolver.query(Email.CONTENT_URI, null,
@@ -102,7 +102,7 @@ object ContentUtils {
         return result
     }
 
-    private fun getPhone(context: Context, phoneId: String): String? {
+    private fun phone(context: Context, phoneId: String): String? {
         var result: String? = null
         if (requireReadContactPermission(context) && phoneId.isNotEmpty()) {
             val cursor = context.contentResolver.query(Phone.CONTENT_URI, null,

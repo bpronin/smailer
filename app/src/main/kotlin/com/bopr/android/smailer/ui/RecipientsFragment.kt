@@ -1,37 +1,57 @@
 package com.bopr.android.smailer.ui
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.*
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
-import com.bopr.android.smailer.PhoneEventFilter
 import com.bopr.android.smailer.R
+import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.util.TagFormatter
+import com.bopr.android.smailer.util.TextUtil.commaJoin
+import com.bopr.android.smailer.util.TextUtil.commaSplit
 import com.bopr.android.smailer.util.TextUtil.isNullOrBlank
+import com.bopr.android.smailer.util.TextUtil.isValidEmailAddress
 import com.bopr.android.smailer.util.UiUtil.showToast
+import com.bopr.android.smailer.util.UiUtil.underwivedText
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import java.util.*
 
 /**
- * Base for black/whitelist fragments.
+ * Recipients list activity fragment.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-abstract class FilterListFragment : BaseFragment() {
+//todo: generalize with FilterListFragment
+class RecipientsFragment : BaseFragment() {
 
     private lateinit var listAdapter: ListAdapter
     private lateinit var listView: RecyclerView
-    private var selectedListPosition = RecyclerView.NO_POSITION
+    private lateinit var settingsListener: SettingsListener
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_filter_list, container, false)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        settingsListener = SettingsListener(requireContext())
+        settings.registerOnSharedPreferenceChangeListener(settingsListener)
+    }
+
+    override fun onDestroy() {
+        settings.unregisterOnSharedPreferenceChangeListener(settingsListener)
+        super.onDestroy()
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.fragment_recipients, container, false)
 
         listView = view.findViewById<RecyclerView>(android.R.id.list).apply {
             addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
@@ -45,11 +65,11 @@ abstract class FilterListFragment : BaseFragment() {
             }
 
             override fun onSwiped(holder: RecyclerView.ViewHolder, swipeDir: Int) {
-                selectedListPosition = holder.adapterPosition
-                removeSelectedItem()
+                removeItems(intArrayOf(holder.adapterPosition))
             }
-
-        }).also { it.attachToRecyclerView(listView) }
+        }).also {
+            it.attachToRecyclerView(listView)
+        }
 
         view.findViewById<FloatingActionButton>(R.id.button_add).apply {
             setOnClickListener { addItem() }
@@ -59,41 +79,6 @@ abstract class FilterListFragment : BaseFragment() {
 
         return view
     }
-
-    override fun onContextItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_edit_item -> {
-                editSelectedItem()
-                true
-            }
-            R.id.action_remove_item -> {
-                removeSelectedItem()
-                true
-            }
-            else ->
-                super.onContextItemSelected(item)
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_list, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.action_log_clear) {
-            clearData()
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    protected abstract fun getItemsList(filter: PhoneEventFilter): Set<String>
-
-    protected abstract fun setItemsList(filter: PhoneEventFilter, list: List<String>)
-
-    protected abstract fun createEditItemDialog(text: String?): EditFilterListItemDialogFragment
-
-    protected abstract fun getItemText(value: String?): String?
 
     private fun updateEmptyText() {
         val view = view
@@ -107,7 +92,13 @@ abstract class FilterListFragment : BaseFragment() {
         }
     }
 
-    fun loadItems() {
+    private fun getItemsList(): List<Item> {
+        val value = settings.getString(PREF_RECIPIENTS_ADDRESS, "")!!
+        val addresses = commaSplit(value)
+        return addresses.toList().sorted().map { Item(it) }
+    }
+
+    private fun loadItems() {
         listAdapter = ListAdapter().also {
             it.registerAdapterDataObserver(object : AdapterDataObserver() {
 
@@ -115,89 +106,68 @@ abstract class FilterListFragment : BaseFragment() {
                     updateEmptyText()
                 }
             })
+
+            listView.adapter = it
         }
 
-        listView.adapter = listAdapter
-
-        val items = getItemsList(settings.getFilter())
-                .toList()
-                .sorted()
-                .map { Item(it) }
-
-        listAdapter.setItems(items)
-    }
-
-    private fun clearData() {
-        AlertDialog.Builder(requireContext())
-                .setMessage(R.string.ask_clear_list)
-                .setPositiveButton(R.string.clear) { _, _ ->
-                    listAdapter.setItems(emptyList())
-                    persistItems()
-                }
-                .setNegativeButton(android.R.string.cancel) { dialog, _ ->
-                    dialog.cancel()
-                }
-                .show()
+        listAdapter.setItems(getItemsList())
     }
 
     private fun persistItems() {
-        val items: MutableList<String> = ArrayList()
+        val addresses: MutableList<String?> = ArrayList()
         for (item in listAdapter.getItems()) {
-            items.add(item.value)
+            addresses.add(item.address)
         }
-        val filter = settings.getFilter()
-        setItemsList(filter, items)
-        settings.edit().putFilter(filter).apply()
+        settings.edit().putString(PREF_RECIPIENTS_ADDRESS, commaJoin(addresses)).apply()
     }
 
-    private fun isItemExists(text: String): Boolean {
+    private fun addItem() {
+        showItemEditor(null)
+    }
+
+    private fun editItem(item: Item?) {
+        item?.let { showItemEditor(it) }
+    }
+
+    private fun removeItems(positions: IntArray) {
+        val savedItems: List<Item> = ArrayList(listAdapter.getItems())
+        val removedItems = listAdapter.removeItems(positions)
+        persistItems()
+        showUndoAction(removedItems, savedItems)
+    }
+
+    private fun undoRemove(lastItems: List<Item>) {
+        listAdapter.setItems(lastItems)
+        persistItems()
+    }
+
+    private fun isItemExists(address: String): Boolean {
         for (item in listAdapter.getItems()) {
-            if (text == item.value) {
+            if (item.address == address) {
                 return true
             }
         }
         return false
     }
 
-    private fun addItem() {
-        editItem(null)
-    }
-
-    private fun editSelectedItem() {
-        if (selectedListPosition != RecyclerView.NO_POSITION) {
-            val item = listAdapter.getItem(selectedListPosition)
-            editItem(item)
-        }
-    }
-
-    private fun editItem(item: Item?) {
-        val dialog = createEditItemDialog(item?.value)
-        dialog.setOnClose { value ->
-            if (isItemExists(value) && (item == null || item.value != value)) {
+    private fun showItemEditor(item: Item?) {
+        val dialog = EditEmailDialogFragment()
+        dialog.setTitle(if (item == null) R.string.add else R.string.edit)
+        dialog.setInitialValue(item?.address)
+        dialog.setCallback { address ->
+            if (isItemExists(address) && (item == null || item.address != address)) {
                 showToast(requireContext(), TagFormatter(requireContext())
-                        .pattern(R.string.item_already_exists)
-                        .put("item", getItemText(value))
+                        .pattern(R.string.recipient_already_exists)
+                        .put("name", address)
                         .format())
-            } else if (!isNullOrBlank(getItemText(value))) {
-                listAdapter.replaceItem(item, Item(value))
+            } else if (!isNullOrBlank(address)) {
+                /* note: if we rotated device reference to "this" is changed here */
+                val newItem = Item(address)
+                listAdapter.replaceItem(item, newItem)
                 persistItems()
             }
         }
         dialog.showDialog(requireActivity())
-    }
-
-    private fun removeSelectedItem() {
-        if (selectedListPosition != RecyclerView.NO_POSITION) {
-            val savedItems: List<Item> = ArrayList(listAdapter.getItems())
-            val removedItems = listAdapter.removeItems(intArrayOf(selectedListPosition))
-            persistItems()
-            showUndoAction(removedItems, savedItems)
-        }
-    }
-
-    private fun undoRemoveItem(lastItems: List<Item>) {
-        listAdapter.setItems(lastItems)
-        persistItems()
     }
 
     private fun showUndoAction(removedItems: List<Item?>, lastItems: List<Item>) {
@@ -209,13 +179,14 @@ abstract class FilterListFragment : BaseFragment() {
                     .put("count", removedItems.size.toString())
                     .format()
         }
+
         Snackbar.make(listView, title, Snackbar.LENGTH_LONG)
                 .setActionTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
-                .setAction(R.string.undo) { undoRemoveItem(lastItems) }
+                .setAction(R.string.undo) { undoRemove(lastItems) }
                 .show()
     }
 
-    private inner class Item(val value: String)
+    private inner class Item(val address: String)
 
     private inner class ListAdapter : RecyclerView.Adapter<ItemViewHolder>() {
 
@@ -223,23 +194,14 @@ abstract class FilterListFragment : BaseFragment() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
             val inflater = LayoutInflater.from(context)
-            return ItemViewHolder(inflater.inflate(R.layout.list_item_filter, parent, false))
+            return ItemViewHolder(inflater.inflate(R.layout.list_item_recipient, parent, false))
         }
 
         override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
             val item = getItem(position)
-            holder.textView.text = item?.let { getItemText(item.value) }
-            holder.itemView.setOnClickListener {
-                selectedListPosition = holder.adapterPosition
-                editSelectedItem()
-            }
-            holder.itemView.setOnLongClickListener {
-                selectedListPosition = holder.adapterPosition
-                false
-            }
-            holder.itemView.setOnCreateContextMenuListener { menu, _, _ ->
-                requireActivity().menuInflater.inflate(R.menu.menu_context_filters, menu)
-            }
+            val address = item?.address
+            holder.textView.text = if (isValidEmailAddress(address)) address else underwivedText(requireContext(), address)
+            holder.itemView.setOnClickListener { editItem(item) }
         }
 
         override fun getItemId(position: Int): Long {
@@ -250,7 +212,7 @@ abstract class FilterListFragment : BaseFragment() {
             return items.size
         }
 
-        fun getItem(position: Int): Item? {
+        private fun getItem(position: Int): Item? {
             return if (position != -1) items[position] else null
         }
 
@@ -289,6 +251,15 @@ abstract class FilterListFragment : BaseFragment() {
     private inner class ItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         val textView: TextView = view.findViewById(R.id.text)
+    }
 
+    private inner class SettingsListener(context: Context) : BaseSettingsListener(context) {
+
+        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+            if (key == PREF_RECIPIENTS_ADDRESS) {
+                loadItems()
+            }
+            super.onSharedPreferenceChanged(sharedPreferences, key)
+        }
     }
 }

@@ -11,7 +11,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
-import com.bopr.android.smailer.util.ContentUtils.getContactName
+import com.bopr.android.smailer.util.ContentUtils.contactName
 import com.bopr.android.smailer.util.ContentUtils.markSmsAsRead
 import com.bopr.android.smailer.util.TextUtil.isNullOrEmpty
 import com.bopr.android.smailer.util.TextUtil.isValidEmailAddressList
@@ -157,7 +157,7 @@ class CallProcessor(
     private fun sendMessage(event: PhoneEvent, recipient: String?) {
         val formatter = MailFormatter(context, event).apply {
             setSendTime(Date())
-            setContactName(getContactName(context, event.phone))
+            setContactName(contactName(context, event.phone))
             setDeviceName(settings.getDeviceName())
             setContentOptions(settings.getStringSet(PREF_EMAIL_CONTENT, ImmutableSet.of())!!)
             setServiceAccount(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT, null))

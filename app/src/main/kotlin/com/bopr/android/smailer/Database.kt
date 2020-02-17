@@ -276,7 +276,7 @@ class Database @JvmOverloads constructor(private val context: Context, private v
         }
     }
 
-    private inner class DbHelper(context: Context?) : SQLiteOpenHelper(context, name, null, DB_VERSION) {
+    private inner class DbHelper(context: Context) : SQLiteOpenHelper(context, name, null, DB_VERSION) {
 
         override fun onCreate(db: SQLiteDatabase) {
             db.execSQL("CREATE TABLE " + TABLE_SYSTEM + " (" +

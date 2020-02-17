@@ -30,7 +30,7 @@ import com.bopr.android.smailer.ui.BatteryOptimizationHelper.isIgnoreBatteryOpti
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
 import com.bopr.android.smailer.util.AndroidUtil.deviceName
 import com.bopr.android.smailer.util.AndroidUtil.primaryAccount
-import com.bopr.android.smailer.util.ContentUtils.getContactName
+import com.bopr.android.smailer.util.ContentUtils.contactName
 import com.bopr.android.smailer.util.TextUtil.commaJoin
 import com.bopr.android.smailer.util.TextUtil.escapeRegex
 import com.bopr.android.smailer.util.UiUtil.alertDialogView
@@ -366,7 +366,7 @@ class DebugFragment : BasePreferenceFragment() {
                 .setView(alertDialogView(input))
                 .setPositiveButton(android.R.string.ok) { _, _ ->
                     val phone = input.text.toString()
-                    val contact = getContactName(appContext, phone)
+                    val contact = contactName(appContext, phone)
                     val text = if (contact != null) "$phone: $contact" else "Contact not found"
                     showToast(appContext, text)
                 }
