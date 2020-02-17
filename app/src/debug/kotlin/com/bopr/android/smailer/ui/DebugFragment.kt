@@ -26,6 +26,8 @@ import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessi
 import com.bopr.android.smailer.remote.RemoteControlService
 import com.bopr.android.smailer.sync.SyncEngine.Companion.syncNow
 import com.bopr.android.smailer.sync.Synchronizer
+import com.bopr.android.smailer.ui.BatteryOptimizationHelper.isIgnoreBatteryOptimizationRequired
+import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
 import com.bopr.android.smailer.util.AndroidUtil.deviceName
 import com.bopr.android.smailer.util.AndroidUtil.primaryAccount
 import com.bopr.android.smailer.util.ContentUtils.getContactName
@@ -134,17 +136,13 @@ class DebugFragment : BasePreferenceFragment() {
                 }),
                 createPreference("Require battery optimisation disabled", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        if (BatteryOptimizationHelper.isIgnoreBatteryOptimizationRequired(appContext)) {
+                        if (isIgnoreBatteryOptimizationRequired(appContext)) {
                             showToast(appContext, "Battery optimization already ignored")
                         } else {
-                            BatteryOptimizationHelper.requireIgnoreBatteryOptimization(appContext)
+                            requireIgnoreBatteryOptimization(appContext)
                         }
                     }
-                }) //                    @Override
-//                    protected void onClick(Preference preference) {
-//                        launchBatteryOptimizationSettings(context);
-//                    }
-//                })
+                })
         )
         addCategory(screen, "Database",
                 createPreference("Add an item to calls log", object : DefaultClickListener() {
