@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import com.bopr.android.smailer.PhoneEventFilter
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.util.TagFormatter
-import com.bopr.android.smailer.util.TextUtil.isNullOrBlank
+import com.bopr.android.smailer.util.TextUtil.isNullOrEmpty
 import com.bopr.android.smailer.util.UiUtil.showToast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -171,19 +171,21 @@ abstract class FilterListFragment : BaseFragment() {
     }
 
     private fun editItem(item: Item?) {
-        val dialog = createEditItemDialog(item?.value)
-        dialog.setOnClose { value ->
-            if (isItemExists(value) && (item == null || item.value != value)) {
-                showToast(requireContext(), TagFormatter(requireContext())
-                        .pattern(R.string.item_already_exists)
-                        .put("item", getItemText(value))
-                        .format())
-            } else if (!isNullOrBlank(getItemText(value))) {
-                listAdapter.replaceItem(item, Item(value))
-                persistItems()
+        createEditItemDialog(item?.value).apply {
+            setOnOkClicked { value ->
+                if (value != null) {
+                    if (isItemExists(value) && (item == null || item.value != value)) {
+                        showToast(requireContext(), TagFormatter(requireContext())
+                                .pattern(R.string.item_already_exists)
+                                .put("item", getItemText(value))
+                                .format())
+                    } else if (!isNullOrEmpty(getItemText(value))) {
+                        listAdapter.replaceItem(item, Item(value))
+                        persistItems()
+                    }
+                }
             }
-        }
-        dialog.showDialog(requireActivity())
+        }.showDialog(requireActivity())
     }
 
     private fun removeSelectedItem() {

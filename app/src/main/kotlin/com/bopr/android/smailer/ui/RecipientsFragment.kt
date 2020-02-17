@@ -151,23 +151,23 @@ class RecipientsFragment : BaseFragment() {
     }
 
     private fun showItemEditor(item: Item?) {
-        val dialog = EditEmailDialogFragment()
-        dialog.setTitle(if (item == null) R.string.add else R.string.edit)
-        dialog.setInitialValue(item?.address)
-        dialog.setCallback { address ->
-            if (isItemExists(address) && (item == null || item.address != address)) {
-                showToast(requireContext(), TagFormatter(requireContext())
-                        .pattern(R.string.recipient_already_exists)
-                        .put("name", address)
-                        .format())
-            } else if (!isNullOrBlank(address)) {
-                /* note: if we rotated device reference to "this" is changed here */
-                val newItem = Item(address)
-                listAdapter.replaceItem(item, newItem)
-                persistItems()
+        EditEmailDialogFragment().apply {
+            setTitle(if (item == null) R.string.add else R.string.edit)
+            setInitialValue(item?.address)
+            setOnOkClicked { value ->
+                if (value != null) {
+                    if (isItemExists(value) && (item == null || item.address != value)) {
+                        showToast(requireContext(), TagFormatter(requireContext())
+                                .pattern(R.string.recipient_already_exists)
+                                .put("name", value)
+                                .format())
+                    } else if (!isNullOrBlank(value)) {
+                        listAdapter.replaceItem(item, Item(value))
+                        persistItems()
+                    }
+                }
             }
-        }
-        dialog.showDialog(requireActivity())
+        }.showDialog(requireActivity())
     }
 
     private fun showUndoAction(removedItems: List<Item?>, lastItems: List<Item>) {
