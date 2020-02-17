@@ -34,10 +34,8 @@ internal object BatteryOptimizationHelper {
                 .setTitle("Battery optimization")
                 .setMessage(R.string.battery_optimization_reason)
                 .setNegativeButton(android.R.string.cancel, null)
-                .setPositiveButton(android.R.string.ok) { dialog, which ->
-                    val intent = Intent()
-                    intent.action = ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
-                    context.startActivity(intent)
+                .setPositiveButton(android.R.string.ok) { _, _ ->
+                    context.startActivity(Intent(ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
                 }
                 .show()
     }
