@@ -33,12 +33,12 @@ public class TextWhitelistFragment extends TextFilterListFragment {
     }
 
     @Override
-    Set<String> getItemsList(PhoneEventFilter filter) {
+    protected Set<String> getItemsList(PhoneEventFilter filter) {
         return filter.getTextWhitelist();
     }
 
     @Override
-    void setItemsList(PhoneEventFilter filter, List<String> list) {
+    protected void setItemsList(PhoneEventFilter filter, List<String> list) {
         filter.setTextWhitelist(new HashSet<>(list));
     }
 

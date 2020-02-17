@@ -28,8 +28,8 @@ object TextUtil {
     }
 
     @JvmStatic
-    fun unescapeRegex(s: String): String? {
-        if (s.isNotEmpty()) {
+    fun unescapeRegex(s: String?): String? {
+        if (!s.isNullOrEmpty()) {
             val ss = s.split(REGEX_)
             if (ss.size > 1) {
                 return ss[1]

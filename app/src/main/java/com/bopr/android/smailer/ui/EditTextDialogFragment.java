@@ -8,9 +8,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.util.TextUtil;
+
+import static com.bopr.android.smailer.util.TextUtil.escapeRegex;
+import static com.bopr.android.smailer.util.TextUtil.unescapeRegex;
 
 /**
  * Phone number editor dialog.
@@ -31,16 +34,16 @@ public class EditTextDialogFragment extends EditFilterListItemDialogFragment {
         return "edit_text_filter_item_dialog";
     }
 
-    void setInitialValue(String text) {
-        String s = TextUtil.unescapeRegex(text);
-        initialRegex = (s != null);
-        initialText = initialRegex ? s : text;
+    void setInitialValue(@Nullable String text) {
+        String regex = unescapeRegex(text);
+        initialRegex = (regex != null);
+        initialText = initialRegex ? regex : text;
     }
 
     @Override
     protected String getValue() {
         String s = editText.getText().toString();
-        return checkBox.isChecked() ? TextUtil.escapeRegex(s) : s;
+        return checkBox.isChecked() ? escapeRegex(s) : s;
     }
 
     @NonNull
