@@ -7,7 +7,7 @@ import com.bopr.android.smailer.R
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal abstract class PhoneFilterListFragment : FilterListFragment() {
+abstract class PhoneFilterListFragment : FilterListFragment() {
 
     override fun createEditItemDialog(text: String?): EditFilterListItemDialogFragment {
         val dialog = EditPhoneDialogFragment()

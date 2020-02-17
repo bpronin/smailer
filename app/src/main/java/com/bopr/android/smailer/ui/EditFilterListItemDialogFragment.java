@@ -17,7 +17,7 @@ import androidx.fragment.app.FragmentActivity;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-abstract class EditFilterListItemDialogFragment extends DialogFragment {
+public abstract class EditFilterListItemDialogFragment extends DialogFragment {
 
     private OnClose onClose;
     private int title;

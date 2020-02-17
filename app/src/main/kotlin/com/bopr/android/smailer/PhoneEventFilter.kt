@@ -20,12 +20,12 @@ import com.bopr.android.smailer.util.TextUtil.unescapeRegex
  * @author Boris Pronin ([bpronin@bttprime.com](mailto:bpronin@bttprime.com))
  */
 class PhoneEventFilter {
-    
-    var triggers = mutableSetOf<String>()
-    var phoneWhitelist = mutableSetOf<String>()
-    var phoneBlacklist = mutableSetOf<String>()
-    var textWhitelist = mutableSetOf<String>()
-    var textBlacklist = mutableSetOf<String>()
+
+    var triggers: MutableSet<String> = mutableSetOf()
+    var phoneWhitelist: MutableSet<String> = mutableSetOf()
+    var phoneBlacklist: MutableSet<String> = mutableSetOf()
+    var textWhitelist: MutableSet<String> = mutableSetOf()
+    var textBlacklist: MutableSet<String> = mutableSetOf()
 
     /**
      * Tests if the filter accepts given event.

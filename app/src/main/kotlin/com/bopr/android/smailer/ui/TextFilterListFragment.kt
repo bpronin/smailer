@@ -8,7 +8,7 @@ import com.bopr.android.smailer.util.TextUtil.unescapeRegex
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal abstract class TextFilterListFragment : FilterListFragment() {
+abstract class TextFilterListFragment : FilterListFragment() {
 
     override fun createEditItemDialog(text: String?): EditFilterListItemDialogFragment {
         val dialog = EditTextDialogFragment()

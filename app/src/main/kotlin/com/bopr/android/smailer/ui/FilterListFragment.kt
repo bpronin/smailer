@@ -23,7 +23,7 @@ import java.util.*
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal abstract class FilterListFragment : BaseFragment() {
+abstract class FilterListFragment : BaseFragment() {
 
     private lateinit var listAdapter: ListAdapter
     private lateinit var listView: RecyclerView
@@ -85,9 +85,9 @@ internal abstract class FilterListFragment : BaseFragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    protected abstract fun getItemsList(filter: PhoneEventFilter?): Set<String>?
+    protected abstract fun getItemsList(filter: PhoneEventFilter): Set<String>
 
-    protected abstract fun setItemsList(filter: PhoneEventFilter?, list: List<String>?)
+    protected abstract fun setItemsList(filter: PhoneEventFilter, list: List<String>)
 
     protected abstract fun createEditItemDialog(text: String?): EditFilterListItemDialogFragment
 
@@ -117,7 +117,7 @@ internal abstract class FilterListFragment : BaseFragment() {
 
         listView.adapter = listAdapter
 
-        val items = getItemsList(settings.getFilter())!!
+        val items = getItemsList(settings.getFilter())
                 .toList()
                 .sorted()
                 .map { Item(it) }
