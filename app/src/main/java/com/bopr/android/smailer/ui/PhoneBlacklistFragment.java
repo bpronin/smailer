@@ -3,6 +3,8 @@ package com.bopr.android.smailer.ui;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+
 import com.bopr.android.smailer.PhoneEventFilter;
 import com.bopr.android.smailer.Settings;
 
@@ -33,12 +35,13 @@ public class PhoneBlacklistFragment extends PhoneFilterListFragment {
     }
 
     @Override
-    Set<String> getItemsList(PhoneEventFilter filter) {
+    @NonNull
+    Set<String> getItemsList(@NonNull PhoneEventFilter filter) {
         return filter.getPhoneBlacklist();
     }
 
     @Override
-    void setItemsList(PhoneEventFilter filter, List<String> list) {
+    void setItemsList(@NonNull PhoneEventFilter filter, @NonNull List<String> list) {
         filter.setPhoneBlacklist(new HashSet<>(list));
     }
 

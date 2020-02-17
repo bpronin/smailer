@@ -98,8 +98,8 @@ import static com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnor
 import static com.bopr.android.smailer.util.AndroidUtil.deviceName;
 import static com.bopr.android.smailer.util.AndroidUtil.primaryAccount;
 import static com.bopr.android.smailer.util.TextUtil.commaJoin;
+import static com.bopr.android.smailer.util.TextUtil.escapeRegex;
 import static com.bopr.android.smailer.util.TextUtil.formatCoordinates;
-import static com.bopr.android.smailer.util.TextUtil.quoteRegex;
 import static com.bopr.android.smailer.util.UiUtil.alertDialogView;
 import static com.bopr.android.smailer.util.UiUtil.showToast;
 import static com.bopr.android.smailer.util.Util.asSet;
@@ -541,7 +541,7 @@ public class DebugFragment extends BasePreferenceFragment {
                 .putBoolean(PREF_NOTIFY_SEND_SUCCESS, true)
                 .putBoolean(PREF_RESEND_UNSENT, true)
                 .putString(PREF_FILTER_PHONE_BLACKLIST, commaJoin(asSet("+123456789", "+9876543*")))
-                .putString(PREF_FILTER_TEXT_BLACKLIST, commaJoin(asSet("Bad text", quoteRegex("Expression"))))
+                .putString(PREF_FILTER_TEXT_BLACKLIST, commaJoin(asSet("Bad text", escapeRegex("Expression"))))
                 .apply();
 
         refreshPreferenceViews();

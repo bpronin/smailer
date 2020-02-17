@@ -19,7 +19,7 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
 import static com.bopr.android.smailer.util.AddressUtil.normalizePhone;
 import static com.bopr.android.smailer.util.AddressUtil.phoneToRegEx;
-import static com.bopr.android.smailer.util.TextUtil.unquoteRegex;
+import static com.bopr.android.smailer.util.TextUtil.unescapeRegex;
 
 /**
  * Filters phone events by various criteria.
@@ -139,7 +139,7 @@ public class PhoneEventFilter {
     private boolean matchesText(Collection<String> patterns, String text) {
         if (!TextUtil.isNullOrEmpty(text)) {
             for (String s : patterns) {
-                String pattern = unquoteRegex(s);
+                String pattern = unescapeRegex(s);
                 if (((pattern != null) && text.matches(pattern)) || text.contains(s)) {
                     return true;
                 }

@@ -8,7 +8,7 @@ import static com.bopr.android.smailer.PhoneEvent.REASON_ACCEPTED;
 import static com.bopr.android.smailer.PhoneEvent.REASON_NUMBER_BLACKLISTED;
 import static com.bopr.android.smailer.PhoneEvent.REASON_TEXT_BLACKLISTED;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
-import static com.bopr.android.smailer.util.TextUtil.quoteRegex;
+import static com.bopr.android.smailer.util.TextUtil.escapeRegex;
 import static com.bopr.android.smailer.util.Util.asSet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -146,11 +146,11 @@ public class PhoneEventFilterTest {
         event.setPhone("111");
         event.setIncoming(true);
 
-        filter.setTextBlacklist(asSet(quoteRegex("(.*)Bob(.*)")));
+        filter.setTextBlacklist(asSet(escapeRegex("(.*)Bob(.*)")));
         event.setText("This is a message for Bob or Ann");
         assertEquals(REASON_TEXT_BLACKLISTED, filter.test(event));
 
-        filter.setTextBlacklist(asSet(quoteRegex("(.*)John(.*)")));
+        filter.setTextBlacklist(asSet(escapeRegex("(.*)John(.*)")));
         event.setText("This is a message for Bob or Ann");
         assertEquals(REASON_ACCEPTED, filter.test(event));
 

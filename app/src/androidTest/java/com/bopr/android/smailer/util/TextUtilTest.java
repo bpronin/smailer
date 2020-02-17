@@ -8,6 +8,7 @@ import org.junit.Test;
 import static com.bopr.android.smailer.util.AddressUtil.extractEmail;
 import static com.bopr.android.smailer.util.TextUtil.capitalize;
 import static com.bopr.android.smailer.util.TextUtil.decimalToDMS;
+import static com.bopr.android.smailer.util.TextUtil.escapeRegex;
 import static com.bopr.android.smailer.util.TextUtil.formatCoordinates;
 import static com.bopr.android.smailer.util.TextUtil.formatDuration;
 import static com.bopr.android.smailer.util.TextUtil.isNotEmpty;
@@ -15,6 +16,7 @@ import static com.bopr.android.smailer.util.TextUtil.isNullOrBlank;
 import static com.bopr.android.smailer.util.TextUtil.isNullOrEmpty;
 import static com.bopr.android.smailer.util.TextUtil.join;
 import static com.bopr.android.smailer.util.TextUtil.split;
+import static com.bopr.android.smailer.util.TextUtil.unescapeRegex;
 import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -108,6 +110,25 @@ public class TextUtilTest extends BaseTest {
     public void testExtractEmail() {
         assertNull(extractEmail("From address"));
         assertEquals("mail@mail.com", extractEmail("From: <mail@mail.com> address"));
+    }
+
+    @Test
+    public void testEscapeRegex() {
+        assertEquals("REGEX:text", escapeRegex("text"));
+        assertEquals("REGEX:", escapeRegex(""));
+        assertEquals("REGEX:   ", escapeRegex("   "));
+        assertEquals("REGEX:REGEX:", escapeRegex("REGEX:"));
+    }
+
+    @Test
+    public void testUnescapeRegex() {
+        assertNull(unescapeRegex(null));
+        assertNull(unescapeRegex(""));
+        assertNull(unescapeRegex("   "));
+        assertNull(unescapeRegex("text"));
+        assertEquals("text", unescapeRegex("REGEX:text"));
+        assertEquals("REGEX:", unescapeRegex("REGEX:REGEX:"));
+        assertEquals("", unescapeRegex("REGEX:"));
     }
 
 

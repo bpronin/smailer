@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -20,7 +21,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bopr.android.smailer.PhoneEventFilter;
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.util.TextUtil;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -31,6 +31,7 @@ import java.util.Set;
 
 import static androidx.recyclerview.widget.RecyclerView.NO_POSITION;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
+import static com.bopr.android.smailer.util.TextUtil.isNullOrBlank;
 import static com.bopr.android.smailer.util.UiUtil.showToast;
 import static java.lang.String.valueOf;
 
@@ -103,7 +104,7 @@ abstract class FilterListFragment extends BaseFragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu,@NonNull MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.menu_list, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -117,28 +118,16 @@ abstract class FilterListFragment extends BaseFragment {
         return super.onOptionsItemSelected(item);
     }
 
-    abstract Set<String> getItemsList(PhoneEventFilter filter);
+    @NonNull
+    abstract Set<String> getItemsList(@NonNull PhoneEventFilter filter);
 
-    abstract void setItemsList(PhoneEventFilter filter, List<String> list);
+    abstract void setItemsList(@NonNull PhoneEventFilter filter, @NonNull List<String> list);
 
     @NonNull
-    abstract EditFilterListItemDialogFragment createEditItemDialog(String text);
+    abstract EditFilterListItemDialogFragment createEditItemDialog(@Nullable String text);
 
-    String getItemText(String value) {
-        return value;
-    }
-
-    private void updateEmptyText() {
-        View view = getView();
-        if (view != null && listView.getAdapter() != null) {
-            TextView text = view.findViewById(R.id.text_empty);
-            if (listView.getAdapter().getItemCount() == 0) {
-                text.setVisibility(View.VISIBLE);
-            } else {
-                text.setVisibility(View.GONE);
-            }
-        }
-    }
+    @Nullable
+    abstract String getItemText(@Nullable String value);
 
     void loadItems() {
         listAdapter = new ListAdapter();
@@ -154,12 +143,24 @@ abstract class FilterListFragment extends BaseFragment {
 
         List<String> values = new ArrayList<>(getItemsList(settings.getFilter()));
         Collections.sort(values);
-        
+
         List<Item> items = new ArrayList<>();
         for (String value : values) {
             items.add(new Item(value));
         }
         listAdapter.setItems(items);
+    }
+
+    private void updateEmptyText() {
+        View view = getView();
+        if (view != null && listView.getAdapter() != null) {
+            TextView text = view.findViewById(R.id.text_empty);
+            if (listView.getAdapter().getItemCount() == 0) {
+                text.setVisibility(View.VISIBLE);
+            } else {
+                text.setVisibility(View.GONE);
+            }
+        }
     }
 
     private void clearData() {
@@ -225,8 +226,7 @@ abstract class FilterListFragment extends BaseFragment {
                             .pattern(R.string.item_already_exists)
                             .put("item", getItemText(value))
                             .format());
-                } else if (!TextUtil.isNullOrBlank(value)) {
-                    /* note: if we rotated device reference to "this" is changed here */
+                } else if (!isNullOrBlank(getItemText(value))) {
                     listAdapter.replaceItem(item, new Item(value));
                     persistItems();
                 }

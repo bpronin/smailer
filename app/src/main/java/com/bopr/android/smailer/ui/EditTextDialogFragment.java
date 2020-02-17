@@ -10,7 +10,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.util.TextUtil;
+
+import static com.bopr.android.smailer.util.TextUtil.escapeRegex;
+import static com.bopr.android.smailer.util.TextUtil.unescapeRegex;
 
 /**
  * Phone number editor dialog.
@@ -32,15 +34,15 @@ public class EditTextDialogFragment extends EditFilterListItemDialogFragment {
     }
 
     void setInitialValue(String text) {
-        String s = TextUtil.unquoteRegex(text);
-        initialRegex = (s != null);
-        initialText = initialRegex ? s : text;
+        String regex = unescapeRegex(text);
+        initialRegex = (regex != null);
+        initialText = initialRegex ? regex : text;
     }
 
     @Override
     protected String getValue() {
-        String s = editText.getText().toString();
-        return checkBox.isChecked() ? TextUtil.quoteRegex(s) : s;
+        String text = editText.getText().toString();
+        return checkBox.isChecked() ? escapeRegex(text) : text;
     }
 
     @NonNull

@@ -138,16 +138,16 @@ public abstract class TextUtil {
     }
 
     @NonNull
-    public static String quoteRegex(@NonNull String s) {
+    public static String escapeRegex(@NonNull String s) {
         return REGEX_ + s;
     }
 
     @Nullable
-    public static String unquoteRegex(@Nullable String s) {
-        if (!isNullOrEmpty(s)) {
-            String[] ss = s.split(REGEX_);
-            if (ss.length > 1) {
-                return ss[1];
+    public static String unescapeRegex(@Nullable String s) {
+        if (s != null) {
+            int ix = s.indexOf(REGEX_);
+            if (ix != -1) {
+                return s.substring(ix + REGEX_.length());
             }
         }
         return null;
