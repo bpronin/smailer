@@ -7,7 +7,8 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mockito
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.mock
 
 /**
  * [GeoLocator] class tester.
@@ -30,8 +31,8 @@ class GeoLocatorTest : BaseTest() {
     }
 
     private fun createMockDatabase(): Database {
-        val database = Mockito.mock(Database::class.java)
-        Mockito.`when`(database.lastLocation).thenReturn(databaseLocation)
+        val database = mock(Database::class.java)
+        `when`(database.lastLocation).thenReturn(databaseLocation)
         return database
     }
 

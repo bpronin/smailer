@@ -21,8 +21,8 @@ class Settings(private val context: Context) :
         SharedPreferencesWrapper(context.getSharedPreferences(PREFERENCES_STORAGE_NAME, MODE_PRIVATE)) {
 
     fun getLocale(): Locale {
-        val value = getString(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)
-        return if (value == VAL_PREF_DEFAULT) {
+        val value = getString(PREF_EMAIL_LOCALE, DEFAULT)
+        return if (value == DEFAULT) {
             Locale.getDefault()
         } else {
             val ss = value!!.split("_")
@@ -70,17 +70,23 @@ class Settings(private val context: Context) :
     fun getFilter(): PhoneEventFilter {
         return PhoneEventFilter().apply {
             triggers = getStringSet(PREF_EMAIL_TRIGGERS, emptySet())!!
-            phoneBlacklist = commaSplit(getString(PREF_FILTER_PHONE_BLACKLIST, "")!!).toMutableSet()
-            phoneWhitelist = commaSplit(getString(PREF_FILTER_PHONE_WHITELIST, "")!!).toMutableSet()
-            textBlacklist = commaSplit(getString(PREF_FILTER_TEXT_BLACKLIST, "")!!).toMutableSet()
-            textWhitelist = commaSplit(getString(PREF_FILTER_TEXT_WHITELIST, "")!!).toMutableSet()
+            phoneBlacklist = getCommaSet(PREF_FILTER_PHONE_BLACKLIST)
+            phoneWhitelist = getCommaSet(PREF_FILTER_PHONE_WHITELIST)
+            textBlacklist = getCommaSet(PREF_FILTER_TEXT_BLACKLIST)
+            textWhitelist = getCommaSet(PREF_FILTER_TEXT_WHITELIST)
         }
+    }
+
+    private fun getCommaSet(key: String): MutableSet<String> {
+        return getString(key, null)?.let {
+            commaSplit(it).toMutableSet()
+        } ?: mutableSetOf()
     }
 
     fun loadDefaults() {
         with(edit()) {
             putInt(PREF_SETTINGS_VERSION, SETTINGS_VERSION)
-            putStringOptional(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)
+            putStringOptional(PREF_EMAIL_LOCALE, DEFAULT)
             putBooleanOptional(PREF_RESEND_UNSENT, true)
             putBooleanOptional(PREF_MARK_SMS_AS_READ, false)
             putBooleanOptional(PREF_REMOTE_CONTROL_ENABLED, false)
@@ -145,7 +151,7 @@ class Settings(private val context: Context) :
         const val PREF_REMOTE_CONTROL_NOTIFICATIONS = "remote_control_notifications"
         const val PREF_REMOTE_CONTROL_FILTER_RECIPIENTS = "remote_control_filter_recipients"
 
-        const val VAL_PREF_DEFAULT = "default"
+        const val DEFAULT = "default"
         const val VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME = "time"
         const val VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT = "time_sent"
         const val VAL_PREF_EMAIL_CONTENT_DEVICE_NAME = "device_name"

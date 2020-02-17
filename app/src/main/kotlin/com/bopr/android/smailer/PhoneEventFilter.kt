@@ -4,6 +4,11 @@ import com.bopr.android.smailer.PhoneEvent.Companion.REASON_ACCEPTED
 import com.bopr.android.smailer.PhoneEvent.Companion.REASON_NUMBER_BLACKLISTED
 import com.bopr.android.smailer.PhoneEvent.Companion.REASON_TEXT_BLACKLISTED
 import com.bopr.android.smailer.PhoneEvent.Companion.REASON_TRIGGER_OFF
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_CALLS
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
 import com.bopr.android.smailer.util.AddressUtil.normalizePhone
 import com.bopr.android.smailer.util.AddressUtil.phoneToRegEx
 import com.bopr.android.smailer.util.TextUtil.isNullOrEmpty
@@ -49,19 +54,19 @@ class PhoneEventFilter {
             event.isSms -> {
                 when {
                     event.isIncoming ->
-                        triggers.contains(Settings.VAL_PREF_TRIGGER_IN_SMS)
+                        triggers.contains(VAL_PREF_TRIGGER_IN_SMS)
                     else ->
-                        triggers.contains(Settings.VAL_PREF_TRIGGER_OUT_SMS)
+                        triggers.contains(VAL_PREF_TRIGGER_OUT_SMS)
                 }
             }
             else -> {
                 when {
                     event.isMissed ->
-                        triggers.contains(Settings.VAL_PREF_TRIGGER_MISSED_CALLS)
+                        triggers.contains(VAL_PREF_TRIGGER_MISSED_CALLS)
                     event.isIncoming ->
-                        triggers.contains(Settings.VAL_PREF_TRIGGER_IN_CALLS)
+                        triggers.contains(VAL_PREF_TRIGGER_IN_CALLS)
                     else ->
-                        triggers.contains(Settings.VAL_PREF_TRIGGER_OUT_CALLS)
+                        triggers.contains(VAL_PREF_TRIGGER_OUT_CALLS)
                 }
             }
         }

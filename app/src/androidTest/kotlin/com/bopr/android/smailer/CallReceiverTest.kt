@@ -7,8 +7,7 @@ import android.telephony.TelephonyManager.*
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Matchers
-import org.mockito.Mockito
+import org.mockito.Mockito.*
 
 /**
  * [CallReceiver] tester.
@@ -21,8 +20,8 @@ class CallReceiverTest : BaseTest() {
 
     @Before
     fun setUp() {
-        context = Mockito.mock(Context::class.java)
-        Mockito.`when`(context.getResources()).thenReturn(targetContext.resources)
+        context = mock(Context::class.java)
+        `when`(context.resources).thenReturn(targetContext.resources)
     }
 
     /**
@@ -31,7 +30,7 @@ class CallReceiverTest : BaseTest() {
     @Test
     fun testReceiveIncomingCall() {
         val invocations = MethodInvocationsCollector()
-        Mockito.doAnswer(invocations).`when`(context)!!.startService(Matchers.any(Intent::class.java))
+        doAnswer(invocations).`when`(context)!!.startService(any(Intent::class.java))
         val receiver = CallReceiver()
 
         /* ringing */
@@ -72,7 +71,7 @@ class CallReceiverTest : BaseTest() {
     @Test
     fun testReceiveOutgoingCall() {
         val invocations = MethodInvocationsCollector()
-        Mockito.doAnswer(invocations).`when`(context)!!.startService(Matchers.any(Intent::class.java))
+        doAnswer(invocations).`when`(context)!!.startService(any(Intent::class.java))
         val receiver = CallReceiver()
 
         /* ringing */
@@ -111,7 +110,7 @@ class CallReceiverTest : BaseTest() {
     @Test
     fun testReceiveMissedCall() {
         val invocations = MethodInvocationsCollector()
-        Mockito.doAnswer(invocations).`when`(context)!!.startService(Matchers.any(Intent::class.java))
+        doAnswer(invocations).`when`(context)!!.startService(any(Intent::class.java))
         val receiver = CallReceiver()
 
         /* ringing */
@@ -144,7 +143,7 @@ class CallReceiverTest : BaseTest() {
     @Test
     fun testReceiveSms() {
         val invocations = MethodInvocationsCollector()
-        Mockito.doAnswer(invocations).`when`(context)!!.startService(Matchers.any(Intent::class.java))
+        doAnswer(invocations).`when`(context)!!.startService(any(Intent::class.java))
         val receiver = CallReceiver()
 
         val intent = Intent(CallReceiver.SMS_RECEIVED)

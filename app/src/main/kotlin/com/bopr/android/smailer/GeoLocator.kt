@@ -6,6 +6,7 @@ import android.content.Context
 import android.location.Location
 import android.os.Looper
 import com.bopr.android.smailer.util.AndroidUtil.isPermissionsDenied
+import com.bopr.android.smailer.util.Mockable
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -21,9 +22,9 @@ import java.util.concurrent.atomic.AtomicReference
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
+@Mockable
 class GeoLocator(private val context: Context, private val database: Database) {
 
-    private val log = LoggerFactory.getLogger("GeoLocator")
     private val client: FusedLocationProviderClient = getFusedLocationProviderClient(context)
 
     /**
@@ -121,6 +122,8 @@ class GeoLocator(private val context: Context, private val database: Database) {
     }
 
     companion object {
+
+        private val log = LoggerFactory.getLogger("GeoLocator")
         private const val DEFAULT_TIMEOUT = 1000
 
         fun isPermissionsDenied(context: Context): Boolean {

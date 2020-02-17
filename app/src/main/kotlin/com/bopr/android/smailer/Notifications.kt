@@ -11,6 +11,7 @@ import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.TaskStackBuilder
 import com.bopr.android.smailer.ui.*
+import com.bopr.android.smailer.util.Mockable
 import com.bopr.android.smailer.util.TagFormatter
 
 /**
@@ -18,6 +19,7 @@ import com.bopr.android.smailer.util.TagFormatter
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
+@Mockable
 class Notifications(private val context: Context) {
 
     private val manager: NotificationManager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager

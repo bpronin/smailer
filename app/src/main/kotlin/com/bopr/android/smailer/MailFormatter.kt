@@ -32,7 +32,7 @@ import java.util.regex.Pattern
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class MailFormatter(private val context: Context, private val event: PhoneEvent) {
+class MailFormatter(private val context: Context, private val event: PhoneEvent) {
 
     private var contactName: String? = null
     private var deviceName: String? = null

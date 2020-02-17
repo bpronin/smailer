@@ -5,7 +5,8 @@ import com.bopr.android.smailer.BaseTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.mock
 
 /**
  * [TagFormatter] tester.
@@ -16,9 +17,9 @@ class TagFormatterTest : BaseTest() {
 
     @Before
     fun setUp() {
-        resources = Mockito.mock(Resources::class.java)
-        Mockito.`when`(resources.getString(RESOURCE_PATTERN)).thenReturn("{one}, {two} and {three}")
-        Mockito.`when`(resources.getString(RESOURCE_THREE)).thenReturn("THREE")
+        resources = mock(Resources::class.java)
+        `when`(resources.getString(RESOURCE_PATTERN)).thenReturn("{one}, {two} and {three}")
+        `when`(resources.getString(RESOURCE_THREE)).thenReturn("THREE")
     }
 
     @Test

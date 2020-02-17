@@ -2,6 +2,7 @@ package com.bopr.android.smailer
 
 import android.accounts.AccountsException
 import android.content.Context
+import com.bopr.android.smailer.util.Mockable
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
@@ -28,6 +29,7 @@ import javax.mail.internet.*
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
+@Mockable
 class GoogleMail(private val context: Context) {
 
     private val log = LoggerFactory.getLogger("GoogleMail")
@@ -117,7 +119,7 @@ class GoogleMail(private val context: Context) {
     private fun createContent(message: MailMessage): com.google.api.services.gmail.model.Message {
         try {
             val mime = MimeMessage(session)
-            mime.setFrom(account)
+            mime.setFrom(message.from)
             mime.setSubject(message.subject, UTF_8)
             mime.setRecipients(Message.RecipientType.TO, parseAddresses(message.recipients!!))
             if (!message.replyTo.isNullOrBlank()) {
