@@ -23,6 +23,7 @@ import java.lang.System.currentTimeMillis
 
 class SyncEngine private constructor(context: Context) {
 
+    private val log = LoggerFactory.getLogger("SyncManager")
     private val settings: Settings = Settings(context)
     private val databaseListener = DatabaseListener()
     private val settingsListener = SettingsListener()
@@ -96,8 +97,6 @@ class SyncEngine private constructor(context: Context) {
     }
 
     companion object {
-
-        private val log = LoggerFactory.getLogger("SyncManager")
 
         private fun syncAccount(context: Context): Account? {
             val name = Settings(context).getString(PREF_SENDER_ACCOUNT, null)

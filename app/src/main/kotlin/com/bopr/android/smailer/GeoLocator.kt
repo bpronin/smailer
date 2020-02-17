@@ -15,7 +15,6 @@ import com.google.android.gms.location.LocationServices.getFusedLocationProvider
 import org.slf4j.LoggerFactory
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicReference
 
 /**
  * Provides last device location.
@@ -66,27 +65,27 @@ class GeoLocator(private val context: Context, private val database: Database) {
             return null
         }
 
-        val coordinates = AtomicReference<GeoCoordinates>()
-        val completeSignal = CountDownLatch(1)
+        var coordinates: GeoCoordinates? = null
+        val latch = CountDownLatch(1)
 
         val callback: LocationCallback = object : LocationCallback() {
 
             override fun onLocationResult(result: LocationResult?) {
                 result?.let {
                     val location = it.lastLocation
-                    coordinates.set(GeoCoordinates(location))
 
                     log.debug("Received current location: $location")
+                    coordinates = GeoCoordinates(location)
                 }
-                completeSignal.countDown()
+                latch.countDown()
             }
         }
 
         client.requestLocationUpdates(LocationRequest(), callback, Looper.getMainLooper())
-        awaitCompletion(completeSignal, timeout, "Current location request")
+        awaitLatch(latch, timeout, "Current location request")
         client.removeLocationUpdates(callback)
 
-        return coordinates.get()
+        return coordinates
     }
 
     private fun getLastLocation(timeout: Long): GeoCoordinates? {
@@ -95,23 +94,23 @@ class GeoLocator(private val context: Context, private val database: Database) {
             return null
         }
 
-        val coordinates = AtomicReference<GeoCoordinates>()
-        val completeSignal = CountDownLatch(1)
+        var coordinates: GeoCoordinates? = null
+        val latch = CountDownLatch(1)
 
         client.lastLocation.addOnSuccessListener { location: Location? ->
             location?.let {
-                coordinates.set(GeoCoordinates(location))
-                completeSignal.countDown()
-
                 log.debug("Received last location: $location")
+
+                coordinates = GeoCoordinates(location)
+                latch.countDown()
             }
         }
-        awaitCompletion(completeSignal, timeout, "Last location request")
+        awaitLatch(latch, timeout, "Last location request")
 
-        return coordinates.get()
+        return coordinates
     }
 
-    private fun awaitCompletion(latch: CountDownLatch, timeout: Long, requestName: String) {
+    private fun awaitLatch(latch: CountDownLatch, timeout: Long, requestName: String) {
         try {
             if (!latch.await(timeout, TimeUnit.MILLISECONDS)) {
                 log.warn("$requestName timeout expired")

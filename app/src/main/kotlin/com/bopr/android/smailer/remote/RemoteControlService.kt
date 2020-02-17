@@ -238,6 +238,7 @@ class RemoteControlService : JobIntentService() {
 
         fun start(context: Context) {
             log.debug("Starting service")
+
             enqueueWork(context, RemoteControlService::class.java, JOB_ID,
                     Intent(context, RemoteControlService::class.java))
         }

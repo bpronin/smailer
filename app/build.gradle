@@ -9,6 +9,9 @@
     To run debug flavor add SHA-1 fingerprint from
     <user_dir>/.android/debug.keystore (password "android") to  api console:
     https://console.developers.google.com/apis/credentials/oauthclient/376904884028-f0m6ki37c8b4cf93aktk0jgag3tiu922.apps.googleusercontent.com?project=smailer-24874
+
+    Uninstall all application's apk-s from device before running tests cause they may lead to unpredictable results
+
 */
 
 apply plugin: "com.android.application"
@@ -128,30 +131,20 @@ dependencies {
     implementation "com.google.api-client:google-api-client-android:1.30.8"
     implementation "com.google.apis:google-api-services-gmail:v1-rev98-1.25.0"
     implementation "com.google.apis:google-api-services-drive:v3-rev99-1.23.0"
-
     implementation "org.slf4j:slf4j-api:1.7.30"
     implementation "com.github.tony19:logback-android-core:1.1.1-6"
     implementation("com.github.tony19:logback-android-classic:1.1.1-6") {
         exclude group: "com.google.android"
     }
-
     implementation "com.google.firebase:firebase-analytics:17.2.2"
     implementation "com.google.firebase:firebase-crashlytics:17.0.0-beta01"
     
     freeImplementation "com.google.android.gms:play-services-ads:18.3.0"
 
-    /* NOTE: uninstall all application"s apk-s from device before running tests
-       cause they may lead to unpredictable results */
-
-//    testImplementation "junit:junit:4.13"
-//    testImplementation "org.robolectric:robolectric:4.3.1"
-//    testImplementation "org.mockito:mockito-core:3.2.4"
-//    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
-
     androidTestImplementation "junit:junit:4.13"
     androidTestImplementation "androidx.test.ext:junit:1.1.1"
     androidTestImplementation "org.mockito:mockito-android:3.2.4"
+    androidTestImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
     androidTestImplementation "androidx.test:rules:1.2.0"
     androidTestImplementation "androidx.test.espresso:espresso-core:3.2.0"
-    androidTestImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
 }

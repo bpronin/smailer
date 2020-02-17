@@ -24,7 +24,6 @@ class Synchronizer @JvmOverloads constructor(context: Context,
                                              private val dataFile: String = "data.json") {
 
     private val log = LoggerFactory.getLogger("Synchronizer")
-
     private val drive = GoogleDrive(context, account)
 
     @Throws(IOException::class)

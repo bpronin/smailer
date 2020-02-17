@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import com.bopr.android.smailer.PhoneEvent
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
@@ -142,11 +143,6 @@ object UiUtil {
     }
 
     @JvmStatic
-    fun showToast(context: Context, text: String?) {
-        Toast.makeText(context, text, Toast.LENGTH_LONG).show()
-    }
-
-    @JvmStatic
     fun alertDialogView(view: View): View {
         @SuppressLint("InflateParams")
         val container = LayoutInflater
@@ -154,5 +150,15 @@ object UiUtil {
                 .inflate(R.layout.alert_dialog_view_container, null) as ViewGroup
         container.addView(view)
         return container
+    }
+
+    @JvmStatic
+    fun showToast(context: Context, text: String?) {
+        Toast.makeText(context, text, Toast.LENGTH_LONG).show()
+    }
+
+    @JvmStatic
+    fun showMessage(context: Context, message: String) {
+        AlertDialog.Builder(context).setMessage(message).show()
     }
 }

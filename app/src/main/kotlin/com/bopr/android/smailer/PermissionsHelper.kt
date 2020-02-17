@@ -30,6 +30,7 @@ import java.util.*
  */
 class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChangeListener {
 
+    private val log = LoggerFactory.getLogger("PermissionsHelper")
     private val requestResultCode = nextRequestResult++
     private val settings: Settings = Settings(activity)
 
@@ -214,7 +215,6 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
 
     companion object {
 
-        private val log = LoggerFactory.getLogger("PermissionsHelper")
         private const val WRITE_SMS = "android.permission.WRITE_SMS"
         private var nextRequestResult = 200
     }

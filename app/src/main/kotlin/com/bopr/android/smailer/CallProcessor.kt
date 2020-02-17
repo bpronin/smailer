@@ -34,6 +34,7 @@ class CallProcessor(
         private val notifications: Notifications = Notifications(context),
         private val locator: GeoLocator = GeoLocator(context, database)) {
 
+    private val log = LoggerFactory.getLogger("CallProcessor")
     private val settings: Settings = Settings(context)
 
     /**
@@ -178,10 +179,5 @@ class CallProcessor(
         if (!silent) {
             notifications.showMailError(reason, Notifications.ACTION_SHOW_MAIN)
         }
-    }
-
-    companion object {
-
-        private val log = LoggerFactory.getLogger("CallProcessor")
     }
 }
