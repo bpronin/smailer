@@ -1,8 +1,11 @@
 package com.bopr.android.smailer
 
+import android.Manifest.permission.READ_CONTACTS
+import android.Manifest.permission.WRITE_CONTACTS
 import android.accounts.AccountsException
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.test.rule.GrantPermissionRule
 import com.bopr.android.smailer.Notifications.Companion.ACTION_SHOW_MAIN
 import com.bopr.android.smailer.PhoneEvent.Companion.REASON_ACCEPTED
 import com.bopr.android.smailer.PhoneEvent.Companion.REASON_TRIGGER_OFF
@@ -23,6 +26,7 @@ import com.nhaarman.mockitokotlin2.*
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.ArgumentMatchers.anyString
@@ -35,6 +39,10 @@ import java.lang.System.currentTimeMillis
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 class CallProcessorTest : BaseTest() {
+
+    @Rule
+    @JvmField
+    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(READ_CONTACTS, WRITE_CONTACTS)
 
     private lateinit var database: Database
     private lateinit var context: Context
