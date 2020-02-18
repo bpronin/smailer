@@ -153,21 +153,17 @@ object UiUtil {
         val toast: Toast = Toast.makeText(context, text, Toast.LENGTH_LONG)
         val view = toast.view
         view.background.colorFilter = createBlendModeColorFilterCompat(
-                ContextCompat.getColor(context, R.color.colorAccent),
-                BlendModeCompat.DARKEN)
+                ContextCompat.getColor(context, R.color.colorAccent), BlendModeCompat.DARKEN)
         view.findViewById<TextView>(android.R.id.message)?.setTextColor(
                 ContextCompat.getColor(context, R.color.colorAccentText))
         toast.show()
     }
 
-    fun showInfoDialog(context: Context,
-                       title: String? = null,
-                       @StringRes titleRes: Int? = null,
-                       message: String? = null,
-                       @StringRes messageRes: Int? = null,
-                       buttonText: String? = null,
-                       @StringRes buttonTextRes: Int? = null,
-                       action: (() -> Unit)? = null) {
+    private fun dialogBuilder(context: Context,
+                              title: String? = null,
+                              @StringRes titleRes: Int? = null,
+                              message: String? = null,
+                              @StringRes messageRes: Int? = null): AlertDialog.Builder {
 
         val builder = AlertDialog.Builder(context)
 
@@ -182,6 +178,20 @@ object UiUtil {
         } ?: messageRes?.let {
             builder.setMessage(it)
         }
+
+        return builder
+    }
+
+    fun showInfoDialog(context: Context,
+                       title: String? = null,
+                       @StringRes titleRes: Int? = null,
+                       message: String? = null,
+                       @StringRes messageRes: Int? = null,
+                       buttonText: String? = null,
+                       @StringRes buttonTextRes: Int? = null,
+                       action: (() -> Unit)? = null) {
+
+        val builder = dialogBuilder(context, title, titleRes, message, messageRes)
 
         val function: (DialogInterface, Int) -> Unit = { _, _ -> action?.invoke() }
         buttonText?.let {
@@ -204,19 +214,7 @@ object UiUtil {
                           @StringRes cancelButtonTextRes: Int? = null,
                           action: (() -> Unit)? = null) {
 
-        val builder = AlertDialog.Builder(context)
-
-        title?.let {
-            builder.setTitle(it)
-        } ?: titleRes?.let {
-            builder.setTitle(it)
-        }
-
-        message?.let {
-            builder.setMessage(it)
-        } ?: messageRes?.let {
-            builder.setMessage(it)
-        }
+        val builder = dialogBuilder(context, title, titleRes, message, messageRes)
 
         val function: (DialogInterface, Int) -> Unit = { _, _ -> action?.invoke() }
         buttonText?.let {
@@ -243,29 +241,19 @@ object UiUtil {
                         value: String? = null,
                         action: (String) -> Unit) {
 
-        val builder = AlertDialog.Builder(context)
-
-        title?.let {
-            builder.setTitle(it)
-        } ?: titleRes?.let {
-            builder.setTitle(it)
-        }
-
-        message?.let {
-            builder.setMessage(it)
-        } ?: messageRes?.let {
-            builder.setMessage(it)
-        }
+        val builder = dialogBuilder(context, title, titleRes, message, messageRes)
 
         val editor = EditText(context)
         editor.inputType = inputType
+        editor.requestFocus()
         editor.setText(value)
+        editor.setSelection(editor.text.length)
 
         @SuppressLint("InflateParams")
-        val container = (LayoutInflater.from(context)
-                .inflate(R.layout.alert_dialog_view_container, null) as ViewGroup).apply {
-            addView(editor)
-        }
+        val container = (LayoutInflater.from(context).inflate(
+                R.layout.alert_dialog_view_container, null) as ViewGroup)
+        container.addView(editor)
+        
         builder.setView(container)
 
         val function: (DialogInterface, Int) -> Unit = { _, _ -> action(editor.text.toString()) }
