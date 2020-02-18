@@ -15,9 +15,7 @@ abstract class BaseEditDialogFragment<R>(dialogTag: String) : BaseDialogFragment
                 .setPositiveButton(android.R.string.ok) { _, _ ->
                     okClickedAction?.invoke(getValue())
                 }
-                .setNegativeButton(android.R.string.cancel) { dialogInterface, _ ->
-                    dialogInterface.cancel()
-                }
+                .setNegativeButton(android.R.string.cancel, null)
     }
 
     abstract fun getValue(): R?

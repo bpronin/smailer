@@ -21,6 +21,7 @@
     <string name="app_version">Application version: {version}</string>
     <string name="ask_clear_history">Clear history?</string>
     <string name="ask_clear_list">Clear list?</string>
+    <string name="battery_optimization">Battery optimization</string>
     <string name="battery_optimization_reason">To make the application work properly when device is in standby mode please turn off battery optimization for it.</string>
     <string name="blacklist">Blacklist</string>
     <string name="call_history">Call history</string>

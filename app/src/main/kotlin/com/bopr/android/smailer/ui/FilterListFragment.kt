@@ -3,7 +3,6 @@ package com.bopr.android.smailer.ui
 import android.os.Bundle
 import android.view.*
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -12,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import com.bopr.android.smailer.PhoneEventFilter
 import com.bopr.android.smailer.R
+import com.bopr.android.smailer.util.ConfirmationDialog
 import com.bopr.android.smailer.util.TagFormatter
 import com.bopr.android.smailer.util.TextUtil.isNullOrEmpty
 import com.bopr.android.smailer.util.UiUtil.showToast
@@ -128,14 +128,11 @@ abstract class FilterListFragment : BaseFragment() {
     }
 
     private fun clearData() {
-        AlertDialog.Builder(requireContext())
+        ConfirmationDialog(requireContext())
                 .setMessage(R.string.ask_clear_list)
-                .setPositiveButton(R.string.clear) { _, _ ->
+                .setAction(R.string.clear) {
                     listAdapter.setItems(emptyList())
                     persistItems()
-                }
-                .setNegativeButton(android.R.string.cancel) { dialog, _ ->
-                    dialog.cancel()
                 }
                 .show()
     }

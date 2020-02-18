@@ -361,6 +361,7 @@ class DebugFragment : BasePreferenceFragment() {
     private fun onGetContact() {
         val input = EditText(appContext)
         input.inputType = InputType.TYPE_CLASS_PHONE
+
         AlertDialog.Builder(appContext)
                 .setTitle("Phone number")
                 .setView(alertDialogView(input))
@@ -370,7 +371,7 @@ class DebugFragment : BasePreferenceFragment() {
                     val text = if (contact != null) "$phone: $contact" else "Contact not found"
                     showToast(appContext, text)
                 }
-                .setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
+                .setNegativeButton(android.R.string.cancel, null)
                 .show()
     }
 
@@ -543,7 +544,7 @@ class DebugFragment : BasePreferenceFragment() {
                         showToast(appContext, "Failed")
                     }
                 }
-                .setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
+                .setNegativeButton(android.R.string.cancel, null)
                 .show()
     }
 

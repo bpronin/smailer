@@ -20,6 +20,7 @@
     <string name="app_version">Версия приложения: {version}</string>
     <string name="ask_clear_history">Очистить журнал?</string>
     <string name="ask_clear_list">Очистить список?</string>
+    <string name="battery_optimization">Экономия заряда батареи</string>
     <string name="battery_optimization_reason">Чтобы приложение корректно работало когда устройство находиться в спящем режиме, отключите для него оптимизацию питания.</string>
     <string name="blacklist">Черный список</string>
     <string name="call_history">Журнал</string>

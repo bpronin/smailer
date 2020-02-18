@@ -10,17 +10,21 @@ import android.text.style.ParagraphStyle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.BlendModeColorFilterCompat.createBlendModeColorFilterCompat
+import androidx.core.graphics.BlendModeCompat
 import com.bopr.android.smailer.PhoneEvent
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.ui.WavyUnderlineSpan
+
 
 /**
  * Miscellaneous UI and resources utilities.
@@ -153,12 +157,21 @@ object UiUtil {
     }
 
     @JvmStatic
-    fun showToast(context: Context, text: String?) {
-        Toast.makeText(context, text, Toast.LENGTH_LONG).show()
+    fun showToast(context: Context, text: String) {
+        val toast: Toast = Toast.makeText(context, text, Toast.LENGTH_LONG)
+        val view = toast.view
+        view.background.colorFilter = createBlendModeColorFilterCompat(
+                ContextCompat.getColor(context, R.color.colorAccent),
+                BlendModeCompat.DARKEN)
+        view.findViewById<TextView>(android.R.id.message)?.setTextColor(
+                ContextCompat.getColor(context, R.color.colorAccentText))
+        toast.show()
     }
 
     @JvmStatic
     fun showMessage(context: Context, message: String) {
         AlertDialog.Builder(context).setMessage(message).show()
     }
+
 }
+

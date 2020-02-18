@@ -10,7 +10,6 @@ import android.text.format.DateFormat
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.*
@@ -27,6 +26,7 @@ import com.bopr.android.smailer.PhoneEventFilter
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.util.AddressUtil.containsPhone
 import com.bopr.android.smailer.util.AddressUtil.findPhone
+import com.bopr.android.smailer.util.ConfirmationDialog
 import com.bopr.android.smailer.util.TagFormatter
 import com.bopr.android.smailer.util.TextUtil.formatDuration
 import com.bopr.android.smailer.util.TextUtil.isNullOrEmpty
@@ -128,14 +128,11 @@ class HistoryFragment : BaseFragment() {
     }
 
     private fun onClearData() {
-        AlertDialog.Builder(requireContext())
+        ConfirmationDialog(requireContext())
                 .setMessage(R.string.ask_clear_history)
-                .setPositiveButton(R.string.clear) { _, _ ->
+                .setAction(R.string.clear) {
                     database.clearEvents()
                     database.notifyChanged()
-                }
-                .setNegativeButton(android.R.string.cancel) { dialog, _ ->
-                    dialog.cancel()
                 }
                 .show()
     }
@@ -302,9 +299,9 @@ class HistoryFragment : BaseFragment() {
                     getString(R.string.missed_call)
                 else ->
                     formatter
-                        .pattern(R.string.call_of_duration_short)
-                        .put("duration", formatDuration(event.callDuration))
-                        .format()
+                            .pattern(R.string.call_of_duration_short)
+                            .put("duration", formatDuration(event.callDuration))
+                            .format()
             }
         }
 

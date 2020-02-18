@@ -6,8 +6,8 @@ import android.content.Intent
 import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
-import androidx.appcompat.app.AlertDialog
 import com.bopr.android.smailer.R
+import com.bopr.android.smailer.util.ConfirmationDialog
 
 internal object BatteryOptimizationHelper {
 
@@ -20,7 +20,6 @@ internal object BatteryOptimizationHelper {
         return false
     }
 
-
     @JvmStatic
     fun requireIgnoreBatteryOptimization(context: Context) {
         if (isIgnoreBatteryOptimizationRequired(context)) {
@@ -30,13 +29,16 @@ internal object BatteryOptimizationHelper {
 
     @TargetApi(Build.VERSION_CODES.M)
     private fun showDialog(context: Context) {
-        AlertDialog.Builder(context)
-                .setTitle("Battery optimization")
+        ConfirmationDialog(context)
+                .setTitle(R.string.battery_optimization)
                 .setMessage(R.string.battery_optimization_reason)
-                .setNegativeButton(android.R.string.cancel, null)
-                .setPositiveButton(android.R.string.ok) { _, _ ->
+                .setAction {
                     context.startActivity(Intent(ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
                 }
                 .show()
+
+//        showConfirmation(context, R.string.battery_optimization, R.string.battery_optimization_reason) {
+//            context.startActivity(Intent(ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
+//        }
     }
 }
