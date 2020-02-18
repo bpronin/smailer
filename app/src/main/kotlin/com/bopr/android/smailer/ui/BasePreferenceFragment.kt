@@ -10,7 +10,6 @@ import androidx.preference.*
 import com.bopr.android.smailer.PermissionsHelper
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.ui.AboutDialogFragment.Companion.showAboutDialog
 import com.bopr.android.smailer.util.UiUtil.accentedText
 import com.bopr.android.smailer.util.UiUtil.underwivedText
 
@@ -61,7 +60,7 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPref
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_about) {
-            showAboutDialog(requireActivity())
+            AboutDialogFragment().showDialog(requireActivity())
         }
         return super.onOptionsItemSelected(item)
     }

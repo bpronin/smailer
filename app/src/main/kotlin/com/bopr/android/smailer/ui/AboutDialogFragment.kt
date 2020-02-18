@@ -1,16 +1,13 @@
 package com.bopr.android.smailer.ui
 
-import android.app.Dialog
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.FragmentActivity
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.util.TagFormatter
@@ -20,7 +17,7 @@ import com.bopr.android.smailer.util.TagFormatter
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class AboutDialogFragment : DialogFragment() {
+class AboutDialogFragment : BaseDialogFragment("about_dialog") {
 
     private lateinit var settings: Settings
 
@@ -29,9 +26,9 @@ class AboutDialogFragment : DialogFragment() {
         settings = Settings(requireContext())
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.dialog_about, container, false)
+    @SuppressLint("InflateParams")
+    override fun onCreateDialogView(inflater: LayoutInflater, root: ViewGroup?): View {
+        val view = inflater.inflate(R.layout.dialog_about, null, false)
         val versionLabel = view.findViewById<TextView>(R.id.label_message)
         versionLabel.text = formatVersion()
         versionLabel.setOnLongClickListener {
@@ -42,17 +39,13 @@ class AboutDialogFragment : DialogFragment() {
                     .show()
             true
         }
+
         view.findViewById<View>(R.id.label_open_source).setOnClickListener {
             startActivity(Intent(context, LegalInfoActivity::class.java))
             dismiss()
         }
-        return view
-    }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = super.onCreateDialog(savedInstanceState)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        return dialog
+        return view
     }
 
     private fun formatVersion(): String {
@@ -62,11 +55,4 @@ class AboutDialogFragment : DialogFragment() {
                 .format()
     }
 
-    companion object {
-
-        @JvmStatic
-        fun showAboutDialog(activity: FragmentActivity) {
-            AboutDialogFragment().show(activity.supportFragmentManager, "about_dialog")
-        }
-    }
 }

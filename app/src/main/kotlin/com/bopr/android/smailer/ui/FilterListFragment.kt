@@ -91,7 +91,7 @@ abstract class FilterListFragment : BaseFragment() {
 
     protected abstract fun setItemsList(filter: PhoneEventFilter, list: List<String>)
 
-    protected abstract fun createEditItemDialog(text: String?): EditFilterListItemDialogFragment
+    protected abstract fun createEditItemDialog(text: String?): BaseEditDialogFragment<String>
 
     protected abstract fun getItemText(value: String?): String?
 

@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import com.bopr.android.smailer.R
@@ -21,9 +22,9 @@ class EditEmailDialogFragment() : BaseEditDialogFragment<String>("edit_recipient
     private lateinit var editText: TextView
     private var initialValue: String? = null
 
-    override fun onCreateDialogView(): View {
+    override fun onCreateDialogView(inflater: LayoutInflater, root: ViewGroup?): View {
         @SuppressLint("InflateParams")
-        val view = LayoutInflater.from(context).inflate(R.layout.editor_email, null, false)
+        val view = inflater.inflate(R.layout.editor_email, null, false)
 
         editText = view.findViewById<EditText>(android.R.id.edit).apply {
             addTextChangedListener(EmailTextValidator(this))

@@ -2,12 +2,13 @@ package com.bopr.android.smailer.ui
 
 import android.app.Dialog
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
-import com.bopr.android.smailer.R
 
 abstract class BaseDialogFragment(private val dialogTag: String) : DialogFragment() {
 
@@ -16,14 +17,18 @@ abstract class BaseDialogFragment(private val dialogTag: String) : DialogFragmen
         retainInstance = true
     }
 
+//    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+//        return super.onCreateView(inflater, container, savedInstanceState)
+//    }
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         var dialog = dialog
         if (dialog == null) {
             val builder = AlertDialog.Builder(requireContext())
-                    .setView(onCreateDialogView())
-                    .setPositiveButton(R.string.close) { dialogInterface, _ ->
-                        dialogInterface.cancel()
-                    }
+                    .setView(onCreateDialogView(LayoutInflater.from(context), null))
+//                    .setPositiveButton(R.string.close) { dialogInterface, _ ->
+//                        dialogInterface.cancel()
+//                    }
             onBuildDialog(builder)
             dialog = builder.create()
 
@@ -41,7 +46,7 @@ abstract class BaseDialogFragment(private val dialogTag: String) : DialogFragmen
         super.onDestroyView()
     }
 
-    abstract fun onCreateDialogView(): View
+    abstract fun onCreateDialogView(inflater: LayoutInflater, root: ViewGroup?): View
 
     open fun onBuildDialog(builder: AlertDialog.Builder) {
         /* do nothing */

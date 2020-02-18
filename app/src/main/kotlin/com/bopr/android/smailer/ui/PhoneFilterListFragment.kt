@@ -9,7 +9,7 @@ import com.bopr.android.smailer.R
  */
 abstract class PhoneFilterListFragment : FilterListFragment() {
 
-    override fun createEditItemDialog(text: String?): EditFilterListItemDialogFragment {
+    override fun createEditItemDialog(text: String?): BaseEditDialogFragment<String> {
         val dialog = EditPhoneDialogFragment()
         dialog.setTitle(if (text == null) R.string.add else R.string.edit)
         dialog.setInitialValue(text)

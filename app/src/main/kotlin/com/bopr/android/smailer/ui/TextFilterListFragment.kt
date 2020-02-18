@@ -10,7 +10,7 @@ import com.bopr.android.smailer.util.TextUtil.unescapeRegex
  */
 abstract class TextFilterListFragment : FilterListFragment() {
 
-    override fun createEditItemDialog(text: String?): EditFilterListItemDialogFragment {
+    override fun createEditItemDialog(text: String?): BaseEditDialogFragment<String> {
         val dialog = EditTextDialogFragment()
         dialog.setTitle(if (text == null) R.string.add else R.string.edit)
         dialog.setInitialValue(text)

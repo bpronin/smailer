@@ -1,9 +1,9 @@
 package com.bopr.android.smailer.ui
 
-import android.annotation.SuppressLint
 import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.bopr.android.smailer.PhoneEvent
@@ -27,9 +27,8 @@ import com.bopr.android.smailer.util.UiUtil.eventTypeText
  */
 class HistoryDetailsDialogFragment(private val event: PhoneEvent) : BaseDialogFragment("log_details_dialog") {
 
-    @SuppressLint("InflateParams")
-    override fun onCreateDialogView(): View {
-        return LayoutInflater.from(context).inflate(R.layout.fragment_log_details, null, false)
+    override fun onCreateDialogView(inflater: LayoutInflater, root: ViewGroup?): View {
+        return inflater.inflate(R.layout.fragment_log_details, root, false)
                 .apply {
                     findViewById<ImageView>(R.id.image_event_type).setImageResource(eventTypeImage(event))
                     findViewById<ImageView>(R.id.image_event_direction).setImageResource(eventDirectionImage(event))

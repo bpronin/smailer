@@ -7,7 +7,6 @@ import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.ui.AboutDialogFragment.Companion.showAboutDialog
 
 open class BaseFragment : Fragment() {
 
@@ -26,7 +25,7 @@ open class BaseFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_about) {
-            showAboutDialog(requireActivity())
+            AboutDialogFragment().showDialog(requireActivity())
         }
         return super.onOptionsItemSelected(item)
     }
