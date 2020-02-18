@@ -10,7 +10,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import com.bopr.android.smailer.util.TextUtil.join
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager.ACCOUNT_TYPE
 import org.slf4j.LoggerFactory
@@ -85,7 +84,7 @@ class GoogleAuthorizationHelper(private val fragment: Fragment,
 
         accountManager.accountManager.getAuthToken(
                 findAccount(accountName),
-                "oauth2: " + join(scopes, " "),
+                "oauth2: " + scopes.joinToString(" "),
                 null,
                 fragment.requireActivity(),
                 AuthTokenAcquireCallback(),

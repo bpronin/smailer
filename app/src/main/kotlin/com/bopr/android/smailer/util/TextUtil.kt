@@ -9,14 +9,7 @@ import kotlin.math.abs
 object TextUtil {
 
     val QUOTATION_PATTERN: Pattern = Pattern.compile("\"([^\"]*)\"")
-
     private const val REGEX_ = "REGEX:"
-
-    fun isNotEmpty(s: CharSequence): Boolean = s.isNotEmpty()
-
-    fun isNullOrEmpty(s: CharSequence?): Boolean = s.isNullOrEmpty()
-
-    fun isNullOrBlank(s: CharSequence?): Boolean = s.isNullOrBlank()
 
     fun escapeRegex(s: String): String {
         return REGEX_ + s
@@ -36,28 +29,12 @@ object TextUtil {
         return !s.isNullOrBlank() && QUOTATION_PATTERN.matcher(s).matches()
     }
 
-    fun join(values: Collection<*>, divider: String) = values.joinToString(divider)
-
-    fun split(value: String, divider: String, trim: Boolean): List<String> {
-        if (value.isNotEmpty()) {
-            var s = value
-            if (trim) {
-                s = value.replace(" ", "")
-            }
-            if (s.isNotEmpty()) {
-                return s.split(divider)
-            }
-        }
-        return emptyList()
-    }
-
     fun commaJoin(values: Collection<*>): String {
-//        return values.joinToString()
-        return join(values, ",")
+        return values.joinToString(",")
     }
 
     fun commaSplit(s: String): List<String> {
-        return split(s, ",", true)
+        return s.split(",")
     }
 
     fun decimalToDMS(coordinate: Double, degreeSymbol: String, minuteSymbol: String,

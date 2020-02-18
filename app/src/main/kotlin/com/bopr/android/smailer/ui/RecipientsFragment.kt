@@ -18,7 +18,6 @@ import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.util.TagFormatter
 import com.bopr.android.smailer.util.TextUtil.commaJoin
 import com.bopr.android.smailer.util.TextUtil.commaSplit
-import com.bopr.android.smailer.util.TextUtil.isNullOrBlank
 import com.bopr.android.smailer.util.TextUtil.isValidEmailAddress
 import com.bopr.android.smailer.util.UiUtil.showToast
 import com.bopr.android.smailer.util.UiUtil.underwivedText
@@ -161,7 +160,7 @@ class RecipientsFragment : BaseFragment() {
                                 .pattern(R.string.recipient_already_exists)
                                 .put("name", value)
                                 .format())
-                    } else if (!isNullOrBlank(value)) {
+                    } else if (!value.isNullOrBlank()) {
                         listAdapter.replaceItem(item, Item(value))
                         persistItems()
                     }

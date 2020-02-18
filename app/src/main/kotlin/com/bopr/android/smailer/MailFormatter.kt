@@ -16,8 +16,6 @@ import com.bopr.android.smailer.util.AddressUtil.escapePhone
 import com.bopr.android.smailer.util.ContentUtils.isReadContactsPermissionsDenied
 import com.bopr.android.smailer.util.TagFormatter
 import com.bopr.android.smailer.util.TextUtil.formatDuration
-import com.bopr.android.smailer.util.TextUtil.isNotEmpty
-import com.bopr.android.smailer.util.TextUtil.isNullOrBlank
 import com.bopr.android.smailer.util.UiUtil.eventTypePrefix
 import com.bopr.android.smailer.util.UiUtil.eventTypeText
 import java.io.UnsupportedEncodingException
@@ -132,9 +130,9 @@ class MailFormatter(private val context: Context, private val event: PhoneEvent)
                 .pattern(BODY_PATTERN)
                 .put("header", formatHeader())
                 .put("message", formatMessage())
-                .put("footer_line", if (isNotEmpty(footer)) LINE else "")
-                .put("footer", if (isNotEmpty(footer)) "<small>$footer</small>" else "")
-                .put("remote_line", if (isNotEmpty(links)) LINE else "")
+                .put("footer_line", if (footer.isNotEmpty()) LINE else "")
+                .put("footer", if (footer.isNotEmpty()) "<small>$footer</small>" else "")
+                .put("remote_line", if (links.isNotEmpty()) LINE else "")
                 .put("remote_links", links)
                 .format()
     }
@@ -181,22 +179,22 @@ class MailFormatter(private val context: Context, private val event: PhoneEvent)
 
         sb.append(callerText)
 
-        if (isNotEmpty(timeText)) {
-            if (isNotEmpty(sb)) {
+        if (timeText.isNotEmpty()) {
+            if (sb.isNotEmpty()) {
                 sb.append("<br>")
             }
             sb.append(timeText)
         }
 
-        if (isNotEmpty(locationText)) {
-            if (isNotEmpty(sb)) {
+        if (locationText.isNotEmpty()) {
+            if (sb.isNotEmpty()) {
                 sb.append("<br>")
             }
             sb.append(locationText)
         }
 
-        if (isNotEmpty(deviceNameText) || isNotEmpty(sendTimeText)) {
-            if (isNotEmpty(sb)) {
+        if (deviceNameText.isNotEmpty() || sendTimeText.isNotEmpty()) {
+            if (sb.isNotEmpty()) {
                 sb.append("<br>")
             }
             sb.append(formatter
@@ -222,7 +220,7 @@ class MailFormatter(private val context: Context, private val event: PhoneEvent)
 
             val phoneQuery = encodeUrl(event.phone)
             var name = contactName
-            if (isNullOrBlank(name)) {
+            if (name.isNullOrBlank()) {
                 name = if (isReadContactsPermissionsDenied(context)) {
                     resources.getString(R.string.contact_no_permission_read_contact)
                 } else {
@@ -266,7 +264,7 @@ class MailFormatter(private val context: Context, private val event: PhoneEvent)
     }
 
     private fun formatDeviceName(): String {
-        return if (contentOptions.contains(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME) && !isNullOrBlank(deviceName)) {
+        return if (contentOptions.contains(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME) && !deviceName.isNullOrBlank()) {
             " " + formatter
                     .pattern(R.string._from_device)
                     .put("device_name", deviceName)
@@ -304,7 +302,7 @@ class MailFormatter(private val context: Context, private val event: PhoneEvent)
 
     private fun formatRemoteControlLinks(): String {
         return if (contentOptions.contains(VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS)
-                && !isNullOrBlank(serviceAccount)) {
+                && !serviceAccount.isNullOrBlank()) {
             formatter
                     .pattern(REPLY_LINKS_PATTERN)
                     .put("title", formatter

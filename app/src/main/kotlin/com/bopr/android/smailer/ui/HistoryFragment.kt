@@ -28,7 +28,6 @@ import com.bopr.android.smailer.util.AddressUtil.containsPhone
 import com.bopr.android.smailer.util.AddressUtil.findPhone
 import com.bopr.android.smailer.util.TagFormatter
 import com.bopr.android.smailer.util.TextUtil.formatDuration
-import com.bopr.android.smailer.util.TextUtil.isNullOrEmpty
 import com.bopr.android.smailer.util.UiUtil.eventDirectionImage
 import com.bopr.android.smailer.util.UiUtil.eventStateImage
 import com.bopr.android.smailer.util.UiUtil.eventTypeImage
@@ -178,14 +177,14 @@ class HistoryFragment : BaseFragment() {
                 setTitle(R.string.add)
                 setInitialValue(listAdapter.getItem(selectedListItemPosition).phone)
                 setOnOkClicked { value ->
-                    if (!isNullOrEmpty(value)) {
+                    if (!value.isNullOrEmpty()) {
                         if (list.contains(value)) {
                             showToast(requireContext(), formatter
                                     .pattern(R.string.item_already_exists)
                                     .put("item", value)
                                     .format())
                         } else {
-                            list.add(value!!)
+                            list.add(value)
                             commit()
                         }
                     }

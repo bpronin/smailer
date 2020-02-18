@@ -5,7 +5,6 @@ import android.content.Context.MODE_PRIVATE
 import android.content.pm.PackageManager
 import com.bopr.android.smailer.util.AndroidUtil.deviceName
 import com.bopr.android.smailer.util.SharedPreferencesWrapper
-import com.bopr.android.smailer.util.TextUtil.isNullOrEmpty
 import java.io.IOException
 import java.util.*
 
@@ -33,11 +32,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
 
     fun getDeviceName(): String {
         val value = getString(PREF_DEVICE_ALIAS, "")
-        return if (isNullOrEmpty(value)) {
-            deviceName()
-        } else {
-            value!!
-        }
+        return if (value.isNullOrEmpty()) deviceName() else value
     }
 
     fun getReleaseVersion(): String {

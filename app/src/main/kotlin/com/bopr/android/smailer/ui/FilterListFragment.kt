@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import com.bopr.android.smailer.PhoneEventFilter
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.util.TagFormatter
-import com.bopr.android.smailer.util.TextUtil.isNullOrEmpty
 import com.bopr.android.smailer.util.UiUtil.showConfirmDialog
 import com.bopr.android.smailer.util.UiUtil.showToast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -173,7 +172,7 @@ abstract class FilterListFragment : BaseFragment() {
                                 .pattern(R.string.item_already_exists)
                                 .put("item", getItemText(value))
                                 .format())
-                    } else if (!isNullOrEmpty(getItemText(value))) {
+                    } else if (!getItemText(value).isNullOrEmpty()) {
                         listAdapter.replaceItem(item, Item(value))
                         persistItems()
                     }

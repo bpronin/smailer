@@ -10,7 +10,6 @@ import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_NOTIFICATIONS
-import com.bopr.android.smailer.util.TextUtil.isNullOrEmpty
 import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
 
 // TODO: 24.02.2019 add help icon for remote control
@@ -64,7 +63,7 @@ class RemoteControlFragment : BasePreferenceFragment() {
         val preference = requirePreference(PREF_REMOTE_CONTROL_ACCOUNT)
         val value = settings.getString(preference.key, null)
 
-        if (isNullOrEmpty(value)) {
+        if (value.isNullOrEmpty()) {
             updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)
         } else if (!authorizator.isAccountExists(value)) {
             updateSummary(preference, value, SUMMARY_STYLE_UNDERWIVED)

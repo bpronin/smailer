@@ -23,8 +23,6 @@ import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
 import com.bopr.android.smailer.util.AndroidUtil.deviceName
 import com.bopr.android.smailer.util.TagFormatter
-import com.bopr.android.smailer.util.TextUtil.isNullOrBlank
-import com.bopr.android.smailer.util.TextUtil.isNullOrEmpty
 import com.bopr.android.smailer.util.TextUtil.isValidEmailAddressList
 import com.google.api.services.drive.DriveScopes
 import com.google.api.services.gmail.GmailScopes
@@ -120,7 +118,7 @@ class MainFragment : BasePreferenceFragment() {
         val preference = requirePreference(PREF_SENDER_ACCOUNT)
         val value = settings.getString(preference.key, "")
 
-        if (isNullOrBlank(value)) {
+        if (value.isNullOrBlank()) {
             updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)
         } else if (!authorizator.isAccountExists(value)) {
             updateSummary(preference, value, SUMMARY_STYLE_UNDERWIVED)
@@ -133,11 +131,11 @@ class MainFragment : BasePreferenceFragment() {
         val preference = requirePreference(PREF_RECIPIENTS_ADDRESS)
         val value = settings.getString(preference.key, "")
 
-        if (isNullOrBlank(value)) {
+        if (value.isNullOrBlank()) {
             updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)
         } else {
             val style = if (isValidEmailAddressList(value)) SUMMARY_STYLE_DEFAULT else SUMMARY_STYLE_UNDERWIVED
-            updateSummary(preference, value!!.replace(",", ", "), style)
+            updateSummary(preference, value.replace(",", ", "), style)
         }
     }
 
@@ -171,7 +169,7 @@ class MainFragment : BasePreferenceFragment() {
         val preference = findPreference<EditTextPreference>(PREF_DEVICE_ALIAS)!!
         val value = settings.getString(preference.key, "")
 
-        if (isNullOrEmpty(value)) {
+        if (value.isNullOrEmpty()) {
             updateSummary(preference, deviceName(), SUMMARY_STYLE_DEFAULT)
         } else {
             updateSummary(preference, value, SUMMARY_STYLE_DEFAULT)

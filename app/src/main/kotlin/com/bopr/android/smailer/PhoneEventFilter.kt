@@ -11,7 +11,6 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
 import com.bopr.android.smailer.util.AddressUtil.normalizePhone
 import com.bopr.android.smailer.util.AddressUtil.phoneToRegEx
-import com.bopr.android.smailer.util.TextUtil.isNullOrEmpty
 import com.bopr.android.smailer.util.TextUtil.unescapeRegex
 
 /**
@@ -91,10 +90,10 @@ class PhoneEventFilter {
     }
 
     private fun matchesText(patterns: Collection<String>, text: String?): Boolean {
-        if (!isNullOrEmpty(text)) {
+        if (!text.isNullOrEmpty()) {
             for (pt in patterns) {
                 val pattern = unescapeRegex(pt)
-                if (pattern != null && text!!.matches(pattern.toRegex()) || text!!.contains(pt)) {
+                if (pattern != null && text.matches(pattern.toRegex()) || text.contains(pt)) {
                     return true
                 }
             }

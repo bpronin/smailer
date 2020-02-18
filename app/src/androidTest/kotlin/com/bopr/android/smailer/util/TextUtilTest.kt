@@ -9,9 +9,7 @@ import com.bopr.android.smailer.util.TextUtil.formatDuration
 import com.bopr.android.smailer.util.TextUtil.isQuoted
 import com.bopr.android.smailer.util.TextUtil.isValidEmailAddress
 import com.bopr.android.smailer.util.TextUtil.isValidEmailAddressList
-import com.bopr.android.smailer.util.TextUtil.join
 import com.bopr.android.smailer.util.TextUtil.readStream
-import com.bopr.android.smailer.util.TextUtil.split
 import com.bopr.android.smailer.util.TextUtil.unescapeRegex
 import org.junit.Assert.*
 import org.junit.Test
@@ -44,23 +42,6 @@ class TextUtilTest {
     }
 
     @Test
-    fun testJoin() {
-        assertEquals("1-2-3", join(listOf(1, 2, 3), "-"))
-        assertEquals("a, b, c", join(listOf("a", "b", "c"), ", "))
-        assertEquals(",,", join(listOf("", "", ""), ","))
-        assertEquals("", join(listOf<String>(), ","))
-    }
-
-    @Test
-    fun testSplit() {
-        assertEquals(listOf("1", " 2", "3 "), split("1, 2,3 ", ",", false))
-        assertEquals(listOf("1", "2", "3"), split("1, 2, 3 ", ",", true))
-        assertEquals(listOf(" "), split(" ", ",", false))
-        assertEquals(listOf<String>(), split("", ",", true))
-        assertEquals(listOf<String>(), split(" ", ",", true))
-    }
-
-    @Test
     fun testCommaJoin() {
         assertEquals("1,2,3", commaJoin(listOf(1, 2, 3)))
         assertEquals("a,b,c", commaJoin(listOf("a", "b", "c")))
@@ -71,7 +52,6 @@ class TextUtilTest {
         assertEquals(listOf("1", "2", "3"), commaSplit(" 1, 2, 3 "))
         assertEquals(listOf("a", "b", "c"), commaSplit("a,b,c"))
     }
-
 
     @Test
     fun testDecimalToDMS() {

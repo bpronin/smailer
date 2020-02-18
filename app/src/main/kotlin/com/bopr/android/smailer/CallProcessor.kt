@@ -13,7 +13,6 @@ import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
 import com.bopr.android.smailer.util.ContentUtils.contactName
 import com.bopr.android.smailer.util.ContentUtils.markSmsAsRead
-import com.bopr.android.smailer.util.TextUtil.isNullOrEmpty
 import com.bopr.android.smailer.util.TextUtil.isValidEmailAddressList
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
@@ -128,19 +127,19 @@ class CallProcessor(
     private fun requireSender(silent: Boolean): String {
         val sender = settings.getString(PREF_SENDER_ACCOUNT, null)
 
-        if (isNullOrEmpty(sender)) {
+        if (sender.isNullOrEmpty()) {
             showErrorNotification(R.string.no_account_specified, silent)
             throw Exception("Account not specified")
         }
 
-        return sender!!
+        return sender
     }
 
     @Throws(Exception::class)
     private fun requireRecipient(silent: Boolean): String {
         val recipients = settings.getString(PREF_RECIPIENTS_ADDRESS, null)
 
-        if (isNullOrEmpty(recipients)) {
+        if (recipients.isNullOrEmpty()) {
             showErrorNotification(R.string.no_recipients_specified, silent)
             throw Exception("Recipients not specified")
         }
@@ -150,7 +149,7 @@ class CallProcessor(
             throw Exception("Recipients are invalid")
         }
 
-        return recipients!!
+        return recipients
     }
 
     @Throws(IOException::class)
