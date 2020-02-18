@@ -34,8 +34,7 @@ import com.bopr.android.smailer.ui.WavyUnderlineSpan
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 object UiUtil {
-    //TODO: remove @JvmStatic
-    @JvmStatic
+
     @DrawableRes
     fun eventTypeImage(event: PhoneEvent): Int {
         return if (event.isSms) {
@@ -45,7 +44,6 @@ object UiUtil {
         }
     }
 
-    @JvmStatic
     @StringRes
     fun eventTypeText(event: PhoneEvent): Int {
         return if (event.isSms) {
@@ -63,7 +61,6 @@ object UiUtil {
         }
     }
 
-    @JvmStatic
     @StringRes
     fun eventTypePrefix(event: PhoneEvent): Int {
         return if (event.isSms) {
@@ -81,7 +78,6 @@ object UiUtil {
         }
     }
 
-    @JvmStatic
     @DrawableRes
     fun eventDirectionImage(event: PhoneEvent): Int {
         return when {
@@ -94,7 +90,6 @@ object UiUtil {
         }
     }
 
-    @JvmStatic
     @DrawableRes
     fun eventStateImage(event: PhoneEvent): Int {
         return when (event.state) {
@@ -109,7 +104,6 @@ object UiUtil {
         }
     }
 
-    @JvmStatic
     @StringRes
     fun eventStateText(event: PhoneEvent): Int {
         return when (event.state) {
@@ -127,7 +121,6 @@ object UiUtil {
     /**
      * Returns text underlined with wavy red line.
      */
-    @JvmStatic
     fun underwivedText(context: Context, value: CharSequence?): Spannable {
         val spannable: Spannable = SpannableString(value)
         val span: ParagraphStyle = WavyUnderlineSpan(context)
@@ -139,7 +132,6 @@ object UiUtil {
     /**
      * Returns text of accent color.
      */
-    @JvmStatic
     fun accentedText(context: Context, value: CharSequence?): Spannable {
         val spannable: Spannable = SpannableString(value)
         val span: CharacterStyle = ForegroundColorSpan(ContextCompat.getColor(context, R.color.colorAccent))
@@ -148,7 +140,6 @@ object UiUtil {
         return spannable
     }
 
-    @JvmStatic
     fun showToast(context: Context, text: String) {
         val toast: Toast = Toast.makeText(context, text, Toast.LENGTH_LONG)
         val view = toast.view
@@ -213,7 +204,7 @@ object UiUtil {
                           cancelButtonText: String? = null,
                           @StringRes cancelButtonTextRes: Int? = null,
                           action: (() -> Unit)? = null) {
-
+        //todo: add "do not as again" (for battery optimization)
         val builder = dialogBuilder(context, title, titleRes, message, messageRes)
 
         val function: (DialogInterface, Int) -> Unit = { _, _ -> action?.invoke() }

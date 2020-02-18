@@ -6,7 +6,8 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import androidx.preference.*
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
 import com.bopr.android.smailer.PermissionsHelper
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
@@ -37,11 +38,6 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPref
         super.onDestroy()
     }
 
-    override fun onStart() {
-        super.onStart()
-        refreshPreferenceViews()
-    }
-
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
                                             grantResults: IntArray) {
         permissionsHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -66,7 +62,7 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPref
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-        refreshPreferenceViews()
+        /* nothing by default */
     }
 
     /**
@@ -75,7 +71,7 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPref
      * @param value      value
      * @param preference preference
      */
-    fun updateSummary(preference: Preference, value: CharSequence?, style: Int) {
+    protected fun updateSummary(preference: Preference, value: CharSequence?, style: Int) {
         when (style) {
             SUMMARY_STYLE_DEFAULT ->
                 preference.summary = value
@@ -86,42 +82,8 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPref
         }
     }
 
-    fun requirePreference(key: CharSequence): Preference {
+    protected fun requirePreference(key: CharSequence): Preference {
         return findPreference(key)!!
-    }
-
-    /**
-     * Reads fragment's [SharedPreferences] and updates settings value.
-     */
-    fun refreshPreferenceViews() {
-        doRefreshPreferenceViews(preferenceScreen)
-    }
-
-    private fun doRefreshPreferenceViews(group: PreferenceGroup) {
-        val map = settings.all
-        for (i in 0 until group.preferenceCount) {
-            val preference = group.getPreference(i)
-            if (preference is PreferenceGroup) {
-                doRefreshPreferenceViews(preference)
-            } else {
-                val value = map[preference.key]
-                preference.onPreferenceChangeListener?.onPreferenceChange(preference, value)
-
-                @Suppress("UNCHECKED_CAST")
-                when (preference) {
-                    is EditTextPreference ->
-                        preference.text = value as String?
-                    is SwitchPreference ->
-                        preference.isChecked = value != null && value as Boolean
-                    is CheckBoxPreference ->
-                        preference.isChecked = value != null && value as Boolean
-                    is ListPreference ->
-                        preference.value = value as String?
-                    is MultiSelectListPreference ->
-                        preference.values = if (value == null) emptySet() else value as Set<String>
-                }
-            }
-        }
     }
 
     companion object {

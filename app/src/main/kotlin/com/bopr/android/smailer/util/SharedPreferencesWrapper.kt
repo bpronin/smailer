@@ -2,6 +2,8 @@ package com.bopr.android.smailer.util
 
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import com.bopr.android.smailer.util.TextUtil.commaJoin
+import com.bopr.android.smailer.util.TextUtil.commaSplit
 import java.util.*
 
 open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPreferences) : SharedPreferences {
@@ -18,6 +20,12 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
         /* should be a copy of values set.
            see: https://stackoverflow.com/questions/17469583/setstring-in-android-sharedpreferences-does-not-save-on-force-close */
         return wrappedPreferences.getStringSet(key, defValues)?.let { LinkedHashSet(it) }
+    }
+
+    fun getCommaSet(key: String): MutableSet<String> {
+        return getString(key, null)?.let {
+            commaSplit(it).toMutableSet()
+        } ?: mutableSetOf()
     }
 
     override fun getInt(key: String, defValue: Int): Int {
@@ -71,6 +79,11 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
                     putStringSet(key, this)
                 }
             }
+            return this
+        }
+
+        fun putCommaSet(key: String, value: Set<String>): EditorWrapper {
+            putString(key, commaJoin(value))
             return this
         }
 

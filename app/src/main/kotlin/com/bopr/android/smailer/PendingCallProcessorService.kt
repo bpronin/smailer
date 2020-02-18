@@ -37,7 +37,7 @@ class PendingCallProcessorService : JobIntentService() {
         private val log = LoggerFactory.getLogger("PendingCallProcessorService")
         private const val JOB_ID = 1000
 
-        fun start(context: Context) {
+        fun startPendingCallProcessorService(context: Context) {
             log.debug("Starting service")
 
             enqueueWork(context, PendingCallProcessorService::class.java, JOB_ID,

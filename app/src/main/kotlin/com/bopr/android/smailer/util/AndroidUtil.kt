@@ -14,7 +14,6 @@ import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccoun
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 object AndroidUtil {
-    //TODO: remove @JvmStatic
 
     /**
      * Checks if listed permissions denied.
@@ -23,7 +22,6 @@ object AndroidUtil {
      * @param permissions permissions
      * @return true if any of listed permissions denied
      */
-    @JvmStatic
     fun isPermissionsDenied(context: Context, vararg permissions: String): Boolean {
         for (p in permissions) {
             if (ContextCompat.checkSelfPermission(context, p) != PackageManager.PERMISSION_GRANTED) {
@@ -36,7 +34,6 @@ object AndroidUtil {
     /**
      * Returns device name.
      */
-    @JvmStatic
     fun deviceName(): String {
         return capitalize(Build.MANUFACTURER) + " " + Build.MODEL
     }
@@ -44,7 +41,6 @@ object AndroidUtil {
     /**
      * Returns primary device account.
      */
-    @JvmStatic
     fun primaryAccount(context: Context): Account {
         return GoogleAccountManager(context).accounts[0]
     }

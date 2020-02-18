@@ -236,7 +236,7 @@ class RemoteControlService : JobIntentService() {
         private val log = LoggerFactory.getLogger("RemoteControlService")
         private const val JOB_ID = 1002
 
-        fun start(context: Context) {
+        fun startRemoteControlService(context: Context) {
             log.debug("Starting service")
 
             enqueueWork(context, RemoteControlService::class.java, JOB_ID,

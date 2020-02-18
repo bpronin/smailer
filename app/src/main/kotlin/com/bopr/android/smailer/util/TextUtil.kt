@@ -7,27 +7,21 @@ import java.util.regex.Pattern
 import kotlin.math.abs
 
 object TextUtil {
-    //TODO: remove @JvmStatic
 
     val QUOTATION_PATTERN: Pattern = Pattern.compile("\"([^\"]*)\"")
 
     private const val REGEX_ = "REGEX:"
 
-    @JvmStatic
     fun isNotEmpty(s: CharSequence): Boolean = s.isNotEmpty()
 
-    @JvmStatic
     fun isNullOrEmpty(s: CharSequence?): Boolean = s.isNullOrEmpty()
 
-    @JvmStatic
     fun isNullOrBlank(s: CharSequence?): Boolean = s.isNullOrBlank()
 
-    @JvmStatic
     fun escapeRegex(s: String): String {
         return REGEX_ + s
     }
 
-    @JvmStatic
     fun unescapeRegex(s: String?): String? {
         if (s != null) {
             val ix = s.indexOf(REGEX_)
@@ -38,15 +32,12 @@ object TextUtil {
         return null
     }
 
-    @JvmStatic
     fun isQuoted(s: String?): Boolean {
         return !s.isNullOrBlank() && QUOTATION_PATTERN.matcher(s).matches()
     }
 
-    @JvmStatic
     fun join(values: Collection<*>, divider: String) = values.joinToString(divider)
 
-    @JvmStatic
     fun split(value: String, divider: String, trim: Boolean): List<String> {
         if (value.isNotEmpty()) {
             var s = value
@@ -60,18 +51,15 @@ object TextUtil {
         return emptyList()
     }
 
-    @JvmStatic
     fun commaJoin(values: Collection<*>): String {
 //        return values.joinToString()
         return join(values, ",")
     }
 
-    @JvmStatic
     fun commaSplit(s: String): List<String> {
         return split(s, ",", true)
     }
 
-    @JvmStatic
     fun decimalToDMS(coordinate: Double, degreeSymbol: String, minuteSymbol: String,
                      secondSymbol: String): String {
         var c = coordinate
@@ -92,7 +80,6 @@ object TextUtil {
         return degrees.toString() + degreeSymbol + minutes + minuteSymbol + seconds + secondSymbol
     }
 
-    @JvmStatic
     fun capitalize(text: String?): String? {
         return if (text.isNullOrBlank()) {
             text
@@ -101,13 +88,11 @@ object TextUtil {
         }
     }
 
-    @JvmStatic
     fun formatDuration(duration: Long): String? {
         val seconds = duration / 1000
         return String.format(Locale.US, "%d:%02d:%02d", seconds / 3600, seconds % 3600 / 60, seconds % 60)
     }
 
-    @JvmStatic
     fun readStream(stream: InputStream?): String? {
         return stream?.let {
             with(Scanner(stream).useDelimiter("\\A")) {
@@ -116,12 +101,10 @@ object TextUtil {
         }
     }
 
-    @JvmStatic
     fun isValidEmailAddress(text: String?): Boolean {
         return !text.isNullOrBlank() && EMAIL_ADDRESS.matcher(text).matches()
     }
 
-    @JvmStatic
     fun isValidEmailAddressList(text: String?): Boolean {
         if (!text.isNullOrBlank()) {
             for (s in commaSplit(text)) {

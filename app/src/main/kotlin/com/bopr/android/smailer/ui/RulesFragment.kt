@@ -1,10 +1,10 @@
 package com.bopr.android.smailer.ui
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.annotation.StringRes
-import androidx.preference.Preference.OnPreferenceChangeListener
-import androidx.preference.Preference.OnPreferenceClickListener
+import androidx.preference.MultiSelectListPreference
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_BLACKLIST
@@ -12,7 +12,6 @@ import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_WHITELIST
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_BLACKLIST
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_WHITELIST
 import com.bopr.android.smailer.util.TagFormatter
-import com.bopr.android.smailer.util.TextUtil.commaSplit
 
 /**
  * Conditions settings activity's fragment.
@@ -24,73 +23,103 @@ class RulesFragment : BasePreferenceFragment() {
     override fun onCreatePreferences(bundle: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_rules)
 
-        requirePreference(PREF_EMAIL_TRIGGERS).apply {
-            onPreferenceChangeListener = OnPreferenceChangeListener { preference, value ->
-                if (value == null || (value as Set<*>).isEmpty()) {
-                    updateSummary(preference, getString(R.string.no_triggers_specified), SUMMARY_STYLE_ACCENTED)
-                } else {
-                    updateSummary(preference, getString(R.string.events_causing_sending_mail), SUMMARY_STYLE_DEFAULT)
-                }
-                true
-            }
+        requirePreference(PREF_FILTER_PHONE_BLACKLIST).setOnPreferenceClickListener {
+            startActivity(Intent(context, PhoneBlacklistActivity::class.java))
+            true
         }
 
-        requirePreference(PREF_FILTER_PHONE_BLACKLIST).apply {
-            onPreferenceClickListener = OnPreferenceClickListener {
-                startActivity(Intent(context, PhoneBlacklistActivity::class.java))
-                true
-            }
-            onPreferenceChangeListener = OnPreferenceChangeListener { preference, value ->
-                updateSummary(preference, formatSummary(value as String?, R.string.unacceptable_phone_numbers,
-                        R.string._none), SUMMARY_STYLE_DEFAULT)
-                true
-            }
+        requirePreference(PREF_FILTER_PHONE_WHITELIST).setOnPreferenceClickListener {
+            startActivity(Intent(context, PhoneWhitelistActivity::class.java))
+            true
         }
 
-        requirePreference(PREF_FILTER_PHONE_WHITELIST).apply {
-            onPreferenceClickListener = OnPreferenceClickListener {
-                startActivity(Intent(context, PhoneWhitelistActivity::class.java))
-                true
-            }
-            onPreferenceChangeListener = OnPreferenceChangeListener { preference, value ->
-                updateSummary(preference, formatSummary(value as String?, R.string.acceptable_phone_numbers,
-                        R.string._any), SUMMARY_STYLE_DEFAULT)
-                true
-            }
+        requirePreference(PREF_FILTER_TEXT_BLACKLIST).setOnPreferenceClickListener {
+            startActivity(Intent(context, TextBlacklistActivity::class.java))
+            true
         }
 
-        requirePreference(PREF_FILTER_TEXT_BLACKLIST).apply {
-            onPreferenceClickListener = OnPreferenceClickListener {
-                startActivity(Intent(context, TextBlacklistActivity::class.java))
-                true
-            }
-            onPreferenceChangeListener = OnPreferenceChangeListener { preference, value ->
-                updateSummary(preference, formatSummary(value as String?, R.string.unacceptable_words,
-                        R.string._none), SUMMARY_STYLE_DEFAULT)
-                true
-            }
-        }
-
-        requirePreference(PREF_FILTER_TEXT_WHITELIST).apply {
-            onPreferenceClickListener = OnPreferenceClickListener {
-                startActivity(Intent(context, TextWhitelistActivity::class.java))
-                true
-            }
-            onPreferenceChangeListener = OnPreferenceChangeListener { preference, value ->
-                updateSummary(preference, formatSummary(value as String?, R.string.acceptable_words,
-                        R.string._any), SUMMARY_STYLE_DEFAULT)
-                true
-            }
+        requirePreference(PREF_FILTER_TEXT_WHITELIST).setOnPreferenceClickListener {
+            startActivity(Intent(context, TextWhitelistActivity::class.java))
+            true
         }
     }
 
-    private fun formatSummary(value: String?, @StringRes patternRes: Int, @StringRes emptyTextRes: Int): String {
+    override fun onStart() {
+        super.onStart()
+        updateTriggersPreferenceView()
+        updatePhoneBlacklistPreferenceView()
+        updatePhoneWhitelistPreferenceView()
+        updateTextBlacklistPreferenceView()
+        updateTextWhitelistPreferenceView()
+    }
+
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+        when (key) {
+            PREF_EMAIL_TRIGGERS ->
+                updateTriggersPreferenceView()
+            PREF_FILTER_PHONE_BLACKLIST ->
+                updatePhoneBlacklistPreferenceView()
+            PREF_FILTER_PHONE_WHITELIST ->
+                updatePhoneWhitelistPreferenceView()
+            PREF_FILTER_TEXT_BLACKLIST ->
+                updateTextBlacklistPreferenceView()
+            PREF_FILTER_TEXT_WHITELIST ->
+                updateTextWhitelistPreferenceView()
+        }
+        super.onSharedPreferenceChanged(sharedPreferences, key)
+    }
+
+    private fun updateTextWhitelistPreferenceView() {
+        val preference = requirePreference(PREF_FILTER_TEXT_WHITELIST)
+        val value = settings.getCommaSet(preference.key)
+
+        updateSummary(preference, formatListSummary(value, R.string.acceptable_words,
+                R.string._any), SUMMARY_STYLE_DEFAULT)
+    }
+
+    private fun updateTextBlacklistPreferenceView() {
+        val preference = requirePreference(PREF_FILTER_TEXT_BLACKLIST)
+        val value = settings.getCommaSet(preference.key)
+
+        updateSummary(preference, formatListSummary(value, R.string.unacceptable_words,
+                R.string._none), SUMMARY_STYLE_DEFAULT)
+    }
+
+    private fun updatePhoneWhitelistPreferenceView() {
+        val preference = requirePreference(PREF_FILTER_PHONE_WHITELIST)
+        val value = settings.getCommaSet(preference.key)
+
+        updateSummary(preference, formatListSummary(value, R.string.acceptable_phone_numbers,
+                R.string._any), SUMMARY_STYLE_DEFAULT)
+    }
+
+    private fun updatePhoneBlacklistPreferenceView() {
+        val preference = requirePreference(PREF_FILTER_PHONE_BLACKLIST)
+        val value = settings.getCommaSet(preference.key)
+
+        updateSummary(preference, formatListSummary(value, R.string.unacceptable_phone_numbers,
+                R.string._none), SUMMARY_STYLE_DEFAULT)
+    }
+
+    private fun updateTriggersPreferenceView() {
+        val preference = findPreference<MultiSelectListPreference>(PREF_EMAIL_TRIGGERS)!!
+        val value = settings.getStringSet(preference.key, null)
+
+        if (value == null || value.isEmpty()) {
+            updateSummary(preference, getString(R.string.no_triggers_specified), SUMMARY_STYLE_ACCENTED)
+        } else {
+            updateSummary(preference, getString(R.string.events_causing_sending_mail), SUMMARY_STYLE_DEFAULT)
+        }
+    }
+
+    private fun formatListSummary(value: Set<String>, @StringRes patternRes: Int,
+                                  @StringRes emptyTextRes: Int): String {
         val pattern = TagFormatter(requireContext()).pattern(patternRes)
 
-        if (value.isNullOrBlank()) {
+        if (value.isEmpty()) {
             pattern.put("size", emptyTextRes)
         } else {
-            pattern.put("size", commaSplit(value).size.toString())
+            pattern.put("size", value.size.toString())
         }
 
         return pattern.format()

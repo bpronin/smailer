@@ -2,7 +2,6 @@ package com.bopr.android.smailer
 
 import androidx.test.platform.app.InstrumentationRegistry
 import com.bopr.android.smailer.util.TextUtil.readStream
-import com.bopr.android.smailer.util.Util.safeEquals
 import org.hamcrest.CustomTypeSafeMatcher
 import org.hamcrest.Description
 import java.io.IOException
@@ -16,21 +15,21 @@ internal open class HtmlMatcher private constructor(private val expected: String
     private val delimiters = Pattern.compile("(\\s|>|<|;)+")
 
     override fun matchesSafely(actual: String?): Boolean {
-        if (safeEquals(actual, expected)) {
+        if (actual == expected) {
             return true
         } else {
-            val exs = Scanner(expected!!).useDelimiter(delimiters)
-            val acs = Scanner(actual!!).useDelimiter(delimiters)
+            val expects = Scanner(expected!!).useDelimiter(delimiters)
+            val actuals = Scanner(actual!!).useDelimiter(delimiters)
             expectedToken = null
             actualToken = null
-            while (exs.hasNext() && acs.hasNext()) {
-                expectedToken = exs.next()
-                actualToken = acs.next()
+            while (expects.hasNext() && actuals.hasNext()) {
+                expectedToken = expects.next()
+                actualToken = actuals.next()
                 if (expectedToken != actualToken) {
                     return false
                 }
             }
-            return exs.hasNext() == acs.hasNext()
+            return expects.hasNext() == actuals.hasNext()
         }
     }
 
@@ -46,7 +45,6 @@ internal open class HtmlMatcher private constructor(private val expected: String
 
     companion object {
 
-        @JvmStatic
         fun htmlEqualsRes(resource: String): HtmlMatcher {
             try {
                 InstrumentationRegistry.getInstrumentation().context.assets.open(resource).use {

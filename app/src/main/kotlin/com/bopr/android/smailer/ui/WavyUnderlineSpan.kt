@@ -12,7 +12,7 @@ import com.bopr.android.smailer.R
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class WavyUnderlineSpan @JvmOverloads constructor(
+class WavyUnderlineSpan(
         private val context: Context,
         private val lineColor: Int = ContextCompat.getColor(context, R.color.errorLine),
         private val lineWidth: Int = 1,

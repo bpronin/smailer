@@ -103,7 +103,7 @@ class SyncEngine private constructor(context: Context) {
             return GoogleAccountManager(context).getAccountByName(name)
         }
 
-        fun enable(context: Context) {
+        fun startSyncEngine(context: Context) {
             SyncEngine(context).start()
         }
 

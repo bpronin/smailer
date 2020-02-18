@@ -7,7 +7,6 @@ import com.bopr.android.smailer.util.AndroidUtil.deviceName
 import com.bopr.android.smailer.util.AndroidUtil.primaryAccount
 import com.bopr.android.smailer.util.UiUtil.showInfoDialog
 import com.bopr.android.smailer.util.UiUtil.showToast
-import com.bopr.android.smailer.util.Util.requireNonNull
 import com.google.api.services.gmail.GmailScopes
 import java.util.*
 
@@ -21,7 +20,7 @@ internal class SendDebugMailTask(activity: Activity, private val properties: Pro
             from = sender
             subject = "test subject"
             body = "test message from " + deviceName()
-            recipients = requireNonNull(properties.getProperty("default_recipient"))
+            recipients = requireNotNull(properties.getProperty("default_recipient"))
         }
 
         try {

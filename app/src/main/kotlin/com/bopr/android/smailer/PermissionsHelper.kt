@@ -19,7 +19,6 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
 import com.bopr.android.smailer.util.TagFormatter
 import com.bopr.android.smailer.util.UiUtil.showInfoDialog
-import com.bopr.android.smailer.util.Util.requireNonNull
 import org.slf4j.LoggerFactory
 import java.util.*
 
@@ -186,7 +185,7 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
         val b = StringBuilder()
         for (permission in permissions) {
             val line = TagFormatter(activity)
-                    .pattern(requireNonNull(items[permission]))
+                    .pattern(requireNotNull(items[permission]))
                     .put("permission", permissionLabel(permission))
                     .format()
             b.append(line).append("\n\n")

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.work.*
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
+import com.bopr.android.smailer.remote.RemoteControlService.Companion.startRemoteControlService
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
 
@@ -15,24 +16,22 @@ import java.util.concurrent.TimeUnit
 internal class RemoteControlWorker(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
 
     override fun doWork(): Result {
-        log.debug("Working")
-
         if (isFeatureEnabled(applicationContext)) {
-            RemoteControlService.start(applicationContext)
+            startRemoteControlService(applicationContext)
         }
         return Result.success()
     }
 
-    companion object {
+    internal companion object {
 
         private val log = LoggerFactory.getLogger("RemoteControlWorker")
-        private const val WORKER_TAG = "smailer-email"
+        private const val WORKER_TAG = "com.bopr.android.smailer.remote"
 
         private fun isFeatureEnabled(context: Context): Boolean {
             return Settings(context).getBoolean(PREF_REMOTE_CONTROL_ENABLED, false)
         }
 
-        fun enable(context: Context) {
+        fun enableRemoteControlWorker(context: Context) {
             val manager = WorkManager.getInstance()
             manager.cancelAllWorkByTag(WORKER_TAG)
             if (isFeatureEnabled(context)) {
@@ -48,6 +47,8 @@ internal class RemoteControlWorker(context: Context, workerParams: WorkerParamet
 
                 log.debug("Enabled")
             } else {
+                manager.cancelAllWorkByTag(WORKER_TAG)
+
                 log.debug("Disabled")
             }
         }

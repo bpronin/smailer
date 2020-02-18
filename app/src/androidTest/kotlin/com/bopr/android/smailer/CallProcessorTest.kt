@@ -12,7 +12,6 @@ import com.bopr.android.smailer.PhoneEvent.Companion.REASON_TRIGGER_OFF
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
-import com.bopr.android.smailer.Settings.Companion.DEFAULT
 import com.bopr.android.smailer.Settings.Companion.DEFAULT_CONTENT
 import com.bopr.android.smailer.Settings.Companion.DEFAULT_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
@@ -21,6 +20,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_DEFAULT
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 import com.nhaarman.mockitokotlin2.*
 import org.junit.After
@@ -70,7 +70,7 @@ class CallProcessorTest : BaseTest() {
         preferences = mock {
             on { getString(eq(PREF_SENDER_ACCOUNT), anyOrNull()) }.doReturn("sender@mail.com")
             on { getString(eq(PREF_RECIPIENTS_ADDRESS), anyOrNull()) }.doReturn("recipient@mail.com")
-            on { getString(eq(PREF_EMAIL_LOCALE), anyOrNull()) }.doReturn(DEFAULT)
+            on { getString(eq(PREF_EMAIL_LOCALE), anyOrNull()) }.doReturn(VAL_PREF_DEFAULT)
             on { getStringSet(eq(PREF_EMAIL_TRIGGERS), anyOrNull()) }.doReturn(DEFAULT_TRIGGERS)
             on { getStringSet(eq(PREF_EMAIL_CONTENT), anyOrNull()) }.doReturn(DEFAULT_CONTENT)
         }

@@ -20,7 +20,6 @@ internal object BatteryOptimizationHelper {
         return false
     }
 
-    @JvmStatic
     fun requireIgnoreBatteryOptimization(context: Context) {
         if (isIgnoreBatteryOptimizationRequired(context)) {
             showDialog(context)

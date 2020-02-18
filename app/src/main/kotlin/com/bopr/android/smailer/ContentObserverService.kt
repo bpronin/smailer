@@ -12,6 +12,7 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.os.IBinder
 import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
 import com.bopr.android.smailer.util.AndroidUtil.deviceName
 import com.bopr.android.smailer.util.db.RowSet
 import org.slf4j.LoggerFactory
@@ -115,7 +116,6 @@ class ContentObserverService : Service() {
     companion object {
 
         private val log = LoggerFactory.getLogger("ContentObserverService")
-
         private val CONTENT_SMS_SENT = Uri.parse("content://sms/sent")
         private val CONTENT_SMS = Uri.parse("content://sms")
 
@@ -124,10 +124,10 @@ class ContentObserverService : Service() {
          *
          * @param context context
          */
-        fun enable(context: Context) {
+        fun enableContentObserver(context: Context) {
             val intent = Intent(context, ContentObserverService::class.java)
-            val triggers = Settings(context).getFilter().triggers
-            if (triggers.contains(Settings.VAL_PREF_TRIGGER_OUT_SMS)) {
+            val filter = Settings(context).getFilter()
+            if (filter.triggers.contains(VAL_PREF_TRIGGER_OUT_SMS)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     context.startForegroundService(intent)
                 } else {

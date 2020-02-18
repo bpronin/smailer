@@ -16,12 +16,12 @@ import java.io.IOException
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class Synchronizer @JvmOverloads constructor(context: Context,
-                                             account: Account,
-                                             private val database: Database = Database(context),
-                                             private val settings: Settings = Settings(context),
-                                             private val metaFile: String = "meta.json",
-                                             private val dataFile: String = "data.json") {
+class Synchronizer(context: Context,
+                   account: Account,
+                   private val database: Database = Database(context),
+                   private val settings: Settings = Settings(context),
+                   private val metaFile: String = "meta.json",
+                   private val dataFile: String = "data.json") {
 
     private val log = LoggerFactory.getLogger("Synchronizer")
     private val drive = GoogleDrive(context, account)

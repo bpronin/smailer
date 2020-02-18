@@ -20,7 +20,6 @@ import com.bopr.android.smailer.util.TextUtil.isNotEmpty
 import com.bopr.android.smailer.util.TextUtil.isNullOrBlank
 import com.bopr.android.smailer.util.UiUtil.eventTypePrefix
 import com.bopr.android.smailer.util.UiUtil.eventTypeText
-import com.bopr.android.smailer.util.Util.requireNonNull
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.text.DateFormat
@@ -146,7 +145,7 @@ class MailFormatter(private val context: Context, private val event: PhoneEvent)
                 resources.getString(R.string.you_had_missed_call)
             }
             event.isSms -> {
-                replaceUrls(requireNonNull(event.text))
+                replaceUrls(requireNotNull(event.text))
             }
             else -> {
                 val patternRes = if (event.isIncoming) {

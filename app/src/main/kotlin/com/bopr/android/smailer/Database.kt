@@ -23,8 +23,7 @@ import java.util.concurrent.TimeUnit
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-//todo: remove @JvmOverloads
-class Database @JvmOverloads constructor(private val context: Context, private val name: String = DATABASE_NAME) {
+class Database constructor(private val context: Context, private val name: String = DATABASE_NAME) {
 
     private var updatesCounter: Long = 0
     private val helper: DbHelper = DbHelper(context)
@@ -263,14 +262,12 @@ class Database @JvmOverloads constructor(private val context: Context, private v
         private const val TABLE_SYSTEM = "system_data"
         private const val TABLE_EVENTS = "phone_events"
 
-        @JvmStatic
         fun registerDatabaseListener(context: Context, listener: BroadcastReceiver): BroadcastReceiver {
             LocalBroadcastManager.getInstance(context).registerReceiver(listener,
                     IntentFilter(DATABASE_EVENT))
             return listener
         }
 
-        @JvmStatic
         fun unregisterDatabaseListener(context: Context, listener: BroadcastReceiver) {
             LocalBroadcastManager.getInstance(context).unregisterReceiver(listener)
         }

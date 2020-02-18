@@ -21,6 +21,30 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceScreen
 import com.bopr.android.smailer.*
 import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_LOCALE
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
+import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_BLACKLIST
+import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_BLACKLIST
+import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
+import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
+import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
+import com.bopr.android.smailer.Settings.Companion.PREF_RESEND_UNSENT
+import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_DEFAULT
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_CONTACT
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_HEADER
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_LOCATION
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_CALLS
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
 import com.bopr.android.smailer.remote.RemoteControlService
 import com.bopr.android.smailer.sync.SyncEngine.Companion.syncNow
 import com.bopr.android.smailer.sync.Synchronizer
@@ -34,8 +58,6 @@ import com.bopr.android.smailer.util.TextUtil.escapeRegex
 import com.bopr.android.smailer.util.UiUtil.showInfoDialog
 import com.bopr.android.smailer.util.UiUtil.showInputDialog
 import com.bopr.android.smailer.util.UiUtil.showToast
-import com.bopr.android.smailer.util.Util.asSet
-import com.bopr.android.smailer.util.Util.requireNonNull
 import com.google.android.gms.tasks.Tasks
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager
 import com.google.api.services.drive.DriveScopes
@@ -265,7 +287,7 @@ class DebugFragment : BasePreferenceFragment() {
 
         database = Database(appContext)
         locator = GeoLocator(appContext, database)
-        authorizator = GoogleAuthorizationHelper(this, Settings.PREF_SENDER_ACCOUNT, GmailScopes.MAIL_GOOGLE_COM,
+        authorizator = GoogleAuthorizationHelper(this, PREF_SENDER_ACCOUNT, GmailScopes.MAIL_GOOGLE_COM,
                 DriveScopes.DRIVE_APPDATA)
         notifications = Notifications(appContext)
         sentStatusReceiver = SentStatusReceiver()
@@ -329,30 +351,29 @@ class DebugFragment : BasePreferenceFragment() {
         val properties = loadDebugProperties()
         settings.edit()
                 .clear()
-                .putString(Settings.PREF_SENDER_ACCOUNT, primaryAccount(appContext).name)
-                .putString(Settings.PREF_REMOTE_CONTROL_ACCOUNT, properties.getProperty("remote_control_account"))
-                .putString(Settings.PREF_RECIPIENTS_ADDRESS, properties.getProperty("default_recipient"))
-                .putStringSet(Settings.PREF_EMAIL_TRIGGERS, asSet(
-                        Settings.VAL_PREF_TRIGGER_IN_SMS,
-                        Settings.VAL_PREF_TRIGGER_IN_CALLS,
-                        Settings.VAL_PREF_TRIGGER_MISSED_CALLS,
-                        Settings.VAL_PREF_TRIGGER_OUT_CALLS,
-                        Settings.VAL_PREF_TRIGGER_OUT_SMS))
-                .putStringSet(Settings.PREF_EMAIL_CONTENT, asSet(
-                        Settings.VAL_PREF_EMAIL_CONTENT_CONTACT,
-                        Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
-                        Settings.VAL_PREF_EMAIL_CONTENT_LOCATION,
-                        Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT,
-                        Settings.VAL_PREF_EMAIL_CONTENT_HEADER,
-                        Settings.VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS,
-                        Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME))
-                .putString(Settings.PREF_EMAIL_LOCALE, Settings.DEFAULT)
-                .putBoolean(Settings.PREF_NOTIFY_SEND_SUCCESS, true)
-                .putBoolean(Settings.PREF_RESEND_UNSENT, true)
-                .putString(Settings.PREF_FILTER_PHONE_BLACKLIST, commaJoin(asSet("+123456789", "+9876543*")))
-                .putString(Settings.PREF_FILTER_TEXT_BLACKLIST, commaJoin(asSet("Bad text", escapeRegex("Expression"))))
+                .putString(PREF_SENDER_ACCOUNT, primaryAccount(appContext).name)
+                .putString(PREF_REMOTE_CONTROL_ACCOUNT, properties.getProperty("remote_control_account"))
+                .putString(PREF_RECIPIENTS_ADDRESS, properties.getProperty("default_recipient"))
+                .putStringSet(PREF_EMAIL_TRIGGERS, mutableSetOf(
+                        VAL_PREF_TRIGGER_IN_SMS,
+                        VAL_PREF_TRIGGER_IN_CALLS,
+                        VAL_PREF_TRIGGER_MISSED_CALLS,
+                        VAL_PREF_TRIGGER_OUT_CALLS,
+                        VAL_PREF_TRIGGER_OUT_SMS))
+                .putStringSet(PREF_EMAIL_CONTENT, mutableSetOf(
+                        VAL_PREF_EMAIL_CONTENT_CONTACT,
+                        VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
+                        VAL_PREF_EMAIL_CONTENT_LOCATION,
+                        VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT,
+                        VAL_PREF_EMAIL_CONTENT_HEADER,
+                        VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS,
+                        VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME))
+                .putString(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)
+                .putBoolean(PREF_NOTIFY_SEND_SUCCESS, true)
+                .putBoolean(PREF_RESEND_UNSENT, true)
+                .putString(PREF_FILTER_PHONE_BLACKLIST, commaJoin(setOf("+123456789", "+9876543*")))
+                .putString(PREF_FILTER_TEXT_BLACKLIST, commaJoin(setOf("Bad text", escapeRegex("Expression"))))
                 .apply()
-        refreshPreferenceViews()
         showToast(appContext, "Done")
     }
 
@@ -361,9 +382,8 @@ class DebugFragment : BasePreferenceFragment() {
                 title = "Phone number",
                 inputType = InputType.TYPE_CLASS_PHONE,
                 action = { value ->
-                    val phone = value
-                    val contact = contactName(appContext, phone)
-                    val text = if (contact != null) "$phone: $contact" else "Contact not found"
+                    val contact = contactName(appContext, value)
+                    val text = if (contact != null) "$value: $contact" else "Contact not found"
                     showToast(appContext, text)
                 }
         )
@@ -371,19 +391,17 @@ class DebugFragment : BasePreferenceFragment() {
 
     private fun onClearPreferences() {
         settings.edit().clear().apply()
-        refreshPreferenceViews()
         showToast(appContext, "Done")
     }
 
     private fun onResetPreferences() {
         settings.loadDefaults()
-        refreshPreferenceViews()
         showToast(appContext, "Done")
     }
 
     private fun onProcessServiceMail() {
-        if (settings.getBoolean(Settings.PREF_REMOTE_CONTROL_ENABLED, false)) {
-            RemoteControlService.start(appContext)
+        if (settings.getBoolean(PREF_REMOTE_CONTROL_ENABLED, false)) {
+            RemoteControlService.startRemoteControlService(appContext)
             showToast(appContext, "Done")
         } else {
             showToast(appContext, "Feature disabled")
@@ -403,7 +421,7 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun onStartProcessPendingEvents() {
-        PendingCallProcessorService.start(appContext)
+        PendingCallProcessorService.startPendingCallProcessorService(appContext)
         showToast(appContext, "Done")
     }
 
@@ -422,7 +440,7 @@ class DebugFragment : BasePreferenceFragment() {
 
     private fun onClearLogs() {
         val dir = File(appContext.filesDir, "log")
-        val logs = requireNonNull(dir.listFiles())
+        val logs = requireNotNull(dir.listFiles())
         for (file in logs) {
             if (!file.delete()) {
                 log.warn("Cannot delete file")
@@ -539,7 +557,7 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun senderAccount(): Account {
-        val name = settings.getString(Settings.PREF_SENDER_ACCOUNT, null)
+        val name = settings.getString(PREF_SENDER_ACCOUNT, null)
         return GoogleAccountManager(appContext).getAccountByName(name)
     }
 

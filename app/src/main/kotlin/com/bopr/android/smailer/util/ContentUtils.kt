@@ -24,7 +24,6 @@ object ContentUtils {
 
     private val log = LoggerFactory.getLogger("ContentUtils")
     
-    @JvmStatic
     fun contactName(context: Context, phone: String): String? {
         var result: String? = null
         if (requireReadContactPermission(context) && phone.isNotEmpty()) {
@@ -42,29 +41,24 @@ object ContentUtils {
         return result
     }
 
-    @JvmStatic
     fun emailAddressFromIntent(context: Context, intent: Intent): String? {
         return intent.data?.lastPathSegment?.let { emailAddress(context, it) }
     }
 
-    @JvmStatic
     fun createPickContactEmailIntent(): Intent {
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = Email.CONTENT_TYPE
         return intent
     }
 
-    @JvmStatic
     fun phoneFromIntent(context: Context, intent: Intent?): String? {
         return intent?.data?.lastPathSegment?.let { phone(context, it) }
     }
 
-    @JvmStatic
     fun isReadContactsPermissionsDenied(context: Context): Boolean {
         return isPermissionsDenied(context, permission.READ_CONTACTS)
     }
 
-    @JvmStatic
     fun markSmsAsRead(context: Context, event: PhoneEvent) {
         val contentResolver = context.contentResolver
         val uri = Uri.parse("content://sms/inbox")

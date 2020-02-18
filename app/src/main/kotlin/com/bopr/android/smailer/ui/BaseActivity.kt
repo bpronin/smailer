@@ -7,7 +7,6 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.util.Util.requireNonNull
 
 /**
  * Base Activity with default behaviour.
@@ -38,7 +37,7 @@ abstract class BaseActivity : AppCompatActivity() {
     protected abstract fun createFragment(): Fragment
 
     protected fun setHomeButtonEnabled(enabled: Boolean) {
-        requireNonNull(supportActionBar).setDisplayHomeAsUpEnabled(enabled)
+        requireNotNull(supportActionBar).setDisplayHomeAsUpEnabled(enabled)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

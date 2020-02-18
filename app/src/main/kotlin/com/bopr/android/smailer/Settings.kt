@@ -5,10 +5,7 @@ import android.content.Context.MODE_PRIVATE
 import android.content.pm.PackageManager
 import com.bopr.android.smailer.util.AndroidUtil.deviceName
 import com.bopr.android.smailer.util.SharedPreferencesWrapper
-import com.bopr.android.smailer.util.TextUtil.commaJoin
-import com.bopr.android.smailer.util.TextUtil.commaSplit
 import com.bopr.android.smailer.util.TextUtil.isNullOrEmpty
-import com.bopr.android.smailer.util.Util.asSet
 import java.io.IOException
 import java.util.*
 
@@ -17,12 +14,12 @@ import java.util.*
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class Settings(private val context: Context) :
-        SharedPreferencesWrapper(context.getSharedPreferences(PREFERENCES_STORAGE_NAME, MODE_PRIVATE)) {
+class Settings(private val context: Context) : SharedPreferencesWrapper(
+        context.getSharedPreferences(PREFERENCES_STORAGE_NAME, MODE_PRIVATE)) {
 
     fun getLocale(): Locale {
-        val value = getString(PREF_EMAIL_LOCALE, DEFAULT)
-        return if (value == DEFAULT) {
+        val value = getString(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)
+        return if (value == VAL_PREF_DEFAULT) {
             Locale.getDefault()
         } else {
             val ss = value!!.split("_")
@@ -77,16 +74,10 @@ class Settings(private val context: Context) :
         }
     }
 
-    private fun getCommaSet(key: String): MutableSet<String> {
-        return getString(key, null)?.let {
-            commaSplit(it).toMutableSet()
-        } ?: mutableSetOf()
-    }
-
     fun loadDefaults() {
         with(edit()) {
             putInt(PREF_SETTINGS_VERSION, SETTINGS_VERSION)
-            putStringOptional(PREF_EMAIL_LOCALE, DEFAULT)
+            putStringOptional(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)
             putBooleanOptional(PREF_RESEND_UNSENT, true)
             putBooleanOptional(PREF_MARK_SMS_AS_READ, false)
             putBooleanOptional(PREF_REMOTE_CONTROL_ENABLED, false)
@@ -113,10 +104,10 @@ class Settings(private val context: Context) :
     inner class EditorWrapper(edit: SharedPreferencesWrapper.EditorWrapper) : SharedPreferencesWrapper.EditorWrapper(edit) {
 
         fun putFilter(filter: PhoneEventFilter): EditorWrapper {
-            putString(PREF_FILTER_PHONE_BLACKLIST, commaJoin(filter.phoneBlacklist))
-            putString(PREF_FILTER_PHONE_WHITELIST, commaJoin(filter.phoneWhitelist))
-            putString(PREF_FILTER_TEXT_BLACKLIST, commaJoin(filter.textBlacklist))
-            putString(PREF_FILTER_TEXT_WHITELIST, commaJoin(filter.textWhitelist))
+            putCommaSet(PREF_FILTER_PHONE_BLACKLIST, filter.phoneBlacklist)
+            putCommaSet(PREF_FILTER_PHONE_WHITELIST, filter.phoneWhitelist)
+            putCommaSet(PREF_FILTER_TEXT_BLACKLIST, filter.textBlacklist)
+            putCommaSet(PREF_FILTER_TEXT_WHITELIST, filter.textWhitelist)
 
             return this
         }
@@ -151,7 +142,7 @@ class Settings(private val context: Context) :
         const val PREF_REMOTE_CONTROL_NOTIFICATIONS = "remote_control_notifications"
         const val PREF_REMOTE_CONTROL_FILTER_RECIPIENTS = "remote_control_filter_recipients"
 
-        const val DEFAULT = "default"
+        const val VAL_PREF_DEFAULT = "default"
         const val VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME = "time"
         const val VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT = "time_sent"
         const val VAL_PREF_EMAIL_CONTENT_DEVICE_NAME = "device_name"
@@ -165,8 +156,7 @@ class Settings(private val context: Context) :
         const val VAL_PREF_TRIGGER_OUT_CALLS = "out_calls"
         const val VAL_PREF_TRIGGER_MISSED_CALLS = "missed_calls"
 
-        @JvmField
-        val DEFAULT_CONTENT: Set<String> = asSet(
+        val DEFAULT_CONTENT: Set<String> = mutableSetOf(
                 VAL_PREF_EMAIL_CONTENT_HEADER,
                 VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
                 VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT,
@@ -175,8 +165,7 @@ class Settings(private val context: Context) :
                 VAL_PREF_EMAIL_CONTENT_CONTACT,
                 VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS)
 
-        @JvmField
-        val DEFAULT_TRIGGERS: Set<String> = asSet(
+        val DEFAULT_TRIGGERS: Set<String> = mutableSetOf(
                 VAL_PREF_TRIGGER_IN_SMS,
                 VAL_PREF_TRIGGER_MISSED_CALLS)
     }

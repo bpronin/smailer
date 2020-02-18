@@ -21,7 +21,6 @@ object DbUtil {
         }
     }
 
-    @JvmStatic
     fun copyTable(db: SQLiteDatabase, tableFrom: String, tableTo: String,
                   convert: (column: String, cursor: Cursor) -> String?) {
         val dst = db.query(tableTo, null, null, null, null, null, null)
@@ -46,7 +45,6 @@ object DbUtil {
         }
     }
 
-    @JvmStatic
     fun replaceTable(db: SQLiteDatabase, table: String, createSql: String,
                      convert: (column: String, cursor: Cursor) -> String?) {
         db.beginTransaction()

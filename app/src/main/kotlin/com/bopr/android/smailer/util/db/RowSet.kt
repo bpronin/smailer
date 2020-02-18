@@ -72,7 +72,6 @@ abstract class RowSet<R>(private val cursor: Cursor) {
 
     companion object {
 
-        @JvmStatic
         fun forLong(cursor: Cursor): Long? {
             return object : RowSet<Long>(cursor) {
 

@@ -2,15 +2,28 @@ package com.bopr.android.smailer
 
 import android.content.Context
 import android.util.Log
-import com.bopr.android.smailer.remote.RemoteControlWorker
-import com.bopr.android.smailer.sync.SyncEngine
+import com.bopr.android.smailer.ContentObserverService.Companion.enableContentObserver
+import com.bopr.android.smailer.ResendWorker.Companion.enableResendWorker
+import com.bopr.android.smailer.remote.RemoteControlWorker.Companion.enableRemoteControlWorker
+import com.bopr.android.smailer.sync.SyncEngine.Companion.startSyncEngine
 import org.slf4j.LoggerFactory
 
 object Environment {
 
     private val log = LoggerFactory.getLogger("Environment")
 
-    private fun setUpDefaultExceptionHandler() {
+    fun setupEnvironment(context: Context) {
+        log.debug("Application init")
+
+        setupDefaultExceptionHandler()
+        startSyncEngine(context)
+        enableContentObserver(context)
+        enableResendWorker(context)
+        enableRemoteControlWorker(context)
+        //todo try to put settings listeners here
+    }
+
+    private fun setupDefaultExceptionHandler() {
         val defaultHandler = requireNotNull(Thread.getDefaultUncaughtExceptionHandler())
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
             try {
@@ -22,14 +35,4 @@ object Environment {
         }
     }
 
-    fun setupEnvironment(context: Context) {
-        log.debug("Application init")
-
-        setUpDefaultExceptionHandler()
-
-        ContentObserverService.enable(context)
-        ResendWorker.enable(context)
-        RemoteControlWorker.enable(context)
-        SyncEngine.enable(context)
-    }
 }
