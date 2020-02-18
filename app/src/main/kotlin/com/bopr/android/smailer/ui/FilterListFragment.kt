@@ -11,10 +11,10 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import com.bopr.android.smailer.PhoneEventFilter
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.util.ConfirmationDialog
 import com.bopr.android.smailer.util.TagFormatter
 import com.bopr.android.smailer.util.TextUtil.isNullOrEmpty
-import com.bopr.android.smailer.util.UiUtil.showToast
+import com.bopr.android.smailer.util.ui.ConfirmationDialog
+import com.bopr.android.smailer.util.ui.UiUtil.showToast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import java.util.*
@@ -128,13 +128,13 @@ abstract class FilterListFragment : BaseFragment() {
     }
 
     private fun clearData() {
-        ConfirmationDialog(requireContext())
-                .setMessage(R.string.ask_clear_list)
-                .setAction(R.string.clear) {
-                    listAdapter.setItems(emptyList())
-                    persistItems()
-                }
-                .show()
+        ConfirmationDialog(requireContext()).apply {
+            setMessage(R.string.ask_clear_list)
+            setAction(R.string.clear) {
+                listAdapter.setItems(emptyList())
+                persistItems()
+            }
+        }.show()
     }
 
     private fun persistItems() {

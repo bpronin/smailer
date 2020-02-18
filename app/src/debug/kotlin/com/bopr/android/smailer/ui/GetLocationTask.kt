@@ -3,7 +3,7 @@ package com.bopr.android.smailer.ui
 import android.app.Activity
 import com.bopr.android.smailer.GeoCoordinates
 import com.bopr.android.smailer.GeoLocator
-import com.bopr.android.smailer.util.UiUtil.showMessage
+import com.bopr.android.smailer.util.ui.InfoDialog
 
 internal class GetLocationTask(activity: Activity, private val locator: GeoLocator)
     : LongAsyncTask<Void?, Void?, GeoCoordinates?>(activity) {
@@ -14,7 +14,9 @@ internal class GetLocationTask(activity: Activity, private val locator: GeoLocat
 
     override fun onPostExecute(result: GeoCoordinates?) {
         super.onPostExecute(result)
-        showMessage(activity, result?.format() ?: "No location received")
+        InfoDialog(activity).apply {
+            setMessage(result?.format() ?: "No location received")
+        }.show()
     }
 
 }

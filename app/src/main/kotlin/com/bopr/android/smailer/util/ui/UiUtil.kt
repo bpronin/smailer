@@ -1,20 +1,15 @@
-package com.bopr.android.smailer.util
+package com.bopr.android.smailer.util.ui
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.CharacterStyle
 import android.text.style.ForegroundColorSpan
 import android.text.style.ParagraphStyle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.BlendModeColorFilterCompat.createBlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat
@@ -147,16 +142,6 @@ object UiUtil {
     }
 
     @JvmStatic
-    fun alertDialogView(view: View): View {
-        @SuppressLint("InflateParams")
-        val container = LayoutInflater
-                .from(view.context)
-                .inflate(R.layout.alert_dialog_view_container, null) as ViewGroup
-        container.addView(view)
-        return container
-    }
-
-    @JvmStatic
     fun showToast(context: Context, text: String) {
         val toast: Toast = Toast.makeText(context, text, Toast.LENGTH_LONG)
         val view = toast.view
@@ -166,11 +151,6 @@ object UiUtil {
         view.findViewById<TextView>(android.R.id.message)?.setTextColor(
                 ContextCompat.getColor(context, R.color.colorAccentText))
         toast.show()
-    }
-
-    @JvmStatic
-    fun showMessage(context: Context, message: String) {
-        AlertDialog.Builder(context).setMessage(message).show()
     }
 
 }

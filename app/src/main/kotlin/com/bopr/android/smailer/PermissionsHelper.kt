@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
@@ -20,6 +19,7 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
 import com.bopr.android.smailer.util.TagFormatter
 import com.bopr.android.smailer.util.Util.requireNonNull
+import com.bopr.android.smailer.util.ui.InfoDialog
 import org.slf4j.LoggerFactory
 import java.util.*
 
@@ -177,11 +177,10 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
 
     private fun explainPermissions(permissions: List<String>) {
         log.debug("Explaining : $permissions")
-
-        AlertDialog.Builder(activity)
-                .setMessage(formatRationale(permissions))
-                .setPositiveButton(android.R.string.ok) { _, _ -> requestPermissions(permissions) }
-                .show()
+        InfoDialog(activity).apply {
+            setMessage(formatRationale(permissions))
+            setAction { requestPermissions(permissions) }
+        }.show()
     }
 
     private fun formatRationale(permissions: Collection<String>): String {
@@ -207,10 +206,9 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
     }
 
     private fun showDenialImpact() {
-        AlertDialog.Builder(activity)
-                .setMessage(R.string.since_permissions_not_granted)
-                .setPositiveButton(android.R.string.ok, null)
-                .show()
+        InfoDialog(activity).apply {
+            setMessage(R.string.since_permissions_not_granted)
+        }.show()
     }
 
     companion object {

@@ -14,8 +14,6 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.telephony.SmsManager.*
 import android.text.InputType
-import android.widget.EditText
-import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.preference.Preference
@@ -33,11 +31,11 @@ import com.bopr.android.smailer.util.AndroidUtil.primaryAccount
 import com.bopr.android.smailer.util.ContentUtils.contactName
 import com.bopr.android.smailer.util.TextUtil.commaJoin
 import com.bopr.android.smailer.util.TextUtil.escapeRegex
-import com.bopr.android.smailer.util.UiUtil.alertDialogView
-import com.bopr.android.smailer.util.UiUtil.showMessage
-import com.bopr.android.smailer.util.UiUtil.showToast
 import com.bopr.android.smailer.util.Util.asSet
 import com.bopr.android.smailer.util.Util.requireNonNull
+import com.bopr.android.smailer.util.ui.InfoDialog
+import com.bopr.android.smailer.util.ui.InputDialog
+import com.bopr.android.smailer.util.ui.UiUtil.showToast
 import com.google.android.gms.tasks.Tasks
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager
 import com.google.api.services.drive.DriveScopes
@@ -291,9 +289,13 @@ class DebugFragment : BasePreferenceFragment() {
                                             grantResults: IntArray) {
         if (requestCode == PERMISSIONS_REQUEST_RECEIVE_SMS) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                showMessage(appContext, "Permission granted")
+                InfoDialog(appContext).apply {
+                    setMessage("Permission granted")
+                }.show()
             } else {
-                showMessage(appContext, "Permission denied")
+                InfoDialog(appContext).apply {
+                    setMessage("Permission denied")
+                }.show()
             }
         }
     }
@@ -359,20 +361,16 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun onGetContact() {
-        val input = EditText(appContext)
-        input.inputType = InputType.TYPE_CLASS_PHONE
-
-        AlertDialog.Builder(appContext)
-                .setTitle("Phone number")
-                .setView(alertDialogView(input))
-                .setPositiveButton(android.R.string.ok) { _, _ ->
-                    val phone = input.text.toString()
-                    val contact = contactName(appContext, phone)
-                    val text = if (contact != null) "$phone: $contact" else "Contact not found"
-                    showToast(appContext, text)
-                }
-                .setNegativeButton(android.R.string.cancel, null)
-                .show()
+        InputDialog(appContext).apply {
+            setTitle("Phone number")
+            setInputType(InputType.TYPE_CLASS_PHONE)
+            setAction { value ->
+                val phone = value
+                val contact = contactName(appContext, phone)
+                val text = if (contact != null) "$phone: $contact" else "Contact not found"
+                showToast(appContext, text)
+            }
+        }.show()
     }
 
     private fun onClearPreferences() {
@@ -476,7 +474,9 @@ class DebugFragment : BasePreferenceFragment() {
                         resolveInfo.priority)
             }
         }
-        showMessage(appContext, b.toString())
+        InfoDialog(appContext).apply {
+            setMessage(b.toString())
+        }.show()
     }
 
     private fun onGoogleDriveClear() {
@@ -526,26 +526,21 @@ class DebugFragment : BasePreferenceFragment() {
 
     @SuppressLint("SetTextI18n")
     private fun onSendSms() {
-        val input = EditText(appContext)
-        input.setText("5556")
-        input.inputType = InputType.TYPE_CLASS_PHONE
-
-        AlertDialog.Builder(appContext)
-                .setTitle("Phone number")
-                .setView(input)
-                .setPositiveButton(android.R.string.ok) { _, _ ->
-                    val phone = input.text.toString()
-                    val sentIntent = PendingIntent.getBroadcast(appContext, 0, Intent("SMS_SENT"), 0)
-                    val deliveredIntent = PendingIntent.getBroadcast(appContext, 0, Intent("SMS_DELIVERED"), 0)
-                    try {
-                        getDefault().sendTextMessage(phone, null, "Debug message", sentIntent, deliveredIntent)
-                    } catch (x: Throwable) {
-                        log.error("Failed: ", x)
-                        showToast(appContext, "Failed")
-                    }
+        InputDialog(appContext).apply {
+            setTitle("Phone number")
+            setValue("5556")
+            setInputType(InputType.TYPE_CLASS_PHONE)
+            setAction { value ->
+                val sentIntent = PendingIntent.getBroadcast(appContext, 0, Intent("SMS_SENT"), 0)
+                val deliveredIntent = PendingIntent.getBroadcast(appContext, 0, Intent("SMS_DELIVERED"), 0)
+                try {
+                    getDefault().sendTextMessage(value, null, "Debug message", sentIntent, deliveredIntent)
+                } catch (x: Throwable) {
+                    log.error("Failed: ", x)
+                    showToast(appContext, "Failed")
                 }
-                .setNegativeButton(android.R.string.cancel, null)
-                .show()
+            }
+        }.show()
     }
 
     private fun senderAccount(): Account {

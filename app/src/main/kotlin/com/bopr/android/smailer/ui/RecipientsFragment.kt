@@ -20,8 +20,8 @@ import com.bopr.android.smailer.util.TextUtil.commaJoin
 import com.bopr.android.smailer.util.TextUtil.commaSplit
 import com.bopr.android.smailer.util.TextUtil.isNullOrBlank
 import com.bopr.android.smailer.util.TextUtil.isValidEmailAddress
-import com.bopr.android.smailer.util.UiUtil.showToast
-import com.bopr.android.smailer.util.UiUtil.underwivedText
+import com.bopr.android.smailer.util.ui.UiUtil.showToast
+import com.bopr.android.smailer.util.ui.UiUtil.underwivedText
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import java.util.*

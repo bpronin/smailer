@@ -7,10 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.util.TagFormatter
+import com.bopr.android.smailer.util.ui.InfoDialog
 
 /**
  * About dialog fragment.
@@ -33,10 +33,10 @@ class AboutDialogFragment : BaseDialogFragment("about_dialog") {
         versionLabel.text = formatVersion()
         versionLabel.setOnLongClickListener {
             val info = settings.getReleaseInfo()
-            AlertDialog.Builder(requireContext())
-                    .setTitle("Release info")
-                    .setMessage("Build number: " + info.number + "\nBuild time: " + info.time)
-                    .show()
+            InfoDialog(requireContext()).apply {
+                setTitle("Release info")
+                setMessage("Build number: ${info.number}\nBuild time: ${info.time}")
+            }.show()
             true
         }
 
