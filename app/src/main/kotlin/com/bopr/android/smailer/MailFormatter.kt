@@ -18,9 +18,9 @@ import com.bopr.android.smailer.util.TagFormatter
 import com.bopr.android.smailer.util.TextUtil.formatDuration
 import com.bopr.android.smailer.util.TextUtil.isNotEmpty
 import com.bopr.android.smailer.util.TextUtil.isNullOrBlank
+import com.bopr.android.smailer.util.UiUtil.eventTypePrefix
+import com.bopr.android.smailer.util.UiUtil.eventTypeText
 import com.bopr.android.smailer.util.Util.requireNonNull
-import com.bopr.android.smailer.util.ui.UiUtil.eventTypePrefix
-import com.bopr.android.smailer.util.ui.UiUtil.eventTypeText
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.text.DateFormat

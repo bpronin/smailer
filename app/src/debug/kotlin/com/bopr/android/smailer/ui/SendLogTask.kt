@@ -6,8 +6,8 @@ import com.bopr.android.smailer.GoogleMail
 import com.bopr.android.smailer.MailMessage
 import com.bopr.android.smailer.util.AndroidUtil.deviceName
 import com.bopr.android.smailer.util.AndroidUtil.primaryAccount
-import com.bopr.android.smailer.util.ui.InfoDialog
-import com.bopr.android.smailer.util.ui.UiUtil.showToast
+import com.bopr.android.smailer.util.UiUtil.showInfoDialog
+import com.bopr.android.smailer.util.UiUtil.showToast
 import com.google.api.services.gmail.GmailScopes
 import org.slf4j.LoggerFactory
 import java.io.*
@@ -52,9 +52,7 @@ internal class SendLogTask(activity: Activity, private val properties: Propertie
     override fun onPostExecute(result: Exception?) {
         super.onPostExecute(result)
         if (result != null) {
-            InfoDialog(activity).apply {
-                setMessage(result.toString())
-            }.show()
+            showInfoDialog(activity, message = result.toString())
         } else {
             showToast(activity, "Done")
         }

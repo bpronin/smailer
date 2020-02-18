@@ -31,11 +31,11 @@ import com.bopr.android.smailer.util.AndroidUtil.primaryAccount
 import com.bopr.android.smailer.util.ContentUtils.contactName
 import com.bopr.android.smailer.util.TextUtil.commaJoin
 import com.bopr.android.smailer.util.TextUtil.escapeRegex
+import com.bopr.android.smailer.util.UiUtil.showInfoDialog
+import com.bopr.android.smailer.util.UiUtil.showInputDialog
+import com.bopr.android.smailer.util.UiUtil.showToast
 import com.bopr.android.smailer.util.Util.asSet
 import com.bopr.android.smailer.util.Util.requireNonNull
-import com.bopr.android.smailer.util.ui.InfoDialog
-import com.bopr.android.smailer.util.ui.InputDialog
-import com.bopr.android.smailer.util.ui.UiUtil.showToast
 import com.google.android.gms.tasks.Tasks
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager
 import com.google.api.services.drive.DriveScopes
@@ -289,13 +289,9 @@ class DebugFragment : BasePreferenceFragment() {
                                             grantResults: IntArray) {
         if (requestCode == PERMISSIONS_REQUEST_RECEIVE_SMS) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                InfoDialog(appContext).apply {
-                    setMessage("Permission granted")
-                }.show()
+                showInfoDialog(appContext, message = "Permission granted")
             } else {
-                InfoDialog(appContext).apply {
-                    setMessage("Permission denied")
-                }.show()
+                showInfoDialog(appContext, message = "Permission denied")
             }
         }
     }
@@ -361,16 +357,16 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun onGetContact() {
-        InputDialog(appContext).apply {
-            setTitle("Phone number")
-            setInputType(InputType.TYPE_CLASS_PHONE)
-            setAction { value ->
-                val phone = value
-                val contact = contactName(appContext, phone)
-                val text = if (contact != null) "$phone: $contact" else "Contact not found"
-                showToast(appContext, text)
-            }
-        }.show()
+        showInputDialog(appContext,
+                title = "Phone number",
+                inputType = InputType.TYPE_CLASS_PHONE,
+                action = { value ->
+                    val phone = value
+                    val contact = contactName(appContext, phone)
+                    val text = if (contact != null) "$phone: $contact" else "Contact not found"
+                    showToast(appContext, text)
+                }
+        )
     }
 
     private fun onClearPreferences() {
@@ -474,9 +470,8 @@ class DebugFragment : BasePreferenceFragment() {
                         resolveInfo.priority)
             }
         }
-        InfoDialog(appContext).apply {
-            setMessage(b.toString())
-        }.show()
+
+        showInfoDialog(appContext, message = b.toString())
     }
 
     private fun onGoogleDriveClear() {
@@ -526,21 +521,21 @@ class DebugFragment : BasePreferenceFragment() {
 
     @SuppressLint("SetTextI18n")
     private fun onSendSms() {
-        InputDialog(appContext).apply {
-            setTitle("Phone number")
-            setValue("5556")
-            setInputType(InputType.TYPE_CLASS_PHONE)
-            setAction { value ->
-                val sentIntent = PendingIntent.getBroadcast(appContext, 0, Intent("SMS_SENT"), 0)
-                val deliveredIntent = PendingIntent.getBroadcast(appContext, 0, Intent("SMS_DELIVERED"), 0)
-                try {
-                    getDefault().sendTextMessage(value, null, "Debug message", sentIntent, deliveredIntent)
-                } catch (x: Throwable) {
-                    log.error("Failed: ", x)
-                    showToast(appContext, "Failed")
+        showInputDialog(appContext,
+                title = "Phone number",
+                inputType = InputType.TYPE_CLASS_PHONE,
+                value = "5556",
+                action = { value ->
+                    val sentIntent = PendingIntent.getBroadcast(appContext, 0, Intent("SMS_SENT"), 0)
+                    val deliveredIntent = PendingIntent.getBroadcast(appContext, 0, Intent("SMS_DELIVERED"), 0)
+                    try {
+                        getDefault().sendTextMessage(value, null, "Debug message", sentIntent, deliveredIntent)
+                    } catch (x: Throwable) {
+                        log.error("Failed: ", x)
+                        showToast(appContext, "Failed")
+                    }
                 }
-            }
-        }.show()
+        )
     }
 
     private fun senderAccount(): Account {

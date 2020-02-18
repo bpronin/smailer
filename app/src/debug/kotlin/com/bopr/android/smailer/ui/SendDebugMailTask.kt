@@ -5,9 +5,9 @@ import com.bopr.android.smailer.GoogleMail
 import com.bopr.android.smailer.MailMessage
 import com.bopr.android.smailer.util.AndroidUtil.deviceName
 import com.bopr.android.smailer.util.AndroidUtil.primaryAccount
+import com.bopr.android.smailer.util.UiUtil.showInfoDialog
+import com.bopr.android.smailer.util.UiUtil.showToast
 import com.bopr.android.smailer.util.Util.requireNonNull
-import com.bopr.android.smailer.util.ui.InfoDialog
-import com.bopr.android.smailer.util.ui.UiUtil.showToast
 import com.google.api.services.gmail.GmailScopes
 import java.util.*
 
@@ -36,9 +36,7 @@ internal class SendDebugMailTask(activity: Activity, private val properties: Pro
     override fun onPostExecute(result: Exception?) {
         super.onPostExecute(result)
         if (result != null) {
-            InfoDialog(activity).apply {
-                setMessage(result.toString())
-            }.show()
+            showInfoDialog(activity, result.toString())
         } else {
             showToast(activity, "Done")
         }

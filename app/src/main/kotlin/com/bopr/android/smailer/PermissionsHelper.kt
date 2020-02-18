@@ -18,8 +18,8 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
 import com.bopr.android.smailer.util.TagFormatter
+import com.bopr.android.smailer.util.UiUtil.showInfoDialog
 import com.bopr.android.smailer.util.Util.requireNonNull
-import com.bopr.android.smailer.util.ui.InfoDialog
 import org.slf4j.LoggerFactory
 import java.util.*
 
@@ -177,10 +177,9 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
 
     private fun explainPermissions(permissions: List<String>) {
         log.debug("Explaining : $permissions")
-        InfoDialog(activity).apply {
-            setMessage(formatRationale(permissions))
-            setAction { requestPermissions(permissions) }
-        }.show()
+        showInfoDialog(activity, message = formatRationale(permissions)) {
+            requestPermissions(permissions)
+        }
     }
 
     private fun formatRationale(permissions: Collection<String>): String {
@@ -206,9 +205,7 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
     }
 
     private fun showDenialImpact() {
-        InfoDialog(activity).apply {
-            setMessage(R.string.since_permissions_not_granted)
-        }.show()
+        showInfoDialog(activity, messageRes = R.string.since_permissions_not_granted)
     }
 
     companion object {
