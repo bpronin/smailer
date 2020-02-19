@@ -9,7 +9,6 @@ import com.bopr.android.smailer.PhoneEventFilter
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.util.TextUtil.escapeRegex
-import com.bopr.android.smailer.util.Util.asSet
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -43,7 +42,7 @@ class PhoneEventFilterTest {
     @Test
     fun testInSmsTrigger() {
         val filter = PhoneEventFilter()
-        filter.triggers = asSet(VAL_PREF_TRIGGER_IN_SMS)
+        filter.triggers = mutableSetOf(VAL_PREF_TRIGGER_IN_SMS)
 
         val event = createEvent(
                 isIncoming = true,
@@ -57,7 +56,7 @@ class PhoneEventFilterTest {
     @Test
     fun testPhoneBlackList() {
         val filter = PhoneEventFilter().apply {
-            triggers = asSet(VAL_PREF_TRIGGER_IN_SMS)
+            triggers = mutableSetOf(VAL_PREF_TRIGGER_IN_SMS)
             phoneBlacklist = mutableSetOf()
         }
 
@@ -69,12 +68,12 @@ class PhoneEventFilterTest {
 
         assertEquals(REASON_ACCEPTED, filter.test(event))
 
-        filter.phoneBlacklist = asSet("111", "333")
+        filter.phoneBlacklist = mutableSetOf("111", "333")
         event = event.copy(phone = "111")
 
         assertEquals(REASON_NUMBER_BLACKLISTED, filter.test(event))
 
-        filter.phoneBlacklist = asSet("+1(11)", "333")
+        filter.phoneBlacklist = mutableSetOf("+1(11)", "333")
         event = event.copy(phone = "1 11")
 
         assertEquals(REASON_NUMBER_BLACKLISTED, filter.test(event))
@@ -83,7 +82,7 @@ class PhoneEventFilterTest {
 
         assertEquals(REASON_ACCEPTED, filter.test(event))
 
-        filter.phoneBlacklist = asSet("111", "222")
+        filter.phoneBlacklist = mutableSetOf("111", "222")
         event = event.copy(phone = "222")
 
         assertEquals(REASON_NUMBER_BLACKLISTED, filter.test(event))
@@ -92,8 +91,8 @@ class PhoneEventFilterTest {
     @Test
     fun testPhoneBlackListPattern() {
         val filter = PhoneEventFilter().apply {
-            triggers = asSet(VAL_PREF_TRIGGER_MISSED_CALLS)
-            phoneBlacklist = asSet("+79628810***")
+            triggers = mutableSetOf(VAL_PREF_TRIGGER_MISSED_CALLS)
+            phoneBlacklist = mutableSetOf("+79628810***")
         }
 
         var event = createEvent(
@@ -116,7 +115,7 @@ class PhoneEventFilterTest {
     @Test
     fun testPhoneWhiteList() {
         val filter = PhoneEventFilter().apply {
-            triggers = asSet(VAL_PREF_TRIGGER_IN_SMS)
+            triggers = mutableSetOf(VAL_PREF_TRIGGER_IN_SMS)
             phoneWhitelist = mutableSetOf()
         }
 
@@ -128,7 +127,7 @@ class PhoneEventFilterTest {
 
         assertEquals(REASON_ACCEPTED, filter.test(event))
 
-        filter.phoneWhitelist = asSet("111", "333")
+        filter.phoneWhitelist = mutableSetOf("111", "333")
         event = event.copy(phone = "111")
 
         assertEquals(REASON_ACCEPTED, filter.test(event))
@@ -137,7 +136,7 @@ class PhoneEventFilterTest {
 
         assertEquals(REASON_ACCEPTED, filter.test(event))
 
-        filter.phoneWhitelist = asSet("111", "222")
+        filter.phoneWhitelist = mutableSetOf("111", "222")
         event = event.copy(phone = "222")
 
         assertEquals(REASON_ACCEPTED, filter.test(event))
@@ -146,7 +145,7 @@ class PhoneEventFilterTest {
     @Test
     fun testTextBlackList() {
         val filter = PhoneEventFilter()
-        filter.triggers = asSet(VAL_PREF_TRIGGER_IN_SMS)
+        filter.triggers = mutableSetOf(VAL_PREF_TRIGGER_IN_SMS)
         filter.textBlacklist = mutableSetOf()
 
         var event = createEvent(
@@ -156,12 +155,12 @@ class PhoneEventFilterTest {
         )
         assertEquals(REASON_ACCEPTED, filter.test(event))
 
-        filter.textBlacklist = asSet("Bob", "Ann")
+        filter.textBlacklist = mutableSetOf("Bob", "Ann")
         event = event.copy(text = "This is a message for Bob or Ann")
 
         assertEquals(REASON_TEXT_BLACKLISTED, filter.test(event))
 
-        filter.textBlacklist = asSet("Bob", "Ann")
+        filter.textBlacklist = mutableSetOf("Bob", "Ann")
         event = event.copy(text = "This is a message")
 
         assertEquals(REASON_ACCEPTED, filter.test(event))
@@ -170,8 +169,8 @@ class PhoneEventFilterTest {
     @Test
     fun testTextBlackListPattern() {
         val filter = PhoneEventFilter()
-        filter.triggers = asSet(VAL_PREF_TRIGGER_IN_SMS)
-        filter.textBlacklist = asSet(escapeRegex("(.*)Bob(.*)"))
+        filter.triggers = mutableSetOf(VAL_PREF_TRIGGER_IN_SMS)
+        filter.textBlacklist = mutableSetOf(escapeRegex("(.*)Bob(.*)"))
 
         var event = createEvent(
                 phone = "111",
@@ -180,12 +179,12 @@ class PhoneEventFilterTest {
         )
         assertEquals(REASON_TEXT_BLACKLISTED, filter.test(event))
 
-        filter.textBlacklist = asSet(escapeRegex("(.*)John(.*)"))
+        filter.textBlacklist = mutableSetOf(escapeRegex("(.*)John(.*)"))
         event = event.copy(text = "This is a message for Bob or Ann")
 
         assertEquals(REASON_ACCEPTED, filter.test(event))
 
-        filter.textBlacklist = asSet("(.*)John(.*)")
+        filter.textBlacklist = mutableSetOf("(.*)John(.*)")
         event = event.copy(text = "This is a message for (.*)John(.*)")
 
         assertEquals(REASON_TEXT_BLACKLISTED, filter.test(event))
@@ -194,7 +193,7 @@ class PhoneEventFilterTest {
     @Test
     fun testTextWhiteList() {
         val filter = PhoneEventFilter()
-        filter.triggers = asSet(VAL_PREF_TRIGGER_IN_SMS)
+        filter.triggers = mutableSetOf(VAL_PREF_TRIGGER_IN_SMS)
         filter.textWhitelist = mutableSetOf()
 
         var event = createEvent(
@@ -204,12 +203,12 @@ class PhoneEventFilterTest {
         )
         assertEquals(REASON_ACCEPTED, filter.test(event))
 
-        filter.textWhitelist = asSet("Bob", "Ann")
+        filter.textWhitelist = mutableSetOf("Bob", "Ann")
         event = event.copy(text = "This is a message for Bob or Ann")
 
         assertEquals(REASON_ACCEPTED, filter.test(event))
 
-        filter.textWhitelist = asSet("Bob", "Ann")
+        filter.textWhitelist = mutableSetOf("Bob", "Ann")
         event = event.copy(text = "This is a message")
 
         assertEquals(REASON_ACCEPTED, filter.test(event))

@@ -3,12 +3,11 @@ package com.bopr.android.smailer.util
 import android.util.Patterns.EMAIL_ADDRESS
 import java.io.InputStream
 import java.util.*
-import java.util.regex.Pattern
 import kotlin.math.abs
 
 object TextUtil {
 
-    val QUOTATION_PATTERN: Pattern = Pattern.compile("\"([^\"]*)\"")
+    private val COMMA_ESCAPED = Regex("(?<!/),")  /* matches commas not preceded by "/" */
     private const val REGEX_ = "REGEX:"
 
     fun escapeRegex(s: String): String {
@@ -26,16 +25,19 @@ object TextUtil {
     }
 
     fun isQuoted(s: String?): Boolean {
-        return !s.isNullOrBlank() && QUOTATION_PATTERN.matcher(s).matches()
+        return !s.isNullOrEmpty() && s.first() == '\"' && s.last() == '\"'
     }
 
     fun commaJoin(values: Collection<*>): String {
-        return values.joinToString(",")
+        return values.joinToString(",") {
+            it.toString().replace(",", "/,")
+        }
     }
 
     fun commaSplit(s: String): List<String> {
-        //todo escape commas in text
-        return s.split(",")
+        return s.split(COMMA_ESCAPED).map {
+            it.trim().replace("/,", ",")
+        }
     }
 
     fun decimalToDMS(coordinate: Double, degreeSymbol: String, minuteSymbol: String,
@@ -95,53 +97,4 @@ object TextUtil {
         return false
     }
 
-//
-//fun normalizePhone(phone: String): String {
-//    return phone.replace("[^A-Za-z0-9*.]", "").toUpperCase(Locale.ROOT)
-//}
-//
-//fun comparePhones(p1: String, p2: String): Int {
-//    return normalizePhone(p1).compareTo(normalizePhone(p2))
-//}
-
-//fun phonesEqual(p1: String?, p2: String?): Boolean {
-//    if (p1 != null) {
-//        if (p2 != null) {
-//            return comparePhones(p1, p2) == 0
-//        }
-//    } else if (p2 == null) {
-//        return true
-//    }
-//    return false
-////    return p1.equals(p2) || comparePhones(p1, p2) == 0
-//}
-//
-//fun phoneToRegEx(phone: String): String {
-//    return normalizePhone(phone).replace("\\*".toRegex(), "(.*)")
-//}
-//
-//fun extractPhone(text: String?): String? {
-//    if (!text.isNullOrBlank()) {
-//        val matcher = PHONE_PATTERN.matcher(text)
-//        if (matcher.find()) {
-//            return matcher.group()
-//        }
-//    }
-//    return null
-//}
-//
-///**
-// * Returns phone as it is if it is regular or quoted otherwise
-// */
-//fun escapePhone(phone: String): String? {
-//    return if (PHONE_PATTERN.matcher(phone).matches()) phone else "\"" + phone + "\""
-//}
-
-//fun Collection<String>.findPhone(phone: String): String? {
-//    return this.find { s -> phonesEqual(s, phone) }
-//}
-//
-//fun Collection<String>.containsPhone(phone: String): Boolean {
-//    return this.findPhone(phone) != null
-//}
 }

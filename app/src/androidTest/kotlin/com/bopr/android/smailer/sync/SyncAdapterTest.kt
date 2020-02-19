@@ -9,7 +9,6 @@ import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_BLACKLIST
 import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_TIME
 import com.bopr.android.smailer.util.AndroidUtil.primaryAccount
-import com.bopr.android.smailer.util.Util.asSet
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -47,7 +46,7 @@ class SyncAdapterTest : BaseTest() {
                 .apply()
         sync.sync()
 
-        assertEquals(asSet("A", "B", "C"), settings.getFilter().phoneBlacklist)
+        assertEquals(setOf("A", "B", "C"), settings.getFilter().phoneBlacklist)
 
         settings.edit()
                 .putLong(PREF_SYNC_TIME, 1) /* earlier than previous */
@@ -55,7 +54,7 @@ class SyncAdapterTest : BaseTest() {
                 .apply()
         sync.sync()
 
-        assertEquals(asSet("A", "B", "C"), settings.getFilter().phoneBlacklist)
+        assertEquals(setOf("A", "B", "C"), settings.getFilter().phoneBlacklist)
 
         settings.edit()
                 .putLong(PREF_SYNC_TIME, 3) /* later than previous */
@@ -63,7 +62,7 @@ class SyncAdapterTest : BaseTest() {
                 .apply()
         sync.sync()
 
-        assertEquals(asSet("A", "B"), settings.getFilter().phoneBlacklist)
+        assertEquals(setOf("A", "B"), settings.getFilter().phoneBlacklist)
 
         sync.dispose()
     }

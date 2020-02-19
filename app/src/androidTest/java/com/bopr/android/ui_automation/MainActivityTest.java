@@ -9,6 +9,7 @@ import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.GeoCoordinates;
 import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
+import com.bopr.android.smailer.Settings;
 import com.bopr.android.smailer.ui.MainActivity;
 
 import org.junit.Test;
@@ -23,7 +24,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.bopr.android.smailer.PhoneEvent.REASON_ACCEPTED;
 import static com.bopr.android.smailer.PhoneEvent.STATE_PENDING;
-import static com.bopr.android.smailer.Settings.DEFAULT_TRIGGERS;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
@@ -64,7 +64,7 @@ public class MainActivityTest extends BaseActivityTest {
         String[] titles = RULE.getActivity().getResources().getStringArray(R.array.trigger_names);
 
         /* check settings */
-        assertThat(settings.getStringSet(PREF_EMAIL_TRIGGERS, null), equalTo(DEFAULT_TRIGGERS));
+        assertThat(settings.getStringSet(PREF_EMAIL_TRIGGERS), equalTo(Settings.Companion.getDEFAULT_TRIGGERS()));
 
         /* check all and press cancel */
         onView(withText(R.string.triggers)).perform(click());
@@ -76,7 +76,7 @@ public class MainActivityTest extends BaseActivityTest {
         onData(allOf(is(instanceOf(String.class)), is(titles[4]))).perform(click());
         onView(withText(android.R.string.cancel)).perform(click());
 
-        assertThat(settings.getStringSet(PREF_EMAIL_TRIGGERS, null), allOf(
+        assertThat(settings.getStringSet(PREF_EMAIL_TRIGGERS), allOf(
                 containsInAnyOrder(VAL_PREF_TRIGGER_IN_SMS, VAL_PREF_TRIGGER_MISSED_CALLS),
                 not(containsInAnyOrder(VAL_PREF_TRIGGER_OUT_SMS, VAL_PREF_TRIGGER_IN_CALLS, VAL_PREF_TRIGGER_OUT_CALLS))
         ));
@@ -92,7 +92,7 @@ public class MainActivityTest extends BaseActivityTest {
         onData(allOf(is(instanceOf(String.class)), is(titles[4]))).perform(click());
         onView(withText(android.R.string.ok)).perform(click());
 
-        assertThat(settings.getStringSet(PREF_EMAIL_TRIGGERS, null), allOf(
+        assertThat(settings.getStringSet(PREF_EMAIL_TRIGGERS), allOf(
                 containsInAnyOrder(VAL_PREF_TRIGGER_OUT_CALLS, VAL_PREF_TRIGGER_IN_CALLS, VAL_PREF_TRIGGER_OUT_SMS),
                 not(containsInAnyOrder(VAL_PREF_TRIGGER_IN_SMS, VAL_PREF_TRIGGER_MISSED_CALLS))
         ));
@@ -115,7 +115,7 @@ public class MainActivityTest extends BaseActivityTest {
 
     @Test
     public void testLogView() {
-        Database database = new Database(RULE.getActivity());
+        Database database = new Database(RULE.getActivity(), "test.sqlite");
         database.clearEvents();
         database.putEvent(new PhoneEvent("10", true, 10000L, 20000L, false, "SMS text",
                 new GeoCoordinates(10.5, 20.5), "Test 10", STATE_PENDING, "device", REASON_ACCEPTED, false));

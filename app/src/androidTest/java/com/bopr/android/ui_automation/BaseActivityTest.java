@@ -32,9 +32,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.withChild;
 import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static com.bopr.android.smailer.Settings.DEFAULT;
-import static com.bopr.android.smailer.Settings.DEFAULT_CONTENT;
-import static com.bopr.android.smailer.Settings.DEFAULT_TRIGGERS;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_CONTENT;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_LOCALE;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_TRIGGERS;
@@ -67,9 +64,9 @@ public class BaseActivityTest {
         settings
                 .edit()
                 .clear()
-                .putStringSet(PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS)
-                .putStringSet(PREF_EMAIL_CONTENT, DEFAULT_CONTENT)
-                .putString(PREF_EMAIL_LOCALE, DEFAULT)
+                .putStringSet(PREF_EMAIL_TRIGGERS, Settings.Companion.getDEFAULT_TRIGGERS())
+                .putStringSet(PREF_EMAIL_CONTENT, Settings.Companion.getDEFAULT_CONTENT())
+                .putString(PREF_EMAIL_LOCALE, Settings.VAL_PREF_DEFAULT)
                 .putBoolean(PREF_RESEND_UNSENT, true)
                 .apply();
     }
