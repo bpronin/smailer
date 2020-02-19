@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.ui.RecipientsFragment.Item
 import com.bopr.android.smailer.util.ContentUtils.createPickContactEmailIntent
 import com.bopr.android.smailer.util.ContentUtils.emailAddressFromIntent
 
@@ -17,17 +16,17 @@ import com.bopr.android.smailer.util.ContentUtils.emailAddressFromIntent
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class EditRecipientDialogFragment : BaseEditDialogFragment<Item>("edit_recipient_dialog") {
+class EditEmailDialogFragment : BaseEditDialogFragment<String>("edit_recipient_dialog") {
 
     private lateinit var editText: TextView
-    private var initialValue: Item? = null
+    private var initialValue: String? = null
 
     override fun onCreateDialogView(inflater: LayoutInflater, root: ViewGroup?): View {
         val view = inflater.inflate(R.layout.editor_email, root, false)
 
         editText = view.findViewById<EditText>(android.R.id.edit).apply {
             addTextChangedListener(EmailTextValidator(this))
-            setText(initialValue?.address)
+            setText(initialValue)
         }
 
         view.findViewById<TextView>(android.R.id.message).setText(R.string.email_address)
@@ -39,12 +38,12 @@ class EditRecipientDialogFragment : BaseEditDialogFragment<Item>("edit_recipient
         return view
     }
 
-    override fun setValue(value: Item?) {
+    override fun setValue(value: String?) {
         initialValue = value
     }
 
-    override fun getValue(): Item? {
-        return Item(editText.text.toString())
+    override fun getValue(): String? {
+        return editText.text.toString()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {

@@ -95,7 +95,7 @@
     <string name="phone_remotely_added_to_whitelist">Номер {text} удаленно добавлен в белый список."</string>
     <string name="phone_remotely_removed_from_blacklist">Номер {text} удаленно удален из черного списка."</string>
     <string name="phone_remotely_removed_from_whitelist">Номер {text} удаленно удален из белого списка."</string>
-    <string name="phone_removed_from_filter">{number} удален из фильтра</string>
+    <string name="phone_removed_from_filter">%1$s удален из фильтра</string>
     <string name="recipient_already_exists">Получатель %1$s уже существует</string>
     <string name="recipient_device">Адресат:</string>
     <string name="recipients">Получатели</string>
@@ -143,6 +143,8 @@
     <string name="you_had_outgoing_call">Исходящий звонок длительностью {duration}.</string>
     <string name="reset_dialogs">Сбросить состояние диалогов</string>
     <string name="proceed">Продолжить</string>
+    <string name="add_to_blacklist">Добавить в черный список</string>
+    <string name="add_to_whitelist">Добавить в белый список</string>
 
     <string-array name="trigger_names">
         <item>Входящие SMS</item>

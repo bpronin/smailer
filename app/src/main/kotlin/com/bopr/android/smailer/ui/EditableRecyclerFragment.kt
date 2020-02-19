@@ -5,13 +5,17 @@ import android.view.ContextMenu
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat.getColor
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.*
 import com.bopr.android.smailer.R
+import com.bopr.android.smailer.util.UiUtil.showToast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 
-abstract class RecyclerFragment<I, H : ViewHolder>() : BaseFragment() {
+abstract class EditableRecyclerFragment<I, H : ViewHolder>() : BaseFragment() {
 
     private lateinit var recycler: RecyclerView
     private lateinit var listAdapter: ListAdapter
@@ -35,7 +39,25 @@ abstract class RecyclerFragment<I, H : ViewHolder>() : BaseFragment() {
             adapter = listAdapter
         }
 
-        view.findViewById<FloatingActionButton>(R.id.button_add).visibility = View.GONE
+        val actionButton = view.findViewById<FloatingActionButton>(R.id.button_add)
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+
+            override fun onMove(recyclerView: RecyclerView, viewHolder: ViewHolder,
+                                target: ViewHolder): Boolean {
+                return false
+            }
+
+            override fun onSwiped(holder: ViewHolder, swipeDir: Int) {
+                selectedItemPosition = holder.adapterPosition
+                removeSelectedItem()
+            }
+        }).also {
+            it.attachToRecyclerView(recycler)
+        }
+
+        actionButton.setOnClickListener {
+            editItem(NO_POSITION)
+        }
 
         return view
     }
@@ -57,7 +79,21 @@ abstract class RecyclerFragment<I, H : ViewHolder>() : BaseFragment() {
         }
     }
 
+    protected fun editSelectedItem() {
+        if (selectedItemPosition != NO_POSITION) {
+            editItem(selectedItemPosition)
+        }
+    }
+
+    protected fun removeSelectedItem() {
+        if (selectedItemPosition != NO_POSITION) {
+            removeItems(selectedItemPosition)
+        }
+    }
+
     protected abstract fun getItems(): Collection<I>
+
+    protected open fun putItems(items: Collection<I>) {}
 
     protected open fun getItemTitle(item: I): String {
         return item.toString()
@@ -71,15 +107,69 @@ abstract class RecyclerFragment<I, H : ViewHolder>() : BaseFragment() {
         return true
     }
 
-    protected open fun onCreateItemContextMenu(menu: ContextMenu, item: I) {}
-
-    protected open fun onItemClick(item: I) {}
+    protected open fun onItemClick(item: I, position: Int) {
+        editSelectedItem()
+    }
 
     protected open fun onItemLongClick(item: I) {}
+
+    protected open fun onCreateItemContextMenu(menu: ContextMenu, item: I) {}
 
     protected abstract fun createViewHolder(parent: ViewGroup): H
 
     protected abstract fun bindViewHolder(item: I, holder: H)
+
+    protected abstract fun createEditDialog(): BaseEditDialogFragment<I>
+
+    private fun persistItems() {
+        putItems(listAdapter.getItems())
+    }
+
+    private fun removeItems(vararg positions: Int) {
+        val savedItems = ArrayList(listAdapter.getItems())
+        listAdapter.removeItems(positions)
+        persistItems()
+        showUndoRemoved(positions.size, savedItems)
+    }
+
+    private fun showUndoRemoved(removedCount: Int, savedItems: List<I>) {
+        val title = if (removedCount == 1) {
+            getString(R.string.item_removed)
+        } else {
+            getString(R.string.items_removed).format(removedCount)
+        }
+
+        Snackbar.make(recycler, title, Snackbar.LENGTH_LONG)
+                .setActionTextColor(getColor(requireContext(), R.color.colorAccentText))
+                .setAction(R.string.undo) {
+                    listAdapter.setItems(savedItems)
+                    persistItems()
+                }
+                .show()
+    }
+
+    private fun editItem(position: Int) {
+        createEditDialog().apply {
+            val item = listAdapter.getItems()[position]
+
+            setTitle(if (item == null) R.string.add else R.string.edit)
+            setValue(item)
+            setOnOkClicked { newItem ->
+                if (newItem != null) {
+                    val exists = listAdapter.getItems().any {
+                        isSameItem(it, newItem)
+                    }
+                    if (exists) {
+                        showToast(requireContext(),
+                                getString(R.string.item_already_exists).format(getItemTitle(newItem)))
+                    } else if (isValidItem(newItem)) {
+                        listAdapter.replaceItem(position, newItem)
+                        persistItems()
+                    }
+                }
+            }
+        }.showDialog(requireActivity())
+    }
 
     private fun updateEmptyText() {
         view?.apply {
@@ -88,7 +178,7 @@ abstract class RecyclerFragment<I, H : ViewHolder>() : BaseFragment() {
         }
     }
 
-    protected inner class ListAdapter : Adapter<H>() {
+    private inner class ListAdapter : Adapter<H>() {
 
         private lateinit var items: MutableList<I>
 
@@ -103,7 +193,7 @@ abstract class RecyclerFragment<I, H : ViewHolder>() : BaseFragment() {
             holder.itemView.apply {
                 setOnClickListener {
                     selectedItemPosition = holder.adapterPosition
-                    onItemClick(item)
+                    onItemClick(item, position)
                 }
                 setOnLongClickListener {
                     selectedItemPosition = holder.adapterPosition
@@ -129,7 +219,7 @@ abstract class RecyclerFragment<I, H : ViewHolder>() : BaseFragment() {
             notifyDataSetChanged()
         }
 
-        fun replaceItemAt(position: Int, item: I) {
+        fun replaceItem(position: Int, item: I) {
             if (position == NO_POSITION) {
                 items.add(item)
             } else {
@@ -138,7 +228,7 @@ abstract class RecyclerFragment<I, H : ViewHolder>() : BaseFragment() {
             notifyDataSetChanged()
         }
 
-        fun removeItemsAt(positions: IntArray) {
+        fun removeItems(positions: IntArray) {
             for (position in positions) {
                 items.removeAt(position)
             }

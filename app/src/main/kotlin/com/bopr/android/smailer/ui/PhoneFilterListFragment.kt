@@ -7,7 +7,7 @@ package com.bopr.android.smailer.ui
  */
 abstract class PhoneFilterListFragment : FilterListFragment() {
 
-    override fun createEditDialog(): BaseEditDialogFragment<String>? {
+    override fun createEditDialog(): BaseEditDialogFragment<String> {
         return EditPhoneDialogFragment()
     }
 

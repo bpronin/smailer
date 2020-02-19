@@ -97,7 +97,7 @@
     <string name="phone_remotely_added_to_whitelist">Phone {text} remotely added to whitelist."</string>
     <string name="phone_remotely_removed_from_blacklist">Phone {text} remotely removed from blacklist."</string>
     <string name="phone_remotely_removed_from_whitelist">Phone {text} remotely removed from whitelist."</string>
-    <string name="phone_removed_from_filter">{number} removed from filter</string>
+    <string name="phone_removed_from_filter">%1$s removed from filter</string>
     <string name="recipient_already_exists">Recipient %1$s is already exists</string>
     <string name="recipient_device">Recipient:</string>
     <string name="recipients">Recipients</string>
@@ -150,6 +150,8 @@
     <string translatable="false" name="send_sms_to_sender_reply_body">send SMS message \"{sms_text}\" to {phone}"</string>
     <string name="reset_dialogs">Reset dialogs</string>
     <string name="proceed">Proceed</string>
+    <string name="add_to_blacklist">Add to blacklist</string>
+    <string name="add_to_whitelist">Add to whitelist</string>
 
     <string-array name="trigger_names">
         <item>Incoming SMS</item>

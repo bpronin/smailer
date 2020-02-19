@@ -13,7 +13,7 @@ import com.bopr.android.smailer.util.Dialogs
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-abstract class FilterListFragment : RecyclerFragment<String, Holder>() {
+abstract class FilterListFragment : EditableRecyclerFragment<String, Holder>() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_list, menu)

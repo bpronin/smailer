@@ -9,7 +9,7 @@ import com.bopr.android.smailer.util.TextUtil.unescapeRegex
  */
 abstract class TextFilterListFragment : FilterListFragment() {
 
-    override fun createEditDialog(): BaseEditDialogFragment<String>? {
+    override fun createEditDialog(): BaseEditDialogFragment<String> {
         return EditTextDialogFragment()
     }
 

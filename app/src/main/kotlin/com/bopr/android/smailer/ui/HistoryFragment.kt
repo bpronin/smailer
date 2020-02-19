@@ -10,6 +10,7 @@ import android.text.format.DateFormat
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.StringRes
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bopr.android.smailer.Database
 import com.bopr.android.smailer.Database.Companion.registerDatabaseListener
@@ -38,7 +39,7 @@ import com.bopr.android.smailer.util.UiUtil.showToast
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(false) {
+class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
 
     private lateinit var database: Database
     private lateinit var phoneEventFilter: PhoneEventFilter
@@ -91,6 +92,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(false) {
         if (item.state != STATE_PENDING) {
             menu.removeItem(R.id.action_ignore)
         }
+
         val blacklisted = containsPhone(phoneEventFilter.phoneBlacklist, item.phone)
         val whitelisted = containsPhone(phoneEventFilter.phoneWhitelist, item.phone)
 
@@ -130,6 +132,10 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(false) {
         }
     }
 
+    override fun onItemClick(item: PhoneEvent) {
+        HistoryDetailsDialogFragment(item).showDialog(requireActivity())
+    }
+
     override fun getItems(): Collection<PhoneEvent> {
         phoneEventFilter = settings.getFilter()
         return database.events.toList()
@@ -152,15 +158,12 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(false) {
         holder.textView.isEnabled = item.stateReason and REASON_TEXT_BLACKLISTED == 0
         holder.phoneView.isEnabled = item.stateReason and REASON_NUMBER_BLACKLISTED == 0
 
-        markAsRead(item)
-    }
-
-    override fun onItemClick(item: PhoneEvent, position: Int) {
-        HistoryDetailsDialogFragment(item).showDialog(requireActivity())
+        markItemAsRead(item)
     }
 
     private fun onClearData() {
-        showConfirmationDialog(requireContext(), messageRes = R.string.ask_clear_history,
+        showConfirmationDialog(requireContext(),
+                messageRes = R.string.ask_clear_history,
                 buttonTextRes = R.string.clear) {
             database.clearEvents()
             database.notifyChanged()
@@ -173,15 +176,11 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(false) {
     }
 
     private fun onAddToBlacklist() {
-        addToPhoneList(phoneEventFilter.phoneBlacklist) {
-            settings.edit().putFilter(phoneEventFilter).apply()
-        }
+        addSelectedItemToFilter(phoneEventFilter.phoneBlacklist, R.string.add_to_blacklist)
     }
 
     private fun onAddToWhitelist() {
-        addToPhoneList(phoneEventFilter.phoneWhitelist) {
-            settings.edit().putFilter(phoneEventFilter).apply()
-        }
+        addSelectedItemToFilter(phoneEventFilter.phoneWhitelist, R.string.add_to_whitelist)
     }
 
     private fun onMarkAsIgnored() {
@@ -194,20 +193,20 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(false) {
 
     private fun onRemoveFromLists() {
         getSelectedItem()?.let {
-            val number = it.phone
-            removeFromPhoneLists(phoneEventFilter.phoneWhitelist, number)
-            removeFromPhoneLists(phoneEventFilter.phoneBlacklist, number)
+            removeFromFilter(phoneEventFilter.phoneWhitelist, it.phone)
+            removeFromFilter(phoneEventFilter.phoneBlacklist, it.phone)
+
             settings.edit().putFilter(phoneEventFilter).apply()
-            showToast(requireContext(), formatter.pattern(R.string.phone_removed_from_filter)
-                    .put("number", number)
-                    .format())
+
+            showToast(requireContext(),
+                    getString(R.string.phone_removed_from_filter).format(it.phone))
         }
     }
 
-    private fun addToPhoneList(list: MutableSet<String>, commit: () -> Unit) {
+    private fun addSelectedItemToFilter(list: MutableSet<String>, @StringRes titleRes: Int) {
         getSelectedItem()?.let {
             EditPhoneDialogFragment().apply {
-                setTitle(R.string.add)
+                setTitle(titleRes)
                 setValue(it.phone)
                 setOnOkClicked { value ->
                     if (!value.isNullOrEmpty()) {
@@ -216,7 +215,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(false) {
                                     getString(R.string.item_already_exists).format(value))
                         } else {
                             list.add(value)
-                            commit()
+                            settings.edit().putFilter(phoneEventFilter).apply()
                         }
                     }
                 }
@@ -224,11 +223,11 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(false) {
         }
     }
 
-    private fun removeFromPhoneLists(list: MutableSet<String>, number: String) {
+    private fun removeFromFilter(list: MutableSet<String>, number: String) {
         list.remove(findPhone(list, number))
     }
 
-    private fun markAsRead(event: PhoneEvent) {
+    private fun markItemAsRead(event: PhoneEvent) {
         if (!event.isRead) {
             event.isRead = true
             database.putEvent(event)
@@ -242,8 +241,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(false) {
             event.isMissed ->
                 getString(R.string.missed_call)
             else ->
-                formatter
-                        .pattern(R.string.call_of_duration_short)
+                formatter.pattern(R.string.call_of_duration_short)
                         .put("duration", formatDuration(event.callDuration))
                         .format()
         }

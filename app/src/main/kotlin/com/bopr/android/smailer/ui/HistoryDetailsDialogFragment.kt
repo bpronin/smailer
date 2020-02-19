@@ -28,7 +28,7 @@ import com.bopr.android.smailer.util.UiUtil.eventTypeText
 class HistoryDetailsDialogFragment(private val event: PhoneEvent) : BaseDialogFragment("log_details_dialog") {
 
     override fun onCreateDialogView(inflater: LayoutInflater, root: ViewGroup?): View {
-        return inflater.inflate(R.layout.fragment_log_details, root, false)
+        return inflater.inflate(R.layout.dialog_history_details, root, false)
                 .apply {
                     findViewById<ImageView>(R.id.image_event_type).setImageResource(eventTypeImage(event))
                     findViewById<ImageView>(R.id.image_event_direction).setImageResource(eventDirectionImage(event))

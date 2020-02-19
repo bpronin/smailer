@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.ui.RecipientsFragment.Holder
-import com.bopr.android.smailer.ui.RecipientsFragment.Item
 import com.bopr.android.smailer.util.TextUtil.isValidEmailAddress
 import com.bopr.android.smailer.util.UiUtil.underwivedText
 
@@ -20,7 +19,7 @@ import com.bopr.android.smailer.util.UiUtil.underwivedText
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class RecipientsFragment : RecyclerFragment<Item, Holder>() {
+class RecipientsFragment : EditableRecyclerFragment<String, Holder>() {
 
     private lateinit var settingsListener: SettingsListener
 
@@ -35,26 +34,18 @@ class RecipientsFragment : RecyclerFragment<Item, Holder>() {
         super.onDestroy()
     }
 
-    override fun getItems(): Collection<Item> {
-        return settings.getCommaList(PREF_RECIPIENTS_ADDRESS).sorted().map { Item(it) }
+    override fun getItems(): Collection<String> {
+        return settings.getCommaList(PREF_RECIPIENTS_ADDRESS).sorted()
     }
 
-    override fun putItems(items: Collection<Item>) {
+    override fun putItems(items: Collection<String>) {
         settings.edit()
-                .putCommaSet(PREF_RECIPIENTS_ADDRESS, items.map { it.address })
+                .putCommaSet(PREF_RECIPIENTS_ADDRESS, items)
                 .apply()
     }
 
-    override fun getItemTitle(item: Item): String {
-        return item.address
-    }
-
-    override fun isValidItem(item: Item): Boolean {
-        return !item.address.isBlank()
-    }
-
-    override fun isSameItem(item: Item, other: Item): Boolean {
-        return item.address == other.address
+    override fun isValidItem(item: String): Boolean {
+        return !item.isBlank()
     }
 
     override fun createViewHolder(parent: ViewGroup): Holder {
@@ -62,19 +53,17 @@ class RecipientsFragment : RecyclerFragment<Item, Holder>() {
         return Holder(view)
     }
 
-    override fun bindViewHolder(item: Item, holder: Holder) {
+    override fun bindViewHolder(item: String, holder: Holder) {
         holder.textView.text =
-                if (isValidEmailAddress(item.address))
-                    item.address
+                if (isValidEmailAddress(item))
+                    item
                 else
-                    underwivedText(requireContext(), item.address)
+                    underwivedText(requireContext(), item)
     }
 
-    override fun createEditDialog(): BaseEditDialogFragment<Item>? {
-        return EditRecipientDialogFragment()
+    override fun createEditDialog(): BaseEditDialogFragment<String> {
+        return EditEmailDialogFragment()
     }
-
-    class Item(val address: String)
 
     inner class Holder(view: View) : ViewHolder(view) {
 
