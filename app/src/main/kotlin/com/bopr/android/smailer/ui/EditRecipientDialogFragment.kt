@@ -1,6 +1,6 @@
 package com.bopr.android.smailer.ui
 
-import android.app.Activity
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
@@ -32,10 +32,8 @@ class EditRecipientDialogFragment : BaseEditDialogFragment<Item>("edit_recipient
 
         view.findViewById<TextView>(android.R.id.message).setText(R.string.email_address)
 
-        view.findViewById<View>(R.id.button_browse_contacts).apply {
-            setOnClickListener {
-                startActivityForResult(createPickContactEmailIntent(), PICK_CONTACT_REQUEST)
-            }
+        view.findViewById<View>(R.id.button_browse_contacts).setOnClickListener {
+            startActivityForResult(createPickContactEmailIntent(), PICK_CONTACT_REQUEST)
         }
 
         return view
@@ -50,13 +48,13 @@ class EditRecipientDialogFragment : BaseEditDialogFragment<Item>("edit_recipient
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        if (requestCode == PICK_CONTACT_REQUEST && resultCode == Activity.RESULT_OK) {
-            editText.text = emailAddressFromIntent(requireContext(), intent!!)
+        if (intent != null && requestCode == PICK_CONTACT_REQUEST && resultCode == RESULT_OK) {
+            editText.text = emailAddressFromIntent(requireContext(), intent)
         }
     }
 
     companion object {
-        private const val PICK_CONTACT_REQUEST = 100
 
+        private const val PICK_CONTACT_REQUEST = 1008
     }
 }

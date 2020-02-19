@@ -35,11 +35,11 @@ class RecipientsFragment : RecyclerFragment<Item, ItemViewHolder>() {
         super.onDestroy()
     }
 
-    override fun loadItems(): List<Item> {
+    override fun loadItems(): Collection<Item> {
         return settings.getCommaList(PREF_RECIPIENTS_ADDRESS).sorted().map { Item(it) }
     }
 
-    override fun saveItems(items: List<Item>) {
+    override fun saveItems(items: Collection<Item>) {
         settings.edit()
                 .putCommaSet(PREF_RECIPIENTS_ADDRESS, items.map { it.address })
                 .apply()

@@ -16,14 +16,14 @@ import com.google.android.material.snackbar.Snackbar
 
 abstract class RecyclerFragment<I, H : ViewHolder> : BaseFragment() {
 
-    private lateinit var listAdapter: ListAdapter
-    private lateinit var listView: RecyclerView
+    private lateinit var recycler: RecyclerView
+    private lateinit var adapter: ListAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_recycler, container, false)
 
-        listView = view.findViewById<RecyclerView>(android.R.id.list).apply {
+        recycler = view.findViewById<RecyclerView>(android.R.id.list).apply {
             addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
         }
 
@@ -35,14 +35,14 @@ abstract class RecyclerFragment<I, H : ViewHolder> : BaseFragment() {
             }
 
             override fun onSwiped(holder: ViewHolder, swipeDir: Int) {
-                removeItemsAt(holder.adapterPosition)
+                removeItems(holder.adapterPosition)
             }
         }).also {
-            it.attachToRecyclerView(listView)
+            it.attachToRecyclerView(recycler)
         }
 
-        view.findViewById<FloatingActionButton>(R.id.button_add).apply {
-            setOnClickListener { addItem() }
+        view.findViewById<FloatingActionButton>(R.id.button_add).setOnClickListener {
+            editItem(null, -1)
         }
 
         reloadItems()
@@ -50,9 +50,9 @@ abstract class RecyclerFragment<I, H : ViewHolder> : BaseFragment() {
         return view
     }
 
-    protected abstract fun loadItems(): List<I>
+    protected abstract fun loadItems(): Collection<I>
 
-    protected abstract fun saveItems(items: List<I>)
+    protected abstract fun saveItems(items: Collection<I>)
 
     protected abstract fun getItemTitle(item: I): String
 
@@ -67,7 +67,7 @@ abstract class RecyclerFragment<I, H : ViewHolder> : BaseFragment() {
     protected abstract fun createEditDialog(): BaseEditDialogFragment<I>
 
     protected fun reloadItems() {
-        listAdapter = ListAdapter().apply {
+        adapter = ListAdapter().apply {
             registerAdapterDataObserver(object : AdapterDataObserver() {
 
                 override fun onChanged() {
@@ -75,130 +75,108 @@ abstract class RecyclerFragment<I, H : ViewHolder> : BaseFragment() {
                 }
             })
 
-            items = loadItems()
+            setItems(loadItems())
         }
-        listView.adapter = listAdapter
+        recycler.adapter = adapter
     }
 
-    private fun saveItems() {
-        saveItems(listAdapter.items)
+    private fun persistItems() {
+        saveItems(adapter.getItems())
     }
 
-    private fun updateEmptyText() {
-        view?.apply {
-            findViewById<View>(R.id.text_empty).visibility =
-                    if (listAdapter.itemCount == 0) View.VISIBLE else View.GONE
+    private fun removeItems(vararg positions: Int) {
+        val savedItems = ArrayList(adapter.getItems())
+        adapter.removeItems(positions)
+        persistItems()
+        showUndoRemoved(positions.size, savedItems)
+    }
+
+    private fun showUndoRemoved(removedCount: Int, savedItems: List<I>) {
+        val title = if (removedCount == 1) {
+            getString(R.string.item_removed)
+        } else {
+            getString(R.string.items_removed).format(removedCount)
         }
+
+        Snackbar.make(recycler, title, Snackbar.LENGTH_LONG)
+                .setActionTextColor(getColor(requireContext(), R.color.colorAccentText))
+                .setAction(R.string.undo) {
+                    adapter.setItems(savedItems)
+                    persistItems()
+                }
+                .show()
     }
 
-    private fun addItem() {
-        showItemEditor(null)
-    }
-
-    private fun editItem(item: I) {
-        showItemEditor(item)
-    }
-
-    private fun removeItemsAt(vararg positions: Int) {
-        val (removedItems, savedItems) = listAdapter.removeItemsAt(positions)
-        saveItems()
-        showUndoAction(removedItems, savedItems)
-    }
-
-    private fun undoRemove(savedItems: List<I>) {
-        listAdapter.items = savedItems
-        saveItems()
-    }
-
-    private fun isItemExists(item: I): Boolean {
-        return listAdapter.items.any { isSameItem(item, it) }
-    }
-
-    private fun showItemEditor(item: I?) {
+    private fun editItem(item: I?, position: Int) {
         createEditDialog().apply {
             setTitle(if (item == null) R.string.add else R.string.edit)
             setValue(item)
-            setOnOkClicked { value ->
-                if (value != null) {
-                    if (isItemExists(value)) {
+            setOnOkClicked { newItem ->
+                if (newItem != null) {
+                    val exists = adapter.getItems().any {
+                        isSameItem(it, newItem)
+                    }
+                    if (exists) {
                         showToast(requireContext(),
-                                getString(R.string.item_already_exists).format(getItemTitle(value)))
-                    } else if (isValidItem(value)) {
-                        listAdapter.replaceItem(item, value)
-                        saveItems()
+                                getString(R.string.item_already_exists).format(getItemTitle(newItem)))
+                    } else if (isValidItem(newItem)) {
+                        adapter.replaceItem(position, newItem)
+                        persistItems()
                     }
                 }
             }
         }.showDialog(requireActivity())
     }
 
-    private fun showUndoAction(removedItems: List<I>, savedItems: List<I>) {
-        val title = if (removedItems.size == 1) {
-            getString(R.string.item_removed)
-        } else {
-            getString(R.string.items_removed).format(removedItems.size)
+    private fun updateEmptyText() {
+        view?.apply {
+            findViewById<View>(R.id.text_empty).visibility =
+                    if (adapter.itemCount == 0) View.VISIBLE else View.GONE
         }
-
-        Snackbar.make(listView, title, Snackbar.LENGTH_LONG)
-                .setActionTextColor(getColor(requireContext(), R.color.colorAccentText))
-                .setAction(R.string.undo) {
-                    undoRemove(savedItems)
-                }
-                .show()
     }
 
     private inner class ListAdapter : Adapter<H>() {
 
-        private lateinit var _items: MutableList<I>
-
-        var items: List<I>
-            get() {
-                return _items
-            }
-            set(value) {
-                _items = ArrayList(value)
-                notifyDataSetChanged()
-            }
+        private lateinit var items: MutableList<I>
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): H {
             return createViewHolder(parent)
         }
 
         override fun onBindViewHolder(holder: H, position: Int) {
-            val item = _items[position]
+            val item = items[position]
             bindViewHolder(item, holder)
             holder.itemView.setOnClickListener {
-                editItem(item)
+                editItem(item, position)
             }
         }
 
         override fun getItemCount(): Int {
-            return _items.size
+            return items.size
         }
 
-        fun removeItemsAt(positions: IntArray): Pair<List<I>, List<I>> {
-            val savedItems: List<I> = ArrayList(_items)
-            val removedItems: MutableList<I> = ArrayList()
+        fun getItems(): List<I> {
+            return items
+        }
 
-            for (position in positions) {
-                val item = _items[position]
-                removedItems.add(item)
-                _items.remove(item)
-            }
-
+        fun setItems(items: Collection<I>) {
+            this.items = ArrayList(items)
             notifyDataSetChanged()
-            return Pair(removedItems, savedItems)
         }
 
-        fun replaceItem(oldItem: I?, newItem: I) {
-            val position = _items.indexOf(oldItem)
-
+        fun replaceItem(position: Int, item: I) {
             if (position == -1) {
-                _items.add(newItem)
+                items.add(item)
             } else {
-                _items[position] = newItem
+                items[position] = item
             }
+            notifyDataSetChanged()
+        }
 
+        fun removeItems(positions: IntArray) {
+            for (position in positions) {
+                items.removeAt(position)
+            }
             notifyDataSetChanged()
         }
     }
