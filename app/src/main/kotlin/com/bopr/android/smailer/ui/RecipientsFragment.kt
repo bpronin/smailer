@@ -58,7 +58,8 @@ class RecipientsFragment : RecyclerFragment<Item, Holder>() {
     }
 
     override fun createViewHolder(parent: ViewGroup): Holder {
-        return Holder(LayoutInflater.from(context).inflate(R.layout.list_item_recipient, parent, false))
+        val view = LayoutInflater.from(context).inflate(R.layout.list_item_recipient, parent, false)
+        return Holder(view)
     }
 
     override fun bindViewHolder(item: Item, holder: Holder) {
@@ -69,7 +70,7 @@ class RecipientsFragment : RecyclerFragment<Item, Holder>() {
                     underwivedText(requireContext(), item.address)
     }
 
-    override fun createEditDialog(): BaseEditDialogFragment<Item> {
+    override fun createEditDialog(): BaseEditDialogFragment<Item>? {
         return EditRecipientDialogFragment()
     }
 

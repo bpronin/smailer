@@ -1,6 +1,7 @@
 package com.bopr.android.smailer.ui
 
 import android.os.Bundle
+import android.view.ContextMenu
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,15 +11,17 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.*
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.util.Dialogs.showConfirmationDialog
 import com.bopr.android.smailer.util.UiUtil.showToast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 
-abstract class RecyclerFragment<I, H : ViewHolder> : BaseFragment() {
+abstract class RecyclerFragment<I, H : ViewHolder>(
+        private val editable: Boolean = true)
+    : BaseFragment() {
 
     private lateinit var recycler: RecyclerView
     private lateinit var listAdapter: ListAdapter
+    private var selectedItemPosition = NO_POSITION
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -38,57 +41,95 @@ abstract class RecyclerFragment<I, H : ViewHolder> : BaseFragment() {
             adapter = listAdapter
         }
 
-        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+        val actionButton = view.findViewById<FloatingActionButton>(R.id.button_add)
+        if (editable) {
+            ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
 
-            override fun onMove(recyclerView: RecyclerView, viewHolder: ViewHolder,
-                                target: ViewHolder): Boolean {
-                return false
+                override fun onMove(recyclerView: RecyclerView, viewHolder: ViewHolder,
+                                    target: ViewHolder): Boolean {
+                    return false
+                }
+
+                override fun onSwiped(holder: ViewHolder, swipeDir: Int) {
+                    selectedItemPosition = holder.adapterPosition
+                    removeSelectedItem()
+                }
+            }).also {
+                it.attachToRecyclerView(recycler)
             }
 
-            override fun onSwiped(holder: ViewHolder, swipeDir: Int) {
-                removeItems(holder.adapterPosition)
+            actionButton.setOnClickListener {
+                editItem(NO_POSITION)
             }
-        }).also {
-            it.attachToRecyclerView(recycler)
+        } else {
+            actionButton.visibility = View.GONE
         }
-
-        view.findViewById<FloatingActionButton>(R.id.button_add).setOnClickListener {
-            editItem(null, NO_POSITION)
-        }
-
-        reloadItems()
 
         return view
+    }
+
+    override fun onStart() {
+        super.onStart()
+        reloadItems()
     }
 
     protected fun reloadItems() {
         listAdapter.setItems(getItems())
     }
 
-    protected fun clearItems() {
-        showConfirmationDialog(requireContext(),
-                messageRes = R.string.ask_clear_list,
-                buttonTextRes = R.string.clear) {
-            listAdapter.setItems(listOf())
-            persistItems()
+    protected fun getSelectedItem(): I? {
+        return if (selectedItemPosition != NO_POSITION) {
+            listAdapter.getItems()[selectedItemPosition]
+        } else {
+            null
+        }
+    }
+
+    protected fun editSelectedItem() {
+        if (selectedItemPosition != NO_POSITION) {
+            editItem(selectedItemPosition)
+        }
+    }
+
+    protected fun removeSelectedItem() {
+        if (selectedItemPosition != NO_POSITION) {
+            removeItems(selectedItemPosition)
         }
     }
 
     protected abstract fun getItems(): Collection<I>
 
-    protected abstract fun putItems(items: Collection<I>)
+    protected open fun putItems(items: Collection<I>) {}
 
-    protected abstract fun getItemTitle(item: I): String
+    protected open fun getItemTitle(item: I): String {
+        return item.toString()
+    }
 
-    protected abstract fun isSameItem(item: I, other: I): Boolean
+    protected open fun isSameItem(item: I, other: I): Boolean {
+        return item == other
+    }
 
-    protected abstract fun isValidItem(item: I): Boolean
+    protected open fun isValidItem(item: I): Boolean {
+        return true
+    }
+
+    protected open fun onItemClick(item: I, position: Int) {
+        if (editable) {
+            editSelectedItem()
+        }
+    }
+
+    protected open fun onItemLongClick(item: I) {}
+
+    protected open fun onCreateItemContextMenu(menu: ContextMenu, item: I) {}
 
     protected abstract fun createViewHolder(parent: ViewGroup): H
 
     protected abstract fun bindViewHolder(item: I, holder: H)
 
-    protected abstract fun createEditDialog(): BaseEditDialogFragment<I>
+    protected open fun createEditDialog(): BaseEditDialogFragment<I>? {
+        return null
+    }
 
     private fun persistItems() {
         putItems(listAdapter.getItems())
@@ -117,9 +158,11 @@ abstract class RecyclerFragment<I, H : ViewHolder> : BaseFragment() {
                 .show()
     }
 
-    private fun editItem(item: I?, position: Int) {
-        createEditDialog().apply {
-            setTitle(if (position == NO_POSITION) R.string.add else R.string.edit)
+    private fun editItem(position: Int) {
+        createEditDialog()!!.apply {
+            val item = listAdapter.getItems()[position]
+
+            setTitle(if (item == null) R.string.add else R.string.edit)
             setValue(item)
             setOnOkClicked { newItem ->
                 if (newItem != null) {
@@ -156,8 +199,20 @@ abstract class RecyclerFragment<I, H : ViewHolder> : BaseFragment() {
         override fun onBindViewHolder(holder: H, position: Int) {
             val item = items[position]
             bindViewHolder(item, holder)
-            holder.itemView.setOnClickListener {
-                editItem(item, position)
+
+            holder.itemView.apply {
+                setOnClickListener {
+                    selectedItemPosition = holder.adapterPosition
+                    onItemClick(item, position)
+                }
+                setOnLongClickListener {
+                    selectedItemPosition = holder.adapterPosition
+                    onItemLongClick(item)
+                    false
+                }
+                setOnCreateContextMenuListener { menu, _, _ ->
+                    onCreateItemContextMenu(menu, item)
+                }
             }
         }
 
@@ -190,4 +245,5 @@ abstract class RecyclerFragment<I, H : ViewHolder> : BaseFragment() {
             notifyDataSetChanged()
         }
     }
+
 }

@@ -10,9 +10,7 @@ import android.text.format.DateFormat
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.*
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bopr.android.smailer.Database
 import com.bopr.android.smailer.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.Database.Companion.unregisterDatabaseListener
@@ -24,6 +22,7 @@ import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.PhoneEventFilter
 import com.bopr.android.smailer.R
+import com.bopr.android.smailer.ui.HistoryFragment.Holder
 import com.bopr.android.smailer.util.AddressUtil.containsPhone
 import com.bopr.android.smailer.util.AddressUtil.findPhone
 import com.bopr.android.smailer.util.Dialogs.showConfirmationDialog
@@ -39,16 +38,13 @@ import com.bopr.android.smailer.util.UiUtil.showToast
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class HistoryFragment : BaseFragment() {
+class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(false) {
 
     private lateinit var database: Database
-    private lateinit var listView: RecyclerView
-    private lateinit var listAdapter: ListAdapter
     private lateinit var phoneEventFilter: PhoneEventFilter
     private lateinit var settingsChangeListener: OnSharedPreferenceChangeListener
     private lateinit var databaseListener: BroadcastReceiver
     private lateinit var formatter: TagFormatter
-    private var selectedListItemPosition = NO_POSITION
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,20 +56,6 @@ class HistoryFragment : BaseFragment() {
         databaseListener = registerDatabaseListener(requireContext(), DatabaseListener())
 
         formatter = TagFormatter(requireContext())
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_log, container, false)
-
-        listView = view.findViewById(android.R.id.list)
-        listView.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
-
-        return view
-    }
-
-    override fun onStart() {
-        super.onStart()
-        loadData()
     }
 
     override fun onDestroy() {
@@ -103,6 +85,28 @@ class HistoryFragment : BaseFragment() {
         }
     }
 
+    override fun onCreateItemContextMenu(menu: ContextMenu, item: PhoneEvent) {
+        requireActivity().menuInflater.inflate(R.menu.menu_context_history, menu)
+
+        if (item.state != STATE_PENDING) {
+            menu.removeItem(R.id.action_ignore)
+        }
+        val blacklisted = containsPhone(phoneEventFilter.phoneBlacklist, item.phone)
+        val whitelisted = containsPhone(phoneEventFilter.phoneWhitelist, item.phone)
+
+        if (blacklisted) {
+            menu.removeItem(R.id.action_add_to_blacklist)
+        }
+
+        if (whitelisted) {
+            menu.removeItem(R.id.action_add_to_whitelist)
+        }
+
+        if (!blacklisted && !whitelisted) {
+            menu.removeItem(R.id.action_remove_from_lists)
+        }
+    }
+
     override fun onContextItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_add_to_blacklist -> {
@@ -124,6 +128,35 @@ class HistoryFragment : BaseFragment() {
             else ->
                 super.onContextItemSelected(item)
         }
+    }
+
+    override fun getItems(): Collection<PhoneEvent> {
+        phoneEventFilter = settings.getFilter()
+        return database.events.toList()
+    }
+
+    override fun createViewHolder(parent: ViewGroup): Holder {
+        val view = LayoutInflater.from(requireContext()).inflate(R.layout.list_item_log, parent, false)
+        return Holder(view)
+    }
+
+    override fun bindViewHolder(item: PhoneEvent, holder: Holder) {
+        holder.timeView.text = DateFormat.format(getString(R.string._time_pattern), item.startTime)
+        holder.textView.text = formatSummary(item)
+        holder.phoneView.text = item.phone
+        holder.typeView.setImageResource(eventTypeImage(item))
+        holder.directionView.setImageResource(eventDirectionImage(item))
+        holder.stateView.setImageResource(eventStateImage(item))
+        holder.typeView.isEnabled = item.stateReason and REASON_TRIGGER_OFF == 0
+        holder.directionView.isEnabled = item.stateReason and REASON_TRIGGER_OFF == 0
+        holder.textView.isEnabled = item.stateReason and REASON_TEXT_BLACKLISTED == 0
+        holder.phoneView.isEnabled = item.stateReason and REASON_NUMBER_BLACKLISTED == 0
+
+        markAsRead(item)
+    }
+
+    override fun onItemClick(item: PhoneEvent, position: Int) {
+        HistoryDetailsDialogFragment(item).showDialog(requireActivity())
     }
 
     private fun onClearData() {
@@ -151,9 +184,17 @@ class HistoryFragment : BaseFragment() {
         }
     }
 
+    private fun onMarkAsIgnored() {
+        getSelectedItem()?.let {
+            it.state = STATE_IGNORED
+            database.putEvent(it)
+            database.notifyChanged()
+        }
+    }
+
     private fun onRemoveFromLists() {
-        if (selectedListItemPosition != NO_POSITION) {
-            val number = listAdapter.getItem(selectedListItemPosition).phone
+        getSelectedItem()?.let {
+            val number = it.phone
             removeFromPhoneLists(phoneEventFilter.phoneWhitelist, number)
             removeFromPhoneLists(phoneEventFilter.phoneBlacklist, number)
             settings.edit().putFilter(phoneEventFilter).apply()
@@ -163,20 +204,11 @@ class HistoryFragment : BaseFragment() {
         }
     }
 
-    private fun onMarkAsIgnored() {
-        if (selectedListItemPosition != NO_POSITION) {
-            val event = listAdapter.getItem(selectedListItemPosition)
-            event.state = STATE_IGNORED
-            database.putEvent(event)
-            database.notifyChanged()
-        }
-    }
-
     private fun addToPhoneList(list: MutableSet<String>, commit: () -> Unit) {
-        if (selectedListItemPosition != NO_POSITION) {
+        getSelectedItem()?.let {
             EditPhoneDialogFragment().apply {
                 setTitle(R.string.add)
-                setValue(listAdapter.getItem(selectedListItemPosition).phone)
+                setValue(it.phone)
                 setOnOkClicked { value ->
                     if (!value.isNullOrEmpty()) {
                         if (list.contains(value)) {
@@ -196,113 +228,28 @@ class HistoryFragment : BaseFragment() {
         list.remove(findPhone(list, number))
     }
 
-    private fun loadData() {
-        listAdapter = ListAdapter(database.events.toList())
-        listView.adapter = listAdapter
-        phoneEventFilter = settings.getFilter()
-        updateEmptyText()
-    }
-
-    private fun updateEmptyText() {
-        val view = view
-        if (view != null) {
-            val text = view.findViewById<TextView>(R.id.text_empty)
-            if (listAdapter.itemCount == 0) {
-                text.visibility = View.VISIBLE
-            } else {
-                text.visibility = View.GONE
-            }
+    private fun markAsRead(event: PhoneEvent) {
+        if (!event.isRead) {
+            event.isRead = true
+            database.putEvent(event)
         }
     }
 
-    private fun showDetails() {
-        if (selectedListItemPosition != NO_POSITION) {
-            val event = listAdapter.getItem(selectedListItemPosition)
-            HistoryDetailsDialogFragment(event).showDialog(requireActivity())
+    private fun formatSummary(event: PhoneEvent): CharSequence? {
+        return when {
+            event.isSms ->
+                event.text
+            event.isMissed ->
+                getString(R.string.missed_call)
+            else ->
+                formatter
+                        .pattern(R.string.call_of_duration_short)
+                        .put("duration", formatDuration(event.callDuration))
+                        .format()
         }
     }
 
-    private inner class ListAdapter(private val items: List<PhoneEvent>) : Adapter<ItemViewHolder>() {
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-            val inflater = LayoutInflater.from(requireContext())
-            return ItemViewHolder(inflater.inflate(R.layout.list_item_log, parent, false))
-        }
-
-        override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-            val event = getItem(position)
-
-            holder.timeView.text = DateFormat.format(getString(R.string._time_pattern), event.startTime)
-            holder.textView.text = formatSummary(event)
-            holder.phoneView.text = event.phone
-            holder.typeView.setImageResource(eventTypeImage(event))
-            holder.directionView.setImageResource(eventDirectionImage(event))
-            holder.stateView.setImageResource(eventStateImage(event))
-            holder.typeView.isEnabled = event.stateReason and REASON_TRIGGER_OFF == 0
-            holder.directionView.isEnabled = event.stateReason and REASON_TRIGGER_OFF == 0
-            holder.textView.isEnabled = event.stateReason and REASON_TEXT_BLACKLISTED == 0
-            holder.phoneView.isEnabled = event.stateReason and REASON_NUMBER_BLACKLISTED == 0
-            holder.itemView.setOnClickListener {
-                selectedListItemPosition = holder.adapterPosition
-                showDetails()
-            }
-            holder.itemView.setOnLongClickListener {
-                selectedListItemPosition = holder.adapterPosition
-                false
-            }
-            holder.itemView.setOnCreateContextMenuListener { menu, _, _ ->
-                requireActivity().menuInflater.inflate(R.menu.menu_context_history, menu)
-                if (event.state != STATE_PENDING) {
-                    menu.removeItem(R.id.action_ignore)
-                }
-                val blacklisted = containsPhone(phoneEventFilter.phoneBlacklist, event.phone)
-                val whitelisted = containsPhone(phoneEventFilter.phoneWhitelist, event.phone)
-                if (blacklisted) {
-                    menu.removeItem(R.id.action_add_to_blacklist)
-                }
-                if (whitelisted) {
-                    menu.removeItem(R.id.action_add_to_whitelist)
-                }
-                if (!blacklisted && !whitelisted) {
-                    menu.removeItem(R.id.action_remove_from_lists)
-                }
-            }
-
-            markAsRead(event)
-        }
-
-        private fun markAsRead(event: PhoneEvent) {
-            if (!event.isRead) {
-                event.isRead = true
-                database.putEvent(event)
-            }
-        }
-
-        override fun getItemCount(): Int {
-            return items.size
-        }
-
-        fun getItem(position: Int): PhoneEvent {
-            return items[position]
-        }
-
-        private fun formatSummary(event: PhoneEvent): CharSequence? {
-            return when {
-                event.isSms ->
-                    event.text
-                event.isMissed ->
-                    getString(R.string.missed_call)
-                else ->
-                    formatter
-                            .pattern(R.string.call_of_duration_short)
-                            .put("duration", formatDuration(event.callDuration))
-                            .format()
-            }
-        }
-
-    }
-
-    private inner class ItemViewHolder(view: View) : ViewHolder(view) {
+    inner class Holder(view: View) : ViewHolder(view) {
 
         val typeView: ImageView = view.findViewById(R.id.list_item_type)
         val directionView: ImageView = view.findViewById(R.id.list_item_direction)
@@ -315,14 +262,15 @@ class HistoryFragment : BaseFragment() {
     private inner class SettingsListener : OnSharedPreferenceChangeListener {
 
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, s: String) {
-            loadData()
+            //todo granularize
+            reloadItems()
         }
     }
 
     private inner class DatabaseListener : BroadcastReceiver() {
 
         override fun onReceive(context: Context, intent: Intent) {
-            loadData()
+            reloadItems()
         }
     }
 }
