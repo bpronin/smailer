@@ -43,7 +43,7 @@ class GoogleAuthorizationHelper(private val fragment: Fragment,
     }
 
     private fun selectedAccount(): Account? {
-        return findAccount(settings.getString(accountSettingName, null))
+        return findAccount(settings.getString(accountSettingName))
     }
 
     /* todo: see https://developer.android.com/reference/android/accounts/AccountManager

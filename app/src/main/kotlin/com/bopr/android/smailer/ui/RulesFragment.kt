@@ -103,9 +103,9 @@ class RulesFragment : BasePreferenceFragment() {
 
     private fun updateTriggersPreferenceView() {
         val preference = findPreference<MultiSelectListPreference>(PREF_EMAIL_TRIGGERS)!!
-        val value = settings.getStringSet(preference.key, null)
+        val value = settings.getStringSet(preference.key)
 
-        if (value == null || value.isEmpty()) {
+        if (value.isEmpty()) {
             updateSummary(preference, getString(R.string.no_triggers_specified), SUMMARY_STYLE_ACCENTED)
         } else {
             updateSummary(preference, getString(R.string.events_causing_sending_mail), SUMMARY_STYLE_DEFAULT)

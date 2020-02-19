@@ -4,59 +4,51 @@ import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import com.bopr.android.smailer.util.TextUtil.commaJoin
 import com.bopr.android.smailer.util.TextUtil.commaSplit
-import java.util.*
 
-open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPreferences) : SharedPreferences {
+open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPreferences) {
 
-    override fun getAll(): Map<String, *> {
-        return wrappedPreferences.all
+    fun getString(key: String): String? {
+        return wrappedPreferences.getString(key, null)
     }
 
-    override fun getString(key: String, defValue: String?): String? {
-        return wrappedPreferences.getString(key, defValue)
+    fun getString(key: String, defValue: String): String {
+        return getString(key) ?: defValue
     }
 
-    override fun getStringSet(key: String, defValues: Set<String>?): MutableSet<String>? {
-        /* should be a copy of values set.
-           see: https://stackoverflow.com/questions/17469583/setstring-in-android-sharedpreferences-does-not-save-on-force-close */
-        return wrappedPreferences.getStringSet(key, defValues)?.let { LinkedHashSet(it) }
+    /* should be a copy of values set. see: https://stackoverflow.com/questions/17469583/setstring-in-android-sharedpreferences-does-not-save-on-force-close */
+    fun getStringSet(key: String): MutableSet<String> {
+        return wrappedPreferences.getStringSet(key, null)?.toMutableSet() ?: mutableSetOf()
     }
 
     fun getCommaSet(key: String): MutableSet<String> {
-        return getString(key, null)?.let {
-            commaSplit(it).toMutableSet()
-        } ?: mutableSetOf()
+        return getString(key)?.let { commaSplit(it).toMutableSet() } ?: mutableSetOf()
     }
 
-    override fun getInt(key: String, defValue: Int): Int {
+    fun getInt(key: String, defValue: Int): Int {
         return wrappedPreferences.getInt(key, defValue)
     }
 
-    override fun getLong(key: String, defValue: Long): Long {
+    fun getLong(key: String, defValue: Long): Long {
         return wrappedPreferences.getLong(key, defValue)
     }
 
-    override fun getFloat(key: String, defValue: Float): Float {
-        return wrappedPreferences.getFloat(key, defValue)
-    }
-
-    override fun getBoolean(key: String, defValue: Boolean): Boolean {
+    fun getBoolean(key: String, defValue: Boolean): Boolean {
         return wrappedPreferences.getBoolean(key, defValue)
     }
 
-    override fun contains(key: String): Boolean {
+    fun contains(key: String): Boolean {
         return wrappedPreferences.contains(key)
     }
 
-    override fun edit(): EditorWrapper {
+    open fun edit(): EditorWrapper {
         return EditorWrapper(wrappedPreferences.edit())
     }
 
-    override fun registerOnSharedPreferenceChangeListener(listener: OnSharedPreferenceChangeListener) {
+    fun registerOnSharedPreferenceChangeListener(listener: OnSharedPreferenceChangeListener) {
         wrappedPreferences.registerOnSharedPreferenceChangeListener(listener)
     }
 
-    override fun unregisterOnSharedPreferenceChangeListener(listener: OnSharedPreferenceChangeListener) {
+    fun unregisterOnSharedPreferenceChangeListener(listener: OnSharedPreferenceChangeListener) {
         wrappedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
     }
 
@@ -73,12 +65,7 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
         }
 
         fun removeFromStringSet(key: String, vararg values: String): EditorWrapper {
-            getStringSet(key, null)?.apply {
-                if (isNotEmpty()) {
-                    removeAll(Arrays.asList<String>(*values))
-                    putStringSet(key, this)
-                }
-            }
+            putStringSet(key, getStringSet(key).subtract(values.asList()))
             return this
         }
 
@@ -109,44 +96,21 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
 
         fun putStringOptional(key: String, value: String?): EditorWrapper {
             if (!contains(key)) {
-                wrappedEditor.putString(key, value)
+                putString(key, value)
             }
             return this
         }
 
-        fun putStringSetOptional(key: String, values: Set<String?>?): EditorWrapper {
+        fun putStringSetOptional(key: String, values: Set<String>?): EditorWrapper {
             if (!contains(key)) {
-                wrappedEditor.putStringSet(key, values)
+                putStringSet(key, values)
             }
             return this
         }
-
-/*
-        fun putIntOptional(key: String, value: Int): EditorWrapper {
-            if (!contains(key)) {
-                wrappedEditor.putInt(key, value)
-            }
-            return this
-        }
-
-        fun putLongOptional(key: String, value: Long): EditorWrapper {
-            if (!contains(key)) {
-                wrappedEditor.putLong(key, value)
-            }
-            return this
-        }
-
-        fun putFloatOptional(key: String, value: Float): EditorWrapper {
-            if (!contains(key)) {
-                wrappedEditor.putFloat(key, value)
-            }
-            return this
-        }
-*/
 
         fun putBooleanOptional(key: String, value: Boolean): EditorWrapper {
             if (!contains(key)) {
-                wrappedEditor.putBoolean(key, value)
+                putBoolean(key, value)
             }
             return this
         }

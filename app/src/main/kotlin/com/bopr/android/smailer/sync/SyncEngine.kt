@@ -20,7 +20,7 @@ import com.bopr.android.smailer.sync.AppContentProvider.Companion.AUTHORITY
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager
 import org.slf4j.LoggerFactory
 import java.lang.System.currentTimeMillis
-
+//todo: review it
 class SyncEngine private constructor(context: Context) {
 
     private val log = LoggerFactory.getLogger("SyncManager")
@@ -99,7 +99,7 @@ class SyncEngine private constructor(context: Context) {
     companion object {
 
         private fun syncAccount(context: Context): Account? {
-            val name = Settings(context).getString(PREF_SENDER_ACCOUNT, null)
+            val name = Settings(context).getString(PREF_SENDER_ACCOUNT)
             return GoogleAccountManager(context).getAccountByName(name)
         }
 

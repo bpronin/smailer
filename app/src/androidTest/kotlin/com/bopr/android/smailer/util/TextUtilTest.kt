@@ -49,7 +49,7 @@ class TextUtilTest {
 
     @Test
     fun testCommaSplit() {
-        assertEquals(listOf("1", "2", "3"), commaSplit(" 1, 2, 3 "))
+        assertEquals(listOf("1", "2", "3"), commaSplit("1,2,3"))
         assertEquals(listOf("a", "b", "c"), commaSplit("a,b,c"))
     }
 

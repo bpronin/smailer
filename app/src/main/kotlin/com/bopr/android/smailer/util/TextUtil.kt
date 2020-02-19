@@ -34,6 +34,7 @@ object TextUtil {
     }
 
     fun commaSplit(s: String): List<String> {
+        //todo escape commas in text
         return s.split(",")
     }
 

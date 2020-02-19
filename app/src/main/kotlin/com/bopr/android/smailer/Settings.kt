@@ -21,7 +21,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         return if (value == VAL_PREF_DEFAULT) {
             Locale.getDefault()
         } else {
-            val ss = value!!.split("_")
+            val ss = value.split("_")
             if (ss.size == 2) {
                 Locale(ss[0], ss[1])
             } else {
@@ -31,7 +31,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
     }
 
     fun getDeviceName(): String {
-        val value = getString(PREF_DEVICE_ALIAS, "")
+        val value = getString(PREF_DEVICE_ALIAS)
         return if (value.isNullOrEmpty()) deviceName() else value
     }
 
@@ -61,7 +61,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
 
     fun getFilter(): PhoneEventFilter {
         return PhoneEventFilter().apply {
-            triggers = getStringSet(PREF_EMAIL_TRIGGERS, emptySet())!!
+            triggers = getStringSet(PREF_EMAIL_TRIGGERS)
             phoneBlacklist = getCommaSet(PREF_FILTER_PHONE_BLACKLIST)
             phoneWhitelist = getCommaSet(PREF_FILTER_PHONE_WHITELIST)
             textBlacklist = getCommaSet(PREF_FILTER_TEXT_BLACKLIST)
@@ -80,13 +80,14 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             putBooleanOptional(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS, true)
             putStringSetOptional(PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS)
 
-            getStringSet(PREF_EMAIL_CONTENT, null)?.let {
-                if (getInt(PREF_SETTINGS_VERSION, 1) == 1) {
-                    it.add(VAL_PREF_EMAIL_CONTENT_HEADER)
-                    it.add(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT)
-                    putStringSet(PREF_EMAIL_CONTENT, it)
-                }
-            } ?: putStringSet(PREF_EMAIL_CONTENT, DEFAULT_CONTENT)
+            val emailContent = getStringSet(PREF_EMAIL_CONTENT)
+            if (emailContent.isEmpty()) {
+                putStringSet(PREF_EMAIL_CONTENT, DEFAULT_CONTENT)
+            } else if (getInt(PREF_SETTINGS_VERSION, 1) == 1) {
+                emailContent.add(VAL_PREF_EMAIL_CONTENT_HEADER)
+                emailContent.add(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT)
+                putStringSet(PREF_EMAIL_CONTENT, emailContent)
+            }
 
             apply()
         }

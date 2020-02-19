@@ -10,7 +10,6 @@ import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes.DRIVE_APPDATA
 import com.google.api.services.drive.model.File
 import com.google.common.collect.ImmutableList
-import com.google.common.collect.ImmutableSet
 import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.io.InputStream
@@ -28,7 +27,7 @@ class GoogleDrive(context: Context, account: Account) {
     private val service: Drive
 
     init {
-        val credential = GoogleAccountCredential.usingOAuth2(context, ImmutableSet.of(DRIVE_APPDATA))
+        val credential = GoogleAccountCredential.usingOAuth2(context, setOf(DRIVE_APPDATA))
                 .setSelectedAccount(account)
         service = Drive.Builder(NetHttpTransport(),
                 JacksonFactory.getDefaultInstance(), credential)

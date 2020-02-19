@@ -21,7 +21,6 @@ import com.bopr.android.smailer.remote.RemoteControlTask.Companion.SEND_SMS_TO_C
 import com.bopr.android.smailer.util.AddressUtil.containsEmail
 import com.bopr.android.smailer.util.AddressUtil.extractEmail
 import com.bopr.android.smailer.util.AddressUtil.findPhone
-import com.bopr.android.smailer.util.TextUtil.commaSplit
 import com.google.api.services.gmail.GmailScopes
 import org.slf4j.LoggerFactory
 
@@ -84,7 +83,7 @@ class RemoteControlService : JobIntentService() {
     private fun acceptMessage(message: MailMessage): Boolean {
         if (settings.getBoolean(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS, false)) {
             val address = extractEmail(message.from)!!
-            val recipients = commaSplit(settings.getString(PREF_RECIPIENTS_ADDRESS, "")!!)
+            val recipients = settings.getCommaSet(PREF_RECIPIENTS_ADDRESS)
             if (!containsEmail(recipients, address)) {
                 log.debug("Address $address rejected")
 
@@ -95,8 +94,8 @@ class RemoteControlService : JobIntentService() {
     }
 
     private fun requireAccount(): String {
-        val account = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT, null)
-        if (account == null) {
+        val account = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
+        if (account == null) {  //todo: kotlinize
             notifications.showError(R.string.service_account_not_specified, Notifications.ACTION_SHOW_REMOTE_CONTROL)
             throw IllegalArgumentException("Service account not specified")
         }

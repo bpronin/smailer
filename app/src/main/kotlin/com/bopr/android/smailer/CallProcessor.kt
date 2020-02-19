@@ -16,7 +16,6 @@ import com.bopr.android.smailer.util.ContentUtils.markSmsAsRead
 import com.bopr.android.smailer.util.TextUtil.isValidEmailAddressList
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
-import com.google.common.collect.ImmutableSet
 import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.util.*
@@ -125,7 +124,7 @@ class CallProcessor(
 
     @Throws(Exception::class)
     private fun requireSender(silent: Boolean): String {
-        val sender = settings.getString(PREF_SENDER_ACCOUNT, null)
+        val sender = settings.getString(PREF_SENDER_ACCOUNT)
 
         if (sender.isNullOrEmpty()) {
             showErrorNotification(R.string.no_account_specified, silent)
@@ -137,7 +136,7 @@ class CallProcessor(
 
     @Throws(Exception::class)
     private fun requireRecipient(silent: Boolean): String {
-        val recipients = settings.getString(PREF_RECIPIENTS_ADDRESS, null)
+        val recipients = settings.getString(PREF_RECIPIENTS_ADDRESS)
 
         if (recipients.isNullOrEmpty()) {
             showErrorNotification(R.string.no_recipients_specified, silent)
@@ -158,8 +157,8 @@ class CallProcessor(
             setSendTime(Date())
             setContactName(contactName(context, event.phone))
             setDeviceName(settings.getDeviceName())
-            setContentOptions(settings.getStringSet(PREF_EMAIL_CONTENT, ImmutableSet.of())!!)
-            setServiceAccount(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT, null))
+            setContentOptions(settings.getStringSet(PREF_EMAIL_CONTENT))
+            setServiceAccount(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT))
             setLocale(settings.getLocale())
         }
 
@@ -167,8 +166,8 @@ class CallProcessor(
             subject = formatter.formatSubject()
             body = formatter.formatBody()
             recipients = recipient
-            from = settings.getString(PREF_SENDER_ACCOUNT, null)
-            replyTo = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT, null)
+            from = settings.getString(PREF_SENDER_ACCOUNT)
+            replyTo = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
         }
 
         transport.send(message)

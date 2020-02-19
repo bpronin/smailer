@@ -557,7 +557,7 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun senderAccount(): Account {
-        val name = settings.getString(PREF_SENDER_ACCOUNT, null)
+        val name = settings.getString(PREF_SENDER_ACCOUNT)
         return GoogleAccountManager(appContext).getAccountByName(name)
     }
 
