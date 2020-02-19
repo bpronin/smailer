@@ -53,10 +53,10 @@ import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatter
 import com.bopr.android.smailer.util.AndroidUtil.deviceName
 import com.bopr.android.smailer.util.AndroidUtil.primaryAccount
 import com.bopr.android.smailer.util.ContentUtils.contactName
+import com.bopr.android.smailer.util.Dialogs.showInfoDialog
+import com.bopr.android.smailer.util.Dialogs.showInputDialog
 import com.bopr.android.smailer.util.TextUtil.commaJoin
 import com.bopr.android.smailer.util.TextUtil.escapeRegex
-import com.bopr.android.smailer.util.UiUtil.showInfoDialog
-import com.bopr.android.smailer.util.UiUtil.showInputDialog
 import com.bopr.android.smailer.util.UiUtil.showToast
 import com.google.android.gms.tasks.Tasks
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager

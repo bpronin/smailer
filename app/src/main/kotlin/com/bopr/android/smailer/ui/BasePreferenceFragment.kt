@@ -11,6 +11,7 @@ import androidx.preference.PreferenceFragmentCompat
 import com.bopr.android.smailer.PermissionsHelper
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
+import com.bopr.android.smailer.util.Dialogs.resetDialogs
 import com.bopr.android.smailer.util.UiUtil.accentedText
 import com.bopr.android.smailer.util.UiUtil.underwivedText
 
@@ -55,8 +56,11 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPref
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.action_about) {
-            AboutDialogFragment().showDialog(requireActivity())
+        when (item.itemId) {
+            R.id.action_about ->
+                AboutDialogFragment().showDialog(requireActivity())
+            R.id.action_reset_dialogs ->
+                resetDialogs(requireContext())
         }
         return super.onOptionsItemSelected(item)
     }

@@ -11,8 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import com.bopr.android.smailer.PhoneEventFilter
 import com.bopr.android.smailer.R
+import com.bopr.android.smailer.util.Dialogs.showConfirmDialog
 import com.bopr.android.smailer.util.TagFormatter
-import com.bopr.android.smailer.util.UiUtil.showConfirmDialog
 import com.bopr.android.smailer.util.UiUtil.showToast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar

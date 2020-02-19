@@ -93,11 +93,12 @@ class RemoteControlService : JobIntentService() {
         return true
     }
 
+    @Throws(Exception::class)
     private fun requireAccount(): String {
         val account = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
-        if (account == null) {  //todo: kotlinize
+        if (account.isNullOrEmpty()) {
             notifications.showError(R.string.service_account_not_specified, Notifications.ACTION_SHOW_REMOTE_CONTROL)
-            throw IllegalArgumentException("Service account not specified")
+            throw Exception("Service account not specified")
         }
         return account
     }

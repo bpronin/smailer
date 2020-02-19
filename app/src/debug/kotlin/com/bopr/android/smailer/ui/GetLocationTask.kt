@@ -3,7 +3,7 @@ package com.bopr.android.smailer.ui
 import android.app.Activity
 import com.bopr.android.smailer.GeoCoordinates
 import com.bopr.android.smailer.GeoLocator
-import com.bopr.android.smailer.util.UiUtil.showInfoDialog
+import com.bopr.android.smailer.util.Dialogs.showInfoDialog
 
 internal class GetLocationTask(activity: Activity, private val locator: GeoLocator)
     : LongAsyncTask<Void?, Void?, GeoCoordinates?>(activity) {

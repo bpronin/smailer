@@ -9,8 +9,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
+import com.bopr.android.smailer.util.Dialogs.showInfoDialog
 import com.bopr.android.smailer.util.TagFormatter
-import com.bopr.android.smailer.util.UiUtil.showInfoDialog
 
 /**
  * About dialog fragment.

@@ -17,8 +17,8 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
+import com.bopr.android.smailer.util.Dialogs.showInfoDialog
 import com.bopr.android.smailer.util.TagFormatter
-import com.bopr.android.smailer.util.UiUtil.showInfoDialog
 import org.slf4j.LoggerFactory
 import java.util.*
 

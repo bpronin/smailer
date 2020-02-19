@@ -141,6 +141,8 @@
     <string name="you_had_incoming_call">Входящий звонок длительностью {duration}.</string>
     <string name="you_had_missed_call">Пропущенный звонок.</string>
     <string name="you_had_outgoing_call">Исходящий звонок длительностью {duration}.</string>
+    <string name="reset_dialogs">Сбросить состояние диалогов</string>
+    <string name="proceed">Продолжить</string>
 
     <string-array name="trigger_names">
         <item>Входящие SMS</item>

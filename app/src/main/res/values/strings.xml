@@ -148,6 +148,8 @@
     <string translatable="false" name="add_text_to_blacklist_reply_body">add text \"{argument}\" to blacklist"</string>
     <string translatable="false" name="add_text_to_whitelist_reply_body">add text \"{argument}\" to whitelist"</string>
     <string translatable="false" name="send_sms_to_sender_reply_body">send SMS message \"{sms_text}\" to {phone}"</string>
+    <string name="reset_dialogs">Reset dialogs</string>
+    <string name="proceed">Proceed</string>
 
     <string-array name="trigger_names">
         <item>Incoming SMS</item>

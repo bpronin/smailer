@@ -1,18 +1,11 @@
 package com.bopr.android.smailer.util
 
-import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
-import android.text.InputType
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.CharacterStyle
 import android.text.style.ForegroundColorSpan
 import android.text.style.ParagraphStyle
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.DrawableRes
@@ -148,115 +141,6 @@ object UiUtil {
         view.findViewById<TextView>(android.R.id.message)?.setTextColor(
                 ContextCompat.getColor(context, R.color.colorAccentText))
         toast.show()
-    }
-
-    private fun dialogBuilder(context: Context,
-                              title: String? = null,
-                              @StringRes titleRes: Int? = null,
-                              message: String? = null,
-                              @StringRes messageRes: Int? = null): AlertDialog.Builder {
-
-        val builder = AlertDialog.Builder(context)
-
-        title?.let {
-            builder.setTitle(it)
-        } ?: titleRes?.let {
-            builder.setTitle(it)
-        }
-
-        message?.let {
-            builder.setMessage(it)
-        } ?: messageRes?.let {
-            builder.setMessage(it)
-        }
-
-        return builder
-    }
-
-    fun showInfoDialog(context: Context,
-                       title: String? = null,
-                       @StringRes titleRes: Int? = null,
-                       message: String? = null,
-                       @StringRes messageRes: Int? = null,
-                       buttonText: String? = null,
-                       @StringRes buttonTextRes: Int? = null,
-                       action: (() -> Unit)? = null) {
-
-        val builder = dialogBuilder(context, title, titleRes, message, messageRes)
-
-        val function: (DialogInterface, Int) -> Unit = { _, _ -> action?.invoke() }
-        buttonText?.let {
-            builder.setPositiveButton(buttonText, function)
-        } ?: buttonTextRes?.let {
-            builder.setPositiveButton(buttonTextRes, function)
-        }
-
-        builder.show()
-    }
-
-    fun showConfirmDialog(context: Context,
-                          title: String? = null,
-                          @StringRes titleRes: Int? = null,
-                          message: String? = null,
-                          @StringRes messageRes: Int? = null,
-                          buttonText: String? = null,
-                          @StringRes buttonTextRes: Int? = null,
-                          cancelButtonText: String? = null,
-                          @StringRes cancelButtonTextRes: Int? = null,
-                          action: (() -> Unit)? = null) {
-        //todo: add "do not as again" (for battery optimization)
-        val builder = dialogBuilder(context, title, titleRes, message, messageRes)
-
-        val function: (DialogInterface, Int) -> Unit = { _, _ -> action?.invoke() }
-        buttonText?.let {
-            builder.setPositiveButton(buttonText, function)
-        } ?: builder.setPositiveButton(buttonTextRes ?: android.R.string.ok, function)
-
-        cancelButtonText?.let {
-            builder.setNegativeButton(cancelButtonText, null)
-        } ?: builder.setNegativeButton(cancelButtonTextRes ?: android.R.string.cancel, null)
-
-        builder.show()
-    }
-
-    fun showInputDialog(context: Context,
-                        title: String? = null,
-                        @StringRes titleRes: Int? = null,
-                        message: String? = null,
-                        @StringRes messageRes: Int? = null,
-                        buttonText: String? = null,
-                        @StringRes buttonTextRes: Int? = null,
-                        cancelButtonText: String? = null,
-                        @StringRes cancelButtonTextRes: Int? = null,
-                        inputType: Int = InputType.TYPE_CLASS_TEXT,
-                        value: String? = null,
-                        action: (String) -> Unit) {
-
-        val builder = dialogBuilder(context, title, titleRes, message, messageRes)
-
-        val editor = EditText(context)
-        editor.inputType = inputType
-        editor.requestFocus()
-        editor.setText(value)
-        editor.setSelection(editor.text.length)
-
-        @SuppressLint("InflateParams")
-        val container = (LayoutInflater.from(context).inflate(
-                R.layout.alert_dialog_view_container, null) as ViewGroup)
-        container.addView(editor)
-        
-        builder.setView(container)
-
-        val function: (DialogInterface, Int) -> Unit = { _, _ -> action(editor.text.toString()) }
-        buttonText?.let {
-            builder.setPositiveButton(buttonText, function)
-        } ?: builder.setPositiveButton(buttonTextRes ?: android.R.string.ok, function)
-
-        cancelButtonText?.let {
-            builder.setNegativeButton(cancelButtonText, null)
-        } ?: builder.setNegativeButton(cancelButtonTextRes ?: android.R.string.cancel, null)
-
-        builder.show()
     }
 
 }

@@ -82,7 +82,7 @@ class CallProcessor(
 
         return try {
             requireRecipient(silent)
-            transport.startSession(requireSender(silent), GMAIL_SEND)
+            transport.startSession(requireAccount(silent), GMAIL_SEND)
             true
         } catch (x: AccountsException) {
             log.warn("Failed starting mail session: ", x)
@@ -123,14 +123,12 @@ class CallProcessor(
     }
 
     @Throws(Exception::class)
-    private fun requireSender(silent: Boolean): String {
+    private fun requireAccount(silent: Boolean): String {
         val sender = settings.getString(PREF_SENDER_ACCOUNT)
-
         if (sender.isNullOrEmpty()) {
             showErrorNotification(R.string.no_account_specified, silent)
             throw Exception("Account not specified")
         }
-
         return sender
     }
 
@@ -138,7 +136,7 @@ class CallProcessor(
     private fun requireRecipient(silent: Boolean): String {
         val recipients = settings.getString(PREF_RECIPIENTS_ADDRESS)
 
-        if (recipients.isNullOrEmpty()) {
+        if (recipients == null) {
             showErrorNotification(R.string.no_recipients_specified, silent)
             throw Exception("Recipients not specified")
         }

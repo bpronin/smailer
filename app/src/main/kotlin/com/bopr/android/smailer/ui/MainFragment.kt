@@ -116,9 +116,9 @@ class MainFragment : BasePreferenceFragment() {
 
     private fun updateAccountPreferenceView() {
         val preference = requirePreference(PREF_SENDER_ACCOUNT)
-        val value = settings.getString(preference.key, "")
+        val value = settings.getString(preference.key)
 
-        if (value.isNullOrBlank()) {
+        if (value.isNullOrEmpty()) {
             updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)
         } else if (!authorizator.isAccountExists(value)) {
             updateSummary(preference, value, SUMMARY_STYLE_UNDERWIVED)
@@ -129,9 +129,9 @@ class MainFragment : BasePreferenceFragment() {
 
     private fun updateRecipientsPreferenceView() {
         val preference = requirePreference(PREF_RECIPIENTS_ADDRESS)
-        val value = settings.getString(preference.key, "")
+        val value = settings.getString(preference.key)
 
-        if (value.isNullOrBlank()) {
+        if (value.isNullOrEmpty()) {
             updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)
         } else {
             val style = if (isValidEmailAddressList(value)) SUMMARY_STYLE_DEFAULT else SUMMARY_STYLE_UNDERWIVED
@@ -155,7 +155,7 @@ class MainFragment : BasePreferenceFragment() {
 
     private fun updateLocalePreferenceView() {
         val preference = findPreference<ListPreference>(PREF_EMAIL_LOCALE)!!
-        val value = settings.getString(PREF_EMAIL_LOCALE, "")
+        val value = settings.getString(preference.key)
 
         val index = preference.findIndexOfValue(value)
         if (index < 0) {
@@ -167,7 +167,7 @@ class MainFragment : BasePreferenceFragment() {
 
     private fun updateDeviceNamePreferenceView() {
         val preference = findPreference<EditTextPreference>(PREF_DEVICE_ALIAS)!!
-        val value = settings.getString(preference.key, "")
+        val value = settings.getString(preference.key)
 
         if (value.isNullOrEmpty()) {
             updateSummary(preference, deviceName(), SUMMARY_STYLE_DEFAULT)

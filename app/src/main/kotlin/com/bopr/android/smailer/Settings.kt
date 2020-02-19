@@ -31,8 +31,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
     }
 
     fun getDeviceName(): String {
-        val value = getString(PREF_DEVICE_ALIAS)
-        return if (value.isNullOrEmpty()) deviceName() else value
+        return getString(PREF_DEVICE_ALIAS) ?: deviceName()
     }
 
     fun getReleaseVersion(): String {
