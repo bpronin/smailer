@@ -53,9 +53,9 @@
     <string name="incoming_sms">Входящее SMS</string>
     <string name="incoming_sms_from">Входящее SMS от</string>
     <string name="invalid_recipient">Указан неверный получатель</string>
-    <string name="item_already_exists">{item} уже существует</string>
+    <string name="item_already_exists">%1$s уже существует</string>
     <string name="item_removed">Запись удалена</string>
-    <string name="items_removed">{count} записей удалено</string>
+    <string name="items_removed">%1$d записей удалено</string>
     <string name="last_known_location">Последнее известное местоположение: {location}</string>
     <string name="list_is_empty">Список пуст</string>
     <string name="mark_all_as_read">Отметить все как прочитанные</string>
@@ -96,7 +96,7 @@
     <string name="phone_remotely_removed_from_blacklist">Номер {text} удаленно удален из черного списка."</string>
     <string name="phone_remotely_removed_from_whitelist">Номер {text} удаленно удален из белого списка."</string>
     <string name="phone_removed_from_filter">{number} удален из фильтра</string>
-    <string name="recipient_already_exists">Получатель {name} уже существует</string>
+    <string name="recipient_already_exists">Получатель %1$s уже существует</string>
     <string name="recipient_device">Адресат:</string>
     <string name="recipients">Получатели</string>
     <string name="regular_expression">Регулярное выражение</string>

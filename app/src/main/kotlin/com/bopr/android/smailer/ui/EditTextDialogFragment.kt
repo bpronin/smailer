@@ -39,14 +39,14 @@ class EditTextDialogFragment : BaseEditDialogFragment<String>("edit_text_filter_
         return view
     }
 
+    override fun setValue(value: String?) {
+        val regex = unescapeRegex(value)
+        isRegex = regex != null
+        initialText = if (isRegex) regex else value
+    }
+
     override fun getValue(): String {
         val text = editText.text.toString()
         return if (checkBox.isChecked) escapeRegex(text) else text
-    }
-
-    fun setInitialValue(text: String?) {
-        val regex = unescapeRegex(text)
-        isRegex = regex != null
-        initialText = if (isRegex) regex else text
     }
 }

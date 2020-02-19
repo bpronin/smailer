@@ -13,6 +13,7 @@ import androidx.annotation.StringRes
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 
+//todo use BaseDialogFragment
 object Dialogs {
 
     const val BATTERY_OPTIMIZATION_NOT_ASK_AGAIN: String = "battery-optimization-dont-ask-again"

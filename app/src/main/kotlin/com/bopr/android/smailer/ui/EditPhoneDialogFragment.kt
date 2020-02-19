@@ -33,12 +33,12 @@ class EditPhoneDialogFragment : BaseEditDialogFragment<String>("edit_phone_dialo
         return view
     }
 
-    override fun getValue(): String {
-        return editText.text.toString()
+    override fun setValue(value: String?) {
+        initialValue = value
     }
 
-    fun setInitialValue(phone: String?) {
-        initialValue = phone
+    override fun getValue(): String {
+        return editText.text.toString()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {

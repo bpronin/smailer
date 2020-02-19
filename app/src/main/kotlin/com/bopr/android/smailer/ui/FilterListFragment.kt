@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import com.bopr.android.smailer.PhoneEventFilter
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.util.Dialogs.showConfirmationDialog
-import com.bopr.android.smailer.util.TagFormatter
 import com.bopr.android.smailer.util.UiUtil.showToast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -169,10 +168,8 @@ abstract class FilterListFragment : BaseFragment() {
             setOnOkClicked { value ->
                 if (value != null) {
                     if (isItemExists(value) && (item == null || item.value != value)) {
-                        showToast(requireContext(), TagFormatter(requireContext())
-                                .pattern(R.string.item_already_exists)
-                                .put("item", getItemText(value))
-                                .format())
+                        showToast(requireContext(),
+                                getString(R.string.item_already_exists).format(getItemText(value)))
                     } else if (!getItemText(value).isNullOrEmpty()) {
                         listAdapter.replaceItem(item, Item(value))
                         persistItems()
@@ -200,10 +197,7 @@ abstract class FilterListFragment : BaseFragment() {
         val title = if (removedItems.size == 1) {
             getString(R.string.item_removed)
         } else {
-            TagFormatter(requireContext())
-                    .pattern(R.string.items_removed)
-                    .put("count", removedItems.size.toString())
-                    .format()
+            getString(R.string.items_removed).format(removedItems.size)
         }
         Snackbar.make(listView, title, Snackbar.LENGTH_LONG)
                 .setActionTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary))

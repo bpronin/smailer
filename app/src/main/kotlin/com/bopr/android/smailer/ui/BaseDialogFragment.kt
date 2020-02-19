@@ -10,25 +10,18 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 
-abstract class BaseDialogFragment(private val dialogTag: String) : DialogFragment() {
+abstract class BaseDialogFragment(private val fragmentTag: String) : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
     }
 
-//    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-//        return super.onCreateView(inflater, container, savedInstanceState)
-//    }
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         var dialog = dialog
         if (dialog == null) {
             val builder = AlertDialog.Builder(requireContext())
                     .setView(onCreateDialogView(LayoutInflater.from(context), null))
-//                    .setPositiveButton(R.string.close) { dialogInterface, _ ->
-//                        dialogInterface.cancel()
-//                    }
             onBuildDialog(builder)
             dialog = builder.create()
 
@@ -53,7 +46,7 @@ abstract class BaseDialogFragment(private val dialogTag: String) : DialogFragmen
     }
 
     fun showDialog(activity: FragmentActivity) {
-        show(activity.supportFragmentManager, dialogTag)
+        show(activity.supportFragmentManager, fragmentTag)
     }
 
 }

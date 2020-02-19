@@ -24,6 +24,10 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
         return getString(key)?.let { commaSplit(it).toMutableSet() } ?: mutableSetOf()
     }
 
+    fun getCommaList(key: String): MutableList<String> {
+        return getString(key)?.let { commaSplit(it).toMutableList() } ?: mutableListOf()
+    }
+
     fun getInt(key: String, defValue: Int): Int {
         return wrappedPreferences.getInt(key, defValue)
     }
@@ -69,7 +73,7 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
             return this
         }
 
-        fun putCommaSet(key: String, value: Set<String>): EditorWrapper {
+        fun putCommaSet(key: String, value: Collection<String>): EditorWrapper {
             putString(key, commaJoin(value))
             return this
         }

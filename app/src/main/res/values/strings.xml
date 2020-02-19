@@ -55,9 +55,9 @@
     <string name="incoming_sms">Incoming SMS</string>
     <string name="incoming_sms_from">Incoming SMS from</string>
     <string name="invalid_recipient">Invalid recipient specified</string>
-    <string name="item_already_exists">{item} already exists</string>
+    <string name="item_already_exists">%1$s is already exists</string>
     <string name="item_removed">Item removed</string>
-    <string name="items_removed">{count} item removed</string>
+    <string name="items_removed">%1$d items removed</string>
     <string name="last_known_location">Last known device location: {location}</string>
     <string name="list_is_empty">List is empty</string>
     <string name="mark_all_as_read">Mark all as read</string>
@@ -98,7 +98,7 @@
     <string name="phone_remotely_removed_from_blacklist">Phone {text} remotely removed from blacklist."</string>
     <string name="phone_remotely_removed_from_whitelist">Phone {text} remotely removed from whitelist."</string>
     <string name="phone_removed_from_filter">{number} removed from filter</string>
-    <string name="recipient_already_exists">Recipient {name} already exists</string>
+    <string name="recipient_already_exists">Recipient %1$s is already exists</string>
     <string name="recipient_device">Recipient:</string>
     <string name="recipients">Recipients</string>
     <string name="regular_expression">Regular expression</string>

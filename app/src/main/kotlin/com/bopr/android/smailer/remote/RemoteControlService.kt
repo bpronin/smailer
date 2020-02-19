@@ -83,7 +83,7 @@ class RemoteControlService : JobIntentService() {
     private fun acceptMessage(message: MailMessage): Boolean {
         if (settings.getBoolean(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS, false)) {
             val address = extractEmail(message.from)!!
-            val recipients = settings.getCommaSet(PREF_RECIPIENTS_ADDRESS)
+            val recipients = settings.getCommaList(PREF_RECIPIENTS_ADDRESS)
             if (!containsEmail(recipients, address)) {
                 log.debug("Address $address rejected")
 

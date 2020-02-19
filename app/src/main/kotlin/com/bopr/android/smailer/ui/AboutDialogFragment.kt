@@ -28,7 +28,7 @@ class AboutDialogFragment : BaseDialogFragment("about_dialog") {
 
     @SuppressLint("InflateParams")
     override fun onCreateDialogView(inflater: LayoutInflater, root: ViewGroup?): View {
-        val view = inflater.inflate(R.layout.dialog_about, null, false)
+        val view = inflater.inflate(R.layout.dialog_about, root, false)
         val versionLabel = view.findViewById<TextView>(R.id.label_message)
         versionLabel.text = formatVersion()
         versionLabel.setOnLongClickListener {

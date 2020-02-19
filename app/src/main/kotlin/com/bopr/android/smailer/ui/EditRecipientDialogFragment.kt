@@ -1,6 +1,5 @@
 package com.bopr.android.smailer.ui
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.view.LayoutInflater
@@ -9,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import com.bopr.android.smailer.R
+import com.bopr.android.smailer.ui.RecipientsFragment.Item
 import com.bopr.android.smailer.util.ContentUtils.createPickContactEmailIntent
 import com.bopr.android.smailer.util.ContentUtils.emailAddressFromIntent
 
@@ -17,18 +17,17 @@ import com.bopr.android.smailer.util.ContentUtils.emailAddressFromIntent
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class EditEmailDialogFragment() : BaseEditDialogFragment<String>("edit_recipient_dialog") {
+class EditRecipientDialogFragment : BaseEditDialogFragment<Item>("edit_recipient_dialog") {
 
     private lateinit var editText: TextView
-    private var initialValue: String? = null
+    private var initialValue: Item? = null
 
     override fun onCreateDialogView(inflater: LayoutInflater, root: ViewGroup?): View {
-        @SuppressLint("InflateParams")
-        val view = inflater.inflate(R.layout.editor_email, null, false)
+        val view = inflater.inflate(R.layout.editor_email, root, false)
 
         editText = view.findViewById<EditText>(android.R.id.edit).apply {
             addTextChangedListener(EmailTextValidator(this))
-            setText(initialValue)
+            setText(initialValue?.address)
         }
 
         view.findViewById<TextView>(android.R.id.message).setText(R.string.email_address)
@@ -42,18 +41,18 @@ class EditEmailDialogFragment() : BaseEditDialogFragment<String>("edit_recipient
         return view
     }
 
-    override fun getValue(): String? {
-        return editText.text.toString()
+    override fun setValue(value: Item?) {
+        initialValue = value
+    }
+
+    override fun getValue(): Item? {
+        return Item(editText.text.toString())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         if (requestCode == PICK_CONTACT_REQUEST && resultCode == Activity.RESULT_OK) {
             editText.text = emailAddressFromIntent(requireContext(), intent!!)
         }
-    }
-
-    fun setInitialValue(value: String?) {
-        initialValue = value
     }
 
     companion object {

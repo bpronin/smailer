@@ -176,14 +176,12 @@ class HistoryFragment : BaseFragment() {
         if (selectedListItemPosition != NO_POSITION) {
             EditPhoneDialogFragment().apply {
                 setTitle(R.string.add)
-                setInitialValue(listAdapter.getItem(selectedListItemPosition).phone)
+                setValue(listAdapter.getItem(selectedListItemPosition).phone)
                 setOnOkClicked { value ->
                     if (!value.isNullOrEmpty()) {
                         if (list.contains(value)) {
-                            showToast(requireContext(), formatter
-                                    .pattern(R.string.item_already_exists)
-                                    .put("item", value)
-                                    .format())
+                            showToast(requireContext(),
+                                    getString(R.string.item_already_exists).format(value))
                         } else {
                             list.add(value)
                             commit()
