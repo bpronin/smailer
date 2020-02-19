@@ -46,6 +46,7 @@ import static java.lang.String.valueOf;
  */
 class MailFormatter {
 
+    private static final Pattern WEB_URL_PATTERN = Pattern.compile("(?:\\S*)://\\S+");
     private static final String SUBJECT_PATTERN = "[{app_name}] {source} {phone}";
     private static final String BODY_PATTERN = "<html><head><meta http-equiv=\"content-type\" " +
             "content=\"text/html; charset=utf-8\">" +
@@ -181,7 +182,7 @@ class MailFormatter {
         if (event.isMissed()) {
             return resources.getString(R.string.you_had_missed_call);
         } else if (event.isSms()) {
-            return replaceUrls(requireNonNull(event.getText()));
+            return replaceUrlsWithLinks(requireNonNull(event.getText()));
         } else {
             int pattern;
             if (event.isIncoming()) {
@@ -413,13 +414,11 @@ class MailFormatter {
     }
 
     @NonNull
-    private String replaceUrls(@NonNull String s) {
-        // TODO: 19.02.2020 consider  PatternsCompat.WEB_URL
-        Matcher matcher = Pattern.compile("((?i:http|https|rtsp|ftp|file)://[\\S]+)").matcher(s);
-
+    private String replaceUrlsWithLinks(@NonNull String s) {
         StringBuffer sb = new StringBuffer();
+        Matcher matcher = WEB_URL_PATTERN.matcher(s);
         while (matcher.find()) {
-            String url = matcher.group(1);
+            String url = matcher.group();
             matcher.appendReplacement(sb, "<a href=\"" + url + "\">" + url + "</a>");
         }
         matcher.appendTail(sb);

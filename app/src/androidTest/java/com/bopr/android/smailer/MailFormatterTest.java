@@ -445,16 +445,19 @@ public class MailFormatterTest extends BaseTest {
     }
 
     /**
-     * Check URLs formatting.
+     * Check replacing URLs with links.
      */
     @Test
     public void testFormatUrls() {
         PhoneEvent event = new PhoneEvent("+12345678901", true, 0, null, false,
-                "Please visit http://google.com site", null, null, STATE_PENDING, null);
+                "Please visit https://www.google.com/search?a=1&b=2 or " +
+                        "https://secure.place  site or download from ftp://get.from.here",
+                null, null, STATE_PENDING, null);
 
         MailFormatter formatter = new MailFormatter(context, event);
 
-        assertThat(formatter.formatBody(), htmlEqualsRes("urls.html"));
+        String actual = formatter.formatBody();
+        assertThat(actual, htmlEqualsRes("urls.html"));
     }
 
     /**
