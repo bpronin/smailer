@@ -49,6 +49,7 @@ class TextUtilTest {
         assertEquals("1,2,3", commaJoin(listOf(1, 2, 3)))
         assertEquals("a,b,c", commaJoin(listOf("a", "b", "c")))
         assertEquals("a,a/,b,c", commaJoin(listOf("a", "a,b", "c")))
+        assertEquals("", commaJoin(listOf<String>()))
     }
 
     @Test
@@ -56,6 +57,7 @@ class TextUtilTest {
         assertEquals(listOf("1", "2", "3"), commaSplit(" 1, 2, 3 "))
         assertEquals(listOf("a", "b", "c"), commaSplit("a,b,c"))
         assertEquals(listOf("a", "b", "a,b", "c"), commaSplit("a, b, a/,b, c"))
+        assertEquals(listOf<String>(), commaSplit(""))
     }
 
     @Test

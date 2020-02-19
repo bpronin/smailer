@@ -10,8 +10,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
+import com.bopr.android.smailer.ui.RecipientsFragment.Holder
 import com.bopr.android.smailer.ui.RecipientsFragment.Item
-import com.bopr.android.smailer.ui.RecipientsFragment.ItemViewHolder
 import com.bopr.android.smailer.util.TextUtil.isValidEmailAddress
 import com.bopr.android.smailer.util.UiUtil.underwivedText
 
@@ -20,7 +20,7 @@ import com.bopr.android.smailer.util.UiUtil.underwivedText
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class RecipientsFragment : RecyclerFragment<Item, ItemViewHolder>() {
+class RecipientsFragment : RecyclerFragment<Item, Holder>() {
 
     private lateinit var settingsListener: SettingsListener
 
@@ -35,11 +35,11 @@ class RecipientsFragment : RecyclerFragment<Item, ItemViewHolder>() {
         super.onDestroy()
     }
 
-    override fun loadItems(): Collection<Item> {
+    override fun getItems(): Collection<Item> {
         return settings.getCommaList(PREF_RECIPIENTS_ADDRESS).sorted().map { Item(it) }
     }
 
-    override fun saveItems(items: Collection<Item>) {
+    override fun putItems(items: Collection<Item>) {
         settings.edit()
                 .putCommaSet(PREF_RECIPIENTS_ADDRESS, items.map { it.address })
                 .apply()
@@ -57,12 +57,11 @@ class RecipientsFragment : RecyclerFragment<Item, ItemViewHolder>() {
         return item.address == other.address
     }
 
-    override fun createViewHolder(parent: ViewGroup): ItemViewHolder {
-        return ItemViewHolder(LayoutInflater.from(context)
-                .inflate(R.layout.list_item_recipient, parent, false))
+    override fun createViewHolder(parent: ViewGroup): Holder {
+        return Holder(LayoutInflater.from(context).inflate(R.layout.list_item_recipient, parent, false))
     }
 
-    override fun bindViewHolder(item: Item, holder: ItemViewHolder) {
+    override fun bindViewHolder(item: Item, holder: Holder) {
         holder.textView.text =
                 if (isValidEmailAddress(item.address))
                     item.address
@@ -76,7 +75,7 @@ class RecipientsFragment : RecyclerFragment<Item, ItemViewHolder>() {
 
     class Item(val address: String)
 
-    inner class ItemViewHolder(view: View) : ViewHolder(view) {
+    inner class Holder(view: View) : ViewHolder(view) {
 
         val textView: TextView = view.findViewById(R.id.text)
     }

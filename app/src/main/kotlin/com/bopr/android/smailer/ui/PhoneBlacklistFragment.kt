@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import com.bopr.android.smailer.PhoneEventFilter
-import com.bopr.android.smailer.Settings
+import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_BLACKLIST
 
 /**
  * Phone number blacklist activity fragment.
@@ -30,15 +30,15 @@ class PhoneBlacklistFragment : PhoneFilterListFragment() {
         return filter.phoneBlacklist
     }
 
-    override fun setItemsList(filter: PhoneEventFilter, list: List<String>) {
+    override fun setItemsList(filter: PhoneEventFilter, list: Collection<String>) {
         filter.phoneBlacklist = list.toMutableSet()
     }
 
     private inner class SettingsListener(context: Context) : BaseSettingsListener(context) {
 
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-            if (key == Settings.PREF_FILTER_PHONE_BLACKLIST) {
-                loadItems()
+            if (key == PREF_FILTER_PHONE_BLACKLIST) {
+                reloadItems()
             }
             super.onSharedPreferenceChanged(sharedPreferences, key)
         }

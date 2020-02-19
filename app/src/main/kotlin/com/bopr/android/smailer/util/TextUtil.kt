@@ -35,8 +35,12 @@ object TextUtil {
     }
 
     fun commaSplit(s: String): List<String> {
-        return s.split(COMMA_ESCAPED).map {
-            it.trim().replace("/,", ",")
+        return if (s.isNotEmpty()) {
+            s.split(COMMA_ESCAPED).map {
+                it.trim().replace("/,", ",")
+            }
+        } else {
+            listOf() /* important. to match commaJoin("") */
         }
     }
 

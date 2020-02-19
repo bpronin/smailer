@@ -48,7 +48,7 @@ class EditRecipientDialogFragment : BaseEditDialogFragment<Item>("edit_recipient
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        if (intent != null && requestCode == PICK_CONTACT_REQUEST && resultCode == RESULT_OK) {
+        if (requestCode == PICK_CONTACT_REQUEST && resultCode == RESULT_OK) {
             editText.text = emailAddressFromIntent(requireContext(), intent)
         }
     }

@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import com.bopr.android.smailer.PhoneEventFilter
-import com.bopr.android.smailer.Settings
+import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_WHITELIST
 
 /**
  * Text whitelist activity fragment.
@@ -30,15 +30,15 @@ class TextWhitelistFragment : TextFilterListFragment() {
         return filter.textWhitelist
     }
 
-    override fun setItemsList(filter: PhoneEventFilter, list: List<String>) {
+    override fun setItemsList(filter: PhoneEventFilter, list: Collection<String>) {
         filter.textWhitelist = list.toMutableSet()
     }
 
     private inner class SettingsListener(context: Context) : BaseSettingsListener(context) {
 
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-            if (key == Settings.PREF_FILTER_TEXT_WHITELIST) {
-                loadItems()
+            if (key == PREF_FILTER_TEXT_WHITELIST) {
+                reloadItems()
             }
             super.onSharedPreferenceChanged(sharedPreferences, key)
         }

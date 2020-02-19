@@ -1,7 +1,5 @@
 package com.bopr.android.smailer.ui
 
-import com.bopr.android.smailer.R
-
 /**
  * Phone filter list activity fragment.
  *
@@ -9,14 +7,11 @@ import com.bopr.android.smailer.R
  */
 abstract class PhoneFilterListFragment : FilterListFragment() {
 
-    override fun createEditItemDialog(text: String?): BaseEditDialogFragment<String> {
-        val dialog = EditPhoneDialogFragment()
-        dialog.setTitle(if (text == null) R.string.add else R.string.edit)
-        dialog.setValue(text)
-        return dialog
+    override fun createEditDialog(): BaseEditDialogFragment<String> {
+        return EditPhoneDialogFragment()
     }
 
-    override fun getItemText(value: String?): String? {
-        return value
+    override fun getItemTitle(item: String): String {
+        return item
     }
 }

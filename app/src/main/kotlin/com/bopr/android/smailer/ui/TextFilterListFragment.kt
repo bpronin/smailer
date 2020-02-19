@@ -1,6 +1,5 @@
 package com.bopr.android.smailer.ui
 
-import com.bopr.android.smailer.R
 import com.bopr.android.smailer.util.TextUtil.unescapeRegex
 
 /**
@@ -10,14 +9,12 @@ import com.bopr.android.smailer.util.TextUtil.unescapeRegex
  */
 abstract class TextFilterListFragment : FilterListFragment() {
 
-    override fun createEditItemDialog(text: String?): BaseEditDialogFragment<String> {
-        val dialog = EditTextDialogFragment()
-        dialog.setTitle(if (text == null) R.string.add else R.string.edit)
-        dialog.setValue(text)
-        return dialog
+    override fun createEditDialog(): BaseEditDialogFragment<String> {
+        return EditTextDialogFragment()
     }
 
-    override fun getItemText(value: String?): String? {
-        return unescapeRegex(value) ?: value
+    override fun getItemTitle(item: String): String {
+        return unescapeRegex(item) ?: item
     }
+
 }

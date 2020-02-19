@@ -41,14 +41,14 @@ object ContentUtils {
         return result
     }
 
-    fun emailAddressFromIntent(context: Context, intent: Intent): String? {
-        return intent.data?.lastPathSegment?.let { emailAddress(context, it) }
-    }
-
     fun createPickContactEmailIntent(): Intent {
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = Email.CONTENT_TYPE
         return intent
+    }
+
+    fun emailAddressFromIntent(context: Context, intent: Intent?): String? {
+        return intent?.data?.lastPathSegment?.let { emailAddress(context, it) }
     }
 
     fun phoneFromIntent(context: Context, intent: Intent?): String? {
