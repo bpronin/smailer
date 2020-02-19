@@ -143,7 +143,7 @@ class MailFormatter(private val context: Context, private val event: PhoneEvent)
                 resources.getString(R.string.you_had_missed_call)
             }
             event.isSms -> {
-                replaceUrls(requireNotNull(event.text))
+                replaceUrlsWithLinks(requireNotNull(event.text))
             }
             else -> {
                 val patternRes = if (event.isIncoming) {
@@ -360,12 +360,12 @@ class MailFormatter(private val context: Context, private val event: PhoneEvent)
                 .format()
     }
 
-    private fun replaceUrls(s: String): String {
+    private fun replaceUrlsWithLinks(s: String): String {
         val sb = StringBuffer()
 
-        val matcher = Pattern.compile("((?i:http|https|rtsp|ftp|file)://[\\S]+)").matcher(s)
+        val matcher = WEB_URL_PATTERN.matcher(s)
         while (matcher.find()) {
-            val url = matcher.group(1)
+            val url = matcher.group()
             matcher.appendReplacement(sb, "<a href=\"$url\">$url</a>")
         }
         matcher.appendTail(sb)
@@ -373,16 +373,16 @@ class MailFormatter(private val context: Context, private val event: PhoneEvent)
         return sb.toString()
     }
 
-    private fun encodeUrl(text: String): String {
+    private fun encodeUrl(s: String): String {
         return try {
-            URLEncoder.encode(text, "UTF-8")
+            URLEncoder.encode(s, "UTF-8")
         } catch (x: UnsupportedEncodingException) {
             throw RuntimeException(x)
         }
     }
 
     companion object {
-
+        private val WEB_URL_PATTERN = Pattern.compile("(?:\\S+)://\\S+")
         private const val SUBJECT_PATTERN = "[{app_name}] {source} {phone}"
         private const val BODY_PATTERN = "<html><head><meta http-equiv=\"content-type\" " +
                 "content=\"text/html; charset=utf-8\">" +

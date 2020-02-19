@@ -430,7 +430,9 @@ class MailFormatterTest : BaseTest() {
     @Test
     fun testFormatUrls() {
         val event = PhoneEvent("+12345678901", true, 0, null, false,
-                "Please visit http://google.com site", null, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
+                "Please visit https://www.google.com/search?a=1&b=2 or " +
+                        "https://secure.place  site or download from ftp://get.from.here",
+                null, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
 
         val formatter = MailFormatter(context, event)
 
