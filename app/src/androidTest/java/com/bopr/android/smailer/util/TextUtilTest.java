@@ -2,11 +2,14 @@ package com.bopr.android.smailer.util;
 
 import com.bopr.android.smailer.BaseTest;
 import com.bopr.android.smailer.GeoCoordinates;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
 
 import org.junit.Test;
 
-import static com.bopr.android.smailer.util.AddressUtil.extractEmail;
 import static com.bopr.android.smailer.util.TextUtil.capitalize;
+import static com.bopr.android.smailer.util.TextUtil.commaJoin;
+import static com.bopr.android.smailer.util.TextUtil.commaSplit;
 import static com.bopr.android.smailer.util.TextUtil.decimalToDMS;
 import static com.bopr.android.smailer.util.TextUtil.escapeRegex;
 import static com.bopr.android.smailer.util.TextUtil.formatCoordinates;
@@ -14,13 +17,15 @@ import static com.bopr.android.smailer.util.TextUtil.formatDuration;
 import static com.bopr.android.smailer.util.TextUtil.isNotEmpty;
 import static com.bopr.android.smailer.util.TextUtil.isNullOrBlank;
 import static com.bopr.android.smailer.util.TextUtil.isNullOrEmpty;
+import static com.bopr.android.smailer.util.TextUtil.isQuoted;
 import static com.bopr.android.smailer.util.TextUtil.join;
 import static com.bopr.android.smailer.util.TextUtil.split;
 import static com.bopr.android.smailer.util.TextUtil.unescapeRegex;
+import static com.google.common.collect.ImmutableList.of;
+import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -59,6 +64,19 @@ public class TextUtilTest extends BaseTest {
     }
 
     @Test
+    public void testIsQuoted() {
+        assertTrue(isQuoted("\"hello\""));
+        assertTrue(isQuoted("\"\"hello\"\""));
+        assertTrue(isQuoted("\"\"hello\""));
+        assertFalse(isQuoted("hello"));
+        assertFalse(isQuoted("\"hello"));
+        assertFalse(isQuoted("hello\""));
+        assertFalse(isQuoted(""));
+        assertFalse(isQuoted(" "));
+        assertFalse(isQuoted(null));
+    }
+
+    @Test
     public void testFormatDuration() {
         long duration = HOURS.toMillis(15) + MINUTES.toMillis(15) + SECONDS.toMillis(15);
         assertEquals("15:15:15", formatDuration(duration));
@@ -90,26 +108,31 @@ public class TextUtilTest extends BaseTest {
     }
 
     @Test
-    public void testStringOf() {
-        assertEquals("1, 2, 3", join(", ", 1, 2, 3));
-        assertEquals("1, null, null", join(", ", 1, null, null));
-        assertEquals("", join(", "));
+    public void testJoin() {
+        assertEquals("1, 2, 3", join(of(1, 2, 3), ", "));
+        assertEquals("1, , ", join(of(1, "", ""), ", "));
+        assertEquals("", join(of(), ", "));
+        assertEquals("[1]|[2]|[3]", join(of(1, 2, 3), "|", new Function<Object, String>() {
+
+            @Override
+            public String apply(Object s) {
+                return "[" + s + "]";
+            }
+        }));
     }
 
     @Test
-    public void testListOf() {
-        assertArrayEquals(new String[]{"1", " 2", "3 "}, split("1, 2,3 ", ",", false).toArray());
-        assertArrayEquals(new String[]{"1", "2", "3"}, split("1, 2, 3 ", ",", true).toArray());
-        assertArrayEquals(new String[]{" "}, split(" ", ",", false).toArray());
-        assertArrayEquals(new String[]{}, split("", ",", true).toArray());
-        assertArrayEquals(new String[]{}, split(" ", ",", true).toArray());
-        assertArrayEquals(new String[]{}, split(null, ",", true).toArray());
-    }
+    public void tesSplit() {
+        assertEquals(of(), split("", ";"));
+        assertEquals(of(" "), split(" ", ";"));
+        assertEquals(of("1", " 2", "3 "), split("1; 2;3 ", ";"));
+        assertEquals(of("[1]", "[2]", "[3]"), split("1;2;3", ";", new Function<String, String>() {
 
-    @Test
-    public void testExtractEmail() {
-        assertNull(extractEmail("From address"));
-        assertEquals("mail@mail.com", extractEmail("From: <mail@mail.com> address"));
+            @Override
+            public String apply(String s) {
+                return "[" + s + "]";
+            }
+        }));
     }
 
     @Test
@@ -131,5 +154,22 @@ public class TextUtilTest extends BaseTest {
         assertEquals("", unescapeRegex("REGEX:"));
     }
 
+    @Test
+    public void testCommaJoin() {
+        assertEquals("a,b,c", commaJoin(asList("a", "b", "c")));
+        assertEquals("1,2,3", commaJoin(asList(1, 2, 3)));
+        assertEquals("1,c,3", commaJoin(asList(1, "c", 3)));
+        assertEquals("a,b/,c,d", commaJoin(asList("a", "b,c", "d")));
+        assertEquals("", commaJoin(ImmutableSet.of()));
+    }
+
+    @Test
+    public void testCommaSplit() {
+        assertTrue(commaSplit("").isEmpty());
+        assertEquals(of(""), commaSplit("   "));
+        assertEquals(of("1", "2", "3"), commaSplit("1,2,3"));
+        assertEquals(of("1", "2", "3"), commaSplit(" 1, 2, 3 "));
+        assertEquals(of("a", "b,c", "d"), commaSplit("a, b/,c, d"));
+    }
 
 }

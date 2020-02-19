@@ -88,7 +88,7 @@ public class SyncManager {
     }
 
     private static Account syncAccount(Context context) {
-        String name = settings(context).getString(PREF_SENDER_ACCOUNT, null);
+        String name = settings(context).getString(PREF_SENDER_ACCOUNT);
         return new GoogleAccountManager(context).getAccountByName(name);
     }
 

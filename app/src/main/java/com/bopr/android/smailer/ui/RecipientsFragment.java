@@ -28,7 +28,6 @@ import java.util.List;
 import static com.bopr.android.smailer.Settings.PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.util.AddressUtil.isValidEmailAddress;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
-import static com.bopr.android.smailer.util.TextUtil.commaJoin;
 import static com.bopr.android.smailer.util.UiUtil.showToast;
 import static com.bopr.android.smailer.util.UiUtil.underwivedText;
 import static java.lang.String.valueOf;
@@ -135,7 +134,7 @@ public class RecipientsFragment extends BaseFragment {
         listView.setAdapter(listAdapter);
 
         List<Item> items = new ArrayList<>();
-        List<String> addresses = TextUtil.split(settings.getString(PREF_RECIPIENTS_ADDRESS, ""), ",", true);
+        List<String> addresses = settings.getCommaList(PREF_RECIPIENTS_ADDRESS);
         for (String address : addresses) {
             items.add(new Item(address));
         }
@@ -149,7 +148,7 @@ public class RecipientsFragment extends BaseFragment {
         }
 
         settings.edit()
-                .putString(PREF_RECIPIENTS_ADDRESS, commaJoin(addresses))
+                .putCommaSet(PREF_RECIPIENTS_ADDRESS, addresses)
                 .apply();
     }
 

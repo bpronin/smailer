@@ -144,7 +144,7 @@ public class MainFragment extends BasePreferenceFragment {
     }
 
     private void updateRecipientsPreferenceSummary() {
-        String value = settings.getString(PREF_RECIPIENTS_ADDRESS, null);
+        String value = settings.getString(PREF_RECIPIENTS_ADDRESS);
         if (isNullOrEmpty(value)) {
             updateSummary(recipientsPreference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED);
         } else {

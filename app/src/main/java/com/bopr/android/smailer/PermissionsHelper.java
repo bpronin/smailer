@@ -46,7 +46,7 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.Util.requireNonNull;
-import static com.bopr.android.smailer.util.Util.toArray;
+import static com.google.common.collect.Iterables.toArray;
 
 /**
  * Responsible for permissions checking.
@@ -152,6 +152,7 @@ public class PermissionsHelper implements SharedPreferences.OnSharedPreferenceCh
 
         doCheck(deniedPermissions);
     }
+
     @SuppressWarnings({"deprecation", "RedundantSuppression"}) // TODO: 06.02.2020 deprecated
     protected void onPermissionsDenied(Collection<String> permissions) {
         log.debug("Denied: " + permissions);
@@ -185,7 +186,7 @@ public class PermissionsHelper implements SharedPreferences.OnSharedPreferenceCh
                         break;
                 }
             }
-            
+
             edit.apply();
         }
     }
@@ -217,7 +218,7 @@ public class PermissionsHelper implements SharedPreferences.OnSharedPreferenceCh
     private void requestPermissions(List<String> permissions) {
         log.debug("Requesting : " + permissions);
 
-        ActivityCompat.requestPermissions(activity, toArray(permissions), requestResultCode);
+        ActivityCompat.requestPermissions(activity, toArray(permissions, String.class), requestResultCode);
     }
 
     private void explainPermissions(final List<String> permissions) {

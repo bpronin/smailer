@@ -102,8 +102,8 @@ import static com.bopr.android.smailer.util.TextUtil.escapeRegex;
 import static com.bopr.android.smailer.util.TextUtil.formatCoordinates;
 import static com.bopr.android.smailer.util.UiUtil.alertDialogView;
 import static com.bopr.android.smailer.util.UiUtil.showToast;
-import static com.bopr.android.smailer.util.Util.asSet;
 import static com.bopr.android.smailer.util.Util.requireNonNull;
+import static com.bopr.android.smailer.util.Util.setOf;
 import static com.google.api.services.drive.DriveScopes.DRIVE_APPDATA;
 import static com.google.api.services.gmail.GmailScopes.GMAIL_SEND;
 import static com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM;
@@ -523,13 +523,13 @@ public class DebugFragment extends BasePreferenceFragment {
                 .putString(PREF_SENDER_ACCOUNT, primaryAccount(context).name)
                 .putString(PREF_REMOTE_CONTROL_ACCOUNT, properties.getProperty("remote_control_account"))
                 .putString(PREF_RECIPIENTS_ADDRESS, properties.getProperty("default_recipient"))
-                .putStringSet(PREF_EMAIL_TRIGGERS, asSet(
+                .putStringSet(PREF_EMAIL_TRIGGERS, setOf(
                         VAL_PREF_TRIGGER_IN_SMS,
                         VAL_PREF_TRIGGER_IN_CALLS,
                         VAL_PREF_TRIGGER_MISSED_CALLS,
                         VAL_PREF_TRIGGER_OUT_CALLS,
                         VAL_PREF_TRIGGER_OUT_SMS))
-                .putStringSet(PREF_EMAIL_CONTENT, asSet(
+                .putStringSet(PREF_EMAIL_CONTENT, setOf(
                         VAL_PREF_EMAIL_CONTENT_CONTACT,
                         VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
                         VAL_PREF_EMAIL_CONTENT_LOCATION,
@@ -540,8 +540,8 @@ public class DebugFragment extends BasePreferenceFragment {
                 .putString(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)
                 .putBoolean(PREF_NOTIFY_SEND_SUCCESS, true)
                 .putBoolean(PREF_RESEND_UNSENT, true)
-                .putString(PREF_FILTER_PHONE_BLACKLIST, commaJoin(asSet("+123456789", "+9876543*")))
-                .putString(PREF_FILTER_TEXT_BLACKLIST, commaJoin(asSet("Bad text", escapeRegex("Expression"))))
+                .putString(PREF_FILTER_PHONE_BLACKLIST, commaJoin(setOf("+123456789", "+9876543*")))
+                .putString(PREF_FILTER_TEXT_BLACKLIST, commaJoin(setOf("Bad text", escapeRegex("Expression"))))
                 .apply();
 
         refreshPreferenceViews();
@@ -802,7 +802,7 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private Account senderAccount() {
-        String name = settings.getString(PREF_SENDER_ACCOUNT, null);
+        String name = settings.getString(PREF_SENDER_ACCOUNT);
         return new GoogleAccountManager(context).getAccountByName(name);
     }
 

@@ -5,7 +5,6 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import com.bopr.android.smailer.util.TextUtil;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 
 import org.slf4j.Logger;
@@ -28,6 +27,7 @@ import static com.bopr.android.smailer.Settings.PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.util.AddressUtil.isValidEmailAddressList;
 import static com.bopr.android.smailer.util.ContentUtils.getContactName;
 import static com.bopr.android.smailer.util.ContentUtils.markSmsAsRead;
+import static com.bopr.android.smailer.util.TextUtil.isNullOrEmpty;
 import static com.google.api.services.gmail.GmailScopes.GMAIL_SEND;
 
 /**
@@ -157,9 +157,9 @@ public class CallProcessor {
     }
 
     private String requireSender(boolean silent) throws Exception {
-        String s = settings.getString(PREF_SENDER_ACCOUNT, null);
+        String s = settings.getString(PREF_SENDER_ACCOUNT);
 
-        if (TextUtil.isNullOrEmpty(s)) {
+        if (isNullOrEmpty(s)) {
             showErrorNotification(R.string.no_account_specified, silent);
             throw new Exception("Account not specified");
         }
@@ -167,9 +167,9 @@ public class CallProcessor {
     }
 
     private String requireRecipient(boolean silent) throws Exception {
-        String s = settings.getString(PREF_RECIPIENTS_ADDRESS, null);
+        String s = settings.getString(PREF_RECIPIENTS_ADDRESS);
 
-        if (TextUtil.isNullOrEmpty(s)) {
+        if (isNullOrEmpty(s)) {
             showErrorNotification(R.string.no_recipients_specified, silent);
             throw new Exception("Recipients not specified");
         }
@@ -187,15 +187,15 @@ public class CallProcessor {
         formatter.setSendTime(new Date());
         formatter.setContactName(getContactName(context, event.getPhone()));
         formatter.setDeviceName(settings.getDeviceName());
-        formatter.setContentOptions(settings.getStringSet(PREF_EMAIL_CONTENT, null));
-        formatter.setServiceAccount(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT, null));
+        formatter.setContentOptions(settings.getStringSet(PREF_EMAIL_CONTENT));
+        formatter.setServiceAccount(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT));
         formatter.setLocale(settings.getLocale());
 
         MailMessage message = new MailMessage();
         message.setSubject(formatter.formatSubject());
         message.setBody(formatter.formatBody());
         message.setRecipients(recipient);
-        message.setReplyTo(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT, null));
+        message.setReplyTo(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT));
 
         transport.send(message);
     }

@@ -7,7 +7,7 @@ import org.junit.function.ThrowingRunnable;
 
 import java.util.Set;
 
-import static org.junit.Assert.assertArrayEquals;
+import static com.bopr.android.smailer.util.Util.setOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
@@ -20,8 +20,8 @@ import static org.junit.Assert.assertTrue;
 public class UtilTest extends BaseTest {
 
     @Test
-    public void testAsSet() {
-        final Set<String> set = Util.asSet("A", "B", "B", "C");
+    public void testSetOf() {
+        final Set<String> set = setOf("A", "B", "B", "C");
 
         assertEquals(3, set.size());
         assertTrue(set.contains("A"));
@@ -34,13 +34,6 @@ public class UtilTest extends BaseTest {
                 set.add("D");
             }
         });
-    }
-
-    @Test
-    public void testToArray() {
-        Set<String> set = Util.asSet("A", "B", "C");
-        String[] strings = Util.toArray(set);
-        assertArrayEquals(strings, new String[]{"A", "B", "C"});
     }
 
 

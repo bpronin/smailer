@@ -3,14 +3,10 @@ package com.bopr.android.smailer.util;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Scanner;
-import java.util.Set;
+import com.google.common.collect.ImmutableSet;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableSet;
+import java.io.InputStream;
+import java.util.Scanner;
 
 /**
  * Miscellaneous utilities.
@@ -40,17 +36,8 @@ public abstract class Util {
     }
 
     @SafeVarargs
-    public static <T> Set<T> asSet(T... values) {
-        return unmodifiableSet(toSet(asList(values)));
-    }
-
-    @NonNull
-    public static <T> Set<T> toSet(@NonNull Collection<T> collection) {
-        return new LinkedHashSet<>(collection);
-    }
-
-    public static String[] toArray(@NonNull Collection<String> collection) {
-        return collection.toArray(new String[0]);
+    public static <T> ImmutableSet<T> setOf(T... values) {
+        return ImmutableSet.copyOf(values);
     }
 
 }

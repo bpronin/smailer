@@ -24,7 +24,7 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_LOCATION;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS;
-import static com.bopr.android.smailer.util.Util.asSet;
+import static com.bopr.android.smailer.util.Util.setOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -147,7 +147,7 @@ public class MailFormatterTest extends BaseTest {
 
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(defaultTime);
-        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
+        formatter.setContentOptions(setOf(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
 
         assertThat(formatter.formatBody(), htmlEqualsRes("footer_time_option.html"));
     }
@@ -163,7 +163,7 @@ public class MailFormatterTest extends BaseTest {
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(defaultTime);
         formatter.setDeviceName("The Device");
-        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME));
+        formatter.setContentOptions(setOf(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME));
 
         assertThat(formatter.formatBody(), htmlEqualsRes("footer_device_option.html"));
     }
@@ -179,7 +179,7 @@ public class MailFormatterTest extends BaseTest {
 
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(defaultTime);
-        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME));
+        formatter.setContentOptions(setOf(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME));
 
         assertThat(formatter.formatBody(), htmlEqualsRes("footer_no_device_option.html"));
     }
@@ -196,7 +196,7 @@ public class MailFormatterTest extends BaseTest {
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(defaultTime);
         formatter.setDeviceName("The Device");
-        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
+        formatter.setContentOptions(setOf(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
                 VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME));
 
         assertThat(formatter.formatBody(), htmlEqualsRes("footer_time_device_option.html"));
@@ -212,7 +212,7 @@ public class MailFormatterTest extends BaseTest {
 
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(defaultTime);
-        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_LOCATION));
+        formatter.setContentOptions(setOf(VAL_PREF_EMAIL_CONTENT_LOCATION));
 
         assertThat(formatter.formatBody(), htmlEqualsRes("footer_location_option.html"));
     }
@@ -228,7 +228,7 @@ public class MailFormatterTest extends BaseTest {
 
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(defaultTime);
-        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_LOCATION));
+        formatter.setContentOptions(setOf(VAL_PREF_EMAIL_CONTENT_LOCATION));
 
         assertThat(formatter.formatBody(), htmlEqualsRes("footer_no_location.html"));
     }
@@ -244,7 +244,7 @@ public class MailFormatterTest extends BaseTest {
 
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(defaultTime);
-        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_LOCATION));
+        formatter.setContentOptions(setOf(VAL_PREF_EMAIL_CONTENT_LOCATION));
 
         when(context.checkPermission(eq(ACCESS_COARSE_LOCATION), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED);
         when(context.checkPermission(eq(ACCESS_FINE_LOCATION), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED);
@@ -263,7 +263,7 @@ public class MailFormatterTest extends BaseTest {
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(defaultTime);
         formatter.setContactName("John Dou");
-        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_CONTACT));
+        formatter.setContentOptions(setOf(VAL_PREF_EMAIL_CONTENT_CONTACT));
 
         assertThat(formatter.formatBody(), htmlEqualsRes("footer_contact_option.html"));
     }
@@ -279,7 +279,7 @@ public class MailFormatterTest extends BaseTest {
 
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(defaultTime);
-        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_CONTACT));
+        formatter.setContentOptions(setOf(VAL_PREF_EMAIL_CONTENT_CONTACT));
         when(context.checkPermission(eq(READ_CONTACTS), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED);
 
         assertThat(formatter.formatBody(), htmlEqualsRes("footer_contact_no_permission.html"));
@@ -296,7 +296,7 @@ public class MailFormatterTest extends BaseTest {
 
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(defaultTime);
-        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_CONTACT));
+        formatter.setContentOptions(setOf(VAL_PREF_EMAIL_CONTENT_CONTACT));
 
         assertThat(formatter.formatBody(), htmlEqualsRes("footer_unknown_contact.html"));
     }
@@ -360,7 +360,7 @@ public class MailFormatterTest extends BaseTest {
         formatter.setSendTime(defaultTime);
         formatter.setContactName("John Dou");
         formatter.setDeviceName("Device");
-        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
+        formatter.setContentOptions(setOf(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
                 VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
                 VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT));
 
@@ -382,7 +382,7 @@ public class MailFormatterTest extends BaseTest {
         formatter.setSendTime(defaultTime);
         formatter.setContactName("John Dou");
         formatter.setDeviceName("Device");
-        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
+        formatter.setContentOptions(setOf(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
                 VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
                 VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT));
 
@@ -403,7 +403,7 @@ public class MailFormatterTest extends BaseTest {
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setSendTime(defaultTime);
         formatter.setDeviceName("Device");
-        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
+        formatter.setContentOptions(setOf(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
                 VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
                 VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT));
 
@@ -429,7 +429,7 @@ public class MailFormatterTest extends BaseTest {
         formatter.setSendTime(defaultTime);
         formatter.setDeviceName("Device");
         formatter.setLocale(new Locale("ru", "ru"));
-        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_CONTACT,
+        formatter.setContentOptions(setOf(VAL_PREF_EMAIL_CONTENT_CONTACT,
                 VAL_PREF_EMAIL_CONTENT_LOCATION,
                 VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
                 VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
@@ -471,7 +471,7 @@ public class MailFormatterTest extends BaseTest {
         MailFormatter formatter = new MailFormatter(context, event);
         formatter.setDeviceName("Device");
         formatter.setServiceAccount("service@mail.com");
-        formatter.setContentOptions(asSet(VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS));
+        formatter.setContentOptions(setOf(VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS));
 
         assertThat(formatter.formatBody(), htmlEqualsRes("remote_control_links.html"));
     }

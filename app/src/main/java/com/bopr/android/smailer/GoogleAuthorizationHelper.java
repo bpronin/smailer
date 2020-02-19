@@ -12,18 +12,18 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager;
+import com.google.common.collect.ImmutableSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.Set;
 
 import static android.accounts.AccountManager.KEY_ACCOUNT_NAME;
 import static android.accounts.AccountManager.newChooseAccountIntent;
 import static android.app.Activity.RESULT_OK;
 import static com.bopr.android.smailer.util.TextUtil.join;
-import static java.util.Arrays.asList;
 
 /**
  * Convenient class to deal with Google authentication.
@@ -40,14 +40,14 @@ public class GoogleAuthorizationHelper {
     private final Settings settings;
     private final GoogleAccountManager accountManager;
     private final String settingName;
-    private final Collection<String> scopes;
+    private final Set<String> scopes;
 
     public GoogleAuthorizationHelper(Fragment fragment, String accountSettingName, String... scopes) {
         if (scopes.length == 0) {
             throw new IllegalArgumentException("Scopes cannot be empty");
         }
         this.fragment = fragment;
-        this.scopes = asList(scopes);
+        this.scopes = ImmutableSet.copyOf(scopes);
         this.settingName = accountSettingName;
         settings = new Settings(fragment.requireContext());
         accountManager = new GoogleAccountManager(fragment.requireContext());
@@ -96,7 +96,7 @@ public class GoogleAuthorizationHelper {
     }
 
     private Account getSelectedAccount() {
-        String accountName = settings.getString(settingName, null);
+        String accountName = settings.getString(settingName);
         return accountManager.getAccountByName(accountName);
     }
 
@@ -106,7 +106,7 @@ public class GoogleAuthorizationHelper {
         Account account = accountManager.getAccountByName(accountName);
         accountManager.getAccountManager().getAuthToken(
                 account,
-                "oauth2: " + join(" ", scopes),
+                "oauth2: " + join(scopes, " "),
                 null,
                 fragment.requireActivity(),
                 new AuthTokenAcquireCallback(accountName),

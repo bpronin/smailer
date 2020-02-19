@@ -8,19 +8,15 @@ import androidx.annotation.NonNull;
 import com.bopr.android.smailer.util.AndroidUtil;
 import com.bopr.android.smailer.util.SharedPreferencesWrapper;
 import com.bopr.android.smailer.util.TextUtil;
+import com.bopr.android.smailer.util.Util;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 
 import static android.content.Context.MODE_PRIVATE;
-import static com.bopr.android.smailer.util.TextUtil.commaJoin;
-import static com.bopr.android.smailer.util.TextUtil.commaSplit;
-import static com.bopr.android.smailer.util.Util.asSet;
-import static com.bopr.android.smailer.util.Util.toSet;
 
 /**
  * Settings.
@@ -69,7 +65,7 @@ public class Settings extends SharedPreferencesWrapper {
     public static final String VAL_PREF_TRIGGER_OUT_CALLS = "out_calls";
     public static final String VAL_PREF_TRIGGER_MISSED_CALLS = "missed_calls";
 
-    public static final Set<String> DEFAULT_CONTENT = asSet(
+    public static final Set<String> DEFAULT_CONTENT = Util.setOf(
             VAL_PREF_EMAIL_CONTENT_HEADER,
             VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
             VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT,
@@ -77,7 +73,7 @@ public class Settings extends SharedPreferencesWrapper {
             VAL_PREF_EMAIL_CONTENT_LOCATION,
             VAL_PREF_EMAIL_CONTENT_CONTACT,
             VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS);
-    public static final Set<String> DEFAULT_TRIGGERS = asSet(
+    public static final Set<String> DEFAULT_TRIGGERS = Util.setOf(
             VAL_PREF_TRIGGER_IN_SMS,
             VAL_PREF_TRIGGER_MISSED_CALLS);
 
@@ -106,8 +102,8 @@ public class Settings extends SharedPreferencesWrapper {
         edit.putBooleanOptional(PREF_REMOTE_CONTROL_NOTIFICATIONS, true);
         edit.putBooleanOptional(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS, true);
 
-        Set<String> content = getStringSet(PREF_EMAIL_CONTENT, null);
-        if (content == null) {
+        Set<String> content = getStringSet(PREF_EMAIL_CONTENT);
+        if (content.isEmpty()) {
             edit.putStringSet(PREF_EMAIL_CONTENT, DEFAULT_CONTENT);
         } else if (getInt(Settings.PREF_SETTINGS_VERSION, 1) == 1) {
             content.add(VAL_PREF_EMAIL_CONTENT_HEADER);
@@ -172,31 +168,33 @@ public class Settings extends SharedPreferencesWrapper {
     public PhoneEventFilter getFilter() {
         PhoneEventFilter filter = new PhoneEventFilter();
 
-        filter.setTriggers(getStringSet(PREF_EMAIL_TRIGGERS, Collections.<String>emptySet()));
-        filter.setPhoneBlacklist(toSet(commaSplit(getString(PREF_FILTER_PHONE_BLACKLIST, ""))));
-        filter.setPhoneWhitelist(toSet(commaSplit(getString(PREF_FILTER_PHONE_WHITELIST, ""))));
-        filter.setTextBlacklist(toSet(commaSplit(getString(PREF_FILTER_TEXT_BLACKLIST, ""))));
-        filter.setTextWhitelist(toSet(commaSplit(getString(PREF_FILTER_TEXT_WHITELIST, ""))));
+        filter.setTriggers(getStringSet(PREF_EMAIL_TRIGGERS));
+        filter.setPhoneBlacklist(getCommaSet(PREF_FILTER_PHONE_BLACKLIST));
+        filter.setPhoneWhitelist(getCommaSet(PREF_FILTER_PHONE_WHITELIST));
+        filter.setTextBlacklist(getCommaSet(PREF_FILTER_TEXT_BLACKLIST));
+        filter.setTextWhitelist(getCommaSet(PREF_FILTER_TEXT_WHITELIST));
 
         return filter;
     }
 
     @Override
+    @NonNull
     public Editor edit() {
         return new Editor(super.edit());
     }
 
     public class Editor extends EditorWrapper {
 
-        private Editor(EditorWrapper edit) {
+        private Editor(@NonNull EditorWrapper edit) {
             super(edit);
         }
 
-        public Editor putFilter(PhoneEventFilter filter) {
-            putString(PREF_FILTER_PHONE_BLACKLIST, commaJoin(filter.getPhoneBlacklist()));
-            putString(PREF_FILTER_PHONE_WHITELIST, commaJoin(filter.getPhoneWhitelist()));
-            putString(PREF_FILTER_TEXT_BLACKLIST, commaJoin(filter.getTextBlacklist()));
-            putString(PREF_FILTER_TEXT_WHITELIST, commaJoin(filter.getTextWhitelist()));
+        @NonNull
+        public Editor putFilter(@NonNull PhoneEventFilter filter) {
+            putCommaSet(PREF_FILTER_PHONE_BLACKLIST, filter.getPhoneBlacklist());
+            putCommaSet(PREF_FILTER_PHONE_WHITELIST, filter.getPhoneWhitelist());
+            putCommaSet(PREF_FILTER_TEXT_BLACKLIST, filter.getTextBlacklist());
+            putCommaSet(PREF_FILTER_TEXT_WHITELIST, filter.getTextWhitelist());
             return this;
         }
 

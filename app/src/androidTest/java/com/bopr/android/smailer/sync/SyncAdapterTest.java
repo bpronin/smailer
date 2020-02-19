@@ -17,7 +17,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 import static com.bopr.android.smailer.Settings.PREF_FILTER_PHONE_BLACKLIST;
 import static com.bopr.android.smailer.Settings.PREF_SYNC_TIME;
 import static com.bopr.android.smailer.util.AndroidUtil.primaryAccount;
-import static com.bopr.android.smailer.util.Util.asSet;
+import static com.bopr.android.smailer.util.Util.setOf;
 import static org.junit.Assert.assertEquals;
 
 public class SyncAdapterTest extends BaseTest {
@@ -39,7 +39,7 @@ public class SyncAdapterTest extends BaseTest {
 
         adapter.onPerformSync(account, null, null, null, null);
 
-        assertEquals(asSet("A", "B", "C"), settings.getFilter().getPhoneBlacklist());
+        assertEquals(setOf("A", "B", "C"), settings.getFilter().getPhoneBlacklist());
 
         settings.edit()
                 .putLong(PREF_SYNC_TIME, 0) /* earlier than previous */
@@ -48,7 +48,7 @@ public class SyncAdapterTest extends BaseTest {
 
         adapter.onPerformSync(account, null, null, null, null);
 
-        assertEquals(asSet("A", "B", "C"), settings.getFilter().getPhoneBlacklist());
+        assertEquals(setOf("A", "B", "C"), settings.getFilter().getPhoneBlacklist());
 
         settings.edit()
                 .putLong(PREF_SYNC_TIME, System.currentTimeMillis()) /* later than previous */
@@ -57,7 +57,7 @@ public class SyncAdapterTest extends BaseTest {
 
         adapter.onPerformSync(account, null, null, null, null);
 
-        assertEquals(asSet("A", "B"), settings.getFilter().getPhoneBlacklist());
+        assertEquals(setOf("A", "B"), settings.getFilter().getPhoneBlacklist());
     }
 
 }

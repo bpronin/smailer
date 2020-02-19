@@ -4,15 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.bopr.android.smailer.GeoCoordinates;
+import com.google.common.base.Function;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 
 @SuppressWarnings("WeakerAccess")
 public abstract class TextUtil {
@@ -95,46 +94,63 @@ public abstract class TextUtil {
         return String.format(Locale.US, "%d:%02d:%02d", seconds / 3600, (seconds % 3600) / 60, seconds % 60);
     }
 
-    @SafeVarargs
     @NonNull
-    public static <T> String join(@NonNull String divider, T... values) {
-        return join(divider, asList(values));
+    public static String join(@NonNull Collection values, @NonNull String divider,
+                              @Nullable Function<Object, String> transform) {
+        StringBuilder sb = new StringBuilder();
+        Iterator it = values.iterator();
+        while (it.hasNext()) {
+            Object value = it.next();
+            sb.append(transform != null ? transform.apply(value) : value);
+            if (it.hasNext()) {
+                sb.append(divider);
+            }
+        }
+        return sb.toString();
     }
 
     @NonNull
-    public static String join(@NonNull String divider, @NonNull Collection values) {
-        StringBuilder builder = new StringBuilder();
-        for (Iterator iterator = values.iterator(); iterator.hasNext(); ) {
-            builder.append(iterator.next());
-            if (iterator.hasNext()) {
-                builder.append(divider);
-            }
-        }
-        return builder.toString();
+    public static String join(@NonNull Collection values, @NonNull String divider) {
+        return join(values, divider, null);
     }
 
     @NonNull
-    public static List<String> split(@Nullable String value, @NonNull String divider, boolean trim) {
-        if (!isNullOrEmpty(value)) {
-            String s = value;
-            if (trim) {
-                s = value.replaceAll(" ", "");
-            }
-            if (!isNullOrEmpty(s)) {
-                return asList(s.split(divider));
+    public static List<String> split(@NonNull String value, @NonNull String divider) {
+        return split(value, divider, null);
+    }
+
+    @NonNull
+    public static List<String> split(@NonNull String value, @NonNull String divider,
+                                     @Nullable Function<String, String> transform) {
+        LinkedList<String> list = new LinkedList<>();
+        if (!value.isEmpty()) {
+            for (String s : value.split(divider)) {
+                list.add(transform != null ? transform.apply(s) : s);
             }
         }
-        return emptyList();
+        return list;
     }
 
     @NonNull
     public static String commaJoin(@NonNull Collection values) {
-        return join(",", values);
+        return join(values, ",", new Function<Object, String>() {
+
+            @Override
+            public String apply(Object value) {
+                return String.valueOf(value).replaceAll(",", "/,");
+            }
+        });
     }
 
     @NonNull
     public static List<String> commaSplit(@NonNull String s) {
-        return split(s, ",", true);
+        return split(s, "(?<!/),", new Function<String, String>() {
+
+            @Override
+            public String apply(String s) {
+                return s.trim().replaceAll("/,", ",");
+            }
+        });
     }
 
     @NonNull
@@ -153,8 +169,8 @@ public abstract class TextUtil {
         return null;
     }
 
-    public static boolean isQuoted(@NonNull String s) {
-        return QUOTED_TEXT_PATTERN.matcher(s).matches();
+    public static boolean isQuoted(@Nullable String s) {
+        return !isNullOrEmpty(s) && s.charAt(0) == '\"' && s.charAt(s.length() - 1) == '\"';
     }
 
 }

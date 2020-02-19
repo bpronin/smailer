@@ -38,7 +38,6 @@ import static com.bopr.android.smailer.remote.RemoteControlTask.SEND_SMS_TO_CALL
 import static com.bopr.android.smailer.util.AddressUtil.containsEmail;
 import static com.bopr.android.smailer.util.AddressUtil.extractEmail;
 import static com.bopr.android.smailer.util.AddressUtil.findPhone;
-import static com.bopr.android.smailer.util.TextUtil.commaSplit;
 import static com.bopr.android.smailer.util.Util.requireNonNull;
 import static com.bopr.android.smailer.util.Util.safeEquals;
 import static com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM;
@@ -104,7 +103,7 @@ public class RemoteControlService extends JobIntentService {
     private boolean acceptMessage(MailMessage message) {
         if (settings.getBoolean(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS, false)) {
             String address = extractEmail(message.getFrom());
-            List<String> recipients = commaSplit(settings.getString(PREF_RECIPIENTS_ADDRESS, ""));
+            List<String> recipients = settings.getCommaList(PREF_RECIPIENTS_ADDRESS);
             if (!containsEmail(recipients, address)) {
                 log.debug("Address " + address + " rejected");
                 return false;
@@ -114,7 +113,7 @@ public class RemoteControlService extends JobIntentService {
     }
 
     private String requireAccount() {
-        String account = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT, null);
+        String account = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT);
         if (account == null) {
             notifications.showError(R.string.service_account_not_specified, ACTION_SHOW_REMOTE_CONTROL);
             throw new IllegalArgumentException("Service account not specified");

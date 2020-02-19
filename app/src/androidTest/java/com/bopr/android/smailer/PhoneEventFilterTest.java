@@ -9,7 +9,7 @@ import static com.bopr.android.smailer.PhoneEvent.REASON_NUMBER_BLACKLISTED;
 import static com.bopr.android.smailer.PhoneEvent.REASON_TEXT_BLACKLISTED;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
 import static com.bopr.android.smailer.util.TextUtil.escapeRegex;
-import static com.bopr.android.smailer.util.Util.asSet;
+import static com.bopr.android.smailer.util.Util.setOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -36,7 +36,7 @@ public class PhoneEventFilterTest {
         event.setText("This is a message for Bob or Ann");
 
         PhoneEventFilter filter = new PhoneEventFilter();
-        filter.setTriggers(asSet(VAL_PREF_TRIGGER_IN_SMS));
+        filter.setTriggers(setOf(VAL_PREF_TRIGGER_IN_SMS));
 
         assertEquals(REASON_ACCEPTED, filter.test(event));
     }
@@ -44,7 +44,7 @@ public class PhoneEventFilterTest {
     @Test
     public void testPhoneBlackList() {
         PhoneEventFilter filter = new PhoneEventFilter();
-        filter.setTriggers(asSet(VAL_PREF_TRIGGER_IN_SMS));
+        filter.setTriggers(setOf(VAL_PREF_TRIGGER_IN_SMS));
 
         PhoneEvent event = new PhoneEvent();
         event.setText("This is a message for Bob or Ann");
@@ -54,18 +54,18 @@ public class PhoneEventFilterTest {
         event.setPhone("111");
         assertEquals(REASON_ACCEPTED, filter.test(event));
 
-        filter.setPhoneBlacklist(asSet("111", "333"));
+        filter.setPhoneBlacklist(setOf("111", "333"));
         event.setPhone("111");
         assertEquals(REASON_NUMBER_BLACKLISTED, filter.test(event));
 
-        filter.setPhoneBlacklist(asSet("+1(11)", "333"));
+        filter.setPhoneBlacklist(setOf("+1(11)", "333"));
         event.setPhone("1 11");
         assertEquals(REASON_NUMBER_BLACKLISTED, filter.test(event));
 
         event.setPhone("222");
         assertEquals(REASON_ACCEPTED, filter.test(event));
 
-        filter.setPhoneBlacklist(asSet("111", "222"));
+        filter.setPhoneBlacklist(setOf("111", "222"));
         event.setPhone("222");
         assertEquals(REASON_NUMBER_BLACKLISTED, filter.test(event));
     }
@@ -74,7 +74,7 @@ public class PhoneEventFilterTest {
     public void testPhoneBlackListPattern() {
         PhoneEventFilter filter = new PhoneEventFilter();
 //        filter.setTriggers(asSet(VAL_PREF_TRIGGER_IN_SMS));
-        filter.setPhoneBlacklist(asSet("+79628810***"));
+        filter.setPhoneBlacklist(setOf("+79628810***"));
 
         PhoneEvent event = new PhoneEvent();
         event.setIncoming(true);
@@ -93,7 +93,7 @@ public class PhoneEventFilterTest {
     @Test
     public void testPhoneWhiteList() {
         PhoneEventFilter filter = new PhoneEventFilter();
-        filter.setTriggers(asSet(VAL_PREF_TRIGGER_IN_SMS));
+        filter.setTriggers(setOf(VAL_PREF_TRIGGER_IN_SMS));
 
         PhoneEvent event = new PhoneEvent();
         event.setText("This is a message for Bob or Ann");
@@ -103,14 +103,14 @@ public class PhoneEventFilterTest {
         event.setPhone("111");
         assertEquals(REASON_ACCEPTED, filter.test(event));
 
-        filter.setPhoneWhitelist(asSet("111", "333"));
+        filter.setPhoneWhitelist(setOf("111", "333"));
         event.setPhone("111");
         assertEquals(REASON_ACCEPTED, filter.test(event));
 
         event.setPhone("222");
         assertEquals(REASON_ACCEPTED, filter.test(event));
 
-        filter.setPhoneWhitelist(asSet("111", "222"));
+        filter.setPhoneWhitelist(setOf("111", "222"));
         event.setPhone("222");
         assertEquals(REASON_ACCEPTED, filter.test(event));
     }
@@ -118,7 +118,7 @@ public class PhoneEventFilterTest {
     @Test
     public void testTextBlackList() {
         PhoneEventFilter filter = new PhoneEventFilter();
-        filter.setTriggers(asSet(VAL_PREF_TRIGGER_IN_SMS));
+        filter.setTriggers(setOf(VAL_PREF_TRIGGER_IN_SMS));
 
         PhoneEvent event = new PhoneEvent();
         event.setPhone("111");
@@ -128,11 +128,11 @@ public class PhoneEventFilterTest {
         event.setText("This is a message for Bob or Ann");
         assertEquals(REASON_ACCEPTED, filter.test(event));
 
-        filter.setTextBlacklist(asSet("Bob", "Ann"));
+        filter.setTextBlacklist(setOf("Bob", "Ann"));
         event.setText("This is a message for Bob or Ann");
         assertEquals(REASON_TEXT_BLACKLISTED, filter.test(event));
 
-        filter.setTextBlacklist(asSet("Bob", "Ann"));
+        filter.setTextBlacklist(setOf("Bob", "Ann"));
         event.setText("This is a message");
         assertEquals(REASON_ACCEPTED, filter.test(event));
     }
@@ -140,21 +140,21 @@ public class PhoneEventFilterTest {
     @Test
     public void testTextBlackListPattern() {
         PhoneEventFilter filter = new PhoneEventFilter();
-        filter.setTriggers(asSet(VAL_PREF_TRIGGER_IN_SMS));
+        filter.setTriggers(setOf(VAL_PREF_TRIGGER_IN_SMS));
 
         PhoneEvent event = new PhoneEvent();
         event.setPhone("111");
         event.setIncoming(true);
 
-        filter.setTextBlacklist(asSet(escapeRegex("(.*)Bob(.*)")));
+        filter.setTextBlacklist(setOf(escapeRegex("(.*)Bob(.*)")));
         event.setText("This is a message for Bob or Ann");
         assertEquals(REASON_TEXT_BLACKLISTED, filter.test(event));
 
-        filter.setTextBlacklist(asSet(escapeRegex("(.*)John(.*)")));
+        filter.setTextBlacklist(setOf(escapeRegex("(.*)John(.*)")));
         event.setText("This is a message for Bob or Ann");
         assertEquals(REASON_ACCEPTED, filter.test(event));
 
-        filter.setTextBlacklist(asSet("(.*)John(.*)"));
+        filter.setTextBlacklist(setOf("(.*)John(.*)"));
         event.setText("This is a message for (.*)John(.*)");
         assertEquals(REASON_TEXT_BLACKLISTED, filter.test(event));
     }
@@ -162,7 +162,7 @@ public class PhoneEventFilterTest {
     @Test
     public void testTextWhiteList() {
         PhoneEventFilter filter = new PhoneEventFilter();
-        filter.setTriggers(asSet(VAL_PREF_TRIGGER_IN_SMS));
+        filter.setTriggers(setOf(VAL_PREF_TRIGGER_IN_SMS));
 
         PhoneEvent event = new PhoneEvent();
         event.setPhone("111");
@@ -172,11 +172,11 @@ public class PhoneEventFilterTest {
         event.setText("This is a message for Bob or Ann");
         assertEquals(REASON_ACCEPTED, filter.test(event));
 
-        filter.setTextWhitelist(asSet("Bob", "Ann"));
+        filter.setTextWhitelist(setOf("Bob", "Ann"));
         event.setText("This is a message for Bob or Ann");
         assertEquals(REASON_ACCEPTED, filter.test(event));
 
-        filter.setTextWhitelist(asSet("Bob", "Ann"));
+        filter.setTextWhitelist(setOf("Bob", "Ann"));
         event.setText("This is a message");
         assertEquals(REASON_ACCEPTED, filter.test(event));
     }

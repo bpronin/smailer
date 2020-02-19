@@ -414,6 +414,7 @@ class MailFormatter {
 
     @NonNull
     private String replaceUrls(@NonNull String s) {
+        // TODO: 19.02.2020 consider  PatternsCompat.WEB_URL
         Matcher matcher = Pattern.compile("((?i:http|https|rtsp|ftp|file)://[\\S]+)").matcher(s);
 
         StringBuffer sb = new StringBuffer();

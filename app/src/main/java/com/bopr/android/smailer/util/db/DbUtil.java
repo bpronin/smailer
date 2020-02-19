@@ -9,7 +9,7 @@ import androidx.annotation.Nullable;
 
 import java.util.Set;
 
-import static com.bopr.android.smailer.util.Util.asSet;
+import static com.bopr.android.smailer.util.Util.setOf;
 
 /**
  * Database utilities.
@@ -42,7 +42,7 @@ public abstract class DbUtil {
                                  FieldDataConverter converter) {
         Cursor dest = db.query(tableTo, null, null, null, null, null, null);
         Cursor src = db.query(tableFrom, null, null, null, null, null, null);
-        Set<String> srcColumns = asSet(src.getColumnNames());
+        Set<String> srcColumns = setOf(src.getColumnNames());
         try {
             src.moveToFirst();
             while (!src.isAfterLast()) {

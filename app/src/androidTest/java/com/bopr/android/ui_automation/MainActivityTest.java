@@ -62,7 +62,7 @@ public class MainActivityTest extends BaseActivityTest {
         String[] titles = RULE.getActivity().getResources().getStringArray(R.array.trigger_names);
 
          /* check settings */
-        assertThat(settings.getStringSet(PREF_EMAIL_TRIGGERS, null), equalTo(DEFAULT_TRIGGERS));
+        assertThat(settings.getStringSet(PREF_EMAIL_TRIGGERS), equalTo(DEFAULT_TRIGGERS));
 
         /* check all and press cancel */
         onView(withText(R.string.triggers)).perform(click());
@@ -74,7 +74,7 @@ public class MainActivityTest extends BaseActivityTest {
         onData(allOf(is(instanceOf(String.class)), is(titles[4]))).perform(click());
         onView(withText(android.R.string.cancel)).perform(click());
 
-        assertThat(settings.getStringSet(PREF_EMAIL_TRIGGERS, null), allOf(
+        assertThat(settings.getStringSet(PREF_EMAIL_TRIGGERS), allOf(
                 containsInAnyOrder(VAL_PREF_TRIGGER_IN_SMS, VAL_PREF_TRIGGER_MISSED_CALLS),
                 not(containsInAnyOrder(VAL_PREF_TRIGGER_OUT_SMS, VAL_PREF_TRIGGER_IN_CALLS, VAL_PREF_TRIGGER_OUT_CALLS))
         ));
@@ -90,7 +90,7 @@ public class MainActivityTest extends BaseActivityTest {
         onData(allOf(is(instanceOf(String.class)), is(titles[4]))).perform(click());
         onView(withText(android.R.string.ok)).perform(click());
 
-        assertThat(settings.getStringSet(PREF_EMAIL_TRIGGERS, null), allOf(
+        assertThat(settings.getStringSet(PREF_EMAIL_TRIGGERS), allOf(
                 containsInAnyOrder(VAL_PREF_TRIGGER_OUT_CALLS, VAL_PREF_TRIGGER_IN_CALLS, VAL_PREF_TRIGGER_OUT_SMS),
                 not(containsInAnyOrder(VAL_PREF_TRIGGER_IN_SMS, VAL_PREF_TRIGGER_MISSED_CALLS))
         ));

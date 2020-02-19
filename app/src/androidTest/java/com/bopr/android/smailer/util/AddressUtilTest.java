@@ -4,11 +4,13 @@ import org.junit.Test;
 
 import static com.bopr.android.smailer.util.AddressUtil.emailsEqual;
 import static com.bopr.android.smailer.util.AddressUtil.escapePhone;
+import static com.bopr.android.smailer.util.AddressUtil.extractEmail;
 import static com.bopr.android.smailer.util.AddressUtil.extractPhone;
 import static com.bopr.android.smailer.util.AddressUtil.phoneToRegEx;
 import static com.bopr.android.smailer.util.AddressUtil.phonesEqual;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class AddressUtilTest {
@@ -43,6 +45,12 @@ public class AddressUtilTest {
         assertTrue(emailsEqual("bobson@mail.com", "bob.son@mail.com"));
         assertFalse(emailsEqual("bobson@mail.com", "\"bob.son\"@mail.com"));
         assertTrue(emailsEqual("b.o.b.s.on@mail.com", "bobson@mail.com"));
+    }
+
+    @Test
+    public void testExtractEmail() {
+        assertNull(extractEmail("From address"));
+        assertEquals("mail@mail.com", extractEmail("From: <mail@mail.com> address"));
     }
 
 }

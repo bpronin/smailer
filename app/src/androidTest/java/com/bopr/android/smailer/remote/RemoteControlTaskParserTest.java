@@ -1,7 +1,7 @@
-package com.bopr.android.smailer;
+package com.bopr.android.smailer.remote;
 
-import com.bopr.android.smailer.remote.RemoteControlTask;
-import com.bopr.android.smailer.remote.RemoteControlTaskParser;
+
+import com.bopr.android.smailer.MailMessage;
 
 import org.junit.Test;
 
