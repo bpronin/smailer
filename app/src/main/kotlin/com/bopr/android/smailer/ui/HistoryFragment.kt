@@ -26,7 +26,7 @@ import com.bopr.android.smailer.PhoneEventFilter
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.util.AddressUtil.containsPhone
 import com.bopr.android.smailer.util.AddressUtil.findPhone
-import com.bopr.android.smailer.util.Dialogs.showConfirmDialog
+import com.bopr.android.smailer.util.Dialogs.showConfirmationDialog
 import com.bopr.android.smailer.util.TagFormatter
 import com.bopr.android.smailer.util.TextUtil.formatDuration
 import com.bopr.android.smailer.util.UiUtil.eventDirectionImage
@@ -127,7 +127,8 @@ class HistoryFragment : BaseFragment() {
     }
 
     private fun onClearData() {
-        showConfirmDialog(requireContext(), messageRes = R.string.ask_clear_history, buttonTextRes = R.string.clear) {
+        showConfirmationDialog(requireContext(), messageRes = R.string.ask_clear_history,
+                buttonTextRes = R.string.clear) {
             database.clearEvents()
             database.notifyChanged()
         }

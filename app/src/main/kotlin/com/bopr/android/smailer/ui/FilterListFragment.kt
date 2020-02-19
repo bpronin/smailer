@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import com.bopr.android.smailer.PhoneEventFilter
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.util.Dialogs.showConfirmDialog
+import com.bopr.android.smailer.util.Dialogs.showConfirmationDialog
 import com.bopr.android.smailer.util.TagFormatter
 import com.bopr.android.smailer.util.UiUtil.showToast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -127,7 +127,8 @@ abstract class FilterListFragment : BaseFragment() {
     }
 
     private fun clearData() {
-        showConfirmDialog(requireContext(), messageRes = R.string.ask_clear_list, buttonTextRes = R.string.clear) {
+        showConfirmationDialog(requireContext(), messageRes = R.string.ask_clear_list,
+                buttonTextRes = R.string.clear) {
             listAdapter.setItems(emptyList())
             persistItems()
         }

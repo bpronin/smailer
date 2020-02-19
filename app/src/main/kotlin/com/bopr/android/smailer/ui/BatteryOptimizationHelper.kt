@@ -8,7 +8,7 @@ import android.os.PowerManager
 import android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.util.Dialogs.BATTERY_OPTIMIZATION_NOT_ASK_AGAIN
-import com.bopr.android.smailer.util.Dialogs.showConfirmDialogAskAgain
+import com.bopr.android.smailer.util.Dialogs.showConfirmationDialog
 
 internal object BatteryOptimizationHelper {
 
@@ -29,7 +29,7 @@ internal object BatteryOptimizationHelper {
 
     @TargetApi(Build.VERSION_CODES.M)
     private fun showDialog(context: Context) {
-        showConfirmDialogAskAgain(context,
+        showConfirmationDialog(context,
                 titleRes = R.string.battery_optimization,
                 messageRes = R.string.battery_optimization_reason,
                 buttonTextRes = R.string.proceed,

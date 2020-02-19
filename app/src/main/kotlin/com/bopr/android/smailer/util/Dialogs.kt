@@ -45,43 +45,19 @@ object Dialogs {
         builder.show()
     }
 
-    fun showConfirmDialog(context: Context,
-                          title: String? = null,
-                          @StringRes titleRes: Int? = null,
-                          message: String? = null,
-                          @StringRes messageRes: Int? = null,
-                          buttonText: String? = null,
-                          @StringRes buttonTextRes: Int? = null,
-                          cancelButtonText: String? = null,
-                          @StringRes cancelButtonTextRes: Int? = null,
-                          action: (() -> Unit)? = null) {
-        val builder = dialogBuilder(context, title, titleRes, message, messageRes)
+    fun showConfirmationDialog(context: Context,
+                               title: String? = null,
+                               @StringRes titleRes: Int? = null,
+                               message: String? = null,
+                               @StringRes messageRes: Int? = null,
+                               buttonText: String? = null,
+                               @StringRes buttonTextRes: Int? = null,
+                               cancelButtonText: String? = null,
+                               @StringRes cancelButtonTextRes: Int? = null,
+                               tag: String? = null,
+                               action: (() -> Unit)? = null) {
 
-        val function: (DialogInterface, Int) -> Unit = { _, _ -> action?.invoke() }
-        buttonText?.let {
-            builder.setPositiveButton(buttonText, function)
-        } ?: builder.setPositiveButton(buttonTextRes ?: android.R.string.ok, function)
-
-        cancelButtonText?.let {
-            builder.setNegativeButton(cancelButtonText, null)
-        } ?: builder.setNegativeButton(cancelButtonTextRes ?: android.R.string.cancel, null)
-
-        builder.show()
-    }
-
-    fun showConfirmDialogAskAgain(context: Context,
-                                  title: String? = null,
-                                  @StringRes titleRes: Int? = null,
-                                  message: String? = null,
-                                  @StringRes messageRes: Int? = null,
-                                  buttonText: String? = null,
-                                  @StringRes buttonTextRes: Int? = null,
-                                  cancelButtonText: String? = null,
-                                  @StringRes cancelButtonTextRes: Int? = null,
-                                  tag: String?,
-                                  action: (() -> Unit)? = null) {
-
-        val builder = dialogBuilder(context, title, titleRes, message, messageRes)
+        val builder: AlertDialog.Builder
 
         if (!tag.isNullOrEmpty()) {
             val settings = Settings(context)
@@ -98,20 +74,17 @@ object Dialogs {
                     R.layout.alert_dialog_view_container, null) as ViewGroup)
             container.addView(checkBox)
 
-            builder.setView(container)
-            builder.setOnDismissListener {
-                settings.edit().putBoolean(tag, checkBox.isChecked).apply()
-            }
+            builder = dialogBuilder(context, title, titleRes, message, messageRes)
+                    .setView(container)
+                    .setOnDismissListener {
+                        settings.edit().putBoolean(tag, checkBox.isChecked).apply()
+                    }
+        } else {
+            builder = dialogBuilder(context, title, titleRes, message, messageRes)
         }
 
-        val function: (DialogInterface, Int) -> Unit = { _, _ -> action?.invoke() }
-        buttonText?.let {
-            builder.setPositiveButton(buttonText, function)
-        } ?: builder.setPositiveButton(buttonTextRes ?: android.R.string.ok, function)
-
-        cancelButtonText?.let {
-            builder.setNegativeButton(cancelButtonText, null)
-        } ?: builder.setNegativeButton(cancelButtonTextRes ?: android.R.string.cancel, null)
+        setPositiveAction(builder, buttonText, buttonTextRes) { _, _ -> action?.invoke() }
+        setNegativeAction(builder, cancelButtonText, cancelButtonTextRes)
 
         builder.show()
     }
@@ -143,17 +116,23 @@ object Dialogs {
         container.addView(editor)
 
         builder.setView(container)
-
-        val function: (DialogInterface, Int) -> Unit = { _, _ -> action(editor.text.toString()) }
-        buttonText?.let {
-            builder.setPositiveButton(buttonText, function)
-        } ?: builder.setPositiveButton(buttonTextRes ?: android.R.string.ok, function)
-
-        cancelButtonText?.let {
-            builder.setNegativeButton(cancelButtonText, null)
-        } ?: builder.setNegativeButton(cancelButtonTextRes ?: android.R.string.cancel, null)
+        setPositiveAction(builder, buttonText, buttonTextRes) { _, _ -> action(editor.text.toString()) }
+        setNegativeAction(builder, cancelButtonText, cancelButtonTextRes)
 
         builder.show()
+    }
+
+    private fun setPositiveAction(builder: AlertDialog.Builder, buttonText: String?,
+                                  buttonTextRes: Int?, callback: (DialogInterface, Int) -> Unit) {
+        buttonText?.let {
+            builder.setPositiveButton(buttonText, callback)
+        } ?: builder.setPositiveButton(buttonTextRes ?: android.R.string.ok, callback)
+    }
+
+    private fun setNegativeAction(builder: AlertDialog.Builder, buttonText: String?, buttonTextRes: Int?) {
+        buttonText?.let {
+            builder.setNegativeButton(buttonText, null)
+        } ?: builder.setNegativeButton(buttonTextRes ?: android.R.string.cancel, null)
     }
 
     private fun dialogBuilder(context: Context,
