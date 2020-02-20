@@ -38,7 +38,7 @@ class PhoneBlacklistFragment : PhoneFilterListFragment() {
 
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
             if (key == PREF_FILTER_PHONE_BLACKLIST) {
-                reloadItems()
+                refreshItems()
             }
             super.onSharedPreferenceChanged(sharedPreferences, key)
         }

@@ -46,11 +46,11 @@ abstract class FilterListFragment : EditableRecyclerFragment<String, Holder>() {
         }
     }
 
-    override fun getItems(): Collection<String> {
+    override fun loadItems(): Collection<String> {
         return getItemsList(settings.getFilter()).sorted()
     }
 
-    override fun putItems(items: Collection<String>) {
+    override fun saveItems(items: Collection<String>) {
         val filter = settings.getFilter()
         setItemsList(filter, items)
         settings.edit()
@@ -77,7 +77,7 @@ abstract class FilterListFragment : EditableRecyclerFragment<String, Holder>() {
     private fun onClearData() {
         Dialogs.showConfirmationDialog(requireContext(), messageRes = R.string.ask_clear_list,
                 buttonTextRes = R.string.clear) {
-            putItems(listOf())
+            saveItems(listOf())
         }
     }
 

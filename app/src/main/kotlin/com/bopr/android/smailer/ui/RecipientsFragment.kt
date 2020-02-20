@@ -34,11 +34,11 @@ class RecipientsFragment : EditableRecyclerFragment<String, Holder>() {
         super.onDestroy()
     }
 
-    override fun getItems(): Collection<String> {
+    override fun loadItems(): Collection<String> {
         return settings.getCommaList(PREF_RECIPIENTS_ADDRESS).sorted()
     }
 
-    override fun putItems(items: Collection<String>) {
+    override fun saveItems(items: Collection<String>) {
         settings.edit()
                 .putCommaSet(PREF_RECIPIENTS_ADDRESS, items)
                 .apply()
@@ -74,7 +74,7 @@ class RecipientsFragment : EditableRecyclerFragment<String, Holder>() {
 
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
             if (key == PREF_RECIPIENTS_ADDRESS) {
-                reloadItems()
+                refreshItems()
             }
             super.onSharedPreferenceChanged(sharedPreferences, key)
         }

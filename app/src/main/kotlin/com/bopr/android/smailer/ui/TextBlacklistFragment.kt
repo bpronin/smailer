@@ -38,7 +38,7 @@ class TextBlacklistFragment : TextFilterListFragment() {
 
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
             if (key == PREF_FILTER_TEXT_BLACKLIST) {
-                reloadItems()
+                refreshItems()
             }
             super.onSharedPreferenceChanged(sharedPreferences, key)
         }

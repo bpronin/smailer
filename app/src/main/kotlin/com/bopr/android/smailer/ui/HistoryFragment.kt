@@ -136,7 +136,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
         HistoryDetailsDialogFragment(item).showDialog(requireActivity())
     }
 
-    override fun getItems(): Collection<PhoneEvent> {
+    override fun loadItems(): Collection<PhoneEvent> {
         phoneEventFilter = settings.getFilter()
         return database.events.toList()
     }
@@ -261,14 +261,14 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
 
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, s: String) {
             //todo granularize
-            reloadItems()
+            refreshItems()
         }
     }
 
     private inner class DatabaseListener : BroadcastReceiver() {
 
         override fun onReceive(context: Context, intent: Intent) {
-            reloadItems()
+            refreshItems()
         }
     }
 }

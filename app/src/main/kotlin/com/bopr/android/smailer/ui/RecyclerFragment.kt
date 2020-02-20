@@ -13,9 +13,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 abstract class RecyclerFragment<I, H : ViewHolder>() : BaseFragment() {
 
-    private lateinit var recycler: RecyclerView
-    private lateinit var listAdapter: ListAdapter
-    private var selectedItemPosition = NO_POSITION
+    protected lateinit var recycler: RecyclerView
+    protected lateinit var listAdapter: ListAdapter
+    protected var selectedItemPosition = NO_POSITION
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -42,33 +42,25 @@ abstract class RecyclerFragment<I, H : ViewHolder>() : BaseFragment() {
 
     override fun onStart() {
         super.onStart()
-        reloadItems()
+        refreshItems()
     }
 
-    protected fun reloadItems() {
-        listAdapter.setItems(getItems())
+    protected fun refreshItems() {
+        listAdapter.setItems(loadItems())
+    }
+
+    protected fun updateSelectedItemPosition(holder: ViewHolder) {
+        selectedItemPosition = holder.adapterPosition
     }
 
     protected fun getSelectedItem(): I? {
-        return if (selectedItemPosition != NO_POSITION) {
-            listAdapter.getItems()[selectedItemPosition]
-        } else {
-            null
-        }
+        return listAdapter.getItemAt(selectedItemPosition)
     }
 
-    protected abstract fun getItems(): Collection<I>
+    protected abstract fun loadItems(): Collection<I>
 
     protected open fun getItemTitle(item: I): String {
         return item.toString()
-    }
-
-    protected open fun isSameItem(item: I, other: I): Boolean {
-        return item == other
-    }
-
-    protected open fun isValidItem(item: I): Boolean {
-        return true
     }
 
     protected open fun onCreateItemContextMenu(menu: ContextMenu, item: I) {}
@@ -102,11 +94,11 @@ abstract class RecyclerFragment<I, H : ViewHolder>() : BaseFragment() {
 
             holder.itemView.apply {
                 setOnClickListener {
-                    selectedItemPosition = holder.adapterPosition
+                    updateSelectedItemPosition(holder)
                     onItemClick(item)
                 }
                 setOnLongClickListener {
-                    selectedItemPosition = holder.adapterPosition
+                    updateSelectedItemPosition(holder)
                     onItemLongClick(item)
                     false
                 }
@@ -120,13 +112,21 @@ abstract class RecyclerFragment<I, H : ViewHolder>() : BaseFragment() {
             return items.size
         }
 
-        fun getItems(): List<I> {
+        fun getItems(): Collection<I> {
             return items
         }
 
         fun setItems(items: Collection<I>) {
             this.items = ArrayList(items)
             notifyDataSetChanged()
+        }
+
+        fun getItemAt(position: Int): I? {
+            return if (position != NO_POSITION) {
+                items[position]
+            } else {
+                null
+            }
         }
 
         fun replaceItemAt(position: Int, item: I) {
