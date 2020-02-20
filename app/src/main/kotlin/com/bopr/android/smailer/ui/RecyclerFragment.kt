@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView.*
 import com.bopr.android.smailer.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-abstract class RecyclerFragment<I, H : ViewHolder>() : BaseFragment() {
+abstract class RecyclerFragment<I, H : ViewHolder> : BaseFragment() {
 
     protected lateinit var recycler: RecyclerView
     protected lateinit var listAdapter: ListAdapter
