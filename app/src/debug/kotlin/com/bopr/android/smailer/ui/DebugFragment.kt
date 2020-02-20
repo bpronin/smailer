@@ -246,7 +246,7 @@ class DebugFragment : BasePreferenceFragment() {
                 }),
                 createPreference("Show mail success", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        notifications.showMessage(R.string.email_send, Notifications.ACTION_SHOW_MAIN)
+                        notifications.showMessage(R.string.email_successfully_send, Notifications.ACTION_SHOW_MAIN)
                     }
                 }),
                 createPreference("Show remote action", object : DefaultClickListener() {
@@ -440,7 +440,7 @@ class DebugFragment : BasePreferenceFragment() {
 
     private fun onClearLogs() {
         val dir = File(appContext.filesDir, "log")
-        val logs = requireNotNull(dir.listFiles())
+        val logs = dir.listFiles()!!
         for (file in logs) {
             if (!file.delete()) {
                 log.warn("Cannot delete file")
@@ -474,13 +474,13 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun onShowConcurrent() {
-        val b = StringBuilder()
+        val sb = StringBuilder()
         val intent = Intent("android.provider.Telephony.SMS_RECEIVED")
         val activities = appContext.packageManager.queryBroadcastReceivers(intent, 0)
         for (resolveInfo in activities) {
             val activityInfo = resolveInfo.activityInfo
             if (activityInfo != null) {
-                b.append(activityInfo.packageName)
+                sb.append(activityInfo.packageName)
                         .append(" : ")
                         .append(resolveInfo.priority)
                         .append("\n")
@@ -489,7 +489,7 @@ class DebugFragment : BasePreferenceFragment() {
             }
         }
 
-        showInfoDialog(appContext, message = b.toString())
+        showInfoDialog(appContext, message = sb.toString())
     }
 
     private fun onGoogleDriveClear() {

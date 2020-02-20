@@ -20,7 +20,7 @@ internal class SendDebugMailTask(activity: Activity, private val properties: Pro
             from = sender
             subject = "test subject"
             body = "test message from " + deviceName()
-            recipients = requireNotNull(properties.getProperty("default_recipient"))
+            recipients = properties.getProperty("default_recipient")
         }
 
         try {

@@ -8,10 +8,12 @@ import java.io.IOException
 import java.util.*
 import java.util.regex.Pattern
 
-internal open class HtmlMatcher private constructor(private val expected: String?) : CustomTypeSafeMatcher<String?>(expected) {
+internal open class HtmlMatcher private constructor(private val expected: String?) :
+        CustomTypeSafeMatcher<String?>("HTML matches") {
 
     private var expectedToken: String? = null
     private var actualToken: String? = null
+    private var prevToken: String? = null
     private val delimiters = Pattern.compile("(\\s|>|<|;)+")
 
     override fun matchesSafely(actual: String?): Boolean {
@@ -22,25 +24,26 @@ internal open class HtmlMatcher private constructor(private val expected: String
             val actuals = Scanner(actual!!).useDelimiter(delimiters)
             expectedToken = null
             actualToken = null
+            prevToken = ""
             while (expects.hasNext() && actuals.hasNext()) {
                 expectedToken = expects.next()
                 actualToken = actuals.next()
                 if (expectedToken != actualToken) {
                     return false
                 }
+                prevToken = actualToken
             }
             return expects.hasNext() == actuals.hasNext()
         }
     }
 
     override fun describeMismatchSafely(item: String?, description: Description) {
-        super.describeMismatchSafely(item, description)
         description
-                .appendText("\nExpected token: '")
+                .appendText("Token [")
                 .appendText(expectedToken)
-                .appendText("' but found: '")
+                .appendText("] does not equal [")
                 .appendText(actualToken)
-                .appendText("'")
+                .appendText("]")
     }
 
     companion object {

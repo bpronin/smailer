@@ -37,7 +37,7 @@ abstract class BaseActivity : AppCompatActivity() {
     protected abstract fun createFragment(): Fragment
 
     protected fun setHomeButtonEnabled(enabled: Boolean) {
-        requireNotNull(supportActionBar).setDisplayHomeAsUpEnabled(enabled)
+        supportActionBar?.setDisplayHomeAsUpEnabled(enabled)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

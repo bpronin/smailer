@@ -104,7 +104,7 @@ class CallProcessor(
             notifications.hideAllErrors()
 
             if (settings.getBoolean(PREF_NOTIFY_SEND_SUCCESS, false)) {
-                notifications.showMessage(R.string.email_send, Notifications.ACTION_SHOW_MAIN)
+                notifications.showMessage(R.string.email_successfully_send, Notifications.ACTION_SHOW_MAIN)
             }
             if (settings.getBoolean(PREF_MARK_SMS_AS_READ, false)) {
                 markSmsAsRead(context, event)

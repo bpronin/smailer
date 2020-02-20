@@ -193,8 +193,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
 
             settings.edit().putFilter(phoneEventFilter).apply()
 
-            showToast(requireContext(),
-                    getString(R.string.phone_removed_from_filter).format(it.phone))
+            showToast(requireContext(), getString(R.string.phone_removed_from_filter, it.phone))
         }
     }
 
@@ -206,8 +205,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
                 setOnOkClicked { value ->
                     if (!value.isNullOrEmpty()) {
                         if (list.contains(value)) {
-                            showToast(requireContext(),
-                                    getString(R.string.item_already_exists).format(value))
+                            showToast(requireContext(), getString(R.string.item_already_exists, value))
                         } else {
                             list.add(value)
                             settings.edit().putFilter(phoneEventFilter).apply()

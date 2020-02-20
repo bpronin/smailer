@@ -268,7 +268,7 @@ class CallProcessorTest : BaseTest() {
 
         processor.process(testingEvent())
 
-        verify(notifications).showMessage(eq(R.string.email_send), eq(ACTION_SHOW_MAIN))
+        verify(notifications).showMessage(eq(R.string.email_successfully_send), eq(ACTION_SHOW_MAIN))
     }
 
     /**

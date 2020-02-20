@@ -23,14 +23,14 @@ object Environment {
     }
 
     private fun setupDefaultExceptionHandler() {
-        val defaultHandler = requireNotNull(Thread.getDefaultUncaughtExceptionHandler())
+        val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
             try {
                 getLogger("Application").error("Application crashed", throwable)
             } catch (x: Throwable) {
                 Log.e("main", "Failed to handle uncaught exception")
             }
-            defaultHandler.uncaughtException(thread, throwable)
+            defaultHandler?.uncaughtException(thread, throwable)
         }
     }
 

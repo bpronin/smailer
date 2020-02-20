@@ -85,7 +85,7 @@ abstract class EditableRecyclerFragment<I, H : ViewHolder> : RecyclerFragment<I,
                     }
                     if (exists) {
                         showToast(requireContext(),
-                                getString(R.string.item_already_exists).format(getItemTitle(newItem)))
+                                getString(R.string.item_already_exists, getItemTitle(newItem)))
                     } else if (isValidItem(newItem)) {
                         listAdapter.replaceItemAt(position, newItem)
                         persistItems()

@@ -12,15 +12,15 @@
     <string name="add">Add</string>
     <string name="add_number_to_blacklist">Add number to blacklist</string>
     <string name="add_number_to_whitelist">Add number to whitelist</string>
-    <string name="add_phone_to_blacklist">add phone to blacklist"</string>
-    <string name="add_phone_to_whitelist">add phone to whitelist"</string>
-    <string name="add_text_to_blacklist">add text to blacklist"</string>
-    <string name="add_text_to_whitelist">add text to whitelist"</string>
+    <string name="add_phone_to_blacklist">add phone to blacklist</string>
+    <string name="add_phone_to_whitelist">add phone to whitelist</string>
+    <string name="add_text_to_blacklist">add text to blacklist</string>
+    <string name="add_text_to_whitelist">add text to whitelist</string>
     <string name="add_to_blacklist">Add to blacklist</string>
     <string name="add_to_whitelist">Add to whitelist</string>
     <string name="allow_control_remotely">Allow to control application by sending email on service account</string>
     <string name="allow_only_recipients">Accept service mail only from recipients</string>
-    <string name="app_version">Application version: {version}</string>
+    <string name="app_version">Application version: %s</string>
     <string name="ask_clear_history">Clear history?</string>
     <string name="ask_clear_list">Clear list?</string>
     <string name="battery_optimization">Battery optimization</string>
@@ -45,7 +45,7 @@
     <string name="email_language">Email language</string>
     <string name="email_message_content">Email message content</string>
     <string name="email_message_language">Email message language</string>
-    <string name="email_send">Email sent.</string>
+    <string name="email_successfully_send">Email successfully sent.</string>
     <string name="enter_phone_number">Enter phone number. You also may use * as a wildcard.</string>
     <string name="events_causing_sending_mail">Events causing sending email</string>
     <string name="geolocation_disabled">(location service disabled)</string>
@@ -56,7 +56,7 @@
     <string name="incoming_sms">Incoming SMS</string>
     <string name="incoming_sms_from">Incoming SMS from</string>
     <string name="invalid_recipient">Invalid recipient specified</string>
-    <string name="item_already_exists">%1$s is already exists</string>
+    <string name="item_already_exists">%s is already exists</string>
     <string name="last_known_location">Last known device location: {location}</string>
     <string name="list_is_empty">List is empty</string>
     <string name="mark_all_as_read">Mark all as read</string>
@@ -81,21 +81,21 @@
     <string name="outgoing_sms">Outgoing SMS</string>
     <string name="outgoing_sms_to">Outgoing SMS to</string>
     <string name="pending">Pending</string>
-    <string name="permission_rationale_coarse_location">Permission to {permission} is needed to add device location into email message.</string>
-    <string name="permission_rationale_fine_location">Permission to {permission} is needed to add device location into email message.</string>
-    <string name="permission_rationale_outgoing_call">Permission to {permission} is needed to send out email when phone calls are made.</string>
-    <string name="permission_rationale_phone_state">Permission to {permission} is needed to send out email when phone calls are received or made.</string>
-    <string name="permission_rationale_read_contacts">Permission to {permission} is needed to add contact name into email message.</string>
-    <string name="permission_rationale_read_sms">Permission to {permission} is needed to send out email when SMS has sent.</string>
-    <string name="permission_rationale_receive_sms">Permission to {permission} is needed to send out email when SMS has received.</string>
-    <string name="permission_rationale_send_sms">Permission to {permission} is needed to remotely send out SMS.</string>
-    <string name="permission_rationale_write_sms">Permission to {permission} is needed to mark processed SMS as read.</string>
+    <string name="permission_rationale_coarse_location">Permission to %s is needed to add device location into email message.</string>
+    <string name="permission_rationale_fine_location">Permission to %s is needed to add device location into email message.</string>
+    <string name="permission_rationale_outgoing_call">Permission to %s is needed to send out email when phone calls are made.</string>
+    <string name="permission_rationale_phone_state">Permission to %s is needed to send out email when phone calls are received or made.</string>
+    <string name="permission_rationale_read_contacts">Permission to %s is needed to add contact name into email message.</string>
+    <string name="permission_rationale_read_sms">Permission to %s is needed to send out email when SMS has sent.</string>
+    <string name="permission_rationale_receive_sms">Permission to %s is needed to send out email when SMS has received.</string>
+    <string name="permission_rationale_send_sms">Permission to %s is needed to remotely send out SMS.</string>
+    <string name="permission_rationale_write_sms">Permission to %s is needed to mark processed SMS as read.</string>
     <string name="phone_number">Phone number</string>
     <string name="phone_number_filter">Phone number filter</string>
-    <string name="phone_remotely_added_to_blacklist">Phone {text} remotely added to blacklist."</string>
-    <string name="phone_remotely_added_to_whitelist">Phone {text} remotely added to whitelist."</string>
-    <string name="phone_remotely_removed_from_blacklist">Phone {text} remotely removed from blacklist."</string>
-    <string name="phone_remotely_removed_from_whitelist">Phone {text} remotely removed from whitelist."</string>
+    <string name="phone_remotely_added_to_blacklist">Phone %s remotely added to blacklist."</string>
+    <string name="phone_remotely_added_to_whitelist">Phone %s remotely added to whitelist."</string>
+    <string name="phone_remotely_removed_from_blacklist">Phone %s remotely removed from blacklist."</string>
+    <string name="phone_remotely_removed_from_whitelist">Phone %s remotely removed from whitelist."</string>
     <string name="phone_removed_from_filter">%1$s removed from filter</string>
     <string name="proceed">Proceed</string>
     <string name="recipient_already_exists">Recipient %1$s is already exists</string>
@@ -124,15 +124,15 @@
     <string name="text_filter">Text filter</string>
     <string name="text_fragment">Text fragment</string>
     <string name="text_in_blacklist">text is in blacklist</string>
-    <string name="text_remotely_added_to_blacklist">Text \"{text}\" remotely added to blacklist."</string>
-    <string name="text_remotely_added_to_whitelist">Text \"{text}\" remotely added to whitelist."</string>
-    <string name="text_remotely_removed_from_blacklist">Text \"{text}\" remotely removed from blacklist."</string>
-    <string name="text_remotely_removed_from_whitelist">Text \"{text}\" remotely removed from whitelist."</string>
+    <string name="text_remotely_added_to_blacklist">Text \"%s\" remotely added to blacklist."</string>
+    <string name="text_remotely_added_to_whitelist">Text \"%s\" remotely added to whitelist."</string>
+    <string name="text_remotely_removed_from_blacklist">Text \"%s\" remotely removed from blacklist."</string>
+    <string name="text_remotely_removed_from_whitelist">Text \"%s\" remotely removed from whitelist."</string>
     <string name="time">Time:</string>
     <string name="time_time">Time: {time}</string>
     <string name="trigger_off">trigger is off</string>
     <string name="triggers">Triggers</string>
-    <string name="unable_send_email">Unable to send email. {reason}</string>
+    <string name="unable_send_email">Unable to send email. %s</string>
     <string name="unacceptable_phone_numbers">Unacceptable phone numbers (%s)</string>
     <string name="unacceptable_words">Unacceptable phrases (%s)</string>
     <string name="undo">Undo</string>
@@ -144,11 +144,12 @@
     <string name="you_had_incoming_call">You had an incoming call of {duration} duration.</string>
     <string name="you_had_missed_call">You had a missed call.</string>
     <string name="you_had_outgoing_call">You had an outgoing call of {duration} duration.</string>
-    <string translatable="false" name="add_phone_to_blacklist_reply_body">add phone {argument} to blacklist"</string>
-    <string translatable="false" name="add_phone_to_whitelist_reply_body">add phone {argument} to whitelist"</string>
-    <string translatable="false" name="add_text_to_blacklist_reply_body">add text \"{argument}\" to blacklist"</string>
-    <string translatable="false" name="add_text_to_whitelist_reply_body">add text \"{argument}\" to whitelist"</string>
-    <string translatable="false" name="send_sms_to_sender_reply_body">send SMS message \"{sms_text}\" to {phone}"</string>
+    <string translatable="false" name="add_phone_to_blacklist_reply_body">add phone %s to blacklist</string>
+    <string translatable="false" name="add_phone_to_whitelist_reply_body">add phone %s to whitelist</string>
+    <string translatable="false" name="add_text_to_blacklist_reply_body">add text \"%s\" to blacklist</string>
+    <string translatable="false" name="add_text_to_whitelist_reply_body">add text \"%s\" to whitelist</string>
+    <string translatable="false" name="send_sms_to_sender_reply_body">send SMS message \"%1$s\" to %2$s</string>
+    <string translatable="false" name="reply_text">To device \"%1$s\": %%0d%%0a %2$s</string>
 
     <plurals name="items_removed">
         <item quantity="one">Item removed</item>

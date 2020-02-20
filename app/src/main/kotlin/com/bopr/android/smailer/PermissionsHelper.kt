@@ -18,7 +18,6 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
 import com.bopr.android.smailer.util.Dialogs.showInfoDialog
-import com.bopr.android.smailer.util.TagFormatter
 import org.slf4j.LoggerFactory
 import java.util.*
 
@@ -182,15 +181,12 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
     }
 
     private fun formatRationale(permissions: Collection<String>): String {
-        val b = StringBuilder()
+        val sb = StringBuilder()
         for (permission in permissions) {
-            val line = TagFormatter(activity)
-                    .pattern(requireNotNull(items[permission]))
-                    .put("permission", permissionLabel(permission))
-                    .format()
-            b.append(line).append("\n\n")
+            val line = activity.getString(items.getValue(permission), permissionLabel(permission))
+            sb.append(line).append("\n\n")
         }
-        return b.toString()
+        return sb.toString()
     }
 
     private fun permissionLabel(permission: String): String {

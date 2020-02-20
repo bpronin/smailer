@@ -12,7 +12,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.TaskStackBuilder
 import com.bopr.android.smailer.ui.*
 import com.bopr.android.smailer.util.Mockable
-import com.bopr.android.smailer.util.TagFormatter
 
 /**
  * Produces notifications.
@@ -23,7 +22,6 @@ import com.bopr.android.smailer.util.TagFormatter
 class Notifications(private val context: Context) {
 
     private val manager: NotificationManager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-    private val formatter: TagFormatter = TagFormatter(context)
 
     private fun getChannel(): String {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -52,19 +50,11 @@ class Notifications(private val context: Context) {
     }
 
     fun showMailError(@StringRes reasonRes: Int, action: Int) {
-        showError(formatter
-                .pattern(R.string.unable_send_email)
-                .put("reason", reasonRes)
-                .format(),
-                action)
+        showError(context.getString(R.string.unable_send_email, context.getString(reasonRes)), action)
     }
 
     fun showRemoteAction(@StringRes messageRes: Int, argument: String) {
-        showMessage(formatter
-                .pattern(messageRes)
-                .put("text", argument)
-                .format(),
-                ACTION_SHOW_HISTORY)
+        showError(context.getString(messageRes, argument), ACTION_SHOW_HISTORY)
     }
 
     fun hideAllErrors() {
@@ -123,6 +113,7 @@ class Notifications(private val context: Context) {
     }
 
     companion object {
+
         private const val CHANNEL_ID = "com.bopr.android.smailer"
 
         private var messageId = -1

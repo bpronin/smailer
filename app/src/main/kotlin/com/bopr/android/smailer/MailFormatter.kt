@@ -143,7 +143,7 @@ class MailFormatter(private val context: Context, private val event: PhoneEvent)
                 resources.getString(R.string.you_had_missed_call)
             }
             event.isSms -> {
-                replaceUrlsWithLinks(requireNotNull(event.text))
+                replaceUrlsWithLinks(event.text!!)
             }
             else -> {
                 val patternRes = if (event.isIncoming) {
@@ -315,12 +315,10 @@ class MailFormatter(private val context: Context, private val event: PhoneEvent)
 
     private fun formatRemoteControlLinksList(): String {
         val phone = escapePhone(event.phone)
-        val text = event.text
 
-        val phoneTask = formatRemoteTaskBody(R.string.add_phone_to_blacklist_reply_body, phone)
-        val sentTask = formatSendSmsRemoteTaskBody(phone)
-        val textTask = text?.let { formatRemoteTaskBody(R.string.add_text_to_blacklist_reply_body, text) }
-                ?: ""
+        val phoneTask = getString(R.string.add_phone_to_blacklist_reply_body, phone)
+        val sentTask = getString(R.string.send_sms_to_sender_reply_body, "Sample text", phone)
+        val textTask = getString(R.string.add_text_to_blacklist_reply_body, (event.text ?: ""))
 
         return formatRemoteControlLink(R.string.add_phone_to_blacklist, phoneTask) +
                 formatRemoteControlLink(R.string.add_text_to_blacklist, textTask) +
@@ -332,31 +330,8 @@ class MailFormatter(private val context: Context, private val event: PhoneEvent)
                 .pattern(REMOTE_CONTROL_LINK_PATTERN)
                 .put("address", serviceAccount)
                 .put("subject", htmlEncode("Re: " + formatSubject()))
-                .put("body", htmlEncode(formatServiceMailBody(body)))
+                .put("body", htmlEncode(getString(R.string.reply_text, deviceName, body)))
                 .put("link_title", titleRes)
-                .format()
-    }
-
-    private fun formatRemoteTaskBody(@StringRes patternRes: Int, argument: String): String {
-        return formatter
-                .pattern(patternRes)
-                .put("argument", argument)
-                .format()
-    }
-
-    private fun formatSendSmsRemoteTaskBody(phone: String): String {
-        return formatter
-                .pattern(R.string.send_sms_to_sender_reply_body)
-                .put("sms_text", "Sample text")
-                .put("phone", phone)
-                .format()
-    }
-
-    private fun formatServiceMailBody(task: String): String {
-        return formatter
-                .pattern("To device \"{device}\": %0d%0a {task}")
-                .put("device", deviceName)
-                .put("task", task)
                 .format()
     }
 
@@ -380,6 +355,12 @@ class MailFormatter(private val context: Context, private val event: PhoneEvent)
             throw RuntimeException(x)
         }
     }
+
+    private fun getString(@StringRes resId: Int, vararg formatArgs: Any?): String {
+        return resources.getString(resId, *formatArgs)
+    }
+
+    private fun getString(@StringRes resId: Int) = resources.getString(resId)
 
     companion object {
         private val WEB_URL_PATTERN = Pattern.compile("(?:\\S+)://\\S+")

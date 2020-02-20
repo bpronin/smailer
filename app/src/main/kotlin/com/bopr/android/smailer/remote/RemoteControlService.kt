@@ -65,7 +65,7 @@ class RemoteControlService : JobIntentService() {
                             task == null ->
                                 log.debug("Not a service mail")
                             settings.getDeviceName() != task.acceptor ->
-                                log.debug("Not my service mail")
+                                log.debug("Not my mail")
                             else -> {
                                 transport.markAsRead(message)
                                 performTask(task)
@@ -201,7 +201,8 @@ class RemoteControlService : JobIntentService() {
         }
     }
 
-    private fun removeFromTextList(filter: PhoneEventFilter, list: MutableSet<String>, text: String, messageRes: Int) {
+    private fun removeFromTextList(filter: PhoneEventFilter, list: MutableSet<String>,
+                                   text: String, messageRes: Int) {
         if (list.contains(text)) {
             list.remove(text)
             saveFilter(filter, text, messageRes)
@@ -210,7 +211,8 @@ class RemoteControlService : JobIntentService() {
         }
     }
 
-    private fun removeFromPhoneList(filter: PhoneEventFilter, list: MutableSet<String>, number: String, messageRes: Int) {
+    private fun removeFromPhoneList(filter: PhoneEventFilter, list: MutableSet<String>,
+                                    number: String, messageRes: Int) {
         findPhone(list, number)?.let {
             list.remove(it)
             saveFilter(filter, number, messageRes)
@@ -233,6 +235,7 @@ class RemoteControlService : JobIntentService() {
     }
 
     companion object {
+
         private val log = LoggerFactory.getLogger("RemoteControlService")
         private const val JOB_ID = 1002
 
