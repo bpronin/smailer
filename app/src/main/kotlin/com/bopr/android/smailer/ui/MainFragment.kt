@@ -11,7 +11,6 @@ import androidx.preference.SwitchPreference
 import com.bopr.android.smailer.Database
 import com.bopr.android.smailer.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.Database.Companion.unregisterDatabaseListener
-import com.bopr.android.smailer.GoogleAuthorizationHelper
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_DEVICE_ALIAS
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_LOCALE

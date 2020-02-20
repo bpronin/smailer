@@ -1,4 +1,4 @@
-package com.bopr.android.smailer
+package com.bopr.android.smailer.ui
 
 import android.accounts.Account
 import android.accounts.AccountManager.KEY_ACCOUNT_NAME
@@ -10,6 +10,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import com.bopr.android.smailer.Settings
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager.ACCOUNT_TYPE
 import org.slf4j.LoggerFactory
