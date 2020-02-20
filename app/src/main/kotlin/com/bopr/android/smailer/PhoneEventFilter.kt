@@ -11,7 +11,7 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
 import com.bopr.android.smailer.util.AddressUtil.normalizePhone
 import com.bopr.android.smailer.util.AddressUtil.phoneToRegEx
-import com.bopr.android.smailer.util.TextUtil.unescapeRegex
+import com.bopr.android.smailer.util.unescapeRegex
 
 /**
  * Filters phone events by various criteria.

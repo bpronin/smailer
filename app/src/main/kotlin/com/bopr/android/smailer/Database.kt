@@ -116,7 +116,6 @@ class Database constructor(private val context: Context, private val name: Strin
     fun clearEvents() {
         helper.writableDatabase.batch {
             delete(TABLE_EVENTS, null, null)
-            updateLastPurgeTime(this)
             updatesCounter++
         }
 
@@ -156,27 +155,6 @@ class Database constructor(private val context: Context, private val name: Strin
     }
 
     /**
-     * Removes all stale records that exceeds specified capacity if given
-     * period of time has elapsed.
-     */
-    fun purge() {
-        log.debug("Purging")
-
-        helper.writableDatabase.batch {
-            if (currentTimeMillis() - lastPurgeTime(this) >= purgePeriod && currentSize(this) >= capacity) {
-                execSQL("DELETE FROM " + TABLE_EVENTS +
-                        " WHERE " + COLUMN_ID + " NOT IN " +
-                        "(" +
-                        "SELECT " + COLUMN_ID + " FROM " + TABLE_EVENTS +
-                        " ORDER BY " + COLUMN_ID + " DESC " +
-                        "LIMIT " + capacity +
-                        ")")
-                updateLastPurgeTime(this)
-            }
-        }
-    }
-
-    /**
      * Fires database changed event.
      */
     fun notifyChanged() {
@@ -206,6 +184,28 @@ class Database constructor(private val context: Context, private val name: Strin
         log.debug("Destroyed")
     }
 
+    /**
+     * Removes all stale records that exceeds specified capacity if given
+     * period of time has elapsed.
+     */
+/*
+    fun purge() {
+        log.debug("Purging")
+
+        helper.writableDatabase.batch {
+            if (currentTimeMillis() - lastPurgeTime(this) >= purgePeriod && currentSize(this) >= capacity) {
+                execSQL("DELETE FROM " + TABLE_EVENTS +
+                        " WHERE " + COLUMN_ID + " NOT IN " +
+                        "(" +
+                        "SELECT " + COLUMN_ID + " FROM " + TABLE_EVENTS +
+                        " ORDER BY " + COLUMN_ID + " DESC " +
+                        "LIMIT " + capacity +
+                        ")")
+                updateLastPurgeTime(this)
+            }
+        }
+    }
+
     private fun currentSize(db: SQLiteDatabase): Long {
         return forLong(db.query(TABLE_EVENTS, strings(COLUMN_COUNT),
                 null, null, null, null, null))!!
@@ -221,6 +221,7 @@ class Database constructor(private val context: Context, private val name: Strin
         values.put(COLUMN_PURGE_TIME, currentTimeMillis())
         db.update(TABLE_SYSTEM, values, "$COLUMN_ID=0", null)
     }
+*/
 
     private fun query(table: String, columns: Array<String>? = null, selection: String? = null,
                       args: Array<String>? = null, groupBy: String? = null,
@@ -304,8 +305,6 @@ class Database constructor(private val context: Context, private val name: Strin
             val values = ContentValues()
             values.put(COLUMN_ID, 0)
             db.insert(TABLE_SYSTEM, null, values)
-
-            updateLastPurgeTime(db)
 
             log.debug("Created")
         }

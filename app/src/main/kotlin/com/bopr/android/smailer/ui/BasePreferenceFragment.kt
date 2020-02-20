@@ -12,8 +12,8 @@ import com.bopr.android.smailer.PermissionsHelper
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.util.Dialogs.resetDialogs
-import com.bopr.android.smailer.util.UiUtil.accentedText
-import com.bopr.android.smailer.util.UiUtil.underwivedText
+import com.bopr.android.smailer.util.accentedText
+import com.bopr.android.smailer.util.underwivedText
 
 /**
  * Base [PreferenceFragmentCompat] with default behaviour.

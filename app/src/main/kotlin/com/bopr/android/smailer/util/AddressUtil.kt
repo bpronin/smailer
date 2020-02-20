@@ -1,7 +1,6 @@
 package com.bopr.android.smailer.util
 
 import androidx.core.util.PatternsCompat.EMAIL_ADDRESS
-import com.bopr.android.smailer.util.TextUtil.isQuoted
 import java.util.*
 import java.util.regex.Pattern
 

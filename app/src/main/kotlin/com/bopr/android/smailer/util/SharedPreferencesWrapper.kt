@@ -2,8 +2,6 @@ package com.bopr.android.smailer.util
 
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
-import com.bopr.android.smailer.util.TextUtil.commaJoin
-import com.bopr.android.smailer.util.TextUtil.commaSplit
 
 open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPreferences) {
 

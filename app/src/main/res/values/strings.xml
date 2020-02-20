@@ -6,8 +6,8 @@
     <string name="_none">none</string>
     <string name="_time_pattern" translatable="false">yyyy-MM-dd HH:mm:ss</string>
     <string name="about">About</string>
-    <string name="acceptable_phone_numbers">Acceptable phone numbers ({size})</string>
-    <string name="acceptable_words">Acceptable phrases ({size})</string>
+    <string name="acceptable_phone_numbers">Acceptable phone numbers (%s)</string>
+    <string name="acceptable_words">Acceptable phrases (%s)</string>
     <string name="account_not_registered">Account not registered on device.</string>
     <string name="add">Add</string>
     <string name="add_number_to_blacklist">Add number to blacklist</string>
@@ -16,6 +16,8 @@
     <string name="add_phone_to_whitelist">add phone to whitelist"</string>
     <string name="add_text_to_blacklist">add text to blacklist"</string>
     <string name="add_text_to_whitelist">add text to whitelist"</string>
+    <string name="add_to_blacklist">Add to blacklist</string>
+    <string name="add_to_whitelist">Add to whitelist</string>
     <string name="allow_control_remotely">Allow to control application by sending email on service account</string>
     <string name="allow_only_recipients">Accept service mail only from recipients</string>
     <string name="app_version">Application version: {version}</string>
@@ -33,7 +35,6 @@
     <string name="close">Close</string>
     <string name="contact_no_permission_read_contact">no permission to read contacts</string>
     <string name="copyright" translatable="false">Copyright © BoPr, 2016-2020</string>
-    <string name="count_new">{count} new</string>
     <string name="device_name">Device name</string>
     <string name="device_name_to_show">Device name to be shown in email message (leave blank to use default)</string>
     <string name="do_not_ask_again">Don\'t ask again</string>
@@ -56,8 +57,6 @@
     <string name="incoming_sms_from">Incoming SMS from</string>
     <string name="invalid_recipient">Invalid recipient specified</string>
     <string name="item_already_exists">%1$s is already exists</string>
-    <string name="item_removed">Item removed</string>
-    <string name="items_removed">%1$d items removed</string>
     <string name="last_known_location">Last known device location: {location}</string>
     <string name="list_is_empty">List is empty</string>
     <string name="mark_all_as_read">Mark all as read</string>
@@ -98,6 +97,7 @@
     <string name="phone_remotely_removed_from_blacklist">Phone {text} remotely removed from blacklist."</string>
     <string name="phone_remotely_removed_from_whitelist">Phone {text} remotely removed from whitelist."</string>
     <string name="phone_removed_from_filter">%1$s removed from filter</string>
+    <string name="proceed">Proceed</string>
     <string name="recipient_already_exists">Recipient %1$s is already exists</string>
     <string name="recipient_device">Recipient:</string>
     <string name="recipients">Recipients</string>
@@ -108,6 +108,7 @@
     <string name="remove">Remove</string>
     <string name="remove_from_filter">Remove number from all rules</string>
     <string name="reply_ot_app">Reply to {app_name}:</string>
+    <string name="reset_dialogs">Reset dialogs</string>
     <string name="rules">Rules</string>
     <string name="rules_for_sending">Rules for sending email</string>
     <string name="select_from_contacts">Select from contacts</string>
@@ -132,8 +133,8 @@
     <string name="trigger_off">trigger is off</string>
     <string name="triggers">Triggers</string>
     <string name="unable_send_email">Unable to send email. {reason}</string>
-    <string name="unacceptable_phone_numbers">Unacceptable phone numbers ({size})</string>
-    <string name="unacceptable_words">Unacceptable phrases ({size})</string>
+    <string name="unacceptable_phone_numbers">Unacceptable phone numbers (%s)</string>
+    <string name="unacceptable_words">Unacceptable phrases (%s)</string>
     <string name="undo">Undo</string>
     <string name="unknown_contact">Unknown contact</string>
     <string name="user_password_not_accepted">Username and password not accepted.</string>
@@ -148,10 +149,16 @@
     <string translatable="false" name="add_text_to_blacklist_reply_body">add text \"{argument}\" to blacklist"</string>
     <string translatable="false" name="add_text_to_whitelist_reply_body">add text \"{argument}\" to whitelist"</string>
     <string translatable="false" name="send_sms_to_sender_reply_body">send SMS message \"{sms_text}\" to {phone}"</string>
-    <string name="reset_dialogs">Reset dialogs</string>
-    <string name="proceed">Proceed</string>
-    <string name="add_to_blacklist">Add to blacklist</string>
-    <string name="add_to_whitelist">Add to whitelist</string>
+
+    <plurals name="items_removed">
+        <item quantity="one">Item removed</item>
+        <item quantity="other">%d items removed</item>
+    </plurals>
+
+    <plurals name="new_history_items_count">
+        <item quantity="one">%d new</item>
+        <item quantity="other">%d new</item>
+    </plurals>
 
     <string-array name="trigger_names">
         <item>Incoming SMS</item>

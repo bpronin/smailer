@@ -21,8 +21,8 @@ import com.bopr.android.smailer.Settings.Companion.PREF_RULES
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
 import com.bopr.android.smailer.util.AndroidUtil.deviceName
-import com.bopr.android.smailer.util.TagFormatter
-import com.bopr.android.smailer.util.TextUtil.isValidEmailAddressList
+import com.bopr.android.smailer.util.getQuantityString
+import com.bopr.android.smailer.util.isValidEmailAddressList
 import com.google.api.services.drive.DriveScopes
 import com.google.api.services.gmail.GmailScopes
 
@@ -142,11 +142,9 @@ class MainFragment : BasePreferenceFragment() {
         val preference = requirePreference(PREF_HISTORY)
         val count = database.unreadEventsCount
         if (count > 0) {
-            val text = TagFormatter(requireContext())
-                    .pattern(R.string.count_new)
-                    .put("count", count.toString())
-                    .format()
-            updateSummary(preference, text, SUMMARY_STYLE_DEFAULT)
+            updateSummary(preference,
+                    getQuantityString(R.plurals.new_history_items_count, count),
+                    SUMMARY_STYLE_DEFAULT)
         } else {
             updateSummary(preference, null, SUMMARY_STYLE_DEFAULT)
         }

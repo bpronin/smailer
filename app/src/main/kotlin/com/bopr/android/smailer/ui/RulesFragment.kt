@@ -11,7 +11,6 @@ import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_BLACKLIST
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_WHITELIST
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_BLACKLIST
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_WHITELIST
-import com.bopr.android.smailer.util.TagFormatter
 
 /**
  * Conditions settings activity's fragment.
@@ -72,33 +71,34 @@ class RulesFragment : BasePreferenceFragment() {
     private fun updateTextWhitelistPreferenceView() {
         val preference = requirePreference(PREF_FILTER_TEXT_WHITELIST)
         val value = settings.getCommaSet(preference.key)
+        val formatListSummary = formatListSummary(value, R.string.acceptable_words, R.string._any)
 
-        updateSummary(preference, formatListSummary(value, R.string.acceptable_words,
-                R.string._any), SUMMARY_STYLE_DEFAULT)
+        updateSummary(preference, formatListSummary, SUMMARY_STYLE_DEFAULT)
     }
 
     private fun updateTextBlacklistPreferenceView() {
         val preference = requirePreference(PREF_FILTER_TEXT_BLACKLIST)
         val value = settings.getCommaSet(preference.key)
 
-        updateSummary(preference, formatListSummary(value, R.string.unacceptable_words,
-                R.string._none), SUMMARY_STYLE_DEFAULT)
+        val text = formatListSummary(value, R.string.unacceptable_words, R.string._none)
+
+        updateSummary(preference, text, SUMMARY_STYLE_DEFAULT)
     }
 
     private fun updatePhoneWhitelistPreferenceView() {
         val preference = requirePreference(PREF_FILTER_PHONE_WHITELIST)
         val value = settings.getCommaSet(preference.key)
+        val text = formatListSummary(value, R.string.acceptable_phone_numbers, R.string._any)
 
-        updateSummary(preference, formatListSummary(value, R.string.acceptable_phone_numbers,
-                R.string._any), SUMMARY_STYLE_DEFAULT)
+        updateSummary(preference, text, SUMMARY_STYLE_DEFAULT)
     }
 
     private fun updatePhoneBlacklistPreferenceView() {
         val preference = requirePreference(PREF_FILTER_PHONE_BLACKLIST)
         val value = settings.getCommaSet(preference.key)
+        val text = formatListSummary(value, R.string.unacceptable_phone_numbers, R.string._none)
 
-        updateSummary(preference, formatListSummary(value, R.string.unacceptable_phone_numbers,
-                R.string._none), SUMMARY_STYLE_DEFAULT)
+        updateSummary(preference, text, SUMMARY_STYLE_DEFAULT)
     }
 
     private fun updateTriggersPreferenceView() {
@@ -112,16 +112,9 @@ class RulesFragment : BasePreferenceFragment() {
         }
     }
 
-    private fun formatListSummary(value: Set<String>, @StringRes patternRes: Int,
-                                  @StringRes emptyTextRes: Int): String {
-        val pattern = TagFormatter(requireContext()).pattern(patternRes)
-
-        if (value.isEmpty()) {
-            pattern.put("size", emptyTextRes)
-        } else {
-            pattern.put("size", value.size.toString())
-        }
-
-        return pattern.format()
+    private fun formatListSummary(set: Set<String>, @StringRes patternRes: Int,
+                                  @StringRes emptyRes: Int): String {
+        return getString(patternRes, if (set.isEmpty()) getString(emptyRes) else set.size)
     }
+
 }

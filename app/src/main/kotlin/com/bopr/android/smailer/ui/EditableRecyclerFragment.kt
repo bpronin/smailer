@@ -10,7 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.NO_POSITION
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.util.UiUtil.showToast
+import com.bopr.android.smailer.util.getQuantityString
+import com.bopr.android.smailer.util.showToast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 
@@ -101,14 +102,10 @@ abstract class EditableRecyclerFragment<I, H : ViewHolder> : RecyclerFragment<I,
         showUndoRemoved(positions.size, savedItems)
     }
 
-    private fun showUndoRemoved(removedCount: Int, savedItems: List<I>) {
-        val title = if (removedCount == 1) {
-            getString(R.string.item_removed)
-        } else {
-            getString(R.string.items_removed).format(removedCount)
-        }
-
-        Snackbar.make(recycler, title, Snackbar.LENGTH_LONG)
+    private fun showUndoRemoved(count: Int, savedItems: List<I>) {
+        Snackbar.make(recycler,
+                getQuantityString(R.plurals.items_removed, count),
+                Snackbar.LENGTH_LONG)
                 .setActionTextColor(getColor(requireContext(), R.color.colorAccentText))
                 .setAction(R.string.undo) {
                     listAdapter.setItems(savedItems)

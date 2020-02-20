@@ -11,8 +11,8 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.ui.RecipientsFragment.Holder
-import com.bopr.android.smailer.util.TextUtil.isValidEmailAddress
-import com.bopr.android.smailer.util.UiUtil.underwivedText
+import com.bopr.android.smailer.util.isValidEmailAddress
+import com.bopr.android.smailer.util.underwivedText
 
 /**
  * Recipients list activity fragment.

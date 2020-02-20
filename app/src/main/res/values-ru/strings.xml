@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="_any">любые</string>
     <string name="_at_time">{time}</string>
     <string name="_from_device">с устройства \"{device_name}\"</string>
     <string name="_none">отсутствуют</string>
     <string name="about">О приложении</string>
-    <string name="acceptable_phone_numbers">Разрешенные номера ({size})</string>
-    <string name="acceptable_words">Разрешенные фразы ({size})</string>
+    <string name="acceptable_phone_numbers">Разрешенные номера (%s)</string>
+    <string name="acceptable_words">Разрешенные фразы (%s)</string>
     <string name="account_not_registered">Аккаунт не зарегистрирован на устройстве.</string>
     <string name="add">Добавить</string>
     <string name="add_number_to_blacklist">Добавить в черный список</string>
@@ -15,6 +16,8 @@
     <string name="add_phone_to_whitelist">Добавить номер в белый список"</string>
     <string name="add_text_to_blacklist">Добавить текст в черный список"</string>
     <string name="add_text_to_whitelist">Добавить текст в белый список"</string>
+    <string name="add_to_blacklist">Добавить в черный список</string>
+    <string name="add_to_whitelist">Добавить в белый список</string>
     <string name="allow_control_remotely">Позволить управлять приложением посредством отправки почты на сервисный аккаунт</string>
     <string name="allow_only_recipients">Принимать сервисную почту только от получателей</string>
     <string name="app_version">Версия приложения: {version}</string>
@@ -31,7 +34,6 @@
     <string name="clear">Очистить</string>
     <string name="close">Закрыть</string>
     <string name="contact_no_permission_read_contact">нет разрешения на чтение контактов</string>
-    <string name="count_new">{count} новых</string>
     <string name="device_name">Имя устройства</string>
     <string name="device_name_to_show">Имя устройства в почтовом сообщении (оставьте пустым, чтобы использовать имя по умолчанию)</string>
     <string name="do_not_ask_again">Больше не спрашивать</string>
@@ -54,8 +56,6 @@
     <string name="incoming_sms_from">Входящее SMS от</string>
     <string name="invalid_recipient">Указан неверный получатель</string>
     <string name="item_already_exists">%1$s уже существует</string>
-    <string name="item_removed">Запись удалена</string>
-    <string name="items_removed">%1$d записей удалено</string>
     <string name="last_known_location">Последнее известное местоположение: {location}</string>
     <string name="list_is_empty">Список пуст</string>
     <string name="mark_all_as_read">Отметить все как прочитанные</string>
@@ -96,6 +96,7 @@
     <string name="phone_remotely_removed_from_blacklist">Номер {text} удаленно удален из черного списка."</string>
     <string name="phone_remotely_removed_from_whitelist">Номер {text} удаленно удален из белого списка."</string>
     <string name="phone_removed_from_filter">%1$s удален из фильтра</string>
+    <string name="proceed">Продолжить</string>
     <string name="recipient_already_exists">Получатель %1$s уже существует</string>
     <string name="recipient_device">Адресат:</string>
     <string name="recipients">Получатели</string>
@@ -106,6 +107,7 @@
     <string name="remove">Удалить</string>
     <string name="remove_from_filter">Исключить номер из правил</string>
     <string name="reply_ot_app">Ответить {app_name}:</string>
+    <string name="reset_dialogs">Сбросить состояние диалогов</string>
     <string name="rules">Правила</string>
     <string name="rules_for_sending">Условия для отправки почты</string>
     <string name="select_from_contacts">Выбрать из контактов</string>
@@ -130,8 +132,8 @@
     <string name="trigger_off">триггер выключен</string>
     <string name="triggers">Триггеры</string>
     <string name="unable_send_email">Не удалось отправить почту. {reason}</string>
-    <string name="unacceptable_phone_numbers">Заблокированные номера ({size})</string>
-    <string name="unacceptable_words">Заблокированные фразы ({size})</string>
+    <string name="unacceptable_phone_numbers">Заблокированные номера (%s)</string>
+    <string name="unacceptable_words">Заблокированные фразы (%s)</string>
     <string name="undo">Отмена</string>
     <string name="unknown_contact">Неизвестный контакт</string>
     <string name="user_password_not_accepted">Неверное имя пользователя или пароль.</string>
@@ -141,10 +143,20 @@
     <string name="you_had_incoming_call">Входящий звонок длительностью {duration}.</string>
     <string name="you_had_missed_call">Пропущенный звонок.</string>
     <string name="you_had_outgoing_call">Исходящий звонок длительностью {duration}.</string>
-    <string name="reset_dialogs">Сбросить состояние диалогов</string>
-    <string name="proceed">Продолжить</string>
-    <string name="add_to_blacklist">Добавить в черный список</string>
-    <string name="add_to_whitelist">Добавить в белый список</string>
+
+    <plurals name="items_removed">
+        <item quantity="one">%d запись удалена</item>
+        <item quantity="few">%d записи удалено</item>
+        <item quantity="many">%d записей удалено</item>
+        <item quantity="other">%d записей удалено</item>
+    </plurals>
+
+    <plurals name="new_history_items_count">
+        <item quantity="one">%d новая</item>
+        <item quantity="few">%d новых</item>
+        <item quantity="many">%d новых</item>
+        <item quantity="other">%d новых</item>
+    </plurals>
 
     <string-array name="trigger_names">
         <item>Входящие SMS</item>

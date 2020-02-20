@@ -7,8 +7,8 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.util.TextUtil.escapeRegex
-import com.bopr.android.smailer.util.TextUtil.unescapeRegex
+import com.bopr.android.smailer.util.escapeRegex
+import com.bopr.android.smailer.util.unescapeRegex
 
 /**
  * Text editor dialog.

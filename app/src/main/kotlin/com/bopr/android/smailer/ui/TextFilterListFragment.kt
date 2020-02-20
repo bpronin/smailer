@@ -1,6 +1,6 @@
 package com.bopr.android.smailer.ui
 
-import com.bopr.android.smailer.util.TextUtil.unescapeRegex
+import com.bopr.android.smailer.util.unescapeRegex
 
 /**
  * Text filter list activity fragment.

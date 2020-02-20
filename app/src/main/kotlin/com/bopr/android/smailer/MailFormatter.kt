@@ -15,9 +15,9 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_REMOTE
 import com.bopr.android.smailer.util.AddressUtil.escapePhone
 import com.bopr.android.smailer.util.ContentUtils.isReadContactsPermissionsDenied
 import com.bopr.android.smailer.util.TagFormatter
-import com.bopr.android.smailer.util.TextUtil.formatDuration
-import com.bopr.android.smailer.util.UiUtil.eventTypePrefix
-import com.bopr.android.smailer.util.UiUtil.eventTypeText
+import com.bopr.android.smailer.util.eventTypePrefix
+import com.bopr.android.smailer.util.eventTypeText
+import com.bopr.android.smailer.util.formatDuration
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.text.DateFormat
