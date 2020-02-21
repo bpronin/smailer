@@ -40,7 +40,6 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
     private lateinit var phoneEventFilter: PhoneEventFilter
     private lateinit var settingsChangeListener: OnSharedPreferenceChangeListener
     private lateinit var databaseListener: BroadcastReceiver
-    private lateinit var formatter: TagFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,8 +49,6 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
 
         database = Database(requireContext())
         databaseListener = registerDatabaseListener(requireContext(), DatabaseListener())
-
-        formatter = TagFormatter(requireContext())
     }
 
     override fun onDestroy() {
@@ -234,9 +231,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
             event.isMissed ->
                 getString(R.string.missed_call)
             else ->
-                formatter.pattern(R.string.call_of_duration_short)
-                        .put("duration", formatDuration(event.callDuration))
-                        .format()
+                getString(R.string.call_of_duration_short, formatDuration(event.callDuration))
         }
     }
 

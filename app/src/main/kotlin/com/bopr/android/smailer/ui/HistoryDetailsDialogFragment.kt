@@ -63,10 +63,7 @@ class HistoryDetailsDialogFragment(private val event: PhoneEvent) : BaseDialogFr
                 } else {
                     R.string.you_had_outgoing_call
                 }
-                TagFormatter(requireContext())
-                        .pattern(pattern)
-                        .put("duration", formatDuration(event.callDuration))
-                        .format()
+                getString(pattern, formatDuration(event.callDuration))
             }
         }
     }

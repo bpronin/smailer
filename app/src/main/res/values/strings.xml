@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="_any">any</string>
-    <string name="_at_time">at {time}</string>
-    <string name="_from_device">from {device_name}</string>
+    <string name="_at_time">\u0020at %s</string>
+    <string name="_from_device">\u0020from %s</string>
     <string name="_none">none</string>
     <string name="_time_pattern" translatable="false">yyyy-MM-dd HH:mm:ss</string>
     <string name="about">About</string>
@@ -27,9 +27,9 @@
     <string name="battery_optimization_reason">To make the application work properly when device is in standby mode please turn off battery optimization for it.</string>
     <string name="blacklist">Blacklist</string>
     <string name="call_history">Call history</string>
-    <string name="call_of_duration_short">Call: {duration}</string>
-    <string name="called_phone">Called: {phone} ({name})</string>
-    <string name="caller_phone">Caller: {phone} ({name})</string>
+    <string name="call_of_duration_short">Call: %s</string>
+    <string name="called_phone">Called: %1$s (%2$s)</string>
+    <string name="caller_phone">Caller: %1$s (%2$s)</string>
     <string name="check_your_settings">Please check your settings</string>
     <string name="clear">Clear</string>
     <string name="close">Close</string>
@@ -57,7 +57,7 @@
     <string name="incoming_sms_from">Incoming SMS from</string>
     <string name="invalid_recipient">Invalid recipient specified</string>
     <string name="item_already_exists">%s is already exists</string>
-    <string name="last_known_location">Last known device location: {location}</string>
+    <string name="last_known_location">Last known device location: %s</string>
     <string name="list_is_empty">List is empty</string>
     <string name="mark_all_as_read">Mark all as read</string>
     <string name="mark_processed_sms_as_read">Mark processed SMS as read</string>
@@ -107,7 +107,7 @@
     <string name="remote_control_account_removed">Service account has been removed.</string>
     <string name="remove">Remove</string>
     <string name="remove_from_filter">Remove number from all rules</string>
-    <string name="reply_ot_app">Reply to {app_name}:</string>
+    <string name="reply_ot_app">Reply to %s:</string>
     <string name="reset_dialogs">Reset dialogs</string>
     <string name="rules">Rules</string>
     <string name="rules_for_sending">Rules for sending email</string>
@@ -115,9 +115,9 @@
     <string name="send_sms_to_sender">send SMS to the caller</string>
     <string name="sender">Account</string>
     <string name="sender_account_removed">Sender account has been removed.</string>
-    <string name="sender_phone">Sender: {phone} ({name})</string>
+    <string name="sender_phone">Sender: %1$s (%2$s)</string>
     <string name="sent_email">Sent email</string>
-    <string name="sent_time_device">Sent{device_name}{time}</string>
+    <string name="sent_time_device">Sent%1$s%2$s</string>
     <string name="service_account_not_specified">Service account not specified.</string>
     <string name="service_running">Service is active</string>
     <string name="since_permissions_not_granted">Since not all required permissions is granted, some options have been disabled.</string>
@@ -129,7 +129,7 @@
     <string name="text_remotely_removed_from_blacklist">Text \"%s\" remotely removed from blacklist."</string>
     <string name="text_remotely_removed_from_whitelist">Text \"%s\" remotely removed from whitelist."</string>
     <string name="time">Time:</string>
-    <string name="time_time">Time: {time}</string>
+    <string name="time_time">Time: %s</string>
     <string name="trigger_off">trigger is off</string>
     <string name="triggers">Triggers</string>
     <string name="unable_send_email">Unable to send email. %s</string>
@@ -141,15 +141,9 @@
     <string name="what_email_contains">What should the email include</string>
     <string name="when_send_email">When email should be sent</string>
     <string name="whitelist">Whitelist</string>
-    <string name="you_had_incoming_call">You had an incoming call of {duration} duration.</string>
+    <string name="you_had_incoming_call">You had an incoming call of %s duration.</string>
     <string name="you_had_missed_call">You had a missed call.</string>
-    <string name="you_had_outgoing_call">You had an outgoing call of {duration} duration.</string>
-    <string translatable="false" name="add_phone_to_blacklist_reply_body">add phone %s to blacklist</string>
-    <string translatable="false" name="add_phone_to_whitelist_reply_body">add phone %s to whitelist</string>
-    <string translatable="false" name="add_text_to_blacklist_reply_body">add text \"%s\" to blacklist</string>
-    <string translatable="false" name="add_text_to_whitelist_reply_body">add text \"%s\" to whitelist</string>
-    <string translatable="false" name="send_sms_to_sender_reply_body">send SMS message \"%1$s\" to %2$s</string>
-    <string translatable="false" name="reply_text">To device \"%1$s\": %%0d%%0a %2$s</string>
+    <string name="you_had_outgoing_call">You had an outgoing call of %s duration.</string>
 
     <plurals name="items_removed">
         <item quantity="one">Item removed</item>

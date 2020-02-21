@@ -155,7 +155,7 @@ class CallProcessor(
             setSendTime(Date())
             setContactName(contactName(context, event.phone))
             setDeviceName(settings.getDeviceName())
-            setContentOptions(settings.getStringSet(PREF_EMAIL_CONTENT))
+            setOptions(settings.getStringSet(PREF_EMAIL_CONTENT))
             setServiceAccount(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT))
             setLocale(settings.getLocale())
         }

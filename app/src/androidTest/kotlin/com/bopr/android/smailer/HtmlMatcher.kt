@@ -8,30 +8,29 @@ import java.io.IOException
 import java.util.*
 import java.util.regex.Pattern
 
-internal open class HtmlMatcher private constructor(private val expected: String?) :
+internal open class HtmlMatcher private constructor(private val expected: String) :
         CustomTypeSafeMatcher<String?>("HTML matches") {
 
-    private var expectedToken: String? = null
+    private lateinit var actual: String
+    private var expectedToken: String?= null
     private var actualToken: String? = null
-    private var prevToken: String? = null
     private val delimiters = Pattern.compile("(\\s|>|<|;)+")
 
-    override fun matchesSafely(actual: String?): Boolean {
+    override fun matchesSafely(html: String?): Boolean {
+        this.actual = html!!
         if (actual == expected) {
             return true
         } else {
-            val expects = Scanner(expected!!).useDelimiter(delimiters)
-            val actuals = Scanner(actual!!).useDelimiter(delimiters)
+            val expects = Scanner(expected).useDelimiter(delimiters)
+            val actuals = Scanner(actual).useDelimiter(delimiters)
             expectedToken = null
             actualToken = null
-            prevToken = ""
             while (expects.hasNext() && actuals.hasNext()) {
                 expectedToken = expects.next()
                 actualToken = actuals.next()
                 if (expectedToken != actualToken) {
                     return false
                 }
-                prevToken = actualToken
             }
             return expects.hasNext() == actuals.hasNext()
         }
@@ -39,11 +38,15 @@ internal open class HtmlMatcher private constructor(private val expected: String
 
     override fun describeMismatchSafely(item: String?, description: Description) {
         description
-                .appendText("Token [")
+                .appendText("Expected token [")
                 .appendText(expectedToken)
-                .appendText("] does not equal [")
+                .appendText("] but [")
                 .appendText(actualToken)
-                .appendText("]")
+                .appendText("] found.")
+
+        description
+                .appendText("\n-------\n")
+                .appendText(actual)
     }
 
     companion object {
@@ -51,7 +54,7 @@ internal open class HtmlMatcher private constructor(private val expected: String
         fun htmlEqualsRes(resource: String): HtmlMatcher {
             try {
                 InstrumentationRegistry.getInstrumentation().context.assets.open(resource).use {
-                    return HtmlMatcher(readStream(it))
+                    return HtmlMatcher(readStream(it)!!)
                 }
             } catch (x: IOException) {
                 throw IllegalArgumentException("Invalid resource", x)

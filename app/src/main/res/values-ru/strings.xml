@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="_any">любые</string>
-    <string name="_at_time">{time}</string>
-    <string name="_from_device">с устройства \"{device_name}\"</string>
+    <string name="_at_time">\u0020%s</string>
+    <string name="_from_device">\u0020с устройства \"%s\"</string>
     <string name="_none">отсутствуют</string>
     <string name="about">О приложении</string>
     <string name="acceptable_phone_numbers">Разрешенные номера (%s)</string>
@@ -27,9 +26,9 @@
     <string name="battery_optimization_reason">Чтобы приложение корректно работало когда устройство находиться в спящем режиме, отключите для него оптимизацию питания.</string>
     <string name="blacklist">Черный список</string>
     <string name="call_history">Журнал</string>
-    <string name="call_of_duration_short">Звонок: {duration}</string>
-    <string name="called_phone">Вы звонили: {phone} ({name})</string>
-    <string name="caller_phone">Вам звонил: {phone} ({name})</string>
+    <string name="call_of_duration_short">Звонок: %s</string>
+    <string name="called_phone">Вы звонили: %1$s (%2$s)</string>
+    <string name="caller_phone">Вам звонил: %1$s (%2$s)</string>
     <string name="check_your_settings">Проверьте настройки приложения</string>
     <string name="clear">Очистить</string>
     <string name="close">Закрыть</string>
@@ -56,7 +55,7 @@
     <string name="incoming_sms_from">Входящее SMS от</string>
     <string name="invalid_recipient">Указан неверный получатель</string>
     <string name="item_already_exists">%s уже существует</string>
-    <string name="last_known_location">Последнее известное местоположение: {location}</string>
+    <string name="last_known_location">Последнее известное местоположение: %s</string>
     <string name="list_is_empty">Список пуст</string>
     <string name="mark_all_as_read">Отметить все как прочитанные</string>
     <string name="mark_processed_sms_as_read">Отмечать обработанные SMS как прочитанные</string>
@@ -106,7 +105,7 @@
     <string name="remote_control_account_removed">Сервисный аккаунт был удален.</string>
     <string name="remove">Удалить</string>
     <string name="remove_from_filter">Исключить номер из правил</string>
-    <string name="reply_ot_app">Ответить {app_name}:</string>
+    <string name="reply_ot_app">Ответить %s:</string>
     <string name="reset_dialogs">Сбросить состояние диалогов</string>
     <string name="rules">Правила</string>
     <string name="rules_for_sending">Условия для отправки почты</string>
@@ -114,9 +113,9 @@
     <string name="send_sms_to_sender">Отправить SMS звонившему</string>
     <string name="sender">Отправитель</string>
     <string name="sender_account_removed">Аккаунт исходящей почты был удален.</string>
-    <string name="sender_phone">Отправитель: {phone} ({name})</string>
+    <string name="sender_phone">Отправитель: %1$s (%2$s)</string>
     <string name="sent_email">Отправлена почта</string>
-    <string name="sent_time_device">Отправлено{device_name}{time}</string>
+    <string name="sent_time_device">Отправлено%1$s%2$s</string>
     <string name="service_account_not_specified">Не указан сервисный аккаунт.</string>
     <string name="service_running">Служба запущена</string>
     <string name="since_permissions_not_granted">Некоторые настройки отключены, поскольку разрешения не получены.</string>
@@ -128,7 +127,7 @@
     <string name="text_remotely_removed_from_blacklist">Текст \"%s\" удаленно удален из черного списка."</string>
     <string name="text_remotely_removed_from_whitelist">Текст \"%s\" удаленно удален из белого списка."</string>
     <string name="time">Время:</string>
-    <string name="time_time">Время: {time}</string>
+    <string name="time_time">Время: %s</string>
     <string name="trigger_off">триггер выключен</string>
     <string name="triggers">Триггеры</string>
     <string name="unable_send_email">Не удалось отправить почту. %s</string>
@@ -140,9 +139,9 @@
     <string name="what_email_contains">Содержание почтового сообщения</string>
     <string name="when_send_email">Условия отправки почты</string>
     <string name="whitelist">Белый список</string>
-    <string name="you_had_incoming_call">Входящий звонок длительностью {duration}.</string>
+    <string name="you_had_incoming_call">Входящий звонок длительностью %s.</string>
     <string name="you_had_missed_call">Пропущенный звонок.</string>
-    <string name="you_had_outgoing_call">Исходящий звонок длительностью {duration}.</string>
+    <string name="you_had_outgoing_call">Исходящий звонок длительностью %s.</string>
 
     <plurals name="items_removed">
         <item quantity="one">%d запись удалена</item>

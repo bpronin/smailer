@@ -47,11 +47,12 @@ android {
 
     defaultConfig {
         versionCode 68
-        versionName "1.7.1-kotlin"
+        versionName "1.7.1"
+        versionNameSuffix = "kotlin"
         applicationId "com.bopr.android.smailer"
+        archivesBaseName = "smailer-${versionName}-${versionNameSuffix}"
         minSdkVersion 18
         targetSdkVersion 29
-        archivesBaseName = "smailer-${versionName}"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -91,13 +92,14 @@ android {
     }
 
     packagingOptions {
-        pickFirst "META-INF/LICENSE.txt" /* JavaMail license file*/
-        exclude "META-INF/DEPENDENCIES"  /* resolves conflict in gmail package */
+        pickFirst "META-INF/LICENSE.txt"
+        pickFirst "META-INF/DEPENDENCIES"
+        pickFirst "META-INF/kotlinx-html.kotlin_module"
     }
 
     compileOptions {
-        sourceCompatibility = 1.7
-        targetCompatibility = 1.7
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
     }
 
     configurations {
@@ -110,8 +112,9 @@ android {
 
 }
 
-allOpen {
-    annotation("com.bopr.android.smailer.util.Mockable")
+repositories {
+    jcenter()
+    google()
 }
 
 dependencies {
@@ -147,4 +150,15 @@ dependencies {
     androidTestImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
     androidTestImplementation "androidx.test:rules:1.2.0"
     androidTestImplementation "androidx.test.espresso:espresso-core:3.2.0"
+}
+
+allOpen {
+    annotation("com.bopr.android.smailer.util.Mockable")
+}
+
+gradle.projectsEvaluated {
+    tasks.withType(JavaCompile) {
+        options.compilerArgs.add("-Xlint:unchecked")
+        options.compilerArgs.add("-Xlint:deprecation")
+    }
 }

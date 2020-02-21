@@ -14,7 +14,6 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_MESSAG
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS
 import com.bopr.android.smailer.util.AddressUtil.escapePhone
 import com.bopr.android.smailer.util.ContentUtils.isReadContactsPermissionsDenied
-import com.bopr.android.smailer.util.TagFormatter
 import com.bopr.android.smailer.util.eventTypePrefix
 import com.bopr.android.smailer.util.eventTypeText
 import com.bopr.android.smailer.util.formatDuration
@@ -35,10 +34,9 @@ class MailFormatter(private val context: Context, private val event: PhoneEvent)
     private var deviceName: String? = null
     private var sendTime: Date? = null
     private var serviceAccount: String? = null
-    private var contentOptions: Set<String> = setOf()
+    private var options: Set<String> = setOf()
     private lateinit var resources: Resources
-    private lateinit var dateTimeFormat: DateFormat
-    private lateinit var formatter: TagFormatter
+    private lateinit var timeFormat: DateFormat
 
     init {
         setLocale(Locale.getDefault())
@@ -55,17 +53,16 @@ class MailFormatter(private val context: Context, private val event: PhoneEvent)
             configuration.setLocale(locale)
             context.createConfigurationContext(configuration).resources
         }
-        formatter = TagFormatter(resources)
-        dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale)
+        timeFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale)
     }
 
     /**
      * Sets email content options.
      *
-     * @param contentOptions set of options
+     * @param options set of options
      */
-    fun setContentOptions(contentOptions: Set<String>) {
-        this.contentOptions = contentOptions
+    fun setOptions(options: Set<String>) {
+        this.options = options
     }
 
     /**
@@ -110,12 +107,7 @@ class MailFormatter(private val context: Context, private val event: PhoneEvent)
      * @return email subject
      */
     fun formatSubject(): String {
-        return formatter
-                .pattern(SUBJECT_PATTERN)
-                .put("app_name", R.string.app_name)
-                .put("source", eventTypePrefix(event))
-                .put("phone", escapePhone(event.phone))
-                .format()
+        return "[${getString(R.string.app_name)}] ${getString(eventTypePrefix(event))} ${escapePhone(event.phone)}"
     }
 
     /**
@@ -125,46 +117,38 @@ class MailFormatter(private val context: Context, private val event: PhoneEvent)
      */
     fun formatBody(): String {
         val footer = formatFooter()
-        val links = formatRemoteControlLinks()
-        return formatter
-                .pattern(BODY_PATTERN)
-                .put("header", formatHeader())
-                .put("message", formatMessage())
-                .put("footer_line", if (footer.isNotEmpty()) LINE else "")
-                .put("footer", if (footer.isNotEmpty()) "<small>$footer</small>" else "")
-                .put("remote_line", if (links.isNotEmpty()) LINE else "")
-                .put("remote_links", links)
-                .format()
+        val links = formatReplyLinks()
+        return "<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">" +
+                "</head><body>" +
+                formatHeader() +
+                formatMessage() +
+                (if (footer.isNotEmpty()) "$LINE<small>$footer</small>" else "") +
+                (if (links.isNotEmpty()) "$LINE$links" else "") +
+                "</body></html>"
     }
 
     private fun formatMessage(): String {
         return when {
             event.isMissed -> {
-                resources.getString(R.string.you_had_missed_call)
+                getString(R.string.you_had_missed_call)
             }
             event.isSms -> {
                 replaceUrlsWithLinks(event.text!!)
             }
             else -> {
-                val patternRes = if (event.isIncoming) {
-                    R.string.you_had_incoming_call
+                val duration = formatDuration(event.callDuration)
+                if (event.isIncoming) {
+                    getString(R.string.you_had_incoming_call, duration)
                 } else {
-                    R.string.you_had_outgoing_call
+                    getString(R.string.you_had_outgoing_call, duration)
                 }
-                formatter
-                        .pattern(patternRes)
-                        .put("duration", formatDuration(event.callDuration))
-                        .format()
             }
         }
     }
 
     private fun formatHeader(): String {
-        return if (contentOptions.contains(VAL_PREF_EMAIL_CONTENT_HEADER)) {
-            formatter
-                    .pattern(HEADER_PATTERN)
-                    .put("header", eventTypeText(event))
-                    .format()
+        return if (options.contains(VAL_PREF_EMAIL_CONTENT_HEADER)) {
+            return "<strong>${eventTypeText(event)}</strong><br><br>"
         } else ""
     }
 
@@ -197,142 +181,102 @@ class MailFormatter(private val context: Context, private val event: PhoneEvent)
             if (sb.isNotEmpty()) {
                 sb.append("<br>")
             }
-            sb.append(formatter
-                    .pattern(R.string.sent_time_device)
-                    .put("device_name", deviceNameText)
-                    .put("time", sendTimeText))
+            sb.append(getString(R.string.sent_time_device, deviceNameText, sendTimeText))
         }
 
         return sb.toString()
     }
 
     private fun formatCaller(): String {
-        if (contentOptions.contains(VAL_PREF_EMAIL_CONTENT_CONTACT)) {
-            val patternRes = if (event.isSms) {
-                R.string.sender_phone
+        if (options.contains(VAL_PREF_EMAIL_CONTENT_CONTACT)) {
+            val phoneUrl = encodeUrl(event.phone)
+            val phoneLink = "<a href=\"tel:$phoneUrl\" style=\"text-decoration: none\">&#9742;</a>${event.phone}"
+
+            val contact = if (contactName.isNullOrBlank()) {
+                return if (isReadContactsPermissionsDenied(context)) {
+                    getString(R.string.contact_no_permission_read_contact)
+                } else {
+                    "<a href=\"https://www.google.com/search?q=$phoneUrl\">" +
+                            "${getString(R.string.unknown_contact)}</a>"
+                }
             } else {
-                if (event.isIncoming) {
+                contactName
+            }
+
+            val patternRes = when {
+                event.isSms ->
+                    R.string.sender_phone
+                event.isIncoming ->
                     R.string.caller_phone
-                } else {
+                else ->
                     R.string.called_phone
-                }
             }
-
-            val phoneQuery = encodeUrl(event.phone)
-            var name = contactName
-            if (name.isNullOrBlank()) {
-                name = if (isReadContactsPermissionsDenied(context)) {
-                    resources.getString(R.string.contact_no_permission_read_contact)
-                } else {
-                    formatter
-                            .pattern(GOOGLE_SEARCH_PATTERN)
-                            .put("query", phoneQuery)
-                            .put("text", R.string.unknown_contact)
-                            .format()
-                }
-            }
-
-            return formatter
-                    .pattern(patternRes)
-                    .put("phone", formatter
-                            .pattern(PHONE_LINK_PATTERN)
-                            .put("phone", phoneQuery)
-                            .put("text", event.phone)
-                            .format())
-                    .put("name", name)
-                    .format()
+            return getString(patternRes, phoneLink, contact)
         }
         return ""
     }
 
     private fun formatEventTime(): String {
-        return if (contentOptions.contains(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME)) {
-            formatter
-                    .pattern(R.string.time_time)
-                    .put("time", dateTimeFormat.format(Date(event.startTime)))
-                    .format()
+        return if (options.contains(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME)) {
+            getString(R.string.time_time, timeFormat.format(Date(event.startTime)))
         } else ""
     }
 
     private fun formatSendTime(): String {
-        return if (contentOptions.contains(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT) && sendTime != null) {
-            " " + formatter
-                    .pattern(R.string._at_time)
-                    .put("time", dateTimeFormat.format(sendTime!!))
-                    .format()
+        return if (options.contains(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT) && sendTime != null) {
+            getString(R.string._at_time, timeFormat.format(sendTime!!))
         } else ""
     }
 
     private fun formatDeviceName(): String {
-        return if (contentOptions.contains(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME) && !deviceName.isNullOrBlank()) {
-            " " + formatter
-                    .pattern(R.string._from_device)
-                    .put("device_name", deviceName)
-                    .format()
+        return if (options.contains(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME) && !deviceName.isNullOrBlank()) {
+            getString(R.string._from_device, deviceName)
         } else ""
     }
 
     private fun formatLocation(): String {
-        if (contentOptions.contains(VAL_PREF_EMAIL_CONTENT_LOCATION)) {
+        return if (options.contains(VAL_PREF_EMAIL_CONTENT_LOCATION)) {
             val coordinates = event.location
             return if (coordinates != null) {
-                formatter
-                        .pattern(R.string.last_known_location)
-                        .put("location", formatter
-                                .pattern(GOOGLE_MAP_LINK_PATTERN)
-                                .put("latitude", coordinates.latitude.toString())
-                                .put("longitude", coordinates.longitude.toString())
-                                .put("location", coordinates.format(degreeSymbol = "&#176;"))
-                                .format())
-                        .format()
+                val lt = coordinates.latitude
+                val ln = coordinates.longitude
+                val text = coordinates.format(degreeSymbol = "&#176;")
+                val link = "<a href=\"https://www.google.com/maps/place/$lt+$ln/@$lt,$ln\">$text</a>"
+                getString(R.string.last_known_location, link)
             } else {
-                val locationText = if (isPermissionsDenied(context)) {
-                    R.string.no_permission_read_location
+                val text = if (isPermissionsDenied(context)) {
+                    getString(R.string.no_permission_read_location)
                 } else {
-                    R.string.geolocation_disabled
+                    getString(R.string.geolocation_disabled)
                 }
-                formatter
-                        .pattern(R.string.last_known_location)
-                        .put("location", locationText)
-                        .format()
+                getString(R.string.last_known_location, text)
             }
-        }
-        return ""
-    }
-
-    private fun formatRemoteControlLinks(): String {
-        return if (contentOptions.contains(VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS)
-                && !serviceAccount.isNullOrBlank()) {
-            formatter
-                    .pattern(REPLY_LINKS_PATTERN)
-                    .put("title", formatter
-                            .pattern(R.string.reply_ot_app)
-                            .put("app_name", R.string.app_name))
-                    .put("links", formatRemoteControlLinksList())
-                    .format()
         } else ""
     }
 
-    private fun formatRemoteControlLinksList(): String {
-        val phone = escapePhone(event.phone)
+    private fun formatReplyLinks(): String {
+        return if (options.contains(VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS)
+                && !serviceAccount.isNullOrBlank()) {
+            //val title = getString(R.string.reply_ot_app, R.string.app_name)
 
-        val phoneTask = getString(R.string.add_phone_to_blacklist_reply_body, phone)
-        val sentTask = getString(R.string.send_sms_to_sender_reply_body, "Sample text", phone)
-        val textTask = getString(R.string.add_text_to_blacklist_reply_body, (event.text ?: ""))
+            val phone = escapePhone(event.phone)
+            val smsText = event.text ?: ""
+            val subject = formatSubject()
 
-        return formatRemoteControlLink(R.string.add_phone_to_blacklist, phoneTask) +
-                formatRemoteControlLink(R.string.add_text_to_blacklist, textTask) +
-                formatRemoteControlLink(R.string.send_sms_to_sender, sentTask)
+            "<ul>${formatReplyLink(R.string.add_phone_to_blacklist, "add phone $phone to blacklist", subject) +
+                    formatReplyLink(R.string.add_text_to_blacklist, "add text \"$smsText\" to blacklist", subject) +
+                    formatReplyLink(R.string.send_sms_to_sender, "send SMS message \"Sample text\" to $phone", subject)}</ul>"
+        } else ""
     }
 
-    private fun formatRemoteControlLink(@StringRes titleRes: Int, body: String): String {
-        return formatter
-                .pattern(REMOTE_CONTROL_LINK_PATTERN)
-                .put("address", serviceAccount)
-                .put("subject", htmlEncode("Re: " + formatSubject()))
-                .put("body", htmlEncode(getString(R.string.reply_text, deviceName, body)))
-                .put("link_title", titleRes)
-                .format()
+    private fun formatReplyLink(@StringRes titleRes: Int, body: String, subject: String): String {
+        return "<li><small>" +
+                "<a href=\"" +
+                "mailto:$serviceAccount?" +
+                "subject=${htmlEncode("Re: $subject")}&amp;" +
+                "body=${htmlEncode("To device \"$deviceName\": %0d%0a $body")}" +
+                "\">${getString(titleRes)}</a>" +
+                "</small></li>"
     }
 
     private fun replaceUrlsWithLinks(s: String): String {
@@ -363,22 +307,9 @@ class MailFormatter(private val context: Context, private val event: PhoneEvent)
     private fun getString(@StringRes resId: Int) = resources.getString(resId)
 
     companion object {
+
         private val WEB_URL_PATTERN = Pattern.compile("(?:\\S+)://\\S+")
-        private const val SUBJECT_PATTERN = "[{app_name}] {source} {phone}"
-        private const val BODY_PATTERN = "<html><head><meta http-equiv=\"content-type\" " +
-                "content=\"text/html; charset=utf-8\">" +
-                "</head><body>{header}{message}{footer_line}{footer}{remote_line}{remote_links}</body></html>"
         private const val LINE = "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">"
-        private const val HEADER_PATTERN = "<strong>{header}</strong><br><br>"
-        private const val GOOGLE_MAP_LINK_PATTERN = "<a href=\"https://www.google.com/maps/" +
-                "place/{latitude}+{longitude}/@{latitude},{longitude}\">{location}</a>"
-        private const val PHONE_LINK_PATTERN = "<a href=\"tel:{phone}\" style=\"text-decoration: " +
-                "none\">&#9742;</a>{text}"
-        private const val REPLY_LINKS_PATTERN = "<ul>{links}</ul>"
-        private const val MAIL_TO_PATTERN = "<a href=\"mailto:{address}?subject={subject}&amp;" +
-                "body={body}\">{link_title}</a>"
-        private const val REMOTE_CONTROL_LINK_PATTERN = "<li><small>$MAIL_TO_PATTERN</small></li>"
-        private const val GOOGLE_SEARCH_PATTERN = "<a href=\"https://www.google.com/search?q={query}\">{text}</a>"
     }
 
 }
