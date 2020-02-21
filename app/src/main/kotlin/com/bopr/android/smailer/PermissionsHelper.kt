@@ -46,11 +46,11 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
     )
 
     init {
-        settings.registerOnSharedPreferenceChangeListener(this)
+        settings.registerChangeListener(this)
     }
 
     fun dispose() {
-        settings.unregisterOnSharedPreferenceChangeListener(this)
+        settings.unregisterChangeListener(this)
 
         log.debug("Disposed")
     }

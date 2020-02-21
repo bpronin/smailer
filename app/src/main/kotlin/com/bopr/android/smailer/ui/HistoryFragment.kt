@@ -1,5 +1,6 @@
 package com.bopr.android.smailer.ui
 
+
 import android.content.BroadcastReceiver
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
@@ -28,24 +29,21 @@ import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_BLACKLIST
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_WHITELIST
 import com.bopr.android.smailer.ui.HistoryFragment.Holder
 import com.bopr.android.smailer.util.*
-
 /**
  * Application activity log activity fragment.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
+class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferenceChangeListener {
 
     private lateinit var database: Database
     private lateinit var callFilter: PhoneEventFilter
-    private lateinit var settingsChangeListener: OnSharedPreferenceChangeListener
     private lateinit var databaseListener: BroadcastReceiver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        settingsChangeListener = SettingsListener()
-        settings.registerOnSharedPreferenceChangeListener(settingsChangeListener)
+        settings.registerChangeListener(this)
 
         database = Database(requireContext())
         databaseListener = registerDatabaseListener(requireContext()) {
@@ -55,7 +53,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
 
     override fun onDestroy() {
         super.onDestroy()
-        settings.unregisterOnSharedPreferenceChangeListener(settingsChangeListener)
+        settings.unregisterChangeListener(this)
         unregisterDatabaseListener(requireContext(), databaseListener)
         database.close()
     }
@@ -123,6 +121,18 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
             }
             else ->
                 super.onContextItemSelected(item)
+        }
+    }
+
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+        when (key) {
+            PREF_EMAIL_TRIGGERS,
+            PREF_FILTER_PHONE_BLACKLIST,
+            PREF_FILTER_PHONE_WHITELIST,
+            PREF_FILTER_TEXT_BLACKLIST,
+            PREF_FILTER_TEXT_WHITELIST -> {
+                refreshItems()
+            }
         }
     }
 
@@ -237,28 +247,13 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
     }
 
     inner class Holder(view: View) : ViewHolder(view) {
-
         val typeView: ImageView = view.findViewById(R.id.list_item_type)
         val directionView: ImageView = view.findViewById(R.id.list_item_direction)
         val phoneView: TextView = view.findViewById(R.id.list_item_phone)
         val timeView: TextView = view.findViewById(R.id.list_item_time)
         val textView: TextView = view.findViewById(R.id.list_item_text)
         val stateView: ImageView = view.findViewById(R.id.list_item_state)
-    }
 
-    private inner class SettingsListener : OnSharedPreferenceChangeListener {
-
-        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-            when (key) {
-                PREF_EMAIL_TRIGGERS,
-                PREF_FILTER_PHONE_BLACKLIST,
-                PREF_FILTER_PHONE_WHITELIST,
-                PREF_FILTER_TEXT_BLACKLIST,
-                PREF_FILTER_TEXT_WHITELIST -> {
-                    refreshItems()
-                }
-            }
-        }
     }
 
 }

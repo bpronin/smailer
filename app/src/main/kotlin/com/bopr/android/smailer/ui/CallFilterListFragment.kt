@@ -1,5 +1,8 @@
 package com.bopr.android.smailer.ui
 
+import android.content.SharedPreferences
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import android.os.Bundle
 import android.view.*
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -13,7 +16,18 @@ import com.bopr.android.smailer.util.showConfirmationDialog
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-abstract class CallFilterListFragment : EditableRecyclerFragment<String, Holder>() {
+abstract class CallFilterListFragment(private val settingName: String) : EditableRecyclerFragment<String, Holder>(),
+        OnSharedPreferenceChangeListener {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        settings.registerChangeListener(this)
+    }
+
+    override fun onDestroy() {
+        settings.unregisterChangeListener(this)
+        super.onDestroy()
+    }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_list, menu)
@@ -46,19 +60,30 @@ abstract class CallFilterListFragment : EditableRecyclerFragment<String, Holder>
         }
     }
 
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+        if (key == settingName) {
+            refreshItems()
+        }
+    }
+
     override fun loadItems(): Collection<String> {
         return getItemsList(settings.callFilter).sorted()
     }
 
     override fun saveItems(items: Collection<String>) {
         val filter = settings.callFilter
-        setItemsList(filter, items)
+
+        getItemsList(filter).apply {
+            clear()
+            addAll(items)
+        }
+
         settings.edit()
                 .putFilter(filter)
                 .apply()
     }
 
-     override fun isValidItem(item: String): Boolean {
+    override fun isValidItem(item: String): Boolean {
         return !item.isBlank()
     }
 
@@ -70,9 +95,9 @@ abstract class CallFilterListFragment : EditableRecyclerFragment<String, Holder>
         holder.textView.text = getItemTitle(item)
     }
 
-    protected abstract fun getItemsList(filter: PhoneEventFilter): Collection<String>
-
-    protected abstract fun setItemsList(filter: PhoneEventFilter, list: Collection<String>)
+    private fun getItemsList(filter: PhoneEventFilter): MutableCollection<String> {
+        return filter.getList(settingName)
+    }
 
     private fun onClearData() {
         showConfirmationDialog(requireContext(), messageRes = R.string.ask_clear_list,

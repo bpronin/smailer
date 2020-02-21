@@ -33,14 +33,14 @@ class MainActivity : AppActivity(), SharedPreferences.OnSharedPreferenceChangeLi
 
         settings = Settings(this)
         settings.loadDefaults()
-        settings.registerOnSharedPreferenceChangeListener(this)
+        settings.registerChangeListener(this)
 
         setupEnvironment(this)
         handleStartupParams(intent)
     }
 
     override fun onDestroy() {
-        settings.unregisterOnSharedPreferenceChangeListener(this)
+        settings.unregisterChangeListener(this)
         super.onDestroy()
     }
 
@@ -54,6 +54,7 @@ class MainActivity : AppActivity(), SharedPreferences.OnSharedPreferenceChangeLi
                 enableRemoteControlWorker(this)
         }
 
+        backupManager.dataChanged()
         onSyncEngineSettingsChanged(this, key)
     }
 

@@ -29,13 +29,13 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPref
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         settings = Settings(requireContext())
-        settings.registerOnSharedPreferenceChangeListener(this)
+        settings.registerChangeListener(this)
         permissionsHelper = PermissionsHelper(requireActivity())
     }
 
     override fun onDestroy() {
         permissionsHelper.dispose()
-        settings.unregisterOnSharedPreferenceChangeListener(this)
+        settings.unregisterChangeListener(this)
         super.onDestroy()
     }
 

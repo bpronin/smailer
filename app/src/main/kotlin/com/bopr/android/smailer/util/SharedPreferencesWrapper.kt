@@ -46,11 +46,11 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
         return EditorWrapper(wrappedPreferences.edit())
     }
 
-    fun registerOnSharedPreferenceChangeListener(listener: OnSharedPreferenceChangeListener) {
+    fun registerChangeListener(listener: OnSharedPreferenceChangeListener) {
         wrappedPreferences.registerOnSharedPreferenceChangeListener(listener)
     }
 
-    fun unregisterOnSharedPreferenceChangeListener(listener: OnSharedPreferenceChangeListener) {
+    fun unregisterChangeListener(listener: OnSharedPreferenceChangeListener) {
         wrappedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
     }
 

@@ -23,22 +23,22 @@ class RulesFragment : BasePreferenceFragment() {
         addPreferencesFromResource(R.xml.pref_rules)
 
         requirePreference(PREF_FILTER_PHONE_BLACKLIST).setOnPreferenceClickListener {
-            startActivity(Intent(context, PhoneBlacklistActivity::class.java))
+            startActivity(Intent(context, CallFilterPhoneBlacklistActivity::class.java))
             true
         }
 
         requirePreference(PREF_FILTER_PHONE_WHITELIST).setOnPreferenceClickListener {
-            startActivity(Intent(context, PhoneWhitelistActivity::class.java))
+            startActivity(Intent(context, CallFilterPhoneWhitelistActivity::class.java))
             true
         }
 
         requirePreference(PREF_FILTER_TEXT_BLACKLIST).setOnPreferenceClickListener {
-            startActivity(Intent(context, TextBlacklistActivity::class.java))
+            startActivity(Intent(context, CallFilterTextBlacklistActivity::class.java))
             true
         }
 
         requirePreference(PREF_FILTER_TEXT_WHITELIST).setOnPreferenceClickListener {
-            startActivity(Intent(context, TextWhitelistActivity::class.java))
+            startActivity(Intent(context, CallFilterTextWhitelistActivity::class.java))
             true
         }
     }

@@ -18,19 +18,22 @@ import com.bopr.android.smailer.util.underwivedText
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class RecipientsFragment : EditableRecyclerFragment<String, Holder>() {
-
-    private lateinit var settingsListener: SettingsListener
+class RecipientsFragment : EditableRecyclerFragment<String, Holder>(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        settingsListener = SettingsListener()
-        settings.registerOnSharedPreferenceChangeListener(settingsListener)
+        settings.registerChangeListener(this)
     }
 
     override fun onDestroy() {
-        settings.unregisterOnSharedPreferenceChangeListener(settingsListener)
+        settings.unregisterChangeListener(this)
         super.onDestroy()
+    }
+
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+        if (key == PREF_RECIPIENTS_ADDRESS) {
+            refreshItems()
+        }
     }
 
     override fun loadItems(): Collection<String> {
@@ -65,17 +68,8 @@ class RecipientsFragment : EditableRecyclerFragment<String, Holder>() {
     }
 
     inner class Holder(view: View) : ViewHolder(view) {
-
         val textView: TextView = view.findViewById(R.id.text)
-    }
 
-    private inner class SettingsListener : SharedPreferences.OnSharedPreferenceChangeListener {
-
-        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-            if (key == PREF_RECIPIENTS_ADDRESS) {
-                refreshItems()
-            }
-        }
     }
 
 }

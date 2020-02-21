@@ -7,7 +7,7 @@ import com.bopr.android.smailer.util.unescapeRegex
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-abstract class TextFilterListFragment : CallFilterListFragment() {
+class CallFilterTextListFragment(settingName: String) : CallFilterListFragment(settingName) {
 
     override fun createEditDialog(): BaseEditDialogFragment<String> {
         return EditTextDialogFragment()
