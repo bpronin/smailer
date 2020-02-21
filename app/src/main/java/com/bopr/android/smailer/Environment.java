@@ -19,7 +19,17 @@ public class Environment {
 
     private static Logger log = LoggerFactory.getLogger("Environment");
 
-    static {
+    public static void setupEnvironment(Context context) {
+        log.debug("Application init");
+
+        setupDefaultExceptionHandler();
+        startSyncEngine(context);
+        enableContentObserverService(context);
+        enableResendWorker(context);
+        enableRemoteControlWorker(context);
+    }
+
+    private static void setupDefaultExceptionHandler() {
         final UncaughtExceptionHandler defaultHandler = requireNonNull(getDefaultUncaughtExceptionHandler());
         setDefaultUncaughtExceptionHandler((thread, throwable) -> {
             try {
@@ -29,15 +39,6 @@ public class Environment {
             }
             defaultHandler.uncaughtException(thread, throwable);
         });
-    }
-
-    public static void setupEnvironment(Context context) {
-        log.debug("Application init");
-
-        startSyncEngine(context);
-        enableContentObserverService(context);
-        enableResendWorker(context);
-        enableRemoteControlWorker(context);
     }
 
 }
