@@ -263,9 +263,14 @@ class Database constructor(private val context: Context, private val name: Strin
         private const val TABLE_SYSTEM = "system_data"
         private const val TABLE_EVENTS = "phone_events"
 
-        fun registerDatabaseListener(context: Context, listener: BroadcastReceiver): BroadcastReceiver {
-            LocalBroadcastManager.getInstance(context).registerReceiver(listener,
-                    IntentFilter(DATABASE_EVENT))
+        fun registerDatabaseListener(context: Context, onChange: () -> Unit): BroadcastReceiver {
+            val listener = object : BroadcastReceiver() {
+
+                override fun onReceive(context: Context?, intent: Intent?) {
+                    onChange()
+                }
+            }
+            LocalBroadcastManager.getInstance(context).registerReceiver(listener, IntentFilter(DATABASE_EVENT))
             return listener
         }
 

@@ -5,7 +5,7 @@ import android.util.Log
 import com.bopr.android.smailer.ContentObserverService.Companion.enableContentObserver
 import com.bopr.android.smailer.ResendWorker.Companion.enableResendWorker
 import com.bopr.android.smailer.remote.RemoteControlWorker.Companion.enableRemoteControlWorker
-import com.bopr.android.smailer.sync.SyncEngine.Companion.startSyncEngine
+import com.bopr.android.smailer.sync.SyncEngine.startSyncEngine
 import org.slf4j.LoggerFactory.getLogger
 
 object Environment {

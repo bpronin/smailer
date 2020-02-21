@@ -12,6 +12,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_RESEND_UNSENT
 import com.bopr.android.smailer.remote.RemoteControlWorker.Companion.enableRemoteControlWorker
+import com.bopr.android.smailer.sync.SyncEngine.onSyncEngineSettingsChanged
 
 /**
  * An activity that presents a set of application settings.
@@ -25,7 +26,7 @@ class MainActivity : AppActivity(), SharedPreferences.OnSharedPreferenceChangeLi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHomeButtonEnabled(false)
-        settings = Settings (this)
+        settings = Settings(this)
         settings.loadDefaults()
         setupEnvironment(this)
         settings.registerOnSharedPreferenceChangeListener(this)
@@ -46,6 +47,8 @@ class MainActivity : AppActivity(), SharedPreferences.OnSharedPreferenceChangeLi
             PREF_REMOTE_CONTROL_ENABLED ->
                 enableRemoteControlWorker(this)
         }
+
+        onSyncEngineSettingsChanged(this, key)
     }
 
     override fun createFragment(): Fragment {

@@ -16,7 +16,7 @@ import java.io.IOException
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class Synchronizer(context: Context,
+internal class Synchronizer(context: Context,
                    account: Account,
                    private val database: Database = Database(context),
                    private val settings: Settings = Settings(context),
@@ -28,8 +28,8 @@ class Synchronizer(context: Context,
 
     @Throws(IOException::class)
     fun sync(): Synchronizer {
-        val localMeta = readMetaData()
-        val remoteMeta: MetaData? = drive.download(metaFile, MetaData::class.java)
+        val localMeta = localMetaData()
+        val remoteMeta = drive.download(metaFile, MetaData::class.java)
         if (remoteMeta == null || localMeta.syncTime >= remoteMeta.syncTime) {
             upload()
         } else {
@@ -42,7 +42,7 @@ class Synchronizer(context: Context,
     fun download(): Synchronizer {
         val data = drive.download(dataFile, SyncData::class.java)
         if (data != null) {
-            writeData(data)
+            putLocalData(data)
 
             log.debug("Downloaded remote data")
         } else {
@@ -53,8 +53,8 @@ class Synchronizer(context: Context,
 
     @Throws(IOException::class)
     fun upload(): Synchronizer {
-        drive.upload(metaFile, readMetaData())
-        drive.upload(dataFile, readData())
+        drive.upload(metaFile, localMetaData())
+        drive.upload(dataFile, getLocalData())
 
         log.debug("Uploaded local data")
         return this
@@ -73,9 +73,11 @@ class Synchronizer(context: Context,
         database.close()
     }
 
-    private fun readMetaData(): MetaData = MetaData(settings.getLong(PREF_SYNC_TIME, 0))
+    private fun localMetaData(): MetaData {
+        return MetaData(settings.getLong(PREF_SYNC_TIME, 0))
+    }
 
-    private fun readData(): SyncData {
+    private fun getLocalData(): SyncData {
         val events = mutableListOf<SyncData.Event>()
         database.events.forEach { event ->
             events.add(eventToData(event))
@@ -91,7 +93,7 @@ class Synchronizer(context: Context,
         }
     }
 
-    private fun writeData(data: SyncData) {
+    private fun putLocalData(data: SyncData) {
         data.events?.map { e -> dataToEvent(e) }?.apply { database.putEvents(this) }
 
         with(settings.callFilter) {

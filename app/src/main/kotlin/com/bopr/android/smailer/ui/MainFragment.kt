@@ -1,7 +1,6 @@
 package com.bopr.android.smailer.ui
 
 import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -70,7 +69,9 @@ class MainFragment : BasePreferenceFragment() {
         authorizator = GoogleAuthorizationHelper(this, PREF_SENDER_ACCOUNT, GmailScopes.GMAIL_SEND,
                 DriveScopes.DRIVE_APPDATA)
         database = Database(requireContext())
-        databaseListener = registerDatabaseListener(requireContext(), DatabaseListener())
+        databaseListener = registerDatabaseListener(requireContext()) {
+            updateHistoryPreferenceView()
+        }
 
         permissionsHelper.checkAll()
         requireIgnoreBatteryOptimization(requireContext())
@@ -176,12 +177,5 @@ class MainFragment : BasePreferenceFragment() {
     private fun updateShowNotificationPreferenceView() {
         val preference = findPreference<SwitchPreference>(PREF_NOTIFY_SEND_SUCCESS)!!
         preference.isChecked = settings.getBoolean(PREF_NOTIFY_SEND_SUCCESS, false)
-    }
-
-    private inner class DatabaseListener : BroadcastReceiver() {
-
-        override fun onReceive(context: Context, intent: Intent) {
-            updateHistoryPreferenceView()
-        }
     }
 }

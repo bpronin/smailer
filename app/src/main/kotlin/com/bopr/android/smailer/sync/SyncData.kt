@@ -7,7 +7,7 @@ import com.google.api.client.util.Key
 /**
  * Data transfer object for synchronization.
  */
-/* NOTE: Json parser requires that all DTO constructor parameters be var and have default value */
+/* NOTE: JSON engine requires that all DTO constructor parameters be var and have default value */
 data class SyncData(
         @Key("phone_black_list") var phoneBlacklist: MutableSet<String>? = null,
         @Key("text_black_list") var textBlacklist: MutableSet<String>? = null,

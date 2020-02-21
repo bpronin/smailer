@@ -1,8 +1,6 @@
 package com.bopr.android.smailer.ui
 
 import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
@@ -50,7 +48,9 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
         settings.registerOnSharedPreferenceChangeListener(settingsChangeListener)
 
         database = Database(requireContext())
-        databaseListener = registerDatabaseListener(requireContext(), DatabaseListener())
+        databaseListener = registerDatabaseListener(requireContext()) {
+            refreshItems()
+        }
     }
 
     override fun onDestroy() {
@@ -261,10 +261,4 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
         }
     }
 
-    private inner class DatabaseListener : BroadcastReceiver() {
-
-        override fun onReceive(context: Context, intent: Intent) {
-            refreshItems()
-        }
-    }
 }
