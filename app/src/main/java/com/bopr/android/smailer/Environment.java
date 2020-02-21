@@ -7,8 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.bopr.android.smailer.ContentObserverService.enableContentObserverService;
-import static com.bopr.android.smailer.ResendWorker.setupResendWorker;
-import static com.bopr.android.smailer.remote.RemoteControlWorker.setupRemoteControlWorker;
+import static com.bopr.android.smailer.ResendWorker.enableResendWorker;
+import static com.bopr.android.smailer.remote.RemoteControlWorker.enableRemoteControlWorker;
 import static com.bopr.android.smailer.sync.SyncEngine.startSyncEngine;
 import static java.lang.Thread.UncaughtExceptionHandler;
 import static java.lang.Thread.getDefaultUncaughtExceptionHandler;
@@ -34,10 +34,10 @@ public class Environment {
     public static void setupEnvironment(Context context) {
         log.debug("Application init");
 
-        enableContentObserverService(context);
-        setupResendWorker(context);
-        setupRemoteControlWorker(context);
         startSyncEngine(context);
+        enableContentObserverService(context);
+        enableResendWorker(context);
+        enableRemoteControlWorker(context);
     }
 
 }

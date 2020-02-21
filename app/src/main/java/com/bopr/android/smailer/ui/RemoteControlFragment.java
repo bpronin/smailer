@@ -13,7 +13,6 @@ import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_ACCOUNT;
 import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_ENABLED;
 import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS;
 import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_NOTIFICATIONS;
-import static com.bopr.android.smailer.remote.RemoteControlWorker.setupRemoteControlWorker;
 import static com.bopr.android.smailer.util.TextUtil.isNullOrEmpty;
 import static com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM;
 
@@ -89,7 +88,6 @@ public class RemoteControlFragment extends BasePreferenceFragment {
                     break;
                 case PREF_REMOTE_CONTROL_ENABLED:
                     updatePreferences();
-                    setupRemoteControlWorker(requireContext());
                     break;
             }
 

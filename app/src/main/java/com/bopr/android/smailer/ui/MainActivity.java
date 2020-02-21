@@ -13,9 +13,11 @@ import com.bopr.android.smailer.Settings;
 import static android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import static com.bopr.android.smailer.ContentObserverService.enableContentObserverService;
 import static com.bopr.android.smailer.Environment.setupEnvironment;
-import static com.bopr.android.smailer.ResendWorker.setupResendWorker;
+import static com.bopr.android.smailer.ResendWorker.enableResendWorker;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_TRIGGERS;
+import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_ENABLED;
 import static com.bopr.android.smailer.Settings.PREF_RESEND_UNSENT;
+import static com.bopr.android.smailer.remote.RemoteControlWorker.enableRemoteControlWorker;
 import static com.bopr.android.smailer.sync.SyncEngine.onSyncSettingsChanged;
 
 /**
@@ -56,7 +58,10 @@ public class MainActivity extends AppActivity implements OnSharedPreferenceChang
                 enableContentObserverService(this);
                 break;
             case PREF_RESEND_UNSENT:
-                setupResendWorker(this);
+                enableResendWorker(this);
+                break;
+            case PREF_REMOTE_CONTROL_ENABLED:
+                enableRemoteControlWorker(this);
                 break;
         }
 

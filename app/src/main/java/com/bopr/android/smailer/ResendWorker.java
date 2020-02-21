@@ -51,7 +51,7 @@ public class ResendWorker extends Worker {
         return settings(context).getBoolean(PREF_RESEND_UNSENT, true);
     }
 
-    public static void setupResendWorker(@NonNull Context context) {
+    public static void enableResendWorker(@NonNull Context context) {
         WorkManager manager = WorkManager.getInstance();
 
         manager.cancelAllWorkByTag(WORKER_TAG);

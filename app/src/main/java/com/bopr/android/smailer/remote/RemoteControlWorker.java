@@ -51,7 +51,7 @@ public class RemoteControlWorker extends Worker {
         return settings(context).getBoolean(PREF_REMOTE_CONTROL_ENABLED, false);
     }
 
-    public static void setupRemoteControlWorker(@NonNull Context context) {
+    public static void enableRemoteControlWorker(@NonNull Context context) {
         WorkManager manager = WorkManager.getInstance();
 
         manager.cancelAllWorkByTag(WORKER_TAG);
