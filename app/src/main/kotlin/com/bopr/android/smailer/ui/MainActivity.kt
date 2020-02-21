@@ -1,5 +1,6 @@
 package com.bopr.android.smailer.ui
 
+import android.app.backup.BackupManager
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -22,14 +23,19 @@ import com.bopr.android.smailer.sync.SyncEngine.onSyncEngineSettingsChanged
 class MainActivity : AppActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     private lateinit var settings: Settings
+    private lateinit var backupManager: BackupManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHomeButtonEnabled(false)
+
+        backupManager = BackupManager(this)
+
         settings = Settings(this)
         settings.loadDefaults()
-        setupEnvironment(this)
         settings.registerOnSharedPreferenceChangeListener(this)
+
+        setupEnvironment(this)
         handleStartupParams(intent)
     }
 

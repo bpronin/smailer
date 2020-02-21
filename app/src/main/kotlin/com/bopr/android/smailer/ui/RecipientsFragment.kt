@@ -1,6 +1,5 @@
 package com.bopr.android.smailer.ui
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -25,7 +24,7 @@ class RecipientsFragment : EditableRecyclerFragment<String, Holder>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        settingsListener = SettingsListener(requireContext())
+        settingsListener = SettingsListener()
         settings.registerOnSharedPreferenceChangeListener(settingsListener)
     }
 
@@ -70,13 +69,12 @@ class RecipientsFragment : EditableRecyclerFragment<String, Holder>() {
         val textView: TextView = view.findViewById(R.id.text)
     }
 
-    private inner class SettingsListener(context: Context) : BaseSettingsListener(context) {
+    private inner class SettingsListener : SharedPreferences.OnSharedPreferenceChangeListener {
 
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
             if (key == PREF_RECIPIENTS_ADDRESS) {
                 refreshItems()
             }
-            super.onSharedPreferenceChanged(sharedPreferences, key)
         }
     }
 

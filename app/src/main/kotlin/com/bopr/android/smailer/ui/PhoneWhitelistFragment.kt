@@ -1,6 +1,5 @@
 package com.bopr.android.smailer.ui
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import com.bopr.android.smailer.PhoneEventFilter
@@ -17,7 +16,7 @@ class PhoneWhitelistFragment : PhoneFilterListFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        settingsListener = SettingsListener(requireContext())
+        settingsListener = SettingsListener()
         settings.registerOnSharedPreferenceChangeListener(settingsListener)
     }
 
@@ -34,13 +33,12 @@ class PhoneWhitelistFragment : PhoneFilterListFragment() {
         filter.phoneWhitelist = list.toMutableSet()
     }
 
-    private inner class SettingsListener(context: Context) : BaseSettingsListener(context) {
+    private inner class SettingsListener : SharedPreferences.OnSharedPreferenceChangeListener {
 
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
             if (key == PREF_FILTER_PHONE_WHITELIST) {
                 refreshItems()
             }
-            super.onSharedPreferenceChanged(sharedPreferences, key)
         }
     }
 }
