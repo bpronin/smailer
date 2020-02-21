@@ -126,8 +126,8 @@ class ContentObserverService : Service() {
          */
         fun enableContentObserver(context: Context) {
             val intent = Intent(context, ContentObserverService::class.java)
-            val filter = Settings(context).getFilter()
-            if (filter.triggers.contains(VAL_PREF_TRIGGER_OUT_SMS)) {
+            val callFilter = Settings(context).callFilter
+            if (callFilter.triggers.contains(VAL_PREF_TRIGGER_OUT_SMS)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     context.startForegroundService(intent)
                 } else {

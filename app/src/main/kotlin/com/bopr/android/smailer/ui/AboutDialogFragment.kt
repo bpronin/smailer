@@ -6,8 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.bopr.android.smailer.BuildInfo
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.util.Dialogs.showInfoDialog
 
 /**
@@ -19,13 +19,12 @@ class AboutDialogFragment : BaseDialogFragment("about_dialog") {
 
     @SuppressLint("InflateParams")
     override fun onCreateDialogView(inflater: LayoutInflater, root: ViewGroup?): View {
-        val settings = Settings(requireContext())
         val view = inflater.inflate(R.layout.dialog_about, root, false)
+        val info = BuildInfo(requireContext())
 
         view.findViewById<TextView>(R.id.label_message).apply {
-            text = getString(R.string.app_version, settings.getReleaseVersion())
+            text = getString(R.string.app_version, info.name)
             setOnLongClickListener {
-                val info = settings.getReleaseInfo()
                 showInfoDialog(requireContext(),
                         title = "Release info",
                         message = "Build number: ${info.number}\nBuild time: ${info.time}")

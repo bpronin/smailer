@@ -79,18 +79,19 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
         }
     }
 
-    override fun onSharedPreferenceChanged(preferences: SharedPreferences, preference: String) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         val deniedPermissions: MutableSet<String> = HashSet()
-        when (preference) {
+        when (key) {
             PREF_EMAIL_TRIGGERS -> {
-                val triggers = preferences.getStringSet(PREF_EMAIL_TRIGGERS, emptySet())
-                if (triggers!!.contains(VAL_PREF_TRIGGER_IN_SMS)) {
+                val triggers = settings.getStringSet(PREF_EMAIL_TRIGGERS)
+                if (triggers.contains(VAL_PREF_TRIGGER_IN_SMS)) {
                     deniedPermissions.add(RECEIVE_SMS)
                 }
                 if (triggers.contains(VAL_PREF_TRIGGER_OUT_SMS)) {
                     deniedPermissions.add(READ_SMS)
                 }
-                if (triggers.contains(VAL_PREF_TRIGGER_IN_CALLS) || preferences.contains(VAL_PREF_TRIGGER_MISSED_CALLS)) {
+                if (triggers.contains(VAL_PREF_TRIGGER_IN_CALLS) ||
+                        triggers.contains(VAL_PREF_TRIGGER_MISSED_CALLS)) {
                     deniedPermissions.add(READ_PHONE_STATE)
                 }
                 if (triggers.contains(VAL_PREF_TRIGGER_OUT_CALLS)) {
@@ -99,8 +100,8 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
                 }
             }
             PREF_EMAIL_CONTENT -> {
-                val content = preferences.getStringSet(PREF_EMAIL_CONTENT, emptySet())
-                if (content!!.contains(VAL_PREF_EMAIL_CONTENT_CONTACT)) {
+                val content = settings.getStringSet(PREF_EMAIL_CONTENT)
+                if (content.contains(VAL_PREF_EMAIL_CONTENT_CONTACT)) {
                     deniedPermissions.add(READ_CONTACTS)
                 }
                 if (content.contains(VAL_PREF_EMAIL_CONTENT_LOCATION)) {
@@ -129,7 +130,8 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
                     WRITE_SMS ->
                         edit.removeFromStringSet(PREF_MARK_SMS_AS_READ)
                     READ_PHONE_STATE ->
-                        edit.removeFromStringSet(PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_IN_CALLS, VAL_PREF_TRIGGER_MISSED_CALLS)
+                        edit.removeFromStringSet(PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_IN_CALLS,
+                                VAL_PREF_TRIGGER_MISSED_CALLS)
                     PROCESS_OUTGOING_CALLS ->
                         edit.removeFromStringSet(PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_OUT_CALLS)
                     READ_CONTACTS ->

@@ -33,8 +33,6 @@ data class GeoCoordinates(
                 .toString()
     }
 
-    fun format(): String = format("°", "\'", "\"", "N", "S", "W", "E")
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -54,7 +52,8 @@ data class GeoCoordinates(
     }
 
     companion object {
-        fun geoCoordinatesOf(latitude: Double?, longitude: Double?): GeoCoordinates? {
+
+        fun coordinatesOf(latitude: Double?, longitude: Double?): GeoCoordinates? {
             return if (latitude != null && longitude != null) {
                 GeoCoordinates(latitude, longitude)
             } else {

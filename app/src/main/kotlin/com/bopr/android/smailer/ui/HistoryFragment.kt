@@ -23,10 +23,14 @@ import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.PhoneEventFilter
 import com.bopr.android.smailer.R
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
+import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_BLACKLIST
+import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_WHITELIST
+import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_BLACKLIST
+import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_WHITELIST
 import com.bopr.android.smailer.ui.HistoryFragment.Holder
 import com.bopr.android.smailer.util.*
 import com.bopr.android.smailer.util.AddressUtil.containsPhone
-import com.bopr.android.smailer.util.AddressUtil.findPhone
 import com.bopr.android.smailer.util.Dialogs.showConfirmationDialog
 
 /**
@@ -37,7 +41,7 @@ import com.bopr.android.smailer.util.Dialogs.showConfirmationDialog
 class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
 
     private lateinit var database: Database
-    private lateinit var phoneEventFilter: PhoneEventFilter
+    private lateinit var callFilter: PhoneEventFilter
     private lateinit var settingsChangeListener: OnSharedPreferenceChangeListener
     private lateinit var databaseListener: BroadcastReceiver
 
@@ -85,8 +89,8 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
             menu.removeItem(R.id.action_ignore)
         }
 
-        val blacklisted = containsPhone(phoneEventFilter.phoneBlacklist, item.phone)
-        val whitelisted = containsPhone(phoneEventFilter.phoneWhitelist, item.phone)
+        val blacklisted = containsPhone(callFilter.phoneBlacklist, item.phone)
+        val whitelisted = containsPhone(callFilter.phoneWhitelist, item.phone)
 
         if (blacklisted) {
             menu.removeItem(R.id.action_add_to_blacklist)
@@ -129,7 +133,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
     }
 
     override fun loadItems(): Collection<PhoneEvent> {
-        phoneEventFilter = settings.getFilter()
+        callFilter = settings.callFilter
         return database.events.toList()
     }
 
@@ -168,11 +172,11 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
     }
 
     private fun onAddToBlacklist() {
-        addSelectedItemToFilter(phoneEventFilter.phoneBlacklist, R.string.add_to_blacklist)
+        addSelectedItemToFilter(callFilter.phoneBlacklist, R.string.add_to_blacklist)
     }
 
     private fun onAddToWhitelist() {
-        addSelectedItemToFilter(phoneEventFilter.phoneWhitelist, R.string.add_to_whitelist)
+        addSelectedItemToFilter(callFilter.phoneWhitelist, R.string.add_to_whitelist)
     }
 
     private fun onMarkAsIgnored() {
@@ -185,10 +189,9 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
 
     private fun onRemoveFromLists() {
         getSelectedItem()?.let {
-            removeFromFilter(phoneEventFilter.phoneWhitelist, it.phone)
-            removeFromFilter(phoneEventFilter.phoneBlacklist, it.phone)
-
-            settings.edit().putFilter(phoneEventFilter).apply()
+            callFilter.phoneWhitelist.remove(it.phone)
+            callFilter.phoneBlacklist.remove(it.phone)
+            saveCallFilter()
 
             showToast(requireContext(), getString(R.string.phone_removed_from_filter, it.phone))
         }
@@ -205,7 +208,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
                             showToast(requireContext(), getString(R.string.item_already_exists, value))
                         } else {
                             list.add(value)
-                            settings.edit().putFilter(phoneEventFilter).apply()
+                            saveCallFilter()
                         }
                     }
                 }
@@ -213,8 +216,8 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
         }
     }
 
-    private fun removeFromFilter(list: MutableSet<String>, number: String) {
-        list.remove(findPhone(list, number))
+    private fun saveCallFilter() {
+        settings.edit().putFilter(callFilter).apply()
     }
 
     private fun markItemAsRead(event: PhoneEvent) {
@@ -247,9 +250,16 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
 
     private inner class SettingsListener : OnSharedPreferenceChangeListener {
 
-        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, s: String) {
-            //todo granularize
-            refreshItems()
+        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+            when (key) {
+                PREF_EMAIL_TRIGGERS,
+                PREF_FILTER_PHONE_BLACKLIST,
+                PREF_FILTER_PHONE_WHITELIST,
+                PREF_FILTER_TEXT_BLACKLIST,
+                PREF_FILTER_TEXT_WHITELIST -> {
+                    refreshItems()
+                }
+            }
         }
     }
 

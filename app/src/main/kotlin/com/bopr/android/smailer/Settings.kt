@@ -2,10 +2,8 @@ package com.bopr.android.smailer
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
-import android.content.pm.PackageManager
 import com.bopr.android.smailer.util.AndroidUtil.deviceName
 import com.bopr.android.smailer.util.SharedPreferencesWrapper
-import java.io.IOException
 import java.util.*
 
 /**
@@ -13,60 +11,39 @@ import java.util.*
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class Settings(private val context: Context) : SharedPreferencesWrapper(
+class Settings(context: Context) : SharedPreferencesWrapper(
         context.getSharedPreferences(PREFERENCES_STORAGE_NAME, MODE_PRIVATE)) {
 
-    fun getLocale(): Locale {
-        val value = getString(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)
-        return if (value == VAL_PREF_DEFAULT) {
-            Locale.getDefault()
-        } else {
-            val ss = value.split("_")
-            if (ss.size == 2) {
-                Locale(ss[0], ss[1])
+    val locale: Locale
+        get() {
+            val value = getString(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)
+            return if (value == VAL_PREF_DEFAULT) {
+                Locale.getDefault()
             } else {
-                throw IllegalArgumentException("Invalid locale code: $value")
+                val ss = value.split("_")
+                if (ss.size == 2) {
+                    Locale(ss[0], ss[1])
+                } else {
+                    throw IllegalArgumentException("Invalid locale code: $value")
+                }
             }
         }
-    }
 
-    fun getDeviceName(): String {
-        return getString(PREF_DEVICE_ALIAS) ?: deviceName()
-    }
-
-    fun getReleaseVersion(): String {
-        try {
-            return context.packageManager.getPackageInfo(context.packageName, 0).versionName
-        } catch (x: PackageManager.NameNotFoundException) {
-            throw RuntimeException(x)
+    val deviceName: String
+        get() {
+            return getString(PREF_DEVICE_ALIAS) ?: deviceName()
         }
-    }
 
-    fun getReleaseInfo(): BuildInfo {
-        try {
-            val properties = Properties()
-            context.assets.open("release.properties").use {
-                properties.load(it)
+    val callFilter: PhoneEventFilter
+        get() {
+            return PhoneEventFilter().apply {
+                triggers = getStringSet(PREF_EMAIL_TRIGGERS)
+                phoneBlacklist = getCommaSet(PREF_FILTER_PHONE_BLACKLIST)
+                phoneWhitelist = getCommaSet(PREF_FILTER_PHONE_WHITELIST)
+                textBlacklist = getCommaSet(PREF_FILTER_TEXT_BLACKLIST)
+                textWhitelist = getCommaSet(PREF_FILTER_TEXT_WHITELIST)
             }
-
-            return BuildInfo(
-                    properties.getProperty("build_number"),
-                    properties.getProperty("build_time")
-            )
-        } catch (x: IOException) {
-            throw RuntimeException("Cannot read release properties", x)
         }
-    }
-
-    fun getFilter(): PhoneEventFilter {
-        return PhoneEventFilter().apply {
-            triggers = getStringSet(PREF_EMAIL_TRIGGERS)
-            phoneBlacklist = getCommaSet(PREF_FILTER_PHONE_BLACKLIST)
-            phoneWhitelist = getCommaSet(PREF_FILTER_PHONE_WHITELIST)
-            textBlacklist = getCommaSet(PREF_FILTER_TEXT_BLACKLIST)
-            textWhitelist = getCommaSet(PREF_FILTER_TEXT_WHITELIST)
-        }
-    }
 
     fun loadDefaults() {
         with(edit()) {
@@ -108,48 +85,46 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         }
     }
 
-    class BuildInfo(val number: String, val time: String)
-
     companion object {
 
         private const val SETTINGS_VERSION = 2
         const val PREFERENCES_STORAGE_NAME = "com.bopr.android.smailer_preferences"
 
-        const val PREF_SYNC_TIME = "sync_time" /* hidden */
-        const val PREF_SETTINGS_VERSION = "settings_version"
-        const val PREF_SENDER_ACCOUNT = "sender_account"
-        const val PREF_RECIPIENTS_ADDRESS = "recipients_address"
+        const val PREF_DEVICE_ALIAS = "device_alias"
         const val PREF_EMAIL_CONTENT = "email_content"
-        const val PREF_EMAIL_TRIGGERS = "email_triggers"
         const val PREF_EMAIL_LOCALE = "email_locale"
-        const val PREF_NOTIFY_SEND_SUCCESS = "notify_send_success"
-        const val PREF_RULES = "rules"
-        const val PREF_HISTORY = "history"
-        const val PREF_MARK_SMS_AS_READ = "mark_processed_sms_as_read"
-        const val PREF_RESEND_UNSENT = "resend_unsent" /* hidden */
+        const val PREF_EMAIL_TRIGGERS = "email_triggers"
         const val PREF_FILTER_PHONE_BLACKLIST = "message_filter_blacklist"
         const val PREF_FILTER_PHONE_WHITELIST = "message_filter_whitelist"
         const val PREF_FILTER_TEXT_BLACKLIST = "message_filter_text_blacklist"
         const val PREF_FILTER_TEXT_WHITELIST = "message_filter_text_whitelist"
-        const val PREF_DEVICE_ALIAS = "device_alias"
-        const val PREF_REMOTE_CONTROL_ENABLED = "remote_control_enabled"
+        const val PREF_HISTORY = "history"
+        const val PREF_MARK_SMS_AS_READ = "mark_processed_sms_as_read"
+        const val PREF_NOTIFY_SEND_SUCCESS = "notify_send_success"
+        const val PREF_RECIPIENTS_ADDRESS = "recipients_address"
         const val PREF_REMOTE_CONTROL_ACCOUNT = "remote_control_account"
-        const val PREF_REMOTE_CONTROL_NOTIFICATIONS = "remote_control_notifications"
+        const val PREF_REMOTE_CONTROL_ENABLED = "remote_control_enabled"
         const val PREF_REMOTE_CONTROL_FILTER_RECIPIENTS = "remote_control_filter_recipients"
+        const val PREF_REMOTE_CONTROL_NOTIFICATIONS = "remote_control_notifications"
+        const val PREF_RESEND_UNSENT = "resend_unsent" /* hidden. for debug purposes. always true */
+        const val PREF_RULES = "rules"
+        const val PREF_SENDER_ACCOUNT = "sender_account"
+        const val PREF_SETTINGS_VERSION = "settings_version"
+        const val PREF_SYNC_TIME = "sync_time" /* hidden, updated by sync engine */
 
         const val VAL_PREF_DEFAULT = "default"
+        const val VAL_PREF_EMAIL_CONTENT_CONTACT = "contact_name"
+        const val VAL_PREF_EMAIL_CONTENT_DEVICE_NAME = "device_name"
+        const val VAL_PREF_EMAIL_CONTENT_HEADER = "header"
+        const val VAL_PREF_EMAIL_CONTENT_LOCATION = "location"
         const val VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME = "time"
         const val VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT = "time_sent"
-        const val VAL_PREF_EMAIL_CONTENT_DEVICE_NAME = "device_name"
-        const val VAL_PREF_EMAIL_CONTENT_LOCATION = "location"
-        const val VAL_PREF_EMAIL_CONTENT_CONTACT = "contact_name"
-        const val VAL_PREF_EMAIL_CONTENT_HEADER = "header"
         const val VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS = "remote_control_links"
-        const val VAL_PREF_TRIGGER_IN_SMS = "in_sms"
-        const val VAL_PREF_TRIGGER_OUT_SMS = "out_sms"
         const val VAL_PREF_TRIGGER_IN_CALLS = "in_calls"
-        const val VAL_PREF_TRIGGER_OUT_CALLS = "out_calls"
+        const val VAL_PREF_TRIGGER_IN_SMS = "in_sms"
         const val VAL_PREF_TRIGGER_MISSED_CALLS = "missed_calls"
+        const val VAL_PREF_TRIGGER_OUT_CALLS = "out_calls"
+        const val VAL_PREF_TRIGGER_OUT_SMS = "out_sms"
 
         val DEFAULT_CONTENT: Set<String> = mutableSetOf(
                 VAL_PREF_EMAIL_CONTENT_HEADER,

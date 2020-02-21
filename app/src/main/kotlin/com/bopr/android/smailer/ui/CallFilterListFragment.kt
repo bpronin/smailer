@@ -5,7 +5,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bopr.android.smailer.PhoneEventFilter
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.ui.FilterListFragment.Holder
+import com.bopr.android.smailer.ui.CallFilterListFragment.Holder
 import com.bopr.android.smailer.util.Dialogs
 
 /**
@@ -13,7 +13,7 @@ import com.bopr.android.smailer.util.Dialogs
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-abstract class FilterListFragment : EditableRecyclerFragment<String, Holder>() {
+abstract class CallFilterListFragment : EditableRecyclerFragment<String, Holder>() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_list, menu)
@@ -47,11 +47,11 @@ abstract class FilterListFragment : EditableRecyclerFragment<String, Holder>() {
     }
 
     override fun loadItems(): Collection<String> {
-        return getItemsList(settings.getFilter()).sorted()
+        return getItemsList(settings.callFilter).sorted()
     }
 
     override fun saveItems(items: Collection<String>) {
-        val filter = settings.getFilter()
+        val filter = settings.callFilter
         setItemsList(filter, items)
         settings.edit()
                 .putFilter(filter)

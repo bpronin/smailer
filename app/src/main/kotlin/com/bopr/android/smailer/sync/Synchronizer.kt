@@ -3,7 +3,7 @@ package com.bopr.android.smailer.sync
 import android.accounts.Account
 import android.content.Context
 import com.bopr.android.smailer.Database
-import com.bopr.android.smailer.GeoCoordinates.Companion.geoCoordinatesOf
+import com.bopr.android.smailer.GeoCoordinates.Companion.coordinatesOf
 import com.bopr.android.smailer.GoogleDrive
 import com.bopr.android.smailer.PhoneEvent
 import com.bopr.android.smailer.Settings
@@ -81,7 +81,7 @@ class Synchronizer(context: Context,
             events.add(eventToData(event))
         }
 
-        with(settings.getFilter()) {
+        with(settings.callFilter) {
             return SyncData(
                     phoneBlacklist,
                     textBlacklist,
@@ -94,11 +94,11 @@ class Synchronizer(context: Context,
     private fun writeData(data: SyncData) {
         data.events?.map { e -> dataToEvent(e) }?.apply { database.putEvents(this) }
 
-        with(settings.getFilter()) {
-            phoneBlacklist = data.phoneBlacklist?.toMutableSet() ?: mutableSetOf()
-            textBlacklist = data.textBlacklist?.toMutableSet() ?: mutableSetOf()
-            phoneWhitelist = data.phoneWhitelist?.toMutableSet() ?: mutableSetOf()
-            textWhitelist = data.textWhitelist?.toMutableSet() ?: mutableSetOf()
+        with(settings.callFilter) {
+            phoneBlacklist = data.phoneBlacklist ?: mutableSetOf()
+            textBlacklist = data.textBlacklist ?: mutableSetOf()
+            phoneWhitelist = data.phoneWhitelist ?: mutableSetOf()
+            textWhitelist = data.textWhitelist ?: mutableSetOf()
 
             settings.edit().putFilter(this).apply()
         }
@@ -130,7 +130,7 @@ class Synchronizer(context: Context,
                 endTime = data.endTime,
                 details = data.details,
                 acceptor = data.recipient,
-                location = geoCoordinatesOf(data.latitude, data.longitude)
+                location = coordinatesOf(data.latitude, data.longitude)
         )
     }
 

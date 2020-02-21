@@ -44,7 +44,7 @@ class CallProcessor(
         log.debug("Processing event: $event")
 
         event.location = locator.getLocation()
-        event.stateReason = settings.getFilter().test(event)
+        event.stateReason = settings.callFilter.test(event)
         if (event.stateReason != REASON_ACCEPTED) {
             event.state = STATE_IGNORED
         } else if (startMailSession(false) && sendMail(event, false)) {
@@ -154,10 +154,10 @@ class CallProcessor(
         val formatter = MailFormatter(context, event).apply {
             setSendTime(Date())
             setContactName(contactName(context, event.phone))
-            setDeviceName(settings.getDeviceName())
+            setDeviceName(settings.deviceName)
             setOptions(settings.getStringSet(PREF_EMAIL_CONTENT))
             setServiceAccount(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT))
-            setLocale(settings.getLocale())
+            setLocale(settings.locale)
         }
 
         val message = MailMessage().apply {
