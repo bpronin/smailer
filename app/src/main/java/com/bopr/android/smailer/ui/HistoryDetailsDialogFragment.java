@@ -2,7 +2,6 @@ package com.bopr.android.smailer.ui;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
@@ -79,13 +78,7 @@ public class HistoryDetailsDialogFragment extends DialogFragment {
 
             dialog = new AlertDialog.Builder(requireContext())
                     .setView(view)
-                    .setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
-
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int which) {
-                            dialogInterface.cancel();
-                        }
-                    })
+                    .setPositiveButton(R.string.close, (dialogInterface, which) -> dialogInterface.cancel())
                     .create();
         }
         return dialog;

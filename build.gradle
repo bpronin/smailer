@@ -3,10 +3,6 @@
 buildscript {
     repositories {
         jcenter()
-        maven {
-            url 'https://maven.google.com/'
-            name 'Google'
-        }
         google()
     }
     dependencies {
@@ -17,22 +13,4 @@ buildscript {
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.0.0-beta02'
     }
 
-}
-
-allprojects {
-    repositories {
-        jcenter()
-        google()
-    }
-
-    gradle.projectsEvaluated {
-        tasks.withType(JavaCompile) {
-            options.compilerArgs.add("-Xlint:unchecked")
-            options.compilerArgs.add("-Xlint:deprecation")
-        }
-    }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
 }

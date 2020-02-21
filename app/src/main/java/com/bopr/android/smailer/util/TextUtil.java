@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
+import static java.lang.String.format;
+import static java.lang.String.valueOf;
+
 @SuppressWarnings("WeakerAccess")
 public abstract class TextUtil {
 
@@ -91,7 +94,7 @@ public abstract class TextUtil {
     @NonNull
     public static String formatDuration(long duration) {
         long seconds = duration / 1000;
-        return String.format(Locale.US, "%d:%02d:%02d", seconds / 3600, (seconds % 3600) / 60, seconds % 60);
+        return format(Locale.US, "%d:%02d:%02d", seconds / 3600, (seconds % 3600) / 60, seconds % 60);
     }
 
     @NonNull
@@ -133,24 +136,13 @@ public abstract class TextUtil {
 
     @NonNull
     public static String commaJoin(@NonNull Collection values) {
-        return join(values, ",", new Function<Object, String>() {
-
-            @Override
-            public String apply(Object value) {
-                return String.valueOf(value).replaceAll(",", "/,");
-            }
-        });
+        return join(values, ",", value -> valueOf(value).replaceAll(",", "/,"));
     }
 
+    @SuppressWarnings("ConstantConditions")
     @NonNull
-    public static List<String> commaSplit(@NonNull String s) {
-        return split(s, "(?<!/),", new Function<String, String>() {
-
-            @Override
-            public String apply(String s) {
-                return s.trim().replaceAll("/,", ",");
-            }
-        });
+    public static List<String> commaSplit(@NonNull String string) {
+        return split(string, "(?<!/),", s -> s.trim().replaceAll("/,", ","));
     }
 
     @NonNull

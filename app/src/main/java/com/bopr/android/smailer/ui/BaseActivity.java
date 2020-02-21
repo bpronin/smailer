@@ -12,7 +12,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.bopr.android.smailer.R;
 
-import static com.bopr.android.smailer.util.Util.requireNonNull;
+import java.util.Objects;
 
 /**
  * Base Activity with default behaviour.
@@ -47,7 +47,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected abstract Fragment createFragment();
 
     protected void setHomeButtonEnabled(boolean enabled) {
-        requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(enabled);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(enabled);
     }
 
     @Override

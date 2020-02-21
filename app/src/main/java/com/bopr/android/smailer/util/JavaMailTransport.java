@@ -34,7 +34,7 @@ import javax.mail.internet.MimeMultipart;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class JavaMailTransport {
 
     private static Logger log = LoggerFactory.getLogger("JavaMailTransport");

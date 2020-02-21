@@ -3,18 +3,16 @@ package com.bopr.android.smailer;
 import android.content.Context;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.bopr.android.smailer.remote.RemoteControlWorker;
-import com.bopr.android.smailer.sync.SyncManager;
+import com.bopr.android.smailer.sync.SyncEngine;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.bopr.android.smailer.util.Util.requireNonNull;
 import static java.lang.Thread.UncaughtExceptionHandler;
 import static java.lang.Thread.getDefaultUncaughtExceptionHandler;
 import static java.lang.Thread.setDefaultUncaughtExceptionHandler;
+import static java.util.Objects.requireNonNull;
 
 public class Environment {
 
@@ -22,17 +20,13 @@ public class Environment {
 
     static {
         final UncaughtExceptionHandler defaultHandler = requireNonNull(getDefaultUncaughtExceptionHandler());
-        setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler() {
-
-            @Override
-            public void uncaughtException(@NonNull Thread thread, @NonNull Throwable throwable) {
-                try {
-                    log.error("Application crashed", throwable);
-                } catch (Throwable x) {
-                    Log.e("main", "Failed to handle uncaught exception");
-                }
-                defaultHandler.uncaughtException(thread, throwable);
+        setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+            try {
+                log.error("Application crashed", throwable);
+            } catch (Throwable x) {
+                Log.e("main", "Failed to handle uncaught exception");
             }
+            defaultHandler.uncaughtException(thread, throwable);
         });
     }
 
@@ -42,7 +36,7 @@ public class Environment {
         ContentObserverService.enable(context);
         ResendWorker.enable(context);
         RemoteControlWorker.enable(context);
-        SyncManager.enable(context);
+        SyncEngine.enable(context);
     }
 
 }

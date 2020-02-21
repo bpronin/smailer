@@ -65,18 +65,12 @@ public abstract class RowSet<R> {
     }
 
     public <C extends Collection<R>> C collect(final C collection) {
-        forEach(new Consumer<R>() {
-
-            @Override
-            public void accept(R row) {
-                collection.add(row);
-            }
-        });
+        forEach(collection::add);
         return collection;
     }
 
     public List<R> toList() {
-        return collect(new ArrayList<R>());
+        return collect(new ArrayList<>());
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")

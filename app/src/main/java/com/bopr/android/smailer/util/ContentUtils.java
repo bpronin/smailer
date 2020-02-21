@@ -19,7 +19,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 import static android.provider.ContactsContract.CommonDataKinds.Email;
 import static android.provider.ContactsContract.CommonDataKinds.Phone;
 import static android.provider.ContactsContract.PhoneLookup;
-import static com.bopr.android.smailer.util.Util.requireNonNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Content utilities.
@@ -89,15 +89,19 @@ public abstract class ContentUtils {
     }
 
     public static String getEmailAddressFromIntent(@NonNull Context context, @NonNull Intent intent) {
-        return getEmailAddress(context, requireNonNull(intent.getData()).getLastPathSegment());
+        return getEmailAddress(context, requireLastDataSegment(intent));
     }
 
     public static String getPhoneFromIntent(@NonNull Context context, @NonNull Intent intent) {
-        return getPhone(context, requireNonNull(intent.getData()).getLastPathSegment());
+        return getPhone(context, requireLastDataSegment(intent));
     }
 
     public static boolean isReadContactsPermissionsDenied(@NonNull Context context) {
         return AndroidUtil.isPermissionsDenied(context, READ_CONTACTS);
+    }
+
+    private static String requireLastDataSegment(@NonNull Intent intent) {
+        return requireNonNull(requireNonNull(intent.getData()).getLastPathSegment());
     }
 
     private static boolean requireReadContactPermission(@NonNull Context context) {

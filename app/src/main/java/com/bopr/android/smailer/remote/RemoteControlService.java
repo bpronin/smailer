@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static com.bopr.android.smailer.Notifications.ACTION_SHOW_REMOTE_CONTROL;
@@ -38,7 +39,6 @@ import static com.bopr.android.smailer.remote.RemoteControlTask.SEND_SMS_TO_CALL
 import static com.bopr.android.smailer.util.AddressUtil.containsEmail;
 import static com.bopr.android.smailer.util.AddressUtil.extractEmail;
 import static com.bopr.android.smailer.util.AddressUtil.findPhone;
-import static com.bopr.android.smailer.util.Util.requireNonNull;
 import static com.bopr.android.smailer.util.Util.safeEquals;
 import static com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM;
 
@@ -124,7 +124,7 @@ public class RemoteControlService extends JobIntentService {
     private void performTask(RemoteControlTask task) {
         log.debug("Processing: " + task);
 
-        switch (requireNonNull(task.getAction())) {
+        switch (Objects.requireNonNull(task.getAction())) {
             case ADD_PHONE_TO_BLACKLIST:
                 addPhoneToBlacklist(task.getArgument());
                 break;

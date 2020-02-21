@@ -84,13 +84,7 @@ public class RecipientsFragment extends BaseFragment {
         itemTouchHelper.attachToRecyclerView(listView);
 
         FloatingActionButton addButton = view.findViewById(R.id.button_add);
-        addButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                addItem();
-            }
-        });
+        addButton.setOnClickListener(v -> addItem());
 
         loadItems();
 
@@ -187,22 +181,18 @@ public class RecipientsFragment extends BaseFragment {
         EditEmailDialogFragment dialog = new EditEmailDialogFragment();
         dialog.setTitle(item == null ? R.string.add : R.string.edit);
         dialog.setInitialValue(item == null ? null : item.address);
-        dialog.setCallback(new EditEmailDialogFragment.Callback() {
-
-            @Override
-            public void onOkClick(String address) {
-                Log.d("", "onOkClick: ");
-                if (isItemExists(address) && (item == null || !item.address.equals(address))) {
-                    showToast(requireContext(), formatter(requireContext())
-                            .pattern(R.string.recipient_already_exists)
-                            .put("name", address)
-                            .format());
-                } else if (!TextUtil.isNullOrBlank(address)) {
-                    /* note: if we rotated device reference to "this" is changed here */
-                    Item newItem = new Item(address);
-                    listAdapter.replaceItem(item, newItem);
-                    persistItems();
-                }
+        dialog.setCallback(address -> {
+            Log.d("", "onOkClick: ");
+            if (isItemExists(address) && (item == null || !item.address.equals(address))) {
+                showToast(requireContext(), formatter(requireContext())
+                        .pattern(R.string.recipient_already_exists)
+                        .put("name", address)
+                        .format());
+            } else if (!TextUtil.isNullOrBlank(address)) {
+                /* note: if we rotated device reference to "this" is changed here */
+                Item newItem = new Item(address);
+                listAdapter.replaceItem(item, newItem);
+                persistItems();
             }
         });
 
@@ -222,13 +212,7 @@ public class RecipientsFragment extends BaseFragment {
 
         Snackbar.make(listView, title, Snackbar.LENGTH_LONG)
                 .setActionTextColor(ContextCompat.getColor(activity, R.color.colorPrimary))
-                .setAction(R.string.undo, new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View v) {
-                        undoRemove(lastItems);
-                    }
-                })
+                .setAction(R.string.undo, v -> undoRemove(lastItems))
                 .show();
     }
 
@@ -259,13 +243,7 @@ public class RecipientsFragment extends BaseFragment {
             String address = item != null ? item.address : null;
             holder.textView.setText(isValidEmailAddress(address) ? address : underwivedText(requireContext(), address));
 
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    editItem(item);
-                }
-            });
+            holder.itemView.setOnClickListener(v -> editItem(item));
         }
 
         @Override

@@ -5,9 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.EditText;
 
-import androidx.annotation.NonNull;
 import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
@@ -84,29 +82,16 @@ public class MainFragment extends BasePreferenceFragment {
         historyPreference.setOnPreferenceClickListener(preferenceClickListener);
         requirePreference(PREF_RULES).setOnPreferenceClickListener(preferenceClickListener);
 
-        requirePreference(PREF_EMAIL_LOCALE).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object value) {
-                updateLocalePreferenceSummary((ListPreference) preference, (String) value);
-                return true;
-            }
+        requirePreference(PREF_EMAIL_LOCALE).setOnPreferenceChangeListener((preference, value) -> {
+            updateLocalePreferenceSummary((ListPreference) preference, (String) value);
+            return true;
         });
 
         EditTextPreference deviceNamePreference = requirePreference(PREF_DEVICE_ALIAS);
-        deviceNamePreference.setOnBindEditTextListener(new EditTextPreference.OnBindEditTextListener() {
-
-            @Override
-            public void onBindEditText(@NonNull EditText editText) {
-                editText.setHint(deviceName());
-            }
-        });
-        deviceNamePreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object value) {
-                updateDeviceNamePreferenceSummary((EditTextPreference) preference, (String) value);
-                return true;
-            }
+        deviceNamePreference.setOnBindEditTextListener(editText -> editText.setHint(deviceName()));
+        deviceNamePreference.setOnPreferenceChangeListener((preference, value) -> {
+            updateDeviceNamePreferenceSummary((EditTextPreference) preference, (String) value);
+            return true;
         });
     }
 

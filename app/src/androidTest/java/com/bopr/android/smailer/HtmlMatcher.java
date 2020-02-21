@@ -18,16 +18,12 @@ class HtmlMatcher extends CustomTypeSafeMatcher<String> {
     private String expectedToken;
     private String actualToken;
 
-    static Matcher<String> htmlEquals(String expected) {
-        return new HtmlMatcher(expected);
-    }
-
     static Matcher<String> htmlEqualsRes(String resource) {
         try {
             InputStream stream = getInstrumentation().getContext().getAssets().open(resource);
             String expected = readStream(stream);
             stream.close();
-            return htmlEquals(expected);
+            return new HtmlMatcher(expected);
         } catch (IOException x) {
             throw new IllegalArgumentException(x);
         }
@@ -35,7 +31,7 @@ class HtmlMatcher extends CustomTypeSafeMatcher<String> {
 
 
     private HtmlMatcher(String expected) {
-        super(expected);
+        super("HTML matches");
         this.expected = expected;
     }
 
@@ -60,12 +56,11 @@ class HtmlMatcher extends CustomTypeSafeMatcher<String> {
 
     @Override
     protected void describeMismatchSafely(String item, Description description) {
-        super.describeMismatchSafely(item, description);
         description
-                .appendText("\nExpected token: '")
+                .appendText("Expected token [")
                 .appendText(expectedToken)
-                .appendText("' but found: '")
+                .appendText("] but [")
                 .appendText(actualToken)
-                .appendText("'");
+                .appendText("] found \n");
     }
 }

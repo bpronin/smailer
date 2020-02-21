@@ -1,7 +1,6 @@
 package com.bopr.android.smailer;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.PermissionInfo;
@@ -16,11 +15,11 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
@@ -45,7 +44,6 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
-import static com.bopr.android.smailer.util.Util.requireNonNull;
 import static com.google.common.collect.Iterables.toArray;
 
 /**
@@ -116,19 +114,20 @@ public class PermissionsHelper implements SharedPreferences.OnSharedPreferenceCh
 
     @Override
     @SuppressWarnings({"deprecation", "RedundantSuppression"}) // TODO: 06.02.2020 deprecated
-    public void onSharedPreferenceChanged(SharedPreferences preferences, String preference) {
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         Set<String> deniedPermissions = new HashSet<>();
 
-        switch (preference) {
+        switch (key) {
             case PREF_EMAIL_TRIGGERS:
-                Set<String> triggers = preferences.getStringSet(PREF_EMAIL_TRIGGERS, Collections.<String>emptySet());
+                Set<String> triggers = settings.getStringSet(PREF_EMAIL_TRIGGERS);
                 if (triggers.contains(VAL_PREF_TRIGGER_IN_SMS)) {
                     deniedPermissions.add(RECEIVE_SMS);
                 }
                 if (triggers.contains(VAL_PREF_TRIGGER_OUT_SMS)) {
                     deniedPermissions.add(READ_SMS);
                 }
-                if (triggers.contains(VAL_PREF_TRIGGER_IN_CALLS) || preferences.contains(VAL_PREF_TRIGGER_MISSED_CALLS)) {
+                if (triggers.contains(VAL_PREF_TRIGGER_IN_CALLS) ||
+                        triggers.contains(VAL_PREF_TRIGGER_MISSED_CALLS)) {
                     deniedPermissions.add(READ_PHONE_STATE);
                 }
                 if (triggers.contains(VAL_PREF_TRIGGER_OUT_CALLS)) {
@@ -136,7 +135,7 @@ public class PermissionsHelper implements SharedPreferences.OnSharedPreferenceCh
                 }
                 break;
             case PREF_EMAIL_CONTENT:
-                Set<String> content = preferences.getStringSet(PREF_EMAIL_CONTENT, Collections.<String>emptySet());
+                Set<String> content = settings.getStringSet(PREF_EMAIL_CONTENT);
                 if (content.contains(VAL_PREF_EMAIL_CONTENT_CONTACT)) {
                     deniedPermissions.add(READ_CONTACTS);
                 }
@@ -226,13 +225,7 @@ public class PermissionsHelper implements SharedPreferences.OnSharedPreferenceCh
 
         new AlertDialog.Builder(activity)
                 .setMessage(formatRationale(permissions))
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        requestPermissions(permissions);
-                    }
-                })
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> requestPermissions(permissions))
                 .show();
     }
 
@@ -240,7 +233,7 @@ public class PermissionsHelper implements SharedPreferences.OnSharedPreferenceCh
         StringBuilder b = new StringBuilder();
         for (String permission : permissions) {
             String line = formatter(activity)
-                    .pattern(requireNonNull(items.get(permission)))
+                    .pattern(Objects.requireNonNull(items.get(permission)))
                     .put("permission", getPermissionLabel(permission))
                     .format();
             b.append(line).append("\n\n");

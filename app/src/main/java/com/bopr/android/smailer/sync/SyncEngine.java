@@ -31,9 +31,9 @@ import static com.bopr.android.smailer.Settings.settings;
 import static com.bopr.android.smailer.sync.AppContentProvider.AUTHORITY;
 import static java.lang.System.currentTimeMillis;
 
-public class SyncManager {
+public class SyncEngine {
 
-    private static final Logger log = LoggerFactory.getLogger("SyncManager");
+    private static final Logger log = LoggerFactory.getLogger("SyncEngine");
 
     private final Database database;
     private final Context context;
@@ -42,7 +42,7 @@ public class SyncManager {
     private final SettingsListener settingsListener = new SettingsListener();
     private Account account;
 
-    private SyncManager(Context context) {
+    private SyncEngine(Context context) {
         this.context = context;
         database = new Database(context);
         registerDatabaseListener(context, databaseListener);
@@ -93,7 +93,7 @@ public class SyncManager {
     }
 
     public static void enable(Context context) {
-        new SyncManager(context).start();
+        new SyncEngine(context).start();
     }
 
     public static void syncNow(Context context) {

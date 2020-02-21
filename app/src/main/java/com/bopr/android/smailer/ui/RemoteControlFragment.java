@@ -37,12 +37,9 @@ public class RemoteControlFragment extends BasePreferenceFragment {
 
         // TODO: 24.02.2019 add help icon for remote control
         accountPreference = requirePreference(PREF_REMOTE_CONTROL_ACCOUNT);
-        accountPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                authorizator.selectAccount();
-                return true;
-            }
+        accountPreference.setOnPreferenceClickListener(preference -> {
+            authorizator.selectAccount();
+            return true;
         });
     }
 

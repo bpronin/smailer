@@ -8,7 +8,6 @@ import android.content.SyncResult;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.core.util.Consumer;
 
 import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.GeoCoordinates;
@@ -106,13 +105,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         data.textWhitelist = filter.getTextWhitelist();
 
         data.events = new ArrayList<>();
-        database.getEvents().forEach(new Consumer<PhoneEvent>() {
-
-            @Override
-            public void accept(PhoneEvent event) {
-                data.events.add(eventToData(event));
-            }
-        });
+        database.getEvents().forEach(event -> data.events.add(eventToData(event)));
 
         return data;
     }

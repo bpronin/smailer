@@ -12,7 +12,6 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,16 +127,12 @@ public class GeoLocator {
         final AtomicReference<GeoCoordinates> coordinates = new AtomicReference<>();
         final CountDownLatch completeSignal = new CountDownLatch(1);
 
-        client.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+        client.getLastLocation().addOnSuccessListener(location -> {
+            if (location != null) {
+                coordinates.set(new GeoCoordinates(location));
+                completeSignal.countDown();
 
-            @Override
-            public void onSuccess(Location location) {
-                if (location != null) {
-                    coordinates.set(new GeoCoordinates(location));
-                    completeSignal.countDown();
-
-                    log.debug("Received last location: " + location);
-                }
+                log.debug("Received last location: " + location);
             }
         });
 

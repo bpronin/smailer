@@ -18,7 +18,7 @@
     <string name="add_text_to_whitelist">add text to whitelist"</string>
     <string name="allow_control_remotely">Allow to control application by sending email on service account</string>
     <string name="allow_only_recipients">Accept service mail only from recipients</string>
-    <string name="app_version">Application version: {version}</string>
+    <string name="app_version">Application version: %s</string>
     <string name="ask_clear_history">Clear history?</string>
     <string name="ask_clear_list">Clear list?</string>
     <string name="battery_optimization_reason">To make the application work properly when device is in standby mode please turn off battery optimization for it.</string>

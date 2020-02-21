@@ -15,6 +15,7 @@ import static android.content.SharedPreferences.Editor;
 import static android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import static com.bopr.android.smailer.util.TextUtil.commaJoin;
 import static com.bopr.android.smailer.util.TextUtil.commaSplit;
+import static com.bopr.android.smailer.util.Util.setOf;
 import static java.util.Arrays.asList;
 
 @SuppressWarnings({"UnusedReturnValue", "unused", "WeakerAccess"})
@@ -43,14 +44,9 @@ public class SharedPreferencesWrapper {
 
     @NonNull
     public Set<String> getStringSet(@NonNull String key) {
-        return getStringSet(key, Util.<String>setOf());
-    }
-
-    @NonNull
-    public Set<String> getStringSet(@NonNull String key, @NonNull Set<String> defValues) {
         /* should be a copy of values set.
            see: https://stackoverflow.com/questions/17469583/setstring-in-android-sharedpreferences-does-not-save-on-force-close */
-        return new LinkedHashSet<>(wrappedPreferences.getStringSet(key, defValues));
+        return new LinkedHashSet<>(wrappedPreferences.getStringSet(key, setOf()));
     }
 
     public int getInt(@NonNull String key, int defValue) {

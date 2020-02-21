@@ -21,7 +21,7 @@ apply from: "local.gradle"
 
 android {
     compileSdkVersion 29
-    buildToolsVersion "28.0.3"
+    buildToolsVersion '29.0.2'
 
     signingConfigs {
         config {
@@ -33,12 +33,12 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.bopr.android.smailer"
-        minSdkVersion 18
-        targetSdkVersion 29
         versionCode 68
         versionName "1.7.1"
         archivesBaseName = "smailer-${versionName}"
+        applicationId "com.bopr.android.smailer"
+        minSdkVersion 18
+        targetSdkVersion 29
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -82,8 +82,8 @@ android {
         exclude "META-INF/DEPENDENCIES"  /* resolves conflict in gmail package */
     }
     compileOptions {
-        sourceCompatibility = 1.7
-        targetCompatibility = 1.7
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
     }
 
     configurations {
@@ -94,6 +94,11 @@ android {
         }
     }
 
+}
+
+repositories {
+    jcenter()
+    google()
 }
 
 dependencies {
@@ -127,4 +132,11 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:1.1.1"
     androidTestImplementation "androidx.test:rules:1.2.0"
     androidTestImplementation "androidx.test.espresso:espresso-core:3.2.0"
+}
+
+gradle.projectsEvaluated {
+    tasks.withType(JavaCompile) {
+        options.compilerArgs.add("-Xlint:unchecked")
+        options.compilerArgs.add("-Xlint:deprecation")
+    }
 }

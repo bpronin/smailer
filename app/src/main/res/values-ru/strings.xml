@@ -17,7 +17,7 @@
     <string name="add_text_to_whitelist">Добавить текст в белый список"</string>
     <string name="allow_control_remotely">Позволить управлять приложением посредством отправки почты на сервисный аккаунт</string>
     <string name="allow_only_recipients">Принимать сервисную почту только от получателей</string>
-    <string name="app_version">Версия приложения: {version}</string>
+    <string name="app_version">Версия приложения: %s</string>
     <string name="ask_clear_history">Очистить журнал?</string>
     <string name="ask_clear_list">Очистить список?</string>
     <string name="battery_optimization_reason">Чтобы приложение корректно работало когда устройство находиться в спящем режиме, отключите для него оптимизацию питания.</string>

@@ -2,12 +2,10 @@ package com.bopr.android.smailer.ui;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.format.DateFormat;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -41,6 +39,11 @@ import static com.bopr.android.smailer.PhoneEvent.REASON_NUMBER_BLACKLISTED;
 import static com.bopr.android.smailer.PhoneEvent.REASON_TEXT_BLACKLISTED;
 import static com.bopr.android.smailer.PhoneEvent.REASON_TRIGGER_OFF;
 import static com.bopr.android.smailer.PhoneEvent.STATE_PENDING;
+import static com.bopr.android.smailer.Settings.PREF_EMAIL_TRIGGERS;
+import static com.bopr.android.smailer.Settings.PREF_FILTER_PHONE_BLACKLIST;
+import static com.bopr.android.smailer.Settings.PREF_FILTER_PHONE_WHITELIST;
+import static com.bopr.android.smailer.Settings.PREF_FILTER_TEXT_BLACKLIST;
+import static com.bopr.android.smailer.Settings.PREF_FILTER_TEXT_WHITELIST;
 import static com.bopr.android.smailer.util.AddressUtil.containsPhone;
 import static com.bopr.android.smailer.util.AddressUtil.findPhone;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
@@ -62,7 +65,7 @@ public class HistoryFragment extends BaseFragment {
     private Database database;
     private RecyclerView listView;
     private ListAdapter listAdapter;
-    private PhoneEventFilter phoneEventFilter;
+    private PhoneEventFilter callFilter;
     private int selectedListItemPosition = NO_POSITION;
     private SharedPreferences.OnSharedPreferenceChangeListener settingsChangeListener;
     private BroadcastReceiver databaseListener;
@@ -94,7 +97,7 @@ public class HistoryFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
-        loadData();
+        reloadItems();
     }
 
     @Override
@@ -145,10 +148,10 @@ public class HistoryFragment extends BaseFragment {
         }
     }
 
-    private void loadData() {
+    private void reloadItems() {
         listAdapter = new ListAdapter(database.getEvents().toList());
         listView.setAdapter(listAdapter);
-        phoneEventFilter = settings.getFilter();
+        callFilter = settings.getFilter();
         updateEmptyText();
     }
 
@@ -175,21 +178,11 @@ public class HistoryFragment extends BaseFragment {
     private void onClearData() {
         new AlertDialog.Builder(requireContext())
                 .setMessage(R.string.ask_clear_history)
-                .setPositiveButton(R.string.clear, new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        database.clearEvents();
-                        database.notifyChanged();
-                    }
+                .setPositiveButton(R.string.clear, (dialog, which) -> {
+                    database.clearEvents();
+                    database.notifyChanged();
                 })
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                })
+                .setNegativeButton(android.R.string.cancel, null)
                 .show();
     }
 
@@ -198,59 +191,41 @@ public class HistoryFragment extends BaseFragment {
         database.notifyChanged();
     }
 
-    private EditFilterListItemDialogFragment createEditPhoneDialog(String number, OnClose onClose) {
-        EditPhoneDialogFragment dialog = new EditPhoneDialogFragment();
-        dialog.setTitle(R.string.add);
-        dialog.setInitialValue(number);
-        dialog.setOnClose(onClose);
-        return dialog;
-    }
-
     private void onAddToBlacklist() {
         if (selectedListItemPosition != NO_POSITION) {
-            String number = listAdapter.getItem(selectedListItemPosition).getPhone();
-            createEditPhoneDialog(number, new OnClose() {
-
-                @Override
-                public void onOkClick(String number) {
-                    if (!TextUtil.isNullOrEmpty(number)) {
-                        Set<String> blacklist = phoneEventFilter.getPhoneBlacklist();
-                        if (blacklist.contains(number)) {
-                            showToast(requireContext(), formatter.pattern(R.string.item_already_exists)
-                                    .put("item", number).format()
-                            );
-                        } else if (!isNullOrBlank(number)) {
-                            blacklist.add(number);
-                            settings.edit().putFilter(phoneEventFilter).apply();
-                        }
+            String phone = listAdapter.getItem(selectedListItemPosition).getPhone();
+            createEditPhoneDialog(phone, number -> {
+                if (!TextUtil.isNullOrEmpty(number)) {
+                    Set<String> blacklist = callFilter.getPhoneBlacklist();
+                    if (blacklist.contains(number)) {
+                        showToast(requireContext(), formatter.pattern(R.string.item_already_exists)
+                                .put("item", number).format()
+                        );
+                    } else if (!isNullOrBlank(number)) {
+                        blacklist.add(number);
+                        settings.edit().putFilter(callFilter).apply();
                     }
                 }
-            })
-                    .showDialog(requireActivity());
+            }).showDialog(requireActivity());
         }
     }
 
     private void onAddToWhitelist() {
         if (selectedListItemPosition != NO_POSITION) {
-            String number = listAdapter.getItem(selectedListItemPosition).getPhone();
-            createEditPhoneDialog(number, new OnClose() {
-
-                @Override
-                public void onOkClick(String number) {
-                    if (!TextUtil.isNullOrEmpty(number)) {
-                        Set<String> whitelist = phoneEventFilter.getPhoneWhitelist();
-                        if (whitelist.contains(number)) {
-                            showToast(requireContext(), formatter.pattern(R.string.item_already_exists)
-                                    .put("item", number).format()
-                            );
-                        } else if (!isNullOrBlank(number)) {
-                            whitelist.add(number);
-                            settings.edit().putFilter(phoneEventFilter).apply();
-                        }
+            String phone = listAdapter.getItem(selectedListItemPosition).getPhone();
+            createEditPhoneDialog(phone, number -> {
+                if (!TextUtil.isNullOrEmpty(number)) {
+                    Set<String> whitelist = callFilter.getPhoneWhitelist();
+                    if (whitelist.contains(number)) {
+                        showToast(requireContext(), formatter.pattern(R.string.item_already_exists)
+                                .put("item", number).format()
+                        );
+                    } else if (!isNullOrBlank(number)) {
+                        whitelist.add(number);
+                        settings.edit().putFilter(callFilter).apply();
                     }
                 }
-            })
-                    .showDialog(requireActivity());
+            }).showDialog(requireActivity());
         }
     }
 
@@ -258,18 +233,14 @@ public class HistoryFragment extends BaseFragment {
         if (selectedListItemPosition != NO_POSITION) {
             String number = listAdapter.getItem(selectedListItemPosition).getPhone();
 
-            removeFromPhoneLists(phoneEventFilter.getPhoneWhitelist(), number);
-            removeFromPhoneLists(phoneEventFilter.getPhoneBlacklist(), number);
-            settings.edit().putFilter(phoneEventFilter).apply();
+            removeFromCallFilter(callFilter.getPhoneWhitelist(), number);
+            removeFromCallFilter(callFilter.getPhoneBlacklist(), number);
+            settings.edit().putFilter(callFilter).apply();
 
             showToast(requireContext(), formatter.pattern(R.string.phone_removed_from_filter)
                     .put("number", number)
                     .format());
         }
-    }
-
-    private void removeFromPhoneLists(Set<String> list, String number) {
-        list.remove(findPhone(list, number));
     }
 
     private void onMarkAsIgnored() {
@@ -279,6 +250,18 @@ public class HistoryFragment extends BaseFragment {
             database.putEvent(event);
             database.notifyChanged();
         }
+    }
+
+    private void removeFromCallFilter(Set<String> list, String number) {
+        list.remove(findPhone(list, number));
+    }
+
+    private EditFilterListItemDialogFragment createEditPhoneDialog(String number, OnClose onClose) {
+        EditPhoneDialogFragment dialog = new EditPhoneDialogFragment();
+        dialog.setTitle(R.string.add);
+        dialog.setInitialValue(number);
+        dialog.setOnClose(onClose);
+        return dialog;
     }
 
     private class ListAdapter extends RecyclerView.Adapter<ItemViewHolder> {
@@ -312,48 +295,35 @@ public class HistoryFragment extends BaseFragment {
                 holder.textView.setEnabled((event.getStateReason() & REASON_TEXT_BLACKLISTED) == 0);
                 holder.phoneView.setEnabled((event.getStateReason() & REASON_NUMBER_BLACKLISTED) == 0);
 
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View v) {
-                        selectedListItemPosition = holder.getAdapterPosition();
-                        showDetails();
-                    }
+                holder.itemView.setOnClickListener(v -> {
+                    selectedListItemPosition = holder.getAdapterPosition();
+                    showDetails();
                 });
-                holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-
-                    @Override
-                    public boolean onLongClick(View v) {
-                        selectedListItemPosition = holder.getAdapterPosition();
-                        return false;
-                    }
+                holder.itemView.setOnLongClickListener(v -> {
+                    selectedListItemPosition = holder.getAdapterPosition();
+                    return false;
                 });
-                holder.itemView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+                holder.itemView.setOnCreateContextMenuListener((menu, v, menuInfo) -> {
+                    requireActivity().getMenuInflater().inflate(R.menu.menu_context_history, menu);
 
-                    @Override
-                    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-                        requireActivity().getMenuInflater().inflate(R.menu.menu_context_history, menu);
-
-                        if (event.getState() != STATE_PENDING) {
-                            menu.removeItem(R.id.action_ignore);
-                        }
-
-                        boolean blacklisted = containsPhone(phoneEventFilter.getPhoneBlacklist(), event.getPhone());
-                        boolean whitelisted = containsPhone(phoneEventFilter.getPhoneWhitelist(), event.getPhone());
-
-                        if (blacklisted) {
-                            menu.removeItem(R.id.action_add_to_blacklist);
-                        }
-
-                        if (whitelisted) {
-                            menu.removeItem(R.id.action_add_to_whitelist);
-                        }
-
-                        if (!blacklisted && !whitelisted) {
-                            menu.removeItem(R.id.action_remove_from_lists);
-                        }
+                    if (event.getState() != STATE_PENDING) {
+                        menu.removeItem(R.id.action_ignore);
                     }
 
+                    boolean blacklisted = containsPhone(callFilter.getPhoneBlacklist(), event.getPhone());
+                    boolean whitelisted = containsPhone(callFilter.getPhoneWhitelist(), event.getPhone());
+
+                    if (blacklisted) {
+                        menu.removeItem(R.id.action_add_to_blacklist);
+                    }
+
+                    if (whitelisted) {
+                        menu.removeItem(R.id.action_add_to_whitelist);
+                    }
+
+                    if (!blacklisted && !whitelisted) {
+                        menu.removeItem(R.id.action_remove_from_lists);
+                    }
                 });
 
                 markAsRead(event);
@@ -415,8 +385,15 @@ public class HistoryFragment extends BaseFragment {
     private class SettingsListener implements SharedPreferences.OnSharedPreferenceChangeListener {
 
         @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-            loadData();
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            switch (key) {
+                case PREF_EMAIL_TRIGGERS:
+                case PREF_FILTER_PHONE_BLACKLIST:
+                case PREF_FILTER_PHONE_WHITELIST:
+                case PREF_FILTER_TEXT_BLACKLIST:
+                case PREF_FILTER_TEXT_WHITELIST:
+                    reloadItems();
+            }
         }
     }
 
@@ -424,7 +401,7 @@ public class HistoryFragment extends BaseFragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            loadData();
+            reloadItems();
         }
     }
 }

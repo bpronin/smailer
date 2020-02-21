@@ -10,7 +10,7 @@ import androidx.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.bopr.android.smailer.util.Util.requireNonNull;
+import java.util.Objects;
 
 /**
  * Service that processes phone event.
@@ -51,7 +51,7 @@ public class CallProcessorService extends IntentService {
 
         if (intent != null) {
             PhoneEvent event = intent.getParcelableExtra(EXTRA_EVENT);
-            callProcessor.process(requireNonNull(event));
+            callProcessor.process(Objects.requireNonNull(event));
         }
     }
 

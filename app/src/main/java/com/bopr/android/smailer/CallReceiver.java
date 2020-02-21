@@ -11,6 +11,8 @@ import androidx.annotation.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
+
 import static android.content.Intent.ACTION_NEW_OUTGOING_CALL;
 import static android.provider.Telephony.Sms.Intents.getMessagesFromIntent;
 import static android.telephony.TelephonyManager.ACTION_PHONE_STATE_CHANGED;
@@ -21,7 +23,6 @@ import static android.telephony.TelephonyManager.EXTRA_STATE_OFFHOOK;
 import static android.telephony.TelephonyManager.EXTRA_STATE_RINGING;
 import static com.bopr.android.smailer.CallProcessorService.startCallProcessingService;
 import static com.bopr.android.smailer.util.AndroidUtil.deviceName;
-import static com.bopr.android.smailer.util.Util.requireNonNull;
 import static java.lang.System.currentTimeMillis;
 
 /**
@@ -144,7 +145,7 @@ public class CallReceiver extends BroadcastReceiver {
     @NonNull
     @SuppressWarnings({"deprecation", "RedundantSuppression"})
     private SmsMessage[] parseMessageLegacy(Intent intent) {
-        Object[] pdus = (Object[]) requireNonNull(intent.getSerializableExtra("pdus"));
+        Object[] pdus = (Object[]) Objects.requireNonNull(intent.getSerializableExtra("pdus"));
         SmsMessage[] messages = new SmsMessage[pdus.length];
         for (int i = 0; i < pdus.length; i++) {
             byte[] pdu = (byte[]) pdus[i];

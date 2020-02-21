@@ -18,15 +18,9 @@ public abstract class Util {
     private Util() {
     }
 
+    @SuppressWarnings("EqualsReplaceableByObjectsCall")
     public static boolean safeEquals(@Nullable Object a, @Nullable Object b) {
         return (a == b) || (a != null && a.equals(b));
-    }
-
-    public static <T> T requireNonNull(@Nullable T obj) {
-        if (obj == null) {
-            throw new NullPointerException();
-        }
-        return obj;
     }
 
     @Nullable

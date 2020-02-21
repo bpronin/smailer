@@ -1,8 +1,6 @@
 package com.bopr.android.smailer.ui;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,6 +21,7 @@ import com.bopr.android.smailer.PhoneEventFilter;
 import com.bopr.android.smailer.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -76,13 +75,7 @@ abstract class FilterListFragment extends BaseFragment {
         itemTouchHelper.attachToRecyclerView(listView);
 
         FloatingActionButton addButton = view.findViewById(R.id.button_add);
-        addButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                addItem();
-            }
-        });
+        addButton.setOnClickListener(v -> addItem());
 
         loadItems();
 
@@ -166,21 +159,11 @@ abstract class FilterListFragment extends BaseFragment {
     private void clearData() {
         new AlertDialog.Builder(requireContext())
                 .setMessage(R.string.ask_clear_list)
-                .setPositiveButton(R.string.clear, new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        listAdapter.setItems(Collections.<Item>emptyList());
-                        persistItems();
-                    }
+                .setPositiveButton(R.string.clear, (dialog, which) -> {
+                    listAdapter.setItems(ImmutableList.of());
+                    persistItems();
                 })
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                })
+                .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel())
                 .show();
     }
 
@@ -217,19 +200,15 @@ abstract class FilterListFragment extends BaseFragment {
 
     private void editItem(final Item item) {
         EditFilterListItemDialogFragment dialog = createEditItemDialog(item == null ? null : item.value);
-        dialog.setOnClose(new EditFilterListItemDialogFragment.OnClose() {
-
-            @Override
-            public void onOkClick(String value) {
-                if (isItemExists(value) && (item == null || !item.value.equals(value))) {
-                    showToast(requireContext(), formatter(requireContext())
-                            .pattern(R.string.item_already_exists)
-                            .put("item", getItemText(value))
-                            .format());
-                } else if (!isNullOrBlank(getItemText(value))) {
-                    listAdapter.replaceItem(item, new Item(value));
-                    persistItems();
-                }
+        dialog.setOnClose(value -> {
+            if (isItemExists(value) && (item == null || !item.value.equals(value))) {
+                showToast(requireContext(), formatter(requireContext())
+                        .pattern(R.string.item_already_exists)
+                        .put("item", getItemText(value))
+                        .format());
+            } else if (!isNullOrBlank(getItemText(value))) {
+                listAdapter.replaceItem(item, new Item(value));
+                persistItems();
             }
         });
 
@@ -263,13 +242,7 @@ abstract class FilterListFragment extends BaseFragment {
 
         Snackbar.make(listView, title, Snackbar.LENGTH_LONG)
                 .setActionTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
-                .setAction(R.string.undo, new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View v) {
-                        undoRemoveItem(lastItems);
-                    }
-                })
+                .setAction(R.string.undo, v -> undoRemoveItem(lastItems))
                 .show();
     }
 
@@ -298,29 +271,16 @@ abstract class FilterListFragment extends BaseFragment {
             Item item = getItem(position);
             holder.textView.setText(item != null ? getItemText(item.value) : null);
 
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    selectedListPosition = holder.getAdapterPosition();
-                    editSelectedItem();
-                }
+            holder.itemView.setOnClickListener(v -> {
+                selectedListPosition = holder.getAdapterPosition();
+                editSelectedItem();
             });
-            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-
-                @Override
-                public boolean onLongClick(View v) {
-                    selectedListPosition = holder.getAdapterPosition();
-                    return false;
-                }
+            holder.itemView.setOnLongClickListener(v -> {
+                selectedListPosition = holder.getAdapterPosition();
+                return false;
             });
-            holder.itemView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
-
-                @Override
-                public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-                    requireActivity().getMenuInflater().inflate(R.menu.menu_context_filters, menu);
-                }
-            });
+            holder.itemView.setOnCreateContextMenuListener((menu, v, menuInfo) ->
+                    requireActivity().getMenuInflater().inflate(R.menu.menu_context_filters, menu));
         }
 
         @Override

@@ -38,7 +38,7 @@ import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.remote.RemoteControlService;
 import com.bopr.android.smailer.sync.SyncAdapter;
-import com.bopr.android.smailer.sync.SyncManager;
+import com.bopr.android.smailer.sync.SyncEngine;
 import com.bopr.android.smailer.util.ContentUtils;
 import com.google.android.gms.tasks.Tasks;
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager;
@@ -56,6 +56,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 
@@ -102,7 +103,6 @@ import static com.bopr.android.smailer.util.TextUtil.escapeRegex;
 import static com.bopr.android.smailer.util.TextUtil.formatCoordinates;
 import static com.bopr.android.smailer.util.UiUtil.alertDialogView;
 import static com.bopr.android.smailer.util.UiUtil.showToast;
-import static com.bopr.android.smailer.util.Util.requireNonNull;
 import static com.bopr.android.smailer.util.Util.setOf;
 import static com.google.api.services.drive.DriveScopes.DRIVE_APPDATA;
 import static com.google.api.services.gmail.GmailScopes.GMAIL_SEND;
@@ -642,7 +642,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
     private void onClearLogs() {
         File dir = new File(context.getFilesDir(), "log");
-        File[] logs = requireNonNull(dir.listFiles());
+        File[] logs = Objects.requireNonNull(dir.listFiles());
         for (File file : logs) {
             if (!file.delete()) {
                 DebugFragment.log.warn("Cannot delete file");
@@ -715,7 +715,7 @@ public class DebugFragment extends BasePreferenceFragment {
             @Override
             public Void call() {
 //                new SyncAdapter(context, false).sync(context, selectedAccount(context));
-                SyncManager.syncNow(context);
+                SyncEngine.syncNow(context);
                 return null;
             }
         });
@@ -860,7 +860,7 @@ public class DebugFragment extends BasePreferenceFragment {
                 MailMessage message = new MailMessage();
                 message.setSubject("test subject");
                 message.setBody("test message from " + deviceName());
-                message.setRecipients(requireNonNull(properties.getProperty("default_recipient")));
+                message.setRecipients(Objects.requireNonNull(properties.getProperty("default_recipient")));
 
                 transport.send(message);
             } catch (Exception x) {
@@ -898,7 +898,7 @@ public class DebugFragment extends BasePreferenceFragment {
             attachment.add(getLogcatLog());
 
             File[] files = new File(getActivity().getFilesDir(), "log").listFiles();
-            attachment.addAll(asList(requireNonNull(files)));
+            attachment.addAll(asList(Objects.requireNonNull(files)));
 
             try {
                 GoogleMail transport = new GoogleMail(getActivity());

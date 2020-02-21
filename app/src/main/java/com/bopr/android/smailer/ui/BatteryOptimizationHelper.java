@@ -1,12 +1,10 @@
 package com.bopr.android.smailer.ui;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.PowerManager;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 
 import com.bopr.android.smailer.R;
@@ -31,15 +29,10 @@ class BatteryOptimizationHelper {
                     .setTitle("Battery optimization")
                     .setMessage(R.string.battery_optimization_reason)
                     .setNegativeButton(android.R.string.cancel, null)
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-
-                        @Override
-                        @RequiresApi(api = Build.VERSION_CODES.M)
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent();
-                            intent.setAction(ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
-                            context.startActivity(intent);
-                        }
+                    .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                        Intent intent = new Intent();
+                        intent.setAction(ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                        context.startActivity(intent);
                     })
                     .show();
         }

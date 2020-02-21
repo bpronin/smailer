@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.Configuration;
 
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import java.util.Date;
@@ -49,13 +48,9 @@ public class MailFormatterTest extends BaseTest {
 
         context = mock(Context.class);
         when(context.getResources()).thenReturn(getContext().getResources());
-        when(context.createConfigurationContext(any(Configuration.class))).thenAnswer(new Answer<Context>() {
-
-            @Override
-            public Context answer(InvocationOnMock invocation) {
-                Configuration parameter = (Configuration) invocation.getArguments()[0];
-                return getContext().createConfigurationContext(parameter);
-            }
+        when(context.createConfigurationContext(any(Configuration.class))).thenAnswer((Answer<Context>) invocation -> {
+            Configuration parameter = (Configuration) invocation.getArguments()[0];
+            return getContext().createConfigurationContext(parameter);
         });
     }
 

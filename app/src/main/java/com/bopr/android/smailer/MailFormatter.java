@@ -16,6 +16,7 @@ import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,7 +37,6 @@ import static com.bopr.android.smailer.util.TextUtil.isNotEmpty;
 import static com.bopr.android.smailer.util.TextUtil.isNullOrBlank;
 import static com.bopr.android.smailer.util.UiUtil.eventTypePrefix;
 import static com.bopr.android.smailer.util.UiUtil.eventTypeText;
-import static com.bopr.android.smailer.util.Util.requireNonNull;
 import static java.lang.String.valueOf;
 
 /**
@@ -182,7 +182,7 @@ class MailFormatter {
         if (event.isMissed()) {
             return resources.getString(R.string.you_had_missed_call);
         } else if (event.isSms()) {
-            return replaceUrlsWithLinks(requireNonNull(event.getText()));
+            return replaceUrlsWithLinks(Objects.requireNonNull(event.getText()));
         } else {
             int pattern;
             if (event.isIncoming()) {

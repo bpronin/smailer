@@ -24,12 +24,12 @@ import com.bopr.android.smailer.Settings;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import static com.bopr.android.smailer.ui.AboutDialogFragment.showAboutDialog;
 import static com.bopr.android.smailer.util.UiUtil.accentedText;
 import static com.bopr.android.smailer.util.UiUtil.underwivedText;
-import static com.bopr.android.smailer.util.Util.requireNonNull;
 
 /**
  * Base {@link PreferenceFragmentCompat } with default behaviour.
@@ -166,6 +166,6 @@ public abstract class BasePreferenceFragment extends PreferenceFragmentCompat {
 
     @NonNull
     <T extends Preference> T requirePreference(@NonNull CharSequence key) {
-        return requireNonNull(this.<T>findPreference(key));
+        return Objects.requireNonNull(this.<T>findPreference(key));
     }
 }

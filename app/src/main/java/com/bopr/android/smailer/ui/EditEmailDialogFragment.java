@@ -3,7 +3,6 @@ package com.bopr.android.smailer.ui;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -71,31 +70,13 @@ public class EditEmailDialogFragment extends DialogFragment {
             messageText.setText(R.string.email_address);
 
             View browseButton = view.findViewById(R.id.button_browse_contacts);
-            browseButton.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    startActivityForResult(ContentUtils.createPickContactEmailIntent(), PICK_CONTACT_REQUEST);
-                }
-            });
+            browseButton.setOnClickListener(v -> startActivityForResult(ContentUtils.createPickContactEmailIntent(), PICK_CONTACT_REQUEST));
 
             dialog = new AlertDialog.Builder(requireContext())
                     .setTitle(title)
                     .setView(view)
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int which) {
-                            callback.onOkClick(editText.getText().toString());
-                        }
-                    })
-                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int which) {
-                            dialogInterface.cancel();
-                        }
-                    })
+                    .setPositiveButton(android.R.string.ok, (dialogInterface, which) -> callback.onOkClick(editText.getText().toString()))
+                    .setNegativeButton(android.R.string.cancel, (dialogInterface, which) -> dialogInterface.cancel())
                     .create();
 
             /* this is to show soft keyboard when dialog is open */
