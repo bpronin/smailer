@@ -12,7 +12,7 @@ import static com.bopr.android.smailer.util.TextUtil.unescapeRegex;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-abstract class TextFilterListFragment extends FilterListFragment {
+abstract class TextFilterListFragment extends CallFilterListFragment {
 
     @NonNull
     @Override

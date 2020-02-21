@@ -3,7 +3,6 @@ package com.bopr.android.smailer.util;
 import com.bopr.android.smailer.BaseTest;
 
 import org.junit.Test;
-import org.junit.function.ThrowingRunnable;
 
 import java.util.Set;
 
@@ -27,13 +26,7 @@ public class UtilTest extends BaseTest {
         assertTrue(set.contains("A"));
         assertTrue(set.contains("B"));
         assertTrue(set.contains("C"));
-        assertThrows(UnsupportedOperationException.class, new ThrowingRunnable() {
-
-            @Override
-            public void run() {
-                set.add("D");
-            }
-        });
+        assertThrows(UnsupportedOperationException.class, () -> set.add("D"));
     }
 
 

@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import static com.bopr.android.smailer.PhoneEvent.STATE_PENDING;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -49,24 +50,27 @@ public class DatabaseTest extends BaseTest {
         database.putEvent(new PhoneEvent("7", false, 7000L, 0L, false, null, null, "Test 2", STATE_PENDING, null));
         database.putEvent(new PhoneEvent("8", true, 8000L, 0L, false, null, null, "Test 3", STATE_PENDING, null));
         database.putEvent(new PhoneEvent("9", false, 9000L, 0L, false, null, null, "Test 4", STATE_PENDING, null));
-        database.putEvent(new PhoneEvent("10", true, 10000L, 20000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), "Test 10", STATE_PENDING, null));
+        database.putEvent(new PhoneEvent("10", true, 10000L, 20000L, false, "SMS text", new GeoCoordinates(10.5, 20.5),
+                "Test 10", STATE_PENDING, null));
 
         List<PhoneEvent> items = database.getEvents().toList();
 
         assertEquals(10, items.size());
 
-        PhoneEvent message = items.get(0); /* descending order so it should be the last */
-        assertEquals(STATE_PENDING, message.getState());
-        assertEquals("10", message.getPhone());
-        assertTrue(message.isIncoming());
-        assertEquals(10000L, message.getStartTime());
-        assertEquals(20000L, message.getEndTime().longValue());
-        assertFalse(message.isMissed());
-        assertTrue(message.isSms());
-        assertEquals(10.5, message.getLocation().getLatitude(), 0.1);
-        assertEquals(20.5, message.getLocation().getLongitude(), 0.1);
-        assertEquals("SMS text", message.getText());
-        assertEquals("Test 10", message.getDetails());
+        PhoneEvent event = items.get(0); /* descending order so it should be the last */
+        assertEquals(STATE_PENDING, event.getState());
+        assertEquals("10", event.getPhone());
+        assertTrue(event.isIncoming());
+        assertEquals(10000L, event.getStartTime());
+        assertNotNull(event.getEndTime());
+        assertEquals(20000L, event.getEndTime().longValue());
+        assertFalse(event.isMissed());
+        assertTrue(event.isSms());
+        assertNotNull(event.getLocation());
+        assertEquals(10.5, event.getLocation().getLatitude(), 0.1);
+        assertEquals(20.5, event.getLocation().getLongitude(), 0.1);
+        assertEquals("SMS text", event.getText());
+        assertEquals("Test 10", event.getDetails());
     }
 
     /**
@@ -74,51 +78,56 @@ public class DatabaseTest extends BaseTest {
      */
     @Test
     public void testUpdateGet() {
-        PhoneEvent message = new PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), "Test 1", STATE_PENDING, null);
-        database.putEvent(message);
+        PhoneEvent event = new PhoneEvent("1", true, 1000L, 2000L, false, "SMS text",
+                new GeoCoordinates(10.5, 20.5), "Test 1", STATE_PENDING, null);
+        database.putEvent(event);
 
         List<PhoneEvent> items = database.getEvents().toList();
         assertEquals(1, items.size());
 
-        message = items.get(0);
-        assertEquals(STATE_PENDING, message.getState());
-        assertEquals("1", message.getPhone());
-        assertTrue(message.isIncoming());
-        assertEquals(1000L, message.getStartTime());
-        assertEquals(2000L, message.getEndTime().longValue());
-        assertFalse(message.isMissed());
-        assertTrue(message.isSms());
-        assertEquals(10.5, message.getLocation().getLatitude(), 0.1);
-        assertEquals(20.5, message.getLocation().getLongitude(), 0.1);
-        assertEquals("SMS text", message.getText());
-        assertEquals("Test 1", message.getDetails());
+        event = items.get(0);
+        assertEquals(STATE_PENDING, event.getState());
+        assertEquals("1", event.getPhone());
+        assertTrue(event.isIncoming());
+        assertEquals(1000L, event.getStartTime());
+        assertNotNull(event.getEndTime());
+        assertEquals(2000L, event.getEndTime().longValue());
+        assertFalse(event.isMissed());
+        assertTrue(event.isSms());
+        assertNotNull(event.getLocation());
+        assertEquals(10.5, event.getLocation().getLatitude(), 0.1);
+        assertEquals(20.5, event.getLocation().getLongitude(), 0.1);
+        assertEquals("SMS text", event.getText());
+        assertEquals("Test 1", event.getDetails());
 
-        assertEquals(STATE_PENDING, message.getState());
-        message.setPhone("2");
-        message.setIncoming(false);
-        message.setStartTime(2000L);
-        message.setEndTime(3000L);
-        message.setMissed(true);
-        message.setLocation(new GeoCoordinates(11.5, 21.5));
-        message.setText("New text");
-        message.setDetails("New details");
-        database.putEvent(message);
+        assertEquals(STATE_PENDING, event.getState());
+        event.setPhone("2");
+        event.setIncoming(false);
+        event.setStartTime(2000L);
+        event.setEndTime(3000L);
+        event.setMissed(true);
+        event.setLocation(new GeoCoordinates(11.5, 21.5));
+        event.setText("New text");
+        event.setDetails("New details");
+        database.putEvent(event);
 
         items = database.getEvents().toList();
         assertEquals(1, items.size());
 
-        message = items.get(0);
-        assertEquals(STATE_PENDING, message.getState());
-        assertEquals("2", message.getPhone());
-        assertFalse(message.isIncoming());
-        assertEquals(2000L, message.getStartTime());
-        assertEquals(3000L, message.getEndTime().longValue());
-        assertTrue(message.isMissed());
-        assertFalse(message.isSms());
-        assertEquals(11.5, message.getLocation().getLatitude(), 0.1);
-        assertEquals(21.5, message.getLocation().getLongitude(), 0.1);
-        assertEquals("New text", message.getText());
-        assertEquals("New details", message.getDetails());
+        event = items.get(0);
+        assertEquals(STATE_PENDING, event.getState());
+        assertEquals("2", event.getPhone());
+        assertFalse(event.isIncoming());
+        assertEquals(2000L, event.getStartTime());
+        assertNotNull(event.getEndTime());
+        assertEquals(3000L, event.getEndTime().longValue());
+        assertTrue(event.isMissed());
+        assertFalse(event.isSms());
+        assertNotNull(event.getLocation());
+        assertEquals(11.5, event.getLocation().getLatitude(), 0.1);
+        assertEquals(21.5, event.getLocation().getLongitude(), 0.1);
+        assertEquals("New text", event.getText());
+        assertEquals("New details", event.getDetails());
     }
 
     /**
@@ -126,7 +135,8 @@ public class DatabaseTest extends BaseTest {
      */
     @Test
     public void testClear() {
-        database.putEvent(new PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), "Test 1", STATE_PENDING, null));
+        database.putEvent(new PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", new GeoCoordinates(10.5, 20.5),
+                "Test 1", STATE_PENDING, null));
         database.putEvent(new PhoneEvent("2", false, 2000L, 0L, false, null, null, null, STATE_PENDING, null));
         database.putEvent(new PhoneEvent("3", true, 3000L, 0L, false, null, null, null, STATE_PENDING, null));
         database.putEvent(new PhoneEvent("4", false, 4000L, 0L, false, null, null, null, STATE_PENDING, null));
@@ -149,7 +159,8 @@ public class DatabaseTest extends BaseTest {
      */
     @Test
     public void testPurge() throws InterruptedException {
-        database.putEvent(new PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", new GeoCoordinates(10.5, 20.5), "Test 1", STATE_PENDING, null));
+        database.putEvent(new PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", new GeoCoordinates(10.5, 20.5),
+                "Test 1", STATE_PENDING, null));
         database.putEvent(new PhoneEvent("2", false, 2000L, 0L, false, null, null, null, STATE_PENDING, null));
         database.putEvent(new PhoneEvent("3", true, 3000L, 0L, false, null, null, null, STATE_PENDING, null));
         database.putEvent(new PhoneEvent("4", false, 4000L, 0L, false, null, null, null, STATE_PENDING, null));
@@ -218,8 +229,8 @@ public class DatabaseTest extends BaseTest {
 
         assertEquals(5, items.size());
 
-        PhoneEvent message = items.get(0); /* descending order so it should be the last */
-        assertEquals("Test 10", message.getDetails());
+        PhoneEvent event = items.get(0); /* descending order so it should be the last */
+        assertEquals("Test 10", event.getDetails());
     }
 
 }

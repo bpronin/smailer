@@ -2,7 +2,6 @@ package com.bopr.android.smailer.util;
 
 import com.bopr.android.smailer.BaseTest;
 import com.bopr.android.smailer.GeoCoordinates;
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 
 import org.junit.Test;
@@ -112,13 +111,7 @@ public class TextUtilTest extends BaseTest {
         assertEquals("1, 2, 3", join(of(1, 2, 3), ", "));
         assertEquals("1, , ", join(of(1, "", ""), ", "));
         assertEquals("", join(of(), ", "));
-        assertEquals("[1]|[2]|[3]", join(of(1, 2, 3), "|", new Function<Object, String>() {
-
-            @Override
-            public String apply(Object s) {
-                return "[" + s + "]";
-            }
-        }));
+        assertEquals("[1]|[2]|[3]", join(of(1, 2, 3), "|", s -> "[" + s + "]"));
     }
 
     @Test
@@ -126,13 +119,7 @@ public class TextUtilTest extends BaseTest {
         assertEquals(of(), split("", ";"));
         assertEquals(of(" "), split(" ", ";"));
         assertEquals(of("1", " 2", "3 "), split("1; 2;3 ", ";"));
-        assertEquals(of("[1]", "[2]", "[3]"), split("1;2;3", ";", new Function<String, String>() {
-
-            @Override
-            public String apply(String s) {
-                return "[" + s + "]";
-            }
-        }));
+        assertEquals(of("[1]", "[2]", "[3]"), split("1;2;3", ";", s -> "[" + s + "]"));
     }
 
     @Test

@@ -10,7 +10,7 @@ import com.bopr.android.smailer.R;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-abstract class PhoneFilterListFragment extends FilterListFragment {
+abstract class PhoneFilterListFragment extends CallFilterListFragment {
 
     @NonNull
     @Override

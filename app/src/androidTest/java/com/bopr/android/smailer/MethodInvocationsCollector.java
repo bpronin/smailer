@@ -11,6 +11,7 @@ import java.util.List;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
+// TODO: 21.02.2020 get rid of it
 class MethodInvocationsCollector implements Answer {
 
     private final List<Object[]> invocationsArguments = new ArrayList<>();

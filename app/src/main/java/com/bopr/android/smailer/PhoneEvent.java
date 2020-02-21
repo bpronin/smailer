@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.bopr.android.smailer.util.TextUtil;
 
@@ -92,7 +93,7 @@ public class PhoneEvent implements Parcelable {
         return phone;
     }
 
-    public void setPhone(String phone) {
+    public void setPhone(@NonNull String phone) {
         this.phone = phone;
     }
 
@@ -104,19 +105,21 @@ public class PhoneEvent implements Parcelable {
         this.startTime = startTime;
     }
 
+    @Nullable
     public Long getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Long endTime) {
+    public void setEndTime(@Nullable Long endTime) {
         this.endTime = endTime;
     }
 
+    @Nullable
     public String getText() {
         return text;
     }
 
-    public void setText(String text) {
+    public void setText(@Nullable String text) {
         this.text = text;
     }
 
@@ -127,19 +130,21 @@ public class PhoneEvent implements Parcelable {
         return 0;
     }
 
-    public void setDetails(String details) {
-        this.details = details;
-    }
-
+    @Nullable
     public String getDetails() {
         return details;
     }
 
+    public void setDetails(@Nullable String details) {
+        this.details = details;
+    }
+
+    @Nullable
     public GeoCoordinates getLocation() {
         return location;
     }
 
-    public void setLocation(GeoCoordinates location) {
+    public void setLocation(@Nullable GeoCoordinates location) {
         this.location = location;
     }
 
@@ -168,11 +173,12 @@ public class PhoneEvent implements Parcelable {
         this.read = value;
     }
 
+    @NonNull
     public String getRecipient() {
         return recipient;
     }
 
-    public void setRecipient(String recipient) {
+    public void setRecipient(@NonNull String recipient) {
         this.recipient = recipient;
     }
 

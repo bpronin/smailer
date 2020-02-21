@@ -37,6 +37,7 @@ import static com.bopr.android.smailer.remote.RemoteControlTask.REMOVE_TEXT_FROM
 import static com.bopr.android.smailer.remote.RemoteControlTask.REMOVE_TEXT_FROM_WHITELIST;
 import static com.bopr.android.smailer.remote.RemoteControlTask.SEND_SMS_TO_CALLER;
 import static com.bopr.android.smailer.util.AddressUtil.containsEmail;
+import static com.bopr.android.smailer.util.AddressUtil.containsPhone;
 import static com.bopr.android.smailer.util.AddressUtil.extractEmail;
 import static com.bopr.android.smailer.util.AddressUtil.findPhone;
 import static com.bopr.android.smailer.util.Util.safeEquals;
@@ -162,7 +163,7 @@ public class RemoteControlService extends JobIntentService {
 
     private void addTextToWhitelist(String text) {
         PhoneEventFilter filter = settings.getFilter();
-        addToFilterList(filter, filter.getTextWhitelist(), text, R.string.text_remotely_added_to_whitelist);
+        addToTextList(filter, filter.getTextWhitelist(), text, R.string.text_remotely_added_to_whitelist);
     }
 
     private void removeTextFromBlacklist(String text) {
@@ -172,7 +173,7 @@ public class RemoteControlService extends JobIntentService {
 
     private void addTextToBlacklist(String text) {
         PhoneEventFilter filter = settings.getFilter();
-        addToFilterList(filter, filter.getTextBlacklist(), text, R.string.text_remotely_added_to_blacklist);
+        addToTextList(filter, filter.getTextBlacklist(), text, R.string.text_remotely_added_to_blacklist);
     }
 
     private void removePhoneFromWhitelist(String phone) {
@@ -182,7 +183,7 @@ public class RemoteControlService extends JobIntentService {
 
     private void addPhoneToWhitelist(String phone) {
         PhoneEventFilter filter = settings.getFilter();
-        addToFilterList(filter, filter.getPhoneWhitelist(), phone, R.string.phone_remotely_added_to_whitelist);
+        addToPhoneList(filter, filter.getPhoneWhitelist(), phone, R.string.phone_remotely_added_to_whitelist);
     }
 
     private void removePhoneFromBlacklist(String phone) {
@@ -192,7 +193,7 @@ public class RemoteControlService extends JobIntentService {
 
     private void addPhoneToBlacklist(String phone) {
         PhoneEventFilter filter = settings.getFilter();
-        addToFilterList(filter, filter.getPhoneBlacklist(), phone, R.string.phone_remotely_added_to_blacklist);
+        addToPhoneList(filter, filter.getPhoneBlacklist(), phone, R.string.phone_remotely_added_to_blacklist);
     }
 
     private void sendSms(@Nullable String message, @Nullable String phone) {
@@ -202,8 +203,17 @@ public class RemoteControlService extends JobIntentService {
         log.debug("Sent SMS: " + message + " to " + phone);
     }
 
-    private void addToFilterList(PhoneEventFilter filter, Set<String> list, String text, int messageRes) {
+    private void addToTextList(PhoneEventFilter filter, Set<String> list, String text, int messageRes) {
         if (!list.contains(text)) {
+            list.add(text);
+            saveFilter(filter, text, messageRes);
+        } else {
+            log.debug("Already in list");
+        }
+    }
+
+    private void addToPhoneList(PhoneEventFilter filter, Set<String> list, String text, int messageRes) {
+        if (!containsPhone(list, text)) {
             list.add(text);
             saveFilter(filter, text, messageRes);
         } else {
@@ -221,9 +231,9 @@ public class RemoteControlService extends JobIntentService {
     }
 
     private void removeFromPhoneList(PhoneEventFilter filter, Set<String> list, String number, int messageRes) {
-        String existingNumber = findPhone(list, number);
-        if (existingNumber != null) {
-            list.remove(existingNumber);
+        String existing = findPhone(list, number); /* searching by normailzed form */
+        if (existing != null) {
+            list.remove(existing);
             saveFilter(filter, number, messageRes);
         } else {
             log.debug("Not in list");

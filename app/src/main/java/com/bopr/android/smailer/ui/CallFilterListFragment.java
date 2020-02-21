@@ -39,7 +39,7 @@ import static java.lang.String.valueOf;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
-abstract class FilterListFragment extends BaseFragment {
+abstract class CallFilterListFragment extends BaseFragment {
 
     private ListAdapter listAdapter;
     private RecyclerView listView;
@@ -137,10 +137,7 @@ abstract class FilterListFragment extends BaseFragment {
         List<String> values = new ArrayList<>(getItemsList(settings.getFilter()));
         Collections.sort(values);
 
-        List<Item> items = new ArrayList<>();
-        for (String value : values) {
-            items.add(new Item(value));
-        }
+        List<String> items = new ArrayList<>(values);
         listAdapter.setItems(items);
     }
 
@@ -168,10 +165,7 @@ abstract class FilterListFragment extends BaseFragment {
     }
 
     private void persistItems() {
-        List<String> items = new ArrayList<>();
-        for (Item item : listAdapter.getItems()) {
-            items.add(item.value);
-        }
+        List<String> items = new ArrayList<>(listAdapter.getItems());
 
         PhoneEventFilter filter = settings.getFilter();
         setItemsList(filter, items);
@@ -179,8 +173,8 @@ abstract class FilterListFragment extends BaseFragment {
     }
 
     private boolean isItemExists(String text) {
-        for (Item item : listAdapter.getItems()) {
-            if (text.equals(item.value)) {
+        for (String item : listAdapter.getItems()) {
+            if (text.equals(item)) {
                 return true;
             }
         }
@@ -193,21 +187,21 @@ abstract class FilterListFragment extends BaseFragment {
 
     private void editSelectedItem() {
         if (selectedListPosition != NO_POSITION) {
-            Item item = listAdapter.getItem(selectedListPosition);
+            String item = listAdapter.getItem(selectedListPosition);
             editItem(item);
         }
     }
 
-    private void editItem(final Item item) {
-        EditFilterListItemDialogFragment dialog = createEditItemDialog(item == null ? null : item.value);
+    private void editItem(final String item) {
+        EditFilterListItemDialogFragment dialog = createEditItemDialog(item);
         dialog.setOnClose(value -> {
-            if (isItemExists(value) && (item == null || !item.value.equals(value))) {
+            if (isItemExists(value) && (item == null || !item.equals(value))) {
                 showToast(requireContext(), formatter(requireContext())
                         .pattern(R.string.item_already_exists)
                         .put("item", getItemText(value))
                         .format());
             } else if (!isNullOrBlank(getItemText(value))) {
-                listAdapter.replaceItem(item, new Item(value));
+                listAdapter.replaceItem(item, value);
                 persistItems();
             }
         });
@@ -217,19 +211,19 @@ abstract class FilterListFragment extends BaseFragment {
 
     private void removeSelectedItem() {
         if (selectedListPosition != NO_POSITION) {
-            List<Item> savedItems = new ArrayList<>(listAdapter.getItems());
-            List<Item> removedItems = listAdapter.removeItems(new int[]{selectedListPosition});
+            List<String> savedItems = new ArrayList<>(listAdapter.getItems());
+            List<String> removedItems = listAdapter.removeItems(new int[]{selectedListPosition});
             persistItems();
             showUndoAction(removedItems, savedItems);
         }
     }
 
-    private void undoRemoveItem(List<Item> lastItems) {
+    private void undoRemoveItem(List<String> lastItems) {
         listAdapter.setItems(lastItems);
         persistItems();
     }
 
-    private void showUndoAction(List<Item> removedItems, final List<Item> lastItems) {
+    private void showUndoAction(List<String> removedItems, final List<String> lastItems) {
         String title;
         if (removedItems.size() == 1) {
             title = getString(R.string.item_removed);
@@ -246,18 +240,9 @@ abstract class FilterListFragment extends BaseFragment {
                 .show();
     }
 
-    private class Item {
-
-        private final String value;
-
-        private Item(String value) {
-            this.value = value;
-        }
-    }
-
     private class ListAdapter extends RecyclerView.Adapter<ItemViewHolder> {
 
-        private final List<Item> items = new ArrayList<>();
+        private final List<String> items = new ArrayList<>();
 
         @NonNull
         @Override
@@ -268,8 +253,8 @@ abstract class FilterListFragment extends BaseFragment {
 
         @Override
         public void onBindViewHolder(@NonNull final ItemViewHolder holder, final int position) {
-            Item item = getItem(position);
-            holder.textView.setText(item != null ? getItemText(item.value) : null);
+            String item = getItem(position);
+            holder.textView.setText(item != null ? getItemText(item) : null);
 
             holder.itemView.setOnClickListener(v -> {
                 selectedListPosition = holder.getAdapterPosition();
@@ -293,24 +278,24 @@ abstract class FilterListFragment extends BaseFragment {
             return items.size();
         }
 
-        private Item getItem(int position) {
+        private String getItem(int position) {
             return position != -1 ? items.get(position) : null;
         }
 
-        private List<Item> getItems() {
+        private List<String> getItems() {
             return Collections.unmodifiableList(items);
         }
 
-        private void setItems(List<Item> items) {
+        private void setItems(List<String> items) {
             this.items.clear();
             this.items.addAll(items);
             notifyDataSetChanged();
         }
 
-        private List<Item> removeItems(int[] positions) {
-            List<Item> removedItems = new ArrayList<>();
+        private List<String> removeItems(int[] positions) {
+            List<String> removedItems = new ArrayList<>();
             for (int position : positions) {
-                Item item = getItem(position);
+                String item = getItem(position);
                 removedItems.add(item);
                 items.remove(item);
             }
@@ -318,7 +303,7 @@ abstract class FilterListFragment extends BaseFragment {
             return removedItems;
         }
 
-        private void replaceItem(Item oldItem, Item newItem) {
+        private void replaceItem(String oldItem, String newItem) {
             int position = items.indexOf(oldItem);
             if (position < 0) {
                 items.add(newItem);

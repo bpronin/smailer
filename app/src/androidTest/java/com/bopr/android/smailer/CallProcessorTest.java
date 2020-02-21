@@ -22,11 +22,12 @@ import static com.bopr.android.smailer.Settings.PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.PREF_SENDER_ACCOUNT;
 import static java.lang.System.currentTimeMillis;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anySetOf;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.doAnswer;
@@ -57,8 +58,8 @@ public class CallProcessorTest extends BaseTest {
         preferences = mock(SharedPreferences.class);
         when(preferences.getString(eq(PREF_SENDER_ACCOUNT), anyString())).thenReturn("sender@mail.com");
         when(preferences.getString(eq(PREF_RECIPIENTS_ADDRESS), anyString())).thenReturn("recipient@mail.com");
-        when(preferences.getStringSet(eq(PREF_EMAIL_TRIGGERS), anySetOf(String.class))).thenReturn(DEFAULT_TRIGGERS);
-        when(preferences.getStringSet(eq(PREF_EMAIL_CONTENT), anySetOf(String.class))).thenReturn(DEFAULT_CONTENT);
+        when(preferences.getStringSet(eq(PREF_EMAIL_TRIGGERS), anySet())).thenReturn(DEFAULT_TRIGGERS);
+        when(preferences.getStringSet(eq(PREF_EMAIL_CONTENT), anySet())).thenReturn(DEFAULT_CONTENT);
 
         context = mock(Context.class);
         when(context.getContentResolver()).thenReturn(getContext().getContentResolver());
@@ -114,6 +115,7 @@ public class CallProcessorTest extends BaseTest {
         assertEquals("[SMailer] Missed call from \"+123\"", message.getSubject());
 
         PhoneEvent savedEvent = database.getEvents().findFirst();
+        assertNotNull(savedEvent);
         assertEquals(event.getRecipient(), savedEvent.getRecipient());
         assertEquals(event.getStartTime(), savedEvent.getStartTime());
         assertEquals(event.getPhone(), savedEvent.getPhone());
@@ -146,6 +148,7 @@ public class CallProcessorTest extends BaseTest {
         assertTrue(sendInvocations.isEmpty());
 
         PhoneEvent savedEvent = database.getEvents().findFirst();
+        assertNotNull(savedEvent);
         assertEquals(event.getRecipient(), savedEvent.getRecipient());
         assertEquals(event.getStartTime(), savedEvent.getStartTime());
         assertEquals(event.getPhone(), savedEvent.getPhone());
@@ -182,6 +185,7 @@ public class CallProcessorTest extends BaseTest {
         assertTrue(sendInvocations.isEmpty());
 
         PhoneEvent savedEvent = database.getEvents().findFirst();
+        assertNotNull(savedEvent);
         assertEquals(event.getRecipient(), savedEvent.getRecipient());
         assertEquals(event.getStartTime(), savedEvent.getStartTime());
         assertEquals(event.getPhone(), savedEvent.getPhone());
@@ -218,6 +222,7 @@ public class CallProcessorTest extends BaseTest {
         assertTrue(sendInvocations.isEmpty());
 
         PhoneEvent savedEvent = database.getEvents().findFirst();
+        assertNotNull(savedEvent);
         assertEquals(event.getRecipient(), savedEvent.getRecipient());
         assertEquals(event.getStartTime(), savedEvent.getStartTime());
         assertEquals(event.getPhone(), savedEvent.getPhone());
@@ -250,6 +255,7 @@ public class CallProcessorTest extends BaseTest {
         assertEquals(R.string.account_not_registered, notificationText);
 
         PhoneEvent savedEvent = database.getEvents().findFirst();
+        assertNotNull(savedEvent);
         assertEquals(event.getRecipient(), savedEvent.getRecipient());
         assertEquals(event.getStartTime(), savedEvent.getStartTime());
         assertEquals(event.getPhone(), savedEvent.getPhone());
@@ -282,6 +288,7 @@ public class CallProcessorTest extends BaseTest {
         assertTrue(showErrorInvocations.isEmpty());
 
         PhoneEvent savedEvent = database.getEvents().findFirst();
+        assertNotNull(savedEvent);
         assertEquals(event.getRecipient(), savedEvent.getRecipient());
         assertEquals(event.getStartTime(), savedEvent.getStartTime());
         assertEquals(event.getPhone(), savedEvent.getPhone());
