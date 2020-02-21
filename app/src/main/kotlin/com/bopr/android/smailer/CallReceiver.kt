@@ -10,7 +10,7 @@ import android.provider.Telephony
 import android.telephony.SmsMessage
 import android.telephony.TelephonyManager.*
 import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
-import com.bopr.android.smailer.util.AndroidUtil.deviceName
+import com.bopr.android.smailer.util.deviceName
 import org.slf4j.LoggerFactory
 import java.lang.System.currentTimeMillis
 

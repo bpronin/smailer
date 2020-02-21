@@ -9,11 +9,11 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
-import com.bopr.android.smailer.util.AndroidUtil.deviceName
 import com.bopr.android.smailer.util.db.DbUtil.batch
 import com.bopr.android.smailer.util.db.DbUtil.replaceTable
 import com.bopr.android.smailer.util.db.RowSet
 import com.bopr.android.smailer.util.db.RowSet.Companion.forLong
+import com.bopr.android.smailer.util.deviceName
 import org.slf4j.LoggerFactory
 import java.lang.System.currentTimeMillis
 import java.util.concurrent.TimeUnit

@@ -20,7 +20,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_RULES
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
-import com.bopr.android.smailer.util.AndroidUtil.deviceName
+import com.bopr.android.smailer.util.deviceName
 import com.bopr.android.smailer.util.getQuantityString
 import com.bopr.android.smailer.util.isValidEmailAddressList
 import com.google.api.services.drive.DriveScopes

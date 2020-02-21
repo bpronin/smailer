@@ -8,40 +8,31 @@ import androidx.core.content.ContextCompat
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager
 
 /**
- * Utilities dependent of android app context .
+ * Checks if listed permissions denied.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @param context     context
+ * @param permissions permissions
+ * @return true if any of listed permissions denied
  */
-object AndroidUtil {
-
-    /**
-     * Checks if listed permissions denied.
-     *
-     * @param context     context
-     * @param permissions permissions
-     * @return true if any of listed permissions denied
-     */
-    fun isPermissionsDenied(context: Context, vararg permissions: String): Boolean {
-        for (p in permissions) {
-            if (ContextCompat.checkSelfPermission(context, p) != PackageManager.PERMISSION_GRANTED) {
-                return true
-            }
+fun isPermissionsDenied(context: Context, vararg permissions: String): Boolean {
+    for (p in permissions) {
+        if (ContextCompat.checkSelfPermission(context, p) != PackageManager.PERMISSION_GRANTED) {
+            return true
         }
-        return false
     }
+    return false
+}
 
-    /**
-     * Returns device name.
-     */
-    fun deviceName(): String {
-        return capitalize(Build.MANUFACTURER) + " " + Build.MODEL
-    }
+/**
+ * Returns device name.
+ */
+fun deviceName(): String {
+    return capitalize(Build.MANUFACTURER) + " " + Build.MODEL
+}
 
-    /**
-     * Returns primary device account.
-     */
-    fun primaryAccount(context: Context): Account {
-        return GoogleAccountManager(context).accounts[0]
-    }
-
+/**
+ * Returns primary device account.
+ */
+fun primaryAccount(context: Context): Account {
+    return GoogleAccountManager(context).accounts[0]
 }

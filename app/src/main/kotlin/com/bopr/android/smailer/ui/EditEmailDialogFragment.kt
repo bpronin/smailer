@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.util.ContentUtils.createPickContactEmailIntent
-import com.bopr.android.smailer.util.ContentUtils.emailAddressFromIntent
+import com.bopr.android.smailer.util.createPickContactEmailIntent
+import com.bopr.android.smailer.util.emailAddressFromIntent
 
 /**
  * Email editor dialog.

@@ -30,8 +30,6 @@ import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_BLACKLIST
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_WHITELIST
 import com.bopr.android.smailer.ui.HistoryFragment.Holder
 import com.bopr.android.smailer.util.*
-import com.bopr.android.smailer.util.AddressUtil.containsPhone
-import com.bopr.android.smailer.util.Dialogs.showConfirmationDialog
 
 /**
  * Application activity log activity fragment.

@@ -12,112 +12,80 @@ import android.provider.ContactsContract.CommonDataKinds.Phone
 import android.provider.ContactsContract.PhoneLookup.CONTENT_FILTER_URI
 import android.provider.ContactsContract.PhoneLookup.DISPLAY_NAME
 import com.bopr.android.smailer.PhoneEvent
-import com.bopr.android.smailer.util.AndroidUtil.isPermissionsDenied
-import org.slf4j.LoggerFactory
 
-/**
- * Content utilities.
- *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
- */
-object ContentUtils {
-
-    private val log = LoggerFactory.getLogger("ContentUtils")
-    
-    fun contactName(context: Context, phone: String): String? {
-        var result: String? = null
-        if (requireReadContactPermission(context) && phone.isNotEmpty()) {
-            val uri = withAppendedPath(CONTENT_FILTER_URI, encode(phone))
-            val cursor = context.contentResolver.query(uri, arrayOf(DISPLAY_NAME), null, null, null)
-            if (cursor != null) {
-                if (cursor.moveToFirst()) {
-                    result = cursor.getString(cursor.getColumnIndex(DISPLAY_NAME))
-                }
-                cursor.close()
-            } else {
-                throw NullPointerException("Cannot obtain cursor")
+fun contactName(context: Context, phone: String): String? {
+    var result: String? = null
+    if (hasReadContactPermission(context) && phone.isNotEmpty()) {
+        val uri = withAppendedPath(CONTENT_FILTER_URI, encode(phone))
+        context.contentResolver.query(uri, arrayOf(DISPLAY_NAME), null, null, null)?.use {
+            if (it.moveToFirst()) {
+                result = it.getString(it.getColumnIndex(DISPLAY_NAME))
             }
         }
-        return result
     }
+    return result
+}
 
-    fun createPickContactEmailIntent(): Intent {
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = Email.CONTENT_TYPE
-        return intent
-    }
+fun createPickContactEmailIntent(): Intent {
+    val intent = Intent(Intent.ACTION_PICK)
+    intent.type = Email.CONTENT_TYPE
+    return intent
+}
 
-    fun emailAddressFromIntent(context: Context, intent: Intent?): String? {
-        return intent?.data?.lastPathSegment?.let { emailAddress(context, it) }
-    }
+fun emailAddressFromIntent(context: Context, intent: Intent?): String? {
+    return intent?.data?.lastPathSegment?.let { getEmailAddress(context, it) }
+}
 
-    fun phoneFromIntent(context: Context, intent: Intent?): String? {
-        return intent?.data?.lastPathSegment?.let { phone(context, it) }
-    }
+fun phoneFromIntent(context: Context, intent: Intent?): String? {
+    return intent?.data?.lastPathSegment?.let { getPhone(context, it) }
+}
 
-    fun isReadContactsPermissionsDenied(context: Context): Boolean {
-        return isPermissionsDenied(context, permission.READ_CONTACTS)
-    }
+fun isReadContactsPermissionsDenied(context: Context): Boolean {
+    return isPermissionsDenied(context, permission.READ_CONTACTS)
+}
 
-    fun markSmsAsRead(context: Context, event: PhoneEvent) {
-        val contentResolver = context.contentResolver
-        val uri = Uri.parse("content://sms/inbox")
-        val cursor = contentResolver.query(uri, null, "read = 0 AND address = ? AND date_sent = ?",
-                arrayOf(event.phone, event.startTime.toString()), null)
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                val id = cursor.getString(cursor.getColumnIndex("_id"))
-                val values = ContentValues()
-                values.put("read", true)
-                values.put("seen", true)
-                contentResolver.update(uri, values, "_id=$id", null)
-                log.debug("SMS marked as read. $event")
-            }
-            cursor.close()
-        } else {
-            throw NullPointerException("Cannot obtain cursor")
+fun markSmsAsRead(context: Context, event: PhoneEvent) {
+    val resolver = context.contentResolver
+    val uri = Uri.parse("content://sms/inbox")
+    resolver.query(uri, null, "read = 0 AND address = ? AND date_sent = ?",
+            arrayOf(event.phone, event.startTime.toString()), null)?.use {
+        if (it.moveToFirst()) {
+            val id = it.getString(it.getColumnIndex("_id"))
+            val values = ContentValues()
+            values.put("read", true)
+            values.put("seen", true)
+            resolver.update(uri, values, "_id=$id", null)
         }
     }
+}
 
-    private fun emailAddress(context: Context, emailId: String): String? {
-        var result: String? = null
-        if (requireReadContactPermission(context) && emailId.isNotEmpty()) {
-            val cursor = context.contentResolver.query(Email.CONTENT_URI, null,
-                    Email._ID + "=" + emailId, null, null)
-            if (cursor != null) {
-                if (cursor.moveToFirst()) {
-                    result = cursor.getString(cursor.getColumnIndex(Email.DATA))
-                }
-                cursor.close()
-            } else {
-                throw NullPointerException("Cannot obtain cursor")
+private fun getEmailAddress(context: Context, emailId: String): String? {
+    var result: String? = null
+    if (hasReadContactPermission(context) && emailId.isNotEmpty()) {
+        context.contentResolver.query(Email.CONTENT_URI, null, Email._ID + "=" + emailId, null, null)?.use {
+            if (it.moveToFirst()) {
+                result = it.getString(it.getColumnIndex(Email.DATA))
             }
         }
-        return result
     }
+    return result
+}
 
-    private fun phone(context: Context, phoneId: String): String? {
-        var result: String? = null
-        if (requireReadContactPermission(context) && phoneId.isNotEmpty()) {
-            val cursor = context.contentResolver.query(Phone.CONTENT_URI, null,
-                    Phone._ID + "=" + phoneId, null, null)
-            if (cursor != null) {
-                if (cursor.moveToFirst()) {
-                    result = cursor.getString(cursor.getColumnIndex(Phone.DATA))
-                }
-                cursor.close()
-            } else {
-                throw NullPointerException("Cannot obtain cursor")
+private fun getPhone(context: Context, phoneId: String): String? {
+    var result: String? = null
+    if (hasReadContactPermission(context) && phoneId.isNotEmpty()) {
+        context.contentResolver.query(Phone.CONTENT_URI, null, Phone._ID + "=" + phoneId, null, null)?.use {
+            if (it.moveToFirst()) {
+                result = it.getString(it.getColumnIndex(Phone.DATA))
             }
         }
-        return result
     }
+    return result
+}
 
-    private fun requireReadContactPermission(context: Context): Boolean {
-        if (isReadContactsPermissionsDenied(context)) {
-            log.warn("Unable read contact. Permission denied.")
-            return false
-        }
-        return true
+private fun hasReadContactPermission(context: Context): Boolean {
+    if (isReadContactsPermissionsDenied(context)) {
+        return false
     }
+    return true
 }

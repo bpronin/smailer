@@ -12,11 +12,7 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_LOCATI
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS
-import com.bopr.android.smailer.util.AddressUtil.escapePhone
-import com.bopr.android.smailer.util.ContentUtils.isReadContactsPermissionsDenied
-import com.bopr.android.smailer.util.eventTypePrefix
-import com.bopr.android.smailer.util.eventTypeText
-import com.bopr.android.smailer.util.formatDuration
+import com.bopr.android.smailer.util.*
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.text.DateFormat

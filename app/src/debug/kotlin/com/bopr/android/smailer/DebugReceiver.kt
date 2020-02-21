@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
-import com.bopr.android.smailer.util.AndroidUtil
+import com.bopr.android.smailer.util.deviceName
 import org.slf4j.LoggerFactory
 
 class DebugReceiver : BroadcastReceiver() {
@@ -24,7 +24,7 @@ class DebugReceiver : BroadcastReceiver() {
     private fun onProcessSingleEvent(context: Context) {
         val start = System.currentTimeMillis()
         startCallProcessingService(context, PhoneEvent(
-                acceptor = AndroidUtil.deviceName(),
+                acceptor = deviceName(),
                 phone = "5556",
                 text = "SMS TEXT",
                 isIncoming = true,

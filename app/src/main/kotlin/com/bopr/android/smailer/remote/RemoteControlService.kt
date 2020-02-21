@@ -18,9 +18,10 @@ import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_PHONE_
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_TEXT_FROM_BLACKLIST
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_TEXT_FROM_WHITELIST
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.SEND_SMS_TO_CALLER
-import com.bopr.android.smailer.util.AddressUtil.containsEmail
-import com.bopr.android.smailer.util.AddressUtil.extractEmail
-import com.bopr.android.smailer.util.AddressUtil.findPhone
+import com.bopr.android.smailer.util.containsEmail
+import com.bopr.android.smailer.util.containsPhone
+import com.bopr.android.smailer.util.extractEmail
+import com.bopr.android.smailer.util.findPhone
 import com.google.api.services.gmail.GmailScopes
 import org.slf4j.LoggerFactory
 
@@ -139,7 +140,7 @@ class RemoteControlService : JobIntentService() {
     private fun addTextToWhitelist(text: String?) {
         text?.let {
             with(settings.callFilter) {
-                addToCallFilter(this, textWhitelist, it, R.string.text_remotely_added_to_whitelist)
+                addToTextList(this, textWhitelist, it, R.string.text_remotely_added_to_whitelist)
             }
         }
     }
@@ -155,7 +156,7 @@ class RemoteControlService : JobIntentService() {
     private fun addTextToBlacklist(text: String?) {
         text?.let {
             with(settings.callFilter) {
-                addToCallFilter(this, textBlacklist, it, R.string.text_remotely_added_to_blacklist)
+                addToTextList(this, textBlacklist, it, R.string.text_remotely_added_to_blacklist)
             }
         }
     }
@@ -171,7 +172,7 @@ class RemoteControlService : JobIntentService() {
     private fun addPhoneToWhitelist(phone: String?) {
         phone?.let {
             with(settings.callFilter) {
-                addToCallFilter(this, phoneWhitelist, it, R.string.phone_remotely_added_to_whitelist)
+                addToPhoneList(this, phoneWhitelist, it, R.string.phone_remotely_added_to_whitelist)
             }
         }
     }
@@ -187,13 +188,22 @@ class RemoteControlService : JobIntentService() {
     private fun addPhoneToBlacklist(phone: String?) {
         phone?.let {
             with(settings.callFilter) {
-                addToCallFilter(this, phoneBlacklist, it, R.string.phone_remotely_added_to_blacklist)
+                addToPhoneList(this, phoneBlacklist, it, R.string.phone_remotely_added_to_blacklist)
             }
         }
     }
 
-    private fun addToCallFilter(filter: PhoneEventFilter, list: MutableSet<String>, value: String, messageRes: Int) {
+    private fun addToTextList(filter: PhoneEventFilter, list: MutableSet<String>, value: String, messageRes: Int) {
         if (!list.contains(value)) {
+            list.add(value)
+            saveCallFilter(filter, value, messageRes)
+        } else {
+            log.debug("Already in list")
+        }
+    }
+
+    private fun addToPhoneList(filter: PhoneEventFilter, list: MutableSet<String>, value: String, messageRes: Int) {
+        if (!containsPhone(list, value)) {
             list.add(value)
             saveCallFilter(filter, value, messageRes)
         } else {
@@ -203,20 +213,17 @@ class RemoteControlService : JobIntentService() {
 
     private fun removeFromTextList(filter: PhoneEventFilter, list: MutableSet<String>,
                                    text: String, messageRes: Int) {
-        if (list.contains(text)) {
-            list.remove(text)
-            saveCallFilter(filter, text, messageRes)
-        } else {
-            log.debug("Not in list")
-        }
+        list.remove(text)
+        saveCallFilter(filter, text, messageRes)
     }
 
     private fun removeFromPhoneList(filter: PhoneEventFilter, list: MutableSet<String>,
                                     number: String, messageRes: Int) {
+        /* searching by normalized form */
         findPhone(list, number)?.let {
             list.remove(it)
             saveCallFilter(filter, number, messageRes)
-        } ?: log.debug("Not in list")
+        }
     }
 
     private fun sendSms(message: String?, phone: String?) {

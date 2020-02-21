@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.telephony.SmsMessage
 import android.telephony.TelephonyManager.*
-import com.bopr.android.smailer.util.AndroidUtil.deviceName
+import com.bopr.android.smailer.util.deviceName
 import com.nhaarman.mockitokotlin2.*
 import org.junit.Before
 import org.junit.Test

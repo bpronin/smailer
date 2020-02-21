@@ -2,8 +2,8 @@ package com.bopr.android.smailer
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
-import com.bopr.android.smailer.util.AndroidUtil.deviceName
 import com.bopr.android.smailer.util.SharedPreferencesWrapper
+import com.bopr.android.smailer.util.deviceName
 import java.util.*
 
 /**

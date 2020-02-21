@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bopr.android.smailer.PhoneEventFilter
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.ui.CallFilterListFragment.Holder
-import com.bopr.android.smailer.util.Dialogs
+import com.bopr.android.smailer.util.showConfirmationDialog
 
 /**
  * Base for black/whitelist fragments.
@@ -75,7 +75,7 @@ abstract class CallFilterListFragment : EditableRecyclerFragment<String, Holder>
     protected abstract fun setItemsList(filter: PhoneEventFilter, list: Collection<String>)
 
     private fun onClearData() {
-        Dialogs.showConfirmationDialog(requireContext(), messageRes = R.string.ask_clear_list,
+        showConfirmationDialog(requireContext(), messageRes = R.string.ask_clear_list,
                 buttonTextRes = R.string.clear) {
             saveItems(listOf())
         }

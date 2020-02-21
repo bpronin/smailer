@@ -21,8 +21,8 @@ object DbUtil {
         }
     }
 
-    fun copyTable(db: SQLiteDatabase, tableFrom: String, tableTo: String,
-                  convert: (column: String, cursor: Cursor) -> String?) {
+    private fun copyTable(db: SQLiteDatabase, tableFrom: String, tableTo: String,
+                          convert: (column: String, cursor: Cursor) -> String?) {
         val dst = db.query(tableTo, null, null, null, null, null, null)
         val src = db.query(tableFrom, null, null, null, null, null, null)
         val srcColumns = src.columnNames
