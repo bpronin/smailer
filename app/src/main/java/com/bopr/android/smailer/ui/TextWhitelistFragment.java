@@ -25,12 +25,12 @@ public class TextWhitelistFragment extends TextFilterListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         settingsListener = new SettingsListener();
-        settings.registerOnSharedPreferenceChangeListener(settingsListener);
+        settings.registerChangeListener(settingsListener);
     }
 
     @Override
     public void onDestroy() {
-        settings.unregisterOnSharedPreferenceChangeListener(settingsListener);
+        settings.unregisterChangeListener(settingsListener);
         super.onDestroy();
     }
 
@@ -45,18 +45,14 @@ public class TextWhitelistFragment extends TextFilterListFragment {
         filter.setTextWhitelist(new HashSet<>(list));
     }
 
-    private class SettingsListener extends BaseSettingsListener {
-
-        private SettingsListener() {
-            super(requireContext());
-        }
+    private class SettingsListener implements SharedPreferences.OnSharedPreferenceChangeListener {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (key.equals(Settings.PREF_FILTER_TEXT_WHITELIST)) {
-                loadItems();
+                reloadItems();
             }
-            super.onSharedPreferenceChanged(sharedPreferences, key);
+
         }
     }
 }

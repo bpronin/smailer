@@ -3,12 +3,13 @@ package com.bopr.android.smailer;
 import android.content.Context;
 import android.util.Log;
 
-import com.bopr.android.smailer.remote.RemoteControlWorker;
-import com.bopr.android.smailer.sync.SyncEngine;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.bopr.android.smailer.ContentObserverService.enableContentObserverService;
+import static com.bopr.android.smailer.ResendWorker.setupResendWorker;
+import static com.bopr.android.smailer.remote.RemoteControlWorker.setupRemoteControlWorker;
+import static com.bopr.android.smailer.sync.SyncEngine.startSyncEngine;
 import static java.lang.Thread.UncaughtExceptionHandler;
 import static java.lang.Thread.getDefaultUncaughtExceptionHandler;
 import static java.lang.Thread.setDefaultUncaughtExceptionHandler;
@@ -33,10 +34,10 @@ public class Environment {
     public static void setupEnvironment(Context context) {
         log.debug("Application init");
 
-        ContentObserverService.enable(context);
-        ResendWorker.enable(context);
-        RemoteControlWorker.enable(context);
-        SyncEngine.enable(context);
+        enableContentObserverService(context);
+        setupResendWorker(context);
+        setupRemoteControlWorker(context);
+        startSyncEngine(context);
     }
 
 }

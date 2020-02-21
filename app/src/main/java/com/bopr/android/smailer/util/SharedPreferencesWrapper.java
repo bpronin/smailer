@@ -85,11 +85,13 @@ public class SharedPreferencesWrapper {
         return new EditorWrapper(wrappedPreferences.edit());
     }
 
-    public void registerOnSharedPreferenceChangeListener(@NonNull OnSharedPreferenceChangeListener listener) {
+    @NonNull
+    public <T extends OnSharedPreferenceChangeListener> T registerChangeListener(@NonNull T listener) {
         wrappedPreferences.registerOnSharedPreferenceChangeListener(listener);
+        return listener;
     }
 
-    public void unregisterOnSharedPreferenceChangeListener(@NonNull OnSharedPreferenceChangeListener listener) {
+    public <T extends OnSharedPreferenceChangeListener> void unregisterChangeListener(@NonNull T listener) {
         wrappedPreferences.unregisterOnSharedPreferenceChangeListener(listener);
     }
 

@@ -24,13 +24,12 @@ public class PhoneWhitelistFragment extends PhoneFilterListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        settingsListener = new SettingsListener();
-        settings.registerOnSharedPreferenceChangeListener(settingsListener);
+        settingsListener = settings.registerChangeListener(new SettingsListener());
     }
 
     @Override
     public void onDestroy() {
-        settings.unregisterOnSharedPreferenceChangeListener(settingsListener);
+        settings.unregisterChangeListener(settingsListener);
         super.onDestroy();
     }
 
@@ -45,18 +44,14 @@ public class PhoneWhitelistFragment extends PhoneFilterListFragment {
         filter.setPhoneWhitelist(new HashSet<>(list));
     }
 
-    private class SettingsListener extends BaseSettingsListener {
-
-        private SettingsListener() {
-            super(requireContext());
-        }
+    private class SettingsListener implements SharedPreferences.OnSharedPreferenceChangeListener {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (key.equals(Settings.PREF_FILTER_PHONE_WHITELIST)) {
-                loadItems();
+                reloadItems();
             }
-            super.onSharedPreferenceChanged(sharedPreferences, key);
+
         }
     }
 

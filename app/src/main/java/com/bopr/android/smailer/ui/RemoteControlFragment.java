@@ -8,12 +8,12 @@ import androidx.preference.Preference;
 
 import com.bopr.android.smailer.GoogleAuthorizationHelper;
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.remote.RemoteControlWorker;
 
 import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_ACCOUNT;
 import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_ENABLED;
 import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS;
 import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_NOTIFICATIONS;
+import static com.bopr.android.smailer.remote.RemoteControlWorker.setupRemoteControlWorker;
 import static com.bopr.android.smailer.util.TextUtil.isNullOrEmpty;
 import static com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM;
 
@@ -27,8 +27,7 @@ public class RemoteControlFragment extends BasePreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         authorizator = new GoogleAuthorizationHelper(this, PREF_REMOTE_CONTROL_ACCOUNT, MAIL_GOOGLE_COM);
-        settingsListener = new SettingsListener();
-        settings.registerOnSharedPreferenceChangeListener(settingsListener);
+        settingsListener = settings.registerChangeListener(new SettingsListener());
     }
 
     @Override
@@ -52,7 +51,7 @@ public class RemoteControlFragment extends BasePreferenceFragment {
 
     @Override
     public void onDestroy() {
-        settings.unregisterOnSharedPreferenceChangeListener(settingsListener);
+        settings.unregisterChangeListener(settingsListener);
         super.onDestroy();
     }
 
@@ -80,11 +79,7 @@ public class RemoteControlFragment extends BasePreferenceFragment {
         requirePreference(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS).setEnabled(enabled);
     }
 
-    private class SettingsListener extends BaseSettingsListener {
-
-        private SettingsListener() {
-            super(requireContext());
-        }
+    private class SettingsListener implements SharedPreferences.OnSharedPreferenceChangeListener {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -94,11 +89,10 @@ public class RemoteControlFragment extends BasePreferenceFragment {
                     break;
                 case PREF_REMOTE_CONTROL_ENABLED:
                     updatePreferences();
-                    RemoteControlWorker.enable(requireContext());
+                    setupRemoteControlWorker(requireContext());
                     break;
             }
 
-            super.onSharedPreferenceChanged(sharedPreferences, key);
         }
     }
 

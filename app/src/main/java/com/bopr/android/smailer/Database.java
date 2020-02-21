@@ -316,9 +316,17 @@ public class Database {
     }
 
     public static BroadcastReceiver registerDatabaseListener(@NonNull Context context,
-                                                             @NonNull BroadcastReceiver listener) {
-        IntentFilter filter = new IntentFilter(DATABASE_EVENT);
-        LocalBroadcastManager.getInstance(context).registerReceiver(listener, filter);
+                                                             @NonNull Runnable onChange) {
+        BroadcastReceiver listener = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                onChange.run();
+            }
+        };
+
+        LocalBroadcastManager.getInstance(context).registerReceiver(listener,
+                new IntentFilter(DATABASE_EVENT));
         return listener;
     }
 

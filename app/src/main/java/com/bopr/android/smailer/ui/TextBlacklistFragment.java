@@ -6,11 +6,12 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 
 import com.bopr.android.smailer.PhoneEventFilter;
-import com.bopr.android.smailer.Settings;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static com.bopr.android.smailer.Settings.PREF_FILTER_TEXT_BLACKLIST;
 
 /**
  * Text blacklist activity fragment.
@@ -24,13 +25,12 @@ public class TextBlacklistFragment extends TextFilterListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        settingsListener = new SettingsListener();
-        settings.registerOnSharedPreferenceChangeListener(settingsListener);
+        settingsListener = settings.registerChangeListener(new SettingsListener());
     }
 
     @Override
     public void onDestroy() {
-        settings.unregisterOnSharedPreferenceChangeListener(settingsListener);
+        settings.unregisterChangeListener(settingsListener);
         super.onDestroy();
     }
 
@@ -45,18 +45,14 @@ public class TextBlacklistFragment extends TextFilterListFragment {
         filter.setTextBlacklist(new HashSet<>(list));
     }
 
-    private class SettingsListener extends BaseSettingsListener {
-
-        private SettingsListener() {
-            super(requireContext());
-        }
+    private class SettingsListener implements SharedPreferences.OnSharedPreferenceChangeListener {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if (key.equals(Settings.PREF_FILTER_TEXT_BLACKLIST)) {
-                loadItems();
+            if (key.equals(PREF_FILTER_TEXT_BLACKLIST)) {
+                reloadItems();
             }
-            super.onSharedPreferenceChanged(sharedPreferences, key);
+
         }
     }
 

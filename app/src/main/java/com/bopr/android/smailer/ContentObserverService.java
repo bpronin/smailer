@@ -90,7 +90,7 @@ public class ContentObserverService extends Service {
      *
      * @param context context
      */
-    public static void enable(Context context) {
+    public static void enableContentObserverService(Context context) {
         Intent intent = new Intent(context, ContentObserverService.class);
         Set<String> triggers = settings(context).getFilter().getTriggers();
         if (triggers.contains(VAL_PREF_TRIGGER_OUT_SMS)) {

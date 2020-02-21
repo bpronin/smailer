@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -31,6 +32,7 @@ import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.bopr.android.smailer.util.UiUtil.showToast;
 import static com.bopr.android.smailer.util.UiUtil.underwivedText;
 import static java.lang.String.valueOf;
+import static java.util.Objects.requireNonNull;
 
 
 /**
@@ -49,13 +51,12 @@ public class RecipientsFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
-        settingsListener = new SettingsListener();
-        settings.registerOnSharedPreferenceChangeListener(settingsListener);
+        settingsListener = settings.registerChangeListener(new SettingsListener());
     }
 
     @Override
     public void onDestroy() {
-        settings.unregisterOnSharedPreferenceChangeListener(settingsListener);
+        settings.unregisterChangeListener(settingsListener);
         super.onDestroy();
     }
 
@@ -217,7 +218,7 @@ public class RecipientsFragment extends BaseFragment {
     }
 
     private class Item {
-
+        // TODO: 22.02.2020 remove it/ make string
         private final String address;
 
         private Item(String address) {
@@ -238,10 +239,12 @@ public class RecipientsFragment extends BaseFragment {
 
         @Override
         public void onBindViewHolder(@NonNull final ItemViewHolder holder, int position) {
-            final Item item = getItem(position);
+            final Item item = requireItem(position);
 
-            String address = item != null ? item.address : null;
-            holder.textView.setText(isValidEmailAddress(address) ? address : underwivedText(requireContext(), address));
+            String address = item.address;
+            holder.textView.setText(isValidEmailAddress(address)
+                    ? address :
+                    underwivedText(requireContext(), address));
 
             holder.itemView.setOnClickListener(v -> editItem(item));
         }
@@ -256,8 +259,14 @@ public class RecipientsFragment extends BaseFragment {
             return items.size();
         }
 
+        @Nullable
         private Item getItem(int position) {
             return position != -1 ? items.get(position) : null;
+        }
+
+        @NonNull
+        private Item requireItem(int position) {
+            return requireNonNull(getItem(position));
         }
 
         private List<Item> getItems() {
@@ -304,18 +313,14 @@ public class RecipientsFragment extends BaseFragment {
 
     }
 
-    private class SettingsListener extends BaseSettingsListener {
-
-        private SettingsListener() {
-            super(requireContext());
-        }
+    private class SettingsListener implements SharedPreferences.OnSharedPreferenceChangeListener {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (key.equals(Settings.PREF_RECIPIENTS_ADDRESS)) {
                 loadItems();
             }
-            super.onSharedPreferenceChanged(sharedPreferences, key);
+
         }
     }
 

@@ -1,7 +1,6 @@
 package com.bopr.android.smailer.ui;
 
 import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -11,20 +10,16 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.Preference.OnPreferenceClickListener;
 
-import com.bopr.android.smailer.ContentObserverService;
 import com.bopr.android.smailer.Database;
 import com.bopr.android.smailer.GoogleAuthorizationHelper;
 import com.bopr.android.smailer.R;
-import com.bopr.android.smailer.ResendWorker;
 
 import static com.bopr.android.smailer.Database.registerDatabaseListener;
 import static com.bopr.android.smailer.Database.unregisterDatabaseListener;
 import static com.bopr.android.smailer.Settings.PREF_DEVICE_ALIAS;
 import static com.bopr.android.smailer.Settings.PREF_EMAIL_LOCALE;
-import static com.bopr.android.smailer.Settings.PREF_EMAIL_TRIGGERS;
 import static com.bopr.android.smailer.Settings.PREF_HISTORY;
 import static com.bopr.android.smailer.Settings.PREF_RECIPIENTS_ADDRESS;
-import static com.bopr.android.smailer.Settings.PREF_RESEND_UNSENT;
 import static com.bopr.android.smailer.Settings.PREF_RULES;
 import static com.bopr.android.smailer.Settings.PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization;
@@ -58,11 +53,10 @@ public class MainFragment extends BasePreferenceFragment {
         authorizator = new GoogleAuthorizationHelper(this, PREF_SENDER_ACCOUNT, GMAIL_SEND,
                 DRIVE_APPDATA);
 
-        settingsListener = new SettingsListener();
-        settings.registerOnSharedPreferenceChangeListener(settingsListener);
+        settingsListener = settings.registerChangeListener(new SettingsListener());
 
         database = new Database(requireContext());
-        databaseListener = registerDatabaseListener(requireContext(), new DatabaseListener());
+        databaseListener = registerDatabaseListener(requireContext(), this::updateHistoryPreference);
 
         permissionsHelper.checkAll();
         requireIgnoreBatteryOptimization(requireContext());
@@ -83,21 +77,21 @@ public class MainFragment extends BasePreferenceFragment {
         requirePreference(PREF_RULES).setOnPreferenceClickListener(preferenceClickListener);
 
         requirePreference(PREF_EMAIL_LOCALE).setOnPreferenceChangeListener((preference, value) -> {
-            updateLocalePreferenceSummary((ListPreference) preference, (String) value);
+            updateLocalePreference((ListPreference) preference, (String) value);
             return true;
         });
 
         EditTextPreference deviceNamePreference = requirePreference(PREF_DEVICE_ALIAS);
         deviceNamePreference.setOnBindEditTextListener(editText -> editText.setHint(deviceName()));
         deviceNamePreference.setOnPreferenceChangeListener((preference, value) -> {
-            updateDeviceNamePreferenceSummary((EditTextPreference) preference, (String) value);
+            updateDeviceNamePreference((EditTextPreference) preference, (String) value);
             return true;
         });
     }
 
     @Override
     public void onDestroy() {
-        settings.unregisterOnSharedPreferenceChangeListener(settingsListener);
+        settings.unregisterChangeListener(settingsListener);
         unregisterDatabaseListener(requireContext(), databaseListener);
         database.close();
         super.onDestroy();
@@ -112,12 +106,12 @@ public class MainFragment extends BasePreferenceFragment {
     @Override
     public void onStart() {
         super.onStart();
-        updateAccountPreferenceSummary();
-        updateRecipientsPreferenceSummary();
-        updateHistoryPreferenceSummary();
+        updateAccountPreference();
+        updateRecipientsPreference();
+        updateHistoryPreference();
     }
 
-    private void updateAccountPreferenceSummary() {
+    private void updateAccountPreference() {
         String value = settings.getString(PREF_SENDER_ACCOUNT, "");
         if (isNullOrEmpty(value)) {
             updateSummary(accountPreference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED);
@@ -128,7 +122,7 @@ public class MainFragment extends BasePreferenceFragment {
         }
     }
 
-    private void updateRecipientsPreferenceSummary() {
+    private void updateRecipientsPreference() {
         String value = settings.getString(PREF_RECIPIENTS_ADDRESS);
         if (isNullOrEmpty(value)) {
             updateSummary(recipientsPreference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED);
@@ -138,7 +132,7 @@ public class MainFragment extends BasePreferenceFragment {
         }
     }
 
-    private void updateHistoryPreferenceSummary() {
+    private void updateHistoryPreference() {
         long count = database.getUnreadEventsCount();
         if (count > 0) {
             String text = formatter(requireContext())
@@ -151,7 +145,7 @@ public class MainFragment extends BasePreferenceFragment {
         }
     }
 
-    private void updateLocalePreferenceSummary(ListPreference preference, String value) {
+    private void updateLocalePreference(ListPreference preference, String value) {
         int index = preference.findIndexOfValue(value);
         if (index < 0) {
             updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED);
@@ -161,7 +155,7 @@ public class MainFragment extends BasePreferenceFragment {
         }
     }
 
-    private void updateDeviceNamePreferenceSummary(EditTextPreference preference, String value) {
+    private void updateDeviceNamePreference(EditTextPreference preference, String value) {
         if (isNullOrEmpty(value)) {
             updateSummary(preference, deviceName(), SUMMARY_STYLE_DEFAULT);
         } else {
@@ -191,38 +185,19 @@ public class MainFragment extends BasePreferenceFragment {
         }
     }
 
-    private class SettingsListener extends BaseSettingsListener {
-
-        private SettingsListener() {
-            super(requireContext());
-        }
+    private class SettingsListener implements SharedPreferences.OnSharedPreferenceChangeListener {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             switch (key) {
                 case PREF_SENDER_ACCOUNT:
-                    updateAccountPreferenceSummary();
+                    updateAccountPreference();
                     break;
                 case PREF_RECIPIENTS_ADDRESS:
-                    updateRecipientsPreferenceSummary();
-                    break;
-                case PREF_EMAIL_TRIGGERS:
-                    ContentObserverService.enable(requireContext());
-                    break;
-                case PREF_RESEND_UNSENT:
-                    ResendWorker.enable(requireContext());
+                    updateRecipientsPreference();
                     break;
             }
-
-            super.onSharedPreferenceChanged(sharedPreferences, key);
         }
     }
 
-    private class DatabaseListener extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            updateHistoryPreferenceSummary();
-        }
-    }
 }

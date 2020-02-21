@@ -68,7 +68,7 @@ public class PermissionsHelper implements SharedPreferences.OnSharedPreferenceCh
     protected PermissionsHelper(Activity activity, Settings settings) {
         this.activity = activity;
         this.settings = settings;
-        this.settings.registerOnSharedPreferenceChangeListener(this);
+        this.settings.registerChangeListener(this);
 
         items.put(RECEIVE_SMS, R.string.permission_rationale_receive_sms);
         items.put(WRITE_SMS, R.string.permission_rationale_write_sms);
@@ -82,7 +82,7 @@ public class PermissionsHelper implements SharedPreferences.OnSharedPreferenceCh
     }
 
     public void dispose() {
-        settings.unregisterOnSharedPreferenceChangeListener(this);
+        settings.unregisterChangeListener(this);
         log.debug("Disposed");
     }
 

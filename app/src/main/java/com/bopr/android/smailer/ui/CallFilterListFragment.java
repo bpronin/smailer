@@ -77,7 +77,7 @@ abstract class CallFilterListFragment extends BaseFragment {
         FloatingActionButton addButton = view.findViewById(R.id.button_add);
         addButton.setOnClickListener(v -> addItem());
 
-        loadItems();
+        reloadItems();
 
         return view;
     }
@@ -122,7 +122,7 @@ abstract class CallFilterListFragment extends BaseFragment {
     @Nullable
     abstract String getItemText(@Nullable String value);
 
-    void loadItems() {
+    void reloadItems() {
         listAdapter = new ListAdapter();
         listAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
 

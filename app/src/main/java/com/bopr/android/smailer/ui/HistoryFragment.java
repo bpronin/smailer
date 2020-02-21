@@ -1,8 +1,6 @@
 package com.bopr.android.smailer.ui;
 
 import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.format.DateFormat;
@@ -77,11 +75,10 @@ public class HistoryFragment extends BaseFragment {
 
         formatter = new TagFormatter(requireContext());
 
-        settingsChangeListener = new SettingsListener();
-        settings.registerOnSharedPreferenceChangeListener(settingsChangeListener);
+        settingsChangeListener = settings.registerChangeListener(new SettingsListener());
 
         database = new Database(getContext());
-        databaseListener = registerDatabaseListener(requireContext(), new DatabaseListener());
+        databaseListener = registerDatabaseListener(requireContext(), this::reloadItems);
     }
 
     @Override
@@ -103,7 +100,7 @@ public class HistoryFragment extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        settings.unregisterOnSharedPreferenceChangeListener(settingsChangeListener);
+        settings.unregisterChangeListener(settingsChangeListener);
         unregisterDatabaseListener(requireContext(), databaseListener);
         database.close();
     }
@@ -397,11 +394,4 @@ public class HistoryFragment extends BaseFragment {
         }
     }
 
-    private class DatabaseListener extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            reloadItems();
-        }
-    }
 }
