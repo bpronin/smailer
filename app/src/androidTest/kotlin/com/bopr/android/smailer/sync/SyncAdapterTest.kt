@@ -46,7 +46,7 @@ class SyncAdapterTest : BaseTest() {
                 .apply()
         sync.sync()
 
-        assertEquals(setOf("A", "B", "C"), settings.getCallFilter().phoneBlacklist)
+        assertEquals(setOf("A", "B", "C"), settings.callFilter.phoneBlacklist)
 
         settings.edit()
                 .putLong(PREF_SYNC_TIME, 1) /* earlier than previous */
@@ -54,7 +54,7 @@ class SyncAdapterTest : BaseTest() {
                 .apply()
         sync.sync()
 
-        assertEquals(setOf("A", "B", "C"), settings.getCallFilter().phoneBlacklist)
+        assertEquals(setOf("A", "B", "C"), settings.callFilter.phoneBlacklist)
 
         settings.edit()
                 .putLong(PREF_SYNC_TIME, 3) /* later than previous */
@@ -62,7 +62,7 @@ class SyncAdapterTest : BaseTest() {
                 .apply()
         sync.sync()
 
-        assertEquals(setOf("A", "B"), settings.getCallFilter().phoneBlacklist)
+        assertEquals(setOf("A", "B"), settings.callFilter.phoneBlacklist)
 
         sync.dispose()
     }
