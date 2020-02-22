@@ -63,22 +63,22 @@
 
         <activity
             android:name=".ui.CallFilterPhoneBlacklistActivity"
-            android:label="@string/blacklist"
+            android:label="@string/phone_blacklist"
             android:parentActivityName=".ui.RulesActivity" />
 
         <activity
             android:name=".ui.CallFilterPhoneWhitelistActivity"
-            android:label="@string/whitelist"
+            android:label="@string/phone_whitelist"
             android:parentActivityName=".ui.RulesActivity" />
 
         <activity
             android:name=".ui.CallFilterTextBlacklistActivity"
-            android:label="@string/blacklist"
+            android:label="@string/text_blacklist"
             android:parentActivityName=".ui.RulesActivity" />
 
         <activity
             android:name=".ui.CallFilterTextWhitelistActivity"
-            android:label="@string/whitelist"
+            android:label="@string/text_whitelist"
             android:parentActivityName=".ui.RulesActivity" />
 
         <activity

@@ -88,6 +88,7 @@
     <string name="permission_rationale_receive_sms">Чтобы отправлять почтовое сообщение при приеме SMS, необходимо разрешение \"%s\".</string>
     <string name="permission_rationale_send_sms">Чтобы удаленно отправлять SMS сообщения, необходимо разрешение \"%s\".</string>
     <string name="permission_rationale_write_sms">Чтобы отмечать обработанные SMS как прочитанные, необходимо разрешение \"%s\".</string>
+    <string name="phone_blacklist">Черный список номеров</string>
     <string name="phone_number">Телефон</string>
     <string name="phone_number_filter">Фильтр номеров</string>
     <string name="phone_remotely_added_to_blacklist">Номер %s удаленно добавлен в черный список."</string>
@@ -95,6 +96,7 @@
     <string name="phone_remotely_removed_from_blacklist">Номер %s удаленно удален из черного списка."</string>
     <string name="phone_remotely_removed_from_whitelist">Номер %s удаленно удален из белого списка."</string>
     <string name="phone_removed_from_filter">%1$s удален из фильтра</string>
+    <string name="phone_whitelist">Белый список номеров</string>
     <string name="proceed">Продолжить</string>
     <string name="recipient_already_exists">Получатель %1$s уже существует</string>
     <string name="recipient_device">Адресат:</string>
@@ -119,6 +121,7 @@
     <string name="service_account_not_specified">Не указан сервисный аккаунт.</string>
     <string name="service_running">Служба запущена</string>
     <string name="since_permissions_not_granted">Некоторые настройки отключены, поскольку разрешения не получены.</string>
+    <string name="text_blacklist">Черный список фраз</string>
     <string name="text_filter">Фильтр текста</string>
     <string name="text_fragment">Фрагмент текста</string>
     <string name="text_in_blacklist">текст в черном списке</string>
@@ -126,6 +129,7 @@
     <string name="text_remotely_added_to_whitelist">Текст \"%s\" удаленно добавлен в белый список."</string>
     <string name="text_remotely_removed_from_blacklist">Текст \"%s\" удаленно удален из черного списка."</string>
     <string name="text_remotely_removed_from_whitelist">Текст \"%s\" удаленно удален из белого списка."</string>
+    <string name="text_whitelist">Белый список фраз</string>
     <string name="time">Время:</string>
     <string name="time_time">Время: %s</string>
     <string name="trigger_off">триггер выключен</string>
