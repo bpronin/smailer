@@ -2,6 +2,7 @@ package com.bopr.android.smailer
 
 import android.Manifest.permission.*
 import android.app.Activity
+import android.content.Context
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.content.pm.PackageManager
@@ -17,6 +18,7 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
+import com.bopr.android.smailer.util.permissionLabel
 import com.bopr.android.smailer.util.showInfoDialog
 import org.slf4j.LoggerFactory
 import java.util.*
@@ -31,19 +33,6 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
     private val log = LoggerFactory.getLogger("PermissionsHelper")
     private val requestResultCode = nextRequestResult++
     private val settings: Settings = Settings(activity)
-
-    @Suppress("DEPRECATION")
-    private val items: Map<String, Int> = mapOf(
-            RECEIVE_SMS to R.string.permission_rationale_receive_sms,
-            WRITE_SMS to R.string.permission_rationale_write_sms,
-            READ_SMS to R.string.permission_rationale_read_sms,
-            READ_PHONE_STATE to R.string.permission_rationale_phone_state,
-            PROCESS_OUTGOING_CALLS to R.string.permission_rationale_outgoing_call, // TODO: 06.02.2020 deprecated
-            READ_CONTACTS to R.string.permission_rationale_read_contacts,
-            ACCESS_COARSE_LOCATION to R.string.permission_rationale_coarse_location,
-            ACCESS_FINE_LOCATION to R.string.permission_rationale_fine_location,
-            SEND_SMS to R.string.permission_rationale_send_sms
-    )
 
     init {
         settings.registerChangeListener(this)
@@ -185,20 +174,9 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
     private fun formatRationale(permissions: Collection<String>): String {
         val sb = StringBuilder()
         for (permission in permissions) {
-            val line = activity.getString(items.getValue(permission), permissionLabel(permission))
-            sb.append(line).append("\n\n")
+            sb.append(permissionRationale(activity, permission)).append("\n\n")
         }
         return sb.toString()
-    }
-
-    private fun permissionLabel(permission: String): String {
-        return try {
-            val packageManager = activity.packageManager
-            val info = packageManager.getPermissionInfo(permission, 0)
-            info.loadLabel(packageManager).toString()
-        } catch (x: PackageManager.NameNotFoundException) {
-            throw RuntimeException(x)
-        }
     }
 
     private fun showDenialImpact() {
@@ -207,7 +185,25 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
 
     companion object {
 
-        private const val WRITE_SMS = "android.permission.WRITE_SMS"
+        const val WRITE_SMS = "android.permission.WRITE_SMS"
+
+        @Suppress("DEPRECATION")
+        private val items: Map<String, Int> = mapOf(
+                RECEIVE_SMS to R.string.permission_rationale_receive_sms,
+                WRITE_SMS to R.string.permission_rationale_write_sms,
+                READ_SMS to R.string.permission_rationale_read_sms,
+                READ_PHONE_STATE to R.string.permission_rationale_phone_state,
+                PROCESS_OUTGOING_CALLS to R.string.permission_rationale_outgoing_call, // TODO: 06.02.2020 deprecated
+                READ_CONTACTS to R.string.permission_rationale_read_contacts,
+                ACCESS_COARSE_LOCATION to R.string.permission_rationale_coarse_location,
+                ACCESS_FINE_LOCATION to R.string.permission_rationale_fine_location,
+                SEND_SMS to R.string.permission_rationale_send_sms
+        )
+
+        fun permissionRationale(context: Context, permission: String): String {
+            return context.getString(items.getValue(permission), permissionLabel(context, permission))
+        }
+
         private var nextRequestResult = 200
     }
 

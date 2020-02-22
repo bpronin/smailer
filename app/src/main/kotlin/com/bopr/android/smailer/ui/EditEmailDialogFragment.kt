@@ -1,5 +1,6 @@
 package com.bopr.android.smailer.ui
 
+import android.Manifest.permission
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.view.LayoutInflater
@@ -7,9 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
+import com.bopr.android.smailer.PermissionsHelper.Companion.permissionRationale
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.util.createPickContactEmailIntent
-import com.bopr.android.smailer.util.emailAddressFromIntent
+import com.bopr.android.smailer.util.checkPermission
+import com.bopr.android.smailer.util.createPickContactIntent
+import com.bopr.android.smailer.util.emailFromIntent
+import com.bopr.android.smailer.util.showToast
 
 /**
  * Email editor dialog.
@@ -32,7 +36,12 @@ class EditEmailDialogFragment : BaseEditDialogFragment<String>("edit_recipient_d
         view.findViewById<TextView>(android.R.id.message).setText(R.string.email_address)
 
         view.findViewById<View>(R.id.button_browse_contacts).setOnClickListener {
-            startActivityForResult(createPickContactEmailIntent(), PICK_CONTACT_REQUEST)
+            val context = requireContext()
+            if (checkPermission(context, permission.READ_CONTACTS)) {
+                startActivityForResult(createPickContactIntent(), PICK_CONTACT_REQUEST)
+            } else {
+                showToast(context, permissionRationale(context, permission.READ_CONTACTS))
+            }
         }
 
         return view
@@ -48,7 +57,7 @@ class EditEmailDialogFragment : BaseEditDialogFragment<String>("edit_recipient_d
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         if (requestCode == PICK_CONTACT_REQUEST && resultCode == RESULT_OK) {
-            editText.text = emailAddressFromIntent(requireContext(), intent)
+            editText.text = emailFromIntent(requireContext(), intent)
         }
     }
 

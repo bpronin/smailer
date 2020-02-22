@@ -6,7 +6,7 @@ import android.content.Context
 import android.location.Location
 import android.os.Looper
 import com.bopr.android.smailer.util.Mockable
-import com.bopr.android.smailer.util.isPermissionsDenied
+import com.bopr.android.smailer.util.checkPermission
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -60,7 +60,7 @@ class GeoLocator(private val context: Context, private val database: Database) {
     }
 
     private fun getCurrentLocation(timeout: Long): GeoCoordinates? {
-        if (isPermissionsDenied(context)) {
+        if (!isLocationPermissionsGranted(context)) {
             log.warn("Unable to read current location. Permission denied.")
             return null
         }
@@ -89,7 +89,7 @@ class GeoLocator(private val context: Context, private val database: Database) {
     }
 
     private fun getLastLocation(timeout: Long): GeoCoordinates? {
-        if (isPermissionsDenied(context)) {
+        if (!isLocationPermissionsGranted(context)) {
             log.warn("Unable to read last location. Permission denied.")
             return null
         }
@@ -125,8 +125,8 @@ class GeoLocator(private val context: Context, private val database: Database) {
         private val log = LoggerFactory.getLogger("GeoLocator")
         private const val DEFAULT_TIMEOUT = 1000
 
-        fun isPermissionsDenied(context: Context): Boolean {
-            return isPermissionsDenied(context, ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION)
+        fun isLocationPermissionsGranted(context: Context): Boolean {
+            return checkPermission(context, ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION)
         }
     }
 

@@ -1,6 +1,7 @@
 package com.bopr.android.smailer.util
 
-import android.Manifest.permission
+import android.Manifest.permission.READ_CONTACTS
+import android.Manifest.permission.READ_SMS
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
@@ -9,44 +10,62 @@ import android.net.Uri.encode
 import android.net.Uri.withAppendedPath
 import android.provider.ContactsContract.CommonDataKinds.Email
 import android.provider.ContactsContract.CommonDataKinds.Phone
-import android.provider.ContactsContract.PhoneLookup.CONTENT_FILTER_URI
-import android.provider.ContactsContract.PhoneLookup.DISPLAY_NAME
+import android.provider.ContactsContract.Contacts
+import android.provider.ContactsContract.PhoneLookup
+import androidx.annotation.RequiresPermission
+import com.bopr.android.smailer.PermissionsHelper.Companion.WRITE_SMS
 import com.bopr.android.smailer.PhoneEvent
 
+@RequiresPermission(READ_CONTACTS)
 fun contactName(context: Context, phone: String): String? {
+    val uri = withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, encode(phone))
     var result: String? = null
-    if (hasReadContactPermission(context) && phone.isNotEmpty()) {
-        val uri = withAppendedPath(CONTENT_FILTER_URI, encode(phone))
-        context.contentResolver.query(uri, arrayOf(DISPLAY_NAME), null, null, null)?.use {
-            if (it.moveToFirst()) {
-                result = it.getString(it.getColumnIndex(DISPLAY_NAME))
+    context.contentResolver.query(uri, arrayOf(PhoneLookup.DISPLAY_NAME), null, null, null)?.use {
+        if (it.moveToFirst()) {
+            result = it.getString(it.getColumnIndex(PhoneLookup.DISPLAY_NAME))
+        }
+    }
+    return result
+}
+
+@RequiresPermission(READ_CONTACTS)
+fun createPickContactIntent(): Intent {
+    return Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI)
+}
+
+@RequiresPermission(READ_CONTACTS)
+fun phoneFromIntent(context: Context, intent: Intent?): String? {
+    val uri: Uri = intent!!.data!!
+    var result: String? = null
+    context.contentResolver.query(uri, null, null, null, null)?.use {
+        if (it.moveToFirst()) {
+            val hasPhone = it.getInt(it.getColumnIndex(Contacts.HAS_PHONE_NUMBER))
+            if (hasPhone == 1) {
+                val id = it.getString(it.getColumnIndexOrThrow(Contacts._ID))
+                result = retrievePhone(context, id)
             }
         }
     }
     return result
 }
 
-fun createPickContactEmailIntent(): Intent {
-    val intent = Intent(Intent.ACTION_PICK)
-    intent.type = Email.CONTENT_TYPE
-    return intent
+@RequiresPermission(READ_CONTACTS)
+fun emailFromIntent(context: Context, intent: Intent?): String? {
+    val uri: Uri = intent!!.data!!
+    var result: String? = null
+    context.contentResolver.query(uri, null, null, null, null)?.use {
+        if (it.moveToFirst()) {
+            val id = it.getString(it.getColumnIndexOrThrow(Contacts._ID))
+            result = retrieveEmail(context, id)
+        }
+    }
+    return result
 }
 
-fun emailAddressFromIntent(context: Context, intent: Intent?): String? {
-    return intent?.data?.lastPathSegment?.let { getEmailAddress(context, it) }
-}
-
-fun phoneFromIntent(context: Context, intent: Intent?): String? {
-    return intent?.data?.lastPathSegment?.let { getPhone(context, it) }
-}
-
-fun isReadContactsPermissionsDenied(context: Context): Boolean {
-    return isPermissionsDenied(context, permission.READ_CONTACTS)
-}
-
+@RequiresPermission(anyOf = [READ_SMS, WRITE_SMS])
 fun markSmsAsRead(context: Context, event: PhoneEvent) {
-    val resolver = context.contentResolver
     val uri = Uri.parse("content://sms/inbox")
+    val resolver = context.contentResolver
     resolver.query(uri, null, "read = 0 AND address = ? AND date_sent = ?",
             arrayOf(event.phone, event.startTime.toString()), null)?.use {
         if (it.moveToFirst()) {
@@ -59,33 +78,22 @@ fun markSmsAsRead(context: Context, event: PhoneEvent) {
     }
 }
 
-private fun getEmailAddress(context: Context, emailId: String): String? {
+private fun retrievePhone(context: Context, contactId: String): String? {
     var result: String? = null
-    if (hasReadContactPermission(context) && emailId.isNotEmpty()) {
-        context.contentResolver.query(Email.CONTENT_URI, null, Email._ID + "=" + emailId, null, null)?.use {
-            if (it.moveToFirst()) {
-                result = it.getString(it.getColumnIndex(Email.DATA))
-            }
+    context.contentResolver.query(Phone.CONTENT_URI, null, "${Phone.CONTACT_ID} = $contactId", null, null)?.use {
+        if (it.moveToFirst()) {
+            result = it.getString(it.getColumnIndex(Phone.DATA))
         }
     }
     return result
 }
 
-private fun getPhone(context: Context, phoneId: String): String? {
+private fun retrieveEmail(context: Context, contactId: String): String? {
     var result: String? = null
-    if (hasReadContactPermission(context) && phoneId.isNotEmpty()) {
-        context.contentResolver.query(Phone.CONTENT_URI, null, Phone._ID + "=" + phoneId, null, null)?.use {
-            if (it.moveToFirst()) {
-                result = it.getString(it.getColumnIndex(Phone.DATA))
-            }
+    context.contentResolver.query(Email.CONTENT_URI, null, "${Email.CONTACT_ID}=$contactId", null, null)?.use {
+        if (it.moveToFirst()) {
+            result = it.getString(it.getColumnIndex(Email.DATA))
         }
     }
     return result
-}
-
-private fun hasReadContactPermission(context: Context): Boolean {
-    if (isReadContactsPermissionsDenied(context)) {
-        return false
-    }
-    return true
 }

@@ -1,11 +1,19 @@
 package com.bopr.android.smailer.ui
 
+import android.Manifest.permission
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
+import com.bopr.android.smailer.PermissionsHelper.Companion.permissionRationale
 import com.bopr.android.smailer.R
+import com.bopr.android.smailer.util.checkPermission
+import com.bopr.android.smailer.util.createPickContactIntent
+import com.bopr.android.smailer.util.phoneFromIntent
+import com.bopr.android.smailer.util.showToast
 
 /**
  * Phone number editor dialog.
@@ -27,7 +35,14 @@ class EditPhoneDialogFragment : BaseEditDialogFragment<String>("edit_phone_dialo
         /* custom message view. do not use setMessage() it's ugly */
         view.findViewById<TextView>(R.id.dialog_message).setText(R.string.enter_phone_number)
 
-        //todo phone from contact list
+        view.findViewById<View>(R.id.button_browse_contacts).setOnClickListener {
+            val context = requireContext()
+            if (checkPermission(context, permission.READ_CONTACTS)) {
+                startActivityForResult(createPickContactIntent(), PICK_CONTACT_REQUEST)
+            } else {
+                showToast(context, permissionRationale(context, permission.READ_CONTACTS))
+            }
+        }
 
         return view
     }
@@ -40,14 +55,14 @@ class EditPhoneDialogFragment : BaseEditDialogFragment<String>("edit_phone_dialo
         return editText.text.toString()
     }
 
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-//        if (requestCode == PICK_CONTACT_REQUEST && resultCode == RESULT_OK) {
-//            editText.setText(phoneFromIntent(requireContext(), intent))
-//        }
-//    }
-//
-//    companion object {
-//
-//        private const val PICK_CONTACT_REQUEST = 1009
-//    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        if (requestCode == PICK_CONTACT_REQUEST && resultCode == RESULT_OK) {
+            editText.setText(phoneFromIntent(requireContext(), intent))
+        }
+    }
+
+    companion object {
+
+        private const val PICK_CONTACT_REQUEST = 1009
+    }
 }

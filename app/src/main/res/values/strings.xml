@@ -48,7 +48,7 @@
     <string name="email_successfully_send">Email successfully sent.</string>
     <string name="enter_phone_number">Enter phone number. You also may use * as a wildcard.</string>
     <string name="events_causing_sending_mail">Events causing sending email</string>
-    <string name="geolocation_disabled">(location service disabled)</string>
+    <string name="geolocation_disabled">(location service disabled on device)</string>
     <string name="history_is_empty">History is empty</string>
     <string name="ignored">Ignored</string>
     <string name="incoming_call">Incoming call</string>

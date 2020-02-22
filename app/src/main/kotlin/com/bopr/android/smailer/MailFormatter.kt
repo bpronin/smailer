@@ -1,10 +1,11 @@
 package com.bopr.android.smailer
 
+import android.Manifest.permission
 import android.content.Context
 import android.content.res.Resources
 import android.text.TextUtils.htmlEncode
 import androidx.annotation.StringRes
-import com.bopr.android.smailer.GeoLocator.Companion.isPermissionsDenied
+import com.bopr.android.smailer.GeoLocator.Companion.isLocationPermissionsGranted
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_CONTACT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_HEADER
@@ -189,11 +190,11 @@ class MailFormatter(private val context: Context, private val event: PhoneEvent)
             val phoneLink = "<a href=\"tel:$phoneUrl\" style=\"text-decoration: none\">&#9742;</a>${event.phone}"
 
             val contact = if (contactName.isNullOrBlank()) {
-                return if (isReadContactsPermissionsDenied(context)) {
-                    getString(R.string.contact_no_permission_read_contact)
-                } else {
+                return if (checkPermission(context, permission.READ_CONTACTS)) {
                     "<a href=\"https://www.google.com/search?q=$phoneUrl\">" +
                             "${getString(R.string.unknown_contact)}</a>"
+                } else {
+                    getString(R.string.contact_no_permission_read_contact)
                 }
             } else {
                 contactName
@@ -240,10 +241,10 @@ class MailFormatter(private val context: Context, private val event: PhoneEvent)
                 val link = "<a href=\"https://www.google.com/maps/place/$lt+$ln/@$lt,$ln\">$text</a>"
                 getString(R.string.last_known_location, link)
             } else {
-                val text = if (isPermissionsDenied(context)) {
-                    getString(R.string.no_permission_read_location)
-                } else {
+                val text = if (isLocationPermissionsGranted(context)) {
                     getString(R.string.geolocation_disabled)
+                } else {
+                    getString(R.string.no_permission_read_location)
                 }
                 getString(R.string.last_known_location, text)
             }
