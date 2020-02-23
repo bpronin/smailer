@@ -14,7 +14,7 @@ public class GoogleMailTest  extends BaseTest{
         message.setRecipients("boprsoftdev@gmail.com");
 
         GoogleMail transport = new GoogleMail(getContext());
-        transport.startSession("bo.smailer.service@gmail.com", GMAIL_SEND);
+        transport.login("bo.smailer.service@gmail.com", GMAIL_SEND);
         transport.send(message);
     }
 }

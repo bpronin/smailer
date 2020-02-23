@@ -1,6 +1,7 @@
 package com.bopr.android.smailer;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.PermissionInfo;
@@ -43,6 +44,7 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_IN_SMS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_MISSED_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_CALLS;
 import static com.bopr.android.smailer.Settings.VAL_PREF_TRIGGER_OUT_SMS;
+import static com.bopr.android.smailer.util.AndroidUtil.checkPermission;
 import static com.bopr.android.smailer.util.TagFormatter.formatter;
 import static com.google.common.collect.Iterables.toArray;
 
@@ -256,6 +258,10 @@ public class PermissionsHelper implements SharedPreferences.OnSharedPreferenceCh
                 .setMessage(R.string.since_permissions_not_granted)
                 .setPositiveButton(android.R.string.ok, null)
                 .show();
+    }
+
+    static boolean isLocationPermissionsGranted(Context context) {
+        return checkPermission(context, ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION);
     }
 
 }

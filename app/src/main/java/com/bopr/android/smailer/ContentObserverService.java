@@ -56,7 +56,7 @@ public class ContentObserverService extends Service {
         log.debug("Running");
 
         getContentResolver().registerContentObserver(CONTENT_SMS, true, contentObserver);
-        startForeground(1, notifications.getForegroundServiceNotification());
+        startForeground(1, notifications.getServiceNotification());
         return super.onStartCommand(intent, flags, startId);
     }
 

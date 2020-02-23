@@ -19,6 +19,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 import static android.provider.ContactsContract.CommonDataKinds.Email;
 import static android.provider.ContactsContract.CommonDataKinds.Phone;
 import static android.provider.ContactsContract.PhoneLookup;
+import static com.bopr.android.smailer.util.AndroidUtil.checkPermission;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -96,20 +97,17 @@ public abstract class ContentUtils {
         return getPhone(context, requireLastDataSegment(intent));
     }
 
-    public static boolean isReadContactsPermissionsDenied(@NonNull Context context) {
-        return AndroidUtil.isPermissionsDenied(context, READ_CONTACTS);
-    }
-
     private static String requireLastDataSegment(@NonNull Intent intent) {
         return requireNonNull(requireNonNull(intent.getData()).getLastPathSegment());
     }
 
     private static boolean requireReadContactPermission(@NonNull Context context) {
-        if (isReadContactsPermissionsDenied(context)) {
+        if (checkPermission(context, READ_CONTACTS)) {
+            return true;
+        } else {
             log.warn("Unable read contact. Permission denied.");
             return false;
         }
-        return true;
     }
 
     public static void markSmsAsRead(@NonNull Context context, @NonNull PhoneEvent event) {

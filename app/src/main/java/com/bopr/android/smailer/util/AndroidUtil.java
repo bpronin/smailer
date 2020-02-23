@@ -4,6 +4,7 @@ import android.accounts.Account;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager;
@@ -23,20 +24,13 @@ public abstract class AndroidUtil {
     private AndroidUtil() {
     }
 
-    /**
-     * Checks if listed permissions denied.
-     *
-     * @param context     context
-     * @param permissions permissions
-     * @return true if any of listed permissions denied
-     */
-    public static boolean isPermissionsDenied(@NonNull Context context, String... permissions) {
+    public static boolean checkPermission(@NonNull Context context, String... permissions) {
         for (String permission : permissions) {
             if (ContextCompat.checkSelfPermission(context, permission) != PERMISSION_GRANTED) {
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     /**
@@ -55,4 +49,8 @@ public abstract class AndroidUtil {
         return new GoogleAccountManager(context).getAccounts()[0];
     }
 
+    @Nullable
+    public static Account getAccount(@NonNull Context context, @Nullable String name) {
+        return new GoogleAccountManager(context).getAccountByName(name);
+    }
 }

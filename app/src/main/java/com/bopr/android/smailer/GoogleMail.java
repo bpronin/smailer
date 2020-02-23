@@ -1,6 +1,6 @@
 package com.bopr.android.smailer;
 
-import android.accounts.AccountsException;
+import android.accounts.Account;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
@@ -44,7 +44,6 @@ import javax.mail.internet.MimeMultipart;
 import static com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential.usingOAuth2;
 import static com.google.api.client.util.Base64.decodeBase64;
 import static com.google.api.client.util.StringUtils.newStringUtf8;
-import static java.util.Arrays.asList;
 import static javax.mail.Message.RecipientType.TO;
 
 /**
@@ -63,15 +62,16 @@ public class GoogleMail {
     private final Context context;
     private Session session;
     private Gmail service;
-    private String account;
+    private Account account;
 
     public GoogleMail(@NonNull Context context) {
         this.context = context;
     }
 
-    public void startSession(@NonNull String account, @NonNull String... scopes) throws AccountsException {
+    public void login(@NonNull Account account, @NonNull String scopes) {
         this.account = account;
-        service = createService(createCredential(account, scopes));
+        service = createService(usingOAuth2(context, ImmutableList.of(scopes))
+                .setSelectedAccount(account));
         session = Session.getDefaultInstance(new Properties(), null);
     }
 
@@ -129,16 +129,6 @@ public class GoogleMail {
     }
 
     @NonNull
-    private GoogleAccountCredential createCredential(String accountName, String... scopes) throws AccountsException {
-        GoogleAccountCredential credential = usingOAuth2(context, asList(scopes));
-        credential.setSelectedAccountName(accountName);
-        if (credential.getSelectedAccount() == null) {
-            throw new AccountsException("Account does not exist: " + accountName);
-        }
-        return credential;
-    }
-
-    @NonNull
     private Gmail createService(@NonNull GoogleAccountCredential credential) {
         return new Gmail.Builder(new NetHttpTransport(),
                 JacksonFactory.getDefaultInstance(), credential)
@@ -150,7 +140,7 @@ public class GoogleMail {
     private Message createContent(MailMessage message) {
         try {
             MimeMessage mimeMessage = new MimeMessage(session);
-            mimeMessage.setFrom(account);
+            mimeMessage.setFrom(account.name);
             mimeMessage.setSubject(message.getSubject(), UTF_8);
             mimeMessage.setRecipients(TO, parseAddresses(message.getRecipients()));
 

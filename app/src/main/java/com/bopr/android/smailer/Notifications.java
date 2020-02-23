@@ -9,9 +9,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
+import androidx.annotation.StringRes;
 import androidx.core.app.NotificationCompat.Builder;
 import androidx.core.app.TaskStackBuilder;
 
@@ -22,9 +23,12 @@ import com.bopr.android.smailer.ui.RemoteControlActivity;
 import com.bopr.android.smailer.ui.RulesActivity;
 import com.bopr.android.smailer.util.TagFormatter;
 
+import java.lang.annotation.Retention;
+
 import static android.app.Notification.CATEGORY_ERROR;
 import static android.app.Notification.CATEGORY_MESSAGE;
 import static android.app.Notification.CATEGORY_SERVICE;
+import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 /**
  * Produces notifications.
@@ -36,12 +40,16 @@ public class Notifications {
 
     private static final String CHANNEL_ID = "com.bopr.android.smailer";
 
-    public static final int ACTION_SHOW_MAIN = 0;
-    public static final int ACTION_SHOW_CONNECTION_OPTIONS = 1;
-    public static final int ACTION_SHOW_RULES = 2;
-    public static final int ACTION_SHOW_HISTORY = 3;
-    public static final int ACTION_SHOW_RECIPIENTS = 4;
-    public static final int ACTION_SHOW_REMOTE_CONTROL = 6;
+    @IntDef({TARGET_MAIN, TARGET_RULES, TARGET_HISTORY, TARGET_RECIPIENTS, TARGET_REMOTE_CONTROL})
+    @Retention(SOURCE)
+    public @interface Target {
+    }
+
+    public static final int TARGET_MAIN = 0;
+    public static final int TARGET_RULES = 1;
+    public static final int TARGET_HISTORY = 2;
+    public static final int TARGET_RECIPIENTS = 3;
+    public static final int TARGET_REMOTE_CONTROL = 4;
 
     private static int messageId = -1;
     private static int errorId = -1;
@@ -56,8 +64,8 @@ public class Notifications {
         formatter = new TagFormatter(context);
     }
 
-    public Notification getForegroundServiceNotification() {
-        Builder builder = createBuilder(context.getString(R.string.service_running), ACTION_SHOW_MAIN);
+    public Notification getServiceNotification() {
+        Builder builder = builder(context.getString(R.string.service_running), null, TARGET_MAIN);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setCategory(CATEGORY_SERVICE);
@@ -66,28 +74,28 @@ public class Notifications {
         return builder.build();
     }
 
-    public void showMessage(int messageRes, int action) {
-        showMessage(context.getString(messageRes), action);
+    public void showMessage(@StringRes int messageRes, @Target int target) {
+        showMessage(context.getString(messageRes), target);
     }
 
-    public void showError(int messageRes, int action) {
-        showError(context.getString(messageRes), action);
+    public void showError(@StringRes int messageRes, @Target int target) {
+        showError(context.getString(messageRes), target);
     }
 
-    public void showMailError(int reasonRes, int action) {
+    public void showMailError(@StringRes int reasonRes, @Target int target) {
         showError(formatter
                         .pattern(R.string.unable_send_email)
                         .put("reason", reasonRes)
                         .format(),
-                action);
+                target);
     }
 
-    public void showRemoteAction(int messageRes, String argument) {
+    public void showRemoteAction(@StringRes int messageRes, String argument) {
         showMessage(formatter
                         .pattern(messageRes)
                         .put("text", argument)
                         .format(),
-                ACTION_SHOW_HISTORY);
+                TARGET_HISTORY);
     }
 
     public void hideAllErrors() {
@@ -96,8 +104,8 @@ public class Notifications {
         }
     }
 
-    private void showMessage(String text, int action) {
-        Builder builder = createBuilder(text, action).setAutoCancel(true);
+    private void showMessage(String text, @Target int target) {
+        Builder builder = builder(text, null, target).setAutoCancel(true);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setCategory(CATEGORY_MESSAGE);
@@ -106,8 +114,8 @@ public class Notifications {
         manager.notify("message", ++messageId, builder.build());
     }
 
-    private void showError(String text, int action) {
-        Builder builder = createBuilder(text, action).setAutoCancel(true);
+    private void showError(String text, @Target int target) {
+        Builder builder = builder(text, context.getString(R.string.tap_to_check_settings), target).setAutoCancel(true);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setCategory(CATEGORY_ERROR);
@@ -116,34 +124,27 @@ public class Notifications {
         manager.notify("error", ++errorId, builder.build());
     }
 
-    private Builder createBuilder(String text, int action) {
+    private Builder builder(@NonNull String title, @Nullable String text, @Target int target) {
         return new Builder(context, getChannel())
-                .setContentIntent(createIntent(action))
+                .setContentIntent(createIntent(target))
                 .setSmallIcon(R.drawable.ic_notification)
-                .setTicker(context.getString(R.string.app_name))
-                .setContentTitle(context.getString(R.string.app_name))
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
+                .setContentTitle(title)
                 .setContentText(text);
     }
 
     @Nullable
-    private PendingIntent createIntent(int action) {
-        switch (action) {
-            case ACTION_SHOW_MAIN:
+    private PendingIntent createIntent(@Target int target) {
+        switch (target) {
+            case TARGET_MAIN:
                 return createActivityIntent(MainActivity.class);
-            case ACTION_SHOW_HISTORY:
+            case TARGET_HISTORY:
                 return createActivityIntent(HistoryActivity.class);
-            case ACTION_SHOW_RECIPIENTS:
+            case TARGET_RECIPIENTS:
                 return createActivityIntent(RecipientsActivity.class);
-//            case ACTION_SHOW_OPTIONS:
-//                return createActivityIntent(OptionsActivity.class);
-            case ACTION_SHOW_REMOTE_CONTROL:
+            case TARGET_REMOTE_CONTROL:
                 return createActivityIntent(RemoteControlActivity.class);
-            case ACTION_SHOW_RULES:
+            case TARGET_RULES:
                 return createActivityIntent(RulesActivity.class);
-            case ACTION_SHOW_CONNECTION_OPTIONS:
-                Intent intent = new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS);
-                return PendingIntent.getActivities(context, 0, new Intent[]{intent}, PendingIntent.FLAG_UPDATE_CURRENT);
         }
         return null;
     }
@@ -155,11 +156,14 @@ public class Notifications {
                 .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
+    @NonNull
     private String getChannel() {
         if (Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            String name = context.getString(R.string.notifications);
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_LOW);
-            manager.createNotificationChannel(channel);
+            if (manager.getNotificationChannel(CHANNEL_ID) == null) {
+                manager.createNotificationChannel(new NotificationChannel(CHANNEL_ID,
+                        context.getString(R.string.notifications),
+                        NotificationManager.IMPORTANCE_LOW));
+            }
         }
         return CHANNEL_ID;
     }

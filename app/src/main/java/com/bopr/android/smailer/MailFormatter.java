@@ -21,7 +21,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static android.Manifest.permission.READ_CONTACTS;
 import static android.text.TextUtils.htmlEncode;
+import static com.bopr.android.smailer.PermissionsHelper.isLocationPermissionsGranted;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_CONTACT;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_HEADER;
@@ -30,7 +32,7 @@ import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_T
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT;
 import static com.bopr.android.smailer.Settings.VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS;
 import static com.bopr.android.smailer.util.AddressUtil.escapePhone;
-import static com.bopr.android.smailer.util.ContentUtils.isReadContactsPermissionsDenied;
+import static com.bopr.android.smailer.util.AndroidUtil.checkPermission;
 import static com.bopr.android.smailer.util.TextUtil.formatCoordinates;
 import static com.bopr.android.smailer.util.TextUtil.formatDuration;
 import static com.bopr.android.smailer.util.TextUtil.isNotEmpty;
@@ -265,14 +267,14 @@ class MailFormatter {
             String phoneQuery = encodeUrl(event.getPhone());
             String name = this.contactName;
             if (isNullOrBlank(name)) {
-                if (isReadContactsPermissionsDenied(context)) {
-                    name = resources.getString(R.string.contact_no_permission_read_contact);
-                } else {
+                if (checkPermission(context, READ_CONTACTS)) {
                     name = formatter
                             .pattern(GOOGLE_SEARCH_PATTERN)
                             .put("query", phoneQuery)
                             .put("text", R.string.unknown_contact)
                             .format();
+                } else {
+                    name = resources.getString(R.string.contact_no_permission_read_contact);
                 }
             }
 
@@ -339,9 +341,9 @@ class MailFormatter {
             } else {
                 return formatter
                         .pattern(R.string.last_known_location)
-                        .put("location", GeoLocator.isPermissionsDenied(context)
-                                ? R.string.no_permission_read_location
-                                : R.string.geolocation_disabled)
+                        .put("location", isLocationPermissionsGranted(context)
+                                ? R.string.geolocation_disabled
+                                : R.string.no_permission_read_location)
                         .format();
             }
         }

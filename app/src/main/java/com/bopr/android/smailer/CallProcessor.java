@@ -1,9 +1,10 @@
 package com.bopr.android.smailer;
 
-import android.accounts.AccountsException;
+import android.accounts.Account;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 
@@ -14,7 +15,9 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
-import static com.bopr.android.smailer.Notifications.ACTION_SHOW_MAIN;
+import static com.bopr.android.smailer.Notifications.TARGET_MAIN;
+import static com.bopr.android.smailer.Notifications.TARGET_RECIPIENTS;
+import static com.bopr.android.smailer.Notifications.Target;
 import static com.bopr.android.smailer.PhoneEvent.REASON_ACCEPTED;
 import static com.bopr.android.smailer.PhoneEvent.STATE_IGNORED;
 import static com.bopr.android.smailer.PhoneEvent.STATE_PROCESSED;
@@ -25,6 +28,7 @@ import static com.bopr.android.smailer.Settings.PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_ACCOUNT;
 import static com.bopr.android.smailer.Settings.PREF_SENDER_ACCOUNT;
 import static com.bopr.android.smailer.util.AddressUtil.isValidEmailAddressList;
+import static com.bopr.android.smailer.util.AndroidUtil.getAccount;
 import static com.bopr.android.smailer.util.ContentUtils.getContactName;
 import static com.bopr.android.smailer.util.ContentUtils.markSmsAsRead;
 import static com.bopr.android.smailer.util.TextUtil.isNullOrEmpty;
@@ -111,13 +115,8 @@ public class CallProcessor {
 
         try {
             requireRecipient(silent);
-            transport.startSession(requireSender(silent), GMAIL_SEND);
+            transport.login(requireAccount(silent), GMAIL_SEND);
             return true;
-        } catch (AccountsException x) {
-            log.warn("Failed starting mail session: ", x);
-
-            showErrorNotification(R.string.account_not_registered, silent);
-            return false;
         } catch (Exception x) {
             log.warn("Failed starting mail session: ", x);
 
@@ -134,7 +133,7 @@ public class CallProcessor {
             notifications.hideAllErrors();
 
             if (settings.getBoolean(PREF_NOTIFY_SEND_SUCCESS, false)) {
-                notifications.showMessage(R.string.email_send, ACTION_SHOW_MAIN);
+                notifications.showMessage(R.string.email_send, TARGET_MAIN);
             }
 
             if (settings.getBoolean(PREF_MARK_SMS_AS_READ, false)) {
@@ -145,9 +144,7 @@ public class CallProcessor {
         } catch (UserRecoverableAuthIOException x) {
             log.warn("Failed sending mail: ", x);
 
-            showErrorNotification(R.string.need_google_permission, silent);
-            /* remove invalid account from settings */
-            settings.edit().putString(PREF_SENDER_ACCOUNT, null).apply();
+            showErrorNotification(R.string.need_google_permission, TARGET_MAIN, silent);
             return false;
         } catch (Exception x) {
             log.warn("Failed sending mail: ", x);
@@ -156,26 +153,25 @@ public class CallProcessor {
         }
     }
 
-    private String requireSender(boolean silent) throws Exception {
-        String s = settings.getString(PREF_SENDER_ACCOUNT);
-
-        if (isNullOrEmpty(s)) {
-            showErrorNotification(R.string.no_account_specified, silent);
-            throw new Exception("Account not specified");
+    private Account requireAccount(boolean silent) throws Exception {
+        Account account = getAccount(context, settings.getString(PREF_SENDER_ACCOUNT));
+        if (account == null) {
+            showErrorNotification(R.string.sender_account_not_found, TARGET_MAIN, silent);
+            throw new Exception("Account not found");
         }
-        return s;
+        return account;
     }
 
     private String requireRecipient(boolean silent) throws Exception {
         String s = settings.getString(PREF_RECIPIENTS_ADDRESS);
 
         if (isNullOrEmpty(s)) {
-            showErrorNotification(R.string.no_recipients_specified, silent);
+            showErrorNotification(R.string.no_recipients_specified, TARGET_RECIPIENTS, silent);
             throw new Exception("Recipients not specified");
         }
 
         if (!isValidEmailAddressList(s)) {
-            showErrorNotification(R.string.invalid_recipient, silent);
+            showErrorNotification(R.string.invalid_recipient, TARGET_RECIPIENTS, silent);
             throw new Exception("Recipients are invalid");
         }
 
@@ -200,9 +196,10 @@ public class CallProcessor {
         transport.send(message);
     }
 
-    private void showErrorNotification(int reason, boolean silent) {
+    private void showErrorNotification(@StringRes int reason, @Target int target,
+                                       boolean silent) {
         if (!silent) {
-            notifications.showMailError(reason, ACTION_SHOW_MAIN);
+            notifications.showMailError(reason, target);
         }
     }
 

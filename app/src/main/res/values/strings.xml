@@ -43,7 +43,7 @@
     <string name="email_language">Email language</string>
     <string name="email_message_content">Email message content</string>
     <string name="email_message_language">Email message language</string>
-    <string name="email_send">Email sent.</string>
+    <string name="email_send">Email sent</string>
     <string name="enter_phone_number">Enter phone number. You also may use * as a wildcard.</string>
     <string name="events_causing_sending_mail">Events causing sending email</string>
     <string name="geolocation_disabled">(location service disabled)</string>
@@ -64,10 +64,10 @@
     <string name="missed_call">Missed call</string>
     <string name="missed_call_from">Missed call from</string>
     <string name="need_google_permission">Access to Google account is required</string>
-    <string name="no_account_specified">Sender account not specified.</string>
-    <string name="no_internet_connection">No internet connection.</string>
+    <string name="sender_account_not_found">Sender account not found</string>
+    <string name="no_internet_connection">No internet connection</string>
     <string name="no_permission_read_location">(no permission to read location)</string>
-    <string name="no_recipients_specified">No recipients specified.</string>
+    <string name="no_recipients_specified">No recipients specified</string>
     <string name="no_triggers_specified">All triggers are disabled</string>
     <string name="not_specified">Not specified</string>
     <string name="notifications">Notifications</string>
@@ -116,7 +116,7 @@
     <string name="sender_phone">Sender: {phone} ({name})</string>
     <string name="sent_email">Sent email</string>
     <string name="sent_time_device">Sent{device_name}{time}</string>
-    <string name="service_account_not_specified">Service account not specified.</string>
+    <string name="service_account_not_found">Service account not found</string>
     <string name="service_running">Service is active</string>
     <string name="since_permissions_not_granted">Since not all required permissions is granted, some options have been disabled.</string>
     <string name="text_filter">Text filter</string>
@@ -147,6 +147,7 @@
     <string translatable="false" name="add_text_to_blacklist_reply_body">add text \"{argument}\" to blacklist"</string>
     <string translatable="false" name="add_text_to_whitelist_reply_body">add text \"{argument}\" to whitelist"</string>
     <string translatable="false" name="send_sms_to_sender_reply_body">send SMS message \"{sms_text}\" to {phone}"</string>
+    <string name="tap_to_check_settings">Tap to check your settings.</string>
 
     <string-array name="trigger_names">
         <item>Incoming SMS</item>

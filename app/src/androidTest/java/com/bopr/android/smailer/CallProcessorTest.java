@@ -95,7 +95,7 @@ public class CallProcessorTest extends BaseTest {
         MethodInvocationsCollector sendInvocations = new MethodInvocationsCollector();
         MethodInvocationsCollector showErrorInvocations = new MethodInvocationsCollector();
 
-        doAnswer(initInvocations).when(transport).startSession(anyString(), anyString());
+        doAnswer(initInvocations).when(transport).login(anyString(), anyString());
         doAnswer(sendInvocations).when(transport).send(any(MailMessage.class));
         doAnswer(showErrorInvocations).when(notifications).showMailError(anyInt(), anyInt());
 
@@ -133,7 +133,7 @@ public class CallProcessorTest extends BaseTest {
         MethodInvocationsCollector sendInvocations = new MethodInvocationsCollector();
         MethodInvocationsCollector showErrorInvocations = new MethodInvocationsCollector();
 
-        doAnswer(initInvocations).when(transport).startSession(anyString(), anyString());
+        doAnswer(initInvocations).when(transport).login(anyString(), anyString());
         doAnswer(sendInvocations).when(transport).send(any(MailMessage.class));
         doAnswer(showErrorInvocations).when(notifications).showMailError(anyInt(), anyInt());
 
@@ -166,7 +166,7 @@ public class CallProcessorTest extends BaseTest {
         MethodInvocationsCollector sendInvocations = new MethodInvocationsCollector();
         MethodInvocationsCollector showErrorInvocations = new MethodInvocationsCollector();
 
-        doAnswer(initInvocations).when(transport).startSession(anyString(), anyString());
+        doAnswer(initInvocations).when(transport).login(anyString(), anyString());
         doAnswer(sendInvocations).when(transport).send(any(MailMessage.class));
         doAnswer(showErrorInvocations).when(notifications).showMailError(anyInt(), anyInt());
 
@@ -179,7 +179,7 @@ public class CallProcessorTest extends BaseTest {
 
         assertEquals(1, showErrorInvocations.count());
         int notificationText = showErrorInvocations.getArgument(0, 0);
-        assertEquals(R.string.no_account_specified, notificationText);
+        assertEquals(R.string.sender_account_not_found, notificationText);
 
         assertTrue(initInvocations.isEmpty());
         assertTrue(sendInvocations.isEmpty());
@@ -203,7 +203,7 @@ public class CallProcessorTest extends BaseTest {
         MethodInvocationsCollector sendInvocations = new MethodInvocationsCollector();
         MethodInvocationsCollector showErrorInvocations = new MethodInvocationsCollector();
 
-        doAnswer(initInvocations).when(transport).startSession(anyString(), anyString());
+        doAnswer(initInvocations).when(transport).login(anyString(), anyString());
         doAnswer(sendInvocations).when(transport).send(any(MailMessage.class));
         doAnswer(showErrorInvocations).when(notifications).showMailError(anyInt(), anyInt());
 
@@ -241,7 +241,7 @@ public class CallProcessorTest extends BaseTest {
 
         doAnswer(sendInvocations).when(transport).send(any(MailMessage.class));
         doAnswer(showErrorInvocations).when(notifications).showMailError(anyInt(), anyInt());
-        doThrow(new AccountsException("Test error")).when(transport).startSession(anyString(), anyString());
+        doThrow(new AccountsException("Test error")).when(transport).login(anyString(), anyString());
 
         PhoneEvent event = newPhoneEvent();
 
@@ -273,7 +273,7 @@ public class CallProcessorTest extends BaseTest {
         MethodInvocationsCollector sendInvocations = new MethodInvocationsCollector();
         MethodInvocationsCollector showErrorInvocations = new MethodInvocationsCollector();
 
-        doAnswer(initInvocations).when(transport).startSession(anyString(), anyString());
+        doAnswer(initInvocations).when(transport).login(anyString(), anyString());
         doAnswer(sendInvocations).when(transport).send(any(MailMessage.class));
         doAnswer(showErrorInvocations).when(notifications).showMailError(anyInt(), anyInt());
         doThrow(new IOException("Test error")).when(transport).send(any(MailMessage.class));
@@ -335,7 +335,7 @@ public class CallProcessorTest extends BaseTest {
     public void testSuccessNotification() {
         MethodInvocationsCollector showSuccessInvocation = new MethodInvocationsCollector();
 
-        doAnswer(showSuccessInvocation).when(notifications).showMessage(R.string.email_send, Notifications.ACTION_SHOW_MAIN);
+        doAnswer(showSuccessInvocation).when(notifications).showMessage(R.string.email_send, Notifications.TARGET_MAIN);
 
         CallProcessor processor = new CallProcessor(context, transport, notifications, database, geoLocator);
 

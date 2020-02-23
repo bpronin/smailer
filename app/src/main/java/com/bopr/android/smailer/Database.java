@@ -83,6 +83,8 @@ public class Database implements Closeable {
         this.context = context;
         this.name = name;
         helper = new DbHelper(context);
+
+        log.debug("Open");
     }
 
     /**

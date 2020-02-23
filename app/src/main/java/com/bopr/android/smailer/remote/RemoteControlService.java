@@ -1,5 +1,7 @@
 package com.bopr.android.smailer.remote;
 
+import android.accounts.Account;
+import android.accounts.AccountsException;
 import android.content.Context;
 import android.content.Intent;
 import android.telephony.SmsManager;
@@ -22,7 +24,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import static com.bopr.android.smailer.Notifications.ACTION_SHOW_REMOTE_CONTROL;
+import static com.bopr.android.smailer.Notifications.TARGET_REMOTE_CONTROL;
 import static com.bopr.android.smailer.Settings.PREF_RECIPIENTS_ADDRESS;
 import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_ACCOUNT;
 import static com.bopr.android.smailer.Settings.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS;
@@ -40,6 +42,7 @@ import static com.bopr.android.smailer.util.AddressUtil.containsEmail;
 import static com.bopr.android.smailer.util.AddressUtil.containsPhone;
 import static com.bopr.android.smailer.util.AddressUtil.extractEmail;
 import static com.bopr.android.smailer.util.AddressUtil.findPhone;
+import static com.bopr.android.smailer.util.AndroidUtil.getAccount;
 import static com.bopr.android.smailer.util.Util.safeEquals;
 import static com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM;
 
@@ -74,7 +77,7 @@ public class RemoteControlService extends JobIntentService {
 
         try {
             GoogleMail transport = new GoogleMail(this);
-            transport.startSession(requireAccount(), MAIL_GOOGLE_COM);
+            transport.login(requireAccount(), MAIL_GOOGLE_COM);
             List<MailMessage> messages = transport.list(query);
 
             if (messages.isEmpty()) {
@@ -113,11 +116,11 @@ public class RemoteControlService extends JobIntentService {
         return true;
     }
 
-    private String requireAccount() {
-        String account = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT);
+    private Account requireAccount() throws AccountsException {
+        Account account = getAccount(this, settings.getString(PREF_REMOTE_CONTROL_ACCOUNT));
         if (account == null) {
-            notifications.showError(R.string.service_account_not_specified, ACTION_SHOW_REMOTE_CONTROL);
-            throw new IllegalArgumentException("Service account not specified");
+            notifications.showError(R.string.service_account_not_found, TARGET_REMOTE_CONTROL);
+            throw new AccountsException("Service account not specified");
         }
         return account;
     }

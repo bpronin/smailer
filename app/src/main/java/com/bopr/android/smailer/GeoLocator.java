@@ -6,7 +6,6 @@ import android.os.Looper;
 
 import androidx.annotation.Nullable;
 
-import com.bopr.android.smailer.util.AndroidUtil;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -20,8 +19,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
-import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static com.bopr.android.smailer.PermissionsHelper.isLocationPermissionsGranted;
 import static com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY;
 
 /**
@@ -83,7 +81,7 @@ public class GeoLocator {
 
     @Nullable
     private GeoCoordinates getCurrentLocation(long timeout) {
-        if (isPermissionsDenied(context)) {
+        if (!isLocationPermissionsGranted(context)) {
             log.warn("Unable to read current location. Permission denied.");
             return null;
         }
@@ -119,7 +117,7 @@ public class GeoLocator {
 
     @Nullable
     private GeoCoordinates getLastLocation(long timeout) {
-        if (isPermissionsDenied(context)) {
+        if (!isLocationPermissionsGranted(context)) {
             log.warn("Unable to read last location. Permission denied.");
             return null;
         }
@@ -149,10 +147,6 @@ public class GeoLocator {
         } catch (InterruptedException x) {
             log.warn(requestName + " interrupted", x);
         }
-    }
-
-    static boolean isPermissionsDenied(Context context) {
-        return AndroidUtil.isPermissionsDenied(context, ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION);
     }
 
 }

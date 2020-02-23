@@ -383,21 +383,12 @@ public class DebugFragment extends BasePreferenceFragment {
 
         addCategory(screen, "Notifications",
 
-                createPreference("Show error. Open connection option", new DefaultClickListener() {
-
-                    @Override
-                    protected void onClick(Preference preference) {
-                        notifications.showMailError(R.string.no_internet_connection,
-                                Notifications.ACTION_SHOW_CONNECTION_OPTIONS);
-                    }
-                }),
-
                 createPreference("Show error. Open application", new DefaultClickListener() {
 
                     @Override
                     protected void onClick(Preference preference) {
                         notifications.showMailError(R.string.no_recipients_specified,
-                                Notifications.ACTION_SHOW_RULES);
+                                Notifications.TARGET_RULES);
                     }
                 }),
 
@@ -413,7 +404,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
                     @Override
                     protected void onClick(Preference preference) {
-                        notifications.showMessage(R.string.email_send, Notifications.ACTION_SHOW_MAIN);
+                        notifications.showMessage(R.string.email_send, Notifications.TARGET_MAIN);
                     }
                 }),
 
@@ -816,7 +807,7 @@ public class DebugFragment extends BasePreferenceFragment {
         protected String doInBackground(Void... params) {
             GoogleMail transport = new GoogleMail(getActivity());
             try {
-                transport.startSession(primaryAccount(getActivity()).name, GMAIL_SEND);
+                transport.login(primaryAccount(getActivity()), GMAIL_SEND);
 
                 MailMessage message = new MailMessage();
                 message.setSubject("test subject");
@@ -863,7 +854,7 @@ public class DebugFragment extends BasePreferenceFragment {
 
             try {
                 GoogleMail transport = new GoogleMail(getActivity());
-                transport.startSession(primaryAccount(getActivity()).name, GMAIL_SEND);
+                transport.login(primaryAccount(getActivity()), GMAIL_SEND);
 
                 for (File file : attachment) {
                     MailMessage message = new MailMessage();
