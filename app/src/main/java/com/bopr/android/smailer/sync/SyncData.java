@@ -42,9 +42,9 @@ public class SyncData {
         @Key("details")
         public String details;
         @Key("latitude")
-        public double latitude;
+        public Double latitude;
         @Key("longitude")
-        public double longitude;
+        public Double longitude;
         @PhoneEvent.EventState
         @Key("state")
         public int state;

@@ -5,6 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.util.ObjectsCompat;
 
 /**
@@ -18,7 +19,7 @@ public class GeoCoordinates implements Parcelable {
     private double longitude;
 
     public GeoCoordinates() {
-        /* Default constructor required by Jackson */
+        /* Default constructor required by JSON engine */
     }
 
     public GeoCoordinates(double latitude, double longitude) {
@@ -26,8 +27,16 @@ public class GeoCoordinates implements Parcelable {
         this.longitude = longitude;
     }
 
-    public GeoCoordinates(Location location) {
+    public GeoCoordinates(@NonNull Location location) {
         this(location.getLatitude(), location.getLongitude());
+    }
+
+    @Nullable
+    public static GeoCoordinates coordinatesOf(@Nullable Double latitude, @Nullable Double longitude) {
+        if (latitude != null && longitude != null) {
+            return new GeoCoordinates(latitude, longitude);
+        }
+        return null;
     }
 
     public double getLatitude() {

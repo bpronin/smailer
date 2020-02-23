@@ -7,7 +7,6 @@ import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
@@ -37,8 +36,8 @@ import com.bopr.android.smailer.PendingCallProcessorService;
 import com.bopr.android.smailer.PhoneEvent;
 import com.bopr.android.smailer.R;
 import com.bopr.android.smailer.remote.RemoteControlService;
-import com.bopr.android.smailer.sync.SyncAdapter;
 import com.bopr.android.smailer.sync.SyncEngine;
+import com.bopr.android.smailer.sync.Synchronizer;
 import com.bopr.android.smailer.util.ContentUtils;
 import com.google.android.gms.tasks.Tasks;
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager;
@@ -555,24 +554,14 @@ public class DebugFragment extends BasePreferenceFragment {
         new AlertDialog.Builder(context)
                 .setTitle("Phone number")
                 .setView(alertDialogView(input))
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                    String phone = input.getText().toString();
+                    String contact = ContentUtils.getContactName(context, phone);
+                    String text = contact != null ? (phone + ": " + contact) : "Contact not found";
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String phone = input.getText().toString();
-                        String contact = ContentUtils.getContactName(context, phone);
-                        String text = contact != null ? (phone + ": " + contact) : "Contact not found";
-
-                        showToast(context, text);
-                    }
+                    showToast(context, text);
                 })
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                })
+                .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel())
                 .show();
     }
 
@@ -696,56 +685,38 @@ public class DebugFragment extends BasePreferenceFragment {
     }
 
     private void onGoogleDriveClear() {
-        Tasks.call(newSingleThreadExecutor(), new Callable<Void>() {
-
-            @Override
-            public Void call() throws Exception {
-                GoogleDrive drive = new GoogleDrive(context, senderAccount());
-                drive.clear();
-                return null;
-            }
+        Tasks.call(newSingleThreadExecutor(), (Callable<Void>) () -> {
+            GoogleDrive drive = new GoogleDrive(context, senderAccount());
+            drive.clear();
+            return null;
         });
 
         showToast(context, "Done");
     }
 
     private void onGoogleDriveSync() {
-        Tasks.call(newSingleThreadExecutor(), new Callable<Void>() {
-
-            @Override
-            public Void call() {
+        Tasks.call(newSingleThreadExecutor(), (Callable<Void>) () -> {
 //                new SyncAdapter(context, false).sync(context, selectedAccount(context));
-                SyncEngine.syncNow(context);
-                return null;
-            }
+            SyncEngine.syncNow(context);
+            return null;
         });
 
         showToast(context, "Done");
     }
 
     private void onGoogleDriveDownload() {
-        Tasks.call(newSingleThreadExecutor(), new Callable<Void>() {
-
-            @Override
-            public Void call() throws Exception {
-                GoogleDrive drive = new GoogleDrive(context, senderAccount());
-                new SyncAdapter(context, false).download(drive);
-                return null;
-            }
+        Tasks.call(newSingleThreadExecutor(), (Callable<Void>) () -> {
+            new Synchronizer(context, primaryAccount(context), database).download();
+            return null;
         });
 
         showToast(context, "Done");
     }
 
     private void onGoogleDriveUpload() {
-        Tasks.call(newSingleThreadExecutor(), new Callable<Void>() {
-
-            @Override
-            public Void call() throws Exception {
-                GoogleDrive drive = new GoogleDrive(context, senderAccount());
-                new SyncAdapter(context, false).upload(drive);
-                return null;
-            }
+        Tasks.call(newSingleThreadExecutor(), (Callable<Void>) () -> {
+            new Synchronizer(context, primaryAccount(context), database).upload();
+            return null;
         });
 
         showToast(context, "Done");
@@ -775,29 +746,19 @@ public class DebugFragment extends BasePreferenceFragment {
         new AlertDialog.Builder(context)
                 .setTitle("Phone number")
                 .setView(input)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                    String phone = input.getText().toString();
+                    PendingIntent sentIntent = getBroadcast(context, 0, new Intent("SMS_SENT"), 0);
+                    PendingIntent deliveredIntent = getBroadcast(context, 0, new Intent("SMS_DELIVERED"), 0);
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String phone = input.getText().toString();
-                        PendingIntent sentIntent = getBroadcast(context, 0, new Intent("SMS_SENT"), 0);
-                        PendingIntent deliveredIntent = getBroadcast(context, 0, new Intent("SMS_DELIVERED"), 0);
-
-                        try {
-                            SmsManager.getDefault().sendTextMessage(phone, null, "Debug message", sentIntent, deliveredIntent);
-                        } catch (Throwable x) {
-                            log.error("Failed: ", x);
-                            showToast(context, "Failed");
-                        }
+                    try {
+                        SmsManager.getDefault().sendTextMessage(phone, null, "Debug message", sentIntent, deliveredIntent);
+                    } catch (Throwable x) {
+                        log.error("Failed: ", x);
+                        showToast(context, "Failed");
                     }
                 })
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                })
+                .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel())
                 .show();
     }
 

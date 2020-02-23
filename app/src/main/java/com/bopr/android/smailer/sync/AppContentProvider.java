@@ -8,19 +8,14 @@ import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.bopr.android.smailer.Database;
-
 public class AppContentProvider extends ContentProvider {
 
     public static final String AUTHORITY = "com.bopr.android.smailer";
     public static final Uri CONTENT = Uri.parse("content://" + AUTHORITY + "/");
 //    public static final Uri CONTENT_EVENTS = Uri.withAppendedPath(CONTENT, "events");
 
-    private Database database;
-
     @Override
     public boolean onCreate() {
-        database = new Database(getContext());
         return true;
     }
 

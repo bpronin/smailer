@@ -20,27 +20,13 @@ public class PendingCallProcessorService extends JobIntentService {
 
     private static final int JOB_ID = 1000;
 
-    private CallProcessor callProcessor;
-    private Database database;
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        database = new Database(this);
-        callProcessor = new CallProcessor(this, database);
-    }
-
-    @Override
-    public void onDestroy() {
-        database.close();
-        super.onDestroy();
-    }
-
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
         log.debug("Handling intent: " + intent);
 
-        callProcessor.processPending();
+        try (Database database = new Database(this)) {
+            new CallProcessor(this, database).processPending();
+        }
     }
 
     /**

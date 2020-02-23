@@ -14,6 +14,9 @@ import androidx.annotation.Nullable;
  *
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
+
+/* To debug it (to put breakpoints) remove android:process=":sync" from AndroidManifest */
+
 public class SyncService extends Service {
 
     private static final Object lock = new Object();

@@ -10,7 +10,7 @@ import androidx.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Service that processes phone event.
@@ -23,35 +23,17 @@ public class CallProcessorService extends IntentService {
 
     private static final String EXTRA_EVENT = "event";
 
-    private CallProcessor callProcessor;
-    private Database database;
-
     public CallProcessorService() {
         super("call-processor");
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        database = new Database(this);
-        callProcessor = new CallProcessor(this, database);
-    }
-
-    @Override
-    public void onDestroy() {
-        database.close();
-        super.onDestroy();
-
-        log.debug("Destroyed");
     }
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         log.debug("Running");
 
-        if (intent != null) {
-            PhoneEvent event = intent.getParcelableExtra(EXTRA_EVENT);
-            callProcessor.process(Objects.requireNonNull(event));
+        PhoneEvent event = requireNonNull(requireNonNull(intent).getParcelableExtra(EXTRA_EVENT));
+        try (Database database = new Database(this)) {
+            new CallProcessor(this, database).process(event);
         }
     }
 

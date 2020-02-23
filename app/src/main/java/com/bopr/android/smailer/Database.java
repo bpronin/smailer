@@ -18,6 +18,7 @@ import com.bopr.android.smailer.util.db.RowSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Closeable;
 import java.util.concurrent.TimeUnit;
 
 import static android.database.sqlite.SQLiteDatabase.CONFLICT_IGNORE;
@@ -35,7 +36,7 @@ import static java.lang.System.currentTimeMillis;
  * @author Boris Pronin (<a href="mailto:boprsoft.dev@gmail.com">boprsoft.dev@gmail.com</a>)
  */
 @SuppressWarnings("WeakerAccess")
-public class Database {
+public class Database implements Closeable {
 
     private static Logger log = LoggerFactory.getLogger("Database");
 
