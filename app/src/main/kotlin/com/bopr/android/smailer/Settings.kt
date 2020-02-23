@@ -3,7 +3,6 @@ package com.bopr.android.smailer
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import com.bopr.android.smailer.util.SharedPreferencesWrapper
-import com.bopr.android.smailer.util.deviceName
 import java.util.*
 
 /**
@@ -27,11 +26,6 @@ class Settings(context: Context) : SharedPreferencesWrapper(
                     throw IllegalArgumentException("Invalid locale code: $value")
                 }
             }
-        }
-
-    val deviceName: String
-        get() {
-            return getString(PREF_DEVICE_ALIAS) ?: deviceName()
         }
 
     val callFilter: PhoneEventFilter

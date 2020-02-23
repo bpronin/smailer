@@ -27,10 +27,10 @@ class GoogleDrive(context: Context, account: Account) {
     private val service: Drive
 
     init {
-        val credential = GoogleAccountCredential.usingOAuth2(context, setOf(DRIVE_APPDATA))
+        val credential = GoogleAccountCredential
+                .usingOAuth2(context, setOf(DRIVE_APPDATA))
                 .setSelectedAccount(account)
-        service = Drive.Builder(NetHttpTransport(),
-                JacksonFactory.getDefaultInstance(), credential)
+        service = Drive.Builder(NetHttpTransport(), JacksonFactory.getDefaultInstance(), credential)
                 .setApplicationName("smailer")
                 .build()
     }
@@ -140,6 +140,7 @@ class GoogleDrive(context: Context, account: Account) {
     }
 
     companion object {
+
         private const val APP_DATA_FOLDER = "appDataFolder"
         private const val MIME_JSON = "text/json"
     }

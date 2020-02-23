@@ -129,8 +129,8 @@ class MailFormatterTest : BaseTest() {
                 "Email body text", null, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
 
         val formatter = MailFormatter(context, event)
-        formatter.setSendTime(defaultTime)
-        formatter.setOptions(setOf(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME))
+        formatter.sendTime = defaultTime
+        formatter.options = setOf(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME)
 
         assertThat(formatter.formatBody(), htmlEqualsRes("footer_time_option.html"))
     }
@@ -144,9 +144,9 @@ class MailFormatterTest : BaseTest() {
                 null, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
 
         val formatter = MailFormatter(context, event)
-        formatter.setSendTime(defaultTime)
-        formatter.setDeviceName("The Device")
-        formatter.setOptions(setOf(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME))
+        formatter.sendTime = defaultTime
+        formatter.deviceName = "The Device"
+        formatter.options = setOf(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME)
 
         assertThat(formatter.formatBody(), htmlEqualsRes("footer_device_option.html"))
     }
@@ -161,8 +161,8 @@ class MailFormatterTest : BaseTest() {
                 null, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
 
         val formatter = MailFormatter(context, event)
-        formatter.setSendTime(defaultTime)
-        formatter.setOptions(setOf(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME))
+        formatter.sendTime = defaultTime
+        formatter.options = setOf(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME)
 
         assertThat(formatter.formatBody(), htmlEqualsRes("footer_no_device_option.html"))
     }
@@ -177,10 +177,10 @@ class MailFormatterTest : BaseTest() {
                 "Email body text", null, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
 
         val formatter = MailFormatter(context, event)
-        formatter.setSendTime(defaultTime)
-        formatter.setDeviceName("The Device")
-        formatter.setOptions(setOf(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
-                VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME))
+        formatter.sendTime = defaultTime
+        formatter.deviceName = "The Device"
+        formatter.options = setOf(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
+                VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME)
 
         assertThat(formatter.formatBody(), htmlEqualsRes("footer_time_device_option.html"))
     }
@@ -194,8 +194,8 @@ class MailFormatterTest : BaseTest() {
                 defaultCoordinates, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
 
         val formatter = MailFormatter(context, event)
-        formatter.setSendTime(defaultTime)
-        formatter.setOptions(setOf(VAL_PREF_EMAIL_CONTENT_LOCATION))
+        formatter.sendTime = defaultTime
+        formatter.options = setOf(VAL_PREF_EMAIL_CONTENT_LOCATION)
 
         assertThat(formatter.formatBody(), htmlEqualsRes("footer_location_option.html"))
     }
@@ -210,8 +210,8 @@ class MailFormatterTest : BaseTest() {
                 null, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
 
         val formatter = MailFormatter(context, event)
-        formatter.setSendTime(defaultTime)
-        formatter.setOptions(setOf(VAL_PREF_EMAIL_CONTENT_LOCATION))
+        formatter.sendTime = defaultTime
+        formatter.options = setOf(VAL_PREF_EMAIL_CONTENT_LOCATION)
 
         assertThat(formatter.formatBody(), htmlEqualsRes("footer_no_location.html"))
     }
@@ -229,8 +229,8 @@ class MailFormatterTest : BaseTest() {
         whenever(context.checkPermission(eq(ACCESS_FINE_LOCATION), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED)
 
         val formatter = MailFormatter(context, event)
-        formatter.setSendTime(defaultTime)
-        formatter.setOptions(setOf(VAL_PREF_EMAIL_CONTENT_LOCATION))
+        formatter.sendTime = defaultTime
+        formatter.options = setOf(VAL_PREF_EMAIL_CONTENT_LOCATION)
 
         assertThat(formatter.formatBody(), htmlEqualsRes("footer_no_location_permission.html"))
     }
@@ -244,9 +244,9 @@ class MailFormatterTest : BaseTest() {
                 null, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
 
         val formatter = MailFormatter(context, event)
-        formatter.setSendTime(defaultTime)
-        formatter.setContactName("John Dou")
-        formatter.setOptions(setOf(VAL_PREF_EMAIL_CONTENT_CONTACT))
+        formatter.sendTime = defaultTime
+        formatter.contactName = "John Dou"
+        formatter.options = setOf(VAL_PREF_EMAIL_CONTENT_CONTACT)
 
         assertThat(formatter.formatBody(), htmlEqualsRes("footer_contact_option.html"))
     }
@@ -263,8 +263,8 @@ class MailFormatterTest : BaseTest() {
         whenever(context.checkPermission(eq(READ_CONTACTS), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED)
 
         val formatter = MailFormatter(context, event)
-        formatter.setSendTime(defaultTime)
-        formatter.setOptions(setOf(VAL_PREF_EMAIL_CONTENT_CONTACT))
+        formatter.sendTime = defaultTime
+        formatter.options = setOf(VAL_PREF_EMAIL_CONTENT_CONTACT)
 
         assertThat(formatter.formatBody(), htmlEqualsRes("footer_contact_no_permission.html"))
     }
@@ -279,8 +279,8 @@ class MailFormatterTest : BaseTest() {
                 null, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
 
         val formatter = MailFormatter(context, event)
-        formatter.setSendTime(defaultTime)
-        formatter.setOptions(setOf(VAL_PREF_EMAIL_CONTENT_CONTACT))
+        formatter.sendTime = defaultTime
+        formatter.options = setOf(VAL_PREF_EMAIL_CONTENT_CONTACT)
 
         assertThat(formatter.formatBody(), htmlEqualsRes("footer_unknown_contact.html"))
     }
@@ -340,12 +340,12 @@ class MailFormatterTest : BaseTest() {
                 defaultCoordinates, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
 
         val formatter = MailFormatter(context, event)
-        formatter.setSendTime(defaultTime)
-        formatter.setContactName("John Dou")
-        formatter.setDeviceName("Device")
-        formatter.setOptions(setOf(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
+        formatter.sendTime = defaultTime
+        formatter.contactName = "John Dou"
+        formatter.deviceName = "Device"
+        formatter.options = setOf(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
                 VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
-                VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT))
+                VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT)
 
         assertThat(formatter.formatBody(), htmlEqualsRes("incoming_call_all.html"))
     }
@@ -361,12 +361,12 @@ class MailFormatterTest : BaseTest() {
                 defaultCoordinates, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
 
         val formatter = MailFormatter(context, event)
-        formatter.setSendTime(defaultTime)
-        formatter.setContactName("John Dou")
-        formatter.setDeviceName("Device")
-        formatter.setOptions(setOf(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
+        formatter.sendTime = defaultTime
+        formatter.contactName = "John Dou"
+        formatter.deviceName = "Device"
+        formatter.options = setOf(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
                 VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
-                VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT))
+                VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT)
 
         assertThat(formatter.formatBody(), htmlEqualsRes("outgoing_call_all.html"))
     }
@@ -382,11 +382,11 @@ class MailFormatterTest : BaseTest() {
                 defaultCoordinates, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
 
         val formatter = MailFormatter(context, event)
-        formatter.setSendTime(defaultTime)
-        formatter.setDeviceName("Device")
-        formatter.setOptions(setOf(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
+        formatter.sendTime = defaultTime
+        formatter.deviceName = "Device"
+        formatter.options = setOf(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
                 VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
-                VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT))
+                VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT)
 
         assertThat(formatter.formatBody(), htmlEqualsRes("missed_call_all.html"))
     }
@@ -406,19 +406,19 @@ class MailFormatterTest : BaseTest() {
                 defaultCoordinates, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
 
         val formatter = MailFormatter(context, event)
-        formatter.setSendTime(defaultTime)
-        formatter.setDeviceName("Device")
-        formatter.setLocale(Locale("ru", "ru"))
-        formatter.setOptions(setOf(VAL_PREF_EMAIL_CONTENT_CONTACT,
+        formatter.sendTime = defaultTime
+        formatter.deviceName = "Device"
+        formatter.locale = Locale("ru", "ru")
+        formatter.options = setOf(VAL_PREF_EMAIL_CONTENT_CONTACT,
                 VAL_PREF_EMAIL_CONTENT_LOCATION,
                 VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
                 VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
-                VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT))
+                VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT)
 
         assertEquals("[SMailer] Пропущенный звонок от +12345678901", formatter.formatSubject())
         assertThat(formatter.formatBody(), htmlEqualsRes("missed_call_ru.html"))
 
-        formatter.setLocale(Locale.getDefault())
+        formatter.locale = Locale.getDefault()
 
         assertEquals("[SMailer] Missed call from +12345678901", formatter.formatSubject())
         assertThat(formatter.formatBody(), htmlEqualsRes("missed_call_en.html"))
@@ -450,9 +450,9 @@ class MailFormatterTest : BaseTest() {
                 false, "Message", defaultCoordinates, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
 
         val formatter = MailFormatter(context, event)
-        formatter.setDeviceName("Device")
-        formatter.setServiceAccount("service@mail.com")
-        formatter.setOptions(setOf(Settings.VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS))
+        formatter.deviceName = "Device"
+        formatter.serviceAccount = "service@mail.com"
+        formatter.options = setOf(Settings.VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS)
 
         assertThat(formatter.formatBody(), htmlEqualsRes("remote_control_links.html"))
     }

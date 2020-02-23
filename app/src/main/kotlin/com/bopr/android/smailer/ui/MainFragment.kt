@@ -19,7 +19,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_RULES
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
-import com.bopr.android.smailer.util.deviceName
+import com.bopr.android.smailer.util.AndroidUtil.deviceName
 import com.bopr.android.smailer.util.getQuantityString
 import com.bopr.android.smailer.util.isValidEmailAddressList
 import com.google.api.services.drive.DriveScopes
@@ -45,7 +45,7 @@ class MainFragment : BasePreferenceFragment() {
         }
 
         requirePreference(PREF_SENDER_ACCOUNT).setOnPreferenceClickListener {
-            authorizator.selectAccount()
+            authorizator.startAccountSelectorActivity()
             true
         }
 
@@ -85,7 +85,7 @@ class MainFragment : BasePreferenceFragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        authorizator.onActivityResult(requestCode, resultCode, data)
+        authorizator.onAccountSelectorActivityResult(requestCode, resultCode, data)
     }
 
     override fun onStart() {
@@ -164,13 +164,13 @@ class MainFragment : BasePreferenceFragment() {
     }
 
     private fun updateDeviceNamePreferenceView() {
-        val preference = findPreference<EditTextPreference>(PREF_DEVICE_ALIAS)!!
-        val value = settings.getString(preference.key)
+        val preference = requirePreference(PREF_DEVICE_ALIAS)
+        val alias = settings.getString(preference.key)
 
-        if (value.isNullOrEmpty()) {
+        if (alias == null) {
             updateSummary(preference, deviceName(), SUMMARY_STYLE_DEFAULT)
         } else {
-            updateSummary(preference, value, SUMMARY_STYLE_DEFAULT)
+            updateSummary(preference, alias, SUMMARY_STYLE_DEFAULT)
         }
     }
 

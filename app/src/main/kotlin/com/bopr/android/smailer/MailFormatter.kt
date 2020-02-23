@@ -13,7 +13,11 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_LOCATI
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS
-import com.bopr.android.smailer.util.*
+import com.bopr.android.smailer.util.AndroidUtil.checkPermission
+import com.bopr.android.smailer.util.escapePhone
+import com.bopr.android.smailer.util.eventTypePrefix
+import com.bopr.android.smailer.util.eventTypeText
+import com.bopr.android.smailer.util.formatDuration
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.text.DateFormat
@@ -27,76 +31,17 @@ import java.util.regex.Pattern
  */
 class MailFormatter(private val context: Context, private val event: PhoneEvent) {
 
-    private var contactName: String? = null
-    private var deviceName: String? = null
-    private var sendTime: Date? = null
-    private var serviceAccount: String? = null
-    private var options: Set<String> = setOf()
+    var contactName: String? = null
+    var deviceName: String? = null
+    var sendTime: Date? = null
+    var serviceAccount: String? = null
+    var options: Set<String> = setOf()
+    var locale: Locale = updateLocale(Locale.getDefault())
+        set(value) {
+            field = updateLocale(value)
+        }
     private lateinit var resources: Resources
     private lateinit var timeFormat: DateFormat
-
-    init {
-        setLocale(Locale.getDefault())
-    }
-
-    /**
-     * Sets mail locale.
-     */
-    fun setLocale(locale: Locale) {
-        resources = if (locale === Locale.getDefault()) {
-            context.resources
-        } else {
-            val configuration = context.resources.configuration
-            configuration.setLocale(locale)
-            context.createConfigurationContext(configuration).resources
-        }
-        timeFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale)
-    }
-
-    /**
-     * Sets email content options.
-     *
-     * @param options set of options
-     */
-    fun setOptions(options: Set<String>) {
-        this.options = options
-    }
-
-    /**
-     * Sets contact name to be used in email body.
-     *
-     * @param contactName name
-     */
-    fun setContactName(contactName: String?) {
-        this.contactName = contactName
-    }
-
-    /**
-     * Sets device name to be used in email body.
-     *
-     * @param deviceName name
-     */
-    fun setDeviceName(deviceName: String?) {
-        this.deviceName = deviceName
-    }
-
-    /**
-     * Sets email send time
-     *
-     * @param sendTime time
-     */
-    fun setSendTime(sendTime: Date?) {
-        this.sendTime = sendTime
-    }
-
-    /**
-     * Sets service account email address
-     *
-     * @param serviceAddress address
-     */
-    fun setServiceAccount(serviceAddress: String?) {
-        serviceAccount = serviceAddress
-    }
 
     /**
      * Returns formatted email subject.
@@ -161,23 +106,17 @@ class MailFormatter(private val context: Context, private val event: PhoneEvent)
         sb.append(callerText)
 
         if (timeText.isNotEmpty()) {
-            if (sb.isNotEmpty()) {
-                sb.append("<br>")
-            }
+            if (sb.isNotEmpty()) sb.append("<br>")
             sb.append(timeText)
         }
 
         if (locationText.isNotEmpty()) {
-            if (sb.isNotEmpty()) {
-                sb.append("<br>")
-            }
+            if (sb.isNotEmpty()) sb.append("<br>")
             sb.append(locationText)
         }
 
         if (deviceNameText.isNotEmpty() || sendTimeText.isNotEmpty()) {
-            if (sb.isNotEmpty()) {
-                sb.append("<br>")
-            }
+            if (sb.isNotEmpty()) sb.append("<br>")
             sb.append(getString(R.string.sent_time_device, deviceNameText, sendTimeText))
         }
 
@@ -189,8 +128,8 @@ class MailFormatter(private val context: Context, private val event: PhoneEvent)
             val phoneUrl = encodeUrl(event.phone)
             val phoneLink = "<a href=\"tel:$phoneUrl\" style=\"text-decoration: none\">&#9742;</a>${event.phone}"
 
-            val contact = if (contactName.isNullOrBlank()) {
-                return if (checkPermission(context, permission.READ_CONTACTS)) {
+            val contact = if (contactName.isNullOrEmpty()) {
+                if (checkPermission(context, permission.READ_CONTACTS)) {
                     "<a href=\"https://www.google.com/search?q=$phoneUrl\">" +
                             "${getString(R.string.unknown_contact)}</a>"
                 } else {
@@ -226,7 +165,7 @@ class MailFormatter(private val context: Context, private val event: PhoneEvent)
     }
 
     private fun formatDeviceName(): String {
-        return if (options.contains(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME) && !deviceName.isNullOrBlank()) {
+        return if (options.contains(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME) && !deviceName.isNullOrEmpty()) {
             getString(R.string._from_device, deviceName)
         } else ""
     }
@@ -253,7 +192,7 @@ class MailFormatter(private val context: Context, private val event: PhoneEvent)
 
     private fun formatReplyLinks(): String {
         return if (options.contains(VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS)
-                && !serviceAccount.isNullOrBlank()) {
+                && !serviceAccount.isNullOrEmpty()) {
             //val title = getString(R.string.reply_ot_app, R.string.app_name)
 
             val phone = escapePhone(event.phone)
@@ -274,6 +213,18 @@ class MailFormatter(private val context: Context, private val event: PhoneEvent)
                 "body=${htmlEncode("To device \"$deviceName\": %0d%0a $body")}" +
                 "\">${getString(titleRes)}</a>" +
                 "</small></li>"
+    }
+
+    private fun updateLocale(locale: Locale): Locale {
+        resources = if (locale == Locale.getDefault()) {
+            context.resources
+        } else {
+            val configuration = context.resources.configuration
+            configuration.setLocale(locale)
+            context.createConfigurationContext(configuration).resources
+        }
+        timeFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale)
+        return locale
     }
 
     private fun replaceUrlsWithLinks(s: String): String {

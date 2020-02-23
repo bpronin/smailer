@@ -4,8 +4,8 @@ import android.app.Activity
 import com.bopr.android.smailer.Database
 import com.bopr.android.smailer.GoogleMail
 import com.bopr.android.smailer.MailMessage
-import com.bopr.android.smailer.util.deviceName
-import com.bopr.android.smailer.util.primaryAccount
+import com.bopr.android.smailer.util.AndroidUtil.deviceName
+import com.bopr.android.smailer.util.AndroidUtil.primaryAccount
 import com.bopr.android.smailer.util.showInfoDialog
 import com.bopr.android.smailer.util.showToast
 import com.google.api.services.gmail.GmailScopes
@@ -28,14 +28,14 @@ internal class SendLogTask(activity: Activity, private val properties: Propertie
         }
 
         try {
-            val sender = primaryAccount(activity).name
-            val transport = GoogleMail(activity)
+            val account = primaryAccount(activity)
+            val transport = GoogleMail(activity, account, GmailScopes.GMAIL_SEND)
 
-            transport.startSession(sender, GmailScopes.GMAIL_SEND)
+            transport.startSession()
             for (file in attachments) {
                 val message = MailMessage().apply {
                     subject = "[SMailer] log: " + file.name
-                    from = sender
+                    from = account.name
                     body = "Device: " + deviceName() + "<br>File: " + file.name
                     attachment = setOf(file)
                     recipients = properties.getProperty("developer_email")

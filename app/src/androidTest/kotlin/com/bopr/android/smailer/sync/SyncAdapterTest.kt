@@ -8,7 +8,7 @@ import com.bopr.android.smailer.Database
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_BLACKLIST
 import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_TIME
-import com.bopr.android.smailer.util.primaryAccount
+import com.bopr.android.smailer.util.AndroidUtil.primaryAccount
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test

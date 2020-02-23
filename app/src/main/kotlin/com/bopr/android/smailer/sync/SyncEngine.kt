@@ -11,7 +11,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_BLACKLIST
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_WHITELIST
 import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_TIME
 import com.bopr.android.smailer.sync.AppContentProvider.Companion.AUTHORITY
-import com.bopr.android.smailer.util.primaryAccount
+import com.bopr.android.smailer.util.AndroidUtil.primaryAccount
 import org.slf4j.LoggerFactory
 import java.lang.System.currentTimeMillis
 

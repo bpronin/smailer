@@ -12,26 +12,15 @@ import org.slf4j.LoggerFactory
  */
 class CallProcessorService : IntentService("call-processor") {
 
-    private lateinit var callProcessor: CallProcessor
-    private lateinit var database: Database
-
-    override fun onCreate() {
-        super.onCreate()
-        database = Database(this)
-        callProcessor = CallProcessor(this, database)
-    }
-
-    override fun onDestroy() {
-        database.close()
-        super.onDestroy()
-
-        log.debug("Destroyed")
-    }
-
     override fun onHandleIntent(intent: Intent?) {
         log.debug("Running")
+
         intent?.getParcelableExtra<PhoneEvent>(EXTRA_EVENT)?.let {
-            callProcessor.process(it)
+            try {
+                CallProcessor(this).process(it)
+            } catch (x: Exception) {
+                log.warn("Processing failed: ", x)
+            }
         }
     }
 

@@ -1,23 +1,27 @@
 package com.bopr.android.smailer
 
+import android.accounts.Account
 import android.accounts.AccountsException
 import android.content.Context
+import com.bopr.android.smailer.Notifications.Companion.ACTION_SHOW_MAIN
 import com.bopr.android.smailer.PhoneEvent.Companion.REASON_ACCEPTED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
+import com.bopr.android.smailer.Settings.Companion.PREF_DEVICE_ALIAS
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_MARK_SMS_AS_READ
 import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
+import com.bopr.android.smailer.util.AndroidUtil
+import com.bopr.android.smailer.util.AndroidUtil.getAccount
 import com.bopr.android.smailer.util.contactName
 import com.bopr.android.smailer.util.isValidEmailAddressList
 import com.bopr.android.smailer.util.markSmsAsRead
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 import org.slf4j.LoggerFactory
-import java.io.IOException
 import java.util.*
 
 /**
@@ -27,13 +31,15 @@ import java.util.*
  */
 class CallProcessor(
         private val context: Context,
-        private val database: Database,
-        private val transport: GoogleMail = GoogleMail(context),
+        private val database: Database = Database(context),
+        transport: GoogleMail? = null,
         private val notifications: Notifications = Notifications(context),
         private val locator: GeoLocator = GeoLocator(context, database)) {
 
     private val log = LoggerFactory.getLogger("CallProcessor")
     private val settings: Settings = Settings(context)
+    private val transport: GoogleMail = transport
+            ?: GoogleMail(context, requireAccount(), GMAIL_SEND)
 
     /**
      * Sends out a mail for event.
@@ -82,7 +88,7 @@ class CallProcessor(
 
         return try {
             requireRecipient(silent)
-            transport.startSession(requireAccount(silent), GMAIL_SEND)
+            transport.startSession()
             true
         } catch (x: AccountsException) {
             log.warn("Failed starting mail session: ", x)
@@ -100,11 +106,28 @@ class CallProcessor(
         log.debug("Sending mail: $event")
 
         return try {
-            sendMessage(event, requireRecipient(silent))
+            val formatter = MailFormatter(context, event).apply {
+                sendTime = Date()
+                contactName = contactName(context, event.phone)
+                deviceName = settings.getString(PREF_DEVICE_ALIAS) ?: AndroidUtil.deviceName()
+                options = settings.getStringSet(PREF_EMAIL_CONTENT)
+                serviceAccount = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
+                locale = settings.locale
+            }
+            val message = MailMessage().apply {
+                subject = formatter.formatSubject()
+                body = formatter.formatBody()
+                recipients = requireRecipient(silent)
+                from = settings.getString(PREF_SENDER_ACCOUNT)
+                replyTo = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
+            }
+
+            transport.send(message)
+
             notifications.hideAllErrors()
 
             if (settings.getBoolean(PREF_NOTIFY_SEND_SUCCESS, false)) {
-                notifications.showMessage(R.string.email_successfully_send, Notifications.ACTION_SHOW_MAIN)
+                notifications.showMessage(R.string.email_successfully_send, ACTION_SHOW_MAIN)
             }
             if (settings.getBoolean(PREF_MARK_SMS_AS_READ, false)) {
                 markSmsAsRead(context, event)
@@ -122,14 +145,12 @@ class CallProcessor(
         }
     }
 
-    @Throws(Exception::class)
-    private fun requireAccount(silent: Boolean): String {
-        val sender = settings.getString(PREF_SENDER_ACCOUNT)
-        if (sender.isNullOrEmpty()) {
-            showErrorNotification(R.string.no_account_specified, silent)
-            throw Exception("Account not specified")
+    @Throws(AccountsException::class)
+    private fun requireAccount(): Account {
+        return getAccount(context, settings.getString(PREF_SENDER_ACCOUNT)) ?: run {
+            notifications.showError(R.string.sender_account_not_found, ACTION_SHOW_MAIN)
+            throw AccountsException("Sender account not found")
         }
-        return sender
     }
 
     @Throws(Exception::class)
@@ -149,31 +170,9 @@ class CallProcessor(
         return recipients
     }
 
-    @Throws(IOException::class)
-    private fun sendMessage(event: PhoneEvent, recipient: String?) {
-        val formatter = MailFormatter(context, event).apply {
-            setSendTime(Date())
-            setContactName(contactName(context, event.phone))
-            setDeviceName(settings.deviceName)
-            setOptions(settings.getStringSet(PREF_EMAIL_CONTENT))
-            setServiceAccount(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT))
-            setLocale(settings.locale)
-        }
-
-        val message = MailMessage().apply {
-            subject = formatter.formatSubject()
-            body = formatter.formatBody()
-            recipients = recipient
-            from = settings.getString(PREF_SENDER_ACCOUNT)
-            replyTo = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
-        }
-
-        transport.send(message)
-    }
-
     private fun showErrorNotification(reason: Int, silent: Boolean) {
         if (!silent) {
-            notifications.showMailError(reason, Notifications.ACTION_SHOW_MAIN)
+            notifications.showMailError(reason, ACTION_SHOW_MAIN)
         }
     }
 }

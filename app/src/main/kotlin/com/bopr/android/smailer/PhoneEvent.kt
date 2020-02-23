@@ -27,16 +27,17 @@ data class PhoneEvent(
 ) : Parcelable {
 
     val isSms: Boolean
-        get() = text?.isNotEmpty() ?: false
+        get() = text != null
 
-    val callDuration: Long
-        get() = endTime?.minus(startTime) ?: 0
+    val callDuration: Long?
+        get() = endTime?.minus(startTime)
 
     @Retention(SOURCE)
     @IntDef(STATE_PENDING, STATE_PROCESSED, STATE_IGNORED)
     annotation class EventState
 
     companion object {
+
         const val STATE_PENDING = 0
         const val STATE_PROCESSED = 1
         const val STATE_IGNORED = 2

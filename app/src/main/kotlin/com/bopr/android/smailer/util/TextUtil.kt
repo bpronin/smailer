@@ -70,9 +70,11 @@ fun capitalize(text: String?): String? {
     }
 }
 
-fun formatDuration(duration: Long): String? {
-    val seconds = duration / 1000
-    return String.format(Locale.US, "%d:%02d:%02d", seconds / 3600, seconds % 3600 / 60, seconds % 60)
+fun formatDuration(duration: Long?): String? {
+    return duration?.let{
+        val seconds = duration / 1000
+        String.format(Locale.US, "%d:%02d:%02d", seconds / 3600, seconds % 3600 / 60, seconds % 60)
+    }
 }
 
 fun readStream(stream: InputStream?): String? {

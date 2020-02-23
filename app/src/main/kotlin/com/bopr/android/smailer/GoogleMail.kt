@@ -1,5 +1,6 @@
 package com.bopr.android.smailer
 
+import android.accounts.Account
 import android.accounts.AccountsException
 import android.content.Context
 import com.bopr.android.smailer.util.Mockable
@@ -30,18 +31,24 @@ import javax.mail.internet.*
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 @Mockable
-class GoogleMail(private val context: Context) {
+class GoogleMail(context: Context, account: Account, vararg scopes: String) {
 
     private val log = LoggerFactory.getLogger("GoogleMail")
 
     private lateinit var service: Gmail
     private lateinit var session: Session
-    private lateinit var account: String
+
+    init {
+        val credential = GoogleAccountCredential
+                .usingOAuth2(context, listOf(*scopes))
+                .setSelectedAccount(account)
+        service = Gmail.Builder(NetHttpTransport(), JacksonFactory.getDefaultInstance(), credential)
+                .setApplicationName("smailer")
+                .build()
+    }
 
     @Throws(AccountsException::class)
-    fun startSession(account: String, vararg scopes: String) {
-        this.account = account
-        service = createService(createCredential(account, *scopes))
+    fun startSession() {
         session = Session.getDefaultInstance(Properties(), null)
     }
 
@@ -97,23 +104,6 @@ class GoogleMail(private val context: Context) {
                 .execute()
 
         log.debug("Message moved to trash: " + message.id)
-    }
-
-    @Throws(AccountsException::class)
-    private fun createCredential(accountName: String, vararg scopes: String): GoogleAccountCredential {
-        val credential = GoogleAccountCredential.usingOAuth2(context, listOf(*scopes))
-        credential.selectedAccountName = accountName
-        if (credential.selectedAccount == null) {
-            throw AccountsException("Account does not exist: $accountName")
-        }
-        return credential
-    }
-
-    private fun createService(credential: GoogleAccountCredential): Gmail {
-        return Gmail.Builder(NetHttpTransport(),
-                JacksonFactory.getDefaultInstance(), credential)
-                .setApplicationName("smailer")
-                .build()
     }
 
     private fun createContent(message: MailMessage): com.google.api.services.gmail.model.Message {
@@ -191,6 +181,7 @@ class GoogleMail(private val context: Context) {
     }
 
     companion object {
+
         private const val ME = "me" /* exact lowercase "me" */
         private const val UTF_8 = "UTF-8"
         private const val HTML = "html"

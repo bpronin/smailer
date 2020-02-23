@@ -4,6 +4,8 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.ui.WavyUnderlineSpan
+import com.bopr.android.smailer.util.AndroidUtil.deviceName
+import com.bopr.android.smailer.util.AndroidUtil.primaryAccount
 import org.hamcrest.CoreMatchers.instanceOf
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert.assertNotNull

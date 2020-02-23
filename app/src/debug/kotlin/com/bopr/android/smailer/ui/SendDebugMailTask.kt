@@ -3,8 +3,8 @@ package com.bopr.android.smailer.ui
 import android.app.Activity
 import com.bopr.android.smailer.GoogleMail
 import com.bopr.android.smailer.MailMessage
-import com.bopr.android.smailer.util.deviceName
-import com.bopr.android.smailer.util.primaryAccount
+import com.bopr.android.smailer.util.AndroidUtil.deviceName
+import com.bopr.android.smailer.util.AndroidUtil.primaryAccount
 import com.bopr.android.smailer.util.showInfoDialog
 import com.bopr.android.smailer.util.showToast
 import com.google.api.services.gmail.GmailScopes
@@ -14,17 +14,18 @@ internal class SendDebugMailTask(activity: Activity, private val properties: Pro
     : LongAsyncTask<Void?, Void?, Exception?>(activity) {
 
     override fun doInBackground(vararg params: Void?): Exception? {
-        val transport = GoogleMail(activity)
-        val sender = primaryAccount(activity).name
+        val account = primaryAccount(activity)
+        val transport = GoogleMail(activity, account, GmailScopes.GMAIL_SEND)
+
         val message = MailMessage().apply {
-            from = sender
+            from = account.name
             subject = "test subject"
             body = "test message from " + deviceName()
             recipients = properties.getProperty("default_recipient")
         }
 
         try {
-            transport.startSession(sender, GmailScopes.GMAIL_SEND)
+            transport.startSession()
             transport.send(message)
         } catch (x: Exception) {
             return x

@@ -16,7 +16,7 @@ import androidx.annotation.RequiresPermission
 import com.bopr.android.smailer.PermissionsHelper.Companion.WRITE_SMS
 import com.bopr.android.smailer.PhoneEvent
 
-@RequiresPermission(READ_CONTACTS)
+@RequiresPermission(READ_CONTACTS, conditional = true)
 fun contactName(context: Context, phone: String): String? {
     val uri = withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, encode(phone))
     var result: String? = null
@@ -28,12 +28,12 @@ fun contactName(context: Context, phone: String): String? {
     return result
 }
 
-@RequiresPermission(READ_CONTACTS)
+@RequiresPermission(READ_CONTACTS, conditional = true)
 fun createPickContactIntent(): Intent {
     return Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI)
 }
 
-@RequiresPermission(READ_CONTACTS)
+@RequiresPermission(READ_CONTACTS, conditional = true)
 fun phoneFromIntent(context: Context, intent: Intent?): String? {
     val uri: Uri = intent!!.data!!
     var result: String? = null
@@ -49,7 +49,7 @@ fun phoneFromIntent(context: Context, intent: Intent?): String? {
     return result
 }
 
-@RequiresPermission(READ_CONTACTS)
+@RequiresPermission(READ_CONTACTS, conditional = true)
 fun emailFromIntent(context: Context, intent: Intent?): String? {
     val uri: Uri = intent!!.data!!
     var result: String? = null
@@ -62,7 +62,7 @@ fun emailFromIntent(context: Context, intent: Intent?): String? {
     return result
 }
 
-@RequiresPermission(anyOf = [READ_SMS, WRITE_SMS])
+@RequiresPermission(anyOf = [READ_SMS, WRITE_SMS], conditional = true)
 fun markSmsAsRead(context: Context, event: PhoneEvent) {
     val uri = Uri.parse("content://sms/inbox")
     val resolver = context.contentResolver

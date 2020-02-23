@@ -116,12 +116,12 @@
     <string name="select_from_contacts">Select from contacts</string>
     <string name="send_sms_to_sender">send SMS to the caller</string>
     <string name="sender">Account</string>
-    <string name="sender_account_removed">Sender account has been removed.</string>
+    <string name="sender_account_not_found">Sender account not found.</string>
     <string name="sender_phone">Sender: %1$s (%2$s)</string>
     <string name="sent_email">Sent email</string>
     <string name="sent_time_device">Sent%1$s%2$s</string>
-    <string name="service_account_not_specified">Service account not specified.</string>
-    <string name="service_running">Service is active</string>
+    <string name="service_account_not_found">Service account not found.</string>
+    <string name="service_running">Service running.</string>
     <string name="since_permissions_not_granted">Since not all required permissions is granted, some options have been disabled.</string>
     <string name="text_blacklist">Text blacklist</string>
     <string name="text_filter">Text filter</string>

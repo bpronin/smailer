@@ -21,7 +21,6 @@ import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_DEFAULT
-import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 import com.nhaarman.mockitokotlin2.*
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -107,7 +106,7 @@ class CallProcessorTest : BaseTest() {
         val event = testingEvent()
         processor.process(event)
 
-        verify(transport).startSession(eq("sender@mail.com"), eq(GMAIL_SEND))
+        verify(transport).startSession()
         verify(transport).send(argThat {
             id == null
                     && subject == "[SMailer] Incoming SMS from \"+123\""
@@ -139,7 +138,7 @@ class CallProcessorTest : BaseTest() {
 
         processor.process(event)
 
-        verify(transport, never()).startSession(any(), any())
+        verify(transport, never()).startSession()
         verify(transport, never()).send(any())
         verify(notifications, never()).showMailError(any(), any())
 
@@ -149,25 +148,25 @@ class CallProcessorTest : BaseTest() {
         assertEquals(REASON_TRIGGER_OFF, savedEvent.stateReason)
     }
 
-    /**
-     * Test processing when sender account is not specified.
-     */
-    @Test
-    fun testProcessNoSender() {
-        whenever(preferences.getString(eq(PREF_SENDER_ACCOUNT), anyOrNull())).thenReturn(null)
-
-        val event = testingEvent()
-        processor.process(event)
-
-        verify(transport, never()).startSession(any(), any())
-        verify(transport, never()).send(any())
-        verify(notifications).showMailError(eq(R.string.no_account_specified), eq(ACTION_SHOW_MAIN))
-
-        val savedEvent = database.events.findFirst()!!
-
-        assertEquals(STATE_PENDING, savedEvent.state)
-        assertEquals(REASON_ACCEPTED, savedEvent.stateReason)
-    }
+//    /**
+//     * Test processing when sender account is not specified.
+//     */
+//    @Test
+//    fun testProcessNoSender() {
+//        whenever(preferences.getString(eq(PREF_SENDER_ACCOUNT), anyOrNull())).thenReturn(null)
+//
+//        val event = testingEvent()
+//        processor.process(event)
+//
+//        verify(transport, never()).startSession()
+//        verify(transport, never()).send(any())
+//        verify(notifications).showMailError(eq(R.string.no_account_specified), eq(ACTION_SHOW_MAIN))
+//
+//        val savedEvent = database.events.findFirst()!!
+//
+//        assertEquals(STATE_PENDING, savedEvent.state)
+//        assertEquals(REASON_ACCEPTED, savedEvent.stateReason)
+//    }
 
     /**
      * Test processing when no recipients specified.
@@ -179,7 +178,7 @@ class CallProcessorTest : BaseTest() {
         val event = testingEvent()
         processor.process(event)
 
-        verify(transport, never()).startSession(any(), any())
+        verify(transport, never()).startSession()
         verify(transport, never()).send(any())
         verify(notifications).showMailError(eq(R.string.no_recipients_specified), eq(ACTION_SHOW_MAIN))
 
@@ -194,12 +193,12 @@ class CallProcessorTest : BaseTest() {
      */
     @Test
     fun testProcessTransportInitFailed() {
-        doThrow(AccountsException("Test error")).whenever(transport).startSession(any(), any())
+        doThrow(AccountsException("Test error")).whenever(transport).startSession()
 
         val event = testingEvent()
         processor.process(event)
 
-        verify(transport).startSession(any(), any())
+        verify(transport).startSession()
         verify(transport, never()).send(any())
         verify(notifications).showMailError(eq(R.string.account_not_registered), eq(ACTION_SHOW_MAIN))
 
@@ -219,7 +218,7 @@ class CallProcessorTest : BaseTest() {
         val event = testingEvent()
         processor.process(event)
 
-        verify(transport).startSession(eq("sender@mail.com"), eq(GMAIL_SEND))
+        verify(transport).startSession()
         verify(transport).send(any())
         verify(notifications, never()).showMailError(any(), any())
 
@@ -234,7 +233,7 @@ class CallProcessorTest : BaseTest() {
      */
     @Test
     fun testClearNotifications() {
-        doThrow(AccountsException("Test error")).whenever(transport).startSession(any(), any())
+        doThrow(AccountsException("Test error")).whenever(transport).startSession()
 
         val event = testingEvent()
         processor.process(event)
@@ -243,7 +242,7 @@ class CallProcessorTest : BaseTest() {
         verify(notifications, never()).hideAllErrors()
 
         /* sending without errors hides all previous error notifications */
-        doNothing().whenever(transport).startSession(any(), any())
+        doNothing().whenever(transport).startSession()
 
         processor.process(testingEvent())
 

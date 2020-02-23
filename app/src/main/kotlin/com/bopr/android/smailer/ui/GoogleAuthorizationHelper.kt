@@ -39,14 +39,6 @@ class GoogleAuthorizationHelper(private val fragment: Fragment,
         return findAccount(accountName) != null
     }
 
-    private fun findAccount(accountName: String?): Account? {
-        return accountManager.getAccountByName(accountName)
-    }
-
-    private fun selectedAccount(): Account? {
-        return findAccount(settings.getString(accountSettingName))
-    }
-
     /* todo: see https://developer.android.com/reference/android/accounts/AccountManager
     public void checkSelectedAccount() {
      try
@@ -60,24 +52,31 @@ class GoogleAuthorizationHelper(private val fragment: Fragment,
     /**
      * Brings up system account selection dialog.
      */
-    fun selectAccount() {
+    fun startAccountSelectorActivity() {
+        val selectedAccount = findAccount(settings.getString(accountSettingName))
+
         val intent: Intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            newChooseAccountIntent(selectedAccount(), null, arrayOf(ACCOUNT_TYPE), null, null, null, null)
+            newChooseAccountIntent(selectedAccount, null, arrayOf(ACCOUNT_TYPE), null, null, null, null)
         } else {
             @Suppress("DEPRECATION")
-            newChooseAccountIntent(selectedAccount(), null, arrayOf(ACCOUNT_TYPE), false, null, null, null, null)
+            newChooseAccountIntent(selectedAccount, null, arrayOf(ACCOUNT_TYPE), false, null, null, null, null)
         }
+
         fragment.startActivityForResult(intent, REQUEST_ACCOUNT_CHOOSER)
     }
 
     /**
-     * Should be placed to owner fragment or activity onActivityResult().
+     * Should be placed to owner's onActivityResult() method.
      */
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    fun onAccountSelectorActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_ACCOUNT_CHOOSER && resultCode == RESULT_OK && data?.extras != null) {
             val accountName = data.extras!!.getString(KEY_ACCOUNT_NAME)
             requestPermission(accountName)
         }
+    }
+
+    private fun findAccount(accountName: String?): Account? {
+        return accountManager.getAccountByName(accountName)
     }
 
     private fun requestPermission(accountName: String?) {

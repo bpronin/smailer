@@ -13,8 +13,8 @@ import android.os.HandlerThread
 import android.os.IBinder
 import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
+import com.bopr.android.smailer.util.AndroidUtil.deviceName
 import com.bopr.android.smailer.util.db.RowSet
-import com.bopr.android.smailer.util.deviceName
 import org.slf4j.LoggerFactory
 
 /**

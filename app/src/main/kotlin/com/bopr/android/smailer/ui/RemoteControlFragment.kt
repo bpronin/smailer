@@ -20,7 +20,7 @@ class RemoteControlFragment : BasePreferenceFragment() {
         addPreferencesFromResource(R.xml.pref_remote)
 
         requirePreference(PREF_REMOTE_CONTROL_ACCOUNT).setOnPreferenceClickListener {
-            authorizator.selectAccount()
+            authorizator.startAccountSelectorActivity()
             true
         }
     }
@@ -41,7 +41,7 @@ class RemoteControlFragment : BasePreferenceFragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        authorizator.onActivityResult(requestCode, resultCode, data)
+        authorizator.onAccountSelectorActivityResult(requestCode, resultCode, data)
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {

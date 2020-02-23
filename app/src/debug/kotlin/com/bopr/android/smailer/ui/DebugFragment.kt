@@ -1,7 +1,6 @@
 package com.bopr.android.smailer.ui
 
 import android.Manifest.permission
-import android.accounts.Account
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
@@ -51,8 +50,9 @@ import com.bopr.android.smailer.sync.Synchronizer
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.isIgnoreBatteryOptimizationRequired
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
 import com.bopr.android.smailer.util.*
+import com.bopr.android.smailer.util.AndroidUtil.deviceName
+import com.bopr.android.smailer.util.AndroidUtil.primaryAccount
 import com.google.android.gms.tasks.Tasks
-import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager
 import com.google.api.services.drive.DriveScopes
 import com.google.api.services.gmail.GmailScopes
 import org.slf4j.LoggerFactory
@@ -297,7 +297,7 @@ class DebugFragment : BasePreferenceFragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        authorizator.onActivityResult(requestCode, resultCode, data)
+        authorizator.onAccountSelectorActivityResult(requestCode, resultCode, data)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
@@ -402,7 +402,7 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun onRequestGooglePermission() {
-        authorizator.selectAccount()
+        authorizator.startAccountSelectorActivity()
     }
 
     private fun onProcessSingleEvent() {
@@ -487,8 +487,7 @@ class DebugFragment : BasePreferenceFragment() {
 
     private fun onGoogleDriveClear() {
         Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
-            val drive = GoogleDrive(appContext, senderAccount())
-            drive.clear()
+            GoogleDrive(appContext, primaryAccount(requireContext())).clear()
             null
         })
         showToast(appContext, "Done")
@@ -509,7 +508,9 @@ class DebugFragment : BasePreferenceFragment() {
     private fun onGoogleDriveDownload() {
         Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
             try {
-                Synchronizer(appContext, senderAccount()).download().dispose()
+                Synchronizer(appContext, primaryAccount(requireContext()))
+                        .download()
+                        .dispose()
             } catch (x: Throwable) {
                 log.error("Download error: ", x)
             }
@@ -521,7 +522,9 @@ class DebugFragment : BasePreferenceFragment() {
     private fun onGoogleDriveUpload() {
         Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
             try {
-                Synchronizer(appContext, senderAccount()).upload().dispose()
+                Synchronizer(appContext, primaryAccount(requireContext()))
+                        .upload()
+                        .dispose()
             } catch (x: Throwable) {
                 log.error("Upload error: ", x)
             }
@@ -547,11 +550,6 @@ class DebugFragment : BasePreferenceFragment() {
                     }
                 }
         )
-    }
-
-    private fun senderAccount(): Account {
-        val name = settings.getString(PREF_SENDER_ACCOUNT)
-        return GoogleAccountManager(appContext).getAccountByName(name)
     }
 
     private abstract inner class DefaultClickListener : Preference.OnPreferenceClickListener {

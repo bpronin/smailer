@@ -12,24 +12,14 @@ import org.slf4j.LoggerFactory
  */
 class PendingCallProcessorService : JobIntentService() {
 
-    private lateinit var callProcessor: CallProcessor
-    private lateinit var database: Database
-
-    override fun onCreate() {
-        super.onCreate()
-        database = Database(this)
-        callProcessor = CallProcessor(this, database)
-    }
-
-    override fun onDestroy() {
-        database.close()
-        super.onDestroy()
-    }
-
     override fun onHandleWork(intent: Intent) {
         log.debug("Handling intent: $intent")
 
-        callProcessor.processPending()
+        try {
+            CallProcessor(this).processPending()
+        } catch (x: Exception) {
+            log.warn("Processing failed: ", x)
+        }
     }
 
     companion object {

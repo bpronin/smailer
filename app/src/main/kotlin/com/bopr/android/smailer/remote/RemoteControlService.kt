@@ -1,10 +1,14 @@
 package com.bopr.android.smailer.remote
 
+import android.accounts.Account
+import android.accounts.AccountsException
 import android.content.Context
 import android.content.Intent
 import android.telephony.SmsManager
 import androidx.core.app.JobIntentService
 import com.bopr.android.smailer.*
+import com.bopr.android.smailer.Notifications.Companion.ACTION_SHOW_REMOTE_CONTROL
+import com.bopr.android.smailer.Settings.Companion.PREF_DEVICE_ALIAS
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS
@@ -18,6 +22,8 @@ import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_PHONE_
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_TEXT_FROM_BLACKLIST
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_TEXT_FROM_WHITELIST
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.SEND_SMS_TO_CALLER
+import com.bopr.android.smailer.util.AndroidUtil.deviceName
+import com.bopr.android.smailer.util.AndroidUtil.getAccount
 import com.bopr.android.smailer.util.containsEmail
 import com.bopr.android.smailer.util.containsPhone
 import com.bopr.android.smailer.util.extractEmail
@@ -49,8 +55,9 @@ class RemoteControlService : JobIntentService() {
         log.debug("Handling intent: $intent")
 
         try {
-            val transport = GoogleMail(this)
-            transport.startSession(requireAccount(), GmailScopes.MAIL_GOOGLE_COM)
+            val transport = GoogleMail(this, requireAccount(), GmailScopes.MAIL_GOOGLE_COM)
+
+            transport.startSession()
 
             val messages = transport.list(query)
             if (messages.isEmpty()) {
@@ -65,7 +72,7 @@ class RemoteControlService : JobIntentService() {
                         when {
                             task == null ->
                                 log.debug("Not a service mail")
-                            settings.deviceName != task.acceptor ->
+                            deviceAlias() != task.acceptor ->
                                 log.debug("Not my mail")
                             else -> {
                                 transport.markAsRead(message)
@@ -94,14 +101,12 @@ class RemoteControlService : JobIntentService() {
         return true
     }
 
-    @Throws(Exception::class)
-    private fun requireAccount(): String {
-        val account = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
-        if (account.isNullOrEmpty()) {
-            notifications.showError(R.string.service_account_not_specified, Notifications.ACTION_SHOW_REMOTE_CONTROL)
-            throw Exception("Service account not specified")
+    @Throws(AccountsException::class)
+    private fun requireAccount(): Account {
+        return getAccount(this, settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)) ?: run {
+            notifications.showError(R.string.service_account_not_found, ACTION_SHOW_REMOTE_CONTROL)
+            throw AccountsException("Service account not found")
         }
-        return account
     }
 
     private fun performTask(task: RemoteControlTask) {
@@ -239,6 +244,10 @@ class RemoteControlService : JobIntentService() {
         if (settings.getBoolean(PREF_REMOTE_CONTROL_NOTIFICATIONS, false)) {
             notifications.showRemoteAction(messageRes, text)
         }
+    }
+
+    private fun deviceAlias(): String {
+        return settings.getString(PREF_DEVICE_ALIAS) ?: deviceName()
     }
 
     companion object {
