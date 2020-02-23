@@ -4,15 +4,12 @@ import android.content.ContentProvider
 import android.content.ContentValues
 import android.database.Cursor
 import android.net.Uri
-import com.bopr.android.smailer.Database
 
 class AppContentProvider : ContentProvider() {
 
     //    public static final Uri CONTENT_EVENTS = Uri.withAppendedPath(CONTENT, "events");
-    private lateinit var database: Database
 
     override fun onCreate(): Boolean {
-        database = Database(context!!)
         return true
     }
 

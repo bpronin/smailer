@@ -15,6 +15,7 @@ import com.bopr.android.smailer.util.db.DbUtil.replaceTable
 import com.bopr.android.smailer.util.db.RowSet
 import com.bopr.android.smailer.util.db.RowSet.Companion.forLong
 import org.slf4j.LoggerFactory
+import java.io.Closeable
 import java.lang.System.currentTimeMillis
 import java.util.concurrent.TimeUnit
 
@@ -23,10 +24,14 @@ import java.util.concurrent.TimeUnit
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class Database constructor(private val context: Context, private val name: String = DATABASE_NAME) {
+class Database constructor(private val context: Context, private val name: String = DATABASE_NAME) : Closeable {
 
     private var updatesCounter: Long = 0
     private val helper: DbHelper = DbHelper(context)
+
+    init {
+        log.debug("Open")
+    }
 
     /**
      * Time period that should exceed until addition of new record triggers purge process
@@ -169,7 +174,7 @@ class Database constructor(private val context: Context, private val name: Strin
     /**
      * Close any open database object.
      */
-    fun close() {
+    override fun close() {
         helper.close()
 
         log.debug("Closed")
@@ -271,11 +276,16 @@ class Database constructor(private val context: Context, private val name: Strin
                 }
             }
             LocalBroadcastManager.getInstance(context).registerReceiver(listener, IntentFilter(DATABASE_EVENT))
+
+            log.debug("Listener registered")
+
             return listener
         }
 
         fun unregisterDatabaseListener(context: Context, listener: BroadcastReceiver) {
             LocalBroadcastManager.getInstance(context).unregisterReceiver(listener)
+
+            log.debug("Listener unregistered")
         }
     }
 

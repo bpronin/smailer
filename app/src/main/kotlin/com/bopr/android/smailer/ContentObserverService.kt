@@ -40,7 +40,7 @@ class ContentObserverService : Service() {
         log.debug("Running")
 
         contentResolver.registerContentObserver(CONTENT_SMS, true, contentObserver)
-        startForeground(1, notifications.foregroundServiceNotification)
+        startForeground(1, notifications.serviceNotification())
         return super.onStartCommand(intent, flags, startId)
     }
 

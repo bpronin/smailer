@@ -37,15 +37,6 @@ class GoogleMail(private val context: Context) {
     private lateinit var service: Gmail
     private lateinit var session: Session
 
-//    fun login(accountName: String?, scope: String) {
-//        val credential = GoogleAccountCredential
-//                .usingOAuth2(context, listOf(scope))
-//                .setSelectedAccountName(accountName)
-//        service = Gmail.Builder(NetHttpTransport(), JacksonFactory.getDefaultInstance(), credential)
-//                .setApplicationName("smailer")
-//                .build()
-//    }
-
     fun login(account: Account, scope: String) {
         val credential = GoogleAccountCredential
                 .usingOAuth2(context, listOf(scope))

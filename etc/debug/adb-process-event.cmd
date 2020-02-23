@@ -3,3 +3,4 @@
 :: See https://developer.android.com/training/monitoring-device-state/doze-standby.html
 
 adb shell am broadcast -n com.bopr.android.smailer/.DebugReceiver -a PROCESS_EVENT
+exit

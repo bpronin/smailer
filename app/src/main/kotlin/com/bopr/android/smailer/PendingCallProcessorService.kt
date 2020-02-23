@@ -15,7 +15,9 @@ class PendingCallProcessorService : JobIntentService() {
     override fun onHandleWork(intent: Intent) {
         log.debug("Handling intent: $intent")
 
-        CallProcessor(this).processPending()
+        Database(this).use {
+            CallProcessor(this, it).processPending()
+        }
     }
 
     companion object {

@@ -292,6 +292,7 @@ class DebugFragment : BasePreferenceFragment() {
     override fun onDestroy() {
         appContext.unregisterReceiver(sentStatusReceiver)
         appContext.unregisterReceiver(deliveredStatusReceiver)
+        database.close()
         super.onDestroy()
     }
 
@@ -510,9 +511,7 @@ class DebugFragment : BasePreferenceFragment() {
     private fun onGoogleDriveDownload() {
         Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
             try {
-                Synchronizer(appContext, primaryAccount(requireContext()))
-                        .download()
-                        .dispose()
+                Synchronizer(appContext, primaryAccount(requireContext()), database).download()
             } catch (x: Throwable) {
                 log.error("Download error: ", x)
             }
@@ -524,9 +523,7 @@ class DebugFragment : BasePreferenceFragment() {
     private fun onGoogleDriveUpload() {
         Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
             try {
-                Synchronizer(appContext, primaryAccount(requireContext()))
-                        .upload()
-                        .dispose()
+                Synchronizer(appContext, primaryAccount(requireContext()), database).upload()
             } catch (x: Throwable) {
                 log.error("Upload error: ", x)
             }

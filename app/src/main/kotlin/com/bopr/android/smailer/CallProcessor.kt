@@ -31,7 +31,7 @@ import java.util.*
  */
 class CallProcessor(
         private val context: Context,
-        private val database: Database = Database(context),
+        private val database: Database,
         private val transport: GoogleMail = GoogleMail(context),
         private val notifications: Notifications = Notifications(context),
         private val locator: GeoLocator = GeoLocator(context, database)) {

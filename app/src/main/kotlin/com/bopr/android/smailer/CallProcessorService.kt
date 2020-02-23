@@ -15,8 +15,10 @@ class CallProcessorService : IntentService("call-processor") {
     override fun onHandleIntent(intent: Intent?) {
         log.debug("Running")
 
-        intent?.getParcelableExtra<PhoneEvent>(EXTRA_EVENT)?.let {
-            CallProcessor(this).process(it)
+        intent?.getParcelableExtra<PhoneEvent>(EXTRA_EVENT)?.let { event ->
+            Database(this).use {
+                CallProcessor(this, it).process(event)
+            }
         }
     }
 

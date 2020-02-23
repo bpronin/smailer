@@ -6,6 +6,7 @@ import android.content.ContentProviderClient
 import android.content.Context
 import android.content.SyncResult
 import android.os.Bundle
+import com.bopr.android.smailer.Database
 import org.slf4j.LoggerFactory
 
 /**
@@ -23,14 +24,12 @@ class SyncAdapter(context: Context, autoInitialize: Boolean) : AbstractThreadedS
 
     override fun onPerformSync(account: Account, extras: Bundle?, authority: String?,
                                provider: ContentProviderClient?, syncResult: SyncResult?) {
-        val synchronizer = Synchronizer(context, account)
-        try {
-            synchronizer.sync()
-        } catch (x: Exception) {
-            log.warn("Synchronization failed ", x)
-        } finally {
-            synchronizer.dispose()
+        Database(context).use {
+            try {
+                Synchronizer(context, account, it).sync()
+            } catch (x: Exception) {
+                log.warn("Synchronization failed ", x)
+            }
         }
     }
-
 }

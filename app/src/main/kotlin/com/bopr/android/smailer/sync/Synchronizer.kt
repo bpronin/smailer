@@ -17,11 +17,11 @@ import java.io.IOException
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 internal class Synchronizer(context: Context,
-                   account: Account,
-                   private val database: Database = Database(context),
-                   private val settings: Settings = Settings(context),
-                   private val metaFile: String = "meta.json",
-                   private val dataFile: String = "data.json") {
+                            account: Account,
+                            private val database: Database,
+                            private val settings: Settings = Settings(context),
+                            private val metaFile: String = "meta.json",
+                            private val dataFile: String = "data.json") {
 
     private val log = LoggerFactory.getLogger("Synchronizer")
     private val drive = GoogleDrive(context)
@@ -71,10 +71,6 @@ internal class Synchronizer(context: Context,
 
         log.debug("Remote data deleted")
         return this
-    }
-
-    fun dispose() {
-        database.close()
     }
 
     private fun localMetaData(): MetaData {

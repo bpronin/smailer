@@ -22,25 +22,25 @@ import com.bopr.android.smailer.util.Mockable
 class Notifications(private val context: Context) {
 
     private val manager: NotificationManager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-    //todo send to one channel?
+
     //todo print information in bold (title?)
-    private fun getChannel(): String {
+    private fun getChannelId(): String {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(CHANNEL_ID,
-                    context.getString(R.string.notifications), IMPORTANCE_LOW)
-            manager.createNotificationChannel(channel)
+            manager.getNotificationChannel(CHANNEL_ID)?.run {
+                manager.createNotificationChannel(NotificationChannel(CHANNEL_ID,
+                        context.getString(R.string.notifications), IMPORTANCE_LOW))
+            }
         }
         return CHANNEL_ID
     }
 
-    internal val foregroundServiceNotification: Notification
-        get() {
-            val builder = createBuilder(context.getString(R.string.service_running), ACTION_SHOW_MAIN)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                builder.setCategory(CATEGORY_SERVICE)
-            }
-            return builder.build()
+    fun serviceNotification(): Notification {
+        val builder = createBuilder(context.getString(R.string.service_running), ACTION_SHOW_MAIN)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder.setCategory(CATEGORY_SERVICE)
         }
+        return builder.build()
+    }
 
     fun showMessage(@StringRes messageRes: Int, action: Int) {
         showMessage(context.getString(messageRes), action)
@@ -81,7 +81,7 @@ class Notifications(private val context: Context) {
     }
 
     private fun createBuilder(text: String, action: Int): NotificationCompat.Builder {
-        return NotificationCompat.Builder(context, getChannel())
+        return NotificationCompat.Builder(context, getChannelId())
                 .setContentIntent(createIntent(action))
                 .setSmallIcon(R.drawable.ic_notification)
                 .setTicker(context.getString(R.string.app_name))
