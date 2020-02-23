@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
 import android.os.Build
+import androidx.annotation.IntDef
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.TaskStackBuilder
@@ -23,7 +24,36 @@ class Notifications(private val context: Context) {
 
     private val manager: NotificationManager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
-    //todo print information in bold (title?)
+    fun serviceNotification(): Notification {
+        val builder = builder(context.getString(R.string.service_running), null, TARGET_MAIN)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder.setCategory(CATEGORY_SERVICE)
+        }
+        return builder.build()
+    }
+
+    fun showMessage(@StringRes messageRes: Int, @Target target: Int) {
+        showMessage(context.getString(messageRes), target)
+    }
+
+    fun showError(@StringRes messageRes: Int, @Target target: Int) {
+        showError(context.getString(messageRes), target)
+    }
+
+    fun showMailError(@StringRes reasonRes: Int, @Target target: Int) {
+        showError(context.getString(R.string.unable_send_email, context.getString(reasonRes)), target)
+    }
+
+    fun showRemoteAction(@StringRes messageRes: Int, argument: String) {
+        showMessage(context.getString(messageRes, argument), TARGET_HISTORY)
+    }
+
+    fun hideAllErrors() {
+        while (errorId >= 0) {
+            manager.cancel("error", errorId--)
+        }
+    }
+
     private fun getChannelId(): String {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             manager.getNotificationChannel(CHANNEL_ID)?.run {
@@ -34,73 +64,41 @@ class Notifications(private val context: Context) {
         return CHANNEL_ID
     }
 
-    fun serviceNotification(): Notification {
-        val builder = createBuilder(context.getString(R.string.service_running), ACTION_SHOW_MAIN)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setCategory(CATEGORY_SERVICE)
-        }
-        return builder.build()
-    }
-
-    fun showMessage(@StringRes messageRes: Int, action: Int) {
-        showMessage(context.getString(messageRes), action)
-    }
-
-    fun showError(@StringRes messageRes: Int, action: Int) {
-        showError(context.getString(messageRes), action)
-    }
-
-    fun showMailError(@StringRes reasonRes: Int, action: Int) {
-        showError(context.getString(R.string.unable_send_email, context.getString(reasonRes)), action)
-    }
-
-    fun showRemoteAction(@StringRes messageRes: Int, argument: String) {
-        showError(context.getString(messageRes, argument), ACTION_SHOW_HISTORY)
-    }
-
-    fun hideAllErrors() {
-        while (errorId >= 0) {
-            manager.cancel("error", errorId--)
-        }
-    }
-
-    private fun showMessage(text: String, action: Int) {
-        val builder = createBuilder(text, action).setAutoCancel(true)
+    private fun showMessage(title: String, @Target target: Int) {
+        val builder = builder(title, null, target).setAutoCancel(true)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setCategory(CATEGORY_MESSAGE)
         }
         manager.notify("message", ++messageId, builder.build())
     }
 
-    private fun showError(text: String, action: Int) {
-        val builder = createBuilder(text, action).setAutoCancel(true)
+    private fun showError(text: String, @Target target: Int) {
+        val builder = builder(text, context.getString(R.string.tap_to_check_settings), target).setAutoCancel(true)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setCategory(CATEGORY_ERROR)
         }
         manager.notify("error", ++errorId, builder.build())
     }
 
-    private fun createBuilder(text: String, action: Int): NotificationCompat.Builder {
+    private fun builder(title: String, text: String?, @Target target: Int): NotificationCompat.Builder {
         return NotificationCompat.Builder(context, getChannelId())
-                .setContentIntent(createIntent(action))
+                .setContentIntent(createIntent(target))
                 .setSmallIcon(R.drawable.ic_notification)
-                .setTicker(context.getString(R.string.app_name))
-                .setContentTitle(context.getString(R.string.app_name))
-                .setStyle(NotificationCompat.BigTextStyle().bigText(text))
+                .setContentTitle(title)
                 .setContentText(text)
     }
 
-    private fun createIntent(action: Int): PendingIntent? {
-        return when (action) {
-            ACTION_SHOW_MAIN ->
+    private fun createIntent(@Target target: Int): PendingIntent? {
+        return when (target) {
+            TARGET_MAIN ->
                 createActivityIntent(MainActivity::class.java)
-            ACTION_SHOW_HISTORY ->
+            TARGET_HISTORY ->
                 createActivityIntent(HistoryActivity::class.java)
-            ACTION_SHOW_RECIPIENTS ->
+            TARGET_RECIPIENTS ->
                 createActivityIntent(RecipientsActivity::class.java)
-            ACTION_SHOW_REMOTE_CONTROL ->
+            TARGET_REMOTE_CONTROL ->
                 createActivityIntent(RemoteControlActivity::class.java)
-            ACTION_SHOW_RULES ->
+            TARGET_RULES ->
                 createActivityIntent(RulesActivity::class.java)
             else ->
                 null
@@ -113,6 +111,10 @@ class Notifications(private val context: Context) {
                 .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)!!
     }
 
+    @Retention(AnnotationRetention.SOURCE)
+    @IntDef(TARGET_MAIN, TARGET_RULES, TARGET_HISTORY, TARGET_RECIPIENTS, TARGET_REMOTE_CONTROL)
+    annotation class Target
+
     companion object {
 
         private const val CHANNEL_ID = "com.bopr.android.smailer"
@@ -120,11 +122,11 @@ class Notifications(private val context: Context) {
         private var messageId = -1
         private var errorId = -1
 
-        const val ACTION_SHOW_MAIN = 0
-        const val ACTION_SHOW_RULES = 1
-        const val ACTION_SHOW_HISTORY = 2
-        const val ACTION_SHOW_RECIPIENTS = 3
-        const val ACTION_SHOW_REMOTE_CONTROL = 4
+        const val TARGET_MAIN = 0
+        const val TARGET_RULES = 1
+        const val TARGET_HISTORY = 2
+        const val TARGET_RECIPIENTS = 3
+        const val TARGET_REMOTE_CONTROL = 4
     }
 
 }

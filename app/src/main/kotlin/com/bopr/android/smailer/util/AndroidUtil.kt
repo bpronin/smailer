@@ -39,6 +39,7 @@ object AndroidUtil {
     }
 
     fun getAccount(context: Context, accountName: String?): Account? {
+        //todo: consider invalidate token when account have been removed not on device
         return GoogleAccountManager(context).getAccountByName(accountName)
     }
 

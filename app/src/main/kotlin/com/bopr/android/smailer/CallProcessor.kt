@@ -3,7 +3,9 @@ package com.bopr.android.smailer
 import android.accounts.Account
 import android.accounts.AccountsException
 import android.content.Context
-import com.bopr.android.smailer.Notifications.Companion.ACTION_SHOW_MAIN
+import androidx.annotation.StringRes
+import com.bopr.android.smailer.Notifications.Companion.TARGET_MAIN
+import com.bopr.android.smailer.Notifications.Companion.TARGET_RECIPIENTS
 import com.bopr.android.smailer.PhoneEvent.Companion.REASON_ACCEPTED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
@@ -121,7 +123,7 @@ class CallProcessor(
             notifications.hideAllErrors()
 
             if (settings.getBoolean(PREF_NOTIFY_SEND_SUCCESS, false)) {
-                notifications.showMessage(R.string.email_successfully_send, ACTION_SHOW_MAIN)
+                notifications.showMessage(R.string.email_successfully_send, TARGET_MAIN)
             }
             if (settings.getBoolean(PREF_MARK_SMS_AS_READ, false)) {
                 markSmsAsRead(context, event)
@@ -130,7 +132,7 @@ class CallProcessor(
         } catch (x: UserRecoverableAuthIOException) {
             log.warn("Failed sending mail: ", x)
 
-            showErrorNotification(R.string.need_google_permission, silent)
+            showErrorNotification(R.string.need_google_permission, TARGET_MAIN, silent)
             false
         } catch (x: Exception) {
             log.warn("Failed sending mail: ", x)
@@ -143,7 +145,7 @@ class CallProcessor(
     private fun requireAccount(silent: Boolean): Account {
         val accountName = settings.getString(PREF_SENDER_ACCOUNT)
         return getAccount(context, accountName) ?: run {
-            showErrorNotification(R.string.sender_account_not_found, silent)
+            showErrorNotification(R.string.sender_account_not_found, TARGET_MAIN, silent)
             throw AccountsException("Sender account [$accountName] not found")
         }
     }
@@ -153,21 +155,22 @@ class CallProcessor(
         val recipients = settings.getString(PREF_RECIPIENTS_ADDRESS)
 
         if (recipients == null) {
-            showErrorNotification(R.string.no_recipients_specified, silent)
+            showErrorNotification(R.string.no_recipients_specified, TARGET_RECIPIENTS, silent)
             throw Exception("Recipients not specified")
         }
 
         if (!isValidEmailAddressList(recipients)) {
-            showErrorNotification(R.string.invalid_recipient, silent)
+            showErrorNotification(R.string.invalid_recipient, TARGET_RECIPIENTS, silent)
             throw Exception("Recipients are invalid")
         }
 
         return recipients
     }
 
-    private fun showErrorNotification(reason: Int, silent: Boolean) {
+    private fun showErrorNotification(@StringRes reason: Int, @Notifications.Target target: Int,
+                                      silent: Boolean) {
         if (!silent) {
-            notifications.showMailError(reason, ACTION_SHOW_MAIN)
+            notifications.showMailError(reason, target)
         }
     }
 }

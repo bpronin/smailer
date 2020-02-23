@@ -229,7 +229,7 @@ class DebugFragment : BasePreferenceFragment() {
                 createPreference("Show error. Open application", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
                         notifications.showMailError(R.string.no_recipients_specified,
-                                Notifications.ACTION_SHOW_RULES)
+                                Notifications.TARGET_RULES)
                     }
                 }),
                 createPreference("Hide last error", object : DefaultClickListener() {
@@ -239,7 +239,7 @@ class DebugFragment : BasePreferenceFragment() {
                 }),
                 createPreference("Show mail success", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        notifications.showMessage(R.string.email_successfully_send, Notifications.ACTION_SHOW_MAIN)
+                        notifications.showMessage(R.string.email_successfully_send, Notifications.TARGET_MAIN)
                     }
                 }),
                 createPreference("Show remote action", object : DefaultClickListener() {

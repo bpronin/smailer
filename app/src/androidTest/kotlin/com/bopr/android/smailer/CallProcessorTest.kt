@@ -7,7 +7,7 @@ import android.accounts.AccountManager
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.test.rule.GrantPermissionRule
-import com.bopr.android.smailer.Notifications.Companion.ACTION_SHOW_MAIN
+import com.bopr.android.smailer.Notifications.Companion.TARGET_MAIN
 import com.bopr.android.smailer.PhoneEvent.Companion.REASON_ACCEPTED
 import com.bopr.android.smailer.PhoneEvent.Companion.REASON_TRIGGER_OFF
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
@@ -168,7 +168,7 @@ class CallProcessorTest : BaseTest() {
         verify(transport, never()).login(any(), any())
         verify(transport, never()).startSession()
         verify(transport, never()).send(any())
-        verify(notifications).showMailError(eq(R.string.sender_account_not_found), eq(ACTION_SHOW_MAIN))
+        verify(notifications).showMailError(eq(R.string.sender_account_not_found), eq(TARGET_MAIN))
 
         val savedEvent = database.events.findFirst()!!
 
@@ -188,7 +188,7 @@ class CallProcessorTest : BaseTest() {
 
         verify(transport, never()).startSession()
         verify(transport, never()).send(any())
-        verify(notifications).showMailError(eq(R.string.no_recipients_specified), eq(ACTION_SHOW_MAIN))
+        verify(notifications).showMailError(eq(R.string.no_recipients_specified), eq(TARGET_MAIN))
 
         val savedEvent = database.events.findFirst()!!
 
@@ -227,7 +227,7 @@ class CallProcessorTest : BaseTest() {
         val event = testingEvent()
         processor.process(event)
 
-        verify(notifications).showMailError(eq(R.string.sender_account_not_found), eq(ACTION_SHOW_MAIN))
+        verify(notifications).showMailError(eq(R.string.sender_account_not_found), eq(TARGET_MAIN))
         verify(notifications, never()).hideAllErrors()
 
         /* sending next message without errors hides all previous error notifications */
@@ -235,7 +235,7 @@ class CallProcessorTest : BaseTest() {
         
         processor.process(testingEvent())
 
-        verify(notifications).showMailError(eq(R.string.sender_account_not_found), eq(ACTION_SHOW_MAIN))
+        verify(notifications).showMailError(eq(R.string.sender_account_not_found), eq(TARGET_MAIN))
         verify(notifications).hideAllErrors()
     }
 
@@ -256,7 +256,7 @@ class CallProcessorTest : BaseTest() {
 
         processor.process(testingEvent())
 
-        verify(notifications).showMessage(eq(R.string.email_successfully_send), eq(ACTION_SHOW_MAIN))
+        verify(notifications).showMessage(eq(R.string.email_successfully_send), eq(TARGET_MAIN))
     }
 
     /**

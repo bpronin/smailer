@@ -7,7 +7,7 @@ import android.content.Intent
 import android.telephony.SmsManager
 import androidx.core.app.JobIntentService
 import com.bopr.android.smailer.*
-import com.bopr.android.smailer.Notifications.Companion.ACTION_SHOW_REMOTE_CONTROL
+import com.bopr.android.smailer.Notifications.Companion.TARGET_REMOTE_CONTROL
 import com.bopr.android.smailer.Settings.Companion.PREF_DEVICE_ALIAS
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
@@ -22,12 +22,12 @@ import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_PHONE_
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_TEXT_FROM_BLACKLIST
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_TEXT_FROM_WHITELIST
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.SEND_SMS_TO_CALLER
+import com.bopr.android.smailer.util.AddressUtil.containsEmail
+import com.bopr.android.smailer.util.AddressUtil.containsPhone
+import com.bopr.android.smailer.util.AddressUtil.extractEmail
+import com.bopr.android.smailer.util.AddressUtil.findPhone
 import com.bopr.android.smailer.util.AndroidUtil.deviceName
 import com.bopr.android.smailer.util.AndroidUtil.getAccount
-import com.bopr.android.smailer.util.containsEmail
-import com.bopr.android.smailer.util.containsPhone
-import com.bopr.android.smailer.util.extractEmail
-import com.bopr.android.smailer.util.findPhone
 import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
 import org.slf4j.LoggerFactory
 
@@ -105,7 +105,7 @@ class RemoteControlService : JobIntentService() {
     private fun requireAccount(): Account {
         val accountName = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
         return getAccount(this, accountName) ?: run {
-            notifications.showError(R.string.service_account_not_found, ACTION_SHOW_REMOTE_CONTROL)
+            notifications.showError(R.string.service_account_not_found, TARGET_REMOTE_CONTROL)
             throw AccountsException("Service account [$accountName] not found")
         }
     }
