@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bopr.android.smailer.PhoneEventFilter
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.ui.CallFilterListFragment.Holder
-import com.bopr.android.smailer.util.showConfirmationDialog
+import com.bopr.android.smailer.util.Dialogs.showConfirmationDialog
 
 /**
  * Base for black/whitelist fragments.

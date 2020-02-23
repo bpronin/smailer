@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.content.ContextCompat
+import com.bopr.android.smailer.util.TextUtil.capitalize
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager
 
 object AndroidUtil {

@@ -28,122 +28,124 @@ import com.bopr.android.smailer.ui.WavyUnderlineSpan
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
+object UiUtil {
 
-@DrawableRes
-fun eventTypeImage(event: PhoneEvent): Int {
-    return if (event.isSms) {
-        R.drawable.ic_message
-    } else {
-        R.drawable.ic_call
-    }
-}
-
-@StringRes
-fun eventTypeText(event: PhoneEvent): Int {
-    return if (event.isSms) {
-        if (event.isIncoming) {
-            R.string.incoming_sms
+    @DrawableRes
+    fun eventTypeImage(event: PhoneEvent): Int {
+        return if (event.isSms) {
+            R.drawable.ic_message
         } else {
-            R.string.outgoing_sms
+            R.drawable.ic_call
         }
-    } else if (event.isMissed) {
-        R.string.missed_call
-    } else if (event.isIncoming) {
-        R.string.incoming_call
-    } else {
-        R.string.outgoing_call
     }
-}
 
-@StringRes
-fun eventTypePrefix(event: PhoneEvent): Int {
-    return if (event.isSms) {
-        if (event.isIncoming) {
-            R.string.incoming_sms_from
+    @StringRes
+    fun eventTypeText(event: PhoneEvent): Int {
+        return if (event.isSms) {
+            if (event.isIncoming) {
+                R.string.incoming_sms
+            } else {
+                R.string.outgoing_sms
+            }
+        } else if (event.isMissed) {
+            R.string.missed_call
+        } else if (event.isIncoming) {
+            R.string.incoming_call
         } else {
-            R.string.outgoing_sms_to
+            R.string.outgoing_call
         }
-    } else if (event.isMissed) {
-        R.string.missed_call_from
-    } else if (event.isIncoming) {
-        R.string.incoming_call_from
-    } else {
-        R.string.outgoing_call_to
     }
-}
 
-@DrawableRes
-fun eventDirectionImage(event: PhoneEvent): Int {
-    return when {
-        event.isMissed ->
-            R.drawable.ic_call_missed
-        event.isIncoming ->
-            R.drawable.ic_call_in
-        else ->
-            R.drawable.ic_call_out
+    @StringRes
+    fun eventTypePrefix(event: PhoneEvent): Int {
+        return if (event.isSms) {
+            if (event.isIncoming) {
+                R.string.incoming_sms_from
+            } else {
+                R.string.outgoing_sms_to
+            }
+        } else if (event.isMissed) {
+            R.string.missed_call_from
+        } else if (event.isIncoming) {
+            R.string.incoming_call_from
+        } else {
+            R.string.outgoing_call_to
+        }
     }
-}
 
-@DrawableRes
-fun eventStateImage(event: PhoneEvent): Int {
-    return when (event.state) {
-        STATE_PENDING ->
-            R.drawable.ic_hourglass
-        STATE_PROCESSED ->
-            R.drawable.ic_state_done
-        STATE_IGNORED ->
-            R.drawable.ic_state_block
-        else ->
-            throw IllegalArgumentException("Unknown state")
+    @DrawableRes
+    fun eventDirectionImage(event: PhoneEvent): Int {
+        return when {
+            event.isMissed ->
+                R.drawable.ic_call_missed
+            event.isIncoming ->
+                R.drawable.ic_call_in
+            else ->
+                R.drawable.ic_call_out
+        }
     }
-}
 
-@StringRes
-fun eventStateText(event: PhoneEvent): Int {
-    return when (event.state) {
-        STATE_PENDING ->
-            R.string.pending
-        STATE_PROCESSED ->
-            R.string.sent_email
-        STATE_IGNORED ->
-            R.string.ignored
-        else ->
-            throw IllegalArgumentException("Unknown state")
+    @DrawableRes
+    fun eventStateImage(event: PhoneEvent): Int {
+        return when (event.state) {
+            STATE_PENDING ->
+                R.drawable.ic_hourglass
+            STATE_PROCESSED ->
+                R.drawable.ic_state_done
+            STATE_IGNORED ->
+                R.drawable.ic_state_block
+            else ->
+                throw IllegalArgumentException("Unknown state")
+        }
     }
-}
 
-/**
- * Returns text underlined with wavy red line.
- */
-fun underwivedText(context: Context, value: CharSequence?): Spannable {
-    val spannable: Spannable = SpannableString(value)
-    val span: ParagraphStyle = WavyUnderlineSpan(context)
-    spannable.setSpan(span, 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+    @StringRes
+    fun eventStateText(event: PhoneEvent): Int {
+        return when (event.state) {
+            STATE_PENDING ->
+                R.string.pending
+            STATE_PROCESSED ->
+                R.string.sent_email
+            STATE_IGNORED ->
+                R.string.ignored
+            else ->
+                throw IllegalArgumentException("Unknown state")
+        }
+    }
 
-    return spannable
-}
+    /**
+     * Returns text underlined with wavy red line.
+     */
+    fun underwivedText(context: Context, value: CharSequence?): Spannable {
+        val spannable: Spannable = SpannableString(value)
+        val span: ParagraphStyle = WavyUnderlineSpan(context)
+        spannable.setSpan(span, 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 
-/**
- * Returns text of accent color.
- */
-fun accentedText(context: Context, value: CharSequence?): Spannable {
-    val spannable: Spannable = SpannableString(value)
-    val span: CharacterStyle = ForegroundColorSpan(ContextCompat.getColor(context, R.color.colorAccent))
-    spannable.setSpan(span, 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        return spannable
+    }
 
-    return spannable
-}
+    /**
+     * Returns text of accent color.
+     */
+    fun accentedText(context: Context, value: CharSequence?): Spannable {
+        val spannable: Spannable = SpannableString(value)
+        val span: CharacterStyle = ForegroundColorSpan(ContextCompat.getColor(context, R.color.colorAccent))
+        spannable.setSpan(span, 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 
-fun showToast(context: Context, text: String) {
-    val toast: Toast = Toast.makeText(context, text, Toast.LENGTH_LONG)
-    val view = toast.view
-    view.background.colorFilter = createBlendModeColorFilterCompat(
-            ContextCompat.getColor(context, R.color.colorAccent), BlendModeCompat.DARKEN)
-    view.findViewById<TextView>(android.R.id.message)?.setTextColor(
-            ContextCompat.getColor(context, R.color.colorAccentText))
-    toast.show()
-}
+        return spannable
+    }
 
-fun Fragment.getQuantityString(@PluralsRes resId: Int, quantity: Number): String {
-    return resources.getQuantityString(resId, quantity.toInt(), quantity)
+    fun showToast(context: Context, text: String) {
+        val toast: Toast = Toast.makeText(context, text, Toast.LENGTH_LONG)
+        val view = toast.view
+        view.background.colorFilter = createBlendModeColorFilterCompat(
+                ContextCompat.getColor(context, R.color.colorAccent), BlendModeCompat.DARKEN)
+        view.findViewById<TextView>(android.R.id.message)?.setTextColor(
+                ContextCompat.getColor(context, R.color.colorAccentText))
+        toast.show()
+    }
+
+    fun Fragment.getQuantityString(@PluralsRes resId: Int, quantity: Number): String {
+        return resources.getQuantityString(resId, quantity.toInt(), quantity)
+    }
 }

@@ -11,9 +11,9 @@ import android.widget.TextView
 import com.bopr.android.smailer.PermissionsHelper.Companion.permissionRationale
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.util.AndroidUtil.checkPermission
-import com.bopr.android.smailer.util.createPickContactIntent
-import com.bopr.android.smailer.util.phoneFromIntent
-import com.bopr.android.smailer.util.showToast
+import com.bopr.android.smailer.util.ContentUtils.createPickContactIntent
+import com.bopr.android.smailer.util.ContentUtils.phoneFromIntent
+import com.bopr.android.smailer.util.UiUtil.showToast
 
 /**
  * Phone number editor dialog.

@@ -7,8 +7,8 @@ import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.util.BATTERY_OPTIMIZATION_NOT_ASK_AGAIN
-import com.bopr.android.smailer.util.showConfirmationDialog
+import com.bopr.android.smailer.util.Dialogs.DIALOG_BATTERY_OPTIMIZATION_NOT_ASK_AGAIN
+import com.bopr.android.smailer.util.Dialogs.showConfirmationDialog
 
 internal object BatteryOptimizationHelper {
 
@@ -33,7 +33,7 @@ internal object BatteryOptimizationHelper {
                 titleRes = R.string.battery_optimization,
                 messageRes = R.string.battery_optimization_reason,
                 buttonTextRes = R.string.proceed,
-                tag = BATTERY_OPTIMIZATION_NOT_ASK_AGAIN) {
+                tag = DIALOG_BATTERY_OPTIMIZATION_NOT_ASK_AGAIN) {
             context.startActivity(Intent(ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
         }
     }

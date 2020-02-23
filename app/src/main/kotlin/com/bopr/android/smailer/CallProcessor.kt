@@ -18,9 +18,9 @@ import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
 import com.bopr.android.smailer.util.AndroidUtil
 import com.bopr.android.smailer.util.AndroidUtil.getAccount
-import com.bopr.android.smailer.util.contactName
-import com.bopr.android.smailer.util.isValidEmailAddressList
-import com.bopr.android.smailer.util.markSmsAsRead
+import com.bopr.android.smailer.util.ContentUtils.contactName
+import com.bopr.android.smailer.util.ContentUtils.markSmsAsRead
+import com.bopr.android.smailer.util.TextUtil.isValidEmailAddressList
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 import org.slf4j.LoggerFactory

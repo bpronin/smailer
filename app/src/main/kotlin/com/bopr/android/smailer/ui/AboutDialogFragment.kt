@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.bopr.android.smailer.BuildInfo
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.util.showInfoDialog
+import com.bopr.android.smailer.util.Dialogs.showInfoDialog
 
 /**
  * About dialog fragment.

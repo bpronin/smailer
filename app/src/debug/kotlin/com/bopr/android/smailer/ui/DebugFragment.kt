@@ -49,9 +49,14 @@ import com.bopr.android.smailer.sync.SyncEngine.syncNow
 import com.bopr.android.smailer.sync.Synchronizer
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.isIgnoreBatteryOptimizationRequired
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
-import com.bopr.android.smailer.util.*
 import com.bopr.android.smailer.util.AndroidUtil.deviceName
 import com.bopr.android.smailer.util.AndroidUtil.primaryAccount
+import com.bopr.android.smailer.util.ContentUtils.contactName
+import com.bopr.android.smailer.util.Dialogs.showInfoDialog
+import com.bopr.android.smailer.util.Dialogs.showInputDialog
+import com.bopr.android.smailer.util.TextUtil.commaJoin
+import com.bopr.android.smailer.util.TextUtil.escapeRegex
+import com.bopr.android.smailer.util.UiUtil.showToast
 import com.google.android.gms.tasks.Tasks
 import com.google.api.services.drive.DriveScopes
 import com.google.api.services.gmail.GmailScopes
