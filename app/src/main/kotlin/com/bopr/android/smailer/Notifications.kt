@@ -22,7 +22,8 @@ import com.bopr.android.smailer.util.Mockable
 class Notifications(private val context: Context) {
 
     private val manager: NotificationManager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-
+    //todo send to one channel?
+    //todo print information in bold (title?)
     private fun getChannel(): String {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(CHANNEL_ID,

@@ -32,14 +32,12 @@ import java.util.*
 class CallProcessor(
         private val context: Context,
         private val database: Database = Database(context),
-        transport: GoogleMail? = null,
+        private val transport: GoogleMail = GoogleMail(context),
         private val notifications: Notifications = Notifications(context),
         private val locator: GeoLocator = GeoLocator(context, database)) {
 
     private val log = LoggerFactory.getLogger("CallProcessor")
     private val settings: Settings = Settings(context)
-    private val transport: GoogleMail = transport
-            ?: GoogleMail(context, requireAccount(), GMAIL_SEND)
 
     /**
      * Sends out a mail for event.
@@ -65,12 +63,12 @@ class CallProcessor(
      * Sends out email for all pending events.
      */
     fun processPending() {
-        log.debug("Processing pending events")
-
         val events = database.pendingEvents.toList()
         if (events.isEmpty()) {
             log.debug("No pending events")
         } else {
+            log.debug("Processing ${events.size} pending event(s)")
+
             if (startMailSession(true)) {
                 for (event in events) {
                     if (sendMail(event, true)) {
@@ -88,16 +86,11 @@ class CallProcessor(
 
         return try {
             requireRecipient(silent)
+            transport.login(requireAccount(silent), GMAIL_SEND)
             transport.startSession()
             true
-        } catch (x: AccountsException) {
-            log.warn("Failed starting mail session: ", x)
-
-            showErrorNotification(R.string.account_not_registered, silent)
-            false
         } catch (x: Exception) {
             log.warn("Failed starting mail session: ", x)
-
             false
         }
     }
@@ -114,6 +107,7 @@ class CallProcessor(
                 serviceAccount = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
                 locale = settings.locale
             }
+
             val message = MailMessage().apply {
                 subject = formatter.formatSubject()
                 body = formatter.formatBody()
@@ -146,10 +140,11 @@ class CallProcessor(
     }
 
     @Throws(AccountsException::class)
-    private fun requireAccount(): Account {
-        return getAccount(context, settings.getString(PREF_SENDER_ACCOUNT)) ?: run {
-            notifications.showError(R.string.sender_account_not_found, ACTION_SHOW_MAIN)
-            throw AccountsException("Sender account not found")
+    private fun requireAccount(silent: Boolean): Account {
+        val accountName = settings.getString(PREF_SENDER_ACCOUNT)
+        return getAccount(context, accountName) ?: run {
+            showErrorNotification(R.string.sender_account_not_found, silent)
+            throw AccountsException("Sender account [$accountName] not found")
         }
     }
 

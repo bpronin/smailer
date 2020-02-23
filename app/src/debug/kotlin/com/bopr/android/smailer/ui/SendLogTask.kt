@@ -29,8 +29,9 @@ internal class SendLogTask(activity: Activity, private val properties: Propertie
 
         try {
             val account = primaryAccount(activity)
-            val transport = GoogleMail(activity, account, GmailScopes.GMAIL_SEND)
+            val transport = GoogleMail(activity)
 
+            transport.login(account, GmailScopes.GMAIL_SEND)
             transport.startSession()
             for (file in attachments) {
                 val message = MailMessage().apply {

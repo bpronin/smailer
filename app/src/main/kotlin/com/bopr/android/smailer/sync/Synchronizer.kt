@@ -24,7 +24,11 @@ internal class Synchronizer(context: Context,
                    private val dataFile: String = "data.json") {
 
     private val log = LoggerFactory.getLogger("Synchronizer")
-    private val drive = GoogleDrive(context, account)
+    private val drive = GoogleDrive(context)
+
+    init {
+        drive.login(account)
+    }
 
     @Throws(IOException::class)
     fun sync(): Synchronizer {

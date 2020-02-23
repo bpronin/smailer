@@ -8,7 +8,6 @@
     <string name="about">About</string>
     <string name="acceptable_phone_numbers">Acceptable phone numbers (%s)</string>
     <string name="acceptable_words">Acceptable phrases (%s)</string>
-    <string name="account_not_registered">Account not registered on device.</string>
     <string name="add">Add</string>
     <string name="add_number_to_blacklist">Add number to blacklist</string>
     <string name="add_number_to_whitelist">Add number to whitelist</string>

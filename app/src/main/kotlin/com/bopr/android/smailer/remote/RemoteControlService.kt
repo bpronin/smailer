@@ -28,7 +28,7 @@ import com.bopr.android.smailer.util.containsEmail
 import com.bopr.android.smailer.util.containsPhone
 import com.bopr.android.smailer.util.extractEmail
 import com.bopr.android.smailer.util.findPhone
-import com.google.api.services.gmail.GmailScopes
+import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
 import org.slf4j.LoggerFactory
 
 /**
@@ -55,8 +55,8 @@ class RemoteControlService : JobIntentService() {
         log.debug("Handling intent: $intent")
 
         try {
-            val transport = GoogleMail(this, requireAccount(), GmailScopes.MAIL_GOOGLE_COM)
-
+            val transport = GoogleMail(this)
+            transport.login(requireAccount(), MAIL_GOOGLE_COM)
             transport.startSession()
 
             val messages = transport.list(query)
@@ -103,9 +103,10 @@ class RemoteControlService : JobIntentService() {
 
     @Throws(AccountsException::class)
     private fun requireAccount(): Account {
-        return getAccount(this, settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)) ?: run {
+        val accountName = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
+        return getAccount(this, accountName) ?: run {
             notifications.showError(R.string.service_account_not_found, ACTION_SHOW_REMOTE_CONTROL)
-            throw AccountsException("Service account not found")
+            throw AccountsException("Service account [$accountName] not found")
         }
     }
 

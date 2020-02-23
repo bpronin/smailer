@@ -15,7 +15,6 @@ internal class SendDebugMailTask(activity: Activity, private val properties: Pro
 
     override fun doInBackground(vararg params: Void?): Exception? {
         val account = primaryAccount(activity)
-        val transport = GoogleMail(activity, account, GmailScopes.GMAIL_SEND)
 
         val message = MailMessage().apply {
             from = account.name
@@ -24,7 +23,9 @@ internal class SendDebugMailTask(activity: Activity, private val properties: Pro
             recipients = properties.getProperty("default_recipient")
         }
 
+        val transport = GoogleMail(activity)
         try {
+            transport.login(account, GmailScopes.GMAIL_SEND)
             transport.startSession()
             transport.send(message)
         } catch (x: Exception) {

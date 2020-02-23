@@ -21,12 +21,12 @@ import java.io.Writer
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class GoogleDrive(context: Context, account: Account) {
+class GoogleDrive(private val context: Context) {
 
     private val log = LoggerFactory.getLogger("GoogleDrive")
-    private val service: Drive
+    private lateinit var service: Drive
 
-    init {
+    fun login(account: Account) {
         val credential = GoogleAccountCredential
                 .usingOAuth2(context, setOf(DRIVE_APPDATA))
                 .setSelectedAccount(account)
@@ -37,15 +37,15 @@ class GoogleDrive(context: Context, account: Account) {
 
     @Throws(IOException::class)
     private fun open(filename: String): InputStream? {
-        return find(filename)?.let {
-            service.files()[it].executeMediaAsInputStream()
+        return find(filename)?.run {
+            service.files()[this].executeMediaAsInputStream()
         }
     }
 
     @Throws(IOException::class)
     private fun write(filename: String, json: String) {
-        find(filename)?.let {
-            update(it, filename, json)
+        find(filename)?.run {
+            update(this, filename, json)
         } ?: create(filename, json)
     }
 
@@ -92,9 +92,9 @@ class GoogleDrive(context: Context, account: Account) {
 
     @Throws(IOException::class)
     fun delete(filename: String) {
-        find(filename)?.let {
+        find(filename)?.run {
             service.files()
-                    .delete(it)
+                    .delete(this)
                     .setFields("id")
                     .execute()
         }
@@ -134,8 +134,8 @@ class GoogleDrive(context: Context, account: Account) {
 
     @Throws(IOException::class)
     fun <T> download(filename: String, dataClass: Class<out T?>): T? {
-        return open(filename)?.let {
-            JacksonFactory.getDefaultInstance().createJsonParser(it).parseAndClose(dataClass)
+        return open(filename)?.run {
+            JacksonFactory.getDefaultInstance().createJsonParser(this).parseAndClose(dataClass)
         }
     }
 

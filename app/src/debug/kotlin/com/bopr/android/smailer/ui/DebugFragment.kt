@@ -487,7 +487,9 @@ class DebugFragment : BasePreferenceFragment() {
 
     private fun onGoogleDriveClear() {
         Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
-            GoogleDrive(appContext, primaryAccount(requireContext())).clear()
+            val drive = GoogleDrive(appContext)
+            drive.login(primaryAccount(requireContext()))
+            drive.clear()
             null
         })
         showToast(appContext, "Done")

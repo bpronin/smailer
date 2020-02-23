@@ -1,7 +1,6 @@
 package com.bopr.android.smailer
 
 import android.accounts.Account
-import android.accounts.AccountsException
 import android.content.Context
 import com.bopr.android.smailer.util.Mockable
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
@@ -31,23 +30,31 @@ import javax.mail.internet.*
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 @Mockable
-class GoogleMail(context: Context, account: Account, vararg scopes: String) {
+class GoogleMail(private val context: Context) {
 
     private val log = LoggerFactory.getLogger("GoogleMail")
 
     private lateinit var service: Gmail
     private lateinit var session: Session
 
-    init {
+//    fun login(accountName: String?, scope: String) {
+//        val credential = GoogleAccountCredential
+//                .usingOAuth2(context, listOf(scope))
+//                .setSelectedAccountName(accountName)
+//        service = Gmail.Builder(NetHttpTransport(), JacksonFactory.getDefaultInstance(), credential)
+//                .setApplicationName("smailer")
+//                .build()
+//    }
+
+    fun login(account: Account, scope: String) {
         val credential = GoogleAccountCredential
-                .usingOAuth2(context, listOf(*scopes))
+                .usingOAuth2(context, listOf(scope))
                 .setSelectedAccount(account)
         service = Gmail.Builder(NetHttpTransport(), JacksonFactory.getDefaultInstance(), credential)
                 .setApplicationName("smailer")
                 .build()
     }
 
-    @Throws(AccountsException::class)
     fun startSession() {
         session = Session.getDefaultInstance(Properties(), null)
     }

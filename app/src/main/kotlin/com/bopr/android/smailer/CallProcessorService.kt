@@ -16,11 +16,7 @@ class CallProcessorService : IntentService("call-processor") {
         log.debug("Running")
 
         intent?.getParcelableExtra<PhoneEvent>(EXTRA_EVENT)?.let {
-            try {
-                CallProcessor(this).process(it)
-            } catch (x: Exception) {
-                log.warn("Processing failed: ", x)
-            }
+            CallProcessor(this).process(it)
         }
     }
 

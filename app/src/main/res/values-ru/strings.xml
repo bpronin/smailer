@@ -7,7 +7,6 @@
     <string name="about">О приложении</string>
     <string name="acceptable_phone_numbers">Разрешенные номера (%s)</string>
     <string name="acceptable_words">Разрешенные фразы (%s)</string>
-    <string name="account_not_registered">Аккаунт не зарегистрирован на устройстве.</string>
     <string name="add">Добавить</string>
     <string name="add_number_to_blacklist">Добавить в черный список</string>
     <string name="add_number_to_whitelist">Добавить в белый список</string>
