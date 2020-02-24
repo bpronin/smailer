@@ -1,5 +1,12 @@
 package com.bopr.android.smailer.util
 
+import com.bopr.android.smailer.util.AddressUtil.escapePhone
+import com.bopr.android.smailer.util.AddressUtil.extractPhone
+import com.bopr.android.smailer.util.AddressUtil.normalizeEmail
+import com.bopr.android.smailer.util.AddressUtil.normalizePhone
+import com.bopr.android.smailer.util.AddressUtil.phoneToRegEx
+import com.bopr.android.smailer.util.AddressUtil.sameEmail
+import com.bopr.android.smailer.util.AddressUtil.samePhone
 import org.junit.Assert.*
 import org.junit.Test
 

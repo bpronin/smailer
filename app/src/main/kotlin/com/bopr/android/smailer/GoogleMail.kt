@@ -34,6 +34,8 @@ class GoogleMail(private val context: Context) {
 
     private val log = LoggerFactory.getLogger("GoogleMail")
 
+    lateinit var account: Account
+        protected set
     private lateinit var service: Gmail
     private lateinit var session: Session
 
@@ -44,6 +46,7 @@ class GoogleMail(private val context: Context) {
         service = Gmail.Builder(NetHttpTransport(), JacksonFactory.getDefaultInstance(), credential)
                 .setApplicationName("smailer")
                 .build()
+        this.account = account
     }
 
     fun startSession() {

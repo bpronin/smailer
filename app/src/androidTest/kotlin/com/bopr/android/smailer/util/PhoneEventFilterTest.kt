@@ -8,6 +8,7 @@ import com.bopr.android.smailer.PhoneEvent.Companion.REASON_TRIGGER_OFF
 import com.bopr.android.smailer.PhoneEventFilter
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
+import com.bopr.android.smailer.util.TextUtil.escapeRegex
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

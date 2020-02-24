@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.test.rule.GrantPermissionRule
 import com.bopr.android.smailer.Notifications.Companion.TARGET_MAIN
+import com.bopr.android.smailer.Notifications.Companion.TARGET_RECIPIENTS
 import com.bopr.android.smailer.PhoneEvent.Companion.REASON_ACCEPTED
 import com.bopr.android.smailer.PhoneEvent.Companion.REASON_TRIGGER_OFF
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
@@ -188,7 +189,7 @@ class CallProcessorTest : BaseTest() {
 
         verify(transport, never()).startSession()
         verify(transport, never()).send(any())
-        verify(notifications).showMailError(eq(R.string.no_recipients_specified), eq(TARGET_MAIN))
+        verify(notifications).showMailError(eq(R.string.no_recipients_specified), eq(TARGET_RECIPIENTS))
 
         val savedEvent = database.events.findFirst()!!
 

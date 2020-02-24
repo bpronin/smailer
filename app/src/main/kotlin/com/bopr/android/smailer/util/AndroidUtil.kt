@@ -1,12 +1,10 @@
 package com.bopr.android.smailer.util
 
-import android.accounts.Account
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.content.ContextCompat
 import com.bopr.android.smailer.util.TextUtil.capitalize
-import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager
 
 object AndroidUtil {
 
@@ -32,18 +30,6 @@ object AndroidUtil {
         return capitalize(Build.MANUFACTURER) + " " + Build.MODEL
     }
 
-    /**
-     * Returns primary device account.
-     */
-    fun primaryAccount(context: Context): Account {
-        return GoogleAccountManager(context).accounts[0]
-    }
-
-    fun getAccount(context: Context, accountName: String?): Account? {
-        //todo: consider invalidate token when account have been removed not on device
-        return GoogleAccountManager(context).getAccountByName(accountName)
-    }
-
     fun permissionLabel(context: Context, permissionName: String): String {
         return try {
             val manager = context.packageManager
@@ -53,4 +39,5 @@ object AndroidUtil {
             throw RuntimeException(x)
         }
     }
+
 }

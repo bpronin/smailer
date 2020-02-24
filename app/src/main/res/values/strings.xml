@@ -62,7 +62,7 @@
     <string name="mark_processed_sms_as_read">Mark processed SMS as read</string>
     <string name="missed_call">Missed call</string>
     <string name="missed_call_from">Missed call from</string>
-    <string name="need_google_permission">Access to Google account is required</string>
+    <string name="no_access_to_google_account">Application has no access to Google account</string>
     <string name="no_account_specified">Sender account not specified.</string>
     <string name="no_internet_connection">No internet connection.</string>
     <string name="no_permission_read_location">(no permission to read location)</string>

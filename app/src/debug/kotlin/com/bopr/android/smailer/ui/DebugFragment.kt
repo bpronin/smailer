@@ -49,8 +49,8 @@ import com.bopr.android.smailer.sync.SyncEngine.syncNow
 import com.bopr.android.smailer.sync.Synchronizer
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.isIgnoreBatteryOptimizationRequired
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
+import com.bopr.android.smailer.ui.GoogleAuthorizationHelper.Companion.primaryAccount
 import com.bopr.android.smailer.util.AndroidUtil.deviceName
-import com.bopr.android.smailer.util.AndroidUtil.primaryAccount
 import com.bopr.android.smailer.util.ContentUtils.contactName
 import com.bopr.android.smailer.util.Dialogs.showInfoDialog
 import com.bopr.android.smailer.util.Dialogs.showInputDialog
@@ -114,6 +114,38 @@ class DebugFragment : BasePreferenceFragment() {
                     }
                 })
         )
+        addCategory(screen, "Settings",
+                createPreference("Populate settings", object : DefaultClickListener() {
+                    override fun onClick(preference: Preference) {
+                        onSetDebugPreferences()
+                    }
+                }),
+                createPreference("Clear settings", object : DefaultClickListener() {
+                    override fun onClick(preference: Preference) {
+                        onClearPreferences()
+                    }
+                }),
+                createPreference("Load default settings", object : DefaultClickListener() {
+                    override fun onClick(preference: Preference) {
+                        onResetPreferences()
+                    }
+                }),
+                createPreference("Put invalid account", object : DefaultClickListener() {
+                    override fun onClick(preference: Preference) {
+//                        settings.edit().putString(PREF_SENDER_ACCOUNT, "unknown@gmail.com").apply()
+                        settings.edit().putString(PREF_SENDER_ACCOUNT, "bbo848284@gmail.com").apply()
+                    }
+                }),
+                createPreference("Require battery optimisation disabled", object : DefaultClickListener() {
+                    override fun onClick(preference: Preference) {
+                        if (isIgnoreBatteryOptimizationRequired(appContext)) {
+                            showToast(appContext, "Battery optimization already ignored")
+                        } else {
+                            requireIgnoreBatteryOptimization(appContext)
+                        }
+                    }
+                })
+        )
         addCategory(screen, "Google drive",
                 createPreference("Download from drive", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
@@ -133,32 +165,6 @@ class DebugFragment : BasePreferenceFragment() {
                 createPreference("Sync data", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
                         onGoogleDriveSync()
-                    }
-                })
-        )
-        addCategory(screen, "Settings",
-                createPreference("Populate settings", object : DefaultClickListener() {
-                    override fun onClick(preference: Preference) {
-                        onSetDebugPreferences()
-                    }
-                }),
-                createPreference("Clear settings", object : DefaultClickListener() {
-                    override fun onClick(preference: Preference) {
-                        onClearPreferences()
-                    }
-                }),
-                createPreference("Load default settings", object : DefaultClickListener() {
-                    override fun onClick(preference: Preference) {
-                        onResetPreferences()
-                    }
-                }),
-                createPreference("Require battery optimisation disabled", object : DefaultClickListener() {
-                    override fun onClick(preference: Preference) {
-                        if (isIgnoreBatteryOptimizationRequired(appContext)) {
-                            showToast(appContext, "Battery optimization already ignored")
-                        } else {
-                            requireIgnoreBatteryOptimization(appContext)
-                        }
                     }
                 })
         )

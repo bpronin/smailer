@@ -3,7 +3,6 @@ package com.bopr.android.smailer
 import android.accounts.Account
 import android.accounts.AccountsException
 import android.content.Context
-import androidx.annotation.StringRes
 import com.bopr.android.smailer.Notifications.Companion.TARGET_MAIN
 import com.bopr.android.smailer.Notifications.Companion.TARGET_RECIPIENTS
 import com.bopr.android.smailer.PhoneEvent.Companion.REASON_ACCEPTED
@@ -16,8 +15,8 @@ import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
+import com.bopr.android.smailer.ui.GoogleAuthorizationHelper.Companion.getAccount
 import com.bopr.android.smailer.util.AndroidUtil
-import com.bopr.android.smailer.util.AndroidUtil.getAccount
 import com.bopr.android.smailer.util.ContentUtils.contactName
 import com.bopr.android.smailer.util.ContentUtils.markSmsAsRead
 import com.bopr.android.smailer.util.TextUtil.isValidEmailAddressList
@@ -53,7 +52,7 @@ class CallProcessor(
         event.stateReason = settings.callFilter.test(event)
         if (event.stateReason != REASON_ACCEPTED) {
             event.state = STATE_IGNORED
-        } else if (startMailSession(false) && sendMail(event, false)) {
+        } else if (startMailSession() && sendMail(event)) {
             event.state = STATE_PROCESSED
         }
 
@@ -71,9 +70,9 @@ class CallProcessor(
         } else {
             log.debug("Processing ${events.size} pending event(s)")
 
-            if (startMailSession(true)) {
+            if (startMailSession()) {
                 for (event in events) {
-                    if (sendMail(event, true)) {
+                    if (sendMail(event)) {
                         event.state = STATE_PROCESSED
                         database.putEvent(event)
                     }
@@ -83,12 +82,12 @@ class CallProcessor(
         }
     }
 
-    private fun startMailSession(silent: Boolean): Boolean {
+    private fun startMailSession(): Boolean {
         log.debug("Starting session")
 
         return try {
-            requireRecipient(silent)
-            transport.login(requireAccount(silent), GMAIL_SEND)
+            validateRecipient()
+            transport.login(requireAccount(), GMAIL_SEND)
             transport.startSession()
             true
         } catch (x: Exception) {
@@ -97,7 +96,7 @@ class CallProcessor(
         }
     }
 
-    private fun sendMail(event: PhoneEvent, silent: Boolean): Boolean {
+    private fun sendMail(event: PhoneEvent): Boolean {
         log.debug("Sending mail: $event")
 
         return try {
@@ -113,7 +112,7 @@ class CallProcessor(
             val message = MailMessage().apply {
                 subject = formatter.formatSubject()
                 body = formatter.formatBody()
-                recipients = requireRecipient(silent)
+                recipients = settings.getString(PREF_RECIPIENTS_ADDRESS)
                 from = settings.getString(PREF_SENDER_ACCOUNT)
                 replyTo = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
             }
@@ -130,9 +129,11 @@ class CallProcessor(
             }
             true
         } catch (x: UserRecoverableAuthIOException) {
+            /* this occurs when app has no permission to access google account or
+               account has been removed outside of the device */
             log.warn("Failed sending mail: ", x)
 
-            showErrorNotification(R.string.need_google_permission, TARGET_MAIN, silent)
+            notifications.showMailError(R.string.no_access_to_google_account, TARGET_MAIN)
             false
         } catch (x: Exception) {
             log.warn("Failed sending mail: ", x)
@@ -142,35 +143,27 @@ class CallProcessor(
     }
 
     @Throws(AccountsException::class)
-    private fun requireAccount(silent: Boolean): Account {
+    private fun requireAccount(): Account {
         val accountName = settings.getString(PREF_SENDER_ACCOUNT)
         return getAccount(context, accountName) ?: run {
-            showErrorNotification(R.string.sender_account_not_found, TARGET_MAIN, silent)
+            notifications.showMailError(R.string.sender_account_not_found, TARGET_MAIN)
             throw AccountsException("Sender account [$accountName] not found")
         }
     }
 
     @Throws(Exception::class)
-    private fun requireRecipient(silent: Boolean): String {
+    private fun validateRecipient() {
         val recipients = settings.getString(PREF_RECIPIENTS_ADDRESS)
 
         if (recipients == null) {
-            showErrorNotification(R.string.no_recipients_specified, TARGET_RECIPIENTS, silent)
+            notifications.showMailError(R.string.no_recipients_specified, TARGET_RECIPIENTS)
             throw Exception("Recipients not specified")
         }
 
         if (!isValidEmailAddressList(recipients)) {
-            showErrorNotification(R.string.invalid_recipient, TARGET_RECIPIENTS, silent)
+            notifications.showMailError(R.string.invalid_recipient, TARGET_RECIPIENTS)
             throw Exception("Recipients are invalid")
         }
-
-        return recipients
     }
 
-    private fun showErrorNotification(@StringRes reason: Int, @Notifications.Target target: Int,
-                                      silent: Boolean) {
-        if (!silent) {
-            notifications.showMailError(reason, target)
-        }
-    }
 }

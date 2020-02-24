@@ -8,8 +8,10 @@ import com.bopr.android.smailer.Database
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_BLACKLIST
 import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_TIME
-import com.bopr.android.smailer.util.AndroidUtil.primaryAccount
+import com.bopr.android.smailer.ui.GoogleAuthorizationHelper.Companion.primaryAccount
+import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
@@ -19,25 +21,25 @@ class SyncAdapterTest : BaseTest() {
     @JvmField
     var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(GET_ACCOUNTS, READ_CONTACTS)
 
-//    @Test
-//    fun testParser(){
-//        val stream = InstrumentationRegistry.getInstrumentation().context.assets.open("sync_data.json")
-//        val data = JacksonFactory.getDefaultInstance().createJsonParser(stream).parseAndClose(SyncData::class.java)
-//
-//        assertEquals(SyncData(
-//             //...
-//        ) , data)
-//    }
+    private lateinit var database: Database
+
+    @Before
+    fun setup() {
+        database = Database(targetContext, "test.sqlite")
+        database.destroy()
+    }
+
+    @After
+    fun teardown() {
+        database.close()
+    }
 
     @Test
     fun testSync() {
-        val context = targetContext
-        val database = Database(context, "test.sqlite")
-        val settings = Settings(context)
-        val account = primaryAccount(context)
-        val sync = Synchronizer(context, account, database, settings, "test-meta.json", "test-data.json")
+        val settings = Settings(targetContext)
+        val account = primaryAccount(targetContext)
+        val sync = Synchronizer(targetContext, account, database, settings, "test-meta.json", "test-data.json")
 
-        database.destroy()
         sync.clear()
 
         settings.edit()
@@ -63,7 +65,5 @@ class SyncAdapterTest : BaseTest() {
         sync.sync()
 
         assertEquals(setOf("A", "B"), settings.callFilter.phoneBlacklist)
-
-        sync.dispose()
     }
 }

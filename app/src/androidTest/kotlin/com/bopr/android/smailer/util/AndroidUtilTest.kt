@@ -3,9 +3,11 @@ package com.bopr.android.smailer.util
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import com.bopr.android.smailer.BaseTest
+import com.bopr.android.smailer.ui.GoogleAuthorizationHelper.Companion.primaryAccount
 import com.bopr.android.smailer.ui.WavyUnderlineSpan
 import com.bopr.android.smailer.util.AndroidUtil.deviceName
-import com.bopr.android.smailer.util.AndroidUtil.primaryAccount
+import com.bopr.android.smailer.util.UiUtil.accentedText
+import com.bopr.android.smailer.util.UiUtil.underwivedText
 import org.hamcrest.CoreMatchers.instanceOf
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert.assertNotNull

@@ -60,7 +60,7 @@
     <string name="mark_processed_sms_as_read">Отмечать обработанные SMS как прочитанные</string>
     <string name="missed_call">Пропущенный звонок</string>
     <string name="missed_call_from">Пропущенный звонок от</string>
-    <string name="need_google_permission">Необходимо разрешение на доступ приложения к аккаунту Google</string>
+    <string name="no_access_to_google_account">Необходимо разрешение на доступ приложения к аккаунту Google</string>
     <string name="no_account_specified">Не указан аккаунт исходящей почты.</string>
     <string name="no_internet_connection">Отсутствует соединение с интернетом.</string>
     <string name="no_permission_read_location">нет разрешения на определение местоположения</string>

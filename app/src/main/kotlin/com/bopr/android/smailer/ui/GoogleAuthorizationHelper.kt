@@ -5,7 +5,9 @@ import android.accounts.AccountManager.KEY_ACCOUNT_NAME
 import android.accounts.AccountManager.newChooseAccountIntent
 import android.accounts.AccountManagerCallback
 import android.accounts.AccountManagerFuture
+import android.app.Activity
 import android.app.Activity.RESULT_OK
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -26,13 +28,14 @@ class GoogleAuthorizationHelper(private val fragment: Fragment,
 
     private val log = LoggerFactory.getLogger("GoogleAuthorizationHelper")
     private val accountManager: GoogleAccountManager
+    private val activity: Activity
     private val scopes: Collection<String?> = setOf(*scopes)
     private val settings: Settings
 
     init {
-        val context = fragment.requireContext()
-        settings = Settings(context)
-        accountManager = GoogleAccountManager(context)
+        activity = fragment.requireActivity()
+        settings = Settings(activity)
+        accountManager = GoogleAccountManager(activity)
     }
 
     fun isAccountExists(accountName: String?): Boolean {
@@ -96,10 +99,12 @@ class GoogleAuthorizationHelper(private val fragment: Fragment,
 
         override fun run(future: AccountManagerFuture<Bundle?>) {
             try {
-                val accountName = future.result?.getString("authAccount")
-                settings.edit().putString(accountSettingName, accountName).apply()
+                future.result?.run {
+                    val accountName = getString(KEY_ACCOUNT_NAME)
+                    settings.edit().putString(accountSettingName, accountName).apply()
 
-                log.debug("Selected account: $accountName")
+                    log.debug("Selected account: $accountName")
+                }
             } catch (x: Exception) {
                 log.error("Failed to acquire auth token: ", x)
             }
@@ -110,7 +115,18 @@ class GoogleAuthorizationHelper(private val fragment: Fragment,
     companion object {
 
         private const val REQUEST_ACCOUNT_CHOOSER = 117
-    }
 
+        /**
+         * Returns primary device account.
+         */
+        fun primaryAccount(context: Context): Account {
+            return GoogleAccountManager(context).accounts[0]
+        }
+
+        fun getAccount(context: Context, accountName: String?): Account? {
+            return GoogleAccountManager(context).getAccountByName(accountName)
+        }
+
+    }
 
 }
