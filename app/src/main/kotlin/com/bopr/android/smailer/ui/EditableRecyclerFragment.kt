@@ -11,13 +11,12 @@ import androidx.recyclerview.widget.RecyclerView.NO_POSITION
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.util.UiUtil.getQuantityString
+import com.bopr.android.smailer.util.UiUtil.showAnimated
 import com.bopr.android.smailer.util.UiUtil.showToast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 
 abstract class EditableRecyclerFragment<I, H : ViewHolder> : RecyclerFragment<I, H>() {
-
-    private lateinit var actionButton: FloatingActionButton
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -38,19 +37,18 @@ abstract class EditableRecyclerFragment<I, H : ViewHolder> : RecyclerFragment<I,
             it.attachToRecyclerView(recycler)
         }
 
-        actionButton = view.findViewById<FloatingActionButton>(R.id.button_add).apply {
+        view.findViewById<FloatingActionButton>(R.id.button_add).apply {
             setOnClickListener {
                 editItem(NO_POSITION)
             }
+            showAnimated(this, R.anim.fab_show, 0)
         }
-
         return view
     }
 
     override fun onStart() {
         super.onStart()
         refreshItems()
-        view!!.postDelayed({ actionButton.show() }, 300)
     }
 
     override fun onItemClick(item: I) {

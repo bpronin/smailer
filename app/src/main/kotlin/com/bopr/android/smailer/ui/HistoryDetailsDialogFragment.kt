@@ -36,22 +36,26 @@ class HistoryDetailsDialogFragment(private val event: PhoneEvent) : BaseDialogFr
                     findViewById<TextView>(R.id.text_time).text = formatTime(event.startTime)
                     findViewById<ImageView>(R.id.image_event_result).setImageResource(eventStateImage(event))
                     findViewById<TextView>(R.id.text_result).setText(eventStateText(event))
-                    findViewById<TextView>(R.id.text_result_reason).text = formatReason(event)
+                    findViewById<TextView>(R.id.text_result_reason).text = formatIgnoringReason(event)
                     findViewById<TextView>(R.id.text_type_title).setText(eventTypeText(event))
                     findViewById<TextView>(R.id.text_recipient).text = event.acceptor
                 }
     }
 
-    private fun formatReason(event: PhoneEvent): CharSequence? {
+    private fun formatIgnoringReason(event: PhoneEvent): CharSequence? {
+        // todo make it spoiler
         if (event.state == STATE_IGNORED) {
-            when {
-                event.stateReason and REASON_NUMBER_BLACKLISTED != 0 ->
-                    return "(" + getString(R.string.number_in_blacklist) + ")"
-                event.stateReason and REASON_TEXT_BLACKLISTED != 0 ->
-                    return "(" + getString(R.string.text_in_blacklist) + ")"
-                event.stateReason and REASON_TRIGGER_OFF != 0 ->
-                    return "(" + getString(R.string.trigger_off) + ")"
+            val sb = StringBuilder()
+            if (event.stateReason and REASON_NUMBER_BLACKLISTED != 0) {
+                sb.append(" (${getString(R.string.number_in_blacklist)})")
             }
+            if (event.stateReason and REASON_TEXT_BLACKLISTED != 0) {
+                " (${getString(R.string.text_in_blacklist)})"
+            }
+            if (event.stateReason and REASON_TRIGGER_OFF != 0) {
+                " (${getString(R.string.trigger_off)})"
+            }
+            return sb
         }
         return null
     }

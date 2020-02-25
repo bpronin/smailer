@@ -1,13 +1,19 @@
 package com.bopr.android.smailer.util
 
 import android.content.Context
+import android.os.Build
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.CharacterStyle
 import android.text.style.ForegroundColorSpan
 import android.text.style.ParagraphStyle
+import android.view.View
+import android.view.View.VISIBLE
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils.loadAnimation
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.AnimRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
@@ -135,13 +141,37 @@ object UiUtil {
         return spannable
     }
 
+    fun showAnimated(view: View, @AnimRes animationRes: Int, delay: Long) {
+        if (view.visibility != VISIBLE) {
+            view.clearAnimation()
+            val animation = loadAnimation(view.getContext(), animationRes).apply {
+                setAnimationListener(object : Animation.AnimationListener {
+
+                    override fun onAnimationEnd(animation: Animation?) {
+                        view.visibility = VISIBLE
+                    }
+
+                    override fun onAnimationRepeat(animation: Animation?) {}
+
+                    override fun onAnimationStart(animation: Animation?) {}
+                })
+                startOffset = delay
+            }
+
+            view.startAnimation(animation)
+        }
+    }
+
     fun showToast(context: Context, text: String) {
         val toast: Toast = Toast.makeText(context, text, Toast.LENGTH_LONG)
-        val view = toast.view
-        view.background.colorFilter = createBlendModeColorFilterCompat(
-                ContextCompat.getColor(context, R.color.colorAccent), BlendModeCompat.DARKEN)
-        view.findViewById<TextView>(android.R.id.message)?.setTextColor(
-                ContextCompat.getColor(context, R.color.colorAccentText))
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
+            /* it looks ugly on old devises */
+            val view = toast.view
+            view.background.colorFilter = createBlendModeColorFilterCompat(
+                    ContextCompat.getColor(context, R.color.colorAccent), BlendModeCompat.DARKEN)
+            view.findViewById<TextView>(android.R.id.message)?.setTextColor(
+                    ContextCompat.getColor(context, R.color.colorAccentText))
+        }
         toast.show()
     }
 
