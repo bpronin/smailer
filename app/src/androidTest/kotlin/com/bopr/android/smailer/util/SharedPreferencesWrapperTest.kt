@@ -2,9 +2,9 @@ package com.bopr.android.smailer.util
 
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import com.bopr.android.smailer.BaseTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Test
 
@@ -23,16 +23,30 @@ class SharedPreferencesWrapperTest : BaseTest() {
         val wrapper = SharedPreferencesWrapper(preferences)
         val prefKey = "set_preference"
 
-        wrapper.edit().putStringSet(prefKey, setOf("A", "B", "C")).apply()
+        var putValues = mutableSetOf("A", "B", "C")
+        wrapper.edit().putStringSet(prefKey, putValues).apply()
 
-        assertEquals(setOf("A", "B", "C"), wrapper.getStringSet(prefKey))
+        var getValues = wrapper.getStringSet(prefKey, null)!!
 
-        wrapper.registerChangeListener(OnSharedPreferenceChangeListener { _, key ->
-            val set = wrapper.getStringSet(key!!)
-            assertEquals(setOf("A", "C"), set)
-        })
-        wrapper.edit().removeFromStringSet(prefKey, "B").apply()
+        assertEquals(putValues, getValues)
+        assertFalse(putValues === getValues)
 
-        assertEquals(setOf("A", "C"), wrapper.getStringSet(prefKey))
+        putValues = getValues
+        putValues.remove("B")
+        wrapper.edit().putStringSet(prefKey, putValues).apply()
+
+        getValues = wrapper.getStringSet(prefKey, null)!!
+
+        assertEquals(setOf("A", "C"), getValues)
+        assertEquals(putValues, getValues)
+        assertFalse(putValues === getValues)
+
+//
+//        wrapper.registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener { _, key ->
+//            val set = wrapper.getStringSet(key!!)
+//            assertEquals(setOf("A", "C"), set)
+//        })
+
+//        assertEquals(setOf("A", "C"), wrapper.getStringSet(prefKey))
     }
 }

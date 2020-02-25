@@ -20,6 +20,8 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceScreen
 import com.bopr.android.smailer.*
 import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
+import com.bopr.android.smailer.Notifications.Companion.TARGET_MAIN
+import com.bopr.android.smailer.Notifications.Companion.TARGET_RULES
 import com.bopr.android.smailer.PhoneEvent.Companion.REASON_ACCEPTED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
@@ -238,26 +240,26 @@ class DebugFragment : BasePreferenceFragment() {
                 })
         )
         addCategory(screen, "Notifications",
-                createPreference("Show error. Open application", object : DefaultClickListener() {
+                createPreference("Show error", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
                         notifications.showMailError(R.string.no_recipients_specified,
-                                Notifications.TARGET_RULES)
+                                TARGET_RULES)
                     }
                 }),
-                createPreference("Hide last error", object : DefaultClickListener() {
+                createPreference("Show success", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        notifications.hideAllErrors()
-                    }
-                }),
-                createPreference("Show mail success", object : DefaultClickListener() {
-                    override fun onClick(preference: Preference) {
-                        notifications.showMessage(R.string.email_successfully_send, Notifications.TARGET_MAIN)
+                        notifications.showMessage(R.string.email_successfully_send, TARGET_MAIN)
                     }
                 }),
                 createPreference("Show remote action", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
                         notifications.showRemoteAction(R.string.text_remotely_added_to_blacklist,
                                 "spam text")
+                    }
+                }),
+                createPreference("Hide errors", object : DefaultClickListener() {
+                    override fun onClick(preference: Preference) {
+                        notifications.cancelAllErrors()
                     }
                 })
         )
@@ -456,7 +458,7 @@ class DebugFragment : BasePreferenceFragment() {
 
     private fun onAddHistoryItem() {
         database.putEvent(PhoneEvent("+79052345670", true, System.currentTimeMillis(), null, false,
-                "Debug message", null, null, PhoneEvent.STATE_PENDING, deviceName(), PhoneEvent.REASON_ACCEPTED, false))
+                "Debug message", null, null, STATE_PENDING, deviceName(), PhoneEvent.REASON_ACCEPTED, false))
         database.notifyChanged()
         showToast(appContext, "Done")
     }
@@ -464,16 +466,16 @@ class DebugFragment : BasePreferenceFragment() {
     private fun onPopulateHistory() {
         var time = System.currentTimeMillis()
         val recipient = deviceName()
-        database.putEvent(PhoneEvent("+79052345671", true, time, null, false, "Debug message", null, null, PhoneEvent.STATE_PENDING, recipient, PhoneEvent.REASON_ACCEPTED, false))
+        database.putEvent(PhoneEvent("+79052345671", true, time, null, false, "Debug message", null, null, STATE_PENDING, recipient, PhoneEvent.REASON_ACCEPTED, false))
         database.putEvent(PhoneEvent("+79052345672", false, 1000.let { time += it; time }, null, false, "Debug message", null, null, PhoneEvent.STATE_PROCESSED, recipient, PhoneEvent.REASON_ACCEPTED, false))
         database.putEvent(PhoneEvent("+79052345673", true, 1000.let { time += it; time }, time + 10000, false, null, null, null, PhoneEvent.STATE_IGNORED, recipient, PhoneEvent.REASON_ACCEPTED, false))
-        database.putEvent(PhoneEvent("+79052345674", false, 1000.let { time += it; time }, time + 10000, false, null, null, null, PhoneEvent.STATE_PENDING, recipient, PhoneEvent.REASON_ACCEPTED, false))
-        database.putEvent(PhoneEvent("+79052345675", true, 1000.let { time += it; time }, time + 10000, true, null, null, null, PhoneEvent.STATE_PENDING, recipient, PhoneEvent.REASON_ACCEPTED, false))
-        database.putEvent(PhoneEvent("+79052345671", true, 1000.let { time += it; time }, null, false, "Debug message", null, "Test exception +79052345671", PhoneEvent.STATE_PENDING, recipient, PhoneEvent.REASON_ACCEPTED, false))
-        database.putEvent(PhoneEvent("+79052345672", false, 1000.let { time += it; time }, null, false, "Debug message", null, "Test exception +79052345672", PhoneEvent.STATE_PENDING, recipient, PhoneEvent.REASON_ACCEPTED, false))
-        database.putEvent(PhoneEvent("+79052345673", true, 1000.let { time += it; time }, time + 10000, false, null, null, "Test exception +79052345673", PhoneEvent.STATE_PENDING, recipient, PhoneEvent.REASON_ACCEPTED, false))
-        database.putEvent(PhoneEvent("+79052345674", false, 1000.let { time += it; time }, time + 10000, false, null, null, "Test exception +79052345674", PhoneEvent.STATE_PENDING, recipient, PhoneEvent.REASON_ACCEPTED, false))
-        database.putEvent(PhoneEvent("+79052345675", true, 1000.let { time += it; time }, time + 10000, true, null, null, "Test exception +79052345675", PhoneEvent.STATE_PENDING, recipient, PhoneEvent.REASON_ACCEPTED, false))
+        database.putEvent(PhoneEvent("+79052345674", false, 1000.let { time += it; time }, time + 10000, false, null, null, null, STATE_PENDING, recipient, PhoneEvent.REASON_ACCEPTED, false))
+        database.putEvent(PhoneEvent("+79052345675", true, 1000.let { time += it; time }, time + 10000, true, null, null, null, STATE_PENDING, recipient, PhoneEvent.REASON_ACCEPTED, false))
+        database.putEvent(PhoneEvent("+79052345671", true, 1000.let { time += it; time }, null, false, "Debug message", null, "Test exception +79052345671", STATE_PENDING, recipient, PhoneEvent.REASON_ACCEPTED, false))
+        database.putEvent(PhoneEvent("+79052345672", false, 1000.let { time += it; time }, null, false, "Debug message", null, "Test exception +79052345672", STATE_PENDING, recipient, PhoneEvent.REASON_ACCEPTED, false))
+        database.putEvent(PhoneEvent("+79052345673", true, 1000.let { time += it; time }, time + 10000, false, null, null, "Test exception +79052345673", STATE_PENDING, recipient, PhoneEvent.REASON_ACCEPTED, false))
+        database.putEvent(PhoneEvent("+79052345674", false, 1000.let { time += it; time }, time + 10000, false, null, null, "Test exception +79052345674", STATE_PENDING, recipient, PhoneEvent.REASON_ACCEPTED, false))
+        database.putEvent(PhoneEvent("+79052345675", true, 1000.let { time += it; time }, time + 10000, true, null, null, "Test exception +79052345675", STATE_PENDING, recipient, PhoneEvent.REASON_ACCEPTED, false))
         database.notifyChanged()
         showToast(appContext, "Done")
     }

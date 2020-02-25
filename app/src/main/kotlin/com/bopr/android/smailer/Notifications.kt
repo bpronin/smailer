@@ -2,6 +2,7 @@ package com.bopr.android.smailer
 
 import android.app.*
 import android.app.Notification.*
+import android.app.NotificationManager.IMPORTANCE_HIGH
 import android.app.NotificationManager.IMPORTANCE_LOW
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
@@ -13,6 +14,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.TaskStackBuilder
 import com.bopr.android.smailer.ui.*
 import com.bopr.android.smailer.util.Mockable
+import java.lang.System.currentTimeMillis
 
 /**
  * Produces notifications.
@@ -22,14 +24,75 @@ import com.bopr.android.smailer.util.Mockable
 @Mockable
 class Notifications(private val context: Context) {
 
-    private val manager: NotificationManager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+    private val manager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+    private val statusBuilder: NotificationCompat.Builder
+    private val messagesBuilder: NotificationCompat.Builder
+    private val errorsBuilder: NotificationCompat.Builder
+
+    init {
+        val statusChannelId = "com.bopr.android.smailer.status"
+        val notificationsChannelId = "com.bopr.android.smailer.notifications"
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            manager.createNotificationChannel(NotificationChannel(statusChannelId,
+                    context.getString(R.string.status), IMPORTANCE_HIGH))
+            manager.createNotificationChannel(NotificationChannel(notificationsChannelId,
+                    context.getString(R.string.notifications), IMPORTANCE_LOW))
+        }
+
+        statusBuilder = NotificationCompat.Builder(context, statusChannelId)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentIntent(targetIntent(TARGET_MAIN))
+                .setOngoing(true)
+                .apply {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        setCategory(CATEGORY_SERVICE)
+                    }
+                }
+
+        messagesBuilder = NotificationCompat.Builder(context, notificationsChannelId)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setAutoCancel(true)
+                .apply {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        setCategory(CATEGORY_MESSAGE)
+                    }
+                }
+
+        errorsBuilder = NotificationCompat.Builder(context, notificationsChannelId)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setAutoCancel(true)
+                .setContentText(context.getString(R.string.tap_to_check_settings))
+                .apply {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        setCategory(CATEGORY_ERROR)
+                    }
+                }
+    }
 
     fun serviceNotification(): Notification {
-        val builder = builder(context.getString(R.string.service_running), null, TARGET_MAIN)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setCategory(CATEGORY_SERVICE)
-        }
-        return builder.build()
+        return statusBuilder
+                .setWhen(currentTimeMillis())
+                .setContentTitle(context.getString(R.string.service_running))
+                .build()
+    }
+
+    fun showMessage(title: String, @Target target: Int) {
+        manager.notify("message", ++messageId,
+                messagesBuilder
+                        .setWhen(currentTimeMillis())
+                        .setContentTitle(title)
+                        .setContentIntent(targetIntent(target))
+                        .build())
+    }
+
+    fun showError(title: String, @Target target: Int) {
+        manager.notify("error", ++errorId,
+                errorsBuilder
+                        .setWhen(currentTimeMillis())
+                        .setContentTitle(title)
+                        .setContentIntent(targetIntent(target))
+                        .build())
     }
 
     fun showMessage(@StringRes messageRes: Int, @Target target: Int) {
@@ -48,64 +111,30 @@ class Notifications(private val context: Context) {
         showMessage(context.getString(messageRes, argument), TARGET_HISTORY)
     }
 
-    fun hideAllErrors() {
+    fun cancelAllErrors() {
         while (errorId >= 0) {
             manager.cancel("error", errorId--)
         }
     }
 
-    private fun getChannelId(): String {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            manager.getNotificationChannel(CHANNEL_ID)?.run {
-                manager.createNotificationChannel(NotificationChannel(CHANNEL_ID,
-                        context.getString(R.string.notifications), IMPORTANCE_LOW))
-            }
-        }
-        return CHANNEL_ID
-    }
-
-    private fun showMessage(title: String, @Target target: Int) {
-        val builder = builder(title, null, target).setAutoCancel(true)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setCategory(CATEGORY_MESSAGE)
-        }
-        manager.notify("message", ++messageId, builder.build())
-    }
-
-    private fun showError(text: String, @Target target: Int) {
-        val builder = builder(text, context.getString(R.string.tap_to_check_settings), target).setAutoCancel(true)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setCategory(CATEGORY_ERROR)
-        }
-        manager.notify("error", ++errorId, builder.build())
-    }
-
-    private fun builder(title: String, text: String?, @Target target: Int): NotificationCompat.Builder {
-        return NotificationCompat.Builder(context, getChannelId())
-                .setContentIntent(createIntent(target))
-                .setSmallIcon(R.drawable.ic_notification)
-                .setContentTitle(title)
-                .setContentText(text)
-    }
-
-    private fun createIntent(@Target target: Int): PendingIntent? {
+    private fun targetIntent(@Target target: Int): PendingIntent {
         return when (target) {
             TARGET_MAIN ->
-                createActivityIntent(MainActivity::class.java)
+                activityIntent(MainActivity::class.java)
             TARGET_HISTORY ->
-                createActivityIntent(HistoryActivity::class.java)
+                activityIntent(HistoryActivity::class.java)
             TARGET_RECIPIENTS ->
-                createActivityIntent(RecipientsActivity::class.java)
+                activityIntent(RecipientsActivity::class.java)
             TARGET_REMOTE_CONTROL ->
-                createActivityIntent(RemoteControlActivity::class.java)
+                activityIntent(RemoteControlActivity::class.java)
             TARGET_RULES ->
-                createActivityIntent(RulesActivity::class.java)
+                activityIntent(RulesActivity::class.java)
             else ->
-                null
+                throw IllegalArgumentException("Invalid target")
         }
     }
 
-    private fun createActivityIntent(activityClass: Class<out Activity>): PendingIntent {
+    private fun activityIntent(activityClass: Class<out Activity>): PendingIntent {
         return TaskStackBuilder.create(context)
                 .addNextIntentWithParentStack(Intent(context, activityClass))
                 .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)!!
@@ -117,10 +146,10 @@ class Notifications(private val context: Context) {
 
     companion object {
 
-        private const val CHANNEL_ID = "com.bopr.android.smailer"
-
         private var messageId = -1
         private var errorId = -1
+
+        const val SERVICE_NOTIFICATION_ID = 19158
 
         const val TARGET_MAIN = 0
         const val TARGET_RULES = 1

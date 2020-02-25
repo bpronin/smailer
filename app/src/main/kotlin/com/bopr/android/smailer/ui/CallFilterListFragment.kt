@@ -25,11 +25,11 @@ abstract class CallFilterListFragment(private val settingName: String) : Editabl
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        settings.registerChangeListener(this)
+        settings.registerOnSharedPreferenceChangeListener(this)
     }
 
     override fun onDestroy() {
-        settings.unregisterChangeListener(this)
+        settings.unregisterOnSharedPreferenceChangeListener(this)
         super.onDestroy()
     }
 

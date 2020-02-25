@@ -1,5 +1,6 @@
 package com.bopr.android.smailer.remote
 
+import android.Manifest.permission.SEND_SMS
 import android.accounts.Account
 import android.accounts.AccountsException
 import android.content.Context
@@ -8,6 +9,7 @@ import android.telephony.SmsManager
 import androidx.core.app.JobIntentService
 import com.bopr.android.smailer.*
 import com.bopr.android.smailer.Notifications.Companion.TARGET_REMOTE_CONTROL
+import com.bopr.android.smailer.PermissionsHelper.Companion.permissionRationale
 import com.bopr.android.smailer.Settings.Companion.PREF_DEVICE_ALIAS
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
@@ -27,6 +29,7 @@ import com.bopr.android.smailer.util.AddressUtil.containsEmail
 import com.bopr.android.smailer.util.AddressUtil.containsPhone
 import com.bopr.android.smailer.util.AddressUtil.extractEmail
 import com.bopr.android.smailer.util.AddressUtil.findPhone
+import com.bopr.android.smailer.util.AndroidUtil.checkPermission
 import com.bopr.android.smailer.util.AndroidUtil.deviceName
 import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
 import org.slf4j.LoggerFactory
@@ -233,11 +236,16 @@ class RemoteControlService : JobIntentService() {
     }
 
     private fun sendSms(message: String?, phone: String?) {
-        with(SmsManager.getDefault()) {
-            sendMultipartTextMessage(phone, null, divideMessage(message), null, null)
-        }
+        if (checkPermission(this, SEND_SMS)) {
+            with(SmsManager.getDefault()) {
+                sendMultipartTextMessage(phone, null, divideMessage(message), null, null)
+            }
 
-        log.debug("Sent SMS: $message to $phone")
+            log.debug("Sent SMS: $message to $phone")
+        } else {
+            notifications.showError(permissionRationale(this, SEND_SMS), TARGET_REMOTE_CONTROL)
+            log.warn("No required permission")
+        }
     }
 
     private fun saveCallFilter(filter: PhoneEventFilter, text: String, messageRes: Int) {

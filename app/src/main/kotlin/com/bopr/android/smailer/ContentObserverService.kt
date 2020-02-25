@@ -12,6 +12,7 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.os.IBinder
 import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
+import com.bopr.android.smailer.Notifications.Companion.SERVICE_NOTIFICATION_ID
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
 import com.bopr.android.smailer.util.AndroidUtil.deviceName
 import com.bopr.android.smailer.util.db.RowSet
@@ -40,7 +41,7 @@ class ContentObserverService : Service() {
         log.debug("Running")
 
         contentResolver.registerContentObserver(CONTENT_SMS, true, contentObserver)
-        startForeground(1, notifications.serviceNotification())
+        startForeground(SERVICE_NOTIFICATION_ID, notifications.serviceNotification())
         return super.onStartCommand(intent, flags, startId)
     }
 

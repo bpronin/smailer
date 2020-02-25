@@ -229,7 +229,7 @@ class CallProcessorTest : BaseTest() {
         processor.process(event)
 
         verify(notifications).showMailError(eq(R.string.sender_account_not_found), eq(TARGET_MAIN))
-        verify(notifications, never()).hideAllErrors()
+        verify(notifications, never()).cancelAllErrors()
 
         /* sending next message without errors hides all previous error notifications */
         whenever(accountManager.getAccountsByType(eq("com.google"))).thenReturn(arrayOf(Account("sender@mail.com", "com.google")))
@@ -237,7 +237,7 @@ class CallProcessorTest : BaseTest() {
         processor.process(testingEvent())
 
         verify(notifications).showMailError(eq(R.string.sender_account_not_found), eq(TARGET_MAIN))
-        verify(notifications).hideAllErrors()
+        verify(notifications).cancelAllErrors()
     }
 
     /**
@@ -250,7 +250,7 @@ class CallProcessorTest : BaseTest() {
 
         processor.process(testingEvent())
 
-        verify(notifications, never()).showMessage(any(), any())
+        verify(notifications, never()).showMessage(anyString(), anyInt())
 
         /* the setting is ON */
         whenever(preferences.getBoolean(eq(PREF_NOTIFY_SEND_SUCCESS), anyOrNull())).thenReturn(true)
@@ -274,14 +274,14 @@ class CallProcessorTest : BaseTest() {
 
         assertEquals(3, database.events.getCount())
         assertEquals(3, database.pendingEvents.getCount())
-        verify(notifications, never()).showError(any(), any())
+        verify(notifications, never()).showError(anyString(), anyInt())
 
         /* try resend with disabled transport */
         processor.processPending()
 
         assertEquals(3, database.events.getCount())
         assertEquals(3, database.pendingEvents.getCount())
-        verify(notifications, never()).showError(any(), any())
+        verify(notifications, never()).showError(anyString(), anyInt())
 
         /* enable transport an try again */
         doNothing().whenever(transport).send(any())
@@ -290,6 +290,6 @@ class CallProcessorTest : BaseTest() {
 
         assertEquals(3, database.events.getCount())
         assertEquals(0, database.pendingEvents.getCount())
-        verify(notifications, never()).showError(any(), any())
+        verify(notifications, never()).showError(anyString(), anyInt())
     }
 }

@@ -124,7 +124,7 @@
     <string name="sent_email">Sent email</string>
     <string name="sent_time_device">Sent%1$s%2$s</string>
     <string name="service_account_not_found">Service account not found</string>
-    <string name="service_running">Service running.</string>
+    <string name="service_running">Service running</string>
     <string name="since_permissions_not_granted">Since not all required permissions is granted, some options have been disabled.</string>
     <string name="tap_to_check_settings">Tap to check your settings.</string>
     <string name="text_blacklist">Text blacklist</string>
@@ -152,6 +152,7 @@
     <string name="you_had_incoming_call">You had an incoming call of %s duration.</string>
     <string name="you_had_missed_call">You had a missed call.</string>
     <string name="you_had_outgoing_call">You had an outgoing call of %s duration.</string>
+    <string name="status">Status</string>
 
     <plurals name="items_removed">
         <item quantity="one">Item removed</item>

@@ -119,7 +119,7 @@ class CallProcessor(
 
             transport.send(message)
 
-            notifications.hideAllErrors()
+            notifications.cancelAllErrors()
 
             if (settings.getBoolean(PREF_NOTIFY_SEND_SUCCESS, false)) {
                 notifications.showMessage(R.string.email_successfully_send, TARGET_MAIN)

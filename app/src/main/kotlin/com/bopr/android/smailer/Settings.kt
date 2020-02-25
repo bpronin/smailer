@@ -15,7 +15,7 @@ class Settings(context: Context) : SharedPreferencesWrapper(
 
     val locale: Locale
         get() {
-            val value = getString(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)
+            val value = getString(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)!!
             return if (value == VAL_PREF_DEFAULT) {
                 Locale.getDefault()
             } else {

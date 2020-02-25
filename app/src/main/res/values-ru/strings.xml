@@ -122,7 +122,7 @@
     <string name="sent_email">Отправлена почта</string>
     <string name="sent_time_device">Отправлено%1$s%2$s</string>
     <string name="service_account_not_found">Сервисный аккаунт не найден</string>
-    <string name="service_running">Служба запущена.</string>
+    <string name="service_running">Служба запущена</string>
     <string name="since_permissions_not_granted">Некоторые настройки отключены, поскольку разрешения не получены.</string>
     <string name="tap_to_check_settings">Нажмите, чтобы проверить настройки.</string>
     <string name="text_blacklist">Черный список фраз</string>
@@ -150,6 +150,7 @@
     <string name="you_had_incoming_call">Входящий звонок длительностью %s.</string>
     <string name="you_had_missed_call">Пропущенный звонок.</string>
     <string name="you_had_outgoing_call">Исходящий звонок длительностью %s.</string>
+    <string name="status">Состояние</string>
 
     <plurals name="items_removed">
         <item quantity="one">%d запись удалена</item>

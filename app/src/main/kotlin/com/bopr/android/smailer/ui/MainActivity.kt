@@ -34,13 +34,13 @@ class MainActivity : MainAppActivity(), SharedPreferences.OnSharedPreferenceChan
 
         settings = Settings(this)
         settings.loadDefaults()
-        settings.registerChangeListener(this)
+        settings.registerOnSharedPreferenceChangeListener(this)
 
         setupEnvironment(this)
     }
 
     override fun onDestroy() {
-        settings.unregisterChangeListener(this)
+        settings.unregisterOnSharedPreferenceChangeListener(this)
         super.onDestroy()
     }
 

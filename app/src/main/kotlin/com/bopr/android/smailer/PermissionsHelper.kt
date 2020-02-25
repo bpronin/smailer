@@ -34,21 +34,23 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
     private val log = LoggerFactory.getLogger("PermissionsHelper")
     private val requestResultCode = nextRequestResult++
     private val settings: Settings = Settings(activity)
+    private var onComplete: (() -> Unit)? = null
 
     init {
-        settings.registerChangeListener(this)
+        settings.registerOnSharedPreferenceChangeListener(this)
     }
 
     fun dispose() {
-        settings.unregisterChangeListener(this)
+        settings.unregisterOnSharedPreferenceChangeListener(this)
 
         log.debug("Disposed")
     }
 
-    fun checkAll(onDone: () -> Unit) {
+    fun checkAll(onComplete: (() -> Unit)?) {
         log.debug("Checking all")
 
-        doCheck(items.keys)
+        this.onComplete = onComplete
+        checkPermissions(items.keys)
     }
 
     /**
@@ -70,7 +72,11 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
             onPermissionsDenied(deniedPermissions)
 
             if (deniedPermissions.isNotEmpty()) {
-                showMessageDialog(activity, activity.getString(R.string.since_permissions_not_granted))
+                showMessageDialog(activity, activity.getString(R.string.since_permissions_not_granted)) {
+                    onComplete()
+                }
+            } else {
+                onComplete()
             }
         }
     }
@@ -109,7 +115,8 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
             }
             PREF_MARK_SMS_AS_READ -> requiredPermissions.add(WRITE_SMS)
         }
-        doCheck(requiredPermissions)
+
+        checkPermissions(requiredPermissions)
     }
 
     private fun onPermissionsGranted(permissions: MutableSet<String>) {
@@ -120,37 +127,43 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
         log.debug("Denied: $permissions")
 
         if (permissions.isNotEmpty()) {
+            val triggers = settings.getStringSet(PREF_EMAIL_TRIGGERS)
+            val content = settings.getStringSet(PREF_EMAIL_CONTENT)
+
             val edit = settings.edit()
 
             for (p in permissions) {
                 @Suppress("DEPRECATION")
                 when (p) {
                     RECEIVE_SMS ->
-                        edit.removeFromStringSet(PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_IN_SMS)
+                        triggers.remove(VAL_PREF_TRIGGER_IN_SMS)
                     READ_SMS ->
-                        edit.removeFromStringSet(PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_OUT_SMS)
-                    WRITE_SMS ->
-                        edit.removeFromStringSet(PREF_MARK_SMS_AS_READ)
-                    READ_PHONE_STATE ->
-                        edit.removeFromStringSet(PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_IN_CALLS,
-                                VAL_PREF_TRIGGER_MISSED_CALLS)
+                        triggers.remove(VAL_PREF_TRIGGER_OUT_SMS)
+                    READ_PHONE_STATE -> {
+                        triggers.remove(VAL_PREF_TRIGGER_IN_CALLS)
+                        triggers.remove(VAL_PREF_TRIGGER_MISSED_CALLS)
+                    }
                     PROCESS_OUTGOING_CALLS ->
-                        edit.removeFromStringSet(PREF_EMAIL_TRIGGERS, VAL_PREF_TRIGGER_OUT_CALLS)
+                        triggers.remove(VAL_PREF_TRIGGER_OUT_CALLS)
                     READ_CONTACTS ->
-                        edit.removeFromStringSet(PREF_EMAIL_CONTENT, VAL_PREF_EMAIL_CONTENT_CONTACT)
+                        content.remove(VAL_PREF_EMAIL_CONTENT_CONTACT)
                     ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION ->
-                        edit.removeFromStringSet(PREF_EMAIL_CONTENT, VAL_PREF_EMAIL_CONTENT_LOCATION)
+                        content.remove(VAL_PREF_EMAIL_CONTENT_LOCATION)
+                    WRITE_SMS ->
+                        edit.putBoolean(PREF_MARK_SMS_AS_READ, false)
                 }
             }
 
+            edit.putStringSet(PREF_EMAIL_TRIGGERS, triggers)
+            edit.putStringSet(PREF_EMAIL_CONTENT, content)
             edit.apply()
         }
     }
 
-    private fun doCheck(permissions: Collection<String>) {
-        log.debug("Checking: $permissions")
-
+    private fun checkPermissions(permissions: Collection<String>) {
         if (permissions.isNotEmpty()) {
+            log.debug("Checking: $permissions")
+
             val deniedPermissions: MutableList<String> = ArrayList()
             val unexplainedPermissions: MutableList<String> = ArrayList()
 
@@ -194,21 +207,25 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
         return sb.toString()
     }
 
+    private fun onComplete() {
+        onComplete?.invoke().also { onComplete = null }
+    }
+
     companion object {
 
         const val WRITE_SMS = "android.permission.WRITE_SMS"
 
         @Suppress("DEPRECATION")
-        private val items: Map<String, Int> = mapOf(
+        private val items: Map<String, Int> = sortedMapOf(
                 RECEIVE_SMS to R.string.permission_rationale_receive_sms,
-                WRITE_SMS to R.string.permission_rationale_write_sms,
+                SEND_SMS to R.string.permission_rationale_send_sms,
                 READ_SMS to R.string.permission_rationale_read_sms,
+                WRITE_SMS to R.string.permission_rationale_write_sms,
                 READ_PHONE_STATE to R.string.permission_rationale_phone_state,
                 PROCESS_OUTGOING_CALLS to R.string.permission_rationale_outgoing_call, // TODO: 06.02.2020 deprecated
                 READ_CONTACTS to R.string.permission_rationale_read_contacts,
                 ACCESS_COARSE_LOCATION to R.string.permission_rationale_coarse_location,
-                ACCESS_FINE_LOCATION to R.string.permission_rationale_fine_location,
-                SEND_SMS to R.string.permission_rationale_send_sms
+                ACCESS_FINE_LOCATION to R.string.permission_rationale_fine_location
         )
 
         fun permissionRationale(context: Context, permission: String): String {

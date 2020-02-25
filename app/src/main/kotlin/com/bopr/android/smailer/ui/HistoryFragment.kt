@@ -50,7 +50,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        settings.registerChangeListener(this)
+        settings.registerOnSharedPreferenceChangeListener(this)
 
         database = Database(requireContext())
         databaseListener = registerDatabaseListener(requireContext()) {
@@ -60,7 +60,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
 
     override fun onDestroy() {
         super.onDestroy()
-        settings.unregisterChangeListener(this)
+        settings.unregisterOnSharedPreferenceChangeListener(this)
         unregisterDatabaseListener(requireContext(), databaseListener)
         database.close()
     }

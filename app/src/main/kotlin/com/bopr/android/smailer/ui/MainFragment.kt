@@ -65,9 +65,8 @@ class MainFragment : BasePreferenceFragment() {
         updateRemoteControlPreferenceView()
 
         permissionsHelper.checkAll {
-//            requireIgnoreBatteryOptimization(requireContext())
+            requireIgnoreBatteryOptimization(requireContext())
         }
-        requireIgnoreBatteryOptimization(requireContext())
     }
 
     override fun onDestroy() {
