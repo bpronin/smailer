@@ -4,9 +4,7 @@ import android.Manifest.permission.*
 import android.content.Context
 import android.content.pm.PackageManager.PERMISSION_DENIED
 import android.content.res.Configuration
-import com.bopr.android.smailer.HtmlMatcher.Companion.htmlEqualsRes
-import com.bopr.android.smailer.PhoneEvent.Companion.REASON_ACCEPTED
-import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
+import com.bopr.android.smailer.HtmlMatcher.Companion.htmlEquals
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_CONTACT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_HEADER
@@ -72,7 +70,7 @@ class MailFormatterTest : BaseTest() {
                         VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS)
         )
 
-        assertThat(formatter.formatBody(), htmlEqualsRes("incoming_sms_all.html"))
+        assertThat(formatter.formatBody(), htmlEquals("incoming_sms_all.html"))
     }
 
     /**
@@ -80,8 +78,13 @@ class MailFormatterTest : BaseTest() {
      */
     @Test
     fun testIncomingSmsSubject() {
-        val event = PhoneEvent("+70123456789", true, 0, null, false, "Email body text",
-                null, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
+        val event = PhoneEvent(
+                phone = "+70123456789",
+                isIncoming = true,
+                startTime = 0,
+                text = "Email body text",
+                acceptor = "device"
+        )
 
         val formatter = MailFormatter(context, event)
 
@@ -93,8 +96,13 @@ class MailFormatterTest : BaseTest() {
      */
     @Test
     fun testOutgoingSmsSubject() {
-        val event = PhoneEvent("+70123456789", false, 0, null, false, "Email body text",
-                null, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
+        val event = PhoneEvent(
+                phone = "+70123456789",
+                isIncoming = false,
+                startTime = 0,
+                text = "Email body text",
+                acceptor = "device"
+        )
 
         val formatter = MailFormatter(context, event)
 
@@ -106,8 +114,12 @@ class MailFormatterTest : BaseTest() {
      */
     @Test
     fun testIncomingCallSubject() {
-        val event = PhoneEvent("+70123456789", true, 0, null, false, null, null, null,
-                STATE_PENDING, "device", REASON_ACCEPTED, false)
+        val event = PhoneEvent(
+                phone = "+70123456789",
+                isIncoming = true,
+                startTime = 0,
+                acceptor = "device"
+        )
 
         val formatter = MailFormatter(context, event)
 
@@ -119,8 +131,12 @@ class MailFormatterTest : BaseTest() {
      */
     @Test
     fun testOutgoingCallSubject() {
-        val event = PhoneEvent("+70123456789", false, 0, null, false, null, null, null,
-                STATE_PENDING, "device", REASON_ACCEPTED, false)
+        val event = PhoneEvent(
+                phone = "+70123456789",
+                isIncoming = false,
+                startTime = 0,
+                acceptor = "device"
+        )
 
         val formatter = MailFormatter(context, event)
 
@@ -132,8 +148,12 @@ class MailFormatterTest : BaseTest() {
      */
     @Test
     fun testMissedCallSubject() {
-        val event = PhoneEvent("+70123456789", false, 0, null, true, null, null, null,
-                STATE_PENDING, "device", REASON_ACCEPTED, false)
+        val event = PhoneEvent(
+                phone = "+70123456789",
+                startTime = 0,
+                isMissed = true,
+                acceptor = "device"
+        )
 
         val formatter = MailFormatter(context, event)
 
@@ -145,12 +165,17 @@ class MailFormatterTest : BaseTest() {
      */
     @Test
     fun testNoBodyFooter() {
-        val event = PhoneEvent("+70123456789", true, 0, null, false, "Email body text",
-                null, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
+        val event = PhoneEvent(
+                phone = "+70123456789",
+                isIncoming = true,
+                startTime = 0,
+                text = "Email body text",
+                acceptor = "device"
+        )
 
         val formatter = MailFormatter(context, event)
 
-        assertThat(formatter.formatBody(), htmlEqualsRes("no_body_footer.html"))
+        assertThat(formatter.formatBody(), htmlEquals("no_body_footer.html"))
     }
 
     /**
@@ -158,14 +183,20 @@ class MailFormatterTest : BaseTest() {
      */
     @Test
     fun testFooterTimeOption() {
-        val event = PhoneEvent("+70123456789", true, defaultTime.time, null, false,
-                "Email body text", null, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
+        val event = PhoneEvent(
+                phone = "+70123456789",
+                isIncoming = true,
+                startTime = defaultTime.time,
+                text = "Email body text",
+                acceptor = "device"
+        )
 
         val formatter = MailFormatter(context, event,
                 sendTime = defaultTime,
                 options = setOf(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME)
         )
-        assertThat(formatter.formatBody(), htmlEqualsRes("footer_time_option.html"))
+
+        assertThat(formatter.formatBody(), htmlEquals("footer_time_option.html"))
     }
 
     /**
@@ -173,15 +204,21 @@ class MailFormatterTest : BaseTest() {
      */
     @Test
     fun testFooterDeviceNameOption() {
-        val event = PhoneEvent("+70123456789", true, 0, null, false, "Email body text",
-                null, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
+        val event = PhoneEvent(
+                phone = "+70123456789",
+                isIncoming = true,
+                startTime = 0,
+                text = "Email body text",
+                acceptor = "device"
+        )
 
         val formatter = MailFormatter(context, event,
                 sendTime = defaultTime,
                 deviceName = "The Device",
                 options = setOf(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME)
         )
-        assertThat(formatter.formatBody(), htmlEqualsRes("footer_device_option.html"))
+
+        assertThat(formatter.formatBody(), htmlEquals("footer_device_option.html"))
     }
 
     /**
@@ -190,14 +227,20 @@ class MailFormatterTest : BaseTest() {
      */
     @Test
     fun testFooterDeviceNameOptionNoValue() {
-        val event = PhoneEvent("+70123456789", true, 0, null, false, "Email body text",
-                null, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
+        val event = PhoneEvent(
+                phone = "+70123456789",
+                isIncoming = true,
+                startTime = 0,
+                text = "Email body text",
+                acceptor = "device"
+        )
 
         val formatter = MailFormatter(context, event,
                 sendTime = defaultTime,
                 options = setOf(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME)
         )
-        assertThat(formatter.formatBody(), htmlEqualsRes("footer_no_device_option.html"))
+
+        assertThat(formatter.formatBody(), htmlEquals("footer_no_device_option.html"))
     }
 
     /**
@@ -206,8 +249,13 @@ class MailFormatterTest : BaseTest() {
      */
     @Test
     fun testFooterDeviceNameTimeOption() {
-        val event = PhoneEvent("+70123456789", true, defaultTime.time, null, false,
-                "Email body text", null, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
+        val event = PhoneEvent(
+                phone = "+70123456789",
+                isIncoming = true,
+                startTime = defaultTime.time,
+                text = "Email body text",
+                acceptor = "device"
+        )
 
         val formatter = MailFormatter(context, event,
                 sendTime = defaultTime,
@@ -216,7 +264,7 @@ class MailFormatterTest : BaseTest() {
                         VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME)
         )
 
-        assertThat(formatter.formatBody(), htmlEqualsRes("footer_time_device_option.html"))
+        assertThat(formatter.formatBody(), htmlEquals("footer_time_device_option.html"))
     }
 
     /**
@@ -224,14 +272,21 @@ class MailFormatterTest : BaseTest() {
      */
     @Test
     fun testFooterLocation() {
-        val event = PhoneEvent("+70123456789", true, 0, null, false, "Email body text",
-                defaultCoordinates, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
+        val event = PhoneEvent(
+                phone = "+70123456789",
+                isIncoming = true,
+                startTime = 0,
+                text = "Email body text",
+                location = defaultCoordinates,
+                acceptor = "device"
+        )
 
         val formatter = MailFormatter(context, event,
                 sendTime = defaultTime,
                 options = setOf(VAL_PREF_EMAIL_CONTENT_LOCATION)
         )
-        assertThat(formatter.formatBody(), htmlEqualsRes("footer_location_option.html"))
+
+        assertThat(formatter.formatBody(), htmlEquals("footer_location_option.html"))
     }
 
     /**
@@ -240,14 +295,20 @@ class MailFormatterTest : BaseTest() {
      */
     @Test
     fun testFooterNoLocation() {
-        val event = PhoneEvent("+70123456789", true, 0, null, false, "Email body text",
-                null, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
+        val event = PhoneEvent(
+                phone = "+70123456789",
+                isIncoming = true,
+                startTime = 0,
+                text = "Email body text",
+                acceptor = "device"
+        )
 
         val formatter = MailFormatter(context, event,
                 sendTime = defaultTime,
                 options = setOf(VAL_PREF_EMAIL_CONTENT_LOCATION)
         )
-        assertThat(formatter.formatBody(), htmlEqualsRes("footer_no_location.html"))
+
+        assertThat(formatter.formatBody(), htmlEquals("footer_no_location.html"))
     }
 
     /**
@@ -256,8 +317,13 @@ class MailFormatterTest : BaseTest() {
      */
     @Test
     fun testFooterNoLocationPermissions() {
-        val event = PhoneEvent("+70123456789", true, 0, null, false, "Email body text",
-                null, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
+        val event = PhoneEvent(
+                phone = "+70123456789",
+                isIncoming = true,
+                startTime = 0,
+                text = "Email body text",
+                acceptor = "device"
+        )
 
         whenever(context.checkPermission(eq(ACCESS_COARSE_LOCATION), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED)
         whenever(context.checkPermission(eq(ACCESS_FINE_LOCATION), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED)
@@ -266,7 +332,8 @@ class MailFormatterTest : BaseTest() {
                 sendTime = defaultTime,
                 options = setOf(VAL_PREF_EMAIL_CONTENT_LOCATION)
         )
-        assertThat(formatter.formatBody(), htmlEqualsRes("footer_no_location_permission.html"))
+
+        assertThat(formatter.formatBody(), htmlEquals("footer_no_location_permission.html"))
     }
 
     /**
@@ -274,15 +341,21 @@ class MailFormatterTest : BaseTest() {
      */
     @Test
     fun testContactName() {
-        val event = PhoneEvent("+12345678901", true, 0, null, false, "Email body text",
-                null, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
+        val event = PhoneEvent(
+                phone = "+12345678901",
+                isIncoming = true,
+                startTime = 0,
+                text = "Email body text",
+                acceptor = "device"
+        )
 
         val formatter = MailFormatter(context, event,
                 sendTime = defaultTime,
                 contactName = "John Dou",
                 options = setOf(VAL_PREF_EMAIL_CONTENT_CONTACT)
         )
-        assertThat(formatter.formatBody(), htmlEqualsRes("footer_contact_option.html"))
+
+        assertThat(formatter.formatBody(), htmlEquals("footer_contact_option.html"))
     }
 
     /**
@@ -291,8 +364,13 @@ class MailFormatterTest : BaseTest() {
      */
     @Test
     fun testContactNameNoPermission() {
-        val event = PhoneEvent("+12345678901", true, 0, null, false, "Email body text",
-                null, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
+        val event = PhoneEvent(
+                phone = "+12345678901",
+                isIncoming = true,
+                startTime = 0,
+                text = "Email body text",
+                acceptor = "device"
+        )
 
         whenever(context.checkPermission(eq(READ_CONTACTS), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED)
 
@@ -300,7 +378,8 @@ class MailFormatterTest : BaseTest() {
                 sendTime = defaultTime,
                 options = setOf(VAL_PREF_EMAIL_CONTENT_CONTACT)
         )
-        assertThat(formatter.formatBody(), htmlEqualsRes("footer_contact_no_permission.html"))
+
+        assertThat(formatter.formatBody(), htmlEquals("footer_contact_no_permission.html"))
     }
 
     /**
@@ -309,14 +388,20 @@ class MailFormatterTest : BaseTest() {
      */
     @Test
     fun testUnknownContactName() {
-        val event = PhoneEvent("+1234 5678-901", true, 0, null, false, "Email body text",
-                null, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
+        val event = PhoneEvent(
+                phone = "+1234 5678-901",
+                isIncoming = true,
+                startTime = 0,
+                text = "Email body text",
+                acceptor = "device"
+        )
 
         val formatter = MailFormatter(context, event,
                 sendTime = defaultTime,
                 options = setOf(VAL_PREF_EMAIL_CONTENT_CONTACT)
         )
-        assertThat(formatter.formatBody(), htmlEqualsRes("footer_unknown_contact.html"))
+
+        assertThat(formatter.formatBody(), htmlEquals("footer_unknown_contact.html"))
     }
 
     /**
@@ -324,14 +409,17 @@ class MailFormatterTest : BaseTest() {
      */
     @Test
     fun testIncomingCallBody() {
-        val start = defaultTime.time
-        val end = GregorianCalendar(2016, 1, 2, 4, 5, 10).time.time
-        val event = PhoneEvent("+70123456789", true, start, end, false, null, null,
-                null, STATE_PENDING, "device", REASON_ACCEPTED, false)
+        val event = PhoneEvent(
+                phone = "+70123456789",
+                isIncoming = true,
+                startTime = defaultTime.time,
+                endTime = GregorianCalendar(2016, 1, 2, 4, 5, 10).time.time,
+                acceptor = "device"
+        )
 
         val formatter = MailFormatter(context, event)
 
-        assertThat(formatter.formatBody(), htmlEqualsRes("incoming_call.html"))
+        assertThat(formatter.formatBody(), htmlEquals("incoming_call.html"))
     }
 
     /**
@@ -339,14 +427,17 @@ class MailFormatterTest : BaseTest() {
      */
     @Test
     fun testOutgoingCallBody() {
-        val start = defaultTime.time
-        val end = GregorianCalendar(2016, 1, 2, 4, 5, 15).time.time
-        val event = PhoneEvent("+70123456789", false, start, end, false, null, null,
-                null, STATE_PENDING, "device", REASON_ACCEPTED, false)
+        val event = PhoneEvent(
+                phone = "+70123456789",
+                isIncoming = false,
+                startTime = defaultTime.time,
+                endTime = GregorianCalendar(2016, 1, 2, 4, 5, 15).time.time,
+                acceptor = "device"
+        )
 
         val formatter = MailFormatter(context, event)
 
-        assertThat(formatter.formatBody(), htmlEqualsRes("outgoing_call.html"))
+        assertThat(formatter.formatBody(), htmlEquals("outgoing_call.html"))
     }
 
     /**
@@ -354,13 +445,16 @@ class MailFormatterTest : BaseTest() {
      */
     @Test
     fun testMissedCallBody() {
-        val start = defaultTime.time
-        val event = PhoneEvent("+70123456789", false, start, null, true, null, null,
-                null, STATE_PENDING, "device", REASON_ACCEPTED, false)
+        val event = PhoneEvent(
+                phone = "+70123456789",
+                startTime = defaultTime.time,
+                isMissed = true,
+                acceptor = "device"
+        )
 
         val formatter = MailFormatter(context, event)
 
-        assertThat(formatter.formatBody(), htmlEqualsRes("missed_call.html"))
+        assertThat(formatter.formatBody(), htmlEquals("missed_call.html"))
     }
 
     /**
@@ -368,20 +462,28 @@ class MailFormatterTest : BaseTest() {
      */
     @Test
     fun testAllContentIncomingCall() {
-        val start = defaultTime.time
-        val end = GregorianCalendar(2016, 1, 2, 4, 5, 10).time.time
-        val event = PhoneEvent("+12345678901", true, start, end, false, null,
-                defaultCoordinates, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
+        val event = PhoneEvent(
+                phone = "+12345678901",
+                isIncoming = true,
+                startTime = defaultTime.time,
+                endTime = GregorianCalendar(2016, 1, 2, 4, 5, 10).time.time,
+                location = defaultCoordinates,
+                acceptor = "device"
+        )
 
         val formatter = MailFormatter(context, event,
                 sendTime = defaultTime,
                 contactName = "John Dou",
                 deviceName = "Device",
-                options = setOf(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
-                        VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
+                options = setOf(
+                        VAL_PREF_EMAIL_CONTENT_CONTACT,
+                        VAL_PREF_EMAIL_CONTENT_LOCATION,
+                        VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
+                        VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
                         VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT)
         )
-        assertThat(formatter.formatBody(), htmlEqualsRes("incoming_call_all.html"))
+
+        assertThat(formatter.formatBody(), htmlEquals("incoming_call_all.html"))
     }
 
     /**
@@ -389,21 +491,27 @@ class MailFormatterTest : BaseTest() {
      */
     @Test
     fun testAllContentOutgoingCall() {
-        val start = defaultTime.time
-        val end = GregorianCalendar(2016, 1, 2, 4, 5, 10).time.time
-        val event = PhoneEvent("+12345678901", false, start, end, false, null,
-                defaultCoordinates, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
+        val event = PhoneEvent(
+                phone = "+12345678901",
+                isIncoming = false,
+                startTime = defaultTime.time,
+                endTime = GregorianCalendar(2016, 1, 2, 4, 5, 10).time.time,
+                location = defaultCoordinates,
+                acceptor = "device"
+        )
 
         val formatter = MailFormatter(context, event,
                 sendTime = defaultTime,
                 contactName = "John Dou",
                 deviceName = "Device",
-                options = setOf(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
-                        VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
+                options = setOf(VAL_PREF_EMAIL_CONTENT_CONTACT,
+                        VAL_PREF_EMAIL_CONTENT_LOCATION,
+                        VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
+                        VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
                         VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT)
         )
 
-        assertThat(formatter.formatBody(), htmlEqualsRes("outgoing_call_all.html"))
+        assertThat(formatter.formatBody(), htmlEquals("outgoing_call_all.html"))
     }
 
     /**
@@ -411,19 +519,27 @@ class MailFormatterTest : BaseTest() {
      */
     @Test
     fun testAllContentMissedCall() {
-        val start = defaultTime.time
-        val end = GregorianCalendar(2016, 1, 2, 4, 5, 10).time.time
-        val event = PhoneEvent("+12345678901", true, start, end, true, null,
-                defaultCoordinates, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
+        val event = PhoneEvent(
+                phone = "+12345678901",
+                isIncoming = true,
+                startTime = defaultTime.time,
+                endTime = GregorianCalendar(2016, 1, 2, 4, 5, 10).time.time,
+                isMissed = true,
+                location = defaultCoordinates,
+                acceptor = "device"
+        )
 
         val formatter = MailFormatter(context, event,
                 sendTime = defaultTime,
                 deviceName = "Device",
-                options = setOf(VAL_PREF_EMAIL_CONTENT_CONTACT, VAL_PREF_EMAIL_CONTENT_LOCATION,
-                        VAL_PREF_EMAIL_CONTENT_DEVICE_NAME, VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
+                options = setOf(VAL_PREF_EMAIL_CONTENT_CONTACT,
+                        VAL_PREF_EMAIL_CONTENT_LOCATION,
+                        VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
+                        VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
                         VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT)
         )
-        assertThat(formatter.formatBody(), htmlEqualsRes("missed_call_all.html"))
+
+        assertThat(formatter.formatBody(), htmlEquals("missed_call_all.html"))
     }
 
     /**
@@ -431,14 +547,23 @@ class MailFormatterTest : BaseTest() {
      */
     @Test
     fun testNonDefaultLocale() {
-        val timeZone = TimeZone.getTimeZone("EST")
-        val calendar = GregorianCalendar(timeZone)
-        calendar[2016, 1, 2, 3, 4] = 5
+        val calendar = GregorianCalendar(TimeZone.getTimeZone("EST"))
+
+        calendar.set(2016, 1, 2, 3, 4, 5)
         val start = calendar.time.time
-        calendar[2016, 1, 2, 3, 4] = 10
+
+        calendar.set(2016, 1, 2, 3, 4, 10)
         val end = calendar.time.time
-        val event = PhoneEvent("+12345678901", true, start, end, true, null,
-                defaultCoordinates, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
+
+        val event = PhoneEvent(
+                phone = "+12345678901",
+                isIncoming = true,
+                startTime = start,
+                endTime = end,
+                isMissed = true,
+                location = defaultCoordinates,
+                acceptor = "device"
+        )
 
         var formatter = MailFormatter(context, event,
                 sendTime = defaultTime,
@@ -450,8 +575,9 @@ class MailFormatterTest : BaseTest() {
                         VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
                         VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT)
         )
+
         assertEquals("[SMailer] Пропущенный звонок от +12345678901", formatter.formatSubject())
-        assertThat(formatter.formatBody(), htmlEqualsRes("missed_call_ru.html"))
+        assertThat(formatter.formatBody(), htmlEquals("missed_call_ru.html"))
 
         formatter = MailFormatter(context, event,
                 sendTime = defaultTime,
@@ -465,7 +591,7 @@ class MailFormatterTest : BaseTest() {
         )
 
         assertEquals("[SMailer] Missed call from +12345678901", formatter.formatSubject())
-        assertThat(formatter.formatBody(), htmlEqualsRes("missed_call_en.html"))
+        assertThat(formatter.formatBody(), htmlEquals("missed_call_en.html"))
     }
 
     /**
@@ -473,14 +599,18 @@ class MailFormatterTest : BaseTest() {
      */
     @Test
     fun testFormatUrls() {
-        val event = PhoneEvent("+12345678901", true, 0, null, false,
-                "Please visit https://www.google.com/search?a=1&b=2 or " +
+        val event = PhoneEvent(
+                phone = "+12345678901",
+                isIncoming = true,
+                startTime = 0,
+                text = "Please visit https://www.google.com/search?a=1&b=2 or " +
                         "https://secure.place  site or download from ftp://get.from.here",
-                null, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
+                acceptor = "device"
+        )
 
         val formatter = MailFormatter(context, event)
 
-        assertThat(formatter.formatBody(), htmlEqualsRes("urls.html"))
+        assertThat(formatter.formatBody(), htmlEquals("urls.html"))
     }
 
     /**
@@ -488,16 +618,22 @@ class MailFormatterTest : BaseTest() {
      */
     @Test
     fun testRemoteControlLinks() {
-        val start = defaultTime.time
-        val end = GregorianCalendar(2016, 1, 2, 4, 5, 10).time.time
-        val event = PhoneEvent("+12345678901", true, start, end,
-                false, "Message", defaultCoordinates, null, STATE_PENDING, "device", REASON_ACCEPTED, false)
+        val event = PhoneEvent(
+                phone = "+12345678901",
+                isIncoming = true,
+                startTime = defaultTime.time,
+                endTime = GregorianCalendar(2016, 1, 2, 4, 5, 10).time.time,
+                text = "Message",
+                location = defaultCoordinates,
+                acceptor = "device"
+        )
 
         val formatter = MailFormatter(context, event,
                 deviceName = "Device",
                 serviceAccount = "service@mail.com",
                 options = setOf(VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS)
         )
-        assertThat(formatter.formatBody(), htmlEqualsRes("remote_control_links.html"))
+
+        assertThat(formatter.formatBody(), htmlEquals("remote_control_links.html"))
     }
 }

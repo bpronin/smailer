@@ -51,9 +51,9 @@ internal open class HtmlMatcher private constructor(private val expected: String
 
     companion object {
 
-        fun htmlEqualsRes(resource: String): HtmlMatcher {
+        fun htmlEquals(resourceName: String): HtmlMatcher {
             try {
-                InstrumentationRegistry.getInstrumentation().context.assets.open(resource).use {
+                InstrumentationRegistry.getInstrumentation().context.assets.open(resourceName).use {
                     return HtmlMatcher(readStream(it)!!)
                 }
             } catch (x: IOException) {
