@@ -1,6 +1,6 @@
 package com.bopr.android.smailer.ui
 
-import android.Manifest.permission
+import android.Manifest.permission.READ_CONTACTS
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.view.LayoutInflater
@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
-import com.bopr.android.smailer.PermissionsHelper.Companion.permissionRationale
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.util.AndroidUtil.checkPermission
 import com.bopr.android.smailer.util.ContentUtils.createPickContactIntent
@@ -37,10 +36,10 @@ class EditPhoneDialogFragment : BaseEditDialogFragment<String>("edit_phone_dialo
 
         view.findViewById<View>(R.id.button_browse_contacts).setOnClickListener {
             val context = requireContext()
-            if (checkPermission(context, permission.READ_CONTACTS)) {
+            if (checkPermission(context, READ_CONTACTS)) {
                 startActivityForResult(createPickContactIntent(), PICK_CONTACT_REQUEST)
             } else {
-                showToast(context, permissionRationale(context, permission.READ_CONTACTS))
+                showToast(context, getString(R.string.permissions_required_for_operation))
             }
         }
 
@@ -56,7 +55,8 @@ class EditPhoneDialogFragment : BaseEditDialogFragment<String>("edit_phone_dialo
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        if (requestCode == PICK_CONTACT_REQUEST && resultCode == RESULT_OK) {
+        if (checkPermission(requireContext(), READ_CONTACTS) &&
+                requestCode == PICK_CONTACT_REQUEST && resultCode == RESULT_OK) {
             editText.setText(phoneFromIntent(requireContext(), intent))
         }
     }

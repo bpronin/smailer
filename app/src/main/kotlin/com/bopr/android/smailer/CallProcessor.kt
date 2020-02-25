@@ -1,5 +1,6 @@
 package com.bopr.android.smailer
 
+import android.Manifest.permission.READ_CONTACTS
 import android.accounts.Account
 import android.accounts.AccountsException
 import android.content.Context
@@ -10,15 +11,14 @@ import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.Settings.Companion.PREF_DEVICE_ALIAS
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
-import com.bopr.android.smailer.Settings.Companion.PREF_MARK_SMS_AS_READ
 import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
 import com.bopr.android.smailer.ui.GoogleAuthorizationHelper.Companion.getAccount
-import com.bopr.android.smailer.util.AndroidUtil
+import com.bopr.android.smailer.util.AndroidUtil.checkPermission
+import com.bopr.android.smailer.util.AndroidUtil.deviceName
 import com.bopr.android.smailer.util.ContentUtils.contactName
-import com.bopr.android.smailer.util.ContentUtils.markSmsAsRead
 import com.bopr.android.smailer.util.TextUtil.isValidEmailAddressList
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
@@ -102,8 +102,8 @@ class CallProcessor(
         return try {
             val formatter = MailFormatter(context, event,
                     sendTime = Date(),
-                    contactName = contactName(context, event.phone),
-                    deviceName = settings.getString(PREF_DEVICE_ALIAS) ?: AndroidUtil.deviceName(),
+                    contactName = contactName(event.phone),
+                    deviceName = settings.getString(PREF_DEVICE_ALIAS) ?: deviceName(),
                     options = settings.getStringSet(PREF_EMAIL_CONTENT),
                     serviceAccount = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT),
                     locale = settings.locale
@@ -123,9 +123,6 @@ class CallProcessor(
 
             if (settings.getBoolean(PREF_NOTIFY_SEND_SUCCESS, false)) {
                 notifications.showMessage(R.string.email_successfully_send, TARGET_MAIN)
-            }
-            if (settings.getBoolean(PREF_MARK_SMS_AS_READ, false)) {
-                markSmsAsRead(context, event)
             }
             true
         } catch (x: UserRecoverableAuthIOException) {
@@ -166,4 +163,12 @@ class CallProcessor(
         }
     }
 
+    private fun contactName(phone: String): String? {
+        return if (checkPermission(context, READ_CONTACTS)) {
+            contactName(context, phone)
+        } else {
+            log.warn("Required permission denied")
+            null
+        }
+    }
 }

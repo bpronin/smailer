@@ -43,7 +43,6 @@ class Settings(context: Context) : SharedPreferencesWrapper(
         with(edit()) {
             putInt(PREF_SETTINGS_VERSION, SETTINGS_VERSION)
             putStringOptional(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)
-            putBooleanOptional(PREF_MARK_SMS_AS_READ, false)
             putBooleanOptional(PREF_REMOTE_CONTROL_ENABLED, false)
             putBooleanOptional(PREF_REMOTE_CONTROL_NOTIFICATIONS, true)
             putBooleanOptional(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS, true)
@@ -92,7 +91,6 @@ class Settings(context: Context) : SharedPreferencesWrapper(
         const val PREF_FILTER_TEXT_BLACKLIST = "message_filter_text_blacklist"
         const val PREF_FILTER_TEXT_WHITELIST = "message_filter_text_whitelist"
         const val PREF_HISTORY = "history"
-        const val PREF_MARK_SMS_AS_READ = "mark_processed_sms_as_read"
         const val PREF_NOTIFY_SEND_SUCCESS = "notify_send_success"
         const val PREF_RECIPIENTS_ADDRESS = "recipients_address"
         const val PREF_REMOTE_CONTROL_ACCOUNT = "remote_control_account"

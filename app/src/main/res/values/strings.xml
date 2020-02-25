@@ -93,6 +93,7 @@
     <string name="permission_rationale_receive_sms">Permission to %s is needed to send out email when SMS has received.</string>
     <string name="permission_rationale_send_sms">Permission to %s is needed to remotely send out SMS.</string>
     <string name="permission_rationale_write_sms">Permission to %s is needed to mark processed SMS as read.</string>
+    <string name="permissions_required_for_operation">Required permissions not granted</string>
     <string name="phone_blacklist">Phone blacklist</string>
     <string name="phone_number">Phone number</string>
     <string name="phone_number_filter">Phone number filter</string>
@@ -126,6 +127,7 @@
     <string name="service_account_not_found">Service account not found</string>
     <string name="service_running">Service running</string>
     <string name="since_permissions_not_granted">Since not all required permissions is granted, some options have been disabled.</string>
+    <string name="status">Status</string>
     <string name="tap_to_check_settings">Tap to check your settings.</string>
     <string name="text_blacklist">Text blacklist</string>
     <string name="text_filter">Text filter</string>
@@ -152,7 +154,6 @@
     <string name="you_had_incoming_call">You had an incoming call of %s duration.</string>
     <string name="you_had_missed_call">You had a missed call.</string>
     <string name="you_had_outgoing_call">You had an outgoing call of %s duration.</string>
-    <string name="status">Status</string>
 
     <plurals name="items_removed">
         <item quantity="one">Item removed</item>

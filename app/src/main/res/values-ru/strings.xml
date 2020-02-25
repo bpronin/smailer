@@ -82,6 +82,7 @@
     <string name="outgoing_sms">Исходящее SMS</string>
     <string name="outgoing_sms_to">Исходящее SMS</string>
     <string name="pending">Ожидание обработки</string>
+    <string name="permissions_required_for_operation">Нет необходимых разрешений</string>
     <string name="permission_rationale_coarse_location">Чтобы отображать местоположение устройства в почтовом сообщении, необходимо разрешение \"%s\".</string>
     <string name="permission_rationale_fine_location">Чтобы отображать местоположение устройства в почтовом сообщении, необходимо разрешение \"%s\".</string>
     <string name="permission_rationale_outgoing_call">Чтобы отправлять почтовое сообщение при исходящих вызовах, необходимо разрешение \"%s\".</string>
@@ -124,6 +125,7 @@
     <string name="service_account_not_found">Сервисный аккаунт не найден</string>
     <string name="service_running">Служба запущена</string>
     <string name="since_permissions_not_granted">Некоторые настройки отключены, поскольку разрешения не получены.</string>
+    <string name="status">Состояние</string>
     <string name="tap_to_check_settings">Нажмите, чтобы проверить настройки.</string>
     <string name="text_blacklist">Черный список фраз</string>
     <string name="text_filter">Фильтр текста</string>
@@ -150,7 +152,6 @@
     <string name="you_had_incoming_call">Входящий звонок длительностью %s.</string>
     <string name="you_had_missed_call">Пропущенный звонок.</string>
     <string name="you_had_outgoing_call">Исходящий звонок длительностью %s.</string>
-    <string name="status">Состояние</string>
 
     <plurals name="items_removed">
         <item quantity="one">%d запись удалена</item>
