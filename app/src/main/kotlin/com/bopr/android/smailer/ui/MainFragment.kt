@@ -57,13 +57,6 @@ class MainFragment : BasePreferenceFragment() {
             updateHistoryPreferenceView()
         }
 
-        updateAccountPreferenceView()
-        updateRecipientsPreferenceView()
-        updateDeviceNamePreferenceView()
-        updateLocalePreferenceView()
-        updateHistoryPreferenceView()
-        updateRemoteControlPreferenceView()
-
         permissionsHelper.checkAll {
             requireIgnoreBatteryOptimization(requireContext())
         }
@@ -73,6 +66,17 @@ class MainFragment : BasePreferenceFragment() {
         database.close()
         unregisterDatabaseListener(requireContext(), databaseListener)
         super.onDestroy()
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        updateAccountPreferenceView()
+        updateRecipientsPreferenceView()
+        updateDeviceNamePreferenceView()
+        updateLocalePreferenceView()
+        updateHistoryPreferenceView()
+        updateRemoteControlPreferenceView()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -28,6 +28,10 @@ class RemoteControlFragment : BasePreferenceFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         authorizator = GoogleAuthorizationHelper(this, PREF_REMOTE_CONTROL_ACCOUNT, MAIL_GOOGLE_COM)
+    }
+
+    override fun onStart() {
+        super.onStart()
 
         updateAccountPreferenceView()
         updateEnabledPreferenceView()

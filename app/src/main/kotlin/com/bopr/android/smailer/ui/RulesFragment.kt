@@ -22,8 +22,8 @@ class RulesFragment : BasePreferenceFragment() {
         addPreferencesFromResource(R.xml.pref_rules)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onStart() {
+        super.onStart()
 
         updateTriggersPreferenceView()
         updatePhoneBlacklistPreferenceView()
