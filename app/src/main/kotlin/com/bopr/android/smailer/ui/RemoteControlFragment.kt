@@ -28,14 +28,8 @@ class RemoteControlFragment : BasePreferenceFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         authorizator = GoogleAuthorizationHelper(this, PREF_REMOTE_CONTROL_ACCOUNT, MAIL_GOOGLE_COM)
-    }
-
-    override fun onStart() {
-        super.onStart()
 
         updateAccountPreferenceView()
-        updateNotificationsPreferenceView()
-        updateFilterRecipientsPreferenceView()
         updateEnabledPreferenceView()
     }
 
@@ -45,17 +39,13 @@ class RemoteControlFragment : BasePreferenceFragment() {
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+        super.onSharedPreferenceChanged(sharedPreferences, key)
         when (key) {
             PREF_REMOTE_CONTROL_ENABLED ->
                 updateEnabledPreferenceView()
             PREF_REMOTE_CONTROL_ACCOUNT ->
                 updateAccountPreferenceView()
-            PREF_REMOTE_CONTROL_NOTIFICATIONS ->
-                updateNotificationsPreferenceView()
-            PREF_REMOTE_CONTROL_FILTER_RECIPIENTS ->
-                updateFilterRecipientsPreferenceView()
         }
-        super.onSharedPreferenceChanged(sharedPreferences, key)
     }
 
     private fun updateAccountPreferenceView() {
@@ -75,24 +65,8 @@ class RemoteControlFragment : BasePreferenceFragment() {
         val preference = findPreference<SwitchPreference>(PREF_REMOTE_CONTROL_ENABLED)!!
         val value = settings.getBoolean(preference.key, false)
 
-        preference.isChecked = value
-
         requirePreference(PREF_REMOTE_CONTROL_ACCOUNT).isEnabled = value
         requirePreference(PREF_REMOTE_CONTROL_NOTIFICATIONS).isEnabled = value
         requirePreference(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS).isEnabled = value
-    }
-
-    private fun updateFilterRecipientsPreferenceView() {
-        val preference = findPreference<SwitchPreference>(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS)!!
-        val value = settings.getBoolean(preference.key, false)
-
-        preference.isChecked = value
-    }
-
-    private fun updateNotificationsPreferenceView() {
-        val preference = findPreference<SwitchPreference>(PREF_REMOTE_CONTROL_NOTIFICATIONS)!!
-        val value = settings.getBoolean(preference.key, false)
-
-        preference.isChecked = value
     }
 }

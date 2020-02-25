@@ -33,13 +33,16 @@ internal class RemoteControlWorker(context: Context, workerParams: WorkerParamet
 
         fun enableRemoteControlWorker(context: Context) {
             val manager = WorkManager.getInstance()
+
+            /* cancel it before, cause we are not checking if previous worker sill running */
             manager.cancelAllWorkByTag(WORKER_TAG)
+
             if (isFeatureEnabled(context)) {
                 val constraints = Constraints.Builder()
                         .setRequiredNetworkType(NetworkType.CONNECTED)
                         .build()
                 val request = PeriodicWorkRequest.Builder(RemoteControlWorker::class.java,
-                        15, TimeUnit.MINUTES) /* interval must be lesser than PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS */
+                        15, TimeUnit.MINUTES) /* interval must be greater than [PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS] */
                         .addTag(WORKER_TAG)
                         .setConstraints(constraints)
                         .build()
@@ -47,8 +50,6 @@ internal class RemoteControlWorker(context: Context, workerParams: WorkerParamet
 
                 log.debug("Enabled")
             } else {
-                manager.cancelAllWorkByTag(WORKER_TAG)
-
                 log.debug("Disabled")
             }
         }

@@ -8,7 +8,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_WHITELIST
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class CallFilterPhoneWhitelistActivity : AppActivity() {
+class CallFilterPhoneWhitelistActivity : BaseAppActivity() {
 
     override fun createFragment(): Fragment {
         return CallFilterPhoneListFragment(PREF_FILTER_PHONE_WHITELIST)

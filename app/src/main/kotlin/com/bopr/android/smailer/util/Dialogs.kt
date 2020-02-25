@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.EditText
-import androidx.annotation.StringRes
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 
@@ -24,45 +23,40 @@ object Dialogs {
                 .apply()
     }
 
+    fun showMessageDialog(context: Context,
+                          message: String? = null,
+                          closeAction: (() -> Unit)? = null) {
+        dialogBuilder(context, null, message)
+                .setOnDismissListener { closeAction?.invoke() }
+                .show()
+    }
+
     fun showInfoDialog(context: Context,
                        title: String? = null,
-                       @StringRes titleRes: Int? = null,
                        message: String? = null,
-                       @StringRes messageRes: Int? = null,
                        buttonText: String? = null,
-                       @StringRes buttonTextRes: Int? = null,
-                       action: (() -> Unit)? = null) {
+                       positiveAction: (() -> Unit)? = null) {
 
-        val builder = dialogBuilder(context, title, titleRes, message, messageRes)
-
-        val function: (DialogInterface, Int) -> Unit = { _, _ -> action?.invoke() }
+        val builder = dialogBuilder(context, title, message)
         buttonText?.let {
-            builder.setPositiveButton(buttonText, function)
-        } ?: buttonTextRes?.let {
-            builder.setPositiveButton(buttonTextRes, function)
+            builder.setPositiveButton(buttonText) { _, _ -> positiveAction?.invoke() }
         }
-
         builder.show()
     }
 
     fun showConfirmationDialog(context: Context,
                                title: String? = null,
-                               @StringRes titleRes: Int? = null,
                                message: String? = null,
-                               @StringRes messageRes: Int? = null,
                                buttonText: String? = null,
-                               @StringRes buttonTextRes: Int? = null,
                                cancelButtonText: String? = null,
-                               @StringRes cancelButtonTextRes: Int? = null,
-                               tag: String? = null,
+                               dialogTag: String? = null,
                                action: (() -> Unit)? = null) {
 
         val builder: AlertDialog.Builder
 
-        if (!tag.isNullOrEmpty()) {
+        if (!dialogTag.isNullOrEmpty()) {
             val settings = Settings(context)
-
-            if (settings.getBoolean(tag, false)) {
+            if (settings.getBoolean(dialogTag, false)) {
                 return
             }
 
@@ -74,35 +68,31 @@ object Dialogs {
                     R.layout.alert_dialog_view_container, null) as ViewGroup)
             container.addView(checkBox)
 
-            builder = dialogBuilder(context, title, titleRes, message, messageRes)
+            builder = dialogBuilder(context, title, message)
                     .setView(container)
                     .setOnDismissListener {
-                        settings.edit().putBoolean(tag, checkBox.isChecked).apply()
+                        settings.edit().putBoolean(dialogTag, checkBox.isChecked).apply()
                     }
         } else {
-            builder = dialogBuilder(context, title, titleRes, message, messageRes)
+            builder = dialogBuilder(context, title, message)
         }
 
-        setPositiveAction(builder, buttonText, buttonTextRes) { _, _ -> action?.invoke() }
-        setNegativeAction(builder, cancelButtonText, cancelButtonTextRes)
+        setPositiveAction(builder, buttonText) { _, _ -> action?.invoke() }
+        setNegativeAction(builder, cancelButtonText)
 
         builder.show()
     }
 
     fun showInputDialog(context: Context,
                         title: String? = null,
-                        @StringRes titleRes: Int? = null,
                         message: String? = null,
-                        @StringRes messageRes: Int? = null,
                         buttonText: String? = null,
-                        @StringRes buttonTextRes: Int? = null,
                         cancelButtonText: String? = null,
-                        @StringRes cancelButtonTextRes: Int? = null,
                         inputType: Int = InputType.TYPE_CLASS_TEXT,
                         value: String? = null,
                         action: (String) -> Unit) {
 
-        val builder = dialogBuilder(context, title, titleRes, message, messageRes)
+        val builder = dialogBuilder(context, title, message)
 
         val editor = EditText(context)
         editor.inputType = inputType
@@ -116,42 +106,37 @@ object Dialogs {
         container.addView(editor)
 
         builder.setView(container)
-        setPositiveAction(builder, buttonText, buttonTextRes) { _, _ -> action(editor.text.toString()) }
-        setNegativeAction(builder, cancelButtonText, cancelButtonTextRes)
+        setPositiveAction(builder, buttonText) { _, _ -> action(editor.text.toString()) }
+        setNegativeAction(builder, cancelButtonText)
 
         builder.show()
     }
 
     private fun setPositiveAction(builder: AlertDialog.Builder, buttonText: String?,
-                                  buttonTextRes: Int?, callback: (DialogInterface, Int) -> Unit) {
+                                  callback: (DialogInterface, Int) -> Unit) {
         buttonText?.let {
             builder.setPositiveButton(buttonText, callback)
-        } ?: builder.setPositiveButton(buttonTextRes ?: android.R.string.ok, callback)
+        } ?: builder.setPositiveButton(android.R.string.ok, callback)
     }
 
-    private fun setNegativeAction(builder: AlertDialog.Builder, buttonText: String?, buttonTextRes: Int?) {
+    private fun setNegativeAction(builder: AlertDialog.Builder, buttonText: String?) {
         buttonText?.let {
             builder.setNegativeButton(buttonText, null)
-        } ?: builder.setNegativeButton(buttonTextRes ?: android.R.string.cancel, null)
+        } ?: builder.setNegativeButton(android.R.string.cancel, null)
     }
 
     private fun dialogBuilder(context: Context,
                               title: String? = null,
-                              @StringRes titleRes: Int? = null,
-                              message: String? = null,
-                              @StringRes messageRes: Int? = null): AlertDialog.Builder {
+                              message: String? = null
+    ): AlertDialog.Builder {
 
         val builder = AlertDialog.Builder(context)
 
         title?.let {
             builder.setTitle(it)
-        } ?: titleRes?.let {
-            builder.setTitle(it)
         }
 
         message?.let {
-            builder.setMessage(it)
-        } ?: messageRes?.let {
             builder.setMessage(it)
         }
 

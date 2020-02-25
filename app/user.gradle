@@ -24,12 +24,17 @@ def updateReleaseInfo = {
 
 assemble.doLast {
     updateReleaseInfo()
-    if (project.hasProperty('upload_path')) {
-        println('copying release to: ' + upload_path)
-        copy {
+}
+
+afterEvaluate {
+    assemblePaidDebug.doLast {
+        if (project.hasProperty('upload_path')) {
+            println('copying release to: ' + upload_path)
+            copy {
 //            from fileTree(new File(projectDir, '/build/outputs/apk/')).include("**/*.apk").files
-            from fileTree(new File(projectDir, '/build/outputs/apk/')).include("**/*paid-debug.apk").files
-            into upload_path
+                from fileTree(new File(projectDir, '/build/outputs/apk/')).include("**/*paid-debug.apk").files
+                into upload_path
+            }
         }
     }
 }

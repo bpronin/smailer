@@ -8,6 +8,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bopr.android.smailer.PhoneEventFilter
 import com.bopr.android.smailer.R
+import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_BLACKLIST
+import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_WHITELIST
+import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_BLACKLIST
+import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_WHITELIST
 import com.bopr.android.smailer.ui.CallFilterListFragment.Holder
 import com.bopr.android.smailer.util.Dialogs.showConfirmationDialog
 
@@ -96,12 +100,23 @@ abstract class CallFilterListFragment(private val settingName: String) : Editabl
     }
 
     private fun getItemsList(filter: PhoneEventFilter): MutableCollection<String> {
-        return filter.getList(settingName)
+        return when (settingName) {
+            PREF_FILTER_PHONE_BLACKLIST ->
+                filter.phoneBlacklist
+            PREF_FILTER_PHONE_WHITELIST ->
+                filter.phoneWhitelist
+            PREF_FILTER_TEXT_BLACKLIST ->
+                filter.textBlacklist
+            PREF_FILTER_TEXT_WHITELIST ->
+                filter.textWhitelist
+            else ->
+                throw IllegalArgumentException()
+        }
     }
 
     private fun onClearData() {
-        showConfirmationDialog(requireContext(), messageRes = R.string.ask_clear_list,
-                buttonTextRes = R.string.clear) {
+        showConfirmationDialog(requireContext(), getString(R.string.ask_clear_list),
+                getString(R.string.clear)) {
             saveItems(listOf())
         }
     }

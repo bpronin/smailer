@@ -43,7 +43,6 @@ class Settings(context: Context) : SharedPreferencesWrapper(
         with(edit()) {
             putInt(PREF_SETTINGS_VERSION, SETTINGS_VERSION)
             putStringOptional(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)
-            putBooleanOptional(PREF_RESEND_UNSENT, true)
             putBooleanOptional(PREF_MARK_SMS_AS_READ, false)
             putBooleanOptional(PREF_REMOTE_CONTROL_ENABLED, false)
             putBooleanOptional(PREF_REMOTE_CONTROL_NOTIFICATIONS, true)
@@ -100,11 +99,9 @@ class Settings(context: Context) : SharedPreferencesWrapper(
         const val PREF_REMOTE_CONTROL_ENABLED = "remote_control_enabled"
         const val PREF_REMOTE_CONTROL_FILTER_RECIPIENTS = "remote_control_filter_recipients"
         const val PREF_REMOTE_CONTROL_NOTIFICATIONS = "remote_control_notifications"
-        const val PREF_RESEND_UNSENT = "resend_unsent" /* hidden. for debug purposes. always true */
-        const val PREF_RULES = "rules"
         const val PREF_SENDER_ACCOUNT = "sender_account"
-        const val PREF_SETTINGS_VERSION = "settings_version"
-        const val PREF_SYNC_TIME = "sync_time" /* hidden, updated by sync engine */
+        const val PREF_SETTINGS_VERSION = "settings_version" /* hidden */
+        const val PREF_SYNC_TIME = "sync_time" /* hidden */
 
         const val VAL_PREF_DEFAULT = "default"
         const val VAL_PREF_EMAIL_CONTENT_CONTACT = "contact_name"

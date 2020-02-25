@@ -7,6 +7,8 @@ import com.bopr.android.smailer.util.TextUtil.commaSplit
 
 open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPreferences) {
 
+    val all = wrappedPreferences.all
+
     fun getString(key: String): String? {
         return wrappedPreferences.getString(key, null)
     }

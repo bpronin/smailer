@@ -7,7 +7,7 @@ import androidx.fragment.app.Fragment
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class RecipientsActivity : AppActivity() {
+class RecipientsActivity : BaseAppActivity() {
 
     override fun createFragment(): Fragment {
         return RecipientsFragment()

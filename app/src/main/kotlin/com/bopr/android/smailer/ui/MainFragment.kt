@@ -6,7 +6,6 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
-import androidx.preference.SwitchPreference
 import com.bopr.android.smailer.Database
 import com.bopr.android.smailer.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.Database.Companion.unregisterDatabaseListener
@@ -14,9 +13,8 @@ import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_DEVICE_ALIAS
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_LOCALE
 import com.bopr.android.smailer.Settings.Companion.PREF_HISTORY
-import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
-import com.bopr.android.smailer.Settings.Companion.PREF_RULES
+import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
 import com.bopr.android.smailer.util.AndroidUtil.deviceName
@@ -39,23 +37,8 @@ class MainFragment : BasePreferenceFragment() {
     override fun onCreatePreferences(bundle: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_main)
 
-        requirePreference(PREF_RULES).setOnPreferenceClickListener {
-            startActivity(Intent(context, RulesActivity::class.java))
-            true
-        }
-
         requirePreference(PREF_SENDER_ACCOUNT).setOnPreferenceClickListener {
             authorizator.startAccountSelectorActivity()
-            true
-        }
-
-        requirePreference(PREF_RECIPIENTS_ADDRESS).setOnPreferenceClickListener {
-            startActivity(Intent(context, RecipientsActivity::class.java))
-            true
-        }
-
-        requirePreference(PREF_HISTORY).setOnPreferenceClickListener {
-            startActivity(Intent(context, HistoryActivity::class.java))
             true
         }
 
@@ -68,12 +51,22 @@ class MainFragment : BasePreferenceFragment() {
         super.onCreate(savedInstanceState)
         authorizator = GoogleAuthorizationHelper(this, PREF_SENDER_ACCOUNT, GmailScopes.GMAIL_SEND,
                 DriveScopes.DRIVE_APPDATA)
+
         database = Database(requireContext())
         databaseListener = registerDatabaseListener(requireContext()) {
             updateHistoryPreferenceView()
         }
 
-        permissionsHelper.checkAll()
+        updateAccountPreferenceView()
+        updateRecipientsPreferenceView()
+        updateDeviceNamePreferenceView()
+        updateLocalePreferenceView()
+        updateHistoryPreferenceView()
+        updateRemoteControlPreferenceView()
+
+        permissionsHelper.checkAll {
+//            requireIgnoreBatteryOptimization(requireContext())
+        }
         requireIgnoreBatteryOptimization(requireContext())
     }
 
@@ -88,30 +81,20 @@ class MainFragment : BasePreferenceFragment() {
         authorizator.onAccountSelectorActivityResult(requestCode, resultCode, data)
     }
 
-    override fun onStart() {
-        super.onStart()
-        updateAccountPreferenceView()
-        updateRecipientsPreferenceView()
-        updateDeviceNamePreferenceView()
-        updateLocalePreferenceView()
-        updateHistoryPreferenceView()
-        updateShowNotificationPreferenceView()
-    }
-
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+        super.onSharedPreferenceChanged(sharedPreferences, key)
         when (key) {
             PREF_SENDER_ACCOUNT ->
                 updateAccountPreferenceView()
             PREF_RECIPIENTS_ADDRESS ->
                 updateRecipientsPreferenceView()
-            PREF_EMAIL_LOCALE ->
-                updateLocalePreferenceView()
             PREF_DEVICE_ALIAS ->
                 updateDeviceNamePreferenceView()
-            PREF_NOTIFY_SEND_SUCCESS ->
-                updateShowNotificationPreferenceView()
+            PREF_EMAIL_LOCALE ->
+                updateLocalePreferenceView()
+            PREF_REMOTE_CONTROL_ENABLED ->
+                updateRemoteControlPreferenceView()
         }
-        super.onSharedPreferenceChanged(sharedPreferences, key)
     }
 
     private fun updateAccountPreferenceView() {
@@ -143,11 +126,9 @@ class MainFragment : BasePreferenceFragment() {
         val preference = requirePreference(PREF_HISTORY)
         val count = database.unreadEventsCount
         if (count > 0) {
-            updateSummary(preference,
-                    getQuantityString(R.plurals.new_history_items_count, count),
-                    SUMMARY_STYLE_DEFAULT)
+            updateSummary(preference, getQuantityString(R.plurals.new_history_items_count, count), SUMMARY_STYLE_DEFAULT)
         } else {
-            updateSummary(preference, null, SUMMARY_STYLE_DEFAULT)
+            updateSummary(preference, getString(R.string.no_new_history_items), SUMMARY_STYLE_DEFAULT)
         }
     }
 
@@ -174,8 +155,12 @@ class MainFragment : BasePreferenceFragment() {
         }
     }
 
-    private fun updateShowNotificationPreferenceView() {
-        val preference = findPreference<SwitchPreference>(PREF_NOTIFY_SEND_SUCCESS)!!
-        preference.isChecked = settings.getBoolean(PREF_NOTIFY_SEND_SUCCESS, false)
+    private fun updateRemoteControlPreferenceView() {
+        val preference = requirePreference(PREF_REMOTE_CONTROL_ENABLED)
+        if (settings.getBoolean(preference.key, false)) {
+            updateSummary(preference, getString(R.string.enabled), SUMMARY_STYLE_DEFAULT)
+        } else {
+            updateSummary(preference, getString(R.string.disavbled), SUMMARY_STYLE_DEFAULT)
+        }
     }
 }

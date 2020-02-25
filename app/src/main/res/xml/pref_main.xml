@@ -1,21 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <androidx.preference.PreferenceScreen
+    <androidx.preference.Preference
         android:icon="@drawable/ic_account_round"
         android:key="sender_account"
         android:title="@string/sender" />
 
-    <androidx.preference.PreferenceScreen
+    <androidx.preference.Preference
         android:icon="@drawable/ic_recipient"
         android:key="recipients_address"
-        android:title="@string/recipients" />
+        android:title="@string/recipients" >
+        <intent
+            android:targetClass="com.bopr.android.smailer.ui.RecipientsActivity"
+            android:targetPackage="com.bopr.android.smailer" />
+        />
+    </androidx.preference.Preference>
 
-    <androidx.preference.PreferenceScreen
+    <androidx.preference.Preference
         android:icon="@drawable/ic_rules"
         android:key="rules"
         android:summary="@string/when_send_email"
-        android:title="@string/rules" />
+        android:title="@string/rules">
+        <intent
+            android:targetClass="com.bopr.android.smailer.ui.RulesActivity"
+            android:targetPackage="com.bopr.android.smailer" />
+        />
+    </androidx.preference.Preference>
 
     <androidx.preference.MultiSelectListPreference
         android:dialogTitle="@string/email_message_content"
@@ -44,27 +54,32 @@
         android:key="email_locale"
         android:title="@string/email_message_language" />
 
-    <androidx.preference.SwitchPreference
-        android:key="notify_send_success"
-        android:title="@string/notify_send_success" />
-
-<!--
-    <androidx.preference.SwitchPreference
-        android:key="mark_processed_sms_as_read"
-        android:title="@string/mark_processed_sms_as_read" />
--->
-
     <androidx.preference.Preference
         android:icon="@drawable/ic_remote"
-        android:key="remote_control"
+        android:key="remote_control_enabled"
         android:title="@string/remote_control">
         <intent
             android:targetClass="com.bopr.android.smailer.ui.RemoteControlActivity"
             android:targetPackage="com.bopr.android.smailer" />
     </androidx.preference.Preference>
 
-    <androidx.preference.PreferenceScreen
+    <androidx.preference.Preference
         android:icon="@drawable/ic_history"
         android:key="history"
-        android:title="@string/call_history" />
+        android:title="@string/call_history">
+        <intent
+            android:targetClass="com.bopr.android.smailer.ui.HistoryActivity"
+            android:targetPackage="com.bopr.android.smailer" />
+        />
+    </androidx.preference.Preference>
+
+    <androidx.preference.Preference
+        android:icon="@drawable/ic_options"
+        android:key="options"
+        android:title="@string/options">
+        <intent
+            android:targetClass="com.bopr.android.smailer.ui.OptionsActivity"
+            android:targetPackage="com.bopr.android.smailer" />
+        />
+    </androidx.preference.Preference>
 </androidx.preference.PreferenceScreen>

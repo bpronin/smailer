@@ -173,9 +173,8 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
     }
 
     private fun onClearData() {
-        showConfirmationDialog(requireContext(),
-                messageRes = R.string.ask_clear_history,
-                buttonTextRes = R.string.clear) {
+        showConfirmationDialog(requireContext(), getString(R.string.ask_clear_history),
+                getString(R.string.clear)) {
             database.clearEvents()
             database.notifyChanged()
         }

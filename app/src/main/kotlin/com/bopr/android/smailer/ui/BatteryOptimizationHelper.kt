@@ -30,10 +30,10 @@ internal object BatteryOptimizationHelper {
     @TargetApi(Build.VERSION_CODES.M)
     private fun showDialog(context: Context) {
         showConfirmationDialog(context,
-                titleRes = R.string.battery_optimization,
-                messageRes = R.string.battery_optimization_reason,
-                buttonTextRes = R.string.proceed,
-                tag = DIALOG_BATTERY_OPTIMIZATION_NOT_ASK_AGAIN) {
+                title = context.getString(R.string.battery_optimization),
+                message = context.getString(R.string.battery_optimization_reason),
+                buttonText = context.getString(R.string.proceed),
+                dialogTag = DIALOG_BATTERY_OPTIMIZATION_NOT_ASK_AGAIN) {
             context.startActivity(Intent(ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
         }
     }

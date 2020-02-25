@@ -1,6 +1,5 @@
 package com.bopr.android.smailer.ui
 
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.annotation.StringRes
@@ -21,30 +20,11 @@ class RulesFragment : BasePreferenceFragment() {
 
     override fun onCreatePreferences(bundle: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_rules)
-
-        requirePreference(PREF_FILTER_PHONE_BLACKLIST).setOnPreferenceClickListener {
-            startActivity(Intent(context, CallFilterPhoneBlacklistActivity::class.java))
-            true
-        }
-
-        requirePreference(PREF_FILTER_PHONE_WHITELIST).setOnPreferenceClickListener {
-            startActivity(Intent(context, CallFilterPhoneWhitelistActivity::class.java))
-            true
-        }
-
-        requirePreference(PREF_FILTER_TEXT_BLACKLIST).setOnPreferenceClickListener {
-            startActivity(Intent(context, CallFilterTextBlacklistActivity::class.java))
-            true
-        }
-
-        requirePreference(PREF_FILTER_TEXT_WHITELIST).setOnPreferenceClickListener {
-            startActivity(Intent(context, CallFilterTextWhitelistActivity::class.java))
-            true
-        }
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
         updateTriggersPreferenceView()
         updatePhoneBlacklistPreferenceView()
         updatePhoneWhitelistPreferenceView()
@@ -53,6 +33,7 @@ class RulesFragment : BasePreferenceFragment() {
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+        super.onSharedPreferenceChanged(sharedPreferences, key)
         when (key) {
             PREF_EMAIL_TRIGGERS ->
                 updateTriggersPreferenceView()
@@ -65,7 +46,6 @@ class RulesFragment : BasePreferenceFragment() {
             PREF_FILTER_TEXT_WHITELIST ->
                 updateTextWhitelistPreferenceView()
         }
-        super.onSharedPreferenceChanged(sharedPreferences, key)
     }
 
     private fun updateTextWhitelistPreferenceView() {
@@ -79,7 +59,6 @@ class RulesFragment : BasePreferenceFragment() {
     private fun updateTextBlacklistPreferenceView() {
         val preference = requirePreference(PREF_FILTER_TEXT_BLACKLIST)
         val value = settings.getCommaSet(preference.key)
-
         val text = formatListSummary(value, R.string.unacceptable_words, R.string._none)
 
         updateSummary(preference, text, SUMMARY_STYLE_DEFAULT)

@@ -7,7 +7,7 @@ import androidx.fragment.app.Fragment
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class RulesActivity : AppActivity() {
+class RulesActivity : BaseAppActivity() {
 
     override fun createFragment(): Fragment {
         return RulesFragment()

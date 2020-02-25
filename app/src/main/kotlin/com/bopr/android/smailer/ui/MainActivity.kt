@@ -1,29 +1,30 @@
 package com.bopr.android.smailer.ui
 
 import android.app.backup.BackupManager
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.bopr.android.smailer.ContentObserverService.Companion.enableContentObserver
 import com.bopr.android.smailer.Environment.setupEnvironment
-import com.bopr.android.smailer.ResendWorker.Companion.enableResendWorker
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
-import com.bopr.android.smailer.Settings.Companion.PREF_RESEND_UNSENT
 import com.bopr.android.smailer.remote.RemoteControlWorker.Companion.enableRemoteControlWorker
 import com.bopr.android.smailer.sync.SyncEngine.onSyncEngineSettingsChanged
 
 /**
- * An activity that presents a set of application settings.
+ * Main application settings activity.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class MainActivity : AppActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
+class MainActivity : MainAppActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     private lateinit var settings: Settings
     private lateinit var backupManager: BackupManager
+
+    override fun createFragment(): Fragment {
+        return MainFragment()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +37,6 @@ class MainActivity : AppActivity(), SharedPreferences.OnSharedPreferenceChangeLi
         settings.registerChangeListener(this)
 
         setupEnvironment(this)
-        handleStartupParams(intent)
     }
 
     override fun onDestroy() {
@@ -46,8 +46,6 @@ class MainActivity : AppActivity(), SharedPreferences.OnSharedPreferenceChangeLi
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         when (key) {
-            PREF_RESEND_UNSENT ->
-                enableResendWorker(this)
             PREF_EMAIL_TRIGGERS ->
                 enableContentObserver(this)
             PREF_REMOTE_CONTROL_ENABLED ->
@@ -58,20 +56,4 @@ class MainActivity : AppActivity(), SharedPreferences.OnSharedPreferenceChangeLi
         onSyncEngineSettingsChanged(this, key)
     }
 
-    override fun createFragment(): Fragment {
-        return MainFragment()
-    }
-
-    private fun handleStartupParams(intent: Intent) {
-        val stringExtra = intent.getStringExtra("screen")
-        if (stringExtra != null) {
-            when (stringExtra) {
-                "debug" -> try {
-                    startActivity(Intent(this, Class.forName("com.bopr.android.smailer.ui.DebugActivity")))
-                } catch (x: ClassNotFoundException) {
-                    throw RuntimeException(x)
-                }
-            }
-        }
-    }
 }

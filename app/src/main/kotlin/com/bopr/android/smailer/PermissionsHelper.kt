@@ -7,7 +7,8 @@ import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
+import androidx.core.content.ContextCompat.checkSelfPermission
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_MARK_SMS_AS_READ
@@ -18,8 +19,9 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
+import com.bopr.android.smailer.sync.SyncEngine.startSyncEngine
 import com.bopr.android.smailer.util.AndroidUtil.permissionLabel
-import com.bopr.android.smailer.util.Dialogs.showInfoDialog
+import com.bopr.android.smailer.util.Dialogs.showMessageDialog
 import org.slf4j.LoggerFactory
 import java.util.*
 
@@ -44,7 +46,7 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
         log.debug("Disposed")
     }
 
-    fun checkAll() {
+    fun checkAll(onDone: () -> Unit) {
         log.debug("Checking all")
 
         doCheck(items.keys)
@@ -55,52 +57,73 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
      */
     fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (requestCode == requestResultCode) {
+            val grantedPermissions: MutableSet<String> = HashSet()
             val deniedPermissions: MutableSet<String> = HashSet()
             for (i in grantResults.indices) {
-                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                    grantedPermissions.add(permissions[i])
+                } else {
                     deniedPermissions.add(permissions[i])
                 }
             }
+
+            onPermissionsGranted(grantedPermissions)
+            onPermissionsDenied(deniedPermissions)
+
             if (deniedPermissions.isNotEmpty()) {
-                onPermissionsDenied(deniedPermissions)
-                showDenialImpact()
+                showMessageDialog(activity, activity.getString(R.string.since_permissions_not_granted))
             }
         }
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-        val deniedPermissions: MutableSet<String> = HashSet()
+        log.debug("Handling preference changed: $key")
+
+        val requiredPermissions: MutableSet<String> = HashSet()
         when (key) {
             PREF_EMAIL_TRIGGERS -> {
                 val triggers = settings.getStringSet(PREF_EMAIL_TRIGGERS)
                 if (triggers.contains(VAL_PREF_TRIGGER_IN_SMS)) {
-                    deniedPermissions.add(RECEIVE_SMS)
+                    requiredPermissions.add(RECEIVE_SMS)
                 }
                 if (triggers.contains(VAL_PREF_TRIGGER_OUT_SMS)) {
-                    deniedPermissions.add(READ_SMS)
+                    requiredPermissions.add(READ_SMS)
                 }
                 if (triggers.contains(VAL_PREF_TRIGGER_IN_CALLS) ||
                         triggers.contains(VAL_PREF_TRIGGER_MISSED_CALLS)) {
-                    deniedPermissions.add(READ_PHONE_STATE)
+                    requiredPermissions.add(READ_PHONE_STATE)
                 }
                 if (triggers.contains(VAL_PREF_TRIGGER_OUT_CALLS)) {
                     @Suppress("DEPRECATION")
-                    deniedPermissions.add(PROCESS_OUTGOING_CALLS) // TODO: 06.02.2020 deprecated
+                    requiredPermissions.add(PROCESS_OUTGOING_CALLS) // TODO: 06.02.2020 deprecated
                 }
             }
             PREF_EMAIL_CONTENT -> {
                 val content = settings.getStringSet(PREF_EMAIL_CONTENT)
                 if (content.contains(VAL_PREF_EMAIL_CONTENT_CONTACT)) {
-                    deniedPermissions.add(READ_CONTACTS)
+                    requiredPermissions.add(READ_CONTACTS)
                 }
                 if (content.contains(VAL_PREF_EMAIL_CONTENT_LOCATION)) {
-                    deniedPermissions.add(ACCESS_COARSE_LOCATION)
-                    deniedPermissions.add(ACCESS_FINE_LOCATION)
+                    requiredPermissions.add(ACCESS_COARSE_LOCATION)
+                    requiredPermissions.add(ACCESS_FINE_LOCATION)
                 }
             }
-            PREF_MARK_SMS_AS_READ -> deniedPermissions.add(WRITE_SMS)
+            PREF_MARK_SMS_AS_READ -> requiredPermissions.add(WRITE_SMS)
         }
-        doCheck(deniedPermissions)
+        doCheck(requiredPermissions)
+    }
+
+    private fun onPermissionsGranted(permissions: MutableSet<String>) {
+        log.debug("Denied: $permissions")
+
+        if (permissions.isNotEmpty()) {
+            for (p in permissions) {
+                when (p) {
+                    GET_ACCOUNTS ->
+                        startSyncEngine(activity)
+                }
+            }
+        }
     }
 
     private fun onPermissionsDenied(permissions: Collection<String>) {
@@ -135,14 +158,16 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
     }
 
     private fun doCheck(permissions: Collection<String>) {
+        log.debug("Checking: $permissions")
+
         if (permissions.isNotEmpty()) {
             val deniedPermissions: MutableList<String> = ArrayList()
             val unexplainedPermissions: MutableList<String> = ArrayList()
 
             for (p in permissions) {
-                if (ContextCompat.checkSelfPermission(activity, p) != PackageManager.PERMISSION_GRANTED) {
+                if (checkSelfPermission(activity, p) != PackageManager.PERMISSION_GRANTED) {
                     deniedPermissions.add(p)
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(activity, p)) {
+                    if (shouldShowRequestPermissionRationale(activity, p)) {
                         unexplainedPermissions.add(p)
                     }
                 }
@@ -166,7 +191,7 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
 
     private fun explainPermissions(permissions: List<String>) {
         log.debug("Explaining : $permissions")
-        showInfoDialog(activity, message = formatRationale(permissions)) {
+        showMessageDialog(activity, formatRationale(permissions)) {
             requestPermissions(permissions)
         }
     }
@@ -177,10 +202,6 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
             sb.append(permissionRationale(activity, permission)).append("\n\n")
         }
         return sb.toString()
-    }
-
-    private fun showDenialImpact() {
-        showInfoDialog(activity, messageRes = R.string.since_permissions_not_granted)
     }
 
     companion object {

@@ -8,7 +8,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_WHITELIST
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class CallFilterTextWhitelistActivity : AppActivity() {
+class CallFilterTextWhitelistActivity : BaseAppActivity() {
 
     override fun createFragment(): Fragment {
         return CallFilterTextListFragment(PREF_FILTER_TEXT_WHITELIST)

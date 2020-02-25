@@ -1,5 +1,6 @@
 package com.bopr.android.smailer.ui
 
+import android.Manifest.permission.GET_ACCOUNTS
 import android.accounts.Account
 import android.accounts.AccountManager.KEY_ACCOUNT_NAME
 import android.accounts.AccountManager.newChooseAccountIntent
@@ -11,6 +12,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import androidx.annotation.RequiresPermission
 import androidx.fragment.app.Fragment
 import com.bopr.android.smailer.Settings
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager
@@ -26,7 +28,6 @@ class GoogleAuthorizationHelper(private val fragment: Fragment,
                                 private val accountSettingName: String,
                                 vararg scopes: String?) {
 
-    private val log = LoggerFactory.getLogger("GoogleAuthorizationHelper")
     private val accountManager: GoogleAccountManager
     private val activity: Activity
     private val scopes: Collection<String?> = setOf(*scopes)
@@ -114,17 +115,19 @@ class GoogleAuthorizationHelper(private val fragment: Fragment,
 
     companion object {
 
+        private val log = LoggerFactory.getLogger("GoogleAuthorizationHelper")
         private const val REQUEST_ACCOUNT_CHOOSER = 117
 
-        /**
-         * Returns primary device account.
-         */
+        @RequiresPermission(GET_ACCOUNTS)
         fun primaryAccount(context: Context): Account {
             return GoogleAccountManager(context).accounts[0]
+            /* when GET_ACCOUNTS not granted it throws an exception */
         }
 
+        @RequiresPermission(GET_ACCOUNTS)
         fun getAccount(context: Context, accountName: String?): Account? {
             return GoogleAccountManager(context).getAccountByName(accountName)
+            /* when GET_ACCOUNTS not granted it throws an exception */
         }
 
     }

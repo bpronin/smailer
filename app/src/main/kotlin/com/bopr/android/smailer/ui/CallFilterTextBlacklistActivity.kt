@@ -8,7 +8,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_BLACKLIST
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class CallFilterTextBlacklistActivity : AppActivity() {
+class CallFilterTextBlacklistActivity : BaseAppActivity() {
 
     override fun createFragment(): Fragment {
         return CallFilterTextListFragment(PREF_FILTER_TEXT_BLACKLIST)

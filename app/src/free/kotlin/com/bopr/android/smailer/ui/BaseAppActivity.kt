@@ -6,11 +6,13 @@ import com.google.android.gms.ads.AdView
 import com.bopr.android.smailer.R
 
 /**
- * Base application activity to be replaced in different flavors.
+ * Base application activity. Individual in different build variants.
+ *
+ * FREE BUILD VARIANT
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-abstract class AppActivity : BaseActivity() {
+abstract class BaseAppActivity : BaseActivity() {
 
     private lateinit var adView: AdView
 

@@ -36,6 +36,7 @@
     <string name="copyright" translatable="false">Copyright © BoPr, 2016-2020</string>
     <string name="device_name">Device name</string>
     <string name="device_name_to_show">Device name to be shown in email message (leave blank to use default)</string>
+    <string name="disavbled">Disabled</string>
     <string name="do_not_ask_again">Don\'t ask again</string>
     <string name="do_not_process_call">Do not process call</string>
     <string name="edit">Edit</string>
@@ -45,6 +46,7 @@
     <string name="email_message_content">Email message content</string>
     <string name="email_message_language">Email message language</string>
     <string name="email_successfully_send">Email successfully sent</string>
+    <string name="enabled">Enabled</string>
     <string name="enter_phone_number">Enter phone number. You also may use * as a wildcard.</string>
     <string name="events_causing_sending_mail">Events causing sending email</string>
     <string name="geolocation_disabled">(location service disabled on device)</string>
@@ -65,6 +67,7 @@
     <string name="no_access_to_google_account">Application has no access to Google account</string>
     <string name="no_account_specified">Sender account not specified.</string>
     <string name="no_internet_connection">No internet connection.</string>
+    <string name="no_new_history_items">No new records</string>
     <string name="no_permission_read_location">(no permission to read location)</string>
     <string name="no_recipients_specified">No recipients specified</string>
     <string name="no_triggers_specified">All triggers are disabled</string>
@@ -75,6 +78,7 @@
     <string name="number_in_blacklist">number is in blacklist</string>
     <string name="open_source">Open source</string>
     <string name="open_source_and_third_party">Open source and third party software</string>
+    <string name="options">Options</string>
     <string name="outgoing_call">Outgoing call</string>
     <string name="outgoing_call_to">Outgoing call to</string>
     <string name="outgoing_sms">Outgoing SMS</string>
@@ -122,6 +126,7 @@
     <string name="service_account_not_found">Service account not found</string>
     <string name="service_running">Service running.</string>
     <string name="since_permissions_not_granted">Since not all required permissions is granted, some options have been disabled.</string>
+    <string name="tap_to_check_settings">Tap to check your settings.</string>
     <string name="text_blacklist">Text blacklist</string>
     <string name="text_filter">Text filter</string>
     <string name="text_fragment">Text fragment</string>
@@ -147,7 +152,6 @@
     <string name="you_had_incoming_call">You had an incoming call of %s duration.</string>
     <string name="you_had_missed_call">You had a missed call.</string>
     <string name="you_had_outgoing_call">You had an outgoing call of %s duration.</string>
-    <string name="tap_to_check_settings">Tap to check your settings.</string>
 
     <plurals name="items_removed">
         <item quantity="one">Item removed</item>

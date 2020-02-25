@@ -7,7 +7,7 @@ import androidx.fragment.app.Fragment
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class HistoryActivity : AppActivity() {
+class HistoryActivity : BaseAppActivity() {
 
     override fun createFragment(): Fragment {
         return HistoryFragment()

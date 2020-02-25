@@ -4,10 +4,6 @@ import com.bopr.android.smailer.PhoneEvent.Companion.REASON_ACCEPTED
 import com.bopr.android.smailer.PhoneEvent.Companion.REASON_NUMBER_BLACKLISTED
 import com.bopr.android.smailer.PhoneEvent.Companion.REASON_TEXT_BLACKLISTED
 import com.bopr.android.smailer.PhoneEvent.Companion.REASON_TRIGGER_OFF
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_BLACKLIST
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_WHITELIST
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_BLACKLIST
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_WHITELIST
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
@@ -29,21 +25,6 @@ class PhoneEventFilter {
     var phoneBlacklist: MutableSet<String> = mutableSetOf()
     var textWhitelist: MutableSet<String> = mutableSetOf()
     var textBlacklist: MutableSet<String> = mutableSetOf()
-
-    fun getList(name: String): MutableSet<String> {
-        return when (name) {
-            PREF_FILTER_PHONE_BLACKLIST ->
-                phoneWhitelist
-            PREF_FILTER_PHONE_WHITELIST ->
-                phoneWhitelist
-            PREF_FILTER_TEXT_BLACKLIST ->
-                textBlacklist
-            PREF_FILTER_TEXT_WHITELIST ->
-                textWhitelist
-            else ->
-                throw IllegalArgumentException()
-        }
-    }
 
     /**
      * Tests if the filter accepts given event.

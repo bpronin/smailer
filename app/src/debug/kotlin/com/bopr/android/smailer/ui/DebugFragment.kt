@@ -29,7 +29,6 @@ import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
-import com.bopr.android.smailer.Settings.Companion.PREF_RESEND_UNSENT
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_DEFAULT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_CONTACT
@@ -375,7 +374,6 @@ class DebugFragment : BasePreferenceFragment() {
                         VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME))
                 .putString(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)
                 .putBoolean(PREF_NOTIFY_SEND_SUCCESS, true)
-                .putBoolean(PREF_RESEND_UNSENT, true)
                 .putString(PREF_FILTER_PHONE_BLACKLIST, commaJoin(setOf("+123456789", "+9876543*")))
                 .putString(PREF_FILTER_TEXT_BLACKLIST, commaJoin(setOf("Bad text", escapeRegex("Expression"))))
                 .apply()

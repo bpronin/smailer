@@ -6,8 +6,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.*
 import com.bopr.android.smailer.PermissionsHelper
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
@@ -31,6 +30,7 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPref
         settings = Settings(requireContext())
         settings.registerChangeListener(this)
         permissionsHelper = PermissionsHelper(requireActivity())
+        updatePreferenceViews()
     }
 
     override fun onDestroy() {
@@ -66,7 +66,39 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPref
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-        /* nothing by default */
+        updatePreferenceViews()
+    }
+
+    private fun updatePreferenceViews() {
+        updateGroupPreferenceViews(preferenceScreen)
+    }
+
+    private fun updateGroupPreferenceViews(group: PreferenceGroup) {
+        val map = settings.all
+        for (i in 0 until group.preferenceCount) {
+            val preference = group.getPreference(i)
+            if (preference is PreferenceGroup) {
+                updateGroupPreferenceViews(preference)
+            } else {
+                val value = map[preference.key]
+
+                preference.onPreferenceChangeListener?.onPreferenceChange(preference, value)
+
+                @Suppress("UNCHECKED_CAST")
+                when (preference) {
+                    is EditTextPreference ->
+                        preference.text = value as String?
+                    is SwitchPreference ->
+                        preference.isChecked = value != null && value as Boolean
+                    is CheckBoxPreference ->
+                        preference.isChecked = value != null && value as Boolean
+                    is ListPreference ->
+                        preference.value = value as String?
+                    is MultiSelectListPreference ->
+                        preference.values = value as Set<String>? ?: setOf()
+                }
+            }
+        }
     }
 
     /**

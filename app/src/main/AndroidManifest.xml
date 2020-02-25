@@ -92,6 +92,11 @@
             android:parentActivityName=".ui.MainActivity" />
 
         <activity
+            android:name=".ui.OptionsActivity"
+            android:label="@string/options"
+            android:parentActivityName=".ui.MainActivity" />
+
+        <activity
             android:name=".ui.LegalInfoActivity"
             android:label="@string/open_source"
             android:parentActivityName=".ui.MainActivity" />
@@ -100,11 +105,13 @@
 
         <service android:name=".ContentObserverService" />
 
-        <service android:name=".PendingCallProcessorService"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
+        <service
+            android:name=".PendingCallProcessorService"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
-        <service android:name=".remote.RemoteControlService"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
+        <service
+            android:name=".remote.RemoteControlService"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <service
             android:name=".sync.AuthenticatorService"
