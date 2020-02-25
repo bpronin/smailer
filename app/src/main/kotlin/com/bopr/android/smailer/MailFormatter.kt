@@ -90,7 +90,7 @@ class MailFormatter(private val context: Context, private val event: PhoneEvent)
 
     private fun formatHeader(): String {
         return if (options.contains(VAL_PREF_EMAIL_CONTENT_HEADER)) {
-            return "<strong>${eventTypeText(event)}</strong><br><br>"
+            return "<strong>${getString(eventTypeText(event))}</strong><br><br>"
         } else ""
     }
 

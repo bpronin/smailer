@@ -118,16 +118,20 @@ class GoogleAuthorizationHelper(private val fragment: Fragment,
         private val log = LoggerFactory.getLogger("GoogleAuthorizationHelper")
         private const val REQUEST_ACCOUNT_CHOOSER = 117
 
+        /**
+         * Returns primary device account or null when no accounts registered.
+         */
         @RequiresPermission(GET_ACCOUNTS)
-        fun primaryAccount(context: Context): Account {
-            return GoogleAccountManager(context).accounts[0]
-            /* when GET_ACCOUNTS not granted it throws an exception */
+        fun primaryAccount(context: Context): Account? {
+            return GoogleAccountManager(context).accounts.getOrNull(0)
         }
 
+        /**
+         * Returns account with specified name or null.
+         */
         @RequiresPermission(GET_ACCOUNTS)
         fun getAccount(context: Context, accountName: String?): Account? {
             return GoogleAccountManager(context).getAccountByName(accountName)
-            /* when GET_ACCOUNTS not granted it throws an exception */
         }
 
     }

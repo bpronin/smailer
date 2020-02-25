@@ -109,13 +109,13 @@ class CallProcessor(
                 locale = settings.locale
             }
 
-            val message = MailMessage().apply {
-                subject = formatter.formatSubject()
-                body = formatter.formatBody()
-                recipients = settings.getString(PREF_RECIPIENTS_ADDRESS)
-                from = settings.getString(PREF_SENDER_ACCOUNT)
-                replyTo = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
-            }
+            val message = MailMessage(
+                    subject = formatter.formatSubject(),
+                    body = formatter.formatBody(),
+                    recipients = settings.getString(PREF_RECIPIENTS_ADDRESS),
+                    from = settings.getString(PREF_SENDER_ACCOUNT),
+                    replyTo = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
+            )
 
             transport.send(message)
 

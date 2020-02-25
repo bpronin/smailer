@@ -1,16 +1,14 @@
 package com.bopr.android.smailer.util
 
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
+import android.Manifest.permission.GET_ACCOUNTS
+import androidx.test.rule.GrantPermissionRule
 import com.bopr.android.smailer.BaseTest
+import com.bopr.android.smailer.ui.GoogleAuthorizationHelper.Companion.getAccount
 import com.bopr.android.smailer.ui.GoogleAuthorizationHelper.Companion.primaryAccount
-import com.bopr.android.smailer.ui.WavyUnderlineSpan
 import com.bopr.android.smailer.util.AndroidUtil.deviceName
-import com.bopr.android.smailer.util.UiUtil.accentedText
-import com.bopr.android.smailer.util.UiUtil.underwivedText
-import org.hamcrest.CoreMatchers.instanceOf
-import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Rule
 import org.junit.Test
 
 /**
@@ -20,29 +18,9 @@ import org.junit.Test
  */
 class AndroidUtilTest : BaseTest() {
 
-    /**
-     * Tests [UiUtil.underwivedText] method.
-     */
-    @Test
-    fun testUnderwivedText() {
-        val spannable = underwivedText(targetContext, "Invalid text")
-        assertThat(spannable, instanceOf<Any>(SpannableString::class.java))
-
-        val span = spannable.getSpans(0, spannable.length, Any::class.java)[0]
-        assertThat(span, instanceOf(WavyUnderlineSpan::class.java))
-    }
-
-    /**
-     * Tests [UiUtil.accentedText] method.
-     */
-    @Test
-    fun testAccentedTextText() {
-        val spannable = accentedText(targetContext, "Invalid text")
-        assertThat(spannable, instanceOf<Any>(SpannableString::class.java))
-
-        val span = spannable.getSpans(0, spannable.length, Any::class.java)[0]
-        assertThat(span, instanceOf(ForegroundColorSpan::class.java))
-    }
+    @Rule
+    @JvmField
+    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(GET_ACCOUNTS)
 
     @Test
     fun testDeviceName() {
@@ -52,6 +30,11 @@ class AndroidUtilTest : BaseTest() {
     @Test
     fun testPrimaryAccount() {
         assertNotNull(primaryAccount(targetContext))
+    }
+
+    @Test
+    fun testGetAccount() {
+        assertNull(getAccount(targetContext, ""))
     }
 
 }

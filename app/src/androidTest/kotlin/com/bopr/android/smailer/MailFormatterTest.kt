@@ -9,9 +9,11 @@ import com.bopr.android.smailer.PhoneEvent.Companion.REASON_ACCEPTED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_CONTACT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_HEADER
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_LOCATION
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS
 import com.nhaarman.mockitokotlin2.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert.assertEquals
@@ -40,6 +42,37 @@ class MailFormatterTest : BaseTest() {
                 targetContext.createConfigurationContext(parameter)
             }
         }
+    }
+
+    /**
+     * Check incoming SMS email body when all required information is present.
+     */
+    @Test
+    fun testAllContentIncomingSms() {
+        val event = PhoneEvent(
+                phone = "+12345678901",
+                isIncoming = true,
+                startTime = defaultTime.time,
+                text = "Message",
+                location = defaultCoordinates,
+                acceptor = "device"
+        )
+
+        val formatter = MailFormatter(context, event).apply {
+            sendTime = defaultTime
+            contactName = "John Dou"
+            deviceName = "Device"
+            serviceAccount = "service@mail.com"
+            options = setOf(VAL_PREF_EMAIL_CONTENT_HEADER,
+                    VAL_PREF_EMAIL_CONTENT_CONTACT,
+                    VAL_PREF_EMAIL_CONTENT_LOCATION,
+                    VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
+                    VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
+                    VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT,
+                    VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS)
+        }
+
+        assertThat(formatter.formatBody(), htmlEqualsRes("incoming_sms_all.html"))
     }
 
     /**
@@ -333,7 +366,7 @@ class MailFormatterTest : BaseTest() {
      * Check incoming call email body when all required information is present.
      */
     @Test
-    fun testAllIncomingContentCall() {
+    fun testAllContentIncomingCall() {
         val start = defaultTime.time
         val end = GregorianCalendar(2016, 1, 2, 4, 5, 10).time.time
         val event = PhoneEvent("+12345678901", true, start, end, false, null,
@@ -354,7 +387,7 @@ class MailFormatterTest : BaseTest() {
      * Check outgoing call email body when all required information is present.
      */
     @Test
-    fun testAllOutgoingContentCall() {
+    fun testAllContentOutgoingCall() {
         val start = defaultTime.time
         val end = GregorianCalendar(2016, 1, 2, 4, 5, 10).time.time
         val event = PhoneEvent("+12345678901", false, start, end, false, null,
@@ -452,7 +485,7 @@ class MailFormatterTest : BaseTest() {
         val formatter = MailFormatter(context, event)
         formatter.deviceName = "Device"
         formatter.serviceAccount = "service@mail.com"
-        formatter.options = setOf(Settings.VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS)
+        formatter.options = setOf(VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS)
 
         assertThat(formatter.formatBody(), htmlEqualsRes("remote_control_links.html"))
     }

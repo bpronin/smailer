@@ -32,13 +32,12 @@ object SyncEngine {
             }
         }
 
-        if (checkPermission(context, GET_ACCOUNTS)) {
-            addPeriodicSync(primaryAccount(context), AUTHORITY, Bundle.EMPTY, 0)
+        primaryAccount(context)?.run {
+            addPeriodicSync(this, AUTHORITY, Bundle.EMPTY, 0)
 
             log.debug("Running")
-        } else {
-            log.debug("Required permissions not granted")
-        }
+
+        } ?: log.debug("No primary account")
     }
 
 

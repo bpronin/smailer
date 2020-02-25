@@ -14,14 +14,14 @@ internal class SendDebugMailTask(activity: Activity, private val properties: Pro
     : LongAsyncTask<Void?, Void?, Exception?>(activity) {
 
     override fun doInBackground(vararg params: Void?): Exception? {
-        val account = primaryAccount(activity)
+        val account = primaryAccount(activity)!!
 
-        val message = MailMessage().apply {
-            from = account.name
-            subject = "test subject"
-            body = "test message from " + deviceName()
-            recipients = properties.getProperty("default_recipient")
-        }
+        val message = MailMessage(
+                from = account.name,
+                subject = "test subject",
+                body = "test message from " + deviceName(),
+                recipients = properties.getProperty("default_recipient")
+        )
 
         val transport = GoogleMail(activity)
         try {

@@ -28,19 +28,19 @@ internal class SendLogTask(activity: Activity, private val properties: Propertie
         }
 
         try {
-            val account = primaryAccount(activity)
+            val account = primaryAccount(activity)!!
             val transport = GoogleMail(activity)
 
             transport.login(account, GmailScopes.GMAIL_SEND)
             transport.startSession()
             for (file in attachments) {
-                val message = MailMessage().apply {
-                    subject = "[SMailer] log: " + file.name
-                    from = account.name
-                    body = "Device: " + deviceName() + "<br>File: " + file.name
-                    attachment = setOf(file)
-                    recipients = properties.getProperty("developer_email")
-                }
+                val message = MailMessage(
+                        subject = "[SMailer] log: " + file.name,
+                        from = account.name,
+                        body = "Device: " + deviceName() + "<br>File: " + file.name,
+                        attachment = setOf(file),
+                        recipients = properties.getProperty("developer_email")
+                )
                 transport.send(message)
             }
         } catch (x: Exception) {

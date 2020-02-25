@@ -113,11 +113,11 @@ class GoogleMail(private val context: Context) {
             mime.setFrom(message.from)
             mime.setSubject(message.subject, UTF_8)
             mime.setRecipients(Message.RecipientType.TO, parseAddresses(message.recipients!!))
-            if (!message.replyTo.isNullOrBlank()) {
-                mime.replyTo = parseAddresses(message.replyTo!!)
+            if (!message.replyTo.isNullOrEmpty()) {
+                mime.replyTo = parseAddresses(message.replyTo)
             }
             if (!message.attachment.isNullOrEmpty()) {
-                mime.setContent(createMultipart(message.body, message.attachment!!))
+                mime.setContent(createMultipart(message.body, message.attachment))
             } else {
                 mime.setText(message.body, UTF_8, HTML)
             }
@@ -156,12 +156,12 @@ class GoogleMail(private val context: Context) {
     }
 
     private fun readMessage(gmailMessage: com.google.api.services.gmail.model.Message): MailMessage {
-        val message = MailMessage()
-        message.id = gmailMessage.id
-        message.subject = readHeader(gmailMessage, "subject")
-        message.from = readHeader(gmailMessage, "from")
-        message.body = readBody(gmailMessage)
-        return message
+        return MailMessage(
+                id = gmailMessage.id,
+                subject = readHeader(gmailMessage, "subject"),
+                from = readHeader(gmailMessage, "from"),
+                body = readBody(gmailMessage)
+        )
     }
 
     private fun readHeader(message: com.google.api.services.gmail.model.Message, name: String): String? {

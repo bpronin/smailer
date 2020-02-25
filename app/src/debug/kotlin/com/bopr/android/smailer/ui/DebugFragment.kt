@@ -20,6 +20,8 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceScreen
 import com.bopr.android.smailer.*
 import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
+import com.bopr.android.smailer.PhoneEvent.Companion.REASON_ACCEPTED
+import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_LOCALE
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
@@ -355,7 +357,7 @@ class DebugFragment : BasePreferenceFragment() {
         val properties = loadDebugProperties()
         settings.edit()
                 .clear()
-                .putString(PREF_SENDER_ACCOUNT, primaryAccount(appContext).name)
+                .putString(PREF_SENDER_ACCOUNT, primaryAccount(appContext)?.name)
                 .putString(PREF_REMOTE_CONTROL_ACCOUNT, properties.getProperty("remote_control_account"))
                 .putString(PREF_RECIPIENTS_ADDRESS, properties.getProperty("default_recipient"))
                 .putStringSet(PREF_EMAIL_TRIGGERS, mutableSetOf(
@@ -418,7 +420,7 @@ class DebugFragment : BasePreferenceFragment() {
     private fun onProcessSingleEvent() {
         val start = System.currentTimeMillis()
         val event = PhoneEvent("5556", true, start, start + 10000, false,
-                "SMS TEXT", null, null, PhoneEvent.STATE_PENDING, deviceName(), PhoneEvent.REASON_ACCEPTED, false)
+                "SMS TEXT", null, null, STATE_PENDING, deviceName(), REASON_ACCEPTED, false)
         startCallProcessingService(appContext, event)
         showToast(appContext, "Done")
     }
@@ -498,7 +500,7 @@ class DebugFragment : BasePreferenceFragment() {
     private fun onGoogleDriveClear() {
         Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
             val drive = GoogleDrive(appContext)
-            drive.login(primaryAccount(requireContext()))
+            drive.login(primaryAccount(requireContext())!!)
             drive.clear()
             null
         })
@@ -520,7 +522,7 @@ class DebugFragment : BasePreferenceFragment() {
     private fun onGoogleDriveDownload() {
         Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
             try {
-                Synchronizer(appContext, primaryAccount(requireContext()), database).download()
+                Synchronizer(appContext, primaryAccount(requireContext())!!, database).download()
             } catch (x: Throwable) {
                 log.error("Download error: ", x)
             }
@@ -532,7 +534,7 @@ class DebugFragment : BasePreferenceFragment() {
     private fun onGoogleDriveUpload() {
         Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
             try {
-                Synchronizer(appContext, primaryAccount(requireContext()), database).upload()
+                Synchronizer(appContext, primaryAccount(requireContext())!!, database).upload()
             } catch (x: Throwable) {
                 log.error("Upload error: ", x)
             }

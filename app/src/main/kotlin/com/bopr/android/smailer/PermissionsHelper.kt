@@ -19,7 +19,6 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
-import com.bopr.android.smailer.sync.SyncEngine.startSyncEngine
 import com.bopr.android.smailer.util.AndroidUtil.permissionLabel
 import com.bopr.android.smailer.util.Dialogs.showMessageDialog
 import org.slf4j.LoggerFactory
@@ -114,16 +113,7 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
     }
 
     private fun onPermissionsGranted(permissions: MutableSet<String>) {
-        log.debug("Denied: $permissions")
-
-        if (permissions.isNotEmpty()) {
-            for (p in permissions) {
-                when (p) {
-                    GET_ACCOUNTS ->
-                        startSyncEngine(activity)
-                }
-            }
-        }
+        log.debug("Granted: $permissions")
     }
 
     private fun onPermissionsDenied(permissions: Collection<String>) {
