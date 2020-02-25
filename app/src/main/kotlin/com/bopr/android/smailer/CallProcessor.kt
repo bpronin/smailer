@@ -100,14 +100,14 @@ class CallProcessor(
         log.debug("Sending mail: $event")
 
         return try {
-            val formatter = MailFormatter(context, event).apply {
-                sendTime = Date()
-                contactName = contactName(context, event.phone)
-                deviceName = settings.getString(PREF_DEVICE_ALIAS) ?: AndroidUtil.deviceName()
-                options = settings.getStringSet(PREF_EMAIL_CONTENT)
-                serviceAccount = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
-                locale = settings.locale
-            }
+            val formatter = MailFormatter(context, event,
+                    sendTime = Date(),
+                    contactName = contactName(context, event.phone),
+                    deviceName = settings.getString(PREF_DEVICE_ALIAS) ?: AndroidUtil.deviceName(),
+                    options = settings.getStringSet(PREF_EMAIL_CONTENT),
+                    serviceAccount = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT),
+                    locale = settings.locale
+            )
 
             val message = MailMessage(
                     subject = formatter.formatSubject(),

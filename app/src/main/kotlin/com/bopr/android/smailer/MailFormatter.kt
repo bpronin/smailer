@@ -29,19 +29,28 @@ import java.util.regex.Pattern
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class MailFormatter(private val context: Context, private val event: PhoneEvent) {
+class MailFormatter(private val context: Context,
+                    private val event: PhoneEvent,
+                    private val contactName: String? = null,
+                    private val deviceName: String? = null,
+                    private val sendTime: Date? = null,
+                    private val serviceAccount: String? = null,
+                    private val options: Set<String> = setOf(),
+                    locale: Locale = Locale.getDefault()) {
 
-    var contactName: String? = null
-    var deviceName: String? = null
-    var sendTime: Date? = null
-    var serviceAccount: String? = null
-    var options: Set<String> = setOf()
-    var locale: Locale = updateLocale(Locale.getDefault())
-        set(value) {
-            field = updateLocale(value)
+    private val resources: Resources
+    private val timeFormat: DateFormat
+
+    init {
+        resources = if (locale == Locale.getDefault()) {
+            context.resources
+        } else {
+            val configuration = context.resources.configuration
+            configuration.setLocale(locale)
+            context.createConfigurationContext(configuration).resources
         }
-    private lateinit var resources: Resources
-    private lateinit var timeFormat: DateFormat
+        timeFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale)
+    }
 
     /**
      * Returns formatted email subject.
@@ -160,7 +169,7 @@ class MailFormatter(private val context: Context, private val event: PhoneEvent)
 
     private fun formatSendTime(): String {
         return if (options.contains(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT) && sendTime != null) {
-            getString(R.string._at_time, timeFormat.format(sendTime!!))
+            getString(R.string._at_time, timeFormat.format(sendTime))
         } else ""
     }
 
@@ -215,17 +224,17 @@ class MailFormatter(private val context: Context, private val event: PhoneEvent)
                 "</small></li>"
     }
 
-    private fun updateLocale(locale: Locale): Locale {
-        resources = if (locale == Locale.getDefault()) {
-            context.resources
-        } else {
-            val configuration = context.resources.configuration
-            configuration.setLocale(locale)
-            context.createConfigurationContext(configuration).resources
-        }
-        timeFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale)
-        return locale
-    }
+//    private fun updateLocale(locale: Locale): Locale {
+//        resources = if (locale == Locale.getDefault()) {
+//            context.resources
+//        } else {
+//            val configuration = context.resources.configuration
+//            configuration.setLocale(locale)
+//            context.createConfigurationContext(configuration).resources
+//        }
+//        timeFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale)
+//        return locale
+//    }
 
     private fun replaceUrlsWithLinks(s: String): String {
         val sb = StringBuffer()
