@@ -11,9 +11,13 @@
     https://console.developers.google.com/apis/credentials/oauthclient/376904884028-f0m6ki37c8b4cf93aktk0jgag3tiu922.apps.googleusercontent.com?project=smailer-24874
 
     Uninstall all application's apk-s from device before running tests cause they may lead to unpredictable results
+
 */
 
 apply plugin: "com.android.application"
+apply plugin: "kotlin-android"
+apply plugin: "kotlin-android-extensions"
+apply plugin: "kotlin-allopen"
 apply plugin: "com.google.gms.google-services"
 apply plugin: "com.google.firebase.crashlytics"
 apply from: "user.gradle"
@@ -21,7 +25,16 @@ apply from: "local.gradle"
 
 android {
     compileSdkVersion 29
-    buildToolsVersion '29.0.2'
+    buildToolsVersion "28.0.3"
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+        debug.java.srcDirs += 'src/debug/kotlin'
+        free.java.srcDirs += 'src/free/kotlin'
+        paid.java.srcDirs += 'src/paid/kotlin'
+        test.java.srcDirs += 'src/test/kotlin'
+        androidTest.java.srcDirs += 'src/androidTest/kotlin'
+    }
 
     signingConfigs {
         config {
@@ -33,9 +46,10 @@ android {
     }
 
     defaultConfig {
-        versionCode 68
-        versionName "1.7.1"
-        archivesBaseName = "smailer-${versionName}"
+        versionCode 72
+        versionName "1.7.5"
+        versionNameSuffix = "-kotlin"
+        archivesBaseName = "smailer-${versionName}${versionNameSuffix}"
         applicationId "com.bopr.android.smailer"
         minSdkVersion 18
         targetSdkVersion 29
@@ -77,13 +91,15 @@ android {
         unitTests.returnDefaultValues = true
     }
 
-    packagingOptions {
-        pickFirst "META-INF/LICENSE.txt" /* JavaMail license file*/
-        exclude "META-INF/DEPENDENCIES"  /* resolves conflict in gmail package */
-    }
     compileOptions {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
+    }
+
+    packagingOptions {
+        pickFirst "META-INF/LICENSE.txt"
+        pickFirst "META-INF/DEPENDENCIES"
+        pickFirst "META-INF/kotlinx-html.kotlin_module"
     }
 
     configurations {
@@ -91,6 +107,7 @@ android {
             exclude group: "org.apache.httpcomponents"
             exclude group: "commons-logging", module: "commons-logging"
             exclude group: "com.google.guava", module: "listenablefuture"
+   //         exclude group: "com.google.android"
         }
     }
 
@@ -103,6 +120,9 @@ repositories {
 
 dependencies {
     implementation fileTree(include: ["*.jar"], dir: "libs")
+    implementation "androidx.core:core-ktx:1.2.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "androidx.legacy:legacy-support-v4:1.0.0"
     implementation "androidx.appcompat:appcompat:1.1.0"
     implementation "androidx.preference:preference:1.1.0"
@@ -115,23 +135,26 @@ dependencies {
     implementation "com.google.api-client:google-api-client-android:1.30.8"
     implementation "com.google.apis:google-api-services-gmail:v1-rev98-1.25.0"
     implementation "com.google.apis:google-api-services-drive:v3-rev99-1.23.0"
-
     implementation "org.slf4j:slf4j-api:1.7.30"
     implementation "com.github.tony19:logback-android-core:1.1.1-6"
     implementation("com.github.tony19:logback-android-classic:1.1.1-6") {
         exclude group: "com.google.android"
     }
-
     implementation "com.google.firebase:firebase-analytics:17.2.2"
     implementation "com.google.firebase:firebase-crashlytics:17.0.0-beta01"
     
     freeImplementation "com.google.android.gms:play-services-ads:18.3.0"
 
     androidTestImplementation "junit:junit:4.13"
-    androidTestImplementation "org.mockito:mockito-android:3.2.4"
     androidTestImplementation "androidx.test.ext:junit:1.1.1"
+    androidTestImplementation "org.mockito:mockito-android:3.2.4"
+    androidTestImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
     androidTestImplementation "androidx.test:rules:1.2.0"
     androidTestImplementation "androidx.test.espresso:espresso-core:3.2.0"
+}
+
+allOpen {
+    annotation("com.bopr.android.smailer.util.Mockable")
 }
 
 gradle.projectsEvaluated {
