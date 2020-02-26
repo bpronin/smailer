@@ -13,7 +13,6 @@ import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_WHITELIST
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_BLACKLIST
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_WHITELIST
 import com.bopr.android.smailer.ui.CallFilterListFragment.Holder
-import com.bopr.android.smailer.util.Dialogs.showConfirmationDialog
 
 /**
  * Base for black/whitelist fragments.
@@ -115,10 +114,9 @@ abstract class CallFilterListFragment(private val settingName: String) : Editabl
     }
 
     private fun onClearData() {
-        showConfirmationDialog(requireContext(), getString(R.string.ask_clear_list),
-                getString(R.string.clear)) {
+        ConfirmDialog(getString(R.string.ask_clear_list)) {
             saveItems(listOf())
-        }
+        }.show(requireActivity())
     }
 
     inner class Holder(view: View) : RecyclerView.ViewHolder(view) {

@@ -1,8 +1,8 @@
 package com.bopr.android.smailer.ui
 
-import android.app.Activity
 import android.app.ProgressDialog
 import android.os.AsyncTask
+import androidx.fragment.app.FragmentActivity
 import java.lang.ref.WeakReference
 
 /**
@@ -11,14 +11,14 @@ import java.lang.ref.WeakReference
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 @Suppress("DEPRECATION")
-abstract class LongAsyncTask<Params, Progress, Result>(activity: Activity) : AsyncTask<Params, Progress, Result>() {
+abstract class LongAsyncTask<P, O, R>(activity: FragmentActivity) : AsyncTask<P, O, R>() {
 
     /* Holding activity reference in nested static class throws memory leak warning. This approach avoids it.*/
-    private val activityReference: WeakReference<Activity> = WeakReference(activity)
+    private val activityReference: WeakReference<FragmentActivity> = WeakReference(activity)
     /* Do not replace qualifier with import to avoid deprecation warning */
-    private lateinit var dialog : ProgressDialog
+    private lateinit var dialog: ProgressDialog
 
-    val activity: Activity
+    val activity: FragmentActivity
         get() = activityReference.get()!!
 
     override fun onPreExecute() {
@@ -27,7 +27,7 @@ abstract class LongAsyncTask<Params, Progress, Result>(activity: Activity) : Asy
         dialog.show()
     }
 
-    override fun onPostExecute(result: Result) {
+    override fun onPostExecute(result: R) {
         dialog.dismiss()
         super.onPostExecute(result)
     }

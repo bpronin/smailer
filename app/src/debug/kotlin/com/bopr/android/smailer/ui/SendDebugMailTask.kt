@@ -1,16 +1,15 @@
 package com.bopr.android.smailer.ui
 
-import android.app.Activity
+import androidx.fragment.app.FragmentActivity
 import com.bopr.android.smailer.GoogleMail
 import com.bopr.android.smailer.MailMessage
 import com.bopr.android.smailer.ui.GoogleAuthorizationHelper.Companion.primaryAccount
 import com.bopr.android.smailer.util.AndroidUtil.deviceName
-import com.bopr.android.smailer.util.Dialogs.showInfoDialog
 import com.bopr.android.smailer.util.UiUtil.showToast
 import com.google.api.services.gmail.GmailScopes
 import java.util.*
 
-internal class SendDebugMailTask(activity: Activity, private val properties: Properties)
+internal class SendDebugMailTask(activity: FragmentActivity, private val properties: Properties)
     : LongAsyncTask<Void?, Void?, Exception?>(activity) {
 
     override fun doInBackground(vararg params: Void?): Exception? {
@@ -37,7 +36,7 @@ internal class SendDebugMailTask(activity: Activity, private val properties: Pro
     override fun onPostExecute(result: Exception?) {
         super.onPostExecute(result)
         if (result != null) {
-            showInfoDialog(activity, result.toString())
+            InfoDialog(message = result.toString()).show(activity)
         } else {
             showToast(activity, "Done")
         }

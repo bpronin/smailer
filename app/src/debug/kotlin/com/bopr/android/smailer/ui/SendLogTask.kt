@@ -1,19 +1,18 @@
 package com.bopr.android.smailer.ui
 
-import android.app.Activity
+import androidx.fragment.app.FragmentActivity
 import com.bopr.android.smailer.Database
 import com.bopr.android.smailer.GoogleMail
 import com.bopr.android.smailer.MailMessage
 import com.bopr.android.smailer.ui.GoogleAuthorizationHelper.Companion.primaryAccount
 import com.bopr.android.smailer.util.AndroidUtil.deviceName
-import com.bopr.android.smailer.util.Dialogs.showInfoDialog
 import com.bopr.android.smailer.util.UiUtil.showToast
 import com.google.api.services.gmail.GmailScopes
 import org.slf4j.LoggerFactory
 import java.io.*
 import java.util.*
 
-internal class SendLogTask(activity: Activity, private val properties: Properties)
+internal class SendLogTask(activity: FragmentActivity, private val properties: Properties)
     : LongAsyncTask<Void?, Void?, Exception?>(activity) {
 
     private val log = LoggerFactory.getLogger("SendLogTask")
@@ -53,7 +52,7 @@ internal class SendLogTask(activity: Activity, private val properties: Propertie
     override fun onPostExecute(result: Exception?) {
         super.onPostExecute(result)
         if (result != null) {
-            showInfoDialog(activity, message = result.toString())
+            InfoDialog(message = result.toString()).show(activity)
         } else {
             showToast(activity, "Done")
         }

@@ -23,7 +23,9 @@ import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessi
 import com.bopr.android.smailer.Notifications.Companion.TARGET_MAIN
 import com.bopr.android.smailer.Notifications.Companion.TARGET_RULES
 import com.bopr.android.smailer.PhoneEvent.Companion.REASON_ACCEPTED
+import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
+import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_LOCALE
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
@@ -53,10 +55,9 @@ import com.bopr.android.smailer.sync.Synchronizer
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.isIgnoreBatteryOptimizationRequired
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
 import com.bopr.android.smailer.ui.GoogleAuthorizationHelper.Companion.primaryAccount
+import com.bopr.android.smailer.util.AndroidUtil.checkPermission
 import com.bopr.android.smailer.util.AndroidUtil.deviceName
 import com.bopr.android.smailer.util.ContentUtils.contactName
-import com.bopr.android.smailer.util.Dialogs.showInfoDialog
-import com.bopr.android.smailer.util.Dialogs.showInputDialog
 import com.bopr.android.smailer.util.TextUtil.commaJoin
 import com.bopr.android.smailer.util.TextUtil.escapeRegex
 import com.bopr.android.smailer.util.UiUtil.showToast
@@ -144,7 +145,7 @@ class DebugFragment : BasePreferenceFragment() {
                         if (isIgnoreBatteryOptimizationRequired(appContext)) {
                             showToast(appContext, "Battery optimization already ignored")
                         } else {
-                            requireIgnoreBatteryOptimization(appContext)
+                            requireIgnoreBatteryOptimization(requireActivity())
                         }
                     }
                 })
@@ -319,9 +320,9 @@ class DebugFragment : BasePreferenceFragment() {
                                             grantResults: IntArray) {
         if (requestCode == PERMISSIONS_REQUEST_RECEIVE_SMS) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                showInfoDialog(appContext, message = "Permission granted")
+                InfoDialog(message = "Permission granted").show(requireActivity())
             } else {
-                showInfoDialog(appContext, message = "Permission denied")
+                InfoDialog(message = "Permission denied").show(requireActivity())
             }
         }
     }
@@ -385,15 +386,19 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun onGetContact() {
-        showInputDialog(appContext,
-                title = "Phone number",
-                inputType = InputType.TYPE_CLASS_PHONE,
-                action = { value ->
-                    val contact = contactName(appContext, value)
-                    val text = if (contact != null) "$value: $contact" else "Contact not found"
-                    showToast(appContext, text)
-                }
-        )
+        if (checkPermission(requireContext(), permission.READ_CONTACTS)) {
+            InputDialog(
+                    title = "Phone number",
+                    inputType = InputType.TYPE_CLASS_PHONE,
+                    positiveAction = {
+                        val contact = contactName(appContext, it)
+                        val text = if (contact != null) "$it: $contact" else "Contact not found"
+                        showToast(appContext, text)
+                    }
+            ).show(requireActivity())
+        } else {
+            showToast(appContext, "No permission")
+        }
     }
 
     private fun onClearPreferences() {
@@ -458,7 +463,7 @@ class DebugFragment : BasePreferenceFragment() {
 
     private fun onAddHistoryItem() {
         database.putEvent(PhoneEvent("+79052345670", true, System.currentTimeMillis(), null, false,
-                "Debug message", null, null, STATE_PENDING, deviceName(), PhoneEvent.REASON_ACCEPTED, false))
+                "Debug message", null, null, STATE_PENDING, deviceName(), REASON_ACCEPTED, false))
         database.notifyChanged()
         showToast(appContext, "Done")
     }
@@ -466,16 +471,16 @@ class DebugFragment : BasePreferenceFragment() {
     private fun onPopulateHistory() {
         var time = System.currentTimeMillis()
         val recipient = deviceName()
-        database.putEvent(PhoneEvent("+79052345671", true, time, null, false, "Debug message", null, null, STATE_PENDING, recipient, PhoneEvent.REASON_ACCEPTED, false))
-        database.putEvent(PhoneEvent("+79052345672", false, 1000.let { time += it; time }, null, false, "Debug message", null, null, PhoneEvent.STATE_PROCESSED, recipient, PhoneEvent.REASON_ACCEPTED, false))
-        database.putEvent(PhoneEvent("+79052345673", true, 1000.let { time += it; time }, time + 10000, false, null, null, null, PhoneEvent.STATE_IGNORED, recipient, PhoneEvent.REASON_ACCEPTED, false))
-        database.putEvent(PhoneEvent("+79052345674", false, 1000.let { time += it; time }, time + 10000, false, null, null, null, STATE_PENDING, recipient, PhoneEvent.REASON_ACCEPTED, false))
-        database.putEvent(PhoneEvent("+79052345675", true, 1000.let { time += it; time }, time + 10000, true, null, null, null, STATE_PENDING, recipient, PhoneEvent.REASON_ACCEPTED, false))
-        database.putEvent(PhoneEvent("+79052345671", true, 1000.let { time += it; time }, null, false, "Debug message", null, "Test exception +79052345671", STATE_PENDING, recipient, PhoneEvent.REASON_ACCEPTED, false))
-        database.putEvent(PhoneEvent("+79052345672", false, 1000.let { time += it; time }, null, false, "Debug message", null, "Test exception +79052345672", STATE_PENDING, recipient, PhoneEvent.REASON_ACCEPTED, false))
-        database.putEvent(PhoneEvent("+79052345673", true, 1000.let { time += it; time }, time + 10000, false, null, null, "Test exception +79052345673", STATE_PENDING, recipient, PhoneEvent.REASON_ACCEPTED, false))
-        database.putEvent(PhoneEvent("+79052345674", false, 1000.let { time += it; time }, time + 10000, false, null, null, "Test exception +79052345674", STATE_PENDING, recipient, PhoneEvent.REASON_ACCEPTED, false))
-        database.putEvent(PhoneEvent("+79052345675", true, 1000.let { time += it; time }, time + 10000, true, null, null, "Test exception +79052345675", STATE_PENDING, recipient, PhoneEvent.REASON_ACCEPTED, false))
+        database.putEvent(PhoneEvent("+79052345671", true, time, null, false, "Debug message", null, null, STATE_PENDING, recipient, REASON_ACCEPTED, false))
+        database.putEvent(PhoneEvent("+79052345672", false, 1000.let { time += it; time }, null, false, "Debug message", null, null, STATE_PROCESSED, recipient, REASON_ACCEPTED, false))
+        database.putEvent(PhoneEvent("+79052345673", true, 1000.let { time += it; time }, time + 10000, false, null, null, null, STATE_IGNORED, recipient, REASON_ACCEPTED, false))
+        database.putEvent(PhoneEvent("+79052345674", false, 1000.let { time += it; time }, time + 10000, false, null, null, null, STATE_PENDING, recipient, REASON_ACCEPTED, false))
+        database.putEvent(PhoneEvent("+79052345675", true, 1000.let { time += it; time }, time + 10000, true, null, null, null, STATE_PENDING, recipient, REASON_ACCEPTED, false))
+        database.putEvent(PhoneEvent("+79052345671", true, 1000.let { time += it; time }, null, false, "Debug message", null, "Test exception +79052345671", STATE_PENDING, recipient, REASON_ACCEPTED, false))
+        database.putEvent(PhoneEvent("+79052345672", false, 1000.let { time += it; time }, null, false, "Debug message", null, "Test exception +79052345672", STATE_PENDING, recipient, REASON_ACCEPTED, false))
+        database.putEvent(PhoneEvent("+79052345673", true, 1000.let { time += it; time }, time + 10000, false, null, null, "Test exception +79052345673", STATE_PENDING, recipient, REASON_ACCEPTED, false))
+        database.putEvent(PhoneEvent("+79052345674", false, 1000.let { time += it; time }, time + 10000, false, null, null, "Test exception +79052345674", STATE_PENDING, recipient, REASON_ACCEPTED, false))
+        database.putEvent(PhoneEvent("+79052345675", true, 1000.let { time += it; time }, time + 10000, true, null, null, "Test exception +79052345675", STATE_PENDING, recipient, REASON_ACCEPTED, false))
         database.notifyChanged()
         showToast(appContext, "Done")
     }
@@ -496,7 +501,7 @@ class DebugFragment : BasePreferenceFragment() {
             }
         }
 
-        showInfoDialog(appContext, message = sb.toString())
+        InfoDialog(message = sb.toString()).show(requireActivity())
     }
 
     private fun onGoogleDriveClear() {
@@ -522,40 +527,43 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun onGoogleDriveDownload() {
-        Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
-            try {
-                Synchronizer(appContext, primaryAccount(requireContext())!!, database).download()
-            } catch (x: Throwable) {
-                log.error("Download error: ", x)
-            }
-            null
-        })
-        showToast(appContext, "Done")
+        ConfirmDialog("Download from drive?") {
+            Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
+                try {
+                    Synchronizer(appContext, primaryAccount(requireContext())!!, database).download()
+                } catch (x: Throwable) {
+                    log.error("Download error: ", x)
+                }
+                null
+            })
+            showToast(appContext, "Done")
+        }.show(requireActivity())
     }
 
     private fun onGoogleDriveUpload() {
-        Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
-            try {
-                Synchronizer(appContext, primaryAccount(requireContext())!!, database).upload()
-            } catch (x: Throwable) {
-                log.error("Upload error: ", x)
-            }
-            null
-        })
-        showToast(appContext, "Done")
+        ConfirmDialog("Upload to drive?") {
+            Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
+                try {
+                    Synchronizer(appContext, primaryAccount(requireContext())!!, database).upload()
+                    showToast(appContext, "Done")
+                } catch (x: Throwable) {
+                    log.error("Upload error: ", x)
+                }
+                null
+            })
+        }.show(requireActivity())
     }
 
     @SuppressLint("SetTextI18n")
     private fun onSendSms() {
-        showInputDialog(appContext,
-                title = "Phone number",
+        InputDialog(title = "Phone number",
                 inputType = InputType.TYPE_CLASS_PHONE,
-                value = "5556",
-                action = { value ->
+                initialValue = "5556",
+                positiveAction = {
                     val sentIntent = PendingIntent.getBroadcast(appContext, 0, Intent("SMS_SENT"), 0)
                     val deliveredIntent = PendingIntent.getBroadcast(appContext, 0, Intent("SMS_DELIVERED"), 0)
                     try {
-                        getDefault().sendTextMessage(value, null, "Debug message", sentIntent, deliveredIntent)
+                        getDefault().sendTextMessage(it, null, "Debug message", sentIntent, deliveredIntent)
                     } catch (x: Throwable) {
                         log.error("Failed: ", x)
                         showToast(appContext, "Failed")

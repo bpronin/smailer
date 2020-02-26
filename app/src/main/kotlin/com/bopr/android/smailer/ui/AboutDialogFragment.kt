@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.bopr.android.smailer.BuildInfo
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.util.Dialogs.showInfoDialog
 
 /**
  * About dialog fragment.
@@ -25,9 +24,9 @@ class AboutDialogFragment : BaseDialogFragment("about_dialog") {
         view.findViewById<TextView>(R.id.label_message).apply {
             text = getString(R.string.app_version, info.name)
             setOnLongClickListener {
-                showInfoDialog(requireContext(),
-                        title = "Release info",
+                InfoDialog(title = "Release info",
                         message = "Build number: ${info.number}\nBuild time: ${info.time}")
+                        .show(requireActivity())
                 true
             }
         }

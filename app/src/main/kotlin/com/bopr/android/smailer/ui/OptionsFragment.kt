@@ -12,5 +12,6 @@ class OptionsFragment : BasePreferenceFragment() {
 
     override fun onCreatePreferences(bundle: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_options)
+        //todo add reset dialogs action here
     }
 }

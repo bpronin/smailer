@@ -1,20 +1,19 @@
 package com.bopr.android.smailer.ui
 
-import android.app.Activity
+import androidx.fragment.app.FragmentActivity
 import com.bopr.android.smailer.GeoCoordinates
 import com.bopr.android.smailer.GeoLocator
-import com.bopr.android.smailer.util.Dialogs.showInfoDialog
 
-internal class GetLocationTask(activity: Activity, private val locator: GeoLocator)
-    : LongAsyncTask<Void?, Void?, GeoCoordinates?>(activity) {
+internal class GetLocationTask(activity: FragmentActivity, private val locator: GeoLocator)
+    : LongAsyncTask<Unit, Unit, GeoCoordinates?>(activity) {
 
-    override fun doInBackground(vararg params: Void?): GeoCoordinates? {
+    override fun doInBackground(vararg params: Unit?): GeoCoordinates? {
         return locator.getLocation()
     }
 
     override fun onPostExecute(result: GeoCoordinates?) {
         super.onPostExecute(result)
-        showInfoDialog(activity, message = result?.format() ?: "No location received")
+        InfoDialog(message = result?.format() ?: "No location received").show(activity)
     }
 
 }

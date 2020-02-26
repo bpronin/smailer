@@ -48,7 +48,7 @@ abstract class BaseDialogFragment(private val fragmentTag: String) : DialogFragm
         return null
     }
 
-    fun show(activity: FragmentActivity) {
+    open fun show(activity: FragmentActivity) {
         show(activity.supportFragmentManager, fragmentTag)
     }
 

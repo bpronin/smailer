@@ -42,7 +42,6 @@ abstract class EditableRecyclerFragment<I, H : ViewHolder> : RecyclerFragment<I,
                 editItem(NO_POSITION)
             }
             showAnimated(this, R.anim.fab_show, 0)
-            show()
         }
         return view
     }

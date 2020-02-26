@@ -29,7 +29,6 @@ import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_BLACKLIST
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_WHITELIST
 import com.bopr.android.smailer.ui.HistoryFragment.Holder
 import com.bopr.android.smailer.util.AddressUtil.containsPhone
-import com.bopr.android.smailer.util.Dialogs.showConfirmationDialog
 import com.bopr.android.smailer.util.TextUtil.formatDuration
 import com.bopr.android.smailer.util.UiUtil.eventDirectionImage
 import com.bopr.android.smailer.util.UiUtil.eventStateImage
@@ -173,11 +172,10 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
     }
 
     private fun onClearData() {
-        showConfirmationDialog(requireContext(), getString(R.string.ask_clear_history),
-                getString(R.string.clear)) {
+        ConfirmDialog(getString(R.string.ask_clear_history)) {
             database.clearEvents()
             database.notifyChanged()
-        }
+        }.show(requireActivity())
     }
 
     private fun onMarkAllAsRead() {

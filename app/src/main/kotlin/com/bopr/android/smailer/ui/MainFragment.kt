@@ -58,7 +58,7 @@ class MainFragment : BasePreferenceFragment() {
         }
 
         permissionsHelper.checkAll {
-            requireIgnoreBatteryOptimization(requireContext())
+            requireIgnoreBatteryOptimization(requireActivity())
         }
     }
 

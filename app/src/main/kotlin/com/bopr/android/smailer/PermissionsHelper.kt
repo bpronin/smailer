@@ -1,7 +1,6 @@
 package com.bopr.android.smailer
 
 import android.Manifest.permission.*
-import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
@@ -9,6 +8,7 @@ import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat.checkSelfPermission
+import androidx.fragment.app.FragmentActivity
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_CONTACT
@@ -18,8 +18,8 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
+import com.bopr.android.smailer.ui.MessageDialog
 import com.bopr.android.smailer.util.AndroidUtil.permissionLabel
-import com.bopr.android.smailer.util.Dialogs.showMessageDialog
 import com.bopr.android.smailer.util.UiUtil.showToast
 import org.slf4j.LoggerFactory
 import java.util.*
@@ -29,7 +29,7 @@ import java.util.*
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChangeListener {
+class PermissionsHelper(private val activity: FragmentActivity) : OnSharedPreferenceChangeListener {
 
     private val log = LoggerFactory.getLogger("PermissionsHelper")
     private val requestResultCode = nextRequestResult++
@@ -46,7 +46,7 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
         log.debug("Disposed")
     }
 
-    fun checkAll(onComplete: (() -> Unit)?) {
+    fun checkAll(onComplete: (() -> Unit)) {
         log.debug("Checking all")
 
         this.onComplete = onComplete
@@ -74,7 +74,7 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
             if (deniedPermissions.isNotEmpty()) {
                 showToast(activity, activity.getString(R.string.since_permissions_not_granted))
             }
-            
+
             onComplete()
         }
     }
@@ -175,7 +175,11 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
                 } else {
                     requestPermissions(deniedPermissions)
                 }
+            } else {
+                onComplete()
             }
+        } else {
+            onComplete()
         }
     }
 
@@ -187,9 +191,9 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
 
     private fun explainPermissions(permissions: List<String>) {
         log.debug("Explaining : $permissions")
-        showMessageDialog(activity, formatRationale(permissions)) {
+        MessageDialog(formatRationale(permissions)) {
             requestPermissions(permissions)
-        }
+        }.show(activity)
     }
 
     private fun formatRationale(permissions: Collection<String>): String {

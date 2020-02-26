@@ -46,8 +46,8 @@ android {
     }
 
     defaultConfig {
-        versionCode 73
-        versionName "1.7.6"
+        versionCode 74
+        versionName "1.7.7"
         versionNameSuffix = "-kotlin"
         archivesBaseName = "smailer-${versionName}${versionNameSuffix}"
         applicationId "com.bopr.android.smailer"
