@@ -39,7 +39,7 @@ internal class SendDebugMailTask(activity: FragmentActivity, private val propert
         if (result != null) {
             InfoDialog(message = result.toString()).show(activity)
         } else {
-            showToast(activity, R.string.operation_complete)
+            activity.showToast(R.string.operation_complete)
         }
     }
 

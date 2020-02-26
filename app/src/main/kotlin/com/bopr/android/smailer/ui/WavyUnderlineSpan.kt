@@ -1,11 +1,9 @@
 package com.bopr.android.smailer.ui
 
-import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.text.style.LineBackgroundSpan
-import androidx.core.content.ContextCompat
-import com.bopr.android.smailer.R
 
 /**
  * Draws wavy line under the text.
@@ -13,8 +11,7 @@ import com.bopr.android.smailer.R
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 class WavyUnderlineSpan(
-        private val context: Context,
-        private val lineColor: Int = ContextCompat.getColor(context, R.color.errorLine),
+        private val lineColor: Int = Color.RED,
         private val lineWidth: Int = 1,
         private val waveSize: Int = 4) : LineBackgroundSpan {
 

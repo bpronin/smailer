@@ -55,7 +55,7 @@ internal class SendLogTask(activity: FragmentActivity, private val properties: P
         if (result != null) {
             InfoDialog(message = result.toString()).show(activity)
         } else {
-            showToast(activity, R.string.operation_complete)
+            activity.showToast(R.string.operation_complete)
         }
     }
 

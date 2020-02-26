@@ -30,6 +30,7 @@ import com.bopr.android.smailer.util.TextUtil.formatDuration
 import com.bopr.android.smailer.util.UiUtil.eventDirectionImage
 import com.bopr.android.smailer.util.UiUtil.eventStateImage
 import com.bopr.android.smailer.util.UiUtil.eventTypeImage
+import com.bopr.android.smailer.util.UiUtil.getColorFromAttr
 import com.bopr.android.smailer.util.UiUtil.showToast
 
 /**
@@ -42,9 +43,13 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
     private lateinit var database: Database
     private lateinit var callFilter: PhoneEventFilter
     private lateinit var databaseListener: BroadcastReceiver
+    private var defaultItemTextColor: Int = 0
+    private var unreadItemTextColor: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        defaultItemTextColor = requireContext().getColorFromAttr(android.R.attr.textColorSecondary)
+        unreadItemTextColor = requireContext().getColorFromAttr(android.R.attr.textColorPrimary)
 
         settings.registerOnSharedPreferenceChangeListener(this)
 
@@ -161,6 +166,16 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
         holder.directionView.setImageResource(eventDirectionImage(item))
         holder.stateView.setImageResource(eventStateImage(item))
 
+        if (!item.isRead) {
+            holder.phoneView.setTextColor(unreadItemTextColor)
+            holder.textView.setTextColor(unreadItemTextColor)
+            holder.timeView.setTextColor(unreadItemTextColor)
+        } else {
+            holder.phoneView.setTextColor(defaultItemTextColor)
+            holder.textView.setTextColor(defaultItemTextColor)
+            holder.timeView.setTextColor(defaultItemTextColor)
+        }
+
         markItemAsRead(item)
     }
 
@@ -198,7 +213,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
             callFilter.phoneBlacklist.remove(it.phone)
             saveCallFilter()
 
-            showToast(requireContext(), getString(R.string.phone_removed_from_filter, it.phone))
+            showToast(getString(R.string.phone_removed_from_filter, it.phone))
         }
     }
 
@@ -210,7 +225,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
                 setOnOkClicked { value ->
                     if (!value.isNullOrEmpty()) {
                         if (list.contains(value)) {
-                            showToast(requireContext(), getString(R.string.item_already_exists, value))
+                            showToast(getString(R.string.item_already_exists, value))
                         } else {
                             list.add(value)
                             saveCallFilter()

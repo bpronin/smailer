@@ -72,7 +72,7 @@ class PermissionsHelper(private val activity: FragmentActivity) : OnSharedPrefer
             onPermissionsDenied(deniedPermissions)
 
             if (deniedPermissions.isNotEmpty()) {
-                showToast(activity, R.string.since_permissions_not_granted)
+                activity.showToast(R.string.since_permissions_not_granted)
             }
 
             onComplete()

@@ -41,7 +41,7 @@ abstract class EditableRecyclerFragment<I, H : ViewHolder> : RecyclerFragment<I,
             setOnClickListener {
                 editItem(NO_POSITION)
             }
-            showAnimated(this, R.anim.fab_show, 0)
+            showAnimated(R.anim.fab_show, 0)
         }
         return view
     }
@@ -82,8 +82,7 @@ abstract class EditableRecyclerFragment<I, H : ViewHolder> : RecyclerFragment<I,
                         it == newItem
                     }
                     if (exists) {
-                        showToast(requireContext(),
-                                getString(R.string.item_already_exists, getItemTitle(newItem)))
+                        showToast(getString(R.string.item_already_exists, getItemTitle(newItem)))
                     } else if (isValidItem(newItem)) {
                         listAdapter.replaceItemAt(position, newItem)
                         persistItems()

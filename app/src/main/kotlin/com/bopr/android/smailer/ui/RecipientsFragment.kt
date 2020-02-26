@@ -56,11 +56,10 @@ class RecipientsFragment : EditableRecyclerFragment<String, Holder>(), SharedPre
     }
 
     override fun bindViewHolder(item: String, holder: Holder) {
-        holder.textView.text =
-                if (isValidEmailAddress(item))
-                    item
-                else
-                    underwivedText(requireContext(), item)
+        holder.textView.text = if (isValidEmailAddress(item))
+            item
+        else
+            requireContext().underwivedText(item)
     }
 
     override fun createEditDialog(): BaseEditDialogFragment<String> {

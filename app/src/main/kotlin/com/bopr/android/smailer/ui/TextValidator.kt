@@ -3,6 +3,8 @@ package com.bopr.android.smailer.ui
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.TextView
+import androidx.core.content.ContextCompat.getColor
+import com.bopr.android.smailer.R
 
 /**
  * Abstract [TextView] input validator.
@@ -11,7 +13,7 @@ import android.widget.TextView
  */
 abstract class TextValidator(private val view: TextView) : TextWatcher {
 
-    private val span = WavyUnderlineSpan(view.context)
+    private val span = WavyUnderlineSpan(getColor(view.context, R.color.errorLine))
 
     /**
      * Returns true if input is valid.

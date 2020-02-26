@@ -110,9 +110,9 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPref
             SUMMARY_STYLE_DEFAULT ->
                 preference.summary = value
             SUMMARY_STYLE_UNDERWIVED ->
-                preference.summary = underwivedText(requireContext(), value)
+                preference.summary = requireContext().underwivedText(value)
             SUMMARY_STYLE_ACCENTED ->
-                preference.summary = accentedText(requireContext(), value)
+                preference.summary = requireContext().accentedText(value)
         }
     }
 

@@ -143,7 +143,7 @@ class DebugFragment : BasePreferenceFragment() {
                 createPreference("Require battery optimisation disabled", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
                         if (isIgnoreBatteryOptimizationRequired(appContext)) {
-                            showToast(appContext, "Battery optimization already ignored")
+                            showToast("Battery optimization already ignored")
                         } else {
                             requireIgnoreBatteryOptimization(requireActivity())
                         }
@@ -187,27 +187,27 @@ class DebugFragment : BasePreferenceFragment() {
                     override fun onClick(preference: Preference) {
                         database.markAllAsRead(false)
                         database.notifyChanged()
-                        showToast(appContext, R.string.operation_complete)
+                        showToast( R.string.operation_complete)
                     }
                 }),
                 createPreference("Mark all as read", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
                         database.markAllAsRead(true)
                         database.notifyChanged()
-                        showToast(appContext, R.string.operation_complete)
+                        showToast( R.string.operation_complete)
                     }
                 }),
                 createPreference("Clear calls log", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
                         database.clearEvents()
                         database.notifyChanged()
-                        showToast(appContext, R.string.operation_complete)
+                        showToast( R.string.operation_complete)
                     }
                 }),
                 createPreference("Destroy database", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
                         database.destroy()
-                        showToast(appContext, R.string.operation_complete)
+                        showToast( R.string.operation_complete)
                     }
                 })
         )
@@ -382,7 +382,7 @@ class DebugFragment : BasePreferenceFragment() {
                 .putString(PREF_FILTER_PHONE_BLACKLIST, commaJoin(setOf("+123456789", "+9876543*")))
                 .putString(PREF_FILTER_TEXT_BLACKLIST, commaJoin(setOf("Bad text", escapeRegex("Expression"))))
                 .apply()
-        showToast(appContext, R.string.operation_complete)
+        showToast( R.string.operation_complete)
     }
 
     private fun onGetContact() {
@@ -393,30 +393,30 @@ class DebugFragment : BasePreferenceFragment() {
                     positiveAction = {
                         val contact = contactName(appContext, it)
                         val text = if (contact != null) "$it: $contact" else "Contact not found"
-                        showToast(appContext, text)
+                        showToast( text)
                     }
             ).show(requireActivity())
         } else {
-            showToast(appContext, "No permission")
+            showToast( "No permission")
         }
     }
 
     private fun onClearPreferences() {
         settings.edit().clear().apply()
-        showToast(appContext, R.string.operation_complete)
+        showToast( R.string.operation_complete)
     }
 
     private fun onResetPreferences() {
         settings.loadDefaults()
-        showToast(appContext, R.string.operation_complete)
+        showToast( R.string.operation_complete)
     }
 
     private fun onProcessServiceMail() {
         if (settings.getBoolean(PREF_REMOTE_CONTROL_ENABLED, false)) {
             RemoteControlService.startRemoteControlService(appContext)
-            showToast(appContext, R.string.operation_complete)
+            showToast( R.string.operation_complete)
         } else {
-            showToast(appContext, "Feature disabled")
+            showToast( "Feature disabled")
         }
     }
 
@@ -429,19 +429,19 @@ class DebugFragment : BasePreferenceFragment() {
         val event = PhoneEvent("5556", true, start, start + 10000, false,
                 "SMS TEXT", null, null, STATE_PENDING, deviceName(), STATUS_ACCEPTED, isRead = false)
         startCallProcessingService(appContext, event)
-        showToast(appContext, R.string.operation_complete)
+        showToast( R.string.operation_complete)
     }
 
     private fun onStartProcessPendingEvents() {
         PendingCallProcessorService.startPendingCallProcessorService(appContext)
-        showToast(appContext, R.string.operation_complete)
+        showToast( R.string.operation_complete)
     }
 
     private fun onRequireReceiveSmsPermission() {
         if (ContextCompat.checkSelfPermission(appContext, permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED) {
             appContext.enforceCallingOrSelfPermission(permission.RECEIVE_SMS, "Testing SMS permission")
         } else {
-            showToast(appContext, "SMS PERMISSION DENIED")
+            showToast( "SMS PERMISSION DENIED")
         }
     }
 
@@ -458,14 +458,14 @@ class DebugFragment : BasePreferenceFragment() {
                 log.warn("Cannot delete file")
             }
         }
-        showToast(appContext, "Removed ${logs.size} log files")
+        showToast( "Removed ${logs.size} log files")
     }
 
     private fun onAddHistoryItem() {
         database.putEvent(PhoneEvent("+79052345670", true, System.currentTimeMillis(), null, false,
                 "Debug message", null, null, STATE_PENDING, deviceName(), STATUS_ACCEPTED, isRead = false))
         database.notifyChanged()
-        showToast(appContext, R.string.operation_complete)
+        showToast( R.string.operation_complete)
     }
 
     private fun onPopulateHistory() {
@@ -482,7 +482,7 @@ class DebugFragment : BasePreferenceFragment() {
         database.putEvent(PhoneEvent("+79052345674", false, 1000.let { time += it; time }, time + 10000, false, null, null, "Test exception +79052345674", STATE_PENDING, recipient, STATUS_ACCEPTED, isRead = false))
         database.putEvent(PhoneEvent("+79052345675", true, 1000.let { time += it; time }, time + 10000, true, null, null, "Test exception +79052345675", STATE_PENDING, recipient, STATUS_ACCEPTED, isRead = false))
         database.notifyChanged()
-        showToast(appContext, R.string.operation_complete)
+        showToast( R.string.operation_complete)
     }
 
     private fun onShowConcurrent() {
@@ -511,7 +511,7 @@ class DebugFragment : BasePreferenceFragment() {
             drive.clear()
             null
         })
-        showToast(appContext, R.string.operation_complete)
+        showToast( R.string.operation_complete)
     }
 
     private fun onGoogleDriveSync() {
@@ -523,7 +523,7 @@ class DebugFragment : BasePreferenceFragment() {
             }
             null
         })
-        showToast(appContext, R.string.operation_complete)
+        showToast( R.string.operation_complete)
     }
 
     private fun onGoogleDriveDownload() {
@@ -536,7 +536,7 @@ class DebugFragment : BasePreferenceFragment() {
                 }
                 null
             })
-            showToast(appContext, R.string.operation_complete)
+            showToast( R.string.operation_complete)
         }.show(requireActivity())
     }
 
@@ -545,7 +545,7 @@ class DebugFragment : BasePreferenceFragment() {
             Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
                 try {
                     Synchronizer(appContext, primaryAccount(requireContext())!!, database).upload()
-                    showToast(appContext, R.string.operation_complete)
+                    showToast( R.string.operation_complete)
                 } catch (x: Throwable) {
                     log.error("Upload error: ", x)
                 }
@@ -566,7 +566,7 @@ class DebugFragment : BasePreferenceFragment() {
                         getDefault().sendTextMessage(it, null, "Debug message", sentIntent, deliveredIntent)
                     } catch (x: Throwable) {
                         log.error("Failed: ", x)
-                        showToast(appContext, "Failed")
+                        showToast( "Failed")
                     }
                 }
         )
@@ -600,7 +600,7 @@ class DebugFragment : BasePreferenceFragment() {
                     "Unknown error"
             }
 
-            showToast(context, message)
+            showToast(message)
             log.debug(message)
         }
     }
@@ -617,7 +617,7 @@ class DebugFragment : BasePreferenceFragment() {
                     "Message not delivered"
             }
 
-            showToast(context, message)
+            showToast(message)
             log.debug(message)
         }
     }

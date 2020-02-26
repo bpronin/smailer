@@ -39,7 +39,7 @@ class EditPhoneDialogFragment : BaseEditDialogFragment<String>("edit_phone_dialo
             if (checkPermission(context, READ_CONTACTS)) {
                 startActivityForResult(createPickContactIntent(), PICK_CONTACT_REQUEST)
             } else {
-                showToast(context, R.string.permissions_required_for_operation)
+                showToast(R.string.permissions_required_for_operation)
             }
         }
 

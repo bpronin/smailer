@@ -13,10 +13,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils.loadAnimation
 import android.widget.TextView
 import android.widget.Toast
-import androidx.annotation.AnimRes
-import androidx.annotation.DrawableRes
-import androidx.annotation.PluralsRes
-import androidx.annotation.StringRes
+import androidx.annotation.*
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.BlendModeColorFilterCompat.createBlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat
@@ -105,36 +102,14 @@ object UiUtil {
         }
     }
 
-    /**
-     * Returns text underlined with wavy red line.
-     */
-    fun underwivedText(context: Context, value: CharSequence?): Spannable {
-        val spannable: Spannable = SpannableString(value)
-        val span: ParagraphStyle = WavyUnderlineSpan(context)
-        spannable.setSpan(span, 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-
-        return spannable
-    }
-
-    /**
-     * Returns text of accent color.
-     */
-    fun accentedText(context: Context, value: CharSequence?): Spannable {
-        val spannable: Spannable = SpannableString(value)
-        val span: CharacterStyle = ForegroundColorSpan(ContextCompat.getColor(context, R.color.colorAccent))
-        spannable.setSpan(span, 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-
-        return spannable
-    }
-
-    fun showAnimated(view: View, @AnimRes animationRes: Int, delay: Long) {
-        if (view.visibility != VISIBLE) {
-            view.clearAnimation()
-            val animation = loadAnimation(view.getContext(), animationRes).apply {
+    fun View.showAnimated(@AnimRes animationRes: Int, delay: Long) {
+        if (visibility != VISIBLE) {
+            clearAnimation()
+            val animation = loadAnimation(getContext(), animationRes).apply {
                 setAnimationListener(object : Animation.AnimationListener {
 
                     override fun onAnimationEnd(animation: Animation?) {
-                        view.visibility = VISIBLE
+                        visibility = VISIBLE
                     }
 
                     override fun onAnimationRepeat(animation: Animation?) {
@@ -148,25 +123,63 @@ object UiUtil {
                 startOffset = delay
             }
 
-            view.startAnimation(animation)
+            startAnimation(animation)
         }
     }
 
-    fun showToast(context: Context, text: String) {
-        val toast: Toast = Toast.makeText(context, text, Toast.LENGTH_LONG)
+    /**
+     * Returns text underlined with wavy red line.
+     */
+    fun Context.underwivedText(value: CharSequence?): Spannable {
+        val spannable: Spannable = SpannableString(value)
+        val span: ParagraphStyle = WavyUnderlineSpan(ContextCompat.getColor(this, R.color.errorLine))
+        spannable.setSpan(span, 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+        return spannable
+    }
+
+    /**
+     * Returns text of accent color.
+     */
+    fun Context.accentedText(value: CharSequence?): Spannable {
+        val spannable: Spannable = SpannableString(value)
+        val span: CharacterStyle = ForegroundColorSpan(ContextCompat.getColor(this, R.color.colorAccent))
+        spannable.setSpan(span, 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+        return spannable
+    }
+
+    fun Context.showToast(text: String) {
+        val toast: Toast = Toast.makeText(this, text, Toast.LENGTH_LONG)
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
             /* it looks ugly on old devises */
             val view = toast.view
             view.background.colorFilter = createBlendModeColorFilterCompat(
-                    ContextCompat.getColor(context, R.color.colorAccent), BlendModeCompat.DARKEN)
+                    ContextCompat.getColor(this, R.color.colorAccent), BlendModeCompat.DARKEN)
             view.findViewById<TextView>(android.R.id.message)?.setTextColor(
-                    ContextCompat.getColor(context, R.color.colorAccentText))
+                    ContextCompat.getColor(this, R.color.colorAccentText))
         }
         toast.show()
     }
 
-    fun showToast(context: Context, @StringRes textRes: Int) {
-        showToast(context, context.getString(textRes))
+    fun Context.showToast(@StringRes textRes: Int) {
+        showToast(getString(textRes))
+    }
+
+    fun Fragment.showToast(text: String) {
+        requireContext().showToast(text)
+    }
+
+    fun Fragment.showToast(@StringRes textRes: Int) {
+        showToast(getString(textRes))
+    }
+
+    @ColorInt
+    fun Context.getColorFromAttr(@AttrRes attr: Int): Int {
+        val a = obtainStyledAttributes(intArrayOf(attr))
+        val color = a.getResourceId(0, 0)
+        a.recycle()
+        return ContextCompat.getColor(this, color)
     }
 
     fun Fragment.getQuantityString(@PluralsRes resId: Int, quantity: Number): String {

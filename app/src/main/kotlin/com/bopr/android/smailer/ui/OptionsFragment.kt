@@ -27,7 +27,7 @@ class OptionsFragment : BasePreferenceFragment() {
                 .edit()
                 .remove(BatteryOptimizationHelper.BATTERY_OPTIMIZATION_DIALOG_TAG)
                 .apply()
-        showToast(requireContext(), R.string.operation_complete)
+        showToast(R.string.operation_complete)
     }
 
 }
