@@ -97,7 +97,6 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
                     requiredPermissions.add(READ_PHONE_STATE)
                 }
                 if (triggers.contains(VAL_PREF_TRIGGER_OUT_CALLS)) {
-                    @Suppress("DEPRECATION") // TODO: 06.02.2020 deprecated
                     requiredPermissions.add(PROCESS_OUTGOING_CALLS)
                 }
             }
@@ -137,7 +136,6 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
                 triggers.remove(VAL_PREF_TRIGGER_IN_CALLS)
                 triggers.remove(VAL_PREF_TRIGGER_MISSED_CALLS)
             }
-            @Suppress("DEPRECATION") // TODO: 06.02.2020 deprecated
             if (permissions.contains(PROCESS_OUTGOING_CALLS)) {
                 triggers.remove(VAL_PREF_TRIGGER_OUT_CALLS)
             }
@@ -208,13 +206,12 @@ class PermissionsHelper(private val activity: Activity) : OnSharedPreferenceChan
 
     companion object {
 
-        @Suppress("DEPRECATION")
         private val items: Map<String, Int> = sortedMapOf(
                 RECEIVE_SMS to R.string.permission_rationale_receive_sms,
                 SEND_SMS to R.string.permission_rationale_send_sms,
                 READ_SMS to R.string.permission_rationale_read_sms,
                 READ_PHONE_STATE to R.string.permission_rationale_phone_state,
-                PROCESS_OUTGOING_CALLS to R.string.permission_rationale_outgoing_call, // TODO: 06.02.2020 deprecated
+                PROCESS_OUTGOING_CALLS to R.string.permission_rationale_outgoing_call,
                 READ_CONTACTS to R.string.permission_rationale_read_contacts,
                 ACCESS_COARSE_LOCATION to R.string.permission_rationale_coarse_location,
                 ACCESS_FINE_LOCATION to R.string.permission_rationale_fine_location

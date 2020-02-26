@@ -51,7 +51,7 @@ class CallReceiver : BroadcastReceiver() {
                 EXTRA_STATE_RINGING -> {
                     isIncomingCall = true
                     callStartTime = currentTimeMillis()
-                    lastCallNumber = intent.getStringExtra(EXTRA_INCOMING_NUMBER) // TODO: 06.02.2020 deprecated
+                    lastCallNumber = intent.getStringExtra(EXTRA_INCOMING_NUMBER)
 
                     log.debug("Call received")
                 }

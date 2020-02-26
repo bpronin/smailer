@@ -43,16 +43,6 @@ class GoogleAuthorizationHelper(private val fragment: Fragment,
         return findAccount(accountName) != null
     }
 
-    /* todo: see https://developer.android.com/reference/android/accounts/AccountManager
-    public void checkSelectedAccount() {
-     try
-        makeSomeRequest())
-     except
-        invalidateToken(accountName);
-        requestPermission(accountName);
-    }
-    */
-
     /**
      * Brings up system account selection dialog.
      */
