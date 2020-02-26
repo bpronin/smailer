@@ -58,7 +58,7 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPref
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_about ->
-                AboutDialogFragment().showDialog(requireActivity())
+                AboutDialogFragment().show(requireActivity())
             R.id.action_reset_dialogs ->
                 resetDialogs(requireContext())
         }

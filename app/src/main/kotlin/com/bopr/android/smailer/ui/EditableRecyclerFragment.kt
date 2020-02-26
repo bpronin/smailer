@@ -90,7 +90,7 @@ abstract class EditableRecyclerFragment<I, H : ViewHolder> : RecyclerFragment<I,
                     }
                 }
             }
-        }.showDialog(requireActivity())
+        }.show(requireActivity())
     }
 
     private fun removeItems(vararg positions: Int) {

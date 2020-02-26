@@ -25,7 +25,7 @@ open class BaseFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_about) {
-            AboutDialogFragment().showDialog(requireActivity())
+            AboutDialogFragment().show(requireActivity())
         }
         return super.onOptionsItemSelected(item)
     }

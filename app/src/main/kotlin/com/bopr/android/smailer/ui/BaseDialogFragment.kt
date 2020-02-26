@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.WindowManager.LayoutParams
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
@@ -21,12 +21,11 @@ abstract class BaseDialogFragment(private val fragmentTag: String) : DialogFragm
         var dialog = dialog
         if (dialog == null) {
             val builder = AlertDialog.Builder(requireContext())
-                    .setView(onCreateDialogView(LayoutInflater.from(context), null))
             onBuildDialog(builder)
             dialog = builder.create()
 
             /* this is to show soft keyboard when dialog is open */
-            dialog.getWindow()!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+            dialog.window?.setSoftInputMode(LayoutParams.SOFT_INPUT_STATE_VISIBLE)
         }
         return dialog
     }
@@ -39,13 +38,17 @@ abstract class BaseDialogFragment(private val fragmentTag: String) : DialogFragm
         super.onDestroyView()
     }
 
-    abstract fun onCreateDialogView(inflater: LayoutInflater, root: ViewGroup?): View
-
     open fun onBuildDialog(builder: AlertDialog.Builder) {
-        /* do nothing */
+        onCreateDialogView(LayoutInflater.from(context), null)?.run {
+            builder.setView(this)
+        }
     }
 
-    fun showDialog(activity: FragmentActivity) {
+    open fun onCreateDialogView(inflater: LayoutInflater, root: ViewGroup?): View? {
+        return null
+    }
+
+    fun show(activity: FragmentActivity) {
         show(activity.supportFragmentManager, fragmentTag)
     }
 

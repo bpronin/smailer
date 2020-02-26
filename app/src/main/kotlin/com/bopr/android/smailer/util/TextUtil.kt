@@ -15,11 +15,8 @@ object TextUtil {
     }
 
     fun unescapeRegex(s: String?): String? {
-        if (s != null) {
-            val ix = s.indexOf(REGEX_)
-            if (ix != -1) {
-                return s.substring(ix + REGEX_.length)
-            }
+        if (!s.isNullOrEmpty() && s.startsWith(REGEX_)) {
+            return s.substring(REGEX_.length)
         }
         return null
     }

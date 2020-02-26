@@ -144,7 +144,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
     }
 
     override fun onItemClick(item: PhoneEvent) {
-        HistoryDetailsDialogFragment(item).showDialog(requireActivity())
+        HistoryDetailsDialogFragment(item).show(requireActivity())
     }
 
     override fun loadItems(): Collection<PhoneEvent> {
@@ -226,7 +226,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
                         }
                     }
                 }
-            }.showDialog(requireActivity())
+            }.show(requireActivity())
         }
     }
 

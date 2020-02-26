@@ -12,6 +12,7 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
 import com.bopr.android.smailer.util.AddressUtil.normalizePhone
 import com.bopr.android.smailer.util.AddressUtil.phoneToRegEx
 import com.bopr.android.smailer.util.TextUtil.unescapeRegex
+import java.util.regex.PatternSyntaxException
 
 /**
  * Filters phone events by various criteria.
@@ -91,10 +92,20 @@ class PhoneEventFilter {
 
     private fun matchesText(patterns: Collection<String>, text: String?): Boolean {
         if (!text.isNullOrEmpty()) {
-            for (pt in patterns) {
-                val pattern = unescapeRegex(pt)
-                if (pattern != null && text.matches(pattern.toRegex()) || text.contains(pt)) {
-                    return true
+            for (pattern in patterns) {
+                val regex = unescapeRegex(pattern)
+                if (regex != null) {
+                    try {
+                        if (text matches Regex(regex)) {
+                            return true
+                        }
+                    } catch (x: PatternSyntaxException) {
+                        /* ignore invalid patterns */
+                    }
+                } else {
+                    if (text.contains(pattern, true)) {
+                        return true
+                    }
                 }
             }
         }
