@@ -126,7 +126,7 @@ class CallProcessorTest : BaseTest() {
         })
         verify(notifications, never()).showMailError(any(), any())
 
-        val savedEvent = database.events.findFirst()!!
+        val savedEvent = database.events.first()!!
 
         assertEquals(event.acceptor, savedEvent.acceptor)
         assertEquals(event.startTime, savedEvent.startTime)
@@ -150,7 +150,7 @@ class CallProcessorTest : BaseTest() {
         verify(transport, never()).send(any())
         verify(notifications, never()).showMailError(any(), any())
 
-        val savedEvent = database.events.findFirst()!!
+        val savedEvent = database.events.first()!!
 
         assertEquals(STATE_IGNORED, savedEvent.state)
         assertEquals(REASON_TRIGGER_OFF, savedEvent.stateReason)
@@ -171,7 +171,7 @@ class CallProcessorTest : BaseTest() {
         verify(transport, never()).send(any())
         verify(notifications).showMailError(eq(R.string.sender_account_not_found), eq(TARGET_MAIN))
 
-        val savedEvent = database.events.findFirst()!!
+        val savedEvent = database.events.first()!!
 
         assertEquals(STATE_PENDING, savedEvent.state)
         assertEquals(REASON_ACCEPTED, savedEvent.stateReason)
@@ -191,7 +191,7 @@ class CallProcessorTest : BaseTest() {
         verify(transport, never()).send(any())
         verify(notifications).showMailError(eq(R.string.no_recipients_specified), eq(TARGET_RECIPIENTS))
 
-        val savedEvent = database.events.findFirst()!!
+        val savedEvent = database.events.first()!!
 
         assertEquals(STATE_PENDING, savedEvent.state)
         assertEquals(REASON_ACCEPTED, savedEvent.stateReason)
@@ -212,7 +212,7 @@ class CallProcessorTest : BaseTest() {
         verify(transport).send(any())
         verify(notifications, never()).showMailError(any(), any())
 
-        val savedEvent = database.events.findFirst()!!
+        val savedEvent = database.events.first()!!
 
         assertEquals(STATE_PENDING, savedEvent.state)
         assertEquals(REASON_ACCEPTED, savedEvent.stateReason)
@@ -272,15 +272,15 @@ class CallProcessorTest : BaseTest() {
         processor.process(testingEvent())
         processor.process(testingEvent())
 
-        assertEquals(3, database.events.getCount())
-        assertEquals(3, database.pendingEvents.getCount())
+        assertEquals(3, database.events.count())
+        assertEquals(3, database.pendingEvents.count())
         verify(notifications, never()).showError(anyString(), anyInt())
 
         /* try resend with disabled transport */
         processor.processPending()
 
-        assertEquals(3, database.events.getCount())
-        assertEquals(3, database.pendingEvents.getCount())
+        assertEquals(3, database.events.count())
+        assertEquals(3, database.pendingEvents.count())
         verify(notifications, never()).showError(anyString(), anyInt())
 
         /* enable transport an try again */
@@ -288,8 +288,8 @@ class CallProcessorTest : BaseTest() {
 
         processor.processPending()
 
-        assertEquals(3, database.events.getCount())
-        assertEquals(0, database.pendingEvents.getCount())
+        assertEquals(3, database.events.count())
+        assertEquals(0, database.pendingEvents.count())
         verify(notifications, never()).showError(anyString(), anyInt())
     }
 }

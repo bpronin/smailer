@@ -70,7 +70,7 @@ class Database constructor(private val context: Context, private val name: Strin
     val lastLocation: GeoCoordinates?
         get() = GeoCoordinatesRowSet(helper.readableDatabase.query(TABLE_SYSTEM,
                 strings(COLUMN_LAST_LATITUDE, COLUMN_LAST_LONGITUDE), "$COLUMN_ID=0",
-                null, null, null, null)).findFirst()
+                null, null, null, null)).first()
 
     fun putEvent(event: PhoneEvent) {
         putEvent(event, helper.writableDatabase)

@@ -62,7 +62,7 @@ class ContentObserverService : Service() {
         log.debug("Processing outgoing sms: $id")
 
         val cursor = contentResolver.query(CONTENT_SMS_SENT, null, "_id=?", arrayOf(id), null)
-        SentSmsRowSet(cursor!!).findFirst()?.let {
+        SentSmsRowSet(cursor!!).first()?.let {
             startCallProcessingService(this, it)
         }
     }

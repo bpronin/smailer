@@ -30,13 +30,13 @@ class Settings(context: Context) : SharedPreferencesWrapper(
 
     val callFilter: PhoneEventFilter
         get() {
-            return PhoneEventFilter().apply {
-                triggers = getStringSet(PREF_EMAIL_TRIGGERS)
-                phoneBlacklist = getCommaSet(PREF_FILTER_PHONE_BLACKLIST)
-                phoneWhitelist = getCommaSet(PREF_FILTER_PHONE_WHITELIST)
-                textBlacklist = getCommaSet(PREF_FILTER_TEXT_BLACKLIST)
-                textWhitelist = getCommaSet(PREF_FILTER_TEXT_WHITELIST)
-            }
+            return PhoneEventFilter(
+                    triggers = getStringSet(PREF_EMAIL_TRIGGERS),
+                    phoneBlacklist = getCommaSet(PREF_FILTER_PHONE_BLACKLIST),
+                    phoneWhitelist = getCommaSet(PREF_FILTER_PHONE_WHITELIST),
+                    textBlacklist = getCommaSet(PREF_FILTER_TEXT_BLACKLIST),
+                    textWhitelist = getCommaSet(PREF_FILTER_TEXT_WHITELIST)
+            )
         }
 
     fun loadDefaults() {

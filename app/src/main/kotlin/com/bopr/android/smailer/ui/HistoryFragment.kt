@@ -149,7 +149,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
 
     override fun loadItems(): Collection<PhoneEvent> {
         callFilter = settings.callFilter
-        return database.events.toList()
+        return database.events.list()
     }
 
     override fun createViewHolder(parent: ViewGroup): Holder {

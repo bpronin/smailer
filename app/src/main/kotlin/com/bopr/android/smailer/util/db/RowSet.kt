@@ -1,7 +1,6 @@
 package com.bopr.android.smailer.util.db
 
 import android.database.Cursor
-import java.util.*
 
 /**
  * [Cursor] wrapper.
@@ -12,7 +11,28 @@ abstract class RowSet<R>(private val cursor: Cursor) {
 
     protected abstract fun get(): R
 
-    fun forEach(action: (row: R) -> Unit) {
+    fun first(): R? {
+        return cursor.use { cursor ->
+            cursor.moveToFirst()
+            if (!cursor.isAfterLast) get() else null
+        }
+    }
+
+    fun count(): Int {
+        return cursor.use { it.count }
+    }
+
+    fun list(): List<R> {
+        return map { it }
+    }
+
+    fun <T> map(transform: (R) -> T): List<T> {
+        val list = mutableListOf<T>()
+        this.forEach { list.add(transform(it)) }
+        return list
+    }
+
+    private fun forEach(action: (R) -> Unit) {
         cursor.use { cursor ->
             cursor.moveToFirst()
             while (!cursor.isAfterLast) {
@@ -20,30 +40,6 @@ abstract class RowSet<R>(private val cursor: Cursor) {
                 cursor.moveToNext()
             }
         }
-    }
-
-    fun findFirst(): R? {
-        return cursor.use { cursor ->
-            cursor.moveToFirst()
-            if (!cursor.isBeforeFirst && !cursor.isAfterLast) {
-                get()
-            } else {
-                null
-            }
-        }
-    }
-
-    fun getCount(): Int {
-        return cursor.use { cursor -> cursor.count }
-    }
-
-    fun toList(): List<R> {
-        return collect(ArrayList())
-    }
-
-    private fun <C : MutableCollection<R>> collect(collection: C): C {
-        forEach { row -> collection.add(row) }
-        return collection
     }
 
     protected fun isNull(columnName: String): Boolean {
@@ -78,7 +74,8 @@ abstract class RowSet<R>(private val cursor: Cursor) {
                 override fun get(): Long {
                     return cursor.getLong(0)
                 }
-            }.findFirst()
+
+            }.first()
         }
     }
 

@@ -46,11 +46,11 @@ android {
     }
 
     defaultConfig {
-        versionCode 71
-        versionName "1.7.4"
-        versionNameSuffix = "kotlin"
+        versionCode 72
+        versionName "1.7.5"
+        versionNameSuffix = "-kotlin"
+        archivesBaseName = "smailer-${versionName}${versionNameSuffix}"
         applicationId "com.bopr.android.smailer"
-        archivesBaseName = "smailer-${versionName}-${versionNameSuffix}"
         minSdkVersion 18
         targetSdkVersion 29
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -91,15 +91,15 @@ android {
         unitTests.returnDefaultValues = true
     }
 
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
+
     packagingOptions {
         pickFirst "META-INF/LICENSE.txt"
         pickFirst "META-INF/DEPENDENCIES"
         pickFirst "META-INF/kotlinx-html.kotlin_module"
-    }
-
-    compileOptions {
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
     }
 
     configurations {
@@ -107,6 +107,7 @@ android {
             exclude group: "org.apache.httpcomponents"
             exclude group: "commons-logging", module: "commons-logging"
             exclude group: "com.google.guava", module: "listenablefuture"
+   //         exclude group: "com.google.android"
         }
     }
 

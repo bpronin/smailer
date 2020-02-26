@@ -64,7 +64,7 @@ class CallProcessor(
      * Sends out email for all pending events.
      */
     fun processPending() {
-        val events = database.pendingEvents.toList()
+        val events = database.pendingEvents.list()
         if (events.isEmpty()) {
             log.debug("No pending events")
         } else {

@@ -19,19 +19,18 @@ import java.util.regex.PatternSyntaxException
  *
  * @author Boris Pronin ([bpronin@bttprime.com](mailto:bpronin@bttprime.com))
  */
-class PhoneEventFilter {
-
-    var triggers: MutableSet<String> = mutableSetOf()
-    var phoneWhitelist: MutableSet<String> = mutableSetOf()
-    var phoneBlacklist: MutableSet<String> = mutableSetOf()
-    var textWhitelist: MutableSet<String> = mutableSetOf()
-    var textBlacklist: MutableSet<String> = mutableSetOf()
+class PhoneEventFilter(
+        var triggers: MutableSet<String> = mutableSetOf(),
+        var phoneWhitelist: MutableSet<String> = mutableSetOf(),
+        var phoneBlacklist: MutableSet<String> = mutableSetOf(),
+        var textWhitelist: MutableSet<String> = mutableSetOf(),
+        var textBlacklist: MutableSet<String> = mutableSetOf()) {
 
     /**
      * Tests if the filter accepts given event.
      *
      * @param event event
-     * @return [REASON_ACCEPTED] if event was accepted or reason code if not
+     * @return [REASON_ACCEPTED] if event was accepted or reason flags otherwise
      */
     fun test(event: PhoneEvent): Int {
         var result = REASON_ACCEPTED

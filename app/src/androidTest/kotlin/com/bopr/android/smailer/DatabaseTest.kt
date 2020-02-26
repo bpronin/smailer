@@ -52,7 +52,7 @@ class DatabaseTest : BaseTest() {
         database.putEvent(PhoneEvent("9", false, 9000L, 0L, false, null, null, "Test 4", STATE_PENDING, "device", REASON_ACCEPTED, false))
         database.putEvent(PhoneEvent("10", true, 10000L, 20000L, false, "SMS text", GeoCoordinates(10.5, 20.5), "Test 10", STATE_PENDING, "device", REASON_ACCEPTED, false))
 
-        val items = database.events.toList()
+        val items = database.events.list()
 
         assertEquals(10, items.size)
 
@@ -87,7 +87,7 @@ class DatabaseTest : BaseTest() {
                 stateReason = REASON_ACCEPTED,
                 isRead = false)
         database.putEvent(event)
-        var items = database.events.toList()
+        var items = database.events.list()
 
         assertEquals(1, items.size)
 
@@ -117,7 +117,7 @@ class DatabaseTest : BaseTest() {
         )
         database.putEvent(event)
 
-        items = database.events.toList()
+        items = database.events.list()
 
         assertEquals(1, items.size)
 
@@ -151,11 +151,11 @@ class DatabaseTest : BaseTest() {
         database.putEvent(PhoneEvent("9", false, 9000L, 0L, false, null, null, "Test 4", STATE_PENDING, "device", REASON_ACCEPTED, false))
         database.putEvent(PhoneEvent("10", true, 10000L, 0L, true, null, null, "Test 5", STATE_PENDING, "device", REASON_ACCEPTED, false))
 
-        assertEquals(10, database.events.getCount())
+        assertEquals(10, database.events.count())
 
         database.clearEvents()
 
-        assertEquals(0, database.events.getCount())
+        assertEquals(0, database.events.count())
     }
 
 //    /**
@@ -207,7 +207,7 @@ class DatabaseTest : BaseTest() {
         database.putEvent(PhoneEvent("9", false, 9000L, 0L, false, null, null, "Test 4", STATE_PENDING, "device", REASON_ACCEPTED, false))
         database.putEvent(PhoneEvent("10", true, 10000L, 20000L, false, null, null, "Test 10", STATE_PENDING, "device", REASON_ACCEPTED, false))
 
-        val items = database.pendingEvents.toList()
+        val items = database.pendingEvents.list()
 
         assertEquals(5, items.size)
 

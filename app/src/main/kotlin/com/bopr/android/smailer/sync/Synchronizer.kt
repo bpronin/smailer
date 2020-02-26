@@ -78,14 +78,10 @@ internal class Synchronizer(context: Context,
     }
 
     private fun getLocalData(): SyncData {
-        val events = mutableListOf<SyncData.Event>()
-        database.events.forEach { event ->
-            events.add(eventToData(event))
-        }
+        val events = database.events.map { eventToData(it) }
 
-        with(settings.callFilter) {
-            return SyncData(
-                    phoneBlacklist,
+        return with(settings.callFilter) {
+            SyncData(phoneBlacklist,
                     textBlacklist,
                     phoneWhitelist,
                     textWhitelist,
@@ -94,13 +90,15 @@ internal class Synchronizer(context: Context,
     }
 
     private fun putLocalData(data: SyncData) {
-        data.events?.map { e -> dataToEvent(e) }?.apply { database.putEvents(this) }
+        data.events?.map { dataToEvent(it) }?.apply {
+            database.putEvents(this)
+        }
 
         with(settings.callFilter) {
-            phoneBlacklist = data.phoneBlacklist ?: mutableSetOf()
-            textBlacklist = data.textBlacklist ?: mutableSetOf()
-            phoneWhitelist = data.phoneWhitelist ?: mutableSetOf()
-            textWhitelist = data.textWhitelist ?: mutableSetOf()
+            phoneBlacklist = data.phoneBlacklist
+            textBlacklist = data.textBlacklist
+            phoneWhitelist = data.phoneWhitelist
+            textWhitelist = data.textWhitelist
 
             settings.edit().putFilter(this).apply()
         }
