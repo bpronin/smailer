@@ -161,10 +161,10 @@
     </plurals>
 
     <plurals name="new_history_items_count">
-        <item quantity="one">%d новая</item>
-        <item quantity="few">%d новых</item>
-        <item quantity="many">%d новых</item>
-        <item quantity="other">%d новых</item>
+        <item quantity="one">%d новая запись</item>
+        <item quantity="few">%d новых записей</item>
+        <item quantity="many">%d новых записей</item>
+        <item quantity="other">%d новых записей</item>
     </plurals>
 
     <string-array name="trigger_names">

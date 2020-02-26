@@ -10,6 +10,7 @@ abstract class BaseEditDialogFragment<V>(dialogTag: String) : BaseDialogFragment
     private var okClickedAction: ((V?) -> Unit)? = null
 
     override fun onBuildDialog(builder: AlertDialog.Builder) {
+        super.onBuildDialog(builder)
         builder
                 .setTitle(title)
                 .setPositiveButton(android.R.string.ok) { _, _ ->
