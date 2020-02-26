@@ -3,19 +3,22 @@ package com.bopr.android.smailer.ui
 import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.bopr.android.smailer.PhoneEvent
-import com.bopr.android.smailer.PhoneEvent.Companion.REASON_NUMBER_BLACKLISTED
-import com.bopr.android.smailer.PhoneEvent.Companion.REASON_TEXT_BLACKLISTED
-import com.bopr.android.smailer.PhoneEvent.Companion.REASON_TRIGGER_OFF
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
+import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
+import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
+import com.bopr.android.smailer.PhoneEvent.Companion.STATUS_NUMBER_BLACKLISTED
+import com.bopr.android.smailer.PhoneEvent.Companion.STATUS_TEXT_BLACKLISTED
+import com.bopr.android.smailer.PhoneEvent.Companion.STATUS_TRIGGER_OFF
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.util.TextUtil.formatDuration
 import com.bopr.android.smailer.util.UiUtil.eventDirectionImage
 import com.bopr.android.smailer.util.UiUtil.eventStateImage
-import com.bopr.android.smailer.util.UiUtil.eventStateText
 import com.bopr.android.smailer.util.UiUtil.eventTypeImage
 import com.bopr.android.smailer.util.UiUtil.eventTypeText
 
@@ -35,29 +38,30 @@ class HistoryDetailsDialogFragment(private val event: PhoneEvent) : BaseDialogFr
                     findViewById<TextView>(R.id.text_message).text = formatMessage(event)
                     findViewById<TextView>(R.id.text_time).text = formatTime(event.startTime)
                     findViewById<ImageView>(R.id.image_event_result).setImageResource(eventStateImage(event))
-                    findViewById<TextView>(R.id.text_result).setText(eventStateText(event))
-                    findViewById<TextView>(R.id.text_result_reason).text = formatIgnoringReason(event)
+                    findViewById<TextView>(R.id.text_result).setText(formatState(event))
                     findViewById<TextView>(R.id.text_type_title).setText(eventTypeText(event))
                     findViewById<TextView>(R.id.text_recipient).text = event.acceptor
+                    findViewById<ImageView>(R.id.image_explain_result).run {
+                        visibility = if (event.state == STATE_IGNORED) VISIBLE else GONE
+                        setOnClickListener {
+                            onExplainResult()
+                        }
+                    }
                 }
     }
 
-    private fun formatIgnoringReason(event: PhoneEvent): CharSequence? {
-        // todo make it spoiler
-        if (event.state == STATE_IGNORED) {
-            val sb = StringBuilder()
-            if (event.stateReason and REASON_NUMBER_BLACKLISTED != 0) {
-                sb.append(" (${getString(R.string.number_in_blacklist)})")
-            }
-            if (event.stateReason and REASON_TEXT_BLACKLISTED != 0) {
-                " (${getString(R.string.text_in_blacklist)})"
-            }
-            if (event.stateReason and REASON_TRIGGER_OFF != 0) {
-                " (${getString(R.string.trigger_off)})"
-            }
-            return sb
+    private fun onExplainResult() {
+        val sb = StringBuilder()
+        if (event.processStatus and STATUS_NUMBER_BLACKLISTED != 0) {
+            sb.append("(${getString(R.string.number_in_blacklist)})").append("\n")
         }
-        return null
+        if (event.processStatus and STATUS_TEXT_BLACKLISTED != 0) {
+            sb.append("(${getString(R.string.text_in_blacklist)})").append("\n")
+        }
+        if (event.processStatus and STATUS_TRIGGER_OFF != 0) {
+            sb.append("(${getString(R.string.trigger_off)})").append("\n")
+        }
+        MessageDialog(getString(R.string.ignored), sb.toString()).show(requireActivity())
     }
 
     private fun formatMessage(event: PhoneEvent): CharSequence? {
@@ -74,6 +78,19 @@ class HistoryDetailsDialogFragment(private val event: PhoneEvent) : BaseDialogFr
                 }
                 getString(pattern, formatDuration(event.callDuration))
             }
+        }
+    }
+
+    private fun formatState(event: PhoneEvent): String {
+        return when (event.state) {
+            STATE_PENDING ->
+                getString(R.string.pending)
+            STATE_PROCESSED ->
+                getString(R.string.sent_email, event.processTime?.run { formatTime(this) } ?: "???")
+            STATE_IGNORED ->
+                getString(R.string.ignored)
+            else ->
+                throw IllegalArgumentException("Unknown state")
         }
     }
 

@@ -116,21 +116,28 @@ internal class Synchronizer(context: Context,
                 details = event.details,
                 latitude = event.location?.latitude,
                 longitude = event.location?.longitude,
-                state = event.state)
+                state = event.state,
+                processStatus = event.processStatus,
+                processTime = event.processTime,
+                isRead = event.isRead
+        )
     }
 
     private fun dataToEvent(data: SyncData.Event): PhoneEvent {
         return PhoneEvent(
-                state = data.state,
                 phone = data.phone,
-                text = data.text,
                 isIncoming = data.incoming,
-                isMissed = data.missed,
                 startTime = data.startTime,
                 endTime = data.endTime,
+                isMissed = data.missed,
+                text = data.text,
+                location = coordinatesOf(data.latitude, data.longitude),
                 details = data.details,
+                state = data.state,
                 acceptor = data.recipient,
-                location = coordinatesOf(data.latitude, data.longitude)
+                isRead = data.isRead,
+                processStatus = data.processStatus,
+                processTime = data.processTime
         )
     }
 

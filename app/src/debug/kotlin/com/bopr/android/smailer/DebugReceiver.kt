@@ -24,12 +24,12 @@ class DebugReceiver : BroadcastReceiver() {
     private fun onProcessSingleEvent(context: Context) {
         val start = System.currentTimeMillis()
         startCallProcessingService(context, PhoneEvent(
-                acceptor = deviceName(),
                 phone = "5556",
-                text = "SMS TEXT",
                 isIncoming = true,
                 startTime = start,
-                endTime = start + 10000))
+                endTime = start + 10000,
+                text = "SMS TEXT",
+                acceptor = deviceName()))
     }
 
     companion object {

@@ -73,11 +73,11 @@ class ContentObserverService : Service() {
             val date = getLong("date")
             return PhoneEvent(
                     phone = getString("address")!!,
-                    acceptor = deviceName(),
                     isIncoming = false,
                     startTime = date!!,
                     endTime = date,
-                    text = getString("body")
+                    text = getString("body"),
+                    acceptor = deviceName()
             )
         }
     }

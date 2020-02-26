@@ -122,7 +122,7 @@
     <string name="sender">Отправитель</string>
     <string name="sender_account_not_found">Аккаунт отправителя не найден</string>
     <string name="sender_phone">Отправитель: %1$s (%2$s)</string>
-    <string name="sent_email">Отправлена почта</string>
+    <string name="sent_email">Почта отправлена %s</string>
     <string name="sent_time_device">Отправлено%1$s%2$s</string>
     <string name="service_account_not_found">Сервисный аккаунт не найден</string>
     <string name="service_running">Служба запущена</string>

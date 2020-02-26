@@ -6,9 +6,9 @@ import android.accounts.AccountsException
 import android.content.Context
 import com.bopr.android.smailer.Notifications.Companion.TARGET_MAIN
 import com.bopr.android.smailer.Notifications.Companion.TARGET_RECIPIENTS
-import com.bopr.android.smailer.PhoneEvent.Companion.REASON_ACCEPTED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
+import com.bopr.android.smailer.PhoneEvent.Companion.STATUS_ACCEPTED
 import com.bopr.android.smailer.Settings.Companion.PREF_DEVICE_ALIAS
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
@@ -17,13 +17,12 @@ import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
 import com.bopr.android.smailer.ui.GoogleAuthorizationHelper.Companion.getAccount
 import com.bopr.android.smailer.util.AndroidUtil.checkPermission
-import com.bopr.android.smailer.util.AndroidUtil.deviceName
 import com.bopr.android.smailer.util.ContentUtils.contactName
 import com.bopr.android.smailer.util.TextUtil.isValidEmailAddressList
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 import org.slf4j.LoggerFactory
-import java.util.*
+import java.lang.System.currentTimeMillis
 
 /**
  * Sends out email for phone events.
@@ -49,8 +48,9 @@ class CallProcessor(
         log.debug("Processing event: $event")
 
         event.location = locator.getLocation()
-        event.stateReason = settings.callFilter.test(event)
-        if (event.stateReason != REASON_ACCEPTED) {
+        event.processStatus = settings.callFilter.test(event)
+        event.processTime = currentTimeMillis()
+        if (event.processStatus != STATUS_ACCEPTED) {
             event.state = STATE_IGNORED
         } else if (startMailSession() && sendMail(event)) {
             event.state = STATE_PROCESSED
@@ -72,6 +72,7 @@ class CallProcessor(
 
             if (startMailSession()) {
                 for (event in events) {
+                    event.processTime = currentTimeMillis()
                     if (sendMail(event)) {
                         event.state = STATE_PROCESSED
                         database.putEvent(event)
@@ -101,9 +102,8 @@ class CallProcessor(
 
         return try {
             val formatter = MailFormatter(context, event,
-                    sendTime = Date(),
                     contactName = contactName(event.phone),
-                    deviceName = settings.getString(PREF_DEVICE_ALIAS) ?: deviceName(),
+                    deviceName = settings.getString(PREF_DEVICE_ALIAS) ?: event.acceptor,
                     options = settings.getStringSet(PREF_EMAIL_CONTENT),
                     serviceAccount = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT),
                     locale = settings.locale

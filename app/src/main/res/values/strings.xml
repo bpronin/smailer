@@ -124,7 +124,7 @@
     <string name="sender">Account</string>
     <string name="sender_account_not_found">Sender account not found</string>
     <string name="sender_phone">Sender: %1$s (%2$s)</string>
-    <string name="sent_email">Sent email</string>
+    <string name="sent_email">Email sent at %s</string>
     <string name="sent_time_device">Sent%1$s%2$s</string>
     <string name="service_account_not_found">Service account not found</string>
     <string name="service_running">Service running</string>

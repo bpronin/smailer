@@ -33,7 +33,6 @@ class MailFormatter(private val context: Context,
                     private val event: PhoneEvent,
                     private val contactName: String? = null,
                     private val deviceName: String? = null,
-                    private val sendTime: Date? = null,
                     private val serviceAccount: String? = null,
                     private val options: Set<String> = setOf(),
                     locale: Locale = Locale.getDefault()) {
@@ -168,8 +167,8 @@ class MailFormatter(private val context: Context,
     }
 
     private fun formatSendTime(): String {
-        return if (options.contains(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT) && sendTime != null) {
-            getString(R.string._at_time, timeFormat.format(sendTime))
+        return if (options.contains(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT) && event.processTime != null) {
+            getString(R.string._at_time, timeFormat.format(event.processTime))
         } else ""
     }
 

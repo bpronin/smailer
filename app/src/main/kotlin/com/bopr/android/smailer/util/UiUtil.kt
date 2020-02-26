@@ -105,20 +105,6 @@ object UiUtil {
         }
     }
 
-    @StringRes
-    fun eventStateText(event: PhoneEvent): Int {
-        return when (event.state) {
-            STATE_PENDING ->
-                R.string.pending
-            STATE_PROCESSED ->
-                R.string.sent_email
-            STATE_IGNORED ->
-                R.string.ignored
-            else ->
-                throw IllegalArgumentException("Unknown state")
-        }
-    }
-
     /**
      * Returns text underlined with wavy red line.
      */

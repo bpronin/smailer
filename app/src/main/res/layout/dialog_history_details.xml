@@ -112,23 +112,22 @@
 
         <TextView
             android:id="@+id/text_result"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_weight="1"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
-            android:text="Sent email" />
+            android:text="Sent email at 2017-12-13 10:45:41" />
 
-        <TextView
-            android:id="@+id/text_result_reason"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ImageView
+            android:id="@+id/image_explain_result"
+            android:layout_width="28sp"
+            android:layout_height="28sp"
             android:layout_gravity="center"
-            android:paddingStart="8dp"
-            android:paddingEnd="0dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:text="(number in blacklist)" />
+            android:contentDescription="Result"
+            android:padding="4dp"
+            app:srcCompat="@drawable/ic_help_outline" />
     </LinearLayout>
 
 

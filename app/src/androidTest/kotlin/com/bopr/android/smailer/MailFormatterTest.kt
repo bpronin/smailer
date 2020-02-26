@@ -28,7 +28,7 @@ import java.util.*
 class MailFormatterTest : BaseTest() {
 
     private lateinit var context: Context
-    private val defaultTime = GregorianCalendar(2016, 1, 2, 3, 4, 5).time
+    private val defaultTime = GregorianCalendar(2016, 1, 2, 3, 4, 5).time.time
     private val defaultCoordinates = GeoCoordinates(60.555, 30.555)
 
     @Before
@@ -50,14 +50,14 @@ class MailFormatterTest : BaseTest() {
         val event = PhoneEvent(
                 phone = "+12345678901",
                 isIncoming = true,
-                startTime = defaultTime.time,
+                startTime = defaultTime,
                 text = "Message",
                 location = defaultCoordinates,
-                acceptor = "device"
+                acceptor = "device",
+                processTime = defaultTime
         )
 
         val formatter = MailFormatter(context, event,
-                sendTime = defaultTime,
                 contactName = "John Dou",
                 deviceName = "Device",
                 serviceAccount = "service@mail.com",
@@ -186,13 +186,13 @@ class MailFormatterTest : BaseTest() {
         val event = PhoneEvent(
                 phone = "+70123456789",
                 isIncoming = true,
-                startTime = defaultTime.time,
+                startTime = defaultTime,
                 text = "Email body text",
-                acceptor = "device"
+                acceptor = "device",
+                processTime = defaultTime
         )
 
         val formatter = MailFormatter(context, event,
-                sendTime = defaultTime,
                 options = setOf(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME)
         )
 
@@ -209,11 +209,11 @@ class MailFormatterTest : BaseTest() {
                 isIncoming = true,
                 startTime = 0,
                 text = "Email body text",
-                acceptor = "device"
+                acceptor = "device",
+                processTime = defaultTime
         )
 
         val formatter = MailFormatter(context, event,
-                sendTime = defaultTime,
                 deviceName = "The Device",
                 options = setOf(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME)
         )
@@ -232,11 +232,11 @@ class MailFormatterTest : BaseTest() {
                 isIncoming = true,
                 startTime = 0,
                 text = "Email body text",
-                acceptor = "device"
+                acceptor = "device",
+                processTime = defaultTime
         )
 
         val formatter = MailFormatter(context, event,
-                sendTime = defaultTime,
                 options = setOf(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME)
         )
 
@@ -252,13 +252,13 @@ class MailFormatterTest : BaseTest() {
         val event = PhoneEvent(
                 phone = "+70123456789",
                 isIncoming = true,
-                startTime = defaultTime.time,
+                startTime = defaultTime,
                 text = "Email body text",
-                acceptor = "device"
+                acceptor = "device",
+                processTime = defaultTime
         )
 
         val formatter = MailFormatter(context, event,
-                sendTime = defaultTime,
                 deviceName = "The Device",
                 options = setOf(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
                         VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME)
@@ -278,11 +278,11 @@ class MailFormatterTest : BaseTest() {
                 startTime = 0,
                 text = "Email body text",
                 location = defaultCoordinates,
-                acceptor = "device"
+                acceptor = "device"   ,
+                processTime = defaultTime
         )
 
         val formatter = MailFormatter(context, event,
-                sendTime = defaultTime,
                 options = setOf(VAL_PREF_EMAIL_CONTENT_LOCATION)
         )
 
@@ -300,11 +300,11 @@ class MailFormatterTest : BaseTest() {
                 isIncoming = true,
                 startTime = 0,
                 text = "Email body text",
-                acceptor = "device"
+                acceptor = "device"    ,
+                processTime = defaultTime
         )
 
         val formatter = MailFormatter(context, event,
-                sendTime = defaultTime,
                 options = setOf(VAL_PREF_EMAIL_CONTENT_LOCATION)
         )
 
@@ -322,14 +322,14 @@ class MailFormatterTest : BaseTest() {
                 isIncoming = true,
                 startTime = 0,
                 text = "Email body text",
-                acceptor = "device"
+                acceptor = "device"    ,
+                processTime = defaultTime
         )
 
         whenever(context.checkPermission(eq(ACCESS_COARSE_LOCATION), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED)
         whenever(context.checkPermission(eq(ACCESS_FINE_LOCATION), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED)
 
         val formatter = MailFormatter(context, event,
-                sendTime = defaultTime,
                 options = setOf(VAL_PREF_EMAIL_CONTENT_LOCATION)
         )
 
@@ -346,11 +346,11 @@ class MailFormatterTest : BaseTest() {
                 isIncoming = true,
                 startTime = 0,
                 text = "Email body text",
-                acceptor = "device"
+                acceptor = "device"  ,
+                processTime = defaultTime
         )
 
         val formatter = MailFormatter(context, event,
-                sendTime = defaultTime,
                 contactName = "John Dou",
                 options = setOf(VAL_PREF_EMAIL_CONTENT_CONTACT)
         )
@@ -369,13 +369,13 @@ class MailFormatterTest : BaseTest() {
                 isIncoming = true,
                 startTime = 0,
                 text = "Email body text",
-                acceptor = "device"
+                acceptor = "device"     ,
+                processTime = defaultTime
         )
 
         whenever(context.checkPermission(eq(READ_CONTACTS), anyInt(), anyInt())).thenReturn(PERMISSION_DENIED)
 
         val formatter = MailFormatter(context, event,
-                sendTime = defaultTime,
                 options = setOf(VAL_PREF_EMAIL_CONTENT_CONTACT)
         )
 
@@ -393,11 +393,11 @@ class MailFormatterTest : BaseTest() {
                 isIncoming = true,
                 startTime = 0,
                 text = "Email body text",
-                acceptor = "device"
+                acceptor = "device"    ,
+                processTime = defaultTime
         )
 
         val formatter = MailFormatter(context, event,
-                sendTime = defaultTime,
                 options = setOf(VAL_PREF_EMAIL_CONTENT_CONTACT)
         )
 
@@ -412,7 +412,7 @@ class MailFormatterTest : BaseTest() {
         val event = PhoneEvent(
                 phone = "+70123456789",
                 isIncoming = true,
-                startTime = defaultTime.time,
+                startTime = defaultTime,
                 endTime = GregorianCalendar(2016, 1, 2, 4, 5, 10).time.time,
                 acceptor = "device"
         )
@@ -430,7 +430,7 @@ class MailFormatterTest : BaseTest() {
         val event = PhoneEvent(
                 phone = "+70123456789",
                 isIncoming = false,
-                startTime = defaultTime.time,
+                startTime = defaultTime,
                 endTime = GregorianCalendar(2016, 1, 2, 4, 5, 15).time.time,
                 acceptor = "device"
         )
@@ -447,7 +447,7 @@ class MailFormatterTest : BaseTest() {
     fun testMissedCallBody() {
         val event = PhoneEvent(
                 phone = "+70123456789",
-                startTime = defaultTime.time,
+                startTime = defaultTime,
                 isMissed = true,
                 acceptor = "device"
         )
@@ -465,14 +465,14 @@ class MailFormatterTest : BaseTest() {
         val event = PhoneEvent(
                 phone = "+12345678901",
                 isIncoming = true,
-                startTime = defaultTime.time,
+                startTime = defaultTime,
                 endTime = GregorianCalendar(2016, 1, 2, 4, 5, 10).time.time,
                 location = defaultCoordinates,
-                acceptor = "device"
+                acceptor = "device" ,
+                processTime = defaultTime
         )
 
         val formatter = MailFormatter(context, event,
-                sendTime = defaultTime,
                 contactName = "John Dou",
                 deviceName = "Device",
                 options = setOf(
@@ -494,14 +494,14 @@ class MailFormatterTest : BaseTest() {
         val event = PhoneEvent(
                 phone = "+12345678901",
                 isIncoming = false,
-                startTime = defaultTime.time,
+                startTime = defaultTime,
                 endTime = GregorianCalendar(2016, 1, 2, 4, 5, 10).time.time,
                 location = defaultCoordinates,
-                acceptor = "device"
+                acceptor = "device"  ,
+                processTime = defaultTime
         )
 
         val formatter = MailFormatter(context, event,
-                sendTime = defaultTime,
                 contactName = "John Dou",
                 deviceName = "Device",
                 options = setOf(VAL_PREF_EMAIL_CONTENT_CONTACT,
@@ -522,15 +522,15 @@ class MailFormatterTest : BaseTest() {
         val event = PhoneEvent(
                 phone = "+12345678901",
                 isIncoming = true,
-                startTime = defaultTime.time,
+                startTime = defaultTime,
                 endTime = GregorianCalendar(2016, 1, 2, 4, 5, 10).time.time,
                 isMissed = true,
                 location = defaultCoordinates,
-                acceptor = "device"
+                acceptor = "device"    ,
+                processTime = defaultTime
         )
 
         val formatter = MailFormatter(context, event,
-                sendTime = defaultTime,
                 deviceName = "Device",
                 options = setOf(VAL_PREF_EMAIL_CONTENT_CONTACT,
                         VAL_PREF_EMAIL_CONTENT_LOCATION,
@@ -562,11 +562,11 @@ class MailFormatterTest : BaseTest() {
                 endTime = end,
                 isMissed = true,
                 location = defaultCoordinates,
-                acceptor = "device"
+                acceptor = "device"  ,
+                processTime = defaultTime
         )
 
         var formatter = MailFormatter(context, event,
-                sendTime = defaultTime,
                 deviceName = "Device",
                 locale = Locale("ru", "ru"),
                 options = setOf(VAL_PREF_EMAIL_CONTENT_CONTACT,
@@ -580,7 +580,6 @@ class MailFormatterTest : BaseTest() {
         assertThat(formatter.formatBody(), htmlEquals("missed_call_ru.html"))
 
         formatter = MailFormatter(context, event,
-                sendTime = defaultTime,
                 deviceName = "Device",
                 locale = Locale.getDefault(),
                 options = setOf(VAL_PREF_EMAIL_CONTENT_CONTACT,
@@ -621,7 +620,7 @@ class MailFormatterTest : BaseTest() {
         val event = PhoneEvent(
                 phone = "+12345678901",
                 isIncoming = true,
-                startTime = defaultTime.time,
+                startTime = defaultTime,
                 endTime = GregorianCalendar(2016, 1, 2, 4, 5, 10).time.time,
                 text = "Message",
                 location = defaultCoordinates,

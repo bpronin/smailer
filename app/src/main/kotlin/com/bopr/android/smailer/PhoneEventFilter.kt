@@ -1,9 +1,9 @@
 package com.bopr.android.smailer
 
-import com.bopr.android.smailer.PhoneEvent.Companion.REASON_ACCEPTED
-import com.bopr.android.smailer.PhoneEvent.Companion.REASON_NUMBER_BLACKLISTED
-import com.bopr.android.smailer.PhoneEvent.Companion.REASON_TEXT_BLACKLISTED
-import com.bopr.android.smailer.PhoneEvent.Companion.REASON_TRIGGER_OFF
+import com.bopr.android.smailer.PhoneEvent.Companion.STATUS_ACCEPTED
+import com.bopr.android.smailer.PhoneEvent.Companion.STATUS_NUMBER_BLACKLISTED
+import com.bopr.android.smailer.PhoneEvent.Companion.STATUS_TEXT_BLACKLISTED
+import com.bopr.android.smailer.PhoneEvent.Companion.STATUS_TRIGGER_OFF
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
@@ -30,18 +30,18 @@ class PhoneEventFilter(
      * Tests if the filter accepts given event.
      *
      * @param event event
-     * @return [REASON_ACCEPTED] if event was accepted or reason flags otherwise
+     * @return [STATUS_ACCEPTED] if event was accepted or explanation flags otherwise
      */
     fun test(event: PhoneEvent): Int {
-        var result = REASON_ACCEPTED
+        var result = STATUS_ACCEPTED
         if (!testTrigger(event)) {
-            result = result or REASON_TRIGGER_OFF
+            result = result or STATUS_TRIGGER_OFF
         }
         if (!testPhone(event.phone)) {
-            result = result or REASON_NUMBER_BLACKLISTED
+            result = result or STATUS_NUMBER_BLACKLISTED
         }
         if (!testText(event.text)) {
-            result = result or REASON_TEXT_BLACKLISTED
+            result = result or STATUS_TEXT_BLACKLISTED
         }
         return result
     }

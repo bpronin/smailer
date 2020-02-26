@@ -90,7 +90,8 @@ class Database constructor(private val context: Context, private val name: Strin
             put(COLUMN_RECIPIENT, event.acceptor)
             put(COLUMN_START_TIME, event.startTime)
             put(COLUMN_STATE, event.state)
-            put(COLUMN_STATE_REASON, event.stateReason)
+            put(COLUMN_PROCESS_STATUS, event.processStatus)
+            put(COLUMN_PROCESS_TIME, event.processTime)
             put(COLUMN_IS_INCOMING, event.isIncoming)
             put(COLUMN_IS_MISSED, event.isMissed)
             put(COLUMN_END_TIME, event.endTime)
@@ -256,17 +257,44 @@ class Database constructor(private val context: Context, private val name: Strin
         const val COLUMN_START_TIME = "start_time"
         const val COLUMN_END_TIME = "end_time"
         const val COLUMN_STATE = "state"
-        const val COLUMN_STATE_REASON = "state_reason"
+        const val COLUMN_PROCESS_STATUS = "state_reason"
+        const val COLUMN_PROCESS_TIME = "process_time"
         const val COLUMN_LAST_LATITUDE = "last_latitude"
         const val COLUMN_LAST_LONGITUDE = "last_longitude"
         const val COLUMN_LAST_LOCATION_TIME = "last_location_time"
         const val COLUMN_READ = "message_read"
         const val COLUMN_RECIPIENT = "recipient"
 
-        private const val DB_VERSION = 5
+        private const val DB_VERSION = 7
         private const val DATABASE_EVENT = "database-event"
         private const val TABLE_SYSTEM = "system_data"
         private const val TABLE_EVENTS = "phone_events"
+
+        private const val SQL_CREATE_SYSTEM = "CREATE TABLE " + TABLE_SYSTEM + " (" +
+                COLUMN_ID + " INTEGER PRIMARY KEY, " +
+                COLUMN_PURGE_TIME + " INTEGER," +
+                COLUMN_LAST_LATITUDE + " REAL," +
+                COLUMN_LAST_LONGITUDE + " REAL," +
+                COLUMN_LAST_LOCATION_TIME + " INTEGER" +
+                ")"
+
+        private const val SQL_CREATE_EVENTS = "CREATE TABLE " + TABLE_EVENTS + " (" +
+                COLUMN_PHONE + " TEXT(25) NOT NULL," +
+                COLUMN_IS_INCOMING + " INTEGER, " +
+                COLUMN_IS_MISSED + " INTEGER, " +
+                COLUMN_START_TIME + " INTEGER NOT NULL, " +
+                COLUMN_END_TIME + " INTEGER, " +
+                COLUMN_LATITUDE + " REAL, " +
+                COLUMN_LONGITUDE + " REAL, " +
+                COLUMN_RECIPIENT + " TEXT(25) NOT NULL," +
+                COLUMN_TEXT + " TEXT(256)," +
+                COLUMN_STATE + " INTEGER, " +
+                COLUMN_PROCESS_STATUS + " INTEGER, " +
+                COLUMN_PROCESS_TIME + " INTEGER, " +
+                COLUMN_READ + " INTEGER NOT NULL DEFAULT(0), " +
+                COLUMN_DETAILS + " TEXT(256), " +
+                "PRIMARY KEY (" + COLUMN_START_TIME + ", " + COLUMN_RECIPIENT + ")" +
+                ")"
 
         fun registerDatabaseListener(context: Context, onChange: () -> Unit): BroadcastReceiver {
             val listener = object : BroadcastReceiver() {
@@ -292,30 +320,8 @@ class Database constructor(private val context: Context, private val name: Strin
     private inner class DbHelper(context: Context) : SQLiteOpenHelper(context, name, null, DB_VERSION) {
 
         override fun onCreate(db: SQLiteDatabase) {
-            db.execSQL("CREATE TABLE " + TABLE_SYSTEM + " (" +
-                    COLUMN_ID + " INTEGER PRIMARY KEY, " +
-                    COLUMN_PURGE_TIME + " INTEGER," +
-                    COLUMN_LAST_LATITUDE + " REAL," +
-                    COLUMN_LAST_LONGITUDE + " REAL," +
-                    COLUMN_LAST_LOCATION_TIME + " INTEGER" +
-                    ")")
-
-            db.execSQL("CREATE TABLE " + TABLE_EVENTS + " (" +
-                    COLUMN_STATE + " INTEGER, " +
-                    COLUMN_STATE_REASON + " INTEGER, " +
-                    COLUMN_IS_INCOMING + " INTEGER, " +
-                    COLUMN_IS_MISSED + " INTEGER, " +
-                    COLUMN_START_TIME + " INTEGER NOT NULL, " +
-                    COLUMN_END_TIME + " INTEGER, " +
-                    COLUMN_LATITUDE + " REAL, " +
-                    COLUMN_LONGITUDE + " REAL, " +
-                    COLUMN_PHONE + " TEXT(25) NOT NULL," +
-                    COLUMN_RECIPIENT + " TEXT(25) NOT NULL," +
-                    COLUMN_TEXT + " TEXT(256)," +
-                    COLUMN_READ + " INTEGER NOT NULL DEFAULT(0), " +
-                    COLUMN_DETAILS + " TEXT(256), " +
-                    "PRIMARY KEY (" + COLUMN_START_TIME + ", " + COLUMN_RECIPIENT + ")" +
-                    ")")
+            db.execSQL(SQL_CREATE_SYSTEM)
+            db.execSQL(SQL_CREATE_EVENTS)
 
             val values = ContentValues()
             values.put(COLUMN_ID, 0)
@@ -326,38 +332,28 @@ class Database constructor(private val context: Context, private val name: Strin
 
         override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) { /* see https://www.techonthenet.com/sqlite/tables/alter_table.php */
             if (oldVersion < DB_VERSION) {
-                replaceTable(db, TABLE_EVENTS, "CREATE TABLE " + TABLE_EVENTS + " (" +
-                        COLUMN_STATE + " INTEGER, " +
-                        COLUMN_STATE_REASON + " INTEGER, " +
-                        COLUMN_IS_INCOMING + " INTEGER, " +
-                        COLUMN_IS_MISSED + " INTEGER, " +
-                        COLUMN_START_TIME + " INTEGER NOT NULL, " +
-                        COLUMN_END_TIME + " INTEGER, " +
-                        COLUMN_LATITUDE + " REAL, " +
-                        COLUMN_LONGITUDE + " REAL, " +
-                        COLUMN_PHONE + " TEXT(25) NOT NULL," +
-                        COLUMN_RECIPIENT + " TEXT(25) NOT NULL," +
-                        COLUMN_TEXT + " TEXT(256)," +
-                        COLUMN_READ + " INTEGER NOT NULL DEFAULT(0), " +
-                        COLUMN_DETAILS + " TEXT(256), " +
-                        "PRIMARY KEY (" + COLUMN_START_TIME + ", " + COLUMN_RECIPIENT + ")" +
-                        ")") { column: String, cursor: Cursor ->
-                    val s = cursor.getString(cursor.getColumnIndex(column))
+                log.warn("Database upgrade from $oldVersion to: $DB_VERSION")
+                
+                replaceTable(db, TABLE_EVENTS, SQL_CREATE_EVENTS) { column: String, cursor: Cursor ->
+                    val value = cursor.getString(cursor.getColumnIndex(column))
 
                     when (column) {
                         COLUMN_STATE -> {
-                            when (s) {
-                                "PENDING" -> return@replaceTable STATE_PENDING.toString()
-                                "IGNORED" -> return@replaceTable STATE_IGNORED.toString()
-                                "PROCESSED" -> return@replaceTable STATE_PROCESSED.toString()
+                            when (value) {
+                                "PENDING" ->
+                                    return@replaceTable STATE_PENDING.toString()
+                                "IGNORED" ->
+                                    return@replaceTable STATE_IGNORED.toString()
+                                "PROCESSED" ->
+                                    return@replaceTable STATE_PROCESSED.toString()
                             }
                         }
                         COLUMN_RECIPIENT -> {
-                            return@replaceTable s ?: deviceName()
+                            return@replaceTable value ?: deviceName()
                         }
                     }
 
-                    return@replaceTable s
+                    return@replaceTable value
                 }
             }
 
@@ -384,19 +380,20 @@ class Database constructor(private val context: Context, private val name: Strin
         override fun get(): PhoneEvent {
             return PhoneEvent(
                     phone = getString(COLUMN_PHONE)!!,
-                    acceptor = getString(COLUMN_RECIPIENT)!!,
+                    isIncoming = getBoolean(COLUMN_IS_INCOMING)!!,
                     startTime = getLong(COLUMN_START_TIME)!!,
                     endTime = getLong(COLUMN_END_TIME),
-                    isIncoming = getBoolean(COLUMN_IS_INCOMING)!!,
                     isMissed = getBoolean(COLUMN_IS_MISSED)!!,
                     text = getString(COLUMN_TEXT),
-                    state = getInt(COLUMN_STATE)!!,
-                    stateReason = getInt(COLUMN_STATE_REASON)!!,
-                    details = getString(COLUMN_DETAILS),
                     location = GeoCoordinates(
                             getDouble(COLUMN_LATITUDE)!!,
                             getDouble(COLUMN_LONGITUDE)!!
                     ),
+                    details = getString(COLUMN_DETAILS),
+                    state = getInt(COLUMN_STATE)!!,
+                    acceptor = getString(COLUMN_RECIPIENT)!!,
+                    processStatus = getInt(COLUMN_PROCESS_STATUS)!!,
+                    processTime = getLong(COLUMN_PROCESS_TIME),
                     isRead = getBoolean(COLUMN_READ)!!
             )
         }

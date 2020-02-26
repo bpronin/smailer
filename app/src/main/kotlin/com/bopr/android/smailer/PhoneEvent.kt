@@ -22,7 +22,8 @@ data class PhoneEvent(
         var details: String? = null,
         @EventState var state: Int = STATE_PENDING,
         val acceptor: String,
-        var stateReason: Int = REASON_ACCEPTED,
+        var processStatus: Int = STATUS_ACCEPTED,
+        var processTime: Long? = null,
         var isRead: Boolean = false
 ) : Parcelable {
 
@@ -41,10 +42,11 @@ data class PhoneEvent(
         const val STATE_PENDING = 0
         const val STATE_PROCESSED = 1
         const val STATE_IGNORED = 2
-        const val REASON_ACCEPTED = 0
-        const val REASON_NUMBER_BLACKLISTED = 1
-        const val REASON_TEXT_BLACKLISTED = 1 shl 1
-        const val REASON_TRIGGER_OFF = 1 shl 2
+
+        const val STATUS_ACCEPTED = 0
+        const val STATUS_NUMBER_BLACKLISTED = 1
+        const val STATUS_TEXT_BLACKLISTED = 1 shl 1
+        const val STATUS_TRIGGER_OFF = 1 shl 2
     }
 
 }

@@ -9,11 +9,11 @@ import android.content.SharedPreferences
 import androidx.test.rule.GrantPermissionRule
 import com.bopr.android.smailer.Notifications.Companion.TARGET_MAIN
 import com.bopr.android.smailer.Notifications.Companion.TARGET_RECIPIENTS
-import com.bopr.android.smailer.PhoneEvent.Companion.REASON_ACCEPTED
-import com.bopr.android.smailer.PhoneEvent.Companion.REASON_TRIGGER_OFF
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
+import com.bopr.android.smailer.PhoneEvent.Companion.STATUS_ACCEPTED
+import com.bopr.android.smailer.PhoneEvent.Companion.STATUS_TRIGGER_OFF
 import com.bopr.android.smailer.Settings.Companion.DEFAULT_CONTENT
 import com.bopr.android.smailer.Settings.Companion.DEFAULT_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
@@ -59,9 +59,9 @@ class CallProcessorTest : BaseTest() {
         return PhoneEvent(
                 phone = "+123",
                 isIncoming = true,
-                isMissed = false,
                 startTime = time,
                 endTime = time + 1000,
+                isMissed = false,
                 text = text,
                 acceptor = "device"
         )
@@ -132,7 +132,7 @@ class CallProcessorTest : BaseTest() {
         assertEquals(event.startTime, savedEvent.startTime)
         assertEquals(event.phone, savedEvent.phone)
         assertEquals(STATE_PROCESSED, savedEvent.state)
-        assertEquals(REASON_ACCEPTED, savedEvent.stateReason)
+        assertEquals(STATUS_ACCEPTED, savedEvent.processStatus)
         assertEquals(GeoCoordinates(60.0, 30.0), event.location)
     }
 
@@ -153,7 +153,7 @@ class CallProcessorTest : BaseTest() {
         val savedEvent = database.events.first()!!
 
         assertEquals(STATE_IGNORED, savedEvent.state)
-        assertEquals(REASON_TRIGGER_OFF, savedEvent.stateReason)
+        assertEquals(STATUS_TRIGGER_OFF, savedEvent.processStatus)
     }
 
     /**
@@ -174,7 +174,7 @@ class CallProcessorTest : BaseTest() {
         val savedEvent = database.events.first()!!
 
         assertEquals(STATE_PENDING, savedEvent.state)
-        assertEquals(REASON_ACCEPTED, savedEvent.stateReason)
+        assertEquals(STATUS_ACCEPTED, savedEvent.processStatus)
     }
 
     /**
@@ -194,7 +194,7 @@ class CallProcessorTest : BaseTest() {
         val savedEvent = database.events.first()!!
 
         assertEquals(STATE_PENDING, savedEvent.state)
-        assertEquals(REASON_ACCEPTED, savedEvent.stateReason)
+        assertEquals(STATUS_ACCEPTED, savedEvent.processStatus)
     }
 
     /**
@@ -215,7 +215,7 @@ class CallProcessorTest : BaseTest() {
         val savedEvent = database.events.first()!!
 
         assertEquals(STATE_PENDING, savedEvent.state)
-        assertEquals(REASON_ACCEPTED, savedEvent.stateReason)
+        assertEquals(STATUS_ACCEPTED, savedEvent.processStatus)
     }
 
     /**
