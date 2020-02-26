@@ -75,7 +75,7 @@
     <string name="notifications">Notifications</string>
     <string name="notify_remote_actions">Display notification when actions are performed</string>
     <string name="notify_send_success">Display notification when email is successfully sent</string>
-    <string name="number_in_blacklist">number in blacklist</string>
+    <string name="number_in_blacklist">Number was in blacklist</string>
     <string name="open_source">Open source</string>
     <string name="open_source_and_third_party">Open source and third party software</string>
     <string name="operation_complete" >Operation complete</string>
@@ -134,7 +134,7 @@
     <string name="text_blacklist">Text blacklist</string>
     <string name="text_filter">Text filter</string>
     <string name="text_fragment">Text fragment</string>
-    <string name="text_in_blacklist">text in blacklist</string>
+    <string name="text_in_blacklist">Text was in blacklist</string>
     <string name="text_remotely_added_to_blacklist">Text \"%s\" remotely added to blacklist"</string>
     <string name="text_remotely_added_to_whitelist">Text \"%s\" remotely added to whitelist"</string>
     <string name="text_remotely_removed_from_blacklist">Text \"%s\" remotely removed from blacklist"</string>
@@ -142,7 +142,7 @@
     <string name="text_whitelist">Text whitelist</string>
     <string name="time">Time:</string>
     <string name="time_time">Time: %s</string>
-    <string name="trigger_off">trigger off</string>
+    <string name="trigger_off">Trigger was off</string>
     <string name="triggers">Triggers</string>
     <string name="unable_send_email">Unable to send email. %s</string>
     <string name="unacceptable_phone_numbers">Unacceptable phone numbers (%s)</string>

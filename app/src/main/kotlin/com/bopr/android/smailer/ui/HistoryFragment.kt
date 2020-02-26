@@ -17,9 +17,6 @@ import com.bopr.android.smailer.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.PhoneEvent
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
-import com.bopr.android.smailer.PhoneEvent.Companion.STATUS_NUMBER_BLACKLISTED
-import com.bopr.android.smailer.PhoneEvent.Companion.STATUS_TEXT_BLACKLISTED
-import com.bopr.android.smailer.PhoneEvent.Companion.STATUS_TRIGGER_OFF
 import com.bopr.android.smailer.PhoneEventFilter
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
@@ -163,10 +160,6 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
         holder.typeView.setImageResource(eventTypeImage(item))
         holder.directionView.setImageResource(eventDirectionImage(item))
         holder.stateView.setImageResource(eventStateImage(item))
-        holder.typeView.isEnabled = item.processStatus and STATUS_TRIGGER_OFF == 0
-        holder.directionView.isEnabled = item.processStatus and STATUS_TRIGGER_OFF == 0
-        holder.textView.isEnabled = item.processStatus and STATUS_TEXT_BLACKLISTED == 0
-        holder.phoneView.isEnabled = item.processStatus and STATUS_NUMBER_BLACKLISTED == 0
 
         markItemAsRead(item)
     }

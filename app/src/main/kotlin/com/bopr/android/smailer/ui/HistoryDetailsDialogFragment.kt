@@ -53,15 +53,17 @@ class HistoryDetailsDialogFragment(private val event: PhoneEvent) : BaseDialogFr
     private fun onExplainResult() {
         val sb = StringBuilder()
         if (event.processStatus and STATUS_NUMBER_BLACKLISTED != 0) {
-            sb.append("(${getString(R.string.number_in_blacklist)})").append("\n")
+            sb.append(getString(R.string.number_in_blacklist)).append("\n\n")
         }
         if (event.processStatus and STATUS_TEXT_BLACKLISTED != 0) {
-            sb.append("(${getString(R.string.text_in_blacklist)})").append("\n")
+            sb.append(getString(R.string.text_in_blacklist)).append("\n\n")
         }
         if (event.processStatus and STATUS_TRIGGER_OFF != 0) {
-            sb.append("(${getString(R.string.trigger_off)})").append("\n")
+            sb.append(getString(R.string.trigger_off)).append("\n\n")
         }
-        MessageDialog(getString(R.string.ignored), sb.toString()).show(requireActivity())
+
+        MessageDialog(getString(R.string.ignored), sb.toString())
+                .show(requireActivity())
     }
 
     private fun formatMessage(event: PhoneEvent): CharSequence? {

@@ -191,7 +191,7 @@ class PermissionsHelper(private val activity: FragmentActivity) : OnSharedPrefer
 
     private fun explainPermissions(permissions: List<String>) {
         log.debug("Explaining : $permissions")
-        MessageDialog(formatRationale(permissions)) {
+        MessageDialog(message = formatRationale(permissions)) {
             requestPermissions(permissions)
         }.show(activity)
     }

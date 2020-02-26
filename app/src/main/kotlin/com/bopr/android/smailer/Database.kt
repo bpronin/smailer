@@ -46,20 +46,26 @@ class Database constructor(private val context: Context, private val name: Strin
     var capacity: Long = 10000
 
     val events: PhoneEventRowSet
-        get() = PhoneEventRowSet(query(table = TABLE_EVENTS,
-                order = "$COLUMN_START_TIME DESC"))
+        get() = PhoneEventRowSet(query(
+                table = TABLE_EVENTS,
+                order = "$COLUMN_START_TIME DESC"
+        ))
 
     val pendingEvents: PhoneEventRowSet
-        get() = PhoneEventRowSet(query(table = TABLE_EVENTS,
+        get() = PhoneEventRowSet(query(
+                table = TABLE_EVENTS,
                 selection = "$COLUMN_STATE=?",
                 args = strings(STATE_PENDING),
-                order = "$COLUMN_START_TIME DESC"))
+                order = "$COLUMN_START_TIME DESC"
+        ))
 
     val unreadEventsCount: Long
         get() {
-            return forLong(query(table = TABLE_EVENTS,
+            return forLong(query(
+                    table = TABLE_EVENTS,
                     columns = strings(COLUMN_COUNT),
-                    selection = "$COLUMN_READ<>1"))!!
+                    selection = "$COLUMN_READ<>1"
+            ))!!
         }
 
     /**
@@ -68,9 +74,11 @@ class Database constructor(private val context: Context, private val name: Strin
      * @return location
      */
     val lastLocation: GeoCoordinates?
-        get() = GeoCoordinatesRowSet(helper.readableDatabase.query(TABLE_SYSTEM,
-                strings(COLUMN_LAST_LATITUDE, COLUMN_LAST_LONGITUDE), "$COLUMN_ID=0",
-                null, null, null, null)).first()
+        get() = GeoCoordinatesRowSet(query(
+                table = TABLE_SYSTEM,
+                columns = strings(COLUMN_LAST_LATITUDE, COLUMN_LAST_LONGITUDE),
+                selection = "$COLUMN_ID=0"
+        )).first()
 
     fun putEvent(event: PhoneEvent) {
         putEvent(event, helper.writableDatabase)
@@ -237,7 +245,7 @@ class Database constructor(private val context: Context, private val name: Strin
     }
 
     private fun strings(vararg values: Any): Array<String> {
-        return Array(values.size) { i -> values[i].toString() }
+        return Array(values.size) { values[it].toString() }
     }
 
     companion object {
@@ -333,7 +341,7 @@ class Database constructor(private val context: Context, private val name: Strin
         override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) { /* see https://www.techonthenet.com/sqlite/tables/alter_table.php */
             if (oldVersion < DB_VERSION) {
                 log.warn("Database upgrade from $oldVersion to: $DB_VERSION")
-                
+
                 replaceTable(db, TABLE_EVENTS, SQL_CREATE_EVENTS) { column: String, cursor: Cursor ->
                     val value = cursor.getString(cursor.getColumnIndex(column))
 
