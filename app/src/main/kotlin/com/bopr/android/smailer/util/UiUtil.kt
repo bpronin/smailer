@@ -151,9 +151,13 @@ object UiUtil {
                         view.visibility = VISIBLE
                     }
 
-                    override fun onAnimationRepeat(animation: Animation?) {}
+                    override fun onAnimationRepeat(animation: Animation?) {
+                        /* nothing */
+                    }
 
-                    override fun onAnimationStart(animation: Animation?) {}
+                    override fun onAnimationStart(animation: Animation?) {
+                        /* nothing */
+                    }
                 })
                 startOffset = delay
             }
@@ -173,6 +177,10 @@ object UiUtil {
                     ContextCompat.getColor(context, R.color.colorAccentText))
         }
         toast.show()
+    }
+
+    fun showToast(context: Context, @StringRes textRes: Int) {
+        showToast(context, context.getString(textRes))
     }
 
     fun Fragment.getQuantityString(@PluralsRes resId: Int, quantity: Number): String {

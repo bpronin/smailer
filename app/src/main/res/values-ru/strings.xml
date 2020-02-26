@@ -76,13 +76,13 @@
     <string name="number_in_blacklist">номер в черном списке</string>
     <string name="open_source">Открытый исходный код</string>
     <string name="open_source_and_third_party">Открытый исходный код и ПО сторонних производителей</string>
+    <string name="operation_complete">Операция выполнена</string>
     <string name="options">Опции</string>
     <string name="outgoing_call">Исходящий звонок</string>
     <string name="outgoing_call_to">Исходящий звонок на</string>
     <string name="outgoing_sms">Исходящее SMS</string>
     <string name="outgoing_sms_to">Исходящее SMS</string>
     <string name="pending">Ожидание обработки</string>
-    <string name="permissions_required_for_operation">Нет необходимых разрешений</string>
     <string name="permission_rationale_coarse_location">Чтобы отображать местоположение устройства в почтовом сообщении, необходимо разрешение \"%s\".</string>
     <string name="permission_rationale_fine_location">Чтобы отображать местоположение устройства в почтовом сообщении, необходимо разрешение \"%s\".</string>
     <string name="permission_rationale_outgoing_call">Чтобы отправлять почтовое сообщение при исходящих вызовах, необходимо разрешение \"%s\".</string>
@@ -92,6 +92,7 @@
     <string name="permission_rationale_receive_sms">Чтобы отправлять почтовое сообщение при приеме SMS, необходимо разрешение \"%s\".</string>
     <string name="permission_rationale_send_sms">Чтобы удаленно отправлять SMS сообщения, необходимо разрешение \"%s\".</string>
     <string name="permission_rationale_write_sms">Чтобы отмечать обработанные SMS как прочитанные, необходимо разрешение \"%s\".</string>
+    <string name="permissions_required_for_operation">Нет необходимых разрешений</string>
     <string name="phone_blacklist">Черный список номеров</string>
     <string name="phone_number">Телефон</string>
     <string name="phone_number_filter">Фильтр номеров</string>
@@ -113,6 +114,7 @@
     <string name="remove_from_filter">Исключить номер из правил</string>
     <string name="reply_ot_app">Ответить %s:</string>
     <string name="reset_dialogs">Сбросить состояние диалогов</string>
+    <string name="reset_dialogs_summary">Сбросить состояние всех диалогов с опцией \"Не показывать больше\"</string>
     <string name="rules">Правила</string>
     <string name="rules_for_sending">Условия для отправки почты</string>
     <string name="select_from_contacts">Выбрать из контактов</string>

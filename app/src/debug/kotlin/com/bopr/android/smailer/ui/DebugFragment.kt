@@ -187,27 +187,27 @@ class DebugFragment : BasePreferenceFragment() {
                     override fun onClick(preference: Preference) {
                         database.markAllAsRead(false)
                         database.notifyChanged()
-                        showToast(appContext, "Done")
+                        showToast(appContext, R.string.operation_complete)
                     }
                 }),
                 createPreference("Mark all as read", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
                         database.markAllAsRead(true)
                         database.notifyChanged()
-                        showToast(appContext, "Done")
+                        showToast(appContext, R.string.operation_complete)
                     }
                 }),
                 createPreference("Clear calls log", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
                         database.clearEvents()
                         database.notifyChanged()
-                        showToast(appContext, "Done")
+                        showToast(appContext, R.string.operation_complete)
                     }
                 }),
                 createPreference("Destroy database", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
                         database.destroy()
-                        showToast(appContext, "Done")
+                        showToast(appContext, R.string.operation_complete)
                     }
                 })
         )
@@ -382,7 +382,7 @@ class DebugFragment : BasePreferenceFragment() {
                 .putString(PREF_FILTER_PHONE_BLACKLIST, commaJoin(setOf("+123456789", "+9876543*")))
                 .putString(PREF_FILTER_TEXT_BLACKLIST, commaJoin(setOf("Bad text", escapeRegex("Expression"))))
                 .apply()
-        showToast(appContext, "Done")
+        showToast(appContext, R.string.operation_complete)
     }
 
     private fun onGetContact() {
@@ -403,18 +403,18 @@ class DebugFragment : BasePreferenceFragment() {
 
     private fun onClearPreferences() {
         settings.edit().clear().apply()
-        showToast(appContext, "Done")
+        showToast(appContext, R.string.operation_complete)
     }
 
     private fun onResetPreferences() {
         settings.loadDefaults()
-        showToast(appContext, "Done")
+        showToast(appContext, R.string.operation_complete)
     }
 
     private fun onProcessServiceMail() {
         if (settings.getBoolean(PREF_REMOTE_CONTROL_ENABLED, false)) {
             RemoteControlService.startRemoteControlService(appContext)
-            showToast(appContext, "Done")
+            showToast(appContext, R.string.operation_complete)
         } else {
             showToast(appContext, "Feature disabled")
         }
@@ -429,12 +429,12 @@ class DebugFragment : BasePreferenceFragment() {
         val event = PhoneEvent("5556", true, start, start + 10000, false,
                 "SMS TEXT", null, null, STATE_PENDING, deviceName(), REASON_ACCEPTED, false)
         startCallProcessingService(appContext, event)
-        showToast(appContext, "Done")
+        showToast(appContext, R.string.operation_complete)
     }
 
     private fun onStartProcessPendingEvents() {
         PendingCallProcessorService.startPendingCallProcessorService(appContext)
-        showToast(appContext, "Done")
+        showToast(appContext, R.string.operation_complete)
     }
 
     private fun onRequireReceiveSmsPermission() {
@@ -465,7 +465,7 @@ class DebugFragment : BasePreferenceFragment() {
         database.putEvent(PhoneEvent("+79052345670", true, System.currentTimeMillis(), null, false,
                 "Debug message", null, null, STATE_PENDING, deviceName(), REASON_ACCEPTED, false))
         database.notifyChanged()
-        showToast(appContext, "Done")
+        showToast(appContext, R.string.operation_complete)
     }
 
     private fun onPopulateHistory() {
@@ -482,7 +482,7 @@ class DebugFragment : BasePreferenceFragment() {
         database.putEvent(PhoneEvent("+79052345674", false, 1000.let { time += it; time }, time + 10000, false, null, null, "Test exception +79052345674", STATE_PENDING, recipient, REASON_ACCEPTED, false))
         database.putEvent(PhoneEvent("+79052345675", true, 1000.let { time += it; time }, time + 10000, true, null, null, "Test exception +79052345675", STATE_PENDING, recipient, REASON_ACCEPTED, false))
         database.notifyChanged()
-        showToast(appContext, "Done")
+        showToast(appContext, R.string.operation_complete)
     }
 
     private fun onShowConcurrent() {
@@ -511,7 +511,7 @@ class DebugFragment : BasePreferenceFragment() {
             drive.clear()
             null
         })
-        showToast(appContext, "Done")
+        showToast(appContext, R.string.operation_complete)
     }
 
     private fun onGoogleDriveSync() {
@@ -523,7 +523,7 @@ class DebugFragment : BasePreferenceFragment() {
             }
             null
         })
-        showToast(appContext, "Done")
+        showToast(appContext, R.string.operation_complete)
     }
 
     private fun onGoogleDriveDownload() {
@@ -536,7 +536,7 @@ class DebugFragment : BasePreferenceFragment() {
                 }
                 null
             })
-            showToast(appContext, "Done")
+            showToast(appContext, R.string.operation_complete)
         }.show(requireActivity())
     }
 
@@ -545,7 +545,7 @@ class DebugFragment : BasePreferenceFragment() {
             Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
                 try {
                     Synchronizer(appContext, primaryAccount(requireContext())!!, database).upload()
-                    showToast(appContext, "Done")
+                    showToast(appContext, R.string.operation_complete)
                 } catch (x: Throwable) {
                     log.error("Upload error: ", x)
                 }

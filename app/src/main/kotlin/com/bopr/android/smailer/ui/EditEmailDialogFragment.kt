@@ -39,7 +39,7 @@ class EditEmailDialogFragment : BaseEditDialogFragment<String>("edit_recipient_d
             if (checkPermission(context, READ_CONTACTS)) {
                 startActivityForResult(createPickContactIntent(), PICK_CONTACT_REQUEST)
             } else {
-                showToast(context, getString(R.string.permissions_required_for_operation))
+                showToast(context, R.string.permissions_required_for_operation)
             }
         }
 

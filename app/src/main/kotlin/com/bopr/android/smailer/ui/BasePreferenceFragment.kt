@@ -10,7 +10,6 @@ import androidx.preference.*
 import com.bopr.android.smailer.PermissionsHelper
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.ui.BatteryOptimizationHelper.BATTERY_OPTIMIZATION_DIALOG_TAG
 import com.bopr.android.smailer.util.UiUtil.accentedText
 import com.bopr.android.smailer.util.UiUtil.underwivedText
 
@@ -59,12 +58,6 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPref
         when (item.itemId) {
             R.id.action_about ->
                 AboutDialogFragment().show(requireActivity())
-            R.id.action_reset_dialogs -> {
-                Settings(requireContext())
-                            .edit()
-                            .remove(BATTERY_OPTIMIZATION_DIALOG_TAG)
-                            .apply()
-            }
         }
         return super.onOptionsItemSelected(item)
     }

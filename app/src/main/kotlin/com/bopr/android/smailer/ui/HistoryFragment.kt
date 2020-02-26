@@ -251,13 +251,12 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
     }
 
     inner class Holder(view: View) : ViewHolder(view) {
+
         val typeView: ImageView = view.findViewById(R.id.list_item_type)
         val directionView: ImageView = view.findViewById(R.id.list_item_direction)
         val phoneView: TextView = view.findViewById(R.id.list_item_phone)
         val timeView: TextView = view.findViewById(R.id.list_item_time)
         val textView: TextView = view.findViewById(R.id.list_item_text)
         val stateView: ImageView = view.findViewById(R.id.list_item_state)
-
     }
-
 }

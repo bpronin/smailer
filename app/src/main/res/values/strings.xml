@@ -78,6 +78,7 @@
     <string name="number_in_blacklist">number in blacklist</string>
     <string name="open_source">Open source</string>
     <string name="open_source_and_third_party">Open source and third party software</string>
+    <string name="operation_complete" >Operation complete</string>
     <string name="options">Options</string>
     <string name="outgoing_call">Outgoing call</string>
     <string name="outgoing_call_to">Outgoing call to</string>
@@ -115,6 +116,7 @@
     <string name="remove_from_filter">Remove number from all rules</string>
     <string name="reply_ot_app">Reply to %s:</string>
     <string name="reset_dialogs">Reset dialogs</string>
+    <string name="reset_dialogs_summary">Reset all dialogs with \"Don\'t show again\" option</string>
     <string name="rules">Rules</string>
     <string name="rules_for_sending">Rules for sending email</string>
     <string name="select_from_contacts">Select from contacts</string>

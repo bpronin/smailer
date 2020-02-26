@@ -3,6 +3,7 @@ package com.bopr.android.smailer.ui
 import androidx.fragment.app.FragmentActivity
 import com.bopr.android.smailer.GoogleMail
 import com.bopr.android.smailer.MailMessage
+import com.bopr.android.smailer.R
 import com.bopr.android.smailer.ui.GoogleAuthorizationHelper.Companion.primaryAccount
 import com.bopr.android.smailer.util.AndroidUtil.deviceName
 import com.bopr.android.smailer.util.UiUtil.showToast
@@ -38,7 +39,7 @@ internal class SendDebugMailTask(activity: FragmentActivity, private val propert
         if (result != null) {
             InfoDialog(message = result.toString()).show(activity)
         } else {
-            showToast(activity, "Done")
+            showToast(activity, R.string.operation_complete)
         }
     }
 
