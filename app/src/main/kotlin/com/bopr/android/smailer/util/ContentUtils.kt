@@ -11,6 +11,8 @@ import android.provider.ContactsContract.CommonDataKinds.Phone
 import android.provider.ContactsContract.Contacts
 import android.provider.ContactsContract.PhoneLookup
 import androidx.annotation.RequiresPermission
+import com.bopr.android.smailer.util.db.DbUtil.getInt
+import com.bopr.android.smailer.util.db.DbUtil.getString
 
 object ContentUtils {
 
@@ -20,7 +22,7 @@ object ContentUtils {
         var result: String? = null
         context.contentResolver.query(uri, arrayOf(PhoneLookup.DISPLAY_NAME), null, null, null)?.use {
             if (it.moveToFirst()) {
-                result = it.getString(it.getColumnIndex(PhoneLookup.DISPLAY_NAME))
+                result = it.getString(PhoneLookup.DISPLAY_NAME)
             }
         }
         return result
@@ -37,7 +39,7 @@ object ContentUtils {
         var result: String? = null
         context.contentResolver.query(uri, null, null, null, null)?.use {
             if (it.moveToFirst()) {
-                val hasPhone = it.getInt(it.getColumnIndex(Contacts.HAS_PHONE_NUMBER))
+                val hasPhone = it.getInt(Contacts.HAS_PHONE_NUMBER)
                 if (hasPhone == 1) {
                     val id = it.getString(it.getColumnIndexOrThrow(Contacts._ID))
                     result = retrievePhone(context, id)
@@ -65,7 +67,7 @@ object ContentUtils {
         context.contentResolver.query(Phone.CONTENT_URI, null, "${Phone.CONTACT_ID} = $contactId",
                 null, null)?.use {
             if (it.moveToFirst()) {
-                result = it.getString(it.getColumnIndex(Phone.DATA))
+                result = it.getString(Phone.DATA)
             }
         }
         return result
@@ -76,7 +78,7 @@ object ContentUtils {
         context.contentResolver.query(Email.CONTENT_URI, null, "${Email.CONTACT_ID}=$contactId",
                 null, null)?.use {
             if (it.moveToFirst()) {
-                result = it.getString(it.getColumnIndex(Email.DATA))
+                result = it.getString(Email.DATA)
             }
         }
         return result

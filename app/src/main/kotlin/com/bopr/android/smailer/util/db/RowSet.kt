@@ -1,6 +1,11 @@
 package com.bopr.android.smailer.util.db
 
 import android.database.Cursor
+import com.bopr.android.smailer.util.db.DbUtil.getDouble
+import com.bopr.android.smailer.util.db.DbUtil.getInt
+import com.bopr.android.smailer.util.db.DbUtil.getLong
+import com.bopr.android.smailer.util.db.DbUtil.getString
+import com.bopr.android.smailer.util.db.DbUtil.isNull
 
 /**
  * [Cursor] wrapper.
@@ -43,11 +48,11 @@ abstract class RowSet<R>(private val cursor: Cursor) {
     }
 
     protected fun isNull(columnName: String): Boolean {
-        return cursor.isNull(cursor.getColumnIndex(columnName))
+        return cursor.isNull(columnName)
     }
 
     protected fun getString(columnName: String): String? {
-        return cursor.getString(cursor.getColumnIndex(columnName))
+        return cursor.getString(columnName)
     }
 
     protected fun getBoolean(columnName: String): Boolean? {
@@ -55,15 +60,15 @@ abstract class RowSet<R>(private val cursor: Cursor) {
     }
 
     protected fun getInt(columnName: String): Int? {
-        return cursor.getInt(cursor.getColumnIndex(columnName))
+        return cursor.getInt(columnName)
     }
 
     protected fun getLong(columnName: String): Long? {
-        return cursor.getLong(cursor.getColumnIndex(columnName))
+        return cursor.getLong(columnName)
     }
 
     protected fun getDouble(columnName: String): Double? {
-        return cursor.getDouble(cursor.getColumnIndex(columnName))
+        return cursor.getDouble(columnName)
     }
 
     companion object {

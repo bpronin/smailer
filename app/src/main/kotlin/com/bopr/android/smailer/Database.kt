@@ -11,6 +11,7 @@ import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.util.AndroidUtil.deviceName
 import com.bopr.android.smailer.util.db.DbUtil.batch
+import com.bopr.android.smailer.util.db.DbUtil.getString
 import com.bopr.android.smailer.util.db.DbUtil.replaceTable
 import com.bopr.android.smailer.util.db.RowSet
 import com.bopr.android.smailer.util.db.RowSet.Companion.forLong
@@ -343,7 +344,7 @@ class Database constructor(private val context: Context, private val name: Strin
                 log.warn("Database upgrade from $oldVersion to: $DB_VERSION")
 
                 replaceTable(db, TABLE_EVENTS, SQL_CREATE_EVENTS) { column: String, cursor: Cursor ->
-                    val value = cursor.getString(cursor.getColumnIndex(column))
+                    val value = cursor.getString(column)
 
                     when (column) {
                         COLUMN_STATE -> {

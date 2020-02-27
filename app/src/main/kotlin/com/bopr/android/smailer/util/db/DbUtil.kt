@@ -61,4 +61,24 @@ object DbUtil {
         }
     }
 
+    fun Cursor.isNull(column: String): Boolean {
+        return isNull(getColumnIndex(column))
+    }
+
+    fun Cursor.getString(column: String): String? {
+        return getString(getColumnIndex(column))
+    }
+
+    fun Cursor.getInt(column: String): Int {
+        return getInt(getColumnIndex(column))
+    }
+
+    fun Cursor.getLong(column: String): Long {
+        return getLong(getColumnIndex(column))
+    }
+
+    fun Cursor.getDouble(column: String): Double {
+        return getDouble(getColumnIndex(column))
+    }
+
 }
