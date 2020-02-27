@@ -5,9 +5,4 @@ package com.bopr.android.smailer.ui
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class DebugActivity : BaseActivity() {
-
-    override fun createFragment(): DebugFragment {
-        return DebugFragment()
-    }
-}
+class DebugActivity : BaseActivity(DebugFragment::class)

@@ -2,6 +2,8 @@ package com.bopr.android.smailer.ui
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.fragment.app.Fragment
+import kotlin.reflect.KClass
 
 /**
  * Main application activity. Individual in different build variants.
@@ -10,7 +12,7 @@ import android.os.Bundle
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-abstract class MainAppActivity : BaseAppActivity(){
+abstract class MainAppActivity(fragmentClass: KClass<out Fragment>) : BaseAppActivity(fragmentClass) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

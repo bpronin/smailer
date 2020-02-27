@@ -3,7 +3,6 @@ package com.bopr.android.smailer.ui
 import android.app.backup.BackupManager
 import android.content.SharedPreferences
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import com.bopr.android.smailer.ContentObserverService.Companion.enableContentObserver
 import com.bopr.android.smailer.Environment.setupEnvironment
 import com.bopr.android.smailer.Settings
@@ -17,14 +16,10 @@ import com.bopr.android.smailer.sync.SyncEngine.onSyncEngineSettingsChanged
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class MainActivity : MainAppActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
+class MainActivity : MainAppActivity(MainFragment::class), SharedPreferences.OnSharedPreferenceChangeListener {
 
     private lateinit var settings: Settings
     private lateinit var backupManager: BackupManager
-
-    override fun createFragment(): Fragment {
-        return MainFragment()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

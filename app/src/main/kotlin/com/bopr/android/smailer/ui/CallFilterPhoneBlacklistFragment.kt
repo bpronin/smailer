@@ -1,11 +1,13 @@
 package com.bopr.android.smailer.ui
 
+import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_BLACKLIST
+
 /**
  * Phone filter list activity fragment.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class CallFilterPhoneListFragment(settingName: String) : CallFilterListFragment(settingName) {
+class CallFilterPhoneBlacklistFragment() : CallFilterListFragment(PREF_FILTER_PHONE_BLACKLIST) {
 
     override fun createEditDialog(): BaseEditDialogFragment<String> {
         return EditPhoneDialogFragment()

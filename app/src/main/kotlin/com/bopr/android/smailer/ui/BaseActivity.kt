@@ -7,13 +7,14 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.bopr.android.smailer.R
+import kotlin.reflect.KClass
 
 /**
  * Base Activity with default behaviour.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-abstract class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity(private val fragmentClass: KClass<out Fragment>) : AppCompatActivity() {
 
     private var fragment: Fragment? = null
 
@@ -26,15 +27,13 @@ abstract class BaseActivity : AppCompatActivity() {
 
         fragment = fragmentManager.findFragmentByTag(TAG_FRAGMENT)
         if (fragment == null) {
-            fragment = createFragment()
+            fragment = fragmentClass.java.newInstance()
             fragmentManager
                     .beginTransaction()
                     .replace(R.id.content, fragment!!, TAG_FRAGMENT)
                     .commit()
         }
     }
-
-    protected abstract fun createFragment(): Fragment
 
     protected fun setHomeButtonEnabled(enabled: Boolean) {
         supportActionBar?.setDisplayHomeAsUpEnabled(enabled)

@@ -255,8 +255,10 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
                 event.text
             event.isMissed ->
                 getString(R.string.missed_call)
+            event.isIncoming ->
+                getString(R.string.incoming_call_of, formatDuration(event.callDuration))
             else ->
-                getString(R.string.call_of_duration_short, formatDuration(event.callDuration))
+                getString(R.string.outgoing_call_of, formatDuration(event.callDuration))
         }
     }
 

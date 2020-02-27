@@ -1,5 +1,6 @@
 package com.bopr.android.smailer.ui
 
+import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_BLACKLIST
 import com.bopr.android.smailer.util.TextUtil.unescapeRegex
 
 /**
@@ -7,7 +8,7 @@ import com.bopr.android.smailer.util.TextUtil.unescapeRegex
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class CallFilterTextListFragment(settingName: String) : CallFilterListFragment(settingName) {
+class CallFilterTextBlacklistFragment : CallFilterListFragment(PREF_FILTER_TEXT_BLACKLIST) {
 
     override fun createEditDialog(): BaseEditDialogFragment<String> {
         return EditTextDialogFragment()

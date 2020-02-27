@@ -1,5 +1,8 @@
 package com.bopr.android.smailer.ui
 
+import androidx.fragment.app.Fragment
+import kotlin.reflect.KClass
+
 /**
  * Base application activity. Individual in different build variants.
  *
@@ -7,4 +10,4 @@ package com.bopr.android.smailer.ui
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-abstract class BaseAppActivity : BaseActivity()
+abstract class BaseAppActivity(fragmentClass: KClass<out Fragment>) : BaseActivity(fragmentClass)
