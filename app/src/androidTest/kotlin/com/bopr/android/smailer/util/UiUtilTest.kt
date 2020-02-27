@@ -22,7 +22,7 @@ class UiUtilTest : BaseTest() {
      */
     @Test
     fun testUnderwivedText() {
-        val spannable = underwivedText(targetContext, "Invalid text")
+        val spannable = targetContext.underwivedText("Invalid text")
         assertThat(spannable, instanceOf<Any>(SpannableString::class.java))
 
         val span = spannable.getSpans(0, spannable.length, Any::class.java)[0]
@@ -34,7 +34,7 @@ class UiUtilTest : BaseTest() {
      */
     @Test
     fun testAccentedTextText() {
-        val spannable = accentedText(targetContext, "Invalid text")
+        val spannable = targetContext.accentedText("Invalid text")
         assertThat(spannable, instanceOf<Any>(SpannableString::class.java))
 
         val span = spannable.getSpans(0, spannable.length, Any::class.java)[0]

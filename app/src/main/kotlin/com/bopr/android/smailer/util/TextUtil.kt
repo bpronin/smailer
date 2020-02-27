@@ -76,11 +76,10 @@ object TextUtil {
         }
     }
 
-    fun readStream(stream: InputStream?): String? {
-        return stream?.let {
-            with(Scanner(stream).useDelimiter("\\A")) {
-                return if (hasNext()) return next() else ""
-            }
+    fun readStream(stream: InputStream): String {
+        /* \A =	The beginning of the input */
+        return Scanner(stream).useDelimiter("\\A").use {
+            if (it.hasNext()) return it.next() else ""
         }
     }
 

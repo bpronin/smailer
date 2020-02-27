@@ -11,6 +11,7 @@ import com.bopr.android.smailer.util.TextUtil.isValidEmailAddress
 import com.bopr.android.smailer.util.TextUtil.isValidEmailAddressList
 import com.bopr.android.smailer.util.TextUtil.readStream
 import com.bopr.android.smailer.util.TextUtil.unescapeRegex
+import com.google.api.client.testing.util.TestableByteArrayInputStream
 import org.junit.Assert.*
 import org.junit.Test
 import java.io.ByteArrayInputStream
@@ -81,9 +82,10 @@ class TextUtilTest {
 
     @Test
     fun testReadStream() {
-        assertEquals("ABC", readStream(ByteArrayInputStream("ABC".toByteArray())))
+        val stream = TestableByteArrayInputStream("ABC".toByteArray())
+        assertEquals("ABC", readStream(stream))
+        assertTrue(stream.isClosed)
         assertEquals("", readStream(ByteArrayInputStream("".toByteArray())))
-        assertNull(readStream(null))
     }
 
     @Test
