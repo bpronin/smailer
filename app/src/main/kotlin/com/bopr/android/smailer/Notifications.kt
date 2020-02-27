@@ -2,7 +2,6 @@ package com.bopr.android.smailer
 
 import android.app.*
 import android.app.Notification.*
-import android.app.NotificationManager.IMPORTANCE_HIGH
 import android.app.NotificationManager.IMPORTANCE_LOW
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
@@ -35,7 +34,7 @@ class Notifications(private val context: Context) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             manager.createNotificationChannel(NotificationChannel(statusChannelId,
-                    context.getString(R.string.status), IMPORTANCE_HIGH))
+                    context.getString(R.string.status), IMPORTANCE_LOW))
             manager.createNotificationChannel(NotificationChannel(notificationsChannelId,
                     context.getString(R.string.notifications), IMPORTANCE_LOW))
         }

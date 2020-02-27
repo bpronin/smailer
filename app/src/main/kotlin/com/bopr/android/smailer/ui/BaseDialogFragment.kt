@@ -8,8 +8,9 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
 
-abstract class BaseDialogFragment(private val fragmentTag: String) : DialogFragment() {
+abstract class BaseDialogFragment(private val fragmentTag: String?) : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,6 +25,14 @@ abstract class BaseDialogFragment(private val fragmentTag: String) : DialogFragm
             dialog = builder.create()
         }
         return dialog
+    }
+
+    override fun show(manager: FragmentManager, tag: String?) {
+        try {
+            super.show(manager, tag)
+        } catch (x: IllegalStateException) {
+            /* workaround for issue: https://issuetracker.google.com/issues/36938035 */
+        }
     }
 
     open fun onBuildDialog(builder: AlertDialog.Builder) {

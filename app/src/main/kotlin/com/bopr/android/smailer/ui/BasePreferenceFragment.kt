@@ -33,7 +33,6 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPref
     }
 
     override fun onDestroy() {
-        permissionsHelper.dispose()
         settings.unregisterOnSharedPreferenceChangeListener(this)
         super.onDestroy()
     }
@@ -64,6 +63,7 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPref
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         updatePreferenceViews()
+        permissionsHelper.onSharedPreferenceChanged(key)
     }
 
     private fun updatePreferenceViews() {

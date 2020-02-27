@@ -2,8 +2,6 @@ package com.bopr.android.smailer
 
 import android.Manifest.permission.*
 import android.content.Context
-import android.content.SharedPreferences
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
@@ -18,7 +16,7 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
-import com.bopr.android.smailer.ui.MessageDialog
+import com.bopr.android.smailer.ui.InfoDialog
 import com.bopr.android.smailer.util.AndroidUtil.permissionLabel
 import com.bopr.android.smailer.util.UiUtil.showToast
 import org.slf4j.LoggerFactory
@@ -29,22 +27,12 @@ import java.util.*
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class PermissionsHelper(private val activity: FragmentActivity) : OnSharedPreferenceChangeListener {
+class PermissionsHelper(val activity: FragmentActivity) {
 
     private val log = LoggerFactory.getLogger("PermissionsHelper")
     private val requestResultCode = nextRequestResult++
     private val settings: Settings = Settings(activity)
     private var onComplete: (() -> Unit)? = null
-
-    init {
-        settings.registerOnSharedPreferenceChangeListener(this)
-    }
-
-    fun dispose() {
-        settings.unregisterOnSharedPreferenceChangeListener(this)
-
-        log.debug("Disposed")
-    }
 
     fun checkAll(onComplete: (() -> Unit)) {
         log.debug("Checking all")
@@ -54,7 +42,7 @@ class PermissionsHelper(private val activity: FragmentActivity) : OnSharedPrefer
     }
 
     /**
-     * To be added into activity's onRequestPermissionsResult()
+     * To be added into owners's onRequestPermissionsResult()
      */
     fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (requestCode == requestResultCode) {
@@ -79,7 +67,10 @@ class PermissionsHelper(private val activity: FragmentActivity) : OnSharedPrefer
         }
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+    /**
+     * To be added into owners's onSharedPreferenceChanged()
+     */
+    fun onSharedPreferenceChanged(key: String) {
         log.debug("Handling preference changed: $key")
 
         val requiredPermissions: MutableSet<String> = HashSet()
@@ -191,7 +182,8 @@ class PermissionsHelper(private val activity: FragmentActivity) : OnSharedPrefer
 
     private fun explainPermissions(permissions: List<String>) {
         log.debug("Explaining : $permissions")
-        MessageDialog(message = formatRationale(permissions)) {
+
+        InfoDialog(message = formatRationale(permissions)) {
             requestPermissions(permissions)
         }.show(activity)
     }
@@ -205,7 +197,7 @@ class PermissionsHelper(private val activity: FragmentActivity) : OnSharedPrefer
     }
 
     private fun onComplete() {
-        onComplete?.invoke().also { onComplete = null }
+//        onComplete?.invoke().also { onComplete = null }
     }
 
     companion object {
