@@ -87,8 +87,10 @@ class HistoryDetailsDialogFragment(private val event: PhoneEvent) : BaseDialogFr
         return when (event.state) {
             STATE_PENDING ->
                 getString(R.string.pending)
-            STATE_PROCESSED ->
+            STATE_PROCESSED -> {
+                //todo sowtbreak before time
                 getString(R.string.sent_email, event.processTime?.run { formatTime(this) } ?: "???")
+            }
             STATE_IGNORED ->
                 getString(R.string.ignored)
             else ->

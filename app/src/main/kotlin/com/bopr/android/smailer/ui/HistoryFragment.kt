@@ -38,6 +38,7 @@ import com.bopr.android.smailer.util.UiUtil.showToast
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
+//todo grouping by number
 class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferenceChangeListener {
 
     private lateinit var database: Database
@@ -189,6 +190,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
     private fun onMarkAllAsRead() {
         database.markAllAsRead(true)
         database.notifyChanged()
+        showToast(R.string.operation_complete)
     }
 
     private fun onAddToBlacklist() {
