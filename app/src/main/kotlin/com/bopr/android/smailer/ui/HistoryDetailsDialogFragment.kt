@@ -10,7 +10,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bopr.android.smailer.PhoneEvent
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
-import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATUS_NUMBER_BLACKLISTED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATUS_TEXT_BLACKLISTED
@@ -19,6 +18,7 @@ import com.bopr.android.smailer.R
 import com.bopr.android.smailer.util.TextUtil.formatDuration
 import com.bopr.android.smailer.util.UiUtil.eventDirectionImage
 import com.bopr.android.smailer.util.UiUtil.eventStateImage
+import com.bopr.android.smailer.util.UiUtil.eventStateText
 import com.bopr.android.smailer.util.UiUtil.eventTypeImage
 import com.bopr.android.smailer.util.UiUtil.eventTypeText
 
@@ -38,9 +38,13 @@ class HistoryDetailsDialogFragment(private val event: PhoneEvent) : BaseDialogFr
                     findViewById<TextView>(R.id.text_message).text = formatMessage(event)
                     findViewById<TextView>(R.id.text_time).text = formatTime(event.startTime)
                     findViewById<ImageView>(R.id.image_event_result).setImageResource(eventStateImage(event))
-                    findViewById<TextView>(R.id.text_result).setText(formatState(event))
+                    findViewById<TextView>(R.id.text_result).setText(eventStateText(event))
                     findViewById<TextView>(R.id.text_type_title).setText(eventTypeText(event))
                     findViewById<TextView>(R.id.text_recipient).text = event.acceptor
+                    findViewById<TextView>(R.id.text_result_time).run {
+                        visibility = if (event.state == STATE_PROCESSED) VISIBLE else GONE
+                        setText(formatProcessTime(event))
+                    }
                     findViewById<ImageView>(R.id.image_explain_result).run {
                         visibility = if (event.state == STATE_IGNORED) VISIBLE else GONE
                         setOnClickListener {
@@ -83,18 +87,9 @@ class HistoryDetailsDialogFragment(private val event: PhoneEvent) : BaseDialogFr
         }
     }
 
-    private fun formatState(event: PhoneEvent): String {
-        return when (event.state) {
-            STATE_PENDING ->
-                getString(R.string.pending)
-            STATE_PROCESSED -> {
-                //todo sowtbreak before time
-                getString(R.string.sent_email, event.processTime?.run { formatTime(this) } ?: "???")
-            }
-            STATE_IGNORED ->
-                getString(R.string.ignored)
-            else ->
-                throw IllegalArgumentException("Unknown state")
+    private fun formatProcessTime(event: PhoneEvent): CharSequence? {
+        return event.processTime?.run {
+            getString(R.string.processed_at, formatTime(this))
         }
     }
 

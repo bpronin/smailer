@@ -3,16 +3,16 @@
     android:fillAfter="true">
     <scale
         android:duration="400"
+        android:interpolator="@android:anim/accelerate_interpolator"
         android:fromXScale="0.0"
         android:fromYScale="0.0"
-        android:interpolator="@android:anim/accelerate_interpolator"
         android:toXScale="1.0"
+        android:toYScale="1.0"
         android:pivotX="50%"
-        android:pivotY="50%"
-        android:toYScale="1.0" />
+        android:pivotY="50%" />
     <alpha
         android:fromAlpha="0.0"
         android:toAlpha="1.0"
         android:interpolator="@android:anim/accelerate_interpolator"
-        android:duration="400"/>
+        android:duration="400" />
 </set>

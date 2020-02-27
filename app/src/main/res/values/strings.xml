@@ -105,6 +105,7 @@
     <string name="phone_removed_from_filter">%1$s removed from filter</string>
     <string name="phone_whitelist">Phone whitelist</string>
     <string name="proceed">Proceed</string>
+    <string name="processed_at">at: %s</string>
     <string name="recipient_already_exists">Recipient %1$s is already exists</string>
     <string name="recipient_device">Recipient:</string>
     <string name="recipients">Recipients</string>
@@ -124,7 +125,7 @@
     <string name="sender">Account</string>
     <string name="sender_account_not_found">Sender account not found</string>
     <string name="sender_phone">Sender: %1$s (%2$s)</string>
-    <string name="sent_email">Email sent at %s</string>
+    <string name="sent_email">Email sent</string>
     <string name="sent_time_device">Sent%1$s%2$s</string>
     <string name="service_account_not_found">Service account not found</string>
     <string name="service_running">Service running</string>
@@ -150,8 +151,8 @@
     <string name="undo">Undo</string>
     <string name="unknown_contact">Unknown contact</string>
     <string name="user_password_not_accepted">Username and password not accepted.</string>
-    <string name="what_email_contains">What should the email include</string>
-    <string name="when_send_email">When email should be sent</string>
+    <string name="what_email_contains">What information should the email include</string>
+    <string name="when_send_email">Under which conditions the email should be sent</string>
     <string name="whitelist">Whitelist</string>
     <string name="you_had_incoming_call">You had an incoming call of %s duration.</string>
     <string name="you_had_missed_call">You had a missed call.</string>

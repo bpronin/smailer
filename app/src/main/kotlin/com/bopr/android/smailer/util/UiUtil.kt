@@ -8,6 +8,7 @@ import android.text.style.CharacterStyle
 import android.text.style.ForegroundColorSpan
 import android.text.style.ParagraphStyle
 import android.view.View
+import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils.loadAnimation
@@ -76,6 +77,20 @@ object UiUtil {
         }
     }
 
+    @StringRes
+    fun eventStateText(event: PhoneEvent): Int {
+        return when (event.state) {
+            STATE_PENDING ->
+                R.string.pending
+            STATE_PROCESSED ->
+                R.string.sent_email
+            STATE_IGNORED ->
+                R.string.ignored
+            else ->
+                throw IllegalArgumentException("Unknown state")
+        }
+    }
+
     @DrawableRes
     fun eventDirectionImage(event: PhoneEvent): Int {
         return when {
@@ -105,24 +120,25 @@ object UiUtil {
     fun View.showAnimated(@AnimRes animationRes: Int, delay: Long) {
         if (visibility != VISIBLE) {
             clearAnimation()
-            val animation = loadAnimation(getContext(), animationRes).apply {
+            val animation = loadAnimation(context, animationRes).apply {
+                startOffset = delay
+
                 setAnimationListener(object : Animation.AnimationListener {
 
-                    override fun onAnimationEnd(animation: Animation?) {
+                    override fun onAnimationStart(animation: Animation?) {
                         visibility = VISIBLE
+                    }
+
+                    override fun onAnimationEnd(animation: Animation?) {
+                        /* nothing */
                     }
 
                     override fun onAnimationRepeat(animation: Animation?) {
                         /* nothing */
                     }
-
-                    override fun onAnimationStart(animation: Animation?) {
-                        /* nothing */
-                    }
                 })
-                startOffset = delay
             }
-
+            visibility = INVISIBLE /* to properly animate coordinates ensure it is not GONE here */
             startAnimation(animation)
         }
     }

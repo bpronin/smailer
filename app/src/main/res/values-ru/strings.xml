@@ -103,6 +103,7 @@
     <string name="phone_removed_from_filter">%1$s удален из фильтра</string>
     <string name="phone_whitelist">Белый список номеров</string>
     <string name="proceed">Продолжить</string>
+    <string name="processed_at">%s</string>
     <string name="recipient_already_exists">Получатель %1$s уже существует</string>
     <string name="recipient_device">Адресат:</string>
     <string name="recipients">Получатели</string>
@@ -122,7 +123,7 @@
     <string name="sender">Отправитель</string>
     <string name="sender_account_not_found">Аккаунт отправителя не найден</string>
     <string name="sender_phone">Отправитель: %1$s (%2$s)</string>
-    <string name="sent_email">Почта отправлена %s</string>
+    <string name="sent_email">Почта отправлена</string>
     <string name="sent_time_device">Отправлено%1$s%2$s</string>
     <string name="service_account_not_found">Сервисный аккаунт не найден</string>
     <string name="service_running">Служба запущена</string>

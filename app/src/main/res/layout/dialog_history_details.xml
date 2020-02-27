@@ -50,40 +50,48 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingTop="4dp"
+        android:paddingBottom="2dp">
 
         <TextView
             android:id="@+id/text_recipient_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="4dp"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
             android:text="@string/recipient_device" />
 
         <TextView
             android:id="@+id/text_recipient"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="4dp"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
             android:text="+79052309442" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingTop="2dp"
+        android:paddingBottom="4dp">
 
         <TextView
             android:id="@+id/text_time_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="4dp"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
             android:text="@string/time" />
 
         <TextView
             android:id="@+id/text_time"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="4dp"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
             android:text="2017-12-13 10:45:41" />
     </LinearLayout>
 
@@ -91,7 +99,10 @@
         android:id="@+id/text_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp"
+        android:paddingStart="8dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="16dp"
         android:text="Message body"
         android:textStyle="bold" />
 
@@ -105,26 +116,41 @@
             android:id="@+id/image_event_result"
             android:layout_width="28sp"
             android:layout_height="28sp"
-            android:layout_gravity="center"
             android:contentDescription="Result"
             android:padding="4dp"
             app:srcCompat="@drawable/ic_state_block" />
 
-        <TextView
-            android:id="@+id/text_result"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:layout_weight="1"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:text="Sent email at 2017-12-13 10:45:41" />
+            android:orientation="vertical"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp">
+
+            <TextView
+                android:id="@+id/text_result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                android:paddingBottom="2dp"
+                android:text="Sent email" />
+
+            <TextView
+                android:id="@+id/text_result_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="4dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="4dp"
+                android:text="at 2017-12-13 10:45:41" />
+        </LinearLayout>
 
         <ImageView
             android:id="@+id/image_explain_result"
             android:layout_width="28sp"
             android:layout_height="28sp"
-            android:layout_gravity="center"
             android:contentDescription="Result"
             android:padding="4dp"
             app:srcCompat="@drawable/ic_help_outline" />
