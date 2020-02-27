@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager.LayoutParams
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
@@ -23,19 +22,8 @@ abstract class BaseDialogFragment(private val fragmentTag: String) : DialogFragm
             val builder = AlertDialog.Builder(requireContext())
             onBuildDialog(builder)
             dialog = builder.create()
-
-            /* this is to show soft keyboard when dialog is open */
-            dialog.window?.setSoftInputMode(LayoutParams.SOFT_INPUT_STATE_VISIBLE)
         }
         return dialog
-    }
-
-    override fun onDestroyView() {
-        /* this avoids disappearing on rotation */
-        if (dialog != null && retainInstance) {
-            dialog!!.setDismissMessage(null)
-        }
-        super.onDestroyView()
     }
 
     open fun onBuildDialog(builder: AlertDialog.Builder) {

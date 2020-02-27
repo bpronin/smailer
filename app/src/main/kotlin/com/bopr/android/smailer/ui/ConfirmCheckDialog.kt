@@ -1,11 +1,11 @@
 package com.bopr.android.smailer.ui
 
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
@@ -36,12 +36,10 @@ class ConfirmCheckDialog(title: String? = null,
         return container
     }
 
-    override fun onBuildDialog(builder: AlertDialog.Builder) {
-        super.onBuildDialog(builder)
-        builder.setOnDismissListener {
-            val settings = Settings(requireContext())
-            settings.edit().putBoolean(dialogTag, checkBox.isChecked).apply()
-        }
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        Settings(requireContext())
+                .edit().putBoolean(dialogTag, checkBox.isChecked).apply()
     }
 
     override fun show(activity: FragmentActivity) {

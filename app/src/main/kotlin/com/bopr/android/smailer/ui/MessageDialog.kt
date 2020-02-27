@@ -1,5 +1,6 @@
 package com.bopr.android.smailer.ui
 
+import android.content.DialogInterface
 import androidx.appcompat.app.AlertDialog
 
 class MessageDialog(private val title: String? = null,
@@ -12,7 +13,11 @@ class MessageDialog(private val title: String? = null,
 
         builder.setTitle(title)
         builder.setMessage(message)
-        builder.setOnDismissListener { dismissAction?.invoke() }
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        dismissAction?.invoke()
     }
 
 }
