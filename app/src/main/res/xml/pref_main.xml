@@ -27,32 +27,16 @@
         />
     </androidx.preference.Preference>
 
-    <androidx.preference.MultiSelectListPreference
-        android:dialogTitle="@string/email_message_content"
-        android:entries="@array/email_content_names"
-        android:entryValues="@array/email_content_values"
-        android:icon="@drawable/ic_content"
-        android:key="email_content"
-        android:summary="@string/what_email_contains"
-        android:title="@string/email_content" />
-
-    <androidx.preference.EditTextPreference
-        android:dialogMessage="@string/device_name_to_show"
-        android:icon="@drawable/ic_device"
-        android:inputType="textNoSuggestions"
-        android:key="device_alias"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/device_name" />
-
-    <androidx.preference.ListPreference
-        android:dialogTitle="@string/email_language"
-        android:entries="@array/language_names"
-        android:entryValues="@array/email_locale_values"
-        android:icon="@drawable/ic_language"
-        android:key="email_locale"
-        android:title="@string/email_message_language" />
+    <androidx.preference.Preference
+        android:icon="@drawable/ic_state_done"
+        android:key="email"
+        android:title="@string/email_message"
+        android:summary="@string/email_message_summary">
+        <intent
+            android:targetClass="com.bopr.android.smailer.ui.EmailSettingsActivity"
+            android:targetPackage="com.bopr.android.smailer" />
+        />
+    </androidx.preference.Preference>
 
     <androidx.preference.Preference
         android:icon="@drawable/ic_remote"

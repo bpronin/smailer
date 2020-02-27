@@ -43,8 +43,10 @@
     <string name="email_address">Email address</string>
     <string name="email_content">Email content</string>
     <string name="email_language">Email language</string>
+    <string name="email_message">Email message</string>
     <string name="email_message_content">Email message content</string>
     <string name="email_message_language">Email message language</string>
+    <string name="email_message_summary">Email message settings</string>
     <string name="email_successfully_send">Email successfully sent</string>
     <string name="enabled">Enabled</string>
     <string name="enter_phone_number">Enter phone number. You also may use * as a wildcard.</string>

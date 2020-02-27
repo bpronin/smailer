@@ -41,8 +41,10 @@
     <string name="email_address">Почтовый адрес</string>
     <string name="email_content">Содержание</string>
     <string name="email_language">Язык почтового сообщения</string>
+    <string name="email_message">Почтовое сообщение</string>
     <string name="email_message_content">Влючать в почтовое сообщение</string>
     <string name="email_message_language">Язык почтового сообщения</string>
+    <string name="email_message_summary">Настройки почтового сообщения</string>
     <string name="email_successfully_send">Почта успешно отправлена.</string>
     <string name="enabled">Включено</string>
     <string name="enter_phone_number">Укажите номер телефона. Допустимо использование символа * для пропуска группы знаков</string>

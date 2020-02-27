@@ -4,20 +4,15 @@ import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import androidx.preference.EditTextPreference
-import androidx.preference.ListPreference
 import com.bopr.android.smailer.Database
 import com.bopr.android.smailer.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings.Companion.PREF_DEVICE_ALIAS
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_LOCALE
 import com.bopr.android.smailer.Settings.Companion.PREF_HISTORY
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
-import com.bopr.android.smailer.util.AndroidUtil.deviceName
 import com.bopr.android.smailer.util.TextUtil.isValidEmailAddressList
 import com.bopr.android.smailer.util.UiUtil.getQuantityString
 import com.google.api.services.drive.DriveScopes
@@ -40,10 +35,6 @@ class MainFragment : BasePreferenceFragment() {
         requirePreference(PREF_SENDER_ACCOUNT).setOnPreferenceClickListener {
             authorizator.startAccountSelectorActivity()
             true
-        }
-
-        findPreference<EditTextPreference>(PREF_DEVICE_ALIAS)!!.setOnBindEditTextListener { editText ->
-            editText.hint = deviceName()
         }
     }
 
@@ -73,8 +64,6 @@ class MainFragment : BasePreferenceFragment() {
 
         updateAccountPreferenceView()
         updateRecipientsPreferenceView()
-        updateDeviceNamePreferenceView()
-        updateLocalePreferenceView()
         updateHistoryPreferenceView()
         updateRemoteControlPreferenceView()
     }
@@ -91,10 +80,6 @@ class MainFragment : BasePreferenceFragment() {
                 updateAccountPreferenceView()
             PREF_RECIPIENTS_ADDRESS ->
                 updateRecipientsPreferenceView()
-            PREF_DEVICE_ALIAS ->
-                updateDeviceNamePreferenceView()
-            PREF_EMAIL_LOCALE ->
-                updateLocalePreferenceView()
             PREF_REMOTE_CONTROL_ENABLED ->
                 updateRemoteControlPreferenceView()
         }
@@ -132,29 +117,6 @@ class MainFragment : BasePreferenceFragment() {
             updateSummary(preference, getQuantityString(R.plurals.new_history_items_count, count), SUMMARY_STYLE_DEFAULT)
         } else {
             updateSummary(preference, getString(R.string.no_new_history_items), SUMMARY_STYLE_DEFAULT)
-        }
-    }
-
-    private fun updateLocalePreferenceView() {
-        val preference = findPreference<ListPreference>(PREF_EMAIL_LOCALE)!!
-        val value = settings.getString(preference.key)
-
-        val index = preference.findIndexOfValue(value)
-        if (index < 0) {
-            updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)
-        } else {
-            updateSummary(preference, preference.entries[index], SUMMARY_STYLE_DEFAULT)
-        }
-    }
-
-    private fun updateDeviceNamePreferenceView() {
-        val preference = requirePreference(PREF_DEVICE_ALIAS)
-        val alias = settings.getString(preference.key)
-
-        if (alias == null) {
-            updateSummary(preference, deviceName(), SUMMARY_STYLE_DEFAULT)
-        } else {
-            updateSummary(preference, alias, SUMMARY_STYLE_DEFAULT)
         }
     }
 
