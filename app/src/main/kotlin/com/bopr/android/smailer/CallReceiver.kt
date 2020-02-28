@@ -133,6 +133,7 @@ class CallReceiver : BroadcastReceiver() {
     }
 
     companion object {
+
         const val SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED"
 
         private var lastCallNumber: String? = null
