@@ -1,6 +1,6 @@
 package com.bopr.android.smailer
 
-import android.Manifest.permission
+import android.Manifest.permission.READ_CONTACTS
 import android.content.Context
 import android.content.res.Resources
 import android.text.TextUtils.htmlEncode
@@ -137,7 +137,7 @@ class MailFormatter(private val context: Context,
             val phoneLink = "<a href=\"tel:$phoneUrl\" style=\"text-decoration: none\">&#9742;</a>${event.phone}"
 
             val contact = if (contactName.isNullOrEmpty()) {
-                if (checkPermission(context, permission.READ_CONTACTS)) {
+                if (context.checkPermission(READ_CONTACTS)) {
                     "<a href=\"https://www.google.com/search?q=$phoneUrl\">" +
                             "${getString(R.string.unknown_contact)}</a>"
                 } else {

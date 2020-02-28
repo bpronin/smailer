@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import com.bopr.android.smailer.util.TextUtil.capitalize
 
 object AndroidUtil {
@@ -14,13 +15,17 @@ object AndroidUtil {
      *
      * @see <a href="https://stackoverflow.com/questions/36031218/check-android-permissions-in-a-method">here</a>
      */
-    fun checkPermission(context: Context, vararg permissions: String): Boolean {
+    fun Context.checkPermission(vararg permissions: String): Boolean {
         for (p in permissions) {
-            if (ContextCompat.checkSelfPermission(context, p) != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(this, p) != PackageManager.PERMISSION_GRANTED) {
                 return false
             }
         }
         return true
+    }
+
+    fun Fragment.checkPermission(vararg permissions: String): Boolean {
+        return requireContext().checkPermission(*permissions)
     }
 
     /**

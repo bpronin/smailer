@@ -1,7 +1,5 @@
 package com.bopr.android.smailer.sync
 
-import android.Manifest.permission.GET_ACCOUNTS
-import android.accounts.Account
 import android.content.BroadcastReceiver
 import android.content.ContentResolver.*
 import android.content.Context
@@ -15,7 +13,6 @@ import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_WHITELIST
 import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_TIME
 import com.bopr.android.smailer.sync.AppContentProvider.Companion.AUTHORITY
 import com.bopr.android.smailer.ui.GoogleAuthorizationHelper.Companion.primaryAccount
-import com.bopr.android.smailer.util.AndroidUtil.checkPermission
 import org.slf4j.LoggerFactory
 import java.lang.System.currentTimeMillis
 
@@ -62,15 +59,6 @@ object SyncEngine {
             PREF_FILTER_TEXT_WHITELIST -> {
                 updateMetadata(context)
             }
-        }
-    }
-
-    private fun account(context: Context): Account? {
-        return if (checkPermission(context, GET_ACCOUNTS)) {
-            primaryAccount(context)
-        } else {
-            log.debug("Required permissions not granted")
-            null
         }
     }
 

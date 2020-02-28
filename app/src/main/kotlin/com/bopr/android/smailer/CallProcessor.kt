@@ -164,10 +164,10 @@ class CallProcessor(
     }
 
     private fun contactName(phone: String): String? {
-        return if (checkPermission(context, READ_CONTACTS)) {
+        return if (context.checkPermission(READ_CONTACTS)) {
             contactName(context, phone)
         } else {
-            log.warn("Required permission denied")
+            log.warn("Permission denied")
             null
         }
     }

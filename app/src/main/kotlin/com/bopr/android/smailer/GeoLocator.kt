@@ -61,7 +61,7 @@ class GeoLocator(private val context: Context, private val database: Database) {
 
     private fun getCurrentLocation(timeout: Long): GeoCoordinates? {
         if (!isLocationPermissionsGranted(context)) {
-            log.warn("Unable to read current location. Permission denied.")
+            log.warn("Permission denied")
             return null
         }
 
@@ -90,7 +90,7 @@ class GeoLocator(private val context: Context, private val database: Database) {
 
     private fun getLastLocation(timeout: Long): GeoCoordinates? {
         if (!isLocationPermissionsGranted(context)) {
-            log.warn("Unable to read last location. Permission denied.")
+            log.warn("Permission denied")
             return null
         }
 
@@ -126,7 +126,7 @@ class GeoLocator(private val context: Context, private val database: Database) {
         private const val DEFAULT_TIMEOUT = 1000
 
         fun isLocationPermissionsGranted(context: Context): Boolean {
-            return checkPermission(context, ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION)
+            return context.checkPermission(ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION)
         }
     }
 

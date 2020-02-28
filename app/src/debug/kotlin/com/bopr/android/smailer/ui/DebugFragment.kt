@@ -1,6 +1,6 @@
 package com.bopr.android.smailer.ui
 
-import android.Manifest.permission
+import android.Manifest.permission.READ_CONTACTS
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
@@ -13,8 +13,6 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.telephony.SmsManager.*
 import android.text.InputType
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceScreen
@@ -187,27 +185,27 @@ class DebugFragment : BasePreferenceFragment() {
                     override fun onClick(preference: Preference) {
                         database.markAllAsRead(false)
                         database.notifyChanged()
-                        showToast( R.string.operation_complete)
+                        showToast(R.string.operation_complete)
                     }
                 }),
                 createPreference("Mark all as read", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
                         database.markAllAsRead(true)
                         database.notifyChanged()
-                        showToast( R.string.operation_complete)
+                        showToast(R.string.operation_complete)
                     }
                 }),
                 createPreference("Clear calls log", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
                         database.clearEvents()
                         database.notifyChanged()
-                        showToast( R.string.operation_complete)
+                        showToast(R.string.operation_complete)
                     }
                 }),
                 createPreference("Destroy database", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
                         database.destroy()
-                        showToast( R.string.operation_complete)
+                        showToast(R.string.operation_complete)
                     }
                 })
         )
@@ -215,16 +213,6 @@ class DebugFragment : BasePreferenceFragment() {
                 createPreference("Request gmail api permission", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
                         onRequestGooglePermission()
-                    }
-                }),
-                createPreference("Require Sms permission", object : DefaultClickListener() {
-                    override fun onClick(preference: Preference) {
-                        onRequireReceiveSmsPermission()
-                    }
-                }),
-                createPreference("Request Sms permission", object : DefaultClickListener() {
-                    override fun onClick(preference: Preference) {
-                        onRequestSmsPermission()
                     }
                 })
         )
@@ -382,41 +370,41 @@ class DebugFragment : BasePreferenceFragment() {
                 .putString(PREF_FILTER_PHONE_BLACKLIST, commaJoin(setOf("+123456789", "+9876543*")))
                 .putString(PREF_FILTER_TEXT_BLACKLIST, commaJoin(setOf("Bad text", escapeRegex("Expression"))))
                 .apply()
-        showToast( R.string.operation_complete)
+        showToast(R.string.operation_complete)
     }
 
     private fun onGetContact() {
-        if (checkPermission(requireContext(), permission.READ_CONTACTS)) {
+        if (checkPermission(READ_CONTACTS)) {
             InputDialog(
                     title = "Phone number",
                     inputType = InputType.TYPE_CLASS_PHONE,
                     positiveAction = {
                         val contact = contactName(appContext, it)
                         val text = if (contact != null) "$it: $contact" else "Contact not found"
-                        showToast( text)
+                        showToast(text)
                     }
             ).show(requireActivity())
         } else {
-            showToast( "No permission")
+            showToast("Permission denied")
         }
     }
 
     private fun onClearPreferences() {
         settings.edit().clear().apply()
-        showToast( R.string.operation_complete)
+        showToast(R.string.operation_complete)
     }
 
     private fun onResetPreferences() {
         settings.loadDefaults()
-        showToast( R.string.operation_complete)
+        showToast(R.string.operation_complete)
     }
 
     private fun onProcessServiceMail() {
         if (settings.getBoolean(PREF_REMOTE_CONTROL_ENABLED, false)) {
             RemoteControlService.startRemoteControlService(appContext)
-            showToast( R.string.operation_complete)
+            showToast(R.string.operation_complete)
         } else {
-            showToast( "Feature disabled")
+            showToast("Feature disabled")
         }
     }
 
@@ -429,25 +417,12 @@ class DebugFragment : BasePreferenceFragment() {
         val event = PhoneEvent("5556", true, start, start + 10000, false,
                 "SMS TEXT", null, null, STATE_PENDING, deviceName(), STATUS_ACCEPTED, isRead = false)
         startCallProcessingService(appContext, event)
-        showToast( R.string.operation_complete)
+        showToast(R.string.operation_complete)
     }
 
     private fun onStartProcessPendingEvents() {
         PendingCallProcessorService.startPendingCallProcessorService(appContext)
-        showToast( R.string.operation_complete)
-    }
-
-    private fun onRequireReceiveSmsPermission() {
-        if (ContextCompat.checkSelfPermission(appContext, permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED) {
-            appContext.enforceCallingOrSelfPermission(permission.RECEIVE_SMS, "Testing SMS permission")
-        } else {
-            showToast( "SMS PERMISSION DENIED")
-        }
-    }
-
-    private fun onRequestSmsPermission() {
-        ActivityCompat.requestPermissions(requireActivity(), arrayOf(permission.RECEIVE_SMS),
-                PERMISSIONS_REQUEST_RECEIVE_SMS)
+        showToast(R.string.operation_complete)
     }
 
     private fun onClearLogs() {
@@ -458,14 +433,14 @@ class DebugFragment : BasePreferenceFragment() {
                 log.warn("Cannot delete file")
             }
         }
-        showToast( "Removed ${logs.size} log files")
+        showToast("Removed ${logs.size} log files")
     }
 
     private fun onAddHistoryItem() {
         database.putEvent(PhoneEvent("+79052345670", true, System.currentTimeMillis(), null, false,
                 "Debug message", null, null, STATE_PENDING, deviceName(), STATUS_ACCEPTED, isRead = false))
         database.notifyChanged()
-        showToast( R.string.operation_complete)
+        showToast(R.string.operation_complete)
     }
 
     private fun onPopulateHistory() {
@@ -482,7 +457,7 @@ class DebugFragment : BasePreferenceFragment() {
         database.putEvent(PhoneEvent("+79052345674", false, 1000.let { time += it; time }, time + 10000, false, null, null, "Test exception +79052345674", STATE_PENDING, recipient, STATUS_ACCEPTED, isRead = false))
         database.putEvent(PhoneEvent("+79052345675", true, 1000.let { time += it; time }, time + 10000, true, null, null, "Test exception +79052345675", STATE_PENDING, recipient, STATUS_ACCEPTED, isRead = false))
         database.notifyChanged()
-        showToast( R.string.operation_complete)
+        showToast(R.string.operation_complete)
     }
 
     private fun onShowConcurrent() {
@@ -511,7 +486,7 @@ class DebugFragment : BasePreferenceFragment() {
             drive.clear()
             null
         })
-        showToast( R.string.operation_complete)
+        showToast(R.string.operation_complete)
     }
 
     private fun onGoogleDriveSync() {
@@ -523,7 +498,7 @@ class DebugFragment : BasePreferenceFragment() {
             }
             null
         })
-        showToast( R.string.operation_complete)
+        showToast(R.string.operation_complete)
     }
 
     private fun onGoogleDriveDownload() {
@@ -536,7 +511,7 @@ class DebugFragment : BasePreferenceFragment() {
                 }
                 null
             })
-            showToast( R.string.operation_complete)
+            showToast(R.string.operation_complete)
         }.show(requireActivity())
     }
 
@@ -545,7 +520,7 @@ class DebugFragment : BasePreferenceFragment() {
             Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
                 try {
                     Synchronizer(appContext, primaryAccount(requireContext())!!, database).upload()
-                    showToast( R.string.operation_complete)
+                    showToast(R.string.operation_complete)
                 } catch (x: Throwable) {
                     log.error("Upload error: ", x)
                 }
@@ -566,7 +541,7 @@ class DebugFragment : BasePreferenceFragment() {
                         getDefault().sendTextMessage(it, null, "Debug message", sentIntent, deliveredIntent)
                     } catch (x: Throwable) {
                         log.error("Failed: ", x)
-                        showToast( "Failed")
+                        showToast("Failed")
                     }
                 }
         )

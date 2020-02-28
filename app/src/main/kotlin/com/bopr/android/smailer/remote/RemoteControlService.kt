@@ -236,7 +236,7 @@ class RemoteControlService : JobIntentService() {
     }
 
     private fun sendSms(message: String?, phone: String?) {
-        if (checkPermission(this, SEND_SMS)) {
+        if (checkPermission(SEND_SMS)) {
             with(SmsManager.getDefault()) {
                 sendMultipartTextMessage(phone, null, divideMessage(message), null, null)
             }
@@ -244,7 +244,7 @@ class RemoteControlService : JobIntentService() {
             log.debug("Sent SMS: $message to $phone")
         } else {
             notifications.showError(permissionRationale(this, SEND_SMS), TARGET_REMOTE_CONTROL)
-            log.warn("No required permission")
+            log.warn("Permission denied")
         }
     }
 

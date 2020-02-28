@@ -13,6 +13,7 @@ import com.bopr.android.smailer.util.AndroidUtil.checkPermission
 import com.bopr.android.smailer.util.ContentUtils.createPickContactIntent
 import com.bopr.android.smailer.util.ContentUtils.emailFromIntent
 import com.bopr.android.smailer.util.UiUtil.showToast
+import org.slf4j.LoggerFactory
 
 /**
  * Email editor dialog.
@@ -21,6 +22,7 @@ import com.bopr.android.smailer.util.UiUtil.showToast
  */
 class EditEmailDialogFragment : BaseEditDialogFragment<String>("edit_recipient_dialog") {
 
+    private val log = LoggerFactory.getLogger("EditEmailDialogFragment")
     private lateinit var editText: TextView
     private var initialValue: String? = null
 
@@ -35,8 +37,7 @@ class EditEmailDialogFragment : BaseEditDialogFragment<String>("edit_recipient_d
         view.findViewById<TextView>(android.R.id.message).setText(R.string.email_address)
 
         view.findViewById<View>(R.id.button_browse_contacts).setOnClickListener {
-            val context = requireContext()
-            if (checkPermission(context, READ_CONTACTS)) {
+            if (checkPermission(READ_CONTACTS)) {
                 startActivityForResult(createPickContactIntent(), PICK_CONTACT_REQUEST)
             } else {
                 showToast(R.string.permissions_required_for_operation)
@@ -55,9 +56,12 @@ class EditEmailDialogFragment : BaseEditDialogFragment<String>("edit_recipient_d
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        if (checkPermission(requireContext(), READ_CONTACTS) &&
-                requestCode == PICK_CONTACT_REQUEST && resultCode == RESULT_OK) {
-            editText.text = emailFromIntent(requireContext(), intent)
+        if (checkPermission(READ_CONTACTS)) {
+            if (requestCode == PICK_CONTACT_REQUEST && resultCode == RESULT_OK) {
+                editText.text = emailFromIntent(requireContext(), intent)
+            }
+        } else {
+            log.warn("Permission denied")
         }
     }
 
