@@ -6,7 +6,7 @@ import com.bopr.android.smailer.MailMessage
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.ui.GoogleAuthorizationHelper.Companion.primaryAccount
 import com.bopr.android.smailer.util.AndroidUtil.deviceName
-import com.bopr.android.smailer.util.UiUtil.showToast
+import com.bopr.android.smailer.util.showToast
 import com.google.api.services.gmail.GmailScopes
 import java.util.*
 

@@ -58,7 +58,7 @@ import com.bopr.android.smailer.util.AndroidUtil.deviceName
 import com.bopr.android.smailer.util.ContentUtils.contactName
 import com.bopr.android.smailer.util.TextUtil.commaJoin
 import com.bopr.android.smailer.util.TextUtil.escapeRegex
-import com.bopr.android.smailer.util.UiUtil.showToast
+import com.bopr.android.smailer.util.showToast
 import com.google.android.gms.tasks.Tasks
 import com.google.api.services.drive.DriveScopes
 import com.google.api.services.gmail.GmailScopes

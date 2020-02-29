@@ -3,7 +3,6 @@ package com.bopr.android.smailer
 import android.Manifest.permission.*
 import android.content.Context
 import android.content.pm.PackageManager
-import android.os.Build
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
@@ -17,7 +16,7 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
 import com.bopr.android.smailer.ui.InfoDialog
 import com.bopr.android.smailer.util.AndroidUtil.permissionLabel
-import com.bopr.android.smailer.util.UiUtil.showToast
+import com.bopr.android.smailer.util.showToast
 import org.slf4j.LoggerFactory
 import java.util.*
 
@@ -79,10 +78,11 @@ class PermissionsHelper(val fragment: Fragment) {
                 if (triggers.contains(VAL_PREF_TRIGGER_OUT_SMS)) {
                     requiredPermissions.add(READ_SMS)
                 }
-                if (triggers.contains(VAL_PREF_TRIGGER_IN_CALLS) ||
-                        triggers.contains(VAL_PREF_TRIGGER_MISSED_CALLS)) {
+                if (triggers.contains(VAL_PREF_TRIGGER_IN_CALLS)
+                        || triggers.contains(VAL_PREF_TRIGGER_OUT_CALLS)
+                        || triggers.contains(VAL_PREF_TRIGGER_MISSED_CALLS)) {
                     requiredPermissions.add(READ_PHONE_STATE)
-                    if (WANTS_CALL_LOG) requiredPermissions.add(READ_CALL_LOG)
+                    requiredPermissions.add(READ_CALL_LOG)
                 }
                 if (triggers.contains(VAL_PREF_TRIGGER_OUT_CALLS)) {
                     requiredPermissions.add(PROCESS_OUTGOING_CALLS)
@@ -120,6 +120,7 @@ class PermissionsHelper(val fragment: Fragment) {
                     || deniedPermissions.contains(READ_CALL_LOG)) {
                 triggers.remove(VAL_PREF_TRIGGER_IN_CALLS)
                 triggers.remove(VAL_PREF_TRIGGER_MISSED_CALLS)
+                triggers.remove(VAL_PREF_TRIGGER_OUT_CALLS)
             }
             if (deniedPermissions.contains(PROCESS_OUTGOING_CALLS)) {
                 triggers.remove(VAL_PREF_TRIGGER_OUT_CALLS)
@@ -189,27 +190,23 @@ class PermissionsHelper(val fragment: Fragment) {
 
     companion object {
 
-        private val WANTS_CALL_LOG = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M //todo check it
+        private var nextRequestResult = 200
 
         private val items: Map<String, Int> = sortedMapOf(
                 RECEIVE_SMS to R.string.permission_rationale_receive_sms,
                 SEND_SMS to R.string.permission_rationale_send_sms,
                 READ_SMS to R.string.permission_rationale_read_sms,
                 READ_PHONE_STATE to R.string.permission_rationale_phone_state,
+                READ_CALL_LOG to R.string.permission_rationale_phone_state,
                 PROCESS_OUTGOING_CALLS to R.string.permission_rationale_outgoing_call,
                 READ_CONTACTS to R.string.permission_rationale_read_contacts,
                 ACCESS_COARSE_LOCATION to R.string.permission_rationale_coarse_location,
                 ACCESS_FINE_LOCATION to R.string.permission_rationale_fine_location
-        ).apply {
-            if (WANTS_CALL_LOG) put(READ_CALL_LOG, R.string.permission_rationale_phone_state)
-        }
+        )
 
         fun permissionRationale(context: Context, permission: String): String {
             return context.getString(items.getValue(permission), permissionLabel(context, permission))
         }
-
-        private var nextRequestResult = 200
     }
-
 
 }

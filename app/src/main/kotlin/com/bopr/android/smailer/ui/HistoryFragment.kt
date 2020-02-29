@@ -30,8 +30,8 @@ import com.bopr.android.smailer.util.TextUtil.formatDuration
 import com.bopr.android.smailer.util.UiUtil.eventDirectionImage
 import com.bopr.android.smailer.util.UiUtil.eventStateImage
 import com.bopr.android.smailer.util.UiUtil.eventTypeImage
-import com.bopr.android.smailer.util.UiUtil.getColorFromAttr
-import com.bopr.android.smailer.util.UiUtil.showToast
+import com.bopr.android.smailer.util.getColorFromAttr
+import com.bopr.android.smailer.util.showToast
 
 /**
  * Application activity log activity fragment.

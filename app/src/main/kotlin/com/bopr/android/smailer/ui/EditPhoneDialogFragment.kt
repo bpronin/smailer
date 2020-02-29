@@ -12,7 +12,7 @@ import com.bopr.android.smailer.R
 import com.bopr.android.smailer.util.AndroidUtil.checkPermission
 import com.bopr.android.smailer.util.ContentUtils.createPickContactIntent
 import com.bopr.android.smailer.util.ContentUtils.phoneFromIntent
-import com.bopr.android.smailer.util.UiUtil.showToast
+import com.bopr.android.smailer.util.showToast
 import org.slf4j.LoggerFactory
 
 /**

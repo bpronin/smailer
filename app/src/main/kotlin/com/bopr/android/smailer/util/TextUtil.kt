@@ -1,5 +1,6 @@
 package com.bopr.android.smailer.util
 
+import android.os.Bundle
 import android.util.Patterns.EMAIL_ADDRESS
 import java.io.InputStream
 import java.util.*
@@ -98,4 +99,15 @@ object TextUtil {
         }
         return false
     }
+
+}
+
+fun Bundle?.toParamString(): String {
+    val sb = StringBuilder()
+    this?.run {
+        for (key in keySet()) {
+            sb.append(key).append("=").append(get(key)).append("; ")
+        }
+    } ?: sb.append("[null]")
+    return sb.toString()
 }

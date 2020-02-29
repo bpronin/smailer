@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.NO_POSITION
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.util.UiUtil.getQuantityString
-import com.bopr.android.smailer.util.UiUtil.showAnimated
-import com.bopr.android.smailer.util.UiUtil.showToast
+import com.bopr.android.smailer.util.getQuantityString
+import com.bopr.android.smailer.util.showAnimated
+import com.bopr.android.smailer.util.showToast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 

@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.preference.Preference
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.util.UiUtil.showToast
+import com.bopr.android.smailer.util.showToast
 
 /**
  * Options fragment.

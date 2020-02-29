@@ -3,11 +3,7 @@ package com.bopr.android.smailer
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.Intent.ACTION_NEW_OUTGOING_CALL
-import android.content.Intent.EXTRA_PHONE_NUMBER
-import android.os.Build
 import android.provider.Telephony
-import android.telephony.SmsMessage
 import android.telephony.TelephonyManager.*
 import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
 import com.bopr.android.smailer.util.AndroidUtil.deviceName
@@ -22,11 +18,9 @@ import java.lang.System.currentTimeMillis
 class CallReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        log.debug("Received intent: $intent")
+        log.trace("Received intent: $intent")
 
         when (intent.action) {
-            ACTION_NEW_OUTGOING_CALL ->
-                lastCallNumber = intent.getStringExtra(EXTRA_PHONE_NUMBER)
             ACTION_PHONE_STATE_CHANGED ->
                 onCallStateChanged(context, intent)
             SMS_RECEIVED ->
@@ -43,60 +37,66 @@ class CallReceiver : BroadcastReceiver() {
      * @param intent  call state intent
      */
     private fun onCallStateChanged(context: Context, intent: Intent) {
+        /* see https://stackoverflow.com/questions/52009874/getting-the-caller-id-in-android-9 */
+        @Suppress("DEPRECATION")
+        callNumber = intent.getStringExtra(EXTRA_INCOMING_NUMBER)
+        if (callNumber == null) return
+
         val callState = intent.getStringExtra(EXTRA_STATE)
-        if (callState != null && lastCallState != callState) {
-            when (callState) {
-                EXTRA_STATE_RINGING -> {
-                    isIncomingCall = true
+        when (callState) {
+            EXTRA_STATE_RINGING -> {
+                callStartTime = currentTimeMillis()
+                isIncomingCall = true
+
+                log.debug("Ringing call from: $callNumber")
+            }
+            EXTRA_STATE_OFFHOOK -> {
+                if (prevCallState == EXTRA_STATE_RINGING) {
+                    log.debug("Started incoming call from: $callNumber")
+                } else {
                     callStartTime = currentTimeMillis()
-                    lastCallNumber = intent.getStringExtra(EXTRA_INCOMING_NUMBER)!!
+                    isIncomingCall = false
 
-                    log.debug("Call received from: $lastCallNumber")
-                }
-                EXTRA_STATE_OFFHOOK -> {
-                    isIncomingCall = lastCallState == EXTRA_STATE_RINGING
-                    callStartTime = currentTimeMillis()
-
-                    if (isIncomingCall) {
-                        log.debug("Started incoming call from: $lastCallNumber")
-                    } else {
-                        log.debug("Started outgoing call to: $lastCallNumber")
-                    }
-                }
-                EXTRA_STATE_IDLE -> {
-                    when {
-                        lastCallState == EXTRA_STATE_RINGING -> {
-                            log.debug("Processing missed call from: $lastCallNumber")
-
-                            processCall(context, incoming = true, missed = true)
-                        }
-                        isIncomingCall -> {
-                            log.debug("Processing incoming call from: $lastCallNumber")
-
-                            processCall(context, incoming = true, missed = false)
-                        }
-                        else -> {
-                            log.debug("Processing outgoing call to: $lastCallNumber")
-
-                            processCall(context, incoming = false, missed = false)
-                        }
-                    }
-                    lastCallNumber = null
+                    log.debug("Started outgoing call to: $callNumber")
                 }
             }
-            lastCallState = callState
+            EXTRA_STATE_IDLE -> {
+                callEndTime = currentTimeMillis()
+                isMissedCall = prevCallState == EXTRA_STATE_RINGING
+                when {
+                    isMissedCall == true -> {
+                        log.debug("Processing missed call from: $callNumber")
+
+                        processCall(context)
+                    }
+                    isIncomingCall == true -> {
+                        log.debug("Processing incoming call from: $callNumber")
+
+                        processCall(context)
+                    }
+                    isIncomingCall == false -> {
+                        log.debug("Processing outgoing call to: $callNumber")
+
+                        processCall(context)
+                    }
+                }
+
+                callNumber = null
+                isIncomingCall = null
+                isMissedCall = null
+                callStartTime = null
+                callEndTime = null
+                prevCallState = null
+            }
         }
+        prevCallState = callState
     }
 
     /**
      * Processes sms intent.
      */
     private fun onSmsReceived(context: Context, intent: Intent) {
-        val messages = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Telephony.Sms.Intents.getMessagesFromIntent(intent)
-        } else {
-            parseMessageLegacy(intent)
-        }
+        val messages = Telephony.Sms.Intents.getMessagesFromIntent(intent)
 
         if (messages.isNotEmpty()) {
             val time = messages[0].timestampMillis  /* NOTE: time zone on emulator may be incorrect */
@@ -112,35 +112,30 @@ class CallReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun processCall(context: Context, incoming: Boolean, missed: Boolean) {
+    /**
+     * Processes last call
+     */
+    private fun processCall(context: Context) {
         startCallProcessingService(context, PhoneEvent(
-                phone = lastCallNumber!!,
-                isIncoming = incoming,
-                startTime = callStartTime,
-                endTime = currentTimeMillis(),
-                isMissed = missed,
+                phone = callNumber!!,
+                isIncoming = isIncomingCall!!,
+                isMissed = isMissedCall!!,
+                startTime = callStartTime!!,
+                endTime = callEndTime!!,
                 acceptor = deviceName()
         ))
-    }
-
-    private fun parseMessageLegacy(intent: Intent): Array<SmsMessage?> {
-        val pdus = intent.getSerializableExtra("pdus") as Array<*>
-        val messages = arrayOfNulls<SmsMessage>(pdus.size)
-        for (i in pdus.indices) {
-            val pdu = pdus[i] as ByteArray
-            @Suppress("DEPRECATION")
-            messages[i] = SmsMessage.createFromPdu(pdu)
-        }
-        return messages
     }
 
     companion object {
 
         const val SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED"
         private val log = LoggerFactory.getLogger("CallReceiver")
-        private var lastCallNumber: String? = null
-        private var lastCallState = EXTRA_STATE_IDLE
-        private var callStartTime: Long = 0
-        private var isIncomingCall = false
+
+        private var callNumber: String? = null
+        private var prevCallState: String? = null
+        private var callStartTime: Long? = null
+        private var callEndTime: Long? = null
+        private var isIncomingCall: Boolean? = null
+        private var isMissedCall: Boolean? = null
     }
 }

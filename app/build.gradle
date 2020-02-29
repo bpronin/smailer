@@ -25,7 +25,7 @@ apply from: "local.gradle"
 
 android {
     compileSdkVersion 29
-    buildToolsVersion "28.0.3"
+    buildToolsVersion "29.0.3"
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -51,7 +51,7 @@ android {
         versionNameSuffix = "-kotlin"
         archivesBaseName = "smailer-${versionName}${versionNameSuffix}"
         applicationId "com.bopr.android.smailer"
-        minSdkVersion 18
+        minSdkVersion 21
         targetSdkVersion 29
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true

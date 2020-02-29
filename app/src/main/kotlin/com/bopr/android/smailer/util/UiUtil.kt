@@ -117,88 +117,89 @@ object UiUtil {
         }
     }
 
-    fun View.showAnimated(@AnimRes animationRes: Int, delay: Long) {
-        if (visibility != VISIBLE) {
-            clearAnimation()
-            val animation = loadAnimation(context, animationRes).apply {
-                startOffset = delay
+}
 
-                setAnimationListener(object : Animation.AnimationListener {
+fun View.showAnimated(@AnimRes animationRes: Int, delay: Long) {
+    if (visibility != VISIBLE) {
+        clearAnimation()
+        val animation = loadAnimation(context, animationRes).apply {
+            startOffset = delay
 
-                    override fun onAnimationStart(animation: Animation?) {
-                        visibility = VISIBLE
-                    }
+            setAnimationListener(object : Animation.AnimationListener {
 
-                    override fun onAnimationEnd(animation: Animation?) {
-                        /* nothing */
-                    }
+                override fun onAnimationStart(animation: Animation?) {
+                    visibility = VISIBLE
+                }
 
-                    override fun onAnimationRepeat(animation: Animation?) {
-                        /* nothing */
-                    }
-                })
-            }
-            visibility = INVISIBLE /* to properly animate coordinates ensure it is not GONE here */
-            startAnimation(animation)
+                override fun onAnimationEnd(animation: Animation?) {
+                    /* nothing */
+                }
+
+                override fun onAnimationRepeat(animation: Animation?) {
+                    /* nothing */
+                }
+            })
         }
+        visibility = INVISIBLE /* to properly animate coordinates ensure it is not GONE here */
+        startAnimation(animation)
     }
+}
 
-    /**
-     * Returns text underlined with wavy red line.
-     */
-    fun Context.underwivedText(value: CharSequence?): Spannable {
-        val spannable: Spannable = SpannableString(value)
-        val span: ParagraphStyle = WavyUnderlineSpan(ContextCompat.getColor(this, R.color.errorLine))
-        spannable.setSpan(span, 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+/**
+ * Returns text underlined with wavy red line.
+ */
+fun Context.underwivedText(value: CharSequence?): Spannable {
+    val spannable: Spannable = SpannableString(value)
+    val span: ParagraphStyle = WavyUnderlineSpan(ContextCompat.getColor(this, R.color.errorLine))
+    spannable.setSpan(span, 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 
-        return spannable
+    return spannable
+}
+
+/**
+ * Returns text of accent color.
+ */
+fun Context.accentedText(value: CharSequence?): Spannable {
+    val spannable: Spannable = SpannableString(value)
+    val span: CharacterStyle = ForegroundColorSpan(ContextCompat.getColor(this, R.color.colorAccent))
+    spannable.setSpan(span, 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+    return spannable
+}
+
+fun Context.showToast(text: String) {
+    val toast: Toast = Toast.makeText(this, text, Toast.LENGTH_LONG)
+    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
+        /* it looks ugly on old devises */
+        val view = toast.view
+        view.background.colorFilter = createBlendModeColorFilterCompat(
+                ContextCompat.getColor(this, R.color.colorAccent), BlendModeCompat.DARKEN)
+        view.findViewById<TextView>(android.R.id.message)?.setTextColor(
+                ContextCompat.getColor(this, R.color.colorAccentText))
     }
+    toast.show()
+}
 
-    /**
-     * Returns text of accent color.
-     */
-    fun Context.accentedText(value: CharSequence?): Spannable {
-        val spannable: Spannable = SpannableString(value)
-        val span: CharacterStyle = ForegroundColorSpan(ContextCompat.getColor(this, R.color.colorAccent))
-        spannable.setSpan(span, 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+fun Context.showToast(@StringRes textRes: Int) {
+    showToast(getString(textRes))
+}
 
-        return spannable
-    }
+fun Fragment.showToast(text: String) {
+    requireContext().showToast(text)
+}
 
-    fun Context.showToast(text: String) {
-        val toast: Toast = Toast.makeText(this, text, Toast.LENGTH_LONG)
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
-            /* it looks ugly on old devises */
-            val view = toast.view
-            view.background.colorFilter = createBlendModeColorFilterCompat(
-                    ContextCompat.getColor(this, R.color.colorAccent), BlendModeCompat.DARKEN)
-            view.findViewById<TextView>(android.R.id.message)?.setTextColor(
-                    ContextCompat.getColor(this, R.color.colorAccentText))
-        }
-        toast.show()
-    }
+fun Fragment.showToast(@StringRes textRes: Int) {
+    showToast(getString(textRes))
+}
 
-    fun Context.showToast(@StringRes textRes: Int) {
-        showToast(getString(textRes))
-    }
+@ColorInt
+fun Context.getColorFromAttr(@AttrRes attr: Int): Int {
+    val a = obtainStyledAttributes(intArrayOf(attr))
+    val color = a.getResourceId(0, 0)
+    a.recycle()
+    return ContextCompat.getColor(this, color)
+}
 
-    fun Fragment.showToast(text: String) {
-        requireContext().showToast(text)
-    }
-
-    fun Fragment.showToast(@StringRes textRes: Int) {
-        showToast(getString(textRes))
-    }
-
-    @ColorInt
-    fun Context.getColorFromAttr(@AttrRes attr: Int): Int {
-        val a = obtainStyledAttributes(intArrayOf(attr))
-        val color = a.getResourceId(0, 0)
-        a.recycle()
-        return ContextCompat.getColor(this, color)
-    }
-
-    fun Fragment.getQuantityString(@PluralsRes resId: Int, quantity: Number): String {
-        return resources.getQuantityString(resId, quantity.toInt(), quantity)
-    }
+fun Fragment.getQuantityString(@PluralsRes resId: Int, quantity: Number): String {
+    return resources.getQuantityString(resId, quantity.toInt(), quantity)
 }
