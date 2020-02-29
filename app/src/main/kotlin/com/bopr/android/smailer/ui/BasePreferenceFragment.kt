@@ -28,7 +28,7 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPref
         setHasOptionsMenu(true)
         settings = Settings(requireContext())
         settings.registerOnSharedPreferenceChangeListener(this)
-        permissionsHelper = PermissionsHelper(requireActivity())
+        permissionsHelper = PermissionsHelper(this)
         updatePreferenceViews()
     }
 

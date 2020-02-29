@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.bopr.android.smailer">
 
-
     <uses-permission
         android:name="android.permission.AUTHENTICATE_ACCOUNTS"
         android:maxSdkVersion="22" />
@@ -11,7 +10,8 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" /><!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.READ_CONTACTS" /><!-- To add contact name into email body -->
     <uses-permission android:name="android.permission.RECEIVE_SMS" /><!-- To process incoming sms -->
-    <uses-permission android:name="android.permission.READ_SMS" /><!-- To process outgoing -->
+    <uses-permission android:name="android.permission.READ_SMS" /><!-- To process outgoing SMS-->
+    <uses-permission android:name="android.permission.READ_CALL_LOG" /><!-- To process calls in never versions -->
     <uses-permission android:name="android.permission.WRITE_SMS" /><!-- To mark sms as read -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /><!-- To add location in email body -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /><!-- To add location in email body -->

@@ -134,8 +134,7 @@ class DebugFragment : BasePreferenceFragment() {
                 }),
                 createPreference("Put invalid account", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-//                        settings.edit().putString(PREF_SENDER_ACCOUNT, "unknown@gmail.com").apply()
-                        settings.edit().putString(PREF_SENDER_ACCOUNT, "bbo848284@gmail.com").apply()
+                        settings.edit().putString(PREF_SENDER_ACCOUNT, "unknown@gmail.com").apply()
                     }
                 }),
                 createPreference("Require battery optimisation disabled", object : DefaultClickListener() {
@@ -350,7 +349,7 @@ class DebugFragment : BasePreferenceFragment() {
                 .clear()
                 .putString(PREF_SENDER_ACCOUNT, primaryAccount(appContext)?.name)
                 .putString(PREF_REMOTE_CONTROL_ACCOUNT, properties.getProperty("remote_control_account"))
-                .putString(PREF_RECIPIENTS_ADDRESS, properties.getProperty("default_recipient"))
+                .putCommaSet(PREF_RECIPIENTS_ADDRESS, setOf(properties.getProperty("default_recipient"), "nowhere@mail.com"))
                 .putStringSet(PREF_EMAIL_TRIGGERS, mutableSetOf(
                         VAL_PREF_TRIGGER_IN_SMS,
                         VAL_PREF_TRIGGER_IN_CALLS,

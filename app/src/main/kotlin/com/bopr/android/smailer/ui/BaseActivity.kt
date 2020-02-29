@@ -1,7 +1,5 @@
 package com.bopr.android.smailer.ui
 
-import android.annotation.TargetApi
-import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -16,21 +14,18 @@ import kotlin.reflect.KClass
  */
 abstract class BaseActivity(private val fragmentClass: KClass<out Fragment>) : AppCompatActivity() {
 
-    private var fragment: Fragment? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHomeButtonEnabled(true)
         setContentView(R.layout.activity_default)
 
         val fragmentManager = supportFragmentManager
-
-        fragment = fragmentManager.findFragmentByTag(TAG_FRAGMENT)
+        var fragment = fragmentManager.findFragmentByTag(null)
         if (fragment == null) {
             fragment = fragmentClass.java.newInstance()
             fragmentManager
                     .beginTransaction()
-                    .replace(R.id.content, fragment!!, TAG_FRAGMENT)
+                    .replace(R.id.content, fragment, null)
                     .commit()
         }
     }
@@ -47,13 +42,4 @@ abstract class BaseActivity(private val fragmentClass: KClass<out Fragment>) : A
         return super.onOptionsItemSelected(item)
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
-                                            grantResults: IntArray) {
-        fragment!!.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
-
-    companion object {
-        private const val TAG_FRAGMENT = "activity_fragment"
-    }
 }

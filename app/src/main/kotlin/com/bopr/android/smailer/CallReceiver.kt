@@ -21,8 +21,6 @@ import java.lang.System.currentTimeMillis
  */
 class CallReceiver : BroadcastReceiver() {
 
-    private val log = LoggerFactory.getLogger("CallReceiver")
-
     override fun onReceive(context: Context, intent: Intent) {
         log.debug("Received intent: $intent")
 
@@ -51,30 +49,34 @@ class CallReceiver : BroadcastReceiver() {
                 EXTRA_STATE_RINGING -> {
                     isIncomingCall = true
                     callStartTime = currentTimeMillis()
-                    lastCallNumber = intent.getStringExtra(EXTRA_INCOMING_NUMBER) /* null in Android > N */
+                    lastCallNumber = intent.getStringExtra(EXTRA_INCOMING_NUMBER)!!
 
-                    log.debug("Call received")
+                    log.debug("Call received from: $lastCallNumber")
                 }
                 EXTRA_STATE_OFFHOOK -> {
                     isIncomingCall = lastCallState == EXTRA_STATE_RINGING
                     callStartTime = currentTimeMillis()
 
-                    log.debug("Started ${if (isIncomingCall) "incoming" else "outgoing"} call")
+                    if (isIncomingCall) {
+                        log.debug("Started incoming call from: $lastCallNumber")
+                    } else {
+                        log.debug("Started outgoing call to: $lastCallNumber")
+                    }
                 }
                 EXTRA_STATE_IDLE -> {
                     when {
                         lastCallState == EXTRA_STATE_RINGING -> {
-                            log.debug("Processing missed call")
+                            log.debug("Processing missed call from: $lastCallNumber")
 
                             processCall(context, incoming = true, missed = true)
                         }
                         isIncomingCall -> {
-                            log.debug("Processing incoming call")
+                            log.debug("Processing incoming call from: $lastCallNumber")
 
                             processCall(context, incoming = true, missed = false)
                         }
                         else -> {
-                            log.debug("Processing outgoing call")
+                            log.debug("Processing outgoing call to: $lastCallNumber")
 
                             processCall(context, incoming = false, missed = false)
                         }
@@ -135,7 +137,7 @@ class CallReceiver : BroadcastReceiver() {
     companion object {
 
         const val SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED"
-
+        private val log = LoggerFactory.getLogger("CallReceiver")
         private var lastCallNumber: String? = null
         private var lastCallState = EXTRA_STATE_IDLE
         private var callStartTime: Long = 0
