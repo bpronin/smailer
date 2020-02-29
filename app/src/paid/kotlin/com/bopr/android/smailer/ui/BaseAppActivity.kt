@@ -6,7 +6,7 @@ import kotlin.reflect.KClass
 /**
  * Base application activity. Individual in different build variants.
  *
- * PAID BUILD VARIANT
+ * PAID build variant
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */

@@ -10,7 +10,7 @@ import kotlin.reflect.KClass
 /**
  * Base application activity. Individual in different build variants.
  *
- * FREE BUILD VARIANT
+ * FREE build variant
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */

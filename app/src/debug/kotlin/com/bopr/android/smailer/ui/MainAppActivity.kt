@@ -8,7 +8,7 @@ import kotlin.reflect.KClass
 /**
  * Main application activity. Individual in different build variants.
  *
- * DEBUG BUILD VARIANT
+ * DEBUG build variant
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
