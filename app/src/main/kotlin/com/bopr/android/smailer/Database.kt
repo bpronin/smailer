@@ -9,12 +9,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
-import com.bopr.android.smailer.util.AndroidUtil.deviceName
-import com.bopr.android.smailer.util.db.DbUtil.batch
-import com.bopr.android.smailer.util.db.DbUtil.getString
-import com.bopr.android.smailer.util.db.DbUtil.replaceTable
-import com.bopr.android.smailer.util.db.RowSet
-import com.bopr.android.smailer.util.db.RowSet.Companion.forLong
+import com.bopr.android.smailer.util.*
 import org.slf4j.LoggerFactory
 import java.io.Closeable
 import java.lang.System.currentTimeMillis
@@ -61,13 +56,13 @@ class Database constructor(private val context: Context, private val name: Strin
         ))
 
     val unreadEventsCount: Long
-        get() {
-            return forLong(query(
-                    table = TABLE_EVENTS,
-                    columns = strings(COLUMN_COUNT),
-                    selection = "$COLUMN_READ<>1"
-            ))!!
-        }
+        get() = query(
+                table = TABLE_EVENTS,
+                columns = strings(COLUMN_COUNT),
+                selection = "$COLUMN_READ<>1"
+        ).useFirst {
+            it.getLong(0)
+        }!!
 
     /**
      * Returns last saved geolocation.
@@ -75,11 +70,16 @@ class Database constructor(private val context: Context, private val name: Strin
      * @return location
      */
     val lastLocation: GeoCoordinates?
-        get() = GeoCoordinatesRowSet(query(
+        get() = query(
                 table = TABLE_SYSTEM,
                 columns = strings(COLUMN_LAST_LATITUDE, COLUMN_LAST_LONGITUDE),
                 selection = "$COLUMN_ID=0"
-        )).first()
+        ).useFirst {
+            GeoCoordinates(
+                    it.getDouble(COLUMN_LAST_LATITUDE),
+                    it.getDouble(COLUMN_LAST_LONGITUDE)
+            )
+        }
 
     fun putEvent(event: PhoneEvent) {
         putEvent(event, helper.writableDatabase)
@@ -255,7 +255,6 @@ class Database constructor(private val context: Context, private val name: Strin
         const val DATABASE_NAME = "smailer.sqlite"
         const val COLUMN_COUNT = "COUNT(*)"
         const val COLUMN_ID = "_id"
-        const val COLUMN_PURGE_TIME = "messages_purge_time"
         const val COLUMN_IS_INCOMING = "is_incoming"
         const val COLUMN_IS_MISSED = "is_missed"
         const val COLUMN_PHONE = "phone"
@@ -273,6 +272,7 @@ class Database constructor(private val context: Context, private val name: Strin
         const val COLUMN_LAST_LOCATION_TIME = "last_location_time"
         const val COLUMN_READ = "message_read"
         const val COLUMN_RECIPIENT = "recipient"
+        private const val COLUMN_PURGE_TIME = "messages_purge_time"
 
         private const val DB_VERSION = 7
         private const val DATABASE_EVENT = "database-event"
@@ -343,41 +343,32 @@ class Database constructor(private val context: Context, private val name: Strin
             if (oldVersion < DB_VERSION) {
                 log.warn("Database upgrade from $oldVersion to: $DB_VERSION")
 
-                replaceTable(db, TABLE_EVENTS, SQL_CREATE_EVENTS) { column: String, cursor: Cursor ->
-                    val value = cursor.getString(column)
-
-                    when (column) {
-                        COLUMN_STATE -> {
-                            when (value) {
-                                "PENDING" ->
-                                    return@replaceTable STATE_PENDING.toString()
-                                "IGNORED" ->
-                                    return@replaceTable STATE_IGNORED.toString()
-                                "PROCESSED" ->
-                                    return@replaceTable STATE_PROCESSED.toString()
-                            }
-                        }
-                        COLUMN_RECIPIENT -> {
-                            return@replaceTable value ?: deviceName()
-                        }
-                    }
-
-                    return@replaceTable value
-                }
+                db.replaceTable(TABLE_EVENTS, SQL_CREATE_EVENTS, ::convertEventsColumns)
             }
 
             log.debug("Upgraded")
         }
 
-    }
+        private fun convertEventsColumns(column: String, cursor: Cursor): String? {
+            val value = cursor.getString(column)
 
-    private inner class GeoCoordinatesRowSet(cursor: Cursor) : RowSet<GeoCoordinates>(cursor) {
+            when (column) {
+                COLUMN_STATE -> {
+                    when (value) {
+                        "PENDING" ->
+                            return STATE_PENDING.toString()
+                        "IGNORED" ->
+                            return STATE_IGNORED.toString()
+                        "PROCESSED" ->
+                            return STATE_PROCESSED.toString()
+                    }
+                }
+                COLUMN_RECIPIENT -> {
+                    return value ?: deviceName()
+                }
+            }
 
-        override fun get(): GeoCoordinates {
-            return GeoCoordinates(
-                    getDouble(COLUMN_LAST_LATITUDE)!!,
-                    getDouble(COLUMN_LAST_LONGITUDE)!!
-            )
+            return value
         }
     }
 
@@ -386,25 +377,27 @@ class Database constructor(private val context: Context, private val name: Strin
      */
     class PhoneEventRowSet(cursor: Cursor) : RowSet<PhoneEvent>(cursor) {
 
-        override fun get(): PhoneEvent {
-            return PhoneEvent(
-                    phone = getString(COLUMN_PHONE)!!,
-                    isIncoming = getBoolean(COLUMN_IS_INCOMING)!!,
-                    startTime = getLong(COLUMN_START_TIME)!!,
-                    endTime = getLong(COLUMN_END_TIME),
-                    isMissed = getBoolean(COLUMN_IS_MISSED)!!,
-                    text = getString(COLUMN_TEXT),
-                    location = GeoCoordinates(
-                            getDouble(COLUMN_LATITUDE)!!,
-                            getDouble(COLUMN_LONGITUDE)!!
-                    ),
-                    details = getString(COLUMN_DETAILS),
-                    state = getInt(COLUMN_STATE)!!,
-                    acceptor = getString(COLUMN_RECIPIENT)!!,
-                    processStatus = getInt(COLUMN_PROCESS_STATUS)!!,
-                    processTime = getLong(COLUMN_PROCESS_TIME),
-                    isRead = getBoolean(COLUMN_READ)!!
-            )
+        override fun get(cursor: Cursor): PhoneEvent {
+            return cursor.run {
+                 PhoneEvent(
+                        phone = getString(COLUMN_PHONE)!!,
+                        isIncoming = getBoolean(COLUMN_IS_INCOMING),
+                        startTime = getLong(COLUMN_START_TIME),
+                        endTime = getLong(COLUMN_END_TIME),
+                        isMissed = getBoolean(COLUMN_IS_MISSED),
+                        text = getString(COLUMN_TEXT),
+                        location = GeoCoordinates(
+                                getDouble(COLUMN_LATITUDE),
+                                getDouble(COLUMN_LONGITUDE)
+                        ),
+                        details = getString(COLUMN_DETAILS),
+                        state = getInt(COLUMN_STATE),
+                        acceptor = getString(COLUMN_RECIPIENT)!!,
+                        processStatus = getInt(COLUMN_PROCESS_STATUS),
+                        processTime = getLong(COLUMN_PROCESS_TIME),
+                        isRead = getBoolean(COLUMN_READ)
+                )
+            }
         }
     }
 

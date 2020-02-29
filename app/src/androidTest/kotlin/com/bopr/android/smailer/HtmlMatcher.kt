@@ -1,7 +1,7 @@
 package com.bopr.android.smailer
 
 import androidx.test.platform.app.InstrumentationRegistry
-import com.bopr.android.smailer.util.TextUtil.readStream
+import com.bopr.android.smailer.util.readStream
 import org.hamcrest.CustomTypeSafeMatcher
 import org.hamcrest.Description
 import java.io.IOException

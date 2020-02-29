@@ -7,7 +7,7 @@ import androidx.preference.ListPreference
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_DEVICE_ALIAS
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_LOCALE
-import com.bopr.android.smailer.util.AndroidUtil.deviceName
+import com.bopr.android.smailer.util.deviceName
 
 /**
  * Email message settings settings fragment.

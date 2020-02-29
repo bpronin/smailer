@@ -5,7 +5,6 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.database.ContentObserver
-import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.os.Handler
@@ -14,8 +13,10 @@ import android.os.IBinder
 import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
 import com.bopr.android.smailer.Notifications.Companion.SERVICE_NOTIFICATION_ID
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
-import com.bopr.android.smailer.util.AndroidUtil.deviceName
-import com.bopr.android.smailer.util.db.RowSet
+import com.bopr.android.smailer.util.deviceName
+import com.bopr.android.smailer.util.getLong
+import com.bopr.android.smailer.util.getString
+import com.bopr.android.smailer.util.useFirst
 import org.slf4j.LoggerFactory
 
 /**
@@ -61,24 +62,16 @@ class ContentObserverService : Service() {
     private fun processOutgoingSms(id: String) {
         log.debug("Processing outgoing sms: $id")
 
-        val cursor = contentResolver.query(CONTENT_SMS_SENT, null, "_id=?", arrayOf(id), null)
-        SentSmsRowSet(cursor!!).first()?.let {
-            startCallProcessingService(this, it)
-        }
-    }
-
-    private inner class SentSmsRowSet(cursor: Cursor) : RowSet<PhoneEvent>(cursor) {
-
-        override fun get(): PhoneEvent {
-            val date = getLong("date")
-            return PhoneEvent(
-                    phone = getString("address")!!,
+        contentResolver.query(CONTENT_SMS_SENT, null, "_id=?", arrayOf(id), null)?.useFirst {
+            val date = it.getLong("date")
+            startCallProcessingService(this, PhoneEvent(
+                    phone = it.getString("address")!!,
                     isIncoming = false,
-                    startTime = date!!,
+                    startTime = date,
                     endTime = date,
-                    text = getString("body"),
+                    text = it.getString("body"),
                     acceptor = deviceName()
-            )
+            ))
         }
     }
 

@@ -15,12 +15,7 @@ import com.bopr.android.smailer.PhoneEvent.Companion.STATUS_NUMBER_BLACKLISTED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATUS_TEXT_BLACKLISTED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATUS_TRIGGER_OFF
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.util.TextUtil.formatDuration
-import com.bopr.android.smailer.util.UiUtil.eventDirectionImage
-import com.bopr.android.smailer.util.UiUtil.eventStateImage
-import com.bopr.android.smailer.util.UiUtil.eventStateText
-import com.bopr.android.smailer.util.UiUtil.eventTypeImage
-import com.bopr.android.smailer.util.UiUtil.eventTypeText
+import com.bopr.android.smailer.util.*
 
 /**
  * Log item details dialog.

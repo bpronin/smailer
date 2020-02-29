@@ -26,122 +26,92 @@ import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.ui.WavyUnderlineSpan
 
-
 /**
  * Miscellaneous UI and resources utilities.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-object UiUtil {
 
-    @DrawableRes
-    fun eventTypeImage(event: PhoneEvent): Int {
-        return if (event.isSms) {
-            R.drawable.ic_message
-        } else {
-            R.drawable.ic_call
-        }
+@DrawableRes
+fun eventTypeImage(event: PhoneEvent): Int {
+    return if (event.isSms) {
+        R.drawable.ic_message
+    } else {
+        R.drawable.ic_call
     }
-
-    @StringRes
-    fun eventTypeText(event: PhoneEvent): Int {
-        return if (event.isSms) {
-            if (event.isIncoming) {
-                R.string.incoming_sms
-            } else {
-                R.string.outgoing_sms
-            }
-        } else if (event.isMissed) {
-            R.string.missed_call
-        } else if (event.isIncoming) {
-            R.string.incoming_call
-        } else {
-            R.string.outgoing_call
-        }
-    }
-
-    @StringRes
-    fun eventTypePrefix(event: PhoneEvent): Int {
-        return if (event.isSms) {
-            if (event.isIncoming) {
-                R.string.incoming_sms_from
-            } else {
-                R.string.outgoing_sms_to
-            }
-        } else if (event.isMissed) {
-            R.string.missed_call_from
-        } else if (event.isIncoming) {
-            R.string.incoming_call_from
-        } else {
-            R.string.outgoing_call_to
-        }
-    }
-
-    @StringRes
-    fun eventStateText(event: PhoneEvent): Int {
-        return when (event.state) {
-            STATE_PENDING ->
-                R.string.pending
-            STATE_PROCESSED ->
-                R.string.sent_email
-            STATE_IGNORED ->
-                R.string.ignored
-            else ->
-                throw IllegalArgumentException("Unknown state")
-        }
-    }
-
-    @DrawableRes
-    fun eventDirectionImage(event: PhoneEvent): Int {
-        return when {
-            event.isMissed ->
-                R.drawable.ic_call_missed
-            event.isIncoming ->
-                R.drawable.ic_call_in
-            else ->
-                R.drawable.ic_call_out
-        }
-    }
-
-    @DrawableRes
-    fun eventStateImage(event: PhoneEvent): Int {
-        return when (event.state) {
-            STATE_PENDING ->
-                R.drawable.ic_hourglass
-            STATE_PROCESSED ->
-                R.drawable.ic_state_done
-            STATE_IGNORED ->
-                R.drawable.ic_state_block
-            else ->
-                throw IllegalArgumentException("Unknown state")
-        }
-    }
-
 }
 
-fun View.showAnimated(@AnimRes animationRes: Int, delay: Long) {
-    if (visibility != VISIBLE) {
-        clearAnimation()
-        val animation = loadAnimation(context, animationRes).apply {
-            startOffset = delay
-
-            setAnimationListener(object : Animation.AnimationListener {
-
-                override fun onAnimationStart(animation: Animation?) {
-                    visibility = VISIBLE
-                }
-
-                override fun onAnimationEnd(animation: Animation?) {
-                    /* nothing */
-                }
-
-                override fun onAnimationRepeat(animation: Animation?) {
-                    /* nothing */
-                }
-            })
+@StringRes
+fun eventTypeText(event: PhoneEvent): Int {
+    return if (event.isSms) {
+        if (event.isIncoming) {
+            R.string.incoming_sms
+        } else {
+            R.string.outgoing_sms
         }
-        visibility = INVISIBLE /* to properly animate coordinates ensure it is not GONE here */
-        startAnimation(animation)
+    } else if (event.isMissed) {
+        R.string.missed_call
+    } else if (event.isIncoming) {
+        R.string.incoming_call
+    } else {
+        R.string.outgoing_call
+    }
+}
+
+@StringRes
+fun eventTypePrefix(event: PhoneEvent): Int {
+    return if (event.isSms) {
+        if (event.isIncoming) {
+            R.string.incoming_sms_from
+        } else {
+            R.string.outgoing_sms_to
+        }
+    } else if (event.isMissed) {
+        R.string.missed_call_from
+    } else if (event.isIncoming) {
+        R.string.incoming_call_from
+    } else {
+        R.string.outgoing_call_to
+    }
+}
+
+@StringRes
+fun eventStateText(event: PhoneEvent): Int {
+    return when (event.state) {
+        STATE_PENDING ->
+            R.string.pending
+        STATE_PROCESSED ->
+            R.string.sent_email
+        STATE_IGNORED ->
+            R.string.ignored
+        else ->
+            throw IllegalArgumentException("Unknown state")
+    }
+}
+
+@DrawableRes
+fun eventDirectionImage(event: PhoneEvent): Int {
+    return when {
+        event.isMissed ->
+            R.drawable.ic_call_missed
+        event.isIncoming ->
+            R.drawable.ic_call_in
+        else ->
+            R.drawable.ic_call_out
+    }
+}
+
+@DrawableRes
+fun eventStateImage(event: PhoneEvent): Int {
+    return when (event.state) {
+        STATE_PENDING ->
+            R.drawable.ic_hourglass
+        STATE_PROCESSED ->
+            R.drawable.ic_state_done
+        STATE_IGNORED ->
+            R.drawable.ic_state_block
+        else ->
+            throw IllegalArgumentException("Unknown state")
     }
 }
 
@@ -165,6 +135,14 @@ fun Context.accentedText(value: CharSequence?): Spannable {
     spannable.setSpan(span, 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 
     return spannable
+}
+
+@ColorInt
+fun Context.getColorFromAttr(@AttrRes attr: Int): Int {
+    val a = obtainStyledAttributes(intArrayOf(attr))
+    val color = a.getResourceId(0, 0)
+    a.recycle()
+    return ContextCompat.getColor(this, color)
 }
 
 fun Context.showToast(text: String) {
@@ -192,14 +170,32 @@ fun Fragment.showToast(@StringRes textRes: Int) {
     showToast(getString(textRes))
 }
 
-@ColorInt
-fun Context.getColorFromAttr(@AttrRes attr: Int): Int {
-    val a = obtainStyledAttributes(intArrayOf(attr))
-    val color = a.getResourceId(0, 0)
-    a.recycle()
-    return ContextCompat.getColor(this, color)
-}
-
 fun Fragment.getQuantityString(@PluralsRes resId: Int, quantity: Number): String {
     return resources.getQuantityString(resId, quantity.toInt(), quantity)
+}
+
+fun View.showAnimated(@AnimRes animationRes: Int, delay: Long) {
+    if (visibility != VISIBLE) {
+        clearAnimation()
+        val animation = loadAnimation(context, animationRes).apply {
+            startOffset = delay
+
+            setAnimationListener(object : Animation.AnimationListener {
+
+                override fun onAnimationStart(animation: Animation?) {
+                    visibility = VISIBLE
+                }
+
+                override fun onAnimationEnd(animation: Animation?) {
+                    /* nothing */
+                }
+
+                override fun onAnimationRepeat(animation: Animation?) {
+                    /* nothing */
+                }
+            })
+        }
+        visibility = INVISIBLE /* to properly animate coordinates ensure it is not GONE here */
+        startAnimation(animation)
+    }
 }

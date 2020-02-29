@@ -2,7 +2,7 @@ package com.bopr.android.smailer
 
 import android.location.Location
 import android.os.Parcelable
-import com.bopr.android.smailer.util.TextUtil.decimalToDMS
+import com.bopr.android.smailer.util.decimalToDMS
 import kotlinx.android.parcel.Parcelize
 
 /**

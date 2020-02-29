@@ -2,7 +2,7 @@ package com.bopr.android.smailer.ui
 
 import android.text.Editable
 import android.widget.TextView
-import com.bopr.android.smailer.util.TextUtil.isValidEmailAddress
+import com.bopr.android.smailer.util.isValidEmailAddress
 
 /**
  * Checks that [TextView]'s input matches email address format.

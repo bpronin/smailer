@@ -25,12 +25,7 @@ import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_TEXT_F
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_TEXT_FROM_WHITELIST
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.SEND_SMS_TO_CALLER
 import com.bopr.android.smailer.ui.GoogleAuthorizationHelper.Companion.getAccount
-import com.bopr.android.smailer.util.AddressUtil.containsEmail
-import com.bopr.android.smailer.util.AddressUtil.containsPhone
-import com.bopr.android.smailer.util.AddressUtil.extractEmail
-import com.bopr.android.smailer.util.AddressUtil.findPhone
-import com.bopr.android.smailer.util.AndroidUtil.checkPermission
-import com.bopr.android.smailer.util.AndroidUtil.deviceName
+import com.bopr.android.smailer.util.*
 import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
 import org.slf4j.LoggerFactory
 

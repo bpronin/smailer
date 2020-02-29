@@ -9,9 +9,9 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.util.AndroidUtil.checkPermission
-import com.bopr.android.smailer.util.ContentUtils.createPickContactIntent
-import com.bopr.android.smailer.util.ContentUtils.emailFromIntent
+import com.bopr.android.smailer.util.checkPermission
+import com.bopr.android.smailer.util.createPickContactIntent
+import com.bopr.android.smailer.util.emailFromIntent
 import com.bopr.android.smailer.util.showToast
 import org.slf4j.LoggerFactory
 

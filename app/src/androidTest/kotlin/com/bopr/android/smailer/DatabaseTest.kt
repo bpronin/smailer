@@ -40,7 +40,7 @@ class DatabaseTest : BaseTest() {
     }
 
     @Test
-    fun testAddGet() {
+    fun testPutGet() {
         database.putEvent(PhoneEvent("1", true, 1000L, 0L, true, null, null, "Test 1", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
         database.putEvent(PhoneEvent("2", false, 2000L, 0L, false, null, null, null, STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
         database.putEvent(PhoneEvent("3", true, 3000L, 0L, false, null, null, null, STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
@@ -215,4 +215,22 @@ class DatabaseTest : BaseTest() {
 
         assertEquals("Test 10", details)
     }
+
+    @Test
+    fun testGetTransform() {
+        database.putEvent(PhoneEvent(phone = "1", startTime = 0, acceptor = "device"))
+        database.putEvent(PhoneEvent(phone = "2", startTime = 1, acceptor = "device"))
+        database.putEvent(PhoneEvent(phone = "3", startTime = 2, acceptor = "device"))
+        database.putEvent(PhoneEvent(phone = "4", startTime = 3, acceptor = "device"))
+        database.putEvent(PhoneEvent(phone = "5", startTime = 4, acceptor = "device"))
+
+        val phones = database.events.map { it.phone }
+
+        assertEquals(5, phones.size)
+
+        assertEquals("5", phones[0])
+        assertEquals("3", phones[2])
+        assertEquals("1", phones[4])
+    }
+
 }
