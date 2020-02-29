@@ -46,7 +46,6 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
 import com.bopr.android.smailer.remote.RemoteControlService
 import com.bopr.android.smailer.sync.SyncEngine.syncNow
 import com.bopr.android.smailer.sync.Synchronizer
@@ -354,8 +353,7 @@ class DebugFragment : BasePreferenceFragment() {
                         VAL_PREF_TRIGGER_IN_SMS,
                         VAL_PREF_TRIGGER_IN_CALLS,
                         VAL_PREF_TRIGGER_MISSED_CALLS,
-                        VAL_PREF_TRIGGER_OUT_CALLS,
-                        VAL_PREF_TRIGGER_OUT_SMS))
+                        VAL_PREF_TRIGGER_OUT_CALLS))
                 .putStringSet(PREF_EMAIL_CONTENT, mutableSetOf(
                         VAL_PREF_EMAIL_CONTENT_CONTACT,
                         VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,

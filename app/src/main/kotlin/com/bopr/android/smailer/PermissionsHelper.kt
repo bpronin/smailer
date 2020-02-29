@@ -84,9 +84,6 @@ class PermissionsHelper(val fragment: Fragment) {
                     requiredPermissions.add(READ_PHONE_STATE)
                     requiredPermissions.add(READ_CALL_LOG)
                 }
-                if (triggers.contains(VAL_PREF_TRIGGER_OUT_CALLS)) {
-                    requiredPermissions.add(PROCESS_OUTGOING_CALLS)
-                }
             }
             PREF_EMAIL_CONTENT -> {
                 val content = settings.getStringSet(PREF_EMAIL_CONTENT)
@@ -119,11 +116,8 @@ class PermissionsHelper(val fragment: Fragment) {
             if (deniedPermissions.contains(READ_PHONE_STATE)
                     || deniedPermissions.contains(READ_CALL_LOG)) {
                 triggers.remove(VAL_PREF_TRIGGER_IN_CALLS)
+                triggers.remove(VAL_PREF_TRIGGER_OUT_CALLS)
                 triggers.remove(VAL_PREF_TRIGGER_MISSED_CALLS)
-                triggers.remove(VAL_PREF_TRIGGER_OUT_CALLS)
-            }
-            if (deniedPermissions.contains(PROCESS_OUTGOING_CALLS)) {
-                triggers.remove(VAL_PREF_TRIGGER_OUT_CALLS)
             }
             if (deniedPermissions.contains(READ_CONTACTS)) {
                 content.remove(VAL_PREF_EMAIL_CONTENT_CONTACT)
@@ -198,7 +192,6 @@ class PermissionsHelper(val fragment: Fragment) {
                 READ_SMS to R.string.permission_rationale_read_sms,
                 READ_PHONE_STATE to R.string.permission_rationale_phone_state,
                 READ_CALL_LOG to R.string.permission_rationale_phone_state,
-                PROCESS_OUTGOING_CALLS to R.string.permission_rationale_outgoing_call,
                 READ_CONTACTS to R.string.permission_rationale_read_contacts,
                 ACCESS_COARSE_LOCATION to R.string.permission_rationale_coarse_location,
                 ACCESS_FINE_LOCATION to R.string.permission_rationale_fine_location

@@ -16,7 +16,6 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /><!-- To add location in email body -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /><!-- To add location in email body -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" /><!-- To process incoming phone calls -->
-    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" /><!-- To process outgoing phone calls -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /><!-- To restart application services at device boot -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /><!-- To check internet connection -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /><!-- To run content listener in foreground service -->
