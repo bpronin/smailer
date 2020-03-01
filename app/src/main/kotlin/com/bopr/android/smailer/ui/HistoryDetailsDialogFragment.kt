@@ -61,8 +61,7 @@ class HistoryDetailsDialogFragment(private val event: PhoneEvent) : BaseDialogFr
             sb.append(getString(R.string.trigger_off)).append("\n\n")
         }
 
-        MessageDialog(getString(R.string.ignored), sb.toString())
-                .show(requireActivity())
+        MessageDialog(getString(R.string.ignored), sb.toString()).show(this)
     }
 
     private fun formatMessage(event: PhoneEvent): CharSequence? {

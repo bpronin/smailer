@@ -116,7 +116,7 @@ abstract class CallFilterListFragment(private val settingName: String) : Editabl
     private fun onClearData() {
         ConfirmDialog(getString(R.string.ask_clear_list)) {
             saveItems(listOf())
-        }.show(requireActivity())
+        }.show(this)
     }
 
     inner class Holder(view: View) : RecyclerView.ViewHolder(view) {

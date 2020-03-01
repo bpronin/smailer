@@ -19,6 +19,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.BlendModeColorFilterCompat.createBlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.bopr.android.smailer.PhoneEvent
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
@@ -197,5 +199,21 @@ fun View.showAnimated(@AnimRes animationRes: Int, delay: Long) {
         }
         visibility = INVISIBLE /* to properly animate coordinates ensure it is not GONE here */
         startAnimation(animation)
+    }
+}
+
+fun RecyclerView.addOnItemSwipedListener(action: (RecyclerView.ViewHolder) -> Unit) {
+    ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+
+        override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
+                            target: RecyclerView.ViewHolder): Boolean {
+            return false
+        }
+
+        override fun onSwiped(holder: RecyclerView.ViewHolder, swipeDir: Int) {
+            action.invoke(holder)
+        }
+    }).also {
+        it.attachToRecyclerView(this)
     }
 }

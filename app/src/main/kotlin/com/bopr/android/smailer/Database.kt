@@ -22,8 +22,8 @@ import java.util.concurrent.TimeUnit
  */
 class Database constructor(private val context: Context, private val name: String = DATABASE_NAME) : Closeable {
 
-    private var updatesCounter: Long = 0
     private val helper: DbHelper = DbHelper(context)
+    private var modified = false
 
     init {
         log.debug("Open")
@@ -82,21 +82,9 @@ class Database constructor(private val context: Context, private val name: Strin
         }
 
     fun putEvent(event: PhoneEvent) {
-        putEvent(event, helper.writableDatabase)
-    }
-
-    fun putEvents(events: Collection<PhoneEvent>) {
-        helper.writableDatabase.batch {
-            for (event in events) {
-                putEvent(event)
-            }
-        }
-    }
-
-    private fun putEvent(event: PhoneEvent, db: SQLiteDatabase) {
         val values = ContentValues().apply {
             put(COLUMN_PHONE, event.phone)
-            put(COLUMN_RECIPIENT, event.acceptor)
+            put(COLUMN_ACCEPTOR, event.acceptor)
             put(COLUMN_START_TIME, event.startTime)
             put(COLUMN_STATE, event.state)
             put(COLUMN_PROCESS_STATUS, event.processStatus)
@@ -112,9 +100,8 @@ class Database constructor(private val context: Context, private val name: Strin
                 put(COLUMN_LONGITUDE, it.longitude)
             }
         }
-
-        if (db.insertWithOnConflict(TABLE_EVENTS, null, values, CONFLICT_IGNORE) == -1L) {
-            db.update(TABLE_EVENTS, values, "$COLUMN_START_TIME=? AND $COLUMN_RECIPIENT=?",
+        if (helper.writableDatabase.insertWithOnConflict(TABLE_EVENTS, null, values, CONFLICT_IGNORE) == -1L) {
+            helper.writableDatabase.update(TABLE_EVENTS, values, "$COLUMN_START_TIME=? AND $COLUMN_ACCEPTOR=?",
                     strings(event.startTime, event.acceptor))
 
             log.debug("Updated: $values")
@@ -122,7 +109,30 @@ class Database constructor(private val context: Context, private val name: Strin
             log.debug("Inserted: $values")
         }
 
-        updatesCounter++
+        modified = true
+    }
+
+    fun putEvents(events: Collection<PhoneEvent>) {
+        helper.writableDatabase.batch {
+            for (event in events) {
+                putEvent(event)
+            }
+        }
+    }
+
+    /**
+     * Removes records from log.
+     */
+    fun deleteEvents(events: Collection<PhoneEvent>) {
+        helper.writableDatabase.batch {
+            for (event in events) {
+                delete(TABLE_EVENTS, "$COLUMN_ACCEPTOR=? AND $COLUMN_START_TIME=?",
+                        strings(event.acceptor, event.startTime))
+            }
+        }
+        modified = true
+
+        log.debug("${events.size} event(s) removed")
     }
 
     /**
@@ -131,8 +141,8 @@ class Database constructor(private val context: Context, private val name: Strin
     fun clearEvents() {
         helper.writableDatabase.batch {
             delete(TABLE_EVENTS, null, null)
-            updatesCounter++
         }
+        modified = true
 
         log.debug("All events removed")
     }
@@ -147,9 +157,8 @@ class Database constructor(private val context: Context, private val name: Strin
             }
 
             update(TABLE_EVENTS, values, null, null)
-
-            updatesCounter++
         }
+        modified = true
 
         log.debug("All events marked as read")
     }
@@ -173,11 +182,11 @@ class Database constructor(private val context: Context, private val name: Strin
      * Fires database changed event.
      */
     fun notifyChanged() {
-        if (updatesCounter > 0) {
+        if (modified) {
             log.debug("Broadcasting data changed")
 
             LocalBroadcastManager.getInstance(context).sendBroadcast(Intent(DATABASE_EVENT))
-            updatesCounter = 0
+            modified = false
         }
     }
 
@@ -197,6 +206,38 @@ class Database constructor(private val context: Context, private val name: Strin
         context.deleteDatabase(name)
 
         log.debug("Destroyed")
+    }
+
+    private fun putEvent(event: PhoneEvent, db: SQLiteDatabase) {
+        val values = ContentValues().apply {
+            put(COLUMN_PHONE, event.phone)
+            put(COLUMN_ACCEPTOR, event.acceptor)
+            put(COLUMN_START_TIME, event.startTime)
+            put(COLUMN_STATE, event.state)
+            put(COLUMN_PROCESS_STATUS, event.processStatus)
+            put(COLUMN_PROCESS_TIME, event.processTime)
+            put(COLUMN_IS_INCOMING, event.isIncoming)
+            put(COLUMN_IS_MISSED, event.isMissed)
+            put(COLUMN_END_TIME, event.endTime)
+            put(COLUMN_TEXT, event.text)
+            put(COLUMN_DETAILS, event.details)
+            put(COLUMN_READ, event.isRead)
+            event.location?.let {
+                put(COLUMN_LATITUDE, it.latitude)
+                put(COLUMN_LONGITUDE, it.longitude)
+            }
+        }
+
+        if (db.insertWithOnConflict(TABLE_EVENTS, null, values, CONFLICT_IGNORE) == -1L) {
+            db.update(TABLE_EVENTS, values, "$COLUMN_START_TIME=? AND $COLUMN_ACCEPTOR=?",
+                    strings(event.startTime, event.acceptor))
+
+            log.debug("Updated: $values")
+        } else {
+            log.debug("Inserted: $values")
+        }
+
+        modified = true
     }
 
     /**
@@ -271,7 +312,7 @@ class Database constructor(private val context: Context, private val name: Strin
         const val COLUMN_LAST_LONGITUDE = "last_longitude"
         const val COLUMN_LAST_LOCATION_TIME = "last_location_time"
         const val COLUMN_READ = "message_read"
-        const val COLUMN_RECIPIENT = "recipient"
+        const val COLUMN_ACCEPTOR = "recipient"
         private const val COLUMN_PURGE_TIME = "messages_purge_time"
 
         private const val DB_VERSION = 7
@@ -295,14 +336,14 @@ class Database constructor(private val context: Context, private val name: Strin
                 COLUMN_END_TIME + " INTEGER, " +
                 COLUMN_LATITUDE + " REAL, " +
                 COLUMN_LONGITUDE + " REAL, " +
-                COLUMN_RECIPIENT + " TEXT(25) NOT NULL," +
+                COLUMN_ACCEPTOR + " TEXT(25) NOT NULL," +
                 COLUMN_TEXT + " TEXT(256)," +
                 COLUMN_STATE + " INTEGER, " +
                 COLUMN_PROCESS_STATUS + " INTEGER, " +
                 COLUMN_PROCESS_TIME + " INTEGER, " +
                 COLUMN_READ + " INTEGER NOT NULL DEFAULT(0), " +
                 COLUMN_DETAILS + " TEXT(256), " +
-                "PRIMARY KEY (" + COLUMN_START_TIME + ", " + COLUMN_RECIPIENT + ")" +
+                "PRIMARY KEY (" + COLUMN_START_TIME + ", " + COLUMN_ACCEPTOR + ")" +
                 ")"
 
         fun registerDatabaseListener(context: Context, onChange: () -> Unit): BroadcastReceiver {
@@ -363,7 +404,7 @@ class Database constructor(private val context: Context, private val name: Strin
                             return STATE_PROCESSED.toString()
                     }
                 }
-                COLUMN_RECIPIENT -> {
+                COLUMN_ACCEPTOR -> {
                     return value ?: deviceName()
                 }
             }
@@ -379,7 +420,7 @@ class Database constructor(private val context: Context, private val name: Strin
 
         override fun get(cursor: Cursor): PhoneEvent {
             return cursor.run {
-                 PhoneEvent(
+                PhoneEvent(
                         phone = getString(COLUMN_PHONE)!!,
                         isIncoming = getBoolean(COLUMN_IS_INCOMING),
                         startTime = getLong(COLUMN_START_TIME),
@@ -392,7 +433,7 @@ class Database constructor(private val context: Context, private val name: Strin
                         ),
                         details = getString(COLUMN_DETAILS),
                         state = getInt(COLUMN_STATE),
-                        acceptor = getString(COLUMN_RECIPIENT)!!,
+                        acceptor = getString(COLUMN_ACCEPTOR)!!,
                         processStatus = getInt(COLUMN_PROCESS_STATUS),
                         processTime = getLong(COLUMN_PROCESS_TIME),
                         isRead = getBoolean(COLUMN_READ)

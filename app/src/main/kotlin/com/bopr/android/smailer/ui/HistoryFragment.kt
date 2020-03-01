@@ -10,6 +10,7 @@ import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bopr.android.smailer.Database
 import com.bopr.android.smailer.Database.Companion.registerDatabaseListener
@@ -26,13 +27,14 @@ import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_BLACKLIST
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_WHITELIST
 import com.bopr.android.smailer.ui.HistoryFragment.Holder
 import com.bopr.android.smailer.util.*
+import com.google.android.material.snackbar.Snackbar
 
 /**
  * Application activity log activity fragment.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-//todo grouping by number
+//todo grouping by phone number
 class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferenceChangeListener {
 
     private lateinit var database: Database
@@ -52,6 +54,17 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
         databaseListener = registerDatabaseListener(requireContext()) {
             refreshItems()
         }
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = super.onCreateView(inflater, container, savedInstanceState)
+
+        recycler.addOnItemSwipedListener {
+            updateSelectedItemPosition(it)
+            onRemoveSelected()
+        }
+
+        return view
     }
 
     override fun onDestroy() {
@@ -106,6 +119,10 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            R.id.action_remove_item -> {
+                onRemoveSelected()
+                true
+            }
             R.id.action_add_to_blacklist -> {
                 onAddToBlacklist()
                 true
@@ -140,7 +157,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
     }
 
     override fun onItemClick(item: PhoneEvent) {
-        HistoryDetailsDialogFragment(item).show(requireActivity())
+        HistoryDetailsDialogFragment(item).show(this)
     }
 
     override fun loadItems(): Collection<PhoneEvent> {
@@ -178,7 +195,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
         ConfirmDialog(getString(R.string.ask_clear_history)) {
             database.clearEvents()
             database.notifyChanged()
-        }.show(requireActivity())
+        }.show(this)
     }
 
     private fun onMarkAllAsRead() {
@@ -213,6 +230,23 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
         }
     }
 
+    private fun onRemoveSelected() {
+        val events = listAdapter.getItemsAt(selectedItemPosition)
+
+        database.deleteEvents(events)
+        database.notifyChanged()
+
+        Snackbar.make(recycler,
+                getQuantityString(R.plurals.items_removed, events.size),
+                Snackbar.LENGTH_LONG)
+                .setActionTextColor(ContextCompat.getColor(requireContext(), R.color.colorAccentText))
+                .setAction(R.string.undo) {
+                    database.putEvents(events)
+                    database.notifyChanged()
+                }
+                .show()
+    }
+
     private fun addSelectedItemToFilter(list: MutableSet<String>, @StringRes titleRes: Int) {
         getSelectedItem()?.let {
             EditPhoneDialogFragment().apply {
@@ -228,7 +262,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
                         }
                     }
                 }
-            }.show(requireActivity())
+            }.show(this)
         }
     }
 

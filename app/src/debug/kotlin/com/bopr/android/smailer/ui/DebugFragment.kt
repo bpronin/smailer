@@ -134,7 +134,7 @@ class DebugFragment : BasePreferenceFragment() {
                         if (isIgnoreBatteryOptimizationRequired(appContext)) {
                             showToast("Battery optimization already ignored")
                         } else {
-                            requireIgnoreBatteryOptimization(requireActivity())
+                            requireIgnoreBatteryOptimization(this@DebugFragment)
                         }
                     }
                 })
@@ -304,9 +304,9 @@ class DebugFragment : BasePreferenceFragment() {
                                             grantResults: IntArray) {
         if (requestCode == PERMISSIONS_REQUEST_RECEIVE_SMS) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                InfoDialog(message = "Permission granted").show(requireActivity())
+                InfoDialog(message = "Permission granted").show(this)
             } else {
-                InfoDialog(message = "Permission denied").show(requireActivity())
+                InfoDialog(message = "Permission denied").show(this)
             }
         }
     }
@@ -378,7 +378,7 @@ class DebugFragment : BasePreferenceFragment() {
                         val text = if (contact != null) "$it: $contact" else "Contact not found"
                         showToast(text)
                     }
-            ).show(requireActivity())
+            ).show(this)
         } else {
             showToast("Permission denied")
         }
@@ -471,7 +471,7 @@ class DebugFragment : BasePreferenceFragment() {
             }
         }
 
-        InfoDialog(message = sb.toString()).show(requireActivity())
+        InfoDialog(message = sb.toString()).show(this)
     }
 
     private fun onGoogleDriveClear() {
@@ -495,7 +495,7 @@ class DebugFragment : BasePreferenceFragment() {
                 null
             })
             showToast(R.string.operation_complete)
-        }.show(requireActivity())
+        }.show(this)
     }
 
     private fun onGoogleDriveDownload() {
@@ -509,7 +509,7 @@ class DebugFragment : BasePreferenceFragment() {
                 null
             })
             showToast(R.string.operation_complete)
-        }.show(requireActivity())
+        }.show(this)
     }
 
     private fun onGoogleDriveUpload() {
@@ -523,7 +523,7 @@ class DebugFragment : BasePreferenceFragment() {
                 }
                 null
             })
-        }.show(requireActivity())
+        }.show(this)
     }
 
     @SuppressLint("SetTextI18n")
@@ -548,7 +548,7 @@ class DebugFragment : BasePreferenceFragment() {
         val s = "Selected: ${selectedAccount(requireContext())?.name}\n\n" +
                 "Service: ${serviceAccount(requireContext())?.name}\n\n" +
                 "Primary: ${primaryAccount(requireContext())?.name}"
-        InfoDialog(message = s).show(requireActivity())
+        InfoDialog(message = s).show(this)
     }
 
     private abstract inner class DefaultClickListener : Preference.OnPreferenceClickListener {

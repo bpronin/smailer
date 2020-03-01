@@ -5,11 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat.getColor
-import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.NO_POSITION
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bopr.android.smailer.R
+import com.bopr.android.smailer.util.addOnItemSwipedListener
 import com.bopr.android.smailer.util.getQuantityString
 import com.bopr.android.smailer.util.showAnimated
 import com.bopr.android.smailer.util.showToast
@@ -22,26 +21,16 @@ abstract class EditableRecyclerFragment<I, H : ViewHolder> : RecyclerFragment<I,
                               savedInstanceState: Bundle?): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)!!
 
-        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
-
-            override fun onMove(recyclerView: RecyclerView, viewHolder: ViewHolder,
-                                target: ViewHolder): Boolean {
-                return false
-            }
-
-            override fun onSwiped(holder: ViewHolder, swipeDir: Int) {
-                updateSelectedItemPosition(holder)
-                removeSelectedItem()
-            }
-        }).also {
-            it.attachToRecyclerView(recycler)
+        recycler.addOnItemSwipedListener {
+            updateSelectedItemPosition(it)
+            removeSelectedItem()
         }
 
         view.findViewById<FloatingActionButton>(R.id.button_add).apply {
             setOnClickListener {
                 editItem(NO_POSITION)
             }
-            showAnimated(R.anim.fab_show, 0)
+            showAnimated(R.anim.fab_show, 300)
         }
         return view
     }
@@ -89,7 +78,7 @@ abstract class EditableRecyclerFragment<I, H : ViewHolder> : RecyclerFragment<I,
                     }
                 }
             }
-        }.show(requireActivity())
+        }.show(this)
     }
 
     private fun removeItems(vararg positions: Int) {

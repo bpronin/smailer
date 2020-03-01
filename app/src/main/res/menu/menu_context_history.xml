@@ -1,28 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    >
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group
-        android:id="@+id/rules">
-        <item
-            android:id="@+id/action_add_to_blacklist"
-            android:title="@string/add_number_to_blacklist"
-            />
+    <item
+        android:id="@+id/action_remove_item"
+        android:title="@string/remove" />
 
-        <item
-            android:id="@+id/action_add_to_whitelist"
-            android:title="@string/add_number_to_whitelist"
-            />
+    <item
+        android:id="@+id/action_add_to_blacklist"
+        android:title="@string/add_number_to_blacklist" />
 
-        <item
-            android:id="@+id/action_remove_from_lists"
-            android:title="@string/remove_from_filter"
-            />
+    <item
+        android:id="@+id/action_add_to_whitelist"
+        android:title="@string/add_number_to_whitelist" />
 
-        <item
-            android:id="@+id/action_ignore"
-            android:title="@string/do_not_process_call"
-            />
-    </group>
+    <item
+        android:id="@+id/action_remove_from_lists"
+        android:title="@string/remove_from_filter" />
+
+    <item
+        android:id="@+id/action_ignore"
+        android:title="@string/do_not_process_call" />
 
 </menu>

@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 
@@ -47,6 +48,10 @@ abstract class BaseDialogFragment(private val fragmentTag: String?) : DialogFrag
 
     open fun show(activity: FragmentActivity) {
         show(activity.supportFragmentManager, fragmentTag)
+    }
+
+    open fun show(fragment: Fragment) {
+        show(fragment.requireActivity())
     }
 
 }

@@ -6,7 +6,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
-import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.Fragment
 import com.bopr.android.smailer.R
 
 internal object BatteryOptimizationHelper {
@@ -22,20 +22,22 @@ internal object BatteryOptimizationHelper {
         return false
     }
 
-    fun requireIgnoreBatteryOptimization(activity: FragmentActivity) {
-        if (isIgnoreBatteryOptimizationRequired(activity)) {
-            showDialog(activity)
+    fun requireIgnoreBatteryOptimization(fragment: Fragment) {
+        if (isIgnoreBatteryOptimizationRequired(fragment.requireContext())) {
+            showDialog(fragment)
         }
     }
 
     @TargetApi(Build.VERSION_CODES.M)
-    private fun showDialog(activity: FragmentActivity) {
-        ConfirmCheckDialog(
-                title = activity.getString(R.string.battery_optimization),
-                message = activity.getString(R.string.battery_optimization_reason),
-                positiveButtonText = activity.getString(R.string.proceed),
-                dialogTag = BATTERY_OPTIMIZATION_DIALOG_TAG) {
-            activity.startActivity(Intent(ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
-        }.show(activity)
+    private fun showDialog(fragment: Fragment) {
+        fragment.run {
+            ConfirmCheckDialog(
+                    title = getString(R.string.battery_optimization),
+                    message = getString(R.string.battery_optimization_reason),
+                    positiveButtonText = getString(R.string.proceed),
+                    dialogTag = BATTERY_OPTIMIZATION_DIALOG_TAG) {
+                startActivity(Intent(ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
+            }.show(this)
+        }
     }
 }

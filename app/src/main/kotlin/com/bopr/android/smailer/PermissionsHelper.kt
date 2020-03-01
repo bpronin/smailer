@@ -171,7 +171,7 @@ class PermissionsHelper(val fragment: Fragment) {
 
         InfoDialog(message = formatRationale(permissions)) {
             requestPermissions(permissions)
-        }.show(fragment.requireActivity())
+        }.show(fragment)
     }
 
     private fun formatRationale(permissions: Collection<String>): String {

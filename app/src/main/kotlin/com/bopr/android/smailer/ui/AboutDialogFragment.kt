@@ -24,9 +24,7 @@ class AboutDialogFragment : BaseDialogFragment("about_dialog") {
         view.findViewById<TextView>(R.id.label_message).apply {
             text = getString(R.string.app_version, info.name)
             setOnLongClickListener {
-                InfoDialog(title = "Release info",
-                        message = "Build number: ${info.number}\nBuild time: ${info.time}")
-                        .show(requireActivity())
+                showDetails(info)
                 true
             }
         }
@@ -37,6 +35,12 @@ class AboutDialogFragment : BaseDialogFragment("about_dialog") {
         }
 
         return view
+    }
+
+    private fun showDetails(info: BuildInfo) {
+        InfoDialog(title = "Release info",
+                message = "Build number: ${info.number}\nBuild time: ${info.time}")
+                .show(this)
     }
 
 }

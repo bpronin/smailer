@@ -129,6 +129,14 @@ abstract class RecyclerFragment<I, H : ViewHolder> : BaseFragment() {
             }
         }
 
+        fun getItemsAt(vararg positions: Int): List<I> {
+            val list = mutableListOf<I>()
+            for (position in positions) {
+                list.add(items[position])
+            }
+            return list
+        }
+
         fun replaceItemAt(position: Int, item: I) {
             if (position == NO_POSITION) {
                 items.add(item)

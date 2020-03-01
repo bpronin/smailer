@@ -48,9 +48,9 @@ class MainFragment : BasePreferenceFragment() {
             updateHistoryPreferenceView()
         }
 
-        permissionsHelper.checkAll {
-            requireIgnoreBatteryOptimization(requireActivity())
+        permissionsHelper.checkAll {   //todo check
         }
+        requireIgnoreBatteryOptimization(this)
     }
 
     override fun onDestroy() {
