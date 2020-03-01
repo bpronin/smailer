@@ -11,9 +11,10 @@ import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_BLACKLIST
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_WHITELIST
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_BLACKLIST
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_WHITELIST
+import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_TIME
 import com.bopr.android.smailer.sync.AppContentProvider.Companion.AUTHORITY
-import com.bopr.android.smailer.ui.GoogleAuthorizationHelper.Companion.primaryAccount
+import com.bopr.android.smailer.util.selectedAccount
 import org.slf4j.LoggerFactory
 import java.lang.System.currentTimeMillis
 
@@ -21,6 +22,7 @@ object SyncEngine {
 
     private val log = LoggerFactory.getLogger("SyncEngine")
     private var databaseListener: BroadcastReceiver? = null
+    private var account: Account? = null
 
     fun startSyncEngine(context: Context) {
         /* register it only once */
@@ -30,28 +32,31 @@ object SyncEngine {
             }
         }
 
-        account(context)?.let {
+        account?.let {
+            removePeriodicSync(it, AUTHORITY, Bundle.EMPTY)
+
+            log.debug("Stopped")
+        }
+
+        account = selectedAccount(context)
+
+        account?.let {
+            requestSyncNow(it)
             addPeriodicSync(it, AUTHORITY, Bundle.EMPTY, 0)
 
             log.debug("Running")
         } ?: log.debug("No account")
     }
 
-    /**
-     * For debug purposes
-     */
-    fun syncNow(context: Context) {
+    private fun requestSyncNow(account: Account) {
         val bundle = Bundle()
         bundle.putBoolean(SYNC_EXTRAS_MANUAL, true)
         bundle.putBoolean(SYNC_EXTRAS_EXPEDITED, true)
 
-        account(context)?.let {
-            requestSync(it, AUTHORITY, bundle)
+        requestSync(account, AUTHORITY, bundle)
 
-            log.debug("Sync now")
-        } ?: log.debug("No account")
+        log.debug("Sync now")
     }
-
 
     fun onSyncEngineSettingsChanged(context: Context, setting: String) {
         when (setting) {
@@ -61,17 +66,16 @@ object SyncEngine {
             PREF_FILTER_TEXT_WHITELIST -> {
                 updateMetadata(context)
             }
+            PREF_SENDER_ACCOUNT ->
+                startSyncEngine(context)
         }
     }
 
-    private fun account(context: Context): Account? {
-        return primaryAccount(context)
-    }
-
     private fun updateMetadata(context: Context) {
-        Settings(context).edit().putLong(PREF_SYNC_TIME, currentTimeMillis()).apply()
+        val time = currentTimeMillis()
+        Settings(context).edit().putLong(PREF_SYNC_TIME, time).apply()
 
-        log.debug("Metadata updated")
+        log.debug("Metadata updated: %tF %tT".format(time, time))
     }
 
 }

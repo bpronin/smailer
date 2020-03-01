@@ -47,15 +47,8 @@ class Settings(context: Context) : SharedPreferencesWrapper(
             putBooleanOptional(PREF_REMOTE_CONTROL_NOTIFICATIONS, true)
             putBooleanOptional(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS, true)
             putStringSetOptional(PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS)
-
-            val emailContent = getStringSet(PREF_EMAIL_CONTENT)
-            if (emailContent.isEmpty()) {
-                putStringSet(PREF_EMAIL_CONTENT, DEFAULT_CONTENT)
-            } else if (getInt(PREF_SETTINGS_VERSION, 1) == 1) {
-                emailContent.add(VAL_PREF_EMAIL_CONTENT_HEADER)
-                emailContent.add(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT)
-                putStringSet(PREF_EMAIL_CONTENT, emailContent)
-            }
+            putBooleanOptional(PREF_NOTIFY_SEND_SUCCESS, false)
+            putStringSetOptional(PREF_EMAIL_CONTENT, DEFAULT_CONTENT)
 
             apply()
         }

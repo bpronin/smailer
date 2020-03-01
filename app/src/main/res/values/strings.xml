@@ -26,8 +26,6 @@
     <string name="battery_optimization_reason">To make the application work properly when device is in standby mode please turn off battery optimization for it.</string>
     <string name="blacklist">Blacklist</string>
     <string name="call_history">Call history</string>
-    <string name="incoming_call_of">Incoming call: %s</string>
-    <string name="outgoing_call_of">Outgoing call: %s</string>
     <string name="called_phone">Called: %1$s (%2$s)</string>
     <string name="caller_phone">Caller: %1$s (%2$s)</string>
     <string name="check_your_settings">Please check your settings</string>
@@ -57,8 +55,10 @@
     <string name="ignored">Ignored</string>
     <string name="incoming_call">Incoming call</string>
     <string name="incoming_call_from">Incoming call from</string>
+    <string name="incoming_call_of">Incoming call: %s</string>
     <string name="incoming_sms">Incoming SMS</string>
     <string name="incoming_sms_from">Incoming SMS from</string>
+    <string name="info_notifications">Info notifications</string>
     <string name="invalid_recipient">Invalid recipient specified</string>
     <string name="item_already_exists">%s is already exists</string>
     <string name="last_known_location">Last known device location: %s</string>
@@ -84,6 +84,7 @@
     <string name="operation_complete" >Operation complete</string>
     <string name="options">Options</string>
     <string name="outgoing_call">Outgoing call</string>
+    <string name="outgoing_call_of">Outgoing call: %s</string>
     <string name="outgoing_call_to">Outgoing call to</string>
     <string name="outgoing_sms">Outgoing SMS</string>
     <string name="outgoing_sms_to">Outgoing SMS to</string>

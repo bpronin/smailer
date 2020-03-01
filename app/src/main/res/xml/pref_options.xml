@@ -3,7 +3,9 @@
 
     <androidx.preference.SwitchPreference
         android:key="notify_send_success"
-        android:title="@string/notify_send_success" />
+        android:title="@string/info_notifications"
+        android:summary="@string/notify_send_success"
+        />
 
     <androidx.preference.Preference
         android:key="reset_dialogs"

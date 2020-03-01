@@ -3,15 +3,13 @@ package com.bopr.android.smailer.util
 import android.Manifest.permission.GET_ACCOUNTS
 import androidx.test.rule.GrantPermissionRule
 import com.bopr.android.smailer.BaseTest
-import com.bopr.android.smailer.ui.GoogleAuthorizationHelper.Companion.getAccount
-import com.bopr.android.smailer.ui.GoogleAuthorizationHelper.Companion.primaryAccount
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Rule
 import org.junit.Test
 
 /**
- * [AndroidUtil] tester.
+ * AndroidUtil tester.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */

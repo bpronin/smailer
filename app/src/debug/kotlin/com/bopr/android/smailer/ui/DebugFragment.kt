@@ -47,11 +47,9 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
 import com.bopr.android.smailer.remote.RemoteControlService
-import com.bopr.android.smailer.sync.SyncEngine.syncNow
 import com.bopr.android.smailer.sync.Synchronizer
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.isIgnoreBatteryOptimizationRequired
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
-import com.bopr.android.smailer.ui.GoogleAuthorizationHelper.Companion.primaryAccount
 import com.bopr.android.smailer.util.*
 import com.google.android.gms.tasks.Tasks
 import com.google.api.services.drive.DriveScopes
@@ -256,9 +254,9 @@ class DebugFragment : BasePreferenceFragment() {
                         onGetContact()
                     }
                 }),
-                createPreference("Show primary account", object : DefaultClickListener() {
+                createPreference("Show accounts", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        onShowPrimaryAccount()
+                        onShowAccounts()
                     }
                 }),
                 createPreference("Show concurrent applications", object : DefaultClickListener() {
@@ -487,22 +485,24 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun onGoogleDriveSync() {
-        Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
-            try {
-                syncNow(appContext)
-            } catch (x: Throwable) {
-                log.error("Sync error: ", x)
-            }
-            null
-        })
-        showToast(R.string.operation_complete)
+        ConfirmDialog("Synchronize with drive?") {
+            Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
+                try {
+                    Synchronizer(appContext, selectedAccount(requireContext())!!, database).sync()
+                } catch (x: Throwable) {
+                    log.error("Sync error: ", x)
+                }
+                null
+            })
+            showToast(R.string.operation_complete)
+        }.show(requireActivity())
     }
 
     private fun onGoogleDriveDownload() {
         ConfirmDialog("Download from drive?") {
             Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
                 try {
-                    Synchronizer(appContext, primaryAccount(requireContext())!!, database).download()
+                    Synchronizer(appContext, selectedAccount(requireContext())!!, database).download()
                 } catch (x: Throwable) {
                     log.error("Download error: ", x)
                 }
@@ -516,7 +516,7 @@ class DebugFragment : BasePreferenceFragment() {
         ConfirmDialog("Upload to drive?") {
             Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
                 try {
-                    Synchronizer(appContext, primaryAccount(requireContext())!!, database).upload()
+                    Synchronizer(appContext, selectedAccount(requireContext())!!, database).upload()
                     showToast(R.string.operation_complete)
                 } catch (x: Throwable) {
                     log.error("Upload error: ", x)
@@ -544,9 +544,11 @@ class DebugFragment : BasePreferenceFragment() {
         )
     }
 
-    private fun onShowPrimaryAccount() {
-        InfoDialog(message = primaryAccount(requireContext())?.name)
-                .show(requireActivity())
+    private fun onShowAccounts() {
+        val s = "Selected: ${selectedAccount(requireContext())?.name}\n\n" +
+                "Service: ${serviceAccount(requireContext())?.name}\n\n" +
+                "Primary: ${primaryAccount(requireContext())?.name}"
+        InfoDialog(message = s).show(requireActivity())
     }
 
     private abstract inner class DefaultClickListener : Preference.OnPreferenceClickListener {

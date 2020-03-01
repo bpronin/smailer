@@ -15,9 +15,9 @@ import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
-import com.bopr.android.smailer.ui.GoogleAuthorizationHelper.Companion.getAccount
 import com.bopr.android.smailer.util.checkPermission
 import com.bopr.android.smailer.util.contactName
+import com.bopr.android.smailer.util.getAccount
 import com.bopr.android.smailer.util.isValidEmailAddressList
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
@@ -142,7 +142,7 @@ class CallProcessor(
     @Throws(AccountsException::class)
     private fun requireAccount(): Account {
         val accountName = settings.getString(PREF_SENDER_ACCOUNT)
-        return getAccount(context, accountName) ?: run {
+        return getAccount(context, settings.getString(PREF_SENDER_ACCOUNT)) ?: run {
             notifications.showMailError(R.string.sender_account_not_found, TARGET_MAIN)
             throw AccountsException("Sender account [$accountName] not found")
         }

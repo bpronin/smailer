@@ -3,4 +3,4 @@
 [DONE] Add possibility to send SMS from service mail
 [TODO] Mail is not being sent when device is dozing
 [DONE] Checking permissions twice at startup
-[TODO] Avoid deprecations
+[DONE] Avoid deprecations

@@ -25,8 +25,6 @@
     <string name="battery_optimization_reason">Чтобы приложение корректно работало когда устройство находиться в спящем режиме, отключите для него оптимизацию питания.</string>
     <string name="blacklist">Черный список</string>
     <string name="call_history">Журнал</string>
-    <string name="incoming_call_of">Входящий звонок: %s</string>
-    <string name="outgoing_call_of">Исходящий звонок: %s</string>
     <string name="called_phone">Вы звонили: %1$s (%2$s)</string>
     <string name="caller_phone">Вам звонил: %1$s (%2$s)</string>
     <string name="check_your_settings">Проверьте настройки приложения</string>
@@ -55,8 +53,10 @@
     <string name="ignored">Пропущено</string>
     <string name="incoming_call">Входящий звонок</string>
     <string name="incoming_call_from">Входящий звонок от</string>
+    <string name="incoming_call_of">Входящий звонок: %s</string>
     <string name="incoming_sms">Входящее SMS</string>
     <string name="incoming_sms_from">Входящее SMS от</string>
+    <string name="info_notifications">Информационные сообщения</string>
     <string name="invalid_recipient">Указан неверный получатель</string>
     <string name="item_already_exists">%s уже существует</string>
     <string name="last_known_location">Последнее известное местоположение: %s</string>
@@ -82,6 +82,7 @@
     <string name="operation_complete">Операция выполнена</string>
     <string name="options">Опции</string>
     <string name="outgoing_call">Исходящий звонок</string>
+    <string name="outgoing_call_of">Исходящий звонок: %s</string>
     <string name="outgoing_call_to">Исходящий звонок на</string>
     <string name="outgoing_sms">Исходящее SMS</string>
     <string name="outgoing_sms_to">Исходящее SMS</string>
