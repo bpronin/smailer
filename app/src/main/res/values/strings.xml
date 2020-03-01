@@ -35,7 +35,7 @@
     <string name="copyright" translatable="false">Copyright © BoPr, 2016-2020</string>
     <string name="device_name">Device name</string>
     <string name="device_name_to_show">Device name to be shown in email message (leave blank to use default)</string>
-    <string name="disavbled">Disabled</string>
+    <string name="disabled">Disabled</string>
     <string name="do_not_ask_again">Don\'t ask again</string>
     <string name="do_not_process_call">Do not process call</string>
     <string name="edit">Edit</string>
@@ -47,7 +47,6 @@
     <string name="email_message_language">Email message language</string>
     <string name="email_message_summary">Email message settings</string>
     <string name="email_successfully_send">Email successfully sent</string>
-    <string name="enable_sync">Enable synchronization</string>
     <string name="enabled">Enabled</string>
     <string name="enter_phone_number">Enter phone number. You also may use * as a wildcard.</string>
     <string name="events_causing_sending_mail">Events causing sending email</string>
@@ -137,6 +136,7 @@
     <string name="since_permissions_not_granted">Since not all required permissions is granted, some options have been disabled.</string>
     <string name="status">Status</string>
     <string name="sync_blacklist_and_log">Synchronize black/whitelists and call history across devices</string>
+    <string name="synchronization">Synchronization</string>
     <string name="tap_to_check_settings">Tap to check your settings.</string>
     <string name="text_blacklist">Text blacklist</string>
     <string name="text_filter">Text filter</string>

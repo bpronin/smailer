@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- to enable spell check in this file enable/add russian dic in settings and
+     put the file temporarily into english resources directory -->
 <resources>
     <string name="_any">любые</string>
     <string name="_at_time">\u0020%s</string>
     <string name="_from_device">\u0020с устройства \"%s\"</string>
     <string name="_none">отсутствуют</string>
     <string name="about">О приложении</string>
-    <string name="acceptable_phone_numbers">Разрешенные номера (%s)</string>
-    <string name="acceptable_words">Разрешенные фразы (%s)</string>
+    <string name="acceptable_phone_numbers">Разрешённые номера (%s)</string>
+    <string name="acceptable_words">Разрешённые фразы (%s)</string>
     <string name="add">Добавить</string>
-    <string name="add_number_to_blacklist">Добавить в черный список</string>
+    <string name="add_number_to_blacklist">Добавить в чёрный список</string>
     <string name="add_number_to_whitelist">Добавить в белый список</string>
-    <string name="add_phone_to_blacklist">Добавить номер в черный список"</string>
+    <string name="add_phone_to_blacklist">Добавить номер в чёрный список"</string>
     <string name="add_phone_to_whitelist">Добавить номер в белый список"</string>
-    <string name="add_text_to_blacklist">Добавить текст в черный список"</string>
+    <string name="add_text_to_blacklist">Добавить текст в чёрный список"</string>
     <string name="add_text_to_whitelist">Добавить текст в белый список"</string>
-    <string name="add_to_blacklist">Добавить в черный список</string>
+    <string name="add_to_blacklist">Добавить в чёрный список</string>
     <string name="add_to_whitelist">Добавить в белый список</string>
     <string name="allow_control_remotely">Позволить управлять приложением посредством отправки почты на сервисный аккаунт</string>
     <string name="allow_only_recipients">Принимать сервисную почту только от получателей</string>
@@ -23,7 +25,7 @@
     <string name="ask_clear_list">Очистить список?</string>
     <string name="battery_optimization">Экономия заряда батареи</string>
     <string name="battery_optimization_reason">Чтобы приложение корректно работало когда устройство находиться в спящем режиме, отключите для него оптимизацию питания.</string>
-    <string name="blacklist">Черный список</string>
+    <string name="blacklist">Чёрный список</string>
     <string name="call_history">Журнал</string>
     <string name="called_phone">Вы звонили: %1$s (%2$s)</string>
     <string name="caller_phone">Вам звонил: %1$s (%2$s)</string>
@@ -33,7 +35,7 @@
     <string name="contact_no_permission_read_contact">нет разрешения на чтение контактов</string>
     <string name="device_name">Имя устройства</string>
     <string name="device_name_to_show">Имя устройства в почтовом сообщении (оставьте пустым, чтобы использовать имя по умолчанию)</string>
-    <string name="disavbled">Отключено</string>
+    <string name="disabled">Отключено</string>
     <string name="do_not_ask_again">Больше не спрашивать</string>
     <string name="do_not_process_call">Игнорировать</string>
     <string name="edit">Изменить</string>
@@ -41,11 +43,10 @@
     <string name="email_content">Содержание</string>
     <string name="email_language">Язык почтового сообщения</string>
     <string name="email_message">Почтовое сообщение</string>
-    <string name="email_message_content">Влючать в почтовое сообщение</string>
+    <string name="email_message_content">Включать в почтовое сообщение</string>
     <string name="email_message_language">Язык почтового сообщения</string>
     <string name="email_message_summary">Настройки почтового сообщения</string>
     <string name="email_successfully_send">Почта успешно отправлена.</string>
-    <string name="enable_sync">Включить синхронизацию</string>
     <string name="enabled">Включено</string>
     <string name="enter_phone_number">Укажите номер телефона. Допустимо использование символа * для пропуска группы знаков</string>
     <string name="events_causing_sending_mail">События для отправки почты</string>
@@ -77,7 +78,7 @@
     <string name="notifications">Уведомления</string>
     <string name="notify_remote_actions">Показывать уведомление о выполнении операций</string>
     <string name="notify_send_success">Показывать уведомление об успешной отправке почты</string>
-    <string name="number_in_blacklist">Номер в черном списке</string>
+    <string name="number_in_blacklist">Номер в чёрном списке</string>
     <string name="open_source">Открытый исходный код</string>
     <string name="open_source_and_third_party">Открытый исходный код и ПО сторонних производителей</string>
     <string name="operation_complete">Операция выполнена</string>
@@ -93,19 +94,19 @@
     <string name="permission_rationale_outgoing_call">Чтобы отправлять почтовое сообщение при исходящих вызовах, необходимо разрешение \"%s\".</string>
     <string name="permission_rationale_phone_state">Чтобы отправлять почтовое сообщение при входящих и исходящих вызовах, необходимо разрешение \"%s\".</string>
     <string name="permission_rationale_read_contacts">Чтобы отображать имя звонившего в почтовом сообщении, необходимо разрешение \"%s\".</string>
-    <string name="permission_rationale_read_sms">Чтобы отправлять почтовое сообщение при отправлеии SMS, необходимо разрешение \"%s\".</string>
+    <string name="permission_rationale_read_sms">Чтобы отправлять почтовое сообщение при отправлении SMS, необходимо разрешение \"%s\".</string>
     <string name="permission_rationale_receive_sms">Чтобы отправлять почтовое сообщение при приеме SMS, необходимо разрешение \"%s\".</string>
-    <string name="permission_rationale_send_sms">Чтобы удаленно отправлять SMS сообщения, необходимо разрешение \"%s\".</string>
+    <string name="permission_rationale_send_sms">Чтобы удалённо отправлять SMS сообщения, необходимо разрешение \"%s\".</string>
     <string name="permission_rationale_write_sms">Чтобы отмечать обработанные SMS как прочитанные, необходимо разрешение \"%s\".</string>
     <string name="permissions_required_for_operation">Нет необходимых разрешений</string>
-    <string name="phone_blacklist">Черный список номеров</string>
+    <string name="phone_blacklist">Чёрный список номеров</string>
     <string name="phone_number">Телефон</string>
     <string name="phone_number_filter">Фильтр номеров</string>
-    <string name="phone_remotely_added_to_blacklist">Номер %s удаленно добавлен в черный список."</string>
-    <string name="phone_remotely_added_to_whitelist">Номер %s удаленно добавлен в белый список."</string>
-    <string name="phone_remotely_removed_from_blacklist">Номер %s удаленно удален из черного списка."</string>
-    <string name="phone_remotely_removed_from_whitelist">Номер %s удаленно удален из белого списка."</string>
-    <string name="phone_removed_from_filter">%1$s удален из фильтра</string>
+    <string name="phone_remotely_added_to_blacklist">Номер %s удалённо добавлен в чёрный список."</string>
+    <string name="phone_remotely_added_to_whitelist">Номер %s удалённо добавлен в белый список."</string>
+    <string name="phone_remotely_removed_from_blacklist">Номер %s удалённо удалён из чёрного списка."</string>
+    <string name="phone_remotely_removed_from_whitelist">Номер %s удалённо удалён из белого списка."</string>
+    <string name="phone_removed_from_filter">%1$s удалён из фильтра</string>
     <string name="phone_whitelist">Белый список номеров</string>
     <string name="proceed">Продолжить</string>
     <string name="processed_at">%s</string>
@@ -113,9 +114,9 @@
     <string name="recipient_device">Адресат:</string>
     <string name="recipients">Получатели</string>
     <string name="regular_expression">Регулярное выражение</string>
-    <string name="remote_control">Удаленное управление</string>
+    <string name="remote_control">Удалённое управление</string>
     <string name="remote_control_account">Сервисный аккаунт</string>
-    <string name="remote_control_account_removed">Сервисный аккаунт был удален.</string>
+    <string name="remote_control_account_removed">Сервисный аккаунт был удалён.</string>
     <string name="remove">Удалить</string>
     <string name="remove_from_filter">Исключить номер из правил</string>
     <string name="reply_ot_app">Ответить %s:</string>
@@ -134,16 +135,17 @@
     <string name="service_running">Служба запущена</string>
     <string name="since_permissions_not_granted">Некоторые настройки отключены, поскольку разрешения не получены.</string>
     <string name="status">Состояние</string>
-    <string name="sync_blacklist_and_log">Синхронизировать ченый и белый списки и журнал звонков между устройствами</string>
+    <string name="sync_blacklist_and_log">Синхронизировать чёрный и белый списки и журнал звонков между устройствами</string>
+    <string name="synchronization">Синхронизация</string>
     <string name="tap_to_check_settings">Нажмите, чтобы проверить настройки.</string>
-    <string name="text_blacklist">Черный список фраз</string>
+    <string name="text_blacklist">Чёрный список фраз</string>
     <string name="text_filter">Фильтр текста</string>
     <string name="text_fragment">Фрагмент текста</string>
-    <string name="text_in_blacklist">Текст в черном списке</string>
-    <string name="text_remotely_added_to_blacklist">Текст \"%s\" удаленно добавлен в черный список"</string>
-    <string name="text_remotely_added_to_whitelist">Текст \"%s\" удаленно добавлен в белый список"</string>
-    <string name="text_remotely_removed_from_blacklist">Текст \"%s\" удаленно удален из черного списка"</string>
-    <string name="text_remotely_removed_from_whitelist">Текст \"%s\" удаленно удален из белого списка"</string>
+    <string name="text_in_blacklist">Текст в чёрном списке</string>
+    <string name="text_remotely_added_to_blacklist">Текст \"%s\" удалённо добавлен в чёрный список"</string>
+    <string name="text_remotely_added_to_whitelist">Текст \"%s\" удалённо добавлен в белый список"</string>
+    <string name="text_remotely_removed_from_blacklist">Текст \"%s\" удалённо удалён из чёрного списка"</string>
+    <string name="text_remotely_removed_from_whitelist">Текст \"%s\" удалённо удалён из белого списка"</string>
     <string name="text_whitelist">Белый список фраз</string>
     <string name="time">Время:</string>
     <string name="time_time">Время: %s</string>
@@ -191,7 +193,7 @@
         <item>Имя звонившего</item>
         <item>Название устройства</item>
         <item>Местоположение устройства</item>
-        <item>Ссылки удаленного управления</item>
+        <item>Ссылки удалённого управления</item>
     </string-array>
 
     <string-array name="language_names">

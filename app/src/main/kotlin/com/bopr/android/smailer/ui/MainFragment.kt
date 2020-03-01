@@ -125,7 +125,7 @@ class MainFragment : BasePreferenceFragment() {
         if (settings.getBoolean(preference.key)) {
             updateSummary(preference, getString(R.string.enabled), SUMMARY_STYLE_DEFAULT)
         } else {
-            updateSummary(preference, getString(R.string.disavbled), SUMMARY_STYLE_DEFAULT)
+            updateSummary(preference, getString(R.string.disabled), SUMMARY_STYLE_DEFAULT)
         }
     }
 }

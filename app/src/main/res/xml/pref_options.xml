@@ -3,7 +3,7 @@
 
     <androidx.preference.SwitchPreference
         android:key="sync_enabled"
-        android:title="@string/enable_sync"
+        android:title="@string/synchronization"
         android:summary="@string/sync_blacklist_and_log"
         />
 
