@@ -109,6 +109,3 @@ fun <T> Cursor.useToList(get: (Cursor) -> T): List<T> {
     }
     return list
 }
-
-
-

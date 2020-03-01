@@ -256,6 +256,11 @@ class DebugFragment : BasePreferenceFragment() {
                         onGetContact()
                     }
                 }),
+                createPreference("Show primary account", object : DefaultClickListener() {
+                    override fun onClick(preference: Preference) {
+                        onShowPrimaryAccount()
+                    }
+                }),
                 createPreference("Show concurrent applications", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
                         onShowConcurrent()
@@ -537,6 +542,11 @@ class DebugFragment : BasePreferenceFragment() {
                     }
                 }
         )
+    }
+
+    private fun onShowPrimaryAccount() {
+        InfoDialog(message = primaryAccount(requireContext())?.name)
+                .show(requireActivity())
     }
 
     private abstract inner class DefaultClickListener : Preference.OnPreferenceClickListener {

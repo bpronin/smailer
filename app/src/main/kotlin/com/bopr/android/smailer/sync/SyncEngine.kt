@@ -1,5 +1,6 @@
 package com.bopr.android.smailer.sync
 
+import android.accounts.Account
 import android.content.BroadcastReceiver
 import android.content.ContentResolver.*
 import android.content.Context
@@ -29,14 +30,12 @@ object SyncEngine {
             }
         }
 
-        primaryAccount(context)?.run {
-            addPeriodicSync(this, AUTHORITY, Bundle.EMPTY, 0)
+        account(context)?.let {
+            addPeriodicSync(it, AUTHORITY, Bundle.EMPTY, 0)
 
             log.debug("Running")
-
-        } ?: log.debug("No primary account")
+        } ?: log.debug("No account")
     }
-
 
     /**
      * For debug purposes
@@ -46,10 +45,13 @@ object SyncEngine {
         bundle.putBoolean(SYNC_EXTRAS_MANUAL, true)
         bundle.putBoolean(SYNC_EXTRAS_EXPEDITED, true)
 
-        requestSync(primaryAccount(context), AUTHORITY, bundle)
+        account(context)?.let {
+            requestSync(it, AUTHORITY, bundle)
 
-        log.debug("Sync now")
+            log.debug("Sync now")
+        } ?: log.debug("No account")
     }
+
 
     fun onSyncEngineSettingsChanged(context: Context, setting: String) {
         when (setting) {
@@ -60,6 +62,10 @@ object SyncEngine {
                 updateMetadata(context)
             }
         }
+    }
+
+    private fun account(context: Context): Account? {
+        return primaryAccount(context)
     }
 
     private fun updateMetadata(context: Context) {
