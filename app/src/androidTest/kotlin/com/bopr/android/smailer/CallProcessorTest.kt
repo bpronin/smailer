@@ -7,6 +7,7 @@ import android.accounts.AccountManager
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.test.rule.GrantPermissionRule
+import androidx.test.rule.GrantPermissionRule.grant
 import com.bopr.android.smailer.Notifications.Companion.TARGET_MAIN
 import com.bopr.android.smailer.Notifications.Companion.TARGET_RECIPIENTS
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
@@ -43,7 +44,7 @@ class CallProcessorTest : BaseTest() {
 
     @Rule
     @JvmField
-    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(READ_CONTACTS, WRITE_CONTACTS)
+    val permissionRule: GrantPermissionRule = grant(READ_CONTACTS, WRITE_CONTACTS)
 
     private lateinit var database: Database
     private lateinit var context: Context
