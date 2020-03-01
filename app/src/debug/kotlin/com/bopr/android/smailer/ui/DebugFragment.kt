@@ -395,7 +395,7 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun onProcessServiceMail() {
-        if (settings.getBoolean(PREF_REMOTE_CONTROL_ENABLED, false)) {
+        if (settings.getBoolean(PREF_REMOTE_CONTROL_ENABLED)) {
             RemoteControlService.startRemoteControlService(appContext)
             showToast(R.string.operation_complete)
         } else {

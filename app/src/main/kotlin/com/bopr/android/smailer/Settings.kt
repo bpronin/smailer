@@ -49,6 +49,7 @@ class Settings(context: Context) : SharedPreferencesWrapper(
             putStringSetOptional(PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS)
             putBooleanOptional(PREF_NOTIFY_SEND_SUCCESS, false)
             putStringSetOptional(PREF_EMAIL_CONTENT, DEFAULT_CONTENT)
+            putBooleanOptional(PREF_SYNC_ENABLED, true)
 
             apply()
         }
@@ -92,6 +93,7 @@ class Settings(context: Context) : SharedPreferencesWrapper(
         const val PREF_REMOTE_CONTROL_NOTIFICATIONS = "remote_control_notifications"
         const val PREF_SENDER_ACCOUNT = "sender_account"
         const val PREF_SETTINGS_VERSION = "settings_version" /* hidden */
+        const val PREF_SYNC_ENABLED = "sync_enabled"
         const val PREF_SYNC_TIME = "sync_time" /* hidden */
 
         const val VAL_PREF_DEFAULT = "default"

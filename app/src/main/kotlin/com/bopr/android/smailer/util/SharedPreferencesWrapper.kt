@@ -4,7 +4,7 @@ import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 
 /* Must be subclass of SharedPreferences! Otherwise it leads to unpredictable results */
-open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPreferences):SharedPreferences {
+open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPreferences) : SharedPreferences {
 
     override fun getAll(): MutableMap<String, *> {
         return wrappedPreferences.all
@@ -37,6 +37,10 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
 
     fun getString(key: String): String? {
         return getString(key, null)
+    }
+
+    fun getBoolean(key: String): Boolean {
+        return getBoolean(key, false)
     }
 
     fun getStringSet(key: String): MutableSet<String> {

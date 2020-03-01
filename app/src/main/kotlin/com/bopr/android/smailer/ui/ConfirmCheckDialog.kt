@@ -44,7 +44,7 @@ class ConfirmCheckDialog(title: String? = null,
 
     override fun show(activity: FragmentActivity) {
         val settings = Settings(activity)
-        if (!settings.getBoolean(dialogTag, false)) {
+        if (!settings.getBoolean(dialogTag)) {
             super.show(activity)
         }
     }

@@ -12,6 +12,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_WHITELIST
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_BLACKLIST
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_WHITELIST
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_TIME
 import com.bopr.android.smailer.sync.AppContentProvider.Companion.AUTHORITY
 import com.bopr.android.smailer.util.selectedAccount
@@ -24,7 +25,7 @@ object SyncEngine {
     private var databaseListener: BroadcastReceiver? = null
     private var account: Account? = null
 
-    fun startSyncEngine(context: Context) {
+    fun enableSyncEngine(context: Context) {
         /* register it only once */
         if (databaseListener == null) {
             databaseListener = registerDatabaseListener(context) {
@@ -32,23 +33,51 @@ object SyncEngine {
             }
         }
 
-        account?.let {
-            removePeriodicSync(it, AUTHORITY, Bundle.EMPTY)
+        if (isEnabled(context)) {
+            start(context)
 
-            log.debug("Stopped")
+            log.debug("Enabled")
+        } else {
+            stop()
+
+            log.debug("Disabled")
         }
+    }
 
+    fun onSyncEngineSettingsChanged(context: Context, setting: String) {
+        when (setting) {
+            PREF_SYNC_ENABLED ->
+                enableSyncEngine(context)
+            PREF_SENDER_ACCOUNT ->
+                restart(context)
+            PREF_FILTER_PHONE_BLACKLIST,
+            PREF_FILTER_PHONE_WHITELIST,
+            PREF_FILTER_TEXT_BLACKLIST,
+            PREF_FILTER_TEXT_WHITELIST ->
+                updateMetadata(context)
+        }
+    }
+
+    private fun start(context: Context) {
         account = selectedAccount(context)
 
         account?.let {
-            requestSyncNow(it)
+            syncNow(it)
             addPeriodicSync(it, AUTHORITY, Bundle.EMPTY, 0)
 
-            log.debug("Running")
+            log.debug("Task added")
         } ?: log.debug("No account")
     }
 
-    private fun requestSyncNow(account: Account) {
+    private fun stop() {
+        account?.let {
+            removePeriodicSync(it, AUTHORITY, Bundle.EMPTY)
+
+            log.debug("Task removed")
+        }
+    }
+
+    private fun syncNow(account: Account) {
         val bundle = Bundle()
         bundle.putBoolean(SYNC_EXTRAS_MANUAL, true)
         bundle.putBoolean(SYNC_EXTRAS_EXPEDITED, true)
@@ -58,18 +87,15 @@ object SyncEngine {
         log.debug("Sync now")
     }
 
-    fun onSyncEngineSettingsChanged(context: Context, setting: String) {
-        when (setting) {
-            PREF_FILTER_PHONE_BLACKLIST,
-            PREF_FILTER_PHONE_WHITELIST,
-            PREF_FILTER_TEXT_BLACKLIST,
-            PREF_FILTER_TEXT_WHITELIST -> {
-                updateMetadata(context)
-            }
-            PREF_SENDER_ACCOUNT ->
-                startSyncEngine(context)
+    private fun restart(context: Context) {
+        if (isEnabled(context)) {
+            stop()
+            start(context)
         }
     }
+
+    private fun isEnabled(context: Context) =
+            Settings(context).getBoolean(PREF_SYNC_ENABLED)
 
     private fun updateMetadata(context: Context) {
         val time = currentTimeMillis()

@@ -86,7 +86,7 @@ class RemoteControlService : JobIntentService() {
     }
 
     private fun acceptMessage(message: MailMessage): Boolean {
-        if (settings.getBoolean(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS, false)) {
+        if (settings.getBoolean(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS)) {
             val address = extractEmail(message.from)!!
             val recipients = settings.getCommaList(PREF_RECIPIENTS_ADDRESS)
             if (!containsEmail(recipients, address)) {
@@ -244,7 +244,7 @@ class RemoteControlService : JobIntentService() {
 
     private fun saveCallFilter(filter: PhoneEventFilter, text: String, messageRes: Int) {
         settings.edit().putFilter(filter).apply()
-        if (settings.getBoolean(PREF_REMOTE_CONTROL_NOTIFICATIONS, false)) {
+        if (settings.getBoolean(PREF_REMOTE_CONTROL_NOTIFICATIONS)) {
             notifications.showRemoteAction(messageRes, text)
         }
     }

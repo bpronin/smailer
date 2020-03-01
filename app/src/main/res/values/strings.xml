@@ -47,6 +47,7 @@
     <string name="email_message_language">Email message language</string>
     <string name="email_message_summary">Email message settings</string>
     <string name="email_successfully_send">Email successfully sent</string>
+    <string name="enable_sync">Enable synchronization</string>
     <string name="enabled">Enabled</string>
     <string name="enter_phone_number">Enter phone number. You also may use * as a wildcard.</string>
     <string name="events_causing_sending_mail">Events causing sending email</string>
@@ -135,6 +136,7 @@
     <string name="service_running">Service running</string>
     <string name="since_permissions_not_granted">Since not all required permissions is granted, some options have been disabled.</string>
     <string name="status">Status</string>
+    <string name="sync_blacklist_and_log">Synchronize black/whitelists and call history across devices</string>
     <string name="tap_to_check_settings">Tap to check your settings.</string>
     <string name="text_blacklist">Text blacklist</string>
     <string name="text_filter">Text filter</string>

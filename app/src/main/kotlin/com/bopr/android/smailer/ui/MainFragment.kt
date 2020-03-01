@@ -122,7 +122,7 @@ class MainFragment : BasePreferenceFragment() {
 
     private fun updateRemoteControlPreferenceView() {
         val preference = requirePreference(PREF_REMOTE_CONTROL_ENABLED)
-        if (settings.getBoolean(preference.key, false)) {
+        if (settings.getBoolean(preference.key)) {
             updateSummary(preference, getString(R.string.enabled), SUMMARY_STYLE_DEFAULT)
         } else {
             updateSummary(preference, getString(R.string.disavbled), SUMMARY_STYLE_DEFAULT)

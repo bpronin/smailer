@@ -28,7 +28,7 @@ internal class RemoteControlWorker(context: Context, workerParams: WorkerParamet
         private const val WORKER_TAG = "com.bopr.android.smailer.remote"
 
         private fun isFeatureEnabled(context: Context): Boolean {
-            return Settings(context).getBoolean(PREF_REMOTE_CONTROL_ENABLED, false)
+            return Settings(context).getBoolean(PREF_REMOTE_CONTROL_ENABLED)
         }
 
         fun enableRemoteControlWorker(context: Context) {

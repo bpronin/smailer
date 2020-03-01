@@ -67,7 +67,7 @@ class RemoteControlFragment : BasePreferenceFragment() {
 
     private fun updateEnabledPreferenceView() {
         val preference = findPreference<SwitchPreference>(PREF_REMOTE_CONTROL_ENABLED)!!
-        val value = settings.getBoolean(preference.key, false)
+        val value = settings.getBoolean(preference.key)
 
         requirePreference(PREF_REMOTE_CONTROL_ACCOUNT).isEnabled = value
         requirePreference(PREF_REMOTE_CONTROL_NOTIFICATIONS).isEnabled = value

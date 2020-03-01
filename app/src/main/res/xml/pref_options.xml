@@ -2,6 +2,12 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <androidx.preference.SwitchPreference
+        android:key="sync_enabled"
+        android:title="@string/enable_sync"
+        android:summary="@string/sync_blacklist_and_log"
+        />
+
+    <androidx.preference.SwitchPreference
         android:key="notify_send_success"
         android:title="@string/info_notifications"
         android:summary="@string/notify_send_success"

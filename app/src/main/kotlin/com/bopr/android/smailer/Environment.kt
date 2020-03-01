@@ -5,7 +5,7 @@ import android.util.Log
 import com.bopr.android.smailer.ContentObserverService.Companion.enableContentObserver
 import com.bopr.android.smailer.PendingCallProcessorWorker.Companion.startPendingCallProcessWorker
 import com.bopr.android.smailer.remote.RemoteControlWorker.Companion.enableRemoteControlWorker
-import com.bopr.android.smailer.sync.SyncEngine.startSyncEngine
+import com.bopr.android.smailer.sync.SyncEngine.enableSyncEngine
 import org.slf4j.LoggerFactory.getLogger
 
 object Environment {
@@ -16,8 +16,8 @@ object Environment {
         getLogger("Application").debug("Application init")
 
         setupDefaultExceptionHandler()
-        startSyncEngine(context)
         startPendingCallProcessWorker()
+        enableSyncEngine(context)
         enableContentObserver(context)
         enableRemoteControlWorker(context)
     }
