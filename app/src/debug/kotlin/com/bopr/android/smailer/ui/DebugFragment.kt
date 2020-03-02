@@ -343,7 +343,6 @@ class DebugFragment : BasePreferenceFragment() {
     private fun onSetDebugPreferences() {
         val properties = loadDebugProperties()
         settings.update {
-            clear()
             putString(PREF_SENDER_ACCOUNT, primaryAccount(appContext)?.name)
             putString(PREF_REMOTE_CONTROL_ACCOUNT, properties.getProperty("remote_control_account"))
             putCommaSet(PREF_RECIPIENTS_ADDRESS, setOf(properties.getProperty("default_recipient"), "nowhere@mail.com"))

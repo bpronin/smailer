@@ -7,6 +7,8 @@ import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
+import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_CONTACT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_LOCATION
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_CALLS
@@ -105,10 +107,11 @@ class PermissionsHelper(val fragment: Fragment) {
     private fun onPermissionsGranted(grantedPermissions: Set<String>) {
         log.debug("Granted: $grantedPermissions")
 
+        /* set default accounts at startup */
         settings.update {
             val accountName = primaryAccount(fragment.requireContext())?.name
-            putStringOptional(Settings.PREF_SENDER_ACCOUNT, accountName)
-            putStringOptional(Settings.PREF_REMOTE_CONTROL_ACCOUNT, accountName)
+            putStringOptional(PREF_SENDER_ACCOUNT, accountName)
+            putStringOptional(PREF_REMOTE_CONTROL_ACCOUNT, accountName)
         }
     }
 

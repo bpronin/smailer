@@ -163,6 +163,8 @@
     <string name="you_had_incoming_call">You had an incoming call of %s duration.</string>
     <string name="you_had_missed_call">You had a missed call.</string>
     <string name="you_had_outgoing_call">You had an outgoing call of %s duration.</string>
+    <string name="send_test_email">Send test email</string>
+    <string name="send_test_email_summary">Send out sample email to check out your settings</string>
 
     <plurals name="items_removed">
         <item quantity="one">Item removed</item>

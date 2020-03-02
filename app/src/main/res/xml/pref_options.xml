@@ -19,4 +19,10 @@
         android:summary="@string/reset_dialogs_summary"
         />
 
+    <androidx.preference.Preference
+        android:key="sent_test_email"
+        android:title="@string/send_test_email"
+        android:summary="@string/send_test_email_summary"
+        />
+
 </androidx.preference.PreferenceScreen>
