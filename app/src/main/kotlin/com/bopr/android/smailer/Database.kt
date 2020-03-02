@@ -208,38 +208,6 @@ class Database constructor(private val context: Context, private val name: Strin
         log.debug("Destroyed")
     }
 
-    private fun putEvent(event: PhoneEvent, db: SQLiteDatabase) {
-        val values = ContentValues().apply {
-            put(COLUMN_PHONE, event.phone)
-            put(COLUMN_ACCEPTOR, event.acceptor)
-            put(COLUMN_START_TIME, event.startTime)
-            put(COLUMN_STATE, event.state)
-            put(COLUMN_PROCESS_STATUS, event.processStatus)
-            put(COLUMN_PROCESS_TIME, event.processTime)
-            put(COLUMN_IS_INCOMING, event.isIncoming)
-            put(COLUMN_IS_MISSED, event.isMissed)
-            put(COLUMN_END_TIME, event.endTime)
-            put(COLUMN_TEXT, event.text)
-            put(COLUMN_DETAILS, event.details)
-            put(COLUMN_READ, event.isRead)
-            event.location?.let {
-                put(COLUMN_LATITUDE, it.latitude)
-                put(COLUMN_LONGITUDE, it.longitude)
-            }
-        }
-
-        if (db.insertWithOnConflict(TABLE_EVENTS, null, values, CONFLICT_IGNORE) == -1L) {
-            db.update(TABLE_EVENTS, values, "$COLUMN_START_TIME=? AND $COLUMN_ACCEPTOR=?",
-                    strings(event.startTime, event.acceptor))
-
-            log.debug("Updated: $values")
-        } else {
-            log.debug("Inserted: $values")
-        }
-
-        modified = true
-    }
-
     /**
      * Removes all stale records that exceeds specified capacity if given
      * period of time has elapsed.

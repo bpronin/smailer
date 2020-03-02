@@ -126,7 +126,7 @@ class DebugFragment : BasePreferenceFragment() {
                 }),
                 createPreference("Put invalid account", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        settings.edit().putString(PREF_SENDER_ACCOUNT, "unknown@gmail.com").apply()
+                        settings.update { putString(PREF_SENDER_ACCOUNT, "unknown@gmail.com") }
                     }
                 }),
                 createPreference("Require battery optimisation disabled", object : DefaultClickListener() {
@@ -342,29 +342,29 @@ class DebugFragment : BasePreferenceFragment() {
 
     private fun onSetDebugPreferences() {
         val properties = loadDebugProperties()
-        settings.edit()
-                .clear()
-                .putString(PREF_SENDER_ACCOUNT, primaryAccount(appContext)?.name)
-                .putString(PREF_REMOTE_CONTROL_ACCOUNT, properties.getProperty("remote_control_account"))
-                .putCommaSet(PREF_RECIPIENTS_ADDRESS, setOf(properties.getProperty("default_recipient"), "nowhere@mail.com"))
-                .putStringSet(PREF_EMAIL_TRIGGERS, mutableSetOf(
-                        VAL_PREF_TRIGGER_IN_SMS,
-                        VAL_PREF_TRIGGER_IN_CALLS,
-                        VAL_PREF_TRIGGER_MISSED_CALLS,
-                        VAL_PREF_TRIGGER_OUT_CALLS))
-                .putStringSet(PREF_EMAIL_CONTENT, mutableSetOf(
-                        VAL_PREF_EMAIL_CONTENT_CONTACT,
-                        VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
-                        VAL_PREF_EMAIL_CONTENT_LOCATION,
-                        VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT,
-                        VAL_PREF_EMAIL_CONTENT_HEADER,
-                        VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS,
-                        VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME))
-                .putString(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)
-                .putBoolean(PREF_NOTIFY_SEND_SUCCESS, true)
-                .putString(PREF_FILTER_PHONE_BLACKLIST, commaJoin(setOf("+123456789", "+9876543*")))
-                .putString(PREF_FILTER_TEXT_BLACKLIST, commaJoin(setOf("Bad text", escapeRegex("Expression"))))
-                .apply()
+        settings.update {
+            clear()
+            putString(PREF_SENDER_ACCOUNT, primaryAccount(appContext)?.name)
+            putString(PREF_REMOTE_CONTROL_ACCOUNT, properties.getProperty("remote_control_account"))
+            putCommaSet(PREF_RECIPIENTS_ADDRESS, setOf(properties.getProperty("default_recipient"), "nowhere@mail.com"))
+            putStringSet(PREF_EMAIL_TRIGGERS, mutableSetOf(
+                    VAL_PREF_TRIGGER_IN_SMS,
+                    VAL_PREF_TRIGGER_IN_CALLS,
+                    VAL_PREF_TRIGGER_MISSED_CALLS,
+                    VAL_PREF_TRIGGER_OUT_CALLS))
+            putStringSet(PREF_EMAIL_CONTENT, mutableSetOf(
+                    VAL_PREF_EMAIL_CONTENT_CONTACT,
+                    VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
+                    VAL_PREF_EMAIL_CONTENT_LOCATION,
+                    VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT,
+                    VAL_PREF_EMAIL_CONTENT_HEADER,
+                    VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS,
+                    VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME))
+            putString(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)
+            putBoolean(PREF_NOTIFY_SEND_SUCCESS, true)
+            putString(PREF_FILTER_PHONE_BLACKLIST, commaJoin(setOf("+123456789", "+9876543*")))
+            putString(PREF_FILTER_TEXT_BLACKLIST, commaJoin(setOf("Bad text", escapeRegex("Expression"))))
+        }
         showToast(R.string.operation_complete)
     }
 
@@ -380,12 +380,12 @@ class DebugFragment : BasePreferenceFragment() {
                     }
             ).show(this)
         } else {
-            showToast("Permission denied")
+            showToast("Missing required permission")
         }
     }
 
     private fun onClearPreferences() {
-        settings.edit().clear().apply()
+        settings.update { clear() }
         showToast(R.string.operation_complete)
     }
 

@@ -41,9 +41,9 @@ class RecipientsFragment : EditableRecyclerFragment<String, Holder>(), SharedPre
     }
 
     override fun saveItems(items: Collection<String>) {
-        settings.edit()
-                .putCommaSet(PREF_RECIPIENTS_ADDRESS, items)
-                .apply()
+        settings.update {
+            putCommaSet(PREF_RECIPIENTS_ADDRESS, items)
+        }
     }
 
     override fun isValidItem(item: String): Boolean {

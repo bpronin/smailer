@@ -42,26 +42,26 @@ class SyncAdapterTest : BaseTest() {
 
         sync.clear()
 
-        settings.edit()
-                .putLong(PREF_SYNC_TIME, 2)
-                .putString(PREF_FILTER_PHONE_BLACKLIST, "A,B,C")
-                .apply()
+        settings.update {
+            putLong(PREF_SYNC_TIME, 2)
+            putString(PREF_FILTER_PHONE_BLACKLIST, "A,B,C")
+        }
         sync.sync()
 
         assertEquals(setOf("A", "B", "C"), settings.callFilter.phoneBlacklist)
 
-        settings.edit()
-                .putLong(PREF_SYNC_TIME, 1) /* earlier than previous */
-                .putString(PREF_FILTER_PHONE_BLACKLIST, "A,B,C,D")
-                .apply()
+        settings.update {
+            putLong(PREF_SYNC_TIME, 1) /* earlier than previous */
+            putString(PREF_FILTER_PHONE_BLACKLIST, "A,B,C,D")
+        }
         sync.sync()
 
         assertEquals(setOf("A", "B", "C"), settings.callFilter.phoneBlacklist)
 
-        settings.edit()
-                .putLong(PREF_SYNC_TIME, 3) /* later than previous */
-                .putString(PREF_FILTER_PHONE_BLACKLIST, "A,B")
-                .apply()
+        settings.update {
+            putLong(PREF_SYNC_TIME, 3) /* later than previous */
+            putString(PREF_FILTER_PHONE_BLACKLIST, "A,B")
+        }
         sync.sync()
 
         assertEquals(setOf("A", "B"), settings.callFilter.phoneBlacklist)

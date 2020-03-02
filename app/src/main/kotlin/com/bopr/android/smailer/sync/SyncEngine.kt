@@ -99,7 +99,7 @@ object SyncEngine {
 
     private fun updateMetadata(context: Context) {
         val time = currentTimeMillis()
-        Settings(context).edit().putLong(PREF_SYNC_TIME, time).apply()
+        Settings(context).update { putLong(PREF_SYNC_TIME, time) }
 
         log.debug("Metadata updated: %tF %tT".format(time, time))
     }

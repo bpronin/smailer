@@ -28,7 +28,7 @@ class Settings(context: Context) : SharedPreferencesWrapper(
             }
         }
 
-    val callFilter: PhoneEventFilter
+    var callFilter: PhoneEventFilter
         get() {
             return PhoneEventFilter(
                     triggers = getStringSet(PREF_EMAIL_TRIGGERS),
@@ -38,37 +38,25 @@ class Settings(context: Context) : SharedPreferencesWrapper(
                     textWhitelist = getCommaSet(PREF_FILTER_TEXT_WHITELIST)
             )
         }
-
-    fun loadDefaults() {
-        with(edit()) {
-            putInt(PREF_SETTINGS_VERSION, SETTINGS_VERSION)
-            putStringOptional(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)
-            putBooleanOptional(PREF_REMOTE_CONTROL_ENABLED, false)
-            putBooleanOptional(PREF_REMOTE_CONTROL_NOTIFICATIONS, true)
-            putBooleanOptional(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS, true)
-            putStringSetOptional(PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS)
-            putBooleanOptional(PREF_NOTIFY_SEND_SUCCESS, false)
-            putStringSetOptional(PREF_EMAIL_CONTENT, DEFAULT_CONTENT)
-            putBooleanOptional(PREF_SYNC_ENABLED, true)
-
-            apply()
-        }
-    }
-
-    override fun edit(): EditorWrapper {
-        return EditorWrapper(super.edit())
-    }
-
-    inner class EditorWrapper(edit: SharedPreferencesWrapper.EditorWrapper) : SharedPreferencesWrapper.EditorWrapper(edit) {
-
-        fun putFilter(filter: PhoneEventFilter): EditorWrapper {
+        set(filter) = update {
+            putStringSet(PREF_EMAIL_TRIGGERS, filter.triggers)
             putCommaSet(PREF_FILTER_PHONE_BLACKLIST, filter.phoneBlacklist)
             putCommaSet(PREF_FILTER_PHONE_WHITELIST, filter.phoneWhitelist)
             putCommaSet(PREF_FILTER_TEXT_BLACKLIST, filter.textBlacklist)
             putCommaSet(PREF_FILTER_TEXT_WHITELIST, filter.textWhitelist)
-
-            return this
         }
+
+
+    fun loadDefaults() = update {
+        putInt(PREF_SETTINGS_VERSION, SETTINGS_VERSION)
+        putBooleanOptional(PREF_NOTIFY_SEND_SUCCESS, false)
+        putStringOptional(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)
+        putStringSetOptional(PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS)
+        putStringSetOptional(PREF_EMAIL_CONTENT, DEFAULT_CONTENT)
+        putBooleanOptional(PREF_REMOTE_CONTROL_ENABLED, false)
+        putBooleanOptional(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS, true)
+        putBooleanOptional(PREF_REMOTE_CONTROL_NOTIFICATIONS, true)
+        putBooleanOptional(PREF_SYNC_ENABLED, true)
     }
 
     companion object {

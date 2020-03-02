@@ -81,9 +81,7 @@ abstract class CallFilterListFragment(private val settingName: String) : Editabl
             addAll(items)
         }
 
-        settings.edit()
-                .putFilter(filter)
-                .apply()
+        settings.callFilter = filter
     }
 
     override fun isValidItem(item: String): Boolean {

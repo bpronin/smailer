@@ -52,7 +52,7 @@ fun permissionLabel(context: Context, permissionName: String): String {
 /**
  * Returns primary device account or null when no accounts registered.
  */
-@RequiresPermission(GET_ACCOUNTS)
+@RequiresPermission(GET_ACCOUNTS /* api<=22 */)
 fun primaryAccount(context: Context): Account? {
     return GoogleAccountManager(context).accounts.getOrNull(0)
 }
@@ -60,7 +60,7 @@ fun primaryAccount(context: Context): Account? {
 /**
  * Returns currently selected account.
  */
-@RequiresPermission(GET_ACCOUNTS)
+@RequiresPermission(GET_ACCOUNTS /* api<=22 */)
 fun selectedAccount(context: Context): Account? {
     return getAccount(context, Settings(context).getString(PREF_SENDER_ACCOUNT))
 }
@@ -68,7 +68,7 @@ fun selectedAccount(context: Context): Account? {
 /**
  * Returns currently selected service account.
  */
-@RequiresPermission(GET_ACCOUNTS)
+@RequiresPermission(GET_ACCOUNTS /* api<=22 */)
 fun serviceAccount(context: Context): Account? {
     return getAccount(context, Settings(context).getString(PREF_REMOTE_CONTROL_ACCOUNT))
 }
@@ -76,7 +76,7 @@ fun serviceAccount(context: Context): Account? {
 /**
  * Returns account with specified name or null.
  */
-@RequiresPermission(GET_ACCOUNTS)
+@RequiresPermission(GET_ACCOUNTS /* api<=22 */)
 fun getAccount(context: Context, accountName: String?): Account? {
     return GoogleAccountManager(context).getAccountByName(accountName)
 }

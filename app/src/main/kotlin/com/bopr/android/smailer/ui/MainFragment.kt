@@ -47,7 +47,10 @@ class MainFragment : BasePreferenceFragment() {
         databaseListener = registerDatabaseListener(requireContext()) {
             updateHistoryPreferenceView()
         }
+    }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
         permissionsHelper.checkAll {   //todo check
         }
         requireIgnoreBatteryOptimization(this)

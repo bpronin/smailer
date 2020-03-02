@@ -16,6 +16,7 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
 import com.bopr.android.smailer.ui.InfoDialog
 import com.bopr.android.smailer.util.permissionLabel
+import com.bopr.android.smailer.util.primaryAccount
 import com.bopr.android.smailer.util.showToast
 import org.slf4j.LoggerFactory
 import java.util.*
@@ -54,6 +55,7 @@ class PermissionsHelper(val fragment: Fragment) {
                 }
             }
 
+            onPermissionsGranted(grantedPermissions)
             onPermissionsDenied(deniedPermissions)
 
             if (deniedPermissions.isNotEmpty()) {
@@ -100,6 +102,16 @@ class PermissionsHelper(val fragment: Fragment) {
         checkPermissions(requiredPermissions)
     }
 
+    private fun onPermissionsGranted(grantedPermissions: Set<String>) {
+        log.debug("Granted: $grantedPermissions")
+
+        settings.update {
+            val accountName = primaryAccount(fragment.requireContext())?.name
+            putStringOptional(Settings.PREF_SENDER_ACCOUNT, accountName)
+            putStringOptional(Settings.PREF_REMOTE_CONTROL_ACCOUNT, accountName)
+        }
+    }
+
     private fun onPermissionsDenied(deniedPermissions: Collection<String>) {
         log.debug("Denied: $deniedPermissions")
 
@@ -127,10 +139,10 @@ class PermissionsHelper(val fragment: Fragment) {
                 content.remove(VAL_PREF_EMAIL_CONTENT_LOCATION)
             }
 
-            settings.edit()
-                    .putStringSet(PREF_EMAIL_TRIGGERS, triggers)
-                    .putStringSet(PREF_EMAIL_CONTENT, content)
-                    .apply()
+            settings.update {
+                putStringSet(PREF_EMAIL_TRIGGERS, triggers)
+                putStringSet(PREF_EMAIL_CONTENT, content)
+            }
         }
     }
 

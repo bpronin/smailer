@@ -61,7 +61,7 @@ class EditPhoneDialogFragment : BaseEditDialogFragment<String>("edit_phone_dialo
                 editText.setText(phoneFromIntent(requireContext(), intent))
             }
         } else {
-            log.warn("Permission denied")
+            log.warn("Missing required permission")
         }
     }
 

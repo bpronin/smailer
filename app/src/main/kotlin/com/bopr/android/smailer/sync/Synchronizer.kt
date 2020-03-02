@@ -7,6 +7,10 @@ import com.bopr.android.smailer.GeoCoordinates.Companion.coordinatesOf
 import com.bopr.android.smailer.GoogleDrive
 import com.bopr.android.smailer.PhoneEvent
 import com.bopr.android.smailer.Settings
+import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_BLACKLIST
+import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_WHITELIST
+import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_BLACKLIST
+import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_WHITELIST
 import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_TIME
 import org.slf4j.LoggerFactory
 import java.io.IOException
@@ -78,29 +82,23 @@ internal class Synchronizer(context: Context,
     }
 
     private fun getLocalData(): SyncData {
-        val events = database.events.map { eventToData(it) }
-
-        return with(settings.callFilter) {
-            SyncData(phoneBlacklist,
-                    textBlacklist,
-                    phoneWhitelist,
-                    textWhitelist,
-                    events)
-        }
+        return SyncData(
+                phoneBlacklist = settings.getCommaSet(PREF_FILTER_PHONE_BLACKLIST),
+                phoneWhitelist = settings.getCommaSet(PREF_FILTER_PHONE_WHITELIST),
+                textBlacklist = settings.getCommaSet(PREF_FILTER_TEXT_BLACKLIST),
+                textWhitelist = settings.getCommaSet(PREF_FILTER_TEXT_WHITELIST),
+                events = database.events.map(::eventToData)
+        )
     }
 
     private fun putLocalData(data: SyncData) {
-        data.events?.map { dataToEvent(it) }?.apply {
-            database.putEvents(this)
-        }
+        data.events?.map(::dataToEvent)?.let(database::putEvents)
 
-        with(settings.callFilter) {
-            phoneBlacklist = data.phoneBlacklist
-            textBlacklist = data.textBlacklist
-            phoneWhitelist = data.phoneWhitelist
-            textWhitelist = data.textWhitelist
-
-            settings.edit().putFilter(this).apply()
+        settings.update {
+            putCommaSet(PREF_FILTER_PHONE_BLACKLIST, data.phoneBlacklist)
+            putCommaSet(PREF_FILTER_PHONE_WHITELIST, data.phoneWhitelist)
+            putCommaSet(PREF_FILTER_TEXT_BLACKLIST, data.textBlacklist)
+            putCommaSet(PREF_FILTER_TEXT_WHITELIST, data.textWhitelist)
         }
     }
 

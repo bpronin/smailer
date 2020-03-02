@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.preference.Preference
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
+import com.bopr.android.smailer.ui.BatteryOptimizationHelper.BATTERY_OPTIMIZATION_DIALOG_TAG
 import com.bopr.android.smailer.util.showToast
 
 /**
@@ -23,10 +24,9 @@ class OptionsFragment : BasePreferenceFragment() {
     }
 
     private fun onResetDialogs() {
-        Settings(requireContext())
-                .edit()
-                .remove(BatteryOptimizationHelper.BATTERY_OPTIMIZATION_DIALOG_TAG)
-                .apply()
+        Settings(requireContext()).update {
+            remove(BATTERY_OPTIMIZATION_DIALOG_TAG)
+        }
         showToast(R.string.operation_complete)
     }
 

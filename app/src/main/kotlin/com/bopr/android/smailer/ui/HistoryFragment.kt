@@ -224,7 +224,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
         getSelectedItem()?.let {
             callFilter.phoneWhitelist.remove(it.phone)
             callFilter.phoneBlacklist.remove(it.phone)
-            saveCallFilter()
+            settings.callFilter = callFilter
 
             showToast(getString(R.string.phone_removed_from_filter, it.phone))
         }
@@ -258,16 +258,12 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
                             showToast(getString(R.string.item_already_exists, value))
                         } else {
                             list.add(value)
-                            saveCallFilter()
+                            settings.callFilter = callFilter
                         }
                     }
                 }
             }.show(this)
         }
-    }
-
-    private fun saveCallFilter() {
-        settings.edit().putFilter(callFilter).apply()
     }
 
     private fun markItemAsRead(event: PhoneEvent) {

@@ -63,6 +63,12 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
         return EditorWrapper(wrappedPreferences.edit())
     }
 
+    fun update(action: EditorWrapper.() -> Unit) {
+        val editor = edit()
+        action(editor)
+        editor.apply()
+    }
+
     override fun registerOnSharedPreferenceChangeListener(listener: OnSharedPreferenceChangeListener?) {
         wrappedPreferences.registerOnSharedPreferenceChangeListener(listener)
     }

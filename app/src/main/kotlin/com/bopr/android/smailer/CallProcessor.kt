@@ -167,7 +167,7 @@ class CallProcessor(
         return if (context.checkPermission(READ_CONTACTS)) {
             contactName(context, phone)
         } else {
-            log.warn("Permission denied")
+            log.warn("Missing required permission")
             null
         }
     }

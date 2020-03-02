@@ -61,7 +61,7 @@ class EditEmailDialogFragment : BaseEditDialogFragment<String>("edit_recipient_d
                 editText.text = emailFromIntent(requireContext(), intent)
             }
         } else {
-            log.warn("Permission denied")
+            log.warn("Missing required permission")
         }
     }
 

@@ -38,8 +38,9 @@ class ConfirmCheckDialog(title: String? = null,
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        Settings(requireContext())
-                .edit().putBoolean(dialogTag, checkBox.isChecked).apply()
+        Settings(requireContext()).update {
+            putBoolean(dialogTag, checkBox.isChecked)
+        }
     }
 
     override fun show(activity: FragmentActivity) {

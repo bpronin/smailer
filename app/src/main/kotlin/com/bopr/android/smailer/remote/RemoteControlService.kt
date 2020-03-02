@@ -238,12 +238,12 @@ class RemoteControlService : JobIntentService() {
             log.debug("Sent SMS: $message to $phone")
         } else {
             notifications.showError(permissionRationale(this, SEND_SMS), TARGET_REMOTE_CONTROL)
-            log.warn("Permission denied")
+            log.warn("Missing required permission")
         }
     }
 
     private fun saveCallFilter(filter: PhoneEventFilter, text: String, messageRes: Int) {
-        settings.edit().putFilter(filter).apply()
+        settings.callFilter = filter
         if (settings.getBoolean(PREF_REMOTE_CONTROL_NOTIFICATIONS)) {
             notifications.showRemoteAction(messageRes, text)
         }

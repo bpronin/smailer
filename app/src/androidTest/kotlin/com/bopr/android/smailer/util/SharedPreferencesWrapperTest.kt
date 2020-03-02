@@ -24,7 +24,7 @@ class SharedPreferencesWrapperTest : BaseTest() {
         val prefKey = "set_preference"
 
         var putValues = mutableSetOf("A", "B", "C")
-        wrapper.edit().putStringSet(prefKey, putValues).apply()
+        wrapper.update { putStringSet(prefKey, putValues) }
 
         var getValues = wrapper.getStringSet(prefKey, null)!!
 
@@ -33,7 +33,7 @@ class SharedPreferencesWrapperTest : BaseTest() {
 
         putValues = getValues
         putValues.remove("B")
-        wrapper.edit().putStringSet(prefKey, putValues).apply()
+        wrapper.update { putStringSet(prefKey, putValues) }
 
         getValues = wrapper.getStringSet(prefKey, null)!!
 

@@ -89,7 +89,7 @@ class GoogleAuthorizationHelper(private val fragment: Fragment,
             try {
                 future.result?.run {
                     val accountName = getString(KEY_ACCOUNT_NAME)
-                    settings.edit().putString(accountSettingName, accountName).apply()
+                    settings.update { putString(accountSettingName, accountName) }
 
                     log.debug("Selected account: $accountName")
                 }

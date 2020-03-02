@@ -61,7 +61,7 @@ class GeoLocator(private val context: Context, private val database: Database) {
 
     private fun getCurrentLocation(timeout: Long): GeoCoordinates? {
         if (!isLocationPermissionsGranted(context)) {
-            log.warn("Permission denied")
+            log.warn("Missing required permission")
             return null
         }
 
@@ -90,7 +90,7 @@ class GeoLocator(private val context: Context, private val database: Database) {
 
     private fun getLastLocation(timeout: Long): GeoCoordinates? {
         if (!isLocationPermissionsGranted(context)) {
-            log.warn("Permission denied")
+            log.warn("Missing required permission")
             return null
         }
 
