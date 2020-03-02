@@ -9,7 +9,6 @@ import android.telephony.SmsManager
 import androidx.core.app.JobIntentService
 import com.bopr.android.smailer.*
 import com.bopr.android.smailer.Notifications.Companion.TARGET_REMOTE_CONTROL
-import com.bopr.android.smailer.PermissionsHelper.Companion.permissionRationale
 import com.bopr.android.smailer.Settings.Companion.PREF_DEVICE_ALIAS
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
@@ -199,7 +198,8 @@ class RemoteControlService : JobIntentService() {
     private fun addToTextList(filter: PhoneEventFilter, list: MutableSet<String>, value: String, messageRes: Int) {
         if (!list.contains(value)) {
             list.add(value)
-            saveCallFilter(filter, value, messageRes)
+            settings.callFilter = filter
+            showNotification(getString(messageRes, value))
         } else {
             log.debug("Already in list")
         }
@@ -208,7 +208,8 @@ class RemoteControlService : JobIntentService() {
     private fun addToPhoneList(filter: PhoneEventFilter, list: MutableSet<String>, value: String, messageRes: Int) {
         if (!containsPhone(list, value)) {
             list.add(value)
-            saveCallFilter(filter, value, messageRes)
+            settings.callFilter = filter
+            showNotification(getString(messageRes, value))
         } else {
             log.debug("Already in list")
         }
@@ -217,7 +218,8 @@ class RemoteControlService : JobIntentService() {
     private fun removeFromTextList(filter: PhoneEventFilter, list: MutableSet<String>,
                                    text: String, messageRes: Int) {
         list.remove(text)
-        saveCallFilter(filter, text, messageRes)
+        settings.callFilter = filter
+        showNotification(getString(messageRes, text))
     }
 
     private fun removeFromPhoneList(filter: PhoneEventFilter, list: MutableSet<String>,
@@ -225,27 +227,27 @@ class RemoteControlService : JobIntentService() {
         /* searching by normalized form */
         findPhone(list, number)?.let {
             list.remove(it)
-            saveCallFilter(filter, number, messageRes)
+            settings.callFilter = filter
+            showNotification(getString(messageRes, number))
         }
     }
 
     private fun sendSms(message: String?, phone: String?) {
         if (checkPermission(SEND_SMS)) {
-            with(SmsManager.getDefault()) {
+            SmsManager.getDefault().run {
                 sendMultipartTextMessage(phone, null, divideMessage(message), null, null)
             }
+            showNotification(getString(R.string.sent_sms, phone))
 
             log.debug("Sent SMS: $message to $phone")
         } else {
-            notifications.showError(permissionRationale(this, SEND_SMS), TARGET_REMOTE_CONTROL)
             log.warn("Missing required permission")
         }
     }
 
-    private fun saveCallFilter(filter: PhoneEventFilter, text: String, messageRes: Int) {
-        settings.callFilter = filter
+    private fun showNotification(message: String) {
         if (settings.getBoolean(PREF_REMOTE_CONTROL_NOTIFICATIONS)) {
-            notifications.showRemoteAction(messageRes, text)
+            notifications.showRemoteAction(message)
         }
     }
 

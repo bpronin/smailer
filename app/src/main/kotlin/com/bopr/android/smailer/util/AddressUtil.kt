@@ -23,11 +23,11 @@ fun samePhone(p1: String, p2: String): Boolean {
 }
 
 fun findPhone(phones: Collection<String>, phone: String): String? {
-    return phones.find { p -> samePhone(p, phone) }
+    return phones.find { samePhone(it, phone) }
 }
 
 fun containsPhone(phones: Collection<String>, phone: String): Boolean {
-    return phones.any { p -> samePhone(p, phone) }
+    return phones.any { samePhone(it, phone) }
 }
 
 fun phoneToRegEx(phone: String): String {

@@ -94,6 +94,20 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
             return this
         }
 
+//        fun addToCommaSet(key: String, vararg values: String): EditorWrapper {
+//            val set = getCommaSet(key)
+//            set.addAll(values)
+//            putCommaSet(key, set)
+//            return this
+//        }
+//
+//        fun removeFromCommaSet(key: String, vararg values: String): EditorWrapper {
+//            val set = getCommaSet(key)
+//            set.removeAll(values)
+//            putCommaSet(key, set)
+//            return this
+//        }
+
         override fun putInt(key: String, value: Int): EditorWrapper {
             wrappedEditor.putInt(key, value)
             return this

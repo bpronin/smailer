@@ -102,10 +102,10 @@
     <string name="phone_blacklist">Phone blacklist</string>
     <string name="phone_number">Phone number</string>
     <string name="phone_number_filter">Phone number filter</string>
-    <string name="phone_remotely_added_to_blacklist">Phone %s remotely added to blacklist."</string>
-    <string name="phone_remotely_added_to_whitelist">Phone %s remotely added to whitelist."</string>
-    <string name="phone_remotely_removed_from_blacklist">Phone %s remotely removed from blacklist."</string>
-    <string name="phone_remotely_removed_from_whitelist">Phone %s remotely removed from whitelist."</string>
+    <string name="phone_remotely_added_to_blacklist">Phone %s added to blacklist."</string>
+    <string name="phone_remotely_added_to_whitelist">Phone %s added to whitelist."</string>
+    <string name="phone_remotely_removed_from_blacklist">Phone %s removed from blacklist."</string>
+    <string name="phone_remotely_removed_from_whitelist">Phone %s removed from whitelist."</string>
     <string name="phone_removed_from_filter">%1$s removed from filter</string>
     <string name="phone_whitelist">Phone whitelist</string>
     <string name="proceed">Proceed</string>
@@ -114,6 +114,7 @@
     <string name="recipient_device">Recipient:</string>
     <string name="recipients">Recipients</string>
     <string name="regular_expression">Regular expression</string>
+    <string name="remote_action">Remote action</string>
     <string name="remote_control">Remote control</string>
     <string name="remote_control_account">Service account</string>
     <string name="remote_control_account_removed">Service account has been removed.</string>
@@ -126,10 +127,13 @@
     <string name="rules_for_sending">Rules for sending email</string>
     <string name="select_from_contacts">Select from contacts</string>
     <string name="send_sms_to_sender">send SMS to the caller</string>
+    <string name="send_test_email">Send test email</string>
+    <string name="send_test_email_summary">Send out sample email to check out your settings</string>
     <string name="sender">Account</string>
     <string name="sender_account_not_found">Sender account not found</string>
     <string name="sender_phone">Sender: %1$s (%2$s)</string>
     <string name="sent_email">Email sent</string>
+    <string name="sent_sms">Sent SMS to %s</string>
     <string name="sent_time_device">Sent%1$s%2$s</string>
     <string name="service_account_not_found">Service account not found</string>
     <string name="service_running">Service running</string>
@@ -142,10 +146,10 @@
     <string name="text_filter">Text filter</string>
     <string name="text_fragment">Text fragment</string>
     <string name="text_in_blacklist">Text was in blacklist</string>
-    <string name="text_remotely_added_to_blacklist">Text \"%s\" remotely added to blacklist"</string>
-    <string name="text_remotely_added_to_whitelist">Text \"%s\" remotely added to whitelist"</string>
-    <string name="text_remotely_removed_from_blacklist">Text \"%s\" remotely removed from blacklist"</string>
-    <string name="text_remotely_removed_from_whitelist">Text \"%s\" remotely removed from whitelist"</string>
+    <string name="text_remotely_added_to_blacklist">Text \"%s\" added to blacklist"</string>
+    <string name="text_remotely_added_to_whitelist">Text \"%s\" added to whitelist"</string>
+    <string name="text_remotely_removed_from_blacklist">Text \"%s\" removed from blacklist"</string>
+    <string name="text_remotely_removed_from_whitelist">Text \"%s\" removed from whitelist"</string>
     <string name="text_whitelist">Text whitelist</string>
     <string name="time">Time:</string>
     <string name="time_time">Time: %s</string>
@@ -163,8 +167,6 @@
     <string name="you_had_incoming_call">You had an incoming call of %s duration.</string>
     <string name="you_had_missed_call">You had a missed call.</string>
     <string name="you_had_outgoing_call">You had an outgoing call of %s duration.</string>
-    <string name="send_test_email">Send test email</string>
-    <string name="send_test_email_summary">Send out sample email to check out your settings</string>
 
     <plurals name="items_removed">
         <item quantity="one">Item removed</item>

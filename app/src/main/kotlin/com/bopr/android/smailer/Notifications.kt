@@ -76,11 +76,12 @@ class Notifications(private val context: Context) {
                 .build()
     }
 
-    fun showMessage(title: String, @Target target: Int) {
+    fun showMessage(title: String, message: String? = null, @Target target: Int) {
         manager.notify("message", ++messageId,
                 messagesBuilder
                         .setWhen(currentTimeMillis())
                         .setContentTitle(title)
+                        .setContentText(message)
                         .setContentIntent(targetIntent(target))
                         .build())
     }
@@ -95,19 +96,32 @@ class Notifications(private val context: Context) {
     }
 
     fun showMessage(@StringRes messageRes: Int, @Target target: Int) {
-        showMessage(context.getString(messageRes), target)
+        showMessage(
+                title = context.getString(messageRes),
+                target = target
+        )
     }
 
     fun showError(@StringRes messageRes: Int, @Target target: Int) {
-        showError(context.getString(messageRes), target)
+        showError(
+                title = context.getString(messageRes),
+                target = target
+        )
     }
 
     fun showMailError(@StringRes reasonRes: Int, @Target target: Int) {
-        showError(context.getString(R.string.unable_send_email, context.getString(reasonRes)), target)
+        showError(
+                title = context.getString(R.string.unable_send_email, context.getString(reasonRes)),
+                target = target
+        )
     }
 
-    fun showRemoteAction(@StringRes messageRes: Int, argument: String) {
-        showMessage(context.getString(messageRes, argument), TARGET_HISTORY)
+    fun showRemoteAction(message: String) {
+        showMessage(
+                title = context.getString(R.string.remote_action),
+                message = message,
+                target = TARGET_MAIN
+        )
     }
 
     fun cancelAllErrors() {

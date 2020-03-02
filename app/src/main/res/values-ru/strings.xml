@@ -102,10 +102,10 @@
     <string name="phone_blacklist">Чёрный список номеров</string>
     <string name="phone_number">Телефон</string>
     <string name="phone_number_filter">Фильтр номеров</string>
-    <string name="phone_remotely_added_to_blacklist">Номер %s удалённо добавлен в чёрный список."</string>
-    <string name="phone_remotely_added_to_whitelist">Номер %s удалённо добавлен в белый список."</string>
-    <string name="phone_remotely_removed_from_blacklist">Номер %s удалённо удалён из чёрного списка."</string>
-    <string name="phone_remotely_removed_from_whitelist">Номер %s удалённо удалён из белого списка."</string>
+    <string name="phone_remotely_added_to_blacklist">Номер %s добавлен в чёрный список."</string>
+    <string name="phone_remotely_added_to_whitelist">Номер %s добавлен в белый список."</string>
+    <string name="phone_remotely_removed_from_blacklist">Номер %s удалён из чёрного списка."</string>
+    <string name="phone_remotely_removed_from_whitelist">Номер %s удалён из белого списка."</string>
     <string name="phone_removed_from_filter">%1$s удалён из фильтра</string>
     <string name="phone_whitelist">Белый список номеров</string>
     <string name="proceed">Продолжить</string>
@@ -114,6 +114,7 @@
     <string name="recipient_device">Адресат:</string>
     <string name="recipients">Получатели</string>
     <string name="regular_expression">Регулярное выражение</string>
+    <string name="remote_action">Удалённое действие</string>
     <string name="remote_control">Удалённое управление</string>
     <string name="remote_control_account">Сервисный аккаунт</string>
     <string name="remote_control_account_removed">Сервисный аккаунт был удалён.</string>
@@ -126,10 +127,13 @@
     <string name="rules_for_sending">Условия для отправки почты</string>
     <string name="select_from_contacts">Выбрать из контактов</string>
     <string name="send_sms_to_sender">Отправить SMS звонившему</string>
+    <string name="send_test_email">Отправить тестовую почту</string>
+    <string name="send_test_email_summary">Отправить почту для проверки настроек</string>
     <string name="sender">Отправитель</string>
     <string name="sender_account_not_found">Аккаунт отправителя не найден</string>
     <string name="sender_phone">Отправитель: %1$s (%2$s)</string>
     <string name="sent_email">Почта отправлена</string>
+    <string name="sent_sms">Отправлено SMS на номер %s</string>
     <string name="sent_time_device">Отправлено%1$s%2$s</string>
     <string name="service_account_not_found">Сервисный аккаунт не найден</string>
     <string name="service_running">Служба запущена</string>
@@ -142,10 +146,10 @@
     <string name="text_filter">Фильтр текста</string>
     <string name="text_fragment">Фрагмент текста</string>
     <string name="text_in_blacklist">Текст в чёрном списке</string>
-    <string name="text_remotely_added_to_blacklist">Текст \"%s\" удалённо добавлен в чёрный список"</string>
-    <string name="text_remotely_added_to_whitelist">Текст \"%s\" удалённо добавлен в белый список"</string>
-    <string name="text_remotely_removed_from_blacklist">Текст \"%s\" удалённо удалён из чёрного списка"</string>
-    <string name="text_remotely_removed_from_whitelist">Текст \"%s\" удалённо удалён из белого списка"</string>
+    <string name="text_remotely_added_to_blacklist">Текст \"%s\" добавлен в чёрный список"</string>
+    <string name="text_remotely_added_to_whitelist">Текст \"%s\" добавлен в белый список"</string>
+    <string name="text_remotely_removed_from_blacklist">Текст \"%s\" удалён из чёрного списка"</string>
+    <string name="text_remotely_removed_from_whitelist">Текст \"%s\" удалён из белого списка"</string>
     <string name="text_whitelist">Белый список фраз</string>
     <string name="time">Время:</string>
     <string name="time_time">Время: %s</string>
@@ -163,8 +167,6 @@
     <string name="you_had_incoming_call">Входящий звонок длительностью %s.</string>
     <string name="you_had_missed_call">Пропущенный звонок.</string>
     <string name="you_had_outgoing_call">Исходящий звонок длительностью %s.</string>
-    <string name="send_test_email">Отправить тестовую почту</string>
-    <string name="send_test_email_summary">Отправить почту для проверки настроек</string>
 
     <plurals name="items_removed">
         <item quantity="one">%d запись удалена</item>
