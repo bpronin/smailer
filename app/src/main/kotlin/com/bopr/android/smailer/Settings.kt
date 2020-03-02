@@ -10,8 +10,8 @@ import java.util.*
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class Settings(context: Context) : SharedPreferencesWrapper(
-        context.getSharedPreferences(PREFERENCES_STORAGE_NAME, MODE_PRIVATE)) {
+class Settings(context: Context, name: String = PREFERENCES_STORAGE_NAME) :
+        SharedPreferencesWrapper(context.getSharedPreferences(name, MODE_PRIVATE)) {
 
     val locale: Locale
         get() {

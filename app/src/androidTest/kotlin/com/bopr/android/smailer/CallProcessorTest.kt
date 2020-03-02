@@ -5,6 +5,7 @@ import android.Manifest.permission.WRITE_CONTACTS
 import android.accounts.Account
 import android.accounts.AccountManager
 import android.content.Context
+import android.content.Context.ACCOUNT_SERVICE
 import android.content.SharedPreferences
 import androidx.test.rule.GrantPermissionRule
 import androidx.test.rule.GrantPermissionRule.grant
@@ -86,7 +87,7 @@ class CallProcessorTest : BaseTest() {
             on { contentResolver }.doReturn(targetContext.contentResolver)
             on { resources }.doReturn(targetContext.resources)
             on { getSharedPreferences(anyString(), anyInt()) }.doReturn(preferences)
-            on { getSystemService(eq(Context.ACCOUNT_SERVICE)) }.doReturn(accountManager)
+            on { getSystemService(eq(ACCOUNT_SERVICE)) }.doReturn(accountManager)
         }
 
         geoLocator = mock {
@@ -251,7 +252,7 @@ class CallProcessorTest : BaseTest() {
 
         processor.process(testingEvent())
 
-        verify(notifications, never()).showMessage(anyString(), anyInt())
+        verify(notifications, never()).showMessage(anyInt(), anyInt())
 
         /* the setting is ON */
         whenever(preferences.getBoolean(eq(PREF_NOTIFY_SEND_SUCCESS), anyOrNull())).thenReturn(true)

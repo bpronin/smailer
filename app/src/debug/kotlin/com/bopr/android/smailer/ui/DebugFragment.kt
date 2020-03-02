@@ -233,8 +233,8 @@ class DebugFragment : BasePreferenceFragment() {
                 }),
                 createPreference("Show remote action", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        notifications.showRemoteAction(R.string.text_remotely_added_to_blacklist,
-                                "spam text")
+                        notifications.showRemoteAction(
+                                getString(R.string.text_remotely_added_to_blacklist, "spam text"))
                     }
                 }),
                 createPreference("Hide errors", object : DefaultClickListener() {
