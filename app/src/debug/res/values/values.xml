@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
+    <item name="action_debug" type="id" />
+
     <string name="banner_ad_unit_id" translatable="false" tools:ignore="UnusedResources">ca-app-pub-3940256099942544/6300978111</string>
 
 </resources>

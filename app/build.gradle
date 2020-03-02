@@ -46,8 +46,8 @@ android {
     }
 
     defaultConfig {
-        versionCode 77
-        versionName "1.7.10"
+        versionCode 78
+        versionName "1.7.11"
         versionNameSuffix = "-kotlin"
         archivesBaseName = "smailer-${versionName}${versionNameSuffix}"
         applicationId "com.bopr.android.smailer"
@@ -79,10 +79,10 @@ android {
     flavorDimensions "main"
 
     productFlavors {
-        free {
+        paid {
             dimension "main"
         }
-        paid {
+        free {
             dimension "main"
         }
     }
@@ -141,7 +141,7 @@ dependencies {
     }
     implementation "com.google.firebase:firebase-analytics:17.2.2"
     implementation "com.google.firebase:firebase-crashlytics:17.0.0-beta01"
-    
+
     freeImplementation "com.google.android.gms:play-services-ads:18.3.0"
 
     androidTestImplementation "junit:junit:4.13"

@@ -23,7 +23,6 @@
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />  <!--To sync data with Google drive -->
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" /> <!--To sync data with Google drive -->
     <uses-permission android:name="android.permission.SEND_SMS" /> <!--To send SMS from  -->
-    <!--<uses-permission android:name="com.bopr.android.smailer.SYNC" />-->
 
     <application
         android:allowBackup="true"
@@ -128,15 +127,11 @@
                 android:resource="@xml/authenticator" />
         </service>
 
-        <!--<service-->
-        <!--android:name=".sync.SyncService"-->
-        <!--android:exported="true"-->
-        <!--android:permission="com.bopr.android.smailer.SYNC"-->
-        <!--android:process=":sync">-->
         <service
             android:name=".sync.SyncService"
             android:exported="true"
             android:permission="com.bopr.android.smailer.SYNC">
+            <!--android:process=":sync">-->
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>

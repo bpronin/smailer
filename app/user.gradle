@@ -22,19 +22,25 @@ def updateReleaseInfo = {
     println('updating release build to: ' + buildNumber)
 }
 
+def uploadApk = { apkName ->
+    if (project.hasProperty('upload_path')) {
+        println("copying " + apkName + " to: " + upload_path)
+        copy {
+            from fileTree(new File(projectDir, '/build/outputs/apk/')).include("**/*" + apkName + ".apk").files
+            into upload_path
+        }
+    }
+}
+
 assemble.doLast {
     updateReleaseInfo()
 }
 
 afterEvaluate {
+    assemblePaidRelease.doLast {
+        uploadApk("paid-release")
+    }
     assemblePaidDebug.doLast {
-        if (project.hasProperty('upload_path')) {
-            println('copying release to: ' + upload_path)
-            copy {
-//            from fileTree(new File(projectDir, '/build/outputs/apk/')).include("**/*.apk").files
-                from fileTree(new File(projectDir, '/build/outputs/apk/')).include("**/*paid-debug.apk").files
-                into upload_path
-            }
-        }
+        uploadApk("paid-debug")
     }
 }

@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
 import com.bopr.android.smailer.util.deviceName
-import org.slf4j.LoggerFactory
 
 class DebugReceiver : BroadcastReceiver() {
 
@@ -14,14 +13,12 @@ class DebugReceiver : BroadcastReceiver() {
        to send intents to this receiver */
 
     override fun onReceive(context: Context, intent: Intent) {
-        log.debug("Received intent: $intent")
-
-        if (PROCESS_EVENT == intent.action) {
-            onProcessSingleEvent(context)
+        if ("PROCESS_PHONE_EVENT" == intent.action) {
+            onProcessPhoneEvent(context)
         }
     }
 
-    private fun onProcessSingleEvent(context: Context) {
+    private fun onProcessPhoneEvent(context: Context) {
         val start = System.currentTimeMillis()
         startCallProcessingService(context, PhoneEvent(
                 phone = "5556",
@@ -32,8 +29,4 @@ class DebugReceiver : BroadcastReceiver() {
                 acceptor = deviceName()))
     }
 
-    companion object {
-        private val log = LoggerFactory.getLogger("DebugReceiver")
-        private const val PROCESS_EVENT = "PROCESS_EVENT"
-    }
 }
