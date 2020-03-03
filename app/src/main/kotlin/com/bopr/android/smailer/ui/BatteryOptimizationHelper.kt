@@ -6,7 +6,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import com.bopr.android.smailer.R
 
 internal object BatteryOptimizationHelper {
@@ -22,15 +22,15 @@ internal object BatteryOptimizationHelper {
         return false
     }
 
-    fun requireIgnoreBatteryOptimization(fragment: Fragment) {
-        if (isIgnoreBatteryOptimizationRequired(fragment.requireContext())) {
-            showDialog(fragment)
+    fun requireIgnoreBatteryOptimization(activity: FragmentActivity) {
+        if (isIgnoreBatteryOptimizationRequired(activity)) {
+            showDialog(activity)
         }
     }
 
     @TargetApi(Build.VERSION_CODES.M)
-    private fun showDialog(fragment: Fragment) {
-        fragment.run {
+    private fun showDialog(activity: FragmentActivity) {
+        activity.run {
             ConfirmCheckDialog(
                     title = getString(R.string.battery_optimization),
                     message = getString(R.string.battery_optimization_reason),

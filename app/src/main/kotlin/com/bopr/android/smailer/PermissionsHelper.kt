@@ -3,8 +3,10 @@ package com.bopr.android.smailer
 import android.Manifest.permission.*
 import android.content.Context
 import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat.requestPermissions
+import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat.checkSelfPermission
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
@@ -28,11 +30,11 @@ import java.util.*
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class PermissionsHelper(val fragment: Fragment) {
+class PermissionsHelper(val activity: FragmentActivity) {
 
     private val log = LoggerFactory.getLogger("PermissionsHelper")
     private val requestResultCode = nextRequestResult++
-    private val settings: Settings = Settings(fragment.requireContext())
+    private val settings: Settings = Settings(activity)
     private var onComplete: (() -> Unit)? = null
 
     fun checkAll(onComplete: (() -> Unit)) {
@@ -61,7 +63,7 @@ class PermissionsHelper(val fragment: Fragment) {
             onPermissionsDenied(deniedPermissions)
 
             if (deniedPermissions.isNotEmpty()) {
-                fragment.showToast(R.string.since_permissions_not_granted)
+                activity.showToast(R.string.since_permissions_not_granted)
             }
         }
     }
@@ -109,7 +111,7 @@ class PermissionsHelper(val fragment: Fragment) {
 
         /* set default accounts at startup */
         settings.update {
-            val accountName = primaryAccount(fragment.requireContext())?.name
+            val accountName = primaryAccount(activity)?.name
             putStringOptional(PREF_SENDER_ACCOUNT, accountName)
             putStringOptional(PREF_REMOTE_CONTROL_ACCOUNT, accountName)
         }
@@ -157,9 +159,9 @@ class PermissionsHelper(val fragment: Fragment) {
             val unexplainedPermissions: MutableList<String> = ArrayList()
 
             for (p in permissions) {
-                if (checkSelfPermission(fragment.requireContext(), p) != PackageManager.PERMISSION_GRANTED) {
+                if (checkSelfPermission(activity, p) != PackageManager.PERMISSION_GRANTED) {
                     deniedPermissions.add(p)
-                    if (fragment.shouldShowRequestPermissionRationale(p)) {
+                    if (shouldShowRequestPermissionRationale(activity, p)) {
                         unexplainedPermissions.add(p)
                     }
                 }
@@ -178,7 +180,7 @@ class PermissionsHelper(val fragment: Fragment) {
     private fun requestPermissions(permissions: List<String>) {
         log.debug("Requesting : $permissions")
 
-        fragment.requestPermissions(permissions.toTypedArray(), requestResultCode)
+        requestPermissions(activity, permissions.toTypedArray(), requestResultCode)
     }
 
     private fun explainPermissions(permissions: List<String>) {
@@ -186,13 +188,13 @@ class PermissionsHelper(val fragment: Fragment) {
 
         InfoDialog(message = formatRationale(permissions)) {
             requestPermissions(permissions)
-        }.show(fragment)
+        }.show(activity)
     }
 
     private fun formatRationale(permissions: Collection<String>): String {
         val sb = StringBuilder()
         for (permission in permissions) {
-            sb.append(permissionRationale(fragment.requireContext(), permission)).append("\n\n")
+            sb.append(permissionRationale(activity, permission)).append("\n\n")
         }
         return sb.toString()
     }

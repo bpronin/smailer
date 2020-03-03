@@ -7,7 +7,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.preference.*
-import com.bopr.android.smailer.PermissionsHelper
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.util.accentedText
@@ -20,7 +19,6 @@ import com.bopr.android.smailer.util.underwivedText
  */
 abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeListener {
 
-    lateinit var permissionsHelper: PermissionsHelper
     lateinit var settings: Settings
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,18 +26,12 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPref
         setHasOptionsMenu(true)
         settings = Settings(requireContext())
         settings.registerOnSharedPreferenceChangeListener(this)
-        permissionsHelper = PermissionsHelper(this)
         updatePreferenceViews()
     }
 
     override fun onDestroy() {
         settings.unregisterOnSharedPreferenceChangeListener(this)
         super.onDestroy()
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
-                                            grantResults: IntArray) {
-        permissionsHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     override fun onDisplayPreferenceDialog(preference: Preference) {
@@ -63,7 +55,6 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPref
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         updatePreferenceViews()
-        permissionsHelper.onSharedPreferenceChanged(key)
     }
 
     private fun updatePreferenceViews() {

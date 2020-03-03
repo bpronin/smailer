@@ -134,7 +134,7 @@ class DebugFragment : BasePreferenceFragment() {
                         if (isIgnoreBatteryOptimizationRequired(appContext)) {
                             showToast("Battery optimization already ignored")
                         } else {
-                            requireIgnoreBatteryOptimization(this@DebugFragment)
+                            requireIgnoreBatteryOptimization(requireActivity())
                         }
                     }
                 })
