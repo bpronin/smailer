@@ -35,12 +35,10 @@ class PermissionsHelper(val activity: FragmentActivity) {
     private val log = LoggerFactory.getLogger("PermissionsHelper")
     private val requestResultCode = nextRequestResult++
     private val settings: Settings = Settings(activity)
-    private var onComplete: (() -> Unit)? = null
 
-    fun checkAll(onComplete: (() -> Unit)) {
+    fun checkAll() {
         log.debug("Checking all")
 
-        this.onComplete = onComplete
         checkPermissions(items.keys)
     }
 

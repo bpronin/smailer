@@ -37,7 +37,7 @@ class MainActivity : MainAppActivity(MainFragment::class), OnSharedPreferenceCha
         settings.registerOnSharedPreferenceChangeListener(this)
 
         setupEnvironment(this)
-        permissionsHelper.checkAll {} //todo check 
+        permissionsHelper.checkAll()
         requireIgnoreBatteryOptimization(this)
     }
 
