@@ -26,7 +26,7 @@ object Environment {
         val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
             try {
-                getLogger("Application").error("Application crashed", throwable)
+                getLogger("Application").error("Application crashed: ", throwable)
             } catch (x: Throwable) {
                 Log.e("main", "Failed to handle uncaught exception")
             }

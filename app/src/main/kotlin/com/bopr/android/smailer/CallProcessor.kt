@@ -89,7 +89,6 @@ class CallProcessor(
         return try {
             validateRecipient()
             transport.login(requireAccount(), GMAIL_SEND)
-            transport.startSession()
             true
         } catch (x: Exception) {
             log.warn("Failed starting mail session: ", x)

@@ -45,7 +45,6 @@ class RemoteControlService : JobIntentService() {
         try {
             val transport = GoogleMail(this)
             transport.login(requireAccount(), MAIL_GOOGLE_COM)
-            transport.startSession()
 
             val messages = transport.list(query)
             if (messages.isEmpty()) {

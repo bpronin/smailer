@@ -26,7 +26,6 @@ internal class SendDebugMailTask(activity: FragmentActivity, private val propert
         val transport = GoogleMail(activity)
         try {
             transport.login(account, GmailScopes.GMAIL_SEND)
-            transport.startSession()
             transport.send(message)
         } catch (x: Exception) {
             return x

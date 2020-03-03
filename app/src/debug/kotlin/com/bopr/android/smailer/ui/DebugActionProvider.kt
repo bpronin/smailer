@@ -6,7 +6,7 @@ import android.view.View
 import androidx.core.view.ActionProvider
 
 /**
- * Used in menu_main.xml.
+ * Used in debug menu_main.xml.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */

@@ -64,9 +64,9 @@ android {
 
     buildTypes {
         all {
-//            minifyEnabled true /* NOTE: obfuscation may break everything! do test app in release mode! */
-//            shrinkResources true
-//            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            shrinkResources true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
         release {
             signingConfig signingConfigs.config

@@ -32,7 +32,6 @@ internal class SendLogTask(activity: FragmentActivity, private val properties: P
             val transport = GoogleMail(activity)
 
             transport.login(account, GmailScopes.GMAIL_SEND)
-            transport.startSession()
             for (file in attachments) {
                 val message = MailMessage(
                         subject = "[SMailer] log: " + file.name,

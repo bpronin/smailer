@@ -9,7 +9,8 @@ import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.client.util.Base64
 import com.google.api.client.util.StringUtils
 import com.google.api.services.gmail.Gmail
-import com.google.api.services.gmail.model.*
+import com.google.api.services.gmail.model.Message
+import com.google.api.services.gmail.model.ModifyMessageRequest
 import com.google.common.collect.ImmutableList
 import org.slf4j.LoggerFactory
 import java.io.ByteArrayOutputStream
@@ -18,7 +19,7 @@ import java.io.IOException
 import java.util.*
 import javax.activation.DataHandler
 import javax.activation.FileDataSource
-import javax.mail.Message
+import javax.mail.Message.RecipientType.TO
 import javax.mail.MessagingException
 import javax.mail.Multipart
 import javax.mail.Session
@@ -33,24 +34,17 @@ import javax.mail.internet.*
 class GoogleMail(private val context: Context) {
 
     private val log = LoggerFactory.getLogger("GoogleMail")
-
-    lateinit var account: Account
-        protected set
     private lateinit var service: Gmail
-    private lateinit var session: Session
+    private lateinit var account: Account
 
     fun login(account: Account, scope: String) {
+        this.account = account
         val credential = GoogleAccountCredential
                 .usingOAuth2(context, listOf(scope))
                 .setSelectedAccount(account)
         service = Gmail.Builder(NetHttpTransport(), JacksonFactory.getDefaultInstance(), credential)
                 .setApplicationName("smailer")
                 .build()
-        this.account = account
-    }
-
-    fun startSession() {
-        session = Session.getDefaultInstance(Properties(), null)
     }
 
     @Throws(IOException::class)
@@ -107,23 +101,27 @@ class GoogleMail(private val context: Context) {
         log.debug("Message moved to trash: " + message.id)
     }
 
-    private fun createContent(message: MailMessage): com.google.api.services.gmail.model.Message {
+    private fun createContent(message: MailMessage): Message {
         try {
-            val mime = MimeMessage(session)
-            mime.setFrom(message.from)
-            mime.setSubject(message.subject, UTF_8)
-            mime.setRecipients(Message.RecipientType.TO, parseAddresses(message.recipients!!))
-            if (!message.replyTo.isNullOrEmpty()) {
-                mime.replyTo = parseAddresses(message.replyTo)
+            val session = Session.getDefaultInstance(Properties(), null)
+            val mime = MimeMessage(session).apply {
+                setFrom(message.from)
+                setSubject(message.subject, UTF_8)
+                setRecipients(TO, parseAddresses(message.recipients!!))
+                if (!message.replyTo.isNullOrEmpty()) {
+                    replyTo = parseAddresses(message.replyTo)
+                }
+                if (!message.attachment.isNullOrEmpty()) {
+                    setContent(createMultipart(message.body, message.attachment))
+                } else {
+                    setText(message.body, UTF_8, HTML)
+                }
             }
-            if (!message.attachment.isNullOrEmpty()) {
-                mime.setContent(createMultipart(message.body, message.attachment))
-            } else {
-                mime.setText(message.body, UTF_8, HTML)
-            }
+            
             val buffer = ByteArrayOutputStream()
             mime.writeTo(buffer)
             return Message().encodeRaw(buffer.toByteArray())
+
         } catch (x: IOException) {
             throw RuntimeException("Message creation failed", x)
         } catch (x: MessagingException) {
@@ -134,15 +132,20 @@ class GoogleMail(private val context: Context) {
     @Throws(MessagingException::class)
     private fun createMultipart(body: String?, attachment: Collection<File>): Multipart {
         val content: Multipart = MimeMultipart()
-        val textPart = MimeBodyPart()
-        textPart.setText(body, UTF_8, HTML)
-        content.addBodyPart(textPart)
-        for (file in attachment) {
-            val attachmentPart = MimeBodyPart()
-            attachmentPart.fileName = file.name
-            attachmentPart.dataHandler = DataHandler(FileDataSource(file))
-            content.addBodyPart(attachmentPart)
+
+        val textPart = MimeBodyPart().apply {
+            setText(body, UTF_8, HTML)
         }
+        content.addBodyPart(textPart)
+
+        for (file in attachment) {
+            val filePart = MimeBodyPart().apply {
+                fileName = file.name
+                dataHandler = DataHandler(FileDataSource(file))
+            }
+            content.addBodyPart(filePart)
+        }
+
         return content
     }
 
@@ -155,7 +158,7 @@ class GoogleMail(private val context: Context) {
         }
     }
 
-    private fun readMessage(gmailMessage: com.google.api.services.gmail.model.Message): MailMessage {
+    private fun readMessage(gmailMessage: Message): MailMessage {
         return MailMessage(
                 id = gmailMessage.id,
                 subject = readHeader(gmailMessage, "subject"),
@@ -164,7 +167,7 @@ class GoogleMail(private val context: Context) {
         )
     }
 
-    private fun readHeader(message: com.google.api.services.gmail.model.Message, name: String): String? {
+    private fun readHeader(message: Message, name: String): String? {
         for (header in message.payload.headers) {
             if (header.name.equals(name, true)) {
                 return header.value
@@ -173,7 +176,7 @@ class GoogleMail(private val context: Context) {
         return null
     }
 
-    private fun readBody(message: com.google.api.services.gmail.model.Message): String? {
+    private fun readBody(message: Message): String? {
         return message.payload?.let {
             val parts = it.parts
             val part = if (parts == null || parts.isEmpty()) it else parts[0]

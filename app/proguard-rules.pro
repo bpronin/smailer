@@ -16,7 +16,28 @@
 #   public *;
 #}
 
--ignorewarnings
+#-ignorewarnings
+#-dontobfuscate
 
-#-verbose
--dontobfuscate
+# Logback
+-keepattributes *Annotation*
+-keep class ch.qos.** { *; }
+-keep class org.slf4j.** { *; }
+-dontwarn ch.qos.logback.core.net.*
+
+# Google API client
+-keepattributes Signature,RuntimeVisibleAnnotations,AnnotationDefault,*Annotation*
+-keepclassmembers class * {
+  @com.google.api.client.util.Key <fields>;
+}
+-dontwarn sun.misc.Unsafe
+
+# Java mail (used to build email messages)
+-keep public class * extends javax.mail.Provider
+
+# Application
+-keepattributes SourceFile, LineNumberTable
+-keep public class com.bopr.android.smailer.ui.DebugActionProvider
+-keepclassmembers public class com.bopr.android.smailer.ui.DebugActionProvider {
+    public <init>(...);
+}
