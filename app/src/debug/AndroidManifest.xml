@@ -7,10 +7,6 @@
 
     <application tools:ignore="AllowBackup,GoogleAppIndexingWarning">
 
-        <meta-data
-            android:name="firebase_crashlytics_collection_enabled"
-            android:value="false" />
-
         <activity
             android:name=".ui.DebugActivity"
             android:exported="true"

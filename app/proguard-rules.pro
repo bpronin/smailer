@@ -41,3 +41,4 @@
 -keepclassmembers public class com.bopr.android.smailer.ui.DebugActionProvider {
     public <init>(...);
 }
+-dontwarn java.lang.ClassValue

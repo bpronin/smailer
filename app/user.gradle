@@ -24,11 +24,21 @@ def updateReleaseInfo = {
 
 def uploadApk = { apkName ->
     if (project.hasProperty('upload_path')) {
-        println("copying " + apkName + " to: " + upload_path)
+        def srcPath = new File(projectDir, 'build/outputs/apk/')
+        def dstPath = new File(upload_path)
+        println("copying apk from: " + srcPath + " to: " + dstPath)
         copy {
-            from fileTree(new File(projectDir, '/build/outputs/apk/')).include("**/*" + apkName + ".apk").files
-            into upload_path
+            from fileTree(srcPath).include("**/*" + apkName + ".apk").files
+            into dstPath
         }
+    } else {
+        println("Property not set")
+    }
+}
+
+tasks.register("uploadRelease") {
+    doLast {
+        uploadApk("paid-staging")
     }
 }
 
@@ -37,10 +47,7 @@ assemble.doLast {
 }
 
 afterEvaluate {
-    assemblePaidRelease.doLast {
-        uploadApk("paid-release")
-    }
-    assemblePaidDebug.doLast {
-        uploadApk("paid-debug")
+    assemblePaidStaging.doLast {
+        uploadApk("paid-staging")
     }
 }

@@ -32,12 +32,13 @@ android {
         debug.java.srcDirs += 'src/debug/kotlin'
         free.java.srcDirs += 'src/free/kotlin'
         paid.java.srcDirs += 'src/paid/kotlin'
+        staging.java.srcDirs += 'src/staging/kotlin'
         test.java.srcDirs += 'src/test/kotlin'
         androidTest.java.srcDirs += 'src/androidTest/kotlin'
     }
 
     signingConfigs {
-        config {
+        release {
             keyAlias "sample"
             storeFile file("keystore.p12")
             storePassword store_password
@@ -68,11 +69,17 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
-        release {
-            signingConfig signingConfigs.config
-        }
         debug {
 //            testCoverageEnabled = true
+            manifestPlaceholders = [crashlyticsEnabled:"false"]
+        }
+        staging {
+            signingConfig signingConfigs.debug
+            manifestPlaceholders = [crashlyticsEnabled:"true"]
+        }
+        release {
+            signingConfig  signingConfigs.release
+            manifestPlaceholders = [crashlyticsEnabled:"true"]
         }
     }
 
