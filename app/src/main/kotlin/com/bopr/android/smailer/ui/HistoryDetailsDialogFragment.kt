@@ -38,7 +38,7 @@ class HistoryDetailsDialogFragment(private val event: PhoneEvent) : BaseDialogFr
                     findViewById<TextView>(R.id.text_recipient).text = event.acceptor
                     findViewById<TextView>(R.id.text_result_time).run {
                         visibility = if (event.state == STATE_PROCESSED) VISIBLE else GONE
-                        setText(formatProcessTime(event))
+                        text = formatProcessTime(event)
                     }
                     findViewById<ImageView>(R.id.image_explain_result).run {
                         visibility = if (event.state == STATE_IGNORED) VISIBLE else GONE

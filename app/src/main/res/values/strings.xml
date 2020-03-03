@@ -30,7 +30,6 @@
     <string name="caller_phone">Caller: %1$s (%2$s)</string>
     <string name="check_your_settings">Please check your settings</string>
     <string name="clear">Clear</string>
-    <string name="close">Close</string>
     <string name="contact_no_permission_read_contact">no permission to read contacts</string>
     <string name="copyright" translatable="false">Copyright © BoPr, 2016-2020</string>
     <string name="device_name">Device name</string>
@@ -64,12 +63,10 @@
     <string name="last_known_location">Last known device location: %s</string>
     <string name="list_is_empty">List is empty</string>
     <string name="mark_all_as_read">Mark all as read</string>
-    <string name="mark_processed_sms_as_read">Mark processed SMS as read</string>
     <string name="missed_call">Missed call</string>
     <string name="missed_call_from">Missed call from</string>
     <string name="no_access_to_google_account">Application has no access to Google account</string>
     <string name="no_account_specified">Sender account not specified.</string>
-    <string name="no_internet_connection">No internet connection.</string>
     <string name="no_new_history_items">No new records</string>
     <string name="no_permission_read_location">(no permission to read location)</string>
     <string name="no_recipients_specified">No recipients specified</string>
@@ -91,13 +88,11 @@
     <string name="pending">Pending</string>
     <string name="permission_rationale_coarse_location">Permission to %s is needed to add device location into email message.</string>
     <string name="permission_rationale_fine_location">Permission to %s is needed to add device location into email message.</string>
-    <string name="permission_rationale_outgoing_call">Permission to %s is needed to send out email when phone calls are made.</string>
     <string name="permission_rationale_phone_state">Permission to %s is needed to send out email when phone calls are received or made.</string>
     <string name="permission_rationale_read_contacts">Permission to %s is needed to add contact name into email message.</string>
     <string name="permission_rationale_read_sms">Permission to %s is needed to send out email when SMS has sent.</string>
     <string name="permission_rationale_receive_sms">Permission to %s is needed to send out email when SMS has received.</string>
     <string name="permission_rationale_send_sms">Permission to %s is needed to remotely send out SMS.</string>
-    <string name="permission_rationale_write_sms">Permission to %s is needed to mark processed SMS as read.</string>
     <string name="permissions_required_for_operation">Required permissions not granted</string>
     <string name="phone_blacklist">Phone blacklist</string>
     <string name="phone_number">Phone number</string>
@@ -117,7 +112,6 @@
     <string name="remote_action">Remote action</string>
     <string name="remote_control">Remote control</string>
     <string name="remote_control_account">Service account</string>
-    <string name="remote_control_account_removed">Service account has been removed.</string>
     <string name="remove">Remove</string>
     <string name="remove_from_filter">Remove number from all rules</string>
     <string name="reply_ot_app">Reply to %s:</string>
@@ -160,7 +154,6 @@
     <string name="unacceptable_words">Unacceptable phrases (%s)</string>
     <string name="undo">Undo</string>
     <string name="unknown_contact">Unknown contact</string>
-    <string name="user_password_not_accepted">Username and password not accepted.</string>
     <string name="what_email_contains">What information should the email include</string>
     <string name="when_send_email">Under which conditions the email should be sent</string>
     <string name="whitelist">Whitelist</string>

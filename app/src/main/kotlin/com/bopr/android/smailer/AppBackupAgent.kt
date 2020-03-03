@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
+@Suppress("unused")
 class AppBackupAgent : BackupAgentHelper() {
 
     private val log = LoggerFactory.getLogger("Backup")

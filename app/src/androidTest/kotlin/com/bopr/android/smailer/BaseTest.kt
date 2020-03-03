@@ -25,7 +25,6 @@ abstract class BaseTest protected constructor() {
 
             Locale.setDefault(Locale.US)
             TimeZone.setDefault(TimeZone.getTimeZone("America/New_York"))
-//            System.setProperty("dexmaker.dexcache", targetContext.cacheDir.path)
         }
     }
 }

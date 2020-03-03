@@ -22,10 +22,6 @@ fun samePhone(p1: String, p2: String): Boolean {
     return comparePhones(p1, p2) == 0
 }
 
-fun findPhone(phones: Collection<String>, phone: String): String? {
-    return phones.find { samePhone(it, phone) }
-}
-
 fun containsPhone(phones: Collection<String>, phone: String): Boolean {
     return phones.any { samePhone(it, phone) }
 }
@@ -67,10 +63,6 @@ private fun compareEmails(e1: String, e2: String): Int {
 
 fun sameEmail(e1: String, e2: String): Boolean {
     return compareEmails(e1, e2) == 0
-}
-
-fun findEmail(emails: Collection<String>, email: String): String? {
-    return emails.find { m -> sameEmail(m, email) }
 }
 
 fun containsEmail(emails: Collection<String>, email: String): Boolean {

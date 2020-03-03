@@ -31,7 +31,6 @@
     <string name="caller_phone">Вам звонил: %1$s (%2$s)</string>
     <string name="check_your_settings">Проверьте настройки приложения</string>
     <string name="clear">Очистить</string>
-    <string name="close">Закрыть</string>
     <string name="contact_no_permission_read_contact">нет разрешения на чтение контактов</string>
     <string name="device_name">Имя устройства</string>
     <string name="device_name_to_show">Имя устройства в почтовом сообщении (оставьте пустым, чтобы использовать имя по умолчанию)</string>
@@ -64,12 +63,10 @@
     <string name="last_known_location">Последнее известное местоположение: %s</string>
     <string name="list_is_empty">Список пуст</string>
     <string name="mark_all_as_read">Отметить все как прочитанные</string>
-    <string name="mark_processed_sms_as_read">Отмечать обработанные SMS как прочитанные</string>
     <string name="missed_call">Пропущенный звонок</string>
     <string name="missed_call_from">Пропущенный звонок от</string>
     <string name="no_access_to_google_account">Необходимо разрешение на доступ приложения к аккаунту Google</string>
     <string name="no_account_specified">Не указан аккаунт исходящей почты.</string>
-    <string name="no_internet_connection">Отсутствует соединение с интернетом.</string>
     <string name="no_new_history_items">Нет новых записей</string>
     <string name="no_permission_read_location">нет разрешения на определение местоположения</string>
     <string name="no_recipients_specified">Не указаны получатели</string>
@@ -91,13 +88,11 @@
     <string name="pending">Ожидание обработки</string>
     <string name="permission_rationale_coarse_location">Чтобы отображать местоположение устройства в почтовом сообщении, необходимо разрешение \"%s\".</string>
     <string name="permission_rationale_fine_location">Чтобы отображать местоположение устройства в почтовом сообщении, необходимо разрешение \"%s\".</string>
-    <string name="permission_rationale_outgoing_call">Чтобы отправлять почтовое сообщение при исходящих вызовах, необходимо разрешение \"%s\".</string>
     <string name="permission_rationale_phone_state">Чтобы отправлять почтовое сообщение при входящих и исходящих вызовах, необходимо разрешение \"%s\".</string>
     <string name="permission_rationale_read_contacts">Чтобы отображать имя звонившего в почтовом сообщении, необходимо разрешение \"%s\".</string>
     <string name="permission_rationale_read_sms">Чтобы отправлять почтовое сообщение при отправлении SMS, необходимо разрешение \"%s\".</string>
     <string name="permission_rationale_receive_sms">Чтобы отправлять почтовое сообщение при приеме SMS, необходимо разрешение \"%s\".</string>
     <string name="permission_rationale_send_sms">Чтобы удалённо отправлять SMS сообщения, необходимо разрешение \"%s\".</string>
-    <string name="permission_rationale_write_sms">Чтобы отмечать обработанные SMS как прочитанные, необходимо разрешение \"%s\".</string>
     <string name="permissions_required_for_operation">Нет необходимых разрешений</string>
     <string name="phone_blacklist">Чёрный список номеров</string>
     <string name="phone_number">Телефон</string>
@@ -117,7 +112,6 @@
     <string name="remote_action">Удалённое действие</string>
     <string name="remote_control">Удалённое управление</string>
     <string name="remote_control_account">Сервисный аккаунт</string>
-    <string name="remote_control_account_removed">Сервисный аккаунт был удалён.</string>
     <string name="remove">Удалить</string>
     <string name="remove_from_filter">Исключить номер из правил</string>
     <string name="reply_ot_app">Ответить %s:</string>
@@ -160,7 +154,6 @@
     <string name="unacceptable_words">Заблокированные фразы (%s)</string>
     <string name="undo">Отмена</string>
     <string name="unknown_contact">Неизвестный контакт</string>
-    <string name="user_password_not_accepted">Неверное имя пользователя или пароль.</string>
     <string name="what_email_contains">Содержание почтового сообщения</string>
     <string name="when_send_email">Условия отправки почты</string>
     <string name="whitelist">Белый список</string>

@@ -116,7 +116,6 @@ class CallProcessorTest : BaseTest() {
         val event = testingEvent()
         processor.process(event)
 
-        verify(transport).startSession()
         verify(transport).send(argThat {
             id == null
                     && subject == "[SMailer] Incoming SMS from \"+123\""
@@ -148,7 +147,6 @@ class CallProcessorTest : BaseTest() {
 
         processor.process(event)
 
-        verify(transport, never()).startSession()
         verify(transport, never()).send(any())
         verify(notifications, never()).showMailError(any(), any())
 
@@ -169,7 +167,6 @@ class CallProcessorTest : BaseTest() {
         processor.process(event)
 
         verify(transport, never()).login(any(), any())
-        verify(transport, never()).startSession()
         verify(transport, never()).send(any())
         verify(notifications).showMailError(eq(R.string.sender_account_not_found), eq(TARGET_MAIN))
 
@@ -189,7 +186,6 @@ class CallProcessorTest : BaseTest() {
         val event = testingEvent()
         processor.process(event)
 
-        verify(transport, never()).startSession()
         verify(transport, never()).send(any())
         verify(notifications).showMailError(eq(R.string.no_recipients_specified), eq(TARGET_RECIPIENTS))
 
@@ -210,7 +206,6 @@ class CallProcessorTest : BaseTest() {
         processor.process(event)
 
         verify(transport).login(any(), any())
-        verify(transport).startSession()
         verify(transport).send(any())
         verify(notifications, never()).showMailError(any(), any())
 

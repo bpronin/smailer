@@ -45,6 +45,9 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        emptyTextRes = R.string.history_is_empty
+
         defaultItemTextColor = requireContext().getColorFromAttr(android.R.attr.textColorSecondary)
         unreadItemTextColor = requireContext().getColorFromAttr(android.R.attr.textColorPrimary)
 

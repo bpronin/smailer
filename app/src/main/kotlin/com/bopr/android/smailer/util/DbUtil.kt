@@ -57,10 +57,6 @@ private fun SQLiteDatabase.copyTable(tableFrom: String, tableTo: String,
     }
 }
 
-fun Cursor.isNull(columnName: String): Boolean {
-    return isNull(getColumnIndex(columnName))
-}
-
 fun Cursor.getString(columnName: String): String? {
     return getString(getColumnIndex(columnName))
 }

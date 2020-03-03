@@ -22,9 +22,9 @@ object JavaMail {
     private val log = LoggerFactory.getLogger("JavaMailTransport")
     private const val UTF_8 = "UTF-8"
     private const val HTML = "html"
-    const val CHECK_RESULT_OK = 0
-    const val CHECK_RESULT_NOT_CONNECTED = 1
-    const val CHECK_RESULT_AUTHENTICATION = 2
+    private const val CHECK_RESULT_OK = 0
+    private const val CHECK_RESULT_NOT_CONNECTED = 1
+    private const val CHECK_RESULT_AUTHENTICATION = 2
 
     private lateinit var account: String
     private lateinit var session: Session

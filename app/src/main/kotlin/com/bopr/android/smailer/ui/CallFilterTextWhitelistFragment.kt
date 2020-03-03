@@ -8,7 +8,7 @@ import com.bopr.android.smailer.util.unescapeRegex
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class CallFilterTextWhitelistFragment() : CallFilterListFragment(PREF_FILTER_TEXT_WHITELIST) {
+class CallFilterTextWhitelistFragment : CallFilterListFragment(PREF_FILTER_TEXT_WHITELIST) {
 
     override fun createEditDialog(): BaseEditDialogFragment<String> {
         return EditTextDialogFragment()

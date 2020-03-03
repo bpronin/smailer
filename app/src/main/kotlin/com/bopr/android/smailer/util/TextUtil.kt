@@ -98,6 +98,7 @@ fun isValidEmailAddressList(text: String?): Boolean {
     return false
 }
 
+@Suppress("unused")
 fun Bundle?.toParamString(): String {
     val sb = StringBuilder()
     this?.run {
