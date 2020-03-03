@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory.getLogger
 
 object Environment {
 
-     /* do not make any member fields. this object dies with its context */
+    /* do not make any member fields. this object dies with its context */
 
     fun setupEnvironment(context: Context) {
         getLogger("Application").debug("Application init")

@@ -50,7 +50,7 @@ class GeoLocator(private val context: Context, private val database: Database) {
             if (coordinates != null) {
                 log.debug("Using location from local database")
             } else {
-                log.warn("Unable to obtain location from database")
+                log.info("Unable to obtain location from database")
             }
         } else {
             database.putLastLocation(coordinates)
@@ -61,7 +61,7 @@ class GeoLocator(private val context: Context, private val database: Database) {
 
     private fun getCurrentLocation(timeout: Long): GeoCoordinates? {
         if (!isLocationPermissionsGranted(context)) {
-            log.warn("Missing required permission")
+            log.info("Missing required permission")
             return null
         }
 

@@ -19,6 +19,9 @@
 #-ignorewarnings
 #-dontobfuscate
 
+# Java mail (used in logback and to build email messages)
+-keep public class * extends javax.mail.Provider
+
 # Logback
 -keepattributes *Annotation*
 -keep class ch.qos.** { *; }
@@ -31,9 +34,6 @@
   @com.google.api.client.util.Key <fields>;
 }
 -dontwarn sun.misc.Unsafe
-
-# Java mail (used to build email messages)
--keep public class * extends javax.mail.Provider
 
 # Application
 -keepattributes SourceFile, LineNumberTable
