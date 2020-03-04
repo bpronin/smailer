@@ -1,6 +1,7 @@
 package com.bopr.android.smailer.remote
 
 import android.content.Context
+import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.Notifications
 import com.bopr.android.smailer.R
@@ -28,6 +29,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
+@SmallTest
 class RemoteControlProcessorTest : BaseTest() {
 
     private lateinit var context: Context

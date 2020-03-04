@@ -1,9 +1,12 @@
 package com.bopr.android.smailer.util
 
+import androidx.test.filters.SmallTest
+import com.bopr.android.smailer.BaseTest
 import org.junit.Assert.*
 import org.junit.Test
 
-class AddressUtilTest {
+@SmallTest
+class AddressUtilTest : BaseTest() {
 
     @Test
     fun testNormalizePhone() {

@@ -2,12 +2,14 @@ package com.bopr.android.smailer.util
 
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
+import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Test
 
+@SmallTest
 class SharedPreferencesWrapperTest : BaseTest() {
 
     private lateinit var preferences: SharedPreferences

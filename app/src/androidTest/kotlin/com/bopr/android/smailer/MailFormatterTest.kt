@@ -4,6 +4,7 @@ import android.Manifest.permission.*
 import android.content.Context
 import android.content.pm.PackageManager.PERMISSION_DENIED
 import android.content.res.Configuration
+import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.HtmlMatcher.Companion.htmlEquals
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_CONTACT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME
@@ -25,6 +26,7 @@ import java.util.*
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
+@SmallTest
 class MailFormatterTest : BaseTest() {
 
     private lateinit var context: Context

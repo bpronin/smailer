@@ -1,12 +1,12 @@
 package com.bopr.android.smailer
 
 import android.Manifest.permission.READ_CONTACTS
-import android.Manifest.permission.WRITE_CONTACTS
 import android.accounts.Account
 import android.accounts.AccountManager
 import android.content.Context
 import android.content.Context.ACCOUNT_SERVICE
 import android.content.SharedPreferences
+import androidx.test.filters.SmallTest
 import androidx.test.rule.GrantPermissionRule
 import androidx.test.rule.GrantPermissionRule.grant
 import com.bopr.android.smailer.Notifications.Companion.TARGET_MAIN
@@ -41,11 +41,12 @@ import java.lang.System.currentTimeMillis
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
+@SmallTest
 class CallProcessorTest : BaseTest() {
 
     @Rule
     @JvmField
-    val permissionRule: GrantPermissionRule = grant(READ_CONTACTS, WRITE_CONTACTS)
+    val permissionRule: GrantPermissionRule = grant(READ_CONTACTS)
 
     private lateinit var database: Database
     private lateinit var context: Context
@@ -230,7 +231,7 @@ class CallProcessorTest : BaseTest() {
 
         /* sending next message without errors hides all previous error notifications */
         whenever(accountManager.getAccountsByType(eq("com.google"))).thenReturn(arrayOf(Account("sender@mail.com", "com.google")))
-        
+
         processor.process(testingEvent())
 
         verify(notifications).showMailError(eq(R.string.sender_account_not_found), eq(TARGET_MAIN))

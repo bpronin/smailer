@@ -8,11 +8,14 @@ import java.io.IOException
 import java.util.*
 import java.util.regex.Pattern
 
+/**
+ * Utility class to match HTML files.
+ */
 internal open class HtmlMatcher private constructor(private val expected: String) :
         CustomTypeSafeMatcher<String?>("HTML matches") {
 
     private lateinit var actual: String
-    private var expectedToken: String?= null
+    private var expectedToken: String? = null
     private var actualToken: String? = null
     private val delimiters = Pattern.compile("(\\s|>|<|;)+")
 

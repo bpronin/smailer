@@ -1,9 +1,11 @@
 package com.bopr.android.smailer
 
+import androidx.test.filters.SmallTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class GeoCoordinatesTest {
+@SmallTest
+class GeoCoordinatesTest : BaseTest() {
 
     @Test
     fun testFormat() {

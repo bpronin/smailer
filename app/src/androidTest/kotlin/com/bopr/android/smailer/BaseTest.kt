@@ -11,7 +11,7 @@ import java.util.*
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-abstract class BaseTest protected constructor() {
+abstract class BaseTest {
 
     companion object {
 

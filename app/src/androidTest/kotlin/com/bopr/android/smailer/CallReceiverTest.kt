@@ -8,6 +8,7 @@ import android.content.Intent
 import android.os.Build
 import android.telephony.SmsMessage
 import android.telephony.TelephonyManager.*
+import androidx.test.filters.SmallTest
 import androidx.test.rule.GrantPermissionRule
 import androidx.test.rule.GrantPermissionRule.grant
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
@@ -22,6 +23,7 @@ import org.junit.Test
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
+@SmallTest
 class CallReceiverTest : BaseTest() {
 
     @Rule

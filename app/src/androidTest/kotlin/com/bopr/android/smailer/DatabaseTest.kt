@@ -1,5 +1,6 @@
 package com.bopr.android.smailer
 
+import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
@@ -15,6 +16,7 @@ import java.util.concurrent.TimeUnit
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
+@SmallTest
 class DatabaseTest : BaseTest() {
 
     private lateinit var database: Database

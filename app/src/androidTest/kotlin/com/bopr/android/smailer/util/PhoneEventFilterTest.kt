@@ -1,5 +1,7 @@
 package com.bopr.android.smailer.util
 
+import androidx.test.filters.SmallTest
+import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.PhoneEvent
 import com.bopr.android.smailer.PhoneEvent.Companion.STATUS_ACCEPTED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATUS_NUMBER_BLACKLISTED
@@ -11,7 +13,8 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class PhoneEventFilterTest {
+@SmallTest
+class PhoneEventFilterTest : BaseTest() {
 
     private fun createEvent(phone: String, acceptor: String = "Device",
                             startTime: Long = 1000,

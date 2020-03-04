@@ -2,6 +2,7 @@ package com.bopr.android.smailer.util
 
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
+import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.ui.WavyUnderlineSpan
 import org.hamcrest.CoreMatchers.instanceOf
@@ -13,6 +14,7 @@ import org.junit.Test
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
+@SmallTest
 class UiUtilTest : BaseTest() {
 
     @Test

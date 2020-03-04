@@ -1,12 +1,15 @@
 package com.bopr.android.smailer.util
 
+import androidx.test.filters.SmallTest
+import com.bopr.android.smailer.BaseTest
 import com.google.api.client.testing.util.TestableByteArrayInputStream
 import org.junit.Assert.*
 import org.junit.Test
 import java.io.ByteArrayInputStream
 import java.util.concurrent.TimeUnit
 
-class TextUtilTest {
+@SmallTest
+class TextUtilTest : BaseTest() {
 
     @Test
     fun testQuoteRegex() {

@@ -1,9 +1,12 @@
 package com.bopr.android.smailer.remote
 
+import androidx.test.filters.SmallTest
+import com.bopr.android.smailer.BaseTest
 import org.junit.Assert.*
 import org.junit.Test
 
-class RemoteControlTaskParserTest {
+@SmallTest
+class RemoteControlTaskParserTest : BaseTest() {
 
     @Test
     fun testParseEmpty() {
