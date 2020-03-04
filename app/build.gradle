@@ -24,16 +24,28 @@ apply from: "user.gradle"
 apply from: "local.gradle"
 
 android {
+
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
+    
+    defaultConfig {
+        versionCode 79
+        versionName "1.7.12"
+        versionNameSuffix "-kt"
+        applicationId "com.bopr.android.smailer"
+        minSdkVersion 21
+        targetSdkVersion 29
+        archivesBaseName = "smailer-${versionName}${versionNameSuffix}"
+        vectorDrawables.useSupportLibrary = true
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
         debug.java.srcDirs += 'src/debug/kotlin'
+        staging.java.srcDirs += 'src/staging/kotlin'
         free.java.srcDirs += 'src/free/kotlin'
         paid.java.srcDirs += 'src/paid/kotlin'
-        staging.java.srcDirs += 'src/staging/kotlin'
-        test.java.srcDirs += 'src/test/kotlin'
         androidTest.java.srcDirs += 'src/androidTest/kotlin'
     }
 
@@ -46,27 +58,8 @@ android {
         }
     }
 
-    defaultConfig {
-        versionCode 79
-        versionName "1.7.12"
-        versionNameSuffix = "-kt"
-        archivesBaseName = "smailer-${versionName}${versionNameSuffix}"
-        applicationId "com.bopr.android.smailer"
-        minSdkVersion 21
-        targetSdkVersion 29
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        multiDexEnabled true
-        vectorDrawables.useSupportLibrary = true
-    }
-
-    lintOptions {
-        abortOnError false
-    }
-
     buildTypes {
         all {
-            shrinkResources true
-            minifyEnabled true
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
         debug {
@@ -75,10 +68,14 @@ android {
         }
         staging {
             signingConfig signingConfigs.debug
+            shrinkResources true
+            minifyEnabled true
             manifestPlaceholders = [crashlyticsEnabled:"true"]
         }
         release {
             signingConfig  signingConfigs.release
+            shrinkResources true
+            minifyEnabled true
             manifestPlaceholders = [crashlyticsEnabled:"true"]
         }
     }
@@ -94,13 +91,17 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
+
     testOptions {
         unitTests.returnDefaultValues = true
     }
 
-    compileOptions {
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
+    lintOptions {
+        abortOnError false
     }
 
     packagingOptions {
