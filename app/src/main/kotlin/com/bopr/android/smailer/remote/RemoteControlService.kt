@@ -2,7 +2,6 @@ package com.bopr.android.smailer.remote
 
 import android.accounts.Account
 import android.accounts.AccountsException
-import android.content.Context
 import android.content.Intent
 import androidx.core.app.JobIntentService
 import com.bopr.android.smailer.*
@@ -104,13 +103,5 @@ class RemoteControlService : JobIntentService() {
     companion object {
 
         private val log = LoggerFactory.getLogger("RemoteControlService")
-        private const val JOB_ID = 1002
-
-        fun startRemoteControlService(context: Context) {
-            log.debug("Starting service")
-
-            enqueueWork(context, RemoteControlService::class.java, JOB_ID,
-                    Intent(context, RemoteControlService::class.java))
-        }
     }
 }

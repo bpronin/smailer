@@ -1,6 +1,5 @@
 package com.bopr.android.smailer
 
-import android.content.Context
 import android.content.Intent
 import androidx.core.app.JobIntentService
 import org.slf4j.LoggerFactory
@@ -13,7 +12,7 @@ import org.slf4j.LoggerFactory
 class PendingCallProcessorService : JobIntentService() {
 
     override fun onHandleWork(intent: Intent) {
-        log.debug("Handling intent: $intent")
+        log.trace("Handling intent: $intent")
 
         Database(this).use {
             CallProcessor(this, it).processPending()
@@ -23,13 +22,5 @@ class PendingCallProcessorService : JobIntentService() {
     companion object {
 
         private val log = LoggerFactory.getLogger("PendingCallProcessorService")
-        private const val JOB_ID = 1000
-
-        fun startPendingCallProcessorService(context: Context) {
-            log.debug("Starting service")
-
-            enqueueWork(context, PendingCallProcessorService::class.java, JOB_ID,
-                    Intent(context, PendingCallProcessorService::class.java))
-        }
     }
 }

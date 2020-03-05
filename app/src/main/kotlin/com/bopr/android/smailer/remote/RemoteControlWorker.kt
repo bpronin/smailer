@@ -1,10 +1,11 @@
 package com.bopr.android.smailer.remote
 
 import android.content.Context
+import android.content.Intent
+import androidx.core.app.JobIntentService.enqueueWork
 import androidx.work.*
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
-import com.bopr.android.smailer.remote.RemoteControlService.Companion.startRemoteControlService
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
 
@@ -26,9 +27,17 @@ internal class RemoteControlWorker(context: Context, workerParams: WorkerParamet
 
         private val log = LoggerFactory.getLogger("RemoteControlWorker")
         private const val WORKER_TAG = "com.bopr.android.smailer.remote"
+        private const val JOB_ID = 1002
 
         private fun isFeatureEnabled(context: Context): Boolean {
             return Settings(context).getBoolean(PREF_REMOTE_CONTROL_ENABLED)
+        }
+
+        fun startRemoteControlService(context: Context) {
+            log.debug("Starting service")
+
+            enqueueWork(context, RemoteControlService::class.java, JOB_ID,
+                    Intent(context, RemoteControlService::class.java))
         }
 
         fun enableRemoteControlWorker(context: Context) {
@@ -42,7 +51,7 @@ internal class RemoteControlWorker(context: Context, workerParams: WorkerParamet
                         .setRequiredNetworkType(NetworkType.CONNECTED)
                         .build()
                 val request = PeriodicWorkRequest.Builder(RemoteControlWorker::class.java,
-                        15, TimeUnit.MINUTES) /* interval must be greater than [PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS] */
+                                15, TimeUnit.MINUTES) /* interval must be greater than [PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS] */
                         .addTag(WORKER_TAG)
                         .setConstraints(constraints)
                         .build()

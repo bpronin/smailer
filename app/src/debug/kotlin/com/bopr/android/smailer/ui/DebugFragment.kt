@@ -20,6 +20,7 @@ import com.bopr.android.smailer.*
 import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
 import com.bopr.android.smailer.Notifications.Companion.TARGET_MAIN
 import com.bopr.android.smailer.Notifications.Companion.TARGET_RULES
+import com.bopr.android.smailer.PendingCallProcessorWorker.Companion.startPendingCallProcessorService
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
@@ -46,7 +47,7 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
-import com.bopr.android.smailer.remote.RemoteControlService
+import com.bopr.android.smailer.remote.RemoteControlWorker.Companion.startRemoteControlService
 import com.bopr.android.smailer.sync.Synchronizer
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.isIgnoreBatteryOptimizationRequired
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
@@ -395,7 +396,7 @@ class DebugFragment : BasePreferenceFragment() {
 
     private fun onProcessServiceMail() {
         if (settings.getBoolean(PREF_REMOTE_CONTROL_ENABLED)) {
-            RemoteControlService.startRemoteControlService(appContext)
+            startRemoteControlService(appContext)
             showToast(R.string.operation_complete)
         } else {
             showToast("Feature disabled")
@@ -415,7 +416,7 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun onStartProcessPendingEvents() {
-        PendingCallProcessorService.startPendingCallProcessorService(appContext)
+        startPendingCallProcessorService(appContext)
         showToast(R.string.operation_complete)
     }
 

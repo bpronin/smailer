@@ -1,9 +1,10 @@
 package com.bopr.android.smailer
 
 import android.content.Context
+import android.content.Intent
+import androidx.core.app.JobIntentService.enqueueWork
 import androidx.work.*
 import androidx.work.ExistingPeriodicWorkPolicy.REPLACE
-import com.bopr.android.smailer.PendingCallProcessorService.Companion.startPendingCallProcessorService
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
 
@@ -23,6 +24,14 @@ internal class PendingCallProcessorWorker(context: Context, workerParams: Worker
 
         private val log = LoggerFactory.getLogger("ResendWorker")
         private const val WORKER_TAG = "com.bopr.android.smailer.resend"
+        private const val JOB_ID = 1000
+
+        fun startPendingCallProcessorService(context: Context) {
+            log.debug("Starting service")
+
+            enqueueWork(context, PendingCallProcessorService::class.java, JOB_ID,
+                    Intent(context, PendingCallProcessorService::class.java))
+        }
 
         fun startPendingCallProcessWorker() {
             val manager = WorkManager.getInstance()
@@ -33,7 +42,7 @@ internal class PendingCallProcessorWorker(context: Context, workerParams: Worker
                     .setRequiredNetworkType(NetworkType.CONNECTED)
                     .build()
             val request = PeriodicWorkRequest.Builder(PendingCallProcessorWorker::class.java,
-                    15, TimeUnit.MINUTES) /* interval must be greater than [PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS] */
+                            15, TimeUnit.MINUTES) /* interval must be greater than [PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS] */
                     .addTag(WORKER_TAG)
                     .setConstraints(constraints)
                     .build()
