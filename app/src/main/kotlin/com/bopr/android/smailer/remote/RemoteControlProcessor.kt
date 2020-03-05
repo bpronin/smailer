@@ -1,15 +1,19 @@
 package com.bopr.android.smailer.remote
 
 import android.Manifest.permission.SEND_SMS
+import android.accounts.Account
+import android.accounts.AccountsException
 import android.content.Context
 import androidx.annotation.StringRes
-import com.bopr.android.smailer.Notifications
-import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings
+import com.bopr.android.smailer.*
+import com.bopr.android.smailer.Settings.Companion.PREF_DEVICE_ALIAS
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_BLACKLIST
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_WHITELIST
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_BLACKLIST
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_WHITELIST
+import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
+import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_NOTIFICATIONS
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.ADD_PHONE_TO_BLACKLIST
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.ADD_PHONE_TO_WHITELIST
@@ -20,9 +24,8 @@ import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_PHONE_
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_TEXT_FROM_BLACKLIST
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_TEXT_FROM_WHITELIST
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.SEND_SMS_TO_CALLER
-import com.bopr.android.smailer.util.SmsTransport
-import com.bopr.android.smailer.util.checkPermission
-import com.bopr.android.smailer.util.samePhone
+import com.bopr.android.smailer.util.*
+import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
 import org.slf4j.LoggerFactory
 
 /**
@@ -36,7 +39,41 @@ internal class RemoteControlProcessor(
         private val notifications: Notifications = Notifications(context),
         private val smsTransport: SmsTransport = SmsTransport()) {
 
-    fun perform(task: RemoteControlTask) {
+    private val parser = RemoteControlTaskParser()
+    private val query = "subject:Re:[${context.getString(R.string.app_name)}] label:inbox"
+
+    @Throws(AccountsException::class)
+    fun handleMail() {
+        val transport = GoogleMail(context)
+        transport.login(requireAccount(), MAIL_GOOGLE_COM)
+
+        val messages = transport.list(query)
+        if (messages.isEmpty()) {
+            log.debug("No service mail")
+            return
+        }
+
+        for (message in messages) {
+            if (acceptMessage(message)) {
+                message.body?.let {
+                    val task = parser.parse(it)
+                    when {
+                        task == null ->
+                            log.debug("Not a service mail")
+                        deviceAlias() != task.acceptor ->
+                            log.debug("Not my mail")
+                        else -> {
+                            transport.markAsRead(message)
+                            performTask(task)
+                            transport.trash(message)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun performTask(task: RemoteControlTask) {
         log.debug("Processing: $task")
 
         when (task.action) {
@@ -59,6 +96,32 @@ internal class RemoteControlProcessor(
             SEND_SMS_TO_CALLER ->
                 sendSms(task.arguments["phone"], task.arguments["text"])
         }
+    }
+
+    private fun acceptMessage(message: MailMessage): Boolean {
+        if (settings.getBoolean(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS)) {
+            val address = extractEmail(message.from)!!
+            val recipients = settings.getCommaList(PREF_RECIPIENTS_ADDRESS)
+            if (!containsEmail(recipients, address)) {
+                log.debug("Address $address rejected")
+
+                return false
+            }
+        }
+        return true
+    }
+
+    @Throws(AccountsException::class)
+    private fun requireAccount(): Account {
+        val accountName = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
+        return getAccount(context, accountName) ?: run {
+            notifications.showError(R.string.service_account_not_found, Notifications.TARGET_REMOTE_CONTROL)
+            throw AccountsException("Service account [$accountName] not found")
+        }
+    }
+
+    private fun deviceAlias(): String {
+        return settings.getString(PREF_DEVICE_ALIAS) ?: deviceName()
     }
 
     private fun addTextToWhitelist(text: String?) {

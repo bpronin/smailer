@@ -37,10 +37,10 @@ class GoogleMail(private val context: Context) {
     private lateinit var service: Gmail
     private lateinit var account: Account
 
-    fun login(account: Account, scope: String) {
+    fun login(account: Account, vararg scopes: String) {
         this.account = account
         val credential = GoogleAccountCredential
-                .usingOAuth2(context, listOf(scope))
+                .usingOAuth2(context, listOf(*scopes))
                 .setSelectedAccount(account)
         service = Gmail.Builder(NetHttpTransport(), JacksonFactory.getDefaultInstance(), credential)
                 .setApplicationName("smailer")
