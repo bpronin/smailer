@@ -77,7 +77,7 @@ fun Cursor.getBoolean(columnName: String): Boolean {
     return getInt(columnName) != 0
 }
 
-fun <T> Cursor.useFirst(action: (Cursor) -> T): T? {
+inline fun <T> Cursor.useFirst(action: (Cursor) -> T): T? {
     use {
         moveToFirst()
         return if (!isAfterLast) {
@@ -88,7 +88,7 @@ fun <T> Cursor.useFirst(action: (Cursor) -> T): T? {
     }
 }
 
-fun Cursor.useAll(action: (Cursor) -> Unit) {
+inline fun Cursor.useAll(action: (Cursor) -> Unit) {
     use {
         moveToFirst()
         while (!isAfterLast) {
@@ -98,7 +98,7 @@ fun Cursor.useAll(action: (Cursor) -> Unit) {
     }
 }
 
-fun <T> Cursor.useToList(get: (Cursor) -> T): List<T> {
+inline fun <T> Cursor.useToList(get: (Cursor) -> T): List<T> {
     val list = mutableListOf<T>()
     useAll {
         list.add(get(it))

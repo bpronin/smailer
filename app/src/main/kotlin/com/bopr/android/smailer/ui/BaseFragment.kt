@@ -8,6 +8,9 @@ import androidx.fragment.app.Fragment
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 
+/**
+ * Base application fragment with default behaviour.
+ */
 open class BaseFragment : Fragment() {
 
     lateinit var settings: Settings

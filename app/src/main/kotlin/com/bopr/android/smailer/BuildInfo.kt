@@ -4,6 +4,9 @@ import android.content.Context
 import java.io.IOException
 import java.util.*
 
+/**
+ * Application release build info.
+ */
 class BuildInfo(context: Context) {
 
     val number: String
@@ -20,7 +23,7 @@ class BuildInfo(context: Context) {
             time = properties.getProperty("build_time")
             name = context.packageManager.getPackageInfo(context.packageName, 0).versionName
         } catch (x: IOException) {
-            throw RuntimeException("Cannot read build info", x)
+            throw RuntimeException("Cannot read release properties file", x)
         }
     }
 

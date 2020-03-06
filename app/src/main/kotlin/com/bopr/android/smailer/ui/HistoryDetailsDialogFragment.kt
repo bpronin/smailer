@@ -18,7 +18,7 @@ import com.bopr.android.smailer.R
 import com.bopr.android.smailer.util.*
 
 /**
- * Log item details dialog.
+ * Call history log item details dialog fragment.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */

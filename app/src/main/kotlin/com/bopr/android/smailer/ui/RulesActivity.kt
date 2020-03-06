@@ -1,7 +1,7 @@
 package com.bopr.android.smailer.ui
 
 /**
- * Conditions settings activity.
+ * Rules settings activity.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */

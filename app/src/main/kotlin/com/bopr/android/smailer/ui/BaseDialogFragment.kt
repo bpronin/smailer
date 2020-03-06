@@ -11,6 +11,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 
+/**
+ * Base dialog fragment.
+ */
 abstract class BaseDialogFragment(private val fragmentTag: String?) : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

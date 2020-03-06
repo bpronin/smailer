@@ -15,8 +15,6 @@ data class GeoCoordinates(
         val latitude: Double = 0.0,
         val longitude: Double = 0.0) : Parcelable {
 
-    constructor(location: Location) : this(location.latitude, location.longitude)
-
     fun format(degreeSymbol: String = "°",
                minuteSymbol: String = "\'",
                secondSymbol: String = "\"",
@@ -52,6 +50,12 @@ data class GeoCoordinates(
     }
 
     companion object {
+
+        fun coordinatesOf(location: Location?): GeoCoordinates? {
+            return location?.let {
+                coordinatesOf(location.latitude, location.longitude)
+            }
+        }
 
         fun coordinatesOf(latitude: Double?, longitude: Double?): GeoCoordinates? {
             return if (latitude != null && longitude != null) {

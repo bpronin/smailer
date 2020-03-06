@@ -29,8 +29,8 @@ android {
     buildToolsVersion "29.0.3"
     
     defaultConfig {
-        versionCode 79
-        versionName "1.7.12"
+        versionCode 80
+        versionName "1.7.13"
         versionNameSuffix "-kt"
         applicationId "com.bopr.android.smailer"
         minSdkVersion 21
@@ -64,6 +64,8 @@ android {
         }
         debug {
 //            testCoverageEnabled = true
+            shrinkResources true
+            minifyEnabled true
             manifestPlaceholders = [crashlyticsEnabled:"false"]
         }
         staging {

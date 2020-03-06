@@ -4,7 +4,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_WHITELIST
 import com.bopr.android.smailer.util.unescapeRegex
 
 /**
- * Text filter list activity fragment.
+ * Text whitelist fragment.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */

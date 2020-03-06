@@ -5,15 +5,17 @@ import android.content.Intent
 import androidx.core.app.JobIntentService.enqueueWork
 import androidx.work.*
 import androidx.work.ExistingPeriodicWorkPolicy.REPLACE
+import androidx.work.NetworkType.CONNECTED
 import org.slf4j.LoggerFactory
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeUnit.MINUTES
 
 /**
  * Checks internet connection every 15 minutes and tries to resend email for all pending events.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class PendingCallProcessorWorker(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
+internal class PendingCallProcessorWorker(context: Context, workerParams: WorkerParameters)
+    : Worker(context, workerParams) {
 
     override fun doWork(): Result {
         startPendingCallProcessorService(applicationContext)
@@ -39,10 +41,10 @@ internal class PendingCallProcessorWorker(context: Context, workerParams: Worker
             manager.cancelAllWorkByTag(WORKER_TAG)
 
             val constraints = Constraints.Builder()
-                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .setRequiredNetworkType(CONNECTED)
                     .build()
             val request = PeriodicWorkRequest.Builder(PendingCallProcessorWorker::class.java,
-                            15, TimeUnit.MINUTES) /* interval must be greater than [PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS] */
+                            15, MINUTES) /* must be greater than [PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS] */
                     .addTag(WORKER_TAG)
                     .setConstraints(constraints)
                     .build()

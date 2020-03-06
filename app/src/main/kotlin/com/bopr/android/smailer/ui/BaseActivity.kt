@@ -8,7 +8,7 @@ import com.bopr.android.smailer.R
 import kotlin.reflect.KClass
 
 /**
- * Base Activity with default behaviour.
+ * Base application activity with default behaviour.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */

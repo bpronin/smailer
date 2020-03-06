@@ -14,7 +14,7 @@ import com.bopr.android.smailer.util.isValidEmailAddress
 import com.bopr.android.smailer.util.underwivedText
 
 /**
- * Recipients list activity fragment.
+ * Recipients list fragment.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */

@@ -5,6 +5,7 @@ import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.Context
 import android.location.Location
 import android.os.Looper
+import com.bopr.android.smailer.GeoCoordinates.Companion.coordinatesOf
 import com.bopr.android.smailer.util.Mockable
 import com.bopr.android.smailer.util.checkPermission
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -75,7 +76,8 @@ class GeoLocator(private val context: Context, private val database: Database) {
                     val location = it.lastLocation
 
                     log.debug("Received current location: $location")
-                    coordinates = GeoCoordinates(location)
+
+                    coordinates = coordinatesOf(location)
                 }
                 latch.countDown()
             }
@@ -101,7 +103,7 @@ class GeoLocator(private val context: Context, private val database: Database) {
             location?.let {
                 log.debug("Received last location: $location")
 
-                coordinates = GeoCoordinates(location)
+                coordinates = coordinatesOf(location)
                 latch.countDown()
             }
         }

@@ -1,7 +1,7 @@
 package com.bopr.android.smailer.ui
 
 /**
- * Number blacklist activity.
+ * Phone number blacklist activity.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */

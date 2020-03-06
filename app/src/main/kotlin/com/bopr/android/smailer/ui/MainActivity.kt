@@ -15,7 +15,7 @@ import com.bopr.android.smailer.sync.SyncEngine.onSyncEngineSettingsChanged
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
 
 /**
- * Main application settings activity.
+ * Main application activity.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */

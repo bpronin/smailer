@@ -3,6 +3,9 @@ package com.bopr.android.smailer.ui
 import android.content.DialogInterface
 import androidx.appcompat.app.AlertDialog
 
+/**
+ * Common message dialog fragment.
+ */
 class MessageDialog(private val title: String? = null,
                     private val message: String? = null,
                     private val dismissAction: (() -> Unit)? = null

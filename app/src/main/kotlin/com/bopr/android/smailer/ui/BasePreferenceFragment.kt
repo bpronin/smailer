@@ -6,11 +6,13 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import androidx.annotation.IntDef
 import androidx.preference.*
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.util.accentedText
 import com.bopr.android.smailer.util.underwivedText
+import kotlin.annotation.AnnotationRetention.SOURCE
 
 /**
  * Base [PreferenceFragmentCompat] with default behaviour.
@@ -96,7 +98,7 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPref
      * @param value      value
      * @param preference preference
      */
-    protected fun updateSummary(preference: Preference, value: CharSequence?, style: Int) {
+    protected fun updateSummary(preference: Preference, value: CharSequence?, @SummaryStyle style: Int) {
         when (style) {
             SUMMARY_STYLE_DEFAULT ->
                 preference.summary = value
@@ -110,6 +112,10 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPref
     protected fun requirePreference(key: CharSequence): Preference {
         return findPreference(key)!!
     }
+
+    @Retention(SOURCE)
+    @IntDef(SUMMARY_STYLE_DEFAULT, SUMMARY_STYLE_UNDERWIVED, SUMMARY_STYLE_ACCENTED)
+    annotation class SummaryStyle
 
     companion object {
         const val SUMMARY_STYLE_DEFAULT = 0

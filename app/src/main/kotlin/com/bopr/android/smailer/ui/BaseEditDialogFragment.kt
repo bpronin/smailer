@@ -6,6 +6,9 @@ import android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 
+/**
+ * Base dialog fragment with value editor.
+ */
 abstract class BaseEditDialogFragment<V>(dialogTag: String) : BaseDialogFragment(dialogTag) {
 
     @StringRes

@@ -15,6 +15,9 @@ import com.bopr.android.smailer.util.showToast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 
+/**
+ * Base fragment with editable recycler view.
+ */
 abstract class EditableRecyclerFragment<I, H : ViewHolder> : RecyclerFragment<I, H>() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

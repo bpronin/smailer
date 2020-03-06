@@ -42,7 +42,7 @@ class EmailSettingsFragment : BasePreferenceFragment() {
     }
 
     private fun updateLocalePreferenceView() {
-        val preference = findPreference<ListPreference>(PREF_EMAIL_LOCALE)!!
+        val preference: ListPreference = findPreference(PREF_EMAIL_LOCALE)!!
         val value = settings.getString(preference.key)
 
         val index = preference.findIndexOfValue(value)

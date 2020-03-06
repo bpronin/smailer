@@ -10,6 +10,9 @@ import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import com.bopr.android.smailer.R
 
+/**
+ * Common dialog with text input field.
+ */
 class InputDialog(private val title: String? = null,
                   private val message: String? = null,
                   private val inputType: Int = InputType.TYPE_CLASS_TEXT,

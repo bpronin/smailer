@@ -10,6 +10,9 @@ import androidx.fragment.app.FragmentActivity
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 
+/**
+ * Confirmation dialog with "Do not ask again" checkbox.
+ */
 class ConfirmCheckDialog(title: String? = null,
                          message: String? = null,
                          positiveButtonText: String? = null,

@@ -9,6 +9,9 @@ import android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
 import androidx.fragment.app.FragmentActivity
 import com.bopr.android.smailer.R
 
+/**
+ * Helper to check battery optimization state and to request to ignore it.
+ */
 internal object BatteryOptimizationHelper {
 
     const val BATTERY_OPTIMIZATION_DIALOG_TAG = "battery-optimization-do-not-ask-again"

@@ -13,11 +13,15 @@ import androidx.recyclerview.widget.RecyclerView.*
 import com.bopr.android.smailer.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
+/**
+ * Base fragment with [RecyclerView].
+ */
 abstract class RecyclerFragment<I, H : ViewHolder> : BaseFragment() {
 
     protected lateinit var recycler: RecyclerView
     protected lateinit var listAdapter: ListAdapter
     protected var selectedItemPosition = NO_POSITION
+
     @StringRes
     protected var emptyTextRes: Int = R.string.list_is_empty
 

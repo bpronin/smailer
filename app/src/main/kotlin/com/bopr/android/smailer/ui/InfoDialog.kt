@@ -3,6 +3,9 @@ package com.bopr.android.smailer.ui
 import android.content.DialogInterface
 import androidx.appcompat.app.AlertDialog
 
+/**
+ * Common info dialog.
+ */
 open class InfoDialog(private val title: String? = null,
                       private val message: String? = null,
                       private val positiveButtonText: String? = null,

@@ -30,7 +30,7 @@ import com.bopr.android.smailer.util.*
 import com.google.android.material.snackbar.Snackbar
 
 /**
- * Application activity log activity fragment.
+ * Call history log fragment.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */

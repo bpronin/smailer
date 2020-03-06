@@ -33,7 +33,6 @@ import javax.mail.internet.*
 @Mockable
 class GoogleMail(private val context: Context) {
 
-    private val log = LoggerFactory.getLogger("GoogleMail")
     private lateinit var service: Gmail
     private lateinit var account: Account
 
@@ -103,7 +102,6 @@ class GoogleMail(private val context: Context) {
 
     private fun createContent(message: MailMessage): Message {
         try {
-            val session = Session.getDefaultInstance(Properties(), null)
             val mime = MimeMessage(session).apply {
                 setFrom(message.from)
                 setSubject(message.subject, UTF_8)
@@ -186,9 +184,11 @@ class GoogleMail(private val context: Context) {
 
     companion object {
 
+        private val log = LoggerFactory.getLogger("GoogleMail")
         private const val ME = "me" /* exact lowercase "me" */
         private const val UTF_8 = "UTF-8"
         private const val HTML = "html"
+        private val session = Session.getDefaultInstance(Properties(), null)
     }
 
 }

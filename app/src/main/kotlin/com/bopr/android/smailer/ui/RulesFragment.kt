@@ -12,7 +12,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_BLACKLIST
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_WHITELIST
 
 /**
- * Conditions settings activity's fragment.
+ * Rules settings fragment.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
@@ -81,7 +81,7 @@ class RulesFragment : BasePreferenceFragment() {
     }
 
     private fun updateTriggersPreferenceView() {
-        val preference = findPreference<MultiSelectListPreference>(PREF_EMAIL_TRIGGERS)!!
+        val preference: MultiSelectListPreference = findPreference(PREF_EMAIL_TRIGGERS)!!
         val value = settings.getStringSet(preference.key)
 
         if (value.isEmpty()) {
