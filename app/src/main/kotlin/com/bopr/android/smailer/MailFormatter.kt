@@ -65,10 +65,10 @@ class MailFormatter(private val context: Context,
         val footer = formatFooter()
         val links = formatReplyLinks()
         return "<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">" +
-                "</head><body>" +
+                "</head><body $BODY_STYLE>" +
                 formatHeader() +
                 formatMessage() +
-                (if (footer.isNotEmpty()) "$LINE<small>$footer</small>" else "") +
+                (if (footer.isNotEmpty()) "$LINE<small $FOOTER_STYLE>$footer</small>" else "") +
                 (if (links.isNotEmpty()) "$LINE$links" else "") +
                 "</body></html>"
     }
@@ -94,7 +94,7 @@ class MailFormatter(private val context: Context,
 
     private fun formatHeader(): String {
         return if (options.contains(VAL_PREF_EMAIL_CONTENT_HEADER)) {
-            return "<strong>${getString(eventTypeText(event))}</strong><br><br>"
+            return "<strong $HEADER_STYLE>${getString(eventTypeText(event))}</strong><br><br>"
         } else ""
     }
 
@@ -197,7 +197,6 @@ class MailFormatter(private val context: Context,
     private fun formatReplyLinks(): String {
         return if (options.contains(VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS)
                 && !serviceAccount.isNullOrEmpty()) {
-            //val title = getString(R.string.reply_ot_app, R.string.app_name)
 
             val phone = escapePhone(event.phone)
             val smsText = event.text ?: ""
@@ -218,18 +217,6 @@ class MailFormatter(private val context: Context,
                 "\">${getString(titleRes)}</a>" +
                 "</small></li>"
     }
-
-//    private fun updateLocale(locale: Locale): Locale {
-//        resources = if (locale == Locale.getDefault()) {
-//            context.resources
-//        } else {
-//            val configuration = context.resources.configuration
-//            configuration.setLocale(locale)
-//            context.createConfigurationContext(configuration).resources
-//        }
-//        timeFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale)
-//        return locale
-//    }
 
     private fun replaceUrlsWithLinks(s: String): String {
         val sb = StringBuffer()
@@ -261,7 +248,10 @@ class MailFormatter(private val context: Context,
     companion object {
 
         private val WEB_URL_PATTERN = Pattern.compile("(?:\\S+)://\\S+")
-        private const val LINE = "<hr style=\"border: none; background-color: #cccccc; height: 1px;\">"
+        private const val LINE = "<hr style=\"border: none; background-color: #e0e0e0; height: 1px;\">"
+        private const val BODY_STYLE = "style=\"font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;\""
+        private const val HEADER_STYLE = "style=\"color: #707070;\""
+        private const val FOOTER_STYLE = "style=\"color: #707070;\""
     }
 
 }
