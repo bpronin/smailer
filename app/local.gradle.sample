@@ -8,12 +8,11 @@
  */
 
 ext {
-    store_password = 'sample'
-    key_password = 'sample'
-    fcm_server_key = "Firebase cloud messaging server key token"
-    upload_path = 'D:/Cloud/Google/Release'
     store_password = "sample"
     key_password = "sample"
     upload_path = "D:/Cloud/Google/Release"
     developer_email = "boprsoft.dev@gmail.com"
+
+    /* Server key from: https://console.firebase.google.com/project/smailer-24874/settings/cloudmessaging/android:com.bopr.android.smailer */
+    fcm_server_key = "Firebase cloud messaging server key token"
 }

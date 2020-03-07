@@ -1,6 +1,5 @@
 package com.bopr.android.smailer.firebase
 
-import com.bopr.android.smailer.firebase.CloudMessaging.subscribeToFirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import org.slf4j.LoggerFactory
@@ -12,8 +11,7 @@ class CloudMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         log.info("Priority: ${message.priority}")
-        log.info("Notification priority: ${message.notification?.notificationPriority}")
-        log.info("Received: ${message.notification}")
+        log.info("Data: ${message.data}")
     }
 
     override fun onNewToken(token: String) {
@@ -29,7 +27,7 @@ class CloudMessagingService : FirebaseMessagingService() {
         */
 
         // Once the token is generated, subscribe to topic with the userId
-        subscribeToFirebaseMessaging()
+        //subscribeToFirebaseMessaging()
     }
 
     override fun onMessageSent(messageId: String) {
