@@ -132,10 +132,10 @@ class DebugFragment : BasePreferenceFragment() {
                 }),
                 createPreference("Require battery optimisation disabled", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        if (isIgnoreBatteryOptimizationRequired(appContext)) {
-                            showToast("Battery optimization already ignored")
-                        } else {
+                        if (isIgnoreBatteryOptimizationRequired(requireContext())) {
                             requireIgnoreBatteryOptimization(requireActivity())
+                        } else {
+                            showToast("Battery optimization already ignored")
                         }
                     }
                 })

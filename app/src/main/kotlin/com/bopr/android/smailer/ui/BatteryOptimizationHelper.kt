@@ -18,9 +18,8 @@ internal object BatteryOptimizationHelper {
 
     fun isIgnoreBatteryOptimizationRequired(context: Context): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val packageName = context.applicationContext.packageName
             val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
-            return !pm.isIgnoringBatteryOptimizations(packageName)
+            return !pm.isIgnoringBatteryOptimizations(context.packageName)
         }
         return false
     }
