@@ -6,4 +6,4 @@ set device=
 adb %device% shell dumpsys deviceidle unforce
 adb %device% shell dumpsys battery reset
 
-exit
+::exit
