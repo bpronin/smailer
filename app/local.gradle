@@ -1,9 +1,0 @@
-/**
- * Properties specific to your local configuration
- */
-
-ext {
-    store_password = 'sample'
-    key_password = 'sample'
-    upload_path = 'D:/Cloud/Google/Release'
-}

@@ -1,0 +1,15 @@
+/**
+ * Properties specific to your local configuration.
+ *
+ * Rename to local.gradle before build
+ *
+ * This file must *NOT* be checked into Version Control Systems,
+ * as it contains information specific to your local configuration.
+ */
+
+ext {
+    store_password = 'sample'
+    key_password = 'sample'
+    fcm_server_key = "Firebase cloud messaging server key token"
+    upload_path = 'D:/Cloud/Google/Release'
+}
