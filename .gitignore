@@ -6,3 +6,4 @@
 /app/src/debug/assets/debug.properties
 /app/google-services.json
 /app/keystore.p12
+/app/local.gradle

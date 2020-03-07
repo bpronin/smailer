@@ -10,6 +10,5 @@
 ext {
     store_password = 'sample'
     key_password = 'sample'
-    fcm_server_key = "Firebase cloud messaging server key token"
     upload_path = 'D:/Cloud/Google/Release'
 }
