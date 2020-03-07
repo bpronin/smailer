@@ -53,8 +53,8 @@ import com.bopr.android.smailer.ui.BatteryOptimizationHelper.isIgnoreBatteryOpti
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
 import com.bopr.android.smailer.util.*
 import com.google.android.gms.tasks.Tasks
-import com.google.api.services.drive.DriveScopes
-import com.google.api.services.gmail.GmailScopes
+import com.google.api.services.drive.DriveScopes.DRIVE_APPDATA
+import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.util.concurrent.Callable
@@ -280,8 +280,7 @@ class DebugFragment : BasePreferenceFragment() {
 
         database = Database(appContext)
         locator = GeoLocator(appContext, database)
-        authorizator = GoogleAuthorizationHelper(this, PREF_SENDER_ACCOUNT, GmailScopes.MAIL_GOOGLE_COM,
-                DriveScopes.DRIVE_APPDATA)
+        authorizator = GoogleAuthorizationHelper(this, PREF_SENDER_ACCOUNT, MAIL_GOOGLE_COM, DRIVE_APPDATA)
         notifications = Notifications(appContext)
         sentStatusReceiver = SentStatusReceiver()
         deliveredStatusReceiver = DeliveryStatusReceiver()
@@ -397,7 +396,7 @@ class DebugFragment : BasePreferenceFragment() {
 
     private fun onProcessSingleEvent() {
         val start = System.currentTimeMillis()
-        val event = PhoneEvent("5556", true, start, start + 10000, false,
+        val event = PhoneEvent("DEBUG", true, start, start + 10000, false,
                 "SMS TEXT", null, null, STATE_PENDING, deviceName(), STATUS_ACCEPTED, isRead = false)
         startCallProcessingService(appContext, event)
         showToast(R.string.operation_complete)

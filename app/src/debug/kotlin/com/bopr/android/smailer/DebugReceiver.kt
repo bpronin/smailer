@@ -4,7 +4,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
+import com.bopr.android.smailer.PendingCallProcessorWorker.Companion.startPendingCallProcessorService
 import com.bopr.android.smailer.util.deviceName
+import java.lang.System.currentTimeMillis
 
 class DebugReceiver : BroadcastReceiver() {
 
@@ -13,20 +15,19 @@ class DebugReceiver : BroadcastReceiver() {
        to send intents to this receiver */
 
     override fun onReceive(context: Context, intent: Intent) {
-        if ("PROCESS_PHONE_EVENT" == intent.action) {
-            onProcessPhoneEvent(context)
+        when (intent.action) {
+            "PROCESS_PHONE_EVENT" -> {
+                startCallProcessingService(context, PhoneEvent(
+                            phone = "ADB DEBUG",
+                            isIncoming = true,
+                            startTime = currentTimeMillis(),
+                            text = "Message text",
+                            acceptor = deviceName()))
+            }
+            "PROCESS_PENDING_EVENTS" -> {
+                startPendingCallProcessorService(context)
+            }
         }
-    }
-
-    private fun onProcessPhoneEvent(context: Context) {
-        val start = System.currentTimeMillis()
-        startCallProcessingService(context, PhoneEvent(
-                phone = "5556",
-                isIncoming = true,
-                startTime = start,
-                endTime = start + 10000,
-                text = "SMS TEXT",
-                acceptor = deviceName()))
     }
 
 }
