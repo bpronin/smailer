@@ -24,7 +24,7 @@ internal class PendingCallProcessorWorker(context: Context, workerParams: Worker
 
     internal companion object {
 
-        private val log = LoggerFactory.getLogger("ResendWorker")
+        private val log = LoggerFactory.getLogger("PendingCallProcessorWorker")
         private const val WORKER_TAG = "com.bopr.android.smailer.resend"
         private const val JOB_ID = 1000
 
