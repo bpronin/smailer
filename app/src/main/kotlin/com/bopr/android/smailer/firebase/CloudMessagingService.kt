@@ -1,5 +1,6 @@
 package com.bopr.android.smailer.firebase
 
+import com.bopr.android.smailer.PendingCallProcessorWorker.Companion.startPendingCallProcessorService
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import org.slf4j.LoggerFactory
@@ -12,6 +13,10 @@ class CloudMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         log.info("Priority: ${message.priority}")
         log.info("Data: ${message.data}")
+
+        if (message.data["action"] == "wakeup") {
+            startPendingCallProcessorService(this)
+        }
     }
 
     override fun onNewToken(token: String) {

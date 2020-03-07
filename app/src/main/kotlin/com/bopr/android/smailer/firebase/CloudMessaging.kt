@@ -51,7 +51,7 @@ class CloudMessaging(context: Context) {
         val payload = JSONObject().apply {
             put("to", to)
             put("data", JSONObject().apply {
-                put("message", "Hello")
+                put("action", "wakeup")
             })
             put("android", JSONObject().apply {
                 put("priority", "high")
@@ -68,6 +68,8 @@ class CloudMessaging(context: Context) {
         )
 
         requestQueue.add(request)
+
+        log.debug("Sent message: $payload")
     }
 
     private inner class FCMRequest(payload: JSONObject, onResponse: (JSONObject) -> Unit,
