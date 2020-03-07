@@ -11,9 +11,8 @@ import com.bopr.android.smailer.util.showToast
 import com.google.api.services.gmail.GmailScopes
 import org.slf4j.LoggerFactory
 import java.io.*
-import java.util.*
 
-internal class SendLogTask(activity: FragmentActivity, private val properties: Properties)
+internal class SendLogTask(activity: FragmentActivity, private val recipient: String)
     : LongAsyncTask<Void?, Void?, Exception?>(activity) {
 
     private val log = LoggerFactory.getLogger("SendLogTask")
@@ -38,7 +37,7 @@ internal class SendLogTask(activity: FragmentActivity, private val properties: P
                         from = account.name,
                         body = "Device: " + deviceName() + "<br>File: " + file.name,
                         attachment = setOf(file),
-                        recipients = properties.getProperty("developer_email")
+                        recipients = recipient
                 )
                 transport.send(message)
             }

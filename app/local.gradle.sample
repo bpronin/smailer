@@ -8,7 +8,8 @@
  */
 
 ext {
-    store_password = 'sample'
-    key_password = 'sample'
-    upload_path = 'D:/Cloud/Google/Release'
+    store_password = "sample"
+    key_password = "sample"
+    upload_path = "D:/Cloud/Google/Release"
+    developer_email = "boprsoft.dev@gmail.com"
 }

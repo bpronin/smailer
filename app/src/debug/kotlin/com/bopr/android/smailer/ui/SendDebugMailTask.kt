@@ -8,9 +8,8 @@ import com.bopr.android.smailer.util.deviceName
 import com.bopr.android.smailer.util.primaryAccount
 import com.bopr.android.smailer.util.showToast
 import com.google.api.services.gmail.GmailScopes
-import java.util.*
 
-internal class SendDebugMailTask(activity: FragmentActivity, private val properties: Properties)
+internal class SendDebugMailTask(activity: FragmentActivity, private val recipient: String)
     : LongAsyncTask<Void?, Void?, Exception?>(activity) {
 
     override fun doInBackground(vararg params: Void?): Exception? {
@@ -20,7 +19,7 @@ internal class SendDebugMailTask(activity: FragmentActivity, private val propert
                 from = account.name,
                 subject = "test subject",
                 body = "test message from " + deviceName(),
-                recipients = properties.getProperty("default_recipient")
+                recipients = recipient
         )
 
         val transport = GoogleMail(activity)

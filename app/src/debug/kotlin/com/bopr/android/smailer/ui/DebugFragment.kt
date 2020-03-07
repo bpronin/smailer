@@ -57,8 +57,6 @@ import com.google.api.services.drive.DriveScopes
 import com.google.api.services.gmail.GmailScopes
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.io.IOException
-import java.util.*
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 
@@ -100,7 +98,8 @@ class DebugFragment : BasePreferenceFragment() {
                 }),
                 createPreference("Send debug mail", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        SendDebugMailTask(requireActivity(), loadDebugProperties()).execute()
+                        SendDebugMailTask(requireActivity(),
+                                getString(R.string.developer_email)).execute()
                     }
                 }),
                 createPreference("Send SMS", object : DefaultClickListener() {
@@ -132,7 +131,7 @@ class DebugFragment : BasePreferenceFragment() {
                 }),
                 createPreference("Require battery optimisation disabled", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        if (isIgnoreBatteryOptimizationRequired(requireContext())) {
+                        if (isIgnoreBatteryOptimizationRequired(appContext)) {
                             requireIgnoreBatteryOptimization(requireActivity())
                         } else {
                             showToast("Battery optimization already ignored")
@@ -211,7 +210,8 @@ class DebugFragment : BasePreferenceFragment() {
         addCategory(screen, "Logging",
                 createPreference("Send logs to developer", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        SendLogTask(requireActivity(), loadDebugProperties()).execute()
+                        SendLogTask(requireActivity(),
+                                getString(R.string.developer_email)).execute()
                     }
                 }),
                 createPreference("Clear logs", object : DefaultClickListener() {
@@ -312,18 +312,6 @@ class DebugFragment : BasePreferenceFragment() {
         }
     }
 
-    private fun loadDebugProperties(): Properties {
-        val properties = Properties()
-        try {
-            val stream = appContext.assets.open("debug.properties")
-            properties.load(stream)
-            stream.close()
-        } catch (x: IOException) {
-            log.error("Cannot read debug properties", x)
-        }
-        return properties
-    }
-
     private fun createPreference(title: String, listener: Preference.OnPreferenceClickListener): Preference {
         val preference = Preference(appContext)
         preference.title = title
@@ -342,11 +330,11 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun onSetDebugPreferences() {
-        val properties = loadDebugProperties()
+        val accountName = primaryAccount(appContext)?.name!!
         settings.update {
-            putString(PREF_SENDER_ACCOUNT, primaryAccount(appContext)?.name)
-            putString(PREF_REMOTE_CONTROL_ACCOUNT, properties.getProperty("remote_control_account"))
-            putCommaSet(PREF_RECIPIENTS_ADDRESS, setOf(properties.getProperty("default_recipient"), "nowhere@mail.com"))
+            putString(PREF_SENDER_ACCOUNT, accountName)
+            putString(PREF_REMOTE_CONTROL_ACCOUNT, accountName)
+            putCommaSet(PREF_RECIPIENTS_ADDRESS, setOf(accountName, "nowhere@mail.com"))
             putStringSet(PREF_EMAIL_TRIGGERS, mutableSetOf(
                     VAL_PREF_TRIGGER_IN_SMS,
                     VAL_PREF_TRIGGER_IN_CALLS,
@@ -477,7 +465,7 @@ class DebugFragment : BasePreferenceFragment() {
     private fun onGoogleDriveClear() {
         Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
             val drive = GoogleDrive(appContext)
-            drive.login(primaryAccount(requireContext())!!)
+            drive.login(primaryAccount(appContext)!!)
             drive.clear()
             null
         })
@@ -488,7 +476,7 @@ class DebugFragment : BasePreferenceFragment() {
         ConfirmDialog("Synchronize with drive?") {
             Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
                 try {
-                    Synchronizer(appContext, selectedAccount(requireContext())!!, database).sync()
+                    Synchronizer(appContext, selectedAccount(appContext)!!, database).sync()
                 } catch (x: Throwable) {
                     log.error("Sync error: ", x)
                 }
@@ -502,7 +490,7 @@ class DebugFragment : BasePreferenceFragment() {
         ConfirmDialog("Download from drive?") {
             Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
                 try {
-                    Synchronizer(appContext, selectedAccount(requireContext())!!, database).download()
+                    Synchronizer(appContext, selectedAccount(appContext)!!, database).download()
                 } catch (x: Throwable) {
                     log.error("Download error: ", x)
                 }
@@ -516,7 +504,7 @@ class DebugFragment : BasePreferenceFragment() {
         ConfirmDialog("Upload to drive?") {
             Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
                 try {
-                    Synchronizer(appContext, selectedAccount(requireContext())!!, database).upload()
+                    Synchronizer(appContext, selectedAccount(appContext)!!, database).upload()
                     showToast(R.string.operation_complete)
                 } catch (x: Throwable) {
                     log.error("Upload error: ", x)
@@ -545,9 +533,9 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun onShowAccounts() {
-        val s = "Selected: ${selectedAccount(requireContext())?.name}\n\n" +
-                "Service: ${serviceAccount(requireContext())?.name}\n\n" +
-                "Primary: ${primaryAccount(requireContext())?.name}"
+        val s = "Selected: ${selectedAccount(appContext)?.name}\n\n" +
+                "Service: ${serviceAccount(appContext)?.name}\n\n" +
+                "Primary: ${primaryAccount(appContext)?.name}"
         InfoDialog(message = s).show(this)
     }
 

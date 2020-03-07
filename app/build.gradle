@@ -27,7 +27,7 @@ android {
 
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
-    
+
     defaultConfig {
         versionCode 80
         versionName "1.7.13"
@@ -61,24 +61,25 @@ android {
     buildTypes {
         all {
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+            resValue("string", "developer_email", developer_email)
         }
         debug {
 //            testCoverageEnabled = true
 //            shrinkResources true
 //            minifyEnabled true
-            manifestPlaceholders = [crashlyticsEnabled:"false"]
+            manifestPlaceholders = [crashlyticsEnabled: "false"]
         }
         staging {
             signingConfig signingConfigs.debug
             shrinkResources true
             minifyEnabled true
-            manifestPlaceholders = [crashlyticsEnabled:"true"]
+            manifestPlaceholders = [crashlyticsEnabled: "true"]
         }
         release {
-            signingConfig  signingConfigs.release
+            signingConfig signingConfigs.release
             shrinkResources true
             minifyEnabled true
-            manifestPlaceholders = [crashlyticsEnabled:"true"]
+            manifestPlaceholders = [crashlyticsEnabled: "true"]
         }
     }
 

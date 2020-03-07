@@ -1,9 +1,8 @@
-/local.properties
 .idea
-*.iml
 .gradle
+*.iml
 **/build/
-/app/src/debug/assets/debug.properties
+/local.properties
 /app/google-services.json
 /app/keystore.p12
 /app/local.gradle
