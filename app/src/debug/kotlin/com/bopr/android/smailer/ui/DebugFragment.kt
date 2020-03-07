@@ -46,7 +46,9 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
-import com.bopr.android.smailer.firebase.CloudMessagingService.Companion.getFirebaseCurrentToken
+import com.bopr.android.smailer.firebase.CloudMessaging.requestCurrentFirebaseToken
+import com.bopr.android.smailer.firebase.CloudMessaging.sendFirebaseMessage
+import com.bopr.android.smailer.firebase.CloudMessaging.subscribeToFirebaseMessaging
 import com.bopr.android.smailer.remote.RemoteControlWorker.Companion.startRemoteControlService
 import com.bopr.android.smailer.sync.Synchronizer
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_DOWNLOAD
@@ -165,6 +167,16 @@ class DebugFragment : BasePreferenceFragment() {
                 createPreference("Get current token", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
                         onFirebaseGetCurrentToken()
+                    }
+                }),
+                createPreference("Subscribe", object : DefaultClickListener() {
+                    override fun onClick(preference: Preference) {
+                        onFirebaseSubscribe()
+                    }
+                }),
+                createPreference("Send message", object : DefaultClickListener() {
+                    override fun onClick(preference: Preference) {
+                        onFirebaseSendMessage()
                     }
                 })
         )
@@ -285,9 +297,18 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun onFirebaseGetCurrentToken() {
-        getFirebaseCurrentToken {
+        requestCurrentFirebaseToken {
             InfoDialog(message = "Token: $it").show(this)
         }
+    }
+
+    private fun onFirebaseSubscribe() {
+        subscribeToFirebaseMessaging()
+        showToast("Subscribed")
+    }
+
+    private fun onFirebaseSendMessage() {
+        sendFirebaseMessage(requireContext())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

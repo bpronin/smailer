@@ -25,6 +25,23 @@
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />  <!--To sync data with Google drive -->
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" /> <!--To sync data with Google drive -->
     <uses-permission android:name="android.permission.SEND_SMS" /> <!--To send SMS from  -->
+    <uses-permission android:name="android.permission.READ_CONTACTS" /> <!-- To add contact name into email body -->
+    <uses-permission android:name="android.permission.RECEIVE_SMS" /> <!-- To process incoming sms -->
+    <uses-permission android:name="android.permission.READ_SMS" /> <!-- To process outgoing SMS -->
+    <uses-permission android:name="android.permission.READ_CALL_LOG" /> <!-- To process calls in never versions -->
+    <uses-permission android:name="android.permission.WRITE_SMS" /> <!-- To mark sms as read -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- To add location in email body -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- To add location in email body -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" /> <!-- To process incoming phone calls -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> <!-- To restart application services at device boot -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- To check internet connection -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <!-- To run content listener in foreground service -->
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" /> <!-- To use account manager for google authorization -->
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" /> <!-- To sync data with Google drive -->
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" /> <!-- To sync data with Google drive -->
+    <uses-permission android:name="android.permission.SEND_SMS" /> <!-- To send SMS from -->
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
 
     <application
         android:allowBackup="true"
@@ -136,9 +153,11 @@
 
         <service
             android:name=".firebase.CloudMessagingService"
-            android:exported="false">
+            android:exported="false"
+            android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
 
