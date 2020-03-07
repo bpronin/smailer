@@ -3,6 +3,6 @@
 set device=
 ::set device=-s emulator-5554
 
-adb %device% shell am broadcast -n com.bopr.android.smailer/.DebugReceiver -a PROCESS_PHONE_EVENT
+adb %device% shell am broadcast -n com.bopr.android.smailer/.DebugReceiver -a PROCESS_PENDING_EVENTS
 
 exit
