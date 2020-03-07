@@ -46,7 +46,8 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
-import com.bopr.android.smailer.remote.RemoteControlProcessor
+import com.bopr.android.smailer.firebase.CloudMessagingService.Companion.getFirebaseCurrentToken
+import com.bopr.android.smailer.remote.RemoteControlWorker.Companion.startRemoteControlService
 import com.bopr.android.smailer.sync.Synchronizer
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_DOWNLOAD
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_UPLOAD
@@ -157,6 +158,13 @@ class DebugFragment : BasePreferenceFragment() {
                 createPreference("Sync data", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
                         onGoogleDriveSync()
+                    }
+                })
+        )
+        addCategory(screen, "Firebase",
+                createPreference("Get current token", object : DefaultClickListener() {
+                    override fun onClick(preference: Preference) {
+                        onFirebaseGetCurrentToken()
                     }
                 })
         )
@@ -274,6 +282,12 @@ class DebugFragment : BasePreferenceFragment() {
                 })
         )
         preferenceScreen = screen
+    }
+
+    private fun onFirebaseGetCurrentToken() {
+        getFirebaseCurrentToken {
+            InfoDialog(message = "Token: $it").show(this)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
