@@ -4,10 +4,12 @@ import android.Manifest.permission.GET_ACCOUNTS
 import android.accounts.Account
 import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Context.CONNECTIVITY_SERVICE
 import android.content.Context.POWER_SERVICE
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
 import android.os.Build
 import android.os.PowerManager
 import android.os.PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED
@@ -86,6 +88,13 @@ fun serviceAccount(context: Context): Account? {
 @RequiresPermission(GET_ACCOUNTS /* api<=22 */)
 fun getAccount(context: Context, accountName: String?): Account? {
     return GoogleAccountManager(context).getAccountByName(accountName)
+}
+
+fun Context.hasInternetConnection(): Boolean {
+    (getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager).run {
+        @Suppress("DEPRECATION")
+        return activeNetworkInfo?.isConnectedOrConnecting ?: false
+    }
 }
 
 fun Context.isInIdleMode(): Boolean {

@@ -7,6 +7,7 @@ import android.content.Context
 import com.bopr.android.smailer.Notifications.Companion.TARGET_MAIN
 import com.bopr.android.smailer.Notifications.Companion.TARGET_RECIPIENTS
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
+import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATUS_ACCEPTED
 import com.bopr.android.smailer.Settings.Companion.PREF_DEVICE_ALIAS
@@ -15,10 +16,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
-import com.bopr.android.smailer.util.checkPermission
-import com.bopr.android.smailer.util.contactName
-import com.bopr.android.smailer.util.getAccount
-import com.bopr.android.smailer.util.isValidEmailAddressList
+import com.bopr.android.smailer.util.*
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 import org.slf4j.LoggerFactory
@@ -45,15 +43,23 @@ class CallProcessor(
      * @param event email event
      */
     fun process(event: PhoneEvent) {
-        log.debug("Processing event: $event")
+        log.debug("Processing: $event")
 
-        event.location = locator.getLocation()
-        event.processStatus = settings.callFilter.test(event)
-        event.processTime = currentTimeMillis()
-        if (event.processStatus != STATUS_ACCEPTED) {
-            event.state = STATE_IGNORED
-        } else if (startMailSession() && sendMail(event)) {
-            event.state = STATE_PROCESSED
+        event.apply {
+            location = locator.getLocation()
+            processStatus = settings.callFilter.test(this)
+            processTime = currentTimeMillis()
+
+            if (processStatus != STATUS_ACCEPTED) {
+                state = STATE_IGNORED
+                log.debug("Ignored")
+            } else if (startMailSession() && sendMail(this)) {
+                state = STATE_PROCESSED
+                log.debug("Processed")
+            } else {
+                state = STATE_PENDING
+                log.debug("Postponed")
+            }
         }
 
         database.putEvent(event)
@@ -84,11 +90,17 @@ class CallProcessor(
     }
 
     private fun startMailSession(): Boolean {
-        log.debug("Starting session")
+        if (!context.hasInternetConnection()) {
+            /* check it before to avoid awaiting timeout while sending */
+            log.warn("Disconnected")
+            return false
+        }
 
         return try {
             validateRecipient()
             transport.login(requireAccount(), GMAIL_SEND)
+
+            log.debug("Mail session started")
             true
         } catch (x: Exception) {
             log.warn("Failed starting mail session: ", x)
@@ -97,10 +109,10 @@ class CallProcessor(
     }
 
     private fun sendMail(event: PhoneEvent): Boolean {
-        log.debug("Sending mail: $event")
-
         return try {
-            val formatter = MailFormatter(context, event,
+            val formatter = MailFormatter(
+                    context = context,
+                    event = event,
                     contactName = contactName(event.phone),
                     deviceName = settings.getString(PREF_DEVICE_ALIAS) ?: event.acceptor,
                     options = settings.getStringSet(PREF_EMAIL_CONTENT),
@@ -118,15 +130,18 @@ class CallProcessor(
 
             transport.send(message)
 
+            log.debug("Mail sent")
+
             notifications.cancelAllErrors()
 
             if (settings.getBoolean(PREF_NOTIFY_SEND_SUCCESS, false)) {
                 notifications.showMessage(R.string.email_successfully_send, TARGET_MAIN)
             }
+
             true
         } catch (x: UserRecoverableAuthIOException) {
             /* this occurs when app has no permission to access google account or
-               account has been removed outside of the device */
+               sender account has been removed from outside of the device */
             log.warn("Failed sending mail: ", x)
 
             notifications.showMailError(R.string.no_access_to_google_account, TARGET_MAIN)

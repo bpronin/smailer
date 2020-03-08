@@ -33,7 +33,7 @@ object SyncEngine {
             }
         }
 
-        if (isEnabled(context)) {
+        if (isFeatureEnabled(context)) {
             start(context)
 
             log.debug("Enabled")
@@ -88,20 +88,22 @@ object SyncEngine {
     }
 
     private fun restart(context: Context) {
-        if (isEnabled(context)) {
+        if (isFeatureEnabled(context)) {
             stop()
             start(context)
         }
     }
 
-    private fun isEnabled(context: Context) =
-            Settings(context).getBoolean(PREF_SYNC_ENABLED)
+    private fun isFeatureEnabled(context: Context) = Settings(context).getBoolean(PREF_SYNC_ENABLED)
 
     private fun updateMetadata(context: Context) {
         val time = currentTimeMillis()
-        Settings(context).update { putLong(PREF_SYNC_TIME, time) }
 
-        log.debug("Metadata updated: %tF %tT".format(time, time))
+        log.debug("Updating metadata: %tF %tT".format(time, time))
+
+        Settings(context).update {
+            putLong(PREF_SYNC_TIME, time)
+        }
     }
 
 }
