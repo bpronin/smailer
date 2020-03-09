@@ -6,6 +6,11 @@ import android.accounts.AccountsException
 import android.content.Context
 import androidx.annotation.StringRes
 import com.bopr.android.smailer.*
+import com.bopr.android.smailer.Notifications.Companion.TARGET_MAIN
+import com.bopr.android.smailer.Notifications.Companion.TARGET_PHONE_BLACKLIST
+import com.bopr.android.smailer.Notifications.Companion.TARGET_PHONE_WHITELIST
+import com.bopr.android.smailer.Notifications.Companion.TARGET_TEXT_BLACKLIST
+import com.bopr.android.smailer.Notifications.Companion.TARGET_TEXT_WHITELIST
 import com.bopr.android.smailer.Settings.Companion.PREF_DEVICE_ALIAS
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_BLACKLIST
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_WHITELIST
@@ -126,48 +131,48 @@ internal class RemoteControlProcessor(
 
     private fun addTextToWhitelist(text: String?) {
         addToList(PREF_FILTER_TEXT_WHITELIST, text,
-                R.string.text_remotely_added_to_whitelist, String::equals)
+                R.string.text_remotely_added_to_whitelist, String::equals, TARGET_TEXT_WHITELIST)
     }
 
     private fun removeTextFromWhitelist(text: String?) {
         removeFromList(PREF_FILTER_TEXT_WHITELIST, text,
-                R.string.text_remotely_removed_from_whitelist, String::equals)
+                R.string.text_remotely_removed_from_whitelist, String::equals, TARGET_TEXT_WHITELIST)
     }
 
     private fun addTextToBlacklist(text: String?) {
         addToList(PREF_FILTER_TEXT_BLACKLIST, text,
-                R.string.text_remotely_added_to_blacklist, String::equals)
+                R.string.text_remotely_added_to_blacklist, String::equals, TARGET_TEXT_BLACKLIST)
     }
 
     private fun removeTextFromBlacklist(text: String?) {
         removeFromList(PREF_FILTER_TEXT_BLACKLIST, text,
-                R.string.text_remotely_removed_from_blacklist, String::equals)
+                R.string.text_remotely_removed_from_blacklist, String::equals, TARGET_TEXT_BLACKLIST)
     }
 
     private fun addPhoneToWhitelist(phone: String?) {
         addToList(PREF_FILTER_PHONE_WHITELIST, phone,
-                R.string.phone_remotely_added_to_whitelist, ::samePhone)
+                R.string.phone_remotely_added_to_whitelist, ::samePhone, TARGET_PHONE_WHITELIST)
     }
 
     private fun removePhoneFromWhitelist(phone: String?) {
         removeFromList(PREF_FILTER_PHONE_WHITELIST, phone,
-                R.string.phone_remotely_removed_from_whitelist, ::samePhone)
+                R.string.phone_remotely_removed_from_whitelist, ::samePhone, TARGET_PHONE_WHITELIST)
     }
 
     private fun addPhoneToBlacklist(phone: String?) {
         addToList(PREF_FILTER_PHONE_BLACKLIST, phone,
-                R.string.phone_remotely_added_to_blacklist, ::samePhone)
+                R.string.phone_remotely_added_to_blacklist, ::samePhone, TARGET_PHONE_BLACKLIST)
     }
 
     private fun removePhoneFromBlacklist(phone: String?) {
         removeFromList(PREF_FILTER_PHONE_BLACKLIST, phone,
-                R.string.phone_remotely_removed_from_blacklist, ::samePhone)
+                R.string.phone_remotely_removed_from_blacklist, ::samePhone, TARGET_PHONE_BLACKLIST)
     }
 
     private fun sendSms(phone: String?, message: String?) {
         if (context.checkPermission(SEND_SMS)) {
             smsTransport.sendMessage(phone, message)
-            showNotification(context.getString(R.string.sent_sms, phone))
+            showNotification(context.getString(R.string.sent_sms, phone), TARGET_MAIN)
 
             log.debug("Sent SMS: $message to $phone")
         } else {
@@ -176,14 +181,14 @@ internal class RemoteControlProcessor(
     }
 
     private fun addToList(key: String, value: String?, @StringRes messageRes: Int,
-                          compare: (String, String) -> Boolean) {
+                          compare: (String, String) -> Boolean, @Notifications.Target target: Int) {
         value?.run {
             val set = settings.getCommaSet(key)
             if (set.none { compare(it, this) }) {
                 settings.update {
                     putCommaSet(key, set.apply { add(value) })
                 }
-                showNotification(context.getString(messageRes, value))
+                showNotification(context.getString(messageRes, value), target)
             } else {
                 log.debug("Already in list")
             }
@@ -191,7 +196,7 @@ internal class RemoteControlProcessor(
     }
 
     private fun removeFromList(key: String, value: String?, @StringRes messageRes: Int,
-                               compare: (String, String) -> Boolean) {
+                               compare: (String, String) -> Boolean, @Notifications.Target target: Int) {
         value?.run {
             val set = settings.getCommaSet(key)
             set.find {
@@ -200,14 +205,14 @@ internal class RemoteControlProcessor(
                 settings.update {
                     putCommaSet(key, set.apply { remove(it) })
                 }
-                showNotification(context.getString(messageRes, value))
+                showNotification(context.getString(messageRes, value), target)
             } ?: log.debug("Not in list")
         }
     }
 
-    private fun showNotification(message: String) {
+    private fun showNotification(message: String, @Notifications.Target target: Int) {
         if (settings.getBoolean(PREF_REMOTE_CONTROL_NOTIFICATIONS)) {
-            notifications.showRemoteAction(message)
+            notifications.showRemoteAction(message, target)
         }
     }
 

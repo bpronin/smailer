@@ -14,6 +14,7 @@ import androidx.core.app.TaskStackBuilder
 import com.bopr.android.smailer.ui.*
 import com.bopr.android.smailer.util.Mockable
 import java.lang.System.currentTimeMillis
+import kotlin.reflect.KClass
 
 /**
  * Produces notifications.
@@ -106,11 +107,11 @@ class Notifications(private val context: Context) {
         )
     }
 
-    fun showRemoteAction(message: String) {
+    fun showRemoteAction(message: String, @Target target: Int) {
         showMessage(
                 title = context.getString(R.string.remote_action),
                 message = message,
-                target = TARGET_MAIN
+                target = target
         )
     }
 
@@ -127,23 +128,31 @@ class Notifications(private val context: Context) {
     private fun targetIntent(@Target target: Int): PendingIntent {
         return when (target) {
             TARGET_MAIN ->
-                activityIntent(MainActivity::class.java)
+                activityIntent(MainActivity::class)
             TARGET_HISTORY ->
-                activityIntent(HistoryActivity::class.java)
+                activityIntent(HistoryActivity::class)
             TARGET_RECIPIENTS ->
-                activityIntent(RecipientsActivity::class.java)
+                activityIntent(RecipientsActivity::class)
             TARGET_REMOTE_CONTROL ->
-                activityIntent(RemoteControlActivity::class.java)
+                activityIntent(RemoteControlActivity::class)
             TARGET_RULES ->
-                activityIntent(RulesActivity::class.java)
+                activityIntent(RulesActivity::class)
+            TARGET_PHONE_BLACKLIST ->
+                activityIntent(CallFilterPhoneBlacklistActivity::class)
+            TARGET_PHONE_WHITELIST ->
+                activityIntent(CallFilterPhoneWhitelistActivity::class)
+            TARGET_TEXT_BLACKLIST ->
+                activityIntent(CallFilterTextBlacklistActivity::class)
+            TARGET_TEXT_WHITELIST ->
+                activityIntent(CallFilterTextWhitelistActivity::class)
             else ->
                 throw IllegalArgumentException("Invalid target")
         }
     }
 
-    private fun activityIntent(activityClass: Class<out Activity>): PendingIntent {
+    private fun activityIntent(activityClass: KClass<out Activity>): PendingIntent {
         return TaskStackBuilder.create(context)
-                .addNextIntentWithParentStack(Intent(context, activityClass))
+                .addNextIntentWithParentStack(Intent(context, activityClass.java))
                 .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)!!
     }
 
@@ -166,7 +175,8 @@ class Notifications(private val context: Context) {
     }
 
     @Retention(AnnotationRetention.SOURCE)
-    @IntDef(TARGET_MAIN, TARGET_RULES, TARGET_HISTORY, TARGET_RECIPIENTS, TARGET_REMOTE_CONTROL)
+    @IntDef(TARGET_MAIN, TARGET_RULES, TARGET_HISTORY, TARGET_RECIPIENTS, TARGET_REMOTE_CONTROL,
+            TARGET_PHONE_BLACKLIST, TARGET_PHONE_WHITELIST, TARGET_TEXT_BLACKLIST, TARGET_TEXT_WHITELIST)
     annotation class Target
 
     companion object {
@@ -184,6 +194,10 @@ class Notifications(private val context: Context) {
         const val TARGET_HISTORY = 2
         const val TARGET_RECIPIENTS = 3
         const val TARGET_REMOTE_CONTROL = 4
+        const val TARGET_PHONE_BLACKLIST = 5
+        const val TARGET_PHONE_WHITELIST = 6
+        const val TARGET_TEXT_BLACKLIST = 7
+        const val TARGET_TEXT_WHITELIST = 8
     }
 
 }

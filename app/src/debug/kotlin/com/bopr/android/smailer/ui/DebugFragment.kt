@@ -20,6 +20,7 @@ import androidx.preference.PreferenceScreen
 import com.bopr.android.smailer.*
 import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
 import com.bopr.android.smailer.Notifications.Companion.TARGET_MAIN
+import com.bopr.android.smailer.Notifications.Companion.TARGET_PHONE_BLACKLIST
 import com.bopr.android.smailer.Notifications.Companion.TARGET_RULES
 import com.bopr.android.smailer.PendingCallProcessorWorker.Companion.startPendingCallProcessorService
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
@@ -237,7 +238,8 @@ class DebugFragment : BasePreferenceFragment() {
                 createPreference("Show remote action", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
                         notifications.showRemoteAction(
-                                getString(R.string.text_remotely_added_to_blacklist, "spam text"))
+                                getString(R.string.text_remotely_added_to_blacklist, "spam text"),
+                                TARGET_PHONE_BLACKLIST)
                     }
                 }),
                 createPreference("Hide errors", object : DefaultClickListener() {
