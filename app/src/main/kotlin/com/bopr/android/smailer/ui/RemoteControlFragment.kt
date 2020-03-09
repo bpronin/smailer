@@ -9,6 +9,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_NOTIFICATIONS
+import com.bopr.android.smailer.util.isAccountExists
 import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
 
 // TODO: 24.02.2019 add help icon for remote control
@@ -54,14 +55,14 @@ class RemoteControlFragment : BasePreferenceFragment() {
 
     private fun updateAccountPreferenceView() {
         val preference = requirePreference(PREF_REMOTE_CONTROL_ACCOUNT)
-        val value = settings.getString(preference.key)
+        val accountName = settings.getString(preference.key)
 
-        if (value.isNullOrEmpty()) {
+        if (accountName.isNullOrEmpty()) {
             updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)
-        } else if (!authorizator.isAccountExists(value)) {
-            updateSummary(preference, value, SUMMARY_STYLE_UNDERWIVED)
+        } else if (!requireContext().isAccountExists(accountName)) {
+            updateSummary(preference, accountName, SUMMARY_STYLE_UNDERWIVED)
         } else {
-            updateSummary(preference, value, SUMMARY_STYLE_DEFAULT)
+            updateSummary(preference, accountName, SUMMARY_STYLE_DEFAULT)
         }
     }
 

@@ -1,8 +1,11 @@
 package com.bopr.android.smailer.util
 
+import android.Manifest.permission.READ_CONTACTS
+import androidx.test.rule.GrantPermissionRule
 import com.bopr.android.smailer.BaseTest
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Rule
 import org.junit.Test
 
 /**
@@ -12,8 +15,10 @@ import org.junit.Test
  */
 class AndroidUtilTest : BaseTest() {
 
-//    @Rule
-//    @JvmField
+    @Rule
+    @JvmField
+    /* somehow it gives access to account list in API>=26 */
+    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(READ_CONTACTS)
 //    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(GET_ACCOUNTS)
 
     @Test

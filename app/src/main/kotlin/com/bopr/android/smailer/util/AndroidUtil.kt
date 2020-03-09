@@ -1,7 +1,5 @@
 package com.bopr.android.smailer.util
 
-import android.Manifest.permission.GET_ACCOUNTS
-import android.accounts.Account
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Context.CONNECTIVITY_SERVICE
@@ -13,13 +11,8 @@ import android.net.ConnectivityManager
 import android.os.Build
 import android.os.PowerManager
 import android.os.PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED
-import androidx.annotation.RequiresPermission
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
-import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
-import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager
 
 
 /**
@@ -56,38 +49,6 @@ fun permissionLabel(context: Context, permissionName: String): String {
     } catch (x: Exception) {
         throw RuntimeException(x)
     }
-}
-
-/**
- * Returns primary device account or null when no accounts registered.
- */
-@RequiresPermission(GET_ACCOUNTS /* api<=22 */)
-fun primaryAccount(context: Context): Account? {
-    return GoogleAccountManager(context).accounts.getOrNull(0)
-}
-
-/**
- * Returns currently selected account.
- */
-@RequiresPermission(GET_ACCOUNTS /* api<=22 */)
-fun selectedAccount(context: Context): Account? {
-    return getAccount(context, Settings(context).getString(PREF_SENDER_ACCOUNT))
-}
-
-/**
- * Returns currently selected service account.
- */
-@RequiresPermission(GET_ACCOUNTS /* api<=22 */)
-fun serviceAccount(context: Context): Account? {
-    return getAccount(context, Settings(context).getString(PREF_REMOTE_CONTROL_ACCOUNT))
-}
-
-/**
- * Returns account with specified name or null.
- */
-@RequiresPermission(GET_ACCOUNTS /* api<=22 */)
-fun getAccount(context: Context, accountName: String?): Account? {
-    return GoogleAccountManager(context).getAccountByName(accountName)
 }
 
 fun Context.hasInternetConnection(): Boolean {

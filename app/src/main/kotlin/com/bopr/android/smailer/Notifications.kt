@@ -86,8 +86,8 @@ class Notifications(private val context: Context) {
                         .build())
     }
 
-    fun showError(title: String, @Target target: Int) {
-        manager.notify("error", ++errorId,
+    fun showError(errorId: Int, title: String, @Target target: Int) {
+        manager.notify("error", errorId,
                 errorsBuilder
                         .setWhen(currentTimeMillis())
                         .setContentTitle(title)
@@ -95,18 +95,8 @@ class Notifications(private val context: Context) {
                         .build())
     }
 
-    fun showMessage(@StringRes messageRes: Int, @Target target: Int) {
-        showMessage(
-                title = context.getString(messageRes),
-                target = target
-        )
-    }
-
-    fun showError(@StringRes messageRes: Int, @Target target: Int) {
-        showError(
-                title = context.getString(messageRes),
-                target = target
-        )
+    fun showError(title: String, @Target target: Int) {
+        showError(++errorId, title, target)
     }
 
     fun showMailError(@StringRes reasonRes: Int, @Target target: Int) {
@@ -124,9 +114,13 @@ class Notifications(private val context: Context) {
         )
     }
 
+    fun cancelError(errorId: Int) {
+        manager.cancel("error", errorId)
+    }
+
     fun cancelAllErrors() {
         while (errorId >= 0) {
-            manager.cancel("error", errorId--)
+            cancelError(errorId--)
         }
     }
 
@@ -153,6 +147,24 @@ class Notifications(private val context: Context) {
                 .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)!!
     }
 
+    fun showRemoteAccountError() {
+        showError(REMOTE_ACCOUNT_ERROR, context.getString(R.string.service_account_not_found),
+                TARGET_REMOTE_CONTROL)
+    }
+
+    fun cancelRemoteAccountError() {
+        cancelError(REMOTE_ACCOUNT_ERROR)
+    }
+
+    fun showSenderAccountError() {
+        showError(SENDER_ACCOUNT_ERROR, context.getString(R.string.sender_account_not_found),
+                TARGET_MAIN)
+    }
+
+    fun cancelSenderAccountError() {
+        cancelError(SENDER_ACCOUNT_ERROR)
+    }
+
     @Retention(AnnotationRetention.SOURCE)
     @IntDef(TARGET_MAIN, TARGET_RULES, TARGET_HISTORY, TARGET_RECIPIENTS, TARGET_REMOTE_CONTROL)
     annotation class Target
@@ -161,6 +173,9 @@ class Notifications(private val context: Context) {
 
         private var messageId = -1
         private var errorId = -1
+
+        private const val SENDER_ACCOUNT_ERROR = -1000
+        private const val REMOTE_ACCOUNT_ERROR = -1001
 
         const val SERVICE_NOTIFICATION_ID = 19158
 

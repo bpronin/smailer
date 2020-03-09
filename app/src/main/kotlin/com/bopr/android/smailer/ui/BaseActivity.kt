@@ -14,18 +14,20 @@ import kotlin.reflect.KClass
  */
 abstract class BaseActivity(private val fragmentClass: KClass<out Fragment>) : AppCompatActivity() {
 
+    protected var fragment: Fragment? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHomeButtonEnabled(true)
         setContentView(R.layout.activity_default)
 
         val fragmentManager = supportFragmentManager
-        var fragment = fragmentManager.findFragmentByTag(null)
+        fragment = fragmentManager.findFragmentByTag("fragment")
         if (fragment == null) {
             fragment = fragmentClass.java.newInstance()
             fragmentManager
                     .beginTransaction()
-                    .replace(R.id.content, fragment, null)
+                    .replace(R.id.content, fragment!!, "fragment")
                     .commit()
         }
     }

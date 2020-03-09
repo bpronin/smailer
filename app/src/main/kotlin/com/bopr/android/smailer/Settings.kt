@@ -56,7 +56,7 @@ class Settings(context: Context, name: String = PREFERENCES_STORAGE_NAME) :
         putBooleanOptional(PREF_REMOTE_CONTROL_ENABLED, false)
         putBooleanOptional(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS, true)
         putBooleanOptional(PREF_REMOTE_CONTROL_NOTIFICATIONS, true)
-        putBooleanOptional(PREF_SYNC_ENABLED, true)
+        putBooleanOptional(PREF_SYNC_ENABLED, false)
     }
 
     companion object {

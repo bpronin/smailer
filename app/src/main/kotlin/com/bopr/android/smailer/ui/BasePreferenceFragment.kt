@@ -99,6 +99,7 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPref
      * @param preference preference
      */
     protected fun updateSummary(preference: Preference, value: CharSequence?, @SummaryStyle style: Int) {
+        preference.summary = null  /* clean to refresh spannable style */
         when (style) {
             SUMMARY_STYLE_DEFAULT ->
                 preference.summary = value

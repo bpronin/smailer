@@ -135,7 +135,8 @@ class CallProcessor(
             notifications.cancelAllErrors()
 
             if (settings.getBoolean(PREF_NOTIFY_SEND_SUCCESS, false)) {
-                notifications.showMessage(R.string.email_successfully_send, TARGET_MAIN)
+                notifications.showMessage(title = context.getString(R.string.email_successfully_send),
+                        target = TARGET_MAIN)
             }
 
             true
@@ -156,8 +157,8 @@ class CallProcessor(
     @Throws(AccountsException::class)
     private fun requireAccount(): Account {
         val accountName = settings.getString(PREF_SENDER_ACCOUNT)
-        return getAccount(context, settings.getString(PREF_SENDER_ACCOUNT)) ?: run {
-            notifications.showMailError(R.string.sender_account_not_found, TARGET_MAIN)
+        return context.getAccount(accountName) ?: run {
+            notifications.showSenderAccountError()
             throw AccountsException("Sender account [$accountName] not found")
         }
     }

@@ -24,7 +24,7 @@ class RemoteControlService : JobIntentService() {
         try {
             processor.handleMail()
         } catch (x: Exception) {
-            log.error("Remote control error", x)
+            log.warn("Failed handling service mail: ", x)
         }
     }
 

@@ -27,7 +27,7 @@ internal class SendLogTask(activity: FragmentActivity, private val recipient: St
         }
 
         try {
-            val account = primaryAccount(activity)!!
+            val account = activity.primaryAccount()!!
             val transport = GoogleMail(activity)
 
             transport.login(account, GmailScopes.GMAIL_SEND)

@@ -15,7 +15,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_TIME
 import com.bopr.android.smailer.sync.AppContentProvider.Companion.AUTHORITY
-import com.bopr.android.smailer.util.selectedAccount
+import com.bopr.android.smailer.util.getAccount
 import org.slf4j.LoggerFactory
 import java.lang.System.currentTimeMillis
 
@@ -59,7 +59,7 @@ object SyncEngine {
     }
 
     private fun start(context: Context) {
-        account = selectedAccount(context)
+        account = context.getAccount(Settings(context).getString(PREF_SENDER_ACCOUNT))
 
         account?.let {
             syncNow(it)

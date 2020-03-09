@@ -1,6 +1,7 @@
 package com.bopr.android.smailer.ui
 
 import android.Manifest.permission.READ_CONTACTS
+import android.accounts.Account
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
@@ -229,7 +230,8 @@ class DebugFragment : BasePreferenceFragment() {
                 }),
                 createPreference("Show success", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        notifications.showMessage(R.string.email_successfully_send, TARGET_MAIN)
+                        notifications.showMessage(title = getString(R.string.email_successfully_send),
+                                target = TARGET_MAIN)
                     }
                 }),
                 createPreference("Show remote action", object : DefaultClickListener() {
@@ -329,7 +331,7 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun onSetDebugPreferences() {
-        val accountName = primaryAccount(appContext)?.name!!
+        val accountName = appContext.primaryAccount()?.name!!
         settings.update {
             putString(PREF_SENDER_ACCOUNT, accountName)
             putString(PREF_REMOTE_CONTROL_ACCOUNT, accountName)
@@ -464,7 +466,7 @@ class DebugFragment : BasePreferenceFragment() {
     private fun onGoogleDriveClear() {
         Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
             val drive = GoogleDrive(appContext)
-            drive.login(primaryAccount(appContext)!!)
+            drive.login(appContext.primaryAccount()!!)
             drive.clear()
             null
         })
@@ -475,7 +477,7 @@ class DebugFragment : BasePreferenceFragment() {
         ConfirmDialog("Synchronize with drive?") {
             Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
                 try {
-                    Synchronizer(appContext, selectedAccount(appContext)!!, database).sync()
+                    Synchronizer(appContext, senderAccount(), database).sync()
                 } catch (x: Throwable) {
                     log.error("Sync error: ", x)
                 }
@@ -489,7 +491,7 @@ class DebugFragment : BasePreferenceFragment() {
         ConfirmDialog("Download from drive?") {
             Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
                 try {
-                    Synchronizer(appContext, selectedAccount(appContext)!!, database).download()
+                    Synchronizer(appContext, senderAccount(), database).download()
                 } catch (x: Throwable) {
                     log.error("Download error: ", x)
                 }
@@ -503,7 +505,7 @@ class DebugFragment : BasePreferenceFragment() {
         ConfirmDialog("Upload to drive?") {
             Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
                 try {
-                    Synchronizer(appContext, selectedAccount(appContext)!!, database).upload()
+                    Synchronizer(appContext, senderAccount(), database).upload()
                     showToast(R.string.operation_complete)
                 } catch (x: Throwable) {
                     log.error("Upload error: ", x)
@@ -532,10 +534,18 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun onShowAccounts() {
-        val s = "Selected: ${selectedAccount(appContext)?.name}\n\n" +
-                "Service: ${serviceAccount(appContext)?.name}\n\n" +
-                "Primary: ${primaryAccount(appContext)?.name}"
+        val s = "Selected: ${senderAccount().name}\n\n" +
+                "Service: ${serviceAccount().name}\n\n" +
+                "Primary: ${appContext.primaryAccount()?.name}"
         InfoDialog(message = s).show(this)
+    }
+
+    private fun senderAccount(): Account {
+        return appContext.getAccount(settings.getString(PREF_SENDER_ACCOUNT))!!
+    }
+
+    private fun serviceAccount(): Account {
+        return appContext.getAccount(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT))!!
     }
 
     private abstract inner class DefaultClickListener : Preference.OnPreferenceClickListener {

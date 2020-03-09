@@ -13,7 +13,7 @@ internal class SendDebugMailTask(activity: FragmentActivity, private val recipie
     : LongAsyncTask<Void?, Void?, Exception?>(activity) {
 
     override fun doInBackground(vararg params: Void?): Exception? {
-        val account = primaryAccount(activity)!!
+        val account = activity.primaryAccount()!!
 
         val message = MailMessage(
                 from = account.name,

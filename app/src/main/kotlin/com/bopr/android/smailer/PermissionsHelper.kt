@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.FragmentActivity
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
+import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_CONTACT
@@ -109,8 +110,9 @@ class PermissionsHelper(val activity: FragmentActivity) {
 
         /* set default accounts at startup */
         settings.update {
-            val accountName = primaryAccount(activity)?.name
+            val accountName = activity.primaryAccount()?.name
             putStringOptional(PREF_SENDER_ACCOUNT, accountName)
+            putStringOptional(PREF_RECIPIENTS_ADDRESS, accountName)
             putStringOptional(PREF_REMOTE_CONTROL_ACCOUNT, accountName)
         }
     }

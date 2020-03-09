@@ -1,6 +1,5 @@
 package com.bopr.android.smailer.ui
 
-import android.accounts.Account
 import android.accounts.AccountManager.KEY_ACCOUNT_NAME
 import android.accounts.AccountManager.newChooseAccountIntent
 import android.accounts.AccountManagerCallback
@@ -12,6 +11,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.bopr.android.smailer.Settings
+import com.bopr.android.smailer.util.getAccount
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager.ACCOUNT_TYPE
 import org.slf4j.LoggerFactory
@@ -36,15 +36,11 @@ class GoogleAuthorizationHelper(private val fragment: Fragment,
         accountManager = GoogleAccountManager(activity)
     }
 
-    fun isAccountExists(accountName: String?): Boolean {
-        return findAccount(accountName) != null
-    }
-
     /**
      * Brings up system account selection dialog.
      */
     fun startAccountSelectorActivity() {
-        val selectedAccount = findAccount(settings.getString(accountSettingName))
+        val selectedAccount = activity.getAccount(settings.getString(accountSettingName))
 
         val intent: Intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             newChooseAccountIntent(selectedAccount, null, arrayOf(ACCOUNT_TYPE), null, null, null, null)
@@ -66,18 +62,14 @@ class GoogleAuthorizationHelper(private val fragment: Fragment,
         }
     }
 
-    private fun findAccount(accountName: String?): Account? {
-        return accountManager.getAccountByName(accountName)
-    }
-
     private fun requestPermission(accountName: String?) {
         log.debug("Requesting permission for: $accountName")
 
         accountManager.accountManager.getAuthToken(
-                findAccount(accountName),
+                activity.getAccount(accountName),
                 "oauth2: " + scopes.joinToString(" "),
                 null,
-                fragment.requireActivity(),
+                activity,
                 AuthTokenAcquireCallback(),
                 null /* callback executes in main thread */
         )

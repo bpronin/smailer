@@ -10,7 +10,7 @@
         android:name="android.permission.GET_ACCOUNTS"
         android:maxSdkVersion="22" /><!-- To access google accounts -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" /><!-- To add contact name into email body -->
+    <uses-permission android:name="android.permission.READ_CONTACTS" /><!-- To add contact name into email body. Also somehow it gives access to account list in API>=26  -->
     <uses-permission android:name="android.permission.RECEIVE_SMS" /><!-- To process incoming sms -->
     <uses-permission android:name="android.permission.READ_SMS" /><!-- To process outgoing SMS-->
     <uses-permission android:name="android.permission.READ_CALL_LOG" /><!-- To process calls in never versions -->

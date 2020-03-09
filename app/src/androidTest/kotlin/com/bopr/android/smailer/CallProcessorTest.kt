@@ -272,14 +272,14 @@ class CallProcessorTest : BaseTest() {
 
         assertEquals(3, database.events.count())
         assertEquals(3, database.pendingEvents.count())
-        verify(notifications, never()).showError(anyString(), anyInt())
+        verify(notifications, never()).showNewError(anyString(), anyInt())
 
         /* try resend with disabled transport */
         processor.processPending()
 
         assertEquals(3, database.events.count())
         assertEquals(3, database.pendingEvents.count())
-        verify(notifications, never()).showError(anyString(), anyInt())
+        verify(notifications, never()).showNewError(anyString(), anyInt())
 
         /* enable transport an try again */
         doNothing().whenever(transport).send(any())
@@ -288,6 +288,6 @@ class CallProcessorTest : BaseTest() {
 
         assertEquals(3, database.events.count())
         assertEquals(0, database.pendingEvents.count())
-        verify(notifications, never()).showError(anyString(), anyInt())
+        verify(notifications, never()).showNewError(anyString(), anyInt())
     }
 }

@@ -114,8 +114,8 @@ internal class RemoteControlProcessor(
     @Throws(AccountsException::class)
     private fun requireAccount(): Account {
         val accountName = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
-        return getAccount(context, accountName) ?: run {
-            notifications.showError(R.string.service_account_not_found, Notifications.TARGET_REMOTE_CONTROL)
+        return context.getAccount(accountName) ?: run {
+            notifications.showRemoteAccountError()
             throw AccountsException("Service account [$accountName] not found")
         }
     }
