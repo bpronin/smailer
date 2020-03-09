@@ -160,6 +160,7 @@
     <string name="you_had_incoming_call">Входящий звонок длительностью %s.</string>
     <string name="you_had_missed_call">Пропущенный звонок.</string>
     <string name="you_had_outgoing_call">Исходящий звонок длительностью %s.</string>
+    <string name="process_service_mail">Проверить сервисную почту</string>
 
     <plurals name="items_removed">
         <item quantity="one">%d запись удалена</item>

@@ -9,12 +9,18 @@ import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_NOTIFICATIONS
+import com.bopr.android.smailer.remote.RemoteControlProcessor
 import com.bopr.android.smailer.util.isAccountExists
+import com.bopr.android.smailer.util.showToast
+import com.google.android.gms.tasks.Tasks
 import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
+import java.util.concurrent.Callable
+import java.util.concurrent.Executors.newSingleThreadExecutor
 
 // TODO: 24.02.2019 add help icon for remote control
 class RemoteControlFragment : BasePreferenceFragment() {
 
+    private val processMailAction = "remote_control_process_service_mail"
     private lateinit var authorizator: GoogleAuthorizationHelper
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -22,6 +28,11 @@ class RemoteControlFragment : BasePreferenceFragment() {
 
         requirePreference(PREF_REMOTE_CONTROL_ACCOUNT).setOnPreferenceClickListener {
             authorizator.startAccountSelectorActivity()
+            true
+        }
+
+        requirePreference(processMailAction).setOnPreferenceClickListener {
+            onProcessServiceMail()
             true
         }
     }
@@ -53,6 +64,14 @@ class RemoteControlFragment : BasePreferenceFragment() {
         }
     }
 
+    private fun onProcessServiceMail() {
+        val processor = RemoteControlProcessor(requireContext())
+        Tasks.call(newSingleThreadExecutor(), Callable {
+            processor.handleMail()
+        })
+        showToast(R.string.operation_complete)
+    }
+
     private fun updateAccountPreferenceView() {
         val preference = requirePreference(PREF_REMOTE_CONTROL_ACCOUNT)
         val accountName = settings.getString(preference.key)
@@ -73,5 +92,6 @@ class RemoteControlFragment : BasePreferenceFragment() {
         requirePreference(PREF_REMOTE_CONTROL_ACCOUNT).isEnabled = value
         requirePreference(PREF_REMOTE_CONTROL_NOTIFICATIONS).isEnabled = value
         requirePreference(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS).isEnabled = value
+        requirePreference(processMailAction).isEnabled = value
     }
 }

@@ -84,6 +84,15 @@ class RemoteControlTaskParserTest : BaseTest() {
     }
 
     @Test
+    fun testParseAddQuotedPhoneToBlacklist() {
+        val task = RemoteControlTaskParser().parse("To device \"Phone\": add phone \"THE-PHONE\" to blacklist")!!
+
+        assertEquals("Phone", task.acceptor)
+        assertEquals(RemoteControlTask.ADD_PHONE_TO_BLACKLIST, task.action)
+        assertEquals("THE-PHONE", task.argument)
+    }
+
+    @Test
     fun testParseAddPhoneToWhitelist() {
         val task = RemoteControlTaskParser().parse("To device \"Phone\": add phone +7905-09441 to whitelist")!!
 

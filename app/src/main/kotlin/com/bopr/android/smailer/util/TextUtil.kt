@@ -4,8 +4,11 @@ import android.os.Bundle
 import android.util.Patterns.EMAIL_ADDRESS
 import java.io.InputStream
 import java.util.*
+import java.util.regex.Pattern
 import kotlin.math.abs
 
+const val QUOTATION_REGEX = "\"([^\"]*)\""
+val QUOTATION_PATTERN: Pattern = Pattern.compile(QUOTATION_REGEX)
 private val COMMA_ESCAPED = Regex("(?<!/),")  /* matches commas not preceded by "/" */
 private const val REGEX_ = "REGEX:"
 

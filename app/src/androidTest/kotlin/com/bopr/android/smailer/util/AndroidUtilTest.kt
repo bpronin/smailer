@@ -28,12 +28,12 @@ class AndroidUtilTest : BaseTest() {
 
     @Test
     fun testPrimaryAccount() {
-        assertNotNull(primaryAccount(targetContext))
+        assertNotNull(targetContext.primaryAccount())
     }
 
     @Test
     fun testGetAccount() {
-        assertNull(getAccount(targetContext, ""))
+        assertNull(targetContext.getAccount(""))
     }
 
 }

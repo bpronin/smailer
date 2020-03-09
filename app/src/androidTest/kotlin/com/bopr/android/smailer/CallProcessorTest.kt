@@ -248,14 +248,15 @@ class CallProcessorTest : BaseTest() {
 
         processor.process(testingEvent())
 
-        verify(notifications, never()).showMessage(anyInt(), anyInt())
+        verify(notifications, never()).showMessage(anyString(), anyString(), anyInt())
 
         /* the setting is ON */
         whenever(preferences.getBoolean(eq(PREF_NOTIFY_SEND_SUCCESS), anyOrNull())).thenReturn(true)
 
         processor.process(testingEvent())
 
-        verify(notifications).showMessage(eq(R.string.email_successfully_send), eq(TARGET_MAIN))
+        verify(notifications).showMessage(anyString(),
+                eq(targetContext.getString(R.string.email_successfully_send)), eq(TARGET_MAIN))
     }
 
     /**
@@ -272,14 +273,14 @@ class CallProcessorTest : BaseTest() {
 
         assertEquals(3, database.events.count())
         assertEquals(3, database.pendingEvents.count())
-        verify(notifications, never()).showNewError(anyString(), anyInt())
+        verify(notifications, never()).showError(anyString(), anyInt())
 
         /* try resend with disabled transport */
         processor.processPending()
 
         assertEquals(3, database.events.count())
         assertEquals(3, database.pendingEvents.count())
-        verify(notifications, never()).showNewError(anyString(), anyInt())
+        verify(notifications, never()).showError(anyString(), anyInt())
 
         /* enable transport an try again */
         doNothing().whenever(transport).send(any())
@@ -288,6 +289,6 @@ class CallProcessorTest : BaseTest() {
 
         assertEquals(3, database.events.count())
         assertEquals(0, database.pendingEvents.count())
-        verify(notifications, never()).showNewError(anyString(), anyInt())
+        verify(notifications, never()).showError(anyString(), anyInt())
     }
 }

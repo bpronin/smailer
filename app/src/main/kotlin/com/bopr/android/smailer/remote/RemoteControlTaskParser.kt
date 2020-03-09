@@ -9,7 +9,9 @@ import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_PHONE_
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_TEXT_FROM_BLACKLIST
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_TEXT_FROM_WHITELIST
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.SEND_SMS_TO_CALLER
-import com.bopr.android.smailer.util.PHONE_PATTERN
+import com.bopr.android.smailer.util.PHONE_REGEX
+import com.bopr.android.smailer.util.QUOTATION_PATTERN
+import com.bopr.android.smailer.util.QUOTATION_REGEX
 import java.util.*
 import java.util.regex.Pattern
 
@@ -103,11 +105,14 @@ internal class RemoteControlTaskParser {
     }
 
     private fun nextPhone(scanner: Scanner): String? {
-        return scanner.findWithinHorizon(PHONE_PATTERN, 0)
+        return scanner.findWithinHorizon(PHONE_OR_QUOTATION_PATTERN, 0)?.let {
+            scanner.match().group(2)    /* found quotation */
+                    ?: it               /* found pure number */
+        }
     }
 
     companion object {
 
-        private val QUOTATION_PATTERN: Pattern = Pattern.compile("\"([^\"]*)\"")
+        private val PHONE_OR_QUOTATION_PATTERN: Pattern = Pattern.compile("($QUOTATION_REGEX|$PHONE_REGEX)")
     }
 }

@@ -18,4 +18,9 @@
         android:key="remote_control_filter_recipients"
         android:title="@string/allow_only_recipients" />
 
+    <androidx.preference.Preference
+        android:key="remote_control_process_service_mail"
+        android:title="@string/process_service_mail"
+        />
+
 </androidx.preference.PreferenceScreen>

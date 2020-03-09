@@ -40,7 +40,7 @@ class SyncEngineTest : BaseTest() {
     @Test
     fun testSync() {
         val settings = Settings(targetContext)
-        val account = primaryAccount(targetContext)!!
+        val account = targetContext.primaryAccount()!!
         val sync = Synchronizer(targetContext, account, database, settings, "test-meta.json", "test-data.json")
 
         sync.clear()

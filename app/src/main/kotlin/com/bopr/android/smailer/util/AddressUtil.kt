@@ -4,10 +4,9 @@ import androidx.core.util.PatternsCompat.EMAIL_ADDRESS
 import java.util.*
 import java.util.regex.Pattern
 
-val PHONE_PATTERN: Pattern = Pattern.compile(       // sdd = space, dot, or dash
-        "(\\+[0-9]+[\\- \\.]*)?"                    // +<digits><sdd>*
-                + "(\\([0-9]+\\)[\\- \\.]*)?"       // (<digits>)<sdd>*
-                + "([0-9][0-9\\- \\.]+[0-9])")      // <digit><digit|sdd>+<digit>
+@Suppress("RegExpRedundantEscape")
+const val PHONE_REGEX: String = "(\\+[0-9]+[\\- \\.]*)?(\\([0-9]+\\)[\\- \\.]*)?([0-9][0-9\\- \\.]+[0-9])"
+val PHONE_PATTERN: Pattern = Pattern.compile(PHONE_REGEX)
 private val NON_PHONE_SYMBOLS = Regex("[^A-Za-z0-9*.]")
 
 fun normalizePhone(phone: String): String {
@@ -44,7 +43,7 @@ fun extractPhone(text: String?): String? {
  * Returns phone as is if it is a regular or quoted otherwise
  */
 fun escapePhone(phone: String): String {
-    return if (PHONE_PATTERN.matcher(phone).matches()) phone else "\"" + phone + "\""
+    return if (PHONE_PATTERN.matcher(phone).matches()) phone else "\"$phone\""
 }
 
 fun normalizeEmail(email: String): String {

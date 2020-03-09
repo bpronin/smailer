@@ -25,7 +25,7 @@ class RemoteControlMailTest : BaseTest() {
 
     private val sender = "TEST"
     private val settings = Settings(targetContext, "test.preferences")
-    private val account = primaryAccount(targetContext)!!
+    private val account = targetContext.primaryAccount()!!
     private val transport = GoogleMail(targetContext)
     private val notifications: Notifications = mock()
     private val processor = RemoteControlProcessor(
