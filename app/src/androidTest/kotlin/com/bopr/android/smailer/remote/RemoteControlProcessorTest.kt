@@ -4,6 +4,11 @@ import android.content.Context
 import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.Notifications
+import com.bopr.android.smailer.Notifications.Companion.TARGET_MAIN
+import com.bopr.android.smailer.Notifications.Companion.TARGET_PHONE_BLACKLIST
+import com.bopr.android.smailer.Notifications.Companion.TARGET_PHONE_WHITELIST
+import com.bopr.android.smailer.Notifications.Companion.TARGET_TEXT_BLACKLIST
+import com.bopr.android.smailer.Notifications.Companion.TARGET_TEXT_WHITELIST
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_BLACKLIST
@@ -62,9 +67,9 @@ class RemoteControlProcessorTest : BaseTest() {
 
         assertEquals("100,200", settings.getString(PREF_FILTER_PHONE_BLACKLIST))
         verify(notifications).showRemoteAction(
-                eq(targetContext.getString(R.string.phone_remotely_added_to_blacklist, "100")))
+                eq(targetContext.getString(R.string.phone_remotely_added_to_blacklist, "100")), eq(TARGET_PHONE_BLACKLIST))
         verify(notifications).showRemoteAction(
-                eq(targetContext.getString(R.string.phone_remotely_added_to_blacklist, "200")))
+                eq(targetContext.getString(R.string.phone_remotely_added_to_blacklist, "200")), eq(TARGET_PHONE_BLACKLIST))
     }
 
     @Test
@@ -77,9 +82,9 @@ class RemoteControlProcessorTest : BaseTest() {
 
         assertEquals("100,200", settings.getString(PREF_FILTER_PHONE_WHITELIST))
         verify(notifications).showRemoteAction(
-                eq(targetContext.getString(R.string.phone_remotely_added_to_whitelist, "100")))
+                eq(targetContext.getString(R.string.phone_remotely_added_to_whitelist, "100")), eq(TARGET_PHONE_WHITELIST))
         verify(notifications).showRemoteAction(
-                eq(targetContext.getString(R.string.phone_remotely_added_to_whitelist, "200")))
+                eq(targetContext.getString(R.string.phone_remotely_added_to_whitelist, "200")), eq(TARGET_PHONE_WHITELIST))
     }
 
     @Test
@@ -92,9 +97,9 @@ class RemoteControlProcessorTest : BaseTest() {
 
         assertEquals("100,200", settings.getString(PREF_FILTER_TEXT_BLACKLIST))
         verify(notifications).showRemoteAction(
-                eq(targetContext.getString(R.string.text_remotely_added_to_blacklist, "100")))
+                eq(targetContext.getString(R.string.text_remotely_added_to_blacklist, "100")), eq(TARGET_TEXT_BLACKLIST))
         verify(notifications).showRemoteAction(
-                eq(targetContext.getString(R.string.text_remotely_added_to_blacklist, "200")))
+                eq(targetContext.getString(R.string.text_remotely_added_to_blacklist, "200")), eq(TARGET_TEXT_BLACKLIST))
     }
 
     @Test
@@ -107,9 +112,9 @@ class RemoteControlProcessorTest : BaseTest() {
 
         assertEquals("100,200", settings.getString(PREF_FILTER_TEXT_WHITELIST))
         verify(notifications).showRemoteAction(
-                eq(targetContext.getString(R.string.text_remotely_added_to_whitelist, "100")))
+                eq(targetContext.getString(R.string.text_remotely_added_to_whitelist, "100")), eq(TARGET_TEXT_WHITELIST))
         verify(notifications).showRemoteAction(
-                eq(targetContext.getString(R.string.text_remotely_added_to_whitelist, "200")))
+                eq(targetContext.getString(R.string.text_remotely_added_to_whitelist, "200")), eq(TARGET_TEXT_WHITELIST))
     }
 
     @Test
@@ -125,9 +130,9 @@ class RemoteControlProcessorTest : BaseTest() {
 
         assertEquals("300", settings.getString(PREF_FILTER_PHONE_BLACKLIST))
         verify(notifications).showRemoteAction(
-                eq(targetContext.getString(R.string.phone_remotely_removed_from_blacklist, "100")))
+                eq(targetContext.getString(R.string.phone_remotely_removed_from_blacklist, "100")), eq(TARGET_PHONE_BLACKLIST))
         verify(notifications).showRemoteAction(
-                eq(targetContext.getString(R.string.phone_remotely_removed_from_blacklist, "+2-00")))
+                eq(targetContext.getString(R.string.phone_remotely_removed_from_blacklist, "+2-00")), eq(TARGET_PHONE_BLACKLIST))
     }
 
     @Test
@@ -143,9 +148,9 @@ class RemoteControlProcessorTest : BaseTest() {
 
         assertEquals("300", settings.getString(PREF_FILTER_PHONE_WHITELIST))
         verify(notifications).showRemoteAction(
-                eq(targetContext.getString(R.string.phone_remotely_removed_from_whitelist, "100")))
+                eq(targetContext.getString(R.string.phone_remotely_removed_from_whitelist, "100")), eq(TARGET_PHONE_WHITELIST))
         verify(notifications).showRemoteAction(
-                eq(targetContext.getString(R.string.phone_remotely_removed_from_whitelist, "+2-00")))
+                eq(targetContext.getString(R.string.phone_remotely_removed_from_whitelist, "+2-00")), eq(TARGET_PHONE_WHITELIST))
     }
 
     @Test
@@ -161,9 +166,9 @@ class RemoteControlProcessorTest : BaseTest() {
 
         assertEquals("300", settings.getString(PREF_FILTER_TEXT_BLACKLIST))
         verify(notifications).showRemoteAction(
-                eq(targetContext.getString(R.string.text_remotely_removed_from_blacklist, "100")))
+                eq(targetContext.getString(R.string.text_remotely_removed_from_blacklist, "100")), eq(TARGET_TEXT_BLACKLIST))
         verify(notifications).showRemoteAction(
-                eq(targetContext.getString(R.string.text_remotely_removed_from_blacklist, "200")))
+                eq(targetContext.getString(R.string.text_remotely_removed_from_blacklist, "200")), eq(TARGET_TEXT_BLACKLIST))
     }
 
     @Test
@@ -179,9 +184,9 @@ class RemoteControlProcessorTest : BaseTest() {
 
         assertEquals("300", settings.getString(PREF_FILTER_TEXT_WHITELIST))
         verify(notifications).showRemoteAction(
-                eq(targetContext.getString(R.string.text_remotely_removed_from_whitelist, "100")))
+                eq(targetContext.getString(R.string.text_remotely_removed_from_whitelist, "100")), eq(TARGET_TEXT_WHITELIST))
         verify(notifications).showRemoteAction(
-                eq(targetContext.getString(R.string.text_remotely_removed_from_whitelist, "200")))
+                eq(targetContext.getString(R.string.text_remotely_removed_from_whitelist, "200")), eq(TARGET_TEXT_WHITELIST))
     }
 
     @Test
@@ -194,7 +199,7 @@ class RemoteControlProcessorTest : BaseTest() {
         })
 
         verify(smsTransport).sendMessage(eq("100"), eq("Text"))
-        verify(notifications).showRemoteAction(eq(targetContext.getString(R.string.sent_sms, "100")))
+        verify(notifications).showRemoteAction(eq(targetContext.getString(R.string.sent_sms, "100")), eq(TARGET_MAIN))
     }
 
 }

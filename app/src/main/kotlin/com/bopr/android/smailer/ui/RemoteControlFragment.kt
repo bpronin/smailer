@@ -2,7 +2,9 @@ package com.bopr.android.smailer.ui
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.drawable.AnimatedVectorDrawable
 import android.os.Bundle
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.preference.SwitchPreference
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
@@ -10,6 +12,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_NOTIFICATIONS
 import com.bopr.android.smailer.remote.RemoteControlProcessor
+import com.bopr.android.smailer.util.getQuantityString
 import com.bopr.android.smailer.util.isAccountExists
 import com.bopr.android.smailer.util.showToast
 import com.google.android.gms.tasks.Tasks.call
@@ -65,10 +68,20 @@ class RemoteControlFragment : BasePreferenceFragment() {
     }
 
     private fun onProcessServiceMail() {
+        val preference = requirePreference(processMailAction)
+
+        val drawable = getDrawable(requireContext(), R.drawable.animated_progress) as AnimatedVectorDrawable
+        preference.icon = drawable
+        drawable.start()
+
         call(newSingleThreadExecutor(), Callable {
             RemoteControlProcessor(requireContext()).checkMailbox()
-        })
-        showToast(R.string.operation_complete)
+        }).addOnCompleteListener {
+            preference.icon = null
+            drawable.stop()
+            /* if we live the page while processing context becomes null */
+            context?.showToast(getQuantityString(R.plurals.mail_items, R.string.mail_items_zero, it.result!!))
+        }
     }
 
     private fun updateAccountPreferenceView() {

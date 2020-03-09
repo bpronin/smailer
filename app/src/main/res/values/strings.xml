@@ -67,7 +67,6 @@
     <string name="missed_call_from">Missed call from</string>
     <string name="no_access_to_google_account">Application has no access to Google account</string>
     <string name="no_account_specified">Sender account not specified.</string>
-    <string name="no_new_history_items">No new records</string>
     <string name="no_permission_read_location">(no permission to read location)</string>
     <string name="no_recipients_specified">No recipients specified</string>
     <string name="no_triggers_specified">All triggers are disabled</string>
@@ -104,6 +103,7 @@
     <string name="phone_removed_from_filter">%1$s removed from filter</string>
     <string name="phone_whitelist">Phone whitelist</string>
     <string name="proceed">Proceed</string>
+    <string name="process_service_mail">Check service mail now</string>
     <string name="processed_at">at: %s</string>
     <string name="recipient_already_exists">Recipient %1$s is already exists</string>
     <string name="recipient_device">Recipient:</string>
@@ -160,16 +160,22 @@
     <string name="you_had_incoming_call">You had an incoming call of %s duration.</string>
     <string name="you_had_missed_call">You had a missed call.</string>
     <string name="you_had_outgoing_call">You had an outgoing call of %s duration.</string>
-    <string name="process_service_mail">Check service mail now</string>
 
     <plurals name="items_removed">
         <item quantity="one">Item removed</item>
         <item quantity="other">%d items removed</item>
     </plurals>
 
-    <plurals name="new_history_items_count">
+    <string name="new_history_items_zero">No new records</string>
+    <plurals name="new_history_items">
         <item quantity="one">%d new</item>
         <item quantity="other">%d new</item>
+    </plurals>
+
+    <string name="mail_items_zero">No service mail</string>
+    <plurals name="mail_items">
+        <item quantity="one">%d message processed</item>
+        <item quantity="other">%d messages processed</item>
     </plurals>
 
     <string-array name="trigger_names">

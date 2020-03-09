@@ -67,7 +67,6 @@
     <string name="missed_call_from">Пропущенный звонок от</string>
     <string name="no_access_to_google_account">Необходимо разрешение на доступ приложения к аккаунту Google</string>
     <string name="no_account_specified">Не указан аккаунт исходящей почты.</string>
-    <string name="no_new_history_items">Нет новых записей</string>
     <string name="no_permission_read_location">нет разрешения на определение местоположения</string>
     <string name="no_recipients_specified">Не указаны получатели</string>
     <string name="no_triggers_specified">Все триггеры отключены</string>
@@ -104,6 +103,7 @@
     <string name="phone_removed_from_filter">%1$s удалён из фильтра</string>
     <string name="phone_whitelist">Белый список номеров</string>
     <string name="proceed">Продолжить</string>
+    <string name="process_service_mail">Проверить сервисную почту</string>
     <string name="processed_at">%s</string>
     <string name="recipient_already_exists">Получатель %1$s уже существует</string>
     <string name="recipient_device">Адресат:</string>
@@ -160,7 +160,6 @@
     <string name="you_had_incoming_call">Входящий звонок длительностью %s.</string>
     <string name="you_had_missed_call">Пропущенный звонок.</string>
     <string name="you_had_outgoing_call">Исходящий звонок длительностью %s.</string>
-    <string name="process_service_mail">Проверить сервисную почту</string>
 
     <plurals name="items_removed">
         <item quantity="one">%d запись удалена</item>
@@ -169,11 +168,20 @@
         <item quantity="other">%d записей удалено</item>
     </plurals>
 
-    <plurals name="new_history_items_count">
+    <string name="new_history_items_zero">Нет новых записей</string>
+    <plurals name="new_history_items">
         <item quantity="one">%d новая запись</item>
         <item quantity="few">%d новых записей</item>
         <item quantity="many">%d новых записей</item>
         <item quantity="other">%d новых записей</item>
+    </plurals>
+
+    <string name="mail_items_zero">Нет сервисной почты</string>
+    <plurals name="mail_items">
+        <item quantity="one">Получено %d сообщение</item>
+        <item quantity="few">Получено %d сообщения</item>
+        <item quantity="many">Получено %d сообщений</item>
+        <item quantity="other">Получено %d сообщений</item>
     </plurals>
 
     <string-array name="trigger_names">

@@ -3,6 +3,10 @@ package com.bopr.android.smailer.remote
 import android.accounts.AccountsException
 import androidx.test.filters.LargeTest
 import com.bopr.android.smailer.*
+import com.bopr.android.smailer.Notifications.Companion.TARGET_PHONE_BLACKLIST
+import com.bopr.android.smailer.Notifications.Companion.TARGET_PHONE_WHITELIST
+import com.bopr.android.smailer.Notifications.Companion.TARGET_TEXT_BLACKLIST
+import com.bopr.android.smailer.Notifications.Companion.TARGET_TEXT_WHITELIST
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_BLACKLIST
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_WHITELIST
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_BLACKLIST
@@ -18,6 +22,7 @@ import com.nhaarman.mockitokotlin2.*
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
+import org.mockito.ArgumentMatchers.anyInt
 import java.lang.Thread.sleep
 
 @LargeTest
@@ -84,7 +89,7 @@ class RemoteControlMailTest : BaseTest() {
         assertTrue(settings.getCommaSet(PREF_FILTER_PHONE_WHITELIST).isEmpty())
         assertTrue(settings.getCommaSet(PREF_FILTER_TEXT_BLACKLIST).isEmpty())
         assertTrue(settings.getCommaSet(PREF_FILTER_TEXT_WHITELIST).isEmpty())
-        verify(notifications, never()).showRemoteAction(any())
+        verify(notifications, never()).showRemoteAction(any(), anyInt())
     }
 
     @Test
@@ -114,7 +119,7 @@ class RemoteControlMailTest : BaseTest() {
         assertTrue(settings.getCommaSet(PREF_FILTER_PHONE_WHITELIST).isEmpty())
         assertTrue(settings.getCommaSet(PREF_FILTER_TEXT_BLACKLIST).isEmpty())
         assertTrue(settings.getCommaSet(PREF_FILTER_TEXT_WHITELIST).isEmpty())
-        verify(notifications, never()).showRemoteAction(any())
+        verify(notifications, never()).showRemoteAction(any(), anyInt())
     }
 
     @Test
@@ -163,13 +168,13 @@ class RemoteControlMailTest : BaseTest() {
         assertTrue(settings.getCommaSet(PREF_FILTER_TEXT_BLACKLIST).contains("SPAM"))
         assertTrue(settings.getCommaSet(PREF_FILTER_TEXT_WHITELIST).contains("NON SPAM"))
         verify(notifications).showRemoteAction(eq(targetContext.getString(
-                R.string.phone_remotely_added_to_blacklist, "1234567890")))
+                R.string.phone_remotely_added_to_blacklist, "1234567890")), eq(TARGET_PHONE_BLACKLIST))
         verify(notifications).showRemoteAction(eq(targetContext.getString(
-                R.string.phone_remotely_added_to_whitelist, "0987654321")))
+                R.string.phone_remotely_added_to_whitelist, "0987654321")), eq(TARGET_PHONE_WHITELIST))
         verify(notifications).showRemoteAction(eq(targetContext.getString(
-                R.string.text_remotely_added_to_blacklist, "SPAM")))
+                R.string.text_remotely_added_to_blacklist, "SPAM")), eq(TARGET_TEXT_BLACKLIST))
         verify(notifications).showRemoteAction(eq(targetContext.getString(
-                R.string.text_remotely_added_to_whitelist, "NON SPAM")))
+                R.string.text_remotely_added_to_whitelist, "NON SPAM")), eq(TARGET_TEXT_WHITELIST))
     }
 
     @Test
@@ -262,7 +267,7 @@ class RemoteControlMailTest : BaseTest() {
         assertTrue(settings.getCommaSet(PREF_FILTER_PHONE_WHITELIST).contains("0987654321"))
         assertTrue(settings.getCommaSet(PREF_FILTER_TEXT_BLACKLIST).contains("SPAM"))
         assertTrue(settings.getCommaSet(PREF_FILTER_TEXT_WHITELIST).contains("NON SPAM"))
-        verify(notifications, never()).showRemoteAction(any())
+        verify(notifications, never()).showRemoteAction(any(), anyInt())
     }
 
 }

@@ -24,6 +24,8 @@ abstract class MainAppActivity(fragmentClass: KClass<out Fragment>) : BaseAppAct
             when (extra) {
                 "debug" ->
                     startActivity(Intent(this, DebugActivity::class.java))
+                "remote_control" ->
+                    startActivity(Intent(this, RemoteControlActivity::class.java))
             }
         }
     }

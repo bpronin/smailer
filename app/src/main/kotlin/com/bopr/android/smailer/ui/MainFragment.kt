@@ -16,7 +16,7 @@ import com.bopr.android.smailer.util.getQuantityString
 import com.bopr.android.smailer.util.isAccountExists
 import com.bopr.android.smailer.util.isValidEmailAddressList
 import com.google.api.services.drive.DriveScopes
-import com.google.api.services.gmail.GmailScopes
+import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 
 /**
  * Main settings fragment.
@@ -40,7 +40,7 @@ class MainFragment : BasePreferenceFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        authorizator = GoogleAuthorizationHelper(this, PREF_SENDER_ACCOUNT, GmailScopes.GMAIL_SEND,
+        authorizator = GoogleAuthorizationHelper(this, PREF_SENDER_ACCOUNT, GMAIL_SEND,
                 DriveScopes.DRIVE_APPDATA)
 
         database = Database(requireContext())
@@ -113,20 +113,16 @@ class MainFragment : BasePreferenceFragment() {
 
     private fun updateHistoryPreferenceView() {
         val preference = requirePreference(PREF_HISTORY)
-        val count = database.unreadEventsCount
-        if (count > 0) {
-            updateSummary(preference, getQuantityString(R.plurals.new_history_items_count, count), SUMMARY_STYLE_DEFAULT)
-        } else {
-            updateSummary(preference, getString(R.string.no_new_history_items), SUMMARY_STYLE_DEFAULT)
-        }
+        updateSummary(preference,
+                getQuantityString(R.plurals.new_history_items, R.string.new_history_items_zero,
+                        database.unreadEventsCount), SUMMARY_STYLE_DEFAULT)
     }
 
     private fun updateRemoteControlPreferenceView() {
         val preference = requirePreference(PREF_REMOTE_CONTROL_ENABLED)
-        if (settings.getBoolean(preference.key)) {
-            updateSummary(preference, getString(R.string.enabled), SUMMARY_STYLE_DEFAULT)
-        } else {
-            updateSummary(preference, getString(R.string.disabled), SUMMARY_STYLE_DEFAULT)
-        }
+        val enabled = settings.getBoolean(preference.key)
+        updateSummary(preference,
+                getString(if (enabled) R.string.enabled else R.string.disabled),
+                SUMMARY_STYLE_DEFAULT)
     }
 }

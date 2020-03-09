@@ -49,36 +49,37 @@ internal class RemoteControlProcessor(
     private val query = "subject:Re:[${context.getString(R.string.app_name)}] label:inbox"
 
     @Throws(AccountsException::class)
-    fun checkMailbox() {
+    fun checkMailbox(): Int {
         checkNotMainThread() /* gmail won't work in main thread */
 
         val transport = GoogleMail(context)
         transport.login(requireAccount(), MAIL_GOOGLE_COM)
         val messages = transport.list(query)
 
-        if (messages.isEmpty()) {
-            log.debug("No service mail")
-            return
-        }
-
-        for (message in messages) {
-            if (acceptMessage(message)) {
-                message.body?.let {
-                    val task = parser.parse(it)
-                    when {
-                        task == null ->
-                            log.debug("Not a service mail")
-                        deviceAlias() != task.acceptor ->
-                            log.debug("Not my mail")
-                        else -> {
-                            transport.markAsRead(message)
-                            performTask(task)
-                            transport.trash(message)
+        if (messages.isNotEmpty()) {
+            for (message in messages) {
+                if (acceptMessage(message)) {
+                    message.body?.let {
+                        val task = parser.parse(it)
+                        when {
+                            task == null ->
+                                log.debug("Not a service mail")
+                            deviceAlias() != task.acceptor ->
+                                log.debug("Not my mail")
+                            else -> {
+                                transport.markAsRead(message)
+                                performTask(task)
+                                transport.trash(message)
+                            }
                         }
                     }
                 }
             }
+        } else {
+            log.debug("No service mail")
         }
+
+        return messages.size
     }
 
     fun performTask(task: RemoteControlTask) {

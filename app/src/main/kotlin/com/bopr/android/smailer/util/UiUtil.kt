@@ -1,6 +1,7 @@
 package com.bopr.android.smailer.util
 
 import android.content.Context
+import android.content.res.Resources
 import android.os.Build
 import android.text.Spannable
 import android.text.SpannableString
@@ -165,15 +166,26 @@ fun Context.showToast(@StringRes textRes: Int) {
 }
 
 fun Fragment.showToast(text: String) {
-    requireContext().showToast(text)
+    context?.showToast(text)
 }
 
 fun Fragment.showToast(@StringRes textRes: Int) {
     showToast(getString(textRes))
 }
 
-fun Fragment.getQuantityString(@PluralsRes resId: Int, quantity: Number): String {
-    return resources.getQuantityString(resId, quantity.toInt(), quantity)
+fun Resources.quantityString(@PluralsRes manyRes: Int, @StringRes zeroRes: Int, quantity: Number): String {
+    return if (quantity.toInt() == 0 && zeroRes != 0)
+        getString(zeroRes)
+    else
+        getQuantityString(manyRes, quantity.toInt(), quantity)
+}
+
+fun Fragment.getQuantityString(@PluralsRes manyRes: Int, @StringRes zeroRes: Int, quantity: Number): String {
+    return resources.quantityString(manyRes, zeroRes, quantity)
+}
+
+fun Fragment.getQuantityString(@PluralsRes manyRes: Int, quantity: Number): String {
+    return getQuantityString(manyRes, 0, quantity)
 }
 
 fun View.showAnimated(@AnimRes animationRes: Int, delay: Long) {
