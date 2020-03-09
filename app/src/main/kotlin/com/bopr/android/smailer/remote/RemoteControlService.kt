@@ -22,7 +22,7 @@ class RemoteControlService : JobIntentService() {
         log.trace("Handling intent: $intent")
 
         try {
-            processor.handleMail()
+            processor.checkMailbox()
         } catch (x: Exception) {
             log.warn("Failed handling service mail: ", x)
         }

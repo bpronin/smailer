@@ -30,6 +30,7 @@ import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_TEXT_F
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_TEXT_FROM_WHITELIST
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.SEND_SMS_TO_CALLER
 import com.bopr.android.smailer.util.*
+import com.google.android.gms.common.internal.Preconditions.checkNotMainThread
 import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
 import org.slf4j.LoggerFactory
 
@@ -48,11 +49,13 @@ internal class RemoteControlProcessor(
     private val query = "subject:Re:[${context.getString(R.string.app_name)}] label:inbox"
 
     @Throws(AccountsException::class)
-    fun handleMail() {
+    fun checkMailbox() {
+        checkNotMainThread() /* gmail won't work in main thread */
+
         val transport = GoogleMail(context)
         transport.login(requireAccount(), MAIL_GOOGLE_COM)
-
         val messages = transport.list(query)
+
         if (messages.isEmpty()) {
             log.debug("No service mail")
             return
@@ -180,13 +183,13 @@ internal class RemoteControlProcessor(
         }
     }
 
-    private fun addToList(key: String, value: String?, @StringRes messageRes: Int,
+    private fun addToList(listKey: String, value: String?, @StringRes messageRes: Int,
                           compare: (String, String) -> Boolean, @Notifications.Target target: Int) {
         value?.run {
-            val set = settings.getCommaSet(key)
-            if (set.none { compare(it, this) }) {
+            val list = settings.getCommaSet(listKey)
+            if (list.none { compare(it, this) }) {
                 settings.update {
-                    putCommaSet(key, set.apply { add(value) })
+                    putCommaSet(listKey, list.apply { add(value) })
                 }
                 showNotification(context.getString(messageRes, value), target)
             } else {
@@ -195,15 +198,13 @@ internal class RemoteControlProcessor(
         }
     }
 
-    private fun removeFromList(key: String, value: String?, @StringRes messageRes: Int,
+    private fun removeFromList(listKey: String, value: String?, @StringRes messageRes: Int,
                                compare: (String, String) -> Boolean, @Notifications.Target target: Int) {
         value?.run {
-            val set = settings.getCommaSet(key)
-            set.find {
-                compare(it, this)
-            }?.let {
+            val list = settings.getCommaSet(listKey)
+            list.find { compare(it, this) }?.let {
                 settings.update {
-                    putCommaSet(key, set.apply { remove(it) })
+                    putCommaSet(listKey, list.apply { remove(it) })
                 }
                 showNotification(context.getString(messageRes, value), target)
             } ?: log.debug("Not in list")

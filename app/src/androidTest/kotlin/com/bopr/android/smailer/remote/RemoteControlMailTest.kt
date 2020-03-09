@@ -63,7 +63,7 @@ class RemoteControlMailTest : BaseTest() {
             putString(PREF_REMOTE_CONTROL_ACCOUNT, null)
         }
 
-        assertThrows(AccountsException::class.java) { processor.handleMail() }
+        assertThrows(AccountsException::class.java) { processor.checkMailbox() }
     }
 
     @Test
@@ -77,7 +77,7 @@ class RemoteControlMailTest : BaseTest() {
 
         assertTrue(getMail().isEmpty())
 
-        processor.handleMail()
+        processor.checkMailbox()
 
         assertTrue(getMail().isEmpty())
         assertTrue(settings.getCommaSet(PREF_FILTER_PHONE_BLACKLIST).isEmpty())
@@ -107,7 +107,7 @@ class RemoteControlMailTest : BaseTest() {
 
         assertEquals(1, awaitMail().size)
 
-        processor.handleMail()
+        processor.checkMailbox()
 
         assertEquals(1, getMail().size)
         assertTrue(settings.getCommaSet(PREF_FILTER_PHONE_BLACKLIST).isEmpty())
@@ -155,7 +155,7 @@ class RemoteControlMailTest : BaseTest() {
 
         assertEquals(4, awaitMail().size)
 
-        processor.handleMail()
+        processor.checkMailbox()
 
         assertTrue(getMail().isEmpty())
         assertTrue(settings.getCommaSet(PREF_FILTER_PHONE_BLACKLIST).contains("1234567890"))
@@ -208,7 +208,7 @@ class RemoteControlMailTest : BaseTest() {
 
         assertEquals(4, awaitMail().size)
 
-        processor.handleMail()
+        processor.checkMailbox()
 
         assertTrue(getMail().isEmpty())
         assertTrue(settings.getCommaSet(PREF_FILTER_PHONE_BLACKLIST).contains("1234567890"))
@@ -255,7 +255,7 @@ class RemoteControlMailTest : BaseTest() {
 
         assertEquals(4, awaitMail().size)
 
-        processor.handleMail()
+        processor.checkMailbox()
 
         assertTrue(getMail().isEmpty())
         assertTrue(settings.getCommaSet(PREF_FILTER_PHONE_BLACKLIST).contains("1234567890"))

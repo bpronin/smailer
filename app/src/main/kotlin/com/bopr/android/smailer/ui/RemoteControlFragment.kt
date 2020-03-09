@@ -12,7 +12,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_NOTIFICAT
 import com.bopr.android.smailer.remote.RemoteControlProcessor
 import com.bopr.android.smailer.util.isAccountExists
 import com.bopr.android.smailer.util.showToast
-import com.google.android.gms.tasks.Tasks
+import com.google.android.gms.tasks.Tasks.call
 import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors.newSingleThreadExecutor
@@ -65,9 +65,8 @@ class RemoteControlFragment : BasePreferenceFragment() {
     }
 
     private fun onProcessServiceMail() {
-        val processor = RemoteControlProcessor(requireContext())
-        Tasks.call(newSingleThreadExecutor(), Callable {
-            processor.handleMail()
+        call(newSingleThreadExecutor(), Callable {
+            RemoteControlProcessor(requireContext()).checkMailbox()
         })
         showToast(R.string.operation_complete)
     }
