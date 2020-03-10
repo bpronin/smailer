@@ -11,7 +11,7 @@ object Environment {
     /* do not make any member fields. this object dies with its context */
 
     fun setupEnvironment(context: Context) {
-        startPendingCallProcessWorker()
+        startPendingCallProcessWorker(context)
         enableSyncEngine(context)
         enableContentObserver(context)
         enableRemoteControlWorker(context)

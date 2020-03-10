@@ -45,10 +45,6 @@ class MainActivity : MainAppActivity(MainFragment::class), OnSharedPreferenceCha
         setupEnvironment(this)
         permissionsHelper.checkAll()
         requireIgnoreBatteryOptimization(this)
-
-//        AccountManager.get(this).addOnAccountsUpdatedListener({accounts->
-//            Log.w("MAIN", ""+accounts)
-//        },null, false )
     }
 
     override fun onDestroy() {

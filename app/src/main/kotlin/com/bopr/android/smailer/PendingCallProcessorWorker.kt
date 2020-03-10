@@ -35,8 +35,8 @@ internal class PendingCallProcessorWorker(context: Context, workerParams: Worker
                     Intent(context, PendingCallProcessorService::class.java))
         }
 
-        fun startPendingCallProcessWorker() {
-            val manager = WorkManager.getInstance()
+        fun startPendingCallProcessWorker(context: Context) {
+            val manager = WorkManager.getInstance(context)
 
             manager.cancelAllWorkByTag(WORKER_TAG)
 

@@ -44,7 +44,7 @@ internal class RemoteControlWorker(context: Context, workerParams: WorkerParamet
         }
 
         fun enableRemoteControlWorker(context: Context) {
-            val manager = WorkManager.getInstance()
+            val manager = WorkManager.getInstance(context)
 
             manager.cancelAllWorkByTag(WORKER_TAG)
 
