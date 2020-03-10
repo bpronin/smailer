@@ -85,10 +85,10 @@ class RemoteControlMailTest : BaseTest() {
         processor.checkMailbox()
 
         assertTrue(getMail().isEmpty())
-        assertTrue(settings.getCommaSet(PREF_FILTER_PHONE_BLACKLIST).isEmpty())
-        assertTrue(settings.getCommaSet(PREF_FILTER_PHONE_WHITELIST).isEmpty())
-        assertTrue(settings.getCommaSet(PREF_FILTER_TEXT_BLACKLIST).isEmpty())
-        assertTrue(settings.getCommaSet(PREF_FILTER_TEXT_WHITELIST).isEmpty())
+        assertTrue(settings.getStringList(PREF_FILTER_PHONE_BLACKLIST).isEmpty())
+        assertTrue(settings.getStringList(PREF_FILTER_PHONE_WHITELIST).isEmpty())
+        assertTrue(settings.getStringList(PREF_FILTER_TEXT_BLACKLIST).isEmpty())
+        assertTrue(settings.getStringList(PREF_FILTER_TEXT_WHITELIST).isEmpty())
         verify(notifications, never()).showRemoteAction(any(), anyInt())
     }
 
@@ -115,10 +115,10 @@ class RemoteControlMailTest : BaseTest() {
         processor.checkMailbox()
 
         assertEquals(1, getMail().size)
-        assertTrue(settings.getCommaSet(PREF_FILTER_PHONE_BLACKLIST).isEmpty())
-        assertTrue(settings.getCommaSet(PREF_FILTER_PHONE_WHITELIST).isEmpty())
-        assertTrue(settings.getCommaSet(PREF_FILTER_TEXT_BLACKLIST).isEmpty())
-        assertTrue(settings.getCommaSet(PREF_FILTER_TEXT_WHITELIST).isEmpty())
+        assertTrue(settings.getStringList(PREF_FILTER_PHONE_BLACKLIST).isEmpty())
+        assertTrue(settings.getStringList(PREF_FILTER_PHONE_WHITELIST).isEmpty())
+        assertTrue(settings.getStringList(PREF_FILTER_TEXT_BLACKLIST).isEmpty())
+        assertTrue(settings.getStringList(PREF_FILTER_TEXT_WHITELIST).isEmpty())
         verify(notifications, never()).showRemoteAction(any(), anyInt())
     }
 
@@ -163,10 +163,10 @@ class RemoteControlMailTest : BaseTest() {
         processor.checkMailbox()
 
         assertTrue(getMail().isEmpty())
-        assertTrue(settings.getCommaSet(PREF_FILTER_PHONE_BLACKLIST).contains("1234567890"))
-        assertTrue(settings.getCommaSet(PREF_FILTER_PHONE_WHITELIST).contains("0987654321"))
-        assertTrue(settings.getCommaSet(PREF_FILTER_TEXT_BLACKLIST).contains("SPAM"))
-        assertTrue(settings.getCommaSet(PREF_FILTER_TEXT_WHITELIST).contains("NON SPAM"))
+        assertTrue(settings.getStringList(PREF_FILTER_PHONE_BLACKLIST).contains("1234567890"))
+        assertTrue(settings.getStringList(PREF_FILTER_PHONE_WHITELIST).contains("0987654321"))
+        assertTrue(settings.getStringList(PREF_FILTER_TEXT_BLACKLIST).contains("SPAM"))
+        assertTrue(settings.getStringList(PREF_FILTER_TEXT_WHITELIST).contains("NON SPAM"))
         verify(notifications).showRemoteAction(eq(targetContext.getString(
                 R.string.phone_remotely_added_to_blacklist, "1234567890")), eq(TARGET_PHONE_BLACKLIST))
         verify(notifications).showRemoteAction(eq(targetContext.getString(
@@ -216,10 +216,10 @@ class RemoteControlMailTest : BaseTest() {
         processor.checkMailbox()
 
         assertTrue(getMail().isEmpty())
-        assertTrue(settings.getCommaSet(PREF_FILTER_PHONE_BLACKLIST).contains("1234567890"))
-        assertTrue(settings.getCommaSet(PREF_FILTER_PHONE_WHITELIST).contains("0987654321"))
-        assertTrue(settings.getCommaSet(PREF_FILTER_TEXT_BLACKLIST).contains("SPAM"))
-        assertTrue(settings.getCommaSet(PREF_FILTER_TEXT_WHITELIST).contains("NON SPAM"))
+        assertTrue(settings.getStringList(PREF_FILTER_PHONE_BLACKLIST).contains("1234567890"))
+        assertTrue(settings.getStringList(PREF_FILTER_PHONE_WHITELIST).contains("0987654321"))
+        assertTrue(settings.getStringList(PREF_FILTER_TEXT_BLACKLIST).contains("SPAM"))
+        assertTrue(settings.getStringList(PREF_FILTER_TEXT_WHITELIST).contains("NON SPAM"))
     }
 
     @Test
@@ -263,10 +263,10 @@ class RemoteControlMailTest : BaseTest() {
         processor.checkMailbox()
 
         assertTrue(getMail().isEmpty())
-        assertTrue(settings.getCommaSet(PREF_FILTER_PHONE_BLACKLIST).contains("1234567890"))
-        assertTrue(settings.getCommaSet(PREF_FILTER_PHONE_WHITELIST).contains("0987654321"))
-        assertTrue(settings.getCommaSet(PREF_FILTER_TEXT_BLACKLIST).contains("SPAM"))
-        assertTrue(settings.getCommaSet(PREF_FILTER_TEXT_WHITELIST).contains("NON SPAM"))
+        assertTrue(settings.getStringList(PREF_FILTER_PHONE_BLACKLIST).contains("1234567890"))
+        assertTrue(settings.getStringList(PREF_FILTER_PHONE_WHITELIST).contains("0987654321"))
+        assertTrue(settings.getStringList(PREF_FILTER_TEXT_BLACKLIST).contains("SPAM"))
+        assertTrue(settings.getStringList(PREF_FILTER_TEXT_WHITELIST).contains("NON SPAM"))
         verify(notifications, never()).showRemoteAction(any(), anyInt())
     }
 

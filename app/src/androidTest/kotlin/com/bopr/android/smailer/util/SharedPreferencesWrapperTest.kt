@@ -4,7 +4,6 @@ import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
-import com.bopr.android.smailer.util.CollectionOperation.Companion.getUpdates
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Before
@@ -43,31 +42,18 @@ class SharedPreferencesWrapperTest : BaseTest() {
         assertEquals(setOf("A", "C"), getValues)
         assertEquals(putValues, getValues)
         assertFalse(putValues === getValues)
-
-//
-//        wrapper.registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener { _, key ->
-//            val set = wrapper.getStringSet(key!!)
-//            assertEquals(setOf("A", "C"), set)
-//        })
-
-//        assertEquals(setOf("A", "C"), wrapper.getStringSet(prefKey))
     }
 
     @Test
-    fun testCommaList() {
+    fun testStringList() {
         val wrapper = SharedPreferencesWrapper(preferences)
 
-        wrapper.update {
-            putStringList("preference", listOf("A", "B", "C"))
-        }
-
-        val value = wrapper.getStringList("preference")
-        val newValue = listOf("B", "C", "D")
-        val updates = value.getUpdates(newValue)
+        val list = listOf("A", "B", "C")
 
         wrapper.update {
-            putStringList("preference", newValue)
+            putStringList("preference", list)
         }
-        
+
+        assertEquals(list, wrapper.getStringList("preference"))
     }
 }

@@ -21,7 +21,7 @@ abstract class BaseTest {
         @JvmStatic
         fun setUpClass() {
             /* cancel all running jobs to prevent interference */
-            WorkManager.getInstance().cancelAllWork()
+            WorkManager.getInstance(targetContext).cancelAllWork()
 
             Locale.setDefault(Locale.US)
             TimeZone.setDefault(TimeZone.getTimeZone("America/New_York"))
