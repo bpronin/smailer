@@ -37,12 +37,12 @@ class RecipientsFragment : EditableRecyclerFragment<String, Holder>(), SharedPre
     }
 
     override fun loadItems(): Collection<String> {
-        return settings.getCommaList(PREF_RECIPIENTS_ADDRESS).sorted()
+        return settings.getStringList(PREF_RECIPIENTS_ADDRESS).sorted()
     }
 
     override fun saveItems(items: Collection<String>) {
         settings.update {
-            putCommaSet(PREF_RECIPIENTS_ADDRESS, items)
+            putStringList(PREF_RECIPIENTS_ADDRESS, items)
         }
     }
 

@@ -50,7 +50,7 @@ class RulesFragment : BasePreferenceFragment() {
 
     private fun updateTextWhitelistPreferenceView() {
         val preference = requirePreference(PREF_FILTER_TEXT_WHITELIST)
-        val value = settings.getCommaSet(preference.key)
+        val value = settings.getStringList(preference.key)
         val formatListSummary = formatListSummary(value, R.string.acceptable_words, R.string._any)
 
         updateSummary(preference, formatListSummary, SUMMARY_STYLE_DEFAULT)
@@ -58,7 +58,7 @@ class RulesFragment : BasePreferenceFragment() {
 
     private fun updateTextBlacklistPreferenceView() {
         val preference = requirePreference(PREF_FILTER_TEXT_BLACKLIST)
-        val value = settings.getCommaSet(preference.key)
+        val value = settings.getStringList(preference.key)
         val text = formatListSummary(value, R.string.unacceptable_words, R.string._none)
 
         updateSummary(preference, text, SUMMARY_STYLE_DEFAULT)
@@ -66,7 +66,7 @@ class RulesFragment : BasePreferenceFragment() {
 
     private fun updatePhoneWhitelistPreferenceView() {
         val preference = requirePreference(PREF_FILTER_PHONE_WHITELIST)
-        val value = settings.getCommaSet(preference.key)
+        val value = settings.getStringList(preference.key)
         val text = formatListSummary(value, R.string.acceptable_phone_numbers, R.string._any)
 
         updateSummary(preference, text, SUMMARY_STYLE_DEFAULT)
@@ -74,7 +74,7 @@ class RulesFragment : BasePreferenceFragment() {
 
     private fun updatePhoneBlacklistPreferenceView() {
         val preference = requirePreference(PREF_FILTER_PHONE_BLACKLIST)
-        val value = settings.getCommaSet(preference.key)
+        val value = settings.getStringList(preference.key)
         val text = formatListSummary(value, R.string.unacceptable_phone_numbers, R.string._none)
 
         updateSummary(preference, text, SUMMARY_STYLE_DEFAULT)
@@ -91,9 +91,9 @@ class RulesFragment : BasePreferenceFragment() {
         }
     }
 
-    private fun formatListSummary(set: Set<String>, @StringRes patternRes: Int,
+    private fun formatListSummary(list: List<String>, @StringRes patternRes: Int,
                                   @StringRes emptyRes: Int): String {
-        return getString(patternRes, if (set.isEmpty()) getString(emptyRes) else set.size)
+        return getString(patternRes, if (list.isEmpty()) getString(emptyRes) else list.size)
     }
 
 }

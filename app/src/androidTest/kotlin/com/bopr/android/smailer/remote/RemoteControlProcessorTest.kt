@@ -120,7 +120,7 @@ class RemoteControlProcessorTest : BaseTest() {
     @Test
     fun testRemovePhoneFromBlacklist() {
         settings.update {
-            putCommaSet(PREF_FILTER_PHONE_BLACKLIST, setOf("100", "200", "300"))
+            putStringList(PREF_FILTER_PHONE_BLACKLIST, setOf("100", "200", "300"))
         }
 
         val processor = RemoteControlProcessor(context, settings, notifications)
@@ -138,7 +138,7 @@ class RemoteControlProcessorTest : BaseTest() {
     @Test
     fun testRemovePhoneFromWhitelist() {
         settings.update {
-            putCommaSet(PREF_FILTER_PHONE_WHITELIST, setOf("100", "200", "300"))
+            putStringList(PREF_FILTER_PHONE_WHITELIST, setOf("100", "200", "300"))
         }
 
         val processor = RemoteControlProcessor(context, settings, notifications)
@@ -156,7 +156,7 @@ class RemoteControlProcessorTest : BaseTest() {
     @Test
     fun testRemoveTextFromBlacklist() {
         settings.update {
-            putCommaSet(PREF_FILTER_TEXT_BLACKLIST, setOf("100", "200", "300"))
+            putStringList(PREF_FILTER_TEXT_BLACKLIST, setOf("100", "200", "300"))
         }
 
         val processor = RemoteControlProcessor(context, settings, notifications)
@@ -174,7 +174,7 @@ class RemoteControlProcessorTest : BaseTest() {
     @Test
     fun testRemoveTextFromWhitelist() {
         settings.update {
-            putCommaSet(PREF_FILTER_TEXT_WHITELIST, setOf("100", "200", "300"))
+            putStringList(PREF_FILTER_TEXT_WHITELIST, setOf("100", "200", "300"))
         }
 
         val processor = RemoteControlProcessor(context, settings, notifications)

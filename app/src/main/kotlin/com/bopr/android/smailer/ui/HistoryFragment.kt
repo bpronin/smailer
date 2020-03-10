@@ -250,7 +250,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
                 .show()
     }
 
-    private fun addSelectedItemToFilter(list: MutableSet<String>, @StringRes titleRes: Int) {
+    private fun addSelectedItemToFilter(list: MutableList<String>, @StringRes titleRes: Int) {
         getSelectedItem()?.let {
             EditPhoneDialogFragment().apply {
                 setTitle(titleRes)

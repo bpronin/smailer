@@ -337,7 +337,7 @@ class DebugFragment : BasePreferenceFragment() {
         settings.update {
             putString(PREF_SENDER_ACCOUNT, accountName)
             putString(PREF_REMOTE_CONTROL_ACCOUNT, accountName)
-            putCommaSet(PREF_RECIPIENTS_ADDRESS, setOf(accountName, "nowhere@mail.com"))
+            putStringList(PREF_RECIPIENTS_ADDRESS, setOf(accountName, "nowhere@mail.com"))
             putStringSet(PREF_EMAIL_TRIGGERS, mutableSetOf(
                     VAL_PREF_TRIGGER_IN_SMS,
                     VAL_PREF_TRIGGER_IN_CALLS,

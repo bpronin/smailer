@@ -76,7 +76,7 @@ class RemoteControlMailTest : BaseTest() {
         settings.update {
             putString(PREF_REMOTE_CONTROL_ACCOUNT, account.name)
             putBoolean(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS, true)
-            putCommaSet(PREF_RECIPIENTS_ADDRESS, setOf(account.name))
+            putStringList(PREF_RECIPIENTS_ADDRESS, setOf(account.name))
             putBoolean(PREF_REMOTE_CONTROL_NOTIFICATIONS, true)
         }
 
@@ -97,7 +97,7 @@ class RemoteControlMailTest : BaseTest() {
         settings.update {
             putString(PREF_REMOTE_CONTROL_ACCOUNT, account.name)
             putBoolean(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS, true)
-            putCommaSet(PREF_RECIPIENTS_ADDRESS, setOf(account.name))
+            putStringList(PREF_RECIPIENTS_ADDRESS, setOf(account.name))
             putBoolean(PREF_REMOTE_CONTROL_NOTIFICATIONS, true)
         }
 
@@ -127,7 +127,7 @@ class RemoteControlMailTest : BaseTest() {
         settings.update {
             putString(PREF_REMOTE_CONTROL_ACCOUNT, account.name)
             putBoolean(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS, true)
-            putCommaSet(PREF_RECIPIENTS_ADDRESS, setOf(account.name))
+            putStringList(PREF_RECIPIENTS_ADDRESS, setOf(account.name))
             putBoolean(PREF_REMOTE_CONTROL_NOTIFICATIONS, true)
         }
 
@@ -227,7 +227,7 @@ class RemoteControlMailTest : BaseTest() {
         settings.update {
             putString(PREF_REMOTE_CONTROL_ACCOUNT, account.name)
             putBoolean(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS, true)
-            putCommaSet(PREF_RECIPIENTS_ADDRESS, setOf(account.name))
+            putStringList(PREF_RECIPIENTS_ADDRESS, setOf(account.name))
             putBoolean(PREF_REMOTE_CONTROL_NOTIFICATIONS, false)
         }
 

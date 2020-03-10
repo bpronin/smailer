@@ -32,18 +32,18 @@ class Settings(context: Context, name: String = PREFERENCES_STORAGE_NAME) :
         get() {
             return PhoneEventFilter(
                     triggers = getStringSet(PREF_EMAIL_TRIGGERS),
-                    phoneBlacklist = getCommaSet(PREF_FILTER_PHONE_BLACKLIST),
-                    phoneWhitelist = getCommaSet(PREF_FILTER_PHONE_WHITELIST),
-                    textBlacklist = getCommaSet(PREF_FILTER_TEXT_BLACKLIST),
-                    textWhitelist = getCommaSet(PREF_FILTER_TEXT_WHITELIST)
+                    phoneBlacklist = getStringList(PREF_FILTER_PHONE_BLACKLIST),
+                    phoneWhitelist = getStringList(PREF_FILTER_PHONE_WHITELIST),
+                    textBlacklist = getStringList(PREF_FILTER_TEXT_BLACKLIST),
+                    textWhitelist = getStringList(PREF_FILTER_TEXT_WHITELIST)
             )
         }
         set(filter) = update {
             putStringSet(PREF_EMAIL_TRIGGERS, filter.triggers)
-            putCommaSet(PREF_FILTER_PHONE_BLACKLIST, filter.phoneBlacklist)
-            putCommaSet(PREF_FILTER_PHONE_WHITELIST, filter.phoneWhitelist)
-            putCommaSet(PREF_FILTER_TEXT_BLACKLIST, filter.textBlacklist)
-            putCommaSet(PREF_FILTER_TEXT_WHITELIST, filter.textWhitelist)
+            putStringList(PREF_FILTER_PHONE_BLACKLIST, filter.phoneBlacklist)
+            putStringList(PREF_FILTER_PHONE_WHITELIST, filter.phoneWhitelist)
+            putStringList(PREF_FILTER_TEXT_BLACKLIST, filter.textBlacklist)
+            putStringList(PREF_FILTER_TEXT_WHITELIST, filter.textWhitelist)
         }
 
 

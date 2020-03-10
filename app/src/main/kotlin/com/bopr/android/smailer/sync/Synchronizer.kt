@@ -79,10 +79,10 @@ internal class Synchronizer(context: Context,
 
     private fun getLocalData(): SyncData {
         return SyncData(
-                phoneBlacklist = settings.getCommaSet(PREF_FILTER_PHONE_BLACKLIST),
-                phoneWhitelist = settings.getCommaSet(PREF_FILTER_PHONE_WHITELIST),
-                textBlacklist = settings.getCommaSet(PREF_FILTER_TEXT_BLACKLIST),
-                textWhitelist = settings.getCommaSet(PREF_FILTER_TEXT_WHITELIST),
+                phoneBlacklist = settings.getStringList(PREF_FILTER_PHONE_BLACKLIST),
+                phoneWhitelist = settings.getStringList(PREF_FILTER_PHONE_WHITELIST),
+                textBlacklist = settings.getStringList(PREF_FILTER_TEXT_BLACKLIST),
+                textWhitelist = settings.getStringList(PREF_FILTER_TEXT_WHITELIST),
                 events = database.events.map(::eventToData)
         )
     }
@@ -91,10 +91,10 @@ internal class Synchronizer(context: Context,
         data.events?.map(::dataToEvent)?.let(database::putEvents)
 
         settings.update {
-            putCommaSet(PREF_FILTER_PHONE_BLACKLIST, data.phoneBlacklist)
-            putCommaSet(PREF_FILTER_PHONE_WHITELIST, data.phoneWhitelist)
-            putCommaSet(PREF_FILTER_TEXT_BLACKLIST, data.textBlacklist)
-            putCommaSet(PREF_FILTER_TEXT_WHITELIST, data.textWhitelist)
+            putStringList(PREF_FILTER_PHONE_BLACKLIST, data.phoneBlacklist)
+            putStringList(PREF_FILTER_PHONE_WHITELIST, data.phoneWhitelist)
+            putStringList(PREF_FILTER_TEXT_BLACKLIST, data.textBlacklist)
+            putStringList(PREF_FILTER_TEXT_WHITELIST, data.textWhitelist)
         }
     }
 

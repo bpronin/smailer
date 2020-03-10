@@ -110,7 +110,7 @@ internal class RemoteControlProcessor(
     private fun acceptMessage(message: MailMessage): Boolean {
         if (settings.getBoolean(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS)) {
             val address = extractEmail(message.from)!!
-            val recipients = settings.getCommaList(PREF_RECIPIENTS_ADDRESS)
+            val recipients = settings.getStringList(PREF_RECIPIENTS_ADDRESS)
             if (!containsEmail(recipients, address)) {
                 log.debug("Address $address rejected")
 
@@ -187,10 +187,10 @@ internal class RemoteControlProcessor(
     private fun addToList(listKey: String, value: String?, @StringRes messageRes: Int,
                           compare: (String, String) -> Boolean, @Notifications.Target target: Int) {
         value?.run {
-            val list = settings.getCommaSet(listKey)
+            val list = settings.getStringList(listKey)
             if (list.none { compare(it, this) }) {
                 settings.update {
-                    putCommaSet(listKey, list.apply { add(value) })
+                    putStringList(listKey, list.apply { add(value) })
                 }
                 showNotification(context.getString(messageRes, value), target)
             } else {
@@ -202,10 +202,10 @@ internal class RemoteControlProcessor(
     private fun removeFromList(listKey: String, value: String?, @StringRes messageRes: Int,
                                compare: (String, String) -> Boolean, @Notifications.Target target: Int) {
         value?.run {
-            val list = settings.getCommaSet(listKey)
+            val list = settings.getStringList(listKey)
             list.find { compare(it, this) }?.let {
                 settings.update {
-                    putCommaSet(listKey, list.apply { remove(it) })
+                    putStringList(listKey, list.apply { remove(it) })
                 }
                 showNotification(context.getString(messageRes, value), target)
             } ?: log.debug("Not in list")
