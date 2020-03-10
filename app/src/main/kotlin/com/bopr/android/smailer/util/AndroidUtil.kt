@@ -2,12 +2,10 @@ package com.bopr.android.smailer.util
 
 import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Context.CONNECTIVITY_SERVICE
 import android.content.Context.POWER_SERVICE
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.net.ConnectivityManager
 import android.os.Build
 import android.os.PowerManager
 import android.os.PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED
@@ -51,12 +49,12 @@ fun permissionLabel(context: Context, permissionName: String): String {
     }
 }
 
-fun Context.hasInternetConnection(): Boolean {
-    (getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager).run {
-        @Suppress("DEPRECATION")
-        return activeNetworkInfo?.isConnectedOrConnecting ?: false
-    }
-}
+//fun Context.hasInternetConnection(): Boolean {
+//    (getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager).run {
+//        @Suppress("DEPRECATION")
+//        return activeNetworkInfo?.isConnectedOrConnecting ?: false
+//    }
+//}
 
 fun Context.isInIdleMode(): Boolean {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

@@ -16,7 +16,10 @@ import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
-import com.bopr.android.smailer.util.*
+import com.bopr.android.smailer.util.checkPermission
+import com.bopr.android.smailer.util.contactName
+import com.bopr.android.smailer.util.getAccount
+import com.bopr.android.smailer.util.isValidEmailAddressList
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 import org.slf4j.LoggerFactory
@@ -90,11 +93,11 @@ class CallProcessor(
     }
 
     private fun startMailSession(): Boolean {
-        if (!context.hasInternetConnection()) {
-            /* check it before to avoid awaiting timeout while sending */
-            log.warn("Disconnected")
-            return false
-        }
+//        if (!context.hasInternetConnection()) {
+//            /* check it before to avoid awaiting timeout while sending */
+//            log.warn("Disconnected")
+//            return false
+//        }
 
         return try {
             validateRecipient()
