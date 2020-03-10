@@ -2,12 +2,10 @@ package com.bopr.android.smailer.ui
 
 import android.os.Bundle
 import androidx.preference.Preference
-import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
-import com.bopr.android.smailer.PhoneEvent
-import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings
+import com.bopr.android.smailer.*
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.BATTERY_OPTIMIZATION_DIALOG_TAG
 import com.bopr.android.smailer.util.deviceName
+import com.bopr.android.smailer.util.runBackgroudTask
 import com.bopr.android.smailer.util.showToast
 import java.lang.System.currentTimeMillis
 
@@ -27,7 +25,7 @@ class OptionsFragment : BasePreferenceFragment() {
         }
 
         requirePreference("sent_test_email").onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            onSendTestEmail()
+            onSendTestEmail(it)
             true
         }
     }
@@ -39,16 +37,22 @@ class OptionsFragment : BasePreferenceFragment() {
         showToast(R.string.operation_complete)
     }
 
-    private fun onSendTestEmail() {
-        startCallProcessingService(requireContext(), PhoneEvent(
-                phone = getString(R.string.app_name),
-                isIncoming = true,
-                startTime = currentTimeMillis(),
-                endTime = currentTimeMillis(),
-                text = "Sample message",
-                acceptor = deviceName()
-        ))
-        showToast(R.string.operation_complete)
+    private fun onSendTestEmail(preference: Preference) {
+        preference.runBackgroudTask({
+            Database(context!!).use {
+                CallProcessor(context!!, it).process(PhoneEvent(
+                        phone = getString(R.string.app_name),
+                        isIncoming = true,
+                        startTime = currentTimeMillis(),
+                        endTime = currentTimeMillis(),
+                        text = "Sample message",
+                        acceptor = deviceName()
+                ))
+            }
+        }, {
+            /* NOTE: if we live the page while processing context becomes null */
+            context?.showToast(R.string.operation_complete)
+        })
     }
 
 }

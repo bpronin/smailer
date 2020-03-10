@@ -16,18 +16,24 @@ import android.view.animation.AnimationUtils.loadAnimation
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.*
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.BlendModeColorFilterCompat.createBlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat
 import androidx.fragment.app.Fragment
+import androidx.preference.Preference
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.bopr.android.smailer.PhoneEvent
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.ui.WavyUnderlineSpan
+import com.google.android.gms.tasks.Tasks.call
+import java.util.concurrent.Callable
+import java.util.concurrent.Executors.newSingleThreadExecutor
 
 /**
  * Miscellaneous UI and resources utilities.
@@ -227,5 +233,21 @@ fun RecyclerView.addOnItemSwipedListener(action: (RecyclerView.ViewHolder) -> Un
         }
     }).also {
         it.attachToRecyclerView(this)
+    }
+}
+
+fun <T> Preference.runBackgroudTask(task: () -> T?, onComplete: (T?) -> Unit) {
+    val lastIcon = icon
+    val progressIcon = getDrawable(context, R.drawable.animated_progress) as AnimatedVectorDrawableCompat
+    icon = progressIcon
+    progressIcon.start()
+
+    call(newSingleThreadExecutor(), Callable {
+        task.invoke()
+    }).addOnCompleteListener {
+        /* here we are in main thread */
+        icon = lastIcon
+        progressIcon.stop()
+        onComplete.invoke(it.result)
     }
 }

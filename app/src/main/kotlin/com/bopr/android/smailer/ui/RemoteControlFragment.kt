@@ -2,9 +2,8 @@ package com.bopr.android.smailer.ui
 
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.drawable.AnimatedVectorDrawable
 import android.os.Bundle
-import androidx.appcompat.content.res.AppCompatResources.getDrawable
+import androidx.preference.Preference
 import androidx.preference.SwitchPreference
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
@@ -14,11 +13,9 @@ import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_NOTIFICAT
 import com.bopr.android.smailer.remote.RemoteControlProcessor
 import com.bopr.android.smailer.util.getQuantityString
 import com.bopr.android.smailer.util.isAccountExists
+import com.bopr.android.smailer.util.runBackgroudTask
 import com.bopr.android.smailer.util.showToast
-import com.google.android.gms.tasks.Tasks.call
 import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
-import java.util.concurrent.Callable
-import java.util.concurrent.Executors.newSingleThreadExecutor
 
 // TODO: 24.02.2019 add help icon for remote control
 class RemoteControlFragment : BasePreferenceFragment() {
@@ -34,8 +31,8 @@ class RemoteControlFragment : BasePreferenceFragment() {
             true
         }
 
-        requirePreference(processMailAction).setOnPreferenceClickListener {
-            onProcessServiceMail()
+        requirePreference("remote_control_process_service_mail").setOnPreferenceClickListener {
+            onProcessServiceMail(it)
             true
         }
     }
@@ -67,21 +64,13 @@ class RemoteControlFragment : BasePreferenceFragment() {
         }
     }
 
-    private fun onProcessServiceMail() {
-        val preference = requirePreference(processMailAction)
-
-        val drawable = getDrawable(requireContext(), R.drawable.animated_progress) as AnimatedVectorDrawable
-        preference.icon = drawable
-        drawable.start()
-
-        call(newSingleThreadExecutor(), Callable {
+    private fun onProcessServiceMail(preference: Preference) {
+        preference.runBackgroudTask({
             RemoteControlProcessor(requireContext()).checkMailbox()
-        }).addOnCompleteListener {
-            preference.icon = null
-            drawable.stop()
-            /* if we live the page while processing context becomes null */
-            context?.showToast(getQuantityString(R.plurals.mail_items, R.string.mail_items_zero, it.result!!))
-        }
+        }, {
+            /* NOTE: if we live the page while processing context becomes null */
+            context?.showToast(getQuantityString(R.plurals.mail_items, R.string.mail_items_zero, it!!))
+        })
     }
 
     private fun updateAccountPreferenceView() {

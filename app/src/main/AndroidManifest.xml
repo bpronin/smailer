@@ -10,6 +10,7 @@
         android:name="android.permission.GET_ACCOUNTS"
         android:maxSdkVersion="22" /><!-- To access google accounts -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /><!-- To check internet connection -->
     <uses-permission android:name="android.permission.READ_CONTACTS" /><!-- To add contact name into email body. Also somehow it gives access to account list in API>=26  -->
     <uses-permission android:name="android.permission.RECEIVE_SMS" /><!-- To process incoming sms -->
     <uses-permission android:name="android.permission.READ_SMS" /><!-- To process outgoing SMS-->
@@ -19,13 +20,11 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /><!-- To add location in email body -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" /><!-- To process incoming phone calls -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /><!-- To restart application services at device boot -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /><!-- To check internet connection -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /><!-- To run content listener in foreground service -->
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />  <!--To use account manager for google authorization-->
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />  <!--To sync data with Google drive -->
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" /> <!--To sync data with Google drive -->
     <uses-permission android:name="android.permission.SEND_SMS" /> <!--To send SMS from  -->
-
     <application
         android:allowBackup="true"
         android:backupAgent=".AppBackupAgent"
