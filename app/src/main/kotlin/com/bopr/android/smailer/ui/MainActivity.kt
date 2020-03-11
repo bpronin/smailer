@@ -14,7 +14,6 @@ import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
 import com.bopr.android.smailer.remote.RemoteControlWorker.Companion.enableRemoteControlWorker
-import com.bopr.android.smailer.sync.SyncEngine.onSyncEngineSettingsChanged
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
 import com.bopr.android.smailer.util.isAccountExists
 
@@ -75,7 +74,6 @@ class MainActivity : MainAppActivity(MainFragment::class), OnSharedPreferenceCha
         }
 
         permissionsHelper.onSharedPreferenceChanged(key)
-        onSyncEngineSettingsChanged(this, key)
         backupManager.dataChanged()
     }
 

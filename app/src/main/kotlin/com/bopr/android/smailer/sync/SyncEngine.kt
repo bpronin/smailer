@@ -4,8 +4,12 @@ import android.accounts.Account
 import android.content.BroadcastReceiver
 import android.content.ContentResolver.*
 import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import com.bopr.android.smailer.Database.Companion.registerDatabaseListener
+import com.bopr.android.smailer.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_BLACKLIST
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_WHITELIST
@@ -19,50 +23,62 @@ import com.bopr.android.smailer.util.getAccount
 import org.slf4j.LoggerFactory
 import java.lang.System.currentTimeMillis
 
-object SyncEngine {
+class SyncEngine(private val context: Context) : OnSharedPreferenceChangeListener {
 
     private val log = LoggerFactory.getLogger("SyncEngine")
-    private var databaseListener: BroadcastReceiver? = null
+    private val settings = Settings(context)
     private var account: Account? = null
+    private val databaseListener = object : BroadcastReceiver() {
 
-    fun enableSyncEngine(context: Context) {
-        /* register it only once */
-        if (databaseListener == null) {
-            databaseListener = registerDatabaseListener(context) {
-                updateMetadata(context)
-            }
+        override fun onReceive(context: Context?, intent: Intent?) {
+            updateMetadata()
         }
+    }
+    private val enabled: Boolean get() = settings.getBoolean(PREF_SYNC_ENABLED)
 
-        if (isFeatureEnabled(context)) {
-            start(context)
+    init {
+        settings.registerOnSharedPreferenceChangeListener(this)
+    }
+
+    fun enable() {
+        if (enabled) {
+            registerDatabaseListener(context, databaseListener)
+            start()
 
             log.debug("Enabled")
         } else {
             stop()
+            unregisterDatabaseListener(context, databaseListener)
 
             log.debug("Disabled")
         }
     }
 
-    fun onSyncEngineSettingsChanged(context: Context, setting: String) {
-        when (setting) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        when (key) {
             PREF_SYNC_ENABLED ->
-                enableSyncEngine(context)
+                enable()
             PREF_SENDER_ACCOUNT ->
-                restart(context)
+                restart()
             PREF_FILTER_PHONE_BLACKLIST,
             PREF_FILTER_PHONE_WHITELIST,
             PREF_FILTER_TEXT_BLACKLIST,
             PREF_FILTER_TEXT_WHITELIST ->
-                updateMetadata(context)
+                updateMetadata()
         }
     }
 
-    private fun start(context: Context) {
-        account = context.getAccount(Settings(context).getString(PREF_SENDER_ACCOUNT))
+    private fun start() {
+        account = context.getAccount(settings.getString(PREF_SENDER_ACCOUNT))
 
         account?.let {
-            syncNow(it)
+            requestSync(it, AUTHORITY, Bundle().apply {
+                putBoolean(SYNC_EXTRAS_MANUAL, true)
+                putBoolean(SYNC_EXTRAS_EXPEDITED, true)
+            })
+
+            log.debug("Synced")
+
             addPeriodicSync(it, AUTHORITY, Bundle.EMPTY, 0)
 
             log.debug("Task added")
@@ -77,33 +93,37 @@ object SyncEngine {
         }
     }
 
-    private fun syncNow(account: Account) {
-        val bundle = Bundle()
-        bundle.putBoolean(SYNC_EXTRAS_MANUAL, true)
-        bundle.putBoolean(SYNC_EXTRAS_EXPEDITED, true)
-
-        requestSync(account, AUTHORITY, bundle)
-
-        log.debug("Sync now")
-    }
-
-    private fun restart(context: Context) {
-        if (isFeatureEnabled(context)) {
+    private fun restart() {
+        if (enabled) {
             stop()
-            start(context)
+            start()
         }
     }
 
-    private fun isFeatureEnabled(context: Context) = Settings(context).getBoolean(PREF_SYNC_ENABLED)
+    private fun updateMetadata() {
+        if (enabled) {
+            val time = currentTimeMillis()
 
-    private fun updateMetadata(context: Context) {
-        val time = currentTimeMillis()
+            log.debug("Updating metadata: %tF %tT".format(time, time))
 
-        log.debug("Updating metadata: %tF %tT".format(time, time))
-
-        Settings(context).update {
-            putLong(PREF_SYNC_TIME, time)
+            settings.update {
+                putLong(PREF_SYNC_TIME, time)
+            }
         }
     }
 
+    companion object {
+
+        private var instance: SyncEngine? = null
+
+        fun setupSyncEngine(context: Context) {
+            if (instance != null){
+                throw IllegalStateException("Sync engine can be instantiated only once")
+            }
+            instance = SyncEngine(context).apply {
+                enable()
+            }
+        }
+
+    }
 }

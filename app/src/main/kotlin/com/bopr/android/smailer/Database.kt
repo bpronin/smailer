@@ -314,6 +314,12 @@ class Database constructor(private val context: Context, private val name: Strin
                 "PRIMARY KEY (" + COLUMN_START_TIME + ", " + COLUMN_ACCEPTOR + ")" +
                 ")"
 
+        fun registerDatabaseListener(context: Context, listener: BroadcastReceiver) {
+            LocalBroadcastManager.getInstance(context).registerReceiver(listener, IntentFilter(DATABASE_EVENT))
+
+            log.debug("Listener registered")
+        }
+
         fun registerDatabaseListener(context: Context, onChange: () -> Unit): BroadcastReceiver {
             val listener = object : BroadcastReceiver() {
 
@@ -321,10 +327,7 @@ class Database constructor(private val context: Context, private val name: Strin
                     onChange()
                 }
             }
-            LocalBroadcastManager.getInstance(context).registerReceiver(listener, IntentFilter(DATABASE_EVENT))
-
-            log.debug("Listener registered")
-
+            registerDatabaseListener(context, listener)
             return listener
         }
 
