@@ -9,7 +9,6 @@ import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
-import java.util.concurrent.TimeUnit
 
 /**
  * [Database] class tester.
@@ -30,15 +29,6 @@ class DatabaseTest : BaseTest() {
     @After
     fun tearDown() {
         database.close()
-    }
-
-    /**
-     * Check default properties.
-     */
-    @Test
-    fun testDefaults() {
-        assertEquals(10000L, database.capacity)
-        assertEquals(TimeUnit.DAYS.toMillis(7), database.purgePeriod)
     }
 
     @Test

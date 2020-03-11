@@ -13,7 +13,6 @@ import com.bopr.android.smailer.util.*
 import org.slf4j.LoggerFactory
 import java.io.Closeable
 import java.lang.System.currentTimeMillis
-import java.util.concurrent.TimeUnit
 
 /**
  * Application database.
@@ -30,23 +29,17 @@ class Database constructor(private val context: Context, private val name: Strin
     }
 
     /**
-     * Time period that should exceed until addition of new record triggers purge process
-     * that removes stale records.
+     * Returns all events.
      */
-    var purgePeriod: Long = TimeUnit.DAYS.toMillis(7)
-
-    /**
-     * Maximum amount of records that the log may contain.
-     * All records that exceeds this value will be removed.
-     */
-    var capacity: Long = 10000
-
     val events: PhoneEventRowSet
         get() = PhoneEventRowSet(query(
                 table = TABLE_EVENTS,
                 order = "$COLUMN_START_TIME DESC"
         ))
 
+    /**
+     * Returns pending events.
+     */
     val pendingEvents: PhoneEventRowSet
         get() = PhoneEventRowSet(query(
                 table = TABLE_EVENTS,
@@ -55,10 +48,13 @@ class Database constructor(private val context: Context, private val name: Strin
                 order = "$COLUMN_START_TIME DESC"
         ))
 
+    /**
+     * Returns count of unread events.
+     */
     val unreadEventsCount: Long
         get() = query(
                 table = TABLE_EVENTS,
-                columns = strings(COLUMN_COUNT),
+                projection = strings(COLUMN_COUNT),
                 selection = "$COLUMN_READ<>1"
         ).useFirst {
             it.getLong(0)
@@ -66,8 +62,6 @@ class Database constructor(private val context: Context, private val name: Strin
 
     /**
      * Returns last saved geolocation.
-     *
-     * @return location
      */
     val lastLocation: GeoCoordinates?
         get() = query(
@@ -104,9 +98,10 @@ class Database constructor(private val context: Context, private val name: Strin
             helper.writableDatabase.update(TABLE_EVENTS, values, "$COLUMN_START_TIME=? AND $COLUMN_ACCEPTOR=?",
                     strings(event.startTime, event.acceptor))
 
-            log.debug("Updated: $values")
-        } else {
-            log.debug("Inserted: $values")
+                log.debug("Updated: $values")
+            } else {
+                log.debug("Inserted: $values")
+            }
         }
 
         modified = true
@@ -136,7 +131,7 @@ class Database constructor(private val context: Context, private val name: Strin
     }
 
     /**
-     * Removes all records from log.
+     * Removes all events from database.
      */
     fun clearEvents() {
         helper.writableDatabase.batch {
@@ -208,134 +203,11 @@ class Database constructor(private val context: Context, private val name: Strin
         log.debug("Destroyed")
     }
 
-    /**
-     * Removes all stale records that exceeds specified capacity if given
-     * period of time has elapsed.
-     */
-/*
-    fun purge() {
-        log.debug("Purging")
-
-        helper.writableDatabase.batch {
-            if (currentTimeMillis() - lastPurgeTime(this) >= purgePeriod && currentSize(this) >= capacity) {
-                execSQL("DELETE FROM " + TABLE_EVENTS +
-                        " WHERE " + COLUMN_ID + " NOT IN " +
-                        "(" +
-                        "SELECT " + COLUMN_ID + " FROM " + TABLE_EVENTS +
-                        " ORDER BY " + COLUMN_ID + " DESC " +
-                        "LIMIT " + capacity +
-                        ")")
-                updateLastPurgeTime(this)
-            }
-        }
-    }
-
-    private fun currentSize(db: SQLiteDatabase): Long {
-        return forLong(db.query(TABLE_EVENTS, strings(COLUMN_COUNT),
-                null, null, null, null, null))!!
-    }
-
-    private fun lastPurgeTime(db: SQLiteDatabase): Long {
-        return forLong(db.query(TABLE_SYSTEM, strings(COLUMN_PURGE_TIME),
-                "$COLUMN_ID=0", null, null, null, null))!!
-    }
-
-    private fun updateLastPurgeTime(db: SQLiteDatabase) {
-        val values = ContentValues()
-        values.put(COLUMN_PURGE_TIME, currentTimeMillis())
-        db.update(TABLE_SYSTEM, values, "$COLUMN_ID=0", null)
-    }
-*/
-
-    private fun query(table: String, columns: Array<String>? = null, selection: String? = null,
+    private fun query(table: String, projection: Array<String>? = null, selection: String? = null,
                       args: Array<String>? = null, groupBy: String? = null,
                       having: String? = null, order: String? = null): Cursor {
-        return helper.readableDatabase.query(table, columns, selection, args,
+        return helper.readableDatabase.query(table, projection, selection, args,
                 groupBy, having, order)
-    }
-
-    private fun strings(vararg values: Any): Array<String> {
-        return Array(values.size) { values[it].toString() }
-    }
-
-    companion object {
-        private val log = LoggerFactory.getLogger("Database")
-
-        const val DATABASE_NAME = "smailer.sqlite"
-        const val COLUMN_COUNT = "COUNT(*)"
-        const val COLUMN_ID = "_id"
-        const val COLUMN_IS_INCOMING = "is_incoming"
-        const val COLUMN_IS_MISSED = "is_missed"
-        const val COLUMN_PHONE = "phone"
-        const val COLUMN_LATITUDE = "latitude"
-        const val COLUMN_LONGITUDE = "longitude"
-        const val COLUMN_TEXT = "message_text"
-        const val COLUMN_DETAILS = "details"
-        const val COLUMN_START_TIME = "start_time"
-        const val COLUMN_END_TIME = "end_time"
-        const val COLUMN_STATE = "state"
-        const val COLUMN_PROCESS_STATUS = "state_reason"
-        const val COLUMN_PROCESS_TIME = "process_time"
-        const val COLUMN_LAST_LATITUDE = "last_latitude"
-        const val COLUMN_LAST_LONGITUDE = "last_longitude"
-        const val COLUMN_LAST_LOCATION_TIME = "last_location_time"
-        const val COLUMN_READ = "message_read"
-        const val COLUMN_ACCEPTOR = "recipient"
-        private const val COLUMN_PURGE_TIME = "messages_purge_time"
-
-        private const val DB_VERSION = 7
-        private const val DATABASE_EVENT = "database-event"
-        private const val TABLE_SYSTEM = "system_data"
-        private const val TABLE_EVENTS = "phone_events"
-
-        private const val SQL_CREATE_SYSTEM = "CREATE TABLE " + TABLE_SYSTEM + " (" +
-                COLUMN_ID + " INTEGER PRIMARY KEY, " +
-                COLUMN_PURGE_TIME + " INTEGER," +
-                COLUMN_LAST_LATITUDE + " REAL," +
-                COLUMN_LAST_LONGITUDE + " REAL," +
-                COLUMN_LAST_LOCATION_TIME + " INTEGER" +
-                ")"
-
-        private const val SQL_CREATE_EVENTS = "CREATE TABLE " + TABLE_EVENTS + " (" +
-                COLUMN_PHONE + " TEXT(25) NOT NULL," +
-                COLUMN_IS_INCOMING + " INTEGER, " +
-                COLUMN_IS_MISSED + " INTEGER, " +
-                COLUMN_START_TIME + " INTEGER NOT NULL, " +
-                COLUMN_END_TIME + " INTEGER, " +
-                COLUMN_LATITUDE + " REAL, " +
-                COLUMN_LONGITUDE + " REAL, " +
-                COLUMN_ACCEPTOR + " TEXT(25) NOT NULL," +
-                COLUMN_TEXT + " TEXT(256)," +
-                COLUMN_STATE + " INTEGER, " +
-                COLUMN_PROCESS_STATUS + " INTEGER, " +
-                COLUMN_PROCESS_TIME + " INTEGER, " +
-                COLUMN_READ + " INTEGER NOT NULL DEFAULT(0), " +
-                COLUMN_DETAILS + " TEXT(256), " +
-                "PRIMARY KEY (" + COLUMN_START_TIME + ", " + COLUMN_ACCEPTOR + ")" +
-                ")"
-
-        fun registerDatabaseListener(context: Context, listener: BroadcastReceiver) {
-            LocalBroadcastManager.getInstance(context).registerReceiver(listener, IntentFilter(DATABASE_EVENT))
-
-            log.debug("Listener registered")
-        }
-
-        fun registerDatabaseListener(context: Context, onChange: () -> Unit): BroadcastReceiver {
-            val listener = object : BroadcastReceiver() {
-
-                override fun onReceive(context: Context?, intent: Intent?) {
-                    onChange()
-                }
-            }
-            registerDatabaseListener(context, listener)
-            return listener
-        }
-
-        fun unregisterDatabaseListener(context: Context, listener: BroadcastReceiver) {
-            LocalBroadcastManager.getInstance(context).unregisterReceiver(listener)
-
-            log.debug("Listener unregistered")
-        }
     }
 
     private inner class DbHelper(context: Context) : SQLiteOpenHelper(context, name, null, DB_VERSION) {
@@ -410,6 +282,87 @@ class Database constructor(private val context: Context, private val name: Strin
                         isRead = getBoolean(COLUMN_READ)
                 )
             }
+        }
+    }
+
+    companion object {
+
+        private val log = LoggerFactory.getLogger("Database")
+
+        const val DATABASE_NAME = "smailer.sqlite"
+        const val COLUMN_COUNT = "COUNT(*)"
+        const val COLUMN_ID = "_id"
+        const val COLUMN_IS_INCOMING = "is_incoming"
+        const val COLUMN_IS_MISSED = "is_missed"
+        const val COLUMN_PHONE = "phone"
+        const val COLUMN_LATITUDE = "latitude"
+        const val COLUMN_LONGITUDE = "longitude"
+        const val COLUMN_TEXT = "message_text"
+        const val COLUMN_DETAILS = "details"
+        const val COLUMN_START_TIME = "start_time"
+        const val COLUMN_END_TIME = "end_time"
+        const val COLUMN_STATE = "state"
+        const val COLUMN_PROCESS_STATUS = "state_reason"
+        const val COLUMN_PROCESS_TIME = "process_time"
+        const val COLUMN_LAST_LATITUDE = "last_latitude"
+        const val COLUMN_LAST_LONGITUDE = "last_longitude"
+        const val COLUMN_LAST_LOCATION_TIME = "last_location_time"
+        const val COLUMN_READ = "message_read"
+        const val COLUMN_ACCEPTOR = "recipient"
+        private const val COLUMN_PURGE_TIME = "messages_purge_time"
+
+        private const val DB_VERSION = 7
+        private const val DATABASE_EVENT = "database-event"
+        private const val TABLE_SYSTEM = "system_data"
+        const val TABLE_EVENTS = "phone_events"
+
+        private const val SQL_CREATE_SYSTEM = "CREATE TABLE " + TABLE_SYSTEM + " (" +
+                COLUMN_ID + " INTEGER PRIMARY KEY, " +
+                COLUMN_PURGE_TIME + " INTEGER," +
+                COLUMN_LAST_LATITUDE + " REAL," +
+                COLUMN_LAST_LONGITUDE + " REAL," +
+                COLUMN_LAST_LOCATION_TIME + " INTEGER" +
+                ")"
+
+        private const val SQL_CREATE_EVENTS = "CREATE TABLE " + TABLE_EVENTS + " (" +
+                COLUMN_PHONE + " TEXT(25) NOT NULL," +
+                COLUMN_IS_INCOMING + " INTEGER, " +
+                COLUMN_IS_MISSED + " INTEGER, " +
+                COLUMN_START_TIME + " INTEGER NOT NULL, " +
+                COLUMN_END_TIME + " INTEGER, " +
+                COLUMN_LATITUDE + " REAL, " +
+                COLUMN_LONGITUDE + " REAL, " +
+                COLUMN_ACCEPTOR + " TEXT(25) NOT NULL," +
+                COLUMN_TEXT + " TEXT(256)," +
+                COLUMN_STATE + " INTEGER, " +
+                COLUMN_PROCESS_STATUS + " INTEGER, " +
+                COLUMN_PROCESS_TIME + " INTEGER, " +
+                COLUMN_READ + " INTEGER NOT NULL DEFAULT(0), " +
+                COLUMN_DETAILS + " TEXT(256), " +
+                "PRIMARY KEY (" + COLUMN_START_TIME + ", " + COLUMN_ACCEPTOR + ")" +
+                ")"
+
+        fun registerDatabaseListener(context: Context, listener: BroadcastReceiver) {
+            LocalBroadcastManager.getInstance(context).registerReceiver(listener, IntentFilter(DATABASE_EVENT))
+
+            log.debug("Listener registered")
+        }
+
+        fun registerDatabaseListener(context: Context, onChange: () -> Unit): BroadcastReceiver {
+            val listener = object : BroadcastReceiver() {
+
+                override fun onReceive(context: Context?, intent: Intent?) {
+                    onChange()
+                }
+            }
+            registerDatabaseListener(context, listener)
+            return listener
+        }
+
+        fun unregisterDatabaseListener(context: Context, listener: BroadcastReceiver) {
+            LocalBroadcastManager.getInstance(context).unregisterReceiver(listener)
+
+            log.debug("Listener unregistered")
         }
     }
 

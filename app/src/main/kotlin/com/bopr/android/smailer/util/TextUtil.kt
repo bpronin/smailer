@@ -12,6 +12,10 @@ val QUOTATION_PATTERN: Pattern = Pattern.compile(QUOTATION_REGEX)
 private val COMMA_ESCAPED = Regex("(?<!/),")  /* matches commas not preceded by "/" */
 private const val REGEX_ = "REGEX:"
 
+fun strings(vararg values: Any): Array<String> {
+    return Array(values.size) { values[it].toString() }
+}
+
 fun escapeRegex(s: String): String {
     return REGEX_ + s
 }
