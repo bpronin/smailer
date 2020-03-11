@@ -21,7 +21,7 @@ import java.util.regex.Pattern
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 internal class RemoteControlTaskParser {
-
+    //todo parse html formatted mail
     fun parse(text: String): RemoteControlTask? {
         var task: RemoteControlTask? = null
 
