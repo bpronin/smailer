@@ -77,7 +77,7 @@ class SyncEngine(private val context: Context) : OnSharedPreferenceChangeListene
                 putBoolean(SYNC_EXTRAS_EXPEDITED, true)
             })
 
-            log.debug("Synced")
+            log.debug("Sync now requested")
 
             addPeriodicSync(it, AUTHORITY, Bundle.EMPTY, 0)
 

@@ -69,7 +69,7 @@ class Database constructor(private val context: Context, private val name: Strin
     var lastLocation: GeoCoordinates?
         get() = query(
                 table = TABLE_SYSTEM,
-                columns = strings(COLUMN_LAST_LATITUDE, COLUMN_LAST_LONGITUDE),
+                projection = strings(COLUMN_LAST_LATITUDE, COLUMN_LAST_LONGITUDE),
                 selection = "$COLUMN_ID=0"
         ).useFirst {
             GeoCoordinates(
@@ -88,6 +88,9 @@ class Database constructor(private val context: Context, private val name: Strin
             log.debug("Updated last location")
         }
 
+    /**
+     * Puts event to database.
+     */
     fun putEvent(event: PhoneEvent) {
         val values = values {
             put(COLUMN_PHONE, event.phone)
@@ -107,9 +110,11 @@ class Database constructor(private val context: Context, private val name: Strin
                 put(COLUMN_LONGITUDE, it.longitude)
             }
         }
-        if (helper.writableDatabase.insertWithOnConflict(TABLE_EVENTS, null, values, CONFLICT_IGNORE) == -1L) {
-            helper.writableDatabase.update(TABLE_EVENTS, values, "$COLUMN_START_TIME=? AND $COLUMN_ACCEPTOR=?",
-                    strings(event.startTime, event.acceptor))
+
+        helper.writableDatabase.run {
+            if (insertWithOnConflict(TABLE_EVENTS, null, values, CONFLICT_IGNORE) == -1L) {
+                update(TABLE_EVENTS, values, "$COLUMN_START_TIME=? AND $COLUMN_ACCEPTOR=?",
+                        strings(event.startTime, event.acceptor))
 
                 log.debug("Updated: $values")
             } else {
@@ -119,6 +124,9 @@ class Database constructor(private val context: Context, private val name: Strin
         modified = true
     }
 
+    /**
+     * Puts specified events to database.
+     */
     fun putEvents(events: Collection<PhoneEvent>) {
         helper.writableDatabase.batch {
             for (event in events) {
@@ -128,7 +136,7 @@ class Database constructor(private val context: Context, private val name: Strin
     }
 
     /**
-     * Removes records from log.
+     * Removes specified events from database.
      */
     fun deleteEvents(events: Collection<PhoneEvent>) {
         helper.writableDatabase.batch {

@@ -27,6 +27,8 @@ class SyncAdapter(context: Context, autoInitialize: Boolean) : AbstractThreadedS
         Database(context).use {
             try {
                 Synchronizer(context, account, it).sync()
+
+                log.debug("Synchronized")
             } catch (x: Exception) {
                 log.warn("Synchronization failed ", x)
             }

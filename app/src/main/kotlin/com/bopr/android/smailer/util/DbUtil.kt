@@ -10,13 +10,14 @@ import android.database.sqlite.SQLiteDatabase
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 
-inline fun SQLiteDatabase.batch(action: SQLiteDatabase.() -> Unit) {
-    this.beginTransaction()
+inline fun <T> SQLiteDatabase.batch(action: SQLiteDatabase.() -> T): T {
+    beginTransaction()
     try {
-        action()
-        this.setTransactionSuccessful()
+        val result = action()
+        setTransactionSuccessful()
+        return result
     } finally {
-        this.endTransaction()
+        endTransaction()
     }
 }
 
