@@ -136,7 +136,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
                 true
             }
             R.id.action_remove_from_lists -> {
-                onRemoveFromLists()
+                onRemoveFromFilterList()
                 true
             }
             R.id.action_ignore -> {
@@ -208,11 +208,11 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
     }
 
     private fun onAddToBlacklist() {
-        addSelectedItemToFilter(PREF_FILTER_PHONE_BLACKLIST, R.string.add_to_blacklist)
+        addSelectionToFilterList(PREF_FILTER_PHONE_BLACKLIST, R.string.add_to_blacklist)
     }
 
     private fun onAddToWhitelist() {
-        addSelectedItemToFilter(PREF_FILTER_PHONE_WHITELIST, R.string.add_to_whitelist)
+        addSelectionToFilterList(PREF_FILTER_PHONE_WHITELIST, R.string.add_to_whitelist)
     }
 
     private fun onMarkAsIgnored() {
@@ -220,23 +220,6 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
             it.state = STATE_IGNORED
             database.putEvent(it)
             database.notifyChanged()
-        }
-    }
-
-    private fun onRemoveFromLists() {
-        getSelectedItem()?.let {
-            settings.run {
-                val blacklist = getStringList(PREF_FILTER_PHONE_BLACKLIST)
-                val whitelist = getStringList(PREF_FILTER_PHONE_WHITELIST)
-                blacklist.remove(it.phone)
-                whitelist.remove(it.phone)
-                update {
-                    putStringList(PREF_FILTER_PHONE_BLACKLIST, blacklist)
-                    putStringList(PREF_FILTER_PHONE_WHITELIST, whitelist)
-                }
-            }
-
-            showToast(getString(R.string.phone_removed_from_filter, it.phone))
         }
     }
 
@@ -257,25 +240,46 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
                 .show()
     }
 
-    private fun addSelectedItemToFilter(settingName: String, @StringRes titleRes: Int) {
-        getSelectedItem()?.let {
+    private fun onRemoveFromFilterList() {
+        getSelectedItem()?.let { item ->
+            settings.update {
+                removeFromFilterList(this, PREF_FILTER_PHONE_BLACKLIST, item.phone)
+                removeFromFilterList(this, PREF_FILTER_PHONE_WHITELIST, item.phone)
+            }
+            showToast(getString(R.string.phone_removed_from_filter, item.phone))
+        }
+    }
+
+    private fun addSelectionToFilterList(listName: String, @StringRes titleRes: Int) {
+        getSelectedItem()?.let { item ->
             EditPhoneDialogFragment().apply {
                 setTitle(titleRes)
-                setValue(it.phone)
-                setOnOkClicked { value ->
-                    if (!value.isNullOrEmpty()) {
-                        settings.run {
-                            val list = getStringList(settingName)
-                            if (list.contains(value)) {
-                                showToast(getString(R.string.item_already_exists, value))
-                            } else {
-                                list.add(value)
-                                update { putStringList(settingName, list) }
-                            }
-                        }
-                    }
-                }
+                setValue(item.phone)
+                setOnOkClicked { addToFilterList(listName, it) }
             }.show(this)
+        }
+    }
+
+    private fun addToFilterList(listName: String, phone: String?) {
+        if (!phone.isNullOrEmpty()) {
+            settings.run {
+                val list = getStringList(listName)
+                if (list.none { samePhone(it, phone) }) {
+                    update {
+                        putStringList(listName, list.apply { add(phone) })
+                    }
+                } else {
+                    showToast(getString(R.string.item_already_exists, phone))
+                }
+            }
+        }
+    }
+
+    private fun removeFromFilterList(edit: SharedPreferencesWrapper.EditorWrapper,
+                                     listName: String, phone: String) {
+        val list = settings.getStringList(listName)
+        list.find { samePhone(it, phone) }?.let {
+            edit.putStringList(PREF_FILTER_PHONE_BLACKLIST, list.apply { remove(it) })
         }
     }
 

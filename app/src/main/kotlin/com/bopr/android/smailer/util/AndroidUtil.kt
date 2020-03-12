@@ -1,19 +1,25 @@
 package com.bopr.android.smailer.util
 
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Context.CONNECTIVITY_SERVICE
-import android.content.Context.POWER_SERVICE
-import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.net.ConnectivityManager
 import android.os.Build
-import android.os.PowerManager
-import android.os.PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
 
+/**
+ * Returns device name.
+ */
+fun deviceName(): String {
+    return capitalize(Build.MANUFACTURER) + " " + Build.MODEL
+}
+
+fun Context.permissionLabel(permissionName: String): String {
+    return packageManager.run {
+        getPermissionInfo(permissionName, 0).loadLabel(this).toString()
+    }
+}
 
 /**
  * The method must be named exactly "checkPermission" to pass the IDE inspections and lint warnings
@@ -34,23 +40,6 @@ fun Fragment.checkPermission(vararg permissions: String): Boolean {
     return requireContext().checkPermission(*permissions)
 }
 
-/**
- * Returns device name.
- */
-fun deviceName(): String {
-    return capitalize(Build.MANUFACTURER) + " " + Build.MODEL
-}
-
-fun permissionLabel(context: Context, permissionName: String): String {
-    return try {
-        val manager = context.packageManager
-        val info = manager.getPermissionInfo(permissionName, 0)
-        info.loadLabel(manager).toString()
-    } catch (x: Exception) {
-        throw RuntimeException(x)
-    }
-}
-
 fun Context.hasInternetConnection(): Boolean {
     (getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager).run {
         @Suppress("DEPRECATION")
@@ -58,6 +47,7 @@ fun Context.hasInternetConnection(): Boolean {
     }
 }
 
+/*
 fun Context.isInIdleMode(): Boolean {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         (getSystemService(POWER_SERVICE) as PowerManager).isDeviceIdleMode
@@ -78,3 +68,4 @@ fun Context.registerIdleModeChangedReceiver(onChanged: (Boolean) -> Unit) {
         registerReceiver(receiver, IntentFilter(ACTION_DEVICE_IDLE_MODE_CHANGED))
     }
 }
+*/

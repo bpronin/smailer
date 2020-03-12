@@ -13,38 +13,19 @@ import java.util.*
 class Settings(context: Context, name: String = PREFERENCES_STORAGE_NAME) :
         SharedPreferencesWrapper(context.getSharedPreferences(name, MODE_PRIVATE)) {
 
-//    var phoneBlacklist: List<String>
-//        get() = getStringList(PREF_FILTER_PHONE_BLACKLIST)
-//        set(value) = update { putStringList(PREF_FILTER_PHONE_BLACKLIST, value) }
-//
-//    var phoneWhitelist: List<String>
-//        get() = getStringList(PREF_FILTER_PHONE_WHITELIST)
-//        set(value) = update { putStringList(PREF_FILTER_PHONE_WHITELIST, value) }
-
     val locale: Locale
         get() {
             val value = getString(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)!!
             return if (value == VAL_PREF_DEFAULT) {
                 Locale.getDefault()
             } else {
-                val ss = value.split("_")
-                if (ss.size == 2) {
-                    Locale(ss[0], ss[1])
+                val a = value.split("_")
+                if (a.size == 2) {
+                    Locale(a[0], a[1])
                 } else {
                     throw IllegalArgumentException("Invalid locale code: $value")
                 }
             }
-        }
-
-    val callFilter: PhoneEventFilter
-        get() {
-            return PhoneEventFilter(
-                    triggers = getStringSet(PREF_EMAIL_TRIGGERS),
-                    phoneBlacklist = getStringList(PREF_FILTER_PHONE_BLACKLIST),
-                    phoneWhitelist = getStringList(PREF_FILTER_PHONE_WHITELIST),
-                    textBlacklist = getStringList(PREF_FILTER_TEXT_BLACKLIST),
-                    textWhitelist = getStringList(PREF_FILTER_TEXT_WHITELIST)
-            )
         }
 
     fun loadDefaults() = update {

@@ -1,7 +1,6 @@
 package com.bopr.android.smailer
 
 import android.Manifest.permission.*
-import android.content.Context
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
@@ -194,9 +193,13 @@ class PermissionsHelper(val activity: FragmentActivity) {
     private fun formatRationale(permissions: Collection<String>): String {
         val sb = StringBuilder()
         for (permission in permissions) {
-            sb.append(permissionRationale(activity, permission)).append("\n\n")
+            sb.append(permissionRationale(permission)).append("\n\n")
         }
         return sb.toString()
+    }
+
+    private fun permissionRationale(permission: String): String {
+        return activity.getString(items.getValue(permission), activity.permissionLabel(permission))
     }
 
     companion object {
@@ -213,10 +216,6 @@ class PermissionsHelper(val activity: FragmentActivity) {
                 ACCESS_COARSE_LOCATION to R.string.permission_rationale_coarse_location,
                 ACCESS_FINE_LOCATION to R.string.permission_rationale_fine_location
         )
-
-        fun permissionRationale(context: Context, permission: String): String {
-            return context.getString(items.getValue(permission), permissionLabel(context, permission))
-        }
     }
 
 }

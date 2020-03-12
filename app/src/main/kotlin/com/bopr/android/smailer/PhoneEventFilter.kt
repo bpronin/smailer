@@ -20,11 +20,11 @@ import java.util.regex.PatternSyntaxException
  * @author Boris Pronin ([bpronin@bttprime.com](mailto:bpronin@bttprime.com))
  */
 class PhoneEventFilter(
-        var triggers: MutableSet<String> = mutableSetOf(),
-        var phoneWhitelist: MutableList<String> = mutableListOf(),
-        var phoneBlacklist: List<String> = mutableListOf(),
-        var textWhitelist: MutableList<String> = mutableListOf(),
-        var textBlacklist: MutableList<String> = mutableListOf()) {
+        val triggers: Set<String>,
+        val phoneWhitelist: List<String>,
+        val phoneBlacklist: List<String>,
+        val textWhitelist: List<String>,
+        val textBlacklist: List<String>) {
 
     /**
      * Tests if the filter accepts given event.

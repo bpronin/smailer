@@ -12,6 +12,7 @@ import android.os.HandlerThread
 import android.os.IBinder
 import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
 import com.bopr.android.smailer.Notifications.Companion.SERVICE_NOTIFICATION_ID
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
 import com.bopr.android.smailer.util.deviceName
 import com.bopr.android.smailer.util.getLong
@@ -120,8 +121,8 @@ class ContentObserverService : Service() {
          */
         fun enableContentObserver(context: Context) {
             val intent = Intent(context, ContentObserverService::class.java)
-            val callFilter = Settings(context).callFilter
-            if (callFilter.triggers.contains(VAL_PREF_TRIGGER_OUT_SMS)) {
+            val triggers = Settings(context).getStringSet(PREF_EMAIL_TRIGGERS)
+            if (triggers.contains(VAL_PREF_TRIGGER_OUT_SMS)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     context.startForegroundService(intent)
                 } else {

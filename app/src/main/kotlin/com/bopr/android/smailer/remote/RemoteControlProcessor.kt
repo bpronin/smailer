@@ -134,42 +134,42 @@ internal class RemoteControlProcessor(
     }
 
     private fun addTextToWhitelist(text: String?) {
-        addToList(PREF_FILTER_TEXT_WHITELIST, text,
+        addToFilterList(PREF_FILTER_TEXT_WHITELIST, text,
                 R.string.text_remotely_added_to_whitelist, String::equals, TARGET_TEXT_WHITELIST)
     }
 
     private fun removeTextFromWhitelist(text: String?) {
-        removeFromList(PREF_FILTER_TEXT_WHITELIST, text,
+        removeFromFilterList(PREF_FILTER_TEXT_WHITELIST, text,
                 R.string.text_remotely_removed_from_whitelist, String::equals, TARGET_TEXT_WHITELIST)
     }
 
     private fun addTextToBlacklist(text: String?) {
-        addToList(PREF_FILTER_TEXT_BLACKLIST, text,
+        addToFilterList(PREF_FILTER_TEXT_BLACKLIST, text,
                 R.string.text_remotely_added_to_blacklist, String::equals, TARGET_TEXT_BLACKLIST)
     }
 
     private fun removeTextFromBlacklist(text: String?) {
-        removeFromList(PREF_FILTER_TEXT_BLACKLIST, text,
+        removeFromFilterList(PREF_FILTER_TEXT_BLACKLIST, text,
                 R.string.text_remotely_removed_from_blacklist, String::equals, TARGET_TEXT_BLACKLIST)
     }
 
     private fun addPhoneToWhitelist(phone: String?) {
-        addToList(PREF_FILTER_PHONE_WHITELIST, phone,
+        addToFilterList(PREF_FILTER_PHONE_WHITELIST, phone,
                 R.string.phone_remotely_added_to_whitelist, ::samePhone, TARGET_PHONE_WHITELIST)
     }
 
     private fun removePhoneFromWhitelist(phone: String?) {
-        removeFromList(PREF_FILTER_PHONE_WHITELIST, phone,
+        removeFromFilterList(PREF_FILTER_PHONE_WHITELIST, phone,
                 R.string.phone_remotely_removed_from_whitelist, ::samePhone, TARGET_PHONE_WHITELIST)
     }
 
     private fun addPhoneToBlacklist(phone: String?) {
-        addToList(PREF_FILTER_PHONE_BLACKLIST, phone,
+        addToFilterList(PREF_FILTER_PHONE_BLACKLIST, phone,
                 R.string.phone_remotely_added_to_blacklist, ::samePhone, TARGET_PHONE_BLACKLIST)
     }
 
     private fun removePhoneFromBlacklist(phone: String?) {
-        removeFromList(PREF_FILTER_PHONE_BLACKLIST, phone,
+        removeFromFilterList(PREF_FILTER_PHONE_BLACKLIST, phone,
                 R.string.phone_remotely_removed_from_blacklist, ::samePhone, TARGET_PHONE_BLACKLIST)
     }
 
@@ -184,31 +184,35 @@ internal class RemoteControlProcessor(
         }
     }
 
-    private fun addToList(listKey: String, value: String?, @StringRes messageRes: Int,
-                          compare: (String, String) -> Boolean, @Notifications.Target target: Int) {
-        value?.run {
-            val list = settings.getStringList(listKey)
-            if (list.none { compare(it, this) }) {
-                settings.update {
-                    putStringList(listKey, list.apply { add(value) })
+    private fun addToFilterList(listName: String, value: String?, @StringRes messageRes: Int,
+                                compare: (String, String) -> Boolean, @Notifications.Target target: Int) {
+        if (!value.isNullOrEmpty()) {
+            settings.run {
+                val list = getStringList(listName)
+                if (list.none { compare(it, value) }) {
+                    update {
+                        putStringList(listName, list.apply { add(value) })
+                    }
+                    showNotification(context.getString(messageRes, value), target)
+                } else {
+                    log.debug("Already in list")
                 }
-                showNotification(context.getString(messageRes, value), target)
-            } else {
-                log.debug("Already in list")
             }
         }
     }
 
-    private fun removeFromList(listKey: String, value: String?, @StringRes messageRes: Int,
-                               compare: (String, String) -> Boolean, @Notifications.Target target: Int) {
-        value?.run {
-            val list = settings.getStringList(listKey)
-            list.find { compare(it, this) }?.let {
-                settings.update {
-                    putStringList(listKey, list.apply { remove(it) })
-                }
-                showNotification(context.getString(messageRes, value), target)
-            } ?: log.debug("Not in list")
+    private fun removeFromFilterList(listName: String, value: String?, @StringRes messageRes: Int,
+                                     compare: (String, String) -> Boolean, @Notifications.Target target: Int) {
+        if (!value.isNullOrEmpty()) {
+            settings.run {
+                val list = getStringList(listName)
+                list.find { compare(it, value) }?.let {
+                    update {
+                        putStringList(listName, list.apply { remove(it) })
+                    }
+                    showNotification(context.getString(messageRes, value), target)
+                } ?: log.debug("Not in list")
+            }
         }
     }
 
