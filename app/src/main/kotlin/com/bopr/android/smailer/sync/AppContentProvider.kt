@@ -5,9 +5,15 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.net.Uri
 
+/**
+ * Application content provider. Does nothing.
+ *
+ * Required by synchronization framework.
+ * Without it sync adapter won't call [SyncAdapter.onPerformSync]
+ *
+ * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ */
 class AppContentProvider : ContentProvider() {
-
-    //    public static final Uri CONTENT_EVENTS = Uri.withAppendedPath(CONTENT, "events");
 
     override fun onCreate(): Boolean {
         return true
@@ -19,43 +25,24 @@ class AppContentProvider : ContentProvider() {
 
     override fun query(uri: Uri, projection: Array<String>?, selection: String?,
                        selectionArgs: Array<String>?, sortOrder: String?): Cursor? {
-        //        if (isValidUri(uri)) {
-        //            return database.query(uri.getLastPathSegment(), projection, selection, selectionArgs, sortOrder);
-        //        }
         return null
     }
 
     override fun insert(uri: Uri, values: ContentValues?): Uri? {
-        //        if (isValidUri(uri)) {
-        //            database.put(uri.getLastPathSegment(), values);
-        //            return uri;
-        //        }
         return null
     }
 
     override fun delete(uri: Uri, selection: String?, selectionArgs: Array<String>?): Int {
-        //        if (isValidUri(uri)) {
-        //            return database.delete(uri.getLastPathSegment(), selection, selectionArgs);
-        //        }
         return 0
     }
 
     override fun update(uri: Uri, values: ContentValues?, selection: String?,
                         selectionArgs: Array<String>?): Int {
-        //        if (isValidUri(uri)) {
-        //            return database.update(uri.getLastPathSegment(), values, selection, selectionArgs);
-        //        }
         return 0
     }
 
-/*
-    private fun isValidUri(uri: Uri): Boolean {
-        return AUTHORITY == uri.authority
-    }
-*/
-
     companion object {
+
         const val AUTHORITY = "com.bopr.android.smailer"
-//        val CONTENT = Uri.parse("content://$AUTHORITY/")
     }
 }
