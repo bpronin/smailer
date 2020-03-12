@@ -9,10 +9,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.util.checkPermission
-import com.bopr.android.smailer.util.createPickContactIntent
-import com.bopr.android.smailer.util.emailFromIntent
-import com.bopr.android.smailer.util.showToast
+import com.bopr.android.smailer.util.*
 import org.slf4j.LoggerFactory
 
 /**
@@ -33,6 +30,7 @@ class EditEmailDialogFragment : BaseEditDialogFragment<String>("edit_recipient_d
             addTextChangedListener(EmailTextValidator(this))
             setText(initialValue)
         }
+        editText.post { editText.showSoftKeyboard() }
 
         view.findViewById<TextView>(android.R.id.message).setText(R.string.email_address)
 

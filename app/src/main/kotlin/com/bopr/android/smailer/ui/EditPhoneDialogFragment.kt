@@ -9,10 +9,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.util.checkPermission
-import com.bopr.android.smailer.util.createPickContactIntent
-import com.bopr.android.smailer.util.phoneFromIntent
-import com.bopr.android.smailer.util.showToast
+import com.bopr.android.smailer.util.*
 import org.slf4j.LoggerFactory
 
 /**
@@ -32,7 +29,8 @@ class EditPhoneDialogFragment : BaseEditDialogFragment<String>("edit_phone_dialo
         editText = view.findViewById<EditText>(R.id.edit_text_phone).apply {
             setText(initialValue)
         }
-
+        editText.post { editText.showSoftKeyboard() }
+        
         /* custom message view. do not use setMessage() it's ugly */
         view.findViewById<TextView>(R.id.dialog_message).setText(R.string.enter_phone_number)
 

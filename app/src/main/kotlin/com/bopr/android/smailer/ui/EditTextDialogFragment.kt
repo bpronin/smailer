@@ -8,6 +8,7 @@ import android.widget.EditText
 import android.widget.TextView
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.util.escapeRegex
+import com.bopr.android.smailer.util.showSoftKeyboard
 import com.bopr.android.smailer.util.unescapeRegex
 
 /**
@@ -28,6 +29,7 @@ class EditTextDialogFragment : BaseEditDialogFragment<String>("edit_text_filter_
         editText = view.findViewById<EditText>(R.id.edit_text).apply {
             setText(initialText)
         }
+        editText.post { editText.showSoftKeyboard() }
 
         checkBox = view.findViewById<CheckBox>(R.id.checkbox_regex).apply {
             isChecked = isRegex

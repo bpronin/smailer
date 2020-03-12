@@ -1,6 +1,7 @@
 package com.bopr.android.smailer.util
 
 import android.content.Context
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.res.Resources
 import android.os.Build
 import android.text.Spannable
@@ -13,6 +14,8 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils.loadAnimation
+import android.view.inputmethod.InputMethodManager
+import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.*
@@ -217,6 +220,13 @@ fun View.showAnimated(@AnimRes animationRes: Int, delay: Long) {
         }
         visibility = INVISIBLE /* to properly animate coordinates ensure it is not GONE here */
         startAnimation(animation)
+    }
+}
+
+fun View.showSoftKeyboard() {
+    if (requestFocus()) {
+        val imm = context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(this, SHOW_IMPLICIT)
     }
 }
 
