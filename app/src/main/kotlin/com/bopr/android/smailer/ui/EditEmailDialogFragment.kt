@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory
 class EditEmailDialogFragment : BaseEditDialogFragment<String>("edit_recipient_dialog") {
 
     private val log = LoggerFactory.getLogger("EditEmailDialogFragment")
+    private val pickContactRequest = 1008
     private lateinit var editText: TextView
     private var initialValue: String? = null
 
@@ -36,7 +37,7 @@ class EditEmailDialogFragment : BaseEditDialogFragment<String>("edit_recipient_d
 
         view.findViewById<View>(R.id.button_browse_contacts).setOnClickListener {
             if (checkPermission(READ_CONTACTS)) {
-                startActivityForResult(createPickContactIntent(), PICK_CONTACT_REQUEST)
+                startActivityForResult(createPickContactIntent(), pickContactRequest)
             } else {
                 showToast(R.string.permissions_required_for_operation)
             }
@@ -55,16 +56,11 @@ class EditEmailDialogFragment : BaseEditDialogFragment<String>("edit_recipient_d
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         if (checkPermission(READ_CONTACTS)) {
-            if (requestCode == PICK_CONTACT_REQUEST && resultCode == RESULT_OK) {
+            if (requestCode == pickContactRequest && resultCode == RESULT_OK) {
                 editText.text = emailFromIntent(requireContext(), intent)
             }
         } else {
             log.warn("Missing required permission")
         }
-    }
-
-    companion object {
-
-        private const val PICK_CONTACT_REQUEST = 1008
     }
 }

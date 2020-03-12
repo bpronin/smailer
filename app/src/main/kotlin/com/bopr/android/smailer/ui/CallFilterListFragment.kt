@@ -89,7 +89,7 @@ abstract class CallFilterListFragment(private val settingName: String) : Editabl
 
     private fun onClearData() {
         ConfirmDialog(getString(R.string.ask_clear_list)) {
-            saveItems(listOf())
+            saveItems(emptyList())
         }.show(this)
     }
 
@@ -101,4 +101,5 @@ abstract class CallFilterListFragment(private val settingName: String) : Editabl
 
         val textView: TextView = view.findViewById(R.id.text)
     }
+
 }

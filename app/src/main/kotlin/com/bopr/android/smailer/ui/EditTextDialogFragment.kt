@@ -51,4 +51,5 @@ class EditTextDialogFragment : BaseEditDialogFragment<String>("edit_text_filter_
         val text = editText.text.toString()
         return if (checkBox.isChecked) escapeRegex(text) else text
     }
+
 }

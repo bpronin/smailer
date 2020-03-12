@@ -67,8 +67,7 @@ class RecipientsFragment : EditableRecyclerFragment<String, Holder>(), SharedPre
     }
 
     inner class Holder(view: View) : ViewHolder(view) {
+
         val textView: TextView = view.findViewById(R.id.text)
-
     }
-
 }

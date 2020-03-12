@@ -29,8 +29,8 @@ android {
     buildToolsVersion "29.0.3"
 
     defaultConfig {
-        versionCode 81
-        versionName "1.7.14"
+        versionCode 82
+        versionName "1.7.15"
         versionNameSuffix "-kt"
         applicationId "com.bopr.android.smailer"
         minSdkVersion 21

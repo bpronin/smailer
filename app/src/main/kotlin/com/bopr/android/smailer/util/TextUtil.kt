@@ -43,7 +43,7 @@ fun commaSplit(s: String): List<String> {
             it.trim().replace("/,", ",")
         }
     } else {
-        listOf() /* important. to match commaJoin("") */
+        emptyList() /* important. to match commaJoin("") */
     }
 }
 

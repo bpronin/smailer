@@ -63,25 +63,30 @@ abstract class EditableRecyclerFragment<I, H : ViewHolder> : RecyclerFragment<I,
         return true
     }
 
+    protected open fun isSameItem(item1: I, item2: I): Boolean {
+        return item1 == item2
+    }
+
     private fun editItem(position: Int) {
         val item = listAdapter.getItemAt(position)
         createEditDialog().apply {
             setTitle(if (item == null) R.string.add else R.string.edit)
             setValue(item)
-            setOnOkClicked { newItem ->
-                if (newItem != null) {
-                    val exists = listAdapter.getItems().any {
-                        it == newItem
-                    }
-                    if (exists) {
-                        showToast(getString(R.string.item_already_exists, getItemTitle(newItem)))
-                    } else if (isValidItem(newItem)) {
-                        listAdapter.replaceItemAt(position, newItem)
-                        persistItems()
-                    }
+            setOnOkClicked { replaceItem(it, position) }
+        }.show(this)
+    }
+
+    private fun replaceItem(item: I?, position: Int) {
+        if (item != null) {
+            listAdapter.run {
+                if (getItems().any { isSameItem(it, item) }) {
+                    showToast(getString(R.string.item_already_exists, getItemTitle(item)))
+                } else if (isValidItem(item)) {
+                    replaceItemAt(position, item)
+                    persistItems()
                 }
             }
-        }.show(this)
+        }
     }
 
     private fun removeItems(vararg positions: Int) {
@@ -93,8 +98,8 @@ abstract class EditableRecyclerFragment<I, H : ViewHolder> : RecyclerFragment<I,
 
     private fun showUndoRemoved(count: Int, savedItems: List<I>) {
         Snackbar.make(recycler,
-                getQuantityString(R.plurals.items_removed, count),
-                Snackbar.LENGTH_LONG)
+                        getQuantityString(R.plurals.items_removed, count),
+                        Snackbar.LENGTH_LONG)
                 .setActionTextColor(getColor(requireContext(), R.color.colorAccentText))
                 .setAction(R.string.undo) {
                     listAdapter.setItems(savedItems)
