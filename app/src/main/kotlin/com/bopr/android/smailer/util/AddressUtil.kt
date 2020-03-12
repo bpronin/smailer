@@ -21,8 +21,8 @@ fun samePhone(p1: String, p2: String): Boolean {
     return comparePhones(p1, p2) == 0
 }
 
-fun containsPhone(phones: Collection<String>, phone: String): Boolean {
-    return phones.any { samePhone(it, phone) }
+fun Collection<String>.containsPhone(phone: String): Boolean {
+    return any { samePhone(it, phone) }
 }
 
 fun phoneToRegEx(phone: String): String {

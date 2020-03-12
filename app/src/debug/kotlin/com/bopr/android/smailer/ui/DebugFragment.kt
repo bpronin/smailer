@@ -69,7 +69,6 @@ import java.util.concurrent.Executors
  */
 class DebugFragment : BasePreferenceFragment() {
 
-    private lateinit var appContext: Context
     private lateinit var locator: GeoLocator
     private lateinit var database: Database
     private lateinit var authorizator: GoogleAuthorizationHelper
@@ -77,11 +76,14 @@ class DebugFragment : BasePreferenceFragment() {
     private lateinit var sentStatusReceiver: BroadcastReceiver
     private lateinit var deliveredStatusReceiver: BroadcastReceiver
 
+    private val developerEmail: String
+        get() = getString(R.string.developer_email)
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         /* do not use fragment's context. see: https://developer.android.com/guide/topics/ui/settings/programmatic-hierarchy*/
-        appContext = preferenceManager.context
+        val context = preferenceManager.context
 
-        val screen = preferenceManager.createPreferenceScreen(appContext)
+        val screen = preferenceManager.createPreferenceScreen(context)
         addCategory(screen, "Call processing",
                 createPreference("Process single event", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
@@ -100,8 +102,7 @@ class DebugFragment : BasePreferenceFragment() {
                 }),
                 createPreference("Send debug mail", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        SendDebugMailTask(requireActivity(),
-                                getString(R.string.developer_email)).execute()
+                        SendDebugMailTask(requireActivity(), developerEmail).execute()
                     }
                 }),
                 createPreference("Send SMS", object : DefaultClickListener() {
@@ -133,7 +134,7 @@ class DebugFragment : BasePreferenceFragment() {
                 }),
                 createPreference("Require battery optimisation disabled", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        if (isIgnoreBatteryOptimizationRequired(appContext)) {
+                        if (isIgnoreBatteryOptimizationRequired(context)) {
                             requireIgnoreBatteryOptimization(requireActivity())
                         } else {
                             showToast("Battery optimization already ignored")
@@ -176,14 +177,14 @@ class DebugFragment : BasePreferenceFragment() {
                 }),
                 createPreference("Mark all as unread", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        database.markAllAsRead(false)
+                        database.markAllEventsAsRead(false)
                         database.notifyChanged()
                         showToast(R.string.operation_complete)
                     }
                 }),
                 createPreference("Mark all as read", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        database.markAllAsRead(true)
+                        database.markAllEventsAsRead(true)
                         database.notifyChanged()
                         showToast(R.string.operation_complete)
                     }
@@ -212,8 +213,7 @@ class DebugFragment : BasePreferenceFragment() {
         addCategory(screen, "Logging",
                 createPreference("Send logs to developer", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        SendLogTask(requireActivity(),
-                                getString(R.string.developer_email)).execute()
+                        SendLogTask(requireActivity(), developerEmail).execute()
                     }
                 }),
                 createPreference("Clear logs", object : DefaultClickListener() {
@@ -282,19 +282,22 @@ class DebugFragment : BasePreferenceFragment() {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(false)
 
-        database = Database(appContext)
-        locator = GeoLocator(appContext, database)
+        val context = requireContext()
+
+        database = Database(context)
+        locator = GeoLocator(context, database)
         authorizator = GoogleAuthorizationHelper(this, PREF_SENDER_ACCOUNT, MAIL_GOOGLE_COM, DRIVE_APPDATA)
-        notifications = Notifications(appContext)
+        notifications = Notifications(context)
         sentStatusReceiver = SentStatusReceiver()
         deliveredStatusReceiver = DeliveryStatusReceiver()
-        appContext.registerReceiver(sentStatusReceiver, IntentFilter("SMS_SENT"))
-        appContext.registerReceiver(deliveredStatusReceiver, IntentFilter("SMS_DELIVERED"))
+        context.registerReceiver(sentStatusReceiver, IntentFilter("SMS_SENT"))
+        context.registerReceiver(deliveredStatusReceiver, IntentFilter("SMS_DELIVERED"))
     }
 
     override fun onDestroy() {
-        appContext.unregisterReceiver(sentStatusReceiver)
-        appContext.unregisterReceiver(deliveredStatusReceiver)
+        val context = requireContext()
+        context.unregisterReceiver(sentStatusReceiver)
+        context.unregisterReceiver(deliveredStatusReceiver)
         database.close()
         super.onDestroy()
     }
@@ -316,7 +319,7 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun createPreference(title: String, listener: Preference.OnPreferenceClickListener): Preference {
-        val preference = Preference(appContext)
+        val preference = Preference(requireContext())
         preference.title = title
         preference.setIcon(R.drawable.ic_bullet)
         preference.onPreferenceClickListener = listener
@@ -324,7 +327,7 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun addCategory(screen: PreferenceScreen, title: String, vararg preferences: Preference) {
-        val category = PreferenceCategory(appContext)
+        val category = PreferenceCategory(requireContext())
         screen.addPreference(category)
         category.title = title
         for (preference in preferences) {
@@ -333,11 +336,10 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun onSetDebugPreferences() {
-        val accountName = appContext.primaryAccount()?.name!!
         settings.update {
-            putString(PREF_SENDER_ACCOUNT, accountName)
-            putString(PREF_REMOTE_CONTROL_ACCOUNT, accountName)
-            putStringList(PREF_RECIPIENTS_ADDRESS, setOf(accountName, "nowhere@mail.com"))
+            putString(PREF_SENDER_ACCOUNT, developerEmail)
+            putString(PREF_REMOTE_CONTROL_ACCOUNT, developerEmail)
+            putStringList(PREF_RECIPIENTS_ADDRESS, setOf(developerEmail, "nowhere@mail.com"))
             putStringSet(PREF_EMAIL_TRIGGERS, mutableSetOf(
                     VAL_PREF_TRIGGER_IN_SMS,
                     VAL_PREF_TRIGGER_IN_CALLS,
@@ -365,7 +367,7 @@ class DebugFragment : BasePreferenceFragment() {
                     title = "Phone number",
                     inputType = InputType.TYPE_CLASS_PHONE,
                     positiveAction = {
-                        val contact = contactName(appContext, it)
+                        val contact = contactName(requireContext(), it)
                         val text = if (contact != null) "$it: $contact" else "Contact not found"
                         showToast(text)
                     }
@@ -387,7 +389,7 @@ class DebugFragment : BasePreferenceFragment() {
 
     private fun onProcessServiceMail() {
         if (settings.getBoolean(PREF_REMOTE_CONTROL_ENABLED)) {
-            startRemoteControlService(appContext)
+            startRemoteControlService(requireContext())
             showToast(R.string.operation_complete)
         } else {
             showToast("Feature disabled")
@@ -402,17 +404,17 @@ class DebugFragment : BasePreferenceFragment() {
         val start = System.currentTimeMillis()
         val event = PhoneEvent("DEBUG", true, start, start + 10000, false,
                 "SMS TEXT", null, null, STATE_PENDING, deviceName(), STATUS_ACCEPTED, isRead = false)
-        startCallProcessingService(appContext, event)
+        startCallProcessingService(requireContext(), event)
         showToast(R.string.operation_complete)
     }
 
     private fun onStartProcessPendingEvents() {
-        startPendingCallProcessorService(appContext)
+        startPendingCallProcessorService(requireContext())
         showToast(R.string.operation_complete)
     }
 
     private fun onClearLogs() {
-        val dir = File(appContext.filesDir, "log")
+        val dir = File(requireContext().filesDir, "log")
         val logs = dir.listFiles()!!
         for (file in logs) {
             if (!file.delete()) {
@@ -449,7 +451,7 @@ class DebugFragment : BasePreferenceFragment() {
     private fun onShowConcurrent() {
         val sb = StringBuilder()
         val intent = Intent("android.provider.Telephony.SMS_RECEIVED")
-        val activities = appContext.packageManager.queryBroadcastReceivers(intent, 0)
+        val activities = requireContext().packageManager.queryBroadcastReceivers(intent, 0)
         for (resolveInfo in activities) {
             val activityInfo = resolveInfo.activityInfo
             if (activityInfo != null) {
@@ -467,8 +469,8 @@ class DebugFragment : BasePreferenceFragment() {
 
     private fun onGoogleDriveClear() {
         Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
-            val drive = GoogleDrive(appContext)
-            drive.login(appContext.primaryAccount()!!)
+            val drive = GoogleDrive(requireContext())
+            drive.login(senderAccount())
             drive.clear()
             null
         })
@@ -479,7 +481,7 @@ class DebugFragment : BasePreferenceFragment() {
         ConfirmDialog("Synchronize with drive?") {
             Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
                 try {
-                    Synchronizer(appContext, senderAccount(), database).sync()
+                    Synchronizer(requireContext(), senderAccount(), database).sync()
                 } catch (x: Throwable) {
                     log.error("Sync error: ", x)
                 }
@@ -493,7 +495,7 @@ class DebugFragment : BasePreferenceFragment() {
         ConfirmDialog("Download from drive?") {
             Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
                 try {
-                    Synchronizer(appContext, senderAccount(), database).download()
+                    Synchronizer(requireContext(), senderAccount(), database).download()
                 } catch (x: Throwable) {
                     log.error("Download error: ", x)
                 }
@@ -507,7 +509,7 @@ class DebugFragment : BasePreferenceFragment() {
         ConfirmDialog("Upload to drive?") {
             Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
                 try {
-                    Synchronizer(appContext, senderAccount(), database).upload()
+                    Synchronizer(requireContext(), senderAccount(), database).upload()
                     showToast(R.string.operation_complete)
                 } catch (x: Throwable) {
                     log.error("Upload error: ", x)
@@ -523,8 +525,8 @@ class DebugFragment : BasePreferenceFragment() {
                 inputType = InputType.TYPE_CLASS_PHONE,
                 initialValue = "5556",
                 positiveAction = {
-                    val sentIntent = PendingIntent.getBroadcast(appContext, 0, Intent("SMS_SENT"), 0)
-                    val deliveredIntent = PendingIntent.getBroadcast(appContext, 0, Intent("SMS_DELIVERED"), 0)
+                    val sentIntent = PendingIntent.getBroadcast(requireContext(), 0, Intent("SMS_SENT"), 0)
+                    val deliveredIntent = PendingIntent.getBroadcast(requireContext(), 0, Intent("SMS_DELIVERED"), 0)
                     try {
                         getDefault().sendTextMessage(it, null, "Debug message", sentIntent, deliveredIntent)
                     } catch (x: Throwable) {
@@ -538,16 +540,16 @@ class DebugFragment : BasePreferenceFragment() {
     private fun onShowAccounts() {
         val s = "Selected: ${senderAccount().name}\n\n" +
                 "Service: ${serviceAccount().name}\n\n" +
-                "Primary: ${appContext.primaryAccount()?.name}"
+                "Primary: ${requireContext().primaryAccount()?.name}"
         InfoDialog(message = s).show(this)
     }
 
     private fun senderAccount(): Account {
-        return appContext.getAccount(settings.getString(PREF_SENDER_ACCOUNT))!!
+        return requireContext().getAccount(settings.getString(PREF_SENDER_ACCOUNT))!!
     }
 
     private fun serviceAccount(): Account {
-        return appContext.getAccount(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT))!!
+        return requireContext().getAccount(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT))!!
     }
 
     private abstract inner class DefaultClickListener : Preference.OnPreferenceClickListener {

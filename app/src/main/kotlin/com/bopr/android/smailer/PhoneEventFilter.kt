@@ -22,7 +22,7 @@ import java.util.regex.PatternSyntaxException
 class PhoneEventFilter(
         var triggers: MutableSet<String> = mutableSetOf(),
         var phoneWhitelist: MutableList<String> = mutableListOf(),
-        var phoneBlacklist: MutableList<String> = mutableListOf(),
+        var phoneBlacklist: List<String> = mutableListOf(),
         var textWhitelist: MutableList<String> = mutableListOf(),
         var textBlacklist: MutableList<String> = mutableListOf()) {
 

@@ -42,13 +42,13 @@ class SyncEngine(private val context: Context) : OnSharedPreferenceChangeListene
 
     fun enable() {
         if (enabled) {
-            registerDatabaseListener(context, databaseListener)
+            context.registerDatabaseListener(databaseListener)
             start()
 
             log.debug("Enabled")
         } else {
             stop()
-            unregisterDatabaseListener(context, databaseListener)
+            context.unregisterDatabaseListener(databaseListener)
 
             log.debug("Disabled")
         }

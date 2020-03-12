@@ -1,11 +1,10 @@
 package com.bopr.android.smailer
 
-import android.Manifest.permission.READ_CONTACTS
+import android.Manifest.permission.*
 import android.content.Context
 import android.content.res.Resources
 import android.text.TextUtils.htmlEncode
 import androidx.annotation.StringRes
-import com.bopr.android.smailer.GeoLocator.Companion.isLocationPermissionsGranted
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_CONTACT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_HEADER
@@ -184,7 +183,7 @@ class MailFormatter(private val context: Context,
                 val link = "<a href=\"https://www.google.com/maps/place/$lt+$ln/@$lt,$ln\">$text</a>"
                 getString(R.string.last_known_location, link)
             } else {
-                val text = if (isLocationPermissionsGranted(context)) {
+                val text = if (context.checkPermission(ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION)) {
                     getString(R.string.geolocation_disabled)
                 } else {
                     getString(R.string.no_permission_read_location)

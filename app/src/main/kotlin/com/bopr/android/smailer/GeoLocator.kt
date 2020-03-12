@@ -15,10 +15,10 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices.getFusedLocationProviderClient
 import org.slf4j.LoggerFactory
 import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeUnit.MILLISECONDS
 
 /**
- * Provides last device location.
+ * Provides device location.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
@@ -54,14 +54,14 @@ class GeoLocator(private val context: Context, private val database: Database) {
                 log.info("Unable to obtain location from database")
             }
         } else {
-            database.putLastLocation(coordinates)
+            database.lastLocation = coordinates
         }
 
         return coordinates
     }
 
     private fun getCurrentLocation(timeout: Long): GeoCoordinates? {
-        if (!isLocationPermissionsGranted(context)) {
+        if (!context.checkPermission(ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION)) {
             log.info("Missing required permission")
             return null
         }
@@ -91,7 +91,7 @@ class GeoLocator(private val context: Context, private val database: Database) {
     }
 
     private fun getLastLocation(timeout: Long): GeoCoordinates? {
-        if (!isLocationPermissionsGranted(context)) {
+        if (!context.checkPermission(ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION)) {
             log.warn("Missing required permission")
             return null
         }
@@ -114,7 +114,7 @@ class GeoLocator(private val context: Context, private val database: Database) {
 
     private fun awaitLatch(latch: CountDownLatch, timeout: Long, requestName: String) {
         try {
-            if (!latch.await(timeout, TimeUnit.MILLISECONDS)) {
+            if (!latch.await(timeout, MILLISECONDS)) {
                 log.warn("$requestName timeout expired")
             }
         } catch (x: InterruptedException) {
@@ -126,10 +126,6 @@ class GeoLocator(private val context: Context, private val database: Database) {
 
         private val log = LoggerFactory.getLogger("GeoLocator")
         private const val DEFAULT_TIMEOUT = 1000
-
-        fun isLocationPermissionsGranted(context: Context): Boolean {
-            return context.checkPermission(ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION)
-        }
     }
 
 }

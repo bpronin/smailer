@@ -6,24 +6,24 @@ import android.content.Context.CONNECTIVITY_SERVICE
 import android.content.Context.POWER_SERVICE
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.net.ConnectivityManager
 import android.os.Build
 import android.os.PowerManager
 import android.os.PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED
-import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
 
 
 /**
- * Method must be named exactly "checkPermission" to pass the IDE inspections and lint warnings
+ * The method must be named exactly "checkPermission" to pass the IDE inspections and lint warnings
  * when checking methods annotated with [androidx.annotation.RequiresPermission].
  *
  * @see <a href="https://stackoverflow.com/questions/36031218/check-android-permissions-in-a-method">here</a>
  */
 fun Context.checkPermission(vararg permissions: String): Boolean {
     for (p in permissions) {
-        if (ContextCompat.checkSelfPermission(this, p) != PackageManager.PERMISSION_GRANTED) {
+        if (checkSelfPermission(this, p) != PERMISSION_GRANTED) {
             return false
         }
     }

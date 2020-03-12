@@ -64,9 +64,6 @@ android {
             resValue("string", "developer_email", developer_email)
         }
         debug {
-//            testCoverageEnabled = true
-//            shrinkResources true
-//            minifyEnabled true
             manifestPlaceholders = [crashlyticsEnabled: "false"]
         }
         staging {
@@ -120,7 +117,6 @@ android {
             exclude group: "com.google.guava", module: "listenablefuture"
         }
     }
-
 }
 
 repositories {
@@ -159,11 +155,4 @@ dependencies {
 
 allOpen {
     annotation("com.bopr.android.smailer.util.Mockable")
-}
-
-gradle.projectsEvaluated {
-    tasks.withType(JavaCompile) {
-        options.compilerArgs.add("-Xlint:unchecked")
-        options.compilerArgs.add("-Xlint:deprecation")
-    }
 }

@@ -105,3 +105,5 @@ inline fun <T> Cursor.useToList(get: (Cursor) -> T): List<T> {
     }
     return list
 }
+
+inline fun values(action: ContentValues.() -> Unit): ContentValues = ContentValues().apply(action)

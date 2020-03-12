@@ -16,7 +16,7 @@ import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATUS_ACCEPTED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATUS_TRIGGER_OFF
-import com.bopr.android.smailer.Settings.Companion.DEFAULT_CONTENT
+import com.bopr.android.smailer.Settings.Companion.DEFAULT_EMAIL_CONTENT
 import com.bopr.android.smailer.Settings.Companion.DEFAULT_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_LOCALE
@@ -77,7 +77,7 @@ class CallProcessorTest : BaseTest() {
             on { getString(eq(PREF_RECIPIENTS_ADDRESS), anyOrNull()) }.doReturn("recipient@mail.com")
             on { getString(eq(PREF_EMAIL_LOCALE), anyOrNull()) }.doReturn(VAL_PREF_DEFAULT)
             on { getStringSet(eq(PREF_EMAIL_TRIGGERS), anyOrNull()) }.doReturn(DEFAULT_TRIGGERS)
-            on { getStringSet(eq(PREF_EMAIL_CONTENT), anyOrNull()) }.doReturn(DEFAULT_CONTENT)
+            on { getStringSet(eq(PREF_EMAIL_CONTENT), anyOrNull()) }.doReturn(DEFAULT_EMAIL_CONTENT)
         }
 
         accountManager = mock {

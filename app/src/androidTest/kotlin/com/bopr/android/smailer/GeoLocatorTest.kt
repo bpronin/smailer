@@ -27,7 +27,7 @@ class GeoLocatorTest : BaseTest() {
     fun setUp() {
         database = Database(targetContext, "test.sqlite")
         database.destroy()
-        database.putLastLocation(GeoCoordinates(50.0, 60.0))
+        database.lastLocation = GeoCoordinates(50.0, 60.0)
     }
 
     @After

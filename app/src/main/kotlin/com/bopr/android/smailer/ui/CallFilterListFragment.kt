@@ -6,12 +6,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bopr.android.smailer.PhoneEventFilter
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_BLACKLIST
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_WHITELIST
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_BLACKLIST
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_WHITELIST
 import com.bopr.android.smailer.ui.CallFilterListFragment.Holder
 
 /**
@@ -38,8 +33,11 @@ abstract class CallFilterListFragment(private val settingName: String) : Editabl
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.action_log_clear) {
-            onClearData()
+        when (item.itemId) {
+            R.id.action_clear ->
+                onClearData()
+            R.id.action_sort ->
+                onSort()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -70,18 +68,11 @@ abstract class CallFilterListFragment(private val settingName: String) : Editabl
     }
 
     override fun loadItems(): Collection<String> {
-        return getItemsList(settings.callFilter).sorted()
+        return settings.getStringList(settingName)
     }
 
     override fun saveItems(items: Collection<String>) {
-        val filter = settings.callFilter
-
-        getItemsList(filter).apply {
-            clear()
-            addAll(items)
-        }
-
-        settings.callFilter = filter
+        settings.update { putStringList(settingName, items) }
     }
 
     override fun isValidItem(item: String): Boolean {
@@ -96,25 +87,14 @@ abstract class CallFilterListFragment(private val settingName: String) : Editabl
         holder.textView.text = getItemTitle(item)
     }
 
-    private fun getItemsList(filter: PhoneEventFilter): MutableCollection<String> {
-        return when (settingName) {
-            PREF_FILTER_PHONE_BLACKLIST ->
-                filter.phoneBlacklist
-            PREF_FILTER_PHONE_WHITELIST ->
-                filter.phoneWhitelist
-            PREF_FILTER_TEXT_BLACKLIST ->
-                filter.textBlacklist
-            PREF_FILTER_TEXT_WHITELIST ->
-                filter.textWhitelist
-            else ->
-                throw IllegalArgumentException()
-        }
-    }
-
     private fun onClearData() {
         ConfirmDialog(getString(R.string.ask_clear_list)) {
             saveItems(listOf())
         }.show(this)
+    }
+
+    private fun onSort() {
+        saveItems(loadItems().sorted())
     }
 
     inner class Holder(view: View) : RecyclerView.ViewHolder(view) {

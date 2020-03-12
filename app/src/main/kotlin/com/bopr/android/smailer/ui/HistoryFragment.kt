@@ -7,6 +7,7 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.view.*
+import android.view.LayoutInflater.from
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.StringRes
@@ -18,7 +19,6 @@ import com.bopr.android.smailer.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.PhoneEvent
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
-import com.bopr.android.smailer.PhoneEventFilter
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_BLACKLIST
@@ -38,7 +38,6 @@ import com.google.android.material.snackbar.Snackbar
 class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferenceChangeListener {
 
     private lateinit var database: Database
-    private lateinit var callFilter: PhoneEventFilter
     private lateinit var databaseListener: BroadcastReceiver
     private var defaultItemTextColor: Int = 0
     private var unreadItemTextColor: Int = 0
@@ -48,13 +47,15 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
 
         emptyTextRes = R.string.history_is_empty
 
-        defaultItemTextColor = requireContext().getColorFromAttr(android.R.attr.textColorSecondary)
-        unreadItemTextColor = requireContext().getColorFromAttr(android.R.attr.textColorPrimary)
+        val context = requireContext()
+
+        defaultItemTextColor = context.getColorFromAttr(android.R.attr.textColorSecondary)
+        unreadItemTextColor = context.getColorFromAttr(android.R.attr.textColorPrimary)
 
         settings.registerOnSharedPreferenceChangeListener(this)
 
-        database = Database(requireContext())
-        databaseListener = registerDatabaseListener(requireContext()) {
+        database = Database(context)
+        databaseListener = context.registerDatabaseListener {
             refreshItems()
         }
     }
@@ -73,18 +74,18 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
     override fun onDestroy() {
         super.onDestroy()
         settings.unregisterOnSharedPreferenceChangeListener(this)
-        unregisterDatabaseListener(requireContext(), databaseListener)
+        requireContext().unregisterDatabaseListener(databaseListener)
         database.close()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_list, menu)
+        inflater.inflate(R.menu.menu_history, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.action_log_clear -> {
+            R.id.action_clear -> {
                 onClearData()
                 true
             }
@@ -104,8 +105,8 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
             menu.removeItem(R.id.action_ignore)
         }
 
-        val blacklisted = containsPhone(callFilter.phoneBlacklist, item.phone)
-        val whitelisted = containsPhone(callFilter.phoneWhitelist, item.phone)
+        val blacklisted = settings.getStringList(PREF_FILTER_PHONE_BLACKLIST).containsPhone(item.phone)
+        val whitelisted = settings.getStringList(PREF_FILTER_PHONE_WHITELIST).containsPhone(item.phone)
 
         if (blacklisted) {
             menu.removeItem(R.id.action_add_to_blacklist)
@@ -164,12 +165,11 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
     }
 
     override fun loadItems(): Collection<PhoneEvent> {
-        callFilter = settings.callFilter
         return database.events.list()
     }
 
     override fun createViewHolder(parent: ViewGroup): Holder {
-        val view = LayoutInflater.from(requireContext()).inflate(R.layout.list_item_log, parent, false)
+        val view = from(requireContext()).inflate(R.layout.list_item_log, parent, false)
         return Holder(view)
     }
 
@@ -202,17 +202,17 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
     }
 
     private fun onMarkAllAsRead() {
-        database.markAllAsRead(true)
+        database.markAllEventsAsRead(true)
         database.notifyChanged()
         showToast(R.string.operation_complete)
     }
 
     private fun onAddToBlacklist() {
-        addSelectedItemToFilter(callFilter.phoneBlacklist, R.string.add_to_blacklist)
+        addSelectedItemToFilter(PREF_FILTER_PHONE_BLACKLIST, R.string.add_to_blacklist)
     }
 
     private fun onAddToWhitelist() {
-        addSelectedItemToFilter(callFilter.phoneWhitelist, R.string.add_to_whitelist)
+        addSelectedItemToFilter(PREF_FILTER_PHONE_WHITELIST, R.string.add_to_whitelist)
     }
 
     private fun onMarkAsIgnored() {
@@ -225,9 +225,16 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
 
     private fun onRemoveFromLists() {
         getSelectedItem()?.let {
-            callFilter.phoneWhitelist.remove(it.phone)
-            callFilter.phoneBlacklist.remove(it.phone)
-            settings.callFilter = callFilter
+            settings.run {
+                val blacklist = getStringList(PREF_FILTER_PHONE_BLACKLIST)
+                val whitelist = getStringList(PREF_FILTER_PHONE_WHITELIST)
+                blacklist.remove(it.phone)
+                whitelist.remove(it.phone)
+                update {
+                    putStringList(PREF_FILTER_PHONE_BLACKLIST, blacklist)
+                    putStringList(PREF_FILTER_PHONE_WHITELIST, whitelist)
+                }
+            }
 
             showToast(getString(R.string.phone_removed_from_filter, it.phone))
         }
@@ -240,8 +247,8 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
         database.notifyChanged()
 
         Snackbar.make(recycler,
-                getQuantityString(R.plurals.items_removed, events.size),
-                Snackbar.LENGTH_LONG)
+                        getQuantityString(R.plurals.items_removed, events.size),
+                        Snackbar.LENGTH_LONG)
                 .setActionTextColor(ContextCompat.getColor(requireContext(), R.color.colorAccentText))
                 .setAction(R.string.undo) {
                     database.putEvents(events)
@@ -250,18 +257,21 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
                 .show()
     }
 
-    private fun addSelectedItemToFilter(list: MutableList<String>, @StringRes titleRes: Int) {
+    private fun addSelectedItemToFilter(settingName: String, @StringRes titleRes: Int) {
         getSelectedItem()?.let {
             EditPhoneDialogFragment().apply {
                 setTitle(titleRes)
                 setValue(it.phone)
                 setOnOkClicked { value ->
                     if (!value.isNullOrEmpty()) {
-                        if (list.contains(value)) {
-                            showToast(getString(R.string.item_already_exists, value))
-                        } else {
-                            list.add(value)
-                            settings.callFilter = callFilter
+                        settings.run {
+                            val list = getStringList(settingName)
+                            if (list.contains(value)) {
+                                showToast(getString(R.string.item_already_exists, value))
+                            } else {
+                                list.add(value)
+                                update { putStringList(settingName, list) }
+                            }
                         }
                     }
                 }

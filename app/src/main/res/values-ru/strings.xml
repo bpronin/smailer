@@ -62,9 +62,11 @@
     <string name="item_already_exists">%s уже существует</string>
     <string name="last_known_location">Последнее известное местоположение: %s</string>
     <string name="list_is_empty">Список пуст</string>
+    <string name="mail_items_zero">Нет сервисной почты</string>
     <string name="mark_all_as_read">Отметить все как прочитанные</string>
     <string name="missed_call">Пропущенный звонок</string>
     <string name="missed_call_from">Пропущенный звонок от</string>
+    <string name="new_history_items_zero">Нет новых записей</string>
     <string name="no_access_to_google_account">Необходимо разрешение на доступ приложения к аккаунту Google</string>
     <string name="no_account_specified">Не указан аккаунт исходящей почты.</string>
     <string name="no_permission_read_location">нет разрешения на определение местоположения</string>
@@ -132,6 +134,7 @@
     <string name="service_account_not_found">Сервисный аккаунт не найден</string>
     <string name="service_running">Служба запущена</string>
     <string name="since_permissions_not_granted">Некоторые настройки отключены, поскольку разрешения не получены.</string>
+    <string name="sort">Сортировать</string>
     <string name="status">Состояние</string>
     <string name="sync_blacklist_and_log">Синхронизировать чёрный и белый списки и журнал звонков между устройствами</string>
     <string name="synchronization">Синхронизация</string>
@@ -168,7 +171,6 @@
         <item quantity="other">%d записей удалено</item>
     </plurals>
 
-    <string name="new_history_items_zero">Нет новых записей</string>
     <plurals name="new_history_items">
         <item quantity="one">%d новая запись</item>
         <item quantity="few">%d новых записей</item>
@@ -176,7 +178,6 @@
         <item quantity="other">%d новых записей</item>
     </plurals>
 
-    <string name="mail_items_zero">Нет сервисной почты</string>
     <plurals name="mail_items">
         <item quantity="one">Получено %d сообщение</item>
         <item quantity="few">Получено %d сообщения</item>

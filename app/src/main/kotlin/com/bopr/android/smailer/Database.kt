@@ -1,6 +1,9 @@
 package com.bopr.android.smailer
 
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteDatabase.CONFLICT_IGNORE
@@ -44,7 +47,7 @@ class Database constructor(private val context: Context, private val name: Strin
         get() = PhoneEventRowSet(query(
                 table = TABLE_EVENTS,
                 selection = "$COLUMN_STATE=?",
-                args = strings(STATE_PENDING),
+                selectionArgs = strings(STATE_PENDING),
                 order = "$COLUMN_START_TIME DESC"
         ))
 
@@ -63,7 +66,7 @@ class Database constructor(private val context: Context, private val name: Strin
     /**
      * Returns last saved geolocation.
      */
-    val lastLocation: GeoCoordinates?
+    var lastLocation: GeoCoordinates?
         get() = query(
                 table = TABLE_SYSTEM,
                 columns = strings(COLUMN_LAST_LATITUDE, COLUMN_LAST_LONGITUDE),
@@ -74,9 +77,19 @@ class Database constructor(private val context: Context, private val name: Strin
                     it.getDouble(COLUMN_LAST_LONGITUDE)
             )
         }
+        set(value) {
+            helper.writableDatabase.update(TABLE_SYSTEM, values {
+                put(COLUMN_LAST_LATITUDE, value?.latitude)
+                put(COLUMN_LAST_LONGITUDE, value?.longitude)
+                put(COLUMN_LAST_LOCATION_TIME, currentTimeMillis())
+            }, "$COLUMN_ID=0", null)
+            modified = true
+
+            log.debug("Updated last location")
+        }
 
     fun putEvent(event: PhoneEvent) {
-        val values = ContentValues().apply {
+        val values = values {
             put(COLUMN_PHONE, event.phone)
             put(COLUMN_ACCEPTOR, event.acceptor)
             put(COLUMN_START_TIME, event.startTime)
@@ -103,7 +116,6 @@ class Database constructor(private val context: Context, private val name: Strin
                 log.debug("Inserted: $values")
             }
         }
-
         modified = true
     }
 
@@ -145,32 +157,15 @@ class Database constructor(private val context: Context, private val name: Strin
     /**
      * Marks all events as read.
      */
-    fun markAllAsRead(read: Boolean) {
+    fun markAllEventsAsRead(read: Boolean) {
         helper.writableDatabase.batch {
-            val values = ContentValues().apply {
+            update(TABLE_EVENTS, values {
                 put(COLUMN_READ, read)
-            }
-
-            update(TABLE_EVENTS, values, null, null)
+            }, null, null)
         }
         modified = true
 
         log.debug("All events marked as read")
-    }
-
-    /**
-     * Saves geolocation.
-     *
-     * @param coordinates location
-     */
-    fun putLastLocation(coordinates: GeoCoordinates) {
-        val values = ContentValues().apply {
-            put(COLUMN_LAST_LATITUDE, coordinates.latitude)
-            put(COLUMN_LAST_LONGITUDE, coordinates.longitude)
-            put(COLUMN_LAST_LOCATION_TIME, currentTimeMillis())
-        }
-
-        helper.writableDatabase.update(TABLE_SYSTEM, values, "$COLUMN_ID=0", null)
     }
 
     /**
@@ -180,8 +175,8 @@ class Database constructor(private val context: Context, private val name: Strin
         if (modified) {
             log.debug("Broadcasting data changed")
 
-            LocalBroadcastManager.getInstance(context).sendBroadcast(Intent(DATABASE_EVENT))
             modified = false
+            LocalBroadcastManager.getInstance(context).sendBroadcast(Intent(DATABASE_EVENT))
         }
     }
 
@@ -195,7 +190,7 @@ class Database constructor(private val context: Context, private val name: Strin
     }
 
     /**
-     * Physically deletes database.
+     * Physically deletes database file.
      */
     fun destroy() {
         context.deleteDatabase(name)
@@ -204,9 +199,9 @@ class Database constructor(private val context: Context, private val name: Strin
     }
 
     private fun query(table: String, projection: Array<String>? = null, selection: String? = null,
-                      args: Array<String>? = null, groupBy: String? = null,
+                      selectionArgs: Array<String>? = null, groupBy: String? = null,
                       having: String? = null, order: String? = null): Cursor {
-        return helper.readableDatabase.query(table, projection, selection, args,
+        return helper.readableDatabase.query(table, projection, selection, selectionArgs,
                 groupBy, having, order)
     }
 
@@ -216,9 +211,9 @@ class Database constructor(private val context: Context, private val name: Strin
             db.execSQL(SQL_CREATE_SYSTEM)
             db.execSQL(SQL_CREATE_EVENTS)
 
-            val values = ContentValues()
-            values.put(COLUMN_ID, 0)
-            db.insert(TABLE_SYSTEM, null, values)
+            db.insert(TABLE_SYSTEM, null, values {
+                put(COLUMN_ID, 0)
+            })
 
             log.debug("Created")
         }
@@ -314,7 +309,7 @@ class Database constructor(private val context: Context, private val name: Strin
         private const val DB_VERSION = 7
         private const val DATABASE_EVENT = "database-event"
         private const val TABLE_SYSTEM = "system_data"
-        const val TABLE_EVENTS = "phone_events"
+        private const val TABLE_EVENTS = "phone_events"
 
         private const val SQL_CREATE_SYSTEM = "CREATE TABLE " + TABLE_SYSTEM + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY, " +
@@ -342,25 +337,34 @@ class Database constructor(private val context: Context, private val name: Strin
                 "PRIMARY KEY (" + COLUMN_START_TIME + ", " + COLUMN_ACCEPTOR + ")" +
                 ")"
 
-        fun registerDatabaseListener(context: Context, listener: BroadcastReceiver) {
-            LocalBroadcastManager.getInstance(context).registerReceiver(listener, IntentFilter(DATABASE_EVENT))
+        /**
+         * Registers database broadcast receiver.
+         */
+        fun Context.registerDatabaseListener(listener: BroadcastReceiver) {
+            LocalBroadcastManager.getInstance(this).registerReceiver(listener, IntentFilter(DATABASE_EVENT))
 
             log.debug("Listener registered")
         }
 
-        fun registerDatabaseListener(context: Context, onChange: () -> Unit): BroadcastReceiver {
+        /**
+         * Creates and registers database broadcast receiver.
+         */
+        fun Context.registerDatabaseListener(onChange: () -> Unit): BroadcastReceiver {
             val listener = object : BroadcastReceiver() {
 
                 override fun onReceive(context: Context?, intent: Intent?) {
                     onChange()
                 }
             }
-            registerDatabaseListener(context, listener)
+            registerDatabaseListener(listener)
             return listener
         }
 
-        fun unregisterDatabaseListener(context: Context, listener: BroadcastReceiver) {
-            LocalBroadcastManager.getInstance(context).unregisterReceiver(listener)
+        /**
+         * Unregisters database broadcast receiver.
+         */
+        fun Context.unregisterDatabaseListener(listener: BroadcastReceiver) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(listener)
 
             log.debug("Listener unregistered")
         }

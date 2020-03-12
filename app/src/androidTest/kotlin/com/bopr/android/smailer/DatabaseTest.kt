@@ -179,7 +179,7 @@ class DatabaseTest : BaseTest() {
 
     @Test
     fun testSaveLoadLocation() {
-        database.putLastLocation(GeoCoordinates(30.0, 60.0))
+        database.lastLocation = GeoCoordinates(30.0, 60.0)
         val actual = database.lastLocation!!
 
         assertEquals(30.0, actual.latitude, 0.1)

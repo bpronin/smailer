@@ -13,6 +13,14 @@ import java.util.*
 class Settings(context: Context, name: String = PREFERENCES_STORAGE_NAME) :
         SharedPreferencesWrapper(context.getSharedPreferences(name, MODE_PRIVATE)) {
 
+//    var phoneBlacklist: List<String>
+//        get() = getStringList(PREF_FILTER_PHONE_BLACKLIST)
+//        set(value) = update { putStringList(PREF_FILTER_PHONE_BLACKLIST, value) }
+//
+//    var phoneWhitelist: List<String>
+//        get() = getStringList(PREF_FILTER_PHONE_WHITELIST)
+//        set(value) = update { putStringList(PREF_FILTER_PHONE_WHITELIST, value) }
+
     val locale: Locale
         get() {
             val value = getString(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)!!
@@ -28,7 +36,7 @@ class Settings(context: Context, name: String = PREFERENCES_STORAGE_NAME) :
             }
         }
 
-    var callFilter: PhoneEventFilter
+    val callFilter: PhoneEventFilter
         get() {
             return PhoneEventFilter(
                     triggers = getStringSet(PREF_EMAIL_TRIGGERS),
@@ -38,25 +46,17 @@ class Settings(context: Context, name: String = PREFERENCES_STORAGE_NAME) :
                     textWhitelist = getStringList(PREF_FILTER_TEXT_WHITELIST)
             )
         }
-        set(filter) = update {
-            putStringSet(PREF_EMAIL_TRIGGERS, filter.triggers)
-            putStringList(PREF_FILTER_PHONE_BLACKLIST, filter.phoneBlacklist)
-            putStringList(PREF_FILTER_PHONE_WHITELIST, filter.phoneWhitelist)
-            putStringList(PREF_FILTER_TEXT_BLACKLIST, filter.textBlacklist)
-            putStringList(PREF_FILTER_TEXT_WHITELIST, filter.textWhitelist)
-        }
-
 
     fun loadDefaults() = update {
         putInt(PREF_SETTINGS_VERSION, SETTINGS_VERSION)
-        putBooleanOptional(PREF_NOTIFY_SEND_SUCCESS, false)
         putStringOptional(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)
         putStringSetOptional(PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS)
-        putStringSetOptional(PREF_EMAIL_CONTENT, DEFAULT_CONTENT)
+        putStringSetOptional(PREF_EMAIL_CONTENT, DEFAULT_EMAIL_CONTENT)
         putBooleanOptional(PREF_REMOTE_CONTROL_ENABLED, false)
         putBooleanOptional(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS, true)
         putBooleanOptional(PREF_REMOTE_CONTROL_NOTIFICATIONS, true)
-        putBooleanOptional(PREF_SYNC_ENABLED, false)
+        putBooleanOptional(PREF_NOTIFY_SEND_SUCCESS, false)
+        putBooleanOptional(PREF_SYNC_ENABLED, true)
     }
 
     companion object {
@@ -98,7 +98,7 @@ class Settings(context: Context, name: String = PREFERENCES_STORAGE_NAME) :
         const val VAL_PREF_TRIGGER_OUT_CALLS = "out_calls"
         const val VAL_PREF_TRIGGER_OUT_SMS = "out_sms"
 
-        val DEFAULT_CONTENT: Set<String> = mutableSetOf(
+        val DEFAULT_EMAIL_CONTENT: Set<String> = mutableSetOf(
                 VAL_PREF_EMAIL_CONTENT_HEADER,
                 VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
                 VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT,

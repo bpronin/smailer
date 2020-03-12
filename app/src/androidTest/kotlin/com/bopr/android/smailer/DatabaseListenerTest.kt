@@ -30,14 +30,14 @@ class DatabaseListenerTest : BaseTest() {
 
     @After
     fun tearDown() {
-        unregisterDatabaseListener(targetContext, listener)
+        targetContext.unregisterDatabaseListener(listener)
         database.close()
     }
 
     @Test
     fun testListener() {
         val latch = CountDownLatch(1)
-        listener = registerDatabaseListener(targetContext) {
+        listener = targetContext.registerDatabaseListener {
             latch.countDown()
         }
 

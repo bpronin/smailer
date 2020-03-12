@@ -43,15 +43,17 @@ class MainFragment : BasePreferenceFragment() {
         authorizator = GoogleAuthorizationHelper(this, PREF_SENDER_ACCOUNT, GMAIL_SEND,
                 DriveScopes.DRIVE_APPDATA)
 
-        database = Database(requireContext())
-        databaseListener = registerDatabaseListener(requireContext()) {
+        val context = requireContext()
+
+        database = Database(context)
+        databaseListener = context.registerDatabaseListener {
             updateHistoryPreferenceView()
         }
     }
 
     override fun onDestroy() {
         database.close()
-        unregisterDatabaseListener(requireContext(), databaseListener)
+        requireContext().unregisterDatabaseListener(databaseListener)
         super.onDestroy()
     }
 
