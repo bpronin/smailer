@@ -63,14 +63,15 @@ class ContentObserverService : Service() {
     private fun processOutgoingSms(id: String) {
         log.debug("Processing outgoing sms: $id")
 
+        val context = this
         contentResolver.query(CONTENT_SMS_SENT, null, "_id=?", arrayOf(id), null)?.useFirst {
-            val date = it.getLong("date")
-            startCallProcessingService(this, PhoneEvent(
-                    phone = it.getString("address")!!,
+            val date = getLong("date")
+            startCallProcessingService(context, PhoneEvent(
+                    phone = getString("address")!!,
                     isIncoming = false,
                     startTime = date,
                     endTime = date,
-                    text = it.getString("body"),
+                    text = getString("body"),
                     acceptor = deviceName()
             ))
         }

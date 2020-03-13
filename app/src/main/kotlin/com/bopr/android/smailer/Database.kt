@@ -9,9 +9,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteDatabase.CONFLICT_IGNORE
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
-import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.util.*
 import org.slf4j.LoggerFactory
 import java.io.Closeable
@@ -35,7 +33,7 @@ class Database constructor(private val context: Context, private val name: Strin
      * Returns all events.
      */
     val events: PhoneEventRowSet
-        get() = PhoneEventRowSet(query(
+        get() = PhoneEventRowSet(helper.readableDatabase.query(
                 table = TABLE_EVENTS,
                 order = "$COLUMN_START_TIME DESC"
         ))
@@ -44,7 +42,7 @@ class Database constructor(private val context: Context, private val name: Strin
      * Returns pending events.
      */
     val pendingEvents: PhoneEventRowSet
-        get() = PhoneEventRowSet(query(
+        get() = PhoneEventRowSet(helper.readableDatabase.query(
                 table = TABLE_EVENTS,
                 selection = "$COLUMN_STATE=?",
                 selectionArgs = strings(STATE_PENDING),
@@ -55,26 +53,26 @@ class Database constructor(private val context: Context, private val name: Strin
      * Returns count of unread events.
      */
     val unreadEventsCount: Long
-        get() = query(
+        get() = helper.readableDatabase.query(
                 table = TABLE_EVENTS,
                 projection = strings(COLUMN_COUNT),
                 selection = "$COLUMN_READ<>1"
         ).useFirst {
-            it.getLong(0)
+            getLong(0)
         }!!
 
     /**
      * Returns last saved geolocation.
      */
     var lastLocation: GeoCoordinates?
-        get() = query(
+        get() = helper.readableDatabase.query(
                 table = TABLE_SYSTEM,
                 projection = strings(COLUMN_LAST_LATITUDE, COLUMN_LAST_LONGITUDE),
                 selection = "$COLUMN_ID=0"
         ).useFirst {
             GeoCoordinates(
-                    it.getDouble(COLUMN_LAST_LATITUDE),
-                    it.getDouble(COLUMN_LAST_LONGITUDE)
+                    getDouble(COLUMN_LAST_LATITUDE),
+                    getDouble(COLUMN_LAST_LONGITUDE)
             )
         }
         set(value) {
@@ -210,91 +208,61 @@ class Database constructor(private val context: Context, private val name: Strin
     /**
      * Physically deletes database file.
      */
-    fun destroy() {
+    fun clean() {
         context.deleteDatabase(name)
 
         log.debug("Destroyed")
     }
 
-    private fun query(table: String, projection: Array<String>? = null, selection: String? = null,
-                      selectionArgs: Array<String>? = null, groupBy: String? = null,
-                      having: String? = null, order: String? = null): Cursor {
-        return helper.readableDatabase.query(table, projection, selection, selectionArgs,
-                groupBy, having, order)
-    }
-
     private inner class DbHelper(context: Context) : SQLiteOpenHelper(context, name, null, DB_VERSION) {
 
         override fun onCreate(db: SQLiteDatabase) {
-            db.execSQL(SQL_CREATE_SYSTEM)
-            db.execSQL(SQL_CREATE_EVENTS)
+            db.batch {
+                execSQL(SQL_CREATE_SYSTEM)
+                execSQL(SQL_CREATE_EVENTS)
 
-            db.insert(TABLE_SYSTEM, null, values {
-                put(COLUMN_ID, 0)
-            })
+                insert(TABLE_SYSTEM, null, values { put(COLUMN_ID, 0) })
 
-            log.debug("Created")
+                log.debug("Created")
+            }
         }
 
         override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) { /* see https://www.techonthenet.com/sqlite/tables/alter_table.php */
-            if (oldVersion < DB_VERSION) {
+            if (DB_VERSION > oldVersion) {
                 log.warn("Database upgrade from $oldVersion to: $DB_VERSION")
 
-                db.replaceTable(TABLE_EVENTS, SQL_CREATE_EVENTS, ::convertEventsColumns)
+                db.alterTable(TABLE_SYSTEM, SQL_CREATE_SYSTEM)
+                db.alterTable(TABLE_EVENTS, SQL_CREATE_EVENTS)
             }
 
             log.debug("Upgraded")
-        }
-
-        private fun convertEventsColumns(column: String, cursor: Cursor): String? {
-            val value = cursor.getString(column)
-
-            when (column) {
-                COLUMN_STATE -> {
-                    when (value) {
-                        "PENDING" ->
-                            return STATE_PENDING.toString()
-                        "IGNORED" ->
-                            return STATE_IGNORED.toString()
-                        "PROCESSED" ->
-                            return STATE_PROCESSED.toString()
-                    }
-                }
-                COLUMN_ACCEPTOR -> {
-                    return value ?: deviceName()
-                }
-            }
-
-            return value
         }
     }
 
     /**
      * Phone events row set.
      */
-    class PhoneEventRowSet(cursor: Cursor) : RowSet<PhoneEvent>(cursor) {
+    inner class PhoneEventRowSet(cursor: Cursor) : RowSet<PhoneEvent>(cursor) {
 
-        override fun get(cursor: Cursor): PhoneEvent {
-            return cursor.run {
-                PhoneEvent(
-                        phone = getString(COLUMN_PHONE)!!,
-                        isIncoming = getBoolean(COLUMN_IS_INCOMING),
-                        startTime = getLong(COLUMN_START_TIME),
-                        endTime = getLong(COLUMN_END_TIME),
-                        isMissed = getBoolean(COLUMN_IS_MISSED),
-                        text = getString(COLUMN_TEXT),
-                        location = GeoCoordinates(
-                                getDouble(COLUMN_LATITUDE),
-                                getDouble(COLUMN_LONGITUDE)
-                        ),
-                        details = getString(COLUMN_DETAILS),
-                        state = getInt(COLUMN_STATE),
-                        acceptor = getString(COLUMN_ACCEPTOR)!!,
-                        processStatus = getInt(COLUMN_PROCESS_STATUS),
-                        processTime = getLong(COLUMN_PROCESS_TIME),
-                        isRead = getBoolean(COLUMN_READ)
-                )
-            }
+        override fun Cursor.get(): PhoneEvent {
+            return PhoneEvent(
+                    phone = getString(COLUMN_PHONE)!!,
+                    isIncoming = getBoolean(COLUMN_IS_INCOMING),
+                    startTime = getLong(COLUMN_START_TIME),
+                    endTime = getLong(COLUMN_END_TIME),
+                    isMissed = getBoolean(COLUMN_IS_MISSED),
+                    text = getString(COLUMN_TEXT),
+                    location = GeoCoordinates(
+                            getDouble(COLUMN_LATITUDE),
+                            getDouble(COLUMN_LONGITUDE)
+                    ),
+                    details = getString(COLUMN_DETAILS),
+                    state = getInt(COLUMN_STATE),
+                    acceptor = getString(COLUMN_ACCEPTOR)!!,
+                    processStatus = getInt(COLUMN_PROCESS_STATUS),
+                    processTime = getLong(COLUMN_PROCESS_TIME),
+                    isRead = getBoolean(COLUMN_READ)
+            )
         }
     }
 
@@ -322,7 +290,6 @@ class Database constructor(private val context: Context, private val name: Strin
         const val COLUMN_LAST_LOCATION_TIME = "last_location_time"
         const val COLUMN_READ = "message_read"
         const val COLUMN_ACCEPTOR = "recipient"
-        private const val COLUMN_PURGE_TIME = "messages_purge_time"
 
         private const val DB_VERSION = 7
         private const val DATABASE_EVENT = "database-event"
@@ -333,7 +300,6 @@ class Database constructor(private val context: Context, private val name: Strin
 
         private const val SQL_CREATE_SYSTEM = "CREATE TABLE " + TABLE_SYSTEM + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY, " +
-                COLUMN_PURGE_TIME + " INTEGER," +
                 COLUMN_LAST_LATITUDE + " REAL," +
                 COLUMN_LAST_LONGITUDE + " REAL," +
                 COLUMN_LAST_LOCATION_TIME + " INTEGER" +

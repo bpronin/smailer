@@ -1,5 +1,6 @@
 package com.bopr.android.smailer.util
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
@@ -9,6 +10,13 @@ import android.database.sqlite.SQLiteDatabase
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
+
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
+fun SQLiteDatabase.query(table: String, projection: Array<String>? = null, selection: String? = null,
+                         selectionArgs: Array<String>? = null, groupBy: String? = null,
+                         having: String? = null, order: String? = null, limit: String? = null): Cursor {
+    return query(table, projection, selection, selectionArgs, groupBy, having, order, limit)
+}
 
 inline fun <T> SQLiteDatabase.batch(action: SQLiteDatabase.() -> T): T {
     beginTransaction()
@@ -21,45 +29,47 @@ inline fun <T> SQLiteDatabase.batch(action: SQLiteDatabase.() -> T): T {
     }
 }
 
-fun SQLiteDatabase.replaceTable(table: String, createSql: String,
-                                convert: (column: String, cursor: Cursor) -> String?) {
+@SuppressLint("Recycle")
+fun SQLiteDatabase.getTables(): Set<String> {
+    return query("sqlite_master", strings("name"), "type='table' AND name<>'android_metadata'")
+            .useToList { getString(0) }.toSet()
+}
+
+inline fun SQLiteDatabase.alterTable(table: String, createSql: String,
+                                     transform: Cursor.(String) -> String? = { getStringIfExist(it) }) {
+    val old = table + "_old"
     batch {
-        val old = table + "_old"
         execSQL("DROP TABLE IF EXISTS $old")
         execSQL("ALTER TABLE $table RENAME TO $old")
         execSQL(createSql)
-        copyTable(old, table, convert)
+        copyTable(old, table, transform)
         execSQL("DROP TABLE $old")
-        setTransactionSuccessful()
     }
 }
 
-private fun SQLiteDatabase.copyTable(tableFrom: String, tableTo: String,
-                                     convert: (column: String, cursor: Cursor) -> String?) {
-    val dst = query(tableTo, null, null, null, null, null, null)
-    val src = query(tableFrom, null, null, null, null, null, null)
-    val srcColumns = src.columnNames
-    val dstColumns = dst.columnNames
-    try {
-        src.moveToFirst()
-        while (!src.isAfterLast) {
-            val values = ContentValues()
-            for (column in dstColumns) {
-                if (srcColumns.contains(column)) {
-                    values.put(column, convert(column, src))
-                }
-            }
-            insert(tableTo, null, values)
-            src.moveToNext()
+@SuppressLint("Recycle")
+inline fun SQLiteDatabase.copyTable(srcTable: String, dstTable: String,
+                                    transform: Cursor.(String) -> String? = { getStringIfExist(it) }) {
+    val columns = query(table = dstTable, limit = "1").use {
+        it.columnNames
+    }
+
+    query(srcTable).useAll {
+        val values = ContentValues()
+        for (column in columns) {
+            values.put(column, transform(column))
         }
-    } finally {
-        src.close()
-        dst.close()
+        insert(dstTable, null, values)
     }
 }
 
 fun Cursor.getString(columnName: String): String? {
     return getString(getColumnIndex(columnName))
+}
+
+fun Cursor.getStringIfExist(columnName: String): String? {
+    val columnIndex = getColumnIndex(columnName)
+    return if (columnIndex != -1) getString(columnIndex) else null
 }
 
 fun Cursor.getInt(columnName: String): Int {
@@ -78,31 +88,27 @@ fun Cursor.getBoolean(columnName: String): Boolean {
     return getInt(columnName) != 0
 }
 
-inline fun <T> Cursor.useFirst(action: (Cursor) -> T): T? {
-    use {
+inline fun <T> Cursor.useFirst(action: Cursor.() -> T): T? {
+    return use {
         moveToFirst()
-        return if (!isAfterLast) {
-            action(it)
-        } else {
-            null
-        }
+        if (!isAfterLast) action() else null
     }
 }
 
-inline fun Cursor.useAll(action: (Cursor) -> Unit) {
+inline fun Cursor.useAll(action: Cursor.() -> Unit) {
     use {
         moveToFirst()
         while (!isAfterLast) {
-            action(it)
+            action()
             moveToNext()
         }
     }
 }
 
-inline fun <T> Cursor.useToList(get: (Cursor) -> T): List<T> {
+inline fun <T> Cursor.useToList(get: Cursor.() -> T): List<T> {
     val list = mutableListOf<T>()
     useAll {
-        list.add(get(it))
+        list.add(get())
     }
     return list
 }

@@ -12,10 +12,10 @@ abstract class RowSet<R>(private val cursor: Cursor) {
     /**
      * Transforms column values into object.
      */
-    protected abstract fun get(cursor: Cursor): R
+    protected abstract fun Cursor.get(): R
 
     fun first(): R? {
-        return cursor.useFirst { get(it) }
+        return cursor.useFirst { get() }
     }
 
     fun count(): Int {
@@ -27,7 +27,7 @@ abstract class RowSet<R>(private val cursor: Cursor) {
     }
 
     fun <T> map(transform: (R) -> T): List<T> {
-        return cursor.useToList { transform(get(it)) }
+        return cursor.useToList { transform(get()) }
     }
 
 }

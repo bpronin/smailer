@@ -195,7 +195,7 @@ class DebugFragment : BasePreferenceFragment() {
                 }),
                 createPreference("Destroy database", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        database.destroy()
+                        database.clean()
                         showToast(R.string.operation_complete)
                     }
                 })

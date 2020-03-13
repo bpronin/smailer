@@ -111,15 +111,10 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
         val blacklisted = settings.getStringList(PREF_FILTER_PHONE_BLACKLIST).containsPhone(item.phone)
         val whitelisted = settings.getStringList(PREF_FILTER_PHONE_WHITELIST).containsPhone(item.phone)
 
-        if (blacklisted) {
+        if (blacklisted || whitelisted) {
             menu.removeItem(R.id.action_add_to_blacklist)
-        }
-
-        if (whitelisted) {
             menu.removeItem(R.id.action_add_to_whitelist)
-        }
-
-        if (!blacklisted && !whitelisted) {
+        } else {
             menu.removeItem(R.id.action_remove_from_lists)
         }
     }
@@ -280,7 +275,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
                                      listName: String, phone: String) {
         val list = settings.getStringList(listName)
         list.find { samePhone(it, phone) }?.let {
-            edit.putStringList(PREF_FILTER_PHONE_BLACKLIST, list.apply { remove(it) })
+            edit.putStringList(listName, list.apply { remove(it) })
         }
     }
 

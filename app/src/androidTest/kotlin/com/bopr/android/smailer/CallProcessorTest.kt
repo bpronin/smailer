@@ -110,7 +110,7 @@ class CallProcessorTest : BaseTest() {
         notifications = mock()
 
         database = Database(targetContext, "test.sqlite") /* not a mock context here! */
-        database.destroy()
+        database.clean()
 
         processor = CallProcessor(context, database, transport, notifications, geoLocator)
     }

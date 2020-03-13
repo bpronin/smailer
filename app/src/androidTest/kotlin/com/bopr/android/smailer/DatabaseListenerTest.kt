@@ -25,7 +25,7 @@ class DatabaseListenerTest : BaseTest() {
     @Before
     fun setUp() {
         database = Database(targetContext, "test.sqlite")
-        database.destroy()
+        database.clean()
     }
 
     @After
