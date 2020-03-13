@@ -229,13 +229,13 @@ class Database constructor(private val context: Context, private val name: Strin
 
         override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) { /* see https://www.techonthenet.com/sqlite/tables/alter_table.php */
             if (DB_VERSION > oldVersion) {
-                log.warn("Database upgrade from $oldVersion to: $DB_VERSION")
+                db.batch {
+                    alterTable(TABLE_SYSTEM, SQL_CREATE_SYSTEM)
+                    alterTable(TABLE_EVENTS, SQL_CREATE_EVENTS)
+                }
 
-                db.alterTable(TABLE_SYSTEM, SQL_CREATE_SYSTEM)
-                db.alterTable(TABLE_EVENTS, SQL_CREATE_EVENTS)
+                log.warn("Database upgraded from $oldVersion to: $DB_VERSION")
             }
-
-            log.debug("Upgraded")
         }
     }
 
