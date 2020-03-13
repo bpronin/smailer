@@ -90,16 +90,16 @@ class Database constructor(private val context: Context, private val name: Strin
 
     var phoneBlacklist: List<String>
         get() = getFilterList(TABLE_PHONE_BLACKLIST)
-        set(value) = putFilterList(TABLE_PHONE_BLACKLIST, value)
+        set(value) = replaceFilterList(TABLE_PHONE_BLACKLIST, value)
     var phoneWhitelist: List<String>
         get() = getFilterList(TABLE_PHONE_WHITELIST)
-        set(value) = putFilterList(TABLE_PHONE_WHITELIST, value)
+        set(value) = replaceFilterList(TABLE_PHONE_WHITELIST, value)
     var textBlacklist: List<String>
         get() = getFilterList(TABLE_TEXT_BLACKLIST)
-        set(value) = putFilterList(TABLE_TEXT_BLACKLIST, value)
+        set(value) = replaceFilterList(TABLE_TEXT_BLACKLIST, value)
     var textWhitelist: List<String>
         get() = getFilterList(TABLE_TEXT_WHITELIST)
-        set(value) = putFilterList(TABLE_TEXT_WHITELIST, value)
+        set(value) = replaceFilterList(TABLE_TEXT_WHITELIST, value)
 
     /**
      * Puts event to database.
@@ -193,7 +193,7 @@ class Database constructor(private val context: Context, private val name: Strin
         return query(listName).useToList { it.getString(COLUMN_VALUE)!! }
     }
 
-    fun putFilterList(listName: String, items: Collection<String>) {
+    fun replaceFilterList(listName: String, items: Collection<String>) {
         helper.writableDatabase.batch {
             delete(listName, null, null)
             log.debug("Removed all from $listName")
