@@ -176,43 +176,43 @@ class Database constructor(private val context: Context, private val name: Strin
         log.debug("All events marked as read")
     }
 
-    fun getFilterList(listTable: String): List<String> {
-        return query(listTable).useToList { it.getString(COLUMN_TEXT)!! }
+    fun getFilterList(listName: String): List<String> {
+        return query(listName).useToList { it.getString(COLUMN_VALUE)!! }
     }
 
-    fun putFilterListItem(listTable: String, item: String): Boolean {
+    fun putFilterListItem(listName: String, item: String): Boolean {
         helper.writableDatabase.run {
             val values = values {
-                put(COLUMN_TEXT, item)
+                put(COLUMN_VALUE, item)
             }
-            return if (insertWithOnConflict(listTable, null, values, CONFLICT_IGNORE) == -1L) {
+            return if (insertWithOnConflict(listName, null, values, CONFLICT_IGNORE) == -1L) {
                 log.debug("Already exists: $values")
                 false
             } else {
                 log.debug("Inserted: $values")
 
-                modifiedTables.add(listTable)
+                modifiedTables.add(listName)
                 true
             }
         }
     }
 
-    fun deleteFilterListItem(listTable: String, item: String): Boolean {
+    fun deleteFilterListItem(listName: String, item: String): Boolean {
         var affected = 0
         helper.writableDatabase.batch {
-           affected = delete(listTable, "$COLUMN_TEXT=?", strings(item))
+           affected = delete(listName, "$COLUMN_VALUE=?", strings(item))
         }
-        modifiedTables.add(listTable)
+        modifiedTables.add(listName)
         return affected != 0
     }
 
-    fun replaceFilterList(listTable: String, items: Collection<String>) {
+    fun replaceFilterList(listName: String, items: Collection<String>) {
         helper.writableDatabase.batch {
-            delete(listTable, null, null)
-            log.debug("Removed all from $listTable")
+            delete(listName, null, null)
+            log.debug("Removed all from $listName")
 
             for (item in items) {
-                putFilterListItem(listTable, item)
+                putFilterListItem(listName, item)
             }
         }
     }
@@ -328,6 +328,7 @@ class Database constructor(private val context: Context, private val name: Strin
         const val COLUMN_LATITUDE = "latitude"
         const val COLUMN_LONGITUDE = "longitude"
         const val COLUMN_TEXT = "message_text"
+        const val COLUMN_VALUE = "value"
         const val COLUMN_DETAILS = "details"
         const val COLUMN_START_TIME = "start_time"
         const val COLUMN_END_TIME = "end_time"
@@ -377,7 +378,7 @@ class Database constructor(private val context: Context, private val name: Strin
                 ")"
 
         private fun SQL_CREATE_LIST(tableName: String) = "CREATE TABLE " + tableName + " (" +
-                COLUMN_TEXT + " TEXT(256) NOT NULL PRIMARY KEY" +
+                COLUMN_VALUE + " TEXT(256) NOT NULL PRIMARY KEY" +
                 ")"
 
         /**
