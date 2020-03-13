@@ -3,14 +3,16 @@ package com.bopr.android.smailer.remote
 import androidx.annotation.StringDef
 import kotlin.annotation.AnnotationRetention.SOURCE
 
-internal data class RemoteControlTask(val acceptor: String?, @Action var action: String? = null) {
+internal data class RemoteControlTask(val acceptor: String?, @Action var action: String? = null,
+                                      val arguments: MutableMap<String, String?> = mutableMapOf()) {
 
-    val arguments: MutableMap<String, String?> = mutableMapOf()
+    constructor(acceptor: String?, @Action action: String? = null,
+                argument: String?) : this(acceptor, action, mutableMapOf(VALUE to argument))
 
     var argument: String?
-        get() = arguments["value"]
+        get() = arguments[VALUE]
         set(value) {
-            arguments["value"] = value
+            arguments[VALUE] = value
         }
 
     @StringDef(
@@ -28,6 +30,9 @@ internal data class RemoteControlTask(val acceptor: String?, @Action var action:
     annotation class Action
 
     companion object {
+
+        const val VALUE = "value"
+
         const val ADD_PHONE_TO_BLACKLIST = "add_phone_to_blacklist"
         const val REMOVE_PHONE_FROM_BLACKLIST = "remove_phone_from_blacklist"
         const val ADD_PHONE_TO_WHITELIST = "add_phone_to_whitelist"

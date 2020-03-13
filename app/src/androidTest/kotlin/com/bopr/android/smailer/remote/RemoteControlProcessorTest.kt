@@ -61,9 +61,9 @@ class RemoteControlProcessorTest : BaseTest() {
     fun testAddPhoneToBlacklist() {
         val processor = RemoteControlProcessor(context, settings, notifications)
 
-        processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_BLACKLIST).apply { argument = "100" })
-        processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_BLACKLIST).apply { argument = "200" })
-        processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_BLACKLIST).apply { argument = "+2-00" }) /* should be ignored */
+        processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_BLACKLIST, "100"))
+        processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_BLACKLIST, "200"))
+        processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_BLACKLIST, "+2-00")) /* should be ignored */
 
         assertEquals("100,200", settings.getString(PREF_FILTER_PHONE_BLACKLIST))
         verify(notifications).showRemoteAction(
@@ -76,9 +76,9 @@ class RemoteControlProcessorTest : BaseTest() {
     fun testAddPhoneToWhitelist() {
         val processor = RemoteControlProcessor(context, settings, notifications)
 
-        processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_WHITELIST).apply { argument = "100" })
-        processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_WHITELIST).apply { argument = "200" })
-        processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_WHITELIST).apply { argument = "+2-00" }) /* should be ignored */
+        processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_WHITELIST, "100"))
+        processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_WHITELIST, "200"))
+        processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_WHITELIST, "+2-00")) /* should be ignored */
 
         assertEquals("100,200", settings.getString(PREF_FILTER_PHONE_WHITELIST))
         verify(notifications).showRemoteAction(
@@ -91,9 +91,9 @@ class RemoteControlProcessorTest : BaseTest() {
     fun testAddTextToBlacklist() {
         val processor = RemoteControlProcessor(context, settings, notifications)
 
-        processor.performTask(RemoteControlTask("device", ADD_TEXT_TO_BLACKLIST).apply { argument = "100" })
-        processor.performTask(RemoteControlTask("device", ADD_TEXT_TO_BLACKLIST).apply { argument = "200" })
-        processor.performTask(RemoteControlTask("device", ADD_TEXT_TO_BLACKLIST).apply { argument = "200" }) /* should be ignored */
+        processor.performTask(RemoteControlTask("device", ADD_TEXT_TO_BLACKLIST, "100"))
+        processor.performTask(RemoteControlTask("device", ADD_TEXT_TO_BLACKLIST, "200"))
+        processor.performTask(RemoteControlTask("device", ADD_TEXT_TO_BLACKLIST, "200")) /* should be ignored */
 
         assertEquals("100,200", settings.getString(PREF_FILTER_TEXT_BLACKLIST))
         verify(notifications).showRemoteAction(
@@ -106,9 +106,9 @@ class RemoteControlProcessorTest : BaseTest() {
     fun testAddTextToWhitelist() {
         val processor = RemoteControlProcessor(context, settings, notifications)
 
-        processor.performTask(RemoteControlTask("device", ADD_TEXT_TO_WHITELIST).apply { argument = "100" })
-        processor.performTask(RemoteControlTask("device", ADD_TEXT_TO_WHITELIST).apply { argument = "200" })
-        processor.performTask(RemoteControlTask("device", ADD_TEXT_TO_WHITELIST).apply { argument = "200" }) /* should be ignored */
+        processor.performTask(RemoteControlTask("device", ADD_TEXT_TO_WHITELIST, "100"))
+        processor.performTask(RemoteControlTask("device", ADD_TEXT_TO_WHITELIST, "200"))
+        processor.performTask(RemoteControlTask("device", ADD_TEXT_TO_WHITELIST, "200")) /* should be ignored */
 
         assertEquals("100,200", settings.getString(PREF_FILTER_TEXT_WHITELIST))
         verify(notifications).showRemoteAction(
@@ -125,8 +125,8 @@ class RemoteControlProcessorTest : BaseTest() {
 
         val processor = RemoteControlProcessor(context, settings, notifications)
 
-        processor.performTask(RemoteControlTask("device", REMOVE_PHONE_FROM_BLACKLIST).apply { argument = "100" })
-        processor.performTask(RemoteControlTask("device", REMOVE_PHONE_FROM_BLACKLIST).apply { argument = "+2-00" })
+        processor.performTask(RemoteControlTask("device", REMOVE_PHONE_FROM_BLACKLIST, "100"))
+        processor.performTask(RemoteControlTask("device", REMOVE_PHONE_FROM_BLACKLIST, "+2-00"))
 
         assertEquals("300", settings.getString(PREF_FILTER_PHONE_BLACKLIST))
         verify(notifications).showRemoteAction(
@@ -143,8 +143,8 @@ class RemoteControlProcessorTest : BaseTest() {
 
         val processor = RemoteControlProcessor(context, settings, notifications)
 
-        processor.performTask(RemoteControlTask("device", REMOVE_PHONE_FROM_WHITELIST).apply { argument = "100" })
-        processor.performTask(RemoteControlTask("device", REMOVE_PHONE_FROM_WHITELIST).apply { argument = "+2-00" })
+        processor.performTask(RemoteControlTask("device", REMOVE_PHONE_FROM_WHITELIST, "100"))
+        processor.performTask(RemoteControlTask("device", REMOVE_PHONE_FROM_WHITELIST, "+2-00"))
 
         assertEquals("300", settings.getString(PREF_FILTER_PHONE_WHITELIST))
         verify(notifications).showRemoteAction(
@@ -161,8 +161,8 @@ class RemoteControlProcessorTest : BaseTest() {
 
         val processor = RemoteControlProcessor(context, settings, notifications)
 
-        processor.performTask(RemoteControlTask("device", REMOVE_TEXT_FROM_BLACKLIST).apply { argument = "100" })
-        processor.performTask(RemoteControlTask("device", REMOVE_TEXT_FROM_BLACKLIST).apply { argument = "200" })
+        processor.performTask(RemoteControlTask("device", REMOVE_TEXT_FROM_BLACKLIST, "100"))
+        processor.performTask(RemoteControlTask("device", REMOVE_TEXT_FROM_BLACKLIST, "200"))
 
         assertEquals("300", settings.getString(PREF_FILTER_TEXT_BLACKLIST))
         verify(notifications).showRemoteAction(
@@ -179,8 +179,8 @@ class RemoteControlProcessorTest : BaseTest() {
 
         val processor = RemoteControlProcessor(context, settings, notifications)
 
-        processor.performTask(RemoteControlTask("device", REMOVE_TEXT_FROM_WHITELIST).apply { argument = "100" })
-        processor.performTask(RemoteControlTask("device", REMOVE_TEXT_FROM_WHITELIST).apply { argument = "200" })
+        processor.performTask(RemoteControlTask("device", REMOVE_TEXT_FROM_WHITELIST, "100"))
+        processor.performTask(RemoteControlTask("device", REMOVE_TEXT_FROM_WHITELIST, "200"))
 
         assertEquals("300", settings.getString(PREF_FILTER_TEXT_WHITELIST))
         verify(notifications).showRemoteAction(

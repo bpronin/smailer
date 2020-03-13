@@ -2,6 +2,15 @@ package com.bopr.android.smailer.remote
 
 import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
+import com.bopr.android.smailer.remote.RemoteControlTask.Companion.ADD_PHONE_TO_BLACKLIST
+import com.bopr.android.smailer.remote.RemoteControlTask.Companion.ADD_PHONE_TO_WHITELIST
+import com.bopr.android.smailer.remote.RemoteControlTask.Companion.ADD_TEXT_TO_BLACKLIST
+import com.bopr.android.smailer.remote.RemoteControlTask.Companion.ADD_TEXT_TO_WHITELIST
+import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_PHONE_FROM_BLACKLIST
+import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_PHONE_FROM_WHITELIST
+import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_TEXT_FROM_BLACKLIST
+import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_TEXT_FROM_WHITELIST
+import com.bopr.android.smailer.remote.RemoteControlTask.Companion.SEND_SMS_TO_CALLER
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -61,7 +70,7 @@ class RemoteControlTaskParserTest : BaseTest() {
         val task = RemoteControlTaskParser().parse("To device \"Phone\": add phone to blacklist")!!
 
         assertEquals("Phone", task.acceptor)
-        assertEquals(RemoteControlTask.ADD_PHONE_TO_BLACKLIST, task.action)
+        assertEquals(ADD_PHONE_TO_BLACKLIST, task.action)
         assertNull(task.argument)
     }
 
@@ -79,7 +88,7 @@ class RemoteControlTaskParserTest : BaseTest() {
         val task = RemoteControlTaskParser().parse("To device \"Phone\": add phone +7905-09441 to blacklist")!!
 
         assertEquals("Phone", task.acceptor)
-        assertEquals(RemoteControlTask.ADD_PHONE_TO_BLACKLIST, task.action)
+        assertEquals(ADD_PHONE_TO_BLACKLIST, task.action)
         assertEquals("+7905-09441", task.argument)
     }
 
@@ -88,7 +97,7 @@ class RemoteControlTaskParserTest : BaseTest() {
         val task = RemoteControlTaskParser().parse("To device \"Phone\": add phone \"THE-PHONE\" to blacklist")!!
 
         assertEquals("Phone", task.acceptor)
-        assertEquals(RemoteControlTask.ADD_PHONE_TO_BLACKLIST, task.action)
+        assertEquals(ADD_PHONE_TO_BLACKLIST, task.action)
         assertEquals("THE-PHONE", task.argument)
     }
 
@@ -97,7 +106,7 @@ class RemoteControlTaskParserTest : BaseTest() {
         val task = RemoteControlTaskParser().parse("To device \"Phone\": add phone +7905-09441 to whitelist")!!
 
         assertEquals("Phone", task.acceptor)
-        assertEquals(RemoteControlTask.ADD_PHONE_TO_WHITELIST, task.action)
+        assertEquals(ADD_PHONE_TO_WHITELIST, task.action)
         assertEquals("+7905-09441", task.argument)
     }
 
@@ -106,7 +115,7 @@ class RemoteControlTaskParserTest : BaseTest() {
         val task = RemoteControlTaskParser().parse("To device \"Phone\": remove phone +7905-09441 from blacklist")!!
 
         assertEquals("Phone", task.acceptor)
-        assertEquals(RemoteControlTask.REMOVE_PHONE_FROM_BLACKLIST, task.action)
+        assertEquals(REMOVE_PHONE_FROM_BLACKLIST, task.action)
         assertEquals("+7905-09441", task.argument)
     }
 
@@ -115,7 +124,7 @@ class RemoteControlTaskParserTest : BaseTest() {
         val task = RemoteControlTaskParser().parse("To device \"Phone\": remove phone +7905-09441 from whitelist")!!
 
         assertEquals("Phone", task.acceptor)
-        assertEquals(RemoteControlTask.REMOVE_PHONE_FROM_WHITELIST, task.action)
+        assertEquals(REMOVE_PHONE_FROM_WHITELIST, task.action)
         assertEquals("+7905-09441", task.argument)
     }
 
@@ -124,7 +133,7 @@ class RemoteControlTaskParserTest : BaseTest() {
         val task = RemoteControlTaskParser().parse("To device \"Phone\": add text to blacklist")!!
 
         assertEquals("Phone", task.acceptor)
-        assertEquals(RemoteControlTask.ADD_TEXT_TO_BLACKLIST, task.action)
+        assertEquals(ADD_TEXT_TO_BLACKLIST, task.action)
         assertNull(task.argument)
     }
 
@@ -142,7 +151,7 @@ class RemoteControlTaskParserTest : BaseTest() {
         val task = RemoteControlTaskParser().parse("To device \"Phone\": add text \"Hello\" to blacklist")!!
 
         assertEquals("Phone", task.acceptor)
-        assertEquals(RemoteControlTask.ADD_TEXT_TO_BLACKLIST, task.action)
+        assertEquals(ADD_TEXT_TO_BLACKLIST, task.action)
         assertEquals("Hello", task.argument)
     }
 
@@ -151,7 +160,7 @@ class RemoteControlTaskParserTest : BaseTest() {
         val task = RemoteControlTaskParser().parse("To device \"Phone\": add text \"Hello\" to whitelist")!!
 
         assertEquals("Phone", task.acceptor)
-        assertEquals(RemoteControlTask.ADD_TEXT_TO_WHITELIST, task.action)
+        assertEquals(ADD_TEXT_TO_WHITELIST, task.action)
         assertEquals("Hello", task.argument)
     }
 
@@ -160,7 +169,7 @@ class RemoteControlTaskParserTest : BaseTest() {
         val task = RemoteControlTaskParser().parse("To device \"Phone\": remove text \"Hello\" from blacklist")!!
 
         assertEquals("Phone", task.acceptor)
-        assertEquals(RemoteControlTask.REMOVE_TEXT_FROM_BLACKLIST, task.action)
+        assertEquals(REMOVE_TEXT_FROM_BLACKLIST, task.action)
         assertEquals("Hello", task.argument)
     }
 
@@ -169,7 +178,7 @@ class RemoteControlTaskParserTest : BaseTest() {
         val task = RemoteControlTaskParser().parse("To device \"Phone\": remove text \"Hello\" from whitelist")!!
 
         assertEquals("Phone", task.acceptor)
-        assertEquals(RemoteControlTask.REMOVE_TEXT_FROM_WHITELIST, task.action)
+        assertEquals(REMOVE_TEXT_FROM_WHITELIST, task.action)
         assertEquals("Hello", task.argument)
     }
 
@@ -177,7 +186,7 @@ class RemoteControlTaskParserTest : BaseTest() {
     fun testParseSendSms() {
         val task = RemoteControlTaskParser().parse("To device \"The Device\": send SMS \"Message\nto caller\" to +12345")!!
 
-        assertEquals(RemoteControlTask.SEND_SMS_TO_CALLER, task.action)
+        assertEquals(SEND_SMS_TO_CALLER, task.action)
         assertEquals("The Device", task.acceptor)
         assertEquals("Message\nto caller", task.arguments["text"])
         assertEquals("+12345", task.arguments["phone"])
@@ -187,7 +196,7 @@ class RemoteControlTaskParserTest : BaseTest() {
     fun testParseSendSmsNoPhone() {
         val task = RemoteControlTaskParser().parse("To device \"The Device\": send SMS \"Message to caller\"")!!
 
-        assertEquals(RemoteControlTask.SEND_SMS_TO_CALLER, task.action)
+        assertEquals(SEND_SMS_TO_CALLER, task.action)
         assertEquals("The Device", task.acceptor)
         assertEquals("Message to caller", task.arguments["text"])
         assertNull(task.arguments["phone"])
@@ -197,7 +206,7 @@ class RemoteControlTaskParserTest : BaseTest() {
     fun testParseSendSmsNoText() {
         val task = RemoteControlTaskParser().parse("To device \"The Device\": send SMS to +12345")!!
 
-        assertEquals(RemoteControlTask.SEND_SMS_TO_CALLER, task.action)
+        assertEquals(SEND_SMS_TO_CALLER, task.action)
         assertEquals("The Device", task.acceptor)
         assertNull(task.arguments["text"])
         assertEquals("+12345", task.arguments["phone"])
