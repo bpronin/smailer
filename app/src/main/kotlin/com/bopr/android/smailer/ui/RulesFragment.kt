@@ -68,36 +68,36 @@ class RulesFragment : BasePreferenceFragment() {
         }
     }
 
-    private fun updateTextWhitelistPreferenceView() {
-        val preference = requirePreference(PREF_TEXT_WHITELIST)
-        val value = settings.getStringList(preference.key)
-        val formatListSummary = formatListSummary(value, R.string.acceptable_words, R.string._any)
-
-        updateSummary(preference, formatListSummary, SUMMARY_STYLE_DEFAULT)
-    }
-
-    private fun updateTextBlacklistPreferenceView() {
-        val preference = requirePreference(PREF_TEXT_BLACKLIST)
-        val value = settings.getStringList(preference.key)
-        val text = formatListSummary(value, R.string.unacceptable_words, R.string._none)
+    private fun updatePhoneBlacklistPreferenceView() {
+        val preference = requirePreference(PREF_PHONE_BLACKLIST)
+        val value = database.getFilterList(TABLE_PHONE_BLACKLIST)
+        val text = formatListSummary(value, R.string.unacceptable_phone_numbers, R.string._none)
 
         updateSummary(preference, text, SUMMARY_STYLE_DEFAULT)
     }
 
     private fun updatePhoneWhitelistPreferenceView() {
         val preference = requirePreference(PREF_PHONE_WHITELIST)
-        val value = settings.getStringList(preference.key)
+        val value = database.getFilterList(TABLE_PHONE_WHITELIST)
         val text = formatListSummary(value, R.string.acceptable_phone_numbers, R.string._any)
 
         updateSummary(preference, text, SUMMARY_STYLE_DEFAULT)
     }
 
-    private fun updatePhoneBlacklistPreferenceView() {
-        val preference = requirePreference(PREF_PHONE_BLACKLIST)
-        val value = settings.getStringList(preference.key)
-        val text = formatListSummary(value, R.string.unacceptable_phone_numbers, R.string._none)
+    private fun updateTextBlacklistPreferenceView() {
+        val preference = requirePreference(PREF_TEXT_BLACKLIST)
+        val value = database.getFilterList(TABLE_TEXT_BLACKLIST)
+        val text = formatListSummary(value, R.string.unacceptable_words, R.string._none)
 
         updateSummary(preference, text, SUMMARY_STYLE_DEFAULT)
+    }
+
+    private fun updateTextWhitelistPreferenceView() {
+        val preference = requirePreference(PREF_TEXT_WHITELIST)
+        val value = database.getFilterList(TABLE_TEXT_WHITELIST)
+        val formatListSummary = formatListSummary(value, R.string.acceptable_words, R.string._any)
+
+        updateSummary(preference, formatListSummary, SUMMARY_STYLE_DEFAULT)
     }
 
     private fun updateTriggersPreferenceView() {

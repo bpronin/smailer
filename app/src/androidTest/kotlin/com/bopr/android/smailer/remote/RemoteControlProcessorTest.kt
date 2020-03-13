@@ -70,7 +70,7 @@ class RemoteControlProcessorTest : BaseTest() {
         processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_BLACKLIST, "200"))
         processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_BLACKLIST, "+2-00")) /* should be ignored */
 
-        assertEquals("100,200", database.getFilterList(TABLE_PHONE_BLACKLIST))
+        assertEquals(listOf("100", "200"), database.getFilterList(TABLE_PHONE_BLACKLIST))
         verify(notifications).showRemoteAction(
                 eq(targetContext.getString(R.string.phone_remotely_added_to_blacklist, "100")), eq(TARGET_PHONE_BLACKLIST))
         verify(notifications).showRemoteAction(
@@ -85,7 +85,7 @@ class RemoteControlProcessorTest : BaseTest() {
         processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_WHITELIST, "200"))
         processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_WHITELIST, "+2-00")) /* should be ignored */
 
-        assertEquals("100,200", database.getFilterList(TABLE_PHONE_WHITELIST))
+        assertEquals(listOf("100", "200"), database.getFilterList(TABLE_PHONE_WHITELIST))
         verify(notifications).showRemoteAction(
                 eq(targetContext.getString(R.string.phone_remotely_added_to_whitelist, "100")), eq(TARGET_PHONE_WHITELIST))
         verify(notifications).showRemoteAction(
@@ -100,7 +100,7 @@ class RemoteControlProcessorTest : BaseTest() {
         processor.performTask(RemoteControlTask("device", ADD_TEXT_TO_BLACKLIST, "200"))
         processor.performTask(RemoteControlTask("device", ADD_TEXT_TO_BLACKLIST, "200")) /* should be ignored */
 
-        assertEquals("100,200", database.getFilterList(TABLE_TEXT_BLACKLIST))
+        assertEquals(listOf("100", "200"), database.getFilterList(TABLE_TEXT_BLACKLIST))
         verify(notifications).showRemoteAction(
                 eq(targetContext.getString(R.string.text_remotely_added_to_blacklist, "100")), eq(TARGET_TEXT_BLACKLIST))
         verify(notifications).showRemoteAction(
@@ -115,7 +115,7 @@ class RemoteControlProcessorTest : BaseTest() {
         processor.performTask(RemoteControlTask("device", ADD_TEXT_TO_WHITELIST, "200"))
         processor.performTask(RemoteControlTask("device", ADD_TEXT_TO_WHITELIST, "200")) /* should be ignored */
 
-        assertEquals("100,200", database.getFilterList(TABLE_TEXT_WHITELIST))
+        assertEquals(listOf("100", "200"), database.getFilterList(TABLE_TEXT_WHITELIST))
         verify(notifications).showRemoteAction(
                 eq(targetContext.getString(R.string.text_remotely_added_to_whitelist, "100")), eq(TARGET_TEXT_WHITELIST))
         verify(notifications).showRemoteAction(
@@ -131,7 +131,7 @@ class RemoteControlProcessorTest : BaseTest() {
         processor.performTask(RemoteControlTask("device", REMOVE_PHONE_FROM_BLACKLIST, "100"))
         processor.performTask(RemoteControlTask("device", REMOVE_PHONE_FROM_BLACKLIST, "+2-00"))
 
-        assertEquals("300", database.getFilterList(TABLE_PHONE_BLACKLIST))
+        assertEquals(listOf("300"), database.getFilterList(TABLE_PHONE_BLACKLIST))
         verify(notifications).showRemoteAction(
                 eq(targetContext.getString(R.string.phone_remotely_removed_from_blacklist, "100")), eq(TARGET_PHONE_BLACKLIST))
         verify(notifications).showRemoteAction(
@@ -147,7 +147,7 @@ class RemoteControlProcessorTest : BaseTest() {
         processor.performTask(RemoteControlTask("device", REMOVE_PHONE_FROM_WHITELIST, "100"))
         processor.performTask(RemoteControlTask("device", REMOVE_PHONE_FROM_WHITELIST, "+2-00"))
 
-        assertEquals("300", database.getFilterList(TABLE_PHONE_WHITELIST))
+        assertEquals(listOf("300"), database.getFilterList(TABLE_PHONE_WHITELIST))
         verify(notifications).showRemoteAction(
                 eq(targetContext.getString(R.string.phone_remotely_removed_from_whitelist, "100")), eq(TARGET_PHONE_WHITELIST))
         verify(notifications).showRemoteAction(
@@ -163,7 +163,7 @@ class RemoteControlProcessorTest : BaseTest() {
         processor.performTask(RemoteControlTask("device", REMOVE_TEXT_FROM_BLACKLIST, "100"))
         processor.performTask(RemoteControlTask("device", REMOVE_TEXT_FROM_BLACKLIST, "200"))
 
-        assertEquals("300", database.getFilterList(TABLE_TEXT_BLACKLIST))
+        assertEquals(listOf("300"), database.getFilterList(TABLE_TEXT_BLACKLIST))
         verify(notifications).showRemoteAction(
                 eq(targetContext.getString(R.string.text_remotely_removed_from_blacklist, "100")), eq(TARGET_TEXT_BLACKLIST))
         verify(notifications).showRemoteAction(
@@ -179,7 +179,7 @@ class RemoteControlProcessorTest : BaseTest() {
         processor.performTask(RemoteControlTask("device", REMOVE_TEXT_FROM_WHITELIST, "100"))
         processor.performTask(RemoteControlTask("device", REMOVE_TEXT_FROM_WHITELIST, "200"))
 
-        assertEquals("300", database.getFilterList(TABLE_TEXT_WHITELIST))
+        assertEquals(listOf("300"), database.getFilterList(TABLE_TEXT_WHITELIST))
         verify(notifications).showRemoteAction(
                 eq(targetContext.getString(R.string.text_remotely_removed_from_whitelist, "100")), eq(TARGET_TEXT_WHITELIST))
         verify(notifications).showRemoteAction(
