@@ -44,7 +44,7 @@ class UiUtilTest : BaseTest() {
         configuration.setLocale(Locale("ru", "ru"))
         val res = targetContext.createConfigurationContext(configuration).resources
 
-        assertEquals("Нет сообщений", res.quantityString(R.plurals.mail_items, R.string.mail_items_zero, 0))
+        assertEquals("Нет сервисной почты", res.quantityString(R.plurals.mail_items, R.string.mail_items_zero, 0))
         assertEquals("Получено 1 сообщение", res.quantityString(R.plurals.mail_items, R.string.mail_items_zero, 1))
         assertEquals("Получено 2 сообщения", res.quantityString(R.plurals.mail_items, R.string.mail_items_zero, 2))
         assertEquals("Получено 10 сообщений", res.quantityString(R.plurals.mail_items, R.string.mail_items_zero, 10))

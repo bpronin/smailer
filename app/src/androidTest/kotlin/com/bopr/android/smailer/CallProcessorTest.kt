@@ -5,7 +5,9 @@ import android.accounts.Account
 import android.accounts.AccountManager
 import android.content.Context
 import android.content.Context.ACCOUNT_SERVICE
+import android.content.Context.CONNECTIVITY_SERVICE
 import android.content.SharedPreferences
+import android.net.ConnectivityManager
 import androidx.test.filters.SmallTest
 import androidx.test.rule.GrantPermissionRule
 import androidx.test.rule.GrantPermissionRule.grant
@@ -70,6 +72,7 @@ class CallProcessorTest : BaseTest() {
         )
     }
 
+    @Suppress("DEPRECATION")
     @Before
     fun setUp() {
         preferences = mock {
@@ -84,11 +87,19 @@ class CallProcessorTest : BaseTest() {
             on { getAccountsByType(eq("com.google")) }.doReturn(arrayOf(Account("sender@mail.com", "com.google")))
         }
 
+        val connectivityManager = mock<ConnectivityManager> {
+            val networkInfo = mock<android.net.NetworkInfo> { /* do not inline. do not optimize imports */
+                on { isConnectedOrConnecting }.doReturn(true)
+            }
+            on { activeNetworkInfo }.doReturn(networkInfo)
+        }
+
         context = mock {
             on { contentResolver }.doReturn(targetContext.contentResolver)
             on { resources }.doReturn(targetContext.resources)
             on { getSharedPreferences(anyString(), anyInt()) }.doReturn(preferences)
             on { getSystemService(eq(ACCOUNT_SERVICE)) }.doReturn(accountManager)
+            on { getSystemService(eq(CONNECTIVITY_SERVICE)) }.doReturn(connectivityManager)
         }
 
         geoLocator = mock {
@@ -169,7 +180,7 @@ class CallProcessorTest : BaseTest() {
 
         verify(transport, never()).login(any(), any())
         verify(transport, never()).send(any())
-        verify(notifications).showMailError(eq(R.string.sender_account_not_found), eq(TARGET_MAIN))
+        verify(notifications).showSenderAccountError()
 
         val savedEvent = database.events.first()!!
 
@@ -226,7 +237,7 @@ class CallProcessorTest : BaseTest() {
         val event = testingEvent()
         processor.process(event)
 
-        verify(notifications).showMailError(eq(R.string.sender_account_not_found), eq(TARGET_MAIN))
+        verify(notifications).showSenderAccountError()
         verify(notifications, never()).cancelAllErrors()
 
         /* sending next message without errors hides all previous error notifications */
@@ -234,7 +245,7 @@ class CallProcessorTest : BaseTest() {
 
         processor.process(testingEvent())
 
-        verify(notifications).showMailError(eq(R.string.sender_account_not_found), eq(TARGET_MAIN))
+        verify(notifications).showSenderAccountError()
         verify(notifications).cancelAllErrors()
     }
 
@@ -255,8 +266,8 @@ class CallProcessorTest : BaseTest() {
 
         processor.process(testingEvent())
 
-        verify(notifications).showMessage(anyString(),
-                eq(targetContext.getString(R.string.email_successfully_send)), eq(TARGET_MAIN))
+        verify(notifications).showMessage(eq(targetContext.getString(R.string.email_successfully_send)),
+                isNull(), eq(TARGET_MAIN))
     }
 
     /**
