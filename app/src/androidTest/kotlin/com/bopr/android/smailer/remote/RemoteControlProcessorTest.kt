@@ -64,7 +64,7 @@ class RemoteControlProcessorTest : BaseTest() {
 
         processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_BLACKLIST, "100"))
         processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_BLACKLIST, "200"))
-        processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_BLACKLIST, "+2-00")) /* should be ignored */
+        processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_BLACKLIST, "200")) /* should be ignored */
 
         assertEquals(listOf("100", "200"), database.phoneBlacklist)
         verify(notifications).showRemoteAction(
@@ -81,7 +81,7 @@ class RemoteControlProcessorTest : BaseTest() {
 
         processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_WHITELIST, "100"))
         processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_WHITELIST, "200"))
-        processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_WHITELIST, "+2-00")) /* should be ignored */
+        processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_WHITELIST, "200")) /* should be ignored */
 
         assertEquals(listOf("100", "200"), database.phoneWhitelist)
         verify(notifications).showRemoteAction(
@@ -133,7 +133,7 @@ class RemoteControlProcessorTest : BaseTest() {
         val processor = RemoteControlProcessor(context, database, settings, notifications)
 
         processor.performTask(RemoteControlTask("device", REMOVE_PHONE_FROM_BLACKLIST, "100"))
-        processor.performTask(RemoteControlTask("device", REMOVE_PHONE_FROM_BLACKLIST, "+2-00"))
+        processor.performTask(RemoteControlTask("device", REMOVE_PHONE_FROM_BLACKLIST, "200"))
 
         assertEquals(listOf("300"), database.phoneBlacklist)
         verify(notifications).showRemoteAction(
@@ -151,7 +151,7 @@ class RemoteControlProcessorTest : BaseTest() {
         val processor = RemoteControlProcessor(context, database, settings, notifications)
 
         processor.performTask(RemoteControlTask("device", REMOVE_PHONE_FROM_WHITELIST, "100"))
-        processor.performTask(RemoteControlTask("device", REMOVE_PHONE_FROM_WHITELIST, "+2-00"))
+        processor.performTask(RemoteControlTask("device", REMOVE_PHONE_FROM_WHITELIST, "200"))
 
         assertEquals(listOf("300"), database.phoneWhitelist)
         verify(notifications).showRemoteAction(
