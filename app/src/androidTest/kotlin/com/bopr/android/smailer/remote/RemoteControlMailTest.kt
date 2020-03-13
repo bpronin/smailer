@@ -3,10 +3,6 @@ package com.bopr.android.smailer.remote
 import android.accounts.AccountsException
 import androidx.test.filters.LargeTest
 import com.bopr.android.smailer.*
-import com.bopr.android.smailer.Database.Companion.TABLE_PHONE_BLACKLIST
-import com.bopr.android.smailer.Database.Companion.TABLE_PHONE_WHITELIST
-import com.bopr.android.smailer.Database.Companion.TABLE_TEXT_BLACKLIST
-import com.bopr.android.smailer.Database.Companion.TABLE_TEXT_WHITELIST
 import com.bopr.android.smailer.Notifications.Companion.TARGET_PHONE_BLACKLIST
 import com.bopr.android.smailer.Notifications.Companion.TARGET_PHONE_WHITELIST
 import com.bopr.android.smailer.Notifications.Companion.TARGET_TEXT_BLACKLIST
@@ -97,10 +93,10 @@ class RemoteControlMailTest : BaseTest() {
         processor.checkMailbox()
 
         assertTrue(getMail().isEmpty())
-        assertTrue(database.getFilterList(TABLE_PHONE_BLACKLIST).isEmpty())
-        assertTrue(database.getFilterList(TABLE_PHONE_WHITELIST).isEmpty())
-        assertTrue(database.getFilterList(TABLE_TEXT_BLACKLIST).isEmpty())
-        assertTrue(database.getFilterList(TABLE_TEXT_WHITELIST).isEmpty())
+        assertTrue(database.phoneBlacklist.isEmpty())
+        assertTrue(database.phoneWhitelist.isEmpty())
+        assertTrue(database.textBlacklist.isEmpty())
+        assertTrue(database.textWhitelist.isEmpty())
         verify(notifications, never()).showRemoteAction(any(), anyInt())
     }
 
@@ -127,10 +123,10 @@ class RemoteControlMailTest : BaseTest() {
         processor.checkMailbox()
 
         assertEquals(1, getMail().size)
-        assertTrue(database.getFilterList(TABLE_PHONE_BLACKLIST).isEmpty())
-        assertTrue(database.getFilterList(TABLE_PHONE_WHITELIST).isEmpty())
-        assertTrue(database.getFilterList(TABLE_TEXT_BLACKLIST).isEmpty())
-        assertTrue(database.getFilterList(TABLE_TEXT_WHITELIST).isEmpty())
+        assertTrue(database.phoneBlacklist.isEmpty())
+        assertTrue(database.phoneWhitelist.isEmpty())
+        assertTrue(database.textBlacklist.isEmpty())
+        assertTrue(database.textWhitelist.isEmpty())
         verify(notifications, never()).showRemoteAction(any(), anyInt())
     }
 
@@ -175,10 +171,10 @@ class RemoteControlMailTest : BaseTest() {
         processor.checkMailbox()
 
         assertTrue(getMail().isEmpty())
-        assertTrue(database.getFilterList(TABLE_PHONE_BLACKLIST).contains("1234567890"))
-        assertTrue(database.getFilterList(TABLE_PHONE_WHITELIST).contains("0987654321"))
-        assertTrue(database.getFilterList(TABLE_TEXT_BLACKLIST).contains("SPAM"))
-        assertTrue(database.getFilterList(TABLE_TEXT_WHITELIST).contains("NON SPAM"))
+        assertTrue(database.phoneBlacklist.contains("1234567890"))
+        assertTrue(database.phoneWhitelist.contains("0987654321"))
+        assertTrue(database.textBlacklist.contains("SPAM"))
+        assertTrue(database.textWhitelist.contains("NON SPAM"))
         verify(notifications).showRemoteAction(eq(targetContext.getString(
                 R.string.phone_remotely_added_to_blacklist, "1234567890")), eq(TARGET_PHONE_BLACKLIST))
         verify(notifications).showRemoteAction(eq(targetContext.getString(
@@ -228,10 +224,10 @@ class RemoteControlMailTest : BaseTest() {
         processor.checkMailbox()
 
         assertTrue(getMail().isEmpty())
-        assertTrue(database.getFilterList(TABLE_PHONE_BLACKLIST).contains("1234567890"))
-        assertTrue(database.getFilterList(TABLE_PHONE_WHITELIST).contains("0987654321"))
-        assertTrue(database.getFilterList(TABLE_TEXT_BLACKLIST).contains("SPAM"))
-        assertTrue(database.getFilterList(TABLE_TEXT_WHITELIST).contains("NON SPAM"))
+        assertTrue(database.phoneBlacklist.contains("1234567890"))
+        assertTrue(database.phoneWhitelist.contains("0987654321"))
+        assertTrue(database.textBlacklist.contains("SPAM"))
+        assertTrue(database.textWhitelist.contains("NON SPAM"))
     }
 
     @Test
@@ -275,10 +271,10 @@ class RemoteControlMailTest : BaseTest() {
         processor.checkMailbox()
 
         assertTrue(getMail().isEmpty())
-        assertTrue(database.getFilterList(TABLE_PHONE_BLACKLIST).contains("1234567890"))
-        assertTrue(database.getFilterList(TABLE_PHONE_WHITELIST).contains("0987654321"))
-        assertTrue(database.getFilterList(TABLE_TEXT_BLACKLIST).contains("SPAM"))
-        assertTrue(database.getFilterList(TABLE_TEXT_WHITELIST).contains("NON SPAM"))
+        assertTrue(database.phoneBlacklist.contains("1234567890"))
+        assertTrue(database.phoneWhitelist.contains("0987654321"))
+        assertTrue(database.textBlacklist.contains("SPAM"))
+        assertTrue(database.textWhitelist.contains("NON SPAM"))
         verify(notifications, never()).showRemoteAction(any(), anyInt())
     }
 
