@@ -66,8 +66,8 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
 
     override fun onDestroy() {
         super.onDestroy()
-        database.close()
         requireContext().unregisterDatabaseListener(databaseListener)
+        database.close()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

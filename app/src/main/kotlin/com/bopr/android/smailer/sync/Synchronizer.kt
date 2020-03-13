@@ -90,10 +90,10 @@ internal class Synchronizer(context: Context,
     private fun putLocalData(data: SyncData) {
         data.events.map(::dataToEvent).let(database::putEvents)
 
-        database.putFilterList(TABLE_PHONE_BLACKLIST, data.phoneBlacklist)
-        database.putFilterList(TABLE_PHONE_WHITELIST, data.phoneWhitelist)
-        database.putFilterList(TABLE_TEXT_BLACKLIST, data.textBlacklist)
-        database.putFilterList(TABLE_TEXT_WHITELIST, data.textWhitelist)
+        database.replaceFilterList(TABLE_PHONE_BLACKLIST, data.phoneBlacklist)
+        database.replaceFilterList(TABLE_PHONE_WHITELIST, data.phoneWhitelist)
+        database.replaceFilterList(TABLE_TEXT_BLACKLIST, data.textBlacklist)
+        database.replaceFilterList(TABLE_TEXT_WHITELIST, data.textWhitelist)
     }
 
     private fun eventToData(event: PhoneEvent): SyncData.Event {

@@ -354,10 +354,8 @@ class DebugFragment : BasePreferenceFragment() {
             putBoolean(PREF_NOTIFY_SEND_SUCCESS, true)
         }
 
-        database.clearFilterList(TABLE_PHONE_BLACKLIST)
-        database.clearFilterList(TABLE_TEXT_BLACKLIST)
-        database.putFilterList(TABLE_PHONE_BLACKLIST, setOf("+123456789", "+9876543*"))
-        database.putFilterList(TABLE_TEXT_BLACKLIST, setOf("Bad text", escapeRegex("Expression")))
+        database.replaceFilterList(TABLE_PHONE_BLACKLIST, setOf("+123456789", "+9876543*"))
+        database.replaceFilterList(TABLE_TEXT_BLACKLIST, setOf("Bad text", escapeRegex("Expression")))
 
         showToast(R.string.operation_complete)
     }

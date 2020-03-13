@@ -206,21 +206,15 @@ class Database constructor(private val context: Context, private val name: Strin
         return affected != 0
     }
 
-    fun putFilterList(listTable: String, items: Collection<String>) {
+    fun replaceFilterList(listTable: String, items: Collection<String>) {
         helper.writableDatabase.batch {
+            delete(listTable, null, null)
+            log.debug("Removed all from $listTable")
+
             for (item in items) {
                 putFilterListItem(listTable, item)
             }
         }
-    }
-
-    fun clearFilterList(listTable: String) {
-        helper.writableDatabase.batch {
-            delete(listTable, null, null)
-        }
-        modifiedTables.add(listTable)
-
-        log.debug("$listTable is clear")
     }
 
     /**

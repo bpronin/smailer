@@ -30,8 +30,8 @@ abstract class CallFilterListFragment(private val listName: String) : EditableRe
     }
 
     override fun onDestroy() {
-        database.close()
         requireContext().unregisterDatabaseListener(databaseListener)
+        database.close()
         super.onDestroy()
     }
 
@@ -74,7 +74,7 @@ abstract class CallFilterListFragment(private val listName: String) : EditableRe
     }
 
     override fun saveItems(items: Collection<String>) {
-        database.putFilterList(listName, items)
+        database.replaceFilterList(listName, items)
         database.notifyChanged()
     }
 

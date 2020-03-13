@@ -14,10 +14,6 @@ import com.bopr.android.smailer.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
-import com.bopr.android.smailer.Settings.Companion.PREF_PHONE_BLACKLIST
-import com.bopr.android.smailer.Settings.Companion.PREF_PHONE_WHITELIST
-import com.bopr.android.smailer.Settings.Companion.PREF_TEXT_BLACKLIST
-import com.bopr.android.smailer.Settings.Companion.PREF_TEXT_WHITELIST
 
 /**
  * Rules settings fragment.
@@ -46,8 +42,8 @@ class RulesFragment : BasePreferenceFragment() {
     }
 
     override fun onDestroy() {
-        database.close()
         requireContext().unregisterDatabaseListener(databaseListener)
+        database.close()
         super.onDestroy()
     }
 
@@ -69,7 +65,7 @@ class RulesFragment : BasePreferenceFragment() {
     }
 
     private fun updatePhoneBlacklistPreferenceView() {
-        val preference = requirePreference(PREF_PHONE_BLACKLIST)
+        val preference = requirePreference("phone_blacklist")
         val value = database.getFilterList(TABLE_PHONE_BLACKLIST)
         val text = formatListSummary(value, R.string.unacceptable_phone_numbers, R.string._none)
 
@@ -77,7 +73,7 @@ class RulesFragment : BasePreferenceFragment() {
     }
 
     private fun updatePhoneWhitelistPreferenceView() {
-        val preference = requirePreference(PREF_PHONE_WHITELIST)
+        val preference = requirePreference("phone_whitelist")
         val value = database.getFilterList(TABLE_PHONE_WHITELIST)
         val text = formatListSummary(value, R.string.acceptable_phone_numbers, R.string._any)
 
@@ -85,7 +81,7 @@ class RulesFragment : BasePreferenceFragment() {
     }
 
     private fun updateTextBlacklistPreferenceView() {
-        val preference = requirePreference(PREF_TEXT_BLACKLIST)
+        val preference = requirePreference("text_blacklist")
         val value = database.getFilterList(TABLE_TEXT_BLACKLIST)
         val text = formatListSummary(value, R.string.unacceptable_words, R.string._none)
 
@@ -93,7 +89,7 @@ class RulesFragment : BasePreferenceFragment() {
     }
 
     private fun updateTextWhitelistPreferenceView() {
-        val preference = requirePreference(PREF_TEXT_WHITELIST)
+        val preference = requirePreference("text_whitelist")
         val value = database.getFilterList(TABLE_TEXT_WHITELIST)
         val formatListSummary = formatListSummary(value, R.string.acceptable_words, R.string._any)
 
