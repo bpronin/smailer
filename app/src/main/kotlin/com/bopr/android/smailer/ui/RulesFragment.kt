@@ -22,8 +22,8 @@ import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
  */
 class RulesFragment : BasePreferenceFragment() {
 
-    private lateinit var databaseListener: BroadcastReceiver
     private lateinit var database: Database
+    private lateinit var databaseListener: BroadcastReceiver
 
     override fun onCreatePreferences(bundle: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_rules)

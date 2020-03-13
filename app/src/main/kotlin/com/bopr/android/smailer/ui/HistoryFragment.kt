@@ -255,13 +255,6 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
         }
     }
 
-    private fun markItemAsRead(event: PhoneEvent) {
-        if (!event.isRead) {
-            event.isRead = true
-            database.putEvent(event)
-        }
-    }
-
     private fun formatSummary(event: PhoneEvent): CharSequence? {
         return when {
             event.isSms ->
