@@ -11,10 +11,6 @@ import android.os.Bundle
 import com.bopr.android.smailer.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_BLACKLIST
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_WHITELIST
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_BLACKLIST
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_WHITELIST
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_TIME
@@ -60,11 +56,6 @@ class SyncEngine(private val context: Context) : OnSharedPreferenceChangeListene
                 enable()
             PREF_SENDER_ACCOUNT ->
                 restart()
-            PREF_FILTER_PHONE_BLACKLIST,
-            PREF_FILTER_PHONE_WHITELIST,
-            PREF_FILTER_TEXT_BLACKLIST,
-            PREF_FILTER_TEXT_WHITELIST ->
-                updateMetadata()
         }
     }
 

@@ -2,8 +2,6 @@ package com.bopr.android.smailer.ui
 
 
 import android.content.BroadcastReceiver
-import android.content.SharedPreferences
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.view.*
@@ -14,18 +12,14 @@ import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bopr.android.smailer.Database
+import com.bopr.android.smailer.Database.Companion.TABLE_PHONE_BLACKLIST
+import com.bopr.android.smailer.Database.Companion.TABLE_PHONE_WHITELIST
 import com.bopr.android.smailer.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.PhoneEvent
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_BLACKLIST
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_WHITELIST
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_BLACKLIST
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_WHITELIST
 import com.bopr.android.smailer.ui.HistoryFragment.Holder
 import com.bopr.android.smailer.util.*
 import com.google.android.material.snackbar.Snackbar
@@ -36,9 +30,8 @@ import com.google.android.material.snackbar.Snackbar
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 //todo grouping by phone number
-class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferenceChangeListener {
+class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
 
-    private lateinit var settings: Settings
     private lateinit var database: Database
     private lateinit var databaseListener: BroadcastReceiver
     private var defaultItemTextColor: Int = 0
@@ -53,9 +46,6 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
 
         defaultItemTextColor = context.getColorFromAttr(android.R.attr.textColorSecondary)
         unreadItemTextColor = context.getColorFromAttr(android.R.attr.textColorPrimary)
-
-        settings = Settings(requireContext())
-        settings.registerOnSharedPreferenceChangeListener(this)
 
         database = Database(context)
         databaseListener = context.registerDatabaseListener {
@@ -76,9 +66,8 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
 
     override fun onDestroy() {
         super.onDestroy()
-        settings.unregisterOnSharedPreferenceChangeListener(this)
-        requireContext().unregisterDatabaseListener(databaseListener)
         database.close()
+        requireContext().unregisterDatabaseListener(databaseListener)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -108,8 +97,8 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
             menu.removeItem(R.id.action_ignore)
         }
 
-        val blacklisted = settings.getStringList(PREF_FILTER_PHONE_BLACKLIST).containsPhone(item.phone)
-        val whitelisted = settings.getStringList(PREF_FILTER_PHONE_WHITELIST).containsPhone(item.phone)
+        val blacklisted = database.getFilterList(TABLE_PHONE_BLACKLIST).contains(item.phone)
+        val whitelisted = database.getFilterList(TABLE_PHONE_WHITELIST).contains(item.phone)
 
         if (blacklisted || whitelisted) {
             menu.removeItem(R.id.action_add_to_blacklist)
@@ -207,11 +196,11 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
     }
 
     private fun onAddToBlacklist() {
-        addSelectionToFilterList(PREF_FILTER_PHONE_BLACKLIST, R.string.add_to_blacklist)
+        addSelectionToFilterList(TABLE_PHONE_BLACKLIST, R.string.add_to_blacklist)
     }
 
     private fun onAddToWhitelist() {
-        addSelectionToFilterList(PREF_FILTER_PHONE_WHITELIST, R.string.add_to_whitelist)
+        addSelectionToFilterList(TABLE_PHONE_WHITELIST, R.string.add_to_whitelist)
     }
 
     private fun onMarkAsIgnored() {
@@ -238,9 +227,9 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
 
     private fun onRemoveFromFilterList() {
         getSelectedItem()?.let { item ->
-            settings.update {
-                removeFromFilterList(this, PREF_FILTER_PHONE_BLACKLIST, item.phone)
-                removeFromFilterList(this, PREF_FILTER_PHONE_WHITELIST, item.phone)
+            database.notifyOf {
+                deleteFilterListItem(TABLE_PHONE_BLACKLIST, item.phone)
+                deleteFilterListItem(TABLE_PHONE_WHITELIST, item.phone)
             }
             showToast(getString(R.string.phone_removed_from_filter, item.phone))
         }
@@ -257,25 +246,15 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
     }
 
     private fun addToFilterList(listName: String, phone: String?) {
-        if (!phone.isNullOrEmpty()) {
-            settings.run {
-                val list = getStringList(listName)
-                if (list.none { samePhone(it, phone) }) {
-                    update {
-                        putStringList(listName, list.apply { add(phone) })
-                    }
-                } else {
-                    showToast(getString(R.string.item_already_exists, phone))
-                }
-            }
+        if (!phone.isNullOrEmpty() && !database.putFilterListItem(listName, phone)) {
+            showToast(getString(R.string.item_already_exists, phone))
         }
     }
 
-    private fun removeFromFilterList(edit: SharedPreferencesWrapper.EditorWrapper,
-                                     listName: String, phone: String) {
-        val list = settings.getStringList(listName)
-        list.find { samePhone(it, phone) }?.let {
-            edit.putStringList(listName, list.apply { remove(it) })
+    private fun markItemAsRead(event: PhoneEvent) {
+        if (!event.isRead) {
+            event.isRead = true
+            database.putEvent(event)
         }
     }
 

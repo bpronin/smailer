@@ -2,6 +2,7 @@ package com.bopr.android.smailer.remote
 
 import android.content.Intent
 import androidx.core.app.JobIntentService
+import com.bopr.android.smailer.Database
 import org.slf4j.LoggerFactory
 
 /**
@@ -16,6 +17,8 @@ class RemoteControlService : JobIntentService() {
     override fun onHandleWork(intent: Intent) {
         log.trace("Handling intent: $intent")
 
-        RemoteControlProcessor(this).checkMailbox()
+        Database(this).use {
+            RemoteControlProcessor(this, it).checkMailbox()
+        }
     }
 }

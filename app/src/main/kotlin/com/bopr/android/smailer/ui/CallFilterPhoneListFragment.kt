@@ -1,7 +1,5 @@
 package com.bopr.android.smailer.ui
 
-import com.bopr.android.smailer.util.samePhone
-
 /**
  * Base phone number lists fragment.
  *
@@ -13,7 +11,4 @@ abstract class CallFilterPhoneListFragment(settingName: String) : CallFilterList
         return EditPhoneDialogFragment()
     }
 
-    override fun isSameItem(item1: String, item2: String): Boolean {
-        return samePhone(item1, item2)
-    }
 }

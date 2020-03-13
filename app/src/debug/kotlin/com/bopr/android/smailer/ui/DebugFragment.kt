@@ -19,6 +19,8 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceScreen
 import com.bopr.android.smailer.*
 import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
+import com.bopr.android.smailer.Database.Companion.TABLE_PHONE_BLACKLIST
+import com.bopr.android.smailer.Database.Companion.TABLE_TEXT_BLACKLIST
 import com.bopr.android.smailer.Notifications.Companion.TARGET_MAIN
 import com.bopr.android.smailer.Notifications.Companion.TARGET_PHONE_BLACKLIST
 import com.bopr.android.smailer.Notifications.Companion.TARGET_RULES
@@ -30,8 +32,6 @@ import com.bopr.android.smailer.PhoneEvent.Companion.STATUS_ACCEPTED
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_LOCALE
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_BLACKLIST
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_BLACKLIST
 import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
@@ -352,9 +352,13 @@ class DebugFragment : BasePreferenceFragment() {
                     VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME))
             putString(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)
             putBoolean(PREF_NOTIFY_SEND_SUCCESS, true)
-            putString(PREF_FILTER_PHONE_BLACKLIST, commaJoin(setOf("+123456789", "+9876543*")))
-            putString(PREF_FILTER_TEXT_BLACKLIST, commaJoin(setOf("Bad text", escapeRegex("Expression"))))
         }
+
+        database.clearFilterList(TABLE_PHONE_BLACKLIST)
+        database.clearFilterList(TABLE_TEXT_BLACKLIST)
+        database.putFilterList(TABLE_PHONE_BLACKLIST, setOf("+123456789", "+9876543*"))
+        database.putFilterList(TABLE_TEXT_BLACKLIST, setOf("Bad text", escapeRegex("Expression")))
+
         showToast(R.string.operation_complete)
     }
 

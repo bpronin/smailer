@@ -9,7 +9,9 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteDatabase.CONFLICT_IGNORE
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
+import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.util.*
 import org.slf4j.LoggerFactory
 import java.io.Closeable
@@ -174,6 +176,53 @@ class Database constructor(private val context: Context, private val name: Strin
         log.debug("All events marked as read")
     }
 
+    fun getFilterList(listTable: String): List<String> {
+        return query(listTable).useToList { it.getString(COLUMN_TEXT)!! }
+    }
+
+    fun putFilterListItem(listTable: String, item: String): Boolean {
+        helper.writableDatabase.run {
+            val values = values {
+                put(COLUMN_TEXT, item)
+            }
+            return if (insertWithOnConflict(listTable, null, values, CONFLICT_IGNORE) == -1L) {
+                log.debug("Already exists: $values")
+                false
+            } else {
+                log.debug("Inserted: $values")
+
+                modifiedTables.add(listTable)
+                true
+            }
+        }
+    }
+
+    fun deleteFilterListItem(listTable: String, item: String): Boolean {
+        var affected = 0
+        helper.writableDatabase.batch {
+           affected = delete(listTable, "$COLUMN_TEXT=?", strings(item))
+        }
+        modifiedTables.add(listTable)
+        return affected != 0
+    }
+
+    fun putFilterList(listTable: String, items: Collection<String>) {
+        helper.writableDatabase.batch {
+            for (item in items) {
+                putFilterListItem(listTable, item)
+            }
+        }
+    }
+
+    fun clearFilterList(listTable: String) {
+        helper.writableDatabase.batch {
+            delete(listTable, null, null)
+        }
+        modifiedTables.add(listTable)
+
+        log.debug("$listTable is clear")
+    }
+
     /**
      * Fires database "changed" event.
      */
@@ -220,6 +269,12 @@ class Database constructor(private val context: Context, private val name: Strin
             db.batch {
                 execSQL(SQL_CREATE_SYSTEM)
                 execSQL(SQL_CREATE_EVENTS)
+            db.execSQL(SQL_CREATE_SYSTEM)
+            db.execSQL(SQL_CREATE_EVENTS)
+            db.execSQL(SQL_CREATE_LIST(TABLE_PHONE_BLACKLIST))
+            db.execSQL(SQL_CREATE_LIST(TABLE_PHONE_WHITELIST))
+            db.execSQL(SQL_CREATE_LIST(TABLE_TEXT_BLACKLIST))
+            db.execSQL(SQL_CREATE_LIST(TABLE_TEXT_WHITELIST))
 
                 insert(TABLE_SYSTEM, null, values { put(COLUMN_ID, 0) })
 
@@ -297,6 +352,10 @@ class Database constructor(private val context: Context, private val name: Strin
 
         private const val TABLE_SYSTEM = "system_data"
         const val TABLE_EVENTS = "phone_events"
+        const val TABLE_PHONE_BLACKLIST = "phone_blacklist"
+        const val TABLE_PHONE_WHITELIST = "phone_whitelist"
+        const val TABLE_TEXT_BLACKLIST = "text_blacklist"
+        const val TABLE_TEXT_WHITELIST = "text_whitelist"
 
         private const val SQL_CREATE_SYSTEM = "CREATE TABLE " + TABLE_SYSTEM + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY, " +
@@ -321,6 +380,10 @@ class Database constructor(private val context: Context, private val name: Strin
                 COLUMN_READ + " INTEGER NOT NULL DEFAULT(0), " +
                 COLUMN_DETAILS + " TEXT(256), " +
                 "PRIMARY KEY (" + COLUMN_START_TIME + ", " + COLUMN_ACCEPTOR + ")" +
+                ")"
+
+        private fun SQL_CREATE_LIST(tableName: String) = "CREATE TABLE " + tableName + " (" +
+                COLUMN_TEXT + " TEXT(256) NOT NULL PRIMARY KEY" +
                 ")"
 
         /**

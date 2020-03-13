@@ -6,16 +6,16 @@ import android.accounts.AccountsException
 import android.content.Context
 import androidx.annotation.StringRes
 import com.bopr.android.smailer.*
+import com.bopr.android.smailer.Database.Companion.TABLE_PHONE_BLACKLIST
+import com.bopr.android.smailer.Database.Companion.TABLE_PHONE_WHITELIST
+import com.bopr.android.smailer.Database.Companion.TABLE_TEXT_BLACKLIST
+import com.bopr.android.smailer.Database.Companion.TABLE_TEXT_WHITELIST
 import com.bopr.android.smailer.Notifications.Companion.TARGET_MAIN
 import com.bopr.android.smailer.Notifications.Companion.TARGET_PHONE_BLACKLIST
 import com.bopr.android.smailer.Notifications.Companion.TARGET_PHONE_WHITELIST
 import com.bopr.android.smailer.Notifications.Companion.TARGET_TEXT_BLACKLIST
 import com.bopr.android.smailer.Notifications.Companion.TARGET_TEXT_WHITELIST
 import com.bopr.android.smailer.Settings.Companion.PREF_DEVICE_ALIAS
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_BLACKLIST
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_WHITELIST
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_BLACKLIST
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_WHITELIST
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS
@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory
  */
 internal class RemoteControlProcessor(
         private val context: Context,
+        private val database: Database,
         private val settings: Settings = Settings(context),
         private val notifications: Notifications = Notifications(context),
         private val smsTransport: SmsTransport = SmsTransport()) {
@@ -134,43 +135,43 @@ internal class RemoteControlProcessor(
     }
 
     private fun addTextToWhitelist(text: String?) {
-        addToFilterList(PREF_FILTER_TEXT_WHITELIST, text,
-                R.string.text_remotely_added_to_whitelist, String::equals, TARGET_TEXT_WHITELIST)
+        addToFilterList(TABLE_TEXT_WHITELIST, text,
+                R.string.text_remotely_added_to_whitelist, TARGET_TEXT_WHITELIST)
     }
 
     private fun removeTextFromWhitelist(text: String?) {
-        removeFromFilterList(PREF_FILTER_TEXT_WHITELIST, text,
-                R.string.text_remotely_removed_from_whitelist, String::equals, TARGET_TEXT_WHITELIST)
+        removeFromFilterList(TABLE_TEXT_WHITELIST, text,
+                R.string.text_remotely_removed_from_whitelist, TARGET_TEXT_WHITELIST)
     }
 
     private fun addTextToBlacklist(text: String?) {
-        addToFilterList(PREF_FILTER_TEXT_BLACKLIST, text,
-                R.string.text_remotely_added_to_blacklist, String::equals, TARGET_TEXT_BLACKLIST)
+        addToFilterList(TABLE_TEXT_BLACKLIST, text,
+                R.string.text_remotely_added_to_blacklist, TARGET_TEXT_BLACKLIST)
     }
 
     private fun removeTextFromBlacklist(text: String?) {
-        removeFromFilterList(PREF_FILTER_TEXT_BLACKLIST, text,
-                R.string.text_remotely_removed_from_blacklist, String::equals, TARGET_TEXT_BLACKLIST)
+        removeFromFilterList(TABLE_TEXT_BLACKLIST, text,
+                R.string.text_remotely_removed_from_blacklist, TARGET_TEXT_BLACKLIST)
     }
 
     private fun addPhoneToWhitelist(phone: String?) {
-        addToFilterList(PREF_FILTER_PHONE_WHITELIST, phone,
-                R.string.phone_remotely_added_to_whitelist, ::samePhone, TARGET_PHONE_WHITELIST)
+        addToFilterList(TABLE_PHONE_WHITELIST, phone,
+                R.string.phone_remotely_added_to_whitelist, TARGET_PHONE_WHITELIST)
     }
 
     private fun removePhoneFromWhitelist(phone: String?) {
-        removeFromFilterList(PREF_FILTER_PHONE_WHITELIST, phone,
-                R.string.phone_remotely_removed_from_whitelist, ::samePhone, TARGET_PHONE_WHITELIST)
+        removeFromFilterList(TABLE_PHONE_WHITELIST, phone,
+                R.string.phone_remotely_removed_from_whitelist, TARGET_PHONE_WHITELIST)
     }
 
     private fun addPhoneToBlacklist(phone: String?) {
-        addToFilterList(PREF_FILTER_PHONE_BLACKLIST, phone,
-                R.string.phone_remotely_added_to_blacklist, ::samePhone, TARGET_PHONE_BLACKLIST)
+        addToFilterList(TABLE_PHONE_BLACKLIST, phone,
+                R.string.phone_remotely_added_to_blacklist, TARGET_PHONE_BLACKLIST)
     }
 
     private fun removePhoneFromBlacklist(phone: String?) {
-        removeFromFilterList(PREF_FILTER_PHONE_BLACKLIST, phone,
-                R.string.phone_remotely_removed_from_blacklist, ::samePhone, TARGET_PHONE_BLACKLIST)
+        removeFromFilterList(TABLE_PHONE_BLACKLIST, phone,
+                R.string.phone_remotely_removed_from_blacklist, TARGET_PHONE_BLACKLIST)
     }
 
     private fun sendSms(phone: String?, message: String?) {
@@ -185,33 +186,25 @@ internal class RemoteControlProcessor(
     }
 
     private fun addToFilterList(listName: String, value: String?, @StringRes messageRes: Int,
-                                compare: (String, String) -> Boolean, @Notifications.Target target: Int) {
+                                @Notifications.Target target: Int) {
         if (!value.isNullOrEmpty()) {
-            settings.run {
-                val list = getStringList(listName)
-                if (list.none { compare(it, value) }) {
-                    update {
-                        putStringList(listName, list.apply { add(value) })
-                    }
-                    showNotification(context.getString(messageRes, value), target)
-                } else {
-                    log.debug("Already in list")
-                }
+            if (database.putFilterListItem(listName, value)) {
+                database.notifyChanged()
+                showNotification(context.getString(messageRes, value), target)
+            } else {
+                log.debug("Already in list")
             }
         }
     }
 
     private fun removeFromFilterList(listName: String, value: String?, @StringRes messageRes: Int,
-                                     compare: (String, String) -> Boolean, @Notifications.Target target: Int) {
+                                     @Notifications.Target target: Int) {
         if (!value.isNullOrEmpty()) {
-            settings.run {
-                val list = getStringList(listName)
-                list.find { compare(it, value) }?.let {
-                    update {
-                        putStringList(listName, list.apply { remove(it) })
-                    }
-                    showNotification(context.getString(messageRes, value), target)
-                } ?: log.debug("Not in list")
+            if (database.deleteFilterListItem(listName, value)) {
+                database.notifyChanged()
+                showNotification(context.getString(messageRes, value), target)
+            } else {
+                log.debug("Not in list")
             }
         }
     }
