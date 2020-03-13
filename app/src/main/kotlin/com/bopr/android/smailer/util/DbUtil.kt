@@ -38,13 +38,11 @@ fun SQLiteDatabase.getTables(): Set<String> {
 inline fun SQLiteDatabase.alterTable(table: String, createSql: String,
                                      transform: Cursor.(String) -> String? = { getStringIfExist(it) }) {
     val old = table + "_old"
-    batch {
-        execSQL("DROP TABLE IF EXISTS $old")
-        execSQL("ALTER TABLE $table RENAME TO $old")
-        execSQL(createSql)
-        copyTable(old, table, transform)
-        execSQL("DROP TABLE $old")
-    }
+    execSQL("DROP TABLE IF EXISTS $old")
+    execSQL("ALTER TABLE $table RENAME TO $old")
+    execSQL(createSql)
+    copyTable(old, table, transform)
+    execSQL("DROP TABLE $old")
 }
 
 @SuppressLint("Recycle")

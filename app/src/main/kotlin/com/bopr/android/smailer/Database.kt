@@ -9,9 +9,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteDatabase.CONFLICT_IGNORE
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
-import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.util.*
 import org.slf4j.LoggerFactory
 import java.io.Closeable
@@ -190,7 +188,7 @@ class Database constructor(private val context: Context, private val name: Strin
     }
 
     fun getFilterList(listName: String): List<String> {
-        return query(listName).useToList { it.getString(COLUMN_VALUE)!! }
+        return helper.readableDatabase.query(listName).useToList { getString(COLUMN_VALUE)!! }
     }
 
     fun replaceFilterList(listName: String, items: Collection<String>) {
@@ -276,12 +274,10 @@ class Database constructor(private val context: Context, private val name: Strin
             db.batch {
                 execSQL(SQL_CREATE_SYSTEM)
                 execSQL(SQL_CREATE_EVENTS)
-            db.execSQL(SQL_CREATE_SYSTEM)
-            db.execSQL(SQL_CREATE_EVENTS)
-            db.execSQL(SQL_CREATE_LIST(TABLE_PHONE_BLACKLIST))
-            db.execSQL(SQL_CREATE_LIST(TABLE_PHONE_WHITELIST))
-            db.execSQL(SQL_CREATE_LIST(TABLE_TEXT_BLACKLIST))
-            db.execSQL(SQL_CREATE_LIST(TABLE_TEXT_WHITELIST))
+                execSQL(SQL_CREATE_LIST(TABLE_PHONE_BLACKLIST))
+                execSQL(SQL_CREATE_LIST(TABLE_PHONE_WHITELIST))
+                execSQL(SQL_CREATE_LIST(TABLE_TEXT_BLACKLIST))
+                execSQL(SQL_CREATE_LIST(TABLE_TEXT_WHITELIST))
 
                 insert(TABLE_SYSTEM, null, values { put(COLUMN_ID, 0) })
 
@@ -291,13 +287,17 @@ class Database constructor(private val context: Context, private val name: Strin
 
         override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) { /* see https://www.techonthenet.com/sqlite/tables/alter_table.php */
             if (DB_VERSION > oldVersion) {
-                log.warn("Database upgrade from $oldVersion to: $DB_VERSION")
+                db.batch {
+                    alterTable(TABLE_SYSTEM, SQL_CREATE_SYSTEM)
+                    alterTable(TABLE_EVENTS, SQL_CREATE_EVENTS)
+                    alterTable(TABLE_PHONE_BLACKLIST, SQL_CREATE_LIST(TABLE_PHONE_BLACKLIST))
+                    alterTable(TABLE_PHONE_WHITELIST, SQL_CREATE_LIST(TABLE_PHONE_WHITELIST))
+                    alterTable(TABLE_TEXT_BLACKLIST, SQL_CREATE_LIST(TABLE_TEXT_BLACKLIST))
+                    alterTable(TABLE_TEXT_WHITELIST, SQL_CREATE_LIST(TABLE_TEXT_WHITELIST))
+                }
 
-                db.alterTable(TABLE_SYSTEM, SQL_CREATE_SYSTEM)
-                db.alterTable(TABLE_EVENTS, SQL_CREATE_EVENTS)
+                log.warn("Database upgraded from $oldVersion to: $DB_VERSION")
             }
-
-            log.debug("Upgraded")
         }
     }
 

@@ -135,18 +135,6 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
         }
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-        when (key) {
-            PREF_EMAIL_TRIGGERS,
-            PREF_FILTER_PHONE_BLACKLIST,
-            PREF_FILTER_PHONE_WHITELIST,
-            PREF_FILTER_TEXT_BLACKLIST,
-            PREF_FILTER_TEXT_WHITELIST -> {
-                refreshItems()
-            }
-        }
-    }
-
     override fun onItemClick(item: PhoneEvent) {
         HistoryDetailsDialogFragment(item).show(this)
     }

@@ -37,7 +37,7 @@ class RemoteControlMailTest : BaseTest() {
         settings.update { clear() }
 
         database = Database(targetContext, "test.sqlite")
-        database.destroy()
+        database.clean()
 
         transport.login(account, MAIL_GOOGLE_COM)
         for (message in getMail()) {

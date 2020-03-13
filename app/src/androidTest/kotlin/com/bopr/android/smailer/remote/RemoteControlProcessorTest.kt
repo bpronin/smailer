@@ -45,7 +45,7 @@ class RemoteControlProcessorTest : BaseTest() {
         }
 
         database = Database(targetContext, "test.sqlite")
-        database.destroy()
+        database.clean()
 
         notifications = mock()
         smsTransport = mock()
