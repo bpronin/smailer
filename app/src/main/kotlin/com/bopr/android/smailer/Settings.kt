@@ -53,7 +53,6 @@ class Settings(context: Context, name: String = PREFERENCES_STORAGE_NAME) :
         const val PREF_FILTER_PHONE_WHITELIST = "message_filter_whitelist"
         const val PREF_FILTER_TEXT_BLACKLIST = "message_filter_text_blacklist"
         const val PREF_FILTER_TEXT_WHITELIST = "message_filter_text_whitelist"
-        const val PREF_HISTORY = "history"
         const val PREF_NOTIFY_SEND_SUCCESS = "notify_send_success"
         const val PREF_RECIPIENTS_ADDRESS = "recipients_address"
         const val PREF_REMOTE_CONTROL_ACCOUNT = "remote_control_account"
@@ -61,8 +60,8 @@ class Settings(context: Context, name: String = PREFERENCES_STORAGE_NAME) :
         const val PREF_REMOTE_CONTROL_FILTER_RECIPIENTS = "remote_control_filter_recipients"
         const val PREF_REMOTE_CONTROL_NOTIFICATIONS = "remote_control_notifications"
         const val PREF_SENDER_ACCOUNT = "sender_account"
-        const val PREF_SETTINGS_VERSION = "settings_version" /* hidden */
         const val PREF_SYNC_ENABLED = "sync_enabled"
+        const val PREF_SETTINGS_VERSION = "settings_version" /* hidden */
         const val PREF_SYNC_TIME = "sync_time" /* hidden */
 
         const val VAL_PREF_DEFAULT = "default"

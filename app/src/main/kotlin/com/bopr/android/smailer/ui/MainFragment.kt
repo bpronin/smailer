@@ -8,7 +8,6 @@ import com.bopr.android.smailer.Database
 import com.bopr.android.smailer.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings.Companion.PREF_HISTORY
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
@@ -114,7 +113,7 @@ class MainFragment : BasePreferenceFragment() {
     }
 
     private fun updateHistoryPreferenceView() {
-        val preference = requirePreference(PREF_HISTORY)
+        val preference = requirePreference("history")
         updateSummary(preference,
                 getQuantityString(R.plurals.new_history_items, R.string.new_history_items_zero,
                         database.unreadEventsCount), SUMMARY_STYLE_DEFAULT)
