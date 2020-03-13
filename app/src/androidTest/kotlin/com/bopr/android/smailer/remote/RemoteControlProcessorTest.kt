@@ -124,7 +124,7 @@ class RemoteControlProcessorTest : BaseTest() {
 
     @Test
     fun testRemovePhoneFromBlacklist() {
-        database.replaceFilterList(TABLE_PHONE_BLACKLIST, setOf("100", "200", "300"))
+        database.putFilterList(TABLE_PHONE_BLACKLIST, setOf("100", "200", "300"))
 
         val processor = RemoteControlProcessor(context, database, settings, notifications)
 
@@ -140,7 +140,7 @@ class RemoteControlProcessorTest : BaseTest() {
 
     @Test
     fun testRemovePhoneFromWhitelist() {
-        database.replaceFilterList(TABLE_PHONE_WHITELIST, setOf("100", "200", "300"))
+        database.putFilterList(TABLE_PHONE_WHITELIST, setOf("100", "200", "300"))
 
         val processor = RemoteControlProcessor(context, database, settings, notifications)
 
@@ -156,7 +156,7 @@ class RemoteControlProcessorTest : BaseTest() {
 
     @Test
     fun testRemoveTextFromBlacklist() {
-        database.replaceFilterList(TABLE_TEXT_BLACKLIST, setOf("100", "200", "300"))
+        database.putFilterList(TABLE_TEXT_BLACKLIST, setOf("100", "200", "300"))
 
         val processor = RemoteControlProcessor(context, database, settings, notifications)
 
@@ -172,7 +172,7 @@ class RemoteControlProcessorTest : BaseTest() {
 
     @Test
     fun testRemoveTextFromWhitelist() {
-        database.replaceFilterList(TABLE_TEXT_WHITELIST, setOf("100", "200", "300"))
+        database.putFilterList(TABLE_TEXT_WHITELIST, setOf("100", "200", "300"))
 
         val processor = RemoteControlProcessor(context, database, settings, notifications)
 

@@ -4,10 +4,6 @@ import android.Manifest.permission.READ_CONTACTS
 import android.accounts.Account
 import android.accounts.AccountsException
 import android.content.Context
-import com.bopr.android.smailer.Database.Companion.TABLE_PHONE_BLACKLIST
-import com.bopr.android.smailer.Database.Companion.TABLE_PHONE_WHITELIST
-import com.bopr.android.smailer.Database.Companion.TABLE_TEXT_BLACKLIST
-import com.bopr.android.smailer.Database.Companion.TABLE_TEXT_WHITELIST
 import com.bopr.android.smailer.Notifications.Companion.TARGET_MAIN
 import com.bopr.android.smailer.Notifications.Companion.TARGET_RECIPIENTS
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
@@ -185,10 +181,10 @@ class CallProcessor(
     private fun eventFilter(): PhoneEventFilter = settings.run {
         PhoneEventFilter(
                 triggers = getStringSet(PREF_EMAIL_TRIGGERS),
-                phoneBlacklist = database.getFilterList(TABLE_PHONE_BLACKLIST),
-                phoneWhitelist = database.getFilterList(TABLE_PHONE_WHITELIST),
-                textBlacklist = database.getFilterList(TABLE_TEXT_BLACKLIST),
-                textWhitelist = database.getFilterList(TABLE_TEXT_WHITELIST)
+                phoneBlacklist = database.phoneBlacklist,
+                phoneWhitelist = database.phoneWhitelist,
+                textBlacklist = database.textBlacklist,
+                textWhitelist = database.textWhitelist
         )
     }
 

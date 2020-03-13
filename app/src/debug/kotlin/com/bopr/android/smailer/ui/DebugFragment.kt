@@ -19,8 +19,6 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceScreen
 import com.bopr.android.smailer.*
 import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
-import com.bopr.android.smailer.Database.Companion.TABLE_PHONE_BLACKLIST
-import com.bopr.android.smailer.Database.Companion.TABLE_TEXT_BLACKLIST
 import com.bopr.android.smailer.Notifications.Companion.TARGET_MAIN
 import com.bopr.android.smailer.Notifications.Companion.TARGET_PHONE_BLACKLIST
 import com.bopr.android.smailer.Notifications.Companion.TARGET_RULES
@@ -354,8 +352,8 @@ class DebugFragment : BasePreferenceFragment() {
             putBoolean(PREF_NOTIFY_SEND_SUCCESS, true)
         }
 
-        database.replaceFilterList(TABLE_PHONE_BLACKLIST, setOf("+123456789", "+9876543*"))
-        database.replaceFilterList(TABLE_TEXT_BLACKLIST, setOf("Bad text", escapeRegex("Expression")))
+        database.phoneBlacklist = listOf("+123456789", "+9876543*")
+        database.textBlacklist = listOf("Bad text", escapeRegex("Expression"))
 
         showToast(R.string.operation_complete)
     }

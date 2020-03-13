@@ -3,10 +3,6 @@ package com.bopr.android.smailer.sync
 import android.accounts.Account
 import android.content.Context
 import com.bopr.android.smailer.Database
-import com.bopr.android.smailer.Database.Companion.TABLE_PHONE_BLACKLIST
-import com.bopr.android.smailer.Database.Companion.TABLE_PHONE_WHITELIST
-import com.bopr.android.smailer.Database.Companion.TABLE_TEXT_BLACKLIST
-import com.bopr.android.smailer.Database.Companion.TABLE_TEXT_WHITELIST
 import com.bopr.android.smailer.GeoCoordinates.Companion.coordinatesOf
 import com.bopr.android.smailer.GoogleDrive
 import com.bopr.android.smailer.PhoneEvent
@@ -79,21 +75,20 @@ internal class Synchronizer(context: Context,
 
     private fun getLocalData(): SyncData {
         return SyncData(
-                phoneBlacklist = database.getFilterList(TABLE_PHONE_BLACKLIST),
-                phoneWhitelist = database.getFilterList(TABLE_PHONE_WHITELIST),
-                textBlacklist = database.getFilterList(TABLE_TEXT_BLACKLIST),
-                textWhitelist = database.getFilterList(TABLE_TEXT_WHITELIST),
+                phoneBlacklist = database.phoneBlacklist,
+                phoneWhitelist = database.phoneWhitelist,
+                textBlacklist = database.textBlacklist,
+                textWhitelist = database.textWhitelist,
                 events = database.events.map(::eventToData)
         )
     }
 
     private fun putLocalData(data: SyncData) {
         data.events.map(::dataToEvent).let(database::putEvents)
-
-        database.replaceFilterList(TABLE_PHONE_BLACKLIST, data.phoneBlacklist)
-        database.replaceFilterList(TABLE_PHONE_WHITELIST, data.phoneWhitelist)
-        database.replaceFilterList(TABLE_TEXT_BLACKLIST, data.textBlacklist)
-        database.replaceFilterList(TABLE_TEXT_WHITELIST, data.textWhitelist)
+        database.phoneBlacklist = data.phoneBlacklist
+        database.phoneWhitelist = data.phoneWhitelist
+        database.textBlacklist = data.textBlacklist
+        database.textWhitelist = data.textWhitelist
     }
 
     private fun eventToData(event: PhoneEvent): SyncData.Event {

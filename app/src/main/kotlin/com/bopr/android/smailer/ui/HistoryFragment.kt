@@ -97,8 +97,8 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
             menu.removeItem(R.id.action_ignore)
         }
 
-        val blacklisted = database.getFilterList(TABLE_PHONE_BLACKLIST).contains(item.phone)
-        val whitelisted = database.getFilterList(TABLE_PHONE_WHITELIST).contains(item.phone)
+        val blacklisted = database.phoneBlacklist.contains(item.phone)
+        val whitelisted = database.phoneWhitelist.contains(item.phone)
 
         if (blacklisted || whitelisted) {
             menu.removeItem(R.id.action_add_to_blacklist)
@@ -246,8 +246,12 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
     }
 
     private fun addToFilterList(listName: String, phone: String?) {
-        if (!phone.isNullOrEmpty() && !database.putFilterListItem(listName, phone)) {
-            showToast(getString(R.string.item_already_exists, phone))
+        if (!phone.isNullOrEmpty()) {
+            if (database.putFilterListItem(listName, phone)) {
+                database.notifyChanged()
+            } else {
+                showToast(getString(R.string.item_already_exists, phone))
+            }
         }
     }
 

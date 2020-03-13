@@ -88,6 +88,19 @@ class Database constructor(private val context: Context, private val name: Strin
             log.debug("Updated last location")
         }
 
+    var phoneBlacklist: List<String>
+        get() = getFilterList(TABLE_PHONE_BLACKLIST)
+        set(value) = putFilterList(TABLE_PHONE_BLACKLIST, value)
+    var phoneWhitelist: List<String>
+        get() = getFilterList(TABLE_PHONE_WHITELIST)
+        set(value) = putFilterList(TABLE_PHONE_WHITELIST, value)
+    var textBlacklist: List<String>
+        get() = getFilterList(TABLE_TEXT_BLACKLIST)
+        set(value) = putFilterList(TABLE_TEXT_BLACKLIST, value)
+    var textWhitelist: List<String>
+        get() = getFilterList(TABLE_TEXT_WHITELIST)
+        set(value) = putFilterList(TABLE_TEXT_WHITELIST, value)
+
     /**
      * Puts event to database.
      */
@@ -180,6 +193,17 @@ class Database constructor(private val context: Context, private val name: Strin
         return query(listName).useToList { it.getString(COLUMN_VALUE)!! }
     }
 
+    fun putFilterList(listName: String, items: Collection<String>) {
+        helper.writableDatabase.batch {
+            delete(listName, null, null)
+            log.debug("Removed all from $listName")
+
+            for (item in items) {
+                putFilterListItem(listName, item)
+            }
+        }
+    }
+
     fun putFilterListItem(listName: String, item: String): Boolean {
         helper.writableDatabase.run {
             val values = values {
@@ -200,21 +224,10 @@ class Database constructor(private val context: Context, private val name: Strin
     fun deleteFilterListItem(listName: String, item: String): Boolean {
         var affected = 0
         helper.writableDatabase.batch {
-           affected = delete(listName, "$COLUMN_VALUE=?", strings(item))
+            affected = delete(listName, "$COLUMN_VALUE=?", strings(item))
         }
         modifiedTables.add(listName)
         return affected != 0
-    }
-
-    fun replaceFilterList(listName: String, items: Collection<String>) {
-        helper.writableDatabase.batch {
-            delete(listName, null, null)
-            log.debug("Removed all from $listName")
-
-            for (item in items) {
-                putFilterListItem(listName, item)
-            }
-        }
     }
 
     /**
