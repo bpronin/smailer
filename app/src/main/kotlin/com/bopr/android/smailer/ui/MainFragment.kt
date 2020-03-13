@@ -51,8 +51,8 @@ class MainFragment : BasePreferenceFragment() {
     }
 
     override fun onDestroy() {
-        database.close()
         requireContext().unregisterDatabaseListener(databaseListener)
+        database.close()
         super.onDestroy()
     }
 
