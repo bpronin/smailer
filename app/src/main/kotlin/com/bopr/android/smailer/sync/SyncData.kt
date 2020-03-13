@@ -10,11 +10,11 @@ import com.google.api.client.util.Key
  */
 /* NOTE: JSON engine requires that all DTO constructor parameters be var and have default value */
 data class SyncData(
-        @Key("phone_black_list") var phoneBlacklist: MutableList<String> = mutableListOf(),
-        @Key("text_black_list") var textBlacklist: MutableList<String> = mutableListOf(),
-        @Key("phone_white_list") var phoneWhitelist: MutableList<String> = mutableListOf(),
-        @Key("text_white_list") var textWhitelist: MutableList<String> = mutableListOf(),
-        @Key("phone_events") var events: List<Event>? = null) {
+        @Key("phone_black_list") var phoneBlacklist: List<String> = emptyList(),
+        @Key("text_black_list") var textBlacklist: List<String> = emptyList(),
+        @Key("phone_white_list") var phoneWhitelist: List<String> = emptyList(),
+        @Key("text_white_list") var textWhitelist: List<String> = emptyList(),
+        @Key("phone_events") var events: List<Event> = emptyList()) {
 
     data class Event(
             @Key("is_incoming") var incoming: Boolean = false,

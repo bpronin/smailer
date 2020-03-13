@@ -20,6 +20,7 @@ import com.bopr.android.smailer.PhoneEvent
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.R
+import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_BLACKLIST
 import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_WHITELIST
@@ -37,6 +38,7 @@ import com.google.android.material.snackbar.Snackbar
 //todo grouping by phone number
 class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferenceChangeListener {
 
+    private lateinit var settings: Settings
     private lateinit var database: Database
     private lateinit var databaseListener: BroadcastReceiver
     private var defaultItemTextColor: Int = 0
@@ -52,6 +54,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
         defaultItemTextColor = context.getColorFromAttr(android.R.attr.textColorSecondary)
         unreadItemTextColor = context.getColorFromAttr(android.R.attr.textColorPrimary)
 
+        settings = Settings(requireContext())
         settings.registerOnSharedPreferenceChangeListener(this)
 
         database = Database(context)
@@ -191,19 +194,20 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
             holder.timeView.setTextColor(defaultItemTextColor)
         }
 
-        markItemAsRead(item)
+        if (!item.isRead) {
+            item.isRead = true
+            database.putEvent(item) /* do not fire events */
+        }
     }
 
     private fun onClearData() {
         ConfirmDialog(getString(R.string.ask_clear_history)) {
-            database.clearEvents()
-            database.notifyChanged()
+            database.notifyOf { clearEvents() }
         }.show(this)
     }
 
     private fun onMarkAllAsRead() {
-        database.markAllEventsAsRead(true)
-        database.notifyChanged()
+        database.notifyOf { markAllEventsAsRead(true) }
         showToast(R.string.operation_complete)
     }
 
@@ -218,24 +222,21 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
     private fun onMarkAsIgnored() {
         getSelectedItem()?.let {
             it.state = STATE_IGNORED
-            database.putEvent(it)
-            database.notifyChanged()
+            database.notifyOf { putEvent(it) }
         }
     }
 
     private fun onRemoveSelected() {
         val events = listAdapter.getItemsAt(selectedItemPosition)
 
-        database.deleteEvents(events)
-        database.notifyChanged()
+        database.notifyOf { deleteEvents(events) }
 
         Snackbar.make(recycler,
                         getQuantityString(R.plurals.items_removed, events.size),
                         Snackbar.LENGTH_LONG)
                 .setActionTextColor(ContextCompat.getColor(requireContext(), R.color.colorAccentText))
                 .setAction(R.string.undo) {
-                    database.putEvents(events)
-                    database.notifyChanged()
+                    database.notifyOf { putEvents(events) }
                 }
                 .show()
     }
@@ -280,13 +281,6 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>(), OnSharedPreferen
         val list = settings.getStringList(listName)
         list.find { samePhone(it, phone) }?.let {
             edit.putStringList(PREF_FILTER_PHONE_BLACKLIST, list.apply { remove(it) })
-        }
-    }
-
-    private fun markItemAsRead(event: PhoneEvent) {
-        if (!event.isRead) {
-            event.isRead = true
-            database.putEvent(event)
         }
     }
 

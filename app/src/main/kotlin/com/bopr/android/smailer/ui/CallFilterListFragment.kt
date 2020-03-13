@@ -7,6 +7,7 @@ import android.view.*
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bopr.android.smailer.R
+import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.ui.CallFilterListFragment.Holder
 
 /**
@@ -17,8 +18,11 @@ import com.bopr.android.smailer.ui.CallFilterListFragment.Holder
 abstract class CallFilterListFragment(private val settingName: String) : EditableRecyclerFragment<String, Holder>(),
         OnSharedPreferenceChangeListener {
 
+    private lateinit var settings: Settings
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        settings = Settings(requireContext())
         settings.registerOnSharedPreferenceChangeListener(this)
     }
 

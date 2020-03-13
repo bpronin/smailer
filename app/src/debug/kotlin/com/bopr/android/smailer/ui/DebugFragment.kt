@@ -177,22 +177,19 @@ class DebugFragment : BasePreferenceFragment() {
                 }),
                 createPreference("Mark all as unread", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        database.markAllEventsAsRead(false)
-                        database.notifyChanged()
+                        database.notifyOf { markAllEventsAsRead(false) }
                         showToast(R.string.operation_complete)
                     }
                 }),
                 createPreference("Mark all as read", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        database.markAllEventsAsRead(true)
-                        database.notifyChanged()
+                        database.notifyOf { markAllEventsAsRead(true) }
                         showToast(R.string.operation_complete)
                     }
                 }),
                 createPreference("Clear calls log", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        database.clearEvents()
-                        database.notifyChanged()
+                        database.notifyOf { clearEvents() }
                         showToast(R.string.operation_complete)
                     }
                 }),
@@ -425,26 +422,28 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun onAddHistoryItem() {
-        database.putEvent(PhoneEvent("+79052345670", true, System.currentTimeMillis(), null, false,
-                "Debug message", null, null, STATE_PENDING, deviceName(), STATUS_ACCEPTED, isRead = false))
-        database.notifyChanged()
+        database.notifyOf {
+            putEvent(PhoneEvent("+79052345670", true, System.currentTimeMillis(), null, false,
+                    "Debug message", null, null, STATE_PENDING, deviceName(), STATUS_ACCEPTED, isRead = false))
+        }
         showToast(R.string.operation_complete)
     }
 
     private fun onPopulateHistory() {
         var time = System.currentTimeMillis()
         val recipient = deviceName()
-        database.putEvent(PhoneEvent("+79052345671", true, time, null, false, "Debug message", null, null, STATE_PENDING, recipient, STATUS_ACCEPTED, isRead = false))
-        database.putEvent(PhoneEvent("+79052345672", false, 1000.let { time += it; time }, null, false, "Debug message", null, null, STATE_PROCESSED, recipient, STATUS_ACCEPTED, isRead = false))
-        database.putEvent(PhoneEvent("+79052345673", true, 1000.let { time += it; time }, time + 10000, false, null, null, null, STATE_IGNORED, recipient, STATUS_ACCEPTED, isRead = false))
-        database.putEvent(PhoneEvent("+79052345674", false, 1000.let { time += it; time }, time + 10000, false, null, null, null, STATE_PENDING, recipient, STATUS_ACCEPTED, isRead = false))
-        database.putEvent(PhoneEvent("+79052345675", true, 1000.let { time += it; time }, time + 10000, true, null, null, null, STATE_PENDING, recipient, STATUS_ACCEPTED, isRead = false))
-        database.putEvent(PhoneEvent("+79052345671", true, 1000.let { time += it; time }, null, false, "Debug message", null, "Test exception +79052345671", STATE_PENDING, recipient, STATUS_ACCEPTED, isRead = false))
-        database.putEvent(PhoneEvent("+79052345672", false, 1000.let { time += it; time }, null, false, "Debug message", null, "Test exception +79052345672", STATE_PENDING, recipient, STATUS_ACCEPTED, isRead = false))
-        database.putEvent(PhoneEvent("+79052345673", true, 1000.let { time += it; time }, time + 10000, false, null, null, "Test exception +79052345673", STATE_PENDING, recipient, STATUS_ACCEPTED, isRead = false))
-        database.putEvent(PhoneEvent("+79052345674", false, 1000.let { time += it; time }, time + 10000, false, null, null, "Test exception +79052345674", STATE_PENDING, recipient, STATUS_ACCEPTED, isRead = false))
-        database.putEvent(PhoneEvent("+79052345675", true, 1000.let { time += it; time }, time + 10000, true, null, null, "Test exception +79052345675", STATE_PENDING, recipient, STATUS_ACCEPTED, isRead = false))
-        database.notifyChanged()
+        database.notifyOf {
+            putEvent(PhoneEvent("+79052345671", true, time, null, false, "Debug message", null, null, STATE_PENDING, recipient, STATUS_ACCEPTED, isRead = false))
+            putEvent(PhoneEvent("+79052345672", false, 1000.let { time += it; time }, null, false, "Debug message", null, null, STATE_PROCESSED, recipient, STATUS_ACCEPTED, isRead = false))
+            putEvent(PhoneEvent("+79052345673", true, 1000.let { time += it; time }, time + 10000, false, null, null, null, STATE_IGNORED, recipient, STATUS_ACCEPTED, isRead = false))
+            putEvent(PhoneEvent("+79052345674", false, 1000.let { time += it; time }, time + 10000, false, null, null, null, STATE_PENDING, recipient, STATUS_ACCEPTED, isRead = false))
+            putEvent(PhoneEvent("+79052345675", true, 1000.let { time += it; time }, time + 10000, true, null, null, null, STATE_PENDING, recipient, STATUS_ACCEPTED, isRead = false))
+            putEvent(PhoneEvent("+79052345671", true, 1000.let { time += it; time }, null, false, "Debug message", null, "Test exception +79052345671", STATE_PENDING, recipient, STATUS_ACCEPTED, isRead = false))
+            putEvent(PhoneEvent("+79052345672", false, 1000.let { time += it; time }, null, false, "Debug message", null, "Test exception +79052345672", STATE_PENDING, recipient, STATUS_ACCEPTED, isRead = false))
+            putEvent(PhoneEvent("+79052345673", true, 1000.let { time += it; time }, time + 10000, false, null, null, "Test exception +79052345673", STATE_PENDING, recipient, STATUS_ACCEPTED, isRead = false))
+            putEvent(PhoneEvent("+79052345674", false, 1000.let { time += it; time }, time + 10000, false, null, null, "Test exception +79052345674", STATE_PENDING, recipient, STATUS_ACCEPTED, isRead = false))
+            putEvent(PhoneEvent("+79052345675", true, 1000.let { time += it; time }, time + 10000, true, null, null, "Test exception +79052345675", STATE_PENDING, recipient, STATUS_ACCEPTED, isRead = false))
+        }
         showToast(R.string.operation_complete)
     }
 

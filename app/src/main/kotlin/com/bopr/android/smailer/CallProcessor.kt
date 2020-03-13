@@ -67,8 +67,7 @@ class CallProcessor(
             }
         }
 
-        database.putEvent(event)
-        database.notifyChanged()
+        database.notifyOf { putEvent(event) }
     }
 
     /**
@@ -80,17 +79,17 @@ class CallProcessor(
             log.debug("No pending events")
         } else {
             log.debug("Processing ${events.size} pending event(s)")
-
-            if (startMailSession()) {
-                for (event in events) {
-                    event.processTime = currentTimeMillis()
-                    if (sendMail(event)) {
-                        event.state = STATE_PROCESSED
-                        database.putEvent(event)
+            database.notifyOf {
+                if (startMailSession()) {
+                    for (event in events) {
+                        event.processTime = currentTimeMillis()
+                        if (sendMail(event)) {
+                            event.state = STATE_PROCESSED
+                            putEvent(event)
+                        }
                     }
                 }
             }
-            database.notifyChanged()
         }
     }
 

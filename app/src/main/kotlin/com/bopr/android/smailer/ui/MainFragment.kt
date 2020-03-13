@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import com.bopr.android.smailer.Database
+import com.bopr.android.smailer.Database.Companion.TABLE_EVENTS
 import com.bopr.android.smailer.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.R
@@ -46,7 +47,7 @@ class MainFragment : BasePreferenceFragment() {
 
         database = Database(context)
         databaseListener = context.registerDatabaseListener {
-            updateHistoryPreferenceView()
+            if (it.contains(TABLE_EVENTS)) updateHistoryPreferenceView()
         }
     }
 

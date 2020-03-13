@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory
  */
 class PendingCallProcessorService : JobIntentService() {
 
+    private val log = LoggerFactory.getLogger("PendingCallProcessorService")
+
     override fun onHandleWork(intent: Intent) {
         log.trace("Handling intent: $intent")
 
@@ -19,8 +21,4 @@ class PendingCallProcessorService : JobIntentService() {
         }
     }
 
-    companion object {
-
-        private val log = LoggerFactory.getLogger("PendingCallProcessorService")
-    }
 }

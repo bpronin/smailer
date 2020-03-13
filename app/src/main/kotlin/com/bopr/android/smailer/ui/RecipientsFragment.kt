@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bopr.android.smailer.R
+import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.ui.RecipientsFragment.Holder
 import com.bopr.android.smailer.util.isValidEmailAddress
@@ -20,8 +21,11 @@ import com.bopr.android.smailer.util.underwivedText
  */
 class RecipientsFragment : EditableRecyclerFragment<String, Holder>(), SharedPreferences.OnSharedPreferenceChangeListener {
 
+    private lateinit var settings: Settings
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        settings = Settings(requireContext())
         settings.registerOnSharedPreferenceChangeListener(this)
     }
 

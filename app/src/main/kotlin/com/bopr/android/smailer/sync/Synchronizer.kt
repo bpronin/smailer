@@ -88,7 +88,7 @@ internal class Synchronizer(context: Context,
     }
 
     private fun putLocalData(data: SyncData) {
-        data.events?.map(::dataToEvent)?.let(database::putEvents)
+        data.events.map(::dataToEvent).let(database::putEvents)
 
         settings.update {
             putStringList(PREF_FILTER_PHONE_BLACKLIST, data.phoneBlacklist)

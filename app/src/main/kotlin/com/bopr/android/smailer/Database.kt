@@ -25,7 +25,7 @@ import java.lang.System.currentTimeMillis
 class Database constructor(private val context: Context, private val name: String = DATABASE_NAME) : Closeable {
 
     private val helper: DbHelper = DbHelper(context)
-    private var modified = false
+    private val modifiedTables = mutableSetOf<String>()
 
     init {
         log.debug("Open")
@@ -83,7 +83,7 @@ class Database constructor(private val context: Context, private val name: Strin
                 put(COLUMN_LAST_LONGITUDE, value?.longitude)
                 put(COLUMN_LAST_LOCATION_TIME, currentTimeMillis())
             }, "$COLUMN_ID=0", null)
-            modified = true
+            modifiedTables.add(TABLE_SYSTEM)
 
             log.debug("Updated last location")
         }
@@ -121,7 +121,7 @@ class Database constructor(private val context: Context, private val name: Strin
                 log.debug("Inserted: $values")
             }
         }
-        modified = true
+        modifiedTables.add(TABLE_EVENTS)
     }
 
     /**
@@ -145,7 +145,7 @@ class Database constructor(private val context: Context, private val name: Strin
                         strings(event.acceptor, event.startTime))
             }
         }
-        modified = true
+        modifiedTables.add(TABLE_EVENTS)
 
         log.debug("${events.size} event(s) removed")
     }
@@ -157,9 +157,9 @@ class Database constructor(private val context: Context, private val name: Strin
         helper.writableDatabase.batch {
             delete(TABLE_EVENTS, null, null)
         }
-        modified = true
+        modifiedTables.add(TABLE_EVENTS)
 
-        log.debug("All events removed")
+        log.debug("Removed all from $TABLE_EVENTS")
     }
 
     /**
@@ -171,21 +171,31 @@ class Database constructor(private val context: Context, private val name: Strin
                 put(COLUMN_READ, read)
             }, null, null)
         }
-        modified = true
+        modifiedTables.add(TABLE_EVENTS)
 
         log.debug("All events marked as read")
     }
 
     /**
-     * Fires database changed event.
+     * Fires database "changed" event.
      */
     fun notifyChanged() {
-        if (modified) {
-            log.debug("Broadcasting data changed")
+        if (modifiedTables.isNotEmpty()) {
+            log.debug("Broadcasting data changed: $modifiedTables")
 
-            modified = false
-            LocalBroadcastManager.getInstance(context).sendBroadcast(Intent(DATABASE_EVENT))
+            val intent = Intent(DATABASE_EVENT).putExtra(EXTRA_TABLES, modifiedTables.toTypedArray())
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+            modifiedTables.clear()
         }
+    }
+
+    /**
+     * Performs given action then fires "changed" event
+     */
+    inline fun <T> notifyOf(action: Database.() -> T): T {
+        val result = action.invoke(this)
+        notifyChanged()
+        return result
     }
 
     /**
@@ -316,8 +326,10 @@ class Database constructor(private val context: Context, private val name: Strin
 
         private const val DB_VERSION = 7
         private const val DATABASE_EVENT = "database-event"
+        private const val EXTRA_TABLES = "tables"
+
         private const val TABLE_SYSTEM = "system_data"
-        private const val TABLE_EVENTS = "phone_events"
+        const val TABLE_EVENTS = "phone_events"
 
         private const val SQL_CREATE_SYSTEM = "CREATE TABLE " + TABLE_SYSTEM + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY, " +
@@ -357,11 +369,11 @@ class Database constructor(private val context: Context, private val name: Strin
         /**
          * Creates and registers database broadcast receiver.
          */
-        fun Context.registerDatabaseListener(onChange: () -> Unit): BroadcastReceiver {
+        fun Context.registerDatabaseListener(onChange: (Set<String>) -> Unit): BroadcastReceiver {
             val listener = object : BroadcastReceiver() {
 
                 override fun onReceive(context: Context?, intent: Intent?) {
-                    onChange()
+                    onChange(intent!!.getStringArrayExtra(EXTRA_TABLES)!!.toSet())
                 }
             }
             registerDatabaseListener(listener)

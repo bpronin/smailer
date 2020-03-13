@@ -11,25 +11,11 @@ import org.slf4j.LoggerFactory
  */
 class RemoteControlService : JobIntentService() {
 
-    private lateinit var processor: RemoteControlProcessor
-
-    override fun onCreate() {
-        super.onCreate()
-        processor = RemoteControlProcessor(this)
-    }
+    private val log = LoggerFactory.getLogger("RemoteControlService")
 
     override fun onHandleWork(intent: Intent) {
         log.trace("Handling intent: $intent")
 
-        try {
-            processor.checkMailbox()
-        } catch (x: Exception) {
-            log.warn("Failed handling service mail: ", x)
-        }
-    }
-
-    companion object {
-
-        private val log = LoggerFactory.getLogger("RemoteControlService")
+        RemoteControlProcessor(this).checkMailbox()
     }
 }

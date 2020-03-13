@@ -20,12 +20,14 @@ abstract class MainAppActivity(fragmentClass: KClass<out Fragment>) : BaseAppAct
     }
 
     private fun handleStartupParams(intent: Intent) {
-        intent.getStringExtra("screen")?.let { extra ->
-            when (extra) {
+        intent.getStringExtra("activity")?.let {
+            when (it) {
                 "debug" ->
                     startActivity(Intent(this, DebugActivity::class.java))
                 "remote_control" ->
                     startActivity(Intent(this, RemoteControlActivity::class.java))
+                "rules" ->
+                    startActivity(Intent(this, RulesActivity::class.java))
             }
         }
     }

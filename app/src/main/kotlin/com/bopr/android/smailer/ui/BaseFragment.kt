@@ -6,18 +6,14 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings
 
 /**
  * Base application fragment with default behaviour.
  */
 open class BaseFragment : Fragment() {
 
-    lateinit var settings: Settings
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        settings = Settings(requireContext())
         setHasOptionsMenu(true)
     }
 
