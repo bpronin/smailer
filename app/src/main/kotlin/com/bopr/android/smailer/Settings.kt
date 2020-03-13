@@ -57,6 +57,11 @@ class Settings(context: Context, name: String = PREFERENCES_STORAGE_NAME) :
         const val PREF_REMOTE_CONTROL_NOTIFICATIONS = "remote_control_notifications"
         const val PREF_SENDER_ACCOUNT = "sender_account"
         const val PREF_SYNC_ENABLED = "sync_enabled"
+        const val PREF_HISTORY = "history" /* view only */
+        const val PREF_PHONE_BLACKLIST = "phone_blacklist" /* view only */
+        const val PREF_PHONE_WHITELIST = "phone_whitelist" /* view only */
+        const val PREF_TEXT_BLACKLIST = "text_blacklist" /* view only */
+        const val PREF_TEXT_WHITELIST = "text_whitelist" /* view only */
         const val PREF_SETTINGS_VERSION = "settings_version" /* hidden */
 
         const val VAL_PREF_DEFAULT = "default"
