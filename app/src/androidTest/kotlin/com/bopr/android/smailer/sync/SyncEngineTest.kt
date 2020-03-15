@@ -37,12 +37,12 @@ class SyncEngineTest : BaseTest() {
         sync.clear()
 
         database.phoneBlacklist = listOf("A","B","C")
-        database.lastSyncTime = 1
+        database.updateTime = 1
 
         sync.sync()
 
         database.phoneBlacklist = emptyList()
-        database.lastSyncTime = 0  /* before last sync to force download */
+        database.updateTime = 0  /* before last sync to force download */
 
         sync.sync()
 

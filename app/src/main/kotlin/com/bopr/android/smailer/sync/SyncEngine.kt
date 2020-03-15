@@ -8,7 +8,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
-import com.bopr.android.smailer.Database
 import com.bopr.android.smailer.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.Settings
@@ -17,19 +16,13 @@ import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_ENABLED
 import com.bopr.android.smailer.sync.AppContentProvider.Companion.AUTHORITY
 import com.bopr.android.smailer.util.getAccount
 import org.slf4j.LoggerFactory
-import java.lang.System.currentTimeMillis
 
 class SyncEngine(private val context: Context) : OnSharedPreferenceChangeListener {
 
     private val log = LoggerFactory.getLogger("SyncEngine")
     private val settings = Settings(context)
     private var account: Account? = null
-    private val databaseListener = object : BroadcastReceiver() {
-
-        override fun onReceive(context: Context?, intent: Intent?) {
-            updateMetadata()
-        }
-    }
+    private val databaseListener = DatabaseListener()
     private val enabled: Boolean get() = settings.getBoolean(PREF_SYNC_ENABLED)
 
     init {
@@ -68,7 +61,7 @@ class SyncEngine(private val context: Context) : OnSharedPreferenceChangeListene
                 putBoolean(SYNC_EXTRAS_EXPEDITED, true)
             })
 
-            log.debug("Sync now requested")
+            log.debug("Sync on demand requested")
 
             addPeriodicSync(it, AUTHORITY, Bundle.EMPTY, 0)
 
@@ -91,12 +84,15 @@ class SyncEngine(private val context: Context) : OnSharedPreferenceChangeListene
         }
     }
 
-    private fun updateMetadata() {
-        if (enabled) {
-            Database(context).use {
-                val time = currentTimeMillis()
-                log.debug("Updating metadata: %tF %tT".format(time, time))
-                it.lastSyncTime = time
+    private inner class DatabaseListener : BroadcastReceiver() {
+
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (enabled) {
+                requestSync(account, AUTHORITY, Bundle().apply {
+                    putBoolean(SYNC_EXTRAS_MANUAL, true)
+                    putBoolean("expect_upload", true)
+                })
+                log.debug("Sync requested")
             }
         }
     }
@@ -106,6 +102,7 @@ class SyncEngine(private val context: Context) : OnSharedPreferenceChangeListene
         private var instance: SyncEngine? = null
 
         fun setupSyncEngine(context: Context) {
+            //todo why not simple class?
             if (instance != null) {
                 throw IllegalStateException("Sync engine can be instantiated only once")
             }

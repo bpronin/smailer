@@ -86,12 +86,12 @@ class Database constructor(private val context: Context, private val name: Strin
         get() = getFilterList(TABLE_TEXT_WHITELIST)
         set(value) = replaceFilterList(TABLE_TEXT_WHITELIST, value)
 
-    var lastSyncTime: Long
-        get() = querySystemTable(COLUMN_LAST_SYNC_TIME).useFirst {
-            getLong(COLUMN_LAST_SYNC_TIME)
+    var updateTime: Long
+        get() = querySystemTable(COLUMN_UPDATE_TIME).useFirst {
+            getLong(COLUMN_UPDATE_TIME)
         }!!
         set(value) = updateSystemTable(values {
-            put(COLUMN_LAST_SYNC_TIME, value)
+            put(COLUMN_UPDATE_TIME, value)
         }).also {
             log.debug("Updated last sync time to: $value")
         }
@@ -375,7 +375,7 @@ class Database constructor(private val context: Context, private val name: Strin
         const val COLUMN_LAST_LATITUDE = "last_latitude"
         const val COLUMN_LAST_LONGITUDE = "last_longitude"
         const val COLUMN_LAST_LOCATION_TIME = "last_location_time"
-        const val COLUMN_LAST_SYNC_TIME = "last_sync_time"
+        const val COLUMN_UPDATE_TIME = "last_sync_time"
         const val COLUMN_READ = "message_read"
         const val COLUMN_ACCEPTOR = "recipient"
 
@@ -394,7 +394,7 @@ class Database constructor(private val context: Context, private val name: Strin
                 COLUMN_LAST_LATITUDE + " REAL," +
                 COLUMN_LAST_LONGITUDE + " REAL," +
                 COLUMN_LAST_LOCATION_TIME + " INTEGER," +
-                COLUMN_LAST_SYNC_TIME + " INTEGER" +
+                COLUMN_UPDATE_TIME + " INTEGER" +
                 ")"
 
         private const val SQL_CREATE_EVENTS = "CREATE TABLE " + TABLE_EVENTS + " (" +

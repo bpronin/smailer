@@ -6,7 +6,7 @@ import android.database.Cursor
 import android.net.Uri
 
 /**
- * Application content provider. Does nothing.
+ * Application content provider. Stub. Does nothing.
  *
  * Required by synchronization framework.
  * Without it sync adapter won't call [SyncAdapter.onPerformSync]

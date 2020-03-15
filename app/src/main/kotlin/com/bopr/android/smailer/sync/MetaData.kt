@@ -7,5 +7,5 @@ import com.google.api.client.util.Key
  */
 /* NOTE: JSON engine requires that all DTO constructor parameters be var and have default value */
 data class MetaData(
-        @Key("sync_time") var syncTime: Long = 0
+        @Key("sync_time") var time: Long = 0
 )

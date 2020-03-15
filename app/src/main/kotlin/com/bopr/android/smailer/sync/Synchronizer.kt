@@ -30,7 +30,7 @@ internal class Synchronizer(context: Context,
     @Throws(IOException::class)
     fun sync() {
         val meta = drive.download(metaFile, MetaData::class)
-        if (meta == null || meta.syncTime <= database.lastSyncTime) {
+        if (meta == null || meta.time <= database.updateTime) {
             upload()
         } else {
             download()
@@ -51,7 +51,7 @@ internal class Synchronizer(context: Context,
 
     @Throws(IOException::class)
     fun upload() {
-        drive.upload(metaFile, MetaData(database.lastSyncTime))
+        drive.upload(metaFile, MetaData(database.updateTime))
         drive.upload(dataFile, getLocalData())
 
         log.debug("Uploaded local data")

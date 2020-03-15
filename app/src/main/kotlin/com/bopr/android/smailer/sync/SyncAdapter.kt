@@ -24,14 +24,14 @@ class SyncAdapter(context: Context, autoInitialize: Boolean) : AbstractThreadedS
 
     override fun onPerformSync(account: Account, extras: Bundle?, authority: String?,
                                provider: ContentProviderClient?, syncResult: SyncResult?) {
-        Database(context).use {
-            try {
+        val upload = extras?.getBoolean("expect_upload", false)
+        try {
+            Database(context).use {
                 Synchronizer(context, account, it).sync()
-
-                log.debug("Synchronized")
-            } catch (x: Exception) {
-                log.warn("Synchronization failed ", x)
             }
+            log.debug("Synchronized")
+        } catch (x: Exception) {
+            log.warn("Synchronization failed ", x)
         }
     }
 }

@@ -69,9 +69,9 @@ class GoogleDrive(private val context: Context) {
                     .delete(it)
                     .setFields("id")
                     .execute()
-        }
 
-        log.debug("Deleted: $filename")
+            log.debug("Deleted: $filename")
+        }
     }
 
     @Throws(IOException::class)
