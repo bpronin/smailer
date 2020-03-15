@@ -38,15 +38,15 @@ class GoogleDrive(private val context: Context) {
 
     @Throws(IOException::class)
     private fun open(filename: String): InputStream? {
-        return find(filename)?.run {
-            service.files()[this].executeMediaAsInputStream()
+        return find(filename)?.let {
+            service.files()[it].executeMediaAsInputStream()
         }
     }
 
     @Throws(IOException::class)
     private fun write(filename: String, json: String) {
-        find(filename)?.run {
-            update(this, filename, json)
+        find(filename)?.let {
+            update(it, filename, json)
         } ?: create(filename, json)
     }
 
@@ -93,9 +93,9 @@ class GoogleDrive(private val context: Context) {
 
     @Throws(IOException::class)
     fun delete(filename: String) {
-        find(filename)?.run {
+        find(filename)?.let {
             service.files()
-                    .delete(this)
+                    .delete(it)
                     .setFields("id")
                     .execute()
         }
@@ -126,17 +126,17 @@ class GoogleDrive(private val context: Context) {
     @Throws(IOException::class)
     fun upload(filename: String, data: Any) {
         val writer: Writer = StringWriter()
-        val generator = JacksonFactory.getDefaultInstance().createJsonGenerator(writer)
-        generator.serialize(data)
-        generator.flush()
-        write(filename, writer.toString())
-        generator.close()
+        JacksonFactory.getDefaultInstance().createJsonGenerator(writer).use {
+            it.serialize(data)
+            it.flush()
+            write(filename, writer.toString())
+        }
     }
 
     @Throws(IOException::class)
     fun <T : Any> download(filename: String, dataClass: KClass<out T>): T? {
-        return open(filename)?.run {
-            JacksonFactory.getDefaultInstance().createJsonParser(this).parseAndClose(dataClass.java)
+        return open(filename)?.let {
+            JacksonFactory.getDefaultInstance().createJsonParser(it).parseAndClose(dataClass.java)
         }
     }
 
