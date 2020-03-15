@@ -6,6 +6,7 @@ import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -40,7 +41,7 @@ class DbUtilTest : BaseTest() {
     @Test
     fun testIsTableExists() {
         helper.writableDatabase.apply {
-            assertEquals(emptySet<String>(), getTables())
+            assertTrue(getTables().isEmpty())
 
             execSQL("CREATE TABLE TABLE_1 (" +
                     "ID INTEGER PRIMARY KEY, " +
@@ -136,7 +137,7 @@ class DbUtilTest : BaseTest() {
                 if (column == "COLUMN_2")
                     getString("COLUMN_1") + "_" + getInt("ID")
                 else
-                    getStringIfExist(column)
+                    getStringIfExists(column)
             }
 
             val ids = mutableListOf<Int>()
@@ -165,7 +166,8 @@ class DbUtilTest : BaseTest() {
             alterTable("TABLE_1", "CREATE TABLE TABLE_1 (" +
                     "ID INTEGER PRIMARY KEY, " +
                     "COLUMN_2 TEXT(25)" +
-                    ")") { column: String ->
+                    ")")
+            { column: String ->
                 if (column == "COLUMN_2")
                     getString("COLUMN_1") + "_PRIM"
                 else
@@ -179,7 +181,29 @@ class DbUtilTest : BaseTest() {
             assertEquals(listOf("A_PRIM", "B_PRIM", "C_PRIM"), values)
             assertEquals(setOf("TABLE_1"), getTables()) /* ensure temp table is removed */
         }
+    }
 
+    @Test
+    fun testAlterTableNoSource() {
+        helper.writableDatabase.apply {
+            alterTable("TABLE_1", "CREATE TABLE TABLE_1 (" +
+                    "ID INTEGER PRIMARY KEY, " +
+                    "COLUMN_2 TEXT(25)" +
+                    ")")
+            { column: String ->
+                if (column == "COLUMN_2")
+                    getString("COLUMN_1") + "_PRIM"
+                else
+                    null
+            }
+
+            val values = query("TABLE_1").useToList {
+                getString("COLUMN_2")
+            }
+
+            assertTrue(values.isEmpty())
+            assertEquals(setOf("TABLE_1"), getTables()) /* ensure temp table is removed */
+        }
     }
 
 }

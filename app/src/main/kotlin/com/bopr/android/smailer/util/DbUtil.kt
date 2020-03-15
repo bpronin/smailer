@@ -35,19 +35,29 @@ fun SQLiteDatabase.getTables(): Set<String> {
             .useToList { getString(0) }.toSet()
 }
 
+@SuppressLint("Recycle")
+fun SQLiteDatabase.isTableExists(name:String): Boolean {
+    return query("sqlite_master", strings("COUNT(*)"), "type='table' AND name='$name'")
+            .useFirst { getLong(0) } == 1L
+}
+
 inline fun SQLiteDatabase.alterTable(table: String, createSql: String,
-                                     transform: Cursor.(String) -> String? = { getStringIfExist(it) }) {
-    val old = table + "_old"
-    execSQL("DROP TABLE IF EXISTS $old")
-    execSQL("ALTER TABLE $table RENAME TO $old")
-    execSQL(createSql)
-    copyTable(old, table, transform)
-    execSQL("DROP TABLE $old")
+                                     transform: Cursor.(String) -> String? = { getStringIfExists(it) }) {
+    if (isTableExists(table)) {
+        val old = table + "_old"
+        execSQL("DROP TABLE IF EXISTS $old")
+        execSQL("ALTER TABLE $table RENAME TO $old")
+        execSQL(createSql)
+        copyTable(old, table, transform)
+        execSQL("DROP TABLE $old")
+    } else {
+        execSQL(createSql)
+    }
 }
 
 @SuppressLint("Recycle")
 inline fun SQLiteDatabase.copyTable(srcTable: String, dstTable: String,
-                                    transform: Cursor.(String) -> String? = { getStringIfExist(it) }) {
+                                    transform: Cursor.(String) -> String? = { getStringIfExists(it) }) {
     val columns = query(table = dstTable, limit = "1").use {
         it.columnNames
     }
@@ -65,7 +75,7 @@ fun Cursor.getString(columnName: String): String? {
     return getString(getColumnIndex(columnName))
 }
 
-fun Cursor.getStringIfExist(columnName: String): String? {
+fun Cursor.getStringIfExists(columnName: String): String? {
     val columnIndex = getColumnIndex(columnName)
     return if (columnIndex != -1) getString(columnIndex) else null
 }
