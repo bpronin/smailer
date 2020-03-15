@@ -58,7 +58,6 @@ class Settings(context: Context, name: String = PREFERENCES_STORAGE_NAME) :
         const val PREF_SENDER_ACCOUNT = "sender_account"
         const val PREF_SYNC_ENABLED = "sync_enabled"
         const val PREF_SETTINGS_VERSION = "settings_version" /* hidden */
-        const val PREF_SYNC_TIME = "sync_time" /* hidden */
 
         const val VAL_PREF_DEFAULT = "default"
         const val VAL_PREF_EMAIL_CONTENT_CONTACT = "contact_name"

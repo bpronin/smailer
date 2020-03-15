@@ -8,12 +8,12 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
+import com.bopr.android.smailer.Database
 import com.bopr.android.smailer.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_ENABLED
-import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_TIME
 import com.bopr.android.smailer.sync.AppContentProvider.Companion.AUTHORITY
 import com.bopr.android.smailer.util.getAccount
 import org.slf4j.LoggerFactory
@@ -93,12 +93,10 @@ class SyncEngine(private val context: Context) : OnSharedPreferenceChangeListene
 
     private fun updateMetadata() {
         if (enabled) {
-            val time = currentTimeMillis()
-
-            log.debug("Updating metadata: %tF %tT".format(time, time))
-
-            settings.update {
-                putLong(PREF_SYNC_TIME, time)
+            Database(context).use {
+                val time = currentTimeMillis()
+                log.debug("Updating metadata: %tF %tT".format(time, time))
+                it.lastSyncTime = time
             }
         }
     }
@@ -108,7 +106,7 @@ class SyncEngine(private val context: Context) : OnSharedPreferenceChangeListene
         private var instance: SyncEngine? = null
 
         fun setupSyncEngine(context: Context) {
-            if (instance != null){
+            if (instance != null) {
                 throw IllegalStateException("Sync engine can be instantiated only once")
             }
             instance = SyncEngine(context).apply {

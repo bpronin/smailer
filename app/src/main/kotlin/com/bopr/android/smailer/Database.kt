@@ -1,9 +1,6 @@
 package com.bopr.android.smailer
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteDatabase.CONFLICT_IGNORE
@@ -65,30 +62,24 @@ class Database constructor(private val context: Context, private val name: Strin
      * Returns last saved geolocation.
      */
     var lastLocation: GeoCoordinates?
-        get() = helper.readableDatabase.query(
-                table = TABLE_SYSTEM,
-                projection = strings(COLUMN_LAST_LATITUDE, COLUMN_LAST_LONGITUDE),
-                selection = "$COLUMN_ID=0"
-        ).useFirst {
+        get() = querySystemTable(COLUMN_LAST_LATITUDE, COLUMN_LAST_LONGITUDE).useFirst {
             GeoCoordinates(
                     getDouble(COLUMN_LAST_LATITUDE),
                     getDouble(COLUMN_LAST_LONGITUDE)
             )
         }
-        set(value) {
-            helper.writableDatabase.update(TABLE_SYSTEM, values {
-                put(COLUMN_LAST_LATITUDE, value?.latitude)
-                put(COLUMN_LAST_LONGITUDE, value?.longitude)
-                put(COLUMN_LAST_LOCATION_TIME, currentTimeMillis())
-            }, "$COLUMN_ID=0", null)
-            modifiedTables.add(TABLE_SYSTEM)
-
-            log.debug("Updated last location")
+        set(value) = updateSystemTable(values {
+            put(COLUMN_LAST_LATITUDE, value?.latitude)
+            put(COLUMN_LAST_LONGITUDE, value?.longitude)
+            put(COLUMN_LAST_LOCATION_TIME, currentTimeMillis())
+        }).also {
+            log.debug("Updated last location to: $value")
         }
 
     var phoneBlacklist: List<String>
         get() = getFilterList(TABLE_PHONE_BLACKLIST)
         set(value) = replaceFilterList(TABLE_PHONE_BLACKLIST, value)
+
     var phoneWhitelist: List<String>
         get() = getFilterList(TABLE_PHONE_WHITELIST)
         set(value) = replaceFilterList(TABLE_PHONE_WHITELIST, value)
@@ -98,6 +89,16 @@ class Database constructor(private val context: Context, private val name: Strin
     var textWhitelist: List<String>
         get() = getFilterList(TABLE_TEXT_WHITELIST)
         set(value) = replaceFilterList(TABLE_TEXT_WHITELIST, value)
+
+    var lastSyncTime: Long
+        get() = querySystemTable(COLUMN_LAST_SYNC_TIME).useFirst {
+            getLong(COLUMN_LAST_SYNC_TIME)
+        }!!
+        set(value) = updateSystemTable(values {
+            put(COLUMN_LAST_SYNC_TIME, value)
+        }).also {
+            log.debug("Updated last sync time to: $value")
+        }
 
     /**
      * Puts event to database.
@@ -165,12 +166,14 @@ class Database constructor(private val context: Context, private val name: Strin
      * Removes all events from database.
      */
     fun clearEvents() {
-        helper.writableDatabase.batch {
+        val affected = helper.writableDatabase.batch {
             delete(TABLE_EVENTS, null, null)
         }
-        modifiedTables.add(TABLE_EVENTS)
+        if (affected != 0) {
+            modifiedTables.add(TABLE_EVENTS)
 
-        log.debug("Removed all from $TABLE_EVENTS")
+            log.debug("Removed all from $TABLE_EVENTS")
+        }
     }
 
     /**
@@ -193,9 +196,9 @@ class Database constructor(private val context: Context, private val name: Strin
 
     fun replaceFilterList(listName: String, items: Collection<String>) {
         helper.writableDatabase.batch {
-            delete(listName, null, null)
-            log.debug("Removed all from $listName")
-
+            if (delete(listName, null, null) != 0) {
+                log.debug("Removed all from $listName")
+            }
             for (item in items) {
                 putFilterListItem(listName, item)
             }
@@ -226,6 +229,14 @@ class Database constructor(private val context: Context, private val name: Strin
         }
         modifiedTables.add(listName)
         return affected != 0
+    }
+
+    fun <T> batchRead(action: Database.() -> T): T {
+        return helper.readableDatabase.batch { this@Database.action() }
+    }
+
+    fun batchWrite(action: Database.() -> Unit) {
+        helper.writableDatabase.batch { this@Database.action() }
     }
 
     /**
@@ -266,6 +277,19 @@ class Database constructor(private val context: Context, private val name: Strin
         context.deleteDatabase(name)
 
         log.debug("Destroyed")
+    }
+
+    private fun querySystemTable(vararg columns: Any): Cursor {
+        return helper.readableDatabase.query(
+                table = TABLE_SYSTEM,
+                projection = strings(*columns),
+                selection = "$COLUMN_ID=0"
+        )
+    }
+
+    private fun updateSystemTable(values: ContentValues) {
+        helper.writableDatabase.update(TABLE_SYSTEM, values, "$COLUMN_ID=0", null)
+        modifiedTables.add(TABLE_SYSTEM)
     }
 
     private inner class DbHelper(context: Context) : SQLiteOpenHelper(context, name, null, DB_VERSION) {
@@ -333,6 +357,8 @@ class Database constructor(private val context: Context, private val name: Strin
         private val log = LoggerFactory.getLogger("Database")
 
         const val DATABASE_NAME = "smailer.sqlite"
+        private const val DB_VERSION = 8
+
         const val COLUMN_COUNT = "COUNT(*)"
         const val COLUMN_ID = "_id"
         const val COLUMN_IS_INCOMING = "is_incoming"
@@ -351,10 +377,10 @@ class Database constructor(private val context: Context, private val name: Strin
         const val COLUMN_LAST_LATITUDE = "last_latitude"
         const val COLUMN_LAST_LONGITUDE = "last_longitude"
         const val COLUMN_LAST_LOCATION_TIME = "last_location_time"
+        const val COLUMN_LAST_SYNC_TIME = "last_sync_time"
         const val COLUMN_READ = "message_read"
         const val COLUMN_ACCEPTOR = "recipient"
 
-        private const val DB_VERSION = 7
         private const val DATABASE_EVENT = "database-event"
         private const val EXTRA_TABLES = "tables"
 
@@ -369,7 +395,8 @@ class Database constructor(private val context: Context, private val name: Strin
                 COLUMN_ID + " INTEGER PRIMARY KEY, " +
                 COLUMN_LAST_LATITUDE + " REAL," +
                 COLUMN_LAST_LONGITUDE + " REAL," +
-                COLUMN_LAST_LOCATION_TIME + " INTEGER" +
+                COLUMN_LAST_LOCATION_TIME + " INTEGER," +
+                COLUMN_LAST_SYNC_TIME + " INTEGER" +
                 ")"
 
         private const val SQL_CREATE_EVENTS = "CREATE TABLE " + TABLE_EVENTS + " (" +

@@ -4,9 +4,9 @@ import android.Manifest.permission.READ_CONTACTS
 import androidx.test.rule.GrantPermissionRule
 import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.Database
-import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.util.primaryAccount
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -32,30 +32,21 @@ class SyncEngineTest : BaseTest() {
     @Test
     fun testSync() {
         val account = targetContext.primaryAccount()!!
-        val settings = Settings(targetContext, "test.preferences")
-        val sync = Synchronizer(targetContext, account, database, settings, "test-meta.json", "test-data.json")
+        val sync = Synchronizer(targetContext, account, database, "test-meta.json", "test-data.json")
 
         sync.clear()
 
-//        settings.update {
-//            putString(PREF_FILTER_PHONE_BLACKLIST, "A,B,C")
-//        }
-//        sync.sync()
-//
-//        assertEquals(setOf("A", "B", "C"), settings.callFilter.phoneBlacklist)
-//
-//        settings.update {
-//            putString(PREF_FILTER_PHONE_BLACKLIST, "A,B,C,D")
-//        }
-//        sync.sync()
-//
-//        assertEquals(setOf("A", "B", "C"), settings.callFilter.phoneBlacklist)
-//
-//        settings.update {
-//            putString(PREF_FILTER_PHONE_BLACKLIST, "A,B")
-//        }
-//        sync.sync()
-//
-//        assertEquals(setOf("A", "B"), settings.callFilter.phoneBlacklist)
+        database.phoneBlacklist = listOf("A","B","C")
+        database.lastSyncTime = 1
+
+        sync.sync()
+
+        database.phoneBlacklist = emptyList()
+        database.lastSyncTime = 0  /* before last sync to force download */
+
+        sync.sync()
+
+        assertEquals(listOf("A", "B", "C"), database.phoneBlacklist)
     }
+
 }
