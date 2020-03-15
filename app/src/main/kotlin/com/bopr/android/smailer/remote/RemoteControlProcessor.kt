@@ -2,7 +2,6 @@ package com.bopr.android.smailer.remote
 
 import android.Manifest.permission.SEND_SMS
 import android.accounts.Account
-import android.accounts.AccountsException
 import android.content.Context
 import androidx.annotation.StringRes
 import com.bopr.android.smailer.*
@@ -49,12 +48,14 @@ internal class RemoteControlProcessor(
     private val parser = RemoteControlTaskParser()
     private val query = "subject:Re:[${context.getString(R.string.app_name)}] label:inbox"
 
-    @Throws(AccountsException::class)
     fun checkMailbox(): Int {
         checkNotMainThread() /* gmail won't work in main thread */
+        
+        if (!checkInternet()) return 0
+        val account = requireAccount() ?: return 0
 
         val transport = GoogleMail(context)
-        transport.login(requireAccount(), MAIL_GOOGLE_COM)
+        transport.login(account, MAIL_GOOGLE_COM)
         val messages = transport.list(query)
 
         if (messages.isNotEmpty()) {
@@ -121,12 +122,20 @@ internal class RemoteControlProcessor(
         return true
     }
 
-    @Throws(AccountsException::class)
-    private fun requireAccount(): Account {
-        val accountName = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
-        return context.getAccount(accountName) ?: run {
-            notifications.showRemoteAccountError()
-            throw AccountsException("Service account [$accountName] not found")
+    private fun checkInternet(): Boolean {
+        /* check it before all to avoid awaiting timeout while sending */
+        return context.hasInternetConnection().also {
+            if (!it) log.warn("No internet connection")
+        }
+    }
+
+    private fun requireAccount(): Account? {
+        val name = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
+        return context.getAccount(name).also {
+            if (it == null) {
+                notifications.showRemoteAccountError()
+                log.warn("Service account [$name] not found")
+            }
         }
     }
 

@@ -1,6 +1,5 @@
 package com.bopr.android.smailer.remote
 
-import android.accounts.AccountsException
 import androidx.test.filters.LargeTest
 import com.bopr.android.smailer.*
 import com.bopr.android.smailer.Notifications.Companion.TARGET_PHONE_BLACKLIST
@@ -15,7 +14,8 @@ import com.bopr.android.smailer.util.deviceName
 import com.bopr.android.smailer.util.primaryAccount
 import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
 import com.nhaarman.mockitokotlin2.*
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers.anyInt
@@ -25,7 +25,7 @@ import java.lang.Thread.sleep
 class RemoteControlMailTest : BaseTest() {
 
     private val sender = "TEST"
-    private val settings = Settings(targetContext, "test.preferences")
+    private val settings = Settings(targetContext, "test.preferences")   //todo remove. replace with shared prefs
     private val account = targetContext.primaryAccount()!!
     private val transport = GoogleMail(targetContext)
     private val notifications: Notifications = mock()
@@ -34,13 +34,10 @@ class RemoteControlMailTest : BaseTest() {
 
     @Before
     fun setUp() {
-        settings.update { clear() }
-
-        database = Database(targetContext, "test.sqlite")
-        database.clean()
+        database = Database(targetContext, "test.sqlite").apply { clean() }
 
         transport.login(account, MAIL_GOOGLE_COM)
-        for (message in getMail()) {
+        for (message in loadMail()) {
             transport.trash(message)
         }
 
@@ -56,14 +53,14 @@ class RemoteControlMailTest : BaseTest() {
         database.close()
     }
 
-    private fun getMail(): List<MailMessage> {
+    private fun loadMail(): List<MailMessage> {
         return transport.list("subject:(Re:[SMailer] AND $sender) label:inbox")
     }
 
     private fun awaitMail(): List<MailMessage> {
         var list = emptyList<MailMessage>()
         for (i in 0..20) {
-            list = getMail()
+            list = loadMail()
             if (list.isNotEmpty()) break
             sleep(1000)
         }
@@ -76,11 +73,13 @@ class RemoteControlMailTest : BaseTest() {
             putString(PREF_REMOTE_CONTROL_ACCOUNT, null)
         }
 
-        assertThrows(AccountsException::class.java) { processor.checkMailbox() }
+        processor.checkMailbox()
+
+        verify(notifications).showRemoteAccountError()
     }
 
     @Test
-    fun testHandleServiceMailNoServiceMail() {
+    fun testHandleServiceMailNoMail() {
         settings.update {
             putString(PREF_REMOTE_CONTROL_ACCOUNT, account.name)
             putBoolean(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS, true)
@@ -88,11 +87,11 @@ class RemoteControlMailTest : BaseTest() {
             putBoolean(PREF_REMOTE_CONTROL_NOTIFICATIONS, true)
         }
 
-        assertTrue(getMail().isEmpty())
+        assertTrue(loadMail().isEmpty())
 
         processor.checkMailbox()
 
-        assertTrue(getMail().isEmpty())
+        assertTrue(loadMail().isEmpty())
         assertTrue(database.phoneBlacklist.isEmpty())
         assertTrue(database.phoneWhitelist.isEmpty())
         assertTrue(database.textBlacklist.isEmpty())
@@ -122,7 +121,7 @@ class RemoteControlMailTest : BaseTest() {
 
         processor.checkMailbox()
 
-        assertEquals(1, getMail().size)
+        assertEquals(1, loadMail().size)
         assertTrue(database.phoneBlacklist.isEmpty())
         assertTrue(database.phoneWhitelist.isEmpty())
         assertTrue(database.textBlacklist.isEmpty())
@@ -170,7 +169,7 @@ class RemoteControlMailTest : BaseTest() {
 
         processor.checkMailbox()
 
-        assertTrue(getMail().isEmpty())
+        assertTrue(loadMail().isEmpty())
         assertTrue(database.phoneBlacklist.contains("1234567890"))
         assertTrue(database.phoneWhitelist.contains("0987654321"))
         assertTrue(database.textBlacklist.contains("SPAM"))
@@ -223,7 +222,7 @@ class RemoteControlMailTest : BaseTest() {
 
         processor.checkMailbox()
 
-        assertTrue(getMail().isEmpty())
+        assertTrue(loadMail().isEmpty())
         assertTrue(database.phoneBlacklist.contains("1234567890"))
         assertTrue(database.phoneWhitelist.contains("0987654321"))
         assertTrue(database.textBlacklist.contains("SPAM"))
@@ -270,7 +269,7 @@ class RemoteControlMailTest : BaseTest() {
 
         processor.checkMailbox()
 
-        assertTrue(getMail().isEmpty())
+        assertTrue(loadMail().isEmpty())
         assertTrue(database.phoneBlacklist.contains("1234567890"))
         assertTrue(database.phoneWhitelist.contains("0987654321"))
         assertTrue(database.textBlacklist.contains("SPAM"))

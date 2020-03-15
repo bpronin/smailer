@@ -1,13 +1,17 @@
 package com.bopr.android.smailer.remote
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.test.filters.SmallTest
-import com.bopr.android.smailer.*
+import com.bopr.android.smailer.BaseTest
+import com.bopr.android.smailer.Database
+import com.bopr.android.smailer.Notifications
 import com.bopr.android.smailer.Notifications.Companion.TARGET_MAIN
 import com.bopr.android.smailer.Notifications.Companion.TARGET_PHONE_BLACKLIST
 import com.bopr.android.smailer.Notifications.Companion.TARGET_PHONE_WHITELIST
 import com.bopr.android.smailer.Notifications.Companion.TARGET_TEXT_BLACKLIST
 import com.bopr.android.smailer.Notifications.Companion.TARGET_TEXT_WHITELIST
+import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_NOTIFICATIONS
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.ADD_PHONE_TO_BLACKLIST
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.ADD_PHONE_TO_WHITELIST
@@ -19,38 +23,36 @@ import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_TEXT_F
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.REMOVE_TEXT_FROM_WHITELIST
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.SEND_SMS_TO_CALLER
 import com.bopr.android.smailer.util.SmsTransport
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.eq
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.*
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.anyInt
 
 @SmallTest
 class RemoteControlProcessorTest : BaseTest() {
 
     private lateinit var context: Context
-    private lateinit var settings: Settings
+    private lateinit var preferences: SharedPreferences
     private lateinit var database: Database
     private lateinit var notifications: Notifications
     private lateinit var smsTransport: SmsTransport
 
     @Before
     fun setUp() {
-        settings = Settings(targetContext, "test.preferences")
-        settings.update {
-            clear()
-            putBoolean(PREF_REMOTE_CONTROL_NOTIFICATIONS, true)
+        preferences = mock {
+            on { getBoolean(eq(PREF_REMOTE_CONTROL_NOTIFICATIONS), anyOrNull()) }.doReturn(true)
         }
 
-        database = Database(targetContext, "test.sqlite")
-        database.clean()
+        database = Database(targetContext, "test.sqlite").apply { clean() }
 
         notifications = mock()
         smsTransport = mock()
+
         context = mock {
             on { resources }.doReturn(targetContext.resources)
+            on { getSharedPreferences(ArgumentMatchers.anyString(), anyInt()) }.doReturn(preferences)
         }
     }
 
@@ -60,7 +62,7 @@ class RemoteControlProcessorTest : BaseTest() {
 
     @Test
     fun testAddPhoneToBlacklist() {
-        val processor = RemoteControlProcessor(context, database, settings, notifications)
+        val processor = RemoteControlProcessor(context, database, notifications = notifications)
 
         processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_BLACKLIST, "100"))
         processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_BLACKLIST, "200"))
@@ -77,7 +79,7 @@ class RemoteControlProcessorTest : BaseTest() {
 
     @Test
     fun testAddPhoneToWhitelist() {
-        val processor = RemoteControlProcessor(context, database, settings, notifications)
+        val processor = RemoteControlProcessor(context, database, notifications = notifications)
 
         processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_WHITELIST, "100"))
         processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_WHITELIST, "200"))
@@ -94,7 +96,7 @@ class RemoteControlProcessorTest : BaseTest() {
 
     @Test
     fun testAddTextToBlacklist() {
-        val processor = RemoteControlProcessor(context, database, settings, notifications)
+        val processor = RemoteControlProcessor(context, database, notifications = notifications)
 
         processor.performTask(RemoteControlTask("device", ADD_TEXT_TO_BLACKLIST, "100"))
         processor.performTask(RemoteControlTask("device", ADD_TEXT_TO_BLACKLIST, "200"))
@@ -111,7 +113,7 @@ class RemoteControlProcessorTest : BaseTest() {
 
     @Test
     fun testAddTextToWhitelist() {
-        val processor = RemoteControlProcessor(context, database, settings, notifications)
+        val processor = RemoteControlProcessor(context, database, notifications = notifications)
 
         processor.performTask(RemoteControlTask("device", ADD_TEXT_TO_WHITELIST, "100"))
         processor.performTask(RemoteControlTask("device", ADD_TEXT_TO_WHITELIST, "200"))
@@ -130,7 +132,7 @@ class RemoteControlProcessorTest : BaseTest() {
     fun testRemovePhoneFromBlacklist() {
         database.phoneBlacklist = listOf("100", "200", "300")
 
-        val processor = RemoteControlProcessor(context, database, settings, notifications)
+        val processor = RemoteControlProcessor(context, database, notifications = notifications)
 
         processor.performTask(RemoteControlTask("device", REMOVE_PHONE_FROM_BLACKLIST, "100"))
         processor.performTask(RemoteControlTask("device", REMOVE_PHONE_FROM_BLACKLIST, "200"))
@@ -148,7 +150,7 @@ class RemoteControlProcessorTest : BaseTest() {
     fun testRemovePhoneFromWhitelist() {
         database.phoneWhitelist = listOf("100", "200", "300")
 
-        val processor = RemoteControlProcessor(context, database, settings, notifications)
+        val processor = RemoteControlProcessor(context, database, notifications = notifications)
 
         processor.performTask(RemoteControlTask("device", REMOVE_PHONE_FROM_WHITELIST, "100"))
         processor.performTask(RemoteControlTask("device", REMOVE_PHONE_FROM_WHITELIST, "200"))
@@ -166,7 +168,7 @@ class RemoteControlProcessorTest : BaseTest() {
     fun testRemoveTextFromBlacklist() {
         database.textBlacklist = listOf("100", "200", "300")
 
-        val processor = RemoteControlProcessor(context, database, settings, notifications)
+        val processor = RemoteControlProcessor(context, database, notifications = notifications)
 
         processor.performTask(RemoteControlTask("device", REMOVE_TEXT_FROM_BLACKLIST, "100"))
         processor.performTask(RemoteControlTask("device", REMOVE_TEXT_FROM_BLACKLIST, "200"))
@@ -184,7 +186,7 @@ class RemoteControlProcessorTest : BaseTest() {
     fun testRemoveTextFromWhitelist() {
         database.textWhitelist = listOf("100", "200", "300")
 
-        val processor = RemoteControlProcessor(context, database, settings, notifications)
+        val processor = RemoteControlProcessor(context, database, notifications = notifications)
 
         processor.performTask(RemoteControlTask("device", REMOVE_TEXT_FROM_WHITELIST, "100"))
         processor.performTask(RemoteControlTask("device", REMOVE_TEXT_FROM_WHITELIST, "200"))
@@ -200,7 +202,7 @@ class RemoteControlProcessorTest : BaseTest() {
 
     @Test
     fun testSendSms() {
-        val processor = RemoteControlProcessor(context, database, settings, notifications, smsTransport)
+        val processor = RemoteControlProcessor(context, database, notifications = notifications, smsTransport = smsTransport)
 
         processor.performTask(RemoteControlTask("device", SEND_SMS_TO_CALLER).apply {
             arguments["phone"] = "100"

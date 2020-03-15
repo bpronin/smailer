@@ -21,8 +21,7 @@ class SyncEngineTest : BaseTest() {
 
     @Before
     fun setup() {
-        database = Database(targetContext, "test.sqlite")
-        database.clean()
+        database = Database(targetContext, "test.sqlite").apply { clean() }
     }
 
     @After

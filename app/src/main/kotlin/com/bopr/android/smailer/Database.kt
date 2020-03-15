@@ -244,7 +244,7 @@ class Database constructor(private val context: Context, private val name: Strin
     /**
      * Performs given action then fires "changed" event
      */
-    inline fun <T> notifyOf(action: Database.() -> T): T {
+    inline fun <T> notifying(action: Database.() -> T): T {
         val result = action.invoke(this)
         notifyChanged()
         return result

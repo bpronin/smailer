@@ -2,7 +2,6 @@ package com.bopr.android.smailer
 
 import android.Manifest.permission.READ_CONTACTS
 import android.accounts.Account
-import android.accounts.AccountsException
 import android.content.Context
 import com.bopr.android.smailer.Notifications.Companion.TARGET_MAIN
 import com.bopr.android.smailer.Notifications.Companion.TARGET_RECIPIENTS
@@ -63,7 +62,7 @@ class CallProcessor(
             }
         }
 
-        database.notifyOf { putEvent(event) }
+        database.notifying { putEvent(event) }
     }
 
     /**
@@ -75,7 +74,8 @@ class CallProcessor(
             log.debug("No pending events")
         } else {
             log.debug("Processing ${events.size} pending event(s)")
-            database.notifyOf {
+
+            database.notifying {
                 if (startMailSession()) {
                     for (event in events) {
                         event.processTime = currentTimeMillis()
@@ -90,50 +90,41 @@ class CallProcessor(
     }
 
     private fun startMailSession(): Boolean {
-        if (!context.hasInternetConnection()) {
-            /* check it before to avoid awaiting timeout while sending */
-            log.warn("Disconnected")
-            return false
+        if (checkInternet() && checkRecipient()) {
+            requireAccount()?.let {
+                transport.login(it, GMAIL_SEND)
+                log.debug("Mail session started")
+                return true
+            }
         }
-
-        return try {
-            validateRecipient()
-            transport.login(requireAccount(), GMAIL_SEND)
-
-            log.debug("Mail session started")
-            true
-        } catch (x: Exception) {
-            log.warn("Failed starting mail session: ", x)
-            false
-        }
+        return false
     }
 
     private fun sendMail(event: PhoneEvent): Boolean {
+        val formatter = MailFormatter(
+                context = context,
+                event = event,
+                contactName = contactName(event.phone),
+                deviceName = settings.getString(PREF_DEVICE_ALIAS) ?: event.acceptor,
+                options = settings.getStringSet(PREF_EMAIL_CONTENT),
+                serviceAccount = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT),
+                locale = settings.locale
+        )
+
+        val message = MailMessage(
+                subject = formatter.formatSubject(),
+                body = formatter.formatBody(),
+                recipients = settings.getString(PREF_RECIPIENTS_ADDRESS),
+                from = settings.getString(PREF_SENDER_ACCOUNT),
+                replyTo = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
+        )
+
         return try {
-            val formatter = MailFormatter(
-                    context = context,
-                    event = event,
-                    contactName = contactName(event.phone),
-                    deviceName = settings.getString(PREF_DEVICE_ALIAS) ?: event.acceptor,
-                    options = settings.getStringSet(PREF_EMAIL_CONTENT),
-                    serviceAccount = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT),
-                    locale = settings.locale
-            )
-
-            val message = MailMessage(
-                    subject = formatter.formatSubject(),
-                    body = formatter.formatBody(),
-                    recipients = settings.getString(PREF_RECIPIENTS_ADDRESS),
-                    from = settings.getString(PREF_SENDER_ACCOUNT),
-                    replyTo = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
-            )
-
             transport.send(message)
 
             log.debug("Mail sent")
 
             notifications.cancelAllErrors()
-
             if (settings.getBoolean(PREF_NOTIFY_SEND_SUCCESS, false)) {
                 notifications.showMessage(title = context.getString(R.string.email_successfully_send),
                         target = TARGET_MAIN)
@@ -154,27 +145,40 @@ class CallProcessor(
         }
     }
 
-    @Throws(AccountsException::class)
-    private fun requireAccount(): Account {
-        val accountName = settings.getString(PREF_SENDER_ACCOUNT)
-        return context.getAccount(accountName) ?: run {
-            notifications.showSenderAccountError()
-            throw AccountsException("Sender account [$accountName] not found")
+    private fun checkInternet(): Boolean {
+        /* check it before all to avoid awaiting timeout while sending */
+        return context.hasInternetConnection().also {
+            if (!it) log.warn("No internet connection")
         }
     }
 
-    @Throws(Exception::class)
-    private fun validateRecipient() {
+    private fun checkRecipient(): Boolean {
         val recipients = settings.getString(PREF_RECIPIENTS_ADDRESS)
 
         if (recipients == null) {
             notifications.showMailError(R.string.no_recipients_specified, TARGET_RECIPIENTS)
-            throw Exception("Recipients not specified")
+
+            log.warn("Recipients not specified")
+            return false
         }
 
         if (!isValidEmailAddressList(recipients)) {
             notifications.showMailError(R.string.invalid_recipient, TARGET_RECIPIENTS)
-            throw Exception("Recipients are invalid")
+
+            log.warn("Recipients are invalid")
+            return false
+        }
+
+        return true
+    }
+
+    private fun requireAccount(): Account? {
+        val name = settings.getString(PREF_SENDER_ACCOUNT)
+        return context.getAccount(name).also {
+            if (it == null) {
+                notifications.showSenderAccountError()
+                log.warn("Sender account [$name] not found")
+            }
         }
     }
 

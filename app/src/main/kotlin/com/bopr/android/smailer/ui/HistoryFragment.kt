@@ -174,12 +174,12 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
 
     private fun onClearData() {
         ConfirmDialog(getString(R.string.ask_clear_history)) {
-            database.notifyOf { clearEvents() }
+            database.notifying { clearEvents() }
         }.show(this)
     }
 
     private fun onMarkAllAsRead() {
-        database.notifyOf { markAllEventsAsRead(true) }
+        database.notifying { markAllEventsAsRead(true) }
         showToast(R.string.operation_complete)
     }
 
@@ -194,28 +194,28 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
     private fun onMarkAsIgnored() {
         getSelectedItem()?.let {
             it.state = STATE_IGNORED
-            database.notifyOf { putEvent(it) }
+            database.notifying { putEvent(it) }
         }
     }
 
     private fun onRemoveSelected() {
         val events = listAdapter.getItemsAt(selectedItemPosition)
 
-        database.notifyOf { deleteEvents(events) }
+        database.notifying { deleteEvents(events) }
 
         Snackbar.make(recycler,
                         getQuantityString(R.plurals.items_removed, events.size),
                         Snackbar.LENGTH_LONG)
                 .setActionTextColor(ContextCompat.getColor(requireContext(), R.color.colorAccentText))
                 .setAction(R.string.undo) {
-                    database.notifyOf { putEvents(events) }
+                    database.notifying { putEvents(events) }
                 }
                 .show()
     }
 
     private fun onRemoveFromFilterList() {
         getSelectedItem()?.let { item ->
-            database.notifyOf {
+            database.notifying {
                 deleteFilterListItem(TABLE_PHONE_BLACKLIST, item.phone)
                 deleteFilterListItem(TABLE_PHONE_WHITELIST, item.phone)
             }

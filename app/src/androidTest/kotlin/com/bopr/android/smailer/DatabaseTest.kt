@@ -22,8 +22,7 @@ class DatabaseTest : BaseTest() {
 
     @Before
     fun setUp() {
-        database = Database(targetContext, "test.sqlite")
-        database.clean()
+        database = Database(targetContext, "test.sqlite").apply { clean() }
     }
 
     @After

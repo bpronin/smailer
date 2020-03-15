@@ -74,7 +74,7 @@ abstract class CallFilterListFragment(private val listName: String) : EditableRe
     }
 
     override fun saveItems(items: Collection<String>) {
-        database.notifyOf { replaceFilterList(listName, items) }
+        database.notifying { replaceFilterList(listName, items) }
     }
 
     override fun isValidItem(item: String): Boolean {
