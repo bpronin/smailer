@@ -31,9 +31,58 @@ class GoogleDrive(private val context: Context) {
         val credential = GoogleAccountCredential
                 .usingOAuth2(context, setOf(DRIVE_APPDATA))
                 .setSelectedAccount(account)
-        service = Drive.Builder(NetHttpTransport(), JacksonFactory.getDefaultInstance(), credential)
+        service = Drive.Builder(NetHttpTransport(), jacksonFactory(), credential)
                 .setApplicationName("smailer")
                 .build()
+    }
+
+    @Throws(IOException::class)
+    fun list(): List<File> {
+        return service.files().list()
+                .setSpaces(APP_DATA_FOLDER)
+                .setFields("files(id, name)")
+                .execute()
+                .files
+    }
+
+    @Throws(IOException::class)
+    fun <T : Any> download(filename: String, dataClass: KClass<out T>): T? {
+        return open(filename)?.let {
+            jacksonFactory().createJsonParser(it).parseAndClose(dataClass.java)
+        }
+    }
+
+    @Throws(IOException::class)
+    fun upload(filename: String, data: Any) {
+        val writer: Writer = StringWriter()
+        jacksonFactory().createJsonGenerator(writer).use {
+            it.serialize(data)
+            it.flush()
+            write(filename, writer.toString())
+        }
+    }
+
+    @Throws(IOException::class)
+    fun delete(filename: String) {
+        find(filename)?.let {
+            service.files()
+                    .delete(it)
+                    .setFields("id")
+                    .execute()
+        }
+
+        log.debug("Deleted: $filename")
+    }
+
+    @Throws(IOException::class)
+    fun clear() {
+        for (file in list()) {
+            service.files()
+                    .delete(file.id)
+                    .execute()
+        }
+
+        log.debug("All data removed")
     }
 
     @Throws(IOException::class)
@@ -91,54 +140,7 @@ class GoogleDrive(private val context: Context) {
         return null
     }
 
-    @Throws(IOException::class)
-    fun delete(filename: String) {
-        find(filename)?.let {
-            service.files()
-                    .delete(it)
-                    .setFields("id")
-                    .execute()
-        }
-
-        log.debug("Deleted: $filename")
-    }
-
-    @Throws(IOException::class)
-    fun clear() {
-        for (file in list()) {
-            service.files()
-                    .delete(file.id)
-                    .execute()
-        }
-
-        log.debug("All data removed")
-    }
-
-    @Throws(IOException::class)
-    fun list(): List<File> {
-        return service.files().list()
-                .setSpaces(APP_DATA_FOLDER)
-                .setFields("files(id, name)")
-                .execute()
-                .files
-    }
-
-    @Throws(IOException::class)
-    fun upload(filename: String, data: Any) {
-        val writer: Writer = StringWriter()
-        JacksonFactory.getDefaultInstance().createJsonGenerator(writer).use {
-            it.serialize(data)
-            it.flush()
-            write(filename, writer.toString())
-        }
-    }
-
-    @Throws(IOException::class)
-    fun <T : Any> download(filename: String, dataClass: KClass<out T>): T? {
-        return open(filename)?.let {
-            JacksonFactory.getDefaultInstance().createJsonParser(it).parseAndClose(dataClass.java)
-        }
-    }
+    private fun jacksonFactory() = JacksonFactory.getDefaultInstance()
 
     companion object {
 
