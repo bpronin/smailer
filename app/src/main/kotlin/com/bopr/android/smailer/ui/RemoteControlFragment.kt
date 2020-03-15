@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.preference.Preference
 import androidx.preference.SwitchPreference
+import com.bopr.android.smailer.Database
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
@@ -66,7 +67,10 @@ class RemoteControlFragment : BasePreferenceFragment() {
 
     private fun onProcessServiceMail(preference: Preference) {
         preference.runBackgroudTask({
-            RemoteControlProcessor(requireContext()).checkMailbox()
+            val context = requireContext()
+            Database(context).use {
+                RemoteControlProcessor(context, it).checkMailbox()
+            }
         }, {
             /* NOTE: if we live the page while processing context becomes null */
             context?.showToast(getQuantityString(R.plurals.mail_items, R.string.mail_items_zero, it!!))

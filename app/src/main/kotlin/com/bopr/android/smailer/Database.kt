@@ -86,6 +86,19 @@ class Database constructor(private val context: Context, private val name: Strin
             log.debug("Updated last location")
         }
 
+    var phoneBlacklist: List<String>
+        get() = getFilterList(TABLE_PHONE_BLACKLIST)
+        set(value) = replaceFilterList(TABLE_PHONE_BLACKLIST, value)
+    var phoneWhitelist: List<String>
+        get() = getFilterList(TABLE_PHONE_WHITELIST)
+        set(value) = replaceFilterList(TABLE_PHONE_WHITELIST, value)
+    var textBlacklist: List<String>
+        get() = getFilterList(TABLE_TEXT_BLACKLIST)
+        set(value) = replaceFilterList(TABLE_TEXT_BLACKLIST, value)
+    var textWhitelist: List<String>
+        get() = getFilterList(TABLE_TEXT_WHITELIST)
+        set(value) = replaceFilterList(TABLE_TEXT_WHITELIST, value)
+
     /**
      * Puts event to database.
      */
@@ -174,6 +187,47 @@ class Database constructor(private val context: Context, private val name: Strin
         log.debug("All events marked as read")
     }
 
+    fun getFilterList(listName: String): List<String> {
+        return helper.readableDatabase.query(listName).useToList { getString(COLUMN_VALUE)!! }
+    }
+
+    fun replaceFilterList(listName: String, items: Collection<String>) {
+        helper.writableDatabase.batch {
+            delete(listName, null, null)
+            log.debug("Removed all from $listName")
+
+            for (item in items) {
+                putFilterListItem(listName, item)
+            }
+        }
+    }
+
+    fun putFilterListItem(listName: String, item: String): Boolean {
+        helper.writableDatabase.run {
+            val values = values {
+                put(COLUMN_VALUE, item)
+            }
+            return if (insertWithOnConflict(listName, null, values, CONFLICT_IGNORE) == -1L) {
+                log.debug("Already exists: $values")
+                false
+            } else {
+                log.debug("Inserted: $values")
+
+                modifiedTables.add(listName)
+                true
+            }
+        }
+    }
+
+    fun deleteFilterListItem(listName: String, item: String): Boolean {
+        var affected = 0
+        helper.writableDatabase.batch {
+            affected = delete(listName, "$COLUMN_VALUE=?", strings(item))
+        }
+        modifiedTables.add(listName)
+        return affected != 0
+    }
+
     /**
      * Fires database "changed" event.
      */
@@ -220,6 +274,10 @@ class Database constructor(private val context: Context, private val name: Strin
             db.batch {
                 execSQL(SQL_CREATE_SYSTEM)
                 execSQL(SQL_CREATE_EVENTS)
+                execSQL(SQL_CREATE_LIST(TABLE_PHONE_BLACKLIST))
+                execSQL(SQL_CREATE_LIST(TABLE_PHONE_WHITELIST))
+                execSQL(SQL_CREATE_LIST(TABLE_TEXT_BLACKLIST))
+                execSQL(SQL_CREATE_LIST(TABLE_TEXT_WHITELIST))
 
                 insert(TABLE_SYSTEM, null, values { put(COLUMN_ID, 0) })
 
@@ -232,6 +290,10 @@ class Database constructor(private val context: Context, private val name: Strin
                 db.batch {
                     alterTable(TABLE_SYSTEM, SQL_CREATE_SYSTEM)
                     alterTable(TABLE_EVENTS, SQL_CREATE_EVENTS)
+                    alterTable(TABLE_PHONE_BLACKLIST, SQL_CREATE_LIST(TABLE_PHONE_BLACKLIST))
+                    alterTable(TABLE_PHONE_WHITELIST, SQL_CREATE_LIST(TABLE_PHONE_WHITELIST))
+                    alterTable(TABLE_TEXT_BLACKLIST, SQL_CREATE_LIST(TABLE_TEXT_BLACKLIST))
+                    alterTable(TABLE_TEXT_WHITELIST, SQL_CREATE_LIST(TABLE_TEXT_WHITELIST))
                 }
 
                 log.warn("Database upgraded from $oldVersion to: $DB_VERSION")
@@ -279,6 +341,7 @@ class Database constructor(private val context: Context, private val name: Strin
         const val COLUMN_LATITUDE = "latitude"
         const val COLUMN_LONGITUDE = "longitude"
         const val COLUMN_TEXT = "message_text"
+        const val COLUMN_VALUE = "value"
         const val COLUMN_DETAILS = "details"
         const val COLUMN_START_TIME = "start_time"
         const val COLUMN_END_TIME = "end_time"
@@ -297,6 +360,10 @@ class Database constructor(private val context: Context, private val name: Strin
 
         private const val TABLE_SYSTEM = "system_data"
         const val TABLE_EVENTS = "phone_events"
+        const val TABLE_PHONE_BLACKLIST = "phone_blacklist"
+        const val TABLE_PHONE_WHITELIST = "phone_whitelist"
+        const val TABLE_TEXT_BLACKLIST = "text_blacklist"
+        const val TABLE_TEXT_WHITELIST = "text_whitelist"
 
         private const val SQL_CREATE_SYSTEM = "CREATE TABLE " + TABLE_SYSTEM + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY, " +
@@ -321,6 +388,10 @@ class Database constructor(private val context: Context, private val name: Strin
                 COLUMN_READ + " INTEGER NOT NULL DEFAULT(0), " +
                 COLUMN_DETAILS + " TEXT(256), " +
                 "PRIMARY KEY (" + COLUMN_START_TIME + ", " + COLUMN_ACCEPTOR + ")" +
+                ")"
+
+        private fun SQL_CREATE_LIST(tableName: String) = "CREATE TABLE " + tableName + " (" +
+                COLUMN_VALUE + " TEXT(256) NOT NULL PRIMARY KEY" +
                 ")"
 
         /**

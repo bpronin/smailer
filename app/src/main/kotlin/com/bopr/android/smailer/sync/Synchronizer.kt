@@ -7,10 +7,6 @@ import com.bopr.android.smailer.GeoCoordinates.Companion.coordinatesOf
 import com.bopr.android.smailer.GoogleDrive
 import com.bopr.android.smailer.PhoneEvent
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_BLACKLIST
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_WHITELIST
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_BLACKLIST
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_WHITELIST
 import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_TIME
 import org.slf4j.LoggerFactory
 import java.io.IOException
@@ -79,23 +75,20 @@ internal class Synchronizer(context: Context,
 
     private fun getLocalData(): SyncData {
         return SyncData(
-                phoneBlacklist = settings.getStringList(PREF_FILTER_PHONE_BLACKLIST),
-                phoneWhitelist = settings.getStringList(PREF_FILTER_PHONE_WHITELIST),
-                textBlacklist = settings.getStringList(PREF_FILTER_TEXT_BLACKLIST),
-                textWhitelist = settings.getStringList(PREF_FILTER_TEXT_WHITELIST),
+                phoneBlacklist = database.phoneBlacklist,
+                phoneWhitelist = database.phoneWhitelist,
+                textBlacklist = database.textBlacklist,
+                textWhitelist = database.textWhitelist,
                 events = database.events.map(::eventToData)
         )
     }
 
     private fun putLocalData(data: SyncData) {
         data.events.map(::dataToEvent).let(database::putEvents)
-
-        settings.update {
-            putStringList(PREF_FILTER_PHONE_BLACKLIST, data.phoneBlacklist)
-            putStringList(PREF_FILTER_PHONE_WHITELIST, data.phoneWhitelist)
-            putStringList(PREF_FILTER_TEXT_BLACKLIST, data.textBlacklist)
-            putStringList(PREF_FILTER_TEXT_WHITELIST, data.textWhitelist)
-        }
+        database.phoneBlacklist = data.phoneBlacklist
+        database.phoneWhitelist = data.phoneWhitelist
+        database.textBlacklist = data.textBlacklist
+        database.textWhitelist = data.textWhitelist
     }
 
     private fun eventToData(event: PhoneEvent): SyncData.Event {

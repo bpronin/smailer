@@ -14,7 +14,7 @@
         android:title="@string/phone_number_filter">
 
         <androidx.preference.Preference
-            android:key="message_filter_blacklist"
+            android:key="phone_blacklist"
             android:title="@string/blacklist" >
             <intent
                 android:targetClass="com.bopr.android.smailer.ui.CallFilterPhoneBlacklistActivity"
@@ -23,7 +23,7 @@
         </androidx.preference.Preference>
 
         <androidx.preference.Preference
-            android:key="message_filter_whitelist"
+            android:key="phone_whitelist"
             android:title="@string/whitelist">
             <intent
                 android:targetClass="com.bopr.android.smailer.ui.CallFilterPhoneWhitelistActivity"
@@ -37,7 +37,7 @@
         android:title="@string/text_filter">
 
         <androidx.preference.Preference
-            android:key="message_filter_text_blacklist"
+            android:key="text_blacklist"
             android:title="@string/blacklist">
             <intent
                 android:targetClass="com.bopr.android.smailer.ui.CallFilterTextBlacklistActivity"
@@ -46,7 +46,7 @@
         </androidx.preference.Preference>
 
         <androidx.preference.Preference
-            android:key="message_filter_text_whitelist"
+            android:key="text_whitelist"
             android:title="@string/whitelist">
             <intent
                 android:targetClass="com.bopr.android.smailer.ui.CallFilterTextWhitelistActivity"

@@ -1,15 +1,19 @@
 package com.bopr.android.smailer.ui
 
+import android.content.BroadcastReceiver
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.annotation.StringRes
 import androidx.preference.MultiSelectListPreference
+import com.bopr.android.smailer.Database
+import com.bopr.android.smailer.Database.Companion.TABLE_PHONE_BLACKLIST
+import com.bopr.android.smailer.Database.Companion.TABLE_PHONE_WHITELIST
+import com.bopr.android.smailer.Database.Companion.TABLE_TEXT_BLACKLIST
+import com.bopr.android.smailer.Database.Companion.TABLE_TEXT_WHITELIST
+import com.bopr.android.smailer.Database.Companion.registerDatabaseListener
+import com.bopr.android.smailer.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_BLACKLIST
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_WHITELIST
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_BLACKLIST
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_WHITELIST
 
 /**
  * Rules settings fragment.
@@ -18,8 +22,29 @@ import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_WHITELIST
  */
 class RulesFragment : BasePreferenceFragment() {
 
+    private lateinit var database: Database
+    private lateinit var databaseListener: BroadcastReceiver
+
     override fun onCreatePreferences(bundle: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_rules)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        database = Database(requireContext())
+        databaseListener = requireContext().registerDatabaseListener {
+            if (it.contains(TABLE_PHONE_BLACKLIST)) updatePhoneBlacklistPreferenceView()
+            if (it.contains(TABLE_PHONE_WHITELIST)) updatePhoneWhitelistPreferenceView()
+            if (it.contains(TABLE_TEXT_BLACKLIST)) updateTextBlacklistPreferenceView()
+            if (it.contains(TABLE_TEXT_WHITELIST)) updateTextWhitelistPreferenceView()
+        }
+    }
+
+    override fun onDestroy() {
+        requireContext().unregisterDatabaseListener(databaseListener)
+        database.close()
+        super.onDestroy()
     }
 
     override fun onStart() {
@@ -34,50 +59,41 @@ class RulesFragment : BasePreferenceFragment() {
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         super.onSharedPreferenceChanged(sharedPreferences, key)
-        when (key) {
-            PREF_EMAIL_TRIGGERS ->
-                updateTriggersPreferenceView()
-            PREF_FILTER_PHONE_BLACKLIST ->
-                updatePhoneBlacklistPreferenceView()
-            PREF_FILTER_PHONE_WHITELIST ->
-                updatePhoneWhitelistPreferenceView()
-            PREF_FILTER_TEXT_BLACKLIST ->
-                updateTextBlacklistPreferenceView()
-            PREF_FILTER_TEXT_WHITELIST ->
-                updateTextWhitelistPreferenceView()
+        if (key == PREF_EMAIL_TRIGGERS) {
+            updateTriggersPreferenceView()
         }
     }
 
-    private fun updateTextWhitelistPreferenceView() {
-        val preference = requirePreference(PREF_FILTER_TEXT_WHITELIST)
-        val value = settings.getStringList(preference.key)
-        val formatListSummary = formatListSummary(value, R.string.acceptable_words, R.string._any)
-
-        updateSummary(preference, formatListSummary, SUMMARY_STYLE_DEFAULT)
-    }
-
-    private fun updateTextBlacklistPreferenceView() {
-        val preference = requirePreference(PREF_FILTER_TEXT_BLACKLIST)
-        val value = settings.getStringList(preference.key)
-        val text = formatListSummary(value, R.string.unacceptable_words, R.string._none)
+    private fun updatePhoneBlacklistPreferenceView() {
+        val preference = requirePreference("phone_blacklist")
+        val text = formatListSummary(database.phoneBlacklist,
+                R.string.unacceptable_phone_numbers, R.string._none)
 
         updateSummary(preference, text, SUMMARY_STYLE_DEFAULT)
     }
 
     private fun updatePhoneWhitelistPreferenceView() {
-        val preference = requirePreference(PREF_FILTER_PHONE_WHITELIST)
-        val value = settings.getStringList(preference.key)
-        val text = formatListSummary(value, R.string.acceptable_phone_numbers, R.string._any)
+        val preference = requirePreference("phone_whitelist")
+        val text = formatListSummary(database.phoneWhitelist,
+                R.string.acceptable_phone_numbers, R.string._any)
 
         updateSummary(preference, text, SUMMARY_STYLE_DEFAULT)
     }
 
-    private fun updatePhoneBlacklistPreferenceView() {
-        val preference = requirePreference(PREF_FILTER_PHONE_BLACKLIST)
-        val value = settings.getStringList(preference.key)
-        val text = formatListSummary(value, R.string.unacceptable_phone_numbers, R.string._none)
+    private fun updateTextBlacklistPreferenceView() {
+        val preference = requirePreference("text_blacklist")
+        val text = formatListSummary(database.textBlacklist,
+                R.string.unacceptable_words, R.string._none)
 
         updateSummary(preference, text, SUMMARY_STYLE_DEFAULT)
+    }
+
+    private fun updateTextWhitelistPreferenceView() {
+        val preference = requirePreference("text_whitelist")
+        val formatListSummary = formatListSummary(database.textWhitelist,
+                R.string.acceptable_words, R.string._any)
+
+        updateSummary(preference, formatListSummary, SUMMARY_STYLE_DEFAULT)
     }
 
     private fun updateTriggersPreferenceView() {

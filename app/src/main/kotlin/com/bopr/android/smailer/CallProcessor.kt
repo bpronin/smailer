@@ -13,10 +13,6 @@ import com.bopr.android.smailer.PhoneEvent.Companion.STATUS_ACCEPTED
 import com.bopr.android.smailer.Settings.Companion.PREF_DEVICE_ALIAS
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_BLACKLIST
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_PHONE_WHITELIST
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_BLACKLIST
-import com.bopr.android.smailer.Settings.Companion.PREF_FILTER_TEXT_WHITELIST
 import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
@@ -185,10 +181,10 @@ class CallProcessor(
     private fun eventFilter(): PhoneEventFilter = settings.run {
         PhoneEventFilter(
                 triggers = getStringSet(PREF_EMAIL_TRIGGERS),
-                phoneBlacklist = getStringList(PREF_FILTER_PHONE_BLACKLIST),
-                phoneWhitelist = getStringList(PREF_FILTER_PHONE_WHITELIST),
-                textBlacklist = getStringList(PREF_FILTER_TEXT_BLACKLIST),
-                textWhitelist = getStringList(PREF_FILTER_TEXT_WHITELIST)
+                phoneBlacklist = database.phoneBlacklist,
+                phoneWhitelist = database.phoneWhitelist,
+                textBlacklist = database.textBlacklist,
+                textWhitelist = database.textWhitelist
         )
     }
 

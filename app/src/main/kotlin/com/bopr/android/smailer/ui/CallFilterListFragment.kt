@@ -1,13 +1,14 @@
 package com.bopr.android.smailer.ui
 
-import android.content.SharedPreferences
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import android.content.BroadcastReceiver
 import android.os.Bundle
 import android.view.*
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bopr.android.smailer.Database
+import com.bopr.android.smailer.Database.Companion.registerDatabaseListener
+import com.bopr.android.smailer.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.ui.CallFilterListFragment.Holder
 
 /**
@@ -15,19 +16,22 @@ import com.bopr.android.smailer.ui.CallFilterListFragment.Holder
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-abstract class CallFilterListFragment(private val settingName: String) : EditableRecyclerFragment<String, Holder>(),
-        OnSharedPreferenceChangeListener {
+abstract class CallFilterListFragment(private val listName: String) : EditableRecyclerFragment<String, Holder>() {
 
-    private lateinit var settings: Settings
+    private lateinit var databaseListener: BroadcastReceiver
+    private lateinit var database: Database
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        settings = Settings(requireContext())
-        settings.registerOnSharedPreferenceChangeListener(this)
+        database = Database(requireContext())
+        databaseListener = requireContext().registerDatabaseListener {
+            if (it.contains(listName)) refreshItems()
+        }
     }
 
     override fun onDestroy() {
-        settings.unregisterOnSharedPreferenceChangeListener(this)
+        requireContext().unregisterDatabaseListener(databaseListener)
+        database.close()
         super.onDestroy()
     }
 
@@ -65,18 +69,12 @@ abstract class CallFilterListFragment(private val settingName: String) : Editabl
         }
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-        if (key == settingName) {
-            refreshItems()
-        }
-    }
-
     override fun loadItems(): Collection<String> {
-        return settings.getStringList(settingName)
+        return database.getFilterList(listName)
     }
 
     override fun saveItems(items: Collection<String>) {
-        settings.update { putStringList(settingName, items) }
+        database.notifyOf { replaceFilterList(listName, items) }
     }
 
     override fun isValidItem(item: String): Boolean {
