@@ -15,6 +15,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.StringWriter
 import java.io.Writer
+import kotlin.reflect.KClass
 
 /**
  * Helper class to access Google drive.
@@ -133,9 +134,9 @@ class GoogleDrive(private val context: Context) {
     }
 
     @Throws(IOException::class)
-    fun <T> download(filename: String, dataClass: Class<out T?>): T? {
+    fun <T : Any> download(filename: String, dataClass: KClass<out T>): T? {
         return open(filename)?.run {
-            JacksonFactory.getDefaultInstance().createJsonParser(this).parseAndClose(dataClass)
+            JacksonFactory.getDefaultInstance().createJsonParser(this).parseAndClose(dataClass.java)
         }
     }
 

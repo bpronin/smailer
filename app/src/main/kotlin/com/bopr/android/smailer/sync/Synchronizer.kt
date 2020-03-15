@@ -29,9 +29,8 @@ internal class Synchronizer(context: Context,
 
     @Throws(IOException::class)
     fun sync() {
-        val localMeta = localMetaData()
-        val remoteMeta = drive.download(metaFile, MetaData::class.java)
-        if (remoteMeta == null || localMeta.syncTime >= remoteMeta.syncTime) {
+        val meta = drive.download(metaFile, MetaData::class)
+        if (meta == null || meta.syncTime <= database.lastSyncTime) {
             upload()
         } else {
             download()
@@ -40,7 +39,7 @@ internal class Synchronizer(context: Context,
 
     @Throws(IOException::class)
     fun download() {
-        val data = drive.download(dataFile, SyncData::class.java)
+        val data = drive.download(dataFile, SyncData::class)
         if (data != null) {
             putLocalData(data)
 
@@ -52,7 +51,7 @@ internal class Synchronizer(context: Context,
 
     @Throws(IOException::class)
     fun upload() {
-        drive.upload(metaFile, localMetaData())
+        drive.upload(metaFile, MetaData(database.lastSyncTime))
         drive.upload(dataFile, getLocalData())
 
         log.debug("Uploaded local data")
@@ -64,10 +63,6 @@ internal class Synchronizer(context: Context,
         drive.delete(dataFile)
 
         log.debug("Remote data deleted")
-    }
-
-    private fun localMetaData(): MetaData {
-        return MetaData(database.lastSyncTime)
     }
 
     private fun getLocalData(): SyncData {
