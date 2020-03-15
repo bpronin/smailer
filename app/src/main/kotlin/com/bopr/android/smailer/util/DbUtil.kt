@@ -18,6 +18,12 @@ fun SQLiteDatabase.query(table: String, projection: Array<String>? = null, selec
     return query(table, projection, selection, selectionArgs, groupBy, having, order, limit)
 }
 
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
+fun SQLiteDatabase.update(table: String, values: ContentValues, where: String? = null,
+                          whereArgs: Array<String>? = null): Int {
+    return update(table, values, where, whereArgs)
+}
+
 inline fun <T> SQLiteDatabase.batch(action: SQLiteDatabase.() -> T): T {
     beginTransaction()
     try {
@@ -36,7 +42,7 @@ fun SQLiteDatabase.getTables(): Set<String> {
 }
 
 @SuppressLint("Recycle")
-fun SQLiteDatabase.isTableExists(name:String): Boolean {
+fun SQLiteDatabase.isTableExists(name: String): Boolean {
     return query("sqlite_master", strings("COUNT(*)"), "type='table' AND name='$name'")
             .useFirst { getLong(0) } == 1L
 }

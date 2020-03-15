@@ -183,7 +183,7 @@ class Database constructor(private val context: Context, private val name: Strin
         helper.writableDatabase.batch {
             update(TABLE_EVENTS, values {
                 put(COLUMN_READ, read)
-            }, null, null)
+            })
         }
         modifiedTables.add(TABLE_EVENTS)
 
@@ -288,7 +288,7 @@ class Database constructor(private val context: Context, private val name: Strin
     }
 
     private fun updateSystemTable(values: ContentValues) {
-        helper.writableDatabase.update(TABLE_SYSTEM, values, "$COLUMN_ID=0", null)
+        helper.writableDatabase.update(TABLE_SYSTEM, values, "$COLUMN_ID=0")
         modifiedTables.add(TABLE_SYSTEM)
     }
 
