@@ -197,6 +197,8 @@ class Database constructor(private val context: Context, private val name: Strin
     fun replaceFilterList(listName: String, items: Collection<String>) {
         helper.writableDatabase.batch {
             if (delete(listName, null, null) != 0) {
+                modifiedTables.add(listName)
+
                 log.debug("Removed all from $listName")
             }
             for (item in items) {
