@@ -14,9 +14,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
-import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_ENABLED
 import com.bopr.android.smailer.remote.RemoteControlWorker.Companion.enableRemoteControlWorker
-import com.bopr.android.smailer.sync.SyncWorker.Companion.enableSyncWorker
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
 import com.bopr.android.smailer.util.isAccountExists
 import com.bopr.android.smailer.util.isValidEmailAddressList
@@ -67,12 +65,11 @@ class MainActivity : MainAppActivity(MainFragment::class), OnSharedPreferenceCha
                 enableContentObserver(this)
             PREF_REMOTE_CONTROL_ENABLED ->
                 enableRemoteControlWorker(this)
-            PREF_SYNC_ENABLED ->
-                enableSyncWorker(this)
-            PREF_SENDER_ACCOUNT ->
+            PREF_SENDER_ACCOUNT -> {
                 if (isAccountExists(settings.getString(PREF_SENDER_ACCOUNT))) {
                     notifications.cancelSenderAccountError()
                 }
+            }
             PREF_REMOTE_CONTROL_ACCOUNT ->
                 if (isAccountExists(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT))) {
                     notifications.cancelRemoteAccountError()

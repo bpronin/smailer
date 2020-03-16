@@ -61,7 +61,7 @@ class CallProcessor(
                 }
             }
 
-            database.notifying { putEvent(event) }
+            database.commit { putEvent(event) }
         }
     }
 
@@ -76,7 +76,7 @@ class CallProcessor(
             } else {
                 log.debug("Processing ${events.size} pending event(s)")
 
-                database.notifying {
+                database.commit {
                     if (startMailSession()) {
                         for (event in events) {
                             event.processTime = currentTimeMillis()

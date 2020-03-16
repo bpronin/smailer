@@ -174,12 +174,12 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
 
     private fun onClearData() {
         ConfirmDialog(getString(R.string.ask_clear_history)) {
-            database.notifying { clearEvents() }
+            database.commit { clearEvents() }
         }.show(this)
     }
 
     private fun onMarkAllAsRead() {
-        database.notifying { markAllEventsAsRead(true) }
+        database.commit { markAllEventsAsRead(true) }
         showToast(R.string.operation_complete)
     }
 
@@ -194,28 +194,28 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
     private fun onMarkAsIgnored() {
         getSelectedItem()?.let {
             it.state = STATE_IGNORED
-            database.notifying { putEvent(it) }
+            database.commit { putEvent(it) }
         }
     }
 
     private fun onRemoveSelected() {
         val events = listAdapter.getItemsAt(selectedItemPosition)
 
-        database.notifying { deleteEvents(events) }
+        database.commit { deleteEvents(events) }
 
         Snackbar.make(recycler,
                         getQuantityString(R.plurals.items_removed, events.size),
                         Snackbar.LENGTH_LONG)
                 .setActionTextColor(ContextCompat.getColor(requireContext(), R.color.colorAccentText))
                 .setAction(R.string.undo) {
-                    database.notifying { putEvents(events) }
+                    database.commit { putEvents(events) }
                 }
                 .show()
     }
 
     private fun onRemoveFromFilterList() {
         getSelectedItem()?.let { item ->
-            database.notifying {
+            database.commit {
                 deleteFilterListItem(TABLE_PHONE_BLACKLIST, item.phone)
                 deleteFilterListItem(TABLE_PHONE_WHITELIST, item.phone)
             }
@@ -235,7 +235,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
 
     private fun addToFilterList(listName: String, phone: String?) {
         if (!phone.isNullOrEmpty()) {
-            if (!database.notifying { putFilterListItem(listName, phone)}) {
+            if (!database.commit { putFilterListItem(listName, phone)}) {
                 showToast(getString(R.string.item_already_exists, phone))
             }
         }

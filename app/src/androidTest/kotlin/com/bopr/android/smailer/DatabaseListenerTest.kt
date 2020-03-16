@@ -40,7 +40,7 @@ class DatabaseListenerTest : BaseTest() {
             latch.countDown()
         }
 
-        database.notifying {
+        database.commit {
             putEvent(PhoneEvent(phone = "1", startTime = 0, acceptor = "device"))
             putEvent(PhoneEvent(phone = "2", startTime = 1, acceptor = "device"))
             putEvent(PhoneEvent(phone = "3", startTime = 2, acceptor = "device"))

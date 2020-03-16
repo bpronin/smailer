@@ -4,10 +4,11 @@ import android.content.Context
 import androidx.work.*
 import androidx.work.ExistingPeriodicWorkPolicy.REPLACE
 import androidx.work.NetworkType.CONNECTED
+import androidx.work.PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import org.slf4j.LoggerFactory
-import java.util.concurrent.TimeUnit.MINUTES
+import java.util.concurrent.TimeUnit.MILLISECONDS
 
 /**
  * Periodically checks email out for remote tasks.
@@ -27,7 +28,7 @@ internal class RemoteControlWorker(context: Context, workerParams: WorkerParamet
     internal companion object {
 
         private val log = LoggerFactory.getLogger("RemoteControlWorker")
-        private const val WORKER_TAG = "com.bopr.android.smailer.remote"
+        private const val WORK_REMOTE = "com.bopr.android.smailer.remote"
 
         private fun isFeatureEnabled(context: Context): Boolean {
             return Settings(context).getBoolean(PREF_REMOTE_CONTROL_ENABLED)
@@ -35,23 +36,21 @@ internal class RemoteControlWorker(context: Context, workerParams: WorkerParamet
 
         fun enableRemoteControlWorker(context: Context) {
             val manager = WorkManager.getInstance(context)
-
-            manager.cancelAllWorkByTag(WORKER_TAG)
-
             if (isFeatureEnabled(context)) {
+                log.debug("Enabled")
+
                 val constraints = Constraints.Builder()
                         .setRequiredNetworkType(CONNECTED)
                         .build()
                 val request = PeriodicWorkRequest.Builder(RemoteControlWorker::class.java,
-                                15, MINUTES) /* must be greater than [PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS] */
-                        .addTag(WORKER_TAG)
+                                MIN_PERIODIC_INTERVAL_MILLIS, MILLISECONDS)
                         .setConstraints(constraints)
                         .build()
-                manager.enqueueUniquePeriodicWork(WORKER_TAG, REPLACE, request)
-
-                log.debug("Enabled")
+                manager.enqueueUniquePeriodicWork(WORK_REMOTE, REPLACE, request)
             } else {
                 log.debug("Disabled")
+
+                manager.cancelUniqueWork(WORK_REMOTE)
             }
         }
     }

@@ -95,7 +95,7 @@ class Database constructor(private val context: Context, private val name: Strin
         internal set(value) = updateSystemTable(values {
             put(COLUMN_UPDATE_TIME, value)
         }).also {
-            log.debug("Updated last sync time to: $value")
+            log.debug("Update time: $value")
         }
 
     /**
@@ -131,7 +131,7 @@ class Database constructor(private val context: Context, private val name: Strin
                 log.debug("Inserted: $values")
             }
         }
-        modified(TABLE_EVENTS)
+        modifiedTables.add(TABLE_EVENTS)
     }
 
     /**
@@ -155,7 +155,7 @@ class Database constructor(private val context: Context, private val name: Strin
                         strings(event.acceptor, event.startTime))
             }
         }
-        modified(TABLE_EVENTS)
+        modifiedTables.add(TABLE_EVENTS)
 
         log.debug("${events.size} event(s) removed")
     }
@@ -168,7 +168,7 @@ class Database constructor(private val context: Context, private val name: Strin
             delete(TABLE_EVENTS, null, null)
         }
         if (affected != 0) {
-            modified(TABLE_EVENTS)
+            modifiedTables.add(TABLE_EVENTS)
 
             log.debug("Removed all from $TABLE_EVENTS")
         }
@@ -183,7 +183,7 @@ class Database constructor(private val context: Context, private val name: Strin
                 put(COLUMN_READ, read)
             })
         }
-        modified(TABLE_EVENTS)
+        modifiedTables.add(TABLE_EVENTS)
 
         log.debug("All events marked as read")
     }
@@ -195,7 +195,7 @@ class Database constructor(private val context: Context, private val name: Strin
     fun replaceFilterList(listName: String, items: Collection<String>) {
         helper.writableDatabase.batch {
             if (delete(listName, null, null) != 0) {
-                modified(listName)
+                modifiedTables.add(listName)
 
                 log.debug("Removed all from $listName")
             }
@@ -216,7 +216,7 @@ class Database constructor(private val context: Context, private val name: Strin
             } else {
                 log.debug("Inserted: $values")
 
-                modified(listName)
+                modifiedTables.add(listName)
                 true
             }
         }
@@ -227,7 +227,7 @@ class Database constructor(private val context: Context, private val name: Strin
         helper.writableDatabase.batch {
             affected = delete(listName, "$COLUMN_VALUE=?", strings(item))
         }
-        modified(listName)
+        modifiedTables.add(listName)
         return affected != 0
     }
 
@@ -246,7 +246,7 @@ class Database constructor(private val context: Context, private val name: Strin
         if (modifiedTables.isNotEmpty()) {
             log.debug("Broadcasting data changed: $modifiedTables. Flags: [$flags]")
 
-            val intent = Intent(DATABASE_EVENT)
+            val intent = Intent(ACTION_DATABASE_CHANGED)
                     .putExtra(EXTRA_TABLES, modifiedTables.toTypedArray())
                     .putExtra(EXTRA_FLAGS, flags)
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
@@ -257,8 +257,9 @@ class Database constructor(private val context: Context, private val name: Strin
     /**
      * Performs given action then fires "changed" event
      */
-    fun <T> notifying(flags: Int = 0, action: Database.() -> T): T {
+    fun <T> commit(flags: Int = 0, action: Database.() -> T): T {
         val result = action(this)
+        updateTime = currentTimeMillis()
         notifyChanged(flags)
         return result
     }
@@ -291,12 +292,6 @@ class Database constructor(private val context: Context, private val name: Strin
 
     private fun updateSystemTable(values: ContentValues) {
         helper.writableDatabase.update(TABLE_SYSTEM, values, "$COLUMN_ID=0")
-    }
-
-    private fun modified(tableName: String) {
-        log.debug("Modified: $tableName")
-        updateTime = currentTimeMillis()
-        modifiedTables.add(tableName)
     }
 
     private inner class DbHelper(context: Context) : SQLiteOpenHelper(context, name, null, DB_VERSION) {
@@ -388,10 +383,10 @@ class Database constructor(private val context: Context, private val name: Strin
         const val COLUMN_READ = "message_read"
         const val COLUMN_ACCEPTOR = "recipient"
 
-        private const val DATABASE_EVENT = "database-event"
+        private const val ACTION_DATABASE_CHANGED = "database_changed"
         const val EXTRA_TABLES = "tables"
         const val EXTRA_FLAGS = "flags"
-        const val DB_FLAG_SYNCING = 0x01
+        const val DB_FLAG_SYNCING = 0x01  /* disables broadcast while data is syncing */
 
         private const val TABLE_SYSTEM = "system_data"
         const val TABLE_EVENTS = "phone_events"
@@ -434,7 +429,8 @@ class Database constructor(private val context: Context, private val name: Strin
          * Registers database broadcast receiver.
          */
         fun Context.registerDatabaseListener(listener: BroadcastReceiver) {
-            LocalBroadcastManager.getInstance(this).registerReceiver(listener, IntentFilter(DATABASE_EVENT))
+            LocalBroadcastManager.getInstance(this).registerReceiver(listener,
+                    IntentFilter(ACTION_DATABASE_CHANGED))
 
             log.debug("Listener registered")
         }

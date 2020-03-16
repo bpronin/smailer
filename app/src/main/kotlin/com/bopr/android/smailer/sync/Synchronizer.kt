@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
 import java.io.IOException
 
 /**
- *Performs synchronization.
+ * Performs synchronization with google drive.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
@@ -37,7 +37,7 @@ internal class Synchronizer(context: Context,
         } else if (meta.time != databaseTime) {
             download()
         } else {
-            log.debug("Data is actual")
+            log.debug("Data is up to date")
         }
     }
 
@@ -47,7 +47,7 @@ internal class Synchronizer(context: Context,
         if (data != null) {
             putLocalData(data)
 
-            log.debug("Downloaded remote data")
+            log.debug("Downloaded")
         } else {
             log.debug("No remote data")
         }
@@ -58,7 +58,7 @@ internal class Synchronizer(context: Context,
         drive.upload(metaFile, SyncMetaData(database.updateTime))
         drive.upload(dataFile, getLocalData())
 
-        log.debug("Uploaded local data")
+        log.debug("Uploaded")
     }
 
     @Throws(IOException::class)
@@ -82,7 +82,7 @@ internal class Synchronizer(context: Context,
     }
 
     private fun putLocalData(data: SyncData) {
-        database.notifying(DB_FLAG_SYNCING) {
+        database.commit(DB_FLAG_SYNCING) {
             batchWrite {
                 data.events.map(::dataToEvent).let(::putEvents)
                 phoneBlacklist = data.phoneBlacklist

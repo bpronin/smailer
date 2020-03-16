@@ -169,19 +169,19 @@ class DebugFragment : BasePreferenceFragment() {
                 }),
                 createPreference("Mark all as unread", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        database.notifying { markAllEventsAsRead(false) }
+                        database.commit { markAllEventsAsRead(false) }
                         showToast(R.string.operation_complete)
                     }
                 }),
                 createPreference("Mark all as read", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        database.notifying { markAllEventsAsRead(true) }
+                        database.commit { markAllEventsAsRead(true) }
                         showToast(R.string.operation_complete)
                     }
                 }),
                 createPreference("Clear calls log", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        database.notifying { clearEvents() }
+                        database.commit { clearEvents() }
                         showToast(R.string.operation_complete)
                     }
                 }),
@@ -427,7 +427,7 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun onAddHistoryItem() {
-        database.notifying {
+        database.commit {
             putEvent(PhoneEvent("+79052345670", true, System.currentTimeMillis(), null, false,
                     "Debug message", null, null, STATE_PENDING, deviceName(), STATUS_ACCEPTED, isRead = false))
         }
@@ -437,7 +437,7 @@ class DebugFragment : BasePreferenceFragment() {
     private fun onPopulateHistory() {
         var time = System.currentTimeMillis()
         val recipient = deviceName()
-        database.notifying {
+        database.commit {
             putEvent(PhoneEvent("+79052345671", true, time, null, false, "Debug message", null, null, STATE_PENDING, recipient, STATUS_ACCEPTED, isRead = false))
             putEvent(PhoneEvent("+79052345672", false, 1000.let { time += it; time }, null, false, "Debug message", null, null, STATE_PROCESSED, recipient, STATUS_ACCEPTED, isRead = false))
             putEvent(PhoneEvent("+79052345673", true, 1000.let { time += it; time }, time + 10000, false, null, null, null, STATE_IGNORED, recipient, STATUS_ACCEPTED, isRead = false))

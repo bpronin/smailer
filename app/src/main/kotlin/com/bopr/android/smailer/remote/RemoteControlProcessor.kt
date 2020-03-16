@@ -196,7 +196,7 @@ internal class RemoteControlProcessor(
     private fun addToFilterList(listName: String, value: String?, @StringRes messageRes: Int,
                                 @Notifications.Target target: Int) {
         if (!value.isNullOrEmpty()) {
-            if (database.notifying { putFilterListItem(listName, value) }) {
+            if (database.commit { putFilterListItem(listName, value) }) {
                 showNotification(context.getString(messageRes, value), target)
             } else {
                 log.debug("Already in list")
@@ -207,7 +207,7 @@ internal class RemoteControlProcessor(
     private fun removeFromFilterList(listName: String, value: String?, @StringRes messageRes: Int,
                                      @Notifications.Target target: Int) {
         if (!value.isNullOrEmpty()) {
-            if (database.notifying { deleteFilterListItem(listName, value) }) {
+            if (database.commit { deleteFilterListItem(listName, value) }) {
                 showNotification(context.getString(messageRes, value), target)
             } else {
                 log.debug("Not in list")
