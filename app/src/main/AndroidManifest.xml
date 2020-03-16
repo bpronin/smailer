@@ -113,29 +113,7 @@
 
         <service android:name=".ContentObserverService" />
 
-        <service
-            android:name=".sync.AuthenticatorService"
-            android:permission="com.bopr.android.smailer.SYNC">
-            <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator" />
-            </intent-filter>
-            <meta-data
-                android:name="android.accounts.AccountAuthenticator"
-                android:resource="@xml/authenticator" />
-        </service>
-
-        <service
-            android:name=".sync.SyncService"
-            android:exported="true"
-            android:permission="com.bopr.android.smailer.SYNC">
-            <!--android:process=":sync">-->
-            <intent-filter>
-                <action android:name="android.content.SyncAdapter" />
-            </intent-filter>
-            <meta-data
-                android:name="android.content.SyncAdapter"
-                android:resource="@xml/sync_adapter" />
-        </service>
+        <service android:name=".sync.SyncService" />
 
         <receiver
             android:name=".CallReceiver"
@@ -154,12 +132,6 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
-        <provider
-            android:name=".sync.AppContentProvider"
-            android:authorities="com.bopr.android.smailer"
-            android:exported="false"
-            android:syncable="true" />
 
     </application>
 
