@@ -47,17 +47,17 @@ fun SQLiteDatabase.isTableExists(name: String): Boolean {
             .useFirst { getLong(0) } == 1L
 }
 
-inline fun SQLiteDatabase.alterTable(table: String, createSql: String,
+inline fun SQLiteDatabase.alterTable(table: String, schemaSql: String,
                                      transform: Cursor.(String) -> String? = { getStringIfExists(it) }) {
     val old = table + "_old"
     dropTable(old) /* ensure temp table is not exists */
     if (isTableExists(table)) {
         execSQL("ALTER TABLE $table RENAME TO $old")
-        execSQL(createSql)
+        execSQL(schemaSql)
         copyTable(old, table, transform)
         dropTable(old)
     } else {
-        execSQL(createSql)
+        execSQL(schemaSql)
     }
 }
 

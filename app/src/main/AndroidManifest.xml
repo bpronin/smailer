@@ -113,8 +113,6 @@
 
         <service android:name=".ContentObserverService" />
 
-        <service android:name=".sync.SyncService" />
-
         <receiver
             android:name=".CallReceiver"
             android:exported="true"

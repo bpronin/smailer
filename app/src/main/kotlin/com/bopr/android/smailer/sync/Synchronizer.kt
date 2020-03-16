@@ -3,6 +3,7 @@ package com.bopr.android.smailer.sync
 import android.accounts.Account
 import android.content.Context
 import com.bopr.android.smailer.Database
+import com.bopr.android.smailer.Database.Companion.DB_FLAG_SYNCING
 import com.bopr.android.smailer.GeoCoordinates.Companion.coordinatesOf
 import com.bopr.android.smailer.GoogleDrive
 import com.bopr.android.smailer.PhoneEvent
@@ -29,11 +30,14 @@ internal class Synchronizer(context: Context,
 
     @Throws(IOException::class)
     fun sync() {
+        val databaseTime = database.updateTime
         val meta = drive.download(metaFile, SyncMetaData::class)
-        if (meta == null || meta.time <= database.updateTime) {
+        if (meta == null || meta.time < databaseTime) {
             upload()
-        } else {
+        } else if (meta.time != databaseTime) {
             download()
+        } else {
+            log.debug("Data is actual")
         }
     }
 
@@ -78,12 +82,14 @@ internal class Synchronizer(context: Context,
     }
 
     private fun putLocalData(data: SyncData) {
-        database.batchWrite {
-            data.events.map(::dataToEvent).let(::putEvents)
-            phoneBlacklist = data.phoneBlacklist
-            phoneWhitelist = data.phoneWhitelist
-            textBlacklist = data.textBlacklist
-            textWhitelist = data.textWhitelist
+        database.notifying(DB_FLAG_SYNCING) {
+            batchWrite {
+                data.events.map(::dataToEvent).let(::putEvents)
+                phoneBlacklist = data.phoneBlacklist
+                phoneWhitelist = data.phoneWhitelist
+                textBlacklist = data.textBlacklist
+                textWhitelist = data.textWhitelist
+            }
         }
     }
 

@@ -37,7 +37,6 @@ class SyncEngineTest : BaseTest() {
         sync.clear()
 
         database.phoneBlacklist = listOf("A","B","C")
-        database.updateTime = 1
 
         sync.sync()
 
