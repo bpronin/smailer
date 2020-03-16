@@ -95,7 +95,7 @@ class Database constructor(private val context: Context, private val name: Strin
         internal set(value) = updateSystemTable(values {
             put(COLUMN_UPDATE_TIME, value)
         }).also {
-            log.debug("Update time: $value")
+            log.debug("Update time: %tF %tT".format(value, value))
         }
 
     /**
@@ -359,7 +359,7 @@ class Database constructor(private val context: Context, private val name: Strin
         private val log = LoggerFactory.getLogger("Database")
 
         const val DATABASE_NAME = "smailer.sqlite"
-        private const val DB_VERSION = 8
+        private const val DB_VERSION = 9
 
         const val COLUMN_COUNT = "COUNT(*)"
         const val COLUMN_ID = "_id"
@@ -379,7 +379,7 @@ class Database constructor(private val context: Context, private val name: Strin
         const val COLUMN_LAST_LATITUDE = "last_latitude"
         const val COLUMN_LAST_LONGITUDE = "last_longitude"
         const val COLUMN_LAST_LOCATION_TIME = "last_location_time"
-        const val COLUMN_UPDATE_TIME = "last_sync_time"
+        const val COLUMN_UPDATE_TIME = "last_update_time"
         const val COLUMN_READ = "message_read"
         const val COLUMN_ACCEPTOR = "recipient"
 
