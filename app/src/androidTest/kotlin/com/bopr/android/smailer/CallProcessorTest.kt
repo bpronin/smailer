@@ -8,8 +8,6 @@ import android.content.Context.CONNECTIVITY_SERVICE
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import androidx.test.filters.SmallTest
-import com.bopr.android.smailer.Notifications.Companion.TARGET_MAIN
-import com.bopr.android.smailer.Notifications.Companion.TARGET_RECIPIENTS
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
@@ -128,7 +126,9 @@ class CallProcessorTest : BaseTest() {
                     && replyTo == null
                     && from == "sender@mail.com"
         })
-        verify(notifications, never()).showMailError(any(), any())
+        verify(notifications, never()).showSenderAccountError()
+        verify(notifications, never()).showRecipientsError(anyInt())
+        verify(notifications, never()).showGoogleAccessError()
 
         val savedEvent = database.events.first()!!
 
@@ -151,7 +151,9 @@ class CallProcessorTest : BaseTest() {
         processor.process(event)
 
         verify(transport, never()).send(any())
-        verify(notifications, never()).showMailError(any(), any())
+        verify(notifications, never()).showSenderAccountError()
+        verify(notifications, never()).showRecipientsError(anyInt())
+        verify(notifications, never()).showGoogleAccessError()
 
         val savedEvent = database.events.first()!!
 
@@ -190,7 +192,7 @@ class CallProcessorTest : BaseTest() {
         processor.process(event)
 
         verify(transport, never()).send(any())
-        verify(notifications).showMailError(eq(R.string.no_recipients_specified), eq(TARGET_RECIPIENTS))
+        verify(notifications).showRecipientsError(eq(R.string.no_recipients_specified))
 
         val savedEvent = database.events.first()!!
 
@@ -210,34 +212,14 @@ class CallProcessorTest : BaseTest() {
 
         verify(transport).login(any(), any())
         verify(transport).send(any())
-        verify(notifications, never()).showMailError(any(), any())
+        verify(notifications, never()).showSenderAccountError()
+        verify(notifications, never()).showRecipientsError(anyInt())
+        verify(notifications, never()).showGoogleAccessError()
 
         val savedEvent = database.events.first()!!
 
         assertEquals(STATE_PENDING, savedEvent.state)
         assertEquals(STATUS_ACCEPTED, savedEvent.processStatus)
-    }
-
-    /**
-     * When settings goes back to normal last error notification should be removed.
-     */
-    @Test
-    fun testClearNotifications() {
-        whenever(accountManager.getAccountsByType(eq("com.google"))).thenReturn(arrayOf())
-
-        val event = testingEvent()
-        processor.process(event)
-
-        verify(notifications).showSenderAccountError()
-        verify(notifications, never()).cancelAllErrors()
-
-        /* sending next message without errors hides all previous error notifications */
-        whenever(accountManager.getAccountsByType(eq("com.google"))).thenReturn(arrayOf(Account("sender@mail.com", "com.google")))
-
-        processor.process(testingEvent())
-
-        verify(notifications).showSenderAccountError()
-        verify(notifications).cancelAllErrors()
     }
 
     /**
@@ -250,15 +232,14 @@ class CallProcessorTest : BaseTest() {
 
         processor.process(testingEvent())
 
-        verify(notifications, never()).showMessage(anyString(), anyString(), anyInt())
+        verify(notifications, never()).showMailSendSuccess()
 
         /* the setting is ON */
         whenever(preferences.getBoolean(eq(PREF_NOTIFY_SEND_SUCCESS), anyOrNull())).thenReturn(true)
 
         processor.process(testingEvent())
 
-        verify(notifications).showMessage(eq(targetContext.getString(R.string.email_successfully_send)),
-                isNull(), eq(TARGET_MAIN))
+        verify(notifications).showMailSendSuccess()
     }
 
     /**
@@ -275,14 +256,18 @@ class CallProcessorTest : BaseTest() {
 
         assertEquals(3, database.events.count())
         assertEquals(3, database.pendingEvents.count())
-        verify(notifications, never()).showError(anyString(), anyInt())
+        verify(notifications, never()).showSenderAccountError()
+        verify(notifications, never()).showRecipientsError(anyInt())
+        verify(notifications, never()).showGoogleAccessError()
 
         /* try resend with disabled transport */
         processor.processPending()
 
         assertEquals(3, database.events.count())
         assertEquals(3, database.pendingEvents.count())
-        verify(notifications, never()).showError(anyString(), anyInt())
+        verify(notifications, never()).showSenderAccountError()
+        verify(notifications, never()).showRecipientsError(anyInt())
+        verify(notifications, never()).showGoogleAccessError()
 
         /* enable transport an try again */
         doNothing().whenever(transport).send(any())
@@ -291,6 +276,8 @@ class CallProcessorTest : BaseTest() {
 
         assertEquals(3, database.events.count())
         assertEquals(0, database.pendingEvents.count())
-        verify(notifications, never()).showError(anyString(), anyInt())
+        verify(notifications, never()).showSenderAccountError()
+        verify(notifications, never()).showRecipientsError(anyInt())
+        verify(notifications, never()).showGoogleAccessError()
     }
 }

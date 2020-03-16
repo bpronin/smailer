@@ -30,17 +30,14 @@ class Notifications(private val context: Context) {
     private val errorsBuilder: NotificationCompat.Builder
 
     init {
-        val statusChannelId = "com.bopr.android.smailer.status"
-        val notificationsChannelId = "com.bopr.android.smailer.notifications"
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            manager.createNotificationChannel(NotificationChannel(statusChannelId,
+            manager.createNotificationChannel(NotificationChannel(CHANNEL_ID_STATUS,
                     context.getString(R.string.status), IMPORTANCE_LOW))
-            manager.createNotificationChannel(NotificationChannel(notificationsChannelId,
+            manager.createNotificationChannel(NotificationChannel(CHANNEL_ID_NOTIFICATIONS,
                     context.getString(R.string.notifications), IMPORTANCE_LOW))
         }
 
-        statusBuilder = NotificationCompat.Builder(context, statusChannelId)
+        statusBuilder = NotificationCompat.Builder(context, CHANNEL_ID_STATUS)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentIntent(targetIntent(TARGET_MAIN))
                 .setOngoing(true)
@@ -50,7 +47,7 @@ class Notifications(private val context: Context) {
                     }
                 }
 
-        messagesBuilder = NotificationCompat.Builder(context, notificationsChannelId)
+        messagesBuilder = NotificationCompat.Builder(context, CHANNEL_ID_NOTIFICATIONS)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setAutoCancel(true)
                 .apply {
@@ -59,7 +56,7 @@ class Notifications(private val context: Context) {
                     }
                 }
 
-        errorsBuilder = NotificationCompat.Builder(context, notificationsChannelId)
+        errorsBuilder = NotificationCompat.Builder(context, CHANNEL_ID_NOTIFICATIONS)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setAutoCancel(true)
                 .setContentText(context.getString(R.string.tap_to_check_settings))
@@ -77,52 +74,68 @@ class Notifications(private val context: Context) {
                 .build()
     }
 
-    fun showMessage(title: String, message: String? = null, @Target target: Int) {
-        manager.notify("message", ++messageId,
-                messagesBuilder
-                        .setWhen(currentTimeMillis())
-                        .setContentTitle(title)
-                        .setContentText(message)
-                        .setContentIntent(targetIntent(target))
-                        .build())
-    }
-
-    fun showError(errorId: Int, title: String, @Target target: Int) {
-        manager.notify("error", errorId,
-                errorsBuilder
-                        .setWhen(currentTimeMillis())
-                        .setContentTitle(title)
-                        .setContentIntent(targetIntent(target))
-                        .build())
-    }
-
-    fun showError(title: String, @Target target: Int) {
-        showError(++errorId, title, target)
-    }
-
-    fun showMailError(@StringRes reasonRes: Int, @Target target: Int) {
-        showError(
-                title = context.getString(R.string.unable_send_email, context.getString(reasonRes)),
-                target = target
-        )
+    fun showMailSendSuccess() {
+        showMessage(context.getString(R.string.email_successfully_send), null, TARGET_MAIN)
     }
 
     fun showRemoteAction(message: String, @Target target: Int) {
-        showMessage(
-                title = context.getString(R.string.remote_action),
-                message = message,
-                target = target
-        )
+        showMessage(context.getString(R.string.remote_action), message, target)
     }
 
-    fun cancelError(errorId: Int) {
-        manager.cancel("error", errorId)
+    fun showRemoteAccountError() {
+        showError(REMOTE_ACCOUNT_ERROR, context.getString(R.string.service_account_not_found),
+                TARGET_REMOTE_CONTROL)
     }
 
-    fun cancelAllErrors() {
-        while (errorId >= 0) {
-            cancelError(errorId--)
-        }
+    fun cancelRemoteAccountError() {
+        cancelError(REMOTE_ACCOUNT_ERROR)
+    }
+
+    fun showSenderAccountError() {
+        showError(SENDER_ACCOUNT_ERROR, context.getString(R.string.sender_account_not_found),
+                TARGET_MAIN)
+    }
+
+    fun cancelSenderAccountError() {
+        cancelError(SENDER_ACCOUNT_ERROR)
+    }
+
+    fun showRecipientsError(@StringRes reasonRes: Int) {
+        showMailError(RECIPIENTS_ERROR, reasonRes, TARGET_RECIPIENTS)
+    }
+
+    fun cancelRecipientsError() {
+        cancelError(RECIPIENTS_ERROR)
+    }
+
+    fun showGoogleAccessError() {
+        showMailError(GOOGLE_ACCESS_ERROR, R.string.no_access_to_google_account, TARGET_MAIN)
+    }
+
+    private fun showMessage(title: String, message: String? = null, @Target target: Int) {
+        manager.notify(TAG_MESSAGE, nextMessageId++, messagesBuilder
+                .setWhen(currentTimeMillis())
+                .setContentTitle(title)
+                .setContentText(message)
+                .setContentIntent(targetIntent(target))
+                .build())
+    }
+
+    private fun showError(errorId: Int, title: String, @Target target: Int) {
+        manager.notify(TAG_ERROR, errorId, errorsBuilder
+                .setWhen(currentTimeMillis())
+                .setContentTitle(title)
+                .setContentIntent(targetIntent(target))
+                .build())
+    }
+
+    private fun showMailError(errorId: Int, @StringRes reasonRes: Int, @Target target: Int) {
+        showError(errorId, context.getString(R.string.unable_send_email, context.getString(reasonRes)),
+                target)
+    }
+
+    private fun cancelError(errorId: Int) {
+        manager.cancel(TAG_ERROR, errorId)
     }
 
     private fun targetIntent(@Target target: Int): PendingIntent {
@@ -156,24 +169,6 @@ class Notifications(private val context: Context) {
                 .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)!!
     }
 
-    fun showRemoteAccountError() {
-        showError(REMOTE_ACCOUNT_ERROR, context.getString(R.string.service_account_not_found),
-                TARGET_REMOTE_CONTROL)
-    }
-
-    fun cancelRemoteAccountError() {
-        cancelError(REMOTE_ACCOUNT_ERROR)
-    }
-
-    fun showSenderAccountError() {
-        showError(SENDER_ACCOUNT_ERROR, context.getString(R.string.sender_account_not_found),
-                TARGET_MAIN)
-    }
-
-    fun cancelSenderAccountError() {
-        cancelError(SENDER_ACCOUNT_ERROR)
-    }
-
     @Retention(AnnotationRetention.SOURCE)
     @IntDef(TARGET_MAIN, TARGET_RULES, TARGET_HISTORY, TARGET_RECIPIENTS, TARGET_REMOTE_CONTROL,
             TARGET_PHONE_BLACKLIST, TARGET_PHONE_WHITELIST, TARGET_TEXT_BLACKLIST, TARGET_TEXT_WHITELIST)
@@ -181,11 +176,18 @@ class Notifications(private val context: Context) {
 
     companion object {
 
-        private var messageId = -1
-        private var errorId = -1
+        private var nextMessageId = 0
 
-        private const val SENDER_ACCOUNT_ERROR = -1000
-        private const val REMOTE_ACCOUNT_ERROR = -1001
+        private const val CHANNEL_ID_STATUS = "com.bopr.android.smailer.status"
+        private const val CHANNEL_ID_NOTIFICATIONS = "com.bopr.android.smailer.notifications"
+
+        private const val TAG_ERROR = "error"
+        private const val TAG_MESSAGE = "message"
+
+        private const val SENDER_ACCOUNT_ERROR = 1000
+        private const val REMOTE_ACCOUNT_ERROR = 1001
+        private const val RECIPIENTS_ERROR = 1002
+        private const val GOOGLE_ACCESS_ERROR = 1003
 
         const val SERVICE_NOTIFICATION_ID = 19158
 

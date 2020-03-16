@@ -19,9 +19,7 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceScreen
 import com.bopr.android.smailer.*
 import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
-import com.bopr.android.smailer.Notifications.Companion.TARGET_MAIN
 import com.bopr.android.smailer.Notifications.Companion.TARGET_PHONE_BLACKLIST
-import com.bopr.android.smailer.Notifications.Companion.TARGET_RULES
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
@@ -214,16 +212,19 @@ class DebugFragment : BasePreferenceFragment() {
                 })
         )
         addCategory(screen, "Notifications",
-                createPreference("Show error", object : DefaultClickListener() {
+                createPreference("Show sender error", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        notifications.showMailError(R.string.no_recipients_specified,
-                                TARGET_RULES)
+                        notifications.showSenderAccountError()
                     }
                 }),
-                createPreference("Show success", object : DefaultClickListener() {
+                createPreference("Show recipients error", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        notifications.showMessage(title = getString(R.string.email_successfully_send),
-                                target = TARGET_MAIN)
+                        notifications.showRecipientsError(R.string.no_recipients_specified)
+                    }
+                }),
+                createPreference("Show mail success", object : DefaultClickListener() {
+                    override fun onClick(preference: Preference) {
+                        notifications.showMailSendSuccess()
                     }
                 }),
                 createPreference("Show remote action", object : DefaultClickListener() {
@@ -233,9 +234,11 @@ class DebugFragment : BasePreferenceFragment() {
                                 TARGET_PHONE_BLACKLIST)
                     }
                 }),
-                createPreference("Hide errors", object : DefaultClickListener() {
+                createPreference("Cancel errors", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        notifications.cancelAllErrors()
+                        notifications.cancelSenderAccountError()
+                        notifications.cancelRemoteAccountError()
+                        notifications.cancelRecipientsError()
                     }
                 })
         )

@@ -3,8 +3,6 @@ package com.bopr.android.smailer
 import android.Manifest.permission.READ_CONTACTS
 import android.accounts.Account
 import android.content.Context
-import com.bopr.android.smailer.Notifications.Companion.TARGET_MAIN
-import com.bopr.android.smailer.Notifications.Companion.TARGET_RECIPIENTS
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
@@ -128,19 +126,16 @@ class CallProcessor(
 
             log.debug("Mail sent")
 
-            notifications.cancelAllErrors()
             if (settings.getBoolean(PREF_NOTIFY_SEND_SUCCESS, false)) {
-                notifications.showMessage(title = context.getString(R.string.email_successfully_send),
-                        target = TARGET_MAIN)
+                notifications.showMailSendSuccess()
             }
-
             true
         } catch (x: UserRecoverableAuthIOException) {
             /* this occurs when app has no permission to access google account or
                sender account has been removed from outside of the device */
             log.warn("Failed sending mail: ", x)
 
-            notifications.showMailError(R.string.no_access_to_google_account, TARGET_MAIN)
+            notifications.showGoogleAccessError()
             false
         } catch (x: Exception) {
             log.warn("Failed sending mail: ", x)
@@ -160,14 +155,14 @@ class CallProcessor(
         val recipients = settings.getString(PREF_RECIPIENTS_ADDRESS)
 
         if (recipients == null) {
-            notifications.showMailError(R.string.no_recipients_specified, TARGET_RECIPIENTS)
+            notifications.showRecipientsError(R.string.no_recipients_specified)
 
             log.warn("Recipients not specified")
             return false
         }
 
         if (!isValidEmailAddressList(recipients)) {
-            notifications.showMailError(R.string.invalid_recipient, TARGET_RECIPIENTS)
+            notifications.showRecipientsError(R.string.invalid_recipient)
 
             log.warn("Recipients are invalid")
             return false
