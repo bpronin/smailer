@@ -4,8 +4,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
-import com.bopr.android.smailer.PendingCallProcessorWorker.Companion.startPendingCallProcessorService
+import com.bopr.android.smailer.remote.RemoteControlProcessor
 import com.bopr.android.smailer.util.deviceName
+import com.bopr.android.smailer.util.runInBackground
 import java.lang.System.currentTimeMillis
 
 class DebugReceiver : BroadcastReceiver() {
@@ -18,14 +19,21 @@ class DebugReceiver : BroadcastReceiver() {
         when (intent.action) {
             "PROCESS_PHONE_EVENT" -> {
                 startCallProcessingService(context, PhoneEvent(
-                            phone = "ADB DEBUG",
-                            isIncoming = true,
-                            startTime = currentTimeMillis(),
-                            text = "Message text",
-                            acceptor = deviceName()))
+                        phone = "ADB DEBUG",
+                        isIncoming = true,
+                        startTime = currentTimeMillis(),
+                        text = "Message text",
+                        acceptor = deviceName()))
             }
             "PROCESS_PENDING_EVENTS" -> {
-                startPendingCallProcessorService(context)
+                runInBackground {
+                    CallProcessor(context).processPending()
+                }
+            }
+            "PROCESS_SERVICE_MAIL" -> {
+                runInBackground {
+                    RemoteControlProcessor(context).checkMailbox()
+                }
             }
         }
     }

@@ -14,7 +14,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_NOTIFICAT
 import com.bopr.android.smailer.remote.RemoteControlProcessor
 import com.bopr.android.smailer.util.getQuantityString
 import com.bopr.android.smailer.util.isAccountExists
-import com.bopr.android.smailer.util.runBackgroudTask
+import com.bopr.android.smailer.util.runBackgroundTask
 import com.bopr.android.smailer.util.showToast
 import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
 
@@ -66,7 +66,7 @@ class RemoteControlFragment : BasePreferenceFragment() {
     }
 
     private fun onProcessServiceMail(preference: Preference) {
-        preference.runBackgroudTask({
+        preference.runBackgroundTask({
             val context = requireContext()
             Database(context).use {
                 RemoteControlProcessor(context, it).checkMailbox()

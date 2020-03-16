@@ -1,6 +1,5 @@
 package com.bopr.android.smailer
 
-import android.Manifest.permission.READ_CONTACTS
 import android.accounts.Account
 import android.accounts.AccountManager
 import android.content.Context
@@ -9,8 +8,6 @@ import android.content.Context.CONNECTIVITY_SERVICE
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import androidx.test.filters.SmallTest
-import androidx.test.rule.GrantPermissionRule
-import androidx.test.rule.GrantPermissionRule.grant
 import com.bopr.android.smailer.Notifications.Companion.TARGET_MAIN
 import com.bopr.android.smailer.Notifications.Companion.TARGET_RECIPIENTS
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
@@ -31,7 +28,6 @@ import com.nhaarman.mockitokotlin2.*
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.ArgumentMatchers.anyString
@@ -45,10 +41,6 @@ import java.lang.System.currentTimeMillis
  */
 @SmallTest
 class CallProcessorTest : BaseTest() {
-
-    @Rule
-    @JvmField
-    val permissionRule: GrantPermissionRule = grant(READ_CONTACTS)
 
     private lateinit var database: Database
     private lateinit var context: Context

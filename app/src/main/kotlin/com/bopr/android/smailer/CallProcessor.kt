@@ -29,7 +29,7 @@ import java.lang.System.currentTimeMillis
  */
 class CallProcessor(
         private val context: Context,
-        private val database: Database,
+        private val database: Database = Database(context),
         private val transport: GoogleMail = GoogleMail(context),
         private val notifications: Notifications = Notifications(context),
         private val locator: GeoLocator = GeoLocator(context, database)) {
@@ -45,43 +45,47 @@ class CallProcessor(
     fun process(event: PhoneEvent) {
         log.debug("Processing: $event")
 
-        event.apply {
-            location = locator.getLocation()
-            processStatus = eventFilter().test(this)
-            processTime = currentTimeMillis()
+        database.use {
+            event.apply {
+                location = locator.getLocation()
+                processStatus = eventFilter().test(this)
+                processTime = currentTimeMillis()
 
-            if (processStatus != STATUS_ACCEPTED) {
-                state = STATE_IGNORED
-                log.debug("Ignored")
-            } else if (startMailSession() && sendMail(this)) {
-                state = STATE_PROCESSED
-                log.debug("Processed")
-            } else {
-                state = STATE_PENDING
-                log.debug("Postponed")
+                if (processStatus != STATUS_ACCEPTED) {
+                    state = STATE_IGNORED
+                    log.debug("Ignored")
+                } else if (startMailSession() && sendMail(this)) {
+                    state = STATE_PROCESSED
+                    log.debug("Processed")
+                } else {
+                    state = STATE_PENDING
+                    log.debug("Postponed")
+                }
             }
-        }
 
-        database.notifying { putEvent(event) }
+            database.notifying { putEvent(event) }
+        }
     }
 
     /**
      * Sends out email for all pending events.
      */
     fun processPending() {
-        val events = database.pendingEvents.list()
-        if (events.isEmpty()) {
-            log.debug("No pending events")
-        } else {
-            log.debug("Processing ${events.size} pending event(s)")
+        database.use {
+            val events = database.pendingEvents.list()
+            if (events.isEmpty()) {
+                log.debug("No pending events")
+            } else {
+                log.debug("Processing ${events.size} pending event(s)")
 
-            database.notifying {
-                if (startMailSession()) {
-                    for (event in events) {
-                        event.processTime = currentTimeMillis()
-                        if (sendMail(event)) {
-                            event.state = STATE_PROCESSED
-                            putEvent(event)
+                database.notifying {
+                    if (startMailSession()) {
+                        for (event in events) {
+                            event.processTime = currentTimeMillis()
+                            if (sendMail(event)) {
+                                event.state = STATE_PROCESSED
+                                putEvent(event)
+                            }
                         }
                     }
                 }

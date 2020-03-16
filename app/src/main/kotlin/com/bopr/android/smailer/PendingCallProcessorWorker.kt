@@ -1,8 +1,6 @@
 package com.bopr.android.smailer
 
 import android.content.Context
-import android.content.Intent
-import androidx.core.app.JobIntentService.enqueueWork
 import androidx.work.*
 import androidx.work.ExistingPeriodicWorkPolicy.REPLACE
 import androidx.work.NetworkType.CONNECTED
@@ -18,7 +16,7 @@ internal class PendingCallProcessorWorker(context: Context, workerParams: Worker
     : Worker(context, workerParams) {
 
     override fun doWork(): Result {
-        startPendingCallProcessorService(applicationContext)
+        CallProcessor(applicationContext).processPending()
         return Result.success()
     }
 
@@ -26,14 +24,6 @@ internal class PendingCallProcessorWorker(context: Context, workerParams: Worker
 
         private val log = LoggerFactory.getLogger("PendingCallProcessorWorker")
         private const val WORKER_TAG = "com.bopr.android.smailer.resend"
-        private const val JOB_ID = 1000
-
-        fun startPendingCallProcessorService(context: Context) {
-            log.debug("Starting service")
-
-            enqueueWork(context, PendingCallProcessorService::class.java, JOB_ID,
-                    Intent(context, PendingCallProcessorService::class.java))
-        }
 
         fun startPendingCallProcessorWorker(context: Context) {
             val manager = WorkManager.getInstance(context)

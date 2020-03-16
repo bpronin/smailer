@@ -40,10 +40,11 @@ class DatabaseListenerTest : BaseTest() {
             latch.countDown()
         }
 
-        database.putEvent(PhoneEvent(phone = "1", startTime = 0, acceptor = "device"))
-        database.putEvent(PhoneEvent(phone = "2", startTime = 1, acceptor = "device"))
-        database.putEvent(PhoneEvent(phone = "3", startTime = 2, acceptor = "device"))
-        database.notifyChanged()
+        database.notifying {
+            putEvent(PhoneEvent(phone = "1", startTime = 0, acceptor = "device"))
+            putEvent(PhoneEvent(phone = "2", startTime = 1, acceptor = "device"))
+            putEvent(PhoneEvent(phone = "3", startTime = 2, acceptor = "device"))
+        }
 
         assertTrue(latch.await(5, TimeUnit.SECONDS))
     }

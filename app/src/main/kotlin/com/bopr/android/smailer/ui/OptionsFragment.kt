@@ -2,10 +2,13 @@ package com.bopr.android.smailer.ui
 
 import android.os.Bundle
 import androidx.preference.Preference
-import com.bopr.android.smailer.*
+import com.bopr.android.smailer.CallProcessor
+import com.bopr.android.smailer.PhoneEvent
+import com.bopr.android.smailer.R
+import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.BATTERY_OPTIMIZATION_DIALOG_TAG
 import com.bopr.android.smailer.util.deviceName
-import com.bopr.android.smailer.util.runBackgroudTask
+import com.bopr.android.smailer.util.runBackgroundTask
 import com.bopr.android.smailer.util.showToast
 import java.lang.System.currentTimeMillis
 
@@ -38,17 +41,15 @@ class OptionsFragment : BasePreferenceFragment() {
     }
 
     private fun onSendTestEmail(preference: Preference) {
-        preference.runBackgroudTask({
-            Database(context!!).use {
-                CallProcessor(context!!, it).process(PhoneEvent(
-                        phone = getString(R.string.app_name),
-                        isIncoming = true,
-                        startTime = currentTimeMillis(),
-                        endTime = currentTimeMillis(),
-                        text = "Sample message",
-                        acceptor = deviceName()
-                ))
-            }
+        preference.runBackgroundTask({
+            CallProcessor(requireContext()).process(PhoneEvent(
+                    phone = getString(R.string.app_name),
+                    isIncoming = true,
+                    startTime = currentTimeMillis(),
+                    endTime = currentTimeMillis(),
+                    text = "Sample message",
+                    acceptor = deviceName()
+            ))
         }, {
             /* NOTE: if we live the page while processing context becomes null */
             context?.showToast(R.string.operation_complete)

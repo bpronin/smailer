@@ -22,10 +22,6 @@ class Database constructor(private val context: Context, private val name: Strin
     private val helper: DbHelper = DbHelper(context)
     private val modifiedTables = mutableSetOf<String>()
 
-    init {
-        log.debug("Open")
-    }
-
     /**
      * Returns all events.
      */
@@ -244,7 +240,7 @@ class Database constructor(private val context: Context, private val name: Strin
     /**
      * Fires database "changed" event.
      */
-    fun notifyChanged() {
+    private fun notifyChanged() {
         if (modifiedTables.isNotEmpty()) {
             log.debug("Broadcasting data changed: $modifiedTables")
 
@@ -257,7 +253,7 @@ class Database constructor(private val context: Context, private val name: Strin
     /**
      * Performs given action then fires "changed" event
      */
-    inline fun <T> notifying(action: Database.() -> T): T {
+    fun <T> notifying(action: Database.() -> T): T {
         val result = action.invoke(this)
         notifyChanged()
         return result

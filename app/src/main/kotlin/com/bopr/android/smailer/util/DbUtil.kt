@@ -49,13 +49,13 @@ fun SQLiteDatabase.isTableExists(name: String): Boolean {
 
 inline fun SQLiteDatabase.alterTable(table: String, createSql: String,
                                      transform: Cursor.(String) -> String? = { getStringIfExists(it) }) {
+    val old = table + "_old"
+    dropTable(old) /* ensure temp table is not exists */
     if (isTableExists(table)) {
-        val old = table + "_old"
-        execSQL("DROP TABLE IF EXISTS $old")
         execSQL("ALTER TABLE $table RENAME TO $old")
         execSQL(createSql)
         copyTable(old, table, transform)
-        execSQL("DROP TABLE $old")
+        dropTable(old)
     } else {
         execSQL(createSql)
     }
@@ -75,6 +75,10 @@ inline fun SQLiteDatabase.copyTable(srcTable: String, dstTable: String,
         }
         insert(dstTable, null, values)
     }
+}
+
+fun SQLiteDatabase.dropTable(table: String) {
+    execSQL("DROP TABLE IF EXISTS $table")
 }
 
 fun Cursor.getString(columnName: String): String? {

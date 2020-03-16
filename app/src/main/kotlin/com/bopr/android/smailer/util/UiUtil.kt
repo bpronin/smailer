@@ -34,9 +34,10 @@ import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.ui.WavyUnderlineSpan
-import com.google.android.gms.tasks.Tasks.call
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import java.util.concurrent.Callable
-import java.util.concurrent.Executors.newSingleThreadExecutor
+import java.util.concurrent.Executors
 
 /**
  * Miscellaneous UI and resources utilities.
@@ -246,18 +247,21 @@ fun RecyclerView.addOnItemSwipedListener(action: (RecyclerView.ViewHolder) -> Un
     }
 }
 
-fun <T> Preference.runBackgroudTask(task: () -> T?, onComplete: (T?) -> Unit) {
+fun <T> runInBackground(task: () -> T): Task<T> {
+    return Tasks.call(Executors.newSingleThreadExecutor(), Callable {
+        task()  /* here we are in main thread */
+    })
+}
+
+fun <T> Preference.runBackgroundTask(task: () -> T?, onComplete: (T?) -> Unit) {
     val lastIcon = icon
     val progressIcon = getDrawable(context, R.drawable.animated_progress) as AnimatedVectorDrawableCompat
     icon = progressIcon
     progressIcon.start()
 
-    call(newSingleThreadExecutor(), Callable {
-        task.invoke()
-    }).addOnCompleteListener {
-        /* here we are in main thread */
-        icon = lastIcon
+    runInBackground(task).addOnCompleteListener {
         progressIcon.stop()
-        onComplete.invoke(it.result)
+        icon = lastIcon
+        onComplete(it.result)
     }
 }

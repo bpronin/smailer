@@ -235,9 +235,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
 
     private fun addToFilterList(listName: String, phone: String?) {
         if (!phone.isNullOrEmpty()) {
-            if (database.putFilterListItem(listName, phone)) {
-                database.notifyChanged()
-            } else {
+            if (!database.notifying { putFilterListItem(listName, phone)}) {
                 showToast(getString(R.string.item_already_exists, phone))
             }
         }

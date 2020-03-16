@@ -22,7 +22,6 @@ import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessi
 import com.bopr.android.smailer.Notifications.Companion.TARGET_MAIN
 import com.bopr.android.smailer.Notifications.Companion.TARGET_PHONE_BLACKLIST
 import com.bopr.android.smailer.Notifications.Companion.TARGET_RULES
-import com.bopr.android.smailer.PendingCallProcessorWorker.Companion.startPendingCallProcessorService
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
@@ -47,18 +46,15 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
-import com.bopr.android.smailer.remote.RemoteControlWorker.Companion.startRemoteControlService
+import com.bopr.android.smailer.remote.RemoteControlProcessor
 import com.bopr.android.smailer.sync.Synchronizer
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.isIgnoreBatteryOptimizationRequired
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
 import com.bopr.android.smailer.util.*
-import com.google.android.gms.tasks.Tasks
 import com.google.api.services.drive.DriveScopes.DRIVE_APPDATA
 import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.util.concurrent.Callable
-import java.util.concurrent.Executors
 
 /**
  * For debug purposes.
@@ -386,8 +382,11 @@ class DebugFragment : BasePreferenceFragment() {
 
     private fun onProcessServiceMail() {
         if (settings.getBoolean(PREF_REMOTE_CONTROL_ENABLED)) {
-            startRemoteControlService(requireContext())
-            showToast(R.string.operation_complete)
+            runInBackground {
+                RemoteControlProcessor(requireContext()).checkMailbox()
+            }.addOnCompleteListener {
+                showToast(R.string.operation_complete)
+            }
         } else {
             showToast("Feature disabled")
         }
@@ -406,8 +405,11 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun onStartProcessPendingEvents() {
-        startPendingCallProcessorService(requireContext())
-        showToast(R.string.operation_complete)
+        runInBackground {
+            CallProcessor(requireContext()).processPending()
+        }.addOnCompleteListener {
+            showToast(R.string.operation_complete)
+        }
     }
 
     private fun onClearLogs() {
@@ -467,54 +469,54 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun onGoogleDriveClear() {
-        Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
+        runInBackground {
             val drive = GoogleDrive(requireContext())
             drive.login(senderAccount())
             drive.clear()
-            null
-        })
-        showToast(R.string.operation_complete)
+        }.addOnCompleteListener {
+            showToast(R.string.operation_complete)
+        }
     }
 
     private fun onGoogleDriveSync() {
         ConfirmDialog("Synchronize with drive?") {
-            Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
+            runInBackground {
                 try {
                     Synchronizer(requireContext(), senderAccount(), database).sync()
                 } catch (x: Throwable) {
                     log.error("Sync error: ", x)
                 }
-                null
-            })
-            showToast(R.string.operation_complete)
+            }.addOnCompleteListener {
+                showToast(R.string.operation_complete)
+            }
         }.show(this)
     }
 
     private fun onGoogleDriveDownload() {
         ConfirmDialog("Download from drive?") {
-            Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
+            runInBackground {
                 try {
                     Synchronizer(requireContext(), senderAccount(), database).download()
                 } catch (x: Throwable) {
                     log.error("Download error: ", x)
                 }
-                null
-            })
-            showToast(R.string.operation_complete)
+            }.addOnCompleteListener {
+                showToast(R.string.operation_complete)
+            }
         }.show(this)
     }
 
     private fun onGoogleDriveUpload() {
         ConfirmDialog("Upload to drive?") {
-            Tasks.call<Void>(Executors.newSingleThreadExecutor(), Callable {
+            runInBackground {
                 try {
                     Synchronizer(requireContext(), senderAccount(), database).upload()
-                    showToast(R.string.operation_complete)
                 } catch (x: Throwable) {
                     log.error("Upload error: ", x)
                 }
-                null
-            })
+            }.addOnCompleteListener {
+                showToast(R.string.operation_complete)
+            }
         }.show(this)
     }
 

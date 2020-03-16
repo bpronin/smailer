@@ -13,12 +13,10 @@ import org.slf4j.LoggerFactory
 class CallProcessorService : IntentService("call-processor") {
 
     override fun onHandleIntent(intent: Intent?) {
-        log.debug("Running")
+        log.debug("Handling intent")
 
-        intent?.getParcelableExtra<PhoneEvent>(EXTRA_EVENT)?.let { event ->
-            Database(this).use {
-                CallProcessor(this, it).process(event)
-            }
+        intent?.getParcelableExtra<PhoneEvent>(EXTRA_EVENT)?.let {
+            CallProcessor(this).process(it)
         }
     }
 

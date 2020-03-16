@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory
  */
 internal class RemoteControlProcessor(
         private val context: Context,
-        private val database: Database,
+        private val database: Database = Database(context),
         private val settings: Settings = Settings(context),
         private val notifications: Notifications = Notifications(context),
         private val smsTransport: SmsTransport = SmsTransport()) {
@@ -50,14 +50,12 @@ internal class RemoteControlProcessor(
 
     fun checkMailbox(): Int {
         checkNotMainThread() /* gmail won't work in main thread */
-        
         if (!checkInternet()) return 0
         val account = requireAccount() ?: return 0
 
         val transport = GoogleMail(context)
         transport.login(account, MAIL_GOOGLE_COM)
         val messages = transport.list(query)
-
         if (messages.isNotEmpty()) {
             for (message in messages) {
                 if (acceptMessage(message)) {
@@ -84,28 +82,29 @@ internal class RemoteControlProcessor(
         return messages.size
     }
 
-    fun performTask(task: RemoteControlTask) {
+    internal fun performTask(task: RemoteControlTask) {
         log.debug("Processing: $task")
-
-        when (task.action) {
-            ADD_PHONE_TO_BLACKLIST ->
-                addPhoneToBlacklist(task.argument)
-            REMOVE_PHONE_FROM_BLACKLIST ->
-                removePhoneFromBlacklist(task.argument)
-            ADD_PHONE_TO_WHITELIST ->
-                addPhoneToWhitelist(task.argument)
-            REMOVE_PHONE_FROM_WHITELIST ->
-                removePhoneFromWhitelist(task.argument)
-            ADD_TEXT_TO_BLACKLIST ->
-                addTextToBlacklist(task.argument)
-            REMOVE_TEXT_FROM_BLACKLIST ->
-                removeTextFromBlacklist(task.argument)
-            ADD_TEXT_TO_WHITELIST ->
-                addTextToWhitelist(task.argument)
-            REMOVE_TEXT_FROM_WHITELIST ->
-                removeTextFromWhitelist(task.argument)
-            SEND_SMS_TO_CALLER ->
-                sendSms(task.arguments["phone"], task.arguments["text"])
+        database.use {
+            when (task.action) {
+                ADD_PHONE_TO_BLACKLIST ->
+                    addPhoneToBlacklist(task.argument)
+                REMOVE_PHONE_FROM_BLACKLIST ->
+                    removePhoneFromBlacklist(task.argument)
+                ADD_PHONE_TO_WHITELIST ->
+                    addPhoneToWhitelist(task.argument)
+                REMOVE_PHONE_FROM_WHITELIST ->
+                    removePhoneFromWhitelist(task.argument)
+                ADD_TEXT_TO_BLACKLIST ->
+                    addTextToBlacklist(task.argument)
+                REMOVE_TEXT_FROM_BLACKLIST ->
+                    removeTextFromBlacklist(task.argument)
+                ADD_TEXT_TO_WHITELIST ->
+                    addTextToWhitelist(task.argument)
+                REMOVE_TEXT_FROM_WHITELIST ->
+                    removeTextFromWhitelist(task.argument)
+                SEND_SMS_TO_CALLER ->
+                    sendSms(task.arguments["phone"], task.arguments["text"])
+            }
         }
     }
 
@@ -197,8 +196,7 @@ internal class RemoteControlProcessor(
     private fun addToFilterList(listName: String, value: String?, @StringRes messageRes: Int,
                                 @Notifications.Target target: Int) {
         if (!value.isNullOrEmpty()) {
-            if (database.putFilterListItem(listName, value)) {
-                database.notifyChanged()
+            if (database.notifying { putFilterListItem(listName, value) }) {
                 showNotification(context.getString(messageRes, value), target)
             } else {
                 log.debug("Already in list")
@@ -209,8 +207,7 @@ internal class RemoteControlProcessor(
     private fun removeFromFilterList(listName: String, value: String?, @StringRes messageRes: Int,
                                      @Notifications.Target target: Int) {
         if (!value.isNullOrEmpty()) {
-            if (database.deleteFilterListItem(listName, value)) {
-                database.notifyChanged()
+            if (database.notifying { deleteFilterListItem(listName, value) }) {
                 showNotification(context.getString(messageRes, value), target)
             } else {
                 log.debug("Not in list")
