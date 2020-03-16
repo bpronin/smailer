@@ -114,14 +114,6 @@
         <service android:name=".ContentObserverService" />
 
         <service
-            android:name=".PendingCallProcessorService"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-
-        <service
-            android:name=".remote.RemoteControlService"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-
-        <service
             android:name=".sync.AuthenticatorService"
             android:permission="com.bopr.android.smailer.SYNC">
             <intent-filter>
