@@ -33,11 +33,11 @@ class RulesFragment : BasePreferenceFragment() {
         super.onCreate(savedInstanceState)
 
         database = Database(requireContext())
-        databaseListener = requireContext().registerDatabaseListener {
-            if (it.contains(TABLE_PHONE_BLACKLIST)) updatePhoneBlacklistPreferenceView()
-            if (it.contains(TABLE_PHONE_WHITELIST)) updatePhoneWhitelistPreferenceView()
-            if (it.contains(TABLE_TEXT_BLACKLIST)) updateTextBlacklistPreferenceView()
-            if (it.contains(TABLE_TEXT_WHITELIST)) updateTextWhitelistPreferenceView()
+        databaseListener = requireContext().registerDatabaseListener { tables, _ ->
+            if (tables.contains(TABLE_PHONE_BLACKLIST)) updatePhoneBlacklistPreferenceView()
+            if (tables.contains(TABLE_PHONE_WHITELIST)) updatePhoneWhitelistPreferenceView()
+            if (tables.contains(TABLE_TEXT_BLACKLIST)) updateTextBlacklistPreferenceView()
+            if (tables.contains(TABLE_TEXT_WHITELIST)) updateTextWhitelistPreferenceView()
         }
     }
 

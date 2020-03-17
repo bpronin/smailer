@@ -48,7 +48,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
         unreadItemTextColor = context.getColorFromAttr(android.R.attr.textColorPrimary)
 
         database = Database(context)
-        databaseListener = context.registerDatabaseListener {
+        databaseListener = context.registerDatabaseListener { _, _ ->
             refreshItems()
         }
     }
@@ -235,7 +235,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
 
     private fun addToFilterList(listName: String, phone: String?) {
         if (!phone.isNullOrEmpty()) {
-            if (!database.commit { putFilterListItem(listName, phone)}) {
+            if (!database.commit { putFilterListItem(listName, phone) }) {
                 showToast(getString(R.string.item_already_exists, phone))
             }
         }

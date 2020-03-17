@@ -21,19 +21,20 @@ internal class SyncWorker(context: Context, workerParams: WorkerParameters)
     : Worker(context, workerParams) {
 
     override fun doWork(): Result {
-        val settings = Settings(applicationContext)
-        if (settings.getBoolean(PREF_SYNC_ENABLED)) {
-            applicationContext.getAccount(settings.getString(PREF_SENDER_ACCOUNT))?.run {
-                Database(applicationContext).use {
-                    val synchronizer = Synchronizer(applicationContext, this, it)
-                    if (inputData.getBoolean(DATA_FORCE_DOWNLOAD, false)) {
-                        synchronizer.download()
-                    } else {
-                        synchronizer.sync()
+        applicationContext.run {
+            if (isFeatureEnabled()) {
+                getAccount(Settings(this).getString(PREF_SENDER_ACCOUNT))?.let { account ->
+                    Database(this).use { database ->
+                        Synchronizer(this, account, database).run {
+                            if (inputData.getBoolean(DATA_FORCE_DOWNLOAD, false)) {
+                                download()
+                            } else {
+                                sync()
+                            }
+                        }
                     }
-                }
-
-            } ?: log.warn("No sync account")
+                } ?: log.warn("No sync account")
+            }
         }
         return Result.success()
     }
@@ -45,41 +46,47 @@ internal class SyncWorker(context: Context, workerParams: WorkerParameters)
         private const val WORK_PERIODIC_SYNC = "com.bopr.android.smailer.periodic_sync"
         private const val DATA_FORCE_DOWNLOAD = "force_download"
 
+        private fun Context.isFeatureEnabled() =
+                Settings(this).getBoolean(PREF_SYNC_ENABLED)
+
         private fun constraints(): Constraints {
             return Constraints.Builder()
                     .setRequiredNetworkType(CONNECTED)
                     .build()
         }
 
-        internal fun runSyncWork(context: Context, forceDownload: Boolean = false) {
-            log.debug("Sync requested")
+        internal fun Context.requestDataSync(forceDownload: Boolean = false) {
+            if (isFeatureEnabled()) {
+                log.debug("Sync requested")
 
-            val data = Data.Builder()
-                    .putBoolean(DATA_FORCE_DOWNLOAD, forceDownload)
-                    .build()
-            val request = OneTimeWorkRequest.Builder(SyncWorker::class.java)
-                    .setConstraints(constraints())
-                    .setInputData(data)
-                    .build()
-            WorkManager.getInstance(context).enqueueUniqueWork(WORK_SYNC,
-                    ExistingWorkPolicy.KEEP, request)
+                val data = Data.Builder()
+                        .putBoolean(DATA_FORCE_DOWNLOAD, forceDownload)
+                        .build()
+                val request = OneTimeWorkRequest.Builder(SyncWorker::class.java)
+                        .setConstraints(constraints())
+                        .setInputData(data)
+                        .build()
+                WorkManager.getInstance(this).enqueueUniqueWork(WORK_SYNC,
+                        ExistingWorkPolicy.KEEP, request)
+            }
         }
 
-        internal fun runPeriodicSyncWork(context: Context) {
-            log.debug("Start")
+        internal fun Context.enablePeriodicDataSync() {
+            if (isFeatureEnabled()) {
+                log.debug("Start periodic sync")
 
-            val request = PeriodicWorkRequest.Builder(SyncWorker::class.java,
-                            MIN_PERIODIC_INTERVAL_MILLIS, MILLISECONDS)
-                    .setConstraints(constraints())
-                    .build()
-            WorkManager.getInstance(context).enqueueUniquePeriodicWork(WORK_PERIODIC_SYNC,
-                    ExistingPeriodicWorkPolicy.REPLACE, request)
+                val request = PeriodicWorkRequest.Builder(SyncWorker::class.java,
+                                MIN_PERIODIC_INTERVAL_MILLIS, MILLISECONDS)
+                        .setConstraints(constraints())
+                        .build()
+                WorkManager.getInstance(this).enqueueUniquePeriodicWork(WORK_PERIODIC_SYNC,
+                        ExistingPeriodicWorkPolicy.REPLACE, request)
+            } else {
+                log.debug("Stop periodic sync")
+
+                WorkManager.getInstance(this).cancelUniqueWork(WORK_PERIODIC_SYNC)
+            }
         }
 
-        internal fun cancelPeriodicSyncWork(context: Context) {
-            log.debug("Stop")
-
-            WorkManager.getInstance(context).cancelUniqueWork(WORK_PERIODIC_SYNC)
-        }
     }
 }

@@ -24,8 +24,8 @@ abstract class CallFilterListFragment(private val listName: String) : EditableRe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         database = Database(requireContext())
-        databaseListener = requireContext().registerDatabaseListener {
-            if (it.contains(listName)) refreshItems()
+        databaseListener = requireContext().registerDatabaseListener { tables, _ ->
+            if (tables.contains(listName)) refreshItems()
         }
     }
 

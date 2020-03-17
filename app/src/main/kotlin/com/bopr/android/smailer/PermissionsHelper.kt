@@ -69,7 +69,7 @@ class PermissionsHelper(val activity: FragmentActivity) {
     /**
      * To be added into owners's onSharedPreferenceChanged()
      */
-    fun onSharedPreferenceChanged(key: String) {
+    fun onSettingsChanged(key: String) {
         log.debug("Handling preference changed: $key")
 
         val requiredPermissions: MutableSet<String> = HashSet()

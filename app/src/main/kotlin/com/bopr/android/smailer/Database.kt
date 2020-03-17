@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase.CONFLICT_IGNORE
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
+import com.bopr.android.smailer.sync.SyncWorker.Companion.requestDataSync
 import com.bopr.android.smailer.util.*
 import org.slf4j.LoggerFactory
 import java.io.Closeable
@@ -17,13 +18,13 @@ import java.lang.System.currentTimeMillis
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class Database constructor(private val context: Context, private val name: String = DATABASE_NAME) : Closeable {
+class Database(private val context: Context, private val name: String = DATABASE_NAME) : Closeable {
 
     private val helper: DbHelper = DbHelper(context)
     private val modifiedTables = mutableSetOf<String>()
 
     /**
-     * Returns all events.
+     * Returns all phone events.
      */
     val events: PhoneEventRowSet
         get() = PhoneEventRowSet(helper.readableDatabase.query(
@@ -32,7 +33,7 @@ class Database constructor(private val context: Context, private val name: Strin
         ))
 
     /**
-     * Returns pending events.
+     * Returns pending phone events.
      */
     val pendingEvents: PhoneEventRowSet
         get() = PhoneEventRowSet(helper.readableDatabase.query(
@@ -43,7 +44,7 @@ class Database constructor(private val context: Context, private val name: Strin
         ))
 
     /**
-     * Returns count of unread events.
+     * Returns count of unread phone events.
      */
     val unreadEventsCount: Long
         get() = helper.readableDatabase.query(
@@ -72,22 +73,38 @@ class Database constructor(private val context: Context, private val name: Strin
             log.debug("Updated last location to: $value")
         }
 
+    /**
+     * Phone numbers blacklist.
+     */
     var phoneBlacklist: List<String>
         get() = getFilterList(TABLE_PHONE_BLACKLIST)
         set(value) = replaceFilterList(TABLE_PHONE_BLACKLIST, value)
 
+    /**
+     * Phone numbers whitelist.
+     */
     var phoneWhitelist: List<String>
         get() = getFilterList(TABLE_PHONE_WHITELIST)
         set(value) = replaceFilterList(TABLE_PHONE_WHITELIST, value)
 
+    /**
+     * SMS text blacklist.
+     */
     var textBlacklist: List<String>
         get() = getFilterList(TABLE_TEXT_BLACKLIST)
         set(value) = replaceFilterList(TABLE_TEXT_BLACKLIST, value)
 
+    /**
+     * SMS text whitelist.
+     */
     var textWhitelist: List<String>
         get() = getFilterList(TABLE_TEXT_WHITELIST)
         set(value) = replaceFilterList(TABLE_TEXT_WHITELIST, value)
 
+    /**
+     * Returns last database modification time.
+     * @see [commit]
+     */
     var updateTime: Long
         get() = querySystemTable(COLUMN_UPDATE_TIME).useFirst {
             getLong(COLUMN_UPDATE_TIME)
@@ -188,10 +205,16 @@ class Database constructor(private val context: Context, private val name: Strin
         log.debug("All events marked as read")
     }
 
+    /**
+     * Returns black/white list.
+     */
     fun getFilterList(listName: String): List<String> {
         return helper.readableDatabase.query(listName).useToList { getString(COLUMN_VALUE)!! }
     }
 
+    /**
+     * Replaces all items in black/white list.
+     */
     fun replaceFilterList(listName: String, items: Collection<String>) {
         helper.writableDatabase.batch {
             if (delete(listName, null, null) != 0) {
@@ -205,6 +228,9 @@ class Database constructor(private val context: Context, private val name: Strin
         }
     }
 
+    /**
+     * Puts item into black/white list.
+     */
     fun putFilterListItem(listName: String, item: String): Boolean {
         helper.writableDatabase.run {
             val values = values {
@@ -222,6 +248,9 @@ class Database constructor(private val context: Context, private val name: Strin
         }
     }
 
+    /**
+     * Deletes item from black/white list.
+     */
     fun deleteFilterListItem(listName: String, item: String): Boolean {
         var affected = 0
         helper.writableDatabase.batch {
@@ -231,41 +260,37 @@ class Database constructor(private val context: Context, private val name: Strin
         return affected != 0
     }
 
+    /**
+     * Performs read transaction.
+     */
     fun <T> batchRead(action: Database.() -> T): T {
         return helper.readableDatabase.batch { this@Database.action() }
     }
 
+    /**
+     * Performs write transaction. Rollback it when failed.
+     */
     fun batchWrite(action: Database.() -> Unit) {
         helper.writableDatabase.batch { this@Database.action() }
     }
 
     /**
-     * Fires database "changed" event.
-     */
-    private fun notifyChanged(flags: Int) {
-        if (modifiedTables.isNotEmpty()) {
-            log.debug("Broadcasting data changed: $modifiedTables. Flags: [$flags]")
-
-            val intent = Intent(ACTION_DATABASE_CHANGED)
-                    .putExtra(EXTRA_TABLES, modifiedTables.toTypedArray())
-                    .putExtra(EXTRA_FLAGS, flags)
-            LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
-            modifiedTables.clear()
-        }
-    }
-
-    /**
-     * Performs given action then fires "changed" event
+     * Performs specified action then updates modification time, fires change event
+     * and requests google drive synchronization.
      */
     fun <T> commit(flags: Int = 0, action: Database.() -> T): T {
         val result = action(this)
-        updateTime = currentTimeMillis()
-        notifyChanged(flags)
+        if (modifiedTables.isNotEmpty()) {
+            updateTime = currentTimeMillis()
+            context.sendDatabaseBroadcast(modifiedTables, flags)
+            modifiedTables.clear()
+            context.requestDataSync()
+        }
         return result
     }
 
     /**
-     * Close any open database object.
+     * Closes open database object.
      */
     override fun close() {
         helper.close()
@@ -386,7 +411,7 @@ class Database constructor(private val context: Context, private val name: Strin
         private const val ACTION_DATABASE_CHANGED = "database_changed"
         const val EXTRA_TABLES = "tables"
         const val EXTRA_FLAGS = "flags"
-        const val DB_FLAG_SYNCING = 0x01  /* disables broadcast while data is syncing */
+        const val DB_FLAG_SYNCING = 0x01  /* disables broadcasting while data is syncing */
 
         private const val TABLE_SYSTEM = "system_data"
         const val TABLE_EVENTS = "phone_events"
@@ -426,26 +451,33 @@ class Database constructor(private val context: Context, private val name: Strin
                 ")"
 
         /**
-         * Registers database broadcast receiver.
+         * Sends database broadcast.
          */
-        fun Context.registerDatabaseListener(listener: BroadcastReceiver) {
-            LocalBroadcastManager.getInstance(this).registerReceiver(listener,
-                    IntentFilter(ACTION_DATABASE_CHANGED))
+        fun Context.sendDatabaseBroadcast(tables: Set<String>, flags: Int) {
+            log.debug("Broadcasting data changed: $tables. Flags: [$flags]")
 
-            log.debug("Listener registered")
+            val intent = Intent(ACTION_DATABASE_CHANGED)
+                    .putExtra(EXTRA_TABLES, tables.toTypedArray())
+                    .putExtra(EXTRA_FLAGS, flags)
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
         }
 
         /**
          * Creates and registers database broadcast receiver.
          */
-        fun Context.registerDatabaseListener(onChange: (Set<String>) -> Unit): BroadcastReceiver {
+        fun Context.registerDatabaseListener(onChange: (Set<String>, Int) -> Unit)
+                : BroadcastReceiver {
             val listener = object : BroadcastReceiver() {
 
-                override fun onReceive(context: Context?, intent: Intent?) {
-                    onChange(intent!!.getStringArrayExtra(EXTRA_TABLES)!!.toSet())
+                override fun onReceive(context: Context, intent: Intent) {
+                    onChange(intent.getStringArrayExtra(EXTRA_TABLES)!!.toSet(),
+                            intent.getIntExtra(EXTRA_FLAGS, 0))
                 }
             }
-            registerDatabaseListener(listener)
+            LocalBroadcastManager.getInstance(this).registerReceiver(listener,
+                    IntentFilter(ACTION_DATABASE_CHANGED))
+
+            log.debug("Listener registered: [${listener.hashCode()}]")
             return listener
         }
 
@@ -455,7 +487,7 @@ class Database constructor(private val context: Context, private val name: Strin
         fun Context.unregisterDatabaseListener(listener: BroadcastReceiver) {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(listener)
 
-            log.debug("Listener unregistered")
+            log.debug("Listener unregistered: [${listener.hashCode()}]")
         }
     }
 

@@ -25,6 +25,7 @@
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />  <!--To sync data with Google drive -->
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" /> <!--To sync data with Google drive -->
     <uses-permission android:name="android.permission.SEND_SMS" /> <!--To send SMS from  -->
+
     <application
         android:allowBackup="true"
         android:backupAgent=".AppBackupAgent"

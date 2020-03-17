@@ -3,7 +3,7 @@ package com.bopr.android.smailer
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.bopr.android.smailer.Environment.setupEnvironment
+import com.bopr.android.smailer.Environment.startServices
 import org.slf4j.LoggerFactory
 
 /**
@@ -19,7 +19,7 @@ class BootReceiver : BroadcastReceiver() {
         log.debug("Received intent: $intent")
 
         if (Intent.ACTION_BOOT_COMPLETED == intent.action) {
-            setupEnvironment(context)
+            startServices(context)
         }
     }
 }

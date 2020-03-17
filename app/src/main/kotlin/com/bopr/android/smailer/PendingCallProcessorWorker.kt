@@ -26,7 +26,7 @@ internal class PendingCallProcessorWorker(context: Context, workerParams: Worker
         private val log = LoggerFactory.getLogger("PendingCallProcessorWorker")
         private const val WORK_RESEND = "com.bopr.android.smailer.resend"
 
-        fun startPendingCallProcessorWorker(context: Context) {
+        fun Context.startPendingCallProcessing() {
             val constraints = Constraints.Builder()
                     .setRequiredNetworkType(CONNECTED)
                     .build()
@@ -34,7 +34,7 @@ internal class PendingCallProcessorWorker(context: Context, workerParams: Worker
                             MIN_PERIODIC_INTERVAL_MILLIS, MILLISECONDS)
                     .setConstraints(constraints)
                     .build()
-            WorkManager.getInstance(context).enqueueUniquePeriodicWork(WORK_RESEND, REPLACE, request)
+            WorkManager.getInstance(this).enqueueUniquePeriodicWork(WORK_RESEND, REPLACE, request)
 
             log.debug("Enabled")
         }

@@ -19,9 +19,12 @@ internal class RemoteControlWorker(context: Context, workerParams: WorkerParamet
     : Worker(context, workerParams) {
 
     override fun doWork(): Result {
-        if (isFeatureEnabled(applicationContext)) {
-            RemoteControlProcessor(applicationContext).checkMailbox()
+        applicationContext.run {
+            if (isFeatureEnabled()) {
+                RemoteControlProcessor(this).checkMailbox()
+            }
         }
+
         return Result.success()
     }
 
@@ -30,13 +33,13 @@ internal class RemoteControlWorker(context: Context, workerParams: WorkerParamet
         private val log = LoggerFactory.getLogger("RemoteControlWorker")
         private const val WORK_REMOTE = "com.bopr.android.smailer.remote"
 
-        private fun isFeatureEnabled(context: Context): Boolean {
-            return Settings(context).getBoolean(PREF_REMOTE_CONTROL_ENABLED)
+        private fun Context.isFeatureEnabled(): Boolean {
+            return Settings(this).getBoolean(PREF_REMOTE_CONTROL_ENABLED)
         }
 
-        fun enableRemoteControlWorker(context: Context) {
-            val manager = WorkManager.getInstance(context)
-            if (isFeatureEnabled(context)) {
+        fun Context.enableRemoteControl() {
+            val manager = WorkManager.getInstance(this)
+            if (isFeatureEnabled()) {
                 log.debug("Enabled")
 
                 val constraints = Constraints.Builder()

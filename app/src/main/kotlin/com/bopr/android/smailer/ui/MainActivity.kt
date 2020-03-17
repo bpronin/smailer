@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import com.bopr.android.smailer.ContentObserverService.Companion.enableContentObserver
-import com.bopr.android.smailer.Environment.setupEnvironment
+import com.bopr.android.smailer.Environment.startServices
 import com.bopr.android.smailer.Notifications
 import com.bopr.android.smailer.PermissionsHelper
 import com.bopr.android.smailer.Settings
@@ -14,7 +14,10 @@ import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
-import com.bopr.android.smailer.remote.RemoteControlWorker.Companion.enableRemoteControlWorker
+import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_ENABLED
+import com.bopr.android.smailer.remote.RemoteControlWorker.Companion.enableRemoteControl
+import com.bopr.android.smailer.sync.SyncWorker.Companion.enablePeriodicDataSync
+import com.bopr.android.smailer.sync.SyncWorker.Companion.requestDataSync
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
 import com.bopr.android.smailer.util.isAccountExists
 import com.bopr.android.smailer.util.isValidEmailAddressList
@@ -35,15 +38,16 @@ class MainActivity : MainAppActivity(MainFragment::class), OnSharedPreferenceCha
         super.onCreate(savedInstanceState)
         setHomeButtonEnabled(false)
 
+        settings = Settings(this)
         backupManager = BackupManager(this)
         notifications = Notifications(this)
         permissionsHelper = PermissionsHelper(this)
 
-        settings = Settings(this)
         settings.loadDefaults()
         settings.registerOnSharedPreferenceChangeListener(this)
 
-        setupEnvironment(this)
+        startServices(this)
+
         permissionsHelper.checkAll()
         requireIgnoreBatteryOptimization(this)
     }
@@ -62,14 +66,16 @@ class MainActivity : MainAppActivity(MainFragment::class), OnSharedPreferenceCha
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         when (key) {
             PREF_EMAIL_TRIGGERS ->
-                enableContentObserver(this)
+                enableContentObserver()
             PREF_REMOTE_CONTROL_ENABLED ->
-                enableRemoteControlWorker(this)
-            PREF_SENDER_ACCOUNT -> {
+                enableRemoteControl()
+            PREF_SYNC_ENABLED ->
+                enablePeriodicDataSync()
+            PREF_SENDER_ACCOUNT ->
                 if (isAccountExists(settings.getString(PREF_SENDER_ACCOUNT))) {
                     notifications.cancelSenderAccountError()
+                    requestDataSync(true)
                 }
-            }
             PREF_REMOTE_CONTROL_ACCOUNT ->
                 if (isAccountExists(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT))) {
                     notifications.cancelRemoteAccountError()
@@ -80,7 +86,7 @@ class MainActivity : MainAppActivity(MainFragment::class), OnSharedPreferenceCha
                 }
         }
 
-        permissionsHelper.onSharedPreferenceChanged(key)
+        permissionsHelper.onSettingsChanged(key)
         backupManager.dataChanged()
     }
 

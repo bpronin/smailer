@@ -46,8 +46,8 @@ class MainFragment : BasePreferenceFragment() {
         val context = requireContext()
 
         database = Database(context)
-        databaseListener = context.registerDatabaseListener {
-            if (it.contains(TABLE_EVENTS)) updateHistoryPreferenceView()
+        databaseListener = context.registerDatabaseListener { tables, _ ->
+            if (tables.contains(TABLE_EVENTS)) updateHistoryPreferenceView()
         }
     }
 

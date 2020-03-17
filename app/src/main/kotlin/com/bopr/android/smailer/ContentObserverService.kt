@@ -8,7 +8,6 @@ import android.database.ContentObserver
 import android.net.Uri
 import android.os.Build
 import android.os.Handler
-import android.os.HandlerThread
 import android.os.IBinder
 import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
 import com.bopr.android.smailer.Notifications.Companion.SERVICE_NOTIFICATION_ID
@@ -29,14 +28,10 @@ class ContentObserverService : Service() {
 
     private lateinit var contentObserver: ContentObserver
     private lateinit var notifications: Notifications
-    private lateinit var thread: HandlerThread
 
     override fun onCreate() {
         notifications = Notifications(this)
-
-        thread = HandlerThread("ContentObserverService")
-        thread.start()
-        contentObserver = SmsContentObserver(Handler(thread.looper))
+        contentObserver = SmsContentObserver()
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
@@ -48,7 +43,6 @@ class ContentObserverService : Service() {
     }
 
     override fun onDestroy() {
-        thread.quit()
         contentResolver.unregisterContentObserver(contentObserver)
         super.onDestroy()
 
@@ -77,7 +71,7 @@ class ContentObserverService : Service() {
         }
     }
 
-    private inner class SmsContentObserver(handler: Handler) : ContentObserver(handler) {
+    private inner class SmsContentObserver : ContentObserver(Handler()) {
 
         private var lastProcessed: Uri? = null
 
@@ -116,23 +110,21 @@ class ContentObserverService : Service() {
         private val CONTENT_SMS = Uri.parse("content://sms")
 
         /**
-         * Starts or stops the service depending on settings
-         *
-         * @param context context
+         * Starts or stops the service depending on corresponding settings.
          */
-        fun enableContentObserver(context: Context) {
-            val intent = Intent(context, ContentObserverService::class.java)
-            val triggers = Settings(context).getStringSet(PREF_EMAIL_TRIGGERS)
+        fun Context.enableContentObserver() {
+            val intent = Intent(this, ContentObserverService::class.java)
+            val triggers = Settings(this).getStringSet(PREF_EMAIL_TRIGGERS)
             if (triggers.contains(VAL_PREF_TRIGGER_OUT_SMS)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    context.startForegroundService(intent)
+                    startForegroundService(intent)
                 } else {
-                    context.startService(intent)
+                    startService(intent)
                 }
 
                 log.debug("Enabled")
             } else {
-                context.stopService(intent)
+                stopService(intent)
 
                 log.debug("Disabled")
             }
