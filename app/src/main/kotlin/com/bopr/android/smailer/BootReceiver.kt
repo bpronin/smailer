@@ -3,7 +3,8 @@ package com.bopr.android.smailer
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.bopr.android.smailer.Environment.startServices
+import android.content.Intent.ACTION_BOOT_COMPLETED
+import com.bopr.android.smailer.Environment.startApplicationServices
 import org.slf4j.LoggerFactory
 
 /**
@@ -16,10 +17,10 @@ class BootReceiver : BroadcastReceiver() {
     private val log = LoggerFactory.getLogger("BootReceiver")
 
     override fun onReceive(context: Context, intent: Intent) {
-        log.debug("Received intent: $intent")
+        log.trace("Received intent: $intent")
 
-        if (Intent.ACTION_BOOT_COMPLETED == intent.action) {
-            startServices(context)
+        if (intent.action == ACTION_BOOT_COMPLETED) {
+            context.startApplicationServices()
         }
     }
 }

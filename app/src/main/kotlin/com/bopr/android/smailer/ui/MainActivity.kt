@@ -5,22 +5,20 @@ import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import com.bopr.android.smailer.ContentObserverService.Companion.enableContentObserver
-import com.bopr.android.smailer.Environment.startServices
+import com.bopr.android.smailer.Environment.startApplicationServices
 import com.bopr.android.smailer.Notifications
 import com.bopr.android.smailer.PermissionsHelper
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
-import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
-import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_ENABLED
 import com.bopr.android.smailer.remote.RemoteControlWorker.Companion.enableRemoteControl
 import com.bopr.android.smailer.sync.SyncWorker.Companion.enablePeriodicDataSync
 import com.bopr.android.smailer.sync.SyncWorker.Companion.requestDataSync
+import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_DOWNLOAD
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
 import com.bopr.android.smailer.util.isAccountExists
-import com.bopr.android.smailer.util.isValidEmailAddressList
 
 /**
  * Main application activity.
@@ -46,7 +44,7 @@ class MainActivity : MainAppActivity(MainFragment::class), OnSharedPreferenceCha
         settings.loadDefaults()
         settings.registerOnSharedPreferenceChangeListener(this)
 
-        startServices(this)
+        startApplicationServices()
 
         permissionsHelper.checkAll()
         requireIgnoreBatteryOptimization(this)
@@ -71,21 +69,14 @@ class MainActivity : MainAppActivity(MainFragment::class), OnSharedPreferenceCha
                 enableRemoteControl()
             PREF_SYNC_ENABLED ->
                 enablePeriodicDataSync()
-            PREF_SENDER_ACCOUNT ->
+            PREF_SENDER_ACCOUNT -> {
                 if (isAccountExists(settings.getString(PREF_SENDER_ACCOUNT))) {
-                    notifications.cancelSenderAccountError()
-                    requestDataSync(true)
+                    requestDataSync(SYNC_FORCE_DOWNLOAD)
                 }
-            PREF_REMOTE_CONTROL_ACCOUNT ->
-                if (isAccountExists(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT))) {
-                    notifications.cancelRemoteAccountError()
-                }
-            PREF_RECIPIENTS_ADDRESS ->
-                if (isValidEmailAddressList(settings.getString(PREF_RECIPIENTS_ADDRESS))) {
-                    notifications.cancelRecipientsError()
-                }
+            }
         }
 
+        notifications.onSettingsChanged(settings, key)
         permissionsHelper.onSettingsChanged(key)
         backupManager.dataChanged()
     }

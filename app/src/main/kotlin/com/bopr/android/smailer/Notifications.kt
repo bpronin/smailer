@@ -11,8 +11,13 @@ import androidx.annotation.IntDef
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.TaskStackBuilder
+import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
+import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
 import com.bopr.android.smailer.ui.*
 import com.bopr.android.smailer.util.Mockable
+import com.bopr.android.smailer.util.isAccountExists
+import com.bopr.android.smailer.util.isValidEmailAddressList
 import java.lang.System.currentTimeMillis
 import kotlin.reflect.KClass
 
@@ -87,29 +92,39 @@ class Notifications(private val context: Context) {
                 TARGET_REMOTE_CONTROL)
     }
 
-    fun cancelRemoteAccountError() {
-        cancelError(REMOTE_ACCOUNT_ERROR)
-    }
-
     fun showSenderAccountError() {
         showError(SENDER_ACCOUNT_ERROR, context.getString(R.string.sender_account_not_found),
                 TARGET_MAIN)
-    }
-
-    fun cancelSenderAccountError() {
-        cancelError(SENDER_ACCOUNT_ERROR)
     }
 
     fun showRecipientsError(@StringRes reasonRes: Int) {
         showMailError(RECIPIENTS_ERROR, reasonRes, TARGET_RECIPIENTS)
     }
 
-    fun cancelRecipientsError() {
-        cancelError(RECIPIENTS_ERROR)
-    }
-
     fun showGoogleAccessError() {
         showMailError(GOOGLE_ACCESS_ERROR, R.string.no_access_to_google_account, TARGET_MAIN)
+    }
+
+    internal fun cancelError(errorId: Int) {
+        manager.cancel(TAG_ERROR, errorId)
+    }
+
+    internal fun onSettingsChanged(settings: Settings, key: String) {
+        when (key) {
+            PREF_SENDER_ACCOUNT -> {
+                if (context.isAccountExists(settings.getString(PREF_SENDER_ACCOUNT))) {
+                    cancelError(SENDER_ACCOUNT_ERROR)
+                }
+            }
+            PREF_REMOTE_CONTROL_ACCOUNT ->
+                if (context.isAccountExists(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT))) {
+                    cancelError(REMOTE_ACCOUNT_ERROR)
+                }
+            PREF_RECIPIENTS_ADDRESS ->
+                if (isValidEmailAddressList(settings.getString(PREF_RECIPIENTS_ADDRESS))) {
+                    cancelError(RECIPIENTS_ERROR)
+                }
+        }
     }
 
     private fun showMessage(title: String, message: String? = null, @Target target: Int) {
@@ -132,10 +147,6 @@ class Notifications(private val context: Context) {
     private fun showMailError(errorId: Int, @StringRes reasonRes: Int, @Target target: Int) {
         showError(errorId, context.getString(R.string.unable_send_email, context.getString(reasonRes)),
                 target)
-    }
-
-    private fun cancelError(errorId: Int) {
-        manager.cancel(TAG_ERROR, errorId)
     }
 
     private fun targetIntent(@Target target: Int): PendingIntent {
@@ -184,10 +195,10 @@ class Notifications(private val context: Context) {
         private const val TAG_ERROR = "error"
         private const val TAG_MESSAGE = "message"
 
-        private const val SENDER_ACCOUNT_ERROR = 1000
-        private const val REMOTE_ACCOUNT_ERROR = 1001
-        private const val RECIPIENTS_ERROR = 1002
-        private const val GOOGLE_ACCESS_ERROR = 1003
+        const val SENDER_ACCOUNT_ERROR = 1000
+        const val REMOTE_ACCOUNT_ERROR = 1001
+        const val RECIPIENTS_ERROR = 1002
+        const val GOOGLE_ACCESS_ERROR = 1003
 
         const val SERVICE_NOTIFICATION_ID = 19158
 

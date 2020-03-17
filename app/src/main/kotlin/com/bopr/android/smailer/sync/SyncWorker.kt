@@ -8,6 +8,7 @@ import com.bopr.android.smailer.Database
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_ENABLED
+import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_NORMAL
 import com.bopr.android.smailer.util.getAccount
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit.MILLISECONDS
@@ -26,11 +27,7 @@ internal class SyncWorker(context: Context, workerParams: WorkerParameters)
                 getAccount(Settings(this).getString(PREF_SENDER_ACCOUNT))?.let { account ->
                     Database(this).use { database ->
                         Synchronizer(this, account, database).run {
-                            if (inputData.getBoolean(DATA_FORCE_DOWNLOAD, false)) {
-                                download()
-                            } else {
-                                sync()
-                            }
+                            sync(inputData.getInt(SYNC_OPTIONS, SYNC_NORMAL))
                         }
                     }
                 } ?: log.warn("No sync account")
@@ -44,7 +41,7 @@ internal class SyncWorker(context: Context, workerParams: WorkerParameters)
         private val log = LoggerFactory.getLogger("SyncWorker")
         private const val WORK_SYNC = "com.bopr.android.smailer.sync"
         private const val WORK_PERIODIC_SYNC = "com.bopr.android.smailer.periodic_sync"
-        private const val DATA_FORCE_DOWNLOAD = "force_download"
+        private const val SYNC_OPTIONS = "options"
 
         private fun Context.isFeatureEnabled() =
                 Settings(this).getBoolean(PREF_SYNC_ENABLED)
@@ -55,12 +52,12 @@ internal class SyncWorker(context: Context, workerParams: WorkerParameters)
                     .build()
         }
 
-        internal fun Context.requestDataSync(forceDownload: Boolean = false) {
+        internal fun Context.requestDataSync(options: Int = SYNC_NORMAL) {
             if (isFeatureEnabled()) {
                 log.debug("Sync requested")
 
                 val data = Data.Builder()
-                        .putBoolean(DATA_FORCE_DOWNLOAD, forceDownload)
+                        .putInt(SYNC_OPTIONS, options)
                         .build()
                 val request = OneTimeWorkRequest.Builder(SyncWorker::class.java)
                         .setConstraints(constraints())

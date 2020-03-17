@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
+import com.bopr.android.smailer.Environment.startApplicationServices
 import com.bopr.android.smailer.remote.RemoteControlProcessor
 import com.bopr.android.smailer.util.deviceName
 import com.bopr.android.smailer.util.runInBackground
@@ -34,6 +35,9 @@ class DebugReceiver : BroadcastReceiver() {
                 runInBackground {
                     RemoteControlProcessor(context).checkMailbox()
                 }
+            }
+            "BOOT_COMPLETED" -> { /* we cannot debug BootReceiver directly */
+                context.startApplicationServices()
             }
         }
     }

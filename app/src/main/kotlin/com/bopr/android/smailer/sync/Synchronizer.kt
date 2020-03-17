@@ -28,21 +28,52 @@ internal class Synchronizer(context: Context,
         drive.login(account)
     }
 
+    /**
+     * Synchronizes database with google drive.
+     *
+     * @param options one of [SYNC_FORCE_DOWNLOAD], [SYNC_FORCE_UPLOAD], [SYNC_NORMAL]
+     * @return true if local database have been changed
+     */
     @Throws(IOException::class)
-    fun sync() {
-        val databaseTime = database.updateTime
-        val meta = drive.download(metaFile, SyncMetaData::class)
-        if (meta == null || meta.time < databaseTime) {
-            upload()
-        } else if (meta.time != databaseTime) {
-            download()
-        } else {
-            log.debug("Data is up to date")
+    fun sync(options: Int = SYNC_NORMAL): Boolean {
+        when (options) {
+            SYNC_FORCE_DOWNLOAD -> {
+                download()
+            }
+            SYNC_FORCE_UPLOAD -> {
+                upload()
+                return true
+            }
+            else -> {
+                val databaseTime = database.updateTime
+                val meta = drive.download(metaFile, SyncMetaData::class)
+                when {
+                    meta == null || meta.time < databaseTime -> {
+                        upload()
+                        return true
+                    }
+                    meta.time != databaseTime -> {
+                        download()
+                    }
+                    else -> {
+                        log.debug("Data is up to date")
+                    }
+                }
+            }
         }
+        return false
     }
 
     @Throws(IOException::class)
-    fun download() {
+    fun clear() {
+        drive.delete(metaFile)
+        drive.delete(dataFile)
+
+        log.debug("Remote data deleted")
+    }
+
+    @Throws(IOException::class)
+    private fun download() {
         val data = drive.download(dataFile, SyncData::class)
         if (data != null) {
             putLocalData(data)
@@ -54,19 +85,11 @@ internal class Synchronizer(context: Context,
     }
 
     @Throws(IOException::class)
-    fun upload() {
+    private fun upload() {
         drive.upload(metaFile, SyncMetaData(database.updateTime))
         drive.upload(dataFile, getLocalData())
 
         log.debug("Uploaded")
-    }
-
-    @Throws(IOException::class)
-    fun clear() {
-        drive.delete(metaFile)
-        drive.delete(dataFile)
-
-        log.debug("Remote data deleted")
     }
 
     private fun getLocalData(): SyncData {
@@ -130,4 +153,10 @@ internal class Synchronizer(context: Context,
         )
     }
 
+    companion object {
+
+        const val SYNC_NORMAL = 0
+        const val SYNC_FORCE_DOWNLOAD = 1
+        const val SYNC_FORCE_UPLOAD = 2
+    }
 }

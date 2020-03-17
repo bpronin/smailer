@@ -19,6 +19,9 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceScreen
 import com.bopr.android.smailer.*
 import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
+import com.bopr.android.smailer.Notifications.Companion.RECIPIENTS_ERROR
+import com.bopr.android.smailer.Notifications.Companion.REMOTE_ACCOUNT_ERROR
+import com.bopr.android.smailer.Notifications.Companion.SENDER_ACCOUNT_ERROR
 import com.bopr.android.smailer.Notifications.Companion.TARGET_PHONE_BLACKLIST
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
@@ -46,6 +49,8 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
 import com.bopr.android.smailer.remote.RemoteControlProcessor
 import com.bopr.android.smailer.sync.Synchronizer
+import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_DOWNLOAD
+import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_UPLOAD
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.isIgnoreBatteryOptimizationRequired
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
 import com.bopr.android.smailer.util.*
@@ -236,9 +241,9 @@ class DebugFragment : BasePreferenceFragment() {
                 }),
                 createPreference("Cancel errors", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        notifications.cancelSenderAccountError()
-                        notifications.cancelRemoteAccountError()
-                        notifications.cancelRecipientsError()
+                        notifications.cancelError(SENDER_ACCOUNT_ERROR)
+                        notifications.cancelError(REMOTE_ACCOUNT_ERROR)
+                        notifications.cancelError(RECIPIENTS_ERROR)
                     }
                 })
         )
@@ -484,11 +489,7 @@ class DebugFragment : BasePreferenceFragment() {
     private fun onGoogleDriveSync() {
         ConfirmDialog("Synchronize with drive?") {
             runInBackground {
-                try {
-                    Synchronizer(requireContext(), senderAccount(), database).sync()
-                } catch (x: Throwable) {
-                    log.error("Sync error: ", x)
-                }
+                Synchronizer(requireContext(), senderAccount(), database).sync()
             }.addOnCompleteListener {
                 showToast(R.string.operation_complete)
             }
@@ -498,11 +499,7 @@ class DebugFragment : BasePreferenceFragment() {
     private fun onGoogleDriveDownload() {
         ConfirmDialog("Download from drive?") {
             runInBackground {
-                try {
-                    Synchronizer(requireContext(), senderAccount(), database).download()
-                } catch (x: Throwable) {
-                    log.error("Download error: ", x)
-                }
+                Synchronizer(requireContext(), senderAccount(), database).sync(SYNC_FORCE_DOWNLOAD)
             }.addOnCompleteListener {
                 showToast(R.string.operation_complete)
             }
@@ -512,11 +509,7 @@ class DebugFragment : BasePreferenceFragment() {
     private fun onGoogleDriveUpload() {
         ConfirmDialog("Upload to drive?") {
             runInBackground {
-                try {
-                    Synchronizer(requireContext(), senderAccount(), database).upload()
-                } catch (x: Throwable) {
-                    log.error("Upload error: ", x)
-                }
+                Synchronizer(requireContext(), senderAccount(), database).sync(SYNC_FORCE_UPLOAD)
             }.addOnCompleteListener {
                 showToast(R.string.operation_complete)
             }
