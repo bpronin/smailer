@@ -106,9 +106,8 @@ internal class RemoteControlProcessor(
     private fun acceptMessage(message: MailMessage): Boolean {
         if (settings.isRemoteControlFilterRecipients) {
             val address = extractEmail(message.from)!!
-            if (!settings.recipients.containsEmail(address)) {
+            if (!settings.emailRecipients.containsEmail(address)) {
                 log.debug("Address $address rejected")
-
                 return false
             }
         }

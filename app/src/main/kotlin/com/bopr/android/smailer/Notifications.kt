@@ -111,17 +111,16 @@ class Notifications(private val context: Context) {
 
     internal fun onSettingsChanged(settings: Settings, key: String) {
         when (key) {
-            PREF_SENDER_ACCOUNT -> {
+            PREF_SENDER_ACCOUNT ->
                 if (context.isAccountExists(settings.senderAccount)) {
                     cancelError(SENDER_ACCOUNT_ERROR)
                 }
-            }
             PREF_REMOTE_CONTROL_ACCOUNT ->
                 if (context.isAccountExists(settings.remoteControlAccount)) {
                     cancelError(REMOTE_ACCOUNT_ERROR)
                 }
             PREF_RECIPIENTS_ADDRESS ->
-                if (isValidEmailAddressList(settings.recipients)) {
+                if (isValidEmailAddressList(settings.emailRecipients)) {
                     cancelError(RECIPIENTS_ERROR)
                 }
         }

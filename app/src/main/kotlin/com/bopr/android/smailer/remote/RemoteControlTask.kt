@@ -6,8 +6,8 @@ import kotlin.annotation.AnnotationRetention.SOURCE
 internal data class RemoteControlTask(val acceptor: String?, @Action var action: String? = null,
                                       val arguments: MutableMap<String, String?> = mutableMapOf()) {
 
-    constructor(acceptor: String?, @Action action: String? = null,
-                argument: String?) : this(acceptor, action, mutableMapOf(VALUE to argument))
+    constructor(acceptor: String?, @Action action: String? = null, argument: String?)
+            : this(acceptor, action, mutableMapOf(VALUE to argument))
 
     var argument: String?
         get() = arguments[VALUE]

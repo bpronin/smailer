@@ -90,7 +90,7 @@ class PermissionsHelper(val activity: FragmentActivity) {
                 }
             }
             PREF_EMAIL_CONTENT -> {
-                val content = settings.emailContent
+                val content = settings.getStringSet(PREF_EMAIL_CONTENT)
                 if (content.contains(VAL_PREF_EMAIL_CONTENT_CONTACT)) {
                     requiredPermissions.add(READ_CONTACTS)
                 }
@@ -121,7 +121,7 @@ class PermissionsHelper(val activity: FragmentActivity) {
 
         if (deniedPermissions.isNotEmpty()) {
             val triggers = settings.emailTriggers
-            val content = settings.emailContent
+            val content = settings.getStringSet(PREF_EMAIL_CONTENT)
 
             if (deniedPermissions.contains(RECEIVE_SMS)) {
                 triggers.remove(VAL_PREF_TRIGGER_IN_SMS)

@@ -90,20 +90,20 @@ class MainFragment : BasePreferenceFragment() {
 
     private fun updateAccountPreferenceView() {
         val preference = requirePreference(PREF_SENDER_ACCOUNT)
-        val accountName = settings.getString(preference.key)
+        val account = settings.senderAccount
 
-        if (accountName.isNullOrEmpty()) {
+        if (account.isNullOrEmpty()) {
             updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)
-        } else if (!requireContext().isAccountExists(accountName)) {
-            updateSummary(preference, accountName, SUMMARY_STYLE_UNDERWIVED)
+        } else if (!requireContext().isAccountExists(account)) {
+            updateSummary(preference, account, SUMMARY_STYLE_UNDERWIVED)
         } else {
-            updateSummary(preference, accountName, SUMMARY_STYLE_DEFAULT)
+            updateSummary(preference, account, SUMMARY_STYLE_DEFAULT)
         }
     }
 
     private fun updateRecipientsPreferenceView() {
         val preference = requirePreference(PREF_RECIPIENTS_ADDRESS)
-        val addresses = settings.recipients
+        val addresses = settings.emailRecipients
 
         if (addresses.isNullOrEmpty()) {
             updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)

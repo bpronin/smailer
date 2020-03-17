@@ -253,13 +253,13 @@ fun <T> runInBackground(task: () -> T): Task<T> {
     })
 }
 
-fun <T> Preference.runBackgroundTask(task: () -> T?, onComplete: (T?) -> Unit) {
+fun <T> Preference.runBackgroundTask(onPerform: () -> T?, onComplete: (T?) -> Unit) {
     val lastIcon = icon
     val progressIcon = getDrawable(context, R.drawable.animated_progress) as AnimatedVectorDrawableCompat
     icon = progressIcon
     progressIcon.start()
 
-    runInBackground(task).addOnCompleteListener {
+    runInBackground(onPerform).addOnCompleteListener {
         progressIcon.stop()
         icon = lastIcon
         onComplete(it.result)

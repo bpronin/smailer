@@ -3,7 +3,6 @@ package com.bopr.android.smailer
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import com.bopr.android.smailer.util.SharedPreferencesWrapper
-import java.util.*
 
 /**
  * Settings.
@@ -13,44 +12,30 @@ import java.util.*
 class Settings(context: Context, name: String = PREFERENCES_STORAGE_NAME) :
         SharedPreferencesWrapper(context.getSharedPreferences(name, MODE_PRIVATE)) {
 
-    val locale: Locale
-        get() {
-            val value = getString(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)!!
-            return if (value == VAL_PREF_DEFAULT) {
-                Locale.getDefault()
-            } else {
-                val a = value.split("_")
-                if (a.size == 2) {
-                    Locale(a[0], a[1])
-                } else {
-                    throw IllegalArgumentException("Invalid locale code: $value")
-                }
-            }
-        }
-
-    val senderAccount get() = getString(PREF_SENDER_ACCOUNT)
-    val remoteControlAccount get() = getString(PREF_REMOTE_CONTROL_ACCOUNT)
-    val recipients get() = getStringList(PREF_RECIPIENTS_ADDRESS)
-    val recipientsPlain get() = getString(PREF_RECIPIENTS_ADDRESS)
     val deviceAlias get() = getString(PREF_DEVICE_ALIAS)
     val emailContent get() = getStringSet(PREF_EMAIL_CONTENT)
+    val emailLocale get() = getString(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)!!
+    val emailRecipients get() = getStringList(PREF_RECIPIENTS_ADDRESS)
+    val emailRecipientsPlain get() = getString(PREF_RECIPIENTS_ADDRESS)
     val emailTriggers get() = getStringSet(PREF_EMAIL_TRIGGERS)
+    val isNotifyRemoteControlActions get() = getBoolean(PREF_REMOTE_CONTROL_NOTIFICATIONS)
     val isNotifySendSuccess get() = getBoolean(PREF_NOTIFY_SEND_SUCCESS)
-    val isSyncEnabled get() = getBoolean(PREF_SYNC_ENABLED)
     val isRemoteControlEnabled get() = getBoolean(PREF_REMOTE_CONTROL_ENABLED)
     val isRemoteControlFilterRecipients get() = getBoolean(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS)
-    val isNotifyRemoteControlActions get() = getBoolean(PREF_REMOTE_CONTROL_NOTIFICATIONS)
+    val isSyncEnabled get() = getBoolean(PREF_SYNC_ENABLED)
+    val remoteControlAccount get() = getString(PREF_REMOTE_CONTROL_ACCOUNT)
+    val senderAccount get() = getString(PREF_SENDER_ACCOUNT)
 
     fun loadDefaults() = update {
         putInt(PREF_SETTINGS_VERSION, SETTINGS_VERSION)
-        putStringOptional(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)
-        putStringSetOptional(PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS)
-        putStringSetOptional(PREF_EMAIL_CONTENT, DEFAULT_EMAIL_CONTENT)
+        putBooleanOptional(PREF_NOTIFY_SEND_SUCCESS, false)
         putBooleanOptional(PREF_REMOTE_CONTROL_ENABLED, false)
         putBooleanOptional(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS, true)
         putBooleanOptional(PREF_REMOTE_CONTROL_NOTIFICATIONS, true)
-        putBooleanOptional(PREF_NOTIFY_SEND_SUCCESS, false)
         putBooleanOptional(PREF_SYNC_ENABLED, true)
+        putStringOptional(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)
+        putStringSetOptional(PREF_EMAIL_CONTENT, DEFAULT_EMAIL_CONTENT)
+        putStringSetOptional(PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS)
     }
 
     companion object {
@@ -69,8 +54,8 @@ class Settings(context: Context, name: String = PREFERENCES_STORAGE_NAME) :
         const val PREF_REMOTE_CONTROL_FILTER_RECIPIENTS = "remote_control_filter_recipients"
         const val PREF_REMOTE_CONTROL_NOTIFICATIONS = "remote_control_notifications"
         const val PREF_SENDER_ACCOUNT = "sender_account"
-        const val PREF_SYNC_ENABLED = "sync_enabled"
         const val PREF_SETTINGS_VERSION = "settings_version" /* hidden */
+        const val PREF_SYNC_ENABLED = "sync_enabled"
 
         const val VAL_PREF_DEFAULT = "default"
         const val VAL_PREF_EMAIL_CONTENT_CONTACT = "contact_name"
@@ -87,13 +72,14 @@ class Settings(context: Context, name: String = PREFERENCES_STORAGE_NAME) :
         const val VAL_PREF_TRIGGER_OUT_SMS = "out_sms"
 
         val DEFAULT_EMAIL_CONTENT: Set<String> = mutableSetOf(
+                VAL_PREF_EMAIL_CONTENT_CONTACT,
+                VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
                 VAL_PREF_EMAIL_CONTENT_HEADER,
+                VAL_PREF_EMAIL_CONTENT_LOCATION,
                 VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
                 VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT,
-                VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
-                VAL_PREF_EMAIL_CONTENT_LOCATION,
-                VAL_PREF_EMAIL_CONTENT_CONTACT,
-                VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS)
+                VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS
+        )
 
         val DEFAULT_TRIGGERS: Set<String> = mutableSetOf(
                 VAL_PREF_TRIGGER_IN_SMS,

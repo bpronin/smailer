@@ -7,11 +7,13 @@ import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATUS_ACCEPTED
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_DEFAULT
 import com.bopr.android.smailer.util.*
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 import org.slf4j.LoggerFactory
 import java.lang.System.currentTimeMillis
+import java.util.*
 
 /**
  * Sends out email for phone events.
@@ -103,13 +105,13 @@ class CallProcessor(
                 deviceName = settings.deviceAlias ?: event.acceptor,
                 options = settings.emailContent,
                 serviceAccount = settings.remoteControlAccount,
-                locale = settings.locale
+                locale = parseLocale(settings.emailLocale)
         )
 
         val message = MailMessage(
                 subject = formatter.formatSubject(),
                 body = formatter.formatBody(),
-                recipients = settings.recipientsPlain,
+                recipients = settings.emailRecipientsPlain,
                 from = settings.senderAccount,
                 replyTo = settings.remoteControlAccount
         )
@@ -145,7 +147,7 @@ class CallProcessor(
     }
 
     private fun checkRecipient(): Boolean {
-        val recipients = settings.recipients
+        val recipients = settings.emailRecipients
 
         if (recipients.isEmpty()) {
             notifications.showRecipientsError(R.string.no_recipients_specified)
@@ -188,6 +190,19 @@ class CallProcessor(
         } else {
             log.warn("Missing required permission")
             null
+        }
+    }
+
+    private fun parseLocale(code: String): Locale {
+        return if (code == VAL_PREF_DEFAULT) {
+            Locale.getDefault()
+        } else {
+            val a = code.split("_")
+            if (a.size == 2) {
+                Locale(a[0], a[1])
+            } else {
+                throw IllegalArgumentException("Invalid locale code: $code")
+            }
         }
     }
 }

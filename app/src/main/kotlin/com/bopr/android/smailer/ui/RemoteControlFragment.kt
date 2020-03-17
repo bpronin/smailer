@@ -66,27 +66,31 @@ class RemoteControlFragment : BasePreferenceFragment() {
     }
 
     private fun onProcessServiceMail(preference: Preference) {
-        preference.runBackgroundTask({
-            val context = requireContext()
-            Database(context).use {
-                RemoteControlProcessor(context, it).checkMailbox()
-            }
-        }, {
-            /* NOTE: if we live the page while processing context becomes null */
-            context?.showToast(getQuantityString(R.plurals.mail_items, R.string.mail_items_zero, it!!))
-        })
+        preference.runBackgroundTask(
+                onPerform = {
+                    requireContext().run {
+                        Database(this).use {
+                            RemoteControlProcessor(this, it).checkMailbox()
+                        }
+                    }
+                },
+                onComplete = {
+                    /* NOTE: if we live the page while processing context becomes null */
+                    context?.showToast(getQuantityString(R.plurals.mail_items, R.string.mail_items_zero, it!!))
+                }
+        )
     }
 
     private fun updateAccountPreferenceView() {
         val preference = requirePreference(PREF_REMOTE_CONTROL_ACCOUNT)
-        val accountName = settings.getString(preference.key)
+        val account = settings.remoteControlAccount
 
-        if (accountName.isNullOrEmpty()) {
+        if (account.isNullOrEmpty()) {
             updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)
-        } else if (!requireContext().isAccountExists(accountName)) {
-            updateSummary(preference, accountName, SUMMARY_STYLE_UNDERWIVED)
+        } else if (!requireContext().isAccountExists(account)) {
+            updateSummary(preference, account, SUMMARY_STYLE_UNDERWIVED)
         } else {
-            updateSummary(preference, accountName, SUMMARY_STYLE_DEFAULT)
+            updateSummary(preference, account, SUMMARY_STYLE_DEFAULT)
         }
     }
 
