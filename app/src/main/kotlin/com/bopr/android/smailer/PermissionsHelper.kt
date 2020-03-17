@@ -75,7 +75,7 @@ class PermissionsHelper(val activity: FragmentActivity) {
         val requiredPermissions: MutableSet<String> = HashSet()
         when (key) {
             PREF_EMAIL_TRIGGERS -> {
-                val triggers = settings.getStringSet(PREF_EMAIL_TRIGGERS)
+                val triggers = settings.emailTriggers
                 if (triggers.contains(VAL_PREF_TRIGGER_IN_SMS)) {
                     requiredPermissions.add(RECEIVE_SMS)
                 }
@@ -90,7 +90,7 @@ class PermissionsHelper(val activity: FragmentActivity) {
                 }
             }
             PREF_EMAIL_CONTENT -> {
-                val content = settings.getStringSet(PREF_EMAIL_CONTENT)
+                val content = settings.emailContent
                 if (content.contains(VAL_PREF_EMAIL_CONTENT_CONTACT)) {
                     requiredPermissions.add(READ_CONTACTS)
                 }
@@ -120,8 +120,8 @@ class PermissionsHelper(val activity: FragmentActivity) {
         log.debug("Denied: $deniedPermissions")
 
         if (deniedPermissions.isNotEmpty()) {
-            val triggers = settings.getStringSet(PREF_EMAIL_TRIGGERS)
-            val content = settings.getStringSet(PREF_EMAIL_CONTENT)
+            val triggers = settings.emailTriggers
+            val content = settings.emailContent
 
             if (deniedPermissions.contains(RECEIVE_SMS)) {
                 triggers.remove(VAL_PREF_TRIGGER_IN_SMS)

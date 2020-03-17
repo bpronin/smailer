@@ -28,6 +28,19 @@ class Settings(context: Context, name: String = PREFERENCES_STORAGE_NAME) :
             }
         }
 
+    val senderAccount get() = getString(PREF_SENDER_ACCOUNT)
+    val remoteControlAccount get() = getString(PREF_REMOTE_CONTROL_ACCOUNT)
+    val recipients get() = getStringList(PREF_RECIPIENTS_ADDRESS)
+    val recipientsPlain get() = getString(PREF_RECIPIENTS_ADDRESS)
+    val deviceAlias get() = getString(PREF_DEVICE_ALIAS)
+    val emailContent get() = getStringSet(PREF_EMAIL_CONTENT)
+    val emailTriggers get() = getStringSet(PREF_EMAIL_TRIGGERS)
+    val isNotifySendSuccess get() = getBoolean(PREF_NOTIFY_SEND_SUCCESS)
+    val isSyncEnabled get() = getBoolean(PREF_SYNC_ENABLED)
+    val isRemoteControlEnabled get() = getBoolean(PREF_REMOTE_CONTROL_ENABLED)
+    val isRemoteControlFilterRecipients get() = getBoolean(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS)
+    val isNotifyRemoteControlActions get() = getBoolean(PREF_REMOTE_CONTROL_NOTIFICATIONS)
+
     fun loadDefaults() = update {
         putInt(PREF_SETTINGS_VERSION, SETTINGS_VERSION)
         putStringOptional(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)
@@ -57,11 +70,6 @@ class Settings(context: Context, name: String = PREFERENCES_STORAGE_NAME) :
         const val PREF_REMOTE_CONTROL_NOTIFICATIONS = "remote_control_notifications"
         const val PREF_SENDER_ACCOUNT = "sender_account"
         const val PREF_SYNC_ENABLED = "sync_enabled"
-        const val PREF_HISTORY = "history" /* view only */
-        const val PREF_PHONE_BLACKLIST = "phone_blacklist" /* view only */
-        const val PREF_PHONE_WHITELIST = "phone_whitelist" /* view only */
-        const val PREF_TEXT_BLACKLIST = "text_blacklist" /* view only */
-        const val PREF_TEXT_WHITELIST = "text_whitelist" /* view only */
         const val PREF_SETTINGS_VERSION = "settings_version" /* hidden */
 
         const val VAL_PREF_DEFAULT = "default"

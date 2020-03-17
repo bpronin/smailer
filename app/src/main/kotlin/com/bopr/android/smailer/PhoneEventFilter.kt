@@ -21,10 +21,10 @@ import java.util.regex.PatternSyntaxException
  */
 class PhoneEventFilter(
         var triggers: Set<String> = emptySet(),
-        var phoneWhitelist: List<String> = emptyList(),
         var phoneBlacklist: List<String> = emptyList(),
-        var textWhitelist: List<String> = emptyList(),
-        var textBlacklist: List<String> = emptyList()) {
+        var phoneWhitelist: List<String> = emptyList(),
+        var textBlacklist: List<String> = emptyList(),
+        var textWhitelist: List<String> = emptyList()) {
 
     /**
      * Tests if the filter accepts given event.

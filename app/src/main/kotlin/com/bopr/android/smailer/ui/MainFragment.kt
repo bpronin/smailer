@@ -103,13 +103,13 @@ class MainFragment : BasePreferenceFragment() {
 
     private fun updateRecipientsPreferenceView() {
         val preference = requirePreference(PREF_RECIPIENTS_ADDRESS)
-        val value = settings.getString(preference.key)
+        val addresses = settings.recipients
 
-        if (value.isNullOrEmpty()) {
+        if (addresses.isNullOrEmpty()) {
             updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)
         } else {
-            val style = if (isValidEmailAddressList(value)) SUMMARY_STYLE_DEFAULT else SUMMARY_STYLE_UNDERWIVED
-            updateSummary(preference, value.replace(",", ", "), style)
+            val style = if (isValidEmailAddressList(addresses)) SUMMARY_STYLE_DEFAULT else SUMMARY_STYLE_UNDERWIVED
+            updateSummary(preference, addresses.joinToString(), style)
         }
     }
 

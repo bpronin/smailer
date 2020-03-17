@@ -89,14 +89,14 @@ fun readStream(stream: InputStream): String {
     }
 }
 
-fun isValidEmailAddress(text: String?): Boolean {
-    return !text.isNullOrBlank() && EMAIL_ADDRESS.matcher(text).matches()
+fun isValidEmailAddress(address: String?): Boolean {
+    return !address.isNullOrBlank() && EMAIL_ADDRESS.matcher(address).matches()
 }
 
-fun isValidEmailAddressList(text: String?): Boolean {
-    if (!text.isNullOrBlank()) {
-        for (s in commaSplit(text)) {
-            if (!isValidEmailAddress(s)) {
+fun isValidEmailAddressList(addresses: Collection<String>): Boolean {
+    if (!addresses.isEmpty()) {
+        for (address in addresses) {
+            if (!isValidEmailAddress(address)) {
                 return false
             }
         }

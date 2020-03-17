@@ -15,12 +15,13 @@ class BuildInfo(context: Context) {
 
     init {
         try {
-            val properties = Properties()
-            context.assets.open("release.properties").use {
-                properties.load(it)
+            Properties().run {
+                context.assets.open("release.properties").use {
+                    load(it)
+                }
+                number = getProperty("build_number")
+                time = getProperty("build_time")
             }
-            number = properties.getProperty("build_number")
-            time = properties.getProperty("build_time")
             name = context.packageManager.getPackageInfo(context.packageName, 0).versionName
         } catch (x: IOException) {
             throw RuntimeException("Cannot read release properties file", x)

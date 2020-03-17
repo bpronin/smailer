@@ -14,11 +14,6 @@ import com.bopr.android.smailer.Notifications.Companion.TARGET_PHONE_BLACKLIST
 import com.bopr.android.smailer.Notifications.Companion.TARGET_PHONE_WHITELIST
 import com.bopr.android.smailer.Notifications.Companion.TARGET_TEXT_BLACKLIST
 import com.bopr.android.smailer.Notifications.Companion.TARGET_TEXT_WHITELIST
-import com.bopr.android.smailer.Settings.Companion.PREF_DEVICE_ALIAS
-import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
-import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
-import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS
-import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_NOTIFICATIONS
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.ADD_PHONE_TO_BLACKLIST
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.ADD_PHONE_TO_WHITELIST
 import com.bopr.android.smailer.remote.RemoteControlTask.Companion.ADD_TEXT_TO_BLACKLIST
@@ -109,10 +104,9 @@ internal class RemoteControlProcessor(
     }
 
     private fun acceptMessage(message: MailMessage): Boolean {
-        if (settings.getBoolean(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS)) {
+        if (settings.isRemoteControlFilterRecipients) {
             val address = extractEmail(message.from)!!
-            val recipients = settings.getStringList(PREF_RECIPIENTS_ADDRESS)
-            if (!containsEmail(recipients, address)) {
+            if (!settings.recipients.containsEmail(address)) {
                 log.debug("Address $address rejected")
 
                 return false
@@ -129,7 +123,7 @@ internal class RemoteControlProcessor(
     }
 
     private fun requireAccount(): Account? {
-        val name = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
+        val name = settings.remoteControlAccount
         return context.getAccount(name).also {
             if (it == null) {
                 notifications.showRemoteAccountError()
@@ -139,7 +133,7 @@ internal class RemoteControlProcessor(
     }
 
     private fun deviceAlias(): String {
-        return settings.getString(PREF_DEVICE_ALIAS) ?: deviceName()
+        return settings.deviceAlias ?: deviceName()
     }
 
     private fun addTextToWhitelist(text: String?) {
@@ -216,7 +210,7 @@ internal class RemoteControlProcessor(
     }
 
     private fun showNotification(message: String, @Notifications.Target target: Int) {
-        if (settings.getBoolean(PREF_REMOTE_CONTROL_NOTIFICATIONS)) {
+        if (settings.isNotifyRemoteControlActions) {
             notifications.showRemoteAction(message, target)
         }
     }

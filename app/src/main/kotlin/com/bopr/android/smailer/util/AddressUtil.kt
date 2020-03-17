@@ -64,8 +64,8 @@ fun sameEmail(e1: String, e2: String): Boolean {
     return compareEmails(e1, e2) == 0
 }
 
-fun containsEmail(emails: Collection<String>, email: String): Boolean {
-    return emails.any { m -> sameEmail(m, email) }
+fun Collection<String>.containsEmail(email: String): Boolean {
+    return any { m -> sameEmail(m, email) }
 }
 
 fun extractEmail(text: String?): String? {

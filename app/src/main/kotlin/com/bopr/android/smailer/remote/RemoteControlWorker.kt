@@ -6,7 +6,6 @@ import androidx.work.ExistingPeriodicWorkPolicy.REPLACE
 import androidx.work.NetworkType.CONNECTED
 import androidx.work.PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit.MILLISECONDS
 
@@ -33,9 +32,7 @@ internal class RemoteControlWorker(context: Context, workerParams: WorkerParamet
         private val log = LoggerFactory.getLogger("RemoteControlWorker")
         private const val WORK_REMOTE = "com.bopr.android.smailer.remote"
 
-        private fun Context.isFeatureEnabled(): Boolean {
-            return Settings(this).getBoolean(PREF_REMOTE_CONTROL_ENABLED)
-        }
+        private fun Context.isFeatureEnabled() = Settings(this).isRemoteControlEnabled
 
         fun Context.enableRemoteControl() {
             val manager = WorkManager.getInstance(this)

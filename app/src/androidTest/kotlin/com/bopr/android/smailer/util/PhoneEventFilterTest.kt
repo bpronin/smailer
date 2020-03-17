@@ -116,7 +116,7 @@ class PhoneEventFilterTest : BaseTest() {
     @Test
     fun testPhoneWhitelist() {
         val filter = PhoneEventFilter(
-            triggers = setOf(VAL_PREF_TRIGGER_IN_SMS)
+                triggers = setOf(VAL_PREF_TRIGGER_IN_SMS)
         )
 
         var event = createEvent(
@@ -151,7 +151,7 @@ class PhoneEventFilterTest : BaseTest() {
         )
 
         val filter = PhoneEventFilter(
-            triggers = setOf(VAL_PREF_TRIGGER_IN_SMS)
+                triggers = setOf(VAL_PREF_TRIGGER_IN_SMS)
         )
         assertEquals(STATUS_ACCEPTED, filter.test(event))
 
