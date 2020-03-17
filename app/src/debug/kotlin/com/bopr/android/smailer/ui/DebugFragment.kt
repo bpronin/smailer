@@ -46,8 +46,12 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
-import com.bopr.android.smailer.firebase.CloudMessaging
-import com.bopr.android.smailer.remote.RemoteControlWorker.Companion.startRemoteControlService
+import com.bopr.android.smailer.firebase.CloudMessaging.FCM_REQUEST_DATA_SYNC
+import com.bopr.android.smailer.firebase.CloudMessaging.requestFirebaseToken
+import com.bopr.android.smailer.firebase.CloudMessaging.sendCloudMessage
+import com.bopr.android.smailer.firebase.CloudMessaging.subscribeToCloudMessaging
+import com.bopr.android.smailer.firebase.CloudMessaging.unsubscribeFromCloudMessaging
+import com.bopr.android.smailer.remote.RemoteControlProcessor
 import com.bopr.android.smailer.sync.Synchronizer
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_DOWNLOAD
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_UPLOAD
@@ -72,7 +76,6 @@ class DebugFragment : BasePreferenceFragment() {
     private lateinit var notifications: Notifications
     private lateinit var sentStatusReceiver: BroadcastReceiver
     private lateinit var deliveredStatusReceiver: BroadcastReceiver
-    private lateinit var cloudMessaging: CloudMessaging
 
     private val developerEmail: String
         get() = getString(R.string.developer_email)
@@ -163,19 +166,26 @@ class DebugFragment : BasePreferenceFragment() {
                 })
         )
         addCategory(screen, "Firebase",
-                createPreference("Get current token", object : DefaultClickListener() {
-                    override fun onClick(preference: Preference) {
-                        onFirebaseGetCurrentToken()
-                    }
-                }),
                 createPreference("Send message", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        onFirebaseSendMessage()
+                        requireContext().sendCloudMessage(FCM_REQUEST_DATA_SYNC)
                     }
                 }),
-                createPreference("Send self message", object : DefaultClickListener() {
+                createPreference("Subscribe", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        onFirebaseSendSelfMessage()
+                        requireContext().subscribeToCloudMessaging()
+                    }
+                }),
+                createPreference("Unsubscribe", object : DefaultClickListener() {
+                    override fun onClick(preference: Preference) {
+                        unsubscribeFromCloudMessaging()
+                    }
+                }),
+                createPreference("Get current token", object : DefaultClickListener() {
+                    override fun onClick(preference: Preference) {
+                        requestFirebaseToken {
+                            InfoDialog(message = "Token: $it").show(this@DebugFragment)
+                        }
                     }
                 })
         )
@@ -304,8 +314,7 @@ class DebugFragment : BasePreferenceFragment() {
         database = Database(context)
         locator = GeoLocator(context, database)
         authorizator = GoogleAuthorizationHelper(this, PREF_SENDER_ACCOUNT, MAIL_GOOGLE_COM, DRIVE_APPDATA)
-        notifications = Notifications(appContext)
-        cloudMessaging = CloudMessaging(appContext)
+        notifications = Notifications(context)
         sentStatusReceiver = SentStatusReceiver()
         deliveredStatusReceiver = DeliveryStatusReceiver()
         context.registerReceiver(sentStatusReceiver, IntentFilter("SMS_SENT"))

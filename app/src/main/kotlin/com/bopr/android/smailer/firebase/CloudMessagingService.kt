@@ -1,6 +1,8 @@
 package com.bopr.android.smailer.firebase
 
-import com.bopr.android.smailer.PendingCallProcessorWorker.Companion.startPendingCallProcessorService
+import com.bopr.android.smailer.firebase.CloudMessaging.FCM_REQUEST_DATA_SYNC
+import com.bopr.android.smailer.firebase.CloudMessaging.requestFirebaseToken
+import com.bopr.android.smailer.sync.SyncWorker.Companion.requestDataSync
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import org.slf4j.LoggerFactory
@@ -8,43 +10,33 @@ import org.slf4j.LoggerFactory
 
 class CloudMessagingService : FirebaseMessagingService() {
 
+    private var instanceToken: String? = null
+
     private val log = LoggerFactory.getLogger("CloudMessagingService")
 
     override fun onMessageReceived(message: RemoteMessage) {
-        log.info("Priority: ${message.priority}")
-        log.info("Data: ${message.data}")
+        log.info("Received message: ${message.data}")
 
-        if (message.data["action"] == "wakeup") {
-            startPendingCallProcessorService(this)
+        loadInstanceToken { token ->
+            if (message.data["sender"] != token) {
+                if (message.data["action"] == FCM_REQUEST_DATA_SYNC) {
+                    requestDataSync()
+                }
+            } else {
+                log.debug("Ignored self message")
+            }
         }
     }
 
     override fun onNewToken(token: String) {
+        instanceToken = token
         log.debug("Refreshed token: $token")
-
-        // If you want to send messages to this application instance or
-        // manage this apps subscriptions on the server side, send the
-        // Instance ID token to your app server.
-        // sendRegistrationToServer(token)
-
-        /*
-          This method is invoked whenever the token refreshes
-        */
-
-        // Once the token is generated, subscribe to topic with the userId
-        //subscribeToFirebaseMessaging()
     }
 
-    override fun onMessageSent(messageId: String) {
-        log.debug("Sent: $messageId")
+    private fun loadInstanceToken(onComplete: (String) -> Unit) {
+        instanceToken?.run(onComplete) ?: requestFirebaseToken {
+            instanceToken = it
+            onComplete(it)
+        }
     }
-
-    override fun onDeletedMessages() {
-        log.debug("Deleted")
-    }
-
-    override fun onSendError(messageId: String, exception: Exception) {
-        log.debug("Send message: $messageId Error: $exception")
-    }
-
 }

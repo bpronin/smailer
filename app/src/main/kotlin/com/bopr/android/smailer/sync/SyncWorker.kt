@@ -7,6 +7,11 @@ import androidx.work.PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS
 import com.bopr.android.smailer.Database
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_NORMAL
+import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_ENABLED
+import com.bopr.android.smailer.firebase.CloudMessaging.FCM_REQUEST_DATA_SYNC
+import com.bopr.android.smailer.firebase.CloudMessaging.sendCloudMessage
+import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_NORMAL
 import com.bopr.android.smailer.util.getAccount
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit.MILLISECONDS
@@ -25,7 +30,10 @@ internal class SyncWorker(context: Context, workerParams: WorkerParameters)
                 getAccount(Settings(this).senderAccount)?.let { account ->
                     Database(this).use { database ->
                         Synchronizer(this, account, database).run {
-                            sync(inputData.getInt(SYNC_OPTIONS, SYNC_NORMAL))
+                            val options = inputData.getInt(SYNC_OPTIONS, SYNC_NORMAL)
+                            if (sync(options)) {
+                                sendCloudMessage(FCM_REQUEST_DATA_SYNC)
+                            }
                         }
                     }
                 } ?: log.warn("No sync account")

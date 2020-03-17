@@ -25,8 +25,7 @@
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />  <!--To sync data with Google drive -->
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" /> <!--To sync data with Google drive -->
     <uses-permission android:name="android.permission.SEND_SMS" /> <!--To send SMS from  -->
-<!--    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />-->
-
+    
     <application
         android:allowBackup="true"
         android:backupAgent=".AppBackupAgent"
@@ -133,8 +132,6 @@
             </intent-filter>
         </receiver>
 
-        <!--  Firebase stuff -->
-
         <service
             android:name=".firebase.CloudMessagingService"
             android:exported="false"
@@ -144,10 +141,6 @@
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
-
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_notification" />
 
     </application>
 
