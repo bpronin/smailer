@@ -6,7 +6,6 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley.newRequestQueue
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
 import com.bopr.android.smailer.util.getAccount
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
@@ -26,7 +25,7 @@ object CloudMessaging {
     private var topic: String? = null
 
     fun Context.subscribeToCloudMessaging() {
-        getAccount(Settings(this).getString(PREF_SENDER_ACCOUNT))?.let { account ->
+        getAccount(Settings(this).senderAccount)?.let { account ->
             topic = "/topics/com.bopr.android.smailer.firebase-${userId(account.name)}"
             topic!!.let {
                 FirebaseMessaging.getInstance().subscribeToTopic(it)
@@ -67,23 +66,19 @@ object CloudMessaging {
     }
 
     internal fun unsubscribeFromCloudMessaging() {
-        topic?.let {
+        topic = topic?.let {
             FirebaseMessaging.getInstance().unsubscribeFromTopic(it)
 
             log.debug("Unsubscribed from: $it")
+            null
         }
     }
 
     internal fun requestFirebaseToken(onComplete: (String) -> Unit) {
-        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val token = task.result!!.token
+        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
+            log.debug("Token received")
 
-                log.info("Current token: $token")
-                onComplete(token)
-            } else {
-                log.warn("Failed", task.exception)
-            }
+            onComplete(it.result!!.token)
         }
     }
 
