@@ -12,12 +12,8 @@ import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
-import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_ENABLED
 import com.bopr.android.smailer.firebase.CloudMessaging.resubscribeToCloudMessaging
-import com.bopr.android.smailer.firebase.CloudMessaging.subscribeToCloudMessaging
-import com.bopr.android.smailer.firebase.CloudMessaging.unsubscribeFromCloudMessaging
 import com.bopr.android.smailer.remote.RemoteControlWorker.Companion.enableRemoteControl
-import com.bopr.android.smailer.sync.SyncWorker.Companion.enablePeriodicDataSync
 import com.bopr.android.smailer.sync.SyncWorker.Companion.requestDataSync
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_DOWNLOAD
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
@@ -48,7 +44,6 @@ class MainActivity : MainAppActivity(MainFragment::class), OnSharedPreferenceCha
         settings.registerOnSharedPreferenceChangeListener(this)
 
         startApplicationServices()
-        subscribeToCloudMessaging()
 
         permissionsHelper.checkAll()
         requireIgnoreBatteryOptimization(this)
@@ -56,7 +51,6 @@ class MainActivity : MainAppActivity(MainFragment::class), OnSharedPreferenceCha
 
     override fun onDestroy() {
         settings.unregisterOnSharedPreferenceChangeListener(this)
-        unsubscribeFromCloudMessaging()
         super.onDestroy()
     }
 
@@ -72,8 +66,6 @@ class MainActivity : MainAppActivity(MainFragment::class), OnSharedPreferenceCha
                 enableContentObserver()
             PREF_REMOTE_CONTROL_ENABLED ->
                 enableRemoteControl()
-            PREF_SYNC_ENABLED ->
-                enablePeriodicDataSync()
             PREF_SENDER_ACCOUNT -> {
                 if (isAccountExists(settings.senderAccount)) {
                     requestDataSync(SYNC_FORCE_DOWNLOAD)

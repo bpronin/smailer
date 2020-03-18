@@ -32,17 +32,17 @@ object CloudMessaging {
         }
     }
 
-    fun unsubscribeFromCloudMessaging() {
+    fun Context.resubscribeToCloudMessaging() {
+        unsubscribeFromCloudMessaging()
+        subscribeToCloudMessaging()
+    }
+
+    internal fun unsubscribeFromCloudMessaging() {
         topic?.let {
             FirebaseMessaging.getInstance().unsubscribeFromTopic(it)
 
             log.debug("Unsubscribed from: $it")
         }
-    }
-
-    fun Context.resubscribeToCloudMessaging() {
-        unsubscribeFromCloudMessaging()
-        subscribeToCloudMessaging()
     }
 
     fun Context.sendCloudMessage(action: String) {

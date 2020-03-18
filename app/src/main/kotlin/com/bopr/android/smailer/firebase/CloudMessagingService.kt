@@ -3,6 +3,7 @@ package com.bopr.android.smailer.firebase
 import com.bopr.android.smailer.firebase.CloudMessaging.FCM_REQUEST_DATA_SYNC
 import com.bopr.android.smailer.firebase.CloudMessaging.requestFirebaseToken
 import com.bopr.android.smailer.sync.SyncWorker.Companion.requestDataSync
+import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_DOWNLOAD
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import org.slf4j.LoggerFactory
@@ -20,7 +21,7 @@ class CloudMessagingService : FirebaseMessagingService() {
         loadInstanceToken { token ->
             if (message.data["sender"] != token) {
                 if (message.data["action"] == FCM_REQUEST_DATA_SYNC) {
-                    requestDataSync()
+                    requestDataSync(SYNC_FORCE_DOWNLOAD)
                 }
             } else {
                 log.debug("Ignored self message")

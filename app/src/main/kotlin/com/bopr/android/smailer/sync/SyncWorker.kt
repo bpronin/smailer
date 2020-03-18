@@ -3,7 +3,6 @@ package com.bopr.android.smailer.sync
 import android.content.Context
 import androidx.work.*
 import androidx.work.NetworkType.CONNECTED
-import androidx.work.PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS
 import com.bopr.android.smailer.Database
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.firebase.CloudMessaging.FCM_REQUEST_DATA_SYNC
@@ -11,7 +10,6 @@ import com.bopr.android.smailer.firebase.CloudMessaging.sendCloudMessage
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_NORMAL
 import com.bopr.android.smailer.util.getAccount
 import org.slf4j.LoggerFactory
-import java.util.concurrent.TimeUnit.MILLISECONDS
 
 /**
  * Checks internet connection every 15 minutes and tries to resend email for all pending events.
@@ -44,7 +42,6 @@ internal class SyncWorker(context: Context, workerParams: WorkerParameters)
 
         private val log = LoggerFactory.getLogger("SyncWorker")
         private const val WORK_SYNC = "com.bopr.android.smailer.sync"
-        private const val WORK_PERIODIC_SYNC = "com.bopr.android.smailer.periodic_sync"
         private const val SYNC_OPTIONS = "options"
 
         private fun constraints() = Constraints.Builder()
@@ -53,7 +50,7 @@ internal class SyncWorker(context: Context, workerParams: WorkerParameters)
 
         internal fun Context.requestDataSync(options: Int = SYNC_NORMAL) {
             if (Settings(this).isSyncEnabled) {
-                log.debug("Sync requested")
+                log.debug("Sync requested. Option: $options")
 
                 val data = Data.Builder()
                         .putInt(SYNC_OPTIONS, options)
@@ -64,23 +61,6 @@ internal class SyncWorker(context: Context, workerParams: WorkerParameters)
                         .build()
                 WorkManager.getInstance(this).enqueueUniqueWork(WORK_SYNC,
                         ExistingWorkPolicy.KEEP, request)
-            }
-        }
-
-        internal fun Context.enablePeriodicDataSync() {
-            if (Settings(this).isSyncEnabled) {
-                log.debug("Start periodic sync")
-
-                val request = PeriodicWorkRequest.Builder(SyncWorker::class.java,
-                                MIN_PERIODIC_INTERVAL_MILLIS, MILLISECONDS)
-                        .setConstraints(constraints())
-                        .build()
-                WorkManager.getInstance(this).enqueueUniquePeriodicWork(WORK_PERIODIC_SYNC,
-                        ExistingPeriodicWorkPolicy.REPLACE, request)
-            } else {
-                log.debug("Stop periodic sync")
-
-                WorkManager.getInstance(this).cancelUniqueWork(WORK_PERIODIC_SYNC)
             }
         }
 
