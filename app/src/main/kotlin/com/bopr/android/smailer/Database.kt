@@ -284,7 +284,9 @@ class Database(private val context: Context, private val name: String = DATABASE
             updateTime = currentTimeMillis()
             context.sendDatabaseBroadcast(modifiedTables, flags)
             modifiedTables.clear()
-            context.requestDataSync()
+            if (flags and DB_FLAG_SYNCING != DB_FLAG_SYNCING) {
+                context.requestDataSync()
+            }
         }
         return result
     }
