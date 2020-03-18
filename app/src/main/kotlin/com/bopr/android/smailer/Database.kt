@@ -161,7 +161,6 @@ class Database(private val context: Context, private val name: String = DATABASE
             }
         }
     }
-
     /**
      * Removes specified events from database.
      */
@@ -189,6 +188,11 @@ class Database(private val context: Context, private val name: String = DATABASE
 
             log.debug("Removed all from $TABLE_EVENTS")
         }
+    }
+
+    fun replaceEvents(events: Collection<PhoneEvent>) {
+        clearEvents()
+        putEvents(events)
     }
 
     /**

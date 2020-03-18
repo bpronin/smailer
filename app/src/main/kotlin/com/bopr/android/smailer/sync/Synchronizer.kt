@@ -107,7 +107,9 @@ internal class Synchronizer(context: Context,
     private fun putLocalData(data: SyncData) {
         database.commit(DB_FLAG_SYNCING) {
             batchWrite {
+                clearEvents()
                 data.events.map(::dataToEvent).let(::putEvents)
+
                 phoneBlacklist = data.phoneBlacklist
                 phoneWhitelist = data.phoneWhitelist
                 textBlacklist = data.textBlacklist
