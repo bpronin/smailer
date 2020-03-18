@@ -140,7 +140,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
     }
 
     override fun loadItems(): Collection<PhoneEvent> {
-        return database.events.list()
+        return database.events
     }
 
     override fun createViewHolder(parent: ViewGroup): Holder {

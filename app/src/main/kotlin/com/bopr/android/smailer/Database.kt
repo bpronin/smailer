@@ -26,22 +26,26 @@ class Database(private val context: Context, private val name: String = DATABASE
     /**
      * Returns all phone events.
      */
-    val events: PhoneEventRowSet
-        get() = PhoneEventRowSet(helper.readableDatabase.query(
+    var events: List<PhoneEvent>
+        get() = helper.readableDatabase.query(
                 table = TABLE_EVENTS,
                 order = "$COLUMN_START_TIME DESC"
-        ))
+        ).useToList(::readEvent)
+        set(value) = helper.writableDatabase.batch {
+            clearEvents()
+            putEvents(value)
+        }
 
     /**
      * Returns pending phone events.
      */
-    val pendingEvents: PhoneEventRowSet
-        get() = PhoneEventRowSet(helper.readableDatabase.query(
+    val pendingEvents: List<PhoneEvent>
+        get() = helper.readableDatabase.query(
                 table = TABLE_EVENTS,
                 selection = "$COLUMN_STATE=?",
                 selectionArgs = strings(STATE_PENDING),
                 order = "$COLUMN_START_TIME DESC"
-        ))
+        ).useToList(::readEvent)
 
     /**
      * Returns count of unread phone events.
@@ -161,6 +165,7 @@ class Database(private val context: Context, private val name: String = DATABASE
             }
         }
     }
+
     /**
      * Removes specified events from database.
      */
@@ -190,12 +195,7 @@ class Database(private val context: Context, private val name: String = DATABASE
         }
     }
 
-    fun replaceEvents(events: Collection<PhoneEvent>) {
-        clearEvents()
-        putEvents(events)
-    }
-
-    /**
+     /**
      * Marks all events as read.
      */
     fun markAllEventsAsRead(read: Boolean) {
@@ -325,6 +325,29 @@ class Database(private val context: Context, private val name: String = DATABASE
         helper.writableDatabase.update(TABLE_SYSTEM, values, "$COLUMN_ID=0")
     }
 
+    private fun readEvent(cursor: Cursor): PhoneEvent {
+        cursor.run {
+            return PhoneEvent(
+                    phone = getString(COLUMN_PHONE)!!,
+                    isIncoming = getBoolean(COLUMN_IS_INCOMING),
+                    startTime = getLong(COLUMN_START_TIME),
+                    endTime = getLong(COLUMN_END_TIME),
+                    isMissed = getBoolean(COLUMN_IS_MISSED),
+                    text = getString(COLUMN_TEXT),
+                    location = GeoCoordinates(
+                            getDouble(COLUMN_LATITUDE),
+                            getDouble(COLUMN_LONGITUDE)
+                    ),
+                    details = getString(COLUMN_DETAILS),
+                    state = getInt(COLUMN_STATE),
+                    acceptor = getString(COLUMN_ACCEPTOR)!!,
+                    processStatus = getInt(COLUMN_PROCESS_STATUS),
+                    processTime = getLong(COLUMN_PROCESS_TIME),
+                    isRead = getBoolean(COLUMN_READ)
+            )
+        }
+    }
+
     private inner class DbHelper(context: Context) : SQLiteOpenHelper(context, name, null, DB_VERSION) {
 
         override fun onCreate(db: SQLiteDatabase) {
@@ -355,33 +378,6 @@ class Database(private val context: Context, private val name: String = DATABASE
 
                 log.warn("Database upgraded from $oldVersion to: $DB_VERSION")
             }
-        }
-    }
-
-    /**
-     * Phone events row set.
-     */
-    inner class PhoneEventRowSet(cursor: Cursor) : RowSet<PhoneEvent>(cursor) {
-
-        override fun Cursor.get(): PhoneEvent {
-            return PhoneEvent(
-                    phone = getString(COLUMN_PHONE)!!,
-                    isIncoming = getBoolean(COLUMN_IS_INCOMING),
-                    startTime = getLong(COLUMN_START_TIME),
-                    endTime = getLong(COLUMN_END_TIME),
-                    isMissed = getBoolean(COLUMN_IS_MISSED),
-                    text = getString(COLUMN_TEXT),
-                    location = GeoCoordinates(
-                            getDouble(COLUMN_LATITUDE),
-                            getDouble(COLUMN_LONGITUDE)
-                    ),
-                    details = getString(COLUMN_DETAILS),
-                    state = getInt(COLUMN_STATE),
-                    acceptor = getString(COLUMN_ACCEPTOR)!!,
-                    processStatus = getInt(COLUMN_PROCESS_STATUS),
-                    processTime = getLong(COLUMN_PROCESS_TIME),
-                    isRead = getBoolean(COLUMN_READ)
-            )
         }
     }
 

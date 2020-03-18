@@ -65,7 +65,7 @@ class CallProcessor(
      */
     fun processPending() {
         database.use {
-            val events = database.pendingEvents.list()
+            val events = database.pendingEvents
             if (events.isEmpty()) {
                 log.debug("No pending events")
             } else {

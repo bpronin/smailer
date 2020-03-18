@@ -7,7 +7,7 @@ import kotlinx.android.parcel.Parcelize
 import kotlinx.android.parcel.RawValue
 
 @Parcelize
-data class ListOperation<T>(val action: Action, val value: @RawValue T):Parcelable {
+data class ListOperation<T>(val action: Action, val value: @RawValue T) : Parcelable {
 
     enum class Action {
         ACTION_UPDATE,

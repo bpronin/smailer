@@ -48,7 +48,7 @@ fun commaSplit(s: String): List<String> {
 }
 
 fun decimalToDMS(coordinate: Double, degreeSymbol: String, minuteSymbol: String,
-             secondSymbol: String): String {
+                 secondSymbol: String): String {
     var c = coordinate
     var mod = c % 1
     var intPart = c.toInt()
