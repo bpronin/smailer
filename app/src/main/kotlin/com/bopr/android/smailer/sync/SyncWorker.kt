@@ -6,9 +6,6 @@ import androidx.work.NetworkType.CONNECTED
 import androidx.work.PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS
 import com.bopr.android.smailer.Database
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_NORMAL
-import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
-import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_ENABLED
 import com.bopr.android.smailer.firebase.CloudMessaging.FCM_REQUEST_DATA_SYNC
 import com.bopr.android.smailer.firebase.CloudMessaging.sendCloudMessage
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_NORMAL
@@ -26,8 +23,9 @@ internal class SyncWorker(context: Context, workerParams: WorkerParameters)
 
     override fun doWork(): Result {
         applicationContext.run {
-            if (isFeatureEnabled()) {
-                getAccount(Settings(this).senderAccount)?.let { account ->
+            val settings = Settings(this)
+            if (settings.isSyncEnabled) {
+                getAccount(settings.senderAccount)?.let { account ->
                     Database(this).use { database ->
                         Synchronizer(this, account, database).run {
                             val options = inputData.getInt(SYNC_OPTIONS, SYNC_NORMAL)
@@ -49,14 +47,12 @@ internal class SyncWorker(context: Context, workerParams: WorkerParameters)
         private const val WORK_PERIODIC_SYNC = "com.bopr.android.smailer.periodic_sync"
         private const val SYNC_OPTIONS = "options"
 
-        private fun Context.isFeatureEnabled() = Settings(this).isSyncEnabled
-
         private fun constraints() = Constraints.Builder()
                 .setRequiredNetworkType(CONNECTED)
                 .build()
 
         internal fun Context.requestDataSync(options: Int = SYNC_NORMAL) {
-            if (isFeatureEnabled()) {
+            if (Settings(this).isSyncEnabled) {
                 log.debug("Sync requested")
 
                 val data = Data.Builder()
@@ -72,7 +68,7 @@ internal class SyncWorker(context: Context, workerParams: WorkerParameters)
         }
 
         internal fun Context.enablePeriodicDataSync() {
-            if (isFeatureEnabled()) {
+            if (Settings(this).isSyncEnabled) {
                 log.debug("Start periodic sync")
 
                 val request = PeriodicWorkRequest.Builder(SyncWorker::class.java,

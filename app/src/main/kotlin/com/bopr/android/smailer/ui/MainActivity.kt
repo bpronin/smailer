@@ -77,9 +77,6 @@ class MainActivity : MainAppActivity(MainFragment::class), OnSharedPreferenceCha
             PREF_SENDER_ACCOUNT -> {
                 if (isAccountExists(settings.senderAccount)) {
                     requestDataSync(SYNC_FORCE_DOWNLOAD)
-            PREF_SENDER_ACCOUNT -> {
-                if (isAccountExists(settings.getString(PREF_SENDER_ACCOUNT))) {
-                    requestDataSync(SYNC_FORCE_DOWNLOAD)
                     resubscribeToCloudMessaging()
                 }
             }

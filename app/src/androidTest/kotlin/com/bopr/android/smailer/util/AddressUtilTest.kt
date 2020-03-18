@@ -2,6 +2,7 @@ package com.bopr.android.smailer.util
 
 import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
+import com.bopr.android.smailer.firebase.CloudMessaging.userId
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -39,6 +40,7 @@ class AddressUtilTest : BaseTest() {
     @Test
     fun testNormalizeEmail() {
         assertEquals("bobson@mail.com", normalizeEmail("bob.son@mail.com"))
+        assertEquals("bobson@mail.com", normalizeEmail("BOB.son@mail.COM"))
         assertEquals("bobson@mail.com", normalizeEmail("b.o.b.s.on@mail.com"))
         assertEquals("\"bob.son\"@mail.com", normalizeEmail("\"bob.son\"@mail.com"))
     }
@@ -49,5 +51,14 @@ class AddressUtilTest : BaseTest() {
         assertTrue(sameEmail("bobson@mail.com", "bob.son@mail.com"))
         assertFalse(sameEmail("bobson@mail.com", "\"bob.son\"@mail.com"))
         assertTrue(sameEmail("b.o.b.s.on@mail.com", "bobson@mail.com"))
+    }
+
+    @Test
+    fun testCloudTopicUserId() {
+        assertEquals("bobson~mail.com", userId("bob.son@mail.com"))
+        assertEquals("bobson~mail.com", userId("BOB.son@MAIL.com"))
+        assertEquals("bobson~mail.com", userId("b.o.b.s.on@mail.com"))
+        assertEquals("bobson~mail.com", userId("\"bob.son\"@mail.com"))
+        assertEquals("bobson~mail.com", userId("b#o*|/b.son@mail.com"))
     }
 }

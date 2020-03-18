@@ -47,6 +47,7 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
 import com.bopr.android.smailer.firebase.CloudMessaging.FCM_REQUEST_DATA_SYNC
+import com.bopr.android.smailer.firebase.CloudMessaging.listFirebaseInfo
 import com.bopr.android.smailer.firebase.CloudMessaging.requestFirebaseToken
 import com.bopr.android.smailer.firebase.CloudMessaging.sendCloudMessage
 import com.bopr.android.smailer.firebase.CloudMessaging.subscribeToCloudMessaging
@@ -184,7 +185,14 @@ class DebugFragment : BasePreferenceFragment() {
                 createPreference("Get current token", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
                         requestFirebaseToken {
-                            InfoDialog(message = "Token: $it").show(this@DebugFragment)
+                            InfoDialog(title = "Token", message = it).show(this@DebugFragment)
+                        }
+                    }
+                }),
+                createPreference("Get server info", object : DefaultClickListener() {
+                    override fun onClick(preference: Preference) {
+                        requireContext().listFirebaseInfo {
+                            InfoDialog(title = "Info", message = it).show(this@DebugFragment)
                         }
                     }
                 })
