@@ -17,7 +17,11 @@ import java.util.*
 object CloudMessaging {
 
     private val log = LoggerFactory.getLogger("CloudMessaging")
+
     const val FCM_REQUEST_DATA_SYNC = "request_data_sync"
+    const val FCM_SENDER = "sender"
+    const val FCM_ACTION = "action"
+
     private val NON_USER_ID_CHARS = Regex("[^a-zA-Z0-9-_~%]")
     private var topic: String? = null
 
@@ -37,22 +41,14 @@ object CloudMessaging {
         subscribeToCloudMessaging()
     }
 
-    internal fun unsubscribeFromCloudMessaging() {
-        topic?.let {
-            FirebaseMessaging.getInstance().unsubscribeFromTopic(it)
-
-            log.debug("Unsubscribed from: $it")
-        }
-    }
-
     fun Context.sendCloudMessage(action: String) {
         topic?.let {
             requestFirebaseToken { token ->
                 val payload = JSONObject().apply {
                     put("to", it)
                     put("data", JSONObject().apply {
-                        put("action", action)
-                        put("sender", token)
+                        put(FCM_SENDER, token)
+                        put(FCM_ACTION, action)
                     })
                 }
 
@@ -70,7 +66,15 @@ object CloudMessaging {
         } ?: log.warn("Unsubscribed")
     }
 
-    fun requestFirebaseToken(onComplete: (String) -> Unit) {
+    internal fun unsubscribeFromCloudMessaging() {
+        topic?.let {
+            FirebaseMessaging.getInstance().unsubscribeFromTopic(it)
+
+            log.debug("Unsubscribed from: $it")
+        }
+    }
+
+    internal fun requestFirebaseToken(onComplete: (String) -> Unit) {
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val token = task.result!!.token
@@ -83,7 +87,7 @@ object CloudMessaging {
         }
     }
 
-    fun Context.listFirebaseInfo(onComplete: (String) -> Unit) {
+    internal fun Context.listFirebaseInfo(onComplete: (String) -> Unit) {
         requestFirebaseToken { token ->
             val request = FCMRequest(
                     "https://iid.googleapis.com/iid/info/$token?details=true",
