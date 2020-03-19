@@ -12,6 +12,8 @@ import com.bopr.android.smailer.util.*
 import org.slf4j.LoggerFactory
 import java.io.Closeable
 import java.lang.System.currentTimeMillis
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 /**
  * Application database.
@@ -60,6 +62,26 @@ class Database(private val context: Context, private val name: String = DATABASE
         }!!
 
     /**
+     * Phone numbers blacklist.
+     */
+    var phoneBlacklist: List<String> by FilterListDelegate(TABLE_PHONE_BLACKLIST)
+
+    /**
+     * Phone numbers whitelist.
+     */
+    var phoneWhitelist: List<String> by FilterListDelegate(TABLE_PHONE_WHITELIST)
+
+    /**
+     * SMS text blacklist.
+     */
+    var textBlacklist: List<String> by FilterListDelegate(TABLE_TEXT_BLACKLIST)
+
+    /**
+     * SMS text whitelist.
+     */
+    var textWhitelist: List<String> by FilterListDelegate(TABLE_TEXT_WHITELIST)
+
+    /**
      * Returns last saved geolocation.
      */
     var lastLocation: GeoCoordinates?
@@ -76,34 +98,6 @@ class Database(private val context: Context, private val name: String = DATABASE
         }).also {
             log.debug("Updated last location to: $value")
         }
-
-    /**
-     * Phone numbers blacklist.
-     */
-    var phoneBlacklist: List<String>
-        get() = getFilterList(TABLE_PHONE_BLACKLIST)
-        set(value) = replaceFilterList(TABLE_PHONE_BLACKLIST, value)
-
-    /**
-     * Phone numbers whitelist.
-     */
-    var phoneWhitelist: List<String>
-        get() = getFilterList(TABLE_PHONE_WHITELIST)
-        set(value) = replaceFilterList(TABLE_PHONE_WHITELIST, value)
-
-    /**
-     * SMS text blacklist.
-     */
-    var textBlacklist: List<String>
-        get() = getFilterList(TABLE_TEXT_BLACKLIST)
-        set(value) = replaceFilterList(TABLE_TEXT_BLACKLIST, value)
-
-    /**
-     * SMS text whitelist.
-     */
-    var textWhitelist: List<String>
-        get() = getFilterList(TABLE_TEXT_WHITELIST)
-        set(value) = replaceFilterList(TABLE_TEXT_WHITELIST, value)
 
     /**
      * Returns last database modification time.
@@ -195,7 +189,7 @@ class Database(private val context: Context, private val name: String = DATABASE
         }
     }
 
-     /**
+    /**
      * Marks all events as read.
      */
     fun markAllEventsAsRead(read: Boolean) {
@@ -345,6 +339,17 @@ class Database(private val context: Context, private val name: String = DATABASE
                     processTime = getLong(COLUMN_PROCESS_TIME),
                     isRead = getBoolean(COLUMN_READ)
             )
+        }
+    }
+
+    private inner class FilterListDelegate(private val listName: String) : ReadWriteProperty<Database, List<String>> {
+
+        override fun getValue(thisRef: Database, property: KProperty<*>): List<String> {
+            return thisRef.getFilterList(listName)
+        }
+
+        override fun setValue(thisRef: Database, property: KProperty<*>, value: List<String>) {
+            thisRef.replaceFilterList(listName, value)
         }
     }
 
