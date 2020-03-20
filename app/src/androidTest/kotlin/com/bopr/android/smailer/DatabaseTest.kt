@@ -66,7 +66,13 @@ class DatabaseTest : BaseTest() {
 
     @Test
     fun testUpdate() {
-        database.events.add(PhoneEvent(phone = "1", startTime = 0, acceptor = "device", state = STATE_PENDING, isRead = false))
+        database.events.add(PhoneEvent(
+                phone = "1",
+                startTime = 0,
+                acceptor = "device",
+                state = STATE_PENDING,
+                isRead = false
+        ))
 
         assertEquals(1, database.events.size)
         database.events.first().run {
@@ -77,8 +83,13 @@ class DatabaseTest : BaseTest() {
             assertEquals(false, isRead)
         }
 
-        database.events.add(PhoneEvent(phone = "1", startTime = 0, acceptor = "device", state = STATE_PROCESSED, isRead = true))
-
+        assertTrue(database.events.add(PhoneEvent(
+                phone = "1",
+                startTime = 0,
+                acceptor = "device",
+                state = STATE_PROCESSED,
+                isRead = true
+        )))
         assertEquals(1, database.events.size)
         database.events.first().run {
             assertEquals("1", phone)
@@ -192,6 +203,8 @@ class DatabaseTest : BaseTest() {
     fun testGetSetList() {
         database.phoneBlacklist.addAll(setOf("A", "B", "C"))
 
+        assertEquals(setOf("A", "B", "C"), database.phoneBlacklist)
+        assertFalse(database.phoneBlacklist.add("A"))
         assertEquals(setOf("A", "B", "C"), database.phoneBlacklist)
     }
 

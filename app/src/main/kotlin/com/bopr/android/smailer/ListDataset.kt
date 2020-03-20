@@ -10,7 +10,7 @@ import com.bopr.android.smailer.util.database.values
 import com.bopr.android.smailer.util.strings
 
 class ListDataset(tableName: String, helper: SQLiteOpenHelper, modifications: MutableSet<String>)
-    : Dataset<String>(tableName, helper, modifications, false) {
+    : Dataset<String>(tableName, helper, modifications) {
 
     override val keyColumns = strings(COLUMN_VALUE)
 
@@ -26,5 +26,9 @@ class ListDataset(tableName: String, helper: SQLiteOpenHelper, modifications: Mu
         return values {
             put(COLUMN_VALUE, element)
         }
+    }
+
+    override fun update(values: ContentValues, element: String): Boolean {
+        return false /* cannot update all rows are unique */
     }
 }

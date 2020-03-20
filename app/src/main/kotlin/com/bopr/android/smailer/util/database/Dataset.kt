@@ -15,8 +15,7 @@ import org.slf4j.LoggerFactory
 abstract class Dataset<T>(
         protected val tableName: String,
         protected val helper: SQLiteOpenHelper,
-        protected val modifications: MutableSet<String>,
-        private val canUpdate: Boolean = true
+        protected val modifications: MutableSet<String>
 ) : MutableSet<T> {
 
     private val log = LoggerFactory.getLogger("Database")
@@ -35,22 +34,13 @@ abstract class Dataset<T>(
 
     override fun add(element: T): Boolean {
         val values = values(element)
-        return write {
-            if (insertWithOnConflict(tableName, null, values, CONFLICT_IGNORE) == -1L) {
-                canUpdate && update(tableName, values, keyClause, key(element)) != 0
-            } else {
-                log.debug("Inserted: $values")
-                true
-            }
-        }
+        return insert(values) || update(values, element)
     }
 
     override fun addAll(elements: Collection<T>): Boolean {
         var affected = 0
-        write {
-            for (e in elements) {
-                if (add(e)) affected++
-            }
+        for (e in elements) {
+            if (add(e)) affected++
         }
 
         log.debug("$affected items(s) added")
@@ -65,10 +55,8 @@ abstract class Dataset<T>(
 
     override fun removeAll(elements: Collection<T>): Boolean {
         var affected = 0
-        write {
-            for (e in elements) {
-                if (remove(e)) affected++
-            }
+        for (e in elements) {
+            if (remove(e)) affected++
         }
 
         log.debug("$affected items(s) removed")
@@ -77,10 +65,8 @@ abstract class Dataset<T>(
 
     override fun retainAll(elements: Collection<T>): Boolean {
         var affected = 0
-        write {
-            for (e in rowSet) {
-                if (!elements.contains(e) && remove(e)) affected++
-            }
+        for (e in rowSet) {
+            if (!elements.contains(e) && remove(e)) affected++
         }
 
         log.debug("$affected items(s) removed")
@@ -149,6 +135,26 @@ abstract class Dataset<T>(
     protected open fun query(): Cursor {
         return read {
             query(tableName)
+        }
+    }
+
+    protected open fun insert(values: ContentValues): Boolean {
+        return write {
+            insertWithOnConflict(tableName, null, values, CONFLICT_IGNORE) != -1L
+        }.also {
+            if (it) {
+                log.debug("Inserted: $values")
+            }
+        }
+    }
+
+    protected open fun update(values: ContentValues, element: T): Boolean {
+        return write {
+            update(tableName, values, keyClause, key(element)) != 0
+        }.also {
+            if (it) {
+                log.debug("Updated: $values")
+            }
         }
     }
 
