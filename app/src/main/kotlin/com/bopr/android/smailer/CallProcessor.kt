@@ -56,7 +56,7 @@ class CallProcessor(
                 }
             }
 
-            database.commit { putEvent(event) }
+            database.commit { events.add(event) }
         }
     }
 
@@ -65,19 +65,19 @@ class CallProcessor(
      */
     fun processPending() {
         database.use {
-            val events = database.pendingEvents
-            if (events.isEmpty()) {
+            val pendingEvents = database.events.filterPending
+            if (pendingEvents.isEmpty()) {
                 log.debug("No pending events")
             } else {
-                log.debug("Processing ${events.size} pending event(s)")
+                log.debug("Processing ${pendingEvents.size} pending event(s)")
 
-                database.commit {
-                    if (startMailSession()) {
-                        for (event in events) {
+                if (startMailSession()) {
+                    database.commit {
+                        for (event in pendingEvents) {
                             event.processTime = currentTimeMillis()
                             if (sendMail(event)) {
                                 event.state = STATE_PROCESSED
-                                putEvent(event)
+                                events.add(event)
                             }
                         }
                     }

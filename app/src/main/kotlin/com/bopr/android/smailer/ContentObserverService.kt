@@ -12,10 +12,10 @@ import android.os.IBinder
 import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
 import com.bopr.android.smailer.Notifications.Companion.SERVICE_NOTIFICATION_ID
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
+import com.bopr.android.smailer.util.database.getLong
+import com.bopr.android.smailer.util.database.getString
+import com.bopr.android.smailer.util.database.useFirst
 import com.bopr.android.smailer.util.deviceName
-import com.bopr.android.smailer.util.getLong
-import com.bopr.android.smailer.util.getString
-import com.bopr.android.smailer.util.useFirst
 import org.slf4j.LoggerFactory
 
 /**

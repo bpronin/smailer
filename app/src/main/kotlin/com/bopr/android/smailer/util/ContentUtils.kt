@@ -11,6 +11,8 @@ import android.provider.ContactsContract.CommonDataKinds.Phone
 import android.provider.ContactsContract.Contacts
 import android.provider.ContactsContract.PhoneLookup
 import androidx.annotation.RequiresPermission
+import com.bopr.android.smailer.util.database.getInt
+import com.bopr.android.smailer.util.database.getString
 
 @RequiresPermission(READ_CONTACTS)
 fun contactName(context: Context, phone: String): String? {

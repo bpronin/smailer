@@ -1,9 +1,10 @@
-package com.bopr.android.smailer.util
+package com.bopr.android.smailer.util.database
 
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import com.bopr.android.smailer.util.strings
 
 /**
  * Database utilities.
@@ -106,10 +107,10 @@ fun Cursor.getBoolean(columnName: String): Boolean {
     return getInt(columnName) != 0
 }
 
-inline fun <T> Cursor.useFirst(action: Cursor.() -> T): T? {
+inline fun <T> Cursor.useFirst(action: Cursor.() -> T): T {
     return use {
         moveToFirst()
-        if (!isAfterLast) action() else null
+        if (!isAfterLast) action() else throw NoSuchElementException("Row set is empty.")
     }
 }
 
@@ -131,4 +132,9 @@ inline fun <T> Cursor.useToList(get: Cursor.() -> T): List<T> {
     return list
 }
 
+fun <T> Cursor.iterator(get: (Cursor) -> T) = CursorIterator<T>(this, get)
+
+fun <T> Cursor.mutableIterator(get: (Cursor) -> T, remove: (T) -> Boolean) = MutableCursorIterator<T>(this, get, remove)
+
 inline fun values(action: ContentValues.() -> Unit): ContentValues = ContentValues().apply(action)
+

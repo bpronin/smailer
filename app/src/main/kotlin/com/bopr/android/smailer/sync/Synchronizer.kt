@@ -93,7 +93,7 @@ internal class Synchronizer(context: Context,
     }
 
     private fun getLocalData(): SyncData {
-        return database.batchRead {
+        return database.run {
             SyncData(
                     phoneBlacklist = phoneBlacklist,
                     phoneWhitelist = phoneWhitelist,
@@ -106,8 +106,8 @@ internal class Synchronizer(context: Context,
 
     private fun putLocalData(data: SyncData) {
         database.commit(DB_FLAG_SYNCING) {
-            batchWrite {
-                events = data.events.map(::dataToEvent)
+            batch {
+                events.replaceAll(data.events.map(::dataToEvent))
                 phoneBlacklist = data.phoneBlacklist
                 phoneWhitelist = data.phoneWhitelist
                 textBlacklist = data.textBlacklist

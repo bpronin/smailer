@@ -6,9 +6,9 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteDatabase.CONFLICT_IGNORE
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.sync.SyncWorker.Companion.requestDataSync
-import com.bopr.android.smailer.util.*
+import com.bopr.android.smailer.util.database.*
+import com.bopr.android.smailer.util.strings
 import org.slf4j.LoggerFactory
 import java.io.Closeable
 import java.lang.System.currentTimeMillis
@@ -28,38 +28,7 @@ class Database(private val context: Context, private val name: String = DATABASE
     /**
      * Returns all phone events.
      */
-    var events: List<PhoneEvent>
-        get() = helper.readableDatabase.query(
-                table = TABLE_EVENTS,
-                order = "$COLUMN_START_TIME DESC"
-        ).useToList(::readEvent)
-        set(value) = helper.writableDatabase.batch {
-            clearEvents()
-            putEvents(value)
-        }
-
-    /**
-     * Returns pending phone events.
-     */
-    val pendingEvents: List<PhoneEvent>
-        get() = helper.readableDatabase.query(
-                table = TABLE_EVENTS,
-                selection = "$COLUMN_STATE=?",
-                selectionArgs = strings(STATE_PENDING),
-                order = "$COLUMN_START_TIME DESC"
-        ).useToList(::readEvent)
-
-    /**
-     * Returns count of unread phone events.
-     */
-    val unreadEventsCount: Long
-        get() = helper.readableDatabase.query(
-                table = TABLE_EVENTS,
-                projection = strings(COLUMN_COUNT),
-                selection = "$COLUMN_READ<>1"
-        ).useFirst {
-            getLong(0)
-        }!!
+    val events = EventsDataset(helper, modifiedTables)
 
     /**
      * Phone numbers blacklist.
@@ -106,102 +75,12 @@ class Database(private val context: Context, private val name: String = DATABASE
     var updateTime: Long
         get() = querySystemTable(COLUMN_UPDATE_TIME).useFirst {
             getLong(COLUMN_UPDATE_TIME)
-        }!!
+        }
         internal set(value) = updateSystemTable(values {
             put(COLUMN_UPDATE_TIME, value)
         }).also {
             log.debug("Update time: %tF %tT".format(value, value))
         }
-
-    /**
-     * Puts event to database.
-     */
-    fun putEvent(event: PhoneEvent) {
-        val values = values {
-            put(COLUMN_PHONE, event.phone)
-            put(COLUMN_ACCEPTOR, event.acceptor)
-            put(COLUMN_START_TIME, event.startTime)
-            put(COLUMN_STATE, event.state)
-            put(COLUMN_PROCESS_STATUS, event.processStatus)
-            put(COLUMN_PROCESS_TIME, event.processTime)
-            put(COLUMN_IS_INCOMING, event.isIncoming)
-            put(COLUMN_IS_MISSED, event.isMissed)
-            put(COLUMN_END_TIME, event.endTime)
-            put(COLUMN_TEXT, event.text)
-            put(COLUMN_DETAILS, event.details)
-            put(COLUMN_READ, event.isRead)
-            event.location?.let {
-                put(COLUMN_LATITUDE, it.latitude)
-                put(COLUMN_LONGITUDE, it.longitude)
-            }
-        }
-
-        helper.writableDatabase.run {
-            if (insertWithOnConflict(TABLE_EVENTS, null, values, CONFLICT_IGNORE) == -1L) {
-                update(TABLE_EVENTS, values, "$COLUMN_START_TIME=? AND $COLUMN_ACCEPTOR=?",
-                        strings(event.startTime, event.acceptor))
-
-                log.debug("Updated: $values")
-            } else {
-                log.debug("Inserted: $values")
-            }
-        }
-        modifiedTables.add(TABLE_EVENTS)
-    }
-
-    /**
-     * Puts specified events to database.
-     */
-    fun putEvents(events: Collection<PhoneEvent>) {
-        helper.writableDatabase.batch {
-            for (event in events) {
-                putEvent(event)
-            }
-        }
-    }
-
-    /**
-     * Removes specified events from database.
-     */
-    fun deleteEvents(events: Collection<PhoneEvent>) {
-        helper.writableDatabase.batch {
-            for (event in events) {
-                delete(TABLE_EVENTS, "$COLUMN_ACCEPTOR=? AND $COLUMN_START_TIME=?",
-                        strings(event.acceptor, event.startTime))
-            }
-        }
-        modifiedTables.add(TABLE_EVENTS)
-
-        log.debug("${events.size} event(s) removed")
-    }
-
-    /**
-     * Removes all events from database.
-     */
-    fun clearEvents() {
-        val affected = helper.writableDatabase.batch {
-            delete(TABLE_EVENTS, null, null)
-        }
-        if (affected != 0) {
-            modifiedTables.add(TABLE_EVENTS)
-
-            log.debug("Removed all from $TABLE_EVENTS")
-        }
-    }
-
-    /**
-     * Marks all events as read.
-     */
-    fun markAllEventsAsRead(read: Boolean) {
-        helper.writableDatabase.batch {
-            update(TABLE_EVENTS, values {
-                put(COLUMN_READ, read)
-            })
-        }
-        modifiedTables.add(TABLE_EVENTS)
-
-        log.debug("All events marked as read")
-    }
 
     /**
      * Returns black/white list.
@@ -259,16 +138,9 @@ class Database(private val context: Context, private val name: String = DATABASE
     }
 
     /**
-     * Performs read transaction.
-     */
-    fun <T> batchRead(action: Database.() -> T): T {
-        return helper.readableDatabase.batch { this@Database.action() }
-    }
-
-    /**
      * Performs write transaction. Rollback it when failed.
      */
-    fun batchWrite(action: Database.() -> Unit) {
+    fun batch(action: Database.() -> Unit) {
         helper.writableDatabase.batch { this@Database.action() }
     }
 
@@ -319,29 +191,6 @@ class Database(private val context: Context, private val name: String = DATABASE
         helper.writableDatabase.update(TABLE_SYSTEM, values, "$COLUMN_ID=0")
     }
 
-    private fun readEvent(cursor: Cursor): PhoneEvent {
-        cursor.run {
-            return PhoneEvent(
-                    phone = getString(COLUMN_PHONE)!!,
-                    isIncoming = getBoolean(COLUMN_IS_INCOMING),
-                    startTime = getLong(COLUMN_START_TIME),
-                    endTime = getLong(COLUMN_END_TIME),
-                    isMissed = getBoolean(COLUMN_IS_MISSED),
-                    text = getString(COLUMN_TEXT),
-                    location = GeoCoordinates(
-                            getDouble(COLUMN_LATITUDE),
-                            getDouble(COLUMN_LONGITUDE)
-                    ),
-                    details = getString(COLUMN_DETAILS),
-                    state = getInt(COLUMN_STATE),
-                    acceptor = getString(COLUMN_ACCEPTOR)!!,
-                    processStatus = getInt(COLUMN_PROCESS_STATUS),
-                    processTime = getLong(COLUMN_PROCESS_TIME),
-                    isRead = getBoolean(COLUMN_READ)
-            )
-        }
-    }
-
     private inner class FilterListDelegate(private val listName: String) : ReadWriteProperty<Database, List<String>> {
 
         override fun getValue(thisRef: Database, property: KProperty<*>): List<String> {
@@ -353,7 +202,7 @@ class Database(private val context: Context, private val name: String = DATABASE
         }
     }
 
-    private inner class DbHelper(context: Context) : SQLiteOpenHelper(context, name, null, DB_VERSION) {
+    inner class DbHelper(context: Context) : SQLiteOpenHelper(context, name, null, DB_VERSION) {
 
         override fun onCreate(db: SQLiteDatabase) {
             db.batch {
@@ -453,6 +302,7 @@ class Database(private val context: Context, private val name: String = DATABASE
                 "PRIMARY KEY (" + COLUMN_START_TIME + ", " + COLUMN_ACCEPTOR + ")" +
                 ")"
 
+        @Suppress("FunctionName")
         private fun SQL_CREATE_LIST(tableName: String) = "CREATE TABLE " + tableName + " (" +
                 COLUMN_VALUE + " TEXT(256) NOT NULL PRIMARY KEY" +
                 ")"

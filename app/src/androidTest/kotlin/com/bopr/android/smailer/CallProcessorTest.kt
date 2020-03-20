@@ -1,5 +1,6 @@
 package com.bopr.android.smailer
 
+import android.Manifest.permission.READ_CONTACTS
 import android.accounts.Account
 import android.accounts.AccountManager
 import android.content.Context
@@ -8,6 +9,7 @@ import android.content.Context.CONNECTIVITY_SERVICE
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import androidx.test.filters.SmallTest
+import androidx.test.rule.GrantPermissionRule
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
@@ -26,6 +28,7 @@ import com.nhaarman.mockitokotlin2.*
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.ArgumentMatchers.anyString
@@ -39,6 +42,10 @@ import java.lang.System.currentTimeMillis
  */
 @SmallTest
 class CallProcessorTest : BaseTest() {
+
+    @Rule
+    @JvmField
+    var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(READ_CONTACTS)
 
     private lateinit var database: Database
     private lateinit var context: Context
@@ -130,7 +137,7 @@ class CallProcessorTest : BaseTest() {
         verify(notifications, never()).showRecipientsError(anyInt())
         verify(notifications, never()).showGoogleAccessError()
 
-        val savedEvent = database.events.first()!!
+        val savedEvent = database.events.first()
 
         assertEquals(event.acceptor, savedEvent.acceptor)
         assertEquals(event.startTime, savedEvent.startTime)
@@ -155,7 +162,7 @@ class CallProcessorTest : BaseTest() {
         verify(notifications, never()).showRecipientsError(anyInt())
         verify(notifications, never()).showGoogleAccessError()
 
-        val savedEvent = database.events.first()!!
+        val savedEvent = database.events.first()
 
         assertEquals(STATE_IGNORED, savedEvent.state)
         assertEquals(STATUS_TRIGGER_OFF, savedEvent.processStatus)
@@ -175,7 +182,7 @@ class CallProcessorTest : BaseTest() {
         verify(transport, never()).send(any())
         verify(notifications).showSenderAccountError()
 
-        val savedEvent = database.events.first()!!
+        val savedEvent = database.events.first()
 
         assertEquals(STATE_PENDING, savedEvent.state)
         assertEquals(STATUS_ACCEPTED, savedEvent.processStatus)
@@ -194,7 +201,7 @@ class CallProcessorTest : BaseTest() {
         verify(transport, never()).send(any())
         verify(notifications).showRecipientsError(eq(R.string.no_recipients_specified))
 
-        val savedEvent = database.events.first()!!
+        val savedEvent = database.events.first()
 
         assertEquals(STATE_PENDING, savedEvent.state)
         assertEquals(STATUS_ACCEPTED, savedEvent.processStatus)
@@ -216,7 +223,7 @@ class CallProcessorTest : BaseTest() {
         verify(notifications, never()).showRecipientsError(anyInt())
         verify(notifications, never()).showGoogleAccessError()
 
-        val savedEvent = database.events.first()!!
+        val savedEvent = database.events.first()
 
         assertEquals(STATE_PENDING, savedEvent.state)
         assertEquals(STATUS_ACCEPTED, savedEvent.processStatus)
@@ -254,8 +261,8 @@ class CallProcessorTest : BaseTest() {
         processor.process(testingEvent())
         processor.process(testingEvent())
 
-        assertEquals(3, database.events.count())
-        assertEquals(3, database.pendingEvents.count())
+        assertEquals(3, database.events.size)
+        assertEquals(3, database.events.filterPending.size)
         verify(notifications, never()).showSenderAccountError()
         verify(notifications, never()).showRecipientsError(anyInt())
         verify(notifications, never()).showGoogleAccessError()
@@ -263,8 +270,8 @@ class CallProcessorTest : BaseTest() {
         /* try resend with disabled transport */
         processor.processPending()
 
-        assertEquals(3, database.events.count())
-        assertEquals(3, database.pendingEvents.count())
+        assertEquals(3, database.events.size)
+        assertEquals(3, database.events.filterPending.size)
         verify(notifications, never()).showSenderAccountError()
         verify(notifications, never()).showRecipientsError(anyInt())
         verify(notifications, never()).showGoogleAccessError()
@@ -274,8 +281,8 @@ class CallProcessorTest : BaseTest() {
 
         processor.processPending()
 
-        assertEquals(3, database.events.count())
-        assertEquals(0, database.pendingEvents.count())
+        assertEquals(3, database.events.size)
+        assertEquals(0, database.events.filterPending.size)
         verify(notifications, never()).showSenderAccountError()
         verify(notifications, never()).showRecipientsError(anyInt())
         verify(notifications, never()).showGoogleAccessError()

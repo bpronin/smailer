@@ -168,18 +168,18 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
 
         if (!item.isRead) {
             item.isRead = true
-            database.putEvent(item) /* do not fire events */
+            database.events.add(item) /* do not fire broadcast here */
         }
     }
 
     private fun onClearData() {
         ConfirmDialog(getString(R.string.ask_clear_history)) {
-            database.commit { clearEvents() }
+            database.commit { events.clear() }
         }.show(this)
     }
 
     private fun onMarkAllAsRead() {
-        database.commit { markAllEventsAsRead(true) }
+        database.commit { events.markAllAsRead(true) }
         showToast(R.string.operation_complete)
     }
 
@@ -194,21 +194,21 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
     private fun onMarkAsIgnored() {
         getSelectedItem()?.let {
             it.state = STATE_IGNORED
-            database.commit { putEvent(it) }
+            database.commit { events.add(it) }
         }
     }
 
     private fun onRemoveSelected() {
-        val events = listAdapter.getItemsAt(selectedItemPosition)
+        val selectedEvents = listAdapter.getItemsAt(selectedItemPosition)
 
-        database.commit { deleteEvents(events) }
+        database.commit { events.removeAll(selectedEvents) }
 
         Snackbar.make(recycler,
-                        getQuantityString(R.plurals.items_removed, events.size),
+                        getQuantityString(R.plurals.items_removed, selectedEvents.size),
                         Snackbar.LENGTH_LONG)
                 .setActionTextColor(ContextCompat.getColor(requireContext(), R.color.colorAccentText))
                 .setAction(R.string.undo) {
-                    database.commit { putEvents(events) }
+                    database.commit { events.addAll(selectedEvents) }
                 }
                 .show()
     }

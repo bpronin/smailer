@@ -31,36 +31,37 @@ class DatabaseTest : BaseTest() {
     }
 
     @Test
-    fun testPutGet() {
-        database.apply {
-            putEvent(PhoneEvent("1", true, 1000L, 0L, true, null, null, "Test 1", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
-            putEvent(PhoneEvent("2", false, 2000L, 0L, false, null, null, null, STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
-            putEvent(PhoneEvent("3", true, 3000L, 0L, false, null, null, null, STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
-            putEvent(PhoneEvent("4", false, 4000L, 0L, false, null, null, null, STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
-            putEvent(PhoneEvent("5", true, 5000L, 0L, true, null, null, null, STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
-            putEvent(PhoneEvent("6", true, 6000L, 7000L, false, null, null, "Test 1", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
-            putEvent(PhoneEvent("7", false, 7000L, 0L, false, null, null, "Test 2", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
-            putEvent(PhoneEvent("8", true, 8000L, 0L, false, null, null, "Test 3", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
-            putEvent(PhoneEvent("9", false, 9000L, 0L, false, null, null, "Test 4", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
-            putEvent(PhoneEvent("10", true, 10000L, 20000L, false, "SMS text", GeoCoordinates(10.5, 20.5), "Test 10", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
+    fun testAddGet() {
+        val events = database.events
+
+        database.batch {
+            events.add(PhoneEvent("1", true, 1000L, 0L, true, null, null, "Test 1", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
+            events.add(PhoneEvent("2", false, 2000L, 0L, false, null, null, null, STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
+            events.add(PhoneEvent("3", true, 3000L, 0L, false, null, null, null, STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
+            events.add(PhoneEvent("4", false, 4000L, 0L, false, null, null, null, STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
+            events.add(PhoneEvent("5", true, 5000L, 0L, true, null, null, null, STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
+            events.add(PhoneEvent("6", true, 6000L, 7000L, false, null, null, "Test 1", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
+            events.add(PhoneEvent("7", false, 7000L, 0L, false, null, null, "Test 2", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
+            events.add(PhoneEvent("8", true, 8000L, 0L, false, null, null, "Test 3", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
+            events.add(PhoneEvent("9", false, 9000L, 0L, false, null, null, "Test 4", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
+            events.add(PhoneEvent("10", true, 10000L, 20000L, false, "SMS text", GeoCoordinates(10.5, 20.5), "Test 10", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
         }
-        val items = database.events.list()
 
-        assertEquals(10, items.size)
+        assertEquals(10, events.size)
 
-        val message = items[0] /* descending order so it should be the last */
+        val event = events.first() /* descending order so it should be the last */
 
-        assertEquals(STATE_PENDING, message.state)
-        assertEquals("10", message.phone)
-        assertTrue(message.isIncoming)
-        assertEquals(10000L, message.startTime)
-        assertEquals(20000L, message.endTime!!)
-        assertFalse(message.isMissed)
-        assertTrue(message.isSms)
-        assertEquals(10.5, message.location!!.latitude, 0.1)
-        assertEquals(20.5, message.location!!.longitude, 0.1)
-        assertEquals("SMS text", message.text)
-        assertEquals("Test 10", message.details)
+        assertEquals(STATE_PENDING, event.state)
+        assertEquals("10", event.phone)
+        assertTrue(event.isIncoming)
+        assertEquals(10000L, event.startTime)
+        assertEquals(20000L, event.endTime!!)
+        assertFalse(event.isMissed)
+        assertTrue(event.isSms)
+        assertEquals(10.5, event.location!!.latitude, 0.1)
+        assertEquals(20.5, event.location!!.longitude, 0.1)
+        assertEquals("SMS text", event.text)
+        assertEquals("Test 10", event.details)
     }
 
     @Test
@@ -78,12 +79,14 @@ class DatabaseTest : BaseTest() {
                 acceptor = "device",
                 processStatus = STATUS_ACCEPTED,
                 isRead = false)
-        database.putEvent(event)
-        var items = database.events.list()
 
-        assertEquals(1, items.size)
+        val events = database.events
 
-        event = items[0]
+        events.add(event)
+
+        assertEquals(1, events.size)
+
+        event = events.first()
 
         assertEquals(STATE_PENDING, event.state)
         assertEquals("1", event.phone)
@@ -107,13 +110,11 @@ class DatabaseTest : BaseTest() {
                 text = "New text",
                 details = "New details"
         )
-        database.putEvent(event)
+        events.add(event)
 
-        items = database.events.list()
+        assertEquals(1, events.size)
 
-        assertEquals(1, items.size)
-
-        event = items[0]
+        event = events.first()
 
         assertEquals(STATE_PENDING, event.state)
         assertEquals("2", event.phone)
@@ -132,23 +133,24 @@ class DatabaseTest : BaseTest() {
      */
     @Test
     fun testClear() {
-        database.apply {
-            putEvent(PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", GeoCoordinates(10.5, 20.5), "Test 1", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
-            putEvent(PhoneEvent("2", false, 2000L, 0L, false, null, null, null, STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
-            putEvent(PhoneEvent("3", true, 3000L, 0L, false, null, null, null, STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
-            putEvent(PhoneEvent("4", false, 4000L, 0L, false, null, null, null, STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
-            putEvent(PhoneEvent("5", true, 5000L, 0L, true, null, null, null, STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
-            putEvent(PhoneEvent("6", true, 6000L, 7000L, false, null, null, "Test 1", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
-            putEvent(PhoneEvent("7", false, 7000L, 0L, false, null, null, "Test 2", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
-            putEvent(PhoneEvent("8", true, 8000L, 0L, false, null, null, "Test 3", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
-            putEvent(PhoneEvent("9", false, 9000L, 0L, false, null, null, "Test 4", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
-            putEvent(PhoneEvent("10", true, 10000L, 0L, true, null, null, "Test 5", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
+        val events = database.events
+        database.batch {
+            events.add(PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", GeoCoordinates(10.5, 20.5), "Test 1", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
+            events.add(PhoneEvent("2", false, 2000L, 0L, false, null, null, null, STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
+            events.add(PhoneEvent("3", true, 3000L, 0L, false, null, null, null, STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
+            events.add(PhoneEvent("4", false, 4000L, 0L, false, null, null, null, STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
+            events.add(PhoneEvent("5", true, 5000L, 0L, true, null, null, null, STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
+            events.add(PhoneEvent("6", true, 6000L, 7000L, false, null, null, "Test 1", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
+            events.add(PhoneEvent("7", false, 7000L, 0L, false, null, null, "Test 2", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
+            events.add(PhoneEvent("8", true, 8000L, 0L, false, null, null, "Test 3", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
+            events.add(PhoneEvent("9", false, 9000L, 0L, false, null, null, "Test 4", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
+            events.add(PhoneEvent("10", true, 10000L, 0L, true, null, null, "Test 5", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
         }
-        assertEquals(10, database.events.count())
+        assertEquals(10, events.size)
 
-        database.clearEvents()
+        events.clear()
 
-        assertEquals(0, database.events.count())
+        assertEquals(0, events.size)
     }
 
     @Test
@@ -162,37 +164,40 @@ class DatabaseTest : BaseTest() {
 
     @Test
     fun testGetUnsentMessages() {
-        database.apply {
-            putEvent(PhoneEvent("1", true, 1000L, 0L, true, null, null, "Test 1", STATE_PROCESSED, "device", STATUS_ACCEPTED, isRead = false))
-            putEvent(PhoneEvent("2", false, 2000L, 0L, false, null, null, null, STATE_PROCESSED, "device", STATUS_ACCEPTED, isRead = false))
-            putEvent(PhoneEvent("3", true, 3000L, 0L, false, null, null, null, STATE_PROCESSED, "device", STATUS_ACCEPTED, isRead = false))
-            putEvent(PhoneEvent("4", false, 4000L, 0L, false, null, null, null, STATE_IGNORED, "device", STATUS_ACCEPTED, isRead = false))
-            putEvent(PhoneEvent("5", true, 5000L, 0L, true, null, null, null, STATE_IGNORED, "device", STATUS_ACCEPTED, isRead = false))
-            putEvent(PhoneEvent("6", true, 6000L, 7000L, false, null, null, "Test 1", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
-            putEvent(PhoneEvent("7", false, 7000L, 0L, false, null, null, "Test 2", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
-            putEvent(PhoneEvent("8", true, 8000L, 0L, false, null, null, "Test 3", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
-            putEvent(PhoneEvent("9", false, 9000L, 0L, false, null, null, "Test 4", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
-            putEvent(PhoneEvent("10", true, 10000L, 20000L, false, null, null, "Test 10", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
+        val events = database.events
+        database.batch {
+            events.add(PhoneEvent("1", true, 1000L, 0L, true, null, null, "Test 1", STATE_PROCESSED, "device", STATUS_ACCEPTED, isRead = false))
+            events.add(PhoneEvent("2", false, 2000L, 0L, false, null, null, null, STATE_PROCESSED, "device", STATUS_ACCEPTED, isRead = false))
+            events.add(PhoneEvent("3", true, 3000L, 0L, false, null, null, null, STATE_PROCESSED, "device", STATUS_ACCEPTED, isRead = false))
+            events.add(PhoneEvent("4", false, 4000L, 0L, false, null, null, null, STATE_IGNORED, "device", STATUS_ACCEPTED, isRead = false))
+            events.add(PhoneEvent("5", true, 5000L, 0L, true, null, null, null, STATE_IGNORED, "device", STATUS_ACCEPTED, isRead = false))
+            events.add(PhoneEvent("6", true, 6000L, 7000L, false, null, null, "Test 1", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
+            events.add(PhoneEvent("7", false, 7000L, 0L, false, null, null, "Test 2", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
+            events.add(PhoneEvent("8", true, 8000L, 0L, false, null, null, "Test 3", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
+            events.add(PhoneEvent("9", false, 9000L, 0L, false, null, null, "Test 4", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
+            events.add(PhoneEvent("10", true, 10000L, 20000L, false, null, null, "Test 10", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
         }
-        val items = database.pendingEvents.list()
+        val pendingEvents = events.filterPending
 
-        assertEquals(5, items.size)
+        assertEquals(5, pendingEvents.size)
 
-        val details = items[0].details /* descending order so it should be the last */
+        val details = pendingEvents.first().details /* descending order so it should be the last */
 
         assertEquals("Test 10", details)
     }
 
     @Test
     fun testGetTransform() {
-        database.apply {
-            putEvent(PhoneEvent(phone = "1", startTime = 0, acceptor = "device"))
-            putEvent(PhoneEvent(phone = "2", startTime = 1, acceptor = "device"))
-            putEvent(PhoneEvent(phone = "3", startTime = 2, acceptor = "device"))
-            putEvent(PhoneEvent(phone = "4", startTime = 3, acceptor = "device"))
-            putEvent(PhoneEvent(phone = "5", startTime = 4, acceptor = "device"))
+        val events = database.events
+        database.batch {
+            events.add(PhoneEvent(phone = "1", startTime = 0, acceptor = "device"))
+            events.add(PhoneEvent(phone = "2", startTime = 1, acceptor = "device"))
+            events.add(PhoneEvent(phone = "3", startTime = 2, acceptor = "device"))
+            events.add(PhoneEvent(phone = "4", startTime = 3, acceptor = "device"))
+            events.add(PhoneEvent(phone = "5", startTime = 4, acceptor = "device"))
         }
-        val phones = database.events.map { it.phone }
+
+        val phones = events.map { it.phone }
 
         assertEquals(5, phones.size)
 

@@ -4,9 +4,9 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
+import com.bopr.android.smailer.util.database.*
 import org.junit.After
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
@@ -203,6 +203,107 @@ class DbUtilTest : BaseTest() {
 
             assertTrue(values.isEmpty())
             assertEquals(setOf("TABLE_1"), getTables()) /* ensure temp table is removed */
+        }
+    }
+
+    @Test
+    fun testCursorIterator() {
+        helper.writableDatabase.apply {
+            execSQL("CREATE TABLE TABLE_1 (" +
+                    "ID INTEGER PRIMARY KEY, " +
+                    "COLUMN_1 TEXT(25)" +
+                    ")")
+            insert("TABLE_1", null, values { put("ID", 10); put("COLUMN_1", "A") })
+            insert("TABLE_1", null, values { put("ID", 11); put("COLUMN_1", "B") })
+            insert("TABLE_1", null, values { put("ID", 12); put("COLUMN_1", "C") })
+
+            val cursor = query("TABLE_1")
+            val iterator = CursorIterator(cursor) { it.getString("COLUMN_1") }
+
+            assertEquals(listOf("A", "B", "C"), iterator.asSequence().toList())
+            assertThrows(IllegalStateException::class.java) { /* must be closed */
+                cursor.moveToFirst()
+            }
+        }
+    }
+
+    @Test
+    fun testCursorIteratorBreak() {
+        helper.writableDatabase.apply {
+            execSQL("CREATE TABLE TABLE_1 (" +
+                    "ID INTEGER PRIMARY KEY, " +
+                    "COLUMN_1 TEXT(25)" +
+                    ")")
+            insert("TABLE_1", null, values { put("ID", 10); put("COLUMN_1", "A") })
+            insert("TABLE_1", null, values { put("ID", 11); put("COLUMN_1", "B") })
+            insert("TABLE_1", null, values { put("ID", 12); put("COLUMN_1", "C") })
+
+            val cursor = query("TABLE_1")
+
+            cursor.iterator { it.getString("COLUMN_1") }.use {
+                while (it.hasNext()) {
+                    val s = it.next()
+                    if (s == "B") break
+                }
+            }
+
+            assertThrows(IllegalStateException::class.java) { /* must be closed */
+                cursor.moveToFirst()
+            }
+        }
+    }
+
+    @Test
+    fun testCursorIteratorEmpty() {
+        helper.writableDatabase.apply {
+            execSQL("CREATE TABLE TABLE_1 (" +
+                    "ID INTEGER PRIMARY KEY, " +
+                    "COLUMN_1 TEXT(25)" +
+                    ")")
+
+            val cursor = query("TABLE_1")
+
+            val iterator = cursor.iterator { it.getString("COLUMN_1") }
+
+            assertEquals(emptyList<String>(), iterator.asSequence().toList())
+            /* NOTE: if cursor is empty and closed exception won't be thrown when we access it */
+        }
+    }
+
+    @Test
+    fun testMutableCursorIterator() {
+        helper.writableDatabase.apply {
+            execSQL("CREATE TABLE TABLE_1 (" +
+                    "ID INTEGER PRIMARY KEY, " +
+                    "COLUMN_1 TEXT(25)" +
+                    ")")
+            insert("TABLE_1", null, values { put("ID", 10); put("COLUMN_1", "A") })
+            insert("TABLE_1", null, values { put("ID", 11); put("COLUMN_1", "B") })
+            insert("TABLE_1", null, values { put("ID", 12); put("COLUMN_1", "C") })
+
+            val cursor = query("TABLE_1")
+
+            val iterator = cursor.mutableIterator(
+                    get = {
+                        it.getString("COLUMN_1")
+                    },
+                    remove = {
+                        delete("TABLE_1", "COLUMN_1='$it'", null)
+                        true
+                    }
+            )
+
+            while (iterator.hasNext()) {
+                if (iterator.next() == "B") {
+                    iterator.remove()
+                }
+            }
+
+            assertThrows(IllegalStateException::class.java) {  /* must be closed */
+                cursor.moveToFirst()
+            }
+
+            assertEquals(listOf("A", "C"), query("TABLE_1").useToList { getString("COLUMN_1") })
         }
     }
 

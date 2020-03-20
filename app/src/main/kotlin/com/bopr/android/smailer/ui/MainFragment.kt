@@ -117,7 +117,7 @@ class MainFragment : BasePreferenceFragment() {
         val preference = requirePreference("history")
         updateSummary(preference,
                 getQuantityString(R.plurals.new_history_items, R.string.new_history_items_zero,
-                        database.unreadEventsCount), SUMMARY_STYLE_DEFAULT)
+                        database.events.unreadCount), SUMMARY_STYLE_DEFAULT)
     }
 
     private fun updateRemoteControlPreferenceView() {
