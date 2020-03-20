@@ -24,11 +24,6 @@ import com.bopr.android.smailer.util.database.*
 import com.bopr.android.smailer.util.strings
 import org.slf4j.LoggerFactory
 
-/**
- * Convenience [Cursor] wrapper.
- *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
- */
 class EventsDataset(helper: SQLiteOpenHelper, modifications: MutableSet<String>)
     : Dataset<PhoneEvent>(TABLE_EVENTS, helper, modifications) {
 
@@ -81,19 +76,19 @@ class EventsDataset(helper: SQLiteOpenHelper, modifications: MutableSet<String>)
     override fun get(cursor: Cursor): PhoneEvent {
         return cursor.run {
             PhoneEvent(
-                    phone = getString(COLUMN_PHONE)!!,
+                    phone = getString(COLUMN_PHONE),
                     isIncoming = getBoolean(COLUMN_IS_INCOMING),
                     startTime = getLong(COLUMN_START_TIME),
                     endTime = getLongOrNull(COLUMN_END_TIME),
                     isMissed = getBoolean(COLUMN_IS_MISSED),
-                    text = getString(COLUMN_TEXT),
+                    text = getStringOrNull(COLUMN_TEXT),
                     location = coordinatesOf(
                             getDoubleOrNull(COLUMN_LATITUDE),
                             getDoubleOrNull(COLUMN_LONGITUDE)
                     ),
-                    details = getString(COLUMN_DETAILS),
+                    details = getStringOrNull(COLUMN_DETAILS),
                     state = getInt(COLUMN_STATE),
-                    acceptor = getString(COLUMN_ACCEPTOR)!!,
+                    acceptor = getString(COLUMN_ACCEPTOR),
                     processStatus = getInt(COLUMN_PROCESS_STATUS),
                     processTime = getLongOrNull(COLUMN_PROCESS_TIME),
                     isRead = getBoolean(COLUMN_READ)

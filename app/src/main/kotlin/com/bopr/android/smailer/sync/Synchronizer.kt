@@ -108,10 +108,10 @@ internal class Synchronizer(context: Context,
         database.commit(DB_FLAG_SYNCING) {
             batch {
                 events.replaceAll(data.events.map(::dataToEvent))
-                phoneBlacklist = data.phoneBlacklist
-                phoneWhitelist = data.phoneWhitelist
-                textBlacklist = data.textBlacklist
-                textWhitelist = data.textWhitelist
+                phoneBlacklist.replaceAll(data.phoneBlacklist)
+                phoneWhitelist.replaceAll(data.phoneWhitelist)
+                textBlacklist.replaceAll(data.textBlacklist)
+                textWhitelist.replaceAll(data.textWhitelist)
             }
         }
     }

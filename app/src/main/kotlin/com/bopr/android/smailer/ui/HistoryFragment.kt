@@ -216,8 +216,8 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
     private fun onRemoveFromFilterList() {
         getSelectedItem()?.let { item ->
             database.commit {
-                deleteFilterListItem(TABLE_PHONE_BLACKLIST, item.phone)
-                deleteFilterListItem(TABLE_PHONE_WHITELIST, item.phone)
+                filterList(TABLE_PHONE_BLACKLIST).remove(item.phone)
+                filterList(TABLE_PHONE_WHITELIST).remove(item.phone)
             }
             showToast(getString(R.string.phone_removed_from_filter, item.phone))
         }
@@ -235,7 +235,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
 
     private fun addToFilterList(listName: String, phone: String?) {
         if (!phone.isNullOrEmpty()) {
-            if (!database.commit { putFilterListItem(listName, phone) }) {
+            if (!database.commit { filterList(listName).add(phone) }) {
                 showToast(getString(R.string.item_already_exists, phone))
             }
         }

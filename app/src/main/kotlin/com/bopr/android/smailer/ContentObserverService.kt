@@ -14,6 +14,7 @@ import com.bopr.android.smailer.Notifications.Companion.SERVICE_NOTIFICATION_ID
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
 import com.bopr.android.smailer.util.database.getLong
 import com.bopr.android.smailer.util.database.getString
+import com.bopr.android.smailer.util.database.getStringOrNull
 import com.bopr.android.smailer.util.database.useFirst
 import com.bopr.android.smailer.util.deviceName
 import org.slf4j.LoggerFactory
@@ -60,11 +61,11 @@ class ContentObserverService : Service() {
         contentResolver.query(CONTENT_SMS_SENT, null, "_id=?", arrayOf(id), null)?.useFirst {
             val date = getLong("date")
             startCallProcessingService(context, PhoneEvent(
-                    phone = getString("address")!!,
+                    phone = getString("address"),
                     isIncoming = false,
                     startTime = date,
                     endTime = date,
-                    text = getString("body"),
+                    text = getStringOrNull("body"),
                     acceptor = deviceName()
             ))
         }

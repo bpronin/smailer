@@ -3,17 +3,13 @@ package com.bopr.android.smailer
 import android.content.*
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-import android.database.sqlite.SQLiteDatabase.CONFLICT_IGNORE
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bopr.android.smailer.sync.SyncWorker.Companion.requestDataSync
 import com.bopr.android.smailer.util.database.*
-import com.bopr.android.smailer.util.strings
 import org.slf4j.LoggerFactory
 import java.io.Closeable
 import java.lang.System.currentTimeMillis
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
 
 /**
  * Application database.
@@ -33,22 +29,32 @@ class Database(private val context: Context, private val name: String = DATABASE
     /**
      * Phone numbers blacklist.
      */
-    var phoneBlacklist: Set<String> by FilterListDelegate(TABLE_PHONE_BLACKLIST)
+    val phoneBlacklist = ListDataset(TABLE_PHONE_BLACKLIST, helper, modifiedTables)
 
     /**
      * Phone numbers whitelist.
      */
-    var phoneWhitelist: Set<String> by FilterListDelegate(TABLE_PHONE_WHITELIST)
+    val phoneWhitelist = ListDataset(TABLE_PHONE_WHITELIST, helper, modifiedTables)
 
     /**
      * SMS text blacklist.
      */
-    var textBlacklist: Set<String> by FilterListDelegate(TABLE_TEXT_BLACKLIST)
+    val textBlacklist = ListDataset(TABLE_TEXT_BLACKLIST, helper, modifiedTables)
 
     /**
      * SMS text whitelist.
      */
-    var textWhitelist: Set<String> by FilterListDelegate(TABLE_TEXT_WHITELIST)
+    val textWhitelist = ListDataset(TABLE_TEXT_WHITELIST, helper, modifiedTables)
+
+    fun filterList(name: String): ListDataset {
+        return when (name) {
+            TABLE_PHONE_BLACKLIST -> phoneBlacklist
+            TABLE_PHONE_WHITELIST -> phoneWhitelist
+            TABLE_TEXT_BLACKLIST -> textBlacklist
+            TABLE_TEXT_WHITELIST -> textWhitelist
+            else -> throw IllegalArgumentException()
+        }
+    }
 
     /**
      * Returns last saved geolocation.
@@ -81,61 +87,6 @@ class Database(private val context: Context, private val name: String = DATABASE
         }).also {
             log.debug("Update time: %tF %tT".format(value, value))
         }
-
-    /**
-     * Returns black/white list.
-     */
-    fun getFilterList(listName: String): Set<String> {
-        return helper.readableDatabase.query(listName).toSet { getString(COLUMN_VALUE)!! }
-    }
-
-    /**
-     * Replaces all items in black/white list.
-     */
-    fun replaceFilterList(listName: String, items: Collection<String>) {
-        helper.writableDatabase.batch {
-            if (delete(listName, null, null) != 0) {
-                modifiedTables.add(listName)
-
-                log.debug("Removed all from $listName")
-            }
-            for (item in items) {
-                putFilterListItem(listName, item)
-            }
-        }
-    }
-
-    /**
-     * Puts item into black/white list.
-     */
-    fun putFilterListItem(listName: String, item: String): Boolean {
-        helper.writableDatabase.run {
-            val values = values {
-                put(COLUMN_VALUE, item)
-            }
-            return if (insertWithOnConflict(listName, null, values, CONFLICT_IGNORE) == -1L) {
-                log.debug("Already exists: $values")
-                false
-            } else {
-                log.debug("Inserted: $values")
-
-                modifiedTables.add(listName)
-                true
-            }
-        }
-    }
-
-    /**
-     * Deletes item from black/white list.
-     */
-    fun deleteFilterListItem(listName: String, item: String): Boolean {
-        var affected = 0
-        helper.writableDatabase.batch {
-            affected = delete(listName, "$COLUMN_VALUE=?", strings(item))
-        }
-        modifiedTables.add(listName)
-        return affected != 0
-    }
 
     /**
      * Performs write transaction. Rollback it when failed.
@@ -181,27 +132,12 @@ class Database(private val context: Context, private val name: String = DATABASE
         log.debug("Destroyed")
     }
 
-    private fun querySystemTable(vararg columns: Any): Cursor {
-        return helper.readableDatabase.query(
-                table = TABLE_SYSTEM,
-                projection = strings(*columns),
-                selection = "$COLUMN_ID=0"
-        )
+    private fun querySystemTable(vararg columns: String): Cursor {
+        return helper.readableDatabase.query(TABLE_SYSTEM, columns, "$COLUMN_ID=0")
     }
 
     private fun updateSystemTable(values: ContentValues) {
         helper.writableDatabase.update(TABLE_SYSTEM, values, "$COLUMN_ID=0")
-    }
-
-    private inner class FilterListDelegate(private val listName: String) : ReadWriteProperty<Database, Set<String>> {
-
-        override fun getValue(thisRef: Database, property: KProperty<*>): Set<String> {
-            return thisRef.getFilterList(listName)
-        }
-
-        override fun setValue(thisRef: Database, property: KProperty<*>, value: Set<String>) {
-            thisRef.replaceFilterList(listName, value)
-        }
     }
 
     inner class DbHelper(context: Context) : SQLiteOpenHelper(context, name, null, DB_VERSION) {

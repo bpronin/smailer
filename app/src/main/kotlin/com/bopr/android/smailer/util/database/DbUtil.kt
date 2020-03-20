@@ -15,15 +15,15 @@ import com.bopr.android.smailer.util.strings
  */
 
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-inline fun SQLiteDatabase.query(table: String, projection: Array<String>? = null, selection: String? = null,
-                                selectionArgs: Array<String>? = null, groupBy: String? = null,
+inline fun SQLiteDatabase.query(table: String, projection: Array<out String>? = null, selection: String? = null,
+                                selectionArgs: Array<out String>? = null, groupBy: String? = null,
                                 having: String? = null, order: String? = null, limit: String? = null): Cursor {
     return query(table, projection, selection, selectionArgs, groupBy, having, order, limit)
 }
 
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 inline fun SQLiteDatabase.update(table: String, values: ContentValues, where: String? = null,
-                                 whereArgs: Array<String>? = null): Int {
+                                 whereArgs: Array<out String>? = null): Int {
     return update(table, values, where, whereArgs)
 }
 
@@ -86,17 +86,12 @@ inline fun SQLiteDatabase.dropTable(table: String) {
 val COUNT_SELECTION = strings("COUNT(*)")
 
 inline fun SQLiteDatabase.count(table: String, selection: String? = null,
-                                selectionArgs: Array<String>? = null): Long {
+                                selectionArgs: Array<out String>? = null): Long {
     return query(table, COUNT_SELECTION, selection, selectionArgs).useFirst { getLong(0) }
 }
 
-inline fun Cursor.getString(columnName: String): String? {
-    return getString(getColumnIndex(columnName))
-}
-
-inline fun Cursor.getStringIfExists(columnName: String): String? {
-    val columnIndex = getColumnIndex(columnName)
-    return if (columnIndex != -1) getString(columnIndex) else null
+inline fun Cursor.getString(columnName: String): String {
+    return getString(getColumnIndex(columnName))!!
 }
 
 inline fun Cursor.getInt(columnName: String): Int {
@@ -113,6 +108,11 @@ inline fun Cursor.getDouble(columnName: String): Double {
 
 inline fun Cursor.getBoolean(columnName: String): Boolean {
     return getInt(columnName) != 0
+}
+
+inline fun Cursor.getStringOrNull(columnName: String): String? {
+    val index = getColumnIndex(columnName)
+    return if (isNull(index)) null else getString(index)
 }
 
 inline fun Cursor.getIntOrNull(columnName: String): Int? {
@@ -135,6 +135,11 @@ inline fun Cursor.getBooleanOrNull(columnName: String): Boolean? {
     return if (isNull(index)) null else {
         getInt(index) != 0
     }
+}
+
+inline fun Cursor.getStringIfExists(columnName: String): String? {
+    val columnIndex = getColumnIndex(columnName)
+    return if (columnIndex != -1) getString(columnIndex) else null
 }
 
 inline fun <T> Cursor.useFirst(action: Cursor.() -> T): T {

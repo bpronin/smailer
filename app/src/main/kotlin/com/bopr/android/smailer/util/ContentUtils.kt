@@ -12,7 +12,7 @@ import android.provider.ContactsContract.Contacts
 import android.provider.ContactsContract.PhoneLookup
 import androidx.annotation.RequiresPermission
 import com.bopr.android.smailer.util.database.getInt
-import com.bopr.android.smailer.util.database.getString
+import com.bopr.android.smailer.util.database.getStringOrNull
 
 @RequiresPermission(READ_CONTACTS)
 fun contactName(context: Context, phone: String): String? {
@@ -20,7 +20,7 @@ fun contactName(context: Context, phone: String): String? {
     var result: String? = null
     context.contentResolver.query(uri, arrayOf(PhoneLookup.DISPLAY_NAME), null, null, null)?.use {
         if (it.moveToFirst()) {
-            result = it.getString(PhoneLookup.DISPLAY_NAME)
+            result = it.getStringOrNull(PhoneLookup.DISPLAY_NAME)
         }
     }
     return result
@@ -65,7 +65,7 @@ private fun retrievePhone(context: Context, contactId: String): String? {
     context.contentResolver.query(Phone.CONTENT_URI, null, "${Phone.CONTACT_ID} = $contactId",
             null, null)?.use {
         if (it.moveToFirst()) {
-            result = it.getString(Phone.DATA)
+            result = it.getStringOrNull(Phone.DATA)
         }
     }
     return result
@@ -76,7 +76,7 @@ private fun retrieveEmail(context: Context, contactId: String): String? {
     context.contentResolver.query(Email.CONTENT_URI, null, "${Email.CONTACT_ID}=$contactId",
             null, null)?.use {
         if (it.moveToFirst()) {
-            result = it.getString(Email.DATA)
+            result = it.getStringOrNull(Email.DATA)
         }
     }
     return result

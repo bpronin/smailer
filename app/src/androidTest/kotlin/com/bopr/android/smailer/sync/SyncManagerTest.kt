@@ -36,11 +36,11 @@ class SyncManagerTest : BaseTest() {
 
         sync.clear()
 
-        database.phoneBlacklist = setOf("A","B","C")
+        database.phoneBlacklist.replaceAll(setOf("A","B","C"))
 
         sync.sync()
 
-        database.phoneBlacklist = emptySet()
+        database.phoneBlacklist.clear()
         database.updateTime = 0  /* before last sync to force download */
 
         sync.sync()

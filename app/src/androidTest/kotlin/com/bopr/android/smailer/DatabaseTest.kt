@@ -153,9 +153,6 @@ class DatabaseTest : BaseTest() {
         assertEquals("New details", event.details)
     }
 
-    /**
-     * Check [Database.clearEvents]  method.
-     */
     @Test
     fun testClear() {
         val events = database.events
@@ -180,12 +177,22 @@ class DatabaseTest : BaseTest() {
     }
 
     @Test
-    fun testSaveLoadLocation() {
+    fun testGetSetLocation() {
         database.lastLocation = GeoCoordinates(30.0, 60.0)
-        val actual = database.lastLocation!!
+        val actual = database.lastLocation
 
-        assertEquals(30.0, actual.latitude, 0.1)
-        assertEquals(60.0, actual.longitude, 0.1)
+        assertNotNull(actual)
+        actual?.run {
+            assertEquals(30.0, latitude, 0.1)
+            assertEquals(60.0, longitude, 0.1)
+        }
+    }
+
+    @Test
+    fun testGetSetList() {
+        database.phoneBlacklist.addAll(setOf("A", "B", "C"))
+
+        assertEquals(setOf("A", "B", "C"), database.phoneBlacklist)
     }
 
     @Test
