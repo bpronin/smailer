@@ -174,12 +174,12 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
 
     private fun onClearData() {
         ConfirmDialog(getString(R.string.ask_clear_history)) {
-            database.commit { events.clear() }
+            database.commit { batch { events.clear() } }
         }.show(this)
     }
 
     private fun onMarkAllAsRead() {
-        database.commit { events.markAllAsRead(true) }
+        database.commit { batch { events.markAllAsRead(true) } }
         showToast(R.string.operation_complete)
     }
 
@@ -201,14 +201,14 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
     private fun onRemoveSelected() {
         val selectedEvents = listAdapter.getItemsAt(selectedItemPosition)
 
-        database.commit { events.removeAll(selectedEvents) }
+        database.commit { batch { events.removeAll(selectedEvents) } }
 
         Snackbar.make(recycler,
                         getQuantityString(R.plurals.items_removed, selectedEvents.size),
                         Snackbar.LENGTH_LONG)
                 .setActionTextColor(ContextCompat.getColor(requireContext(), R.color.colorAccentText))
                 .setAction(R.string.undo) {
-                    database.commit { events.addAll(selectedEvents) }
+                    database.commit { batch { events.addAll(selectedEvents) } }
                 }
                 .show()
     }

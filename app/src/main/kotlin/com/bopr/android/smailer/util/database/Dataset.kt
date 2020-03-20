@@ -1,10 +1,10 @@
 package com.bopr.android.smailer.util.database
 
+import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteDatabase.CONFLICT_IGNORE
 import android.database.sqlite.SQLiteOpenHelper
-import com.bopr.android.smailer.Database.Companion.COLUMN_COUNT
-import com.bopr.android.smailer.util.strings
 import org.slf4j.LoggerFactory
 
 /**
@@ -13,23 +13,55 @@ import org.slf4j.LoggerFactory
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 abstract class Dataset<T>(
-        private val tableName: String,
-        private val helper: SQLiteOpenHelper,
-        private val modifications: MutableSet<String>
+        protected val tableName: String,
+        protected val helper: SQLiteOpenHelper,
+        protected val modifications: MutableSet<String>
 ) : MutableSet<T> {
 
     private val log = LoggerFactory.getLogger("Database")
 
-    override val size: Int
-        get() = read { query(tableName, strings(COLUMN_COUNT)).useFirst { getInt(0) } }
+    protected abstract val keyColumns: Array<String>
 
-    override fun addAll(elements: Collection<T>): Boolean {
+    private val keyClause by lazy {
+        keyColumns.joinToString(" AND ") { "$it=?" }
+    }
+
+    private val rowSet
+        get() = query().toSet(::get)
+
+    override val size
+        get() = read { count(tableName).toInt() }
+
+    override fun add(element: T): Boolean {
+        val values = values(element)
         write {
-            for (e in elements) {
-                add(e)
+            if (insertWithOnConflict(tableName, null, values, CONFLICT_IGNORE) == -1L) {
+                update(tableName, values, keyClause, key(element))
+
+                log.debug("Updated: $values")
+            } else {
+                log.debug("Inserted: $values")
             }
         }
         return true
+    }
+
+    override fun addAll(elements: Collection<T>): Boolean {
+        var affected = 0
+        write {
+            for (e in elements) {
+                if (add(e)) affected++
+            }
+        }
+
+        log.debug("$affected items(s) added")
+        return affected != 0
+    }
+
+    override fun remove(element: T): Boolean {
+        return write {
+            delete(tableName, keyClause, key(element)) != 0
+        }
     }
 
     override fun removeAll(elements: Collection<T>): Boolean {
@@ -47,33 +79,13 @@ abstract class Dataset<T>(
     override fun retainAll(elements: Collection<T>): Boolean {
         var affected = 0
         write {
-            for (e in rowSet()) {
+            for (e in rowSet) {
                 if (!elements.contains(e) && remove(e)) affected++
             }
         }
 
         log.debug("$affected items(s) removed")
         return affected != 0
-    }
-
-    override fun iterator(): MutableIterator<T> {
-        val iterator = rowSet().iterator()
-
-        return object : MutableIterator<T> {
-
-            var current: T? = null
-
-            override fun hasNext(): Boolean = iterator.hasNext()
-
-            override fun next(): T {
-                current = iterator.next()
-                return current!!
-            }
-
-            override fun remove() {
-                remove(current)
-            }
-        }
     }
 
     override fun clear() {
@@ -88,41 +100,67 @@ abstract class Dataset<T>(
     }
 
     override fun contains(element: T): Boolean {
-        return rowSet().contains(element)
+        return rowSet.contains(element)
     }
 
     override fun containsAll(elements: Collection<T>): Boolean {
-        return rowSet().containsAll(elements)
+        return rowSet.containsAll(elements)
     }
 
-    fun first(): T {
-        return queryAll().useFirst(::get)
-    }
+    override fun iterator(): MutableIterator<T> {
+        val iterator = rowSet.iterator()
 
-    fun last(): T {
-        return queryAll().useLast(::get)
-    }
+        return object : MutableIterator<T> {
 
-    fun replaceAll(elements: Collection<T>) {
-        write {
-            clear()
-            addAll(elements)
+            var current: T? = null
+
+            override fun hasNext(): Boolean = iterator.hasNext()
+
+            override fun next(): T {
+                return iterator.next().also {
+                    current = it
+                }
+            }
+
+            override fun remove() {
+                remove(current)
+            }
         }
     }
 
-    protected abstract fun queryAll(): Cursor
+    fun replaceAll(elements: Collection<T>): Boolean {
+        clear()
+        return addAll(elements)
+    }
+
+    open fun first(): T {
+        return query().useFirst(::get)
+    }
+
+    open fun last(): T {
+        return query().useLast(::get)
+    }
 
     protected abstract fun get(cursor: Cursor): T
 
-    protected fun <R> read(action: SQLiteDatabase.() -> R): R {
-        return helper.readableDatabase.run(action)
+    protected abstract fun values(element: T): ContentValues
+
+    protected abstract fun key(element: T): Array<String>
+
+    protected open fun query(): Cursor {
+        return read {
+            query(tableName)
+        }
     }
 
-    protected fun <R> write(action: SQLiteDatabase.() -> R): R {
-        val result = helper.writableDatabase.batch(action)
+    protected inline fun <R> read(action: SQLiteDatabase.() -> R): R {
+        return helper.readableDatabase.action()
+    }
+
+    protected inline fun <R> write(action: SQLiteDatabase.() -> R): R {
+        val result = helper.writableDatabase.action()
         modifications.add(tableName)
         return result
     }
 
-    private fun rowSet() = queryAll().toSet(::get)
 }

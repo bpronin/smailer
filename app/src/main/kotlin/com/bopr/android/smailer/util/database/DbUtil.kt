@@ -1,4 +1,4 @@
-@file:Suppress("unused")
+@file:Suppress("unused", "NOTHING_TO_INLINE")
 
 package com.bopr.android.smailer.util.database
 
@@ -15,15 +15,15 @@ import com.bopr.android.smailer.util.strings
  */
 
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-fun SQLiteDatabase.query(table: String, projection: Array<String>? = null, selection: String? = null,
-                         selectionArgs: Array<String>? = null, groupBy: String? = null,
-                         having: String? = null, order: String? = null, limit: String? = null): Cursor {
+inline fun SQLiteDatabase.query(table: String, projection: Array<String>? = null, selection: String? = null,
+                                selectionArgs: Array<String>? = null, groupBy: String? = null,
+                                having: String? = null, order: String? = null, limit: String? = null): Cursor {
     return query(table, projection, selection, selectionArgs, groupBy, having, order, limit)
 }
 
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-fun SQLiteDatabase.update(table: String, values: ContentValues, where: String? = null,
-                          whereArgs: Array<String>? = null): Int {
+inline fun SQLiteDatabase.update(table: String, values: ContentValues, where: String? = null,
+                                 whereArgs: Array<String>? = null): Int {
     return update(table, values, where, whereArgs)
 }
 
@@ -39,13 +39,13 @@ inline fun <T> SQLiteDatabase.batch(action: SQLiteDatabase.() -> T): T {
 }
 
 @SuppressLint("Recycle")
-fun SQLiteDatabase.getTables(): Set<String> {
+inline fun SQLiteDatabase.getTables(): Set<String> {
     return query("sqlite_master", strings("name"), "type='table' AND name<>'android_metadata'")
             .toSet { getString(0) }
 }
 
 @SuppressLint("Recycle")
-fun SQLiteDatabase.isTableExists(name: String): Boolean {
+inline fun SQLiteDatabase.isTableExists(name: String): Boolean {
     return query("sqlite_master", strings("COUNT(*)"), "type='table' AND name='$name'")
             .useFirst { getLong(0) } == 1L
 }
@@ -80,51 +80,56 @@ inline fun SQLiteDatabase.copyTable(srcTable: String, dstTable: String,
     }
 }
 
-fun SQLiteDatabase.dropTable(table: String) {
+inline fun SQLiteDatabase.dropTable(table: String) {
     execSQL("DROP TABLE IF EXISTS $table")
 }
 
-fun Cursor.getString(columnName: String): String? {
+inline fun SQLiteDatabase.count(table: String, selection: String? = null,
+                                selectionArgs: Array<String>? = null): Long {
+    return query(table, strings("COUNT (*)"), selection, selectionArgs).useFirst { getLong(0) }
+}
+
+inline fun Cursor.getString(columnName: String): String? {
     return getString(getColumnIndex(columnName))
 }
 
-fun Cursor.getStringIfExists(columnName: String): String? {
+inline fun Cursor.getStringIfExists(columnName: String): String? {
     val columnIndex = getColumnIndex(columnName)
     return if (columnIndex != -1) getString(columnIndex) else null
 }
 
-fun Cursor.getInt(columnName: String): Int {
+inline fun Cursor.getInt(columnName: String): Int {
     return getInt(getColumnIndex(columnName))
 }
 
-fun Cursor.getLong(columnName: String): Long {
+inline fun Cursor.getLong(columnName: String): Long {
     return getLong(getColumnIndex(columnName))
 }
 
-fun Cursor.getDouble(columnName: String): Double {
+inline fun Cursor.getDouble(columnName: String): Double {
     return getDouble(getColumnIndex(columnName))
 }
 
-fun Cursor.getBoolean(columnName: String): Boolean {
+inline fun Cursor.getBoolean(columnName: String): Boolean {
     return getInt(columnName) != 0
 }
 
-fun Cursor.getIntOrNull(columnName: String): Int? {
+inline fun Cursor.getIntOrNull(columnName: String): Int? {
     val index = getColumnIndex(columnName)
     return if (isNull(index)) null else getInt(index)
 }
 
-fun Cursor.getLongOrNull(columnName: String): Long? {
+inline fun Cursor.getLongOrNull(columnName: String): Long? {
     val index = getColumnIndex(columnName)
     return if (isNull(index)) null else getLong(index)
 }
 
-fun Cursor.getDoubleOrNull(columnName: String): Double? {
+inline fun Cursor.getDoubleOrNull(columnName: String): Double? {
     val index = getColumnIndex(columnName)
     return if (isNull(index)) null else getDouble(index)
 }
 
-fun Cursor.getBooleanOrNull(columnName: String): Boolean? {
+inline fun Cursor.getBooleanOrNull(columnName: String): Boolean? {
     val index = getColumnIndex(columnName)
     return if (isNull(index)) null else {
         getInt(index) != 0

@@ -173,19 +173,19 @@ class DebugFragment : BasePreferenceFragment() {
                 }),
                 createPreference("Mark all as unread", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        database.commit { events.markAllAsRead(false) }
+                        database.commit { batch { events.markAllAsRead(false) } }
                         showToast(R.string.operation_complete)
                     }
                 }),
                 createPreference("Mark all as read", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        database.commit { events.markAllAsRead(true) }
+                        database.commit { batch { events.markAllAsRead(true) } }
                         showToast(R.string.operation_complete)
                     }
                 }),
                 createPreference("Clear calls log", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        database.commit { events.clear() }
+                        database.commit { batch { events.clear() } }
                         showToast(R.string.operation_complete)
                     }
                 }),

@@ -41,9 +41,11 @@ class DatabaseListenerTest : BaseTest() {
         }
 
         database.commit {
-            events.add(PhoneEvent(phone = "1", startTime = 0, acceptor = "device"))
-            events.add(PhoneEvent(phone = "2", startTime = 1, acceptor = "device"))
-            events.add(PhoneEvent(phone = "3", startTime = 2, acceptor = "device"))
+            batch {
+                events.add(PhoneEvent(phone = "1", startTime = 0, acceptor = "device"))
+                events.add(PhoneEvent(phone = "2", startTime = 1, acceptor = "device"))
+                events.add(PhoneEvent(phone = "3", startTime = 2, acceptor = "device"))
+            }
         }
 
         assertTrue(latch.await(5, TimeUnit.SECONDS))

@@ -141,7 +141,9 @@ class Database(private val context: Context, private val name: String = DATABASE
      * Performs write transaction. Rollback it when failed.
      */
     fun batch(action: Database.() -> Unit) {
+        log.debug("Begin transaction")
         helper.writableDatabase.batch { this@Database.action() }
+        log.debug("End transaction")
     }
 
     /**
@@ -242,7 +244,6 @@ class Database(private val context: Context, private val name: String = DATABASE
         const val DATABASE_NAME = "smailer.sqlite"
         private const val DB_VERSION = 9
 
-        const val COLUMN_COUNT = "COUNT(*)"
         const val COLUMN_ID = "_id"
         const val COLUMN_IS_INCOMING = "is_incoming"
         const val COLUMN_IS_MISSED = "is_missed"

@@ -73,11 +73,13 @@ class CallProcessor(
 
                 if (startMailSession()) {
                     database.commit {
-                        for (event in pendingEvents) {
-                            event.processTime = currentTimeMillis()
-                            if (sendMail(event)) {
-                                event.state = STATE_PROCESSED
-                                events.add(event)
+                        batch {
+                            for (event in pendingEvents) {
+                                event.processTime = currentTimeMillis()
+                                if (sendMail(event)) {
+                                    event.state = STATE_PROCESSED
+                                    events.add(event)
+                                }
                             }
                         }
                     }

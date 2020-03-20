@@ -74,7 +74,7 @@ abstract class CallFilterListFragment(private val listName: String) : EditableRe
     }
 
     override fun saveItems(items: Collection<String>) {
-        database.commit { replaceFilterList(listName, items) }
+        database.commit { batch { replaceFilterList(listName, items) } }
     }
 
     override fun isValidItem(item: String): Boolean {

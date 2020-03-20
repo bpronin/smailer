@@ -1,7 +1,7 @@
 package com.bopr.android.smailer
 
+import android.content.ContentValues
 import android.database.Cursor
-import android.database.sqlite.SQLiteDatabase.CONFLICT_IGNORE
 import android.database.sqlite.SQLiteOpenHelper
 import com.bopr.android.smailer.Database.Companion.COLUMN_ACCEPTOR
 import com.bopr.android.smailer.Database.Companion.COLUMN_DETAILS
@@ -19,6 +19,7 @@ import com.bopr.android.smailer.Database.Companion.COLUMN_STATE
 import com.bopr.android.smailer.Database.Companion.COLUMN_TEXT
 import com.bopr.android.smailer.Database.Companion.TABLE_EVENTS
 import com.bopr.android.smailer.GeoCoordinates.Companion.coordinatesOf
+import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.util.database.*
 import com.bopr.android.smailer.util.strings
 import org.slf4j.LoggerFactory
@@ -33,27 +34,24 @@ class EventsDataset(helper: SQLiteOpenHelper, modifications: MutableSet<String>)
 
     private val log = LoggerFactory.getLogger("Database")
 
+    override val keyColumns = strings(COLUMN_START_TIME, COLUMN_ACCEPTOR)
+
     /**
      * Returns count of unread phone events.
      */
     val unreadCount: Long
         get() = read {
-            query(
-                    table = TABLE_EVENTS,
-                    projection = strings(Database.COLUMN_COUNT),
-                    selection = "$COLUMN_READ<>1"
-            )
-        }.useFirst { getLong(0) }
+            count(tableName, "$COLUMN_READ<>1")
+        }
 
     /**
      * Returns pending phone events.
      */
     val filterPending: Set<PhoneEvent>
         get() = read {
-            query(
-                    table = TABLE_EVENTS,
+            query(tableName,
                     selection = "$COLUMN_STATE=?",
-                    selectionArgs = strings(PhoneEvent.STATE_PENDING),
+                    selectionArgs = strings(STATE_PENDING),
                     order = "$COLUMN_START_TIME DESC"
             )
         }.toSet(::get)
@@ -63,7 +61,7 @@ class EventsDataset(helper: SQLiteOpenHelper, modifications: MutableSet<String>)
      */
     fun markAllAsRead(read: Boolean) {
         write {
-            update(TABLE_EVENTS, values {
+            update(tableName, values {
                 put(COLUMN_READ, read)
             })
         }
@@ -71,10 +69,14 @@ class EventsDataset(helper: SQLiteOpenHelper, modifications: MutableSet<String>)
         log.debug("All events marked as read")
     }
 
-    override fun queryAll(): Cursor {
+    override fun query(): Cursor {
         return read {
-            query(table = TABLE_EVENTS, order = "$COLUMN_START_TIME DESC")
+            query(tableName, order = "$COLUMN_START_TIME DESC")
         }
+    }
+
+    override fun key(element: PhoneEvent): Array<String> {
+        return strings(element.startTime, element.acceptor)
     }
 
     override fun get(cursor: Cursor): PhoneEvent {
@@ -100,8 +102,8 @@ class EventsDataset(helper: SQLiteOpenHelper, modifications: MutableSet<String>)
         }
     }
 
-    override fun add(element: PhoneEvent): Boolean {
-        val values = values {
+    override fun values(element: PhoneEvent): ContentValues {
+        return values {
             put(COLUMN_PHONE, element.phone)
             put(COLUMN_ACCEPTOR, element.acceptor)
             put(COLUMN_START_TIME, element.startTime)
@@ -114,32 +116,10 @@ class EventsDataset(helper: SQLiteOpenHelper, modifications: MutableSet<String>)
             put(COLUMN_TEXT, element.text)
             put(COLUMN_DETAILS, element.details)
             put(COLUMN_READ, element.isRead)
-            element.location?.let {
-                put(COLUMN_LATITUDE, it.latitude)
-                put(COLUMN_LONGITUDE, it.longitude)
+            element.location?.run {
+                put(COLUMN_LATITUDE, latitude)
+                put(COLUMN_LONGITUDE, longitude)
             }
-        }
-
-        return write {
-            if (insertWithOnConflict(TABLE_EVENTS, null, values, CONFLICT_IGNORE) == -1L) {
-                update(TABLE_EVENTS, values, "${COLUMN_START_TIME}=? AND ${COLUMN_ACCEPTOR}=?",
-                        strings(element.startTime, element.acceptor))
-
-                log.debug("Updated: $values")
-                false
-            } else {
-                log.debug("Inserted: $values")
-                true
-            }
-        }
-    }
-
-    override fun remove(element: PhoneEvent): Boolean {
-        return write {
-            delete(TABLE_EVENTS,
-                    "$COLUMN_ACCEPTOR=? AND $COLUMN_START_TIME=?",
-                    strings(element.acceptor, element.startTime)
-            ) != 0
         }
     }
 
