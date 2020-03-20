@@ -10,7 +10,7 @@ import com.bopr.android.smailer.util.database.values
 import com.bopr.android.smailer.util.strings
 
 class ListDataset(tableName: String, helper: SQLiteOpenHelper, modifications: MutableSet<String>)
-    : Dataset<String>(tableName, helper, modifications) {
+    : Dataset<String>(tableName, helper, modifications, false) {
 
     override val keyColumns = strings(COLUMN_VALUE)
 

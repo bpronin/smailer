@@ -70,11 +70,11 @@ abstract class CallFilterListFragment(private val listName: String) : EditableRe
     }
 
     override fun loadItems(): Collection<String> {
-        return database.filterList(listName)
+        return database.filterList[listName]
     }
 
     override fun saveItems(items: Collection<String>) {
-        database.commit { batch { filterList(listName).replaceAll(items) } }
+        database.commit { batch { filterList[listName].replaceAll(items) } }
     }
 
     override fun isValidItem(item: String): Boolean {

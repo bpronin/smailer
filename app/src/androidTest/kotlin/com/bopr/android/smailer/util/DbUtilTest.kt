@@ -111,7 +111,7 @@ class DbUtilTest : BaseTest() {
             val values = mutableListOf<String?>()
             query("TABLE_2").useAll {
                 ids.add(getInt("ID"))
-                values.add(getString("COLUMN_2"))
+                values.add(getStringOrNull("COLUMN_2"))
             }
 
             assertEquals(listOf(10, 11, 12), ids)

@@ -6,7 +6,7 @@ import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.Database
 import com.bopr.android.smailer.util.primaryAccount
 import org.junit.After
-import org.junit.Assert.assertEquals
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -36,16 +36,22 @@ class SyncManagerTest : BaseTest() {
 
         sync.clear()
 
-        database.phoneBlacklist.replaceAll(setOf("A","B","C"))
+        database.commit { phoneBlacklist.replaceAll(setOf("A", "B", "C")) }
+
+        assertEquals(setOf("A", "B", "C"), database.phoneBlacklist)
+        assertFalse(database.updateTime == 0L)
 
         sync.sync()
 
-        database.phoneBlacklist.clear()
+        database.commit { phoneBlacklist.clear()}
+
+        assertTrue(database.phoneBlacklist.isEmpty())
+
         database.updateTime = 0  /* before last sync to force download */
 
         sync.sync()
 
-        assertEquals(listOf("A", "B", "C"), database.phoneBlacklist)
+        assertEquals(setOf("A", "B", "C"), database.phoneBlacklist)
     }
 
 }

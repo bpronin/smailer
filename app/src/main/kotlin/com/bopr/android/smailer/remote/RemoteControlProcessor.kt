@@ -5,10 +5,6 @@ import android.accounts.Account
 import android.content.Context
 import androidx.annotation.StringRes
 import com.bopr.android.smailer.*
-import com.bopr.android.smailer.Database.Companion.TABLE_PHONE_BLACKLIST
-import com.bopr.android.smailer.Database.Companion.TABLE_PHONE_WHITELIST
-import com.bopr.android.smailer.Database.Companion.TABLE_TEXT_BLACKLIST
-import com.bopr.android.smailer.Database.Companion.TABLE_TEXT_WHITELIST
 import com.bopr.android.smailer.Notifications.Companion.TARGET_MAIN
 import com.bopr.android.smailer.Notifications.Companion.TARGET_PHONE_BLACKLIST
 import com.bopr.android.smailer.Notifications.Companion.TARGET_PHONE_WHITELIST
@@ -136,42 +132,42 @@ internal class RemoteControlProcessor(
     }
 
     private fun addTextToWhitelist(text: String?) {
-        addToFilterList(TABLE_TEXT_WHITELIST, text,
+        addToFilterList(database.textWhitelist, text,
                 R.string.text_remotely_added_to_whitelist, TARGET_TEXT_WHITELIST)
     }
 
     private fun removeTextFromWhitelist(text: String?) {
-        removeFromFilterList(TABLE_TEXT_WHITELIST, text,
+        removeFromFilterList(database.textWhitelist, text,
                 R.string.text_remotely_removed_from_whitelist, TARGET_TEXT_WHITELIST)
     }
 
     private fun addTextToBlacklist(text: String?) {
-        addToFilterList(TABLE_TEXT_BLACKLIST, text,
+        addToFilterList(database.textBlacklist, text,
                 R.string.text_remotely_added_to_blacklist, TARGET_TEXT_BLACKLIST)
     }
 
     private fun removeTextFromBlacklist(text: String?) {
-        removeFromFilterList(TABLE_TEXT_BLACKLIST, text,
+        removeFromFilterList(database.textBlacklist, text,
                 R.string.text_remotely_removed_from_blacklist, TARGET_TEXT_BLACKLIST)
     }
 
     private fun addPhoneToWhitelist(phone: String?) {
-        addToFilterList(TABLE_PHONE_WHITELIST, phone,
+        addToFilterList(database.phoneWhitelist, phone,
                 R.string.phone_remotely_added_to_whitelist, TARGET_PHONE_WHITELIST)
     }
 
     private fun removePhoneFromWhitelist(phone: String?) {
-        removeFromFilterList(TABLE_PHONE_WHITELIST, phone,
+        removeFromFilterList(database.phoneWhitelist, phone,
                 R.string.phone_remotely_removed_from_whitelist, TARGET_PHONE_WHITELIST)
     }
 
     private fun addPhoneToBlacklist(phone: String?) {
-        addToFilterList(TABLE_PHONE_BLACKLIST, phone,
+        addToFilterList(database.phoneBlacklist, phone,
                 R.string.phone_remotely_added_to_blacklist, TARGET_PHONE_BLACKLIST)
     }
 
     private fun removePhoneFromBlacklist(phone: String?) {
-        removeFromFilterList(TABLE_PHONE_BLACKLIST, phone,
+        removeFromFilterList(database.phoneBlacklist, phone,
                 R.string.phone_remotely_removed_from_blacklist, TARGET_PHONE_BLACKLIST)
     }
 
@@ -186,10 +182,10 @@ internal class RemoteControlProcessor(
         }
     }
 
-    private fun addToFilterList(listName: String, value: String?, @StringRes messageRes: Int,
+    private fun addToFilterList(list: ListDataset, value: String?, @StringRes messageRes: Int,
                                 @Notifications.Target target: Int) {
         if (!value.isNullOrEmpty()) {
-            if (database.commit { filterList(listName).add(value) }) {
+            if (database.commit { list.add(value) }) {
                 showNotification(context.getString(messageRes, value), target)
             } else {
                 log.debug("Already in list")
@@ -197,10 +193,10 @@ internal class RemoteControlProcessor(
         }
     }
 
-    private fun removeFromFilterList(listName: String, value: String?, @StringRes messageRes: Int,
+    private fun removeFromFilterList(list: ListDataset, value: String?, @StringRes messageRes: Int,
                                      @Notifications.Target target: Int) {
         if (!value.isNullOrEmpty()) {
-            if (database.commit { filterList(listName).remove(value) }) {
+            if (database.commit { list.remove(value) }) {
                 showNotification(context.getString(messageRes, value), target)
             } else {
                 log.debug("Not in list")

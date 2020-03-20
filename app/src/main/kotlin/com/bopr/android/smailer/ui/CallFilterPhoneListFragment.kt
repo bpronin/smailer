@@ -5,7 +5,7 @@ package com.bopr.android.smailer.ui
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-abstract class CallFilterPhoneListFragment(settingName: String) : CallFilterListFragment(settingName) {
+abstract class CallFilterPhoneListFragment(listName: String) : CallFilterListFragment(listName) {
 
     override fun createEditDialog(): BaseEditDialogFragment<String> {
         return EditPhoneDialogFragment()

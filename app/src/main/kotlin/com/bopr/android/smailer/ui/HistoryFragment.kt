@@ -12,10 +12,9 @@ import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bopr.android.smailer.Database
-import com.bopr.android.smailer.Database.Companion.TABLE_PHONE_BLACKLIST
-import com.bopr.android.smailer.Database.Companion.TABLE_PHONE_WHITELIST
 import com.bopr.android.smailer.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.Database.Companion.unregisterDatabaseListener
+import com.bopr.android.smailer.ListDataset
 import com.bopr.android.smailer.PhoneEvent
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
@@ -184,11 +183,11 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
     }
 
     private fun onAddToBlacklist() {
-        addSelectionToFilterList(TABLE_PHONE_BLACKLIST, R.string.add_to_blacklist)
+        addSelectionToFilterList(database.phoneBlacklist, R.string.add_to_blacklist)
     }
 
     private fun onAddToWhitelist() {
-        addSelectionToFilterList(TABLE_PHONE_WHITELIST, R.string.add_to_whitelist)
+        addSelectionToFilterList(database.phoneWhitelist, R.string.add_to_whitelist)
     }
 
     private fun onMarkAsIgnored() {
@@ -216,26 +215,26 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
     private fun onRemoveFromFilterList() {
         getSelectedItem()?.let { item ->
             database.commit {
-                filterList(TABLE_PHONE_BLACKLIST).remove(item.phone)
-                filterList(TABLE_PHONE_WHITELIST).remove(item.phone)
+                phoneBlacklist.remove(item.phone)
+                phoneWhitelist.remove(item.phone)
             }
             showToast(getString(R.string.phone_removed_from_filter, item.phone))
         }
     }
 
-    private fun addSelectionToFilterList(listName: String, @StringRes titleRes: Int) {
+    private fun addSelectionToFilterList(list: ListDataset, @StringRes titleRes: Int) {
         getSelectedItem()?.let { item ->
             EditPhoneDialogFragment().apply {
                 setTitle(titleRes)
                 setValue(item.phone)
-                setOnOkClicked { addToFilterList(listName, it) }
+                setOnOkClicked { addToFilterList(list, it) }
             }.show(this)
         }
     }
 
-    private fun addToFilterList(listName: String, phone: String?) {
+    private fun addToFilterList(list: ListDataset, phone: String?) {
         if (!phone.isNullOrEmpty()) {
-            if (!database.commit { filterList(listName).add(phone) }) {
+            if (!database.commit { list.add(phone) }) {
                 showToast(getString(R.string.item_already_exists, phone))
             }
         }

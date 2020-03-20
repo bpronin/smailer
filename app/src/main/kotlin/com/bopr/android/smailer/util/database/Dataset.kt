@@ -15,7 +15,8 @@ import org.slf4j.LoggerFactory
 abstract class Dataset<T>(
         protected val tableName: String,
         protected val helper: SQLiteOpenHelper,
-        protected val modifications: MutableSet<String>
+        protected val modifications: MutableSet<String>,
+        private val canUpdate: Boolean = true
 ) : MutableSet<T> {
 
     private val log = LoggerFactory.getLogger("Database")
@@ -34,16 +35,14 @@ abstract class Dataset<T>(
 
     override fun add(element: T): Boolean {
         val values = values(element)
-        write {
+        return write {
             if (insertWithOnConflict(tableName, null, values, CONFLICT_IGNORE) == -1L) {
-                update(tableName, values, keyClause, key(element))
-
-                log.debug("Updated: $values")
+                canUpdate && update(tableName, values, keyClause, key(element)) != 0
             } else {
                 log.debug("Inserted: $values")
+                true
             }
         }
-        return true
     }
 
     override fun addAll(elements: Collection<T>): Boolean {

@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bopr.android.smailer.sync.SyncWorker.Companion.requestDataSync
+import com.bopr.android.smailer.util.Dictionary
 import com.bopr.android.smailer.util.database.*
 import org.slf4j.LoggerFactory
 import java.io.Closeable
@@ -46,15 +47,12 @@ class Database(private val context: Context, private val name: String = DATABASE
      */
     val textWhitelist = ListDataset(TABLE_TEXT_WHITELIST, helper, modifiedTables)
 
-    fun filterList(name: String): ListDataset {
-        return when (name) {
-            TABLE_PHONE_BLACKLIST -> phoneBlacklist
-            TABLE_PHONE_WHITELIST -> phoneWhitelist
-            TABLE_TEXT_BLACKLIST -> textBlacklist
-            TABLE_TEXT_WHITELIST -> textWhitelist
-            else -> throw IllegalArgumentException()
-        }
-    }
+    val filterList = Dictionary(
+            TABLE_PHONE_BLACKLIST to phoneBlacklist,
+            TABLE_PHONE_WHITELIST to phoneWhitelist,
+            TABLE_TEXT_BLACKLIST to textBlacklist,
+            TABLE_TEXT_WHITELIST to textWhitelist
+    )
 
     /**
      * Returns last saved geolocation.
