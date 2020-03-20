@@ -19,7 +19,6 @@ import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.*
-import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.BlendModeColorFilterCompat.createBlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat
@@ -255,7 +254,7 @@ fun <T> runInBackground(task: () -> T): Task<T> {
 
 fun <T> Preference.runBackgroundTask(onPerform: () -> T?, onComplete: (T?) -> Unit) {
     val lastIcon = icon
-    val progressIcon = getDrawable(context, R.drawable.animated_progress) as AnimatedVectorDrawableCompat
+    val progressIcon = AnimatedVectorDrawableCompat.create(context, R.drawable.animated_progress)!!
     icon = progressIcon
     progressIcon.start()
 

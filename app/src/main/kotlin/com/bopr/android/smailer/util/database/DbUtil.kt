@@ -46,8 +46,7 @@ inline fun SQLiteDatabase.getTables(): Set<String> {
 
 @SuppressLint("Recycle")
 inline fun SQLiteDatabase.isTableExists(name: String): Boolean {
-    return query("sqlite_master", strings("COUNT(*)"), "type='table' AND name='$name'")
-            .useFirst { getLong(0) } == 1L
+    return count("sqlite_master", "type='table' AND name='$name'") == 1L
 }
 
 inline fun SQLiteDatabase.alterTable(table: String, schemaSql: String,
@@ -84,9 +83,11 @@ inline fun SQLiteDatabase.dropTable(table: String) {
     execSQL("DROP TABLE IF EXISTS $table")
 }
 
+val COUNT_SELECTION = strings("COUNT(*)")
+
 inline fun SQLiteDatabase.count(table: String, selection: String? = null,
                                 selectionArgs: Array<String>? = null): Long {
-    return query(table, strings("COUNT (*)"), selection, selectionArgs).useFirst { getLong(0) }
+    return query(table, COUNT_SELECTION, selection, selectionArgs).useFirst { getLong(0) }
 }
 
 inline fun Cursor.getString(columnName: String): String? {

@@ -50,8 +50,7 @@ class EventsDataset(helper: SQLiteOpenHelper, modifications: MutableSet<String>)
     val filterPending: Set<PhoneEvent>
         get() = read {
             query(tableName,
-                    selection = "$COLUMN_STATE=?",
-                    selectionArgs = strings(STATE_PENDING),
+                    selection = "$COLUMN_STATE=$STATE_PENDING",
                     order = "$COLUMN_START_TIME DESC"
             )
         }.toSet(::get)
@@ -122,5 +121,4 @@ class EventsDataset(helper: SQLiteOpenHelper, modifications: MutableSet<String>)
             }
         }
     }
-
 }

@@ -159,6 +159,7 @@ class DatabaseTest : BaseTest() {
     @Test
     fun testClear() {
         val events = database.events
+
         database.batch {
             events.add(PhoneEvent("1", true, 1000L, 2000L, false, "SMS text", GeoCoordinates(10.5, 20.5), "Test 1", STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
             events.add(PhoneEvent("2", false, 2000L, 0L, false, null, null, null, STATE_PENDING, "device", STATUS_ACCEPTED, isRead = false))
