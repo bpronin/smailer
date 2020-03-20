@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.bopr.android.smailer.util.database
 
 import android.annotation.SuppressLint
@@ -39,7 +41,7 @@ inline fun <T> SQLiteDatabase.batch(action: SQLiteDatabase.() -> T): T {
 @SuppressLint("Recycle")
 fun SQLiteDatabase.getTables(): Set<String> {
     return query("sqlite_master", strings("name"), "type='table' AND name<>'android_metadata'")
-            .useToList { getString(0) }.toSet()
+            .toSet { getString(0) }
 }
 
 @SuppressLint("Recycle")
@@ -107,9 +109,38 @@ fun Cursor.getBoolean(columnName: String): Boolean {
     return getInt(columnName) != 0
 }
 
+fun Cursor.getIntOrNull(columnName: String): Int? {
+    val index = getColumnIndex(columnName)
+    return if (isNull(index)) null else getInt(index)
+}
+
+fun Cursor.getLongOrNull(columnName: String): Long? {
+    val index = getColumnIndex(columnName)
+    return if (isNull(index)) null else getLong(index)
+}
+
+fun Cursor.getDoubleOrNull(columnName: String): Double? {
+    val index = getColumnIndex(columnName)
+    return if (isNull(index)) null else getDouble(index)
+}
+
+fun Cursor.getBooleanOrNull(columnName: String): Boolean? {
+    val index = getColumnIndex(columnName)
+    return if (isNull(index)) null else {
+        getInt(index) != 0
+    }
+}
+
 inline fun <T> Cursor.useFirst(action: Cursor.() -> T): T {
     return use {
         moveToFirst()
+        if (!isAfterLast) action() else throw NoSuchElementException("Row set is empty.")
+    }
+}
+
+inline fun <T> Cursor.useLast(action: Cursor.() -> T): T {
+    return use {
+        moveToLast()
         if (!isAfterLast) action() else throw NoSuchElementException("Row set is empty.")
     }
 }
@@ -124,17 +155,13 @@ inline fun Cursor.useAll(action: Cursor.() -> Unit) {
     }
 }
 
-inline fun <T> Cursor.useToList(get: Cursor.() -> T): List<T> {
-    val list = mutableListOf<T>()
+inline fun <T> Cursor.toSet(get: Cursor.() -> T): Set<T> {
+    val set = mutableSetOf<T>()
     useAll {
-        list.add(get())
+        set.add(get())
     }
-    return list
+    return set
 }
-
-fun <T> Cursor.iterator(get: (Cursor) -> T) = CursorIterator<T>(this, get)
-
-fun <T> Cursor.mutableIterator(get: (Cursor) -> T, remove: (T) -> Boolean) = MutableCursorIterator<T>(this, get, remove)
 
 inline fun values(action: ContentValues.() -> Unit): ContentValues = ContentValues().apply(action)
 

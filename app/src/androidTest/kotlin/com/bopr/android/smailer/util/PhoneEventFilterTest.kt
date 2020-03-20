@@ -69,12 +69,12 @@ class PhoneEventFilterTest : BaseTest() {
 
         assertEquals(STATUS_ACCEPTED, filter.test(event))
 
-        filter.phoneBlacklist = listOf("111", "333")
+        filter.phoneBlacklist = setOf("111", "333")
         event = event.copy(phone = "111")
 
         assertEquals(STATUS_NUMBER_BLACKLISTED, filter.test(event))
 
-        filter.phoneBlacklist = listOf("+1(11)", "333")
+        filter.phoneBlacklist = setOf("+1(11)", "333")
         event = event.copy(phone = "1 11")
 
         assertEquals(STATUS_NUMBER_BLACKLISTED, filter.test(event))
@@ -83,7 +83,7 @@ class PhoneEventFilterTest : BaseTest() {
 
         assertEquals(STATUS_ACCEPTED, filter.test(event))
 
-        filter.phoneBlacklist = listOf("111", "222")
+        filter.phoneBlacklist = setOf("111", "222")
         event = event.copy(phone = "222")
 
         assertEquals(STATUS_NUMBER_BLACKLISTED, filter.test(event))
@@ -93,7 +93,7 @@ class PhoneEventFilterTest : BaseTest() {
     fun testPhoneBlacklistPattern() {
         val filter = PhoneEventFilter().apply {
             triggers = setOf(VAL_PREF_TRIGGER_MISSED_CALLS)
-            phoneBlacklist = listOf("+79628810***")
+            phoneBlacklist = setOf("+79628810***")
         }
 
         var event = createEvent(
@@ -127,7 +127,7 @@ class PhoneEventFilterTest : BaseTest() {
 
         assertEquals(STATUS_ACCEPTED, filter.test(event))
 
-        filter.phoneWhitelist = listOf("111", "333")
+        filter.phoneWhitelist = setOf("111", "333")
         event = event.copy(phone = "111")
 
         assertEquals(STATUS_ACCEPTED, filter.test(event))
@@ -136,7 +136,7 @@ class PhoneEventFilterTest : BaseTest() {
 
         assertEquals(STATUS_ACCEPTED, filter.test(event))
 
-        filter.phoneWhitelist = listOf("111", "222")
+        filter.phoneWhitelist = setOf("111", "222")
         event = event.copy(phone = "222")
 
         assertEquals(STATUS_ACCEPTED, filter.test(event))
@@ -156,19 +156,19 @@ class PhoneEventFilterTest : BaseTest() {
         assertEquals(STATUS_ACCEPTED, filter.test(event))
 
         event = event.copy(text = "This is a message for Bob or Ann")
-        filter.textBlacklist = listOf("Bob", "Ann")
+        filter.textBlacklist = setOf("Bob", "Ann")
         assertEquals(STATUS_TEXT_BLACKLISTED, filter.test(event))
 
         event = event.copy(text = "This is a message for Bobson or Ann")
-        filter.textBlacklist = listOf("BOB")
+        filter.textBlacklist = setOf("BOB")
         assertEquals(STATUS_TEXT_BLACKLISTED, filter.test(event))
 
         event = event.copy(text = "This is a message for Bob or Ann")
-        filter.textBlacklist = listOf("bob")
+        filter.textBlacklist = setOf("bob")
         assertEquals(STATUS_TEXT_BLACKLISTED, filter.test(event))
 
         event = event.copy(text = "This is a message")
-        filter.textBlacklist = listOf("Bob", "Ann")
+        filter.textBlacklist = setOf("Bob", "Ann")
         assertEquals(STATUS_ACCEPTED, filter.test(event))
     }
 
@@ -184,19 +184,19 @@ class PhoneEventFilterTest : BaseTest() {
         }
         assertEquals(STATUS_ACCEPTED, filter.test(event))
 
-        filter.textBlacklist = listOf(escapeRegex("REGEX:.*John.*"))
+        filter.textBlacklist = setOf(escapeRegex("REGEX:.*John.*"))
         event = event.copy(text = "This is a message for Bob or Ann")
         assertEquals(STATUS_ACCEPTED, filter.test(event))
 
-        filter.textBlacklist = listOf("REX:(.*)John(.*)", "REGEX:.*someone.*", "REGEX:.*other*")
+        filter.textBlacklist = setOf("REX:(.*)John(.*)", "REGEX:.*someone.*", "REGEX:.*other*")
         event = event.copy(text = "This is a message for John or someone else")
         assertEquals(STATUS_TEXT_BLACKLISTED, filter.test(event))
 
-        filter.textBlacklist = listOf("REGEX:(?i:.*SOMEONE.*)")
+        filter.textBlacklist = setOf("REGEX:(?i:.*SOMEONE.*)")
         event = event.copy(text = "This is a message for John or someone else")
         assertEquals(STATUS_TEXT_BLACKLISTED, filter.test(event))
 
-        filter.textBlacklist = listOf("REGEX:?i:.*SOMEONE.*") /* invalid pattern */
+        filter.textBlacklist = setOf("REGEX:?i:.*SOMEONE.*") /* invalid pattern */
         event = event.copy(text = "This is a message for John or someone else")
         assertEquals(STATUS_ACCEPTED, filter.test(event))
     }
@@ -205,7 +205,7 @@ class PhoneEventFilterTest : BaseTest() {
     fun testTextWhitelist() {
         val filter = PhoneEventFilter()
         filter.triggers = setOf(VAL_PREF_TRIGGER_IN_SMS)
-        filter.textWhitelist = listOf()
+        filter.textWhitelist = setOf()
 
         var event = createEvent(
                 phone = "111",
@@ -214,11 +214,11 @@ class PhoneEventFilterTest : BaseTest() {
         )
         assertEquals(STATUS_ACCEPTED, filter.test(event))
 
-        filter.textWhitelist = listOf("Bob", "Ann")
+        filter.textWhitelist = setOf("Bob", "Ann")
         event = event.copy(text = "This is a message for Bob or Ann")
         assertEquals(STATUS_ACCEPTED, filter.test(event))
 
-        filter.textWhitelist = listOf("Bob", "Ann")
+        filter.textWhitelist = setOf("Bob", "Ann")
         event = event.copy(text = "This is a message")
         assertEquals(STATUS_ACCEPTED, filter.test(event))
     }

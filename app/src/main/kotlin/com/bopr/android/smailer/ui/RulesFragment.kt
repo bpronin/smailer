@@ -107,7 +107,7 @@ class RulesFragment : BasePreferenceFragment() {
         }
     }
 
-    private fun formatListSummary(list: List<String>, @StringRes patternRes: Int,
+    private fun formatListSummary(list: Set<String>, @StringRes patternRes: Int,
                                   @StringRes emptyRes: Int): String {
         return getString(patternRes, if (list.isEmpty()) getString(emptyRes) else list.size)
     }

@@ -206,4 +206,39 @@ class DatabaseTest : BaseTest() {
         assertEquals("1", phones[4])
     }
 
+    @Test
+    fun testIteratorRemove() {
+        database.batch {
+            events.add(PhoneEvent(phone = "1", startTime = 0, acceptor = "device"))
+            events.add(PhoneEvent(phone = "2", startTime = 1, acceptor = "device"))
+            events.add(PhoneEvent(phone = "3", startTime = 2, acceptor = "device"))
+        }
+
+        val iterator = database.events.iterator()
+        while (iterator.hasNext()) {
+            if (iterator.next().phone == "1") {
+                iterator.remove()
+            }
+        }
+
+        assertEquals(2, database.events.size)
+        assertEquals("3", database.events.first().phone)
+        assertEquals("2", database.events.last().phone)
+    }
+
+    @Test
+    fun testContains() {
+        database.batch {
+            events.add(PhoneEvent(phone = "1", startTime = 0, acceptor = "device"))
+            events.add(PhoneEvent(phone = "2", startTime = 1, acceptor = "device"))
+            events.add(PhoneEvent(phone = "3", startTime = 2, acceptor = "device"))
+        }
+
+        assertTrue(database.events.contains(PhoneEvent(phone = "1", startTime = 0, acceptor = "device")))
+        assertTrue(database.events.containsAll(listOf(
+                PhoneEvent(phone = "1", startTime = 0, acceptor = "device"),
+                PhoneEvent(phone = "3", startTime = 2, acceptor = "device")
+        )))
+    }
+
 }

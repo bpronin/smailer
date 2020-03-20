@@ -15,28 +15,16 @@ import org.slf4j.LoggerFactory
 abstract class Dataset<T>(
         private val tableName: String,
         private val helper: SQLiteOpenHelper,
-        private val modifications: MutableCollection<String>
+        private val modifications: MutableSet<String>
 ) : MutableSet<T> {
 
     private val log = LoggerFactory.getLogger("Database")
-    protected val readable: SQLiteDatabase get() = helper.readableDatabase
-    protected val writable: SQLiteDatabase get() = helper.writableDatabase
 
     override val size: Int
-        get() = readable.query(tableName, strings(COLUMN_COUNT)).useFirst { getInt(0) }
-
-    override fun clear() {
-        val affected = writable.batch {
-            delete(tableName, null, null)
-        }
-        if (affected != 0) {
-            modified()
-            log.debug("All items removed from $tableName")
-        }
-    }
+        get() = read { query(tableName, strings(COLUMN_COUNT)).useFirst { getInt(0) } }
 
     override fun addAll(elements: Collection<T>): Boolean {
-        writable.batch {
+        write {
             for (e in elements) {
                 add(e)
             }
@@ -45,56 +33,96 @@ abstract class Dataset<T>(
     }
 
     override fun removeAll(elements: Collection<T>): Boolean {
-        var modified = false
-        writable.batch {
+        var affected = 0
+        write {
             for (e in elements) {
-                modified = remove(e)
+                if (remove(e)) affected++
             }
         }
-        if (modified) {
-            modified()
-            log.debug("$modified items(s) removed")
-        }
-        return modified
+
+        log.debug("$affected items(s) removed")
+        return affected != 0
     }
 
-    override fun iterator(): MutableCursorIterator<T> {
-        return query().mutableIterator(::get, ::remove)
+    override fun retainAll(elements: Collection<T>): Boolean {
+        var affected = 0
+        write {
+            for (e in rowSet()) {
+                if (!elements.contains(e) && remove(e)) affected++
+            }
+        }
+
+        log.debug("$affected items(s) removed")
+        return affected != 0
+    }
+
+    override fun iterator(): MutableIterator<T> {
+        val iterator = rowSet().iterator()
+
+        return object : MutableIterator<T> {
+
+            var current: T? = null
+
+            override fun hasNext(): Boolean = iterator.hasNext()
+
+            override fun next(): T {
+                current = iterator.next()
+                return current!!
+            }
+
+            override fun remove() {
+                remove(current)
+            }
+        }
+    }
+
+    override fun clear() {
+        write {
+            delete(tableName, null, null)
+        }
+        log.debug("All items removed from $tableName")
     }
 
     override fun isEmpty(): Boolean {
         return size == 0
     }
 
+    override fun contains(element: T): Boolean {
+        return rowSet().contains(element)
+    }
+
+    override fun containsAll(elements: Collection<T>): Boolean {
+        return rowSet().containsAll(elements)
+    }
+
     fun first(): T {
-        return query().useFirst(::get)
+        return queryAll().useFirst(::get)
+    }
+
+    fun last(): T {
+        return queryAll().useLast(::get)
     }
 
     fun replaceAll(elements: Collection<T>) {
-        writable.batch {
+        write {
             clear()
             addAll(elements)
         }
     }
 
-    protected abstract fun query(): Cursor
+    protected abstract fun queryAll(): Cursor
 
     protected abstract fun get(cursor: Cursor): T
 
-    protected fun modified() {
+    protected fun <R> read(action: SQLiteDatabase.() -> R): R {
+        return helper.readableDatabase.run(action)
+    }
+
+    protected fun <R> write(action: SQLiteDatabase.() -> R): R {
+        val result = helper.writableDatabase.batch(action)
         modifications.add(tableName)
+        return result
     }
 
-    override fun contains(element: T): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override fun containsAll(elements: Collection<T>): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override fun retainAll(elements: Collection<T>): Boolean {
-        TODO("Not yet implemented")
-    }
-
+    private fun rowSet() = queryAll().toSet(::get)
 }

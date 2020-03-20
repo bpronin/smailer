@@ -99,7 +99,7 @@ internal class Synchronizer(context: Context,
                     phoneWhitelist = phoneWhitelist,
                     textBlacklist = textBlacklist,
                     textWhitelist = textWhitelist,
-                    events = events.map(::eventToData)
+                    events = events.map(::eventToData).toSet()
             )
         }
     }

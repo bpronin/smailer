@@ -68,7 +68,7 @@ class RemoteControlProcessorTest : BaseTest() {
         processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_BLACKLIST, "200"))
         processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_BLACKLIST, "200")) /* should be ignored */
 
-        assertEquals(listOf("100", "200"), database.phoneBlacklist)
+        assertEquals(setOf("100", "200"), database.phoneBlacklist)
         verify(notifications).showRemoteAction(
                 eq(targetContext.getString(R.string.phone_remotely_added_to_blacklist, "100")),
                 eq(TARGET_PHONE_BLACKLIST))
@@ -85,7 +85,7 @@ class RemoteControlProcessorTest : BaseTest() {
         processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_WHITELIST, "200"))
         processor.performTask(RemoteControlTask("device", ADD_PHONE_TO_WHITELIST, "200")) /* should be ignored */
 
-        assertEquals(listOf("100", "200"), database.phoneWhitelist)
+        assertEquals(setOf("100", "200"), database.phoneWhitelist)
         verify(notifications).showRemoteAction(
                 eq(targetContext.getString(R.string.phone_remotely_added_to_whitelist, "100")),
                 eq(TARGET_PHONE_WHITELIST))
@@ -102,7 +102,7 @@ class RemoteControlProcessorTest : BaseTest() {
         processor.performTask(RemoteControlTask("device", ADD_TEXT_TO_BLACKLIST, "200"))
         processor.performTask(RemoteControlTask("device", ADD_TEXT_TO_BLACKLIST, "200")) /* should be ignored */
 
-        assertEquals(listOf("100", "200"), database.textBlacklist)
+        assertEquals(setOf("100", "200"), database.textBlacklist)
         verify(notifications).showRemoteAction(
                 eq(targetContext.getString(R.string.text_remotely_added_to_blacklist, "100")),
                 eq(TARGET_TEXT_BLACKLIST))
@@ -119,7 +119,7 @@ class RemoteControlProcessorTest : BaseTest() {
         processor.performTask(RemoteControlTask("device", ADD_TEXT_TO_WHITELIST, "200"))
         processor.performTask(RemoteControlTask("device", ADD_TEXT_TO_WHITELIST, "200")) /* should be ignored */
 
-        assertEquals(listOf("100", "200"), database.textWhitelist)
+        assertEquals(setOf("100", "200"), database.textWhitelist)
         verify(notifications).showRemoteAction(
                 eq(targetContext.getString(R.string.text_remotely_added_to_whitelist, "100")),
                 eq(TARGET_TEXT_WHITELIST))
@@ -130,14 +130,14 @@ class RemoteControlProcessorTest : BaseTest() {
 
     @Test
     fun testRemovePhoneFromBlacklist() {
-        database.phoneBlacklist = listOf("100", "200", "300")
+        database.phoneBlacklist = setOf("100", "200", "300")
 
         val processor = RemoteControlProcessor(context, database, notifications = notifications)
 
         processor.performTask(RemoteControlTask("device", REMOVE_PHONE_FROM_BLACKLIST, "100"))
         processor.performTask(RemoteControlTask("device", REMOVE_PHONE_FROM_BLACKLIST, "200"))
 
-        assertEquals(listOf("300"), database.phoneBlacklist)
+        assertEquals(setOf("300"), database.phoneBlacklist)
         verify(notifications).showRemoteAction(
                 eq(targetContext.getString(R.string.phone_remotely_removed_from_blacklist, "100")),
                 eq(TARGET_PHONE_BLACKLIST))
@@ -148,14 +148,14 @@ class RemoteControlProcessorTest : BaseTest() {
 
     @Test
     fun testRemovePhoneFromWhitelist() {
-        database.phoneWhitelist = listOf("100", "200", "300")
+        database.phoneWhitelist = setOf("100", "200", "300")
 
         val processor = RemoteControlProcessor(context, database, notifications = notifications)
 
         processor.performTask(RemoteControlTask("device", REMOVE_PHONE_FROM_WHITELIST, "100"))
         processor.performTask(RemoteControlTask("device", REMOVE_PHONE_FROM_WHITELIST, "200"))
 
-        assertEquals(listOf("300"), database.phoneWhitelist)
+        assertEquals(setOf("300"), database.phoneWhitelist)
         verify(notifications).showRemoteAction(
                 eq(targetContext.getString(R.string.phone_remotely_removed_from_whitelist, "100")),
                 eq(TARGET_PHONE_WHITELIST))
@@ -166,14 +166,14 @@ class RemoteControlProcessorTest : BaseTest() {
 
     @Test
     fun testRemoveTextFromBlacklist() {
-        database.textBlacklist = listOf("100", "200", "300")
+        database.textBlacklist = setOf("100", "200", "300")
 
         val processor = RemoteControlProcessor(context, database, notifications = notifications)
 
         processor.performTask(RemoteControlTask("device", REMOVE_TEXT_FROM_BLACKLIST, "100"))
         processor.performTask(RemoteControlTask("device", REMOVE_TEXT_FROM_BLACKLIST, "200"))
 
-        assertEquals(listOf("300"), database.textBlacklist)
+        assertEquals(setOf("300"), database.textBlacklist)
         verify(notifications).showRemoteAction(
                 eq(targetContext.getString(R.string.text_remotely_removed_from_blacklist, "100")),
                 eq(TARGET_TEXT_BLACKLIST))
@@ -184,14 +184,14 @@ class RemoteControlProcessorTest : BaseTest() {
 
     @Test
     fun testRemoveTextFromWhitelist() {
-        database.textWhitelist = listOf("100", "200", "300")
+        database.textWhitelist = setOf("100", "200", "300")
 
         val processor = RemoteControlProcessor(context, database, notifications = notifications)
 
         processor.performTask(RemoteControlTask("device", REMOVE_TEXT_FROM_WHITELIST, "100"))
         processor.performTask(RemoteControlTask("device", REMOVE_TEXT_FROM_WHITELIST, "200"))
 
-        assertEquals(listOf("300"), database.textWhitelist)
+        assertEquals(setOf("300"), database.textWhitelist)
         verify(notifications).showRemoteAction(
                 eq(targetContext.getString(R.string.text_remotely_removed_from_whitelist, "100")),
                 eq(TARGET_TEXT_WHITELIST))

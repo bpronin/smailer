@@ -33,22 +33,22 @@ class Database(private val context: Context, private val name: String = DATABASE
     /**
      * Phone numbers blacklist.
      */
-    var phoneBlacklist: List<String> by FilterListDelegate(TABLE_PHONE_BLACKLIST)
+    var phoneBlacklist: Set<String> by FilterListDelegate(TABLE_PHONE_BLACKLIST)
 
     /**
      * Phone numbers whitelist.
      */
-    var phoneWhitelist: List<String> by FilterListDelegate(TABLE_PHONE_WHITELIST)
+    var phoneWhitelist: Set<String> by FilterListDelegate(TABLE_PHONE_WHITELIST)
 
     /**
      * SMS text blacklist.
      */
-    var textBlacklist: List<String> by FilterListDelegate(TABLE_TEXT_BLACKLIST)
+    var textBlacklist: Set<String> by FilterListDelegate(TABLE_TEXT_BLACKLIST)
 
     /**
      * SMS text whitelist.
      */
-    var textWhitelist: List<String> by FilterListDelegate(TABLE_TEXT_WHITELIST)
+    var textWhitelist: Set<String> by FilterListDelegate(TABLE_TEXT_WHITELIST)
 
     /**
      * Returns last saved geolocation.
@@ -85,8 +85,8 @@ class Database(private val context: Context, private val name: String = DATABASE
     /**
      * Returns black/white list.
      */
-    fun getFilterList(listName: String): List<String> {
-        return helper.readableDatabase.query(listName).useToList { getString(COLUMN_VALUE)!! }
+    fun getFilterList(listName: String): Set<String> {
+        return helper.readableDatabase.query(listName).toSet { getString(COLUMN_VALUE)!! }
     }
 
     /**
@@ -191,13 +191,13 @@ class Database(private val context: Context, private val name: String = DATABASE
         helper.writableDatabase.update(TABLE_SYSTEM, values, "$COLUMN_ID=0")
     }
 
-    private inner class FilterListDelegate(private val listName: String) : ReadWriteProperty<Database, List<String>> {
+    private inner class FilterListDelegate(private val listName: String) : ReadWriteProperty<Database, Set<String>> {
 
-        override fun getValue(thisRef: Database, property: KProperty<*>): List<String> {
+        override fun getValue(thisRef: Database, property: KProperty<*>): Set<String> {
             return thisRef.getFilterList(listName)
         }
 
-        override fun setValue(thisRef: Database, property: KProperty<*>, value: List<String>) {
+        override fun setValue(thisRef: Database, property: KProperty<*>, value: Set<String>) {
             thisRef.replaceFilterList(listName, value)
         }
     }

@@ -355,8 +355,8 @@ class DebugFragment : BasePreferenceFragment() {
             putBoolean(PREF_NOTIFY_SEND_SUCCESS, true)
         }
 
-        database.phoneBlacklist = listOf("+123456789", "+9876543*")
-        database.textBlacklist = listOf("Bad text", escapeRegex("Expression"))
+        database.phoneBlacklist = setOf("+123456789", "+9876543*")
+        database.textBlacklist = setOf("Bad text", escapeRegex("Expression"))
 
         showToast(R.string.operation_complete)
     }
