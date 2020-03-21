@@ -161,13 +161,13 @@ class Notifications(private val context: Context) {
             TARGET_RULES ->
                 activityIntent(RulesActivity::class)
             TARGET_PHONE_BLACKLIST ->
-                activityIntent(CallFilterPhoneBlacklistActivity::class)
+                activityIntent(EventFilterPhoneBlacklistActivity::class)
             TARGET_PHONE_WHITELIST ->
-                activityIntent(CallFilterPhoneWhitelistActivity::class)
+                activityIntent(EventFilterPhoneWhitelistActivity::class)
             TARGET_TEXT_BLACKLIST ->
-                activityIntent(CallFilterTextBlacklistActivity::class)
+                activityIntent(EventFilterTextBlacklistActivity::class)
             TARGET_TEXT_WHITELIST ->
-                activityIntent(CallFilterTextWhitelistActivity::class)
+                activityIntent(EventFilterTextWhitelistActivity::class)
             else ->
                 throw IllegalArgumentException("Invalid target")
         }

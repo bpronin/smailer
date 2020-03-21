@@ -6,7 +6,6 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bopr.android.smailer.sync.SyncWorker.Companion.requestDataSync
-import com.bopr.android.smailer.util.Dictionary
 import com.bopr.android.smailer.util.database.*
 import org.slf4j.LoggerFactory
 import java.io.Closeable
@@ -30,24 +29,24 @@ class Database(private val context: Context, private val name: String = DATABASE
     /**
      * Phone numbers blacklist.
      */
-    val phoneBlacklist = ListDataset(TABLE_PHONE_BLACKLIST, helper, modifiedTables)
+    val phoneBlacklist = StringDataset(TABLE_PHONE_BLACKLIST, helper, modifiedTables)
 
     /**
      * Phone numbers whitelist.
      */
-    val phoneWhitelist = ListDataset(TABLE_PHONE_WHITELIST, helper, modifiedTables)
+    val phoneWhitelist = StringDataset(TABLE_PHONE_WHITELIST, helper, modifiedTables)
 
     /**
      * SMS text blacklist.
      */
-    val textBlacklist = ListDataset(TABLE_TEXT_BLACKLIST, helper, modifiedTables)
+    val textBlacklist = StringDataset(TABLE_TEXT_BLACKLIST, helper, modifiedTables)
 
     /**
      * SMS text whitelist.
      */
-    val textWhitelist = ListDataset(TABLE_TEXT_WHITELIST, helper, modifiedTables)
+    val textWhitelist = StringDataset(TABLE_TEXT_WHITELIST, helper, modifiedTables)
 
-    val filterList = Dictionary(
+    val eventFilterList = mapOf(
             TABLE_PHONE_BLACKLIST to phoneBlacklist,
             TABLE_PHONE_WHITELIST to phoneWhitelist,
             TABLE_TEXT_BLACKLIST to textBlacklist,
@@ -99,13 +98,13 @@ class Database(private val context: Context, private val name: String = DATABASE
      * Performs specified action then updates modification time, fires change event
      * and requests google drive synchronization.
      */
-    fun <T> commit(flags: Int = 0, action: Database.() -> T): T {
+    fun <T> commit(syncRequired: Boolean = true, action: Database.() -> T): T {
         val result = action(this)
         if (modifiedTables.isNotEmpty()) {
             updateTime = currentTimeMillis()
-            context.sendDatabaseBroadcast(modifiedTables, flags)
+            context.sendDatabaseBroadcast(modifiedTables)
             modifiedTables.clear()
-            if (flags and DB_FLAG_SYNCING != DB_FLAG_SYNCING) {
+            if (syncRequired) {
                 context.requestDataSync()
             }
         }
@@ -200,9 +199,7 @@ class Database(private val context: Context, private val name: String = DATABASE
         const val COLUMN_ACCEPTOR = "recipient"
 
         private const val ACTION_DATABASE_CHANGED = "database_changed"
-        const val EXTRA_TABLES = "tables"
-        const val EXTRA_FLAGS = "flags"
-        const val DB_FLAG_SYNCING = 0x01  /* disables broadcasting while data is syncing */
+        private const val EXTRA_TABLES = "tables"
 
         private const val TABLE_SYSTEM = "system_data"
         const val TABLE_EVENTS = "phone_events"
@@ -245,25 +242,23 @@ class Database(private val context: Context, private val name: String = DATABASE
         /**
          * Sends database broadcast.
          */
-        fun Context.sendDatabaseBroadcast(tables: Set<String>, flags: Int) {
-            log.debug("Broadcasting data changed: $tables. Flags: [$flags]")
+        fun Context.sendDatabaseBroadcast(tables: Set<String>) {
+            log.debug("Broadcasting data changed: $tables")
 
             val intent = Intent(ACTION_DATABASE_CHANGED)
                     .putExtra(EXTRA_TABLES, tables.toTypedArray())
-                    .putExtra(EXTRA_FLAGS, flags)
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
         }
 
         /**
          * Creates and registers database broadcast receiver.
          */
-        fun Context.registerDatabaseListener(onChange: (Set<String>, Int) -> Unit)
+        fun Context.registerDatabaseListener(onChange: (Set<String>) -> Unit)
                 : BroadcastReceiver {
             val listener = object : BroadcastReceiver() {
 
                 override fun onReceive(context: Context, intent: Intent) {
-                    onChange(intent.getStringArrayExtra(EXTRA_TABLES)!!.toSet(),
-                            intent.getIntExtra(EXTRA_FLAGS, 0))
+                    onChange(intent.getStringArrayExtra(EXTRA_TABLES)?.toSet() ?: emptySet())
                 }
             }
             LocalBroadcastManager.getInstance(this).registerReceiver(listener,

@@ -14,7 +14,7 @@ data class SyncData(
         @Key("text_black_list") var textBlacklist: Set<String> = emptySet(),
         @Key("phone_white_list") var phoneWhitelist: Set<String> = emptySet(),
         @Key("text_white_list") var textWhitelist: Set<String> = emptySet(),
-        @Key("phone_events") var events: Set<Event> = emptySet()) {
+        @Key("phone_events") var events: List<Event> = emptyList()) {
 
     data class Event(
             @Key("is_incoming") var incoming: Boolean = false,

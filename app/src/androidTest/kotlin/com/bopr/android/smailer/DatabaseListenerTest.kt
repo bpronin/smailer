@@ -36,7 +36,7 @@ class DatabaseListenerTest : BaseTest() {
     @Test
     fun testListener() {
         val latch = CountDownLatch(1)
-        listener = targetContext.registerDatabaseListener { _, _ ->
+        listener = targetContext.registerDatabaseListener {
             latch.countDown()
         }
 

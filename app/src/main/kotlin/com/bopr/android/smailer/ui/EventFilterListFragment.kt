@@ -9,22 +9,28 @@ import com.bopr.android.smailer.Database
 import com.bopr.android.smailer.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.ui.CallFilterListFragment.Holder
+import com.bopr.android.smailer.StringDataset
+import com.bopr.android.smailer.ui.EventFilterListFragment.Holder
 
 /**
  * Base for black/whitelist fragments.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-abstract class CallFilterListFragment(private val listName: String) : EditableRecyclerFragment<String, Holder>() {
+abstract class EventFilterListFragment(private val listName: String) : EditableRecyclerFragment<String, Holder>() {
 
-    private lateinit var databaseListener: BroadcastReceiver
     private lateinit var database: Database
+    private lateinit var databaseListener: BroadcastReceiver
+    private lateinit var list: StringDataset
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        database = Database(requireContext())
-        databaseListener = requireContext().registerDatabaseListener { tables, _ ->
+
+        val context = requireContext()
+
+        database = Database(context)
+        list = database.eventFilterList.getValue(listName)
+        databaseListener = context.registerDatabaseListener { tables ->
             if (tables.contains(listName)) refreshItems()
         }
     }
@@ -70,11 +76,11 @@ abstract class CallFilterListFragment(private val listName: String) : EditableRe
     }
 
     override fun loadItems(): Collection<String> {
-        return database.filterList[listName]
+        return list
     }
 
     override fun saveItems(items: Collection<String>) {
-        database.commit { batch { filterList[listName].replaceAll(items) } }
+        database.commit { batch { list.replaceAll(items) } }
     }
 
     override fun isValidItem(item: String): Boolean {

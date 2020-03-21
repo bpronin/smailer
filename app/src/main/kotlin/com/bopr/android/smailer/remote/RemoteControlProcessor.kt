@@ -182,7 +182,7 @@ internal class RemoteControlProcessor(
         }
     }
 
-    private fun addToFilterList(list: ListDataset, value: String?, @StringRes messageRes: Int,
+    private fun addToFilterList(list: StringDataset, value: String?, @StringRes messageRes: Int,
                                 @Notifications.Target target: Int) {
         if (!value.isNullOrEmpty()) {
             if (database.commit { list.add(value) }) {
@@ -193,7 +193,7 @@ internal class RemoteControlProcessor(
         }
     }
 
-    private fun removeFromFilterList(list: ListDataset, value: String?, @StringRes messageRes: Int,
+    private fun removeFromFilterList(list: StringDataset, value: String?, @StringRes messageRes: Int,
                                      @Notifications.Target target: Int) {
         if (!value.isNullOrEmpty()) {
             if (database.commit { list.remove(value) }) {

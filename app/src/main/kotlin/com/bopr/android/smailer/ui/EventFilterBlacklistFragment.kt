@@ -7,4 +7,4 @@ import com.bopr.android.smailer.Database.Companion.TABLE_PHONE_BLACKLIST
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class CallFilterPhoneBlacklistFragment : CallFilterPhoneListFragment(TABLE_PHONE_BLACKLIST)
+class EventFilterBlacklistFragment : EventFilterPhoneListFragment(TABLE_PHONE_BLACKLIST)

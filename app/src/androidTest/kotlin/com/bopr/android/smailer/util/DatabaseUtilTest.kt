@@ -17,7 +17,7 @@ import org.junit.Test
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 @SmallTest
-class DbUtilTest : BaseTest() {
+class DatabaseUtilTest : BaseTest() {
 
     private lateinit var helper: SQLiteOpenHelper
 

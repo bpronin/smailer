@@ -9,16 +9,16 @@ import android.view.LayoutInflater.from
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.StringRes
-import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getColor
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bopr.android.smailer.Database
 import com.bopr.android.smailer.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.Database.Companion.unregisterDatabaseListener
-import com.bopr.android.smailer.ListDataset
 import com.bopr.android.smailer.PhoneEvent
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.R
+import com.bopr.android.smailer.StringDataset
 import com.bopr.android.smailer.ui.HistoryFragment.Holder
 import com.bopr.android.smailer.util.*
 import com.google.android.material.snackbar.Snackbar
@@ -47,7 +47,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
         unreadItemTextColor = context.getColorFromAttr(android.R.attr.textColorPrimary)
 
         database = Database(context)
-        databaseListener = context.registerDatabaseListener { _, _ ->
+        databaseListener = context.registerDatabaseListener {
             refreshItems()
         }
     }
@@ -205,7 +205,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
         Snackbar.make(recycler,
                         getQuantityString(R.plurals.items_removed, selectedEvents.size),
                         Snackbar.LENGTH_LONG)
-                .setActionTextColor(ContextCompat.getColor(requireContext(), R.color.colorAccentText))
+                .setActionTextColor(getColor(requireContext(), R.color.colorAccentText))
                 .setAction(R.string.undo) {
                     database.commit { batch { events.addAll(selectedEvents) } }
                 }
@@ -222,7 +222,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
         }
     }
 
-    private fun addSelectionToFilterList(list: ListDataset, @StringRes titleRes: Int) {
+    private fun addSelectionToFilterList(list: StringDataset, @StringRes titleRes: Int) {
         getSelectedItem()?.let { item ->
             EditPhoneDialogFragment().apply {
                 setTitle(titleRes)
@@ -232,7 +232,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
         }
     }
 
-    private fun addToFilterList(list: ListDataset, phone: String?) {
+    private fun addToFilterList(list: StringDataset, phone: String?) {
         if (!phone.isNullOrEmpty()) {
             if (!database.commit { list.add(phone) }) {
                 showToast(getString(R.string.item_already_exists, phone))

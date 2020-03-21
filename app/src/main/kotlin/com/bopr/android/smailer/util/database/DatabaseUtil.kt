@@ -2,7 +2,6 @@
 
 package com.bopr.android.smailer.util.database
 
-import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
@@ -13,6 +12,8 @@ import com.bopr.android.smailer.util.strings
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
+
+val COUNT_SELECTION = strings("COUNT(*)")
 
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 inline fun SQLiteDatabase.query(table: String, projection: Array<out String>? = null, selection: String? = null,
@@ -38,13 +39,11 @@ inline fun <T> SQLiteDatabase.batch(action: SQLiteDatabase.() -> T): T {
     }
 }
 
-@SuppressLint("Recycle")
 inline fun SQLiteDatabase.getTables(): Set<String> {
     return query("sqlite_master", strings("name"), "type='table' AND name<>'android_metadata'")
             .toSet { getString(0) }
 }
 
-@SuppressLint("Recycle")
 inline fun SQLiteDatabase.isTableExists(name: String): Boolean {
     return count("sqlite_master", "type='table' AND name='$name'") == 1L
 }
@@ -63,19 +62,18 @@ inline fun SQLiteDatabase.alterTable(table: String, schemaSql: String,
     }
 }
 
-@SuppressLint("Recycle")
-inline fun SQLiteDatabase.copyTable(srcTable: String, dstTable: String,
+inline fun SQLiteDatabase.copyTable(src: String, dest: String,
                                     transform: Cursor.(String) -> String? = { getStringIfExists(it) }) {
-    val columns = query(table = dstTable, limit = "1").use {
+    val columns = query(table = dest, limit = "1").use {
         it.columnNames
     }
 
-    query(srcTable).useAll {
+    query(src).useAll {
         val values = ContentValues()
         for (column in columns) {
             values.put(column, transform(column))
         }
-        insert(dstTable, null, values)
+        insert(dest, null, values)
     }
 }
 
@@ -83,15 +81,13 @@ inline fun SQLiteDatabase.dropTable(table: String) {
     execSQL("DROP TABLE IF EXISTS $table")
 }
 
-val COUNT_SELECTION = strings("COUNT(*)")
-
 inline fun SQLiteDatabase.count(table: String, selection: String? = null,
                                 selectionArgs: Array<out String>? = null): Long {
     return query(table, COUNT_SELECTION, selection, selectionArgs).useFirst { getLong(0) }
 }
 
 inline fun Cursor.getString(columnName: String): String {
-    return getString(getColumnIndex(columnName))!!
+    return getString(getColumnIndex(columnName))
 }
 
 inline fun Cursor.getInt(columnName: String): Int {

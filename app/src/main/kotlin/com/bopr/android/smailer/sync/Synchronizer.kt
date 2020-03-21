@@ -3,7 +3,6 @@ package com.bopr.android.smailer.sync
 import android.accounts.Account
 import android.content.Context
 import com.bopr.android.smailer.Database
-import com.bopr.android.smailer.Database.Companion.DB_FLAG_SYNCING
 import com.bopr.android.smailer.GeoCoordinates.Companion.coordinatesOf
 import com.bopr.android.smailer.GoogleDrive
 import com.bopr.android.smailer.PhoneEvent
@@ -99,13 +98,13 @@ internal class Synchronizer(context: Context,
                     phoneWhitelist = phoneWhitelist,
                     textBlacklist = textBlacklist,
                     textWhitelist = textWhitelist,
-                    events = events.map(::eventToData).toSet()
+                    events = events.map(::eventToData)
             )
         }
     }
 
     private fun putLocalData(data: SyncData) {
-        database.commit(DB_FLAG_SYNCING) {
+        database.commit(false) {
             batch {
                 events.replaceAll(data.events.map(::dataToEvent))
                 phoneBlacklist.replaceAll(data.phoneBlacklist)

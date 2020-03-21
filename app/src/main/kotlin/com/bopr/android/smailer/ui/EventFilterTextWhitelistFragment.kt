@@ -1,14 +1,14 @@
 package com.bopr.android.smailer.ui
 
-import com.bopr.android.smailer.Database.Companion.TABLE_TEXT_BLACKLIST
+import com.bopr.android.smailer.Database.Companion.TABLE_TEXT_WHITELIST
 import com.bopr.android.smailer.util.unescapeRegex
 
 /**
- * Text blacklist fragment.
+ * Text whitelist fragment.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class CallFilterTextBlacklistFragment : CallFilterListFragment(TABLE_TEXT_BLACKLIST) {
+class EventFilterTextWhitelistFragment : EventFilterListFragment(TABLE_TEXT_WHITELIST) {
 
     override fun createEditDialog(): BaseEditDialogFragment<String> {
         return EditTextDialogFragment()
