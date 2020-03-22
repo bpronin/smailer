@@ -6,12 +6,11 @@ import com.bopr.android.smailer.util.Mockable
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
-import com.google.api.client.util.Base64
-import com.google.api.client.util.StringUtils
+import com.google.api.client.util.Base64.decodeBase64
+import com.google.api.client.util.StringUtils.newStringUtf8
 import com.google.api.services.gmail.Gmail
 import com.google.api.services.gmail.model.Message
 import com.google.api.services.gmail.model.ModifyMessageRequest
-import com.google.common.collect.ImmutableList
 import org.slf4j.LoggerFactory
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -33,6 +32,7 @@ import javax.mail.internet.*
 @Mockable
 class GoogleMail(private val context: Context) {
 
+    private val log = LoggerFactory.getLogger("GoogleMail")
     private val session = Session.getDefaultInstance(Properties(), null)
     private lateinit var service: Gmail
     private lateinit var account: Account
@@ -82,7 +82,7 @@ class GoogleMail(private val context: Context) {
     @Throws(IOException::class)
     fun markAsRead(message: MailMessage) {
         val content = ModifyMessageRequest()
-                .setRemoveLabelIds(ImmutableList.of("UNREAD")) /* case sensitive */
+                .setRemoveLabelIds(listOf("UNREAD")) /* case sensitive */
         service.users()
                 .messages()
                 .modify(ME, message.id, content)
@@ -178,14 +178,13 @@ class GoogleMail(private val context: Context) {
     private fun readBody(message: Message): String? {
         return message.payload?.let {
             val parts = it.parts
-            val part = if (parts == null || parts.isEmpty()) it else parts[0]
-            return StringUtils.newStringUtf8(Base64.decodeBase64(part.body.data))
+            val part = if (parts.isNullOrEmpty()) it else parts[0]
+            return newStringUtf8(decodeBase64(part.body.data))
         }
     }
 
     companion object {
 
-        private val log = LoggerFactory.getLogger("GoogleMail")
         private const val ME = "me" /* exact lowercase "me" */
         private const val UTF_8 = "UTF-8"
         private const val HTML = "html"

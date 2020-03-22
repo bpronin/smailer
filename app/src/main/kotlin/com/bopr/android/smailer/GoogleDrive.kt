@@ -2,6 +2,7 @@ package com.bopr.android.smailer
 
 import android.accounts.Account
 import android.content.Context
+import com.bopr.android.smailer.util.Mockable
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.http.ByteArrayContent
 import com.google.api.client.http.javanet.NetHttpTransport
@@ -9,7 +10,6 @@ import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes.DRIVE_APPDATA
 import com.google.api.services.drive.model.File
-import com.google.common.collect.ImmutableList
 import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.io.InputStream
@@ -22,7 +22,8 @@ import kotlin.reflect.KClass
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class GoogleDrive(private val context: Context) {
+@Mockable
+internal class GoogleDrive(private val context: Context) {
 
     private val log = LoggerFactory.getLogger("GoogleDrive")
     private lateinit var service: Drive
@@ -102,7 +103,7 @@ class GoogleDrive(private val context: Context) {
     @Throws(IOException::class)
     private fun create(filename: String, json: String) {
         val metadata = File()
-                .setParents(ImmutableList.of(APP_DATA_FOLDER))
+                .setParents(listOf(APP_DATA_FOLDER))
                 .setMimeType(MIME_JSON)
                 .setName(filename)
         val content = ByteArrayContent.fromString(MIME_JSON, json)

@@ -2,6 +2,7 @@ package com.bopr.android.smailer.sync
 
 import android.content.Context
 import androidx.work.*
+import androidx.work.ExistingWorkPolicy.KEEP
 import androidx.work.NetworkType.CONNECTED
 import com.bopr.android.smailer.Database
 import com.bopr.android.smailer.Settings
@@ -26,8 +27,8 @@ internal class SyncWorker(context: Context, workerParams: WorkerParameters)
                 getAccount(settings.senderAccount)?.let { account ->
                     Database(this).use { database ->
                         Synchronizer(this, account, database).run {
-                            val options = inputData.getInt(SYNC_OPTIONS, SYNC_NORMAL)
-                            if (sync(options)) {
+                            val mode = inputData.getInt(SYNC_OPTIONS, SYNC_NORMAL)
+                            if (sync(mode)) {
                                 sendCloudMessage(FCM_REQUEST_DATA_SYNC)
                             }
                         }
@@ -48,19 +49,18 @@ internal class SyncWorker(context: Context, workerParams: WorkerParameters)
                 .setRequiredNetworkType(CONNECTED)
                 .build()
 
-        internal fun Context.requestDataSync(options: Int = SYNC_NORMAL) {
+        internal fun Context.requestDataSync(mode: Int = SYNC_NORMAL) {
             if (Settings(this).isSyncEnabled) {
-                log.debug("Sync requested. Option: $options")
+                log.debug("Sync requested in mode: $mode")
 
                 val data = Data.Builder()
-                        .putInt(SYNC_OPTIONS, options)
+                        .putInt(SYNC_OPTIONS, mode)
                         .build()
                 val request = OneTimeWorkRequest.Builder(SyncWorker::class.java)
                         .setConstraints(constraints())
                         .setInputData(data)
                         .build()
-                WorkManager.getInstance(this).enqueueUniqueWork(WORK_SYNC,
-                        ExistingWorkPolicy.KEEP, request)
+                WorkManager.getInstance(this).enqueueUniqueWork(WORK_SYNC, KEEP, request)
             }
         }
 

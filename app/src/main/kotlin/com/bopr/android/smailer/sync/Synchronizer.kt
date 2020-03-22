@@ -17,11 +17,11 @@ import java.io.IOException
 internal class Synchronizer(context: Context,
                             account: Account,
                             private val database: Database,
+                            private val drive: GoogleDrive = GoogleDrive(context),
                             private val metaFile: String = "meta.json",
                             private val dataFile: String = "data.json") {
 
     private val log = LoggerFactory.getLogger("Synchronizer")
-    private val drive = GoogleDrive(context)
 
     init {
         drive.login(account)
@@ -30,12 +30,12 @@ internal class Synchronizer(context: Context,
     /**
      * Synchronizes database with google drive.
      *
-     * @param options one of [SYNC_FORCE_DOWNLOAD], [SYNC_FORCE_UPLOAD], [SYNC_NORMAL]
+     * @param mode one of [SYNC_FORCE_DOWNLOAD], [SYNC_FORCE_UPLOAD], [SYNC_NORMAL]
      * @return true if local database have been changed
      */
     @Throws(IOException::class)
-    fun sync(options: Int = SYNC_NORMAL): Boolean {
-        when (options) {
+    fun sync(mode: Int = SYNC_NORMAL): Boolean {
+        when (mode) {
             SYNC_FORCE_DOWNLOAD -> {
                 download()
             }

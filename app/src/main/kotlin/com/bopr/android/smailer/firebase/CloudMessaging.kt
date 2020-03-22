@@ -1,5 +1,6 @@
 package com.bopr.android.smailer.firebase
 
+import android.accounts.Account
 import android.content.Context
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.JsonObjectRequest
@@ -22,16 +23,24 @@ object CloudMessaging {
     const val FCM_ACTION = "action"
 
     private val NON_USER_ID_CHARS = Regex("[^a-zA-Z0-9-_~%]")
-    private var topic: String? = null
+    private var subscribedTopic: String? = null
 
     fun Context.subscribeToCloudMessaging() {
-        getAccount(Settings(this).senderAccount)?.let { account ->
-            topic = "/topics/com.bopr.android.smailer.firebase-${userId(account.name)}"
-            topic!!.let {
-                FirebaseMessaging.getInstance().subscribeToTopic(it)
+        account()?.let { account ->
+            subscribedTopic = topic(account).apply {
+                FirebaseMessaging.getInstance().subscribeToTopic(this)
 
-                log.debug("Subscribed to: $it")
+                log.debug("Subscribed to: $this")
             }
+        } ?: log.debug("No account")
+    }
+
+    internal fun unsubscribeFromCloudMessaging() {
+        subscribedTopic?.run {
+            FirebaseMessaging.getInstance().unsubscribeFromTopic(this)
+
+            log.debug("Unsubscribed from: $this")
+            subscribedTopic = null
         }
     }
 
@@ -41,10 +50,10 @@ object CloudMessaging {
     }
 
     fun Context.sendCloudMessage(action: String) {
-        topic?.let {
+        account()?.let { account ->
             requestFirebaseToken { token ->
                 val payload = JSONObject().apply {
-                    put("to", it)
+                    put("to", topic(account))
                     put("data", JSONObject().apply {
                         put(FCM_SENDER, token)
                         put(FCM_ACTION, action)
@@ -62,17 +71,13 @@ object CloudMessaging {
 
                 log.debug("Sent message: $payload")
             }
-        } ?: log.warn("Unsubscribed")
+        } ?: log.warn("No account")
     }
 
-    internal fun unsubscribeFromCloudMessaging() {
-        topic = topic?.let {
-            FirebaseMessaging.getInstance().unsubscribeFromTopic(it)
+    private fun Context.account() = getAccount(Settings(this).senderAccount)
 
-            log.debug("Unsubscribed from: $it")
-            null
-        }
-    }
+    private fun topic(account: Account) =
+            "/topics/com.bopr.android.smailer.firebase-${userId(account.name)}"
 
     internal fun requestFirebaseToken(onComplete: (String) -> Unit) {
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
