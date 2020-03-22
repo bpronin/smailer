@@ -17,7 +17,7 @@
             android:key="phone_blacklist"
             android:title="@string/blacklist" >
             <intent
-                android:targetClass="com.bopr.android.smailer.ui.CallFilterPhoneBlacklistActivity"
+                android:targetClass="com.bopr.android.smailer.ui.EventFilterPhoneBlacklistActivity"
                 android:targetPackage="com.bopr.android.smailer" />
             />
         </androidx.preference.Preference>
@@ -26,7 +26,7 @@
             android:key="phone_whitelist"
             android:title="@string/whitelist">
             <intent
-                android:targetClass="com.bopr.android.smailer.ui.CallFilterPhoneWhitelistActivity"
+                android:targetClass="com.bopr.android.smailer.ui.EventFilterPhoneWhitelistActivity"
                 android:targetPackage="com.bopr.android.smailer" />
             />
         </androidx.preference.Preference>
@@ -40,7 +40,7 @@
             android:key="text_blacklist"
             android:title="@string/blacklist">
             <intent
-                android:targetClass="com.bopr.android.smailer.ui.CallFilterTextBlacklistActivity"
+                android:targetClass="com.bopr.android.smailer.ui.EventFilterTextBlacklistActivity"
                 android:targetPackage="com.bopr.android.smailer" />
             />
         </androidx.preference.Preference>
@@ -49,7 +49,7 @@
             android:key="text_whitelist"
             android:title="@string/whitelist">
             <intent
-                android:targetClass="com.bopr.android.smailer.ui.CallFilterTextWhitelistActivity"
+                android:targetClass="com.bopr.android.smailer.ui.EventFilterTextWhitelistActivity"
                 android:targetPackage="com.bopr.android.smailer" />
             />
         </androidx.preference.Preference>
