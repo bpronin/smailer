@@ -53,14 +53,8 @@ class EmailSettingsFragment : BasePreferenceFragment() {
     }
 
     private fun updateDeviceNamePreferenceView() {
-        val preference = requirePreference(PREF_DEVICE_ALIAS)
-        val alias = settings.deviceAlias
-
-        if (alias == null) {
-            updateSummary(preference, deviceName(), SUMMARY_STYLE_DEFAULT)
-        } else {
-            updateSummary(preference, alias, SUMMARY_STYLE_DEFAULT)
-        }
+        updateSummary(requirePreference(PREF_DEVICE_ALIAS), settings.deviceAlias,
+                SUMMARY_STYLE_DEFAULT)
     }
 
 }

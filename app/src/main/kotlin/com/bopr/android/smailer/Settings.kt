@@ -3,6 +3,7 @@ package com.bopr.android.smailer
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import com.bopr.android.smailer.util.SharedPreferencesWrapper
+import com.bopr.android.smailer.util.deviceName
 
 /**
  * Settings.
@@ -12,7 +13,6 @@ import com.bopr.android.smailer.util.SharedPreferencesWrapper
 class Settings(context: Context, name: String = PREFERENCES_STORAGE_NAME) :
         SharedPreferencesWrapper(context.getSharedPreferences(name, MODE_PRIVATE)) {
 
-    val deviceAlias get() = getString(PREF_DEVICE_ALIAS)
     val emailContent get() = getStringSet(PREF_EMAIL_CONTENT)
     val emailLocale get() = getString(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)!!
     val emailRecipients get() = getStringList(PREF_RECIPIENTS_ADDRESS)
@@ -25,6 +25,11 @@ class Settings(context: Context, name: String = PREFERENCES_STORAGE_NAME) :
     val isSyncEnabled get() = getBoolean(PREF_SYNC_ENABLED)
     val remoteControlAccount get() = getString(PREF_REMOTE_CONTROL_ACCOUNT)
     val senderAccount get() = getString(PREF_SENDER_ACCOUNT)
+    val deviceAlias: String
+        get() {
+            val setting = getString(PREF_DEVICE_ALIAS)
+            return if (!setting.isNullOrEmpty()) setting else deviceName()
+        }
 
     fun loadDefaults() = update {
         putInt(PREF_SETTINGS_VERSION, SETTINGS_VERSION)

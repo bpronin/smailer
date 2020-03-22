@@ -2,14 +2,10 @@ package com.bopr.android.smailer.ui
 
 
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
 import com.bopr.android.smailer.R
-import org.hamcrest.Matchers.allOf
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -38,8 +34,10 @@ class MainActivityTest {
 
     @Test
     fun testMainActivity() {
-        checkBatteryOptimizationDialog()
-        assertPageDisplayed(R.string.app_name)
+        if (onView(alertDialog(R.string.battery_optimization)).isExists()) {
+            clickCancelButton()
+        }
+        assertHomeDisplayed()
 
 /*      it won't work cause account picker is outside app process
         clickPreference(R.string.sender)
@@ -50,46 +48,41 @@ class MainActivityTest {
         assertPageDisplayed(R.string.recipients)
 
         clickBackButton()
-        assertPageDisplayed(R.string.app_name)
+        assertHomeDisplayed()
 
         clickPreference(R.string.rules)
         assertPageDisplayed(R.string.rules_for_sending)
 
         clickBackButton()
-        assertPageDisplayed(R.string.app_name)
+        assertHomeDisplayed()
 
         clickPreference(R.string.email_message)
         assertPageDisplayed(R.string.email_message)
 
         clickBackButton()
-        assertPageDisplayed(R.string.app_name)
+        assertHomeDisplayed()
 
         clickPreference(R.string.remote_control)
         assertPageDisplayed(R.string.remote_control)
 
         clickBackButton()
-        assertPageDisplayed(R.string.app_name)
+        assertHomeDisplayed()
 
         clickPreference(R.string.call_history)
         assertPageDisplayed(R.string.call_history)
 
         clickBackButton()
-        assertPageDisplayed(R.string.app_name)
+        assertHomeDisplayed()
 
         clickPreference(R.string.options)
         assertPageDisplayed(R.string.options)
 
         clickBackButton()
-        assertPageDisplayed(R.string.app_name)
+        assertHomeDisplayed()
     }
 
-    private fun checkBatteryOptimizationDialog() {
-        if (onView(withText(R.string.battery_optimization)).isExists()) {
-            onView(allOf(
-                    withId(android.R.id.button2),
-                    withText(android.R.string.cancel))
-            ).perform(click())
-        }
+    private fun assertHomeDisplayed() {
+        assertPageDisplayed(R.string.app_name)
     }
 
 }

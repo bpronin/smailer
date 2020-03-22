@@ -104,7 +104,7 @@ class CallProcessor(
                 context = context,
                 event = event,
                 contactName = contactName(event.phone),
-                deviceName = settings.deviceAlias ?: event.acceptor,
+                deviceName = settings.deviceAlias,
                 options = settings.emailContent,
                 serviceAccount = settings.remoteControlAccount,
                 locale = parseLocale(settings.emailLocale)

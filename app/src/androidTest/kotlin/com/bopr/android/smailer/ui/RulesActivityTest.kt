@@ -16,7 +16,7 @@ class RulesActivityTest {
 
     @Rule
     @JvmField
-    var activityTestRule: ActivityTestRule<MainActivity> = ActivityTestRule(MainActivity::class.java)
+    var activityTestRule = ActivityTestRule(RulesActivity::class.java)
 
     @Rule
     @JvmField
@@ -33,40 +33,54 @@ class RulesActivityTest {
 
     @Test
     fun testRulesActivity() {
-        hideBatteryOptimizationDialog()
-        assertPageDisplayed(R.string.app_name)
+        testTriggersPreference()
+        testPhoneBlacklistPreference()
+        testPhoneWhitelistPreference()
+        testTextBlacklistPreference()
+        testTextWhitelistPreference()
+    }
 
-        clickPreference(R.string.rules)
-        assertPageDisplayed(R.string.rules_for_sending)
-
-        clickPreference(R.string.triggers)
-        assertAlertDialogDisplayed(R.string.triggers)
-
-        clickCancelButton()
-        assertPageDisplayed(R.string.rules_for_sending)
-
-        clickPreferenceAtPosition(2)
-        assertPageDisplayed(R.string.phone_blacklist)
-
-        clickBackButton()
-        assertPageDisplayed(R.string.rules_for_sending)
-
-        clickPreferenceAtPosition(3)
-        assertPageDisplayed(R.string.phone_whitelist)
-
-        clickBackButton()
-        assertPageDisplayed(R.string.rules_for_sending)
-
-        clickPreferenceAtPosition(5)
-        assertPageDisplayed(R.string.text_blacklist)
-
-        clickBackButton()
-        assertPageDisplayed(R.string.rules_for_sending)
-
+    private fun testTextWhitelistPreference() {
         clickPreferenceAtPosition(6)
         assertPageDisplayed(R.string.text_whitelist)
 
         clickBackButton()
+        assertHomeDisplayed()
+    }
+
+    private fun testTextBlacklistPreference() {
+        clickPreferenceAtPosition(5)
+        assertPageDisplayed(R.string.text_blacklist)
+
+        clickBackButton()
+        assertHomeDisplayed()
+    }
+
+    private fun testPhoneWhitelistPreference() {
+        clickPreferenceAtPosition(3)
+        assertPageDisplayed(R.string.phone_whitelist)
+
+        clickBackButton()
+        assertHomeDisplayed()
+    }
+
+    private fun testPhoneBlacklistPreference() {
+        clickPreferenceAtPosition(2)
+        assertPageDisplayed(R.string.phone_blacklist)
+
+        clickBackButton()
+        assertHomeDisplayed()
+    }
+
+    private fun testTriggersPreference() {
+        clickPreference(R.string.triggers)
+        assertAlertDialogDisplayed(R.string.triggers)
+
+        clickCancelButton()
+        assertHomeDisplayed()
+    }
+
+    private fun assertHomeDisplayed() {
         assertPageDisplayed(R.string.rules_for_sending)
     }
 }

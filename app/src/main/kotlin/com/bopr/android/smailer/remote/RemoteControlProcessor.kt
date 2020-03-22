@@ -55,7 +55,7 @@ internal class RemoteControlProcessor(
                         when {
                             task == null ->
                                 log.debug("Not a service mail")
-                            deviceAlias() != task.acceptor ->
+                            settings.deviceAlias != task.acceptor ->
                                 log.debug("Not my mail")
                             else -> {
                                 transport.markAsRead(message)
@@ -125,10 +125,6 @@ internal class RemoteControlProcessor(
                 log.warn("Service account [$name] not found")
             }
         }
-    }
-
-    private fun deviceAlias(): String {
-        return settings.deviceAlias ?: deviceName()
     }
 
     private fun addTextToWhitelist(text: String?) {
