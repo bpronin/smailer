@@ -41,7 +41,7 @@ class RulesActivityTest {
     }
 
     private fun testTextWhitelistPreference() {
-        clickPreferenceAtPosition(6)
+        clickPreferenceAt(R.string.whitelist, 6)
         assertPageDisplayed(R.string.text_whitelist)
 
         clickBackButton()
@@ -49,7 +49,7 @@ class RulesActivityTest {
     }
 
     private fun testTextBlacklistPreference() {
-        clickPreferenceAtPosition(5)
+        clickPreferenceAt(R.string.blacklist, 5)
         assertPageDisplayed(R.string.text_blacklist)
 
         clickBackButton()
@@ -57,7 +57,7 @@ class RulesActivityTest {
     }
 
     private fun testPhoneWhitelistPreference() {
-        clickPreferenceAtPosition(3)
+        clickPreferenceAt(R.string.whitelist, 3)
         assertPageDisplayed(R.string.phone_whitelist)
 
         clickBackButton()
@@ -65,19 +65,69 @@ class RulesActivityTest {
     }
 
     private fun testPhoneBlacklistPreference() {
-        clickPreferenceAtPosition(2)
+        clickPreferenceAt(R.string.blacklist, 2)
         assertPageDisplayed(R.string.phone_blacklist)
 
         clickBackButton()
         assertHomeDisplayed()
     }
 
-    private fun testTriggersPreference() {
+    @Test
+    fun testTriggersPreference() {
+        testTriggersPreferenceCheckAll()
+        testTriggersPreferenceCancel()
+        testTriggersPreferenceUncheckAll()
+    }
+
+    private fun testTriggersPreferenceCheckAll() {
         clickPreference(R.string.triggers)
         assertAlertDialogDisplayed(R.string.triggers)
 
-        clickCancelButton()
+        val titles = stringArray(R.array.trigger_names)
+        setCheckboxChecked(titles[0])
+        setCheckboxChecked(titles[1])
+        setCheckboxChecked(titles[2])
+        setCheckboxChecked(titles[3])
+        setCheckboxChecked(titles[4])
+
+        clickOkButton()
+
         assertHomeDisplayed()
+        assertPreferenceSummaryEquals(R.string.triggers, R.string.events_causing_sending_mail)
+    }
+
+    private fun testTriggersPreferenceUncheckAll() {
+        clickPreference(R.string.triggers)
+        assertAlertDialogDisplayed(R.string.triggers)
+
+        val titles = stringArray(R.array.trigger_names)
+        setCheckboxUnchecked(titles[0])
+        setCheckboxUnchecked(titles[1])
+        setCheckboxUnchecked(titles[2])
+        setCheckboxUnchecked(titles[3])
+        setCheckboxUnchecked(titles[4])
+
+        clickOkButton()
+
+        assertHomeDisplayed()
+        assertPreferenceSummaryEquals(R.string.triggers, R.string.no_triggers_specified)
+    }
+
+    private fun testTriggersPreferenceCancel() {
+        clickPreference(R.string.triggers)
+        assertAlertDialogDisplayed(R.string.triggers)
+
+        val titles = stringArray(R.array.trigger_names)
+        setCheckboxUnchecked(titles[0])
+        setCheckboxUnchecked(titles[1])
+        setCheckboxUnchecked(titles[2])
+        setCheckboxUnchecked(titles[3])
+        setCheckboxUnchecked(titles[4])
+
+        clickCancelButton()
+
+        assertHomeDisplayed()
+        assertPreferenceSummaryEquals(R.string.triggers, R.string.events_causing_sending_mail)
     }
 
     private fun assertHomeDisplayed() {
