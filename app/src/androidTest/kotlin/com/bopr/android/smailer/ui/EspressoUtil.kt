@@ -8,7 +8,6 @@ import android.widget.EditText
 import androidx.appcompat.widget.AlertDialogLayout
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -16,8 +15,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.bopr.android.smailer.R
 import org.hamcrest.Description
 import org.hamcrest.Matcher
-import org.hamcrest.Matchers.allOf
-import org.hamcrest.Matchers.instanceOf
+import org.hamcrest.Matchers.*
 import org.hamcrest.TypeSafeMatcher
 
 fun string(id: Int): String {
@@ -26,22 +24,6 @@ fun string(id: Int): String {
 
 fun stringArray(id: Int): Array<String> {
     return InstrumentationRegistry.getInstrumentation().targetContext.resources.getStringArray(id)
-}
-
-fun ViewInteraction.isExists(): Boolean {
-    var exists = true
-    withFailureHandler { _, _ ->
-        exists = false
-    }.check(matches(isDisplayed()))
-    return exists
-}
-
-fun ViewInteraction.isCheckedCheckbox(): Boolean {
-    var checked = true
-    withFailureHandler { _, _ ->
-        checked = false
-    }.check(matches(isChecked()))
-    return checked
 }
 
 /* matchers */
@@ -124,20 +106,6 @@ fun clickCheckbox(title: String) {
     onView(checkBox(title)).perform(click())
 }
 
-fun setCheckboxChecked(title: String) {
-    val onCheckbox = onView(checkBox(title))
-    if (!onCheckbox.isCheckedCheckbox()) {
-        onCheckbox.perform(click())
-    }
-}
-
-fun setCheckboxUnchecked(title: String) {
-    val onCheckbox = onView(checkBox(title))
-    if (onCheckbox.isCheckedCheckbox()) {
-        onCheckbox.perform(click())
-    }
-}
-
 /* assertions */
 
 fun assertPageDisplayed(title: Int) {
@@ -160,5 +128,21 @@ fun assertPreferenceSummaryIs(title: Int, summary: String) {
             withId(android.R.id.summary),
             hasSibling(preferenceTitle(title)))
     ).check(matches(withText(summary)))
+}
+
+fun assertPreferenceEnabled(title: Int) {
+    onView(preferenceTitle(title)).check(matches(isEnabled()))
+}
+
+fun assertPreferenceDisabled(title: Int) {
+    onView(preferenceTitle(title)).check(matches(not(isEnabled())))
+}
+
+fun assertCheckboxChecked(title: String) {
+    onView(checkBox(title)).check(matches(isChecked()))
+}
+
+fun assertCheckboxUnchecked(title: String) {
+    onView(checkBox(title)).check(matches(isNotChecked()))
 }
 

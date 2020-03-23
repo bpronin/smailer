@@ -10,8 +10,8 @@ import com.bopr.android.smailer.util.deviceName
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class Settings(context: Context, name: String = PREFERENCES_STORAGE_NAME) :
-        SharedPreferencesWrapper(context.getSharedPreferences(name, MODE_PRIVATE)) {
+class Settings(context: Context) :
+        SharedPreferencesWrapper(context.getSharedPreferences(sharedPreferencesName, MODE_PRIVATE)) {
 
     val emailContent get() = getStringSet(PREF_EMAIL_CONTENT)
     val emailLocale get() = getString(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)!!
@@ -45,8 +45,9 @@ class Settings(context: Context, name: String = PREFERENCES_STORAGE_NAME) :
 
     companion object {
 
+        var sharedPreferencesName = "com.bopr.android.smailer_preferences"
+
         private const val SETTINGS_VERSION = 2
-        const val PREFERENCES_STORAGE_NAME = "com.bopr.android.smailer_preferences"
 
         const val PREF_DEVICE_ALIAS = "device_alias"
         const val PREF_EMAIL_CONTENT = "email_content"

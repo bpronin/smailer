@@ -15,8 +15,7 @@ import org.junit.Test
  */
 class AndroidUtilTest : BaseTest() {
 
-    @Rule
-    @JvmField
+    @get:Rule
     /* somehow it gives access to account list in API>=26 */
     val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(READ_CONTACTS)
 //    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(GET_ACCOUNTS)

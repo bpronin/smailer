@@ -1,39 +1,22 @@
 package com.bopr.android.smailer.ui
 
 
-import androidx.test.filters.LargeTest
-import androidx.test.rule.ActivityTestRule
-import androidx.test.rule.GrantPermissionRule
 import com.bopr.android.smailer.R
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
 import com.bopr.android.smailer.util.deviceName
-import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 
 
-@LargeTest
-@RunWith(androidx.test.ext.junit.runners.AndroidJUnit4::class)
-class EmailSettingsActivityTest {
+class EmailSettingsActivityTest : BaseActivityTest(EmailSettingsActivity::class) {
 
-    @Rule
-    @JvmField
-    var activityTestRule = ActivityTestRule(EmailSettingsActivity::class.java)
-
-    @Rule
-    @JvmField
-    var grantPermissionRule: GrantPermissionRule =
-            GrantPermissionRule.grant(
-                    "android.permission.RECEIVE_SMS",
-                    "android.permission.SEND_SMS",
-                    "android.permission.ACCESS_FINE_LOCATION",
-                    "android.permission.READ_CONTACTS",
-                    "android.permission.READ_SMS",
-                    "android.permission.ACCESS_COARSE_LOCATION",
-                    "android.permission.READ_CALL_LOG",
-                    "android.permission.READ_PHONE_STATE")
+    override fun beforeActivityCreate() {
+        settings.update {
+            putStringSet(PREF_EMAIL_CONTENT, emptySet())
+        }
+    }
 
     @Test
-    fun testEmailSettingsActivity() {
+    fun testActivity() {
         testContentPreference()
         testLanguagePreference()
         testDeviceNamePreference()

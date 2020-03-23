@@ -10,6 +10,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_NOTIFICATIONS
+import com.bopr.android.smailer.Settings.Companion.sharedPreferencesName
 import com.bopr.android.smailer.util.deviceName
 import com.bopr.android.smailer.util.primaryAccount
 import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
@@ -25,15 +26,18 @@ import java.lang.Thread.sleep
 class RemoteControlMailTest : BaseTest() {
 
     private val sender = "TEST"
-    private val settings = Settings(targetContext, "test.preferences")   //todo remove. replace with shared prefs
     private val account = targetContext.primaryAccount()!!
     private val transport = GoogleMail(targetContext)
     private val notifications: Notifications = mock()
+    private lateinit var settings: Settings
     private lateinit var database: Database
     private lateinit var processor: RemoteControlProcessor
 
     @Before
     fun setUp() {
+        sharedPreferencesName = "test.preferences"
+        settings = Settings(targetContext)   //todo remove. replace with shared prefs
+
         database = Database(targetContext, "test.sqlite").apply { clean() }
 
         transport.login(account, MAIL_GOOGLE_COM)

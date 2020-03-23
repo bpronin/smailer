@@ -1,42 +1,22 @@
 package com.bopr.android.smailer.ui
 
 
-import androidx.test.espresso.Espresso.onView
-import androidx.test.filters.LargeTest
-import androidx.test.rule.ActivityTestRule
-import androidx.test.rule.GrantPermissionRule
 import com.bopr.android.smailer.R
-import org.junit.Rule
+import com.bopr.android.smailer.ui.BatteryOptimizationHelper.BATTERY_OPTIMIZATION_DIALOG_TAG
 import org.junit.Test
-import org.junit.runner.RunWith
 
 
-@LargeTest
-@RunWith(androidx.test.ext.junit.runners.AndroidJUnit4::class)
-class MainActivityTest {
+class MainActivityTest : BaseActivityTest(MainActivity::class) {
 
-    @Rule
-    @JvmField
-    var activityTestRule: ActivityTestRule<MainActivity> = ActivityTestRule(MainActivity::class.java)
-
-    @Rule
-    @JvmField
-    var grantPermissionRule: GrantPermissionRule =
-            GrantPermissionRule.grant(
-                    "android.permission.RECEIVE_SMS",
-                    "android.permission.SEND_SMS",
-                    "android.permission.ACCESS_FINE_LOCATION",
-                    "android.permission.READ_CONTACTS",
-                    "android.permission.READ_SMS",
-                    "android.permission.ACCESS_COARSE_LOCATION",
-                    "android.permission.READ_CALL_LOG",
-                    "android.permission.READ_PHONE_STATE")
+    override fun beforeActivityCreate() {
+        settings.update {
+            /* hide battery optimization dialog */
+            putBoolean(BATTERY_OPTIMIZATION_DIALOG_TAG, true)
+        }
+    }
 
     @Test
-    fun testMainActivity() {
-        if (onView(alertDialog(R.string.battery_optimization)).isExists()) {
-            clickCancelButton()
-        }
+    fun testActivity() {
         assertHomeDisplayed()
 
 /*      it won't work cause account picker is outside app process

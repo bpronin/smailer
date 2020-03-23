@@ -17,8 +17,7 @@ import org.junit.Test
 
 class SyncTest : BaseTest() {
 
-    @Rule
-    @JvmField
+    @get:Rule
     var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(READ_CONTACTS)
 
     private lateinit var database: Database

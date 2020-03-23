@@ -1,38 +1,21 @@
 package com.bopr.android.smailer.ui
 
 
-import androidx.test.filters.LargeTest
-import androidx.test.rule.ActivityTestRule
-import androidx.test.rule.GrantPermissionRule
 import com.bopr.android.smailer.R
-import org.junit.Rule
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
 import org.junit.Test
-import org.junit.runner.RunWith
 
 
-@LargeTest
-@RunWith(androidx.test.ext.junit.runners.AndroidJUnit4::class)
-class RulesActivityTest {
+class RulesActivityTest : BaseActivityTest(RulesActivity::class) {
 
-    @Rule
-    @JvmField
-    var activityTestRule = ActivityTestRule(RulesActivity::class.java)
-
-    @Rule
-    @JvmField
-    var grantPermissionRule: GrantPermissionRule =
-            GrantPermissionRule.grant(
-                    "android.permission.RECEIVE_SMS",
-                    "android.permission.SEND_SMS",
-                    "android.permission.ACCESS_FINE_LOCATION",
-                    "android.permission.READ_CONTACTS",
-                    "android.permission.READ_SMS",
-                    "android.permission.ACCESS_COARSE_LOCATION",
-                    "android.permission.READ_CALL_LOG",
-                    "android.permission.READ_PHONE_STATE")
+    override fun beforeActivityCreate() {
+        settings.update {
+            putStringSet(PREF_EMAIL_TRIGGERS, emptySet())
+        }
+    }
 
     @Test
-    fun testRulesActivity() {
+    fun testActivity() {
         testTriggersPreference()
         testPhoneBlacklistPreference()
         testPhoneWhitelistPreference()
@@ -79,16 +62,18 @@ class RulesActivityTest {
     }
 
     private fun testTriggersPreferenceCheckAll() {
-        clickPreference(R.string.triggers)
-        assertAlertDialogDisplayed(R.string.triggers)
-
         val titles = stringArray(R.array.trigger_names)
-        setCheckboxChecked(titles[0])
-        setCheckboxChecked(titles[1])
-        setCheckboxChecked(titles[2])
-        setCheckboxChecked(titles[3])
-        setCheckboxChecked(titles[4])
 
+        clickPreference(R.string.triggers)
+
+        assertAlertDialogDisplayed(R.string.triggers)
+        for (title in titles) {
+            assertCheckboxUnchecked(title)
+        }
+
+        for (title in titles) {
+            clickCheckbox(title)
+        }
         clickOkButton()
 
         assertHomeDisplayed()
@@ -96,16 +81,18 @@ class RulesActivityTest {
     }
 
     private fun testTriggersPreferenceUncheckAll() {
-        clickPreference(R.string.triggers)
-        assertAlertDialogDisplayed(R.string.triggers)
-
         val titles = stringArray(R.array.trigger_names)
-        setCheckboxUnchecked(titles[0])
-        setCheckboxUnchecked(titles[1])
-        setCheckboxUnchecked(titles[2])
-        setCheckboxUnchecked(titles[3])
-        setCheckboxUnchecked(titles[4])
 
+        clickPreference(R.string.triggers)
+
+        assertAlertDialogDisplayed(R.string.triggers)
+        for (title in titles) {
+            assertCheckboxChecked(title)
+        }
+
+        for (title in titles) {
+            clickCheckbox(title)
+        }
         clickOkButton()
 
         assertHomeDisplayed()
@@ -113,16 +100,14 @@ class RulesActivityTest {
     }
 
     private fun testTriggersPreferenceCancel() {
+        val titles = stringArray(R.array.trigger_names)
+
         clickPreference(R.string.triggers)
         assertAlertDialogDisplayed(R.string.triggers)
 
-        val titles = stringArray(R.array.trigger_names)
-        setCheckboxUnchecked(titles[0])
-        setCheckboxUnchecked(titles[1])
-        setCheckboxUnchecked(titles[2])
-        setCheckboxUnchecked(titles[3])
-        setCheckboxUnchecked(titles[4])
-
+        for (title in titles) {
+            clickCheckbox(title)
+        }
         clickCancelButton()
 
         assertHomeDisplayed()

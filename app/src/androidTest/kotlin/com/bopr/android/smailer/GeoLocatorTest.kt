@@ -16,8 +16,7 @@ import org.junit.Test
  */
 class GeoLocatorTest : BaseTest() {
 
-    @Rule
-    @JvmField
+    @get:Rule
     val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(ACCESS_COARSE_LOCATION,
             ACCESS_FINE_LOCATION)
 

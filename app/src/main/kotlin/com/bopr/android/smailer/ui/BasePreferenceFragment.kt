@@ -10,6 +10,7 @@ import androidx.annotation.IntDef
 import androidx.preference.*
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
+import com.bopr.android.smailer.Settings.Companion.sharedPreferencesName
 import com.bopr.android.smailer.util.accentedText
 import com.bopr.android.smailer.util.underwivedText
 import kotlin.annotation.AnnotationRetention.SOURCE
@@ -25,7 +26,9 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPref
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        preferenceManager.sharedPreferencesName = sharedPreferencesName
         setHasOptionsMenu(true)
+
         settings = Settings(requireContext())
         settings.registerOnSharedPreferenceChangeListener(this)
         updatePreferenceViews()
@@ -74,19 +77,23 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPref
 
                 preference.callChangeListener(value)
 
-                when (preference) {
-                    is EditTextPreference ->
-                        preference.text = value as String?
-                    is SwitchPreference ->
-                        preference.isChecked = value as Boolean
-                    is CheckBoxPreference ->
-                        preference.isChecked = value as Boolean
-                    is ListPreference ->
-                        preference.value = value as String?
-                    is MultiSelectListPreference -> {
-                        @Suppress("UNCHECKED_CAST")
-                        preference.values = value as Set<String>
+                try {
+                    when (preference) {
+                        is EditTextPreference ->
+                            preference.text = value as String?
+                        is SwitchPreference ->
+                            preference.isChecked = value as Boolean
+                        is CheckBoxPreference ->
+                            preference.isChecked = value as Boolean
+                        is ListPreference ->
+                            preference.value = value as String?
+                        is MultiSelectListPreference -> {
+                            @Suppress("UNCHECKED_CAST")
+                            preference.values = value as Set<String>
+                        }
                     }
+                } catch (x: Exception) {
+                    throw IllegalArgumentException("Cannot update preference: ${preference.key}.", x)
                 }
             }
         }

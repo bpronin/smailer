@@ -26,8 +26,7 @@ import org.junit.Test
 @SmallTest
 class CallReceiverTest : BaseTest() {
 
-    @Rule
-    @JvmField
+    @get:Rule
     val permissionRule: GrantPermissionRule = grant(READ_CALL_LOG, READ_PHONE_STATE)
 
     private lateinit var context: Context
