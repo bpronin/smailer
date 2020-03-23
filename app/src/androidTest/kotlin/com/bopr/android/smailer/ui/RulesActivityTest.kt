@@ -72,8 +72,7 @@ class RulesActivityTest {
         assertHomeDisplayed()
     }
 
-    @Test
-    fun testTriggersPreference() {
+    private fun testTriggersPreference() {
         testTriggersPreferenceCheckAll()
         testTriggersPreferenceCancel()
         testTriggersPreferenceUncheckAll()
@@ -93,7 +92,7 @@ class RulesActivityTest {
         clickOkButton()
 
         assertHomeDisplayed()
-        assertPreferenceSummaryEquals(R.string.triggers, R.string.events_causing_sending_mail)
+        assertPreferenceSummaryIs(R.string.triggers, R.string.events_causing_sending_mail)
     }
 
     private fun testTriggersPreferenceUncheckAll() {
@@ -110,7 +109,7 @@ class RulesActivityTest {
         clickOkButton()
 
         assertHomeDisplayed()
-        assertPreferenceSummaryEquals(R.string.triggers, R.string.no_triggers_specified)
+        assertPreferenceSummaryIs(R.string.triggers, R.string.no_triggers_specified)
     }
 
     private fun testTriggersPreferenceCancel() {
@@ -127,7 +126,7 @@ class RulesActivityTest {
         clickCancelButton()
 
         assertHomeDisplayed()
-        assertPreferenceSummaryEquals(R.string.triggers, R.string.events_causing_sending_mail)
+        assertPreferenceSummaryIs(R.string.triggers, R.string.events_causing_sending_mail)
     }
 
     private fun assertHomeDisplayed() {

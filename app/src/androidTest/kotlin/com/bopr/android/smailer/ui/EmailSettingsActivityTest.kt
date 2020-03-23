@@ -40,11 +40,44 @@ class EmailSettingsActivityTest {
     }
 
     private fun testLanguagePreference() {
+        testLanguagePreferenceEnglish()
+        testLanguagePreferenceCancel()
+        testLanguagePreferenceDefault()
+    }
+
+    private fun testLanguagePreferenceEnglish() {
+        val titles = stringArray(R.array.language_names)
+
+        clickPreference(R.string.email_message_language)
+        assertAlertDialogDisplayed(R.string.email_language)
+
+        clickCheckbox(titles[1])
+
+        assertHomeDisplayed()
+        assertPreferenceSummaryIs(R.string.email_message_language, titles[1])
+    }
+
+    private fun testLanguagePreferenceCancel() {
+        val titles = stringArray(R.array.language_names)
+
         clickPreference(R.string.email_message_language)
         assertAlertDialogDisplayed(R.string.email_language)
 
         clickCancelButton()
         assertHomeDisplayed()
+        assertPreferenceSummaryIs(R.string.email_message_language, titles[1])
+    }
+
+    private fun testLanguagePreferenceDefault() {
+        val titles = stringArray(R.array.language_names)
+
+        clickPreference(R.string.email_message_language)
+        assertAlertDialogDisplayed(R.string.email_language)
+
+        clickCheckbox(titles[0])
+
+        assertHomeDisplayed()
+        assertPreferenceSummaryIs(R.string.email_message_language, titles[0])
     }
 
     private fun testContentPreference() {
@@ -69,7 +102,7 @@ class EmailSettingsActivityTest {
         clickCancelButton()
 
         assertHomeDisplayed()
-        assertPreferenceSummaryEquals(R.string.device_name, "device")
+        assertPreferenceSummaryIs(R.string.device_name, "device")
     }
 
     private fun testDeviceNamePreferenceInput() {
@@ -81,7 +114,7 @@ class EmailSettingsActivityTest {
         clickOkButton()
 
         assertHomeDisplayed()
-        assertPreferenceSummaryEquals(R.string.device_name, "device")
+        assertPreferenceSummaryIs(R.string.device_name, "device")
     }
 
     private fun testDeviceNamePreferenceClear() {
@@ -93,7 +126,7 @@ class EmailSettingsActivityTest {
         clickOkButton()
 
         assertHomeDisplayed()
-        assertPreferenceSummaryEquals(R.string.device_name, deviceName())
+        assertPreferenceSummaryIs(R.string.device_name, deviceName())
     }
 
     private fun assertHomeDisplayed() {

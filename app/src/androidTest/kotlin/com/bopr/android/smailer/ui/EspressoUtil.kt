@@ -64,7 +64,7 @@ fun childAtPosition(parentMatcher: Matcher<View>, position: Int): Matcher<View> 
     }
 }
 
-fun preferenceTitle(title: Int): Matcher<View> {
+private fun preferenceTitle(title: Int): Matcher<View> {
     return allOf(
             withId(android.R.id.title),
             withText(title),
@@ -75,6 +75,13 @@ fun alertDialog(title: Int): Matcher<View>? {
     return allOf(
             withText(title),
             isDescendantOfA(instanceOf(AlertDialogLayout::class.java)))
+}
+
+private fun checkBox(title: String): Matcher<View>? {
+    return allOf(
+            instanceOf(Checkable::class.java),
+            withText(title)
+    )
 }
 
 /* actions */
@@ -113,21 +120,19 @@ fun clearInputText() {
     onView(instanceOf(EditText::class.java)).perform(clearText())
 }
 
+fun clickCheckbox(title: String) {
+    onView(checkBox(title)).perform(click())
+}
+
 fun setCheckboxChecked(title: String) {
-    val onCheckbox = onView(allOf(
-            instanceOf(Checkable::class.java),
-            withText(title)
-    ))
+    val onCheckbox = onView(checkBox(title))
     if (!onCheckbox.isCheckedCheckbox()) {
         onCheckbox.perform(click())
     }
 }
 
 fun setCheckboxUnchecked(title: String) {
-    val onCheckbox = onView(allOf(
-            instanceOf(Checkable::class.java),
-            withText(title)
-    ))
+    val onCheckbox = onView(checkBox(title))
     if (onCheckbox.isCheckedCheckbox()) {
         onCheckbox.perform(click())
     }
@@ -146,11 +151,11 @@ fun assertAlertDialogDisplayed(title: Int) {
     onView(alertDialog(title)).check(matches(isDisplayed()))
 }
 
-fun assertPreferenceSummaryEquals(title: Int, summary: Int) {
-    assertPreferenceSummaryEquals(title, string(summary))
+fun assertPreferenceSummaryIs(title: Int, summary: Int) {
+    assertPreferenceSummaryIs(title, string(summary))
 }
 
-fun assertPreferenceSummaryEquals(title: Int, summary: String) {
+fun assertPreferenceSummaryIs(title: Int, summary: String) {
     onView(allOf(
             withId(android.R.id.summary),
             hasSibling(preferenceTitle(title)))
