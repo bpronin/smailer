@@ -19,6 +19,7 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceScreen
 import com.bopr.android.smailer.*
 import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
+import com.bopr.android.smailer.Database.Companion.databaseName
 import com.bopr.android.smailer.Notifications.Companion.RECIPIENTS_ERROR
 import com.bopr.android.smailer.Notifications.Companion.REMOTE_ACCOUNT_ERROR
 import com.bopr.android.smailer.Notifications.Companion.SENDER_ACCOUNT_ERROR
@@ -228,7 +229,7 @@ class DebugFragment : BasePreferenceFragment() {
                 }),
                 createPreference("Destroy database", object : DefaultClickListener() {
                     override fun onClick(preference: Preference) {
-                        database.clean()
+                        requireContext().deleteDatabase(databaseName)
                         showToast(R.string.operation_complete)
                     }
                 })

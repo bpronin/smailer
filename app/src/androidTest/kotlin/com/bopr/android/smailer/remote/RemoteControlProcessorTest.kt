@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.Database
+import com.bopr.android.smailer.Database.Companion.databaseName
 import com.bopr.android.smailer.Notifications
 import com.bopr.android.smailer.Notifications.Companion.TARGET_MAIN
 import com.bopr.android.smailer.Notifications.Companion.TARGET_PHONE_BLACKLIST
@@ -45,7 +46,9 @@ class RemoteControlProcessorTest : BaseTest() {
             on { getBoolean(eq(PREF_REMOTE_CONTROL_NOTIFICATIONS), anyOrNull()) }.doReturn(true)
         }
 
-        database = Database(targetContext, "test.sqlite").apply { clean() }
+        databaseName = "test.sqlite"
+        targetContext.deleteDatabase(databaseName)
+        database = Database(targetContext)
 
         notifications = mock()
         smsTransport = mock()

@@ -2,6 +2,7 @@ package com.bopr.android.smailer.remote
 
 import androidx.test.filters.LargeTest
 import com.bopr.android.smailer.*
+import com.bopr.android.smailer.Database.Companion.databaseName
 import com.bopr.android.smailer.Notifications.Companion.TARGET_PHONE_BLACKLIST
 import com.bopr.android.smailer.Notifications.Companion.TARGET_PHONE_WHITELIST
 import com.bopr.android.smailer.Notifications.Companion.TARGET_TEXT_BLACKLIST
@@ -38,7 +39,9 @@ class RemoteControlMailTest : BaseTest() {
         sharedPreferencesName = "test.preferences"
         settings = Settings(targetContext)   //todo remove. replace with shared prefs
 
-        database = Database(targetContext, "test.sqlite").apply { clean() }
+        databaseName = "test.sqlite"
+        targetContext.deleteDatabase(databaseName)
+        database = Database(targetContext)
 
         transport.login(account, MAIL_GOOGLE_COM)
         for (message in loadMail()) {

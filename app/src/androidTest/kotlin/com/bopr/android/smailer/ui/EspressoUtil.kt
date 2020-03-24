@@ -8,9 +8,11 @@ import android.widget.EditText
 import androidx.appcompat.widget.AlertDialogLayout
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.RootMatchers.isPlatformPopup
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.platform.app.InstrumentationRegistry
 import com.bopr.android.smailer.R
@@ -20,12 +22,14 @@ import org.hamcrest.Matcher
 import org.hamcrest.Matchers.*
 import org.hamcrest.TypeSafeMatcher
 
+private val context get() = InstrumentationRegistry.getInstrumentation().targetContext
+
 fun string(id: Int): String {
-    return InstrumentationRegistry.getInstrumentation().targetContext.getString(id)
+    return context.getString(id)
 }
 
 fun stringArray(id: Int): Array<String> {
-    return InstrumentationRegistry.getInstrumentation().targetContext.resources.getStringArray(id)
+    return context.resources.getStringArray(id)
 }
 
 /* matchers */
@@ -68,6 +72,13 @@ private fun checkBox(title: String): Matcher<View>? {
     )
 }
 
+private fun recyclerItem(text: String): Matcher<View>? {
+    return allOf(
+            isDescendantOfA(instanceOf(RecyclerView::class.java)),
+            withText(text)
+    )
+}
+
 /* actions */
 
 fun clickPreference(title: Int) {
@@ -79,6 +90,15 @@ fun clickPreferenceAt(title: Int, position: Int) {
             preferenceTitle(title),
             isDescendantOfA(childAtPosition(allOf(withId(R.id.recycler_view)), position)))
     ).perform(click())
+}
+
+fun clickContextMenuItem(title: Int) {
+    onView(withText(title)).inRoot(isPlatformPopup()).perform(click())
+}
+
+fun clickOptionsMenuItem(title: Int) {
+    openActionBarOverflowOrOptionsMenu(context)
+    onView(withText(title)).inRoot(isPlatformPopup()).perform(click())
 }
 
 fun clickBackButton() {
@@ -108,17 +128,15 @@ fun clickCheckbox(title: String) {
 }
 
 fun clickRecyclerItem(text: String) {
-    onView(allOf(
-            isDescendantOfA(instanceOf(RecyclerView::class.java)),
-            withText(text)
-    )).perform(click())
+    onView(recyclerItem(text)).perform(click())
+}
+
+fun longClickRecyclerItem(text: String) {
+    onView(recyclerItem(text)).perform(longClick())
 }
 
 fun swipeRecyclerItem(text: String) {
-    onView(allOf(
-            isDescendantOfA(instanceOf(RecyclerView::class.java)),
-            withText(text)
-    )).perform(swipeRight())
+    onView(recyclerItem(text)).perform(swipeRight())
 }
 
 fun clearInputText() {
@@ -170,15 +188,15 @@ fun assertCheckboxUnchecked(title: String) {
 }
 
 fun assertRecyclerItemDisplayed(text: String) {
-    onView(allOf(
-            isDescendantOfA(instanceOf(RecyclerView::class.java)),
-            withText(text)
-    )).check(matches(isDisplayed()))
+    onView(recyclerItem(text)).check(matches(isDisplayed()))
+}
+fun assertRecyclerItemNotDisplayed(text: String) {
+    onView(recyclerItem(text)).check(doesNotExist())
 }
 
-fun assertRecyclerItemNotDisplayed(text: String) {
+fun assertRecyclerItemDisplayedAt(text: String, position: Int) {
     onView(allOf(
-            isDescendantOfA(instanceOf(RecyclerView::class.java)),
-            withText(text)
-    )).check(doesNotExist())
+            recyclerItem(text),
+            isDescendantOfA(childAtPosition(instanceOf(RecyclerView::class.java), position))
+    )).check(matches(isDisplayed()))
 }

@@ -5,6 +5,7 @@ import android.accounts.Account
 import androidx.test.rule.GrantPermissionRule
 import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.Database
+import com.bopr.android.smailer.Database.Companion.databaseName
 import com.bopr.android.smailer.GoogleDrive
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_UPLOAD
 import com.bopr.android.smailer.util.primaryAccount
@@ -26,7 +27,10 @@ class SyncTest : BaseTest() {
     @Before
     fun setup() {
         account = targetContext.primaryAccount()!!
-        database = Database(targetContext, "test.sqlite").apply { clean() }
+
+        databaseName = "test.sqlite"
+        targetContext.deleteDatabase(databaseName)
+        database = Database(targetContext)
     }
 
     @After

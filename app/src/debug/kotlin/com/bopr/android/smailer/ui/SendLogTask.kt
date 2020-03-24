@@ -1,7 +1,7 @@
 package com.bopr.android.smailer.ui
 
 import androidx.fragment.app.FragmentActivity
-import com.bopr.android.smailer.Database
+import com.bopr.android.smailer.Database.Companion.databaseName
 import com.bopr.android.smailer.GoogleMail
 import com.bopr.android.smailer.MailMessage
 import com.bopr.android.smailer.R
@@ -19,7 +19,7 @@ internal class SendLogTask(activity: FragmentActivity, private val recipient: St
 
     override fun doInBackground(vararg params: Void?): Exception? {
         val attachments: MutableList<File> = mutableListOf()
-        attachments.add(activity.getDatabasePath(Database.DATABASE_NAME))
+        attachments.add(activity.getDatabasePath(databaseName))
         attachments.add(readLogcatLog())
 
         File(activity.filesDir, "log").listFiles()?.let {

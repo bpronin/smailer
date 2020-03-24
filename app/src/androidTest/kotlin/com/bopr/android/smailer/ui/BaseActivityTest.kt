@@ -6,8 +6,11 @@ import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
 import com.bopr.android.smailer.BaseTest
+import com.bopr.android.smailer.Database
+import com.bopr.android.smailer.Database.Companion.databaseName
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.sharedPreferencesName
+import org.junit.After
 import org.junit.Rule
 import org.junit.runner.RunWith
 import kotlin.reflect.KClass
@@ -34,14 +37,25 @@ abstract class BaseActivityTest(private val activityClass: KClass<out Activity>)
     val activityTestRule: ActivityTestRule<out Activity>
         get() {
             sharedPreferencesName = "test.preferences"
+            databaseName = "test.sqlite"
+
             targetContext.deleteSharedPreferences(sharedPreferencesName)
+            targetContext.deleteDatabase(databaseName)
+
             settings = Settings(targetContext)
+            database = Database(targetContext)
 
             beforeActivityCreate()
             return ActivityTestRule(activityClass.java)
         }
 
     lateinit var settings: Settings
+    lateinit var database: Database
+
+    @After
+    fun tearDown() {
+        database.close()
+    }
 
     protected open fun beforeActivityCreate() {}
 

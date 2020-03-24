@@ -59,6 +59,9 @@ class MainActivityTest : BaseActivityTest(MainActivity::class) {
 
         clickBackButton()
         assertHomeDisplayed()
+
+        clickOptionsMenuItem(R.string.about)
+        assertAlertDialogDisplayed(R.string.app_title)
     }
 
     private fun assertHomeDisplayed() {

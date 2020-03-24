@@ -16,7 +16,7 @@ import java.lang.System.currentTimeMillis
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class Database(private val context: Context, private val name: String = DATABASE_NAME) : Closeable {
+class Database(private val context: Context) : Closeable {
 
     private val helper: DbHelper = DbHelper(context)
     private val modifiedTables = mutableSetOf<String>()
@@ -120,15 +120,6 @@ class Database(private val context: Context, private val name: String = DATABASE
         log.debug("Closed")
     }
 
-    /**
-     * Physically deletes database file.
-     */
-    fun clean() {
-        context.deleteDatabase(name)
-
-        log.debug("Destroyed")
-    }
-
     private fun querySystemTable(vararg columns: String): Cursor {
         return helper.readableDatabase.query(TABLE_SYSTEM, columns, "$COLUMN_ID=0")
     }
@@ -137,7 +128,7 @@ class Database(private val context: Context, private val name: String = DATABASE
         helper.writableDatabase.update(TABLE_SYSTEM, values, "$COLUMN_ID=0")
     }
 
-    inner class DbHelper(context: Context) : SQLiteOpenHelper(context, name, null, DB_VERSION) {
+    inner class DbHelper(context: Context) : SQLiteOpenHelper(context, databaseName, null, DB_VERSION) {
 
         override fun onCreate(db: SQLiteDatabase) {
             db.batch {
@@ -174,7 +165,8 @@ class Database(private val context: Context, private val name: String = DATABASE
 
         private val log = LoggerFactory.getLogger("Database")
 
-        const val DATABASE_NAME = "smailer.sqlite"
+        var databaseName = "smailer.sqlite"
+
         private const val DB_VERSION = 9
 
         const val COLUMN_ID = "_id"

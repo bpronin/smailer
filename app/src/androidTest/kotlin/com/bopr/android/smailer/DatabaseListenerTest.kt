@@ -2,6 +2,7 @@ package com.bopr.android.smailer
 
 import android.content.BroadcastReceiver
 import androidx.test.filters.SmallTest
+import com.bopr.android.smailer.Database.Companion.databaseName
 import com.bopr.android.smailer.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.Database.Companion.unregisterDatabaseListener
 import org.junit.After
@@ -24,7 +25,9 @@ class DatabaseListenerTest : BaseTest() {
 
     @Before
     fun setUp() {
-        database = Database(targetContext, "test.sqlite").apply { clean() }
+        databaseName = "test.sqlite"
+        targetContext.deleteDatabase(databaseName)
+        database = Database(targetContext)
     }
 
     @After

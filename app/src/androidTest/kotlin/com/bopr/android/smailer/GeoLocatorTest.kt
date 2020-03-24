@@ -3,6 +3,7 @@ package com.bopr.android.smailer
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import androidx.test.rule.GrantPermissionRule
+import com.bopr.android.smailer.Database.Companion.databaseName
 import org.junit.After
 import org.junit.Assert.assertNotNull
 import org.junit.Before
@@ -24,8 +25,9 @@ class GeoLocatorTest : BaseTest() {
 
     @Before
     fun setUp() {
-        database = Database(targetContext, "test.sqlite").apply {
-            clean()
+        databaseName = "test.sqlite"
+        targetContext.deleteDatabase(databaseName)
+        database = Database(targetContext).apply {
             lastLocation = GeoCoordinates(50.0, 60.0)
         }
     }
