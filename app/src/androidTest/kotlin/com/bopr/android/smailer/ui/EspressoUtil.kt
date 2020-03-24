@@ -190,6 +190,7 @@ fun assertCheckboxUnchecked(title: String) {
 fun assertRecyclerItemDisplayed(text: String) {
     onView(recyclerItem(text)).check(matches(isDisplayed()))
 }
+
 fun assertRecyclerItemNotDisplayed(text: String) {
     onView(recyclerItem(text)).check(doesNotExist())
 }
@@ -198,5 +199,12 @@ fun assertRecyclerItemDisplayedAt(text: String, position: Int) {
     onView(allOf(
             recyclerItem(text),
             isDescendantOfA(childAtPosition(instanceOf(RecyclerView::class.java), position))
+    )).check(matches(isDisplayed()))
+}
+
+fun assertTextInputDisplayed(text: String) {
+    onView(allOf(
+            instanceOf(EditText::class.java),
+            withText(text)
     )).check(matches(isDisplayed()))
 }
