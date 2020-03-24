@@ -9,10 +9,12 @@ import androidx.appcompat.widget.AlertDialogLayout
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
+import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.platform.app.InstrumentationRegistry
 import com.bopr.android.smailer.R
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.*
@@ -90,20 +92,41 @@ fun clickOkButton() {
     onView(withText(android.R.string.ok)).perform(click())
 }
 
+fun clickFab() {
+    onView(allOf(
+            withId(R.id.button_add),
+            instanceOf(FloatingActionButton::class.java)
+    )).perform(click())
+}
+
 fun clickCancelButton() {
     onView(withText(android.R.string.cancel)).perform(click())
 }
 
-fun inputText(text: String) {
-    onView(instanceOf(EditText::class.java)).perform(replaceText(text))
+fun clickCheckbox(title: String) {
+    onView(checkBox(title)).perform(click())
+}
+
+fun clickRecyclerItem(text: String) {
+    onView(allOf(
+            isDescendantOfA(instanceOf(RecyclerView::class.java)),
+            withText(text)
+    )).perform(click())
+}
+
+fun swipeRecyclerItem(text: String) {
+    onView(allOf(
+            isDescendantOfA(instanceOf(RecyclerView::class.java)),
+            withText(text)
+    )).perform(swipeRight())
 }
 
 fun clearInputText() {
     onView(instanceOf(EditText::class.java)).perform(clearText())
 }
 
-fun clickCheckbox(title: String) {
-    onView(checkBox(title)).perform(click())
+fun inputText(text: String) {
+    onView(instanceOf(EditText::class.java)).perform(replaceText(text))
 }
 
 /* assertions */
@@ -146,3 +169,16 @@ fun assertCheckboxUnchecked(title: String) {
     onView(checkBox(title)).check(matches(isNotChecked()))
 }
 
+fun assertRecyclerItemDisplayed(text: String) {
+    onView(allOf(
+            isDescendantOfA(instanceOf(RecyclerView::class.java)),
+            withText(text)
+    )).check(matches(isDisplayed()))
+}
+
+fun assertRecyclerItemNotDisplayed(text: String) {
+    onView(allOf(
+            isDescendantOfA(instanceOf(RecyclerView::class.java)),
+            withText(text)
+    )).check(doesNotExist())
+}

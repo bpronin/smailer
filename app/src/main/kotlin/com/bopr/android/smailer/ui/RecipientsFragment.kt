@@ -2,7 +2,7 @@ package com.bopr.android.smailer.ui
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.view.LayoutInflater.from
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -55,7 +55,7 @@ class RecipientsFragment : EditableRecyclerFragment<String, Holder>(), SharedPre
     }
 
     override fun createViewHolder(parent: ViewGroup): Holder {
-        val view = LayoutInflater.from(context).inflate(R.layout.list_item_recipient, parent, false)
+        val view = from(context).inflate(R.layout.list_item_recipient, parent, false)
         return Holder(view)
     }
 
