@@ -21,21 +21,19 @@ import java.util.regex.Pattern
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 internal class RemoteControlTaskParser {
-    //todo parse html formatted mail
-    fun parse(text: String): RemoteControlTask? {
-        var task: RemoteControlTask? = null
 
+    fun parse(text: String): RemoteControlTask? {
         val scanner = Scanner(text).useDelimiter("\\W+")
         if (hasNextToken(scanner, "(?i:DEVICE)")) {
-            task = RemoteControlTask(nextQuoted(scanner))
-            when (nextToken(scanner, "(?i:ADD|REMOVE|SEND)")) {
+            val task = RemoteControlTask(nextQuoted(scanner))
+            when (nextToken(scanner, "(?i:ADD|PUT|REMOVE|DELETE|SEND)")) {
                 "SEND" ->
                     if (hasNextToken(scanner, "(?i:SMS)")) {
                         task.action = SEND_SMS_TO_CALLER
                         task.arguments["text"] = nextQuoted(scanner)
                         task.arguments["phone"] = nextPhone(scanner)
                     }
-                "ADD" -> {
+                "ADD", "PUT" -> {
                     when (nextToken(scanner, "(?i:PHONE|TEXT)")) {
                         "PHONE" -> {
                             task.argument = nextPhone(scanner)
@@ -69,7 +67,7 @@ internal class RemoteControlTaskParser {
                         }
                     }
                 }
-                "REMOVE" -> when (nextToken(scanner, "(?i:PHONE|TEXT)")) {
+                "REMOVE", "DELETE" -> when (nextToken(scanner, "(?i:PHONE|TEXT)")) {
                     "PHONE" -> {
                         task.argument = nextPhone(scanner)
                         when (nextToken(scanner, "(?i:BLACKLIST|WHITELIST)")) {
@@ -86,8 +84,9 @@ internal class RemoteControlTaskParser {
                     }
                 }
             }
+            return task
         }
-        return task
+        return null
     }
 
     private fun hasNextToken(scanner: Scanner, pattern: String): Boolean {
@@ -105,9 +104,9 @@ internal class RemoteControlTaskParser {
     }
 
     private fun nextPhone(scanner: Scanner): String? {
-        return scanner.findWithinHorizon(PHONE_OR_QUOTATION_PATTERN, 0)?.let {
+        return scanner.findWithinHorizon(PHONE_OR_QUOTATION_PATTERN, 0)?.let { text ->
             scanner.match().group(2)    /* found quotation */
-                    ?: it               /* found pure number */
+                    ?: text               /* found pure number */
         }
     }
 

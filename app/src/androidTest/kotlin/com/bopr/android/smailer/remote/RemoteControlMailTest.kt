@@ -37,7 +37,7 @@ class RemoteControlMailTest : BaseTest() {
     @Before
     fun setUp() {
         sharedPreferencesName = "test.preferences"
-        settings = Settings(targetContext)   //todo remove. replace with shared prefs
+        settings = Settings(targetContext)
 
         databaseName = "test.sqlite"
         targetContext.deleteDatabase(databaseName)
