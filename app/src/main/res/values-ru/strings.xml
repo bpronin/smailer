@@ -10,13 +10,13 @@
     <string name="acceptable_phone_numbers">Разрешённые номера (%s)</string>
     <string name="acceptable_words">Разрешённые фразы (%s)</string>
     <string name="add">Добавить</string>
-    <string name="add_phone_to_blacklist_action">Добавить в чёрный список</string>
-    <string name="add_phone_to_whitelist_action">Добавить в белый список</string>
     <string name="add_phone_to_blacklist">добавить номер в чёрный список"</string>
+    <string name="add_phone_to_blacklist_action">Добавить номер в чёрный список</string>
     <string name="add_phone_to_whitelist">добавить номер в белый список"</string>
+    <string name="add_phone_to_whitelist_action">Добавить номер в белый список</string>
     <string name="add_text_to_blacklist">добавить текст в чёрный список"</string>
-    <string name="add_text_to_whitelist">добавить текст в белый список"</string>
     <string name="add_text_to_blacklist_action">Добавить текст в чёрный список"</string>
+    <string name="add_text_to_whitelist">добавить текст в белый список"</string>
     <string name="add_text_to_whitelist_action">Добавить текст в белый список"</string>
     <string name="add_to_blacklist">Добавить в чёрный список</string>
     <string name="add_to_whitelist">Добавить в белый список</string>
@@ -105,7 +105,6 @@
     <string name="phone_remotely_removed_from_blacklist">Номер %s удалён из чёрного списка."</string>
     <string name="phone_remotely_removed_from_whitelist">Номер %s удалён из белого списка."</string>
     <string name="phone_removed_from_filter">%1$s удалён из фильтра</string>
-    <string name="text_removed_from_filter">%Текст удалён из фильтра</string>
     <string name="phone_whitelist">Белый список номеров</string>
     <string name="proceed">Продолжить</string>
     <string name="process_service_mail">Проверить сервисную почту</string>
@@ -151,6 +150,7 @@
     <string name="text_remotely_added_to_whitelist">Текст \"%s\" добавлен в белый список"</string>
     <string name="text_remotely_removed_from_blacklist">Текст \"%s\" удалён из чёрного списка"</string>
     <string name="text_remotely_removed_from_whitelist">Текст \"%s\" удалён из белого списка"</string>
+    <string name="text_removed_from_filter">%Текст удалён из фильтра</string>
     <string name="text_whitelist">Белый список фраз</string>
     <string name="time">Время:</string>
     <string name="time_time">Время: %s</string>
