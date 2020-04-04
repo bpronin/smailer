@@ -28,7 +28,6 @@ import com.google.android.material.snackbar.Snackbar
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-//todo grouping by phone number
 class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
 
     private lateinit var database: Database
@@ -80,7 +79,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
                 onClearData()
                 true
             }
-            R.id.action_log_mar_all_read -> {
+            R.id.action_mark_all_as_read -> {
                 onMarkAllAsRead()
                 true
             }
@@ -96,14 +95,9 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
             menu.removeItem(R.id.action_ignore)
         }
 
-        val blacklisted = database.phoneBlacklist.contains(item.phone)
-        val whitelisted = database.phoneWhitelist.contains(item.phone)
-
-        if (blacklisted || whitelisted) {
-            menu.removeItem(R.id.action_add_to_blacklist)
-            menu.removeItem(R.id.action_add_to_whitelist)
-        } else {
-            menu.removeItem(R.id.action_remove_from_lists)
+        if (!item.isSms) {
+            menu.removeItem(R.id.action_add_text_to_blacklist)
+            menu.removeItem(R.id.action_add_text_to_whitelist)
         }
     }
 
@@ -113,16 +107,20 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
                 onRemoveSelected()
                 true
             }
-            R.id.action_add_to_blacklist -> {
-                onAddToBlacklist()
+            R.id.action_add_phone_to_blacklist -> {
+                addSelectionPhoneToFilterList(database.phoneBlacklist, R.string.add_to_blacklist)
                 true
             }
-            R.id.action_add_to_whitelist -> {
-                onAddToWhitelist()
+            R.id.action_add_phone_to_whitelist -> {
+                addSelectionPhoneToFilterList(database.phoneWhitelist, R.string.add_to_whitelist)
                 true
             }
-            R.id.action_remove_from_lists -> {
-                onRemoveFromFilterList()
+            R.id.action_add_text_to_blacklist -> {
+                addSelectionTextToFilterList(database.textBlacklist, R.string.add_to_blacklist)
+                true
+            }
+            R.id.action_add_text_to_whitelist -> {
+                addSelectionTextToFilterList(database.textWhitelist, R.string.add_to_whitelist)
                 true
             }
             R.id.action_ignore -> {
@@ -182,14 +180,6 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
         showToast(R.string.operation_complete)
     }
 
-    private fun onAddToBlacklist() {
-        addSelectionToFilterList(database.phoneBlacklist, R.string.add_to_blacklist)
-    }
-
-    private fun onAddToWhitelist() {
-        addSelectionToFilterList(database.phoneWhitelist, R.string.add_to_whitelist)
-    }
-
     private fun onMarkAsIgnored() {
         getSelectedItem()?.let {
             it.state = STATE_IGNORED
@@ -212,17 +202,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
                 .show()
     }
 
-    private fun onRemoveFromFilterList() {
-        getSelectedItem()?.let { item ->
-            database.commit {
-                phoneBlacklist.remove(item.phone)
-                phoneWhitelist.remove(item.phone)
-            }
-            showToast(getString(R.string.phone_removed_from_filter, item.phone))
-        }
-    }
-
-    private fun addSelectionToFilterList(list: StringDataset, @StringRes titleRes: Int) {
+    private fun addSelectionPhoneToFilterList(list: StringDataset, @StringRes titleRes: Int) {
         getSelectedItem()?.let { item ->
             EditPhoneDialogFragment().apply {
                 setTitle(titleRes)
@@ -232,11 +212,21 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
         }
     }
 
-    private fun addToFilterList(list: StringDataset, phone: String?) {
-        if (!phone.isNullOrEmpty()) {
-            if (!database.commit { list.add(phone) }) {
-                showToast(getString(R.string.item_already_exists, phone))
+    private fun addToFilterList(list: StringDataset, value: String?) {
+        if (!value.isNullOrEmpty()) {
+            if (!database.commit { list.add(value) }) {
+                showToast(getString(R.string.item_already_exists, value))
             }
+        }
+    }
+
+    private fun addSelectionTextToFilterList(list: StringDataset, @StringRes titleRes: Int) {
+        getSelectedItem()?.let { item ->
+            EditTextDialogFragment().apply {
+                setTitle(titleRes)
+                setValue(item.text)
+                setOnOkClicked { addToFilterList(list, it) }
+            }.show(this)
         }
     }
 

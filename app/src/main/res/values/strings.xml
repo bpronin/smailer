@@ -9,8 +9,10 @@
     <string name="acceptable_phone_numbers">Acceptable phone numbers (%s)</string>
     <string name="acceptable_words">Acceptable phrases (%s)</string>
     <string name="add">Add</string>
-    <string name="add_number_to_blacklist">Add number to blacklist</string>
-    <string name="add_number_to_whitelist">Add number to whitelist</string>
+    <string name="add_phone_to_blacklist_action">Add phone to blacklist</string>
+    <string name="add_phone_to_whitelist_action">Add phone to whitelist</string>
+    <string name="add_text_to_blacklist_action">Add text to blacklist</string>
+    <string name="add_text_to_whitelist_action">Add text to whitelist</string>
     <string name="add_phone_to_blacklist">add phone to blacklist</string>
     <string name="add_phone_to_whitelist">add phone to whitelist</string>
     <string name="add_text_to_blacklist">add text to blacklist</string>
@@ -102,7 +104,8 @@
     <string name="phone_remotely_added_to_whitelist">Phone %s added to whitelist."</string>
     <string name="phone_remotely_removed_from_blacklist">Phone %s removed from blacklist."</string>
     <string name="phone_remotely_removed_from_whitelist">Phone %s removed from whitelist."</string>
-    <string name="phone_removed_from_filter">%1$s removed from filter</string>
+    <string name="phone_removed_from_filter">Phone %1$s removed from filter</string>
+    <string name="text_removed_from_filter">Text removed from filter</string>
     <string name="phone_whitelist">Phone whitelist</string>
     <string name="proceed">Proceed</string>
     <string name="process_service_mail">Check service mail now</string>
@@ -115,7 +118,8 @@
     <string name="remote_control">Remote control</string>
     <string name="remote_control_account">Service account</string>
     <string name="remove">Remove</string>
-    <string name="remove_from_filter">Remove number from all rules</string>
+    <string name="remove_phone_from_filter">Remove phone from all rules</string>
+    <string name="remove_text_from_filter">Remove text from all rules</string>
     <string name="reply_ot_app">Reply to %s:</string>
     <string name="reset_dialogs">Reset dialogs</string>
     <string name="reset_dialogs_summary">Reset all dialogs with \"Don\'t show again\" option</string>

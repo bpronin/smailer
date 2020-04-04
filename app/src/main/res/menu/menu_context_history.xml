@@ -2,20 +2,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/action_remove_item"
-        android:title="@string/remove" />
+        android:id="@+id/action_add_phone_to_blacklist"
+        android:title="@string/add_phone_to_blacklist_action" />
 
     <item
-        android:id="@+id/action_add_to_blacklist"
-        android:title="@string/add_number_to_blacklist" />
+        android:id="@+id/action_add_phone_to_whitelist"
+        android:title="@string/add_phone_to_whitelist_action" />
 
     <item
-        android:id="@+id/action_add_to_whitelist"
-        android:title="@string/add_number_to_whitelist" />
+        android:id="@+id/action_add_text_to_blacklist"
+        android:title="@string/add_text_to_blacklist_action" />
 
     <item
-        android:id="@+id/action_remove_from_lists"
-        android:title="@string/remove_from_filter" />
+        android:id="@+id/action_add_text_to_whitelist"
+        android:title="@string/add_text_to_whitelist_action" />
 
     <item
         android:id="@+id/action_ignore"

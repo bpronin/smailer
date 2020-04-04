@@ -109,18 +109,21 @@ fun clickBackButton() {
 }
 
 fun clickOkButton() {
-    onView(withText(android.R.string.ok)).perform(click())
-}
-
-fun clickFab() {
     onView(allOf(
-            withId(R.id.button_add),
-            instanceOf(FloatingActionButton::class.java)
+            withText(android.R.string.ok)
+//            instanceOf(AppCompatButton::class.java)
     )).perform(click())
 }
 
 fun clickCancelButton() {
-    onView(withText(android.R.string.cancel)).perform(click())
+    onView(allOf(
+            withText(android.R.string.cancel)
+//            instanceOf(AppCompatButton::class.java)
+    )).perform(click())
+}
+
+fun clickFab() {
+    onView(instanceOf(FloatingActionButton::class.java)).perform(click())
 }
 
 fun clickCheckbox(title: String) {
