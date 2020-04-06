@@ -1,4 +1,8 @@
-apply from: 'local.gradle'
+if (file("local.gradle").exists()) {
+    apply from: "local.gradle"
+} else {
+    apply from: "../.github/workflows/local.gradle"
+}
 
 import java.text.SimpleDateFormat
 

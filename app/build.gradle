@@ -21,7 +21,12 @@ apply plugin: "kotlin-allopen"
 apply plugin: "com.google.gms.google-services"
 apply plugin: "com.google.firebase.crashlytics"
 apply from: "user.gradle"
-apply from: "local.gradle"
+
+if (file("local.gradle").exists()) {
+    apply from: "local.gradle"
+} else {
+    apply from: "../.github/workflows/local.gradle"
+}
 
 android {
 
