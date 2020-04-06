@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "376904884028",
+    "firebase_url": "https://smailer-24874.firebaseio.com",
+    "project_id": "smailer-24874",
+    "storage_bucket": "smailer-24874.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:376904884028:android:61f1adcf99dd03692ec839",
+        "android_client_info": {
+          "package_name": "com.bopr.android.smailer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKJZYr2m6B-1e6aqo8kaaphzmIkcxUFp0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
