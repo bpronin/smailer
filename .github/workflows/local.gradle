@@ -1,0 +1,13 @@
+/**
+ * Properties specific to your local configuration.
+ *
+ * This file must *NOT* be checked into Version Control Systems,
+ * as it contains information specific to your local configuration.
+ */
+
+ext {
+    store_password = "sample"
+    key_password = "sample"
+    developer_email = "boprsoft.dev@gmail.com"
+    fcm_server_key = "firebase cloud messageng token"
+}
