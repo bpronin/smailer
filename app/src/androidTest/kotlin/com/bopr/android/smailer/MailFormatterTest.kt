@@ -549,50 +549,32 @@ class MailFormatterTest : BaseTest() {
      */
     @Test
     fun testNonDefaultLocale() {
-        val calendar = GregorianCalendar(TimeZone.getTimeZone("EST"))
-
-        calendar.set(2016, 1, 2, 3, 4, 5)
-        val start = calendar.time.time
-
-        calendar.set(2016, 1, 2, 3, 4, 10)
-        val end = calendar.time.time
-
         val event = PhoneEvent(
                 phone = "+12345678901",
                 isIncoming = true,
-                startTime = start,
-                endTime = end,
-                isMissed = true,
+                startTime = defaultTime,
+                text = "Message",
                 location = defaultCoordinates,
-                acceptor = "device"  ,
+                acceptor = "device",
                 processTime = defaultTime
         )
 
-        var formatter = MailFormatter(context, event,
+        val formatter = MailFormatter(context, event,
+                contactName = "John Dou",
                 deviceName = "Device",
+                serviceAccount = "service@mail.com",
                 locale = Locale("ru", "ru"),
-                options = setOf(VAL_PREF_EMAIL_CONTENT_CONTACT,
+                options = setOf(VAL_PREF_EMAIL_CONTENT_HEADER,
+                        VAL_PREF_EMAIL_CONTENT_CONTACT,
                         VAL_PREF_EMAIL_CONTENT_LOCATION,
                         VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
                         VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
-                        VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT)
+                        VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT,
+                        VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS)
         )
 
-        assertEquals("[SMailer] Пропущенный звонок от +12345678901", formatter.formatSubject())
-        assertThat(formatter.formatBody(), htmlEquals("missed_call_ru.html"))
-
-        formatter = MailFormatter(context, event,
-                deviceName = "Device",
-                locale = Locale.getDefault(),
-                options = setOf(VAL_PREF_EMAIL_CONTENT_CONTACT,
-                        VAL_PREF_EMAIL_CONTENT_LOCATION,
-                        VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
-                        VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
-                        VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT)
-        )
-
-        assertEquals("[SMailer] Missed call from +12345678901", formatter.formatSubject())
-        assertThat(formatter.formatBody(), htmlEquals("missed_call_en.html"))
+        assertEquals("[SMailer] Входящее SMS от +12345678901", formatter.formatSubject())
+        assertThat(formatter.formatBody(), htmlEquals("incoming_sms_all_ru.html"))
     }
 
     /**

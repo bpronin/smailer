@@ -125,7 +125,7 @@
     <string name="rules">Правила</string>
     <string name="rules_for_sending">Условия для отправки почты</string>
     <string name="select_from_contacts">Выбрать из контактов</string>
-    <string name="send_sms_to_sender">Отправить SMS звонившему</string>
+    <string name="send_sms_to_sender">отправить SMS звонившему</string>
     <string name="send_test_email">Отправить тестовую почту</string>
     <string name="send_test_email_summary">Отправить почту для проверки настроек</string>
     <string name="sender">Отправитель</string>

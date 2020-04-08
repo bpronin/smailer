@@ -21,11 +21,12 @@ data class GeoCoordinates(
                northSymbol: String = "N",
                southSymbol: String = "S",
                westSymbol: String = "W",
-               eastSymbol: String = "E"): String {
+               eastSymbol: String = "E",
+               separator: String = ", "): String {
         return StringBuilder()
                 .append(decimalToDMS(latitude, degreeSymbol, minuteSymbol, secondSymbol))
                 .append(if (latitude > 0) northSymbol else southSymbol)
-                .append(", ")
+                .append(separator)
                 .append(decimalToDMS(longitude, degreeSymbol, minuteSymbol, secondSymbol))
                 .append(if (longitude > 0) westSymbol else eastSymbol)
                 .toString()

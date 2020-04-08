@@ -63,13 +63,19 @@ class MailFormatter(private val context: Context,
     fun formatBody(): String {
         val footer = formatFooter()
         val links = formatReplyLinks()
-        return "<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">" +
-                "</head><body $BODY_STYLE>" +
+        return "<!DOCTYPE html>" +
+                "<html lang=\"en\">" +
+                "<head>" +
+                "<title>${getString(R.string.app_name)} message</title>" +
+                "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">" +
+                "</head>" +
+                "<body $BODY_STYLE>" +
                 formatHeader() +
                 formatMessage() +
                 (if (footer.isNotEmpty()) "$LINE<small $FOOTER_STYLE>$footer</small>" else "") +
                 (if (links.isNotEmpty()) "$LINE$links" else "") +
-                "</body></html>"
+                "</body>" +
+                "</html>"
     }
 
     private fun formatMessage(): String {
@@ -129,7 +135,7 @@ class MailFormatter(private val context: Context,
     private fun formatCaller(): String {
         if (options.contains(VAL_PREF_EMAIL_CONTENT_CONTACT)) {
             val phoneUrl = encodeUrl(event.phone)
-            val phoneLink = "<a href=\"tel:$phoneUrl\" style=\"text-decoration: none\">&#9742;</a>${event.phone}"
+            val phoneLink = "<a href=\"tel:$phoneUrl\" style=\"text-decoration: none;\">&#9742;</a>${event.phone}"
 
             val contact = if (contactName.isNullOrEmpty()) {
                 if (context.checkPermission(READ_CONTACTS)) {
@@ -179,7 +185,7 @@ class MailFormatter(private val context: Context,
             return if (coordinates != null) {
                 val lt = coordinates.latitude
                 val ln = coordinates.longitude
-                val text = coordinates.format(degreeSymbol = "&#176;")
+                val text = coordinates.format(degreeSymbol = "&#176;", separator = ",&nbsp;")
                 val link = "<a href=\"https://www.google.com/maps/place/$lt+$ln/@$lt,$ln\">$text</a>"
                 getString(R.string.last_known_location, link)
             } else {
@@ -208,13 +214,15 @@ class MailFormatter(private val context: Context,
     }
 
     private fun formatReplyLink(@StringRes titleRes: Int, body: String, subject: String): String {
-        return "<li><small>" +
+        return "<li>" +
                 "<a href=\"" +
                 "mailto:$serviceAccount?" +
                 "subject=${htmlEncode("Re: $subject")}&amp;" +
                 "body=${htmlEncode("To device \"$deviceName\": %0d%0a $body")}" +
-                "\">${getString(titleRes)}</a>" +
-                "</small></li>"
+                "\">" +
+                "<small>${getString(titleRes)}</small>" +
+                "</a>" +
+                "</li>"
     }
 
     private fun replaceUrlsWithLinks(s: String): String {
