@@ -40,7 +40,7 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPref
     }
 
     override fun onDisplayPreferenceDialog(preference: Preference) {
-        if (fragmentManager!!.findFragmentByTag(DIALOG_FRAGMENT_TAG) == null) {
+        if (parentFragmentManager.findFragmentByTag(DIALOG_FRAGMENT_TAG) == null) {
             super.onDisplayPreferenceDialog(preference)
         }
     }
