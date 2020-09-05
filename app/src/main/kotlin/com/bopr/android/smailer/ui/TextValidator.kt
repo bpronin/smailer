@@ -11,20 +11,36 @@ import com.bopr.android.smailer.R
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-abstract class TextValidator(private val view: TextView) : TextWatcher {
+abstract class TextValidator(protected val view: TextView) : TextWatcher {
 
-    private val span = WavyUnderlineSpan(getColor(view.context, R.color.errorLine))
+    private var underwaveSpan: WavyUnderlineSpan? = null
 
     /**
-     * Returns true if input is valid.
+     * Returns true if text should be underlined with red wavy line.
      */
-    abstract fun isValidInput(view: TextView, editable: Editable, text: String?): Boolean
+    protected open fun shouldUnderwave(text: String?): Boolean {
+        return false
+    }
+
+    /**
+     * Returns validation error message.
+     */
+    protected open fun getErrorMessage(text: String?): String? {
+        return null
+    }
 
     override fun afterTextChanged(editable: Editable) {
-        if (isValidInput(view, editable, editable.toString())) {
-            editable.removeSpan(span)
+        val text = editable.toString()
+
+        view.error = getErrorMessage(text)
+
+        if (shouldUnderwave(text)) {
+            if (underwaveSpan == null){
+                underwaveSpan = WavyUnderlineSpan(getColor(view.context, R.color.errorLine))
+            }
+            editable.setSpan(underwaveSpan, 0, editable.length, 0)
         } else {
-            editable.setSpan(span, 0, editable.length, 0)
+            editable.removeSpan(underwaveSpan)
         }
     }
 

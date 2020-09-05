@@ -28,4 +28,12 @@
         android:singleLine="true"
         android:title="@string/device_name" />
 
+    <androidx.preference.EditTextPreference
+        android:dialogMessage="@string/phone_search_url_explanation"
+        android:icon="@drawable/ic_search"
+        android:inputType="textNoSuggestions"
+        android:key="phone_search_url"
+        android:selectAllOnFocus="true"
+        android:title="@string/phone_search_url" />
+
 </androidx.preference.PreferenceScreen>

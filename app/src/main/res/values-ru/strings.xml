@@ -35,7 +35,7 @@
     <string name="clear">Очистить</string>
     <string name="contact_no_permission_read_contact">нет разрешения на чтение контактов</string>
     <string name="device_name">Имя устройства</string>
-    <string name="device_name_to_show">Имя устройства в почтовом сообщении (оставьте пустым, чтобы использовать имя по умолчанию)</string>
+    <string name="device_name_to_show">Имя устройства в почтовом сообщении (оставьте пустым, чтобы использовать значение по умолчанию)</string>
     <string name="disabled">Отключено</string>
     <string name="do_not_ask_again">Больше не спрашивать</string>
     <string name="do_not_process_call">Игнорировать</string>
@@ -60,7 +60,9 @@
     <string name="incoming_sms">Входящее SMS</string>
     <string name="incoming_sms_from">Входящее SMS от</string>
     <string name="info_notifications">Информационные сообщения</string>
+    <string name="invalid_email">Некоррекный почтовый адрес</string>
     <string name="invalid_recipient">Указан неверный получатель</string>
+    <string name="invalid_url">Некорректный URL</string>
     <string name="item_already_exists">%s уже существует</string>
     <string name="last_known_location">Последнее известное местоположение: %s</string>
     <string name="list_is_empty">Список пуст</string>
@@ -105,6 +107,9 @@
     <string name="phone_remotely_removed_from_blacklist">Номер %s удалён из чёрного списка."</string>
     <string name="phone_remotely_removed_from_whitelist">Номер %s удалён из белого списка."</string>
     <string name="phone_removed_from_filter">%1$s удалён из фильтра</string>
+    <string name="phone_search_url">Запрос поиска номера</string>
+    <string name="phone_search_url_explanation">URL поиска неизвестных номеров телефонов (оставьте пустым, чтобы использовать значение по умолчанию)</string>
+    <string name="phone_search_url_must_contain_phone_tag">URL должен содержать тег {phone}</string>
     <string name="phone_whitelist">Белый список номеров</string>
     <string name="proceed">Продолжить</string>
     <string name="process_service_mail">Проверить сервисную почту</string>

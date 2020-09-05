@@ -443,8 +443,20 @@ class DebugFragment : BasePreferenceFragment() {
 
     private fun onProcessSingleEvent() {
         val start = System.currentTimeMillis()
-        val event = PhoneEvent("DEBUG", true, start, start + 10000, false,
-                "debug SMS message text", null, null, STATE_PENDING, deviceName(), STATUS_ACCEPTED, isRead = false)
+        val event = PhoneEvent(
+                phone = "+1(234) 567-89-01",
+                isIncoming = true,
+                startTime = start,
+                endTime = start + 10000,
+                isMissed = false,
+                text = "debug SMS message text",
+                location = null,
+                details = null,
+                state = STATE_PENDING,
+                acceptor = deviceName(),
+                processStatus = STATUS_ACCEPTED,
+                isRead = false
+        )
         startCallProcessingService(requireContext(), event)
         showToast(R.string.operation_complete)
     }

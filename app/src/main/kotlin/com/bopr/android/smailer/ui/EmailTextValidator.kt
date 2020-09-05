@@ -1,7 +1,7 @@
 package com.bopr.android.smailer.ui
 
-import android.text.Editable
 import android.widget.TextView
+import com.bopr.android.smailer.R
 import com.bopr.android.smailer.util.isValidEmailAddress
 
 /**
@@ -11,7 +11,18 @@ import com.bopr.android.smailer.util.isValidEmailAddress
  */
 class EmailTextValidator(view: TextView) : TextValidator(view) {
 
-    override fun isValidInput(view: TextView, editable: Editable, text: String?): Boolean {
-        return isValidEmailAddress(text)
+//    override fun shouldUnderwave(text: String?): Boolean {
+//        return !isValidEmailAddress(text)
+//    }
+
+    override fun getErrorMessage(text: String?): String? {
+        return when {
+            text.isNullOrEmpty() ->
+                null
+            !isValidEmailAddress(text) ->
+                view.context.getString(R.string.invalid_email)
+            else ->
+                null
+        }
     }
 }

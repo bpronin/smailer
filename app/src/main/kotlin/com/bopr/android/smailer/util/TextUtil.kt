@@ -9,7 +9,9 @@ import kotlin.math.abs
 
 const val QUOTATION_REGEX = "\"([^\"]*)\""
 val QUOTATION_PATTERN: Pattern = Pattern.compile(QUOTATION_REGEX)
-private val COMMA_ESCAPED = Regex("(?<!/),")  /* matches commas not preceded by "/" */
+val WEB_URL_PATTERN: Pattern = Pattern.compile("(?:\\S+)://\\S+")
+
+private val COMMA_ESCAPED = Regex("(?<!/),")  /* matches commas not preceded by slash symbol */
 private const val REGEX_ = "REGEX:"
 
 fun strings(vararg values: Any): Array<String> {
@@ -91,6 +93,10 @@ fun readStream(stream: InputStream): String {
 
 fun isValidEmailAddress(address: String?): Boolean {
     return !address.isNullOrBlank() && EMAIL_ADDRESS.matcher(address).matches()
+}
+
+fun isValidUrl(url: String?): Boolean {
+    return !url.isNullOrBlank() && WEB_URL_PATTERN.matcher(url).matches()
 }
 
 fun isValidEmailAddressList(addresses: Collection<String>): Boolean {

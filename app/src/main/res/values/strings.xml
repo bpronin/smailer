@@ -60,7 +60,9 @@
     <string name="incoming_sms">Incoming SMS</string>
     <string name="incoming_sms_from">Incoming SMS from</string>
     <string name="info_notifications">Info notifications</string>
+    <string name="invalid_email">Invalid email address</string>
     <string name="invalid_recipient">Invalid recipient specified</string>
+    <string name="invalid_url">Invalid URL</string>
     <string name="item_already_exists">%s is already exists</string>
     <string name="last_known_location">Last known device location: %s</string>
     <string name="list_is_empty">List is empty</string>
@@ -105,6 +107,9 @@
     <string name="phone_remotely_removed_from_blacklist">Phone %s removed from blacklist."</string>
     <string name="phone_remotely_removed_from_whitelist">Phone %s removed from whitelist."</string>
     <string name="phone_removed_from_filter">Phone %1$s removed from filter</string>
+    <string name="phone_search_url">Phone search URL</string>
+    <string name="phone_search_url_explanation">URL to search for unknown phone numbers (leave blank to use default)</string>
+    <string name="phone_search_url_must_contain_phone_tag">URL must contain {phone} tag</string>
     <string name="phone_whitelist">Phone whitelist</string>
     <string name="proceed">Proceed</string>
     <string name="process_service_mail">Check service mail now</string>

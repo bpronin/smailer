@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.res.Resources
 import android.text.TextUtils.htmlEncode
 import androidx.annotation.StringRes
+import com.bopr.android.smailer.Settings.Companion.DEFAULT_PHONE_SEARCH_URL
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_CONTACT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_HEADER
@@ -13,11 +14,11 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_MESSAG
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS
 import com.bopr.android.smailer.util.*
+import org.slf4j.LoggerFactory
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.text.DateFormat
 import java.util.*
-import java.util.regex.Pattern
 
 /**
  * Formats email subject and body.
@@ -30,6 +31,7 @@ class MailFormatter(private val context: Context,
                     private val deviceName: String? = null,
                     private val serviceAccount: String? = null,
                     private val options: Set<String> = setOf(),
+                    private val phoneSearchUrl: String = DEFAULT_PHONE_SEARCH_URL,
                     locale: Locale = Locale.getDefault()) {
 
     private val resources: Resources
@@ -134,15 +136,16 @@ class MailFormatter(private val context: Context,
 
     private fun formatCaller(): String {
         if (options.contains(VAL_PREF_EMAIL_CONTENT_CONTACT)) {
-            val phoneUrl = encodeUrl(event.phone)
-            val phoneLink = "<a href=\"tel:$phoneUrl\" style=\"text-decoration: none;\">&#9742;</a>${event.phone}"
+            val telLink = "<a href=\"tel:${encodeUrl(event.phone)}\"" +
+                    " style=\"text-decoration: none;\">&#9742;</a>${event.phone}"
 
             val contact = if (contactName.isNullOrEmpty()) {
                 if (context.checkPermission(READ_CONTACTS)) {
-                    "<a href=\"https://www.google.com/search?q=$phoneUrl\">" +
-                            "${getString(R.string.unknown_contact)}</a>"
+                    val url = phoneSearchUrl.replace(PHONE_SEARCH_TAG, normalizePhone(event.phone))
+                    "<a href=\"$url\">${getString(R.string.unknown_contact)}</a>"
                 } else {
-                    getString(R.string.contact_no_permission_read_contact)
+                    log.warn("No permission to read contacts")
+                    getString(R.string.unknown_contact)
                 }
             } else {
                 contactName
@@ -156,7 +159,7 @@ class MailFormatter(private val context: Context,
                 else ->
                     R.string.called_phone
             }
-            return getString(patternRes, phoneLink, contact)
+            return getString(patternRes, telLink, contact)
         }
         return ""
     }
@@ -207,22 +210,23 @@ class MailFormatter(private val context: Context,
             val smsText = event.text ?: ""
             val subject = formatSubject()
 
-            "<ul>${formatReplyLink(R.string.add_phone_to_blacklist, "add phone $phone to blacklist", subject) +
-                    formatReplyLink(R.string.add_text_to_blacklist, "add text \"$smsText\" to blacklist", subject) +
-                    formatReplyLink(R.string.send_sms_to_sender, "send SMS message \"Sample text\" to $phone", subject)}</ul>"
+            "<ul>${
+                formatReplyLink(R.string.add_phone_to_blacklist, "add phone $phone to blacklist", subject) +
+                        formatReplyLink(R.string.add_text_to_blacklist, "add text \"$smsText\" to blacklist", subject) +
+                        formatReplyLink(R.string.send_sms_to_sender, "send SMS message \"Sample text\" to $phone", subject)
+            }</ul>"
         } else ""
     }
 
     private fun formatReplyLink(@StringRes titleRes: Int, body: String, subject: String): String {
-        return "<li>" +
-                "<a href=\"" +
-                "mailto:$serviceAccount?" +
-                "subject=${htmlEncode("Re: $subject")}&amp;" +
-                "body=${htmlEncode("To device \"$deviceName\": %0d%0a $body")}" +
-                "\">" +
-                "<small>${getString(titleRes)}</small>" +
-                "</a>" +
-                "</li>"
+        return """
+            <li>
+                <a href="mailto:$serviceAccount?subject=${htmlEncode("Re: $subject")}&amp;
+                        body=${htmlEncode("To device \"$deviceName\": %0d%0a $body")}">
+                    <small>${getString(titleRes)}</small>
+                </a>
+            </li>
+            """.trimIndent()
     }
 
     private fun replaceUrlsWithLinks(s: String): String {
@@ -254,7 +258,9 @@ class MailFormatter(private val context: Context,
 
     companion object {
 
-        private val WEB_URL_PATTERN = Pattern.compile("(?:\\S+)://\\S+")
+        private val log = LoggerFactory.getLogger("MailFormatter")
+
+        const val PHONE_SEARCH_TAG = "{phone}"
         private const val LINE = "<hr style=\"border: none; background-color: #e0e0e0; height: 1px;\">"
         private const val BODY_STYLE = "style=\"font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;\""
         private const val HEADER_STYLE = "style=\"color: #707070;\""

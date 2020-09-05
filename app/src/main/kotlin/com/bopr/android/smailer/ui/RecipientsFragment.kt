@@ -70,7 +70,7 @@ class RecipientsFragment : EditableRecyclerFragment<String, Holder>(), SharedPre
         return EditEmailDialogFragment()
     }
 
-    inner class Holder(view: View) : ViewHolder(view) {
+    class Holder(view: View) : ViewHolder(view) {
 
         val textView: TextView = view.findViewById(R.id.text)
     }

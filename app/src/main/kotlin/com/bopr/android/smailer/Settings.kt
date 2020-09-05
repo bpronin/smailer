@@ -2,6 +2,7 @@ package com.bopr.android.smailer
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
+import com.bopr.android.smailer.MailFormatter.Companion.PHONE_SEARCH_TAG
 import com.bopr.android.smailer.util.SharedPreferencesWrapper
 import com.bopr.android.smailer.util.deviceName
 
@@ -30,6 +31,11 @@ class Settings(context: Context) :
             val setting = getString(PREF_DEVICE_ALIAS)
             return if (!setting.isNullOrEmpty()) setting else deviceName()
         }
+    val phoneSearchUrl: String
+        get() {
+            val setting = getString(PREF_PHONE_SEARCH_URL)
+            return if (!setting.isNullOrEmpty()) setting else DEFAULT_PHONE_SEARCH_URL
+        }
 
     fun loadDefaults() = update {
         putInt(PREF_SETTINGS_VERSION, SETTINGS_VERSION)
@@ -54,6 +60,7 @@ class Settings(context: Context) :
         const val PREF_EMAIL_LOCALE = "email_locale"
         const val PREF_EMAIL_TRIGGERS = "email_triggers"
         const val PREF_NOTIFY_SEND_SUCCESS = "notify_send_success"
+        const val PREF_PHONE_SEARCH_URL = "phone_search_url"
         const val PREF_RECIPIENTS_ADDRESS = "recipients_address"
         const val PREF_REMOTE_CONTROL_ACCOUNT = "remote_control_account"
         const val PREF_REMOTE_CONTROL_ENABLED = "remote_control_enabled"
@@ -76,6 +83,8 @@ class Settings(context: Context) :
         const val VAL_PREF_TRIGGER_MISSED_CALLS = "missed_calls"
         const val VAL_PREF_TRIGGER_OUT_CALLS = "out_calls"
         const val VAL_PREF_TRIGGER_OUT_SMS = "out_sms"
+
+        const val DEFAULT_PHONE_SEARCH_URL = "https://www.google.com/search?q=$PHONE_SEARCH_TAG"
 
         val DEFAULT_EMAIL_CONTENT: Set<String> = mutableSetOf(
                 VAL_PREF_EMAIL_CONTENT_CONTACT,

@@ -107,6 +107,7 @@ class CallProcessor(
                 deviceName = settings.deviceAlias,
                 options = settings.emailContent,
                 serviceAccount = settings.remoteControlAccount,
+                phoneSearchUrl = settings.phoneSearchUrl,
                 locale = parseLocale(settings.emailLocale)
         )
 

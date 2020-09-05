@@ -407,6 +407,29 @@ class MailFormatterTest : BaseTest() {
     }
 
     /**
+     * Check email body footer with [Settings.VAL_PREF_EMAIL_CONTENT_CONTACT] option switched on,
+     *  unknown contact name and custom search URL.
+     */
+    @Test
+    fun testSearchPhoneLink() {
+        val event = PhoneEvent(
+                phone = "+1234 5678-901",
+                isIncoming = true,
+                startTime = 0,
+                text = "Email body text",
+                acceptor = "device"    ,
+                processTime = defaultTime
+        )
+
+        val formatter = MailFormatter(context, event,
+                phoneSearchUrl = "https://www.neberitrubku.ru/nomer-telefona/{phone}",
+                options = setOf(VAL_PREF_EMAIL_CONTENT_CONTACT)
+        )
+
+        assertThat(formatter.formatBody(), htmlEquals("footer_search_contact.html"))
+    }
+
+    /**
      * Check incoming call email body.
      */
     @Test
