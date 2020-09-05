@@ -5,3 +5,4 @@
 [DONE] Checking permissions twice at startup
 [DONE] Avoid deprecations
 [TODO] Deploy app on same open source market
+[TODO] Add into mail body direct link to https://www.neberitrubku.ru/nomer-telefona/+79046102565
