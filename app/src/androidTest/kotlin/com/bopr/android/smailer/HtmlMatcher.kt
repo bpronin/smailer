@@ -9,7 +9,7 @@ import java.util.*
 import java.util.regex.Pattern
 
 /**
- * Utility class to match HTML files.
+ * Utility class to match HTML files ignoring whitespaces.
  */
 internal open class HtmlMatcher private constructor(private val expected: String) :
         CustomTypeSafeMatcher<String?>("HTML matches") {

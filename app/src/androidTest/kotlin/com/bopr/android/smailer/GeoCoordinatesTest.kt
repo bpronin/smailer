@@ -4,6 +4,11 @@ import androidx.test.filters.SmallTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
+/**
+ * [GeoCoordinates] class tester.
+ *
+ * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ */
 @SmallTest
 class GeoCoordinatesTest : BaseTest() {
 

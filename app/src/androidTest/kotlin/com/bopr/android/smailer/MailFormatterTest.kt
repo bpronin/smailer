@@ -16,13 +16,14 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_REMOTE
 import com.nhaarman.mockitokotlin2.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers.anyInt
 import java.util.*
 
 /**
- * [MailFormatter] tester.
+ * [MailFormatter] class tester.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
@@ -640,6 +641,15 @@ class MailFormatterTest : BaseTest() {
                 options = setOf(VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS)
         )
 
-        assertThat(formatter.formatBody(), htmlEquals("remote_control_links.html"))
+        val body = formatter.formatBody()
+        assertThat(body, htmlEquals("remote_control_links.html"))
+
+        /* Ensure that there are no line breaks in href values. Otherwise reply email body will be formatted incorrectly */
+        assertTrue(body.contains("mailto:service@mail.com?subject=Re: [SMailer] Incoming SMS from " +
+                "+12345678901&amp;body=To device &quot;Device&quot;: %0d%0a add phone +12345678901 to blacklist"))
+        assertTrue(body.contains("mailto:service@mail.com?subject=Re: [SMailer] Incoming SMS from " +
+                "+12345678901&amp;body=To device &quot;Device&quot;: %0d%0a add text &quot;Message&quot; to blacklist"))
+        assertTrue(body.contains("mailto:service@mail.com?subject=Re: [SMailer] Incoming SMS from " +
+                "+12345678901&amp;body=To device &quot;Device&quot;: %0d%0a send SMS message &quot;Sample text&quot; to +12345678901"))
     }
 }

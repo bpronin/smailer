@@ -219,14 +219,13 @@ class MailFormatter(private val context: Context,
     }
 
     private fun formatReplyLink(@StringRes titleRes: Int, body: String, subject: String): String {
-        return """
-            <li>
-                <a href="mailto:$serviceAccount?subject=${htmlEncode("Re: $subject")}&amp;
-                        body=${htmlEncode("To device \"$deviceName\": %0d%0a $body")}">
-                    <small>${getString(titleRes)}</small>
-                </a>
-            </li>
-            """.trimIndent()
+        /* Important! There should not be line breaks in href values. Note: Kotlin's """ """ adds line breaks */
+        return "<li>" +
+                "<a href=\"mailto:$serviceAccount?subject=${htmlEncode("Re: $subject")}&amp;" +
+                "body=${htmlEncode("To device \"$deviceName\": %0d%0a $body")}\">" +
+                "<small>${getString(titleRes)}</small>" +
+                "</a>" +
+                "</li>"
     }
 
     private fun replaceUrlsWithLinks(s: String): String {
