@@ -11,14 +11,11 @@ import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat.getColor
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.bopr.android.smailer.Database
+import com.bopr.android.smailer.*
 import com.bopr.android.smailer.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.Database.Companion.unregisterDatabaseListener
-import com.bopr.android.smailer.PhoneEvent
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
-import com.bopr.android.smailer.R
-import com.bopr.android.smailer.StringDataset
 import com.bopr.android.smailer.ui.HistoryFragment.Holder
 import com.bopr.android.smailer.util.*
 import com.google.android.material.snackbar.Snackbar
@@ -81,6 +78,10 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
             }
             R.id.action_mark_all_as_read -> {
                 onMarkAllAsRead()
+                true
+            }
+            R.id.action_process_all_pending -> {
+                onProcessAllPending()
                 true
             }
             else ->
@@ -179,11 +180,18 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
         database.commit { batch { events.markAllAsRead(true) } }
         showToast(R.string.operation_complete)
     }
-
     private fun onMarkAsIgnored() {
         getSelectedItem()?.let {
             it.state = STATE_IGNORED
             database.commit { events.add(it) }
+        }
+    }
+
+    private fun onProcessAllPending() {
+        runInBackground {
+            CallProcessor(requireContext()).processPending()
+        }.addOnCompleteListener {
+            showToast(R.string.operation_complete)
         }
     }
 

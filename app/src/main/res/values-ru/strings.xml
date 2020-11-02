@@ -112,6 +112,7 @@
     <string name="phone_search_url_must_contain_phone_tag">URL должен содержать тег {phone}</string>
     <string name="phone_whitelist">Белый список номеров</string>
     <string name="proceed">Продолжить</string>
+    <string name="process_all_pending">Обработать необработанные</string>
     <string name="process_service_mail">Проверить сервисную почту</string>
     <string name="processed_at">%s</string>
     <string name="recipient_already_exists">Получатель %1$s уже существует</string>

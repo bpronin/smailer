@@ -112,6 +112,7 @@
     <string name="phone_search_url_must_contain_phone_tag">URL must contain {phone} tag</string>
     <string name="phone_whitelist">Phone whitelist</string>
     <string name="proceed">Proceed</string>
+    <string name="process_all_pending">Process pending</string>
     <string name="process_service_mail">Check service mail now</string>
     <string name="processed_at">at: %s</string>
     <string name="recipient_already_exists">Recipient %1$s is already exists</string>
