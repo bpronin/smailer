@@ -8,7 +8,6 @@ import com.android.volley.toolbox.Volley.newRequestQueue
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.util.getAccount
-import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
 import org.json.JSONObject
 import org.slf4j.LoggerFactory
@@ -80,10 +79,10 @@ object CloudMessaging {
             "/topics/com.bopr.android.smailer.firebase-${userId(account.name)}"
 
     internal fun requestFirebaseToken(onComplete: (String) -> Unit) {
-        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener {
             log.debug("Token received")
 
-            onComplete(it.result!!.token)
+            onComplete(it.result)
         }
     }
 
