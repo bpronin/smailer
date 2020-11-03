@@ -35,7 +35,6 @@ import com.bopr.android.smailer.R
 import com.bopr.android.smailer.ui.WavyUnderlineSpan
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
-import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 
 /**
@@ -44,12 +43,70 @@ import java.util.concurrent.Executors
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 
+/**
+ * To prevent drawables from being shrinked by R8's resource shrinker we have to
+ * hold theirs hardcoded references.
+ */
+private val RES_DIRECTION_IMAGE = intArrayOf(
+        R.drawable.ic_call_missed,
+        R.drawable.ic_call_in,
+        R.drawable.ic_call_out
+)
+
+/**
+ * To prevent drawables from being shrinked by R8's resource shrinker we have to
+ * hold theirs hardcoded references.
+ */
+private val RES_STATE_IMAGE = intArrayOf(
+        R.drawable.ic_hourglass,
+        R.drawable.ic_state_done,
+        R.drawable.ic_state_block
+)
+
+/**
+ * To prevent drawables from being shrinked by R8's resource shrinker we have to
+ * hold theirs hardcoded references.
+ */
+private val RES_TYPE_IMAGE = intArrayOf(
+        R.drawable.ic_message,
+        R.drawable.ic_call
+)
+
 @DrawableRes
 fun eventTypeImage(event: PhoneEvent): Int {
+    /* do not use direct drawable resources references here due to shrinker issue */
     return if (event.isSms) {
-        R.drawable.ic_message
+        RES_TYPE_IMAGE[0]
     } else {
-        R.drawable.ic_call
+        RES_TYPE_IMAGE[1]
+    }
+}
+
+@DrawableRes
+fun eventDirectionImage(event: PhoneEvent): Int {
+    /* do not use direct drawable resources references here due to shrinker issue */
+    return when {
+        event.isMissed ->
+            RES_DIRECTION_IMAGE[0]
+        event.isIncoming ->
+            RES_DIRECTION_IMAGE[1]
+        else ->
+            RES_DIRECTION_IMAGE[2]
+    }
+}
+
+@DrawableRes
+fun eventStateImage(event: PhoneEvent): Int {
+    /* do not use direct drawable resources references here due to shrinker issue */
+    return when (event.state) {
+        STATE_PENDING ->
+            RES_STATE_IMAGE[0]
+        STATE_PROCESSED ->
+            RES_STATE_IMAGE[1]
+        STATE_IGNORED ->
+            RES_STATE_IMAGE[2]
+        else ->
+            throw IllegalArgumentException("Unknown state")
     }
 }
 
@@ -96,32 +153,6 @@ fun eventStateText(event: PhoneEvent): Int {
             R.string.sent_email
         STATE_IGNORED ->
             R.string.ignored
-        else ->
-            throw IllegalArgumentException("Unknown state")
-    }
-}
-
-@DrawableRes
-fun eventDirectionImage(event: PhoneEvent): Int {
-    return when {
-        event.isMissed ->
-            R.drawable.ic_call_missed
-        event.isIncoming ->
-            R.drawable.ic_call_in
-        else ->
-            R.drawable.ic_call_out
-    }
-}
-
-@DrawableRes
-fun eventStateImage(event: PhoneEvent): Int {
-    return when (event.state) {
-        STATE_PENDING ->
-            R.drawable.ic_hourglass
-        STATE_PROCESSED ->
-            R.drawable.ic_state_done
-        STATE_IGNORED ->
-            R.drawable.ic_state_block
         else ->
             throw IllegalArgumentException("Unknown state")
     }
@@ -247,7 +278,7 @@ fun RecyclerView.addOnItemSwipedListener(action: (RecyclerView.ViewHolder) -> Un
 }
 
 fun <T> runInBackground(task: () -> T): Task<T> {
-    return Tasks.call(Executors.newSingleThreadExecutor(), Callable {
+    return Tasks.call(Executors.newSingleThreadExecutor(), {
         task()  /* here we are in main thread */
     })
 }

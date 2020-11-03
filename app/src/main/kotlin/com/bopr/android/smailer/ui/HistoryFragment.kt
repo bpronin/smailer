@@ -180,6 +180,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
         database.commit { batch { events.markAllAsRead(true) } }
         showToast(R.string.operation_complete)
     }
+
     private fun onMarkAsIgnored() {
         getSelectedItem()?.let {
             it.state = STATE_IGNORED
@@ -201,8 +202,8 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
         database.commit { batch { events.removeAll(selectedEvents) } }
 
         Snackbar.make(recycler,
-                        getQuantityString(R.plurals.items_removed, selectedEvents.size),
-                        Snackbar.LENGTH_LONG)
+                getQuantityString(R.plurals.items_removed, selectedEvents.size),
+                Snackbar.LENGTH_LONG)
                 .setActionTextColor(getColor(requireContext(), R.color.colorAccentText))
                 .setAction(R.string.undo) {
                     database.commit { batch { events.addAll(selectedEvents) } }
