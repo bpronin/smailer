@@ -11,10 +11,6 @@ import com.bopr.android.smailer.util.isValidEmailAddress
  */
 class EmailTextValidator(view: TextView) : TextValidator(view) {
 
-//    override fun shouldUnderwave(text: String?): Boolean {
-//        return !isValidEmailAddress(text)
-//    }
-
     override fun getErrorMessage(text: String?): String? {
         return when {
             text.isNullOrEmpty() ->

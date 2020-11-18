@@ -8,7 +8,10 @@ import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATUS_ACCEPTED
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_DEFAULT
-import com.bopr.android.smailer.util.*
+import com.bopr.android.smailer.util.checkPermission
+import com.bopr.android.smailer.util.contactName
+import com.bopr.android.smailer.util.getAccount
+import com.bopr.android.smailer.util.hasInternetConnection
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 import org.slf4j.LoggerFactory
@@ -29,6 +32,7 @@ class CallProcessor(
 
     private val log = LoggerFactory.getLogger("CallProcessor")
     private val settings: Settings = Settings(context)
+    private val recipientsValidator = RecipientsValidator(notifications)
 
     /**
      * Sends out a mail for event.
@@ -150,23 +154,24 @@ class CallProcessor(
     }
 
     private fun checkRecipient(): Boolean {
-        val recipients = settings.emailRecipients
-
-        if (recipients.isEmpty()) {
-            notifications.showRecipientsError(R.string.no_recipients_specified)
-
-            log.warn("Recipients not specified")
-            return false
-        }
-
-        if (!isValidEmailAddressList(recipients)) {
-            notifications.showRecipientsError(R.string.invalid_recipient)
-
-            log.warn("Recipients are invalid")
-            return false
-        }
-
-        return true
+//        val recipients = settings.emailRecipients
+//
+//        if (recipients.isEmpty()) {
+//            notifications.showRecipientsError(R.string.no_recipients_specified)
+//
+//            log.warn("Recipients not specified")
+//            return false
+//        }
+//
+//        if (!isValidEmailAddressList(recipients)) {
+//            notifications.showRecipientsError(R.string.invalid_recipient)
+//
+//            log.warn("Recipients are invalid")
+//            return false
+//        }
+//
+//        return true
+        return recipientsValidator.checkRecipients(settings.emailRecipients)
     }
 
     private fun requireAccount(): Account? {

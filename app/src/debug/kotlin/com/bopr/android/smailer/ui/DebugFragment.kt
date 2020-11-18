@@ -43,6 +43,7 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_LOCATI
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_LOW_BATTERY_LEVEL
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
@@ -380,7 +381,8 @@ class DebugFragment : BasePreferenceFragment() {
                     VAL_PREF_TRIGGER_IN_SMS,
                     VAL_PREF_TRIGGER_IN_CALLS,
                     VAL_PREF_TRIGGER_MISSED_CALLS,
-                    VAL_PREF_TRIGGER_OUT_CALLS))
+                    VAL_PREF_TRIGGER_OUT_CALLS,
+                    VAL_PREF_LOW_BATTERY_LEVEL))
             putStringSet(PREF_EMAIL_CONTENT, mutableSetOf(
                     VAL_PREF_EMAIL_CONTENT_CONTACT,
                     VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,

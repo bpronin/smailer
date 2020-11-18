@@ -83,6 +83,7 @@ class Settings(context: Context) :
         const val VAL_PREF_TRIGGER_MISSED_CALLS = "missed_calls"
         const val VAL_PREF_TRIGGER_OUT_CALLS = "out_calls"
         const val VAL_PREF_TRIGGER_OUT_SMS = "out_sms"
+        const val VAL_PREF_LOW_BATTERY_LEVEL = "low_battery_level"
 
         const val DEFAULT_PHONE_SEARCH_URL = "https://www.google.com/search?q=$PHONE_SEARCH_TAG"
 
@@ -98,7 +99,9 @@ class Settings(context: Context) :
 
         val DEFAULT_TRIGGERS: Set<String> = mutableSetOf(
                 VAL_PREF_TRIGGER_IN_SMS,
-                VAL_PREF_TRIGGER_MISSED_CALLS)
+                VAL_PREF_TRIGGER_MISSED_CALLS,
+                VAL_PREF_LOW_BATTERY_LEVEL
+        )
     }
 
 }

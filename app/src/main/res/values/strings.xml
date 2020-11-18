@@ -195,6 +195,7 @@
         <item>Incoming calls</item>
         <item>Outgoing calls</item>
         <item>Missed calls</item>
+        <item>Low battery level</item>
     </string-array>
 
     <string-array name="email_content_names">

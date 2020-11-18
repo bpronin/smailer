@@ -9,6 +9,7 @@
         <item>in_calls</item>
         <item>out_calls</item>
         <item>missed_calls</item>
+        <item>low_battery_level</item>
     </string-array>
 
     <string-array name="email_content_values" translatable="false">
