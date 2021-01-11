@@ -33,7 +33,7 @@
     <string name="check_your_settings">Please check your settings</string>
     <string name="clear">Clear</string>
     <string name="contact_no_permission_read_contact">no permission to read contacts</string>
-    <string name="copyright" translatable="false">Copyright © BoPr, 2016-2020</string>
+    <string name="copyright" translatable="false">Copyright © BoPr, 2016-2021</string>
     <string name="device_name">Device name</string>
     <string name="device_name_to_show">Device name to be shown in email message (leave blank to use default)</string>
     <string name="disabled">Disabled</string>

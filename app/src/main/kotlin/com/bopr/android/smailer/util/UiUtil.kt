@@ -3,7 +3,6 @@ package com.bopr.android.smailer.util
 import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.res.Resources
-import android.os.Build
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.CharacterStyle
@@ -16,12 +15,9 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils.loadAnimation
 import android.view.inputmethod.InputMethodManager
 import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
-import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.*
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.BlendModeColorFilterCompat.createBlendModeColorFilterCompat
-import androidx.core.graphics.BlendModeCompat
 import androidx.fragment.app.Fragment
 import androidx.preference.Preference
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -190,14 +186,18 @@ fun Context.getColorFromAttr(@AttrRes attr: Int): Int {
 
 fun Context.showToast(text: String) {
     val toast: Toast = Toast.makeText(this, text, Toast.LENGTH_LONG)
+/*
     if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
-        /* it looks ugly on old devises */
+        */
+/* it looks ugly on old devises *//*
+
         val view = toast.view
         view.background.colorFilter = createBlendModeColorFilterCompat(
                 ContextCompat.getColor(this, R.color.colorAccent), BlendModeCompat.DARKEN)
         view.findViewById<TextView>(android.R.id.message)?.setTextColor(
                 ContextCompat.getColor(this, R.color.colorAccentText))
     }
+*/
     toast.show()
 }
 
