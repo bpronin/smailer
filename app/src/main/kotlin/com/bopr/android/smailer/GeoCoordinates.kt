@@ -3,7 +3,7 @@ package com.bopr.android.smailer
 import android.location.Location
 import android.os.Parcelable
 import com.bopr.android.smailer.util.decimalToDMS
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 /**
  * Geolocation coordinates.

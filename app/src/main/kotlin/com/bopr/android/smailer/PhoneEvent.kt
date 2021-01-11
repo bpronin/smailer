@@ -2,7 +2,7 @@ package com.bopr.android.smailer
 
 import android.os.Parcelable
 import androidx.annotation.IntDef
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import kotlin.annotation.AnnotationRetention.SOURCE
 
 /**

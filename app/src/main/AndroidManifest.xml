@@ -18,6 +18,7 @@
     <uses-permission android:name="android.permission.WRITE_SMS" /><!-- To mark sms as read -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /><!-- To add location in email body -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /><!-- To add location in email body -->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" /><!-- To add location in email body -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" /><!-- To process incoming phone calls -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /><!-- To restart application services at device boot -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /><!-- To run content listener in foreground service -->
