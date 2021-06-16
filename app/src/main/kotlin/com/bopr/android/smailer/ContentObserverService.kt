@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
 import com.bopr.android.smailer.Notifications.Companion.SERVICE_NOTIFICATION_ID
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
@@ -71,7 +72,7 @@ class ContentObserverService : Service() {
         }
     }
 
-    private inner class SmsContentObserver : ContentObserver(Handler()) {
+    private inner class SmsContentObserver : ContentObserver(Handler(Looper.getMainLooper())) {
 
         private var lastProcessed: Uri? = null
 

@@ -73,7 +73,7 @@ fun capitalize(text: String?): String? {
     return if (text.isNullOrBlank()) {
         text
     } else {
-        text.substring(0, 1).toUpperCase(Locale.getDefault()) + text.substring(1)
+        text.substring(0, 1).uppercase() + text.substring(1)
     }
 }
 
