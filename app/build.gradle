@@ -7,7 +7,7 @@
     3.  Signing and other user specific parameters should be put into /app/local.gradle (see local.gradle.sample)
 
     To run debug flavor add SHA-1 fingerprint from
-    <user_dir>/.android/debug.keystore (password "android") to  api console:
+    <user_dir>/.android/debug.keystore (password "android") to api console:
     https://console.developers.google.com/apis/credentials/oauthclient/376904884028-f0m6ki37c8b4cf93aktk0jgag3tiu922.apps.googleusercontent.com?project=smailer-24874
 
     Uninstall all application"s apk-s from device before running tests cause they may lead to unpredictable results
@@ -22,22 +22,32 @@ apply plugin: "com.google.gms.google-services"
 apply plugin: "com.google.firebase.crashlytics"
 apply from: "user.gradle"
 
-if (file("local.gradle").exists()) {
-    apply from: "local.gradle"
+if (!file("keystore.p12").exists()) {
+    throw new InvalidUserDataException("Required file /app/keystore.p12")
+}
+
+def local_gradle = "local.gradle"
+if (file(local_gradle).exists()) {
+    apply from: local_gradle
 } else {
-    apply from: "../.github/workflows/local.gradle"
+    local_gradle = "../.github/workflows/local.gradle"
+    if (file(local_gradle).exists()) {
+        apply from: local_gradle
+    } else {
+        throw new InvalidUserDataException("Required file /app/local.gradle")
+    }
 }
 
 android {
 
-    compileSdkVersion 30
+    compileSdkVersion 33
 
     defaultConfig {
         versionCode 96
         versionName '1.9.3'
         applicationId "com.bopr.android.smailer"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 33
         archivesBaseName = "smailer-${versionName}"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

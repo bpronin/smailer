@@ -10,8 +10,10 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.util.getAccount
+import com.bopr.android.smailer.util.showToast
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager.ACCOUNT_TYPE
 import org.slf4j.LoggerFactory
@@ -87,6 +89,7 @@ class GoogleAuthorizationHelper(private val fragment: Fragment,
                 }
             } catch (x: Exception) {
                 log.error("Failed to acquire auth token: ", x)
+                activity.showToast(R.string.unexpected_error)
             }
         }
 

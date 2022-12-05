@@ -173,6 +173,7 @@
     <string name="you_had_incoming_call">You had an incoming call of %s duration.</string>
     <string name="you_had_missed_call">You had a missed call.</string>
     <string name="you_had_outgoing_call">You had an outgoing call of %s duration.</string>
+    <string name="unexpected_error">Something went wrong. Please check your network connection.</string>
 
     <plurals name="items_removed">
         <item quantity="one">Item removed</item>

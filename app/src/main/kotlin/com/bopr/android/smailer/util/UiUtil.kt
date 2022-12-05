@@ -185,20 +185,7 @@ fun Context.getColorFromAttr(@AttrRes attr: Int): Int {
 }
 
 fun Context.showToast(text: String) {
-    val toast: Toast = Toast.makeText(this, text, Toast.LENGTH_LONG)
-/*
-    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
-        */
-/* it looks ugly on old devises *//*
-
-        val view = toast.view
-        view.background.colorFilter = createBlendModeColorFilterCompat(
-                ContextCompat.getColor(this, R.color.colorAccent), BlendModeCompat.DARKEN)
-        view.findViewById<TextView>(android.R.id.message)?.setTextColor(
-                ContextCompat.getColor(this, R.color.colorAccentText))
-    }
-*/
-    toast.show()
+    Toast.makeText(this, text, Toast.LENGTH_LONG).show()
 }
 
 fun Context.showToast(@StringRes textRes: Int) {
