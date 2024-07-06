@@ -40,7 +40,7 @@ class CallProcessor(
      * @param event email event
      */
     fun process(event: PhoneEvent) {
-        log.debug("Processing: $event")
+        log.debug("Processing: {}", event)
 
         database.use {
             event.apply {

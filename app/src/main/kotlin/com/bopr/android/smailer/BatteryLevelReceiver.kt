@@ -22,7 +22,7 @@ class BatteryLevelReceiver : BroadcastReceiver() {
     private val log = LoggerFactory.getLogger("BatteryLevelReceiver")
 
     override fun onReceive(context: Context, intent: Intent) {
-        log.trace("Received intent: $intent")
+        log.trace("Received intent: {}", intent)
 
         if (intent.action == ACTION_BATTERY_LOW && checkInternet(context)) {
             log.trace("Low battery level detected")
