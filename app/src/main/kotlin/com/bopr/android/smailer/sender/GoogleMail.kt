@@ -1,13 +1,16 @@
-package com.bopr.android.smailer
+package com.bopr.android.smailer.sender
 
 import android.accounts.Account
 import android.content.Context
+import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.util.Mockable
+import com.bopr.android.smailer.util.primaryAccount
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.client.util.StringUtils.newStringUtf8
 import com.google.api.services.gmail.Gmail
+import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 import com.google.api.services.gmail.model.Message
 import com.google.api.services.gmail.model.ModifyMessageRequest
 import com.google.common.io.BaseEncoding
@@ -30,29 +33,49 @@ import javax.mail.internet.*
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 @Mockable
-class GoogleMail(private val context: Context) {
+internal class GoogleMail(context: Context) : MessengerTransport(context) {
 
     private val log = LoggerFactory.getLogger("GoogleMail")
+
     private val session = Session.getDefaultInstance(Properties(), null)
     private lateinit var service: Gmail
     private lateinit var account: Account
+    private val settings = Settings(context)
+
+    override fun sendMessages(vararg messages: EventMessage) {
+        try {
+            login(context.primaryAccount()!!, GMAIL_SEND)
+            messages.forEach {
+                val mailMessage = MailMessage(
+                    id = it.id,
+                    subject = it.subject,
+                    body = it.text,
+                    from = account.name,
+                    recipients = settings.emailRecipientsPlain
+                )
+                send(mailMessage)
+            }
+        } catch (x: Exception) {
+            log.error("Send mail failed", x)
+        }
+    }
 
     fun login(account: Account, vararg scopes: String) {
         this.account = account
         val credential = GoogleAccountCredential
-                .usingOAuth2(context, listOf(*scopes))
-                .setSelectedAccount(account)
+            .usingOAuth2(context, listOf(*scopes))
+            .setSelectedAccount(account)
         service = Gmail.Builder(NetHttpTransport(), JacksonFactory.getDefaultInstance(), credential)
-                .setApplicationName("smailer")
-                .build()
+            .setApplicationName("smailer")
+            .build()
     }
 
     @Throws(IOException::class)
     fun send(message: MailMessage) {
         service.users()
-                .messages()
-                .send(ME, createContent(message))
-                .execute()
+            .messages()
+            .send(ME, createContent(message))
+            .execute()
 
         log.debug("Message sent")
     }
@@ -60,19 +83,19 @@ class GoogleMail(private val context: Context) {
     @Throws(IOException::class)
     fun list(query: String): List<MailMessage> {
         val response = service
-                .users()
-                .messages()
-                .list(ME)
-                .setQ(query)
-                .execute()
+            .users()
+            .messages()
+            .list(ME)
+            .setQ(query)
+            .execute()
 
         val result = LinkedList<MailMessage>()
         response.messages?.let {
             for (m in it) {
                 val message = service
-                        .users()
-                        .messages()[ME, m.id]
-                        .execute()
+                    .users()
+                    .messages()[ME, m.id]
+                    .execute()
                 result.add(readMessage(message))
             }
         }
@@ -82,11 +105,11 @@ class GoogleMail(private val context: Context) {
     @Throws(IOException::class)
     fun markAsRead(message: MailMessage) {
         val content = ModifyMessageRequest()
-                .setRemoveLabelIds(listOf("UNREAD")) /* case sensitive */
+            .setRemoveLabelIds(listOf("UNREAD")) /* case sensitive */
         service.users()
-                .messages()
-                .modify(ME, message.id, content)
-                .execute()
+            .messages()
+            .modify(ME, message.id, content)
+            .execute()
 
         log.debug("Message marked as read: " + message.id)
     }
@@ -94,9 +117,9 @@ class GoogleMail(private val context: Context) {
     @Throws(IOException::class)
     fun trash(message: MailMessage) {
         service.users()
-                .messages()
-                .trash(ME, message.id)
-                .execute()
+            .messages()
+            .trash(ME, message.id)
+            .execute()
 
         log.debug("Message moved to trash: " + message.id)
     }
@@ -159,10 +182,10 @@ class GoogleMail(private val context: Context) {
 
     private fun readMessage(gmailMessage: Message): MailMessage {
         return MailMessage(
-                id = gmailMessage.id,
-                subject = readHeader(gmailMessage, "subject"),
-                from = readHeader(gmailMessage, "from"),
-                body = readBody(gmailMessage)
+            id = gmailMessage.id,
+            subject = readHeader(gmailMessage, "subject"),
+            from = readHeader(gmailMessage, "from"),
+            body = readBody(gmailMessage)
         )
     }
 
@@ -183,8 +206,8 @@ class GoogleMail(private val context: Context) {
         }
     }
 
-    companion object {
 
+    companion object {
         private const val ME = "me" /* exact lowercase "me" */
         private const val UTF_8 = "UTF-8"
         private const val HTML = "html"

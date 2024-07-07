@@ -1,4 +1,4 @@
-package com.bopr.android.smailer
+package com.bopr.android.smailer.sender
 
 import java.io.File
 

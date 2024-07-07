@@ -12,7 +12,7 @@ import com.bopr.android.smailer.util.deviceName
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 class Settings(context: Context) :
-        SharedPreferencesWrapper(context.getSharedPreferences(sharedPreferencesName, MODE_PRIVATE)) {
+    SharedPreferencesWrapper(context.getSharedPreferences(sharedPreferencesName, MODE_PRIVATE)) {
 
     val emailContent get() = getStringSet(PREF_EMAIL_CONTENT)
     val emailLocale get() = getString(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)!!
@@ -26,6 +26,9 @@ class Settings(context: Context) :
     val isSyncEnabled get() = getBoolean(PREF_SYNC_ENABLED)
     val remoteControlAccount get() = getString(PREF_REMOTE_CONTROL_ACCOUNT)
     val senderAccount get() = getString(PREF_SENDER_ACCOUNT)
+    val messagingTransports =  getStringSet(PREF_MESSAGING_TRANSPORTS)
+    val telegramBotToken = getString(PREF_TELEGRAM_BOT_TOKEN)
+
     val deviceAlias: String
         get() {
             val setting = getString(PREF_DEVICE_ALIAS)
@@ -47,6 +50,7 @@ class Settings(context: Context) :
         putStringOptional(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)
         putStringSetOptional(PREF_EMAIL_CONTENT, DEFAULT_EMAIL_CONTENT)
         putStringSetOptional(PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS)
+        putStringSetOptional(PREF_MESSAGING_TRANSPORTS, DEFAULT_MESSAGING_TRANSPORTS)
     }
 
     companion object {
@@ -59,6 +63,7 @@ class Settings(context: Context) :
         const val PREF_EMAIL_CONTENT = "email_content"
         const val PREF_EMAIL_LOCALE = "email_locale"
         const val PREF_EMAIL_TRIGGERS = "email_triggers"
+        const val PREF_MESSAGING_TRANSPORTS = "messaging_transports"
         const val PREF_NOTIFY_SEND_SUCCESS = "notify_send_success"
         const val PREF_PHONE_SEARCH_URL = "phone_search_url"
         const val PREF_RECIPIENTS_ADDRESS = "recipients_address"
@@ -69,6 +74,7 @@ class Settings(context: Context) :
         const val PREF_SENDER_ACCOUNT = "sender_account"
         const val PREF_SETTINGS_VERSION = "settings_version" /* hidden */
         const val PREF_SYNC_ENABLED = "sync_enabled"
+        const val PREF_TELEGRAM_BOT_TOKEN = "telegram_bot_token"
 
         const val VAL_PREF_DEFAULT = "default"
         const val VAL_PREF_EMAIL_CONTENT_CONTACT = "contact_name"
@@ -78,6 +84,8 @@ class Settings(context: Context) :
         const val VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME = "time"
         const val VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT = "time_sent"
         const val VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS = "remote_control_links"
+        const val VAL_PREF_MESSAGING_TRANSPORT_EMAIL = "email"
+        const val VAL_PREF_MESSAGING_TRANSPORT_TELEGRAM = "telegram"
         const val VAL_PREF_TRIGGER_IN_CALLS = "in_calls"
         const val VAL_PREF_TRIGGER_IN_SMS = "in_sms"
         const val VAL_PREF_TRIGGER_MISSED_CALLS = "missed_calls"
@@ -88,20 +96,25 @@ class Settings(context: Context) :
         const val DEFAULT_PHONE_SEARCH_URL = "https://www.google.com/search?q=$PHONE_SEARCH_TAG"
 
         val DEFAULT_EMAIL_CONTENT: Set<String> = mutableSetOf(
-                VAL_PREF_EMAIL_CONTENT_CONTACT,
-                VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
-                VAL_PREF_EMAIL_CONTENT_HEADER,
-                VAL_PREF_EMAIL_CONTENT_LOCATION,
-                VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
-                VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT,
-                VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS
+            VAL_PREF_EMAIL_CONTENT_CONTACT,
+            VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
+            VAL_PREF_EMAIL_CONTENT_HEADER,
+            VAL_PREF_EMAIL_CONTENT_LOCATION,
+            VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
+            VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT,
+            VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS
         )
 
         val DEFAULT_TRIGGERS: Set<String> = mutableSetOf(
-                VAL_PREF_TRIGGER_IN_SMS,
-                VAL_PREF_TRIGGER_MISSED_CALLS,
-                VAL_PREF_LOW_BATTERY_LEVEL
+            VAL_PREF_TRIGGER_IN_SMS,
+            VAL_PREF_TRIGGER_MISSED_CALLS,
+            VAL_PREF_LOW_BATTERY_LEVEL
         )
+
+        val DEFAULT_MESSAGING_TRANSPORTS: Set<String> = mutableSetOf(
+            VAL_PREF_MESSAGING_TRANSPORT_TELEGRAM
+        )
+
     }
 
 }

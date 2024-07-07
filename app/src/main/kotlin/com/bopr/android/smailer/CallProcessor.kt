@@ -8,12 +8,13 @@ import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATUS_ACCEPTED
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_DEFAULT
+import com.bopr.android.smailer.sender.EventMessage
+import com.bopr.android.smailer.sender.Messenger
 import com.bopr.android.smailer.util.checkPermission
 import com.bopr.android.smailer.util.contactName
 import com.bopr.android.smailer.util.getAccount
 import com.bopr.android.smailer.util.hasInternetConnection
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
-import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 import org.slf4j.LoggerFactory
 import java.lang.System.currentTimeMillis
 import java.util.*
@@ -24,11 +25,12 @@ import java.util.*
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 class CallProcessor(
-        private val context: Context,
-        private val database: Database = Database(context),
-        private val transport: GoogleMail = GoogleMail(context),
-        private val notifications: Notifications = Notifications(context),
-        private val locator: GeoLocator = GeoLocator(context, database)) {
+    private val context: Context,
+    private val database: Database = Database(context),
+    private val messenger: Messenger = Messenger(context),
+    private val notifications: Notifications = Notifications(context),
+    private val locator: GeoLocator = GeoLocator(context, database)
+) {
 
     private val log = LoggerFactory.getLogger("CallProcessor")
     private val settings: Settings = Settings(context)
@@ -51,7 +53,7 @@ class CallProcessor(
                 if (processStatus != STATUS_ACCEPTED) {
                     state = STATE_IGNORED
                     log.debug("Ignored")
-                } else if (startMailSession() && sendMail(this)) {
+                } else if (startMailSession() && sendMessage(this)) {
                     state = STATE_PROCESSED
                     log.debug("Processed")
                 } else {
@@ -80,7 +82,7 @@ class CallProcessor(
                         batch {
                             for (event in pendingEvents) {
                                 event.processTime = currentTimeMillis()
-                                if (sendMail(event)) {
+                                if (sendMessage(event)) {
                                     event.state = STATE_PROCESSED
                                     events.add(event)
                                 }
@@ -93,40 +95,37 @@ class CallProcessor(
     }
 
     private fun startMailSession(): Boolean {
-        if (checkInternet() && checkRecipient()) {
-            requireAccount()?.let {
-                transport.login(it, GMAIL_SEND)
-                log.debug("Mail session started")
-                return true
-            }
-        }
-        return false
+//        if (checkInternet() && checkRecipient()) {
+//            requireAccount()?.let {
+//                messenger.startSession()
+//                log.debug("Mail session started")
+        return true
+//            }
+//        }
+//        return false
     }
 
-    private fun sendMail(event: PhoneEvent): Boolean {
+    private fun sendMessage(event: PhoneEvent): Boolean {
         val formatter = MailFormatter(
-                context = context,
-                event = event,
-                contactName = contactName(event.phone),
-                deviceName = settings.deviceAlias,
-                options = settings.emailContent,
-                serviceAccount = settings.remoteControlAccount,
-                phoneSearchUrl = settings.phoneSearchUrl,
-                locale = parseLocale(settings.emailLocale)
-        )
-
-        val message = MailMessage(
-                subject = formatter.formatSubject(),
-                body = formatter.formatBody(),
-                recipients = settings.emailRecipientsPlain,
-                from = settings.senderAccount,
-                replyTo = settings.remoteControlAccount
+            context = context,
+            event = event,
+            contactName = contactName(event.phone),
+            deviceName = settings.deviceAlias,
+            options = settings.emailContent,
+            serviceAccount = settings.remoteControlAccount,
+            phoneSearchUrl = settings.phoneSearchUrl,
+            locale = parseLocale(settings.emailLocale)
         )
 
         return try {
-            transport.send(message)
+            messenger.sendMessages(
+                EventMessage(
+                    subject = formatter.formatSubject(),
+                    text = formatter.formatBody()
+                )
+            )
 
-            log.debug("Mail sent")
+            log.debug("Event message sent")
 
             if (settings.isNotifySendSuccess) {
                 notifications.showMailSendSuccess()
@@ -185,11 +184,11 @@ class CallProcessor(
     }
 
     private fun eventFilter() = PhoneEventFilter(
-            settings.emailTriggers,
-            database.phoneBlacklist,
-            database.phoneWhitelist,
-            database.textBlacklist,
-            database.textWhitelist
+        settings.emailTriggers,
+        database.phoneBlacklist,
+        database.phoneWhitelist,
+        database.textBlacklist,
+        database.textWhitelist
     )
 
     private fun contactName(phone: String): String? {

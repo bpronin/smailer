@@ -12,6 +12,8 @@ import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_NOTIFICATIONS
 import com.bopr.android.smailer.Settings.Companion.sharedPreferencesName
+import com.bopr.android.smailer.sender.GoogleMail
+import com.bopr.android.smailer.sender.MailMessage
 import com.bopr.android.smailer.util.deviceName
 import com.bopr.android.smailer.util.primaryAccount
 import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
