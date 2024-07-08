@@ -45,6 +45,14 @@
                 android:key="telegram_messenger_enabled"
                 android:title="@string/send_telegram_message_on_events" />
 
+        <androidx.preference.EditTextPreference
+                android:key="telegram_bot_token"
+                android:title="@string/telegram_bot_token" />
+
+        <androidx.preference.Preference
+                android:key="sent_test_telegram_message"
+                android:title="@string/send_test_telegram_message"
+                android:summary="@string/send_test_telegram_message_summary" />
     </androidx.preference.PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

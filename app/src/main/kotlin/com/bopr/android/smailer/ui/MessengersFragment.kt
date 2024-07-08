@@ -7,8 +7,11 @@ import androidx.preference.Preference
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_BOT_TOKEN
 import com.bopr.android.smailer.sender.EventMessage
 import com.bopr.android.smailer.sender.GoogleMail
+import com.bopr.android.smailer.sender.MessengerTransport
+import com.bopr.android.smailer.sender.TelegramBot
 import com.bopr.android.smailer.util.isAccountExists
 import com.bopr.android.smailer.util.isValidEmailAddressList
 import com.bopr.android.smailer.util.runLongTask
@@ -33,9 +36,20 @@ class MessengersFragment : BasePreferenceFragment() {
             true
         }
 
+//        requirePreference(PREF_TELEGRAM_BOT_TOKEN).setOnPreferenceClickListener {
+//            todo: start token editor dialog
+//            true
+//        }
+
         requirePreference("sent_test_email").onPreferenceClickListener =
             Preference.OnPreferenceClickListener {
-                onSendTestEmail(it)
+                sendTestMessage(it, GoogleMail(requireContext()))
+                true
+            }
+
+        requirePreference("sent_test_telegram_message").onPreferenceClickListener =
+            Preference.OnPreferenceClickListener {
+                sendTestMessage(it, TelegramBot(requireContext()))
                 true
             }
     }
@@ -53,6 +67,7 @@ class MessengersFragment : BasePreferenceFragment() {
 
         updateAccountPreferenceView()
         updateRecipientsPreferenceView()
+        updateTelegramBotTokenPreferenceView()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -75,25 +90,30 @@ class MessengersFragment : BasePreferenceFragment() {
 
             PREF_RECIPIENTS_ADDRESS ->
                 updateRecipientsPreferenceView()
+
+            PREF_TELEGRAM_BOT_TOKEN ->
+                updateTelegramBotTokenPreferenceView()
         }
     }
 
-    private fun onSendTestEmail(preference: Preference) {
+    private fun sendTestMessage(preference: Preference, transport: MessengerTransport) {
         preference.runLongTask(
             onPerform = {
-                GoogleMail(requireContext()).sendMessages(
+                transport.sendMessages(
                     EventMessage(
-                        subject = "${getString(R.string.app_name)} sample message",
-                        text = "This is a sample message"
+                        subject = "${getString(R.string.app_name)} test message",
+                        text = "This is a test message"
                     )
                 )
             },
             onComplete = { _, error ->
-                /* if we live the page while processing then context becomes null. so "context?" */
-                if (error != null)
-                    InfoDialog(error.message).show(requireActivity())
-                else
+                if (error != null) {
+                    val errorMessage = getString(R.string.error_sending_test_message)
+                    InfoDialog(message = errorMessage).show(requireActivity())
+                } else {
+                    /* if we live the page while processing then context becomes null. so "context?" */
                     context?.showToast(R.string.operation_complete)
+                }
             })
     }
 
@@ -110,7 +130,6 @@ class MessengersFragment : BasePreferenceFragment() {
         }
     }
 
-
     private fun updateRecipientsPreferenceView() {
         val preference = requirePreference(PREF_RECIPIENTS_ADDRESS)
         val addresses = settings.emailRecipients
@@ -121,6 +140,17 @@ class MessengersFragment : BasePreferenceFragment() {
             val style =
                 if (isValidEmailAddressList(addresses)) SUMMARY_STYLE_DEFAULT else SUMMARY_STYLE_UNDERWIVED
             updateSummary(preference, addresses.joinToString(), style)
+        }
+    }
+
+    private fun updateTelegramBotTokenPreferenceView() {
+        val preference = requirePreference(PREF_TELEGRAM_BOT_TOKEN)
+        val token = settings.telegramBotToken
+
+        if (token.isNullOrEmpty()) {
+            updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)
+        } else {
+            updateSummary(preference, token, SUMMARY_STYLE_DEFAULT)
         }
     }
 }

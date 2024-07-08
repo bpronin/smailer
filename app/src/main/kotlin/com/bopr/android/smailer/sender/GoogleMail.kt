@@ -43,20 +43,17 @@ internal class GoogleMail(context: Context) : MessengerTransport(context) {
     private val settings = Settings(context)
 
     override fun sendMessages(vararg messages: EventMessage) {
-        try {
-            login(context.primaryAccount()!!, GMAIL_SEND)
-            messages.forEach {
-                val mailMessage = MailMessage(
-                    id = it.id,
-                    subject = it.subject,
-                    body = it.text,
-                    from = account.name,
-                    recipients = settings.emailRecipientsPlain
-                )
-                send(mailMessage)
-            }
-        } catch (x: Exception) {
-            log.error("Send mail failed", x)
+        login(context.primaryAccount()!!, GMAIL_SEND)
+
+        messages.forEach {
+            val mailMessage = MailMessage(
+                id = it.id,
+                subject = it.subject,
+                body = it.text,
+                from = account.name,
+                recipients = settings.emailRecipientsPlain
+            )
+            send(mailMessage)
         }
     }
 
