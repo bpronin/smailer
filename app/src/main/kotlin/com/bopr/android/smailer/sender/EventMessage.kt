@@ -7,6 +7,6 @@ package com.bopr.android.smailer.sender
  */
 data class EventMessage(
     val id: String? = null,
-    val subject: String,
+    val subject: String? = null,
     val text: String
 )

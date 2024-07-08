@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <androidx.preference.PreferenceCategory android:title="@string/email">
+
+        <androidx.preference.SwitchPreference
+                android:key="email_messenger_enabled"
+                android:title="@string/send_email_message_on_events" />
+
+        <androidx.preference.Preference
+                android:icon="@drawable/ic_account_round"
+                android:key="sender_account"
+                android:title="@string/sender" />
+
+        <androidx.preference.Preference
+                android:icon="@drawable/ic_recipient"
+                android:key="recipients_address"
+                android:title="@string/recipients">
+            <intent
+                    android:targetClass="com.bopr.android.smailer.ui.RecipientsActivity"
+                    android:targetPackage="com.bopr.android.smailer" />
+            />
+        </androidx.preference.Preference>
+
+        <androidx.preference.Preference
+                android:icon="@drawable/ic_state_done"
+                android:key="email"
+                android:title="@string/email_message"
+                android:summary="@string/email_message_summary">
+            <intent
+                    android:targetClass="com.bopr.android.smailer.ui.EmailSettingsActivity"
+                    android:targetPackage="com.bopr.android.smailer" />
+            />
+        </androidx.preference.Preference>
+
+        <androidx.preference.Preference
+                android:key="sent_test_email"
+                android:title="@string/send_test_email"
+                android:summary="@string/send_test_email_summary" />
+    </androidx.preference.PreferenceCategory>
+
+    <androidx.preference.PreferenceCategory android:title="@string/telegram">
+
+        <androidx.preference.SwitchPreference
+                android:key="telegram_messenger_enabled"
+                android:title="@string/send_telegram_message_on_events" />
+
+    </androidx.preference.PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>
