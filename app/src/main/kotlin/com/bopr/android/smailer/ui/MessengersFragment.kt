@@ -9,12 +9,13 @@ import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_BOT_TOKEN
 import com.bopr.android.smailer.sender.EventMessage
-import com.bopr.android.smailer.sender.GoogleMail
-import com.bopr.android.smailer.sender.MessengerTransport
-import com.bopr.android.smailer.sender.TelegramBot
-import com.bopr.android.smailer.util.isAccountExists
-import com.bopr.android.smailer.util.isValidEmailAddressList
-import com.bopr.android.smailer.util.runLongTask
+import com.bopr.android.smailer.sender.Telegram
+import com.bopr.android.smailer.sender.TelegramException
+import com.bopr.android.smailer.sender.TelegramException.Code.TELEGRAM_BAD_RESPONSE
+import com.bopr.android.smailer.sender.TelegramException.Code.TELEGRAM_INVALID_TOKEN
+import com.bopr.android.smailer.sender.TelegramException.Code.TELEGRAM_NO_CHAT
+import com.bopr.android.smailer.sender.TelegramException.Code.TELEGRAM_NO_TOKEN
+import com.bopr.android.smailer.sender.TelegramException.Code.TELEGRAM_REQUEST_FAILED
 import com.bopr.android.smailer.util.showToast
 import com.google.api.services.drive.DriveScopes
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
@@ -31,27 +32,26 @@ class MessengersFragment : BasePreferenceFragment() {
     override fun onCreatePreferences(bundle: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_messengers)
 
-        requirePreference(PREF_SENDER_ACCOUNT).setOnPreferenceClickListener {
-            authorizationHelper.startAccountSelectorActivity()
-            true
-        }
+        /*     requirePreference(PREF_SENDER_ACCOUNT).setOnPreferenceClickListener {
+                    authorizationHelper.startAccountSelectorActivity()
+                    true
+                }
+
+                requirePreference("sent_test_email").setOnPreferenceClickListener {
+                    sendTestMessage(it, GoogleMail(requireContext()))
+                    true
+                }
+        */
 
 //        requirePreference(PREF_TELEGRAM_BOT_TOKEN).setOnPreferenceClickListener {
 //            todo: start token editor dialog
 //            true
 //        }
 
-        requirePreference("sent_test_email").onPreferenceClickListener =
-            Preference.OnPreferenceClickListener {
-                sendTestMessage(it, GoogleMail(requireContext()))
-                true
-            }
-
-        requirePreference("sent_test_telegram_message").onPreferenceClickListener =
-            Preference.OnPreferenceClickListener {
-                sendTestMessage(it, TelegramBot(requireContext()))
-                true
-            }
+        requirePreference("sent_test_telegram_message").setOnPreferenceClickListener {
+            sendTestTelegramMessage(it)
+            true
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -96,51 +96,97 @@ class MessengersFragment : BasePreferenceFragment() {
         }
     }
 
-    private fun sendTestMessage(preference: Preference, transport: MessengerTransport) {
-        preference.runLongTask(
-            onPerform = {
-                transport.sendMessages(
-                    EventMessage(
-                        subject = "${getString(R.string.app_name)} test message",
-                        text = "This is a test message"
-                    )
-                )
+    private fun sendTestTelegramMessage(preference: Preference) {
+        Telegram(requireContext()).sendMessage(
+            EventMessage(
+                subject = "${getString(R.string.app_name)} test message",
+                text = "This is a test message"
+            ),
+            onSuccess = {
+                /* if we live the page while processing then context becomes null. so "context?" */
+                context?.showToast(R.string.test_message_sent)
             },
-            onComplete = { _, error ->
-                if (error != null) {
-                    val errorMessage = getString(R.string.error_sending_test_message)
-                    InfoDialog(message = errorMessage).show(requireActivity())
-                } else {
-                    /* if we live the page while processing then context becomes null. so "context?" */
-                    context?.showToast(R.string.operation_complete)
+            onError = { error ->
+                when (error) {
+                    is TelegramException -> {
+                        when (error.errorCode) {
+                            TELEGRAM_REQUEST_FAILED,
+                            TELEGRAM_BAD_RESPONSE ->
+                                showInfoDialog(
+                                    R.string.test_message_failed,
+                                    R.string.error_sending_test_message
+                                )
+
+                            TELEGRAM_NO_TOKEN ->
+                                showInfoDialog(
+                                    R.string.test_message_failed,
+                                    R.string.no_telegram_bot_token
+                                )
+
+                            TELEGRAM_INVALID_TOKEN ->
+                                showInfoDialog(
+                                    R.string.test_message_failed,
+                                    R.string.bad_telegram_bot_token
+                                )
+
+                            TELEGRAM_NO_CHAT ->
+                                showInfoDialog(
+                                    R.string.test_message_failed,
+                                    R.string.require_start_chat
+                                )
+
+                        }
+                    }
+
+                    else -> throw error
                 }
-            })
+            }
+        )
+
+//        preference.runLongTask(
+//            onPerform = {
+//                transport.sendMessages(
+//                    EventMessage(
+//                        subject = "${getString(R.string.app_name)} test message",
+//                        text = "This is a test message"
+//                    )
+//                )
+//            },
+//            onComplete = { _, error ->
+//                if (error != null) {
+//                    val errorMessage = getString(R.string.error_sending_test_message)
+//                    InfoDialog(message = errorMessage).show(requireActivity())
+//                } else {
+//                    /* if we live the page while processing then context becomes null. so "context?" */
+//                    context?.showToast(R.string.operation_complete)
+//                }
+//            })
     }
 
     private fun updateAccountPreferenceView() {
-        val preference = requirePreference(PREF_SENDER_ACCOUNT)
-        val account = settings.senderAccount
-
-        if (account.isNullOrEmpty()) {
-            updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)
-        } else if (!requireContext().isAccountExists(account)) {
-            updateSummary(preference, account, SUMMARY_STYLE_UNDERWIVED)
-        } else {
-            updateSummary(preference, account, SUMMARY_STYLE_DEFAULT)
-        }
+//        val preference = requirePreference(PREF_SENDER_ACCOUNT)
+//        val account = settings.senderAccount
+//
+//        if (account.isNullOrEmpty()) {
+//            updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)
+//        } else if (!requireContext().isAccountExists(account)) {
+//            updateSummary(preference, account, SUMMARY_STYLE_UNDERWIVED)
+//        } else {
+//            updateSummary(preference, account, SUMMARY_STYLE_DEFAULT)
+//        }
     }
 
     private fun updateRecipientsPreferenceView() {
-        val preference = requirePreference(PREF_RECIPIENTS_ADDRESS)
-        val addresses = settings.emailRecipients
-
-        if (addresses.isEmpty()) {
-            updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)
-        } else {
-            val style =
-                if (isValidEmailAddressList(addresses)) SUMMARY_STYLE_DEFAULT else SUMMARY_STYLE_UNDERWIVED
-            updateSummary(preference, addresses.joinToString(), style)
-        }
+//        val preference = requirePreference(PREF_RECIPIENTS_ADDRESS)
+//        val addresses = settings.emailRecipients
+//
+//        if (addresses.isEmpty()) {
+//            updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)
+//        } else {
+//            val style =
+//                if (isValidEmailAddressList(addresses)) SUMMARY_STYLE_DEFAULT else SUMMARY_STYLE_UNDERWIVED
+//            updateSummary(preference, addresses.joinToString(), style)
+//        }
     }
 
     private fun updateTelegramBotTokenPreferenceView() {
@@ -150,7 +196,7 @@ class MessengersFragment : BasePreferenceFragment() {
         if (token.isNullOrEmpty()) {
             updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)
         } else {
-            updateSummary(preference, token, SUMMARY_STYLE_DEFAULT)
+            updateSummary(preference, getString(R.string.specified), SUMMARY_STYLE_DEFAULT)
         }
     }
 }

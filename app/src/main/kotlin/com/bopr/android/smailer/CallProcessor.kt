@@ -118,7 +118,7 @@ class CallProcessor(
         )
 
         return try {
-            messenger.sendMessages(
+            messenger.sendMessage(
                 EventMessage(
                     subject = formatter.formatSubject(),
                     text = formatter.formatBody()

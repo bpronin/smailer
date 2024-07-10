@@ -66,6 +66,7 @@ class Settings(context: Context) :
         const val PREF_EMAIL_LOCALE = "email_locale"
         const val PREF_EMAIL_TRIGGERS = "email_triggers"
         const val PREF_NOTIFY_SEND_SUCCESS = "notify_send_success"
+        const val PREF_EMAIL_MESSENGER_ENABLED = "email_messenger_enabled"
         const val PREF_PHONE_SEARCH_URL = "phone_search_url"
         const val PREF_RECIPIENTS_ADDRESS = "recipients_address"
         const val PREF_REMOTE_CONTROL_ACCOUNT = "remote_control_account"
@@ -76,7 +77,6 @@ class Settings(context: Context) :
         const val PREF_SETTINGS_VERSION = "settings_version" /* hidden */
         const val PREF_SYNC_ENABLED = "sync_enabled"
         const val PREF_TELEGRAM_BOT_TOKEN = "telegram_bot_token"
-        const val PREF_EMAIL_MESSENGER_ENABLED = "email_messenger_enabled"
         const val PREF_TELEGRAM_MESSENGER_ENABLED = "telegram_messenger_enabled"
 
         const val VAL_PREF_DEFAULT = "default"
@@ -87,15 +87,16 @@ class Settings(context: Context) :
         const val VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME = "time"
         const val VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT = "time_sent"
         const val VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS = "remote_control_links"
+        const val VAL_PREF_LOW_BATTERY_LEVEL = "low_battery_level"
         const val VAL_PREF_TRIGGER_IN_CALLS = "in_calls"
         const val VAL_PREF_TRIGGER_IN_SMS = "in_sms"
         const val VAL_PREF_TRIGGER_MISSED_CALLS = "missed_calls"
         const val VAL_PREF_TRIGGER_OUT_CALLS = "out_calls"
         const val VAL_PREF_TRIGGER_OUT_SMS = "out_sms"
-        const val VAL_PREF_LOW_BATTERY_LEVEL = "low_battery_level"
 
         const val DEFAULT_PHONE_SEARCH_URL = "https://www.google.com/search?q=$PHONE_SEARCH_TAG"
 
+        //todo: replace with individual boolean options
         val DEFAULT_EMAIL_CONTENT: Set<String> = mutableSetOf(
             VAL_PREF_EMAIL_CONTENT_CONTACT,
             VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
@@ -106,6 +107,7 @@ class Settings(context: Context) :
             VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS
         )
 
+        //todo: replace with individual boolean options
         val DEFAULT_TRIGGERS: Set<String> = mutableSetOf(
             VAL_PREF_TRIGGER_IN_SMS,
             VAL_PREF_TRIGGER_MISSED_CALLS,

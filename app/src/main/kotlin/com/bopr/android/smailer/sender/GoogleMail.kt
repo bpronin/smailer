@@ -33,7 +33,7 @@ import javax.mail.internet.*
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 @Mockable
-internal class GoogleMail(context: Context) : MessengerTransport(context) {
+internal class GoogleMail(context: Context) : Transport(context) {
 
     private val log = LoggerFactory.getLogger("GoogleMail")
 
@@ -42,19 +42,23 @@ internal class GoogleMail(context: Context) : MessengerTransport(context) {
     private lateinit var account: Account
     private val settings = Settings(context)
 
-    override fun sendMessages(vararg messages: EventMessage) {
+    override fun sendMessage(
+        message: EventMessage,
+        onSuccess: () -> Unit,
+        onError: (error: Exception) -> Unit
+    ) {
         login(context.primaryAccount()!!, GMAIL_SEND)
 
-        messages.forEach {
-            val mailMessage = MailMessage(
-                id = it.id,
-                subject = it.subject,
-                body = it.text,
-                from = account.name,
-                recipients = settings.emailRecipientsPlain
-            )
-            send(mailMessage)
-        }
+        val mailMessage = MailMessage(
+            id = message.id,
+            subject = message.subject,
+            body = message.text,
+            from = account.name,
+            recipients = settings.emailRecipientsPlain
+        )
+        send(mailMessage)
+
+        onSuccess()
     }
 
     fun login(account: Account, vararg scopes: String) {

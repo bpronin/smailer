@@ -38,6 +38,7 @@
         />
     </androidx.preference.Preference>
 
+<!--
     <androidx.preference.Preference
         android:icon="@drawable/ic_remote"
         android:key="remote_control_enabled"
@@ -46,6 +47,7 @@
             android:targetClass="com.bopr.android.smailer.ui.RemoteControlActivity"
             android:targetPackage="com.bopr.android.smailer" />
     </androidx.preference.Preference>
+-->
 
     <androidx.preference.Preference
         android:icon="@drawable/ic_history"

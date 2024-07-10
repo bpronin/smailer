@@ -45,7 +45,7 @@ class BatteryLevelReceiver : BroadcastReceiver() {
     }
 
     private fun sendMessage(context: Context) {
-        Messenger(context).sendMessages(
+        Messenger(context).sendMessage(
             EventMessage(
                 subject = "[SMailer] Battery level",
                 text = "Device: " + deviceName() + "<br> Battery level is low."

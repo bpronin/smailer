@@ -120,12 +120,12 @@ class MainFragment : BasePreferenceFragment() {
     }
 
     private fun updateRemoteControlPreferenceView() {
-        val preference = requirePreference(PREF_REMOTE_CONTROL_ENABLED)
-        val enabled = settings.getBoolean(preference.key)
-        updateSummary(
-            preference,
-            getString(if (enabled) R.string.enabled else R.string.disabled),
-            SUMMARY_STYLE_DEFAULT
-        )
+//        val preference = requirePreference(PREF_REMOTE_CONTROL_ENABLED)
+//        val enabled = settings.getBoolean(preference.key)
+//        updateSummary(
+//            preference,
+//            getString(if (enabled) R.string.enabled else R.string.disabled),
+//            SUMMARY_STYLE_DEFAULT
+//        )
     }
 }

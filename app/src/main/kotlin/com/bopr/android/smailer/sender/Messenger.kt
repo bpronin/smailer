@@ -12,24 +12,28 @@ import org.slf4j.LoggerFactory
  */
 @Mockable
 class Messenger(context: Context) {
-    
+
     private val log = LoggerFactory.getLogger("Messenger")
     private val settings = Settings(context)
-    private val emailTransports by lazyOf(GoogleMail(context))
-    private val telegramTransports by lazyOf(TelegramBot(context))
+    private val emailTransport by lazyOf(GoogleMail(context))
+    private val telegramTransport by lazyOf(Telegram(context))
 
-    fun sendMessages(vararg messages: EventMessage) {
+    fun sendMessage(message: EventMessage) {
         if (settings.telegramMessengerEnabled)
-            telegramTransports.silentSendMessages(*messages)
+            silentSendMessage(telegramTransport, message)
         if (settings.emailMessengerEnabled)
-            emailTransports.silentSendMessages(*messages)
+            silentSendMessage(emailTransport, message)
     }
 
-    private fun MessengerTransport.silentSendMessages(vararg messages: EventMessage){
+    private fun silentSendMessage(transport: Transport, message: EventMessage) {
         try {
-            sendMessages(*messages)
+            transport.sendMessage(message) { resultCode ->
+                log.info("Send message result: $resultCode")
+//                log.error("Error while sending message.", resultCode)
+            }
         } catch (x: Exception) {
             log.error("Send message failed", x)
         }
+        //todo: consider to show notification on errors
     }
 }
