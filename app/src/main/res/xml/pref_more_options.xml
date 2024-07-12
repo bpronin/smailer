@@ -2,12 +2,6 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <androidx.preference.SwitchPreference
-        android:key="sync_enabled"
-        android:title="@string/synchronization"
-        android:summary="@string/sync_blacklist_and_log"
-        />
-
-    <androidx.preference.SwitchPreference
         android:key="notify_send_success"
         android:title="@string/info_notifications"
         android:summary="@string/notify_send_success"
@@ -17,12 +11,6 @@
         android:key="reset_dialogs"
         android:title="@string/reset_dialogs"
         android:summary="@string/reset_dialogs_summary"
-        />
-
-    <androidx.preference.Preference
-        android:key="sent_test_email"
-        android:title="@string/send_test_email"
-        android:summary="@string/send_test_email_summary"
         />
 
 </androidx.preference.PreferenceScreen>

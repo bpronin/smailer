@@ -68,7 +68,7 @@ class Database(private val context: Context) : Closeable {
             put(COLUMN_LAST_LONGITUDE, value?.longitude)
             put(COLUMN_LAST_LOCATION_TIME, currentTimeMillis())
         }).also {
-            log.debug("Updated last location to: $value")
+            log.debug("Updated last location to: {}", value)
         }
 
     /**
@@ -235,7 +235,7 @@ class Database(private val context: Context) : Closeable {
          * Sends database broadcast.
          */
         fun Context.sendDatabaseBroadcast(tables: Set<String>) {
-            log.debug("Broadcasting data changed: $tables")
+            log.debug("Broadcasting data changed: {}", tables)
 
             val intent = Intent(ACTION_DATABASE_CHANGED)
                     .putExtra(EXTRA_TABLES, tables.toTypedArray())

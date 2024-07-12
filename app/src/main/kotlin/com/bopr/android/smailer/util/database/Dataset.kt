@@ -69,7 +69,7 @@ abstract class Dataset<T>(
             if (!elements.contains(e) && remove(e)) affected++
         }
 
-        log.debug("$affected items(s) removed")
+        log.debug("$affected items(s) removed in retain")
         return affected != 0
     }
 
@@ -143,7 +143,7 @@ abstract class Dataset<T>(
             insertWithOnConflict(tableName, null, values, CONFLICT_IGNORE) != -1L
         }.also {
             if (it) {
-                log.debug("Inserted: $values")
+                log.debug("Inserted: {}", values)
             }
         }
     }
@@ -153,7 +153,7 @@ abstract class Dataset<T>(
             update(tableName, values, keyClause, key(element)) != 0
         }.also {
             if (it) {
-                log.debug("Updated: $values")
+                log.debug("Updated: {}", values)
             }
         }
     }

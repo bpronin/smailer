@@ -17,7 +17,7 @@ class BootReceiver : BroadcastReceiver() {
     private val log = LoggerFactory.getLogger("BootReceiver")
 
     override fun onReceive(context: Context, intent: Intent) {
-        log.trace("Received intent: $intent")
+        log.trace("Received intent: {}", intent)
 
         if (intent.action == ACTION_BOOT_COMPLETED) {
             context.startApplicationServices()

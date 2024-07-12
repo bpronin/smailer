@@ -1,5 +1,6 @@
 package com.bopr.android.smailer.util
 
+import com.bopr.android.smailer.MailMessage
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.security.AccessController
@@ -26,90 +27,79 @@ object JavaMail {
     private const val CHECK_RESULT_NOT_CONNECTED = 1
     private const val CHECK_RESULT_AUTHENTICATION = 2
 
-    private lateinit var account: String
-    private lateinit var session: Session
-
     init {
         Security.addProvider(JSSEProvider())
-    }
-
-    /**
-     * Starts new delivery session.
-     */
-    fun startSession(account: String, password: String, host: String, port: Int) {
-        this.account = account
-
-        val props = Properties()
-        props["mail.transport.protocol"] = "smtp"
-        props["mail.host"] = host
-        props["mail.smtp.port"] = port
-        props["mail.smtp.auth"] = "true"
-        props["mail.smtp.socketFactory.port"] = port
-        props["mail.smtp.socketFactory.class"] = "javax.net.ssl.SSLSocketFactory"
-        props["mail.smtp.socketFactory.fallback"] = false
-        props["mail.smtp.quitwait"] = false
-        props["mail.smtp.connectiontimeout"] = 10000
-
-        val authentication = PasswordAuthentication(account, password)
-        session = Session.getInstance(props, object : Authenticator() {
-
-            override fun getPasswordAuthentication(): PasswordAuthentication {
-                return authentication
-            }
-        })
     }
 
     /**
      * Sends email with attachment.
      */
     @Throws(MessagingException::class)
-    fun send(recipients: String, subject: String?, body: String?, attachment: Collection<File>?) {
-        val message = MimeMessage(session).apply {
-            sender = InternetAddress(account)
-            setSubject(subject, UTF_8)
-        }
+    fun send(account: String, password: String, smtpHost: String, smtpPort: Int = 465,
+             vararg messages: MailMessage
+    ) {
+        val session = startSession(smtpHost, smtpPort, account, password)
 
-        if (recipients.indexOf(',') > 0) {
-            message.setRecipients(TO, InternetAddress.parse(recipients))
-        } else {
-            message.setRecipients(TO, arrayOf(InternetAddress(recipients)))
+        val transport = session.transport
+        try {
+            transport.connect()
+            for (message in messages) {
+                val mimeMessage = createMimeMessage(message, session)
+                transport.sendMessage(mimeMessage, mimeMessage.getRecipients(TO))
+            }
+        } finally {
+            try {
+                transport.close()
+            } catch (x: MessagingException) {
+                log.warn("Closing transport failed", x)
+            }
         }
-
-        if (attachment == null) {
-            message.setText(body, UTF_8, HTML)
-        } else {
-            message.setContent(createMultipart(body, attachment))
-        }
-
-        Transport.send(message)
     }
 
-    /**
-     * Checks connection to mail server.
-     */
-    fun checkConnection(): Int {
-        log.debug("checking connection")
+    private fun startSession(
+        smtpHost: String,
+        smtpPort: Int,
+        account: String,
+        password: String
+    ): Session {
+        val props = Properties()
+        props["mail.transport.protocol"] = "smtp"
+        props["mail.host"] = smtpHost
+        props["mail.smtp.port"] = smtpPort
+        props["mail.smtp.auth"] = "true"
+        props["mail.smtp.socketFactory.port"] = smtpPort
+        props["mail.smtp.socketFactory.class"] = "javax.net.ssl.SSLSocketFactory"
+        props["mail.smtp.socketFactory.fallback"] = false
+        props["mail.smtp.quitwait"] = false
+        props["mail.smtp.connectiontimeout"] = 10000
 
-        try {
-            val transport = session.transport
-            try {
-                transport.connect()
-                return CHECK_RESULT_OK
-            } finally {
-                try {
-                    transport.close()
-                } catch (x: MessagingException) {
-                    log.warn("Closing transport failed", x)
+        val session = Session.getInstance(props, object : Authenticator() {
+
+            override fun getPasswordAuthentication(): PasswordAuthentication {
+                return PasswordAuthentication(account, password)
+            }
+        })
+        return session
+    }
+
+    private fun createMimeMessage(m: MailMessage, session: Session): Message {
+        return MimeMessage(session).apply {
+            sender = InternetAddress(m.from)
+            setSubject(m.subject, UTF_8)
+
+            m.recipients?.let {
+                if (it.indexOf(',') > 0) {
+                    setRecipients(TO, InternetAddress.parse(it))
+                } else {
+                    setRecipients(TO, arrayOf(InternetAddress(it)))
                 }
             }
-        } catch (x: AuthenticationFailedException) {
-            log.debug("Authentication failed", x)
 
-            return CHECK_RESULT_AUTHENTICATION
-        } catch (x: MessagingException) {
-            log.debug("Connection failed", x)
-
-            return CHECK_RESULT_NOT_CONNECTED
+            m.attachment?.let {
+                setContent(createMultipart(m.body, m.attachment))
+            } ?: run {
+                setText(m.body, UTF_8, HTML)
+            }
         }
     }
 
@@ -139,8 +129,14 @@ object JavaMail {
             AccessController.doPrivileged<Void>(PrivilegedAction<Void?> {
                 put("SSLContext.TLS", "org.apache.harmony.xnet.provider.jsse.SSLContextImpl")
                 put("Alg.Alias.SSLContext.TLSv1", "TLS")
-                put("KeyManagerFactory.X509", "org.apache.harmony.xnet.provider.jsse.KeyManagerFactoryImpl")
-                put("TrustManagerFactory.X509", "org.apache.harmony.xnet.provider.jsse.TrustManagerFactoryImpl")
+                put(
+                    "KeyManagerFactory.X509",
+                    "org.apache.harmony.xnet.provider.jsse.KeyManagerFactoryImpl"
+                )
+                put(
+                    "TrustManagerFactory.X509",
+                    "org.apache.harmony.xnet.provider.jsse.TrustManagerFactoryImpl"
+                )
                 null
             })
         }

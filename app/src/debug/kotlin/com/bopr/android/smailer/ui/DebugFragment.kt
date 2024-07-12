@@ -26,7 +26,6 @@ import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessi
 import com.bopr.android.smailer.Database
 import com.bopr.android.smailer.Database.Companion.databaseName
 import com.bopr.android.smailer.GeoLocator
-import com.bopr.android.smailer.GoogleDrive
 import com.bopr.android.smailer.GoogleMail
 import com.bopr.android.smailer.MailMessage
 import com.bopr.android.smailer.Notifications
@@ -67,6 +66,7 @@ import com.bopr.android.smailer.firebase.CloudMessaging.sendCloudMessage
 import com.bopr.android.smailer.firebase.CloudMessaging.subscribeToCloudMessaging
 import com.bopr.android.smailer.firebase.CloudMessaging.unsubscribeFromCloudMessaging
 import com.bopr.android.smailer.remote.RemoteControlProcessor
+import com.bopr.android.smailer.sync.GoogleDrive
 import com.bopr.android.smailer.sync.Synchronizer
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_DOWNLOAD
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_UPLOAD

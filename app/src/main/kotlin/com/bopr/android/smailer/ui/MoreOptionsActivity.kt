@@ -1,8 +1,8 @@
 package com.bopr.android.smailer.ui
 
 /**
- * Options activity.
+ * More options activity.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class OptionsActivity : BaseAppActivity(OptionsFragment::class)
+class MoreOptionsActivity : BaseAppActivity(MoreOptionsFragment::class)

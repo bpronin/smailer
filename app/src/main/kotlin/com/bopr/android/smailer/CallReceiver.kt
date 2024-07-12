@@ -18,7 +18,7 @@ import java.lang.System.currentTimeMillis
 class CallReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        log.trace("Received intent: $intent")
+        log.trace("Received intent: {}", intent)
 
         when (intent.action) {
             ACTION_PHONE_STATE_CHANGED ->

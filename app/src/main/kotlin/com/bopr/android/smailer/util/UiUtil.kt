@@ -18,21 +18,19 @@ import android.view.animation.AnimationUtils.loadAnimation
 import android.view.inputmethod.InputMethodManager
 import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
 import android.widget.Toast
-import androidx.annotation.*
+import androidx.annotation.AnimRes
+import androidx.annotation.AttrRes
+import androidx.annotation.ColorInt
+import androidx.annotation.PluralsRes
+import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.preference.Preference
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
-import com.bopr.android.smailer.PhoneEvent
-import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
-import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
-import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.ui.WavyUnderlineSpan
-import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.Tasks
 import java.util.concurrent.Executors
 
 /**
@@ -40,121 +38,6 @@ import java.util.concurrent.Executors
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-
-/**
- * To prevent drawables from being shrinked by R8's resource shrinker we have to
- * hold theirs hardcoded references.
- */
-private val RES_DIRECTION_IMAGE = intArrayOf(
-        R.drawable.ic_call_missed,
-        R.drawable.ic_call_in,
-        R.drawable.ic_call_out
-)
-
-/**
- * To prevent drawables from being shrinked by R8's resource shrinker we have to
- * hold theirs hardcoded references.
- */
-private val RES_STATE_IMAGE = intArrayOf(
-        R.drawable.ic_hourglass,
-        R.drawable.ic_state_done,
-        R.drawable.ic_state_block
-)
-
-/**
- * To prevent drawables from being shrinked by R8's resource shrinker we have to
- * hold theirs hardcoded references.
- */
-private val RES_TYPE_IMAGE = intArrayOf(
-        R.drawable.ic_message,
-        R.drawable.ic_call
-)
-
-@DrawableRes
-fun eventTypeImage(event: PhoneEvent): Int {
-    /* do not use direct drawable resources references here due to shrinker issue */
-    return if (event.isSms) {
-        RES_TYPE_IMAGE[0]
-    } else {
-        RES_TYPE_IMAGE[1]
-    }
-}
-
-@DrawableRes
-fun eventDirectionImage(event: PhoneEvent): Int {
-    /* do not use direct drawable resources references here due to shrinker issue */
-    return when {
-        event.isMissed ->
-            RES_DIRECTION_IMAGE[0]
-        event.isIncoming ->
-            RES_DIRECTION_IMAGE[1]
-        else ->
-            RES_DIRECTION_IMAGE[2]
-    }
-}
-
-@DrawableRes
-fun eventStateImage(event: PhoneEvent): Int {
-    /* do not use direct drawable resources references here due to shrinker issue */
-    return when (event.state) {
-        STATE_PENDING ->
-            RES_STATE_IMAGE[0]
-        STATE_PROCESSED ->
-            RES_STATE_IMAGE[1]
-        STATE_IGNORED ->
-            RES_STATE_IMAGE[2]
-        else ->
-            throw IllegalArgumentException("Unknown state")
-    }
-}
-
-@StringRes
-fun eventTypeText(event: PhoneEvent): Int {
-    return if (event.isSms) {
-        if (event.isIncoming) {
-            R.string.incoming_sms
-        } else {
-            R.string.outgoing_sms
-        }
-    } else if (event.isMissed) {
-        R.string.missed_call
-    } else if (event.isIncoming) {
-        R.string.incoming_call
-    } else {
-        R.string.outgoing_call
-    }
-}
-
-@StringRes
-fun eventTypePrefix(event: PhoneEvent): Int {
-    return if (event.isSms) {
-        if (event.isIncoming) {
-            R.string.incoming_sms_from
-        } else {
-            R.string.outgoing_sms_to
-        }
-    } else if (event.isMissed) {
-        R.string.missed_call_from
-    } else if (event.isIncoming) {
-        R.string.incoming_call_from
-    } else {
-        R.string.outgoing_call_to
-    }
-}
-
-@StringRes
-fun eventStateText(event: PhoneEvent): Int {
-    return when (event.state) {
-        STATE_PENDING ->
-            R.string.pending
-        STATE_PROCESSED ->
-            R.string.sent_email
-        STATE_IGNORED ->
-            R.string.ignored
-        else ->
-            throw IllegalArgumentException("Unknown state")
-    }
-}
 
 /**
  * Returns text underlined with wavy red line.

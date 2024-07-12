@@ -1,4 +1,4 @@
-package com.bopr.android.smailer
+package com.bopr.android.smailer.sync
 
 import android.accounts.Account
 import android.content.Context

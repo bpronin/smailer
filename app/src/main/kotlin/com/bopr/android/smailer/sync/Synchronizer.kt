@@ -4,7 +4,6 @@ import android.accounts.Account
 import android.content.Context
 import com.bopr.android.smailer.Database
 import com.bopr.android.smailer.GeoCoordinates.Companion.coordinatesOf
-import com.bopr.android.smailer.GoogleDrive
 import com.bopr.android.smailer.PhoneEvent
 import org.slf4j.LoggerFactory
 import java.io.IOException

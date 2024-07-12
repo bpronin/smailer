@@ -34,19 +34,16 @@ class MailFormatter(private val context: Context,
                     private val phoneSearchUrl: String = DEFAULT_PHONE_SEARCH_URL,
                     locale: Locale = Locale.getDefault()) {
 
-    private val resources: Resources
-    private val timeFormat: DateFormat
-
-    init {
-        resources = if (locale == Locale.getDefault()) {
-            context.resources
-        } else {
-            val configuration = context.resources.configuration
-            configuration.setLocale(locale)
-            context.createConfigurationContext(configuration).resources
-        }
-        timeFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale)
+    private val resources: Resources = if (locale == Locale.getDefault()) {
+        context.resources
+    } else {
+        val configuration = context.resources.configuration
+        configuration.setLocale(locale)
+        context.createConfigurationContext(configuration).resources
     }
+
+    private val timeFormat: DateFormat =
+        DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale)
 
     /**
      * Returns formatted email subject.
