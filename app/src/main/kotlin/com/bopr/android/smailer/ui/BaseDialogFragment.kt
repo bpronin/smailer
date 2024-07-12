@@ -40,7 +40,7 @@ abstract class BaseDialogFragment(private val fragmentTag: String?) : DialogFrag
     }
 
     open fun onBuildDialog(builder: AlertDialog.Builder) {
-        onCreateDialogView(LayoutInflater.from(context), null)?.run {
+        onCreateDialogView(layoutInflater, null)?.run {
             builder.setView(this)
         }
     }

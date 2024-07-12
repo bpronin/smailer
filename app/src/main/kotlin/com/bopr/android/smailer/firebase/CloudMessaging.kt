@@ -11,7 +11,7 @@ import com.bopr.android.smailer.util.getAccount
 import com.google.firebase.messaging.FirebaseMessaging
 import org.json.JSONObject
 import org.slf4j.LoggerFactory
-import java.util.*
+import java.util.Locale
 
 object CloudMessaging {
 
@@ -60,11 +60,11 @@ object CloudMessaging {
                 }
 
                 val request = FCMRequest(
-                        "https://fcm.googleapis.com/fcm/send",
-                        payload,
-                        getString(R.string.fcm_server_key),
-                        { log.debug("Response: {}", it) },
-                        { log.warn("Request failed: ", it) }
+                    "https://fcm.googleapis.com/fcm/send",
+                    payload,
+                    getString(R.string.fcm_server_key),
+                    { log.debug("Response: {}", it) },
+                    { log.warn("Request failed: ", it) }
                 )
                 newRequestQueue(this).add(request)
 
@@ -76,7 +76,7 @@ object CloudMessaging {
     private fun Context.account() = getAccount(Settings(this).senderAccount)
 
     private fun topic(account: Account) =
-            "/topics/com.bopr.android.smailer.firebase-${userId(account.name)}"
+        "/topics/com.bopr.android.smailer.firebase-${userId(account.name)}"
 
     internal fun requestFirebaseToken(onComplete: (String) -> Unit) {
         FirebaseMessaging.getInstance().token.addOnCompleteListener {
@@ -89,14 +89,14 @@ object CloudMessaging {
     internal fun Context.listFirebaseInfo(onComplete: (String) -> Unit) {
         requestFirebaseToken { token ->
             val request = FCMRequest(
-                    "https://iid.googleapis.com/iid/info/$token?details=true",
-                    null,
-                    getString(R.string.fcm_server_key),
-                    {
-                        log.debug("Response: {}", it)
-                        onComplete(it.toString(3))
-                    },
-                    { log.warn("Request failed: ", it) }
+                "https://iid.googleapis.com/iid/info/$token?details=true",
+                null,
+                getString(R.string.fcm_server_key),
+                {
+                    log.debug("Response: {}", it)
+                    onComplete(it.toString(3))
+                },
+                { log.warn("Request failed: ", it) }
             )
             newRequestQueue(this).add(request)
         }
@@ -107,15 +107,16 @@ object CloudMessaging {
         return "${parts[0].replace(NON_USER_ID_CHARS, "")}~${parts[1]}"
     }
 
-    private class FCMRequest(url: String, payload: JSONObject?, val serverKey: String,
-                             onComplete: (JSONObject) -> Unit,
-                             onError: (VolleyError) -> Unit)
-        : JsonObjectRequest(url, payload, onComplete, onError) {
+    private class FCMRequest(
+        url: String, payload: JSONObject?, val serverKey: String,
+        onComplete: (JSONObject) -> Unit,
+        onError: (VolleyError) -> Unit
+    ) : JsonObjectRequest(Method.POST, url, payload, onComplete, onError) {
 
         override fun getHeaders(): Map<String, String> {
             return mapOf(
-                    "Authorization" to "key=$serverKey",
-                    "Content-Type" to "application/json"
+                "Authorization" to "key=$serverKey",
+                "Content-Type" to "application/json"
             )
         }
     }

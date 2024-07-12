@@ -28,7 +28,7 @@ class ConfirmCheckDialog(title: String? = null,
 
     private lateinit var checkBox: CheckBox
 
-    override fun onCreateDialogView(inflater: LayoutInflater, root: ViewGroup?): View? {
+    override fun onCreateDialogView(inflater: LayoutInflater, root: ViewGroup?): View {
         checkBox = CheckBox(context)
         checkBox.setText(R.string.do_not_ask_again)
 

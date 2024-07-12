@@ -6,11 +6,11 @@ import com.bopr.android.smailer.util.Mockable
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
-import com.google.api.client.util.Base64.decodeBase64
 import com.google.api.client.util.StringUtils.newStringUtf8
 import com.google.api.services.gmail.Gmail
 import com.google.api.services.gmail.model.Message
 import com.google.api.services.gmail.model.ModifyMessageRequest
+import com.google.common.io.BaseEncoding
 import org.slf4j.LoggerFactory
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -179,7 +179,7 @@ class GoogleMail(private val context: Context) {
         return message.payload?.let {
             val parts = it.parts
             val part = if (parts.isNullOrEmpty()) it else parts[0]
-            return newStringUtf8(decodeBase64(part.body.data))
+            return newStringUtf8(BaseEncoding.base64().decode(part.body.data))
         }
     }
 

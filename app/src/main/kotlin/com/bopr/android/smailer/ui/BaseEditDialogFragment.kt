@@ -15,11 +15,11 @@ abstract class BaseEditDialogFragment<V>(dialogTag: String) : BaseDialogFragment
     override fun onBuildDialog(builder: AlertDialog.Builder) {
         super.onBuildDialog(builder)
         builder
-                .setTitle(title)
-                .setPositiveButton(android.R.string.ok) { _, _ ->
-                    okClickedAction?.invoke(getValue())
-                }
-                .setNegativeButton(android.R.string.cancel, null)
+            .setTitle(title)
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                okClickedAction?.invoke(getValue())
+            }
+            .setNegativeButton(android.R.string.cancel, null)
     }
 
     abstract fun setValue(value: V?)
