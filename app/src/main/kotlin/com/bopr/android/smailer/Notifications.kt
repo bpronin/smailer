@@ -30,53 +30,55 @@ import kotlin.reflect.KClass
 class Notifications(private val context: Context) {
 
     private val manager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-    private val statusBuilder: NotificationCompat.Builder
-    private val messagesBuilder: NotificationCompat.Builder
-    private val errorsBuilder: NotificationCompat.Builder
+
+    private val statusBuilder: NotificationCompat.Builder =
+        NotificationCompat.Builder(context, CHANNEL_ID_STATUS)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentIntent(targetIntent(TARGET_MAIN))
+            .setOngoing(true)
+            .apply {
+                setCategory(CATEGORY_SERVICE)
+            }
+
+    private val messagesBuilder: NotificationCompat.Builder =
+        NotificationCompat.Builder(context, CHANNEL_ID_NOTIFICATIONS)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setAutoCancel(true)
+            .apply {
+                setCategory(CATEGORY_MESSAGE)
+            }
+
+    private val errorsBuilder: NotificationCompat.Builder =
+        NotificationCompat.Builder(context, CHANNEL_ID_NOTIFICATIONS)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setAutoCancel(true)
+            .setContentText(context.getString(R.string.tap_to_check_settings))
+            .apply {
+                setCategory(CATEGORY_ERROR)
+            }
 
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            manager.createNotificationChannel(NotificationChannel(CHANNEL_ID_STATUS,
-                    context.getString(R.string.status), IMPORTANCE_LOW))
-            manager.createNotificationChannel(NotificationChannel(CHANNEL_ID_NOTIFICATIONS,
-                    context.getString(R.string.notifications), IMPORTANCE_LOW))
+            manager.createNotificationChannel(
+                NotificationChannel(
+                    CHANNEL_ID_STATUS,
+                    context.getString(R.string.status), IMPORTANCE_LOW
+                )
+            )
+            manager.createNotificationChannel(
+                NotificationChannel(
+                    CHANNEL_ID_NOTIFICATIONS,
+                    context.getString(R.string.notifications), IMPORTANCE_LOW
+                )
+            )
         }
-
-        statusBuilder = NotificationCompat.Builder(context, CHANNEL_ID_STATUS)
-                .setSmallIcon(R.drawable.ic_notification)
-                .setContentIntent(targetIntent(TARGET_MAIN))
-                .setOngoing(true)
-                .apply {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        setCategory(CATEGORY_SERVICE)
-                    }
-                }
-
-        messagesBuilder = NotificationCompat.Builder(context, CHANNEL_ID_NOTIFICATIONS)
-                .setSmallIcon(R.drawable.ic_notification)
-                .setAutoCancel(true)
-                .apply {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        setCategory(CATEGORY_MESSAGE)
-                    }
-                }
-
-        errorsBuilder = NotificationCompat.Builder(context, CHANNEL_ID_NOTIFICATIONS)
-                .setSmallIcon(R.drawable.ic_notification)
-                .setAutoCancel(true)
-                .setContentText(context.getString(R.string.tap_to_check_settings))
-                .apply {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        setCategory(CATEGORY_ERROR)
-                    }
-                }
     }
 
     fun serviceNotification(): Notification {
         return statusBuilder
-                .setWhen(currentTimeMillis())
-                .setContentTitle(context.getString(R.string.service_running))
-                .build()
+            .setWhen(currentTimeMillis())
+            .setContentTitle(context.getString(R.string.service_running))
+            .build()
     }
 
     fun showMailSendSuccess() {
@@ -88,13 +90,17 @@ class Notifications(private val context: Context) {
     }
 
     fun showRemoteAccountError() {
-        showError(REMOTE_ACCOUNT_ERROR, context.getString(R.string.service_account_not_found),
-                TARGET_REMOTE_CONTROL)
+        showError(
+            REMOTE_ACCOUNT_ERROR, context.getString(R.string.service_account_not_found),
+            TARGET_REMOTE_CONTROL
+        )
     }
 
     fun showSenderAccountError() {
-        showError(SENDER_ACCOUNT_ERROR, context.getString(R.string.sender_account_not_found),
-                TARGET_MAIN)
+        showError(
+            SENDER_ACCOUNT_ERROR, context.getString(R.string.sender_account_not_found),
+            TARGET_MAIN
+        )
     }
 
     fun showRecipientsError(@StringRes reasonRes: Int) {
@@ -109,16 +115,18 @@ class Notifications(private val context: Context) {
         manager.cancel(TAG_ERROR, errorId)
     }
 
-    internal fun onSettingsChanged(settings: Settings, key: String) {
+    internal fun onSettingsChanged(settings: Settings, key: String?) {
         when (key) {
             PREF_SENDER_ACCOUNT ->
                 if (context.isAccountExists(settings.senderAccount)) {
                     cancelError(SENDER_ACCOUNT_ERROR)
                 }
+
             PREF_REMOTE_CONTROL_ACCOUNT ->
                 if (context.isAccountExists(settings.remoteControlAccount)) {
                     cancelError(REMOTE_ACCOUNT_ERROR)
                 }
+
             PREF_RECIPIENTS_ADDRESS ->
                 if (isValidEmailAddressList(settings.emailRecipients)) {
                     cancelError(RECIPIENTS_ERROR)
@@ -127,47 +135,62 @@ class Notifications(private val context: Context) {
     }
 
     private fun showMessage(title: String, message: String? = null, @Target target: Int) {
-        manager.notify(TAG_MESSAGE, nextMessageId++, messagesBuilder
+        manager.notify(
+            TAG_MESSAGE, nextMessageId++, messagesBuilder
                 .setWhen(currentTimeMillis())
                 .setContentTitle(title)
                 .setContentText(message)
                 .setContentIntent(targetIntent(target))
-                .build())
+                .build()
+        )
     }
 
     private fun showError(errorId: Int, title: String, @Target target: Int) {
-        manager.notify(TAG_ERROR, errorId, errorsBuilder
+        manager.notify(
+            TAG_ERROR, errorId, errorsBuilder
                 .setWhen(currentTimeMillis())
                 .setContentTitle(title)
                 .setContentIntent(targetIntent(target))
-                .build())
+                .build()
+        )
     }
 
     private fun showMailError(errorId: Int, @StringRes reasonRes: Int, @Target target: Int) {
-        showError(errorId, context.getString(R.string.unable_send_email, context.getString(reasonRes)),
-                target)
+        showError(
+            errorId, context.getString(R.string.unable_send_email, context.getString(reasonRes)),
+            target
+        )
     }
 
     private fun targetIntent(@Target target: Int): PendingIntent {
         return when (target) {
             TARGET_MAIN ->
                 activityIntent(MainActivity::class)
+
             TARGET_HISTORY ->
                 activityIntent(HistoryActivity::class)
+
             TARGET_RECIPIENTS ->
                 activityIntent(RecipientsActivity::class)
+
             TARGET_REMOTE_CONTROL ->
                 activityIntent(RemoteControlActivity::class)
+
             TARGET_RULES ->
                 activityIntent(RulesActivity::class)
+
             TARGET_PHONE_BLACKLIST ->
                 activityIntent(EventFilterPhoneBlacklistActivity::class)
+
             TARGET_PHONE_WHITELIST ->
                 activityIntent(EventFilterPhoneWhitelistActivity::class)
+
             TARGET_TEXT_BLACKLIST ->
                 activityIntent(EventFilterTextBlacklistActivity::class)
+
             TARGET_TEXT_WHITELIST ->
                 activityIntent(EventFilterTextWhitelistActivity::class)
+
             else ->
                 throw IllegalArgumentException("Invalid target")
         }
@@ -175,13 +198,15 @@ class Notifications(private val context: Context) {
 
     private fun activityIntent(activityClass: KClass<out Activity>): PendingIntent {
         return TaskStackBuilder.create(context)
-                .addNextIntentWithParentStack(Intent(context, activityClass.java))
-                .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)!!
+            .addNextIntentWithParentStack(Intent(context, activityClass.java))
+            .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)!!
     }
 
     @Retention(AnnotationRetention.SOURCE)
-    @IntDef(TARGET_MAIN, TARGET_RULES, TARGET_HISTORY, TARGET_RECIPIENTS, TARGET_REMOTE_CONTROL,
-            TARGET_PHONE_BLACKLIST, TARGET_PHONE_WHITELIST, TARGET_TEXT_BLACKLIST, TARGET_TEXT_WHITELIST)
+    @IntDef(
+        TARGET_MAIN, TARGET_RULES, TARGET_HISTORY, TARGET_RECIPIENTS, TARGET_REMOTE_CONTROL,
+        TARGET_PHONE_BLACKLIST, TARGET_PHONE_WHITELIST, TARGET_TEXT_BLACKLIST, TARGET_TEXT_WHITELIST
+    )
     annotation class Target
 
     companion object {

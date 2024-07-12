@@ -71,11 +71,11 @@ class GeoLocator(private val context: Context, private val database: Database) {
 
         val callback: LocationCallback = object : LocationCallback() {
 
-            override fun onLocationResult(result: LocationResult?) {
-                result?.let {
+            override fun onLocationResult(result: LocationResult) {
+                result.let {
                     val location = it.lastLocation
 
-                    log.debug("Received current location: $location")
+                    log.debug("Received current location: {}", location)
 
                     coordinates = coordinatesOf(location)
                 }
@@ -101,7 +101,7 @@ class GeoLocator(private val context: Context, private val database: Database) {
 
         client.lastLocation.addOnSuccessListener { location: Location? ->
             location?.let {
-                log.debug("Received last location: $location")
+                log.debug("Received last location: {}", location)
 
                 coordinates = coordinatesOf(location)
                 latch.countDown()

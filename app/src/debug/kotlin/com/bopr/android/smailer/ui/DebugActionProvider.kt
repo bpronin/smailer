@@ -12,8 +12,8 @@ import androidx.core.view.ActionProvider
  */
 class DebugActionProvider (context: Context) : ActionProvider(context) {
 
-    override fun onCreateActionView(): View? {
-        return null
+    override fun onCreateActionView(): View {
+        throw UnsupportedOperationException("DebugActionProvider does ot provide views.")
     }
 
     override fun onPerformDefaultAction(): Boolean {

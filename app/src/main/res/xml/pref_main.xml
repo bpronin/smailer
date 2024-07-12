@@ -60,7 +60,7 @@
     <androidx.preference.Preference
         android:icon="@drawable/ic_options"
         android:key="options"
-        android:title="@string/options">
+        android:title="@string/more_options">
         <intent
             android:targetClass="com.bopr.android.smailer.ui.OptionsActivity"
             android:targetPackage="com.bopr.android.smailer" />

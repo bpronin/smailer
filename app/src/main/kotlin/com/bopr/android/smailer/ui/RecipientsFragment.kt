@@ -34,7 +34,7 @@ class RecipientsFragment : EditableRecyclerFragment<String, Holder>(), SharedPre
         super.onDestroy()
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         if (key == PREF_RECIPIENTS_ADDRESS) {
             refreshItems()
         }
@@ -51,7 +51,7 @@ class RecipientsFragment : EditableRecyclerFragment<String, Holder>(), SharedPre
     }
 
     override fun isValidItem(item: String): Boolean {
-        return !item.isBlank()
+        return item.isNotBlank()
     }
 
     override fun createViewHolder(parent: ViewGroup): Holder {

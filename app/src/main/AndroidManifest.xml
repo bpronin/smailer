@@ -3,6 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.bopr.android.smailer">
 
+    <uses-feature
+            android:name="android.hardware.telephony"
+            android:required="false" />
+
     <uses-permission
         android:name="android.permission.AUTHENTICATE_ACCOUNTS"
         android:maxSdkVersion="22" />
@@ -103,7 +107,7 @@
 
         <activity
             android:name=".ui.OptionsActivity"
-            android:label="@string/options"
+            android:label="@string/more_options"
             android:parentActivityName=".ui.MainActivity" />
 
         <activity

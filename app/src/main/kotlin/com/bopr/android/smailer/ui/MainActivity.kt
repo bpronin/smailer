@@ -56,11 +56,12 @@ class MainActivity : MainAppActivity(MainFragment::class), OnSharedPreferenceCha
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
                                             grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         permissionsHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)
         fragment?.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
             PREF_EMAIL_TRIGGERS ->
                 enableContentObserver()

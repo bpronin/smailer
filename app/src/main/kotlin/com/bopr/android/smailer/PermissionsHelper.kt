@@ -69,7 +69,7 @@ class PermissionsHelper(val activity: FragmentActivity) {
     /**
      * To be added into owners's onSharedPreferenceChanged()
      */
-    internal fun onSettingsChanged(key: String) {
+    internal fun onSettingsChanged(key: String?) {
         log.debug("Handling preference changed: $key")
 
         val requiredPermissions: MutableSet<String> = HashSet()
@@ -105,7 +105,7 @@ class PermissionsHelper(val activity: FragmentActivity) {
     }
 
     private fun onPermissionsGranted(grantedPermissions: Set<String>) {
-        log.debug("Granted: $grantedPermissions")
+        log.debug("Granted: {}", grantedPermissions)
 
         /* set default accounts at startup */
         settings.update {
@@ -117,7 +117,7 @@ class PermissionsHelper(val activity: FragmentActivity) {
     }
 
     private fun onPermissionsDenied(deniedPermissions: Collection<String>) {
-        log.debug("Denied: $deniedPermissions")
+        log.debug("Denied: {}", deniedPermissions)
 
         if (deniedPermissions.isNotEmpty()) {
             val triggers = settings.emailTriggers
@@ -152,7 +152,7 @@ class PermissionsHelper(val activity: FragmentActivity) {
 
     private fun checkPermissions(permissions: Collection<String>) {
         if (permissions.isNotEmpty()) {
-            log.debug("Checking: $permissions")
+            log.debug("Checking: {}", permissions)
 
             val deniedPermissions: MutableList<String> = ArrayList()
             val unexplainedPermissions: MutableList<String> = ArrayList()
@@ -177,13 +177,13 @@ class PermissionsHelper(val activity: FragmentActivity) {
     }
 
     private fun requestPermissions(permissions: List<String>) {
-        log.debug("Requesting : $permissions")
+        log.debug("Requesting : {}", permissions)
 
         requestPermissions(activity, permissions.toTypedArray(), requestResultCode)
     }
 
     private fun explainPermissions(permissions: List<String>) {
-        log.debug("Explaining : $permissions")
+        log.debug("Explaining : {}", permissions)
 
         InfoDialog(message = formatRationale(permissions)) {
             requestPermissions(permissions)

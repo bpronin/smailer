@@ -2,9 +2,9 @@ package com.bopr.android.smailer
 
 import android.content.Context
 import androidx.work.*
-import androidx.work.ExistingPeriodicWorkPolicy.REPLACE
+import androidx.work.ExistingPeriodicWorkPolicy.UPDATE
 import androidx.work.NetworkType.CONNECTED
-import androidx.work.PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS
+import androidx.work.PeriodicWorkRequest.Companion.MIN_PERIODIC_INTERVAL_MILLIS
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit.MILLISECONDS
 
@@ -34,7 +34,7 @@ internal class PendingCallProcessorWorker(context: Context, workerParams: Worker
                             MIN_PERIODIC_INTERVAL_MILLIS, MILLISECONDS)
                     .setConstraints(constraints)
                     .build()
-            WorkManager.getInstance(this).enqueueUniquePeriodicWork(WORK_RESEND, REPLACE, request)
+            WorkManager.getInstance(this).enqueueUniquePeriodicWork(WORK_RESEND, UPDATE, request)
 
             log.debug("Enabled")
         }

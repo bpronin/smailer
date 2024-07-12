@@ -63,12 +63,12 @@ object CloudMessaging {
                         "https://fcm.googleapis.com/fcm/send",
                         payload,
                         getString(R.string.fcm_server_key),
-                        { log.debug("Response: $it") },
+                        { log.debug("Response: {}", it) },
                         { log.warn("Request failed: ", it) }
                 )
                 newRequestQueue(this).add(request)
 
-                log.debug("Sent message: $payload")
+                log.debug("Sent message: {}", payload)
             }
         } ?: log.warn("No account")
     }
@@ -93,7 +93,7 @@ object CloudMessaging {
                     null,
                     getString(R.string.fcm_server_key),
                     {
-                        log.debug("Response: $it")
+                        log.debug("Response: {}", it)
                         onComplete(it.toString(3))
                     },
                     { log.warn("Request failed: ", it) }
@@ -103,7 +103,7 @@ object CloudMessaging {
     }
 
     internal fun userId(email: String): String {
-        val parts = email.toLowerCase(Locale.ROOT).split("@")
+        val parts = email.lowercase(Locale.ROOT).split("@")
         return "${parts[0].replace(NON_USER_ID_CHARS, "")}~${parts[1]}"
     }
 
