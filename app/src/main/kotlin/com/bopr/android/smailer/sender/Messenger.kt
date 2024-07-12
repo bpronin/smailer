@@ -27,10 +27,13 @@ class Messenger(context: Context) {
 
     private fun silentSendMessage(transport: Transport, message: EventMessage) {
         try {
-            transport.sendMessage(message) { resultCode ->
-                log.info("Send message result: $resultCode")
-//                log.error("Error while sending message.", resultCode)
-            }
+            transport.sendMessage(message,
+                onSuccess = {
+                    log.debug("Message sent successfully.")
+                },
+                onError = { error ->
+                    log.error("Error while sending message.", error)
+                })
         } catch (x: Exception) {
             log.error("Send message failed", x)
         }
