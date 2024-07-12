@@ -1,10 +1,19 @@
 package com.bopr.android.smailer
 
-import android.Manifest.permission.*
+import android.Manifest.permission.ACCESS_COARSE_LOCATION
+import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.Manifest.permission.READ_CALL_LOG
+import android.Manifest.permission.READ_CONTACTS
+import android.Manifest.permission.READ_PHONE_STATE
+import android.Manifest.permission.READ_SMS
+import android.Manifest.permission.RECEIVE_SMS
+import android.Manifest.permission.SEND_SMS
+import android.app.Activity
 import android.content.pm.PackageManager
-import androidx.core.app.ActivityCompat.requestPermissions
+import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat.checkSelfPermission
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
@@ -19,11 +28,10 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
 import com.bopr.android.smailer.ui.InfoDialog
+import com.bopr.android.smailer.ui.showInfoDialog
 import com.bopr.android.smailer.util.permissionLabel
 import com.bopr.android.smailer.util.primaryAccount
-import com.bopr.android.smailer.util.showToast
 import org.slf4j.LoggerFactory
-import java.util.*
 
 /**
  * Responsible for permissions checking.
@@ -33,8 +41,11 @@ import java.util.*
 class PermissionsHelper(val activity: FragmentActivity) {
 
     private val log = LoggerFactory.getLogger("PermissionsHelper")
-    private val requestResultCode = nextRequestResult++
     private val settings: Settings = Settings(activity)
+    private val permissionRequestLauncher =
+        activity.registerForActivityResult(RequestMultiplePermissions()) { result ->
+            onPermissionRequestResult(result)
+        }
 
     fun checkAll() {
         log.debug("Checking all")
@@ -42,32 +53,20 @@ class PermissionsHelper(val activity: FragmentActivity) {
         checkPermissions(items.keys)
     }
 
-    /**
-     * To be added into owners's onRequestPermissionsResult()
-     */
-    fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        if (requestCode == requestResultCode) {
-            val grantedPermissions: MutableSet<String> = HashSet()
-            val deniedPermissions: MutableSet<String> = HashSet()
-            for (i in grantResults.indices) {
-                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                    grantedPermissions.add(permissions[i])
-                } else {
-                    deniedPermissions.add(permissions[i])
-                }
-            }
+    private fun onPermissionRequestResult(result: Map<String, @JvmSuppressWildcards Boolean>) {
+        val grantedPermissions = result.filterValues { it }.keys
+        val deniedPermissions = result.filterValues { !it }.keys
 
-            onPermissionsGranted(grantedPermissions)
-            onPermissionsDenied(deniedPermissions)
+        onPermissionsGranted(grantedPermissions)
+        onPermissionsDenied(deniedPermissions)
 
-            if (deniedPermissions.isNotEmpty()) {
-                activity.showToast(R.string.since_permissions_not_granted)
-            }
+        if (deniedPermissions.isNotEmpty()) {
+            activity.showInfoDialog(messageResId = R.string.since_permissions_not_granted)
         }
     }
 
     /**
-     * To be added into owners's onSharedPreferenceChanged()
+     * To be added into owner's onSharedPreferenceChanged()
      */
     internal fun onSettingsChanged(key: String?) {
         log.debug("Handling preference changed: $key")
@@ -83,12 +82,14 @@ class PermissionsHelper(val activity: FragmentActivity) {
                     requiredPermissions.add(READ_SMS)
                 }
                 if (triggers.contains(VAL_PREF_TRIGGER_IN_CALLS)
-                        || triggers.contains(VAL_PREF_TRIGGER_OUT_CALLS)
-                        || triggers.contains(VAL_PREF_TRIGGER_MISSED_CALLS)) {
+                    || triggers.contains(VAL_PREF_TRIGGER_OUT_CALLS)
+                    || triggers.contains(VAL_PREF_TRIGGER_MISSED_CALLS)
+                ) {
                     requiredPermissions.add(READ_PHONE_STATE)
                     requiredPermissions.add(READ_CALL_LOG)
                 }
             }
+
             PREF_EMAIL_CONTENT -> {
                 val content = settings.getStringSet(PREF_EMAIL_CONTENT)
                 if (content.contains(VAL_PREF_EMAIL_CONTENT_CONTACT)) {
@@ -130,7 +131,8 @@ class PermissionsHelper(val activity: FragmentActivity) {
                 triggers.remove(VAL_PREF_TRIGGER_OUT_SMS)
             }
             if (deniedPermissions.contains(READ_PHONE_STATE)
-                    || deniedPermissions.contains(READ_CALL_LOG)) {
+                || deniedPermissions.contains(READ_CALL_LOG)
+            ) {
                 triggers.remove(VAL_PREF_TRIGGER_IN_CALLS)
                 triggers.remove(VAL_PREF_TRIGGER_OUT_CALLS)
                 triggers.remove(VAL_PREF_TRIGGER_MISSED_CALLS)
@@ -139,7 +141,8 @@ class PermissionsHelper(val activity: FragmentActivity) {
                 content.remove(VAL_PREF_EMAIL_CONTENT_CONTACT)
             }
             if (deniedPermissions.contains(ACCESS_COARSE_LOCATION)
-                    || deniedPermissions.contains(ACCESS_FINE_LOCATION)) {
+                || deniedPermissions.contains(ACCESS_FINE_LOCATION)
+            ) {
                 content.remove(VAL_PREF_EMAIL_CONTENT_LOCATION)
             }
 
@@ -178,16 +181,15 @@ class PermissionsHelper(val activity: FragmentActivity) {
 
     private fun requestPermissions(permissions: List<String>) {
         log.debug("Requesting : {}", permissions)
-
-        requestPermissions(activity, permissions.toTypedArray(), requestResultCode)
+        permissionRequestLauncher.launch(permissions.toTypedArray())
     }
 
     private fun explainPermissions(permissions: List<String>) {
         log.debug("Explaining : {}", permissions)
 
-        InfoDialog(message = formatRationale(permissions)) {
+        activity.showInfoDialog(message = formatRationale(permissions)) {
             requestPermissions(permissions)
-        }.show(activity)
+        }
     }
 
     private fun formatRationale(permissions: Collection<String>): String {
@@ -207,14 +209,14 @@ class PermissionsHelper(val activity: FragmentActivity) {
         private var nextRequestResult = 200
 
         private val items: Map<String, Int> = sortedMapOf(
-                RECEIVE_SMS to R.string.permission_rationale_receive_sms,
-                SEND_SMS to R.string.permission_rationale_send_sms,
-                READ_SMS to R.string.permission_rationale_read_sms,
-                READ_PHONE_STATE to R.string.permission_rationale_phone_state,
-                READ_CALL_LOG to R.string.permission_rationale_phone_state,
-                READ_CONTACTS to R.string.permission_rationale_read_contacts,
-                ACCESS_COARSE_LOCATION to R.string.permission_rationale_coarse_location,
-                ACCESS_FINE_LOCATION to R.string.permission_rationale_fine_location
+            RECEIVE_SMS to R.string.permission_rationale_receive_sms,
+            SEND_SMS to R.string.permission_rationale_send_sms,
+            READ_SMS to R.string.permission_rationale_read_sms,
+            READ_PHONE_STATE to R.string.permission_rationale_phone_state,
+            READ_CALL_LOG to R.string.permission_rationale_phone_state,
+            READ_CONTACTS to R.string.permission_rationale_read_contacts,
+            ACCESS_COARSE_LOCATION to R.string.permission_rationale_coarse_location,
+            ACCESS_FINE_LOCATION to R.string.permission_rationale_fine_location
         )
     }
 

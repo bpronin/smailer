@@ -69,9 +69,10 @@ class RemoteControlFragment : BasePreferenceFragment() {
             },
             onComplete = { result, error ->
                 /* if we live the page while processing then context becomes null. so "context?" */
-                if (error != null)
-                    InfoDialog(error.message).show(requireActivity())
-                else
+                if (error != null) {
+                    val errorMessage = error.message ?: error.toString()
+                    requireActivity().showInfoDialog(message = errorMessage)
+                } else
                     context?.showToast(
                         getQuantityString(
                             R.plurals.mail_items,

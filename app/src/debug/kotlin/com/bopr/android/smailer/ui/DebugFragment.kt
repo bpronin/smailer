@@ -172,12 +172,12 @@ class DebugFragment : BasePreferenceFragment() {
             },
             addPreference("Get current token") {
                 requestFirebaseToken { token ->
-                    showInfo("Firebase token", token)
+                    showInfoDialog("Firebase token", token)
                 }
             },
             addPreference("Get server info") {
                 requireContext().listFirebaseInfo {
-                    showInfo("Info", it)
+                    showInfoDialog("Info", it)
                 }
             }
         )
@@ -319,7 +319,7 @@ class DebugFragment : BasePreferenceFragment() {
         runInBackground({
             locator.getLocation()
         }, { result, _ ->
-            showInfo("Location", result?.format() ?: "No location received")
+            showInfoDialog("Location", result?.format() ?: "No location received")
         })
     }
 
@@ -353,9 +353,9 @@ class DebugFragment : BasePreferenceFragment() {
     ) {
         if (requestCode == PERMISSIONS_REQUEST_RECEIVE_SMS) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                showInfo("Permission", "Granted")
+                showInfoDialog("Permission", "Granted")
             } else {
-                showInfo("Permission", "Denied")
+                showInfoDialog("Permission", "Denied")
             }
         }
     }
@@ -709,7 +709,7 @@ class DebugFragment : BasePreferenceFragment() {
             }
         }
 
-        showInfo("Concurrents", sb.toString())
+        showInfoDialog("Concurrents", sb.toString())
     }
 
     private fun onGoogleDriveClear(preference: Preference) {
@@ -778,7 +778,7 @@ class DebugFragment : BasePreferenceFragment() {
         val s = "Selected: ${senderAccount().name}\n\n" +
                 "Service: ${serviceAccount().name}\n\n" +
                 "Primary: ${requireContext().primaryAccount()?.name}"
-        showInfo("Accounts", s)
+        showInfoDialog("Accounts", s)
     }
 
     private fun showSuccess() {
@@ -786,11 +786,7 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun showError(error: Throwable) {
-        showInfo("Error", error.message ?: error.toString())
-    }
-
-    private fun showInfo(title: String, message: String) {
-        InfoDialog(title, message).show(requireActivity())
+        showInfoDialog("Error", error.message ?: error.toString())
     }
 
     private fun senderAccount(): Account {

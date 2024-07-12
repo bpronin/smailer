@@ -54,12 +54,12 @@ class MainActivity : MainAppActivity(MainFragment::class), OnSharedPreferenceCha
         super.onDestroy()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
-                                            grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        permissionsHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        requireFragment().onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
+//    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
+//                                            grantResults: IntArray) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+//        permissionsHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)
+//        requireFragment().onRequestPermissionsResult(requestCode, permissions, grantResults)
+//    }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {

@@ -44,3 +44,29 @@ fun Fragment.showInfoDialog(message: String) {
 fun Fragment.showInfoDialog(title: String, message: String) {
     InfoDialog(title, message).show(this)
 }
+
+fun FragmentActivity.showInfoDialog(
+    title: String? = null,
+    message: String,
+    positiveButtonText: String? = null,
+    positiveAction: (() -> Unit)? = null
+) {
+    InfoDialog(title, message, positiveButtonText, positiveAction).show(this)
+}
+
+fun FragmentActivity.showInfoDialog(
+    @StringRes titleResId: Int? = null,
+    @StringRes messageResId: Int,
+    positiveButtonText: String? = null,
+    positiveAction: (() -> Unit)? = null
+) {
+    showInfoDialog(
+        titleResId?.let { getString(it) },
+        getString(messageResId),
+        positiveButtonText,
+        positiveAction
+    )
+}
+
+
+
