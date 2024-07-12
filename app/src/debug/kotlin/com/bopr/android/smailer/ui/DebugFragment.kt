@@ -11,12 +11,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.telephony.SmsManager.RESULT_ERROR_GENERIC_FAILURE
 import android.telephony.SmsManager.RESULT_ERROR_NO_SERVICE
 import android.telephony.SmsManager.RESULT_ERROR_NULL_PDU
 import android.telephony.SmsManager.RESULT_ERROR_RADIO_OFF
-import android.telephony.SmsManager.getDefault
 import android.text.InputType
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
@@ -72,6 +72,7 @@ import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_DOWNLOAD
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_UPLOAD
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.isIgnoreBatteryOptimizationRequired
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
+import com.bopr.android.smailer.util.SmsTransport.Companion.smsManager
 import com.bopr.android.smailer.util.checkPermission
 import com.bopr.android.smailer.util.contactName
 import com.bopr.android.smailer.util.deviceName
@@ -336,8 +337,8 @@ class DebugFragment : BasePreferenceFragment() {
         notifications = Notifications(context)
         sentStatusReceiver = SentStatusReceiver()
         deliveredStatusReceiver = DeliveryStatusReceiver()
-        context.registerReceiver(sentStatusReceiver, IntentFilter("SMS_SENT"))
-        context.registerReceiver(deliveredStatusReceiver, IntentFilter("SMS_DELIVERED"))
+        registerReceiver(context, sentStatusReceiver, IntentFilter("SMS_SENT"))
+        registerReceiver(context, deliveredStatusReceiver, IntentFilter("SMS_DELIVERED"))
     }
 
     override fun onDestroy() {
@@ -765,7 +766,7 @@ class DebugFragment : BasePreferenceFragment() {
                     PendingIntent.FLAG_IMMUTABLE
                 )
                 try {
-                    getDefault().sendTextMessage(
+                    requireContext().smsManager.sendTextMessage(
                         it,
                         null,
                         "Debug message",
@@ -814,6 +815,20 @@ class DebugFragment : BasePreferenceFragment() {
                 if (error != null) showError(error) else showSuccess()
             })
     }
+
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
+    private fun registerReceiver(
+        context: Context,
+        receiver: BroadcastReceiver,
+        filter: IntentFilter
+    ) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            context.registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED)
+        } else {
+            context.registerReceiver(receiver, filter)
+        }
+    }
+
 
     private abstract inner class DefaultClickListener : Preference.OnPreferenceClickListener {
 

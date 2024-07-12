@@ -1,11 +1,12 @@
 package com.bopr.android.smailer.util
 
 import androidx.core.util.PatternsCompat.EMAIL_ADDRESS
-import java.util.*
+import java.util.Locale
 import java.util.regex.Pattern
 
 @Suppress("RegExpRedundantEscape")
-const val PHONE_REGEX: String = "(\\+[0-9]+[\\- \\.]*)?(\\([0-9]+\\)[\\- \\.]*)?([0-9][0-9\\- \\.]+[0-9])"
+const val PHONE_REGEX: String =
+    "(\\+[0-9]+[\\- \\.]*)?(\\([0-9]+\\)[\\- \\.]*)?([0-9][0-9\\- \\.]+[0-9])"
 val PHONE_PATTERN: Pattern = Pattern.compile(PHONE_REGEX)
 private val NON_PHONE_SYMBOLS = Regex("[^A-Za-z0-9*.]")
 
@@ -21,9 +22,9 @@ fun samePhone(p1: String, p2: String): Boolean {
     return comparePhones(p1, p2) == 0
 }
 
-fun Collection<String>.containsPhone(phone: String): Boolean {
-    return any { samePhone(it, phone) }
-}
+//fun Collection<String>.containsPhone(phone: String): Boolean {
+//    return any { samePhone(it, phone) }
+//}
 
 fun phoneToRegEx(phone: String): String {
     return normalizePhone(phone).replace("*", "(.*)")

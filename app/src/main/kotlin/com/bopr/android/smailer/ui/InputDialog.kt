@@ -24,7 +24,7 @@ class InputDialog(private val title: String? = null,
 
     private lateinit var editor: EditText
 
-    override fun onCreateDialogView(inflater: LayoutInflater, root: ViewGroup?): View? {
+    override fun onCreateDialogView(inflater: LayoutInflater, root: ViewGroup?): View {
         editor = EditText(context)
         editor.inputType = inputType
         editor.requestFocus()
