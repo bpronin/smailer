@@ -4,20 +4,38 @@ package com.bopr.android.smailer.ui
 import android.content.BroadcastReceiver
 import android.os.Bundle
 import android.text.format.DateFormat
-import android.view.*
+import android.view.ContextMenu
+import android.view.LayoutInflater
 import android.view.LayoutInflater.from
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat.getColor
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.bopr.android.smailer.*
+import com.bopr.android.smailer.CallProcessor
+import com.bopr.android.smailer.Database
 import com.bopr.android.smailer.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.Database.Companion.unregisterDatabaseListener
+import com.bopr.android.smailer.PhoneEvent
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
 import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
+import com.bopr.android.smailer.R
+import com.bopr.android.smailer.StringDataset
 import com.bopr.android.smailer.ui.HistoryFragment.Holder
-import com.bopr.android.smailer.util.*
+import com.bopr.android.smailer.util.addOnItemSwipedListener
+import com.bopr.android.smailer.util.eventDirectionImage
+import com.bopr.android.smailer.util.eventStateImage
+import com.bopr.android.smailer.util.eventTypeImage
+import com.bopr.android.smailer.util.formatDuration
+import com.bopr.android.smailer.util.getColorFromAttr
+import com.bopr.android.smailer.util.getQuantityString
+import com.bopr.android.smailer.util.runInBackground
+import com.bopr.android.smailer.util.showToast
 import com.google.android.material.snackbar.Snackbar
 
 /**
@@ -48,7 +66,11 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
 
         recycler.addOnItemSwipedListener {
@@ -76,14 +98,17 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
                 onClearData()
                 true
             }
+
             R.id.action_mark_all_as_read -> {
                 onMarkAllAsRead()
                 true
             }
+
             R.id.action_process_all_pending -> {
                 onProcessAllPending()
                 true
             }
+
             else ->
                 super.onOptionsItemSelected(item)
         }
@@ -108,26 +133,32 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
                 onRemoveSelected()
                 true
             }
+
             R.id.action_add_phone_to_blacklist -> {
                 addSelectionPhoneToFilterList(database.phoneBlacklist, R.string.add_to_blacklist)
                 true
             }
+
             R.id.action_add_phone_to_whitelist -> {
                 addSelectionPhoneToFilterList(database.phoneWhitelist, R.string.add_to_whitelist)
                 true
             }
+
             R.id.action_add_text_to_blacklist -> {
                 addSelectionTextToFilterList(database.textBlacklist, R.string.add_to_blacklist)
                 true
             }
+
             R.id.action_add_text_to_whitelist -> {
                 addSelectionTextToFilterList(database.textWhitelist, R.string.add_to_whitelist)
                 true
             }
+
             R.id.action_ignore -> {
                 onMarkAsIgnored()
                 true
             }
+
             else ->
                 super.onContextItemSelected(item)
         }
@@ -189,11 +220,11 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
     }
 
     private fun onProcessAllPending() {
-        runInBackground {
+        runInBackground({
             CallProcessor(requireContext()).processPending()
-        }.addOnCompleteListener {
+        }, { _, _ ->
             showToast(R.string.operation_complete)
-        }
+        })
     }
 
     private fun onRemoveSelected() {
@@ -201,14 +232,16 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
 
         database.commit { batch { events.removeAll(selectedEvents) } }
 
-        Snackbar.make(recycler,
-                getQuantityString(R.plurals.items_removed, selectedEvents.size),
-                Snackbar.LENGTH_LONG)
-                .setActionTextColor(getColor(requireContext(), R.color.colorAccentText))
-                .setAction(R.string.undo) {
-                    database.commit { batch { events.addAll(selectedEvents) } }
-                }
-                .show()
+        Snackbar.make(
+            recycler,
+            getQuantityString(R.plurals.items_removed, selectedEvents.size),
+            Snackbar.LENGTH_LONG
+        )
+            .setActionTextColor(getColor(requireContext(), R.color.colorAccentText))
+            .setAction(R.string.undo) {
+                database.commit { batch { events.addAll(selectedEvents) } }
+            }
+            .show()
     }
 
     private fun addSelectionPhoneToFilterList(list: StringDataset, @StringRes titleRes: Int) {
@@ -243,10 +276,13 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
         return when {
             event.isSms ->
                 event.text
+
             event.isMissed ->
                 getString(R.string.missed_call)
+
             event.isIncoming ->
                 getString(R.string.incoming_call_of, formatDuration(event.callDuration))
+
             else ->
                 getString(R.string.outgoing_call_of, formatDuration(event.callDuration))
         }

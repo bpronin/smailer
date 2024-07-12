@@ -7,6 +7,12 @@ import android.net.ConnectivityManager
 import android.os.Build
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
+import java.io.BufferedReader
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStreamReader
+import java.io.PrintWriter
 
 /**
  * Returns device name.
@@ -45,6 +51,24 @@ fun Context.hasInternetConnection(): Boolean {
         @Suppress("DEPRECATION")
         return activeNetworkInfo?.isConnectedOrConnecting ?: false
     }
+}
+
+fun Context.readLogcatLog(): File {
+    val file = File(filesDir, "logcat.log")
+    try {
+        val process = Runtime.getRuntime().exec("logcat -d")
+        val src = BufferedReader(InputStreamReader(process.inputStream))
+        val dst = PrintWriter(FileOutputStream(file))
+        var line: String?
+        while (src.readLine().also { line = it } != null) {
+            dst.println(line)
+        }
+        src.close()
+        dst.close()
+    } catch (x: IOException) {
+        throw Exception("Cannot get logcat ", x)
+    }
+    return file
 }
 
 /*

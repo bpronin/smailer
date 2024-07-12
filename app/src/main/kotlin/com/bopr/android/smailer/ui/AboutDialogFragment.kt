@@ -19,7 +19,7 @@ class AboutDialogFragment : BaseDialogFragment("about_dialog") {
     @SuppressLint("InflateParams")
     override fun onCreateDialogView(inflater: LayoutInflater, root: ViewGroup?): View {
         val view = inflater.inflate(R.layout.dialog_about, root, false)
-        val info = BuildInfo(requireContext())
+        val info = BuildInfo.get(requireContext())
 
         view.findViewById<TextView>(R.id.label_message).apply {
             text = getString(R.string.app_version, info.name)

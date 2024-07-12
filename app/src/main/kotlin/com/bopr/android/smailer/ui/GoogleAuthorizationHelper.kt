@@ -28,13 +28,11 @@ class GoogleAuthorizationHelper(private val fragment: Fragment,
                                 vararg scopes: String?) {
 
     private val accountManager: GoogleAccountManager
-    private val activity: Activity
+    private val activity: Activity = fragment.requireActivity()
     private val scopes: Collection<String?> = setOf(*scopes)
-    private val settings: Settings
+    private val settings: Settings = Settings(activity)
 
     init {
-        activity = fragment.requireActivity()
-        settings = Settings(activity)
         accountManager = GoogleAccountManager(activity)
     }
 

@@ -14,7 +14,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_NOTIFICAT
 import com.bopr.android.smailer.remote.RemoteControlProcessor
 import com.bopr.android.smailer.util.getQuantityString
 import com.bopr.android.smailer.util.isAccountExists
-import com.bopr.android.smailer.util.runBackgroundTask
+import com.bopr.android.smailer.util.runLongTask
 import com.bopr.android.smailer.util.showToast
 import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
 
@@ -60,24 +60,34 @@ class RemoteControlFragment : BasePreferenceFragment() {
         when (key) {
             PREF_REMOTE_CONTROL_ENABLED ->
                 updateEnabledPreferenceView()
+
             PREF_REMOTE_CONTROL_ACCOUNT ->
                 updateAccountPreferenceView()
         }
     }
 
     private fun onProcessServiceMail(preference: Preference) {
-        preference.runBackgroundTask(
-                onPerform = {
-                    requireContext().run {
-                        Database(this).use {
-                            RemoteControlProcessor(this, it).checkMailbox()
-                        }
+        preference.runLongTask(
+            onPerform = {
+                requireContext().run {
+                    Database(this).use {
+                        RemoteControlProcessor(this, it).checkMailbox()
                     }
-                },
-                onComplete = {
-                    /* NOTE: if we live the page while processing context becomes null */
-                    context?.showToast(getQuantityString(R.plurals.mail_items, R.string.mail_items_zero, it!!))
                 }
+            },
+            onComplete = { result, error ->
+                /* if we live the page while processing then context becomes null. so "context?" */
+                if (error != null)
+                    InfoDialog(error.message).show(requireActivity())
+                else
+                    context?.showToast(
+                        getQuantityString(
+                            R.plurals.mail_items,
+                            R.string.mail_items_zero,
+                            result!!
+                        )
+                    )
+            }
         )
     }
 

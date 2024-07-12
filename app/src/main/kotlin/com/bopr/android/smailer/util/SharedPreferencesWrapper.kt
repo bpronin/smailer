@@ -27,7 +27,7 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
     }
 
     override fun getStringSet(key: String?, defValues: MutableSet<String>?): MutableSet<String>? {
-        /* should be a copy of values set. see: https://stackoverflow.com/questions/17469583/setstring-in-android-sharedpreferences-does-not-save-on-force-close */
+        /* Must be a copy of values set. see: https://stackoverflow.com/questions/17469583/setstring-in-android-sharedpreferences-does-not-save-on-force-close */
         return wrappedPreferences.getStringSet(key, null)?.toMutableSet() ?: defValues
     }
 

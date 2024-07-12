@@ -12,6 +12,8 @@ import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_NOTIFICATIONS
 import com.bopr.android.smailer.Settings.Companion.sharedPreferencesName
+import com.bopr.android.smailer.sender.GoogleMail
+import com.bopr.android.smailer.sender.MailMessage
 import com.bopr.android.smailer.util.deviceName
 import com.bopr.android.smailer.util.primaryAccount
 import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
@@ -116,12 +118,14 @@ class RemoteControlMailTest : BaseTest() {
         }
 
         transport.run {
-            send(MailMessage(
+            send(
+                MailMessage(
                     subject = "Re: [SMailer] Incoming SMS from \"$sender\"",
                     body = "To device \"ANOTHER DEVICE\" add phone \"1234567890\" to blacklist",
                     recipients = account.name,
                     from = account.name
-            ))
+            )
+            )
         }
 
         assertEquals(1, awaitMail().size)
@@ -146,30 +150,38 @@ class RemoteControlMailTest : BaseTest() {
         }
 
         transport.run {
-            send(MailMessage(
+            send(
+                MailMessage(
                     subject = "Re: [SMailer] Incoming SMS from \"$sender\"",
                     body = "To device \"${deviceName()}\" add phone \"1234567890\" to blacklist",
                     recipients = account.name,
                     from = account.name
-            ))
-            send(MailMessage(
+            )
+            )
+            send(
+                MailMessage(
                     subject = "Re: [SMailer] Incoming SMS from \"$sender\"",
                     body = "To device \"${deviceName()}\" add phone \"0987654321\" to whitelist",
                     recipients = account.name,
                     from = account.name
-            ))
-            send(MailMessage(
+            )
+            )
+            send(
+                MailMessage(
                     subject = "Re: [SMailer] Incoming SMS from \"$sender\"",
                     body = "To device \"${deviceName()}\" add text \"SPAM\" to blacklist",
                     recipients = account.name,
                     from = account.name
-            ))
-            send(MailMessage(
+            )
+            )
+            send(
+                MailMessage(
                     subject = "Re: [SMailer] Incoming SMS from \"$sender\"",
                     body = "To device \"${deviceName()}\" add text \"NON SPAM\" to whitelist",
                     recipients = account.name,
                     from = account.name
-            ))
+            )
+            )
         }
 
         assertEquals(4, awaitMail().size)
@@ -199,30 +211,38 @@ class RemoteControlMailTest : BaseTest() {
         }
 
         transport.run {
-            send(MailMessage(
+            send(
+                MailMessage(
                     subject = "Re: [SMailer] Incoming SMS from \"$sender\"",
                     body = "To device \"${deviceName()}\" add phone \"1234567890\" to blacklist",
                     recipients = account.name,
                     from = account.name
-            ))
-            send(MailMessage(
+            )
+            )
+            send(
+                MailMessage(
                     subject = "Re: [SMailer] Incoming SMS from \"$sender\"",
                     body = "To device \"${deviceName()}\" add phone \"0987654321\" to whitelist",
                     recipients = account.name,
                     from = account.name
-            ))
-            send(MailMessage(
+            )
+            )
+            send(
+                MailMessage(
                     subject = "Re: [SMailer] Incoming SMS from \"$sender\"",
                     body = "To device \"${deviceName()}\" add text \"SPAM\" to blacklist",
                     recipients = account.name,
                     from = account.name
-            ))
-            send(MailMessage(
+            )
+            )
+            send(
+                MailMessage(
                     subject = "Re: [SMailer] Incoming SMS from \"$sender\"",
                     body = "To device \"${deviceName()}\" add text \"NON SPAM\" to whitelist",
                     recipients = account.name,
                     from = account.name
-            ))
+            )
+            )
         }
 
         assertEquals(4, awaitMail().size)
@@ -246,30 +266,38 @@ class RemoteControlMailTest : BaseTest() {
         }
 
         transport.run {
-            send(MailMessage(
+            send(
+                MailMessage(
                     subject = "Re: [SMailer] Incoming SMS from \"$sender\"",
                     body = "To device \"${deviceName()}\" add phone \"1234567890\" to blacklist",
                     recipients = account.name,
                     from = account.name
-            ))
-            send(MailMessage(
+            )
+            )
+            send(
+                MailMessage(
                     subject = "Re: [SMailer] Incoming SMS from \"$sender\"",
                     body = "To device \"${deviceName()}\" add phone \"0987654321\" to whitelist",
                     recipients = account.name,
                     from = account.name
-            ))
-            send(MailMessage(
+            )
+            )
+            send(
+                MailMessage(
                     subject = "Re: [SMailer] Incoming SMS from \"$sender\"",
                     body = "To device \"${deviceName()}\" add text \"SPAM\" to blacklist",
                     recipients = account.name,
                     from = account.name
-            ))
-            send(MailMessage(
+            )
+            )
+            send(
+                MailMessage(
                     subject = "Re: [SMailer] Incoming SMS from \"$sender\"",
                     body = "To device \"${deviceName()}\" add text \"NON SPAM\" to whitelist",
                     recipients = account.name,
                     from = account.name
-            ))
+            )
+            )
         }
 
         assertEquals(4, awaitMail().size)

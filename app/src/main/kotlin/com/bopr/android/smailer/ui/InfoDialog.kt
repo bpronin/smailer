@@ -1,15 +1,19 @@
 package com.bopr.android.smailer.ui
 
 import android.content.DialogInterface
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 
 /**
  * Common info dialog.
  */
-open class InfoDialog(private val title: String? = null,
-                      private val message: String? = null,
-                      private val positiveButtonText: String? = null,
-                      private val positiveAction: (() -> Unit)? = null
+class InfoDialog(
+    private val title: String? = null,
+    private val message: String? = null,
+    private val positiveButtonText: String? = null,
+    private val positiveAction: (() -> Unit)? = null
 ) : BaseDialogFragment("info-dialog") {
 
     override fun onBuildDialog(builder: AlertDialog.Builder) {
@@ -23,5 +27,20 @@ open class InfoDialog(private val title: String? = null,
             positiveAction?.invoke()
         }
     }
+}
 
+fun Fragment.showInfoDialog(@StringRes messageResId: Int) {
+    showInfoDialog(getString(messageResId))
+}
+
+fun Fragment.showInfoDialog(@StringRes titleResId: Int, @StringRes messageResId: Int) {
+    showInfoDialog(getString(titleResId), getString(messageResId))
+}
+
+fun Fragment.showInfoDialog(message: String) {
+    InfoDialog(message = message).show(this)
+}
+
+fun Fragment.showInfoDialog(title: String, message: String) {
+    InfoDialog(title, message).show(this)
 }
