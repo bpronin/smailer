@@ -98,13 +98,11 @@ class DebugFragment : BasePreferenceFragment() {
 
     private lateinit var locator: GeoLocator
     private lateinit var database: Database
-    private lateinit var authorizator: GoogleAuthorizationHelper
+    private lateinit var authorizationHelper: GoogleAuthorizationHelper
     private lateinit var notifications: Notifications
     private lateinit var sentStatusReceiver: BroadcastReceiver
     private lateinit var deliveredStatusReceiver: BroadcastReceiver
-
-    private val developerEmail: String
-        get() = getString(R.string.developer_email)
+    private val developerEmail by lazy { getString(R.string.developer_email) }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         /* do not use fragment's context. see: https://developer.android.com/guide/topics/ui/settings/programmatic-hierarchy*/
@@ -332,7 +330,7 @@ class DebugFragment : BasePreferenceFragment() {
 
         database = Database(context)
         locator = GeoLocator(context, database)
-        authorizator =
+        authorizationHelper =
             GoogleAuthorizationHelper(this, PREF_SENDER_ACCOUNT, MAIL_GOOGLE_COM, DRIVE_APPDATA)
         notifications = Notifications(context)
         sentStatusReceiver = SentStatusReceiver()
@@ -347,11 +345,6 @@ class DebugFragment : BasePreferenceFragment() {
         context.unregisterReceiver(deliveredStatusReceiver)
         database.close()
         super.onDestroy()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        authorizator.onAccountSelectorActivityResult(requestCode, resultCode, data)
     }
 
     override fun onRequestPermissionsResult(
@@ -466,7 +459,7 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun onRequestGooglePermission() {
-        authorizator.startAccountSelectorActivity()
+        authorizationHelper.startAccountPicker()
     }
 
     private fun onProcessSingleEvent() {

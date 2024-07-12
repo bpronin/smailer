@@ -1,7 +1,6 @@
 package com.bopr.android.smailer.ui
 
 import android.content.BroadcastReceiver
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import com.bopr.android.smailer.Database
@@ -27,20 +26,20 @@ class MainFragment : BasePreferenceFragment() {
 
     private lateinit var database: Database
     private lateinit var databaseListener: BroadcastReceiver
-    private lateinit var authorizator: GoogleAuthorizationHelper
+    private lateinit var authorizationHelper: GoogleAuthorizationHelper
 
     override fun onCreatePreferences(bundle: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_main)
 
         requirePreference(PREF_SENDER_ACCOUNT).setOnPreferenceClickListener {
-            authorizator.startAccountSelectorActivity()
+            authorizationHelper.startAccountPicker()
             true
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        authorizator = GoogleAuthorizationHelper(this, PREF_SENDER_ACCOUNT, GMAIL_SEND,
+        authorizationHelper = GoogleAuthorizationHelper(this, PREF_SENDER_ACCOUNT, GMAIL_SEND,
                 DriveScopes.DRIVE_APPDATA)
 
         val context = requireContext()
@@ -64,11 +63,6 @@ class MainFragment : BasePreferenceFragment() {
         updateRecipientsPreferenceView()
         updateHistoryPreferenceView()
         updateRemoteControlPreferenceView()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        authorizator.onAccountSelectorActivityResult(requestCode, resultCode, data)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,

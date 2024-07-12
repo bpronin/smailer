@@ -110,14 +110,3 @@ fun isValidEmailAddressList(addresses: Collection<String>): Boolean {
     }
     return false
 }
-
-@Suppress("unused")
-fun Bundle?.toParamString(): String {
-    val sb = StringBuilder()
-    this?.run {
-        for (key in keySet()) {
-            sb.append(key).append("=").append(get(key)).append("; ")
-        }
-    } ?: sb.append("[null]")
-    return sb.toString()
-}

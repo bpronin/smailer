@@ -1,6 +1,5 @@
 package com.bopr.android.smailer.ui
 
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.preference.Preference
@@ -28,7 +27,7 @@ class RemoteControlFragment : BasePreferenceFragment() {
         addPreferencesFromResource(R.xml.pref_remote)
 
         requirePreference(PREF_REMOTE_CONTROL_ACCOUNT).setOnPreferenceClickListener {
-            authorizator.startAccountSelectorActivity()
+            authorizator.startAccountPicker()
             true
         }
 
@@ -50,19 +49,12 @@ class RemoteControlFragment : BasePreferenceFragment() {
         updateEnabledPreferenceView()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        authorizator.onAccountSelectorActivityResult(requestCode, resultCode, data)
-    }
-
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         super.onSharedPreferenceChanged(sharedPreferences, key)
         when (key) {
-            PREF_REMOTE_CONTROL_ENABLED ->
-                updateEnabledPreferenceView()
+            PREF_REMOTE_CONTROL_ENABLED -> updateEnabledPreferenceView()
 
-            PREF_REMOTE_CONTROL_ACCOUNT ->
-                updateAccountPreferenceView()
+            PREF_REMOTE_CONTROL_ACCOUNT -> updateAccountPreferenceView()
         }
     }
 
