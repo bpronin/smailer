@@ -16,10 +16,10 @@ import androidx.fragment.app.FragmentManager
  */
 abstract class BaseDialogFragment(private val fragmentTag: String?) : DialogFragment() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        retainInstance = true
-    }
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        retainInstance = true
+//    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         var dialog = dialog

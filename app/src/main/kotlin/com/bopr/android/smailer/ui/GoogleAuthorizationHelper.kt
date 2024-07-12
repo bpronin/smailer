@@ -30,11 +30,10 @@ class GoogleAuthorizationHelper(
     private val activity = fragment.requireActivity()
     private val accountManager = GoogleAccountManager(activity)
     private val settings = Settings(activity)
-    private val accountPickerLauncher by lazy {
+    private val accountPickerLauncher =
         fragment.registerForActivityResult(StartActivityForResult()) { result ->
             onAccountPickerResult(result)
         }
-    }
 
     /**
      * Brings up system account selection dialog.
