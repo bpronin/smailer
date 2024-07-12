@@ -2,8 +2,15 @@ package com.bopr.android.smailer.ui
 
 import android.content.BroadcastReceiver
 import android.os.Bundle
-import android.view.*
+import android.view.ContextMenu
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.view.MenuProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.bopr.android.smailer.Database
 import com.bopr.android.smailer.Database.Companion.registerDatabaseListener
@@ -17,7 +24,8 @@ import com.bopr.android.smailer.ui.EventFilterListFragment.Holder
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-abstract class EventFilterListFragment(private val listName: String) : EditableRecyclerFragment<String, Holder>() {
+abstract class EventFilterListFragment(private val listName: String) :
+    EditableRecyclerFragment<String, Holder>() {
 
     private lateinit var database: Database
     private lateinit var databaseListener: BroadcastReceiver
@@ -41,19 +49,9 @@ abstract class EventFilterListFragment(private val listName: String) : EditableR
         super.onDestroy()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_list, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_clear ->
-                onClearData()
-            R.id.action_sort ->
-                onSort()
-        }
-        return super.onOptionsItemSelected(item)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        requireActivity().addMenuProvider(FragmentMenuProvider())
     }
 
     override fun onCreateItemContextMenu(menu: ContextMenu, item: String) {
@@ -66,10 +64,12 @@ abstract class EventFilterListFragment(private val listName: String) : EditableR
                 editSelectedItem()
                 true
             }
+
             R.id.action_remove_item -> {
                 removeSelectedItem()
                 true
             }
+
             else ->
                 super.onContextItemSelected(item)
         }
@@ -84,18 +84,20 @@ abstract class EventFilterListFragment(private val listName: String) : EditableR
     }
 
     override fun isValidItem(item: String): Boolean {
-        return !item.isBlank()
+        return item.isNotBlank()
     }
 
     override fun createViewHolder(parent: ViewGroup): Holder {
-        return Holder(LayoutInflater.from(context).inflate(R.layout.list_item_filter, parent, false))
+        return Holder(
+            LayoutInflater.from(context).inflate(R.layout.list_item_filter, parent, false)
+        )
     }
 
     override fun bindViewHolder(item: String, holder: Holder) {
         holder.textView.text = getItemTitle(item)
     }
 
-    private fun onClearData() {
+    private fun onClear() {
         ConfirmDialog(getString(R.string.ask_clear_list)) {
             saveItems(emptyList())
         }.show(this)
@@ -103,6 +105,22 @@ abstract class EventFilterListFragment(private val listName: String) : EditableR
 
     private fun onSort() {
         saveItems(loadItems().sorted())
+    }
+
+    inner class FragmentMenuProvider : MenuProvider {
+
+        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            menuInflater.inflate(R.menu.menu_list, menu)
+        }
+
+        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+            when (menuItem.itemId) {
+                R.id.action_clear -> onClear()
+
+                R.id.action_sort -> onSort()
+            }
+            return true
+        }
     }
 
     inner class Holder(view: View) : RecyclerView.ViewHolder(view) {

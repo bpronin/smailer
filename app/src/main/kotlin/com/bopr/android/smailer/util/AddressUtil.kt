@@ -10,7 +10,7 @@ val PHONE_PATTERN: Pattern = Pattern.compile(PHONE_REGEX)
 private val NON_PHONE_SYMBOLS = Regex("[^A-Za-z0-9*.]")
 
 fun normalizePhone(phone: String): String {
-    return phone.replace(NON_PHONE_SYMBOLS, "").toUpperCase(Locale.ROOT)
+    return phone.replace(NON_PHONE_SYMBOLS, "").uppercase(Locale.ROOT)
 }
 
 fun comparePhones(p1: String, p2: String): Int {
@@ -53,7 +53,7 @@ fun normalizeEmail(email: String): String {
     } else {
         localPart.replace(".", "")
     }
-    return email.replaceFirst(localPart, part).toLowerCase(Locale.ROOT)
+    return email.replaceFirst(localPart, part).lowercase(Locale.ROOT)
 }
 
 private fun compareEmails(e1: String, e2: String): Int {

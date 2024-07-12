@@ -58,7 +58,7 @@ class MainActivity : MainAppActivity(MainFragment::class), OnSharedPreferenceCha
                                             grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         permissionsHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        fragment?.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        requireFragment().onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {

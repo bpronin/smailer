@@ -6,8 +6,17 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.View
 import androidx.annotation.IntDef
-import androidx.preference.*
+import androidx.core.view.MenuProvider
+import androidx.preference.CheckBoxPreference
+import androidx.preference.EditTextPreference
+import androidx.preference.ListPreference
+import androidx.preference.MultiSelectListPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceGroup
+import androidx.preference.SwitchPreference
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.sharedPreferencesName
@@ -20,14 +29,14 @@ import kotlin.annotation.AnnotationRetention.SOURCE
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeListener {
+abstract class BasePreferenceFragment : PreferenceFragmentCompat(),
+    OnSharedPreferenceChangeListener {
 
     lateinit var settings: Settings
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         preferenceManager.sharedPreferencesName = sharedPreferencesName
-        setHasOptionsMenu(true)
 
         settings = Settings(requireContext())
         settings.registerOnSharedPreferenceChangeListener(this)
@@ -39,23 +48,19 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPref
         super.onDestroy()
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        requireActivity().addMenuProvider(FragmentMenuProvider())
+    }
+
+    private fun onShowAbout() {
+        AboutDialogFragment().show(this)
+    }
+
     override fun onDisplayPreferenceDialog(preference: Preference) {
         if (parentFragmentManager.findFragmentByTag(DIALOG_FRAGMENT_TAG) == null) {
             super.onDisplayPreferenceDialog(preference)
         }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.menu_main, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_about ->
-                AboutDialogFragment().show(this)
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
@@ -81,19 +86,26 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPref
                     when (preference) {
                         is EditTextPreference ->
                             preference.text = value as String?
+
                         is SwitchPreference ->
                             preference.isChecked = value as Boolean
+
                         is CheckBoxPreference ->
                             preference.isChecked = value as Boolean
+
                         is ListPreference ->
                             preference.value = value as String?
+
                         is MultiSelectListPreference -> {
                             @Suppress("UNCHECKED_CAST")
                             preference.values = value as Set<String>
                         }
                     }
                 } catch (x: Exception) {
-                    throw IllegalArgumentException("Cannot update preference: ${preference.key}.", x)
+                    throw IllegalArgumentException(
+                        "Cannot update preference: ${preference.key}.",
+                        x
+                    )
                 }
             }
         }
@@ -105,13 +117,19 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPref
      * @param value      value
      * @param preference preference
      */
-    protected fun updateSummary(preference: Preference, value: CharSequence?, @SummaryStyle style: Int) {
+    protected fun updateSummary(
+        preference: Preference,
+        value: CharSequence?,
+        @SummaryStyle style: Int
+    ) {
         preference.summary = null  /* clean to refresh spannable style */
         when (style) {
             SUMMARY_STYLE_DEFAULT ->
                 preference.summary = value
+
             SUMMARY_STYLE_UNDERWIVED ->
                 preference.summary = requireContext().underwivedText(value)
+
             SUMMARY_STYLE_ACCENTED ->
                 preference.summary = requireContext().accentedText(value)
         }
@@ -119,6 +137,20 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPref
 
     protected fun requirePreference(key: CharSequence): Preference {
         return findPreference(key)!!
+    }
+
+    inner class FragmentMenuProvider : MenuProvider {
+
+        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            menuInflater.inflate(R.menu.menu_main, menu)
+        }
+
+        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+            if (menuItem.itemId == R.id.action_about) {
+                onShowAbout()
+            }
+            return true
+        }
     }
 
     @Retention(SOURCE)

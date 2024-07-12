@@ -14,7 +14,7 @@ import kotlin.reflect.KClass
  */
 abstract class BaseActivity(private val fragmentClass: KClass<out Fragment>) : AppCompatActivity() {
 
-    protected var fragment: Fragment? = null
+    private var fragment: Fragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,9 +26,9 @@ abstract class BaseActivity(private val fragmentClass: KClass<out Fragment>) : A
         if (fragment == null) {
             fragment = fragmentClass.java.newInstance()
             fragmentManager
-                    .beginTransaction()
-                    .replace(R.id.content, fragment!!, "fragment")
-                    .commit()
+                .beginTransaction()
+                .replace(R.id.content, fragment!!, "fragment")
+                .commit()
         }
     }
 
@@ -43,5 +43,7 @@ abstract class BaseActivity(private val fragmentClass: KClass<out Fragment>) : A
         }
         return super.onOptionsItemSelected(item)
     }
+
+    protected fun requireFragment() = requireNotNull(fragment)
 
 }

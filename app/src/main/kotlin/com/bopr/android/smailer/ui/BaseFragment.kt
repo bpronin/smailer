@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.View
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import com.bopr.android.smailer.R
 
@@ -12,20 +14,26 @@ import com.bopr.android.smailer.R
  */
 open class BaseFragment : Fragment() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        requireActivity().addMenuProvider(FragmentMenuProvider())
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_main, menu)
-        super.onCreateOptionsMenu(menu, inflater)
+    private fun onShowAbout(){
+        AboutDialogFragment().show(this)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.action_about) {
-            AboutDialogFragment().show(this)
+    inner class FragmentMenuProvider : MenuProvider {
+
+        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            menuInflater.inflate(R.menu.menu_main, menu)
         }
-        return super.onOptionsItemSelected(item)
+
+        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+            if (menuItem.itemId == R.id.action_about) {
+                onShowAbout()
+            }
+            return true
+        }
     }
 }

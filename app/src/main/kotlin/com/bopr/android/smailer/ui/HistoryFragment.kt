@@ -2,8 +2,10 @@ package com.bopr.android.smailer.ui
 
 
 import android.content.BroadcastReceiver
+import android.content.Context
 import android.os.Bundle
 import android.text.format.DateFormat
+import android.util.AttributeSet
 import android.view.ContextMenu
 import android.view.LayoutInflater
 import android.view.LayoutInflater.from
@@ -16,6 +18,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat.getColor
+import androidx.core.view.MenuProvider
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bopr.android.smailer.CallProcessor
 import com.bopr.android.smailer.Database
@@ -66,6 +69,12 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        requireContext().unregisterDatabaseListener(databaseListener)
+        database.close()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -81,37 +90,9 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
         return view
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        requireContext().unregisterDatabaseListener(databaseListener)
-        database.close()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_history, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_clear -> {
-                onClearData()
-                true
-            }
-
-            R.id.action_mark_all_as_read -> {
-                onMarkAllAsRead()
-                true
-            }
-
-            R.id.action_process_all_pending -> {
-                onProcessAllPending()
-                true
-            }
-
-            else ->
-                super.onOptionsItemSelected(item)
-        }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        requireActivity().addMenuProvider(FragmentMenuProvider())
     }
 
     override fun onCreateItemContextMenu(menu: ContextMenu, item: PhoneEvent) {
@@ -297,4 +278,33 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
         val textView: TextView = view.findViewById(R.id.list_item_text)
         val stateView: ImageView = view.findViewById(R.id.list_item_state)
     }
+
+    inner class FragmentMenuProvider : MenuProvider {
+
+        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            menuInflater.inflate(R.menu.menu_history, menu)
+        }
+
+        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+            return when (menuItem.itemId) {
+                R.id.action_clear -> {
+                    onClearData()
+                    true
+                }
+
+                R.id.action_mark_all_as_read -> {
+                    onMarkAllAsRead()
+                    true
+                }
+
+                R.id.action_process_all_pending -> {
+                    onProcessAllPending()
+                    true
+                }
+
+                else -> false
+            }
+        }
+    }
+
 }

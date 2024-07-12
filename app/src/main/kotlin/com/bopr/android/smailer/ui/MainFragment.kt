@@ -105,7 +105,7 @@ class MainFragment : BasePreferenceFragment() {
         val preference = requirePreference(PREF_RECIPIENTS_ADDRESS)
         val addresses = settings.emailRecipients
 
-        if (addresses.isNullOrEmpty()) {
+        if (addresses.isEmpty()) {
             updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)
         } else {
             val style = if (isValidEmailAddressList(addresses)) SUMMARY_STYLE_DEFAULT else SUMMARY_STYLE_UNDERWIVED

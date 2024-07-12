@@ -74,7 +74,7 @@ internal class RemoteControlProcessor(
     }
 
     internal fun performTask(task: RemoteControlTask) {
-        log.debug("Processing: $task")
+        log.debug("Processing: {}", task)
         database.use {
             when (task.action) {
                 ADD_PHONE_TO_BLACKLIST ->

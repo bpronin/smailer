@@ -12,7 +12,8 @@ import com.bopr.android.smailer.remote.RemoteControlTask.Companion.SEND_SMS_TO_C
 import com.bopr.android.smailer.util.PHONE_REGEX
 import com.bopr.android.smailer.util.QUOTATION_PATTERN
 import com.bopr.android.smailer.util.QUOTATION_REGEX
-import java.util.*
+import java.util.Locale
+import java.util.Scanner
 import java.util.regex.Pattern
 
 /**
@@ -33,6 +34,7 @@ internal class RemoteControlTaskParser {
                         task.arguments["text"] = nextQuoted(scanner)
                         task.arguments["phone"] = nextPhone(scanner)
                     }
+
                 "ADD", "PUT" -> {
                     when (nextToken(scanner, "(?i:PHONE|TEXT)")) {
                         "PHONE" -> {
@@ -42,6 +44,7 @@ internal class RemoteControlTaskParser {
                                 "WHITELIST" -> task.action = ADD_PHONE_TO_WHITELIST
                             }
                         }
+
                         "TEXT" -> {
                             task.argument = nextQuoted(scanner)
                             when (nextToken(scanner, "(?i:BLACKLIST|WHITELIST)")) {
@@ -58,6 +61,7 @@ internal class RemoteControlTaskParser {
                                 "WHITELIST" -> task.action = REMOVE_PHONE_FROM_WHITELIST
                             }
                         }
+
                         "TEXT" -> {
                             task.argument = nextQuoted(scanner)
                             when (nextToken(scanner, "(?i:BLACKLIST|WHITELIST)")) {
@@ -67,6 +71,7 @@ internal class RemoteControlTaskParser {
                         }
                     }
                 }
+
                 "REMOVE", "DELETE" -> when (nextToken(scanner, "(?i:PHONE|TEXT)")) {
                     "PHONE" -> {
                         task.argument = nextPhone(scanner)
@@ -75,6 +80,7 @@ internal class RemoteControlTaskParser {
                             "WHITELIST" -> task.action = REMOVE_PHONE_FROM_WHITELIST
                         }
                     }
+
                     "TEXT" -> {
                         task.argument = nextQuoted(scanner)
                         when (nextToken(scanner, "(?i:BLACKLIST|WHITELIST)")) {
@@ -94,7 +100,7 @@ internal class RemoteControlTaskParser {
     }
 
     private fun nextToken(scanner: Scanner, pattern: String): String {
-        return scanner.findWithinHorizon(pattern, 0)?.toUpperCase(Locale.ROOT) ?: ""
+        return scanner.findWithinHorizon(pattern, 0).uppercase(Locale.ROOT)
     }
 
     private fun nextQuoted(scanner: Scanner): String? {
@@ -106,12 +112,13 @@ internal class RemoteControlTaskParser {
     private fun nextPhone(scanner: Scanner): String? {
         return scanner.findWithinHorizon(PHONE_OR_QUOTATION_PATTERN, 0)?.let { text ->
             scanner.match().group(2)    /* found quotation */
-                    ?: text               /* found pure number */
+                ?: text               /* found pure number */
         }
     }
 
     companion object {
 
-        private val PHONE_OR_QUOTATION_PATTERN: Pattern = Pattern.compile("($QUOTATION_REGEX|$PHONE_REGEX)")
+        private val PHONE_OR_QUOTATION_PATTERN: Pattern =
+            Pattern.compile("($QUOTATION_REGEX|$PHONE_REGEX)")
     }
 }
