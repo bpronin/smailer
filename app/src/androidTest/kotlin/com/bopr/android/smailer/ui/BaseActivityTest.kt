@@ -2,8 +2,8 @@ package com.bopr.android.smailer.ui
 
 
 import android.app.Activity
+import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.filters.LargeTest
-import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
 import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.Database
@@ -34,7 +34,7 @@ abstract class BaseActivityTest(private val activityClass: KClass<out Activity>)
 
 
     @get:Rule
-    val activityTestRule: ActivityTestRule<out Activity>
+    val activityTestRule: ActivityScenarioRule<out Activity>
         get() {
             sharedPreferencesName = "test.preferences"
             databaseName = "test.sqlite"
@@ -46,7 +46,7 @@ abstract class BaseActivityTest(private val activityClass: KClass<out Activity>)
             database = Database(targetContext)
 
             beforeActivityCreate()
-            return ActivityTestRule(activityClass.java)
+            return ActivityScenarioRule(activityClass.java)
         }
 
     lateinit var settings: Settings

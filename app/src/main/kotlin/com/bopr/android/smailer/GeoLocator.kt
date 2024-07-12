@@ -4,6 +4,8 @@ import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.Context
 import android.location.Location
+import android.location.LocationRequest.PASSIVE_INTERVAL
+import android.os.Build
 import android.os.Looper
 import com.bopr.android.smailer.GeoCoordinates.Companion.coordinatesOf
 import com.bopr.android.smailer.util.Mockable
@@ -83,7 +85,14 @@ class GeoLocator(private val context: Context, private val database: Database) {
             }
         }
 
-        client.requestLocationUpdates(LocationRequest(), callback, Looper.getMainLooper())
+        val locationRequest = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            LocationRequest.Builder(PASSIVE_INTERVAL).build()
+        } else {
+            @Suppress("DEPRECATION")
+            LocationRequest()
+        }
+
+        client.requestLocationUpdates(locationRequest, callback, Looper.getMainLooper())
         awaitLatch(latch, timeout, "Current location request")
         client.removeLocationUpdates(callback)
 
