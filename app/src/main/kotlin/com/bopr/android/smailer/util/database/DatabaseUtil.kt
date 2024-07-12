@@ -87,19 +87,19 @@ inline fun SQLiteDatabase.count(table: String, selection: String? = null,
 }
 
 inline fun Cursor.getString(columnName: String): String {
-    return getString(getColumnIndex(columnName))
+    return getString(getColumnIndexOrThrow(columnName))
 }
 
 inline fun Cursor.getInt(columnName: String): Int {
-    return getInt(getColumnIndex(columnName))
+    return getInt(getColumnIndexOrThrow((columnName)))
 }
 
 inline fun Cursor.getLong(columnName: String): Long {
-    return getLong(getColumnIndex(columnName))
+    return getLong(getColumnIndexOrThrow((columnName)))
 }
 
 inline fun Cursor.getDouble(columnName: String): Double {
-    return getDouble(getColumnIndex(columnName))
+    return getDouble(getColumnIndexOrThrow((columnName)))
 }
 
 inline fun Cursor.getBoolean(columnName: String): Boolean {

@@ -24,7 +24,7 @@ import com.bopr.android.smailer.util.isAccountExists
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class MainActivity : MainAppActivity(MainFragment::class), OnSharedPreferenceChangeListener {
+class MainActivity : BaseMainActivity(MainFragment::class), OnSharedPreferenceChangeListener {
 
     private lateinit var settings: Settings
     private lateinit var backupManager: BackupManager

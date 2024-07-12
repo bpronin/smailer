@@ -114,12 +114,19 @@ abstract class EventFilterListFragment(private val listName: String) :
         }
 
         override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-            when (menuItem.itemId) {
-                R.id.action_clear -> onClear()
+            return when (menuItem.itemId) {
+                R.id.action_clear -> {
+                    onClear()
+                    true
+                }
 
-                R.id.action_sort -> onSort()
+                R.id.action_sort -> {
+                    onSort()
+                    true
+                }
+
+                else -> false
             }
-            return true
         }
     }
 

@@ -10,7 +10,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
-import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
+import com.bopr.android.smailer.CallProcessorWorker.Companion.startPhoneEventProcessing
 import com.bopr.android.smailer.Notifications.Companion.SERVICE_NOTIFICATION_ID
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
 import com.bopr.android.smailer.util.database.getLong
@@ -58,17 +58,19 @@ class ContentObserverService : Service() {
     private fun processOutgoingSms(id: String) {
         log.debug("Processing outgoing sms: $id")
 
-        val context = this
+        val context = this  //todo: why? contentResolver is also Context
         contentResolver.query(CONTENT_SMS_SENT, null, "_id=?", arrayOf(id), null)?.useFirst {
             val date = getLong("date")
-            startCallProcessingService(context, PhoneEvent(
+            context.startPhoneEventProcessing(
+                PhoneEvent(
                     phone = getString("address"),
                     isIncoming = false,
                     startTime = date,
                     endTime = date,
                     text = getStringOrNull("body"),
                     acceptor = deviceName()
-            ))
+                )
+            )
         }
     }
 
@@ -80,7 +82,10 @@ class ContentObserverService : Service() {
             onChange(selfChange, null)
         }
 
-        override fun onChange(selfChange: Boolean, uri: Uri?) { /* this method may be called multiple times so we need to remember processed uri */
+        override fun onChange(
+            selfChange: Boolean,
+            uri: Uri?
+        ) { /* this method may be called multiple times so we need to remember processed uri */
             log.debug("Processing uri: {}", uri)
 
             uri?.let {
@@ -90,10 +95,13 @@ class ContentObserverService : Service() {
                         when (segments[0]) {
                             "raw" ->
                                 log.debug("sms/raw changed")
+
                             "inbox" ->
                                 log.debug("sms/inbox segment changed")
+
                             "sent" ->
                                 processOutgoingSms(segments[1])
+
                             else ->
                                 processOutgoingSms(segments[0])
                         }

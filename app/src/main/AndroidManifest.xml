@@ -106,7 +106,7 @@
             android:parentActivityName=".ui.MainActivity" />
 
         <activity
-            android:name=".ui.OptionsActivity"
+            android:name=".ui.MoreOptionsActivity"
             android:label="@string/more_options"
             android:parentActivityName=".ui.MainActivity" />
 
@@ -115,7 +115,7 @@
             android:label="@string/open_source"
             android:parentActivityName=".ui.MainActivity" />
 
-        <service android:name=".CallProcessorService" />
+<!--        <service android:name=".CallProcessorService" />-->
 
         <service android:name=".ContentObserverService" />
 

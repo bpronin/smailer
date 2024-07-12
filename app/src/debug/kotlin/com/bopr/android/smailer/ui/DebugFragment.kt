@@ -22,7 +22,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceScreen
 import com.bopr.android.smailer.CallProcessor
-import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
+import com.bopr.android.smailer.CallProcessorWorker.Companion.startPhoneEventProcessing
 import com.bopr.android.smailer.Database
 import com.bopr.android.smailer.Database.Companion.databaseName
 import com.bopr.android.smailer.GeoLocator
@@ -478,7 +478,7 @@ class DebugFragment : BasePreferenceFragment() {
             processStatus = STATUS_ACCEPTED,
             isRead = false
         )
-        startCallProcessingService(requireContext(), event)
+        requireContext().startPhoneEventProcessing(event)
         showSuccess()
     }
 

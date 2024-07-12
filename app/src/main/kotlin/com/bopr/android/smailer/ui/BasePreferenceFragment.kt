@@ -146,10 +146,11 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(),
         }
 
         override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-            if (menuItem.itemId == R.id.action_about) {
+            return if (menuItem.itemId == R.id.action_about) {
                 onShowAbout()
-            }
-            return true
+                true
+            } else
+                false
         }
     }
 

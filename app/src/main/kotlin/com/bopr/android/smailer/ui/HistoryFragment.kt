@@ -2,10 +2,8 @@ package com.bopr.android.smailer.ui
 
 
 import android.content.BroadcastReceiver
-import android.content.Context
 import android.os.Bundle
 import android.text.format.DateFormat
-import android.util.AttributeSet
 import android.view.ContextMenu
 import android.view.LayoutInflater
 import android.view.LayoutInflater.from
@@ -304,6 +302,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
 
                 else -> false
             }
+
         }
     }
 

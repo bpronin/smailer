@@ -4,8 +4,13 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.provider.Telephony
-import android.telephony.TelephonyManager.*
-import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
+import android.telephony.TelephonyManager.ACTION_PHONE_STATE_CHANGED
+import android.telephony.TelephonyManager.EXTRA_INCOMING_NUMBER
+import android.telephony.TelephonyManager.EXTRA_STATE
+import android.telephony.TelephonyManager.EXTRA_STATE_IDLE
+import android.telephony.TelephonyManager.EXTRA_STATE_OFFHOOK
+import android.telephony.TelephonyManager.EXTRA_STATE_RINGING
+import com.bopr.android.smailer.CallProcessorWorker.Companion.startPhoneEventProcessing
 import com.bopr.android.smailer.util.deviceName
 import org.slf4j.LoggerFactory
 import java.lang.System.currentTimeMillis
@@ -23,6 +28,7 @@ class CallReceiver : BroadcastReceiver() {
         when (intent.action) {
             ACTION_PHONE_STATE_CHANGED ->
                 onCallStateChanged(context, intent)
+
             SMS_RECEIVED ->
                 onSmsReceived(context, intent)
         }
@@ -50,6 +56,7 @@ class CallReceiver : BroadcastReceiver() {
 
                 log.debug("Ringing call from: $callNumber")
             }
+
             EXTRA_STATE_OFFHOOK -> {
                 if (prevCallState == EXTRA_STATE_RINGING) {
                     log.debug("Started incoming call from: $callNumber")
@@ -60,6 +67,7 @@ class CallReceiver : BroadcastReceiver() {
                     log.debug("Started outgoing call to: $callNumber")
                 }
             }
+
             EXTRA_STATE_IDLE -> {
                 callEndTime = currentTimeMillis()
                 isMissedCall = prevCallState == EXTRA_STATE_RINGING
@@ -69,11 +77,13 @@ class CallReceiver : BroadcastReceiver() {
 
                         processCall(context)
                     }
+
                     isIncomingCall == true -> {
                         log.debug("Processing incoming call from: $callNumber")
 
                         processCall(context)
                     }
+
                     isIncomingCall == false -> {
                         log.debug("Processing outgoing call to: $callNumber")
 
@@ -99,16 +109,22 @@ class CallReceiver : BroadcastReceiver() {
         val messages = Telephony.Sms.Intents.getMessagesFromIntent(intent)
 
         if (messages.isNotEmpty()) {
-            val time = messages[0].timestampMillis  /* NOTE: time zone on emulator may be incorrect */
-            val event = PhoneEvent(phone = messages[0].displayOriginatingAddress,
+
+            /* NOTE: time zone on emulator may be incorrect */
+            val time = messages[0].timestampMillis
+
+            context.startPhoneEventProcessing(
+                PhoneEvent(
+                    phone = messages[0].displayOriginatingAddress,
                     isIncoming = true,
                     startTime = time,
                     endTime = time,
-                    text = messages.joinToString(separator = "", transform = { m -> m.displayMessageBody }),
+                    text = messages.joinToString(
+                        separator = "",
+                        transform = { m -> m.displayMessageBody }),
                     acceptor = deviceName()
+                )
             )
-
-            startCallProcessingService(context, event)
         }
     }
 
@@ -116,14 +132,16 @@ class CallReceiver : BroadcastReceiver() {
      * Processes last call
      */
     private fun processCall(context: Context) {
-        startCallProcessingService(context, PhoneEvent(
+        context.startPhoneEventProcessing(
+            PhoneEvent(
                 phone = callNumber!!,
                 isIncoming = isIncomingCall!!,
                 isMissed = isMissedCall!!,
                 startTime = callStartTime!!,
                 endTime = callEndTime!!,
                 acceptor = deviceName()
-        ))
+            )
+        )
     }
 
     companion object {

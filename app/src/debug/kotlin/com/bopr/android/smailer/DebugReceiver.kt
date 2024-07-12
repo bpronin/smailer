@@ -3,7 +3,7 @@ package com.bopr.android.smailer
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.bopr.android.smailer.CallProcessorService.Companion.startCallProcessingService
+import com.bopr.android.smailer.CallProcessorWorker.Companion.startPhoneEventProcessing
 import com.bopr.android.smailer.Environment.startApplicationServices
 import com.bopr.android.smailer.remote.RemoteControlProcessor
 import com.bopr.android.smailer.util.deviceName
@@ -19,7 +19,7 @@ class DebugReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
             "PROCESS_PHONE_EVENT" -> {
-                startCallProcessingService(context, PhoneEvent(
+                context.startPhoneEventProcessing(PhoneEvent(
                         phone = "ADB DEBUG",
                         isIncoming = true,
                         startTime = currentTimeMillis(),

@@ -19,7 +19,7 @@ open class BaseFragment : Fragment() {
         requireActivity().addMenuProvider(FragmentMenuProvider())
     }
 
-    private fun onShowAbout(){
+    private fun onShowAbout() {
         AboutDialogFragment().show(this)
     }
 
@@ -30,10 +30,11 @@ open class BaseFragment : Fragment() {
         }
 
         override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-            if (menuItem.itemId == R.id.action_about) {
+            return if (menuItem.itemId == R.id.action_about) {
                 onShowAbout()
-            }
-            return true
+                true
+            } else
+                false
         }
     }
 }
