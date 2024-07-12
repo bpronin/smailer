@@ -57,7 +57,7 @@ class RulesFragment : BasePreferenceFragment() {
         updateTextWhitelistPreferenceView()
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         super.onSharedPreferenceChanged(sharedPreferences, key)
         if (key == PREF_EMAIL_TRIGGERS) {
             updateTriggersPreferenceView()

@@ -58,7 +58,7 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(), OnSharedPref
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         updatePreferenceViews()
     }
 

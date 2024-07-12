@@ -76,7 +76,7 @@ class MainFragment : BasePreferenceFragment() {
         updateAccountPreferenceView()
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         super.onSharedPreferenceChanged(sharedPreferences, key)
         when (key) {
             PREF_SENDER_ACCOUNT ->
