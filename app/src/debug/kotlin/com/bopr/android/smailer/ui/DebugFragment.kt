@@ -10,7 +10,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.telephony.SmsManager.RESULT_ERROR_GENERIC_FAILURE
@@ -18,6 +17,7 @@ import android.telephony.SmsManager.RESULT_ERROR_NO_SERVICE
 import android.telephony.SmsManager.RESULT_ERROR_NULL_PDU
 import android.telephony.SmsManager.RESULT_ERROR_RADIO_OFF
 import android.text.InputType
+import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceScreen
@@ -103,6 +103,10 @@ class DebugFragment : BasePreferenceFragment() {
     private lateinit var sentStatusReceiver: BroadcastReceiver
     private lateinit var deliveredStatusReceiver: BroadcastReceiver
     private val developerEmail by lazy { getString(R.string.developer_email) }
+//    private val requestPermissionLauncher =
+//        registerForActivityResult(RequestPermission()) { result: Boolean ->
+//            onPermissionRequestResult(result)
+//        }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         /* do not use fragment's context. see: https://developer.android.com/guide/topics/ui/settings/programmatic-hierarchy*/
@@ -347,16 +351,11 @@ class DebugFragment : BasePreferenceFragment() {
         super.onDestroy()
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        if (requestCode == PERMISSIONS_REQUEST_RECEIVE_SMS) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                showInfoDialog("Permission", "Granted")
-            } else {
-                showInfoDialog("Permission", "Denied")
-            }
+    private fun onPermissionRequestResult(granted: Boolean) {
+        if (granted) {
+            showInfoDialog("Permission", "Granted")
+        } else {
+            showInfoDialog("Permission", "Denied")
         }
     }
 
@@ -879,6 +878,5 @@ class DebugFragment : BasePreferenceFragment() {
     companion object {
 
         private val log = LoggerFactory.getLogger("DebugFragment")
-        private const val PERMISSIONS_REQUEST_RECEIVE_SMS = 100
     }
 }
