@@ -1,20 +1,10 @@
 package com.bopr.android.smailer.util
 
-import android.content.Intent
-import android.os.Build
 import android.os.Parcel
 import android.os.Parcelable
-import com.bopr.android.smailer.PhoneEvent
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_DEFAULT
+import java.util.Locale
 import kotlin.reflect.KClass
-
-fun Intent.getPhoneEventExtra(name: String): PhoneEvent? {
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        getParcelableExtra(name, PhoneEvent::class.java)
-    } else {
-        @Suppress("DEPRECATION")
-        return getParcelableExtra(name)
-    }
-}
 
 fun parcelize(value: Parcelable): ByteArray {
     Parcel.obtain().run {
@@ -36,6 +26,19 @@ fun <T : Parcelable> unparcelize(bytes: ByteArray, valueClass: KClass<T>): T {
             return readValue(valueClass.java.getClassLoader()) as T
         } finally {
             recycle()
+        }
+    }
+}
+
+fun parseLocale(code: String): Locale {
+    return if (code == VAL_PREF_DEFAULT) {
+        Locale.getDefault()
+    } else {
+        val a = code.split("_")
+        if (a.size == 2) {
+            Locale(a[0], a[1])
+        } else {
+            throw IllegalArgumentException("Invalid locale code: $code")
         }
     }
 }

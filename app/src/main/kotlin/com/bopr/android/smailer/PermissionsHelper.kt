@@ -8,12 +8,10 @@ import android.Manifest.permission.READ_PHONE_STATE
 import android.Manifest.permission.READ_SMS
 import android.Manifest.permission.RECEIVE_SMS
 import android.Manifest.permission.SEND_SMS
-import android.app.Activity
 import android.content.pm.PackageManager
 import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat.checkSelfPermission
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
@@ -27,10 +25,8 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
-import com.bopr.android.smailer.ui.InfoDialog
 import com.bopr.android.smailer.ui.showInfoDialog
 import com.bopr.android.smailer.util.permissionLabel
-import com.bopr.android.smailer.util.primaryAccount
 import org.slf4j.LoggerFactory
 
 /**
@@ -41,7 +37,9 @@ import org.slf4j.LoggerFactory
 class PermissionsHelper(val activity: FragmentActivity) {
 
     private val log = LoggerFactory.getLogger("PermissionsHelper")
-    private val settings: Settings = Settings(activity)
+    private val settings = Settings(activity)
+    private val accountManager = AccountManager(activity)
+
     private val permissionRequestLauncher =
         activity.registerForActivityResult(RequestMultiplePermissions()) { result ->
             onPermissionRequestResult(result)
@@ -74,7 +72,7 @@ class PermissionsHelper(val activity: FragmentActivity) {
         val requiredPermissions: MutableSet<String> = HashSet()
         when (key) {
             PREF_EMAIL_TRIGGERS -> {
-                val triggers = settings.emailTriggers
+                val triggers = settings.getEmailTriggers()
                 if (triggers.contains(VAL_PREF_TRIGGER_IN_SMS)) {
                     requiredPermissions.add(RECEIVE_SMS)
                 }
@@ -110,7 +108,7 @@ class PermissionsHelper(val activity: FragmentActivity) {
 
         /* set default accounts at startup */
         settings.update {
-            val accountName = activity.primaryAccount()?.name
+            val accountName = accountManager.getPrimaryGoogleAccount()?.name
             putStringOptional(PREF_SENDER_ACCOUNT, accountName)
             putStringOptional(PREF_RECIPIENTS_ADDRESS, accountName)
             putStringOptional(PREF_REMOTE_CONTROL_ACCOUNT, accountName)
@@ -121,7 +119,7 @@ class PermissionsHelper(val activity: FragmentActivity) {
         log.debug("Denied: {}", deniedPermissions)
 
         if (deniedPermissions.isNotEmpty()) {
-            val triggers = settings.emailTriggers
+            val triggers = settings.getEmailTriggers()
             val content = settings.getStringSet(PREF_EMAIL_CONTENT)
 
             if (deniedPermissions.contains(RECEIVE_SMS)) {

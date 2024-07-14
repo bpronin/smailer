@@ -2,8 +2,7 @@ package com.bopr.android.smailer.util
 
 import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
-import com.bopr.android.smailer.GeoCoordinates
-import com.bopr.android.smailer.PhoneEvent
+import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotSame
 import org.junit.Test
@@ -14,7 +13,7 @@ class ParseUtilTest : BaseTest() {
 
     @Test
     fun testParcelize() {
-        val source = PhoneEvent(
+        val source = PhoneEventInfo(
             phone = "+12345678901",
             isIncoming = true,
             startTime = GregorianCalendar(2016, 1, 2, 3, 4, 5).time.time,
@@ -25,7 +24,7 @@ class ParseUtilTest : BaseTest() {
         )
 
         val bytes = parcelize(source)
-        val actual = unparcelize(bytes, PhoneEvent::class)
+        val actual = unparcelize(bytes, PhoneEventInfo::class)
 
         assertEquals(source, actual)
         assertNotSame(source, actual)

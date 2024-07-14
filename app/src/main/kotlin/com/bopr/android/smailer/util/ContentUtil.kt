@@ -14,12 +14,12 @@ import android.provider.ContactsContract.CommonDataKinds.Phone
 import android.provider.ContactsContract.Contacts
 import android.provider.ContactsContract.PhoneLookup
 import androidx.annotation.RequiresPermission
-import com.bopr.android.smailer.util.database.getInt
-import com.bopr.android.smailer.util.database.getStringOrNull
+import com.bopr.android.smailer.data.getInt
+import com.bopr.android.smailer.data.getStringOrNull
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager.ACCOUNT_TYPE
 
 @RequiresPermission(READ_CONTACTS)
-fun contactName(context: Context, phone: String): String? {
+fun getContactName(context: Context, phone: String): String? {
     val uri = withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, encode(phone))
     var result: String? = null
     context.contentResolver.query(uri, arrayOf(PhoneLookup.DISPLAY_NAME), null, null, null)?.use {
@@ -28,6 +28,14 @@ fun contactName(context: Context, phone: String): String? {
         }
     }
     return result
+}
+
+fun tryGetContactName(context: Context, phone: String): String? {
+    return if (context.checkPermission(READ_CONTACTS)) {
+        getContactName(context, phone)
+    } else {
+        null
+    }
 }
 
 @RequiresPermission(READ_CONTACTS)

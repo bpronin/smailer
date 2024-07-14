@@ -2,7 +2,7 @@ package com.bopr.android.smailer.util
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import com.bopr.android.smailer.PhoneEvent
+import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
 import com.bopr.android.smailer.R
 
 /**
@@ -35,7 +35,7 @@ private val RES_TYPE_IMAGE = intArrayOf(
 )
 
 @DrawableRes
-fun eventTypeImage(event: PhoneEvent): Int {
+fun eventTypeImage(event: PhoneEventInfo): Int {
     /* do not use direct drawable resources references here due to shrinker issue */
     return if (event.isSms) {
         RES_TYPE_IMAGE[0]
@@ -45,7 +45,7 @@ fun eventTypeImage(event: PhoneEvent): Int {
 }
 
 @DrawableRes
-fun eventDirectionImage(event: PhoneEvent): Int {
+fun eventDirectionImage(event: PhoneEventInfo): Int {
     /* do not use direct drawable resources references here due to shrinker issue */
     return when {
         event.isMissed ->
@@ -60,16 +60,16 @@ fun eventDirectionImage(event: PhoneEvent): Int {
 }
 
 @DrawableRes
-fun eventStateImage(event: PhoneEvent): Int {
+fun eventStateImage(event: PhoneEventInfo): Int {
     /* do not use direct drawable resources references here due to shrinker issue */
     return when (event.state) {
-        PhoneEvent.STATE_PENDING ->
+        PhoneEventInfo.STATE_PENDING ->
             RES_STATE_IMAGE[0]
 
-        PhoneEvent.STATE_PROCESSED ->
+        PhoneEventInfo.STATE_PROCESSED ->
             RES_STATE_IMAGE[1]
 
-        PhoneEvent.STATE_IGNORED ->
+        PhoneEventInfo.STATE_IGNORED ->
             RES_STATE_IMAGE[2]
 
         else ->
@@ -78,7 +78,7 @@ fun eventStateImage(event: PhoneEvent): Int {
 }
 
 @StringRes
-fun eventTypeText(event: PhoneEvent): Int {
+fun eventTypeText(event: PhoneEventInfo): Int {
     return if (event.isSms) {
         if (event.isIncoming) {
             R.string.incoming_sms
@@ -95,7 +95,7 @@ fun eventTypeText(event: PhoneEvent): Int {
 }
 
 @StringRes
-fun eventTypePrefix(event: PhoneEvent): Int {
+fun eventTypePrefix(event: PhoneEventInfo): Int {
     return if (event.isSms) {
         if (event.isIncoming) {
             R.string.incoming_sms_from
@@ -112,15 +112,15 @@ fun eventTypePrefix(event: PhoneEvent): Int {
 }
 
 @StringRes
-fun eventStateText(event: PhoneEvent): Int {
+fun eventStateText(event: PhoneEventInfo): Int {
     return when (event.state) {
-        PhoneEvent.STATE_PENDING ->
+        PhoneEventInfo.STATE_PENDING ->
             R.string.pending
 
-        PhoneEvent.STATE_PROCESSED ->
+        PhoneEventInfo.STATE_PROCESSED ->
             R.string.sent_email
 
-        PhoneEvent.STATE_IGNORED ->
+        PhoneEventInfo.STATE_IGNORED ->
             R.string.ignored
 
         else ->

@@ -1,8 +1,8 @@
 package com.bopr.android.smailer.sync
 
-import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
-import com.bopr.android.smailer.PhoneEvent.Companion.STATUS_ACCEPTED
-import com.bopr.android.smailer.PhoneEvent.EventState
+import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATE_PENDING
+import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATUS_ACCEPTED
+import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.EventState
 import com.google.api.client.util.Key
 
 /**

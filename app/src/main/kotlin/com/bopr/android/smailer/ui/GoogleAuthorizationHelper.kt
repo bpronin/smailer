@@ -1,17 +1,15 @@
 package com.bopr.android.smailer.ui
 
 import android.accounts.AccountManager.KEY_ACCOUNT_NAME
-import android.accounts.AccountManagerCallback
-import android.accounts.AccountManagerFuture
+import android.app.Activity
 import android.app.Activity.RESULT_OK
-import android.os.Bundle
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import com.bopr.android.smailer.AccountManager
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.util.createPickAccountIntent
-import com.bopr.android.smailer.util.getAccount
-import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager
 import org.slf4j.LoggerFactory
 
 /**
@@ -20,18 +18,17 @@ import org.slf4j.LoggerFactory
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 class GoogleAuthorizationHelper(
-    fragment: Fragment,
+    private val activity: FragmentActivity,
     private val accountSettingName: String,
     vararg scopes: String?
 ) {
 
     private val log = LoggerFactory.getLogger("GoogleAuthorizationHelper")
     private val scopes = setOf(*scopes)
-    private val activity = fragment.requireActivity()
-    private val accountManager = GoogleAccountManager(activity)
+    private val accountManager = AccountManager(activity)
     private val settings = Settings(activity)
     private val accountPickerLauncher =
-        fragment.registerForActivityResult(StartActivityForResult()) { result ->
+        activity.registerForActivityResult(StartActivityForResult()) { result ->
             onAccountPickerResult(result)
         }
 
@@ -39,7 +36,7 @@ class GoogleAuthorizationHelper(
      * Brings up system account selection dialog.
      */
     fun startAccountPicker() {
-        val account = activity.getAccount(settings.getString(accountSettingName))
+        val account = accountManager.getGoogleAccount(settings.getString(accountSettingName))
         accountPickerLauncher.launch(createPickAccountIntent(account))
     }
 
@@ -53,27 +50,18 @@ class GoogleAuthorizationHelper(
     private fun requestPermission(accountName: String?) {
         log.debug("Requesting permission for: $accountName")
 
-        accountManager.accountManager.getAuthToken(
-            activity.getAccount(accountName),
-            "oauth2: " + scopes.joinToString(" "),
-            null,
+        accountManager.requestGoogleAuthToken(
             activity,
-            AuthTokenAcquireCallback(),
-            null /* callback executes in main thread */
-        )
-    }
+            accountName,
+            scopes,
+            onResponse = { result ->
+                settings.update {
+                    putString(accountSettingName, result)
+                }
 
-    private inner class AuthTokenAcquireCallback : AccountManagerCallback<Bundle?> {
-
-        override fun run(future: AccountManagerFuture<Bundle?>) {
-            future.result?.run {
-                val accountName = getString(KEY_ACCOUNT_NAME)
-                settings.update { putString(accountSettingName, accountName) }
-
-                log.debug("Selected account: $accountName")
+                log.debug("Selected account: $result")
             }
-        }
-
+        )
     }
 
 }

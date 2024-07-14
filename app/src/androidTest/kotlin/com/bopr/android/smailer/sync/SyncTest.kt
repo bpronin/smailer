@@ -4,10 +4,10 @@ import android.Manifest.permission.READ_CONTACTS
 import android.accounts.Account
 import androidx.test.rule.GrantPermissionRule
 import com.bopr.android.smailer.BaseTest
-import com.bopr.android.smailer.Database
-import com.bopr.android.smailer.Database.Companion.databaseName
+import com.bopr.android.smailer.data.Database
+import com.bopr.android.smailer.data.Database.Companion.databaseName
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_UPLOAD
-import com.bopr.android.smailer.util.primaryAccount
+import com.bopr.android.smailer.util.primaryGoogleAccount
 import com.nhaarman.mockitokotlin2.*
 import org.junit.After
 import org.junit.Assert.*
@@ -25,7 +25,7 @@ class SyncTest : BaseTest() {
 
     @Before
     fun setup() {
-        account = targetContext.primaryAccount()!!
+        account = targetContext.primaryGoogleAccount!!
 
         databaseName = "test.sqlite"
         targetContext.deleteDatabase(databaseName)
@@ -45,8 +45,8 @@ class SyncTest : BaseTest() {
         database.commit {
             phoneBlacklist.addAll(setOf("PBA", "PBB", "PBC"))
             phoneWhitelist.addAll(setOf("PWA", "PWB", "PWC"))
-            textBlacklist.addAll(setOf("TBA", "TBB", "TBC"))
-            textWhitelist.addAll(setOf("TWA", "TWB", "TWC"))
+            smsTextBlacklist.addAll(setOf("TBA", "TBB", "TBC"))
+            smsTextWhitelist.addAll(setOf("TWA", "TWB", "TWC"))
         }
 
         sync.sync(SYNC_FORCE_UPLOAD)
@@ -61,8 +61,8 @@ class SyncTest : BaseTest() {
             (this as SyncData).run {
                 phoneBlacklist == database.phoneBlacklist
                         && phoneWhitelist == database.phoneWhitelist
-                        && textBlacklist == database.textBlacklist
-                        && textWhitelist == database.textWhitelist
+                        && textBlacklist == database.smsTextBlacklist
+                        && textWhitelist == database.smsTextWhitelist
             }
         })
 

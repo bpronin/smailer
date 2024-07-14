@@ -12,11 +12,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.MenuProvider
 import androidx.recyclerview.widget.RecyclerView
-import com.bopr.android.smailer.Database
-import com.bopr.android.smailer.Database.Companion.registerDatabaseListener
-import com.bopr.android.smailer.Database.Companion.unregisterDatabaseListener
+import com.bopr.android.smailer.data.Database
+import com.bopr.android.smailer.data.Database.Companion.registerDatabaseListener
+import com.bopr.android.smailer.data.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.StringDataset
+import com.bopr.android.smailer.data.StringDataset
 import com.bopr.android.smailer.ui.EventFilterListFragment.Holder
 
 /**
@@ -37,7 +37,7 @@ abstract class EventFilterListFragment(private val listName: String) :
         val context = requireContext()
 
         database = Database(context)
-        list = database.eventFilterList.getValue(listName)
+        list = database.phoneEventsFilters.getValue(listName)
         databaseListener = context.registerDatabaseListener { tables ->
             if (tables.contains(listName)) refreshItems()
         }

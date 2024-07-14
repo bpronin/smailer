@@ -32,7 +32,8 @@ import kotlin.annotation.AnnotationRetention.SOURCE
 abstract class BasePreferenceFragment : PreferenceFragmentCompat(),
     OnSharedPreferenceChangeListener {
 
-    lateinit var settings: Settings
+//    protected val settings by lazyOf(Settings(requireContext()))
+    protected lateinit var settings: Settings
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

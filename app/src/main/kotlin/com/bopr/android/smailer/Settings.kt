@@ -2,7 +2,7 @@ package com.bopr.android.smailer
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
-import com.bopr.android.smailer.MailFormatter.Companion.PHONE_SEARCH_TAG
+import com.bopr.android.smailer.consumer.mail.PhoneEventMailFormatter.Companion.PHONE_SEARCH_TAG
 import com.bopr.android.smailer.util.SharedPreferencesWrapper
 import com.bopr.android.smailer.util.deviceName
 
@@ -14,32 +14,33 @@ import com.bopr.android.smailer.util.deviceName
 class Settings(context: Context) :
     SharedPreferencesWrapper(context.getSharedPreferences(sharedPreferencesName, MODE_PRIVATE)) {
 
-    val emailContent get() = getStringSet(PREF_EMAIL_CONTENT)
-    val emailLocale get() = getString(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)!!
-    val emailRecipients get() = getStringList(PREF_RECIPIENTS_ADDRESS)
-    val emailRecipientsPlain get() = getString(PREF_RECIPIENTS_ADDRESS)
-    val emailTriggers get() = getStringSet(PREF_EMAIL_TRIGGERS)
-    val isNotifyRemoteControlActions get() = getBoolean(PREF_REMOTE_CONTROL_NOTIFICATIONS)
-    val isNotifySendSuccess get() = getBoolean(PREF_NOTIFY_SEND_SUCCESS)
-    val isRemoteControlEnabled get() = getBoolean(PREF_REMOTE_CONTROL_ENABLED)
-    val isRemoteControlFilterRecipients get() = getBoolean(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS)
-    val isSyncEnabled get() = getBoolean(PREF_SYNC_ENABLED)
-    val remoteControlAccount get() = getString(PREF_REMOTE_CONTROL_ACCOUNT)
-    val senderAccount get() = getString(PREF_SENDER_ACCOUNT)
-    val emailMessengerEnabled get() = getBoolean(PREF_EMAIL_MESSENGER_ENABLED)
-    val telegramMessengerEnabled get() = getBoolean(PREF_TELEGRAM_MESSENGER_ENABLED)
-    val telegramBotToken get() = getString(PREF_TELEGRAM_BOT_TOKEN)
+    fun getEmailContent() = getStringSet(PREF_EMAIL_CONTENT)
+    fun getEmailLocale() = getString(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)!!
+    fun getEmailRecipients() = getStringList(PREF_RECIPIENTS_ADDRESS)
+    fun getEmailRecipientsPlain() = getString(PREF_RECIPIENTS_ADDRESS)
+    fun getEmailTriggers() = getStringSet(PREF_EMAIL_TRIGGERS)
+    fun isNotifyRemoteControlActions() = getBoolean(PREF_REMOTE_CONTROL_NOTIFICATIONS)
+    fun isNotifySendSuccess() = getBoolean(PREF_NOTIFY_SEND_SUCCESS)
+    fun isRemoteControlEnabled() = getBoolean(PREF_REMOTE_CONTROL_ENABLED)
+    fun isRemoteControlFilterRecipients() = getBoolean(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS)
+    fun isCloudSyncEnabled() = getBoolean(PREF_SYNC_ENABLED)
+    fun getRemoteControlAccountName() = getString(PREF_REMOTE_CONTROL_ACCOUNT)
+    fun getSenderAccountName() = getString(PREF_SENDER_ACCOUNT)
+    fun getEmailMessengerEnabled() = getBoolean(PREF_EMAIL_MESSENGER_ENABLED)
+    fun getTelegramMessengerEnabled() = getBoolean(PREF_TELEGRAM_MESSENGER_ENABLED)
+    fun getTelegramBotToken() = getString(PREF_TELEGRAM_BOT_TOKEN)
+    fun isBatteryEventsEnabled() =
+        getStringSet(PREF_EMAIL_TRIGGERS).contains(VAL_PREF_LOW_BATTERY_LEVEL)
 
-    val deviceAlias: String
-        get() {
-            val setting = getString(PREF_DEVICE_ALIAS)
-            return if (!setting.isNullOrEmpty()) setting else deviceName()
-        }
-    val phoneSearchUrl: String
-        get() {
-            val setting = getString(PREF_PHONE_SEARCH_URL)
-            return if (!setting.isNullOrEmpty()) setting else DEFAULT_PHONE_SEARCH_URL
-        }
+    fun getDeviceAlias(): String {
+        val setting = getString(PREF_DEVICE_ALIAS)
+        return if (!setting.isNullOrEmpty()) setting else deviceName()
+    }
+
+    fun getPhoneSearchUrl(): String {
+        val setting = getString(PREF_PHONE_SEARCH_URL)
+        return if (!setting.isNullOrEmpty()) setting else DEFAULT_PHONE_SEARCH_URL
+    }
 
     fun loadDefaults() = update {
         putInt(PREF_SETTINGS_VERSION, SETTINGS_VERSION)
@@ -56,7 +57,6 @@ class Settings(context: Context) :
     }
 
     companion object {
-
         var sharedPreferencesName = "com.bopr.android.smailer_preferences"
 
         private const val SETTINGS_VERSION = 2
@@ -113,7 +113,6 @@ class Settings(context: Context) :
             VAL_PREF_TRIGGER_MISSED_CALLS,
             VAL_PREF_LOW_BATTERY_LEVEL
         )
-
     }
 
 }

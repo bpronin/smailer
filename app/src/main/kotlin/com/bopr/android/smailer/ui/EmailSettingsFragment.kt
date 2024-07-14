@@ -54,7 +54,7 @@ class EmailSettingsFragment : BasePreferenceFragment() {
     private fun updateLocalePreferenceView() {
         val preference: ListPreference = findPreference(PREF_EMAIL_LOCALE)!!
 
-        val index = preference.findIndexOfValue(settings.emailLocale)
+        val index = preference.findIndexOfValue(settings.getEmailLocale())
         if (index < 0) {
             updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)
         } else {
@@ -63,12 +63,12 @@ class EmailSettingsFragment : BasePreferenceFragment() {
     }
 
     private fun updateDeviceNamePreferenceView() {
-        updateSummary(requirePreference(PREF_DEVICE_ALIAS), settings.deviceAlias,
+        updateSummary(requirePreference(PREF_DEVICE_ALIAS), settings.getDeviceAlias(),
                 SUMMARY_STYLE_DEFAULT)
     }
 
     private fun updatePhoneSearchUrlPreferenceView() {
-        updateSummary(requirePreference(PREF_PHONE_SEARCH_URL), settings.phoneSearchUrl,
+        updateSummary(requirePreference(PREF_PHONE_SEARCH_URL), settings.getPhoneSearchUrl(),
                 SUMMARY_STYLE_DEFAULT)
     }
 

@@ -118,10 +118,10 @@
 
 <!--        <service android:name=".CallProcessorService" />-->
 
-        <service android:name=".ContentObserverService" />
+        <service android:name=".provider.telephony.ContentObserverService" />
 
         <receiver
-            android:name=".CallReceiver"
+            android:name=".provider.telephony.PhoneEventReceiver"
             android:exported="true"
             android:permission="android.permission.BROADCAST_SMS">
             <intent-filter>
@@ -139,7 +139,7 @@
         </receiver>
 
         <receiver
-            android:name=".BatteryLevelReceiver"
+            android:name=".provider.battery.BatteryLevelReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BATTERY_LOW" />
@@ -147,7 +147,7 @@
         </receiver>
 
         <service
-            android:name=".firebase.CloudMessagingService"
+            android:name=".control.FirebaseControlService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

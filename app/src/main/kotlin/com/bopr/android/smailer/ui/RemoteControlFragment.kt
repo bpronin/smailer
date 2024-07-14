@@ -4,15 +4,15 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.preference.Preference
 import androidx.preference.SwitchPreference
-import com.bopr.android.smailer.Database
+import com.bopr.android.smailer.AccountManager
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_NOTIFICATIONS
-import com.bopr.android.smailer.remote.RemoteControlProcessor
+import com.bopr.android.smailer.control.RemoteControlProcessor
+import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.util.getQuantityString
-import com.bopr.android.smailer.util.isAccountExists
 import com.bopr.android.smailer.util.runLongTask
 import com.bopr.android.smailer.util.showToast
 import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
@@ -21,13 +21,14 @@ import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
 class RemoteControlFragment : BasePreferenceFragment() {
 
     private val processMailAction = "remote_control_process_service_mail"
-    private lateinit var authorizator: GoogleAuthorizationHelper
+    private lateinit var authorizationHelper: GoogleAuthorizationHelper
+    private lateinit var accountManager: AccountManager
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_remote)
 
         requirePreference(PREF_REMOTE_CONTROL_ACCOUNT).setOnPreferenceClickListener {
-            authorizator.startAccountPicker()
+            authorizationHelper.startAccountPicker()
             true
         }
 
@@ -39,7 +40,11 @@ class RemoteControlFragment : BasePreferenceFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        authorizator = GoogleAuthorizationHelper(this, PREF_REMOTE_CONTROL_ACCOUNT, MAIL_GOOGLE_COM)
+
+        accountManager = AccountManager(requireContext())
+        authorizationHelper = GoogleAuthorizationHelper(
+            requireActivity(), PREF_REMOTE_CONTROL_ACCOUNT, MAIL_GOOGLE_COM
+        )
     }
 
     override fun onStart() {
@@ -51,6 +56,7 @@ class RemoteControlFragment : BasePreferenceFragment() {
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         super.onSharedPreferenceChanged(sharedPreferences, key)
+
         when (key) {
             PREF_REMOTE_CONTROL_ENABLED -> updateEnabledPreferenceView()
 
@@ -86,11 +92,11 @@ class RemoteControlFragment : BasePreferenceFragment() {
 
     private fun updateAccountPreferenceView() {
         val preference = requirePreference(PREF_REMOTE_CONTROL_ACCOUNT)
-        val account = settings.remoteControlAccount
+        val account = settings.getRemoteControlAccountName()
 
         if (account.isNullOrEmpty()) {
             updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)
-        } else if (!requireContext().isAccountExists(account)) {
+        } else if (!accountManager.isGoogleAccountExists(account)) {
             updateSummary(preference, account, SUMMARY_STYLE_UNDERWIVED)
         } else {
             updateSummary(preference, account, SUMMARY_STYLE_DEFAULT)

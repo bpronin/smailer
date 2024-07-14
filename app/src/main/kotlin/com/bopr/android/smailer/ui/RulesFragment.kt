@@ -5,13 +5,13 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.annotation.StringRes
 import androidx.preference.MultiSelectListPreference
-import com.bopr.android.smailer.Database
-import com.bopr.android.smailer.Database.Companion.TABLE_PHONE_BLACKLIST
-import com.bopr.android.smailer.Database.Companion.TABLE_PHONE_WHITELIST
-import com.bopr.android.smailer.Database.Companion.TABLE_TEXT_BLACKLIST
-import com.bopr.android.smailer.Database.Companion.TABLE_TEXT_WHITELIST
-import com.bopr.android.smailer.Database.Companion.registerDatabaseListener
-import com.bopr.android.smailer.Database.Companion.unregisterDatabaseListener
+import com.bopr.android.smailer.data.Database
+import com.bopr.android.smailer.data.Database.Companion.TABLE_PHONE_BLACKLIST
+import com.bopr.android.smailer.data.Database.Companion.TABLE_PHONE_WHITELIST
+import com.bopr.android.smailer.data.Database.Companion.TABLE_TEXT_BLACKLIST
+import com.bopr.android.smailer.data.Database.Companion.TABLE_TEXT_WHITELIST
+import com.bopr.android.smailer.data.Database.Companion.registerDatabaseListener
+import com.bopr.android.smailer.data.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
 
@@ -82,7 +82,7 @@ class RulesFragment : BasePreferenceFragment() {
 
     private fun updateTextBlacklistPreferenceView() {
         val preference = requirePreference("text_blacklist")
-        val text = formatListSummary(database.textBlacklist,
+        val text = formatListSummary(database.smsTextBlacklist,
                 R.string.unacceptable_words, R.string._none)
 
         updateSummary(preference, text, SUMMARY_STYLE_DEFAULT)
@@ -90,7 +90,7 @@ class RulesFragment : BasePreferenceFragment() {
 
     private fun updateTextWhitelistPreferenceView() {
         val preference = requirePreference("text_whitelist")
-        val formatListSummary = formatListSummary(database.textWhitelist,
+        val formatListSummary = formatListSummary(database.smsTextWhitelist,
                 R.string.acceptable_words, R.string._any)
 
         updateSummary(preference, formatListSummary, SUMMARY_STYLE_DEFAULT)

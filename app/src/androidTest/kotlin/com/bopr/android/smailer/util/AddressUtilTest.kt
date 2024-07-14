@@ -2,7 +2,6 @@ package com.bopr.android.smailer.util
 
 import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
-import com.bopr.android.smailer.firebase.CloudMessaging.userId
 import org.junit.Assert.*
 import org.junit.Test
 

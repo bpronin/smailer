@@ -1,6 +1,7 @@
 package com.bopr.android.smailer
 
 import androidx.test.filters.SmallTest
+import com.bopr.android.smailer.util.GeoCoordinates
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

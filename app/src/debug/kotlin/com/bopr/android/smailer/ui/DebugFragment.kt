@@ -17,27 +17,15 @@ import android.telephony.SmsManager.RESULT_ERROR_NO_SERVICE
 import android.telephony.SmsManager.RESULT_ERROR_NULL_PDU
 import android.telephony.SmsManager.RESULT_ERROR_RADIO_OFF
 import android.text.InputType
-import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceScreen
-import com.bopr.android.smailer.CallProcessor
-import com.bopr.android.smailer.CallProcessorWorker.Companion.startPhoneEventProcessing
-import com.bopr.android.smailer.Database
-import com.bopr.android.smailer.Database.Companion.databaseName
-import com.bopr.android.smailer.GeoLocator
-import com.bopr.android.smailer.GoogleMail
-import com.bopr.android.smailer.MailMessage
-import com.bopr.android.smailer.Notifications
-import com.bopr.android.smailer.Notifications.Companion.RECIPIENTS_ERROR
-import com.bopr.android.smailer.Notifications.Companion.REMOTE_ACCOUNT_ERROR
-import com.bopr.android.smailer.Notifications.Companion.SENDER_ACCOUNT_ERROR
-import com.bopr.android.smailer.Notifications.Companion.TARGET_PHONE_BLACKLIST
-import com.bopr.android.smailer.PhoneEvent
-import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
-import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
-import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PROCESSED
-import com.bopr.android.smailer.PhoneEvent.Companion.STATUS_ACCEPTED
+import com.bopr.android.smailer.AccountManager
+import com.bopr.android.smailer.NotificationsHelper
+import com.bopr.android.smailer.NotificationsHelper.Companion.RECIPIENTS_ERROR
+import com.bopr.android.smailer.NotificationsHelper.Companion.REMOTE_ACCOUNT_ERROR
+import com.bopr.android.smailer.NotificationsHelper.Companion.SENDER_ACCOUNT_ERROR
+import com.bopr.android.smailer.NotificationsHelper.Companion.TARGET_PHONE_BLACKLIST
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_LOCALE
@@ -59,32 +47,38 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
-import com.bopr.android.smailer.firebase.CloudMessaging.FCM_REQUEST_DATA_SYNC
-import com.bopr.android.smailer.firebase.CloudMessaging.listFirebaseInfo
-import com.bopr.android.smailer.firebase.CloudMessaging.requestFirebaseToken
-import com.bopr.android.smailer.firebase.CloudMessaging.sendCloudMessage
-import com.bopr.android.smailer.firebase.CloudMessaging.subscribeToCloudMessaging
-import com.bopr.android.smailer.firebase.CloudMessaging.unsubscribeFromCloudMessaging
-import com.bopr.android.smailer.remote.RemoteControlProcessor
+import com.bopr.android.smailer.consumer.mail.MailMessage
+import com.bopr.android.smailer.control.RemoteControlProcessor
+import com.bopr.android.smailer.data.Database
+import com.bopr.android.smailer.data.Database.Companion.databaseName
+import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
+import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATE_IGNORED
+import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATE_PENDING
+import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATE_PROCESSED
+import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATUS_ACCEPTED
+import com.bopr.android.smailer.provider.telephony.PhoneEventProcessor
+import com.bopr.android.smailer.provider.telephony.PhoneEventProcessorWorker.Companion.startPhoneEventProcessing
+import com.bopr.android.smailer.provider.telephony.SmsTransport.Companion.smsManager
 import com.bopr.android.smailer.sync.GoogleDrive
 import com.bopr.android.smailer.sync.Synchronizer
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_DOWNLOAD
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_UPLOAD
+import com.bopr.android.smailer.transport.Firebase
+import com.bopr.android.smailer.transport.Firebase.Companion.FCM_REQUEST_DATA_SYNC
+import com.bopr.android.smailer.transport.GoogleMailSession
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.isIgnoreBatteryOptimizationRequired
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
-import com.bopr.android.smailer.util.SmsTransport.Companion.smsManager
+import com.bopr.android.smailer.util.GeoLocator
 import com.bopr.android.smailer.util.checkPermission
-import com.bopr.android.smailer.util.contactName
 import com.bopr.android.smailer.util.deviceName
 import com.bopr.android.smailer.util.escapeRegex
-import com.bopr.android.smailer.util.getAccount
-import com.bopr.android.smailer.util.primaryAccount
+import com.bopr.android.smailer.util.getContactName
 import com.bopr.android.smailer.util.readLogcatLog
 import com.bopr.android.smailer.util.runInBackground
 import com.bopr.android.smailer.util.runLongTask
 import com.bopr.android.smailer.util.showToast
 import com.google.api.services.drive.DriveScopes.DRIVE_APPDATA
-import com.google.api.services.gmail.GmailScopes
+import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -98,11 +92,14 @@ class DebugFragment : BasePreferenceFragment() {
 
     private lateinit var locator: GeoLocator
     private lateinit var database: Database
-    private lateinit var authorizationHelper: GoogleAuthorizationHelper
-    private lateinit var notifications: Notifications
+    private lateinit var authorization: GoogleAuthorizationHelper
+    private lateinit var notifications: NotificationsHelper
+    private lateinit var accountManager: AccountManager
     private lateinit var sentStatusReceiver: BroadcastReceiver
     private lateinit var deliveredStatusReceiver: BroadcastReceiver
     private val developerEmail by lazy { getString(R.string.developer_email) }
+    private val firebase by lazy { Firebase(requireContext()) }
+
 //    private val requestPermissionLauncher =
 //        registerForActivityResult(RequestPermission()) { result: Boolean ->
 //            onPermissionRequestResult(result)
@@ -166,22 +163,22 @@ class DebugFragment : BasePreferenceFragment() {
         )
         addCategory(screen, "Firebase",
             addPreference("Send message") {
-                requireContext().sendCloudMessage(FCM_REQUEST_DATA_SYNC)
+                firebase.send(FCM_REQUEST_DATA_SYNC)
             },
             addPreference("Subscribe") {
-                requireContext().subscribeToCloudMessaging()
+                firebase.subscribe()
             },
             addPreference("Unsubscribe") {
-                unsubscribeFromCloudMessaging()
+                firebase.unsubscribe()
             },
             addPreference("Get current token") {
-                requestFirebaseToken { token ->
+                firebase.requestToken { token ->
                     showInfoDialog("Firebase token", token)
                 }
             },
             addPreference("Get server info") {
-                requireContext().listFirebaseInfo {
-                    showInfoDialog("Info", it)
+                firebase.requestInfo { info ->
+                    showInfoDialog("Info", info)
                 }
             }
         )
@@ -194,15 +191,15 @@ class DebugFragment : BasePreferenceFragment() {
                 onPopulateHistory()
             },
             addPreference("Mark all as unread") {
-                database.commit { batch { events.markAllAsRead(false) } }
+                database.commit { batch { phoneEvents.markAllAsRead(false) } }
                 showSuccess()
             },
             addPreference("Mark all as read") {
-                database.commit { batch { events.markAllAsRead(true) } }
+                database.commit { batch { phoneEvents.markAllAsRead(true) } }
                 showSuccess()
             },
             addPreference("Clear calls log") {
-                database.commit { batch { events.clear() } }
+                database.commit { batch { phoneEvents.clear() } }
                 showSuccess()
             },
             addPreference("Destroy database") {
@@ -283,10 +280,9 @@ class DebugFragment : BasePreferenceFragment() {
                 attachments.addAll(it)
             }
 
-            val account = context.primaryAccount()!!
-            val transport = GoogleMail(context)
+            val account = accountManager.requirePrimaryGoogleAccount()
 
-            transport.login(account, GmailScopes.GMAIL_SEND)
+            val mailSession = GoogleMailSession(context, account, GMAIL_SEND)
             for (file in attachments) {
                 val message = MailMessage(
                     subject = "[SMailer] log: " + file.name,
@@ -295,7 +291,7 @@ class DebugFragment : BasePreferenceFragment() {
                     attachment = setOf(file),
                     recipients = developerEmail
                 )
-                transport.send(message)
+                mailSession.send(message)
             }
 
         }
@@ -303,7 +299,7 @@ class DebugFragment : BasePreferenceFragment() {
 
     private fun onSendDebugMail(preference: Preference) {
         runLongTask(preference) {
-            val account = requireContext().primaryAccount()!!
+            val account = accountManager.requirePrimaryGoogleAccount()
 
             val message = MailMessage(
                 from = account.name,
@@ -312,10 +308,7 @@ class DebugFragment : BasePreferenceFragment() {
                 recipients = developerEmail
             )
 
-            GoogleMail(requireContext()).run {
-                login(account, GmailScopes.GMAIL_SEND)
-                send(message)
-            }
+            GoogleMailSession(requireContext(), account, GMAIL_SEND).send(message)
         }
     }
 
@@ -334,9 +327,11 @@ class DebugFragment : BasePreferenceFragment() {
 
         database = Database(context)
         locator = GeoLocator(context, database)
-        authorizationHelper =
-            GoogleAuthorizationHelper(this, PREF_SENDER_ACCOUNT, MAIL_GOOGLE_COM, DRIVE_APPDATA)
-        notifications = Notifications(context)
+        authorization = GoogleAuthorizationHelper(
+            requireActivity(), PREF_SENDER_ACCOUNT, MAIL_GOOGLE_COM, DRIVE_APPDATA
+        )
+        notifications = NotificationsHelper(context)
+        accountManager = AccountManager(context)
         sentStatusReceiver = SentStatusReceiver()
         deliveredStatusReceiver = DeliveryStatusReceiver()
         registerReceiver(context, sentStatusReceiver, IntentFilter("SMS_SENT"))
@@ -416,7 +411,7 @@ class DebugFragment : BasePreferenceFragment() {
         }
 
         database.phoneBlacklist.replaceAll(setOf("+123456789", "+9876543*"))
-        database.textBlacklist.replaceAll(setOf("Bad text", escapeRegex("Expression")))
+        database.smsTextBlacklist.replaceAll(setOf("Bad text", escapeRegex("Expression")))
 
         showSuccess()
     }
@@ -427,7 +422,7 @@ class DebugFragment : BasePreferenceFragment() {
                 title = "Phone number",
                 inputType = InputType.TYPE_CLASS_PHONE,
                 positiveAction = {
-                    val contact = contactName(requireContext(), it)
+                    val contact = getContactName(requireContext(), it)
                     val text = if (contact != null) "$it: $contact" else "Contact not found"
                     showToast(text)
                 }
@@ -448,7 +443,7 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun onProcessServiceMail(preference: Preference) {
-        if (settings.isRemoteControlEnabled) {
+        if (settings.isRemoteControlEnabled()) {
             runLongTask(preference) {
                 RemoteControlProcessor(requireContext()).checkMailbox()
             }
@@ -458,12 +453,12 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun onRequestGooglePermission() {
-        authorizationHelper.startAccountPicker()
+        authorization.startAccountPicker()
     }
 
     private fun onProcessSingleEvent() {
         val start = System.currentTimeMillis()
-        val event = PhoneEvent(
+        val info = PhoneEventInfo(
             phone = "+1(234) 567-89-01",
             isIncoming = true,
             startTime = start,
@@ -472,18 +467,17 @@ class DebugFragment : BasePreferenceFragment() {
             text = "debug SMS message text",
             location = null,
             details = null,
-            state = STATE_PENDING,
             acceptor = deviceName(),
             processStatus = STATUS_ACCEPTED,
             isRead = false
         )
-        requireContext().startPhoneEventProcessing(event)
+        requireContext().startPhoneEventProcessing(info)
         showSuccess()
     }
 
     private fun onStartProcessPendingEvents(preference: Preference) {
         runLongTask(preference) {
-            CallProcessor(requireContext()).processPending()
+            PhoneEventProcessor(requireContext()).processPending()
         }
     }
 
@@ -500,8 +494,8 @@ class DebugFragment : BasePreferenceFragment() {
 
     private fun onAddHistoryItem() {
         database.commit {
-            events.add(
-                PhoneEvent(
+            phoneEvents.add(
+                PhoneEventInfo(
                     "+79052345670",
                     true,
                     System.currentTimeMillis(),
@@ -525,8 +519,8 @@ class DebugFragment : BasePreferenceFragment() {
         val recipient = deviceName()
         database.commit {
             batch {
-                events.add(
-                    PhoneEvent(
+                phoneEvents.add(
+                    PhoneEventInfo(
                         "+79052345671",
                         true,
                         time,
@@ -541,8 +535,8 @@ class DebugFragment : BasePreferenceFragment() {
                         isRead = false
                     )
                 )
-                events.add(
-                    PhoneEvent(
+                phoneEvents.add(
+                    PhoneEventInfo(
                         "+79052345672",
                         false,
                         1000.let { time += it; time },
@@ -557,8 +551,8 @@ class DebugFragment : BasePreferenceFragment() {
                         isRead = false
                     )
                 )
-                events.add(
-                    PhoneEvent(
+                phoneEvents.add(
+                    PhoneEventInfo(
                         "+79052345673",
                         true,
                         1000.let { time += it; time },
@@ -573,8 +567,8 @@ class DebugFragment : BasePreferenceFragment() {
                         isRead = false
                     )
                 )
-                events.add(
-                    PhoneEvent(
+                phoneEvents.add(
+                    PhoneEventInfo(
                         "+79052345674",
                         false,
                         1000.let { time += it; time },
@@ -589,8 +583,8 @@ class DebugFragment : BasePreferenceFragment() {
                         isRead = false
                     )
                 )
-                events.add(
-                    PhoneEvent(
+                phoneEvents.add(
+                    PhoneEventInfo(
                         "+79052345675",
                         true,
                         1000.let { time += it; time },
@@ -605,8 +599,8 @@ class DebugFragment : BasePreferenceFragment() {
                         isRead = false
                     )
                 )
-                events.add(
-                    PhoneEvent(
+                phoneEvents.add(
+                    PhoneEventInfo(
                         "+79052345671",
                         true,
                         1000.let { time += it; time },
@@ -621,8 +615,8 @@ class DebugFragment : BasePreferenceFragment() {
                         isRead = false
                     )
                 )
-                events.add(
-                    PhoneEvent(
+                phoneEvents.add(
+                    PhoneEventInfo(
                         "+79052345672",
                         false,
                         1000.let { time += it; time },
@@ -637,8 +631,8 @@ class DebugFragment : BasePreferenceFragment() {
                         isRead = false
                     )
                 )
-                events.add(
-                    PhoneEvent(
+                phoneEvents.add(
+                    PhoneEventInfo(
                         "+79052345673",
                         true,
                         1000.let { time += it; time },
@@ -653,8 +647,8 @@ class DebugFragment : BasePreferenceFragment() {
                         isRead = false
                     )
                 )
-                events.add(
-                    PhoneEvent(
+                phoneEvents.add(
+                    PhoneEventInfo(
                         "+79052345674",
                         false,
                         1000.let { time += it; time },
@@ -669,8 +663,8 @@ class DebugFragment : BasePreferenceFragment() {
                         isRead = false
                     )
                 )
-                events.add(
-                    PhoneEvent(
+                phoneEvents.add(
+                    PhoneEventInfo(
                         "+79052345675",
                         true,
                         1000.let { time += it; time },
@@ -776,7 +770,7 @@ class DebugFragment : BasePreferenceFragment() {
     private fun onShowAccounts() {
         val s = "Selected: ${senderAccount().name}\n\n" +
                 "Service: ${serviceAccount().name}\n\n" +
-                "Primary: ${requireContext().primaryAccount()?.name}"
+                "Primary: ${accountManager.getPrimaryGoogleAccount()?.name}"
         showInfoDialog("Accounts", s)
     }
 
@@ -789,11 +783,11 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun senderAccount(): Account {
-        return requireContext().getAccount(settings.senderAccount)!!
+        return accountManager.requireGoogleAccount(settings.getSenderAccountName())
     }
 
     private fun serviceAccount(): Account {
-        return requireContext().getAccount(settings.remoteControlAccount)!!
+        return accountManager.requireGoogleAccount(settings.getRemoteControlAccountName())
     }
 
     private fun runLongTask(preference: Preference, onPerform: () -> Unit) {

@@ -1,9 +1,9 @@
 package com.bopr.android.smailer.ui
 
 
-import com.bopr.android.smailer.PhoneEvent
+import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.StringDataset
+import com.bopr.android.smailer.data.StringDataset
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -30,10 +30,10 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
 
     private fun testClear() {
         database.commit {
-            events.clear()
-            events.add(PhoneEvent(phone = "1", startTime = currentTimeMillis(), acceptor = "device-1"))
-            events.add(PhoneEvent(phone = "2", startTime = currentTimeMillis(), acceptor = "device-2"))
-            events.add(PhoneEvent(phone = "3", startTime = currentTimeMillis(), acceptor = "device-3"))
+            phoneEvents.clear()
+            phoneEvents.add(PhoneEventInfo(phone = "1", startTime = currentTimeMillis(), acceptor = "device-1"))
+            phoneEvents.add(PhoneEventInfo(phone = "2", startTime = currentTimeMillis(), acceptor = "device-2"))
+            phoneEvents.add(PhoneEventInfo(phone = "3", startTime = currentTimeMillis(), acceptor = "device-3"))
         }
 
         assertRecyclerItemDisplayed("1")
@@ -53,10 +53,10 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
 
     private fun testClearCancel() {
         database.commit {
-            events.clear()
-            events.add(PhoneEvent(phone = "1", startTime = currentTimeMillis(), acceptor = "device-1"))
-            events.add(PhoneEvent(phone = "2", startTime = currentTimeMillis(), acceptor = "device-2"))
-            events.add(PhoneEvent(phone = "3", startTime = currentTimeMillis(), acceptor = "device-3"))
+            phoneEvents.clear()
+            phoneEvents.add(PhoneEventInfo(phone = "1", startTime = currentTimeMillis(), acceptor = "device-1"))
+            phoneEvents.add(PhoneEventInfo(phone = "2", startTime = currentTimeMillis(), acceptor = "device-2"))
+            phoneEvents.add(PhoneEventInfo(phone = "3", startTime = currentTimeMillis(), acceptor = "device-3"))
         }
 
         assertRecyclerItemDisplayed("1")
@@ -76,10 +76,10 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
 
     private fun testRemoveItem() {
         database.commit {
-            events.clear()
-            events.add(PhoneEvent(phone = "1", startTime = currentTimeMillis(), acceptor = "device-1"))
-            events.add(PhoneEvent(phone = "2", startTime = currentTimeMillis(), acceptor = "device-2"))
-            events.add(PhoneEvent(phone = "3", startTime = currentTimeMillis(), acceptor = "device-3"))
+            phoneEvents.clear()
+            phoneEvents.add(PhoneEventInfo(phone = "1", startTime = currentTimeMillis(), acceptor = "device-1"))
+            phoneEvents.add(PhoneEventInfo(phone = "2", startTime = currentTimeMillis(), acceptor = "device-2"))
+            phoneEvents.add(PhoneEventInfo(phone = "3", startTime = currentTimeMillis(), acceptor = "device-3"))
         }
 
         swipeRecyclerItem("2")
@@ -91,30 +91,36 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
 
     private fun testMarkAllAsRead() {
         database.commit {
-            events.clear()
-            events.add(PhoneEvent(phone = "1", startTime = currentTimeMillis(), acceptor = "device-1",
-                    isRead = false))
-            events.add(PhoneEvent(phone = "2", startTime = currentTimeMillis(), acceptor = "device-2",
-                    isRead = false))
-            events.add(PhoneEvent(phone = "3", startTime = currentTimeMillis(), acceptor = "device-3",
-                    isRead = false))
+            phoneEvents.clear()
+            phoneEvents.add(
+                PhoneEventInfo(phone = "1", startTime = currentTimeMillis(), acceptor = "device-1",
+                    isRead = false)
+            )
+            phoneEvents.add(
+                PhoneEventInfo(phone = "2", startTime = currentTimeMillis(), acceptor = "device-2",
+                    isRead = false)
+            )
+            phoneEvents.add(
+                PhoneEventInfo(phone = "3", startTime = currentTimeMillis(), acceptor = "device-3",
+                    isRead = false)
+            )
         }
 
-        assertEquals(3, database.events.unreadCount)
+        assertEquals(3, database.phoneEvents.unreadCount)
 
         clickOptionsMenuItem(R.string.mark_all_as_read)
 
-        assertEquals(0, database.events.unreadCount)
+        assertEquals(0, database.phoneEvents.unreadCount)
     }
 
     private fun testAddToList(dataset: StringDataset, menuTitle: Int, dialogTitle: Int, isCheckingText: Boolean,
                               isCancel: Boolean) {
         database.commit {
             dataset.clear()
-            events.clear()
-            events.add(PhoneEvent(phone = "1", startTime = currentTimeMillis(), acceptor = "device-1"))
-            events.add(PhoneEvent(phone = "phone", startTime = currentTimeMillis(), acceptor = "device-2", text = "text"))
-            events.add(PhoneEvent(phone = "3", startTime = currentTimeMillis(), acceptor = "device-3"))
+            phoneEvents.clear()
+            phoneEvents.add(PhoneEventInfo(phone = "1", startTime = currentTimeMillis(), acceptor = "device-1"))
+            phoneEvents.add(PhoneEventInfo(phone = "phone", startTime = currentTimeMillis(), acceptor = "device-2", text = "text"))
+            phoneEvents.add(PhoneEventInfo(phone = "3", startTime = currentTimeMillis(), acceptor = "device-3"))
         }
 
         assertTrue(dataset.isEmpty())
@@ -192,7 +198,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
 
     private fun testAddTextToBlacklist() {
         testAddToList(
-                database.textBlacklist,
+                database.smsTextBlacklist,
                 R.string.add_text_to_blacklist_action,
                 R.string.add_to_blacklist,
                 isCheckingText = true,
@@ -202,7 +208,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
 
     private fun testAddTextToBlacklistCancel() {
         testAddToList(
-                database.textBlacklist,
+                database.smsTextBlacklist,
                 R.string.add_text_to_blacklist_action,
                 R.string.add_to_blacklist,
                 isCheckingText = true,
@@ -212,7 +218,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
 
     private fun testAddTextToWhitelist() {
         testAddToList(
-                database.textWhitelist,
+                database.smsTextWhitelist,
                 R.string.add_text_to_whitelist_action,
                 R.string.add_to_whitelist,
                 isCheckingText = true,
@@ -222,7 +228,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
 
     private fun testAddTextToWhitelistCancel() {
         testAddToList(
-                database.textWhitelist,
+                database.smsTextWhitelist,
                 R.string.add_text_to_whitelist_action,
                 R.string.add_to_whitelist,
                 isCheckingText = true,

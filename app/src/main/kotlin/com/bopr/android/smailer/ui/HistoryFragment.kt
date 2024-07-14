@@ -18,15 +18,15 @@ import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.view.MenuProvider
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.bopr.android.smailer.CallProcessor
-import com.bopr.android.smailer.Database
-import com.bopr.android.smailer.Database.Companion.registerDatabaseListener
-import com.bopr.android.smailer.Database.Companion.unregisterDatabaseListener
-import com.bopr.android.smailer.PhoneEvent
-import com.bopr.android.smailer.PhoneEvent.Companion.STATE_IGNORED
-import com.bopr.android.smailer.PhoneEvent.Companion.STATE_PENDING
+import com.bopr.android.smailer.provider.telephony.PhoneEventProcessor
+import com.bopr.android.smailer.data.Database
+import com.bopr.android.smailer.data.Database.Companion.registerDatabaseListener
+import com.bopr.android.smailer.data.Database.Companion.unregisterDatabaseListener
+import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
+import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATE_IGNORED
+import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATE_PENDING
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.StringDataset
+import com.bopr.android.smailer.data.StringDataset
 import com.bopr.android.smailer.ui.HistoryFragment.Holder
 import com.bopr.android.smailer.util.addOnItemSwipedListener
 import com.bopr.android.smailer.util.eventDirectionImage
@@ -44,7 +44,7 @@ import com.google.android.material.snackbar.Snackbar
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
+class HistoryFragment : RecyclerFragment<PhoneEventInfo, Holder>() {
 
     private lateinit var database: Database
     private lateinit var databaseListener: BroadcastReceiver
@@ -93,7 +93,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
         requireActivity().addMenuProvider(FragmentMenuProvider())
     }
 
-    override fun onCreateItemContextMenu(menu: ContextMenu, item: PhoneEvent) {
+    override fun onCreateItemContextMenu(menu: ContextMenu, item: PhoneEventInfo) {
         requireActivity().menuInflater.inflate(R.menu.menu_context_history, menu)
 
         if (item.state != STATE_PENDING) {
@@ -124,12 +124,12 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
             }
 
             R.id.action_add_text_to_blacklist -> {
-                addSelectionTextToFilterList(database.textBlacklist, R.string.add_to_blacklist)
+                addSelectionTextToFilterList(database.smsTextBlacklist, R.string.add_to_blacklist)
                 true
             }
 
             R.id.action_add_text_to_whitelist -> {
-                addSelectionTextToFilterList(database.textWhitelist, R.string.add_to_whitelist)
+                addSelectionTextToFilterList(database.smsTextWhitelist, R.string.add_to_whitelist)
                 true
             }
 
@@ -143,12 +143,12 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
         }
     }
 
-    override fun onItemClick(item: PhoneEvent) {
+    override fun onItemClick(item: PhoneEventInfo) {
         HistoryDetailsDialogFragment(item).show(this)
     }
 
-    override fun loadItems(): Collection<PhoneEvent> {
-        return database.events
+    override fun loadItems(): Collection<PhoneEventInfo> {
+        return database.phoneEvents
     }
 
     override fun createViewHolder(parent: ViewGroup): Holder {
@@ -156,7 +156,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
         return Holder(view)
     }
 
-    override fun bindViewHolder(item: PhoneEvent, holder: Holder) {
+    override fun bindViewHolder(item: PhoneEventInfo, holder: Holder) {
         holder.timeView.text = DateFormat.format(getString(R.string._time_pattern), item.startTime)
         holder.textView.text = formatSummary(item)
         holder.phoneView.text = item.phone
@@ -176,31 +176,31 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
 
         if (!item.isRead) {
             item.isRead = true
-            database.events.add(item) /* do not fire broadcast here */
+            database.phoneEvents.add(item) /* do not fire broadcast here */
         }
     }
 
     private fun onClearData() {
         ConfirmDialog(getString(R.string.ask_clear_history)) {
-            database.commit { batch { events.clear() } }
+            database.commit { batch { phoneEvents.clear() } }
         }.show(this)
     }
 
     private fun onMarkAllAsRead() {
-        database.commit { batch { events.markAllAsRead(true) } }
+        database.commit { batch { phoneEvents.markAllAsRead(true) } }
         showToast(R.string.operation_complete)
     }
 
     private fun onMarkAsIgnored() {
         getSelectedItem()?.let {
             it.state = STATE_IGNORED
-            database.commit { events.add(it) }
+            database.commit { phoneEvents.add(it) }
         }
     }
 
     private fun onProcessAllPending() {
         runInBackground({
-            CallProcessor(requireContext()).processPending()
+            PhoneEventProcessor(requireContext()).processPending()
         }, { _, _ ->
             showToast(R.string.operation_complete)
         })
@@ -209,7 +209,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
     private fun onRemoveSelected() {
         val selectedEvents = listAdapter.getItemsAt(selectedItemPosition)
 
-        database.commit { batch { events.removeAll(selectedEvents) } }
+        database.commit { batch { phoneEvents.removeAll(selectedEvents) } }
 
         Snackbar.make(
             recycler,
@@ -218,7 +218,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
         )
             .setActionTextColor(getColor(requireContext(), R.color.colorAccentText))
             .setAction(R.string.undo) {
-                database.commit { batch { events.addAll(selectedEvents) } }
+                database.commit { batch { phoneEvents.addAll(selectedEvents) } }
             }
             .show()
     }
@@ -251,7 +251,7 @@ class HistoryFragment : RecyclerFragment<PhoneEvent, Holder>() {
         }
     }
 
-    private fun formatSummary(event: PhoneEvent): CharSequence? {
+    private fun formatSummary(event: PhoneEventInfo): CharSequence? {
         return when {
             event.isSms ->
                 event.text

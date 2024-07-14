@@ -3,7 +3,10 @@ package com.bopr.android.smailer
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import androidx.test.rule.GrantPermissionRule
-import com.bopr.android.smailer.Database.Companion.databaseName
+import com.bopr.android.smailer.data.Database
+import com.bopr.android.smailer.data.Database.Companion.databaseName
+import com.bopr.android.smailer.util.GeoCoordinates
+import com.bopr.android.smailer.util.GeoLocator
 import org.junit.After
 import org.junit.Assert.assertNotNull
 import org.junit.Before

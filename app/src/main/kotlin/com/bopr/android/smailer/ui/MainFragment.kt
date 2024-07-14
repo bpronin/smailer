@@ -3,18 +3,18 @@ package com.bopr.android.smailer.ui
 import android.content.BroadcastReceiver
 import android.content.SharedPreferences
 import android.os.Bundle
-import com.bopr.android.smailer.Database
-import com.bopr.android.smailer.Database.Companion.TABLE_EVENTS
-import com.bopr.android.smailer.Database.Companion.registerDatabaseListener
-import com.bopr.android.smailer.Database.Companion.unregisterDatabaseListener
+import com.bopr.android.smailer.AccountManager
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
+import com.bopr.android.smailer.data.Database
+import com.bopr.android.smailer.data.Database.Companion.TABLE_PHONE_EVENTS
+import com.bopr.android.smailer.data.Database.Companion.registerDatabaseListener
+import com.bopr.android.smailer.data.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.util.getQuantityString
-import com.bopr.android.smailer.util.isAccountExists
 import com.bopr.android.smailer.util.isValidEmailAddressList
-import com.google.api.services.drive.DriveScopes
+import com.google.api.services.drive.DriveScopes.DRIVE_APPDATA
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 
 /**
@@ -26,7 +26,8 @@ class MainFragment : BasePreferenceFragment() {
 
     private lateinit var database: Database
     private lateinit var databaseListener: BroadcastReceiver
-    private lateinit var authorizationHelper: GoogleAuthorizationHelper
+    private lateinit var authorization: GoogleAuthorizationHelper
+    private lateinit var accountManager: AccountManager
 
 //    private val requestPermissionLauncher = registerForActivityResult(RequestPermission()) { _ ->
 //        updateAccountPreferenceView()
@@ -36,29 +37,29 @@ class MainFragment : BasePreferenceFragment() {
         addPreferencesFromResource(R.xml.pref_main)
 
         requirePreference(PREF_SENDER_ACCOUNT).setOnPreferenceClickListener {
-            authorizationHelper.startAccountPicker()
+            authorization.startAccountPicker()
             true
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        authorizationHelper = GoogleAuthorizationHelper(
-            this, PREF_SENDER_ACCOUNT, GMAIL_SEND,
-            DriveScopes.DRIVE_APPDATA
+
+        authorization = GoogleAuthorizationHelper(
+            requireActivity(), PREF_SENDER_ACCOUNT, GMAIL_SEND, DRIVE_APPDATA
         )
 
-        val context = requireContext()
-
-        database = Database(context)
-        databaseListener = context.registerDatabaseListener { tables ->
-            if (tables.contains(TABLE_EVENTS)) updateHistoryPreferenceView()
+        accountManager = AccountManager(requireContext())
+        database = Database(requireContext())
+        databaseListener = requireContext().registerDatabaseListener { tables ->
+            if (tables.contains(TABLE_PHONE_EVENTS)) updateHistoryPreferenceView()
         }
     }
 
     override fun onDestroy() {
         requireContext().unregisterDatabaseListener(databaseListener)
         database.close()
+
         super.onDestroy()
     }
 
@@ -73,6 +74,7 @@ class MainFragment : BasePreferenceFragment() {
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         super.onSharedPreferenceChanged(sharedPreferences, key)
+
         when (key) {
             PREF_SENDER_ACCOUNT -> updateAccountPreferenceView()
 
@@ -84,11 +86,11 @@ class MainFragment : BasePreferenceFragment() {
 
     private fun updateAccountPreferenceView() {
         val preference = requirePreference(PREF_SENDER_ACCOUNT)
-        val account = settings.senderAccount
+        val account = settings.getSenderAccountName()
 
         if (account.isNullOrEmpty()) {
             updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)
-        } else if (!requireContext().isAccountExists(account)) {
+        } else if (!accountManager.isGoogleAccountExists(account)) {
             updateSummary(preference, account, SUMMARY_STYLE_UNDERWIVED)
         } else {
             updateSummary(preference, account, SUMMARY_STYLE_DEFAULT)
@@ -97,7 +99,7 @@ class MainFragment : BasePreferenceFragment() {
 
     private fun updateRecipientsPreferenceView() {
         val preference = requirePreference(PREF_RECIPIENTS_ADDRESS)
-        val addresses = settings.emailRecipients
+        val addresses = settings.getEmailRecipients()
 
         if (addresses.isEmpty()) {
             updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)
@@ -114,7 +116,7 @@ class MainFragment : BasePreferenceFragment() {
             preference,
             getQuantityString(
                 R.plurals.new_history_items, R.string.new_history_items_zero,
-                database.events.unreadCount
+                database.phoneEvents.unreadCount
             ), SUMMARY_STYLE_DEFAULT
         )
     }

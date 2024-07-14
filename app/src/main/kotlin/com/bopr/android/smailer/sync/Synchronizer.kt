@@ -2,14 +2,14 @@ package com.bopr.android.smailer.sync
 
 import android.accounts.Account
 import android.content.Context
-import com.bopr.android.smailer.Database
-import com.bopr.android.smailer.GeoCoordinates.Companion.coordinatesOf
-import com.bopr.android.smailer.PhoneEvent
+import com.bopr.android.smailer.data.Database
+import com.bopr.android.smailer.util.GeoCoordinates.Companion.coordinatesOf
+import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
 import org.slf4j.LoggerFactory
 import java.io.IOException
 
 /**
- * Performs synchronization with google drive.
+ * Performs synchronization application data with google drive.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
@@ -95,9 +95,9 @@ internal class Synchronizer(context: Context,
             SyncData(
                     phoneBlacklist = phoneBlacklist,
                     phoneWhitelist = phoneWhitelist,
-                    textBlacklist = textBlacklist,
-                    textWhitelist = textWhitelist,
-                    events = events.map(::eventToData)
+                    textBlacklist = smsTextBlacklist,
+                    textWhitelist = smsTextWhitelist,
+                    events = phoneEvents.map(::eventToData)
             )
         }
     }
@@ -105,16 +105,16 @@ internal class Synchronizer(context: Context,
     private fun putLocalData(data: SyncData) {
         database.commit(false) {
             batch {
-                events.replaceAll(data.events.map(::dataToEvent))
+                phoneEvents.replaceAll(data.events.map(::dataToEvent))
                 phoneBlacklist.replaceAll(data.phoneBlacklist)
                 phoneWhitelist.replaceAll(data.phoneWhitelist)
-                textBlacklist.replaceAll(data.textBlacklist)
-                textWhitelist.replaceAll(data.textWhitelist)
+                smsTextBlacklist.replaceAll(data.textBlacklist)
+                smsTextWhitelist.replaceAll(data.textWhitelist)
             }
         }
     }
 
-    private fun eventToData(event: PhoneEvent): SyncData.Event {
+    private fun eventToData(event: PhoneEventInfo): SyncData.Event {
         return SyncData.Event(
                 incoming = event.isIncoming,
                 missed = event.isMissed,
@@ -133,8 +133,8 @@ internal class Synchronizer(context: Context,
         )
     }
 
-    private fun dataToEvent(data: SyncData.Event): PhoneEvent {
-        return PhoneEvent(
+    private fun dataToEvent(data: SyncData.Event): PhoneEventInfo {
+        return PhoneEventInfo(
                 phone = data.phone,
                 isIncoming = data.incoming,
                 startTime = data.startTime,

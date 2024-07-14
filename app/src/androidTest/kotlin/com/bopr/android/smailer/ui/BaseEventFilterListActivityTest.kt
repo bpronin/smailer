@@ -3,7 +3,7 @@ package com.bopr.android.smailer.ui
 
 import android.app.Activity
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.StringDataset
+import com.bopr.android.smailer.data.StringDataset
 import org.junit.Test
 import kotlin.reflect.KClass
 
@@ -14,7 +14,7 @@ abstract class BaseEventFilterListActivityTest(activityClass: KClass<out Activit
     protected lateinit var dataset: StringDataset
 
     override fun beforeActivityCreate() {
-        dataset = database.eventFilterList.getValue(listName)
+        dataset = database.phoneEventsFilters.getValue(listName)
     }
 
     @Test

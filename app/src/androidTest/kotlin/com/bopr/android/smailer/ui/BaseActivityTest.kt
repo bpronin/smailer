@@ -6,8 +6,8 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.filters.LargeTest
 import androidx.test.rule.GrantPermissionRule
 import com.bopr.android.smailer.BaseTest
-import com.bopr.android.smailer.Database
-import com.bopr.android.smailer.Database.Companion.databaseName
+import com.bopr.android.smailer.data.Database
+import com.bopr.android.smailer.data.Database.Companion.databaseName
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.sharedPreferencesName
 import org.junit.After
