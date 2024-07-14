@@ -1,9 +1,9 @@
 package com.bopr.android.smailer.control
 
-import com.bopr.android.smailer.transport.Firebase
-import com.bopr.android.smailer.transport.Firebase.Companion.FCM_ACTION
-import com.bopr.android.smailer.transport.Firebase.Companion.FCM_REQUEST_DATA_SYNC
-import com.bopr.android.smailer.transport.Firebase.Companion.FCM_SENDER
+import com.bopr.android.smailer.external.Firebase
+import com.bopr.android.smailer.external.Firebase.Companion.FCM_ACTION
+import com.bopr.android.smailer.external.Firebase.Companion.FCM_REQUEST_DATA_SYNC
+import com.bopr.android.smailer.external.Firebase.Companion.FCM_SENDER
 import com.bopr.android.smailer.sync.SyncWorker.Companion.syncAppDataWithGoogleCloud
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_DOWNLOAD
 import com.google.firebase.messaging.FirebaseMessagingService

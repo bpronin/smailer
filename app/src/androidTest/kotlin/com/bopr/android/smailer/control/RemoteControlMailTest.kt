@@ -19,7 +19,7 @@ import com.bopr.android.smailer.Settings.Companion.sharedPreferencesName
 import com.bopr.android.smailer.consumer.mail.MailMessage
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.databaseName
-import com.bopr.android.smailer.transport.GoogleMail
+import com.bopr.android.smailer.external.GoogleMail
 import com.bopr.android.smailer.util.deviceName
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.eq

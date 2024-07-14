@@ -7,7 +7,7 @@ import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.consumer.EventMessengerTransport
 import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
-import com.bopr.android.smailer.transport.GoogleMail
+import com.bopr.android.smailer.external.GoogleMail
 import com.bopr.android.smailer.util.Mockable
 import com.bopr.android.smailer.util.isValidEmailAddressList
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND

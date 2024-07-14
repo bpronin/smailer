@@ -1,4 +1,4 @@
-package com.bopr.android.smailer.transport
+package com.bopr.android.smailer.external
 
 import com.bopr.android.smailer.consumer.mail.MailMessage
 import org.slf4j.LoggerFactory
@@ -126,7 +126,7 @@ object JavaMail {
     private class JSSEProvider : Provider("HarmonyJSSE", 1.0, "Harmony JSSE Provider") {
 
         init {
-            AccessController.doPrivileged<Void>(PrivilegedAction<Void?> {
+            AccessController.doPrivileged<Void>(PrivilegedAction {
                 put("SSLContext.TLS", "org.apache.harmony.xnet.provider.jsse.SSLContextImpl")
                 put("Alg.Alias.SSLContext.TLSv1", "TLS")
                 put(

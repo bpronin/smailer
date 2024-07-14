@@ -3,7 +3,7 @@ package com.bopr.android.smailer.consumer.telegram
 import android.content.Context
 import com.bopr.android.smailer.consumer.EventMessengerTransport
 import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
-import com.bopr.android.smailer.transport.Telegram
+import com.bopr.android.smailer.external.Telegram
 
 /**
  * Telegram transport.

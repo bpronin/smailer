@@ -1,15 +1,15 @@
-package com.bopr.android.smailer.transport
+package com.bopr.android.smailer.external
 
 import android.content.Context
 import com.android.volley.AuthFailureError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.transport.TelegramException.Code.TELEGRAM_BAD_RESPONSE
-import com.bopr.android.smailer.transport.TelegramException.Code.TELEGRAM_INVALID_TOKEN
-import com.bopr.android.smailer.transport.TelegramException.Code.TELEGRAM_NO_CHAT
-import com.bopr.android.smailer.transport.TelegramException.Code.TELEGRAM_NO_TOKEN
-import com.bopr.android.smailer.transport.TelegramException.Code.TELEGRAM_REQUEST_FAILED
+import com.bopr.android.smailer.external.TelegramException.Code.TELEGRAM_BAD_RESPONSE
+import com.bopr.android.smailer.external.TelegramException.Code.TELEGRAM_INVALID_TOKEN
+import com.bopr.android.smailer.external.TelegramException.Code.TELEGRAM_NO_CHAT
+import com.bopr.android.smailer.external.TelegramException.Code.TELEGRAM_NO_TOKEN
+import com.bopr.android.smailer.external.TelegramException.Code.TELEGRAM_REQUEST_FAILED
 import com.bopr.android.smailer.util.Mockable
 import com.google.common.base.Strings.isNullOrEmpty
 import org.json.JSONObject
@@ -23,15 +23,14 @@ import org.slf4j.LoggerFactory
 @Mockable
 internal class Telegram(context: Context) {
 
-    private val log = LoggerFactory.getLogger("TelegramBot")
     private val settings = Settings(context)
     private val baseUrl = "https://api.telegram.org/bot"
     private val requestQueue = Volley.newRequestQueue(context)
 
     fun sendMessage(
         message: String,
-        onSuccess: () -> Unit,
-        onError: (error: Exception) -> Unit
+        onSuccess: () -> Unit = {},
+        onError: (error: Exception) -> Unit = {}
     ) {
         requestUpdates(
             onSuccess = { chatId ->
@@ -125,6 +124,11 @@ internal class Telegram(context: Context) {
             },
             onError = onError
         )
+    }
+
+    companion object {
+
+        private val log = LoggerFactory.getLogger("Telegram")
     }
 
 }

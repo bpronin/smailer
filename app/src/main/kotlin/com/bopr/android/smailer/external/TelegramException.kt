@@ -1,8 +1,8 @@
-package com.bopr.android.smailer.transport
+package com.bopr.android.smailer.external
 
 
 class TelegramException(val code: Code, cause: Throwable? = null) :
-    Exception("Messenger error.", cause) {
+    Exception("Messenger error [${code.name}]", cause) {
 
     enum class Code {
         TELEGRAM_REQUEST_FAILED,
@@ -11,8 +11,5 @@ class TelegramException(val code: Code, cause: Throwable? = null) :
         TELEGRAM_NO_TOKEN,
         TELEGRAM_INVALID_TOKEN
     }
-
-    override fun toString(): String {
-        return super.toString()+" [${code.name}]"
-    }
+    
 }

@@ -5,7 +5,7 @@ import android.content.Context
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.util.GeoCoordinates.Companion.coordinatesOf
 import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
-import com.bopr.android.smailer.transport.GoogleDrive
+import com.bopr.android.smailer.external.GoogleDrive
 import org.slf4j.LoggerFactory
 import java.io.IOException
 

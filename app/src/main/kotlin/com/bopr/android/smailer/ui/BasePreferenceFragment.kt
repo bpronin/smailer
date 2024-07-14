@@ -32,7 +32,7 @@ import kotlin.annotation.AnnotationRetention.SOURCE
 abstract class BasePreferenceFragment : PreferenceFragmentCompat(),
     OnSharedPreferenceChangeListener {
 
-//    protected val settings by lazyOf(Settings(requireContext()))
+    //    protected val settings by lazyOf(Settings(requireContext()))
     protected lateinit var settings: Settings
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -123,16 +123,15 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(),
         value: CharSequence?,
         @SummaryStyle style: Int
     ) {
-        preference.summary = null  /* clean to refresh spannable style */
-        when (style) {
-            SUMMARY_STYLE_DEFAULT ->
-                preference.summary = value
+        preference.apply {
+            summary = null  /* cleanup to refresh spannable style */
+            when (style) {
+                SUMMARY_STYLE_DEFAULT -> summary = value
 
-            SUMMARY_STYLE_UNDERWIVED ->
-                preference.summary = requireContext().underwivedText(value)
+                SUMMARY_STYLE_UNDERWIVED -> summary = requireContext().underwivedText(value)
 
-            SUMMARY_STYLE_ACCENTED ->
-                preference.summary = requireContext().accentedText(value)
+                SUMMARY_STYLE_ACCENTED -> summary = requireContext().accentedText(value)
+            }
         }
     }
 

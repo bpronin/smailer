@@ -12,8 +12,8 @@ import androidx.work.WorkerParameters
 import com.bopr.android.smailer.AccountManager
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.transport.Firebase
-import com.bopr.android.smailer.transport.Firebase.Companion.FCM_REQUEST_DATA_SYNC
+import com.bopr.android.smailer.external.Firebase
+import com.bopr.android.smailer.external.Firebase.Companion.FCM_REQUEST_DATA_SYNC
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_NORMAL
 import org.slf4j.LoggerFactory
 

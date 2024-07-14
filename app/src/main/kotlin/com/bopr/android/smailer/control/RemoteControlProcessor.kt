@@ -24,7 +24,7 @@ import com.bopr.android.smailer.control.RemoteControlTask.Companion.REMOVE_PHONE
 import com.bopr.android.smailer.control.RemoteControlTask.Companion.REMOVE_TEXT_FROM_BLACKLIST
 import com.bopr.android.smailer.control.RemoteControlTask.Companion.REMOVE_TEXT_FROM_WHITELIST
 import com.bopr.android.smailer.control.RemoteControlTask.Companion.SEND_SMS_TO_CALLER
-import com.bopr.android.smailer.transport.GoogleMail
+import com.bopr.android.smailer.external.GoogleMail
 import com.bopr.android.smailer.consumer.mail.MailMessage
 import com.bopr.android.smailer.provider.telephony.SmsTransport
 import com.bopr.android.smailer.util.checkPermission

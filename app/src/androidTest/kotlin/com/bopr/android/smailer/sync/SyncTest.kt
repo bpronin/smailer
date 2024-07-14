@@ -8,7 +8,7 @@ import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.databaseName
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_UPLOAD
-import com.bopr.android.smailer.transport.GoogleDrive
+import com.bopr.android.smailer.external.GoogleDrive
 import com.nhaarman.mockitokotlin2.*
 import org.junit.After
 import org.junit.Assert.*

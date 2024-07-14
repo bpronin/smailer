@@ -12,8 +12,8 @@ import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.TABLE_PHONE_EVENTS
 import com.bopr.android.smailer.data.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.data.Database.Companion.unregisterDatabaseListener
+import com.bopr.android.smailer.util.commaSplit
 import com.bopr.android.smailer.util.getQuantityString
-import com.bopr.android.smailer.util.isValidEmailAddressList
 import com.google.api.services.drive.DriveScopes.DRIVE_APPDATA
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 
@@ -99,14 +99,18 @@ class MainFragment : BasePreferenceFragment() {
 
     private fun updateRecipientsPreferenceView() {
         val preference = requirePreference(PREF_RECIPIENTS_ADDRESS)
-        val addresses = settings.getEmailRecipients()
+        val addresses = commaSplit(settings.getEmailRecipients())
 
-        if (addresses.isBlank()) {
+        if (addresses.isEmpty()) {
             updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)
+        } else if (addresses.size == 1) {
+            updateSummary(preference, addresses.first(), SUMMARY_STYLE_DEFAULT)
         } else {
-            val style =
-                if (isValidEmailAddressList(addresses)) SUMMARY_STYLE_DEFAULT else SUMMARY_STYLE_UNDERWIVED
-            updateSummary(preference, addresses, style)
+            updateSummary(
+                preference,
+                getString(R.string.addresses, addresses.size),
+                SUMMARY_STYLE_DEFAULT
+            )
         }
     }
 

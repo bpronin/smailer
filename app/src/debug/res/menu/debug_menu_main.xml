@@ -4,7 +4,8 @@
 
     <item
             android:id="@+id/action_debug"
-            app:showAsAction="never"
+            android:icon="@drawable/ic_bug"
+            app:showAsAction="always"
             android:title="@string/action_debug" />
 
 </menu>

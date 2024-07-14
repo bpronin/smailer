@@ -1,7 +1,7 @@
 package com.bopr.android.smailer
 
 import android.content.Context
-import com.bopr.android.smailer.transport.Firebase.Companion.subscribeToFirebaseMessaging
+import com.bopr.android.smailer.external.Firebase.Companion.subscribeToFirebaseMessaging
 import com.bopr.android.smailer.provider.telephony.ContentObserverService.Companion.startContentObserver
 import com.bopr.android.smailer.provider.telephony.PendingEventsProcessorWorker.Companion.startPendingEventsProcessing
 import com.bopr.android.smailer.control.MailRemoteControlWorker.Companion.enableMailRemoteControl

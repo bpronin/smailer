@@ -51,6 +51,11 @@ import com.bopr.android.smailer.consumer.mail.MailMessage
 import com.bopr.android.smailer.control.RemoteControlProcessor
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.databaseName
+import com.bopr.android.smailer.external.Firebase
+import com.bopr.android.smailer.external.Firebase.Companion.FCM_REQUEST_DATA_SYNC
+import com.bopr.android.smailer.external.GoogleDrive
+import com.bopr.android.smailer.external.GoogleMail
+import com.bopr.android.smailer.external.Telegram
 import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
 import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATE_IGNORED
 import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATE_PENDING
@@ -59,13 +64,9 @@ import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STAT
 import com.bopr.android.smailer.provider.telephony.PhoneEventProcessor
 import com.bopr.android.smailer.provider.telephony.PhoneEventProcessorWorker.Companion.startPhoneEventProcessing
 import com.bopr.android.smailer.provider.telephony.SmsTransport.Companion.smsManager
-import com.bopr.android.smailer.transport.GoogleDrive
 import com.bopr.android.smailer.sync.Synchronizer
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_DOWNLOAD
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_UPLOAD
-import com.bopr.android.smailer.transport.Firebase
-import com.bopr.android.smailer.transport.Firebase.Companion.FCM_REQUEST_DATA_SYNC
-import com.bopr.android.smailer.transport.GoogleMail
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.isIgnoreBatteryOptimizationRequired
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
 import com.bopr.android.smailer.util.GeoLocator
@@ -95,8 +96,8 @@ class DebugFragment : BasePreferenceFragment() {
     private lateinit var authorization: GoogleAuthorizationHelper
     private lateinit var notifications: NotificationsHelper
     private lateinit var accountManager: AccountManager
-    private lateinit var sentStatusReceiver: BroadcastReceiver
-    private lateinit var deliveredStatusReceiver: BroadcastReceiver
+    private lateinit var smsSendStatusReceiver: BroadcastReceiver
+    private lateinit var smsDeliveryStatusReceiver: BroadcastReceiver
     private val developerEmail by lazy { getString(R.string.developer_email) }
     private val firebase by lazy { Firebase(requireContext()) }
 
@@ -109,21 +110,25 @@ class DebugFragment : BasePreferenceFragment() {
         /* do not use fragment's context. see: https://developer.android.com/guide/topics/ui/settings/programmatic-hierarchy*/
         val context = preferenceManager.context
         val screen = preferenceManager.createPreferenceScreen(context)
-        addCategory(screen, "Call processing",
+        addCategory(screen, "Event processing",
             addPreference("Process single event") {
                 onProcessSingleEvent()
             },
             addPreference("Process pending events") { preference ->
                 onStartProcessPendingEvents(preference)
             },
-            addPreference("Process service mail") { preference ->
-                onProcessServiceMail(preference)
-            },
-            addPreference("Send debug mail") { preference ->
-                onSendDebugMail(preference)
-            },
             addPreference("Send SMS") {
                 onSendSms()
+            }
+        )
+        addCategory(screen, "Telegram",
+            addPreference("Send debug message") { preference ->
+                onSendTelegramMessage()
+            }
+        )
+        addCategory(screen, "Email",
+            addPreference("Send debug mail") { preference ->
+                onSendDebugMail(preference)
             }
         )
         addCategory(screen, "Settings",
@@ -143,7 +148,7 @@ class DebugFragment : BasePreferenceFragment() {
                 if (isIgnoreBatteryOptimizationRequired(context)) {
                     requireIgnoreBatteryOptimization(requireActivity())
                 } else {
-                    showToast("Battery optimization already disabled")
+                    showInfoDialog("Battery", "Optimization already disabled")
                 }
             }
         )
@@ -192,19 +197,19 @@ class DebugFragment : BasePreferenceFragment() {
             },
             addPreference("Mark all as unread") {
                 database.commit { batch { phoneEvents.markAllAsRead(false) } }
-                showSuccess()
+                showComplete()
             },
             addPreference("Mark all as read") {
                 database.commit { batch { phoneEvents.markAllAsRead(true) } }
-                showSuccess()
+                showComplete()
             },
             addPreference("Clear calls log") {
                 database.commit { batch { phoneEvents.clear() } }
-                showSuccess()
+                showComplete()
             },
             addPreference("Destroy database") {
                 requireContext().deleteDatabase(databaseName)
-                showSuccess()
+                showComplete()
             }
         )
         addCategory(screen, "Permissions",
@@ -242,6 +247,11 @@ class DebugFragment : BasePreferenceFragment() {
                 notifications.cancelError(RECIPIENTS_ERROR)
             }
         )
+        addCategory(screen, "Email remote control",
+            addPreference("Process service mail") { preference ->
+                onProcessServiceMail(preference)
+            }
+        )
         addCategory(screen, "Other",
             addPreference("Get location") {
                 onGetLocation()
@@ -253,7 +263,7 @@ class DebugFragment : BasePreferenceFragment() {
                 onShowAccounts()
             },
             addPreference("Show concurrent applications") {
-                onShowConcurrent()
+                onShowConcurrentApps()
             },
             addPreference("Crash!") {
                 throw RuntimeException("Test crash")
@@ -269,7 +279,7 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun onSendLog(preference: Preference) {
-        runLongTask(preference) {
+        runLongTask("Log", preference) {
             val context = requireContext()
 
             val attachments: MutableList<File> = mutableListOf()
@@ -298,7 +308,7 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun onSendDebugMail(preference: Preference) {
-        runLongTask(preference) {
+        runLongTask("Mail", preference) {
             val account = accountManager.requirePrimaryGoogleAccount()
 
             val message = MailMessage(
@@ -323,25 +333,26 @@ class DebugFragment : BasePreferenceFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val context = requireContext()
-
-        database = Database(context)
-        locator = GeoLocator(context, database)
+        database = Database(requireContext())
+        locator = GeoLocator(requireContext(), database)
         authorization = GoogleAuthorizationHelper(
             requireActivity(), PREF_SENDER_ACCOUNT, MAIL_GOOGLE_COM, DRIVE_APPDATA
         )
-        notifications = NotificationsHelper(context)
-        accountManager = AccountManager(context)
-        sentStatusReceiver = SentStatusReceiver()
-        deliveredStatusReceiver = DeliveryStatusReceiver()
-        registerReceiver(context, sentStatusReceiver, IntentFilter("SMS_SENT"))
-        registerReceiver(context, deliveredStatusReceiver, IntentFilter("SMS_DELIVERED"))
+        notifications = NotificationsHelper(requireContext())
+        accountManager = AccountManager(requireContext())
+
+        smsSendStatusReceiver = SentStatusReceiver().also {
+            registerReceiver(it, IntentFilter("SMS_SENT"))
+        }
+
+        smsDeliveryStatusReceiver = DeliveryStatusReceiver().also {
+            registerReceiver(it, IntentFilter("SMS_DELIVERED"))
+        }
     }
 
     override fun onDestroy() {
-        val context = requireContext()
-        context.unregisterReceiver(sentStatusReceiver)
-        context.unregisterReceiver(deliveredStatusReceiver)
+        unregisterReceiver(smsSendStatusReceiver)
+        unregisterReceiver(smsDeliveryStatusReceiver)
         database.close()
         super.onDestroy()
     }
@@ -413,7 +424,7 @@ class DebugFragment : BasePreferenceFragment() {
         database.phoneBlacklist.replaceAll(setOf("+123456789", "+9876543*"))
         database.smsTextBlacklist.replaceAll(setOf("Bad text", escapeRegex("Expression")))
 
-        showSuccess()
+        showComplete()
     }
 
     private fun onGetContact() {
@@ -424,31 +435,31 @@ class DebugFragment : BasePreferenceFragment() {
                 positiveAction = {
                     val contact = getContactName(requireContext(), it)
                     val text = if (contact != null) "$it: $contact" else "Contact not found"
-                    showToast(text)
+                    showInfoDialog("Contact", text)
                 }
             ).show(this)
         } else {
-            showToast("Missing required permission")
+            showInfoDialog("Contact", "Missing required permission")
         }
     }
 
     private fun onClearPreferences() {
         settings.update { clear() }
-        showSuccess()
+        showComplete()
     }
 
     private fun onResetPreferences() {
         settings.loadDefaults()
-        showSuccess()
+        showComplete()
     }
 
     private fun onProcessServiceMail(preference: Preference) {
         if (settings.isRemoteControlEnabled()) {
-            runLongTask(preference) {
+            runLongTask("Remote control", preference) {
                 RemoteControlProcessor(requireContext()).checkMailbox()
             }
         } else {
-            showToast("Feature disabled")
+            showInfoDialog("Remote control", "Feature is disabled")
         }
     }
 
@@ -472,11 +483,11 @@ class DebugFragment : BasePreferenceFragment() {
             isRead = false
         )
         requireContext().startPhoneEventProcessing(info)
-        showSuccess()
+        showComplete()
     }
 
     private fun onStartProcessPendingEvents(preference: Preference) {
-        runLongTask(preference) {
+        runLongTask("Event processing", preference) {
             PhoneEventProcessor(requireContext()).processPending()
         }
     }
@@ -489,7 +500,7 @@ class DebugFragment : BasePreferenceFragment() {
                 log.warn("Cannot delete file")
             }
         }
-        showToast("Removed ${logs.size} log files")
+        showInfoDialog("Log", "Removed ${logs.size} log files")
     }
 
     private fun onAddHistoryItem() {
@@ -511,7 +522,7 @@ class DebugFragment : BasePreferenceFragment() {
                 )
             )
         }
-        showSuccess()
+        showComplete()
     }
 
     private fun onPopulateHistory() {
@@ -681,10 +692,11 @@ class DebugFragment : BasePreferenceFragment() {
                 )
             }
         }
-        showSuccess()
+        showComplete()
     }
 
-    private fun onShowConcurrent() {
+    @SuppressLint("QueryPermissionsNeeded")
+    private fun onShowConcurrentApps() {
         val sb = StringBuilder()
         val intent = Intent("android.provider.Telephony.SMS_RECEIVED")
         val activities = requireContext().packageManager.queryBroadcastReceivers(intent, 0)
@@ -695,6 +707,7 @@ class DebugFragment : BasePreferenceFragment() {
                     .append(" : ")
                     .append(resolveInfo.priority)
                     .append("\n")
+
                 log.debug(
                     "Concurrent package:" + activityInfo.packageName + " priority: " +
                             resolveInfo.priority
@@ -702,18 +715,18 @@ class DebugFragment : BasePreferenceFragment() {
             }
         }
 
-        showInfoDialog("Concurrents", sb.toString())
+        showInfoDialog("Concurrent Apps", sb.toString())
     }
 
     private fun onGoogleDriveClear(preference: Preference) {
-        runLongTask(preference) {
+        runLongTask("Google drive", preference) {
             GoogleDrive(requireContext(), senderAccount()).clear()
         }
     }
 
     private fun onGoogleDriveSync(preference: Preference) {
         ConfirmDialog("Synchronize with drive?") {
-            runLongTask(preference) {
+            runLongTask("Google drive", preference) {
                 Synchronizer(requireContext(), senderAccount(), database).sync()
             }
         }.show(this)
@@ -721,7 +734,7 @@ class DebugFragment : BasePreferenceFragment() {
 
     private fun onGoogleDriveDownload(preference: Preference) {
         ConfirmDialog("Download from drive?") {
-            runLongTask(preference) {
+            runLongTask("Google drive", preference) {
                 Synchronizer(requireContext(), senderAccount(), database).sync(SYNC_FORCE_DOWNLOAD)
             }
         }.show(this)
@@ -729,7 +742,7 @@ class DebugFragment : BasePreferenceFragment() {
 
     private fun onGoogleDriveUpload(preference: Preference) {
         ConfirmDialog("Upload to drive?") {
-            runLongTask(preference) {
+            runLongTask("Google drive", preference) {
                 Synchronizer(requireContext(), senderAccount(), database).sync(SYNC_FORCE_UPLOAD)
             }
         }.show(this)
@@ -758,8 +771,7 @@ class DebugFragment : BasePreferenceFragment() {
                         deliveredIntent
                     )
                 } catch (x: Throwable) {
-                    log.error("Failed: ", x)
-                    showToast("Failed")
+                    showError("SMS", x)
                 }
             }
         )
@@ -772,12 +784,24 @@ class DebugFragment : BasePreferenceFragment() {
         showInfoDialog("Accounts", s)
     }
 
-    private fun showSuccess() {
+    private fun onSendTelegramMessage() {
+        Telegram(requireContext()).sendMessage(
+            message = "Debug message",
+            onSuccess = {
+                showComplete()
+            },
+            onError = { error ->
+                showError("Telegram", error)
+            }
+        )
+    }
+
+    private fun showComplete() {
         showToast(R.string.operation_complete)
     }
 
-    private fun showError(error: Throwable) {
-        showInfoDialog("Error", error.message ?: error.toString())
+    private fun showError(title: String, error: Throwable) {
+        showInfoDialog(title, error.message ?: error.toString())
     }
 
     private fun senderAccount(): Account {
@@ -788,27 +812,26 @@ class DebugFragment : BasePreferenceFragment() {
         return accountManager.requireGoogleAccount(settings.getRemoteControlAccountName())
     }
 
-    private fun runLongTask(preference: Preference, onPerform: () -> Unit) {
+    private fun runLongTask(title: String, preference: Preference, onPerform: () -> Unit) {
         preference.runLongTask(
             onPerform = onPerform,
             onComplete = { _, error ->
-                if (error != null) showError(error) else showSuccess()
+                if (error != null) showError(title, error) else showComplete()
             })
     }
 
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
-    private fun registerReceiver(
-        context: Context,
-        receiver: BroadcastReceiver,
-        filter: IntentFilter
-    ) {
+    private fun registerReceiver(receiver: BroadcastReceiver, filter: IntentFilter) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            context.registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED)
+            requireContext().registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED)
         } else {
-            context.registerReceiver(receiver, filter)
+            requireContext().registerReceiver(receiver, filter)
         }
     }
 
+    private fun unregisterReceiver(receiver: BroadcastReceiver) {
+        requireContext().unregisterReceiver(receiver)
+    }
 
     private abstract inner class DefaultClickListener : Preference.OnPreferenceClickListener {
 
@@ -843,8 +866,7 @@ class DebugFragment : BasePreferenceFragment() {
                     "Unknown error"
             }
 
-            showToast(message)
-            log.debug(message)
+            showInfoDialog("SMS", message)
         }
     }
 
@@ -862,8 +884,7 @@ class DebugFragment : BasePreferenceFragment() {
                     "Message not delivered"
             }
 
-            showToast(message)
-            log.debug(message)
+            showInfoDialog("SMS", message)
         }
     }
 

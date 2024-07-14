@@ -16,7 +16,7 @@ import com.bopr.android.smailer.control.MailRemoteControlWorker.Companion.enable
 import com.bopr.android.smailer.provider.telephony.ContentObserverService.Companion.startContentObserver
 import com.bopr.android.smailer.sync.SyncWorker.Companion.syncAppDataWithGoogleCloud
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_DOWNLOAD
-import com.bopr.android.smailer.transport.Firebase.Companion.resubscribeToFirebaseMessaging
+import com.bopr.android.smailer.external.Firebase.Companion.resubscribeToFirebaseMessaging
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
 
 /**
