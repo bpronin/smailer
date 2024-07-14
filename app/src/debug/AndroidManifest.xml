@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.bopr.android.smailer">
+        xmlns:tools="http://schemas.android.com/tools"
+        package="com.bopr.android.smailer">
 
     <uses-permission android:name="android.permission.WRITE_CONTACTS" />
 
-    <application tools:ignore="AllowBackup,GoogleAppIndexingWarning"
-        android:icon="@mipmap/ic_launcher">
+    <application
+            tools:ignore="AllowBackup,GoogleAppIndexingWarning"
+            android:icon="@mipmap/ic_launcher">
 
         <activity
-            android:name=".ui.DebugActivity"
-            android:exported="true"
-            android:label="Debug" />
+                android:name=".ui.DebugActivity"
+                android:exported="true"
+                android:label="Debug"
+                android:parentActivityName=".ui.MainActivity" />
 
         <receiver
-            android:name=".DebugReceiver"
-            android:exported="true"
-            tools:ignore="ExportedReceiver">
+                android:name=".DebugReceiver"
+                android:exported="true"
+                tools:ignore="ExportedReceiver">
             <intent-filter>
                 <action android:name="PROCESS_PHONE_EVENT" />
             </intent-filter>

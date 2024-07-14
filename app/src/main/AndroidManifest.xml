@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.bopr.android.smailer">
+        xmlns:tools="http://schemas.android.com/tools"
+        package="com.bopr.android.smailer">
 
     <uses-feature
             android:name="android.hardware.telephony"
             android:required="false" />
 
     <uses-permission
-        android:name="android.permission.AUTHENTICATE_ACCOUNTS"
-        android:maxSdkVersion="22" />
+            android:name="android.permission.AUTHENTICATE_ACCOUNTS"
+            android:maxSdkVersion="22" />
     <uses-permission
-        android:name="android.permission.GET_ACCOUNTS"
-        android:maxSdkVersion="22" /><!-- To access google accounts -->
+            android:name="android.permission.GET_ACCOUNTS"
+            android:maxSdkVersion="22" /><!-- To access google accounts -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /><!-- To check internet connection -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
@@ -33,28 +33,28 @@
     <uses-permission android:name="android.permission.SEND_SMS" /> <!--To send SMS from  -->
 
     <application
-        android:allowBackup="true"
-        android:backupAgent=".AppBackupAgent"
-        android:fullBackupContent="@xml/backup_scheme"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:restoreAnyVersion="true"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning">
+            android:allowBackup="true"
+            android:backupAgent=".AppBackupAgent"
+            android:fullBackupContent="@xml/backup_scheme"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:restoreAnyVersion="true"
+            android:supportsRtl="true"
+            android:theme="@style/AppTheme"
+            tools:ignore="GoogleAppIndexingWarning">
 
         <!-- See: https://developer.android.com/google/backup/signup -->
         <meta-data
-            android:name="com.google.android.backup.api_key"
-            android:value="AEdPqrEAAAAI4Ju-ayl5GJi0GgUprqv9f4BpIq7lr3-NFUwctw" />
+                android:name="com.google.android.backup.api_key"
+                android:value="AEdPqrEAAAAI4Ju-ayl5GJi0GgUprqv9f4BpIq7lr3-NFUwctw" />
 
         <meta-data
-            android:name="firebase_crashlytics_collection_enabled"
-            android:value="${crashlyticsEnabled}" />
+                android:name="firebase_crashlytics_collection_enabled"
+                android:value="${crashlyticsEnabled}" />
 
         <activity
-            android:name=".ui.MainActivity"
-            android:exported="true">
+                android:name=".ui.MainActivity"
+                android:exported="true">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
                 <action android:name="android.intent.action.MAIN" />
@@ -62,68 +62,74 @@
         </activity>
 
         <activity
-            android:name=".ui.RecipientsActivity"
-            android:label="@string/recipients"
-            android:parentActivityName=".ui.MainActivity" />
+                android:name=".ui.RulesActivity"
+                android:label="@string/rules_for_sending"
+                android:parentActivityName=".ui.MainActivity" />
 
         <activity
-            android:name=".ui.RulesActivity"
-            android:label="@string/rules_for_sending"
-            android:parentActivityName=".ui.MainActivity" />
+                android:name=".ui.EventConsumersActivity"
+                android:label="@string/messengers"
+                android:parentActivityName=".ui.MainActivity" />
 
         <activity
-            android:name=".ui.EventFilterPhoneBlacklistActivity"
-            android:label="@string/phone_blacklist"
-            android:parentActivityName=".ui.RulesActivity" />
+                android:name=".ui.HistoryActivity"
+                android:label="@string/history"
+                android:parentActivityName=".ui.MainActivity" />
 
         <activity
-            android:name=".ui.EventFilterPhoneWhitelistActivity"
-            android:label="@string/phone_whitelist"
-            android:parentActivityName=".ui.RulesActivity" />
+                android:name=".ui.MoreOptionsActivity"
+                android:label="@string/more_options"
+                android:parentActivityName=".ui.MainActivity" />
 
         <activity
-            android:name=".ui.EventFilterTextBlacklistActivity"
-            android:label="@string/text_blacklist"
-            android:parentActivityName=".ui.RulesActivity" />
+                android:name=".ui.RemoteControlActivity"
+                android:label="@string/remote_control"
+                android:parentActivityName=".ui.MainActivity" />
 
         <activity
-            android:name=".ui.EventFilterTextWhitelistActivity"
-            android:label="@string/text_whitelist"
-            android:parentActivityName=".ui.RulesActivity" />
+                android:name=".ui.LegalInfoActivity"
+                android:label="@string/open_source"
+                android:parentActivityName=".ui.MainActivity" />
 
         <activity
-            android:name=".ui.EmailSettingsActivity"
-            android:label="@string/email_message"
-            android:parentActivityName=".ui.MainActivity" />
+                android:name=".ui.RecipientsActivity"
+                android:label="@string/recipients"
+                android:parentActivityName=".ui.EventConsumersActivity" />
 
         <activity
-            android:name=".ui.RemoteControlActivity"
-            android:label="@string/remote_control"
-            android:parentActivityName=".ui.MainActivity" />
+                android:name=".ui.EventFilterPhoneBlacklistActivity"
+                android:label="@string/phone_blacklist"
+                android:parentActivityName=".ui.RulesActivity" />
 
         <activity
-            android:name=".ui.HistoryActivity"
-            android:label="@string/call_history"
-            android:parentActivityName=".ui.MainActivity" />
+                android:name=".ui.EventFilterPhoneWhitelistActivity"
+                android:label="@string/phone_whitelist"
+                android:parentActivityName=".ui.RulesActivity" />
 
         <activity
-            android:name=".ui.MoreOptionsActivity"
-            android:label="@string/more_options"
-            android:parentActivityName=".ui.MainActivity" />
+                android:name=".ui.EventFilterTextBlacklistActivity"
+                android:label="@string/text_blacklist"
+                android:parentActivityName=".ui.RulesActivity" />
 
         <activity
-            android:name=".ui.LegalInfoActivity"
-            android:label="@string/open_source"
-            android:parentActivityName=".ui.MainActivity" />
+                android:name=".ui.EventFilterTextWhitelistActivity"
+                android:label="@string/text_whitelist"
+                android:parentActivityName=".ui.RulesActivity" />
 
-<!--        <service android:name=".CallProcessorService" />-->
+        <activity
+                android:name=".ui.EmailSettingsActivity"
+                android:label="@string/email_message"
+                android:parentActivityName=".ui.EventConsumersActivity" />
+
+
+        <!--        <service android:name=".CallProcessorService" />-->
 
         <service android:name=".provider.telephony.ContentObserverService" />
 
         <receiver
-            android:name=".provider.telephony.PhoneEventReceiver"
-            android:exported="true"
-            android:permission="android.permission.BROADCAST_SMS">
+                android:name=".provider.telephony.PhoneEventReceiver"
+                android:exported="true"
+                android:permission="android.permission.BROADCAST_SMS">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
                 <action android:name="android.intent.action.PHONE_STATE" />
@@ -131,24 +137,24 @@
         </receiver>
 
         <receiver
-            android:name=".BootReceiver"
-            android:exported="true">
+                android:name=".BootReceiver"
+                android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
         <receiver
-            android:name=".provider.battery.BatteryLevelReceiver"
-            android:exported="false">
+                android:name=".provider.battery.BatteryLevelReceiver"
+                android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BATTERY_LOW" />
             </intent-filter>
         </receiver>
 
         <service
-            android:name=".control.FirebaseControlService"
-            android:exported="false">
+                android:name=".control.FirebaseControlService"
+                android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>

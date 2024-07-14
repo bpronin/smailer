@@ -10,7 +10,7 @@ import android.os.Bundle
 import androidx.annotation.RequiresPermission
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager
 
-class AccountManager(context: Context) {
+class AccountHelper(context: Context) {
 
     private val googleAccountManager = GoogleAccountManager(context)
 

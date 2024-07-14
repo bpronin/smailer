@@ -4,7 +4,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.preference.Preference
 import androidx.preference.SwitchPreference
-import com.bopr.android.smailer.AccountManager
+import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
@@ -22,7 +22,7 @@ class RemoteControlFragment : BasePreferenceFragment() {
 
     private val processMailAction = "remote_control_process_service_mail"
     private lateinit var authorizationHelper: GoogleAuthorizationHelper
-    private lateinit var accountManager: AccountManager
+    private lateinit var accountHelper: AccountHelper
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_remote)
@@ -41,7 +41,7 @@ class RemoteControlFragment : BasePreferenceFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        accountManager = AccountManager(requireContext())
+        accountHelper = AccountHelper(requireContext())
         authorizationHelper = GoogleAuthorizationHelper(
             requireActivity(), PREF_REMOTE_CONTROL_ACCOUNT, MAIL_GOOGLE_COM
         )
@@ -96,7 +96,7 @@ class RemoteControlFragment : BasePreferenceFragment() {
 
         if (account.isNullOrEmpty()) {
             updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)
-        } else if (!accountManager.isGoogleAccountExists(account)) {
+        } else if (!accountHelper.isGoogleAccountExists(account)) {
             updateSummary(preference, account, SUMMARY_STYLE_UNDERWIVED)
         } else {
             updateSummary(preference, account, SUMMARY_STYLE_DEFAULT)

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-<!--
     <androidx.preference.PreferenceCategory android:title="@string/email">
 
         <androidx.preference.SwitchPreference
@@ -39,7 +38,6 @@
                 android:title="@string/send_test_email"
                 android:summary="@string/send_test_email_summary" />
     </androidx.preference.PreferenceCategory>
--->
 
     <androidx.preference.PreferenceCategory android:title="@string/telegram">
 

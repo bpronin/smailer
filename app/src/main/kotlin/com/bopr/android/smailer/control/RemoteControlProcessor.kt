@@ -4,7 +4,7 @@ import android.Manifest.permission.SEND_SMS
 import android.accounts.Account
 import android.content.Context
 import androidx.annotation.StringRes
-import com.bopr.android.smailer.AccountManager
+import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.NotificationsHelper.Companion.TARGET_MAIN
@@ -51,7 +51,7 @@ internal class RemoteControlProcessor(
 
     private val parser = RemoteControlTaskParser()
     private val query = "subject:Re:[${context.getString(R.string.app_name)}] label:inbox"
-    private val accountManager = AccountManager(context)
+    private val accountHelper = AccountHelper(context)
 
     fun checkMailbox(): Int {
         checkNotMainThread() /* gmail won't work in main thread */
@@ -144,7 +144,7 @@ internal class RemoteControlProcessor(
 
     private fun requireAccount(): Account? {
         val accountName = settings.getRemoteControlAccountName()
-        val googleAccount = accountManager.getGoogleAccount(accountName)
+        val googleAccount = accountHelper.getGoogleAccount(accountName)
         return googleAccount.also {
             if (it == null) {
                 notifications.showRemoteAccountError()

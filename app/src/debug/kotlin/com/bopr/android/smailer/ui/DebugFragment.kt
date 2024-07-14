@@ -20,7 +20,7 @@ import android.text.InputType
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceScreen
-import com.bopr.android.smailer.AccountManager
+import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.NotificationsHelper.Companion.RECIPIENTS_ERROR
 import com.bopr.android.smailer.NotificationsHelper.Companion.REMOTE_ACCOUNT_ERROR
@@ -95,7 +95,7 @@ class DebugFragment : BasePreferenceFragment() {
     private lateinit var database: Database
     private lateinit var authorization: GoogleAuthorizationHelper
     private lateinit var notifications: NotificationsHelper
-    private lateinit var accountManager: AccountManager
+    private lateinit var accountHelper: AccountHelper
     private lateinit var smsSendStatusReceiver: BroadcastReceiver
     private lateinit var smsDeliveryStatusReceiver: BroadcastReceiver
     private val developerEmail by lazy { getString(R.string.developer_email) }
@@ -290,7 +290,7 @@ class DebugFragment : BasePreferenceFragment() {
                 attachments.addAll(it)
             }
 
-            val account = accountManager.requirePrimaryGoogleAccount()
+            val account = accountHelper.requirePrimaryGoogleAccount()
 
             val mailSession = GoogleMail(context, account, GMAIL_SEND)
             for (file in attachments) {
@@ -309,7 +309,7 @@ class DebugFragment : BasePreferenceFragment() {
 
     private fun onSendDebugMail(preference: Preference) {
         runLongTask("Mail", preference) {
-            val account = accountManager.requirePrimaryGoogleAccount()
+            val account = accountHelper.requirePrimaryGoogleAccount()
 
             val message = MailMessage(
                 from = account.name,
@@ -339,7 +339,7 @@ class DebugFragment : BasePreferenceFragment() {
             requireActivity(), PREF_SENDER_ACCOUNT, MAIL_GOOGLE_COM, DRIVE_APPDATA
         )
         notifications = NotificationsHelper(requireContext())
-        accountManager = AccountManager(requireContext())
+        accountHelper = AccountHelper(requireContext())
 
         smsSendStatusReceiver = SentStatusReceiver().also {
             registerReceiver(it, IntentFilter("SMS_SENT"))
@@ -780,7 +780,7 @@ class DebugFragment : BasePreferenceFragment() {
     private fun onShowAccounts() {
         val s = "Selected: ${senderAccount().name}\n\n" +
                 "Service: ${serviceAccount().name}\n\n" +
-                "Primary: ${accountManager.getPrimaryGoogleAccount()?.name}"
+                "Primary: ${accountHelper.getPrimaryGoogleAccount()?.name}"
         showInfoDialog("Accounts", s)
     }
 
@@ -805,11 +805,11 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun senderAccount(): Account {
-        return accountManager.requireGoogleAccount(settings.getSenderAccountName())
+        return accountHelper.requireGoogleAccount(settings.getSenderAccountName())
     }
 
     private fun serviceAccount(): Account {
-        return accountManager.requireGoogleAccount(settings.getRemoteControlAccountName())
+        return accountHelper.requireGoogleAccount(settings.getRemoteControlAccountName())
     }
 
     private fun runLongTask(title: String, preference: Preference, onPerform: () -> Unit) {

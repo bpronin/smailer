@@ -9,7 +9,7 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.bopr.android.smailer.AccountManager
+import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.external.Firebase
@@ -27,10 +27,10 @@ internal class SyncWorker(context: Context, workerParams: WorkerParameters) :
 
     override fun doWork(): Result {
         val settings = Settings(applicationContext)
-        val accountManager = AccountManager(applicationContext)
+        val accountHelper = AccountHelper(applicationContext)
 
         if (settings.isCloudSyncEnabled()) {
-            accountManager.getGoogleAccount(settings.getSenderAccountName())?.let { account ->
+            accountHelper.getGoogleAccount(settings.getSenderAccountName())?.let { account ->
                 Database(applicationContext).use { database ->
                     Synchronizer(applicationContext, account, database).run {
                         val mode = inputData.getInt(SYNC_OPTIONS, SYNC_NORMAL)
@@ -51,6 +51,9 @@ internal class SyncWorker(context: Context, workerParams: WorkerParameters) :
         private const val SYNC_OPTIONS = "options"
 
         internal fun Context.syncAppDataWithGoogleCloud(mode: Int = SYNC_NORMAL) {
+            return // TODO: the app is deregistered from Google Console
+            @Suppress("UNREACHABLE_CODE")
+            
             if (Settings(this).isCloudSyncEnabled()) {
                 log.debug("Sync requested in mode: $mode")
 

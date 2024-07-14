@@ -2,70 +2,39 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <androidx.preference.Preference
-        android:icon="@drawable/ic_account_round"
-        android:key="sender_account"
-        android:title="@string/sender" />
-
-    <androidx.preference.Preference
-        android:icon="@drawable/ic_recipient"
-        android:key="recipients_address"
-        android:title="@string/recipients" >
+            android:icon="@drawable/ic_rules"
+            android:key="rules"
+            android:summary="@string/when_send_email"
+            android:title="@string/rules">
         <intent
-            android:targetClass="com.bopr.android.smailer.ui.RecipientsActivity"
-            android:targetPackage="com.bopr.android.smailer" />
-        />
+                android:targetClass="com.bopr.android.smailer.ui.RulesActivity"
+                android:targetPackage="com.bopr.android.smailer" />
     </androidx.preference.Preference>
 
     <androidx.preference.Preference
-        android:icon="@drawable/ic_rules"
-        android:key="rules"
-        android:summary="@string/when_send_email"
-        android:title="@string/rules">
+            android:icon="@drawable/ic_out"
+            android:key="messengers"
+            android:title="@string/messengers" >
         <intent
-            android:targetClass="com.bopr.android.smailer.ui.RulesActivity"
-            android:targetPackage="com.bopr.android.smailer" />
-        />
+                android:targetClass="com.bopr.android.smailer.ui.EventConsumersActivity"
+                android:targetPackage="com.bopr.android.smailer" />
     </androidx.preference.Preference>
 
     <androidx.preference.Preference
-        android:icon="@drawable/ic_state_done"
-        android:key="email"
-        android:title="@string/email_message"
-        android:summary="@string/email_message_summary">
+            android:icon="@drawable/ic_history"
+            android:key="history"
+            android:title="@string/history">
         <intent
-            android:targetClass="com.bopr.android.smailer.ui.EmailSettingsActivity"
-            android:targetPackage="com.bopr.android.smailer" />
-        />
-    </androidx.preference.Preference>
-
-<!--
-    <androidx.preference.Preference
-        android:icon="@drawable/ic_remote"
-        android:key="remote_control_enabled"
-        android:title="@string/remote_control">
-        <intent
-            android:targetClass="com.bopr.android.smailer.ui.RemoteControlActivity"
-            android:targetPackage="com.bopr.android.smailer" />
-    </androidx.preference.Preference>
--->
-
-    <androidx.preference.Preference
-        android:icon="@drawable/ic_history"
-        android:key="history"
-        android:title="@string/call_history">
-        <intent
-            android:targetClass="com.bopr.android.smailer.ui.HistoryActivity"
-            android:targetPackage="com.bopr.android.smailer" />
-        />
+                android:targetClass="com.bopr.android.smailer.ui.HistoryActivity"
+                android:targetPackage="com.bopr.android.smailer" />
     </androidx.preference.Preference>
 
     <androidx.preference.Preference
-        android:icon="@drawable/ic_options"
-        android:key="options"
-        android:title="@string/more_options">
+            android:icon="@drawable/ic_options"
+            android:key="options"
+            android:title="@string/more_options">
         <intent
-            android:targetClass="com.bopr.android.smailer.ui.MoreOptionsActivity"
-            android:targetPackage="com.bopr.android.smailer" />
-        />
+                android:targetClass="com.bopr.android.smailer.ui.MoreOptionsActivity"
+                android:targetPackage="com.bopr.android.smailer" />
     </androidx.preference.Preference>
 </androidx.preference.PreferenceScreen>

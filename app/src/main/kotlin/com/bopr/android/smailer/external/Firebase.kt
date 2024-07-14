@@ -5,7 +5,7 @@ import android.content.Context
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
-import com.bopr.android.smailer.AccountManager
+import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.google.firebase.messaging.FirebaseMessaging
@@ -17,7 +17,7 @@ class Firebase(val context: Context) {
 
     private var subscribedTopic: String? = null
     private val settings = Settings(context)
-    private val accountManager = AccountManager(context)
+    private val accountHelper = AccountHelper(context)
     private val firebaseMessaging = FirebaseMessaging.getInstance()
 
     internal fun subscribe() {
@@ -79,7 +79,7 @@ class Firebase(val context: Context) {
     }
 
     private fun getAccount(): Account? {
-        return accountManager.getGoogleAccount(settings.getSenderAccountName())
+        return accountHelper.getGoogleAccount(settings.getSenderAccountName())
     }
 
     private fun formatUserId(email: String): String {

@@ -27,7 +27,7 @@
     <string name="battery_optimization">Экономия заряда батареи</string>
     <string name="battery_optimization_reason">Чтобы приложение корректно работало когда устройство находиться в спящем режиме, отключите для него оптимизацию питания.</string>
     <string name="blacklist">Чёрный список</string>
-    <string name="call_history">Журнал</string>
+    <string name="history">История</string>
     <string name="called_phone">Вы звонили: %1$s (%2$s)</string>
     <string name="caller_phone">Вам звонил: %1$s (%2$s)</string>
     <string name="check_your_settings">Проверьте настройки приложения</string>

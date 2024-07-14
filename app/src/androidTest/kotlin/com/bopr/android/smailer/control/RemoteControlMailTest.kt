@@ -2,7 +2,7 @@ package com.bopr.android.smailer.control
 
 import android.accounts.Account
 import androidx.test.filters.LargeTest
-import com.bopr.android.smailer.AccountManager
+import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.NotificationsHelper.Companion.TARGET_PHONE_BLACKLIST
@@ -53,7 +53,7 @@ class RemoteControlMailTest : BaseTest() {
         database = Database(targetContext)
 
         settings = Settings(targetContext)
-        account = AccountManager(targetContext).requirePrimaryGoogleAccount()
+        account = AccountHelper(targetContext).requirePrimaryGoogleAccount()
         transport = GoogleMail(targetContext, account)
 
         for (message in loadMail()) {

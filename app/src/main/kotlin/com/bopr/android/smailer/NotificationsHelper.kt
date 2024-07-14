@@ -131,12 +131,12 @@ class NotificationsHelper(private val context: Context) {
     internal fun onSettingsChanged(settings: Settings, key: String?) {
         when (key) {
             PREF_SENDER_ACCOUNT ->
-                if (AccountManager(context).isGoogleAccountExists(settings.getSenderAccountName())) {
+                if (AccountHelper(context).isGoogleAccountExists(settings.getSenderAccountName())) {
                     cancelError(SENDER_ACCOUNT_ERROR)
                 }
 
             PREF_REMOTE_CONTROL_ACCOUNT ->
-                if (AccountManager(context).isGoogleAccountExists(settings.getRemoteControlAccountName())) {
+                if (AccountHelper(context).isGoogleAccountExists(settings.getRemoteControlAccountName())) {
                     cancelError(REMOTE_ACCOUNT_ERROR)
                 }
 

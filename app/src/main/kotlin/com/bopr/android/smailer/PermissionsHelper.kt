@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory
 class PermissionsHelper(val activity: FragmentActivity) {
 
     private val settings = Settings(activity)
-    private val accountManager = AccountManager(activity)
+    private val accountHelper = AccountHelper(activity)
 
     private val permissionRequestLauncher =
         activity.registerForActivityResult(RequestMultiplePermissions()) { result ->
@@ -107,7 +107,7 @@ class PermissionsHelper(val activity: FragmentActivity) {
 
         /* set default accounts at startup */
         settings.update {
-            val accountName = accountManager.getPrimaryGoogleAccount()?.name
+            val accountName = accountHelper.getPrimaryGoogleAccount()?.name
             putStringOptional(PREF_SENDER_ACCOUNT, accountName)
             putStringOptional(PREF_RECIPIENTS_ADDRESS, accountName)
             putStringOptional(PREF_REMOTE_CONTROL_ACCOUNT, accountName)

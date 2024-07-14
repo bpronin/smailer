@@ -4,7 +4,7 @@ import android.app.backup.BackupManager
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
-import com.bopr.android.smailer.AccountManager
+import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.AppStartup.startUpAppServices
 import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.PermissionsHelper
@@ -30,7 +30,7 @@ class MainActivity : BaseMainActivity(MainFragment::class), OnSharedPreferenceCh
     private lateinit var backupManager: BackupManager
     private lateinit var permissionsHelper: PermissionsHelper
     private lateinit var notificationsHelper: NotificationsHelper
-    private lateinit var accountManager: AccountManager
+    private lateinit var accountHelper: AccountHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +38,7 @@ class MainActivity : BaseMainActivity(MainFragment::class), OnSharedPreferenceCh
         backupManager = BackupManager(this)
         notificationsHelper = NotificationsHelper(this)
         permissionsHelper = PermissionsHelper(this)
-        accountManager = AccountManager(this)
+        accountHelper = AccountHelper(this)
 
         settings = Settings(this).apply {
             loadDefaults()
@@ -73,7 +73,7 @@ class MainActivity : BaseMainActivity(MainFragment::class), OnSharedPreferenceCh
                 enableMailRemoteControl()
 
             PREF_SENDER_ACCOUNT -> {
-                if (accountManager.isGoogleAccountExists(settings.getSenderAccountName())) {
+                if (accountHelper.isGoogleAccountExists(settings.getSenderAccountName())) {
                     syncAppDataWithGoogleCloud(SYNC_FORCE_DOWNLOAD)
                     resubscribeToFirebaseMessaging()
                 }

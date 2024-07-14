@@ -2,6 +2,7 @@ package com.bopr.android.smailer.ui
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
@@ -13,24 +14,29 @@ import com.bopr.android.smailer.external.TelegramException.Code.TELEGRAM_INVALID
 import com.bopr.android.smailer.external.TelegramException.Code.TELEGRAM_NO_CHAT
 import com.bopr.android.smailer.external.TelegramException.Code.TELEGRAM_NO_TOKEN
 import com.bopr.android.smailer.external.TelegramException.Code.TELEGRAM_REQUEST_FAILED
+import com.bopr.android.smailer.util.commaSplit
 import com.bopr.android.smailer.util.showToast
 import com.google.api.services.drive.DriveScopes.DRIVE_APPDATA
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 
 /**
- * Messengers settings fragment.
+ * Event consumers settings fragment.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class MessengersFragment : BasePreferenceFragment() {
+class EventConsumersFragment : BasePreferenceFragment() {
 
-    private lateinit var authorization: GoogleAuthorizationHelper
+    private lateinit var accountHelper: AccountHelper
+    private lateinit var authorizationHelper: GoogleAuthorizationHelper
+    //    private val requestPermissionLauncher = registerForActivityResult(RequestPermission()) { _ ->
+//        updateAccountPreferenceView()
+//    }
 
     override fun onCreatePreferences(bundle: Bundle?, rootKey: String?) {
-        addPreferencesFromResource(R.xml.pref_messengers)
+        addPreferencesFromResource(R.xml.pref_event_consumers)
 
         requirePreference(PREF_SENDER_ACCOUNT).setOnPreferenceClickListener {
-            authorization.startAccountPicker()
+            authorizationHelper.startAccountPicker()
             true
         }
 
@@ -58,7 +64,9 @@ class MessengersFragment : BasePreferenceFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        authorization = GoogleAuthorizationHelper(
+
+        accountHelper = AccountHelper(requireContext())
+        authorizationHelper = GoogleAuthorizationHelper(
             requireActivity(), PREF_SENDER_ACCOUNT, GMAIL_SEND, DRIVE_APPDATA
         )
     }
@@ -148,30 +156,35 @@ class MessengersFragment : BasePreferenceFragment() {
     }
 
     private fun updateAccountPreferenceView() {
-//        val preference = requirePreference(PREF_SENDER_ACCOUNT)
-//        val account = settings.senderAccount
-//
-//        if (account.isNullOrEmpty()) {
-//            updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)
-//        } else if (!requireContext().isAccountExists(account)) {
-//            updateSummary(preference, account, SUMMARY_STYLE_UNDERWIVED)
-//        } else {
-//            updateSummary(preference, account, SUMMARY_STYLE_DEFAULT)
-//        }
+        val preference = requirePreference(PREF_SENDER_ACCOUNT)
+        val account = settings.getSenderAccountName()
+
+        if (account.isNullOrEmpty()) {
+            updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)
+        } else if (!accountHelper.isGoogleAccountExists(account)) {
+            updateSummary(preference, account, SUMMARY_STYLE_UNDERWIVED)
+        } else {
+            updateSummary(preference, account, SUMMARY_STYLE_DEFAULT)
+        }
     }
 
     private fun updateRecipientsPreferenceView() {
-//        val preference = requirePreference(PREF_RECIPIENTS_ADDRESS)
-//        val addresses = settings.emailRecipients
-//
-//        if (addresses.isEmpty()) {
-//            updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)
-//        } else {
-//            val style =
-//                if (isValidEmailAddressList(addresses)) SUMMARY_STYLE_DEFAULT else SUMMARY_STYLE_UNDERWIVED
-//            updateSummary(preference, addresses.joinToString(), style)
-//        }
+        val preference = requirePreference(PREF_RECIPIENTS_ADDRESS)
+        val addresses = commaSplit(settings.getEmailRecipients())
+
+        if (addresses.isEmpty()) {
+            updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)
+        } else if (addresses.size == 1) {
+            updateSummary(preference, addresses.first(), SUMMARY_STYLE_DEFAULT)
+        } else {
+            updateSummary(
+                preference,
+                getString(R.string.addresses, addresses.size),
+                SUMMARY_STYLE_DEFAULT
+            )
+        }
     }
+
 
     private fun updateTelegramBotTokenPreferenceView() {
         val preference = requirePreference(PREF_TELEGRAM_BOT_TOKEN)

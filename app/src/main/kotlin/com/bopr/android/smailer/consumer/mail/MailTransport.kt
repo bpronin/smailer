@@ -1,7 +1,7 @@
 package com.bopr.android.smailer.consumer.mail
 
 import android.content.Context
-import com.bopr.android.smailer.AccountManager
+import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
@@ -23,7 +23,7 @@ internal class MailTransport(context: Context) :
     EventMessengerTransport(context) {
 
     private val settings = Settings(context)
-    private val accountManager = AccountManager(context)
+    private val accountHelper = AccountHelper(context)
     private val formatters = MailFormatterFactory(context)
     private val notifications by lazy { NotificationsHelper(context) }
 
@@ -35,7 +35,7 @@ internal class MailTransport(context: Context) :
         val recipients = settings.getEmailRecipients()
         if (!checkRecipients(recipients)) return
 
-        val account = accountManager.requirePrimaryGoogleAccount()
+        val account = accountHelper.requirePrimaryGoogleAccount()
         val formatter = formatters.get(event)
 
         val mailMessage = MailMessage(

@@ -48,8 +48,8 @@ class MainActivityTest : BaseActivityTest(MainActivity::class) {
         clickBackButton()
         assertHomeDisplayed()
 
-        clickPreference(R.string.call_history)
-        assertPageDisplayed(R.string.call_history)
+        clickPreference(R.string.history)
+        assertPageDisplayed(R.string.history)
 
         clickBackButton()
         assertHomeDisplayed()
