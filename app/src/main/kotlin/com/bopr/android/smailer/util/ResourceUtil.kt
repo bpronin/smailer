@@ -1,9 +1,12 @@
 package com.bopr.android.smailer.util
 
+import android.content.Context
+import android.content.res.Resources
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
 import com.bopr.android.smailer.R
+import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
+import java.util.Locale
 
 /**
  * To prevent drawables from being shrinked by R8's resource shrinker we have to
@@ -118,12 +121,23 @@ fun eventStateText(event: PhoneEventInfo): Int {
             R.string.pending
 
         PhoneEventInfo.STATE_PROCESSED ->
-            R.string.sent_email
+            R.string.processed
 
         PhoneEventInfo.STATE_IGNORED ->
             R.string.ignored
 
         else ->
             throw IllegalArgumentException("Unknown state")
+    }
+}
+
+fun Context.localeResources(locale: Locale): Resources {
+    return if (locale == Locale.getDefault()) {
+        resources
+    } else {
+        val configuration = resources.configuration.apply {
+            setLocale(locale)
+        }
+        createConfigurationContext(configuration).resources
     }
 }

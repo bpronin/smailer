@@ -36,7 +36,7 @@ internal class MailTransport(context: Context) :
         if (!checkRecipients(recipients)) return
 
         val account = accountHelper.requirePrimaryGoogleAccount()
-        val formatter = formatters.get(event)
+        val formatter = formatters.createFormatter(event)
 
         val mailMessage = MailMessage(
             subject = formatter.formatSubject(),

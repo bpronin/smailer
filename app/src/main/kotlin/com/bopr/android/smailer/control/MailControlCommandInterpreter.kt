@@ -1,14 +1,14 @@
 package com.bopr.android.smailer.control
 
-import com.bopr.android.smailer.control.RemoteControlTask.Companion.ADD_PHONE_TO_BLACKLIST
-import com.bopr.android.smailer.control.RemoteControlTask.Companion.ADD_PHONE_TO_WHITELIST
-import com.bopr.android.smailer.control.RemoteControlTask.Companion.ADD_TEXT_TO_BLACKLIST
-import com.bopr.android.smailer.control.RemoteControlTask.Companion.ADD_TEXT_TO_WHITELIST
-import com.bopr.android.smailer.control.RemoteControlTask.Companion.REMOVE_PHONE_FROM_BLACKLIST
-import com.bopr.android.smailer.control.RemoteControlTask.Companion.REMOVE_PHONE_FROM_WHITELIST
-import com.bopr.android.smailer.control.RemoteControlTask.Companion.REMOVE_TEXT_FROM_BLACKLIST
-import com.bopr.android.smailer.control.RemoteControlTask.Companion.REMOVE_TEXT_FROM_WHITELIST
-import com.bopr.android.smailer.control.RemoteControlTask.Companion.SEND_SMS_TO_CALLER
+import com.bopr.android.smailer.control.ControlCommand.Action.ADD_PHONE_TO_BLACKLIST
+import com.bopr.android.smailer.control.ControlCommand.Action.ADD_PHONE_TO_WHITELIST
+import com.bopr.android.smailer.control.ControlCommand.Action.ADD_TEXT_TO_BLACKLIST
+import com.bopr.android.smailer.control.ControlCommand.Action.ADD_TEXT_TO_WHITELIST
+import com.bopr.android.smailer.control.ControlCommand.Action.REMOVE_PHONE_FROM_BLACKLIST
+import com.bopr.android.smailer.control.ControlCommand.Action.REMOVE_PHONE_FROM_WHITELIST
+import com.bopr.android.smailer.control.ControlCommand.Action.REMOVE_TEXT_FROM_BLACKLIST
+import com.bopr.android.smailer.control.ControlCommand.Action.REMOVE_TEXT_FROM_WHITELIST
+import com.bopr.android.smailer.control.ControlCommand.Action.SEND_SMS_TO_CALLER
 import com.bopr.android.smailer.util.PHONE_REGEX
 import com.bopr.android.smailer.util.QUOTATION_PATTERN
 import com.bopr.android.smailer.util.QUOTATION_REGEX
@@ -17,56 +17,57 @@ import java.util.Scanner
 import java.util.regex.Pattern
 
 /**
- * Parses text into remote control task.
+ * Parses mail text into control command.
+ * Command mail message example: "To device My Device. Add phone +1234567901 to blacklist."
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class RemoteControlTaskParser {
+internal class MailControlCommandInterpreter {
 
-    fun parse(text: String): RemoteControlTask? {
+    fun interpret(text: String): ControlCommand? {
         val scanner = Scanner(text).useDelimiter("\\W+")
         if (hasNextToken(scanner, "(?i:DEVICE)")) {
-            val task = RemoteControlTask(nextQuoted(scanner))
+            val command = ControlCommand(nextQuoted(scanner))
             when (nextToken(scanner, "(?i:ADD|PUT|REMOVE|DELETE|SEND)")) {
                 "SEND" ->
                     if (hasNextToken(scanner, "(?i:SMS)")) {
-                        task.action = SEND_SMS_TO_CALLER
-                        task.arguments["text"] = nextQuoted(scanner)
-                        task.arguments["phone"] = nextPhone(scanner)
+                        command.action = SEND_SMS_TO_CALLER
+                        command.arguments["text"] = nextQuoted(scanner)
+                        command.arguments["phone"] = nextPhone(scanner)
                     }
 
                 "ADD", "PUT" -> {
                     when (nextToken(scanner, "(?i:PHONE|TEXT)")) {
                         "PHONE" -> {
-                            task.argument = nextPhone(scanner)
+                            command.argument = nextPhone(scanner)
                             when (nextToken(scanner, "(?i:BLACKLIST|WHITELIST)")) {
-                                "BLACKLIST" -> task.action = ADD_PHONE_TO_BLACKLIST
-                                "WHITELIST" -> task.action = ADD_PHONE_TO_WHITELIST
+                                "BLACKLIST" -> command.action = ADD_PHONE_TO_BLACKLIST
+                                "WHITELIST" -> command.action = ADD_PHONE_TO_WHITELIST
                             }
                         }
 
                         "TEXT" -> {
-                            task.argument = nextQuoted(scanner)
+                            command.argument = nextQuoted(scanner)
                             when (nextToken(scanner, "(?i:BLACKLIST|WHITELIST)")) {
-                                "BLACKLIST" -> task.action = ADD_TEXT_TO_BLACKLIST
-                                "WHITELIST" -> task.action = ADD_TEXT_TO_WHITELIST
+                                "BLACKLIST" -> command.action = ADD_TEXT_TO_BLACKLIST
+                                "WHITELIST" -> command.action = ADD_TEXT_TO_WHITELIST
                             }
                         }
                     }
                     when (nextToken(scanner, "(?i:PHONE|TEXT)")) {
                         "PHONE" -> {
-                            task.argument = nextPhone(scanner)
+                            command.argument = nextPhone(scanner)
                             when (nextToken(scanner, "(?i:BLACKLIST|WHITELIST)")) {
-                                "BLACKLIST" -> task.action = REMOVE_PHONE_FROM_BLACKLIST
-                                "WHITELIST" -> task.action = REMOVE_PHONE_FROM_WHITELIST
+                                "BLACKLIST" -> command.action = REMOVE_PHONE_FROM_BLACKLIST
+                                "WHITELIST" -> command.action = REMOVE_PHONE_FROM_WHITELIST
                             }
                         }
 
                         "TEXT" -> {
-                            task.argument = nextQuoted(scanner)
+                            command.argument = nextQuoted(scanner)
                             when (nextToken(scanner, "(?i:BLACKLIST|WHITELIST)")) {
-                                "BLACKLIST" -> task.action = REMOVE_TEXT_FROM_BLACKLIST
-                                "WHITELIST" -> task.action = REMOVE_TEXT_FROM_WHITELIST
+                                "BLACKLIST" -> command.action = REMOVE_TEXT_FROM_BLACKLIST
+                                "WHITELIST" -> command.action = REMOVE_TEXT_FROM_WHITELIST
                             }
                         }
                     }
@@ -74,23 +75,23 @@ internal class RemoteControlTaskParser {
 
                 "REMOVE", "DELETE" -> when (nextToken(scanner, "(?i:PHONE|TEXT)")) {
                     "PHONE" -> {
-                        task.argument = nextPhone(scanner)
+                        command.argument = nextPhone(scanner)
                         when (nextToken(scanner, "(?i:BLACKLIST|WHITELIST)")) {
-                            "BLACKLIST" -> task.action = REMOVE_PHONE_FROM_BLACKLIST
-                            "WHITELIST" -> task.action = REMOVE_PHONE_FROM_WHITELIST
+                            "BLACKLIST" -> command.action = REMOVE_PHONE_FROM_BLACKLIST
+                            "WHITELIST" -> command.action = REMOVE_PHONE_FROM_WHITELIST
                         }
                     }
 
                     "TEXT" -> {
-                        task.argument = nextQuoted(scanner)
+                        command.argument = nextQuoted(scanner)
                         when (nextToken(scanner, "(?i:BLACKLIST|WHITELIST)")) {
-                            "BLACKLIST" -> task.action = REMOVE_TEXT_FROM_BLACKLIST
-                            "WHITELIST" -> task.action = REMOVE_TEXT_FROM_WHITELIST
+                            "BLACKLIST" -> command.action = REMOVE_TEXT_FROM_BLACKLIST
+                            "WHITELIST" -> command.action = REMOVE_TEXT_FROM_WHITELIST
                         }
                     }
                 }
             }
-            return task
+            return command
         }
         return null
     }

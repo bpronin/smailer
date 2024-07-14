@@ -1,6 +1,7 @@
 package com.bopr.android.smailer.consumer
 
 import android.content.Context
+import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.consumer.mail.MailTransport
 import com.bopr.android.smailer.consumer.telegram.TelegramTransport

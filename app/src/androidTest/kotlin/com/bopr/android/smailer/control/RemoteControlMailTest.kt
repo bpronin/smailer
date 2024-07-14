@@ -5,10 +5,6 @@ import androidx.test.filters.LargeTest
 import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.NotificationsHelper
-import com.bopr.android.smailer.NotificationsHelper.Companion.TARGET_PHONE_BLACKLIST
-import com.bopr.android.smailer.NotificationsHelper.Companion.TARGET_PHONE_WHITELIST
-import com.bopr.android.smailer.NotificationsHelper.Companion.TARGET_TEXT_BLACKLIST
-import com.bopr.android.smailer.NotificationsHelper.Companion.TARGET_TEXT_WHITELIST
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
@@ -20,6 +16,10 @@ import com.bopr.android.smailer.consumer.mail.MailMessage
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.databaseName
 import com.bopr.android.smailer.external.GoogleMail
+import com.bopr.android.smailer.ui.EventFilterPhoneBlacklistActivity
+import com.bopr.android.smailer.ui.EventFilterPhoneWhitelistActivity
+import com.bopr.android.smailer.ui.EventFilterTextBlacklistActivity
+import com.bopr.android.smailer.ui.EventFilterTextWhitelistActivity
 import com.bopr.android.smailer.util.deviceName
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.eq
@@ -32,6 +32,7 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers.anyInt
 import java.lang.Thread.sleep
+import kotlin.reflect.KClass
 
 @LargeTest
 class RemoteControlMailTest : BaseTest() {
@@ -39,7 +40,7 @@ class RemoteControlMailTest : BaseTest() {
     private val sender = "TEST"
     private val notifications: NotificationsHelper = mock()
     private lateinit var database: Database
-    private lateinit var processor: RemoteControlProcessor
+    private lateinit var processor: MailControlProcessor
     private lateinit var account: Account
     private lateinit var transport: GoogleMail
     private lateinit var settings: Settings
@@ -60,9 +61,8 @@ class RemoteControlMailTest : BaseTest() {
             transport.trash(message)
         }
 
-        processor = RemoteControlProcessor(
+        processor = MailControlProcessor(
             context = targetContext,
-            database = database,
             settings = settings,
             notifications = notifications
         )
@@ -115,7 +115,7 @@ class RemoteControlMailTest : BaseTest() {
         assertTrue(database.phoneWhitelist.isEmpty())
         assertTrue(database.smsTextBlacklist.isEmpty())
         assertTrue(database.smsTextWhitelist.isEmpty())
-        verify(notifications, never()).showRemoteAction(any(), anyInt())
+        verify(notifications, never()).showRemoteAction(any(), any())
     }
 
     @Test
@@ -147,7 +147,7 @@ class RemoteControlMailTest : BaseTest() {
         assertTrue(database.phoneWhitelist.isEmpty())
         assertTrue(database.smsTextBlacklist.isEmpty())
         assertTrue(database.smsTextWhitelist.isEmpty())
-        verify(notifications, never()).showRemoteAction(any(), anyInt())
+        verify(notifications, never()).showRemoteAction(any(), any())
     }
 
     @Test
@@ -208,28 +208,28 @@ class RemoteControlMailTest : BaseTest() {
                 targetContext.getString(
                     R.string.phone_remotely_added_to_blacklist, "1234567890"
                 )
-            ), eq(TARGET_PHONE_BLACKLIST)
+            ), eq(EventFilterPhoneBlacklistActivity::class)
         )
         verify(notifications).showRemoteAction(
             eq(
                 targetContext.getString(
                     R.string.phone_remotely_added_to_whitelist, "0987654321"
                 )
-            ), eq(TARGET_PHONE_WHITELIST)
+            ), eq(EventFilterPhoneWhitelistActivity::class)
         )
         verify(notifications).showRemoteAction(
             eq(
                 targetContext.getString(
                     R.string.text_remotely_added_to_blacklist, "SPAM"
                 )
-            ), eq(TARGET_TEXT_BLACKLIST)
+            ), eq(EventFilterTextBlacklistActivity::class)
         )
         verify(notifications).showRemoteAction(
             eq(
                 targetContext.getString(
                     R.string.text_remotely_added_to_whitelist, "NON SPAM"
                 )
-            ), eq(TARGET_TEXT_WHITELIST)
+            ), eq(EventFilterTextWhitelistActivity::class)
         )
     }
 
@@ -339,7 +339,7 @@ class RemoteControlMailTest : BaseTest() {
         assertTrue(database.phoneWhitelist.contains("0987654321"))
         assertTrue(database.smsTextBlacklist.contains("SPAM"))
         assertTrue(database.smsTextWhitelist.contains("NON SPAM"))
-        verify(notifications, never()).showRemoteAction(any(), anyInt())
+        verify(notifications, never()).showRemoteAction(any(), any())
     }
 
 }

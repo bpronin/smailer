@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory
 
 /**
  * Performs actions when specific firebase messages received.
+ *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 class FirebaseControlService : FirebaseMessagingService() {

@@ -18,7 +18,7 @@ import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STAT
 import com.bopr.android.smailer.Settings.Companion.DEFAULT_EMAIL_CONTENT
 import com.bopr.android.smailer.Settings.Companion.DEFAULT_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_LOCALE
+import com.bopr.android.smailer.Settings.Companion.PREF_MESSAGE_LOCALE
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
@@ -80,7 +80,7 @@ class PhoneEventProcessorTest : BaseTest() {
         preferences = mock {
             on { getString(eq(PREF_SENDER_ACCOUNT), anyOrNull()) }.doReturn("sender@mail.com")
             on { getString(eq(PREF_RECIPIENTS_ADDRESS), anyOrNull()) }.doReturn("recipient@mail.com")
-            on { getString(eq(PREF_EMAIL_LOCALE), anyOrNull()) }.doReturn(VAL_PREF_DEFAULT)
+            on { getString(eq(PREF_MESSAGE_LOCALE), anyOrNull()) }.doReturn(VAL_PREF_DEFAULT)
             on { getStringSet(eq(PREF_EMAIL_TRIGGERS), anyOrNull()) }.doReturn(DEFAULT_TRIGGERS)
             on { getStringSet(eq(PREF_EMAIL_CONTENT), anyOrNull()) }.doReturn(DEFAULT_EMAIL_CONTENT)
         }

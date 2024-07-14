@@ -10,7 +10,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_NOTIFICATIONS
-import com.bopr.android.smailer.control.RemoteControlProcessor
+import com.bopr.android.smailer.control.MailControlProcessor
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.util.getQuantityString
 import com.bopr.android.smailer.util.runLongTask
@@ -69,7 +69,7 @@ class RemoteControlFragment : BasePreferenceFragment() {
             onPerform = {
                 requireContext().run {
                     Database(this).use {
-                        RemoteControlProcessor(this, it).checkMailbox()
+                        MailControlProcessor(this).checkMailbox()
                     }
                 }
             },

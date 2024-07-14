@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory
 internal class Telegram(context: Context) {
 
     private val settings = Settings(context)
-    private val baseUrl = "https://api.telegram.org/bot"
     private val requestQueue = Volley.newRequestQueue(context)
 
     fun sendMessage(
@@ -42,40 +41,6 @@ internal class Telegram(context: Context) {
             },
             onError = onError
         )
-    }
-
-    private fun request(
-        command: String,
-        onResponse: (response: JSONObject) -> Unit,
-        onError: (error: Exception) -> Unit
-    ) {
-        val token = settings.getTelegramBotToken()
-        if (isNullOrEmpty(token)) {
-            onError(TelegramException(TELEGRAM_NO_TOKEN))
-        } else {
-            val url = "$baseUrl$token/$command"
-
-            val request = JsonObjectRequest(url,
-                { response ->
-                    try {
-                        onResponse(response)
-                    } catch (x: Exception) {
-                        log.error("Error while processing <$command> response.", x)
-                        onError(x)
-                    }
-                },
-                { error ->
-                    log.error("<$command> request failed.", error)
-                    if (error is AuthFailureError) {
-                        onError(TelegramException(TELEGRAM_INVALID_TOKEN, error))
-                    } else {
-                        onError(TelegramException(TELEGRAM_REQUEST_FAILED, error))
-                    }
-                }
-            )
-
-            requestQueue.add(request)
-        }
     }
 
     private fun requestUpdates(
@@ -114,7 +79,10 @@ internal class Telegram(context: Context) {
         onError: (error: Exception) -> Unit
     ) {
         request(
-            command = "sendMessage?chat_id=$chatId&text=$text",
+            command = "sendMessage?" +
+                    "chat_id=$chatId&" +
+                    "text=$text&" +
+                    "parse_mode=$PARSE_MODE",
             onResponse = { response ->
                 if (!response.getBoolean("ok")) {
                     throw TelegramException(TELEGRAM_BAD_RESPONSE)
@@ -126,9 +94,47 @@ internal class Telegram(context: Context) {
         )
     }
 
+    private fun request(
+        command: String,
+        onResponse: (response: JSONObject) -> Unit,
+        onError: (error: Exception) -> Unit
+    ) {
+        val token = settings.getTelegramBotToken()
+
+        if (isNullOrEmpty(token)) {
+            onError(TelegramException(TELEGRAM_NO_TOKEN))
+        } else {
+            val url = "$BASE_URL$token/$command"
+            val request = JsonObjectRequest(url,
+                { response ->
+                    try {
+                        onResponse(response)
+                    } catch (x: Exception) {
+                        log.error("Error while processing <$command> response.", x)
+
+                        onError(x)
+                    }
+                },
+                { error ->
+                    log.error("<$command> request failed.", error)
+
+                    if (error is AuthFailureError) {
+                        onError(TelegramException(TELEGRAM_INVALID_TOKEN, error))
+                    } else {
+                        onError(TelegramException(TELEGRAM_REQUEST_FAILED, error))
+                    }
+                }
+            )
+
+            requestQueue.add(request)
+        }
+    }
+
     companion object {
 
         private val log = LoggerFactory.getLogger("Telegram")
+        private const val BASE_URL = "https://api.telegram.org/bot"
+        private const val PARSE_MODE = "html"
     }
 
 }

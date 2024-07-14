@@ -2,6 +2,7 @@ package com.bopr.android.smailer.util
 
 import android.Manifest.permission.READ_CONTACTS
 import androidx.test.rule.GrantPermissionRule
+import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.BaseTest
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -27,12 +28,12 @@ class AndroidUtilTest : BaseTest() {
 
     @Test
     fun testPrimaryAccount() {
-        assertNotNull(targetContext.primaryGoogleAccount)
+        assertNotNull(AccountHelper(targetContext).getPrimaryGoogleAccount())
     }
 
     @Test
     fun testGetAccount() {
-        assertNull(targetContext.getGoogleAccount(""))
+        assertNull(AccountHelper(targetContext).getGoogleAccount(""))
     }
 
 }

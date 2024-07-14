@@ -7,7 +7,7 @@ import androidx.preference.ListPreference
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.DEFAULT_PHONE_SEARCH_URL
 import com.bopr.android.smailer.Settings.Companion.PREF_DEVICE_ALIAS
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_LOCALE
+import com.bopr.android.smailer.Settings.Companion.PREF_MESSAGE_LOCALE
 import com.bopr.android.smailer.Settings.Companion.PREF_PHONE_SEARCH_URL
 import com.bopr.android.smailer.util.deviceName
 
@@ -46,15 +46,15 @@ class EmailSettingsFragment : BasePreferenceFragment() {
                 updateDeviceNamePreferenceView()
             PREF_PHONE_SEARCH_URL ->
                 updatePhoneSearchUrlPreferenceView()
-            PREF_EMAIL_LOCALE ->
+            PREF_MESSAGE_LOCALE ->
                 updateLocalePreferenceView()
         }
     }
 
     private fun updateLocalePreferenceView() {
-        val preference: ListPreference = findPreference(PREF_EMAIL_LOCALE)!!
+        val preference: ListPreference = findPreference(PREF_MESSAGE_LOCALE)!!
 
-        val index = preference.findIndexOfValue(settings.getEmailLocale())
+        val index = preference.findIndexOfValue(settings.getMessageLocale())
         if (index < 0) {
             updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)
         } else {
@@ -63,7 +63,7 @@ class EmailSettingsFragment : BasePreferenceFragment() {
     }
 
     private fun updateDeviceNamePreferenceView() {
-        updateSummary(requirePreference(PREF_DEVICE_ALIAS), settings.getDeviceAlias(),
+        updateSummary(requirePreference(PREF_DEVICE_ALIAS), settings.getDeviceName(),
                 SUMMARY_STYLE_DEFAULT)
     }
 

@@ -28,18 +28,15 @@ fun Context.permissionLabel(permissionName: String): String {
 }
 
 /**
- * The method must be named exactly "checkPermission" to pass the IDE inspections and lint warnings
+ * NOTE: The method must be named exactly "checkPermission" to pass the IDE inspections and lint warnings
  * when checking methods annotated with [androidx.annotation.RequiresPermission].
  *
  * @see <a href="https://stackoverflow.com/questions/36031218/check-android-permissions-in-a-method">here</a>
  */
 fun Context.checkPermission(vararg permissions: String): Boolean {
-    for (p in permissions) {
-        if (checkSelfPermission(this, p) != PERMISSION_GRANTED) {
-            return false
-        }
+    return permissions.none { permission ->
+        checkSelfPermission(this, permission) != PERMISSION_GRANTED
     }
-    return true
 }
 
 fun Fragment.checkPermission(vararg permissions: String): Boolean {

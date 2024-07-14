@@ -2,6 +2,7 @@ package com.bopr.android.smailer.util
 
 import android.util.Patterns.EMAIL_ADDRESS
 import java.io.InputStream
+import java.net.URLEncoder
 import java.util.Locale
 import java.util.Scanner
 import java.util.regex.Pattern
@@ -104,4 +105,25 @@ fun isValidEmailAddress(address: String?): Boolean {
 fun isValidEmailAddressList(addresses: String?): Boolean {
     return !addresses.isNullOrBlank() && commaSplit(addresses).all { isValidEmailAddress(it) }
 
+}
+
+fun String.htmlReplaceUrlsWithLinks(): String {
+    val sb = StringBuffer()
+
+    val matcher = WEB_URL_PATTERN.matcher(this)
+    while (matcher.find()) {
+        val url = matcher.group()
+        matcher.appendReplacement(sb, "<a href=\"$url\">$url</a>")
+    }
+    matcher.appendTail(sb)
+
+    return sb.toString()
+}
+
+fun String.httpEncoded(): String {
+//    return try {
+    return URLEncoder.encode(this, "UTF-8")
+//    } catch (x: UnsupportedEncodingException) {
+//        throw RuntimeException(x)
+//    }
 }

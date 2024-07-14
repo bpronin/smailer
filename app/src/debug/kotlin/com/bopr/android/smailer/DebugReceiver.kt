@@ -7,7 +7,7 @@ import com.bopr.android.smailer.AppStartup.startUpAppServices
 import com.bopr.android.smailer.provider.telephony.PhoneEventProcessor
 import com.bopr.android.smailer.provider.telephony.PhoneEventProcessorWorker.Companion.startPhoneEventProcessing
 import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
-import com.bopr.android.smailer.control.RemoteControlProcessor
+import com.bopr.android.smailer.control.MailControlProcessor
 import com.bopr.android.smailer.util.deviceName
 import com.bopr.android.smailer.util.runInBackground
 import java.lang.System.currentTimeMillis
@@ -41,7 +41,7 @@ class DebugReceiver : BroadcastReceiver() {
 
             "PROCESS_SERVICE_MAIL" -> {
                 runInBackground {
-                    RemoteControlProcessor(context).checkMailbox()
+                    MailControlProcessor(context).checkMailbox()
                 }
             }
 

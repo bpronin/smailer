@@ -14,17 +14,17 @@ import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit.MILLISECONDS
 
 /**
- * Periodically checks email out for remote tasks.
+ * Periodically checks service mailbox for messages containing control commands.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class MailRemoteControlWorker(context: Context, workerParams: WorkerParameters) :
+internal class MailControlWorker(context: Context, workerParams: WorkerParameters) :
     Worker(context, workerParams) {
 
     override fun doWork(): Result {
         applicationContext.run {
             if (isFeatureEnabled) {
-                RemoteControlProcessor(this).checkMailbox()
+                MailControlProcessor(this).checkMailbox()
             }
         }
 
@@ -47,7 +47,7 @@ internal class MailRemoteControlWorker(context: Context, workerParams: WorkerPar
                     .build()
 
                 val request = PeriodicWorkRequest.Builder(
-                    MailRemoteControlWorker::class.java,
+                    MailControlWorker::class.java,
                     MIN_PERIODIC_INTERVAL_MILLIS,
                     MILLISECONDS
                 )

@@ -13,22 +13,15 @@ import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
 import android.os.Build
-import androidx.annotation.IntDef
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.TaskStackBuilder
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
-import com.bopr.android.smailer.ui.EventFilterPhoneBlacklistActivity
-import com.bopr.android.smailer.ui.EventFilterPhoneWhitelistActivity
-import com.bopr.android.smailer.ui.EventFilterTextBlacklistActivity
-import com.bopr.android.smailer.ui.EventFilterTextWhitelistActivity
-import com.bopr.android.smailer.ui.HistoryActivity
 import com.bopr.android.smailer.ui.MainActivity
 import com.bopr.android.smailer.ui.RecipientsActivity
 import com.bopr.android.smailer.ui.RemoteControlActivity
-import com.bopr.android.smailer.ui.RulesActivity
 import com.bopr.android.smailer.util.Mockable
 import com.bopr.android.smailer.util.isValidEmailAddressList
 import java.lang.System.currentTimeMillis
@@ -47,13 +40,13 @@ class NotificationsHelper(private val context: Context) {
     private val statusBuilder: NotificationCompat.Builder =
         NotificationCompat.Builder(context, CHANNEL_ID_STATUS)
             .setSmallIcon(R.drawable.ic_notification)
-            .setContentIntent(targetIntent(TARGET_MAIN))
+            .setContentIntent(activityIntent(MainActivity::class))
             .setOngoing(true)
             .apply {
                 setCategory(CATEGORY_SERVICE)
             }
 
-    private val messagesBuilder: NotificationCompat.Builder =
+    private val infoBuilder: NotificationCompat.Builder =
         NotificationCompat.Builder(context, CHANNEL_ID_NOTIFICATIONS)
             .setSmallIcon(R.drawable.ic_notification)
             .setAutoCancel(true)
@@ -95,37 +88,47 @@ class NotificationsHelper(private val context: Context) {
     }
 
     fun showMailSendSuccess() {
-        showMessage(context.getString(R.string.email_successfully_send), null, TARGET_MAIN)
+        notifyInfo(context.getString(R.string.email_successfully_send), null, MainActivity::class)
     }
 
-    fun showRemoteAction(message: String, @Target target: Int) {
-        showMessage(context.getString(R.string.remote_action), message, target)
+    fun showRemoteAction(message: String, target: KClass<out Activity>) {
+        notifyInfo(context.getString(R.string.remote_action), message, target)
     }
 
     fun showRemoteAccountError() {
-        showError(
-            REMOTE_ACCOUNT_ERROR, context.getString(R.string.service_account_not_found),
-            TARGET_REMOTE_CONTROL
+        notifyError(
+            REMOTE_ACCOUNT_ERROR,
+            context.getString(R.string.service_account_not_found),
+            RemoteControlActivity::class
         )
     }
 
     fun showSenderAccountError() {
-        showError(
-            SENDER_ACCOUNT_ERROR, context.getString(R.string.sender_account_not_found),
-            TARGET_MAIN
+        notifyError(
+            SENDER_ACCOUNT_ERROR,
+            context.getString(R.string.sender_account_not_found),
+            MainActivity::class
         )
     }
 
     fun showRecipientsError(@StringRes reasonRes: Int) {
-        showMailError(RECIPIENTS_ERROR, reasonRes, TARGET_RECIPIENTS)
+        showMailError(
+            RECIPIENTS_ERROR,
+            reasonRes,
+            RecipientsActivity::class
+        )
     }
 
     fun showGoogleAccessError() {
-        showMailError(GOOGLE_ACCESS_ERROR, R.string.no_access_to_google_account, TARGET_MAIN)
+        showMailError(
+            GOOGLE_ACCESS_ERROR,
+            R.string.no_access_to_google_account,
+            MainActivity::class
+        )
     }
 
-    internal fun cancelError(errorId: Int) {
-        manager.cancel(TAG_ERROR, errorId)
+    internal fun cancelError(notificationId: Int) {
+        manager.cancel(TAG_ERROR, notificationId)
     }
 
     internal fun onSettingsChanged(settings: Settings, key: String?) {
@@ -147,66 +150,33 @@ class NotificationsHelper(private val context: Context) {
         }
     }
 
-    private fun showMessage(title: String, message: String? = null, @Target target: Int) {
+    fun notifyInfo(title: String, text: String? = null, target: KClass<out Activity>) {
         manager.notify(
-            TAG_MESSAGE, nextMessageId++, messagesBuilder
+            TAG_MESSAGE, nextInfoNotificationId++, infoBuilder
                 .setWhen(currentTimeMillis())
                 .setContentTitle(title)
-                .setContentText(message)
-                .setContentIntent(targetIntent(target))
+                .setContentText(text)
+                .setContentIntent(activityIntent(target))
                 .build()
         )
     }
 
-    private fun showError(errorId: Int, title: String, @Target target: Int) {
+    fun notifyError(notificationId: Int, title: String, target: KClass<out Activity>) {
         manager.notify(
-            TAG_ERROR, errorId, errorsBuilder
+            TAG_ERROR, notificationId, errorsBuilder
                 .setWhen(currentTimeMillis())
                 .setContentTitle(title)
-                .setContentIntent(targetIntent(target))
+                .setContentIntent(activityIntent(target))
                 .build()
         )
     }
 
-    private fun showMailError(errorId: Int, @StringRes reasonRes: Int, @Target target: Int) {
-        showError(
-            errorId, context.getString(R.string.unable_send_email, context.getString(reasonRes)),
+    private fun showMailError(errorId: Int, @StringRes reasonRes: Int, target: KClass<out Activity>) {
+        notifyError(
+            errorId,
+            context.getString(R.string.unable_send_email, context.getString(reasonRes)),
             target
         )
-    }
-
-    private fun targetIntent(@Target target: Int): PendingIntent {
-        return when (target) {
-            TARGET_MAIN ->
-                activityIntent(MainActivity::class)
-
-            TARGET_HISTORY ->
-                activityIntent(HistoryActivity::class)
-
-            TARGET_RECIPIENTS ->
-                activityIntent(RecipientsActivity::class)
-
-            TARGET_REMOTE_CONTROL ->
-                activityIntent(RemoteControlActivity::class)
-
-            TARGET_RULES ->
-                activityIntent(RulesActivity::class)
-
-            TARGET_PHONE_BLACKLIST ->
-                activityIntent(EventFilterPhoneBlacklistActivity::class)
-
-            TARGET_PHONE_WHITELIST ->
-                activityIntent(EventFilterPhoneWhitelistActivity::class)
-
-            TARGET_TEXT_BLACKLIST ->
-                activityIntent(EventFilterTextBlacklistActivity::class)
-
-            TARGET_TEXT_WHITELIST ->
-                activityIntent(EventFilterTextWhitelistActivity::class)
-
-            else ->
-                throw IllegalArgumentException("Invalid target")
-        }
     }
 
     private fun activityIntent(activityClass: KClass<out Activity>): PendingIntent {
@@ -215,16 +185,9 @@ class NotificationsHelper(private val context: Context) {
             .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)!!
     }
 
-    @Retention(AnnotationRetention.SOURCE)
-    @IntDef(
-        TARGET_MAIN, TARGET_RULES, TARGET_HISTORY, TARGET_RECIPIENTS, TARGET_REMOTE_CONTROL,
-        TARGET_PHONE_BLACKLIST, TARGET_PHONE_WHITELIST, TARGET_TEXT_BLACKLIST, TARGET_TEXT_WHITELIST
-    )
-    annotation class Target
-
     companion object {
 
-        private var nextMessageId = 0
+        private var nextInfoNotificationId = 0
 
         private const val CHANNEL_ID_STATUS = "com.bopr.android.smailer.status"
         private const val CHANNEL_ID_NOTIFICATIONS = "com.bopr.android.smailer.notifications"
@@ -238,16 +201,6 @@ class NotificationsHelper(private val context: Context) {
         const val GOOGLE_ACCESS_ERROR = 1003
 
         const val SERVICE_NOTIFICATION_ID = 19158
-
-        const val TARGET_MAIN = 0
-        const val TARGET_RULES = 1
-        const val TARGET_HISTORY = 2
-        const val TARGET_RECIPIENTS = 3
-        const val TARGET_REMOTE_CONTROL = 4
-        const val TARGET_PHONE_BLACKLIST = 5
-        const val TARGET_PHONE_WHITELIST = 6
-        const val TARGET_TEXT_BLACKLIST = 7
-        const val TARGET_TEXT_WHITELIST = 8
     }
 
 }

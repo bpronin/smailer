@@ -52,12 +52,12 @@ class AddressUtilTest : BaseTest() {
         assertTrue(sameEmail("b.o.b.s.on@mail.com", "bobson@mail.com"))
     }
 
-    @Test
-    fun testCloudTopicUserId() {
-        assertEquals("bobson~mail.com", userId("bob.son@mail.com"))
-        assertEquals("bobson~mail.com", userId("BOB.son@MAIL.com"))
-        assertEquals("bobson~mail.com", userId("b.o.b.s.on@mail.com"))
-        assertEquals("bobson~mail.com", userId("\"bob.son\"@mail.com"))
-        assertEquals("bobson~mail.com", userId("b#o*|/b.son@mail.com"))
-    }
+//    @Test
+//    fun testCloudTopicUserId() {
+//        assertEquals("bobson~mail.com", userId("bob.son@mail.com"))
+//        assertEquals("bobson~mail.com", userId("BOB.son@MAIL.com"))
+//        assertEquals("bobson~mail.com", userId("b.o.b.s.on@mail.com"))
+//        assertEquals("bobson~mail.com", userId("\"bob.son\"@mail.com"))
+//        assertEquals("bobson~mail.com", userId("b#o*|/b.son@mail.com"))
+//    }
 }

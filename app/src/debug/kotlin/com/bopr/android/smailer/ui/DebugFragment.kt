@@ -25,10 +25,9 @@ import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.NotificationsHelper.Companion.RECIPIENTS_ERROR
 import com.bopr.android.smailer.NotificationsHelper.Companion.REMOTE_ACCOUNT_ERROR
 import com.bopr.android.smailer.NotificationsHelper.Companion.SENDER_ACCOUNT_ERROR
-import com.bopr.android.smailer.NotificationsHelper.Companion.TARGET_PHONE_BLACKLIST
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_LOCALE
+import com.bopr.android.smailer.Settings.Companion.PREF_MESSAGE_LOCALE
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
@@ -48,7 +47,7 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
 import com.bopr.android.smailer.consumer.mail.MailMessage
-import com.bopr.android.smailer.control.RemoteControlProcessor
+import com.bopr.android.smailer.control.MailControlProcessor
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.databaseName
 import com.bopr.android.smailer.external.Firebase
@@ -238,7 +237,7 @@ class DebugFragment : BasePreferenceFragment() {
             addPreference("Show remote action") {
                 notifications.showRemoteAction(
                     getString(R.string.text_remotely_added_to_blacklist, "spam text"),
-                    TARGET_PHONE_BLACKLIST
+                    EventFilterTextBlacklistActivity::class
                 )
             },
             addPreference("Cancel errors") {
@@ -417,7 +416,7 @@ class DebugFragment : BasePreferenceFragment() {
                     VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME
                 )
             )
-            putString(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)
+            putString(PREF_MESSAGE_LOCALE, VAL_PREF_DEFAULT)
             putBoolean(PREF_NOTIFY_SEND_SUCCESS, true)
         }
 
@@ -456,7 +455,7 @@ class DebugFragment : BasePreferenceFragment() {
     private fun onProcessServiceMail(preference: Preference) {
         if (settings.isRemoteControlEnabled()) {
             runLongTask("Remote control", preference) {
-                RemoteControlProcessor(requireContext()).checkMailbox()
+                MailControlProcessor(requireContext()).checkMailbox()
             }
         } else {
             showInfoDialog("Remote control", "Feature is disabled")
@@ -475,7 +474,7 @@ class DebugFragment : BasePreferenceFragment() {
             startTime = start,
             endTime = start + 10000,
             isMissed = false,
-            text = "debug SMS message text",
+            text = "Debug SMS message text",
             location = null,
             details = null,
             acceptor = deviceName(),

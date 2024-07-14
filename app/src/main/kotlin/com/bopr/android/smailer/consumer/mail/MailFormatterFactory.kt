@@ -10,32 +10,21 @@ class MailFormatterFactory(private val context: Context) {
 
     private val settings = Settings(context)
 
-    fun get(event: PhoneEventInfo): MailFormatter {
-        return PhoneEventMailFormatter(
-            context = context,
-            event = event,
-            contactName = tryGetContactName(context, event.phone),
-            deviceName = settings.getDeviceAlias(),
-            options = settings.getEmailContent(),
-            serviceAccount = settings.getRemoteControlAccountName(),
-            phoneSearchUrl = settings.getPhoneSearchUrl(),
-            locale = parseLocale(settings.getEmailLocale())
-        )
-
-//        return when (event.payload) {
-//            is PhoneEventInfo -> PhoneEventMailFormatter(
-//                context = context,
-//                event = event.payload,
-//                contactName = tryGetContactName(context, event.payload.phone),
-//                deviceName = settings.getDeviceAlias(),
-//                options = settings.getEmailContent(),
-//                serviceAccount = settings.getRemoteControlAccountName(),
-//                phoneSearchUrl = settings.getPhoneSearchUrl(),
-//                locale = parseLocale(settings.getEmailLocale())
-//            )
-////            is BatteryEvent -> BatteryEventMailFormatter(context)
-//            else -> throw IllegalArgumentException("No formatter for ${event::class}")
-//        }
+    fun createFormatter(event: PhoneEventInfo): MailFormatter {
+        return when (event) {
+            is PhoneEventInfo -> PhoneEventMailFormatter(
+                context = context,
+                event = event,
+                contactName = tryGetContactName(context, event.phone),
+                deviceName = settings.getDeviceName(),
+                options = settings.getEmailContent(),
+                serviceAccount = settings.getRemoteControlAccountName(),
+                phoneSearchUrl = settings.getPhoneSearchUrl(),
+                locale = parseLocale(settings.getMessageLocale())
+            )
+//            is BatteryEvent -> BatteryEventMailFormatter(context)
+            else -> throw IllegalArgumentException("No formatter for ${event::class}")
+        }
     }
 
 }
