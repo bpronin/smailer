@@ -29,27 +29,27 @@ class MainActivity : BaseMainActivity(MainFragment::class), OnSharedPreferenceCh
     private lateinit var settings: Settings
     private lateinit var backupManager: BackupManager
     private lateinit var permissionsHelper: PermissionsHelper
-    private lateinit var notifications: NotificationsHelper
-    private val accountManager = AccountManager(this)
+    private lateinit var notificationsHelper: NotificationsHelper
+    private lateinit var accountManager: AccountManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setHomeButtonEnabled(false)
-
         backupManager = BackupManager(this)
-        notifications = NotificationsHelper(this)
+        notificationsHelper = NotificationsHelper(this)
         permissionsHelper = PermissionsHelper(this)
+        accountManager = AccountManager(this)
 
-        settings = Settings(this).also {
-            it.loadDefaults()
-            it.registerOnSharedPreferenceChangeListener(this)
+        settings = Settings(this).apply {
+            loadDefaults()
+            registerOnSharedPreferenceChangeListener(this@MainActivity)
         }
-
-        startUpAppServices()
 
         permissionsHelper.checkAll()
         requireIgnoreBatteryOptimization(this)
+        setHomeButtonEnabled(false)
+
+        startUpAppServices()
     }
 
     override fun onDestroy() {
@@ -80,7 +80,7 @@ class MainActivity : BaseMainActivity(MainFragment::class), OnSharedPreferenceCh
             }
         }
 
-        notifications.onSettingsChanged(settings, key)
+        notificationsHelper.onSettingsChanged(settings, key)
         permissionsHelper.onSettingsChanged(key)
         backupManager.dataChanged()
     }

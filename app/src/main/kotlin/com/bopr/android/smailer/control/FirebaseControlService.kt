@@ -36,6 +36,7 @@ class FirebaseControlService : FirebaseMessagingService() {
     }
 
     companion object {
-        private val log = LoggerFactory.getLogger("CloudMessagingService")
+
+        private val log = LoggerFactory.getLogger("FirebaseControlService")
     }
 }

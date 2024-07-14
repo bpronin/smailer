@@ -5,6 +5,7 @@ import android.content.Context
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.util.GeoCoordinates.Companion.coordinatesOf
 import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
+import com.bopr.android.smailer.transport.GoogleDrive
 import org.slf4j.LoggerFactory
 import java.io.IOException
 
@@ -16,15 +17,9 @@ import java.io.IOException
 internal class Synchronizer(context: Context,
                             account: Account,
                             private val database: Database,
-                            private val drive: GoogleDrive = GoogleDrive(context),
+                            private val drive: GoogleDrive = GoogleDrive(context, account),
                             private val metaFile: String = "meta.json",
                             private val dataFile: String = "data.json") {
-
-    private val log = LoggerFactory.getLogger("Synchronizer")
-
-    init {
-        drive.login(account)
-    }
 
     /**
      * Synchronizes database with google drive.
@@ -152,6 +147,8 @@ internal class Synchronizer(context: Context,
     }
 
     companion object {
+
+        private val log = LoggerFactory.getLogger("Synchronizer")
 
         const val SYNC_NORMAL = 0
         const val SYNC_FORCE_DOWNLOAD = 1

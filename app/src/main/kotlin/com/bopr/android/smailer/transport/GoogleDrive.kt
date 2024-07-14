@@ -1,4 +1,4 @@
-package com.bopr.android.smailer.sync
+package com.bopr.android.smailer.transport
 
 import android.accounts.Account
 import android.content.Context
@@ -18,32 +18,29 @@ import java.io.Writer
 import kotlin.reflect.KClass
 
 /**
- * Helper class to access Google drive.
+ * Google drive session.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 @Mockable
-internal class GoogleDrive(private val context: Context) {
+internal class GoogleDrive(context: Context, account: Account) {
 
-    private val log = LoggerFactory.getLogger("GoogleDrive")
-    private lateinit var service: Drive
-
-    fun login(account: Account) {
-        val credential = GoogleAccountCredential
+    private val service: Drive =
+        Drive.Builder(
+            NetHttpTransport(), jacksonFactory(), GoogleAccountCredential
                 .usingOAuth2(context, setOf(DRIVE_APPDATA))
                 .setSelectedAccount(account)
-        service = Drive.Builder(NetHttpTransport(), jacksonFactory(), credential)
-                .setApplicationName("smailer")
-                .build()
-    }
+        )
+            .setApplicationName("smailer")
+            .build()
 
     @Throws(IOException::class)
     fun list(): List<File> {
         return service.files().list()
-                .setSpaces(APP_DATA_FOLDER)
-                .setFields("files(id, name)")
-                .execute()
-                .files
+            .setSpaces(APP_DATA_FOLDER)
+            .setFields("files(id, name)")
+            .execute()
+            .files
     }
 
     @Throws(IOException::class)
@@ -67,9 +64,9 @@ internal class GoogleDrive(private val context: Context) {
     fun delete(filename: String) {
         find(filename)?.let {
             service.files()
-                    .delete(it)
-                    .setFields("id")
-                    .execute()
+                .delete(it)
+                .setFields("id")
+                .execute()
 
             log.debug("Deleted: $filename")
         }
@@ -79,8 +76,8 @@ internal class GoogleDrive(private val context: Context) {
     fun clear() {
         for (file in list()) {
             service.files()
-                    .delete(file.id)
-                    .execute()
+                .delete(file.id)
+                .execute()
         }
 
         log.debug("All data removed")
@@ -103,14 +100,14 @@ internal class GoogleDrive(private val context: Context) {
     @Throws(IOException::class)
     private fun create(filename: String, json: String) {
         val metadata = File()
-                .setParents(listOf(APP_DATA_FOLDER))
-                .setMimeType(MIME_JSON)
-                .setName(filename)
+            .setParents(listOf(APP_DATA_FOLDER))
+            .setMimeType(MIME_JSON)
+            .setName(filename)
         val content = ByteArrayContent.fromString(MIME_JSON, json)
         service.files()
-                .create(metadata, content)
-                .setFields("id")
-                .execute()
+            .create(metadata, content)
+            .setFields("id")
+            .execute()
     }
 
     @Throws(IOException::class)
@@ -118,19 +115,19 @@ internal class GoogleDrive(private val context: Context) {
         val metadata = File().setName(filename)
         val content = ByteArrayContent.fromString(MIME_JSON, json)
         service.files()
-                .update(fileId, metadata, content)
-                .execute()
+            .update(fileId, metadata, content)
+            .execute()
     }
 
     @Throws(IOException::class)
     private fun find(filename: String): String? {
         val files = service.files()
-                .list()
-                .setSpaces(APP_DATA_FOLDER)
-                .setQ("name='$filename'")
-                .setFields("files(id)")
-                .execute()
-                .files
+            .list()
+            .setSpaces(APP_DATA_FOLDER)
+            .setQ("name='$filename'")
+            .setFields("files(id)")
+            .execute()
+            .files
 
         if (files.isNotEmpty()) {
             if (files.size > 1) {
@@ -147,6 +144,7 @@ internal class GoogleDrive(private val context: Context) {
 
         private const val APP_DATA_FOLDER = "appDataFolder"
         private const val MIME_JSON = "text/json"
+        private val log = LoggerFactory.getLogger("GoogleDrive")
     }
 
 }

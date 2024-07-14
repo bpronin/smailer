@@ -4,8 +4,6 @@ import android.accounts.Account
 import androidx.test.filters.LargeTest
 import com.bopr.android.smailer.AccountManager
 import com.bopr.android.smailer.BaseTest
-import com.bopr.android.smailer.data.Database
-import com.bopr.android.smailer.data.Database.Companion.databaseName
 import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.NotificationsHelper.Companion.TARGET_PHONE_BLACKLIST
 import com.bopr.android.smailer.NotificationsHelper.Companion.TARGET_PHONE_WHITELIST
@@ -18,10 +16,11 @@ import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_NOTIFICATIONS
 import com.bopr.android.smailer.Settings.Companion.sharedPreferencesName
-import com.bopr.android.smailer.transport.GoogleMailSession
 import com.bopr.android.smailer.consumer.mail.MailMessage
+import com.bopr.android.smailer.data.Database
+import com.bopr.android.smailer.data.Database.Companion.databaseName
+import com.bopr.android.smailer.transport.GoogleMail
 import com.bopr.android.smailer.util.deviceName
-import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
@@ -38,11 +37,11 @@ import java.lang.Thread.sleep
 class RemoteControlMailTest : BaseTest() {
 
     private val sender = "TEST"
-    private val transport = GoogleMailSession(targetContext)
     private val notifications: NotificationsHelper = mock()
     private lateinit var database: Database
     private lateinit var processor: RemoteControlProcessor
     private lateinit var account: Account
+    private lateinit var transport: GoogleMail
     private lateinit var settings: Settings
 
     @Before
@@ -55,8 +54,8 @@ class RemoteControlMailTest : BaseTest() {
 
         settings = Settings(targetContext)
         account = AccountManager(targetContext).requirePrimaryGoogleAccount()
+        transport = GoogleMail(targetContext, account)
 
-        transport.login(account, MAIL_GOOGLE_COM)
         for (message in loadMail()) {
             transport.trash(message)
         }

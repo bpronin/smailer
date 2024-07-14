@@ -31,13 +31,7 @@ import javax.mail.internet.*
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 @Mockable
-internal class GoogleMailSession(
-    context: Context,
-    account: Account,
-    vararg scopes: String
-) {
-
-    private val log = LoggerFactory.getLogger("GoogleMail")
+internal class GoogleMail(context: Context, account: Account, vararg scopes: String) {
 
     private val session = Session.getDefaultInstance(Properties(), null)
     private val service =
@@ -187,7 +181,10 @@ internal class GoogleMailSession(
     }
 
     companion object {
-        private const val ME = "me" /* exact lowercase "me" */
+
+        private val log = LoggerFactory.getLogger("GoogleMail")
+
+        private const val ME = "me" /* EXACT lowercase "me" */
         private const val UTF_8 = "UTF-8"
         private const val HTML = "html"
     }

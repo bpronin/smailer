@@ -14,7 +14,7 @@ class TelegramTransport(context: Context) : EventMessengerTransport(context) {
 
     private val telegram = Telegram(context)
 
-    override fun sendMessage(
+    override fun sendMessageFor(
         event: PhoneEventInfo,
         onSuccess: () -> Unit,
         onError: (error: Exception) -> Unit

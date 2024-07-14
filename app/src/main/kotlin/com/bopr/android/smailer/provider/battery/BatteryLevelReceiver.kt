@@ -18,10 +18,10 @@ class BatteryLevelReceiver : BroadcastReceiver() {
     private val log = LoggerFactory.getLogger("BatteryLevelReceiver")
 
     override fun onReceive(context: Context, intent: Intent) {
-        log.trace("Received intent: {}", intent)
+        log.debug("Received intent: {}", intent)
 
         if (intent.action == Intent.ACTION_BATTERY_LOW) {
-            log.trace("Low battery level detected")
+            log.debug("Low battery level detected")
 
 //            if (Settings(context).isBatteryEventsEnabled()) {
 //                val event = Event(

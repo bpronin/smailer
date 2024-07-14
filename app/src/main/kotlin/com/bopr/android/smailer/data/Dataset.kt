@@ -18,8 +18,6 @@ abstract class Dataset<T>(
         protected val modifications: MutableSet<String>
 ) : MutableSet<T> {
 
-    private val log = LoggerFactory.getLogger("Database")
-
     protected abstract val keyColumns: Array<String>
 
     private val keyClause by lazy {
@@ -166,6 +164,10 @@ abstract class Dataset<T>(
         val result = helper.writableDatabase.action()
         modifications.add(tableName)
         return result
+    }
+
+    companion object {
+        private val log = LoggerFactory.getLogger("Database")
     }
 
 }

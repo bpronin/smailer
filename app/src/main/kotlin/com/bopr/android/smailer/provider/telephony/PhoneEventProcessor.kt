@@ -27,14 +27,8 @@ class PhoneEventProcessor(
     private val locator: GeoLocator = GeoLocator(context, database)
 ) {
 
-    private val log = LoggerFactory.getLogger("CallProcessor")
     private val settings: Settings = Settings(context)
 
-    /**
-     * Sends out a mail for event.
-     *
-     * @param event email event
-     */
     fun process(event: PhoneEventInfo) {
         log.debug("Processing: {}", event)
 
@@ -62,9 +56,6 @@ class PhoneEventProcessor(
         }
     }
 
-    /**
-     * Sends out email for all pending events.
-     */
     fun processPending() {
         database.use {
             val pendingEvents = database.phoneEvents.filterPending
@@ -132,5 +123,10 @@ class PhoneEventProcessor(
         database.smsTextBlacklist,
         database.smsTextWhitelist
     )
+
+    companion object {
+
+        private val log = LoggerFactory.getLogger("PhoneEventProcessor")
+    }
 
 }

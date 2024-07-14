@@ -15,14 +15,13 @@ class Settings(context: Context) :
     SharedPreferencesWrapper(context.getSharedPreferences(sharedPreferencesName, MODE_PRIVATE)) {
 
     fun getEmailContent() = getStringSet(PREF_EMAIL_CONTENT)
-    fun getEmailLocale() = getString(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)!!
-    fun getEmailRecipients() = getStringList(PREF_RECIPIENTS_ADDRESS)
-    fun getEmailRecipientsPlain() = getString(PREF_RECIPIENTS_ADDRESS)
+    fun getEmailLocale() = requireString(PREF_EMAIL_LOCALE, VAL_PREF_DEFAULT)
+    fun getEmailRecipients() = requireString(PREF_RECIPIENTS_ADDRESS, "")
     fun getEmailTriggers() = getStringSet(PREF_EMAIL_TRIGGERS)
     fun isNotifyRemoteControlActions() = getBoolean(PREF_REMOTE_CONTROL_NOTIFICATIONS)
     fun isNotifySendSuccess() = getBoolean(PREF_NOTIFY_SEND_SUCCESS)
     fun isRemoteControlEnabled() = getBoolean(PREF_REMOTE_CONTROL_ENABLED)
-    fun isRemoteControlFilterRecipients() = getBoolean(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS)
+    fun isRemoteControlRecipientsFilterEnabled() = getBoolean(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS)
     fun isCloudSyncEnabled() = getBoolean(PREF_SYNC_ENABLED)
     fun getRemoteControlAccountName() = getString(PREF_REMOTE_CONTROL_ACCOUNT)
     fun getSenderAccountName() = getString(PREF_SENDER_ACCOUNT)

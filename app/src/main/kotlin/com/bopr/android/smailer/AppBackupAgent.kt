@@ -16,7 +16,8 @@ class AppBackupAgent : BackupAgentHelper() {
     private val log = LoggerFactory.getLogger("Backup")
 
     override fun onCreate() {
-        log.debug("Create")
+        log.debug("Created")
+
         addHelper("settings", SharedPreferencesBackupHelper(this, sharedPreferencesName))
         //        addHelper("database", new FileBackupHelper(this, "../databases/" + Settings.DB_NAME));
     }

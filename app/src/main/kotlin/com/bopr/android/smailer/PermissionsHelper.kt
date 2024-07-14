@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory
  */
 class PermissionsHelper(val activity: FragmentActivity) {
 
-    private val log = LoggerFactory.getLogger("PermissionsHelper")
     private val settings = Settings(activity)
     private val accountManager = AccountManager(activity)
 
@@ -216,6 +215,7 @@ class PermissionsHelper(val activity: FragmentActivity) {
             ACCESS_COARSE_LOCATION to R.string.permission_rationale_coarse_location,
             ACCESS_FINE_LOCATION to R.string.permission_rationale_fine_location
         )
+        private val log = LoggerFactory.getLogger("PermissionsHelper")
     }
 
 }

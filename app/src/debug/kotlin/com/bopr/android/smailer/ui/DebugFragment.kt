@@ -59,13 +59,13 @@ import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STAT
 import com.bopr.android.smailer.provider.telephony.PhoneEventProcessor
 import com.bopr.android.smailer.provider.telephony.PhoneEventProcessorWorker.Companion.startPhoneEventProcessing
 import com.bopr.android.smailer.provider.telephony.SmsTransport.Companion.smsManager
-import com.bopr.android.smailer.sync.GoogleDrive
+import com.bopr.android.smailer.transport.GoogleDrive
 import com.bopr.android.smailer.sync.Synchronizer
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_DOWNLOAD
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_UPLOAD
 import com.bopr.android.smailer.transport.Firebase
 import com.bopr.android.smailer.transport.Firebase.Companion.FCM_REQUEST_DATA_SYNC
-import com.bopr.android.smailer.transport.GoogleMailSession
+import com.bopr.android.smailer.transport.GoogleMail
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.isIgnoreBatteryOptimizationRequired
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
 import com.bopr.android.smailer.util.GeoLocator
@@ -282,7 +282,7 @@ class DebugFragment : BasePreferenceFragment() {
 
             val account = accountManager.requirePrimaryGoogleAccount()
 
-            val mailSession = GoogleMailSession(context, account, GMAIL_SEND)
+            val mailSession = GoogleMail(context, account, GMAIL_SEND)
             for (file in attachments) {
                 val message = MailMessage(
                     subject = "[SMailer] log: " + file.name,
@@ -308,7 +308,7 @@ class DebugFragment : BasePreferenceFragment() {
                 recipients = developerEmail
             )
 
-            GoogleMailSession(requireContext(), account, GMAIL_SEND).send(message)
+            GoogleMail(requireContext(), account, GMAIL_SEND).send(message)
         }
     }
 
@@ -707,9 +707,7 @@ class DebugFragment : BasePreferenceFragment() {
 
     private fun onGoogleDriveClear(preference: Preference) {
         runLongTask(preference) {
-            val drive = GoogleDrive(requireContext())
-            drive.login(senderAccount())
-            drive.clear()
+            GoogleDrive(requireContext(), senderAccount()).clear()
         }
     }
 

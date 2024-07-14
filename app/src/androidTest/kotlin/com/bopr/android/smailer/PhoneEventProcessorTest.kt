@@ -129,9 +129,9 @@ class PhoneEventProcessorTest : BaseTest() {
     @Test
     fun testProcessMailSent() {
         val event = testingEvent()
-        processor.processEvent(event)
+        processor.process(event)
 
-//        verify(messenger).sendMessages(argThat {
+//        verify(messenger).sendMessagesFor(argThat {
 //            id == null
 //                    && subject == "[SMailer] Incoming SMS from \"+123\""
 //                    && !body.isNullOrBlank()
@@ -162,9 +162,9 @@ class PhoneEventProcessorTest : BaseTest() {
         /* make the event not an SMS then default filter will deny it */
         val event = testingEvent(null)
 
-        processor.processEvent(event)
+        processor.process(event)
 
-        verify(messenger, never()).sendMessages(any())
+        verify(messenger, never()).sendMessageFor(any())
         verify(notifications, never()).showSenderAccountError()
         verify(notifications, never()).showRecipientsError(anyInt())
         verify(notifications, never()).showGoogleAccessError()
@@ -183,10 +183,10 @@ class PhoneEventProcessorTest : BaseTest() {
         whenever(preferences.getString(eq(PREF_SENDER_ACCOUNT), anyOrNull())).thenReturn(null)
 
         val event = testingEvent()
-        processor.processEvent(event)
+        processor.process(event)
 
 //        verify(messenger, never()).login(any(), any())
-        verify(messenger, never()).sendMessages(any())
+        verify(messenger, never()).sendMessageFor(any())
         verify(notifications).showSenderAccountError()
 
         val savedEvent = database.phoneEvents.first()
@@ -203,9 +203,9 @@ class PhoneEventProcessorTest : BaseTest() {
         whenever(preferences.getString(eq(PREF_RECIPIENTS_ADDRESS), anyOrNull())).thenReturn(null)
 
         val event = testingEvent()
-        processor.processEvent(event)
+        processor.process(event)
 
-        verify(messenger, never()).sendMessages(any())
+        verify(messenger, never()).sendMessageFor(any())
         verify(notifications).showRecipientsError(eq(R.string.no_recipients_specified))
 
         val savedEvent = database.phoneEvents.first()
@@ -219,13 +219,13 @@ class PhoneEventProcessorTest : BaseTest() {
      */
     @Test
     fun testProcessTransportSendFailed() {
-        doThrow(IOException("Test error")).whenever(messenger).sendMessages(any())
+        doThrow(IOException("Test error")).whenever(messenger).sendMessageFor(any())
 
         val event = testingEvent()
-        processor.processEvent(event)
+        processor.process(event)
 
 //        verify(messenger).login(any(), any())
-        verify(messenger).sendMessages(any())
+        verify(messenger).sendMessageFor(any())
         verify(notifications, never()).showSenderAccountError()
         verify(notifications, never()).showRecipientsError(anyInt())
         verify(notifications, never()).showGoogleAccessError()
@@ -244,14 +244,14 @@ class PhoneEventProcessorTest : BaseTest() {
         /* the setting is OFF */
         whenever(preferences.getBoolean(eq(PREF_NOTIFY_SEND_SUCCESS), anyOrNull())).thenReturn(false)
 
-        processor.processEvent(testingEvent())
+        processor.process(testingEvent())
 
         verify(notifications, never()).showMailSendSuccess()
 
         /* the setting is ON */
         whenever(preferences.getBoolean(eq(PREF_NOTIFY_SEND_SUCCESS), anyOrNull())).thenReturn(true)
 
-        processor.processEvent(testingEvent())
+        processor.process(testingEvent())
 
         verify(notifications).showMailSendSuccess()
     }
@@ -262,11 +262,11 @@ class PhoneEventProcessorTest : BaseTest() {
     @Test
     fun testProcessPending() {
         /* disable transport */
-        doThrow(IOException("Test error")).whenever(messenger).sendMessages(any())
+        doThrow(IOException("Test error")).whenever(messenger).sendMessageFor(any())
 
-        processor.processEvent(testingEvent())
-        processor.processEvent(testingEvent())
-        processor.processEvent(testingEvent())
+        processor.process(testingEvent())
+        processor.process(testingEvent())
+        processor.process(testingEvent())
 
         assertEquals(3, database.phoneEvents.size)
         assertEquals(3, database.phoneEvents.filterPending.size)
@@ -284,7 +284,7 @@ class PhoneEventProcessorTest : BaseTest() {
         verify(notifications, never()).showGoogleAccessError()
 
         /* enable transport an try again */
-        doNothing().whenever(messenger).sendMessages(any())
+        doNothing().whenever(messenger).sendMessageFor(any())
 
         processor.processPending()
 

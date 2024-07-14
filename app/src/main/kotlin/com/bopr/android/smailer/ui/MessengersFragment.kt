@@ -101,7 +101,7 @@ class MessengersFragment : BasePreferenceFragment() {
             },
             onError = { error ->
                 if (error is TelegramException) {
-                    when (error.errorCode) {
+                    when (error.code) {
                         TELEGRAM_REQUEST_FAILED,
                         TELEGRAM_BAD_RESPONSE -> showInfoDialog(
                             R.string.test_message_failed,

@@ -24,10 +24,11 @@ import com.bopr.android.smailer.control.RemoteControlTask.Companion.REMOVE_PHONE
 import com.bopr.android.smailer.control.RemoteControlTask.Companion.REMOVE_TEXT_FROM_BLACKLIST
 import com.bopr.android.smailer.control.RemoteControlTask.Companion.REMOVE_TEXT_FROM_WHITELIST
 import com.bopr.android.smailer.control.RemoteControlTask.Companion.SEND_SMS_TO_CALLER
-import com.bopr.android.smailer.transport.GoogleMailSession
+import com.bopr.android.smailer.transport.GoogleMail
 import com.bopr.android.smailer.consumer.mail.MailMessage
 import com.bopr.android.smailer.provider.telephony.SmsTransport
 import com.bopr.android.smailer.util.checkPermission
+import com.bopr.android.smailer.util.commaSplit
 import com.bopr.android.smailer.util.containsEmail
 import com.bopr.android.smailer.util.extractEmail
 import com.bopr.android.smailer.util.hasInternetConnection
@@ -57,7 +58,7 @@ internal class RemoteControlProcessor(
         if (!checkInternet()) return 0
         val account = requireAccount() ?: return 0
 
-        val session = GoogleMailSession(context, account, MAIL_GOOGLE_COM)
+        val session = GoogleMail(context, account, MAIL_GOOGLE_COM)
         val messages = session.list(query)
         if (messages.isEmpty()) {
             log.debug("No service mail")
@@ -122,10 +123,12 @@ internal class RemoteControlProcessor(
     }
 
     private fun acceptMessage(message: MailMessage): Boolean {
-        if (settings.isRemoteControlFilterRecipients()) {
+        if (settings.isRemoteControlRecipientsFilterEnabled()) {
             val address = extractEmail(message.from)!!
-            if (!settings.getEmailRecipients().containsEmail(address)) {
+            val recipients = commaSplit(settings.getEmailRecipients())
+            if (!recipients.containsEmail(address)) {
                 log.debug("Address $address rejected")
+
                 return false
             }
         }

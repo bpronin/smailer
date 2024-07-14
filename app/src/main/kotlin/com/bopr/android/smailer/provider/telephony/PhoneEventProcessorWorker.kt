@@ -16,7 +16,7 @@ class PhoneEventProcessorWorker(context: Context, workerParams: WorkerParameters
     override fun doWork(): Result {
         val info = unparcelize(inputData.getByteArray(DATA)!!, PhoneEventInfo::class)
 
-        log.trace("Processing phone event: {}", info)
+        log.debug("Processing phone event: {}", info)
 
         PhoneEventProcessor(applicationContext).process(info)
 
@@ -25,11 +25,11 @@ class PhoneEventProcessorWorker(context: Context, workerParams: WorkerParameters
 
     companion object {
 
-        private val log = LoggerFactory.getLogger("CallProcessorWorker")
+        private val log = LoggerFactory.getLogger("PhoneEventProcessorWorker")
         private const val DATA = "data"
 
         fun Context.startPhoneEventProcessing(info: PhoneEventInfo) {
-            log.debug("Starting processing phone event")
+            log.debug("Start processing")
 
             val data = Data.Builder()
                 .putByteArray(DATA, parcelize(info))

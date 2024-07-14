@@ -23,7 +23,7 @@ internal class PendingEventsProcessorWorker(context: Context, workerParams: Work
 
     internal companion object {
 
-        private val log = LoggerFactory.getLogger("PendingCallProcessorWorker")
+        private val log = LoggerFactory.getLogger("PendingEventsProcessorWorker")
         private const val WORK_RESEND = "com.bopr.android.smailer.resend"
 
         fun Context.startPendingEventsProcessing() {

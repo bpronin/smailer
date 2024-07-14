@@ -39,6 +39,10 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
         return getString(key, null)
     }
 
+    fun requireString(key: String, defValue: String): String {
+        return requireNotNull(getString(key, defValue))
+    }
+
     fun getBoolean(key: String): Boolean {
         return getBoolean(key, false)
     }

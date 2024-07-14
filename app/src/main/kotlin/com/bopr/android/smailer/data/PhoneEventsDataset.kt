@@ -12,8 +12,6 @@ import org.slf4j.LoggerFactory
 class PhoneEventsDataset(helper: SQLiteOpenHelper, modifications: MutableSet<String>) :
     Dataset<PhoneEventInfo>(Database.TABLE_PHONE_EVENTS, helper, modifications) {
 
-    private val log = LoggerFactory.getLogger("Database")
-
     override val keyColumns = strings(Database.COLUMN_START_TIME, Database.COLUMN_ACCEPTOR)
 
     /**
@@ -101,5 +99,10 @@ class PhoneEventsDataset(helper: SQLiteOpenHelper, modifications: MutableSet<Str
                 put(Database.COLUMN_LONGITUDE, longitude)
             }
         }
+    }
+
+    companion object {
+
+        private val log = LoggerFactory.getLogger("Database")
     }
 }

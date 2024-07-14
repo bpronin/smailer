@@ -5,5 +5,9 @@ import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
 
 abstract class EventMessengerTransport(val context: Context) {
 
-    abstract fun sendMessage(event: PhoneEventInfo, onSuccess: () -> Unit, onError: (error: Exception) -> Unit)
+    abstract fun sendMessageFor(
+        event: PhoneEventInfo,
+        onSuccess: () -> Unit,
+        onError: (error: Exception) -> Unit
+    )
 }

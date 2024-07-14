@@ -23,7 +23,7 @@ import java.lang.System.currentTimeMillis
 class PhoneEventReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        log.trace("Received intent: {}", intent)
+        log.debug("Received intent: {}", intent)
 
         when (intent.action) {
             ACTION_PHONE_STATE_CHANGED ->
@@ -146,8 +146,9 @@ class PhoneEventReceiver : BroadcastReceiver() {
 
     companion object {
 
+        private val log = LoggerFactory.getLogger("PhoneEventReceiver")
+
         const val SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED"
-        private val log = LoggerFactory.getLogger("CallReceiver")
 
         private var callNumber: String? = null
         private var prevCallState: String? = null
