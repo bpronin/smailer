@@ -149,7 +149,7 @@
     <string name="status">Status</string>
     <string name="sync_blacklist_and_log">Synchronize black/whitelists and call history across devices</string>
     <string name="synchronization">Synchronization</string>
-    <string name="tap_to_check_settings">Tap to check your settings.</string>
+    <string name="check_settings">Please check your settings.</string>
     <string name="text_blacklist">Text blacklist</string>
     <string name="text_filter">Text filter</string>
     <string name="text_fragment">Text fragment</string>
@@ -188,9 +188,10 @@
     <string name="require_start_chat">To receive messages you need to start conversation with your bot in Telegram application.</string>
     <string name="test_message_sent">Test message sent.</string>
     <string name="bad_telegram_bot_token">Telegram bot token is invalid.</string>
-    <string name="no_telegram_bot_token">Telegram bot token not specified.</string>
+    <string name="no_telegram_bot_token">Telegram bot token is not specified.</string>
     <string name="test_message_failed">Test message filed</string>
     <string name="addresses">%d addresses</string>
+    <string name="unknown_location">unknown</string>
 
     <plurals name="items_removed">
         <item quantity="one">Item removed</item>

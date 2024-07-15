@@ -4,7 +4,8 @@ import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 
 /* Must be subclass of SharedPreferences! Otherwise it leads to unpredictable results */
-open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPreferences) : SharedPreferences {
+open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPreferences) :
+    SharedPreferences {
 
     override fun getAll(): MutableMap<String, *> {
         return wrappedPreferences.all
@@ -34,6 +35,17 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
     override fun getBoolean(key: String, defValue: Boolean): Boolean {
         return wrappedPreferences.getBoolean(key, defValue)
     }
+
+//    inline fun <reified T : Any> get(key: String): T? {
+//        return when (T::class) {
+//            String::class -> getString(key) as T
+//            Boolean::class -> getBoolean(key) as T
+//            Int::class -> getInt(key, 0) as T
+//            Long::class -> getLong(key, 0) as T
+//            Float::class -> getFloat(key, 0f) as T
+//            else -> null
+//        }
+//    }
 
     fun getString(key: String): String? {
         return getString(key, null)
@@ -77,7 +89,8 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
         wrappedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
     }
 
-    open inner class EditorWrapper(private val wrappedEditor: SharedPreferences.Editor) : SharedPreferences.Editor {
+    open inner class EditorWrapper(private val wrappedEditor: SharedPreferences.Editor) :
+        SharedPreferences.Editor {
 
         override fun putString(key: String, value: String?): EditorWrapper {
             wrappedEditor.putString(key, value)
@@ -114,21 +127,21 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
             return this
         }
 
-        fun putStringOptional(key: String, value: String?): EditorWrapper {
+        fun putStringIfNotExists(key: String, value: String?): EditorWrapper {
             if (!contains(key)) {
                 putString(key, value)
             }
             return this
         }
 
-        fun putStringSetOptional(key: String, values: Set<String>?): EditorWrapper {
+        fun putStringSetIfNotExists(key: String, values: Set<String>?): EditorWrapper {
             if (!contains(key)) {
                 putStringSet(key, values)
             }
             return this
         }
 
-        fun putBooleanOptional(key: String, value: Boolean): EditorWrapper {
+        fun putBooleanIfNotExists(key: String, value: Boolean): EditorWrapper {
             if (!contains(key)) {
                 putBoolean(key, value)
             }

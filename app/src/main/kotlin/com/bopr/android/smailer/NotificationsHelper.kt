@@ -58,7 +58,7 @@ class NotificationsHelper(private val context: Context) {
         NotificationCompat.Builder(context, CHANNEL_ID_NOTIFICATIONS)
             .setSmallIcon(R.drawable.ic_notification)
             .setAutoCancel(true)
-            .setContentText(context.getString(R.string.tap_to_check_settings))
+            .setContentText(context.getString(R.string.check_settings))
             .apply {
                 setCategory(CATEGORY_ERROR)
             }
@@ -134,12 +134,20 @@ class NotificationsHelper(private val context: Context) {
     internal fun onSettingsChanged(settings: Settings, key: String?) {
         when (key) {
             PREF_SENDER_ACCOUNT ->
-                if (AccountHelper(context).isGoogleAccountExists(settings.getSenderAccountName())) {
+                if (AccountHelper(context).isGoogleAccountExists(
+                        settings.getString(
+                            PREF_SENDER_ACCOUNT
+                        )
+                    )) {
                     cancelError(SENDER_ACCOUNT_ERROR)
                 }
 
             PREF_REMOTE_CONTROL_ACCOUNT ->
-                if (AccountHelper(context).isGoogleAccountExists(settings.getRemoteControlAccountName())) {
+                if (AccountHelper(context).isGoogleAccountExists(
+                        settings.getString(
+                            PREF_REMOTE_CONTROL_ACCOUNT
+                        )
+                    )) {
                     cancelError(REMOTE_ACCOUNT_ERROR)
                 }
 

@@ -1,14 +1,13 @@
-package com.bopr.android.smailer
+package com.bopr.android.smailer.data
 
 import android.content.BroadcastReceiver
 import androidx.test.filters.SmallTest
-import com.bopr.android.smailer.data.Database
-import com.bopr.android.smailer.data.Database.Companion.databaseName
+import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.data.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.data.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
 import org.junit.After
-import org.junit.Assert.assertTrue
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import java.util.concurrent.CountDownLatch
@@ -27,8 +26,8 @@ class DatabaseListenerTest : BaseTest() {
 
     @Before
     fun setUp() {
-        databaseName = "test.sqlite"
-        targetContext.deleteDatabase(databaseName)
+        Database.databaseName = "test.sqlite"
+        targetContext.deleteDatabase(Database.databaseName)
         database = Database(targetContext)
     }
 
@@ -53,7 +52,7 @@ class DatabaseListenerTest : BaseTest() {
             }
         }
 
-        assertTrue(latch.await(5, TimeUnit.SECONDS))
+        Assert.assertTrue(latch.await(5, TimeUnit.SECONDS))
     }
 
 }

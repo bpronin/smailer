@@ -1,8 +1,9 @@
 package com.bopr.android.smailer.consumer
 
 import android.content.Context
-import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.Settings
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_ENABLED
+import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSENGER_ENABLED
 import com.bopr.android.smailer.consumer.mail.MailTransport
 import com.bopr.android.smailer.consumer.telegram.TelegramTransport
 import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
@@ -22,8 +23,11 @@ class EventMessenger(context: Context) {
     private val telegramTransport by lazyOf(TelegramTransport(context))
 
     fun sendMessageFor(event: PhoneEventInfo) {
-        if (settings.getTelegramMessengerEnabled()) trySendMessage(telegramTransport, event)
-        if (settings.getEmailMessengerEnabled()) trySendMessage(emailTransport, event)
+        if (settings.getBoolean(PREF_TELEGRAM_MESSENGER_ENABLED)) trySendMessage(
+            telegramTransport,
+            event
+        )
+        if (settings.getBoolean(PREF_EMAIL_MESSENGER_ENABLED)) trySendMessage(emailTransport, event)
     }
 
     private fun trySendMessage(transport: EventMessengerTransport, event: PhoneEventInfo) {

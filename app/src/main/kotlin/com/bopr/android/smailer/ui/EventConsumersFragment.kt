@@ -157,7 +157,7 @@ class EventConsumersFragment : BasePreferenceFragment() {
 
     private fun updateAccountPreferenceView() {
         val preference = requirePreference(PREF_SENDER_ACCOUNT)
-        val account = settings.getSenderAccountName()
+        val account = settings.getString(PREF_SENDER_ACCOUNT)
 
         if (account.isNullOrEmpty()) {
             updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)
@@ -188,7 +188,7 @@ class EventConsumersFragment : BasePreferenceFragment() {
 
     private fun updateTelegramBotTokenPreferenceView() {
         val preference = requirePreference(PREF_TELEGRAM_BOT_TOKEN)
-        val token = settings.getTelegramBotToken()
+        val token = settings.getString(PREF_TELEGRAM_BOT_TOKEN)
 
         if (token.isNullOrEmpty()) {
             updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)

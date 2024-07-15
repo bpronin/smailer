@@ -1,45 +1,41 @@
-package com.bopr.android.smailer
+package com.bopr.android.smailer.consumer.mail
 
-import android.Manifest.permission.READ_CONTACTS
+import android.Manifest
 import android.accounts.Account
 import android.accounts.AccountManager
 import android.content.Context
-import android.content.Context.ACCOUNT_SERVICE
-import android.content.Context.CONNECTIVITY_SERVICE
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import androidx.test.filters.SmallTest
 import androidx.test.rule.GrantPermissionRule
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATE_IGNORED
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATE_PENDING
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATE_PROCESSED
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATUS_ACCEPTED
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATUS_TRIGGER_OFF
-import com.bopr.android.smailer.Settings.Companion.DEFAULT_EMAIL_CONTENT
-import com.bopr.android.smailer.Settings.Companion.DEFAULT_TRIGGERS
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
-import com.bopr.android.smailer.Settings.Companion.PREF_MESSAGE_LOCALE
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
-import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
-import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
-import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_DEFAULT
-import com.bopr.android.smailer.provider.telephony.PhoneEventProcessor
+import com.bopr.android.smailer.BaseTest
+import com.bopr.android.smailer.NotificationsHelper
+import com.bopr.android.smailer.R
+import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.consumer.EventMessenger
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
+import com.bopr.android.smailer.provider.telephony.PhoneEventProcessor
 import com.bopr.android.smailer.util.GeoCoordinates
 import com.bopr.android.smailer.util.GeoLocator
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.anyOrNull
+import com.nhaarman.mockitokotlin2.doNothing
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.doThrow
+import com.nhaarman.mockitokotlin2.eq
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.never
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import org.junit.After
-import org.junit.Assert.assertEquals
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.ArgumentMatchers.anyInt
-import org.mockito.ArgumentMatchers.anyString
+import org.mockito.ArgumentMatchers
 import java.io.IOException
-import java.lang.System.currentTimeMillis
 
 /**
  * [PhoneEventProcessor] tester.
@@ -50,7 +46,8 @@ import java.lang.System.currentTimeMillis
 class PhoneEventProcessorTest : BaseTest() {
 
     @get:Rule
-    var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(READ_CONTACTS)
+    var permissionRule: GrantPermissionRule =
+        GrantPermissionRule.grant(Manifest.permission.READ_CONTACTS)
 
     private lateinit var database: Database
     private lateinit var context: Context
@@ -62,15 +59,15 @@ class PhoneEventProcessorTest : BaseTest() {
     private lateinit var accountManager: AccountManager
 
     private fun testingEvent(text: String? = "Message"): PhoneEventInfo {
-        val time = currentTimeMillis()
+        val time = System.currentTimeMillis()
         return PhoneEventInfo(
-                phone = "+123",
-                isIncoming = true,
-                startTime = time,
-                endTime = time + 1000,
-                isMissed = false,
-                text = text,
-                acceptor = "device"
+            phone = "+123",
+            isIncoming = true,
+            startTime = time,
+            endTime = time + 1000,
+            isMissed = false,
+            text = text,
+            acceptor = "device"
         )
     }
 
@@ -78,19 +75,51 @@ class PhoneEventProcessorTest : BaseTest() {
     @Before
     fun setUp() {
         preferences = mock {
-            on { getString(eq(PREF_SENDER_ACCOUNT), anyOrNull()) }.doReturn("sender@mail.com")
-            on { getString(eq(PREF_RECIPIENTS_ADDRESS), anyOrNull()) }.doReturn("recipient@mail.com")
-            on { getString(eq(PREF_MESSAGE_LOCALE), anyOrNull()) }.doReturn(VAL_PREF_DEFAULT)
-            on { getStringSet(eq(PREF_EMAIL_TRIGGERS), anyOrNull()) }.doReturn(DEFAULT_TRIGGERS)
-            on { getStringSet(eq(PREF_EMAIL_CONTENT), anyOrNull()) }.doReturn(DEFAULT_EMAIL_CONTENT)
+            on {
+                getString(
+                    eq(Settings.PREF_SENDER_ACCOUNT),
+                    anyOrNull()
+                )
+            }.doReturn("sender@mail.com")
+            on {
+                getString(
+                    eq(Settings.PREF_RECIPIENTS_ADDRESS),
+                    anyOrNull()
+                )
+            }.doReturn("recipient@mail.com")
+            on {
+                getString(
+                    eq(Settings.PREF_MESSAGE_LOCALE),
+                    anyOrNull()
+                )
+            }.doReturn(Settings.VAL_PREF_DEFAULT)
+            on {
+                getStringSet(
+                    eq(Settings.PREF_EMAIL_TRIGGERS),
+                    anyOrNull()
+                )
+            }.doReturn(Settings.DEFAULT_TRIGGERS)
+            on {
+                getStringSet(
+                    eq(Settings.PREF_EMAIL_CONTENT),
+                    anyOrNull()
+                )
+            }.doReturn(Settings.DEFAULT_EMAIL_CONTENT)
         }
 
         accountManager = mock {
-            on { getAccountsByType(eq("com.google")) }.doReturn(arrayOf(Account("sender@mail.com", "com.google")))
+            on { getAccountsByType(eq("com.google")) }.doReturn(
+                arrayOf(
+                    Account(
+                        "sender@mail.com",
+                        "com.google"
+                    )
+                )
+            )
         }
 
         val connectivityManager = mock<ConnectivityManager> {
-            val networkInfo = mock<android.net.NetworkInfo> { /* do not inline. do not optimize imports */
+            val networkInfo = mock<NetworkInfo> { /* do not inline. do not optimize imports */
                 on { isConnectedOrConnecting }.doReturn(true)
             }
             on { activeNetworkInfo }.doReturn(networkInfo)
@@ -99,9 +128,14 @@ class PhoneEventProcessorTest : BaseTest() {
         context = mock {
             on { contentResolver }.doReturn(targetContext.contentResolver)
             on { resources }.doReturn(targetContext.resources)
-            on { getSharedPreferences(anyString(), anyInt()) }.doReturn(preferences)
-            on { getSystemService(eq(ACCOUNT_SERVICE)) }.doReturn(accountManager)
-            on { getSystemService(eq(CONNECTIVITY_SERVICE)) }.doReturn(connectivityManager)
+            on {
+                getSharedPreferences(
+                    ArgumentMatchers.anyString(),
+                    ArgumentMatchers.anyInt()
+                )
+            }.doReturn(preferences)
+            on { getSystemService(eq(Context.ACCOUNT_SERVICE)) }.doReturn(accountManager)
+            on { getSystemService(eq(Context.CONNECTIVITY_SERVICE)) }.doReturn(connectivityManager)
         }
 
         geoLocator = mock {
@@ -141,17 +175,17 @@ class PhoneEventProcessorTest : BaseTest() {
 //                    && from == "sender@mail.com"
 //        })
         verify(notifications, never()).showSenderAccountError()
-        verify(notifications, never()).showRecipientsError(anyInt())
+        verify(notifications, never()).showRecipientsError(ArgumentMatchers.anyInt())
         verify(notifications, never()).showGoogleAccessError()
 
         val savedEvent = database.phoneEvents.first()
 
-        assertEquals(event.acceptor, savedEvent.acceptor)
-        assertEquals(event.startTime, savedEvent.startTime)
-        assertEquals(event.phone, savedEvent.phone)
-        assertEquals(STATE_PROCESSED, savedEvent.state)
-        assertEquals(STATUS_ACCEPTED, savedEvent.processStatus)
-        assertEquals(GeoCoordinates(60.0, 30.0), event.location)
+        Assert.assertEquals(event.acceptor, savedEvent.acceptor)
+        Assert.assertEquals(event.startTime, savedEvent.startTime)
+        Assert.assertEquals(event.phone, savedEvent.phone)
+        Assert.assertEquals(PhoneEventInfo.STATE_PROCESSED, savedEvent.state)
+        Assert.assertEquals(PhoneEventInfo.STATUS_ACCEPTED, savedEvent.processStatus)
+        Assert.assertEquals(GeoCoordinates(60.0, 30.0), event.location)
     }
 
     /**
@@ -166,13 +200,13 @@ class PhoneEventProcessorTest : BaseTest() {
 
         verify(messenger, never()).sendMessageFor(any())
         verify(notifications, never()).showSenderAccountError()
-        verify(notifications, never()).showRecipientsError(anyInt())
+        verify(notifications, never()).showRecipientsError(ArgumentMatchers.anyInt())
         verify(notifications, never()).showGoogleAccessError()
 
         val savedEvent = database.phoneEvents.first()
 
-        assertEquals(STATE_IGNORED, savedEvent.state)
-        assertEquals(STATUS_TRIGGER_OFF, savedEvent.processStatus)
+        Assert.assertEquals(PhoneEventInfo.STATE_IGNORED, savedEvent.state)
+        Assert.assertEquals(PhoneEventInfo.STATUS_TRIGGER_OFF, savedEvent.processStatus)
     }
 
     /**
@@ -180,7 +214,7 @@ class PhoneEventProcessorTest : BaseTest() {
      */
     @Test
     fun testProcessNoSender() {
-        whenever(preferences.getString(eq(PREF_SENDER_ACCOUNT), anyOrNull())).thenReturn(null)
+        whenever(preferences.getString(eq(Settings.PREF_SENDER_ACCOUNT), anyOrNull())).thenReturn(null)
 
         val event = testingEvent()
         processor.process(event)
@@ -191,8 +225,8 @@ class PhoneEventProcessorTest : BaseTest() {
 
         val savedEvent = database.phoneEvents.first()
 
-        assertEquals(STATE_PENDING, savedEvent.state)
-        assertEquals(STATUS_ACCEPTED, savedEvent.processStatus)
+        Assert.assertEquals(PhoneEventInfo.STATE_PENDING, savedEvent.state)
+        Assert.assertEquals(PhoneEventInfo.STATUS_ACCEPTED, savedEvent.processStatus)
     }
 
     /**
@@ -200,7 +234,7 @@ class PhoneEventProcessorTest : BaseTest() {
      */
     @Test
     fun testProcessNoRecipients() {
-        whenever(preferences.getString(eq(PREF_RECIPIENTS_ADDRESS), anyOrNull())).thenReturn(null)
+        whenever(preferences.getString(eq(Settings.PREF_RECIPIENTS_ADDRESS), anyOrNull())).thenReturn(null)
 
         val event = testingEvent()
         processor.process(event)
@@ -210,8 +244,8 @@ class PhoneEventProcessorTest : BaseTest() {
 
         val savedEvent = database.phoneEvents.first()
 
-        assertEquals(STATE_PENDING, savedEvent.state)
-        assertEquals(STATUS_ACCEPTED, savedEvent.processStatus)
+        Assert.assertEquals(PhoneEventInfo.STATE_PENDING, savedEvent.state)
+        Assert.assertEquals(PhoneEventInfo.STATUS_ACCEPTED, savedEvent.processStatus)
     }
 
     /**
@@ -227,13 +261,13 @@ class PhoneEventProcessorTest : BaseTest() {
 //        verify(messenger).login(any(), any())
         verify(messenger).sendMessageFor(any())
         verify(notifications, never()).showSenderAccountError()
-        verify(notifications, never()).showRecipientsError(anyInt())
+        verify(notifications, never()).showRecipientsError(ArgumentMatchers.anyInt())
         verify(notifications, never()).showGoogleAccessError()
 
         val savedEvent = database.phoneEvents.first()
 
-        assertEquals(STATE_PENDING, savedEvent.state)
-        assertEquals(STATUS_ACCEPTED, savedEvent.processStatus)
+        Assert.assertEquals(PhoneEventInfo.STATE_PENDING, savedEvent.state)
+        Assert.assertEquals(PhoneEventInfo.STATUS_ACCEPTED, savedEvent.processStatus)
     }
 
     /**
@@ -242,14 +276,14 @@ class PhoneEventProcessorTest : BaseTest() {
     @Test
     fun testSuccessNotification() {
         /* the setting is OFF */
-        whenever(preferences.getBoolean(eq(PREF_NOTIFY_SEND_SUCCESS), anyOrNull())).thenReturn(false)
+        whenever(preferences.getBoolean(eq(Settings.PREF_NOTIFY_SEND_SUCCESS), anyOrNull())).thenReturn(false)
 
         processor.process(testingEvent())
 
         verify(notifications, never()).showMailSendSuccess()
 
         /* the setting is ON */
-        whenever(preferences.getBoolean(eq(PREF_NOTIFY_SEND_SUCCESS), anyOrNull())).thenReturn(true)
+        whenever(preferences.getBoolean(eq(Settings.PREF_NOTIFY_SEND_SUCCESS), anyOrNull())).thenReturn(true)
 
         processor.process(testingEvent())
 
@@ -268,19 +302,19 @@ class PhoneEventProcessorTest : BaseTest() {
         processor.process(testingEvent())
         processor.process(testingEvent())
 
-        assertEquals(3, database.phoneEvents.size)
-        assertEquals(3, database.phoneEvents.filterPending.size)
+        Assert.assertEquals(3, database.phoneEvents.size)
+        Assert.assertEquals(3, database.phoneEvents.filterPending.size)
         verify(notifications, never()).showSenderAccountError()
-        verify(notifications, never()).showRecipientsError(anyInt())
+        verify(notifications, never()).showRecipientsError(ArgumentMatchers.anyInt())
         verify(notifications, never()).showGoogleAccessError()
 
         /* try resend with disabled transport */
         processor.processPending()
 
-        assertEquals(3, database.phoneEvents.size)
-        assertEquals(3, database.phoneEvents.filterPending.size)
+        Assert.assertEquals(3, database.phoneEvents.size)
+        Assert.assertEquals(3, database.phoneEvents.filterPending.size)
         verify(notifications, never()).showSenderAccountError()
-        verify(notifications, never()).showRecipientsError(anyInt())
+        verify(notifications, never()).showRecipientsError(ArgumentMatchers.anyInt())
         verify(notifications, never()).showGoogleAccessError()
 
         /* enable transport an try again */
@@ -288,10 +322,10 @@ class PhoneEventProcessorTest : BaseTest() {
 
         processor.processPending()
 
-        assertEquals(3, database.phoneEvents.size)
-        assertEquals(0, database.phoneEvents.filterPending.size)
+        Assert.assertEquals(3, database.phoneEvents.size)
+        Assert.assertEquals(0, database.phoneEvents.filterPending.size)
         verify(notifications, never()).showSenderAccountError()
-        verify(notifications, never()).showRecipientsError(anyInt())
+        verify(notifications, never()).showRecipientsError(ArgumentMatchers.anyInt())
         verify(notifications, never()).showGoogleAccessError()
     }
 }

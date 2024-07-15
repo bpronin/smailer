@@ -1,24 +1,17 @@
-package com.bopr.android.smailer
+package com.bopr.android.smailer.consumer.mail
 
-import android.Manifest.permission.READ_CALL_LOG
-import android.Manifest.permission.READ_PHONE_STATE
+import android.Manifest
 import android.annotation.TargetApi
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.telephony.SmsMessage
-import android.telephony.TelephonyManager.ACTION_PHONE_STATE_CHANGED
-import android.telephony.TelephonyManager.EXTRA_INCOMING_NUMBER
-import android.telephony.TelephonyManager.EXTRA_STATE
-import android.telephony.TelephonyManager.EXTRA_STATE_IDLE
-import android.telephony.TelephonyManager.EXTRA_STATE_OFFHOOK
-import android.telephony.TelephonyManager.EXTRA_STATE_RINGING
+import android.telephony.TelephonyManager
 import androidx.test.filters.SmallTest
 import androidx.test.rule.GrantPermissionRule
-import androidx.test.rule.GrantPermissionRule.grant
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATE_PENDING
-import com.bopr.android.smailer.provider.telephony.PhoneEventReceiver
+import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
+import com.bopr.android.smailer.provider.telephony.PhoneEventReceiver
 import com.bopr.android.smailer.util.deviceName
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.argThat
@@ -38,7 +31,10 @@ import org.junit.Test
 class PhoneEventReceiverTest : BaseTest() {
 
     @get:Rule
-    val permissionRule: GrantPermissionRule = grant(READ_CALL_LOG, READ_PHONE_STATE)
+    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(
+        Manifest.permission.READ_CALL_LOG,
+        Manifest.permission.READ_PHONE_STATE
+    )
 
     private lateinit var context: Context
 
@@ -49,9 +45,9 @@ class PhoneEventReceiverTest : BaseTest() {
 
     @Suppress("DEPRECATION")
     private fun calStateIntent(state: String, number: String?): Intent {
-        val intent = Intent(ACTION_PHONE_STATE_CHANGED)
-        intent.putExtra(EXTRA_STATE, state)
-        number?.run { intent.putExtra(EXTRA_INCOMING_NUMBER, number) }
+        val intent = Intent(TelephonyManager.ACTION_PHONE_STATE_CHANGED)
+        intent.putExtra(TelephonyManager.EXTRA_STATE, state)
+        number?.run { intent.putExtra(TelephonyManager.EXTRA_INCOMING_NUMBER, number) }
         return intent
     }
 
@@ -71,18 +67,18 @@ class PhoneEventReceiverTest : BaseTest() {
     fun testReceiveIncomingCall() {
         val receiver = PhoneEventReceiver()
 
-        receiver.onReceive(context, calStateIntent(EXTRA_STATE_RINGING, "100"))
+        receiver.onReceive(context, calStateIntent(TelephonyManager.EXTRA_STATE_RINGING, "100"))
         verify(context, never()).startService(anyOrNull())
 
-        receiver.onReceive(context, calStateIntent(EXTRA_STATE_OFFHOOK, "100"))
+        receiver.onReceive(context, calStateIntent(TelephonyManager.EXTRA_STATE_OFFHOOK, "100"))
         verify(context, never()).startService(anyOrNull())
 
-        receiver.onReceive(context, calStateIntent(EXTRA_STATE_IDLE, "100"))
+        receiver.onReceive(context, calStateIntent(TelephonyManager.EXTRA_STATE_IDLE, "100"))
         verify(context).startService(argThat {
             getPhoneEventExtra("event")!!.run {
                 isIncoming && !isMissed && phone == "100"
                         && location == null && endTime != null && acceptor == deviceName()
-                        && state == STATE_PENDING
+                        && state == PhoneEventInfo.STATE_PENDING
             }
         })
     }
@@ -92,27 +88,27 @@ class PhoneEventReceiverTest : BaseTest() {
     fun testReceiveIncomingCallQ() {
         val receiver = PhoneEventReceiver()
 
-        receiver.onReceive(context, calStateIntent(EXTRA_STATE_RINGING, null))
+        receiver.onReceive(context, calStateIntent(TelephonyManager.EXTRA_STATE_RINGING, null))
         verify(context, never()).startService(anyOrNull())
 
-        receiver.onReceive(context, calStateIntent(EXTRA_STATE_RINGING, "100"))
+        receiver.onReceive(context, calStateIntent(TelephonyManager.EXTRA_STATE_RINGING, "100"))
         verify(context, never()).startService(anyOrNull())
 
-        receiver.onReceive(context, calStateIntent(EXTRA_STATE_OFFHOOK, null))
+        receiver.onReceive(context, calStateIntent(TelephonyManager.EXTRA_STATE_OFFHOOK, null))
         verify(context, never()).startService(anyOrNull())
 
-        receiver.onReceive(context, calStateIntent(EXTRA_STATE_OFFHOOK, "100"))
+        receiver.onReceive(context, calStateIntent(TelephonyManager.EXTRA_STATE_OFFHOOK, "100"))
         verify(context, never()).startService(anyOrNull())
 
-        receiver.onReceive(context, calStateIntent(EXTRA_STATE_IDLE, null))
+        receiver.onReceive(context, calStateIntent(TelephonyManager.EXTRA_STATE_IDLE, null))
         verify(context, never()).startService(anyOrNull())
 
-        receiver.onReceive(context, calStateIntent(EXTRA_STATE_IDLE, "100"))
+        receiver.onReceive(context, calStateIntent(TelephonyManager.EXTRA_STATE_IDLE, "100"))
         verify(context).startService(argThat {
             getPhoneEventExtra("event")!!.run {
                 isIncoming && !isMissed && phone == "100"
                         && location == null && endTime != null && acceptor == deviceName()
-                        && state == STATE_PENDING
+                        && state == PhoneEventInfo.STATE_PENDING
             }
         })
     }
@@ -124,15 +120,15 @@ class PhoneEventReceiverTest : BaseTest() {
     fun testReceiveOutgoingCall() {
         val receiver = PhoneEventReceiver()
 
-        receiver.onReceive(context, calStateIntent(EXTRA_STATE_OFFHOOK, "200"))
+        receiver.onReceive(context, calStateIntent(TelephonyManager.EXTRA_STATE_OFFHOOK, "200"))
         verify(context, never()).startService(anyOrNull())
 
-        receiver.onReceive(context, calStateIntent(EXTRA_STATE_IDLE, "200"))
+        receiver.onReceive(context, calStateIntent(TelephonyManager.EXTRA_STATE_IDLE, "200"))
         verify(context).startService(argThat {
             getPhoneEventExtra("event")!!.run {
                 !isIncoming && !isMissed && phone == "200"
                         && location == null && endTime != null && acceptor == deviceName()
-                        && state == STATE_PENDING
+                        && state == PhoneEventInfo.STATE_PENDING
             }
         })
     }
@@ -144,15 +140,15 @@ class PhoneEventReceiverTest : BaseTest() {
     fun testReceiveMissedCall() {
         val receiver = PhoneEventReceiver()
 
-        receiver.onReceive(context, calStateIntent(EXTRA_STATE_RINGING, "300"))
+        receiver.onReceive(context, calStateIntent(TelephonyManager.EXTRA_STATE_RINGING, "300"))
         verify(context, never()).startService(anyOrNull())
 
-        receiver.onReceive(context, calStateIntent(EXTRA_STATE_IDLE, "300"))
+        receiver.onReceive(context, calStateIntent(TelephonyManager.EXTRA_STATE_IDLE, "300"))
         verify(context).startService(argThat {
             getPhoneEventExtra("event")!!.run {
                 isIncoming && isMissed && phone == "300"
                         && location == null && endTime != null && acceptor == deviceName()
-                        && state == STATE_PENDING
+                        && state == PhoneEventInfo.STATE_PENDING
             }
         })
     }
@@ -210,7 +206,7 @@ class PhoneEventReceiverTest : BaseTest() {
             getPhoneEventExtra("event")!!.run {
                 isSms && isIncoming && phone == "+15555215556" && text == "Text message"
                         && location == null && endTime != null && acceptor == deviceName()
-                        && state == STATE_PENDING
+                        && state == PhoneEventInfo.STATE_PENDING
             }
         })
     }

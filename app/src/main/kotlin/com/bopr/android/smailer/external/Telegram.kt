@@ -5,6 +5,7 @@ import com.android.volley.AuthFailureError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.bopr.android.smailer.Settings
+import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_BOT_TOKEN
 import com.bopr.android.smailer.external.TelegramException.Code.TELEGRAM_BAD_RESPONSE
 import com.bopr.android.smailer.external.TelegramException.Code.TELEGRAM_INVALID_TOKEN
 import com.bopr.android.smailer.external.TelegramException.Code.TELEGRAM_NO_CHAT
@@ -62,8 +63,6 @@ internal class Telegram(context: Context) {
                             .getJSONObject("chat")
                             .getString("id")
 
-                        log.debug("Chat ID = $chatId")
-
                         onSuccess(chatId)
                     }
                 }
@@ -99,7 +98,7 @@ internal class Telegram(context: Context) {
         onResponse: (response: JSONObject) -> Unit,
         onError: (error: Exception) -> Unit
     ) {
-        val token = settings.getTelegramBotToken()
+        val token = settings.getString(PREF_TELEGRAM_BOT_TOKEN)
 
         if (isNullOrEmpty(token)) {
             onError(TelegramException(TELEGRAM_NO_TOKEN))

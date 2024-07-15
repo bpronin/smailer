@@ -14,42 +14,32 @@ import com.bopr.android.smailer.util.deviceName
 class Settings(context: Context) :
     SharedPreferencesWrapper(context.getSharedPreferences(sharedPreferencesName, MODE_PRIVATE)) {
 
-    fun getMessageLocale() = requireString(PREF_MESSAGE_LOCALE, VAL_PREF_DEFAULT)
     fun getEmailContent() = getStringSet(PREF_EMAIL_CONTENT)
-    fun getEmailRecipients() = requireString(PREF_RECIPIENTS_ADDRESS, "")
     fun getEmailTriggers() = getStringSet(PREF_EMAIL_TRIGGERS)
-    fun isNotifyRemoteControlActions() = getBoolean(PREF_REMOTE_CONTROL_NOTIFICATIONS)
-    fun isNotifySendSuccess() = getBoolean(PREF_NOTIFY_SEND_SUCCESS)
-    fun isRemoteControlEnabled() = getBoolean(PREF_REMOTE_CONTROL_ENABLED)
-    fun isRemoteControlRecipientsFilterEnabled() = getBoolean(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS)
-    fun isCloudSyncEnabled() = getBoolean(PREF_SYNC_ENABLED)
-    fun getRemoteControlAccountName() = getString(PREF_REMOTE_CONTROL_ACCOUNT)
-    fun getSenderAccountName() = getString(PREF_SENDER_ACCOUNT)
-    fun getEmailMessengerEnabled() = getBoolean(PREF_EMAIL_MESSENGER_ENABLED)
-    fun getTelegramMessengerEnabled() = getBoolean(PREF_TELEGRAM_MESSENGER_ENABLED)
-    fun getTelegramBotToken() = getString(PREF_TELEGRAM_BOT_TOKEN)
-    fun isBatteryEventsEnabled() =
-        getStringSet(PREF_EMAIL_TRIGGERS).contains(VAL_PREF_LOW_BATTERY_LEVEL)
+    fun getEmailRecipients() = requireString(PREF_RECIPIENTS_ADDRESS, "")
+    fun getMessageLocale() = requireString(PREF_MESSAGE_LOCALE, VAL_PREF_DEFAULT)
     fun getDeviceName() = requireString(PREF_DEVICE_ALIAS, deviceName())
     fun getPhoneSearchUrl() = requireString(PREF_PHONE_SEARCH_URL, DEFAULT_PHONE_SEARCH_URL)
 
     fun loadDefaults() = update {
         putInt(PREF_SETTINGS_VERSION, SETTINGS_VERSION)
-        putBooleanOptional(PREF_NOTIFY_SEND_SUCCESS, false)
-        putBooleanOptional(PREF_REMOTE_CONTROL_ENABLED, false)
-        putBooleanOptional(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS, true)
-        putBooleanOptional(PREF_REMOTE_CONTROL_NOTIFICATIONS, true)
-        putBooleanOptional(PREF_SYNC_ENABLED, true)
-        putStringOptional(PREF_MESSAGE_LOCALE, VAL_PREF_DEFAULT)
-        putStringSetOptional(PREF_EMAIL_CONTENT, DEFAULT_EMAIL_CONTENT)
-        putStringSetOptional(PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS)
-        putBooleanOptional(PREF_TELEGRAM_MESSENGER_ENABLED, true)
-        putBooleanOptional(PREF_EMAIL_MESSENGER_ENABLED, false)
+        putBooleanIfNotExists(PREF_NOTIFY_SEND_SUCCESS, false)
+        putBooleanIfNotExists(PREF_REMOTE_CONTROL_ENABLED, false)
+        putBooleanIfNotExists(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS, true)
+        putBooleanIfNotExists(PREF_REMOTE_CONTROL_NOTIFICATIONS, true)
+        putBooleanIfNotExists(PREF_SYNC_ENABLED, true)
+        putStringIfNotExists(PREF_MESSAGE_LOCALE, VAL_PREF_DEFAULT)
+        putBooleanIfNotExists(PREF_EMAIL_MESSENGER_ENABLED, false)
+        putStringSetIfNotExists(PREF_EMAIL_CONTENT, DEFAULT_EMAIL_CONTENT)
+        putStringSetIfNotExists(PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS)
+        putBooleanIfNotExists(PREF_TELEGRAM_MESSENGER_ENABLED, true)
+        putBooleanIfNotExists(PREF_TELEGRAM_MESSAGE_SHOW_HEADER, true)
+        putBooleanIfNotExists(PREF_TELEGRAM_MESSAGE_SHOW_CALLER, false)
+        putBooleanIfNotExists(PREF_TELEGRAM_MESSAGE_SHOW_DEVICE_NAME, false)
+        putBooleanIfNotExists(PREF_TELEGRAM_MESSAGE_SHOW_EVENT_TIME, false)
+        putBooleanIfNotExists(PREF_TELEGRAM_MESSAGE_SHOW_PROCESS_TIME, false)
+        putBooleanIfNotExists(PREF_TELEGRAM_MESSAGE_SHOW_LOCATION, false)
     }
-
-    fun isTelegramMessageHeaderEnabled(): Boolean = true
-    fun isTelegramMessageFooterEnabled(): Boolean = true
-    fun isTelegramMessageDeviceNameEnabled(): Boolean = true
 
     companion object {
         var sharedPreferencesName = "com.bopr.android.smailer_preferences"
@@ -58,10 +48,10 @@ class Settings(context: Context) :
 
         const val PREF_DEVICE_ALIAS = "device_alias"
         const val PREF_EMAIL_CONTENT = "email_content"
-        const val PREF_MESSAGE_LOCALE = "email_locale"
-        const val PREF_EMAIL_TRIGGERS = "email_triggers"
-        const val PREF_NOTIFY_SEND_SUCCESS = "notify_send_success"
         const val PREF_EMAIL_MESSENGER_ENABLED = "email_messenger_enabled"
+        const val PREF_EMAIL_TRIGGERS = "email_triggers"
+        const val PREF_MESSAGE_LOCALE = "email_locale"
+        const val PREF_NOTIFY_SEND_SUCCESS = "notify_send_success"
         const val PREF_PHONE_SEARCH_URL = "phone_search_url"
         const val PREF_RECIPIENTS_ADDRESS = "recipients_address"
         const val PREF_REMOTE_CONTROL_ACCOUNT = "remote_control_account"
@@ -72,6 +62,12 @@ class Settings(context: Context) :
         const val PREF_SETTINGS_VERSION = "settings_version" /* hidden */
         const val PREF_SYNC_ENABLED = "sync_enabled"
         const val PREF_TELEGRAM_BOT_TOKEN = "telegram_bot_token"
+        const val PREF_TELEGRAM_MESSAGE_SHOW_DEVICE_NAME = "telegram_message_show_device_name"
+        const val PREF_TELEGRAM_MESSAGE_SHOW_EVENT_TIME = "telegram_message_show_event_time"
+        const val PREF_TELEGRAM_MESSAGE_SHOW_PROCESS_TIME = "telegram_message_show_process_time"
+        const val PREF_TELEGRAM_MESSAGE_SHOW_LOCATION = "telegram_message_show_location"
+        const val PREF_TELEGRAM_MESSAGE_SHOW_HEADER = "telegram_message_show_header"
+        const val PREF_TELEGRAM_MESSAGE_SHOW_CALLER = "telegram_message_show_caller"
         const val PREF_TELEGRAM_MESSENGER_ENABLED = "telegram_messenger_enabled"
 
         const val VAL_PREF_DEFAULT = "default"

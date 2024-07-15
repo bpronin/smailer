@@ -6,6 +6,8 @@ import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
+import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS
 import com.bopr.android.smailer.consumer.mail.MailMessage
 import com.bopr.android.smailer.external.GoogleMail
 import com.bopr.android.smailer.util.commaSplit
@@ -69,7 +71,7 @@ internal class MailControlProcessor(
     }
 
     private fun acceptMessage(message: MailMessage): Boolean {
-        if (settings.isRemoteControlRecipientsFilterEnabled()) {
+        if (settings.getBoolean(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS)) {
             val address = extractEmail(message.from)!!
             val recipients = commaSplit(settings.getEmailRecipients())
             if (!recipients.containsEmail(address)) {
@@ -89,7 +91,7 @@ internal class MailControlProcessor(
     }
 
     private fun requireAccount(): Account? {
-        val accountName = settings.getRemoteControlAccountName()
+        val accountName = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
         val googleAccount = accountHelper.getGoogleAccount(accountName)
         return googleAccount.also {
             if (it == null) {

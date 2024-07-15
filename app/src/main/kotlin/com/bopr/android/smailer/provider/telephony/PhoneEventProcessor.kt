@@ -3,6 +3,7 @@ package com.bopr.android.smailer.provider.telephony
 import android.content.Context
 import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.Settings
+import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.consumer.EventMessenger
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATE_IGNORED
@@ -98,7 +99,7 @@ class PhoneEventProcessor(
 
             log.debug("Event message sent")
 
-            if (settings.isNotifySendSuccess()) {
+            if (settings.getBoolean(PREF_NOTIFY_SEND_SUCCESS)) {
                 notifications.showMailSendSuccess()
             }
             true

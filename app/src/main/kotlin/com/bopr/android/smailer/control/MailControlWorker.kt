@@ -10,6 +10,7 @@ import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.bopr.android.smailer.Settings
+import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit.MILLISECONDS
 
@@ -35,7 +36,10 @@ internal class MailControlWorker(context: Context, workerParams: WorkerParameter
 
         private val log = LoggerFactory.getLogger("MailRemoteControlWorker")
         private const val WORK_REMOTE_CONTROL = "com.bopr.android.smailer.remote_control"
-        private val Context.isFeatureEnabled get() = Settings(this).isRemoteControlEnabled()
+        private val Context.isFeatureEnabled
+            get() = Settings(this).getBoolean(
+                PREF_REMOTE_CONTROL_ENABLED
+            )
 
         fun Context.enableMailRemoteControl() {
             val manager = WorkManager.getInstance(this)

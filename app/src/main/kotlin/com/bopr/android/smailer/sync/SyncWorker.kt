@@ -12,6 +12,8 @@ import androidx.work.WorkerParameters
 import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.Settings
+import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_ENABLED
 import com.bopr.android.smailer.external.Firebase
 import com.bopr.android.smailer.external.Firebase.Companion.FCM_REQUEST_DATA_SYNC
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_NORMAL
@@ -29,17 +31,18 @@ internal class SyncWorker(context: Context, workerParams: WorkerParameters) :
         val settings = Settings(applicationContext)
         val accountHelper = AccountHelper(applicationContext)
 
-        if (settings.isCloudSyncEnabled()) {
-            accountHelper.getGoogleAccount(settings.getSenderAccountName())?.let { account ->
-                Database(applicationContext).use { database ->
-                    Synchronizer(applicationContext, account, database).run {
-                        val mode = inputData.getInt(SYNC_OPTIONS, SYNC_NORMAL)
-                        if (sync(mode)) {
-                            Firebase(applicationContext).send(FCM_REQUEST_DATA_SYNC)
+        if (settings.getBoolean(PREF_SYNC_ENABLED)) {
+            accountHelper.getGoogleAccount(settings.getString(PREF_SENDER_ACCOUNT))
+                ?.let { account ->
+                    Database(applicationContext).use { database ->
+                        Synchronizer(applicationContext, account, database).run {
+                            val mode = inputData.getInt(SYNC_OPTIONS, SYNC_NORMAL)
+                            if (sync(mode)) {
+                                Firebase(applicationContext).send(FCM_REQUEST_DATA_SYNC)
+                            }
                         }
                     }
-                }
-            } ?: log.warn("No sync account")
+                } ?: log.warn("No sync account")
         }
         return Result.success()
     }
@@ -53,8 +56,8 @@ internal class SyncWorker(context: Context, workerParams: WorkerParameters) :
         internal fun Context.syncAppDataWithGoogleCloud(mode: Int = SYNC_NORMAL) {
             return // TODO: the app is deregistered from Google Console
             @Suppress("UNREACHABLE_CODE")
-            
-            if (Settings(this).isCloudSyncEnabled()) {
+
+            if (Settings(this).getBoolean(PREF_SYNC_ENABLED)) {
                 log.debug("Sync requested in mode: $mode")
 
                 val constraints = Constraints.Builder()

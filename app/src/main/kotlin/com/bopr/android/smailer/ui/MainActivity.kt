@@ -73,7 +73,7 @@ class MainActivity : BaseMainActivity(MainFragment::class), OnSharedPreferenceCh
                 enableMailRemoteControl()
 
             PREF_SENDER_ACCOUNT -> {
-                if (accountHelper.isGoogleAccountExists(settings.getSenderAccountName())) {
+                if (accountHelper.isGoogleAccountExists(settings.getString(PREF_SENDER_ACCOUNT))) {
                     syncAppDataWithGoogleCloud(SYNC_FORCE_DOWNLOAD)
                     resubscribeToFirebaseMessaging()
                 }

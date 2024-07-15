@@ -108,9 +108,9 @@ class PermissionsHelper(val activity: FragmentActivity) {
         /* set default accounts at startup */
         settings.update {
             val accountName = accountHelper.getPrimaryGoogleAccount()?.name
-            putStringOptional(PREF_SENDER_ACCOUNT, accountName)
-            putStringOptional(PREF_RECIPIENTS_ADDRESS, accountName)
-            putStringOptional(PREF_REMOTE_CONTROL_ACCOUNT, accountName)
+            putStringIfNotExists(PREF_SENDER_ACCOUNT, accountName)
+            putStringIfNotExists(PREF_RECIPIENTS_ADDRESS, accountName)
+            putStringIfNotExists(PREF_REMOTE_CONTROL_ACCOUNT, accountName)
         }
     }
 

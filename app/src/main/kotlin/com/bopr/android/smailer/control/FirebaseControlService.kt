@@ -17,12 +17,10 @@ import org.slf4j.LoggerFactory
  */
 class FirebaseControlService : FirebaseMessagingService() {
 
-    private val firebase = Firebase(this)
-
     override fun onMessageReceived(message: RemoteMessage) {
         log.info("Received message: ${message.data}")
 
-        firebase.requestToken { token ->
+        Firebase(this).requestToken { token ->
             if (message.data[FCM_SENDER] == token) {
                 log.debug("Ignored self message")
             } else if (message.data[FCM_ACTION] == FCM_REQUEST_DATA_SYNC) {

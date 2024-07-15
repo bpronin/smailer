@@ -92,7 +92,7 @@ class RemoteControlFragment : BasePreferenceFragment() {
 
     private fun updateAccountPreferenceView() {
         val preference = requirePreference(PREF_REMOTE_CONTROL_ACCOUNT)
-        val account = settings.getRemoteControlAccountName()
+        val account = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
 
         if (account.isNullOrEmpty()) {
             updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)

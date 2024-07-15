@@ -32,6 +32,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_DEFAULT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_CONTACT
@@ -453,7 +454,7 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun onProcessServiceMail(preference: Preference) {
-        if (settings.isRemoteControlEnabled()) {
+        if (settings.getBoolean(PREF_REMOTE_CONTROL_ENABLED)) {
             runLongTask("Remote control", preference) {
                 MailControlProcessor(requireContext()).checkMailbox()
             }
@@ -804,11 +805,11 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun senderAccount(): Account {
-        return accountHelper.requireGoogleAccount(settings.getSenderAccountName())
+        return accountHelper.requireGoogleAccount(settings.getString(PREF_SENDER_ACCOUNT))
     }
 
     private fun serviceAccount(): Account {
-        return accountHelper.requireGoogleAccount(settings.getRemoteControlAccountName())
+        return accountHelper.requireGoogleAccount(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT))
     }
 
     private fun runLongTask(title: String, preference: Preference, onPerform: () -> Unit) {
