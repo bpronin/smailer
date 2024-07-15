@@ -3,14 +3,14 @@ package com.bopr.android.smailer.data
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteOpenHelper
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATE_PENDING
+import com.bopr.android.smailer.provider.telephony.PhoneEventData
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATE_PENDING
 import com.bopr.android.smailer.util.GeoCoordinates
 import com.bopr.android.smailer.util.strings
 import org.slf4j.LoggerFactory
 
 class PhoneEventsDataset(helper: SQLiteOpenHelper, modifications: MutableSet<String>) :
-    Dataset<PhoneEventInfo>(Database.TABLE_PHONE_EVENTS, helper, modifications) {
+    Dataset<PhoneEventData>(Database.TABLE_PHONE_EVENTS, helper, modifications) {
 
     override val keyColumns = strings(Database.COLUMN_START_TIME, Database.COLUMN_ACCEPTOR)
 
@@ -25,7 +25,7 @@ class PhoneEventsDataset(helper: SQLiteOpenHelper, modifications: MutableSet<Str
     /**
      * Returns pending phone events.
      */
-    val filterPending: Set<PhoneEventInfo>
+    val filterPending: Set<PhoneEventData>
         get() = read {
             query(
                 tableName,
@@ -53,13 +53,13 @@ class PhoneEventsDataset(helper: SQLiteOpenHelper, modifications: MutableSet<Str
         }
     }
 
-    override fun key(element: PhoneEventInfo): Array<String> {
+    override fun key(element: PhoneEventData): Array<String> {
         return strings(element.startTime, element.acceptor)
     }
 
-    override fun get(cursor: Cursor): PhoneEventInfo {
+    override fun get(cursor: Cursor): PhoneEventData {
         return cursor.run {
-            PhoneEventInfo(
+            PhoneEventData(
                 phone = getString(Database.COLUMN_PHONE),
                 isIncoming = getBoolean(Database.COLUMN_IS_INCOMING),
                 startTime = getLong(Database.COLUMN_START_TIME),
@@ -80,7 +80,7 @@ class PhoneEventsDataset(helper: SQLiteOpenHelper, modifications: MutableSet<Str
         }
     }
 
-    override fun values(element: PhoneEventInfo): ContentValues {
+    override fun values(element: PhoneEventData): ContentValues {
         return values {
             put(Database.COLUMN_PHONE, element.phone)
             put(Database.COLUMN_ACCEPTOR, element.acceptor)

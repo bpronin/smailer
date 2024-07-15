@@ -196,6 +196,7 @@
     <string name="on">Включено</string>
     <string name="off">Выключено</string>
     <string name="settings">Параметры</string>
+    <string name="low_battery_level">Низкий уровень батареи</string>
 
     <plurals name="items_removed">
         <item quantity="one">%d запись удалена</item>
@@ -224,7 +225,6 @@
         <item>Входящие звонки</item>
         <item>Исходящие звонки</item>
         <item>Пропущенные звонки</item>
-        <item>Низкий уровень батареи</item>
     </string-array>
 
     <string-array name="email_content_names">

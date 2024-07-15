@@ -1,9 +1,9 @@
-package com.bopr.android.smailer.consumer.telegram
+package com.bopr.android.smailer.processor.telegram
 
 import android.content.Context
 import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.consumer.EventMessengerTransport
+import com.bopr.android.smailer.processor.EventProcessor
 import com.bopr.android.smailer.external.Telegram
 import com.bopr.android.smailer.external.TelegramException
 import com.bopr.android.smailer.external.TelegramException.Code.TELEGRAM_BAD_RESPONSE
@@ -11,7 +11,7 @@ import com.bopr.android.smailer.external.TelegramException.Code.TELEGRAM_INVALID
 import com.bopr.android.smailer.external.TelegramException.Code.TELEGRAM_NO_CHAT
 import com.bopr.android.smailer.external.TelegramException.Code.TELEGRAM_NO_TOKEN
 import com.bopr.android.smailer.external.TelegramException.Code.TELEGRAM_REQUEST_FAILED
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
+import com.bopr.android.smailer.provider.Event
 import com.bopr.android.smailer.ui.EventConsumersActivity
 
 /**
@@ -19,18 +19,18 @@ import com.bopr.android.smailer.ui.EventConsumersActivity
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class TelegramTransport(context: Context) : EventMessengerTransport(context) {
+class TelegramTransport(context: Context) : EventProcessor(context) {
 
     private val telegram = Telegram(context)
-    private val formatters = MessageFormatterFactory(context)
+    private val formatters = TelegramMessageFormatterFactory(context)
     private val notifications by lazyOf(NotificationsHelper(context))
 
-    override fun sendMessageFor(
-        event: PhoneEventInfo,
+    override fun process(
+        event: Event,
         onSuccess: () -> Unit,
         onError: (error: Exception) -> Unit
     ) {
-        val formatter = formatters.createFormatter(event)
+        val formatter = formatters.createFormatter(event.payload)
         telegram.sendMessage(formatter.formatMessage(), onSuccess,
             onError = { error ->
                 if (error is TelegramException) handleTelegramError(error)

@@ -8,12 +8,12 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATE_IGNORED
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATE_PROCESSED
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATUS_NUMBER_BLACKLISTED
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATUS_TEXT_BLACKLISTED
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATUS_TRIGGER_OFF
+import com.bopr.android.smailer.provider.telephony.PhoneEventData
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATE_IGNORED
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATE_PROCESSED
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_NUMBER_BLACKLISTED
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_TEXT_BLACKLISTED
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_TRIGGER_OFF
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.util.*
 
@@ -22,7 +22,7 @@ import com.bopr.android.smailer.util.*
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class HistoryDetailsDialogFragment(private val event: PhoneEventInfo) : BaseDialogFragment("log_details_dialog") {
+class HistoryDetailsDialogFragment(private val event: PhoneEventData) : BaseDialogFragment("log_details_dialog") {
 
     override fun onCreateDialogView(inflater: LayoutInflater, root: ViewGroup?): View {
         return inflater.inflate(R.layout.dialog_history_details, root, false)
@@ -64,7 +64,7 @@ class HistoryDetailsDialogFragment(private val event: PhoneEventInfo) : BaseDial
         MessageDialog(getString(R.string.ignored), sb.toString()).show(this)
     }
 
-    private fun formatMessage(event: PhoneEventInfo): CharSequence? {
+    private fun formatMessage(event: PhoneEventData): CharSequence? {
         return when {
             event.isSms ->
                 event.text
@@ -81,7 +81,7 @@ class HistoryDetailsDialogFragment(private val event: PhoneEventInfo) : BaseDial
         }
     }
 
-    private fun formatProcessTime(event: PhoneEventInfo): CharSequence? {
+    private fun formatProcessTime(event: PhoneEventData): CharSequence? {
         return event.processTime?.run {
             getString(R.string.processed_at, formatTime(this))
         }

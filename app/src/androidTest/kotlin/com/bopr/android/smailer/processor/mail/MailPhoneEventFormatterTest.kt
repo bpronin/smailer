@@ -1,4 +1,4 @@
-package com.bopr.android.smailer.consumer.mail
+package com.bopr.android.smailer.processor.mail
 
 import android.Manifest
 import android.content.Context
@@ -8,7 +8,7 @@ import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.HtmlMatcher
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
+import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import com.bopr.android.smailer.util.GeoCoordinates
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.doAnswer
@@ -52,7 +52,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
      */
     @Test
     fun testAllContentIncomingSms() {
-        val event = PhoneEventInfo(
+        val event = PhoneEventData(
             phone = "+12345678901",
             isIncoming = true,
             startTime = defaultTime,
@@ -89,7 +89,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
      */
     @Test
     fun testIncomingSmsSubject() {
-        val event = PhoneEventInfo(
+        val event = PhoneEventData(
             phone = "+70123456789",
             isIncoming = true,
             startTime = 0,
@@ -107,7 +107,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
      */
     @Test
     fun testOutgoingSmsSubject() {
-        val event = PhoneEventInfo(
+        val event = PhoneEventData(
             phone = "+70123456789",
             isIncoming = false,
             startTime = 0,
@@ -125,7 +125,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
      */
     @Test
     fun testIncomingCallSubject() {
-        val event = PhoneEventInfo(
+        val event = PhoneEventData(
             phone = "+70123456789",
             isIncoming = true,
             startTime = 0,
@@ -142,7 +142,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
      */
     @Test
     fun testOutgoingCallSubject() {
-        val event = PhoneEventInfo(
+        val event = PhoneEventData(
             phone = "+70123456789",
             isIncoming = false,
             startTime = 0,
@@ -159,7 +159,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
      */
     @Test
     fun testMissedCallSubject() {
-        val event = PhoneEventInfo(
+        val event = PhoneEventData(
             phone = "+70123456789",
             startTime = 0,
             isMissed = true,
@@ -176,7 +176,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
      */
     @Test
     fun testNoBodyFooter() {
-        val event = PhoneEventInfo(
+        val event = PhoneEventData(
             phone = "+70123456789",
             isIncoming = true,
             startTime = 0,
@@ -197,7 +197,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
      */
     @Test
     fun testFooterTimeOption() {
-        val event = PhoneEventInfo(
+        val event = PhoneEventData(
             phone = "+70123456789",
             isIncoming = true,
             startTime = defaultTime,
@@ -222,7 +222,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
      */
     @Test
     fun testFooterDeviceNameOption() {
-        val event = PhoneEventInfo(
+        val event = PhoneEventData(
             phone = "+70123456789",
             isIncoming = true,
             startTime = 0,
@@ -249,7 +249,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
      */
     @Test
     fun testFooterDeviceNameOptionNoValue() {
-        val event = PhoneEventInfo(
+        val event = PhoneEventData(
             phone = "+70123456789",
             isIncoming = true,
             startTime = 0,
@@ -275,7 +275,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
      */
     @Test
     fun testFooterDeviceNameTimeOption() {
-        val event = PhoneEventInfo(
+        val event = PhoneEventData(
             phone = "+70123456789",
             isIncoming = true,
             startTime = defaultTime,
@@ -304,7 +304,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
      */
     @Test
     fun testFooterLocation() {
-        val event = PhoneEventInfo(
+        val event = PhoneEventData(
             phone = "+70123456789",
             isIncoming = true,
             startTime = 0,
@@ -331,7 +331,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
      */
     @Test
     fun testFooterNoLocation() {
-        val event = PhoneEventInfo(
+        val event = PhoneEventData(
             phone = "+70123456789",
             isIncoming = true,
             startTime = 0,
@@ -357,7 +357,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
      */
     @Test
     fun testFooterNoLocationPermissions() {
-        val event = PhoneEventInfo(
+        val event = PhoneEventData(
             phone = "+70123456789",
             isIncoming = true,
             startTime = 0,
@@ -397,7 +397,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
      */
     @Test
     fun testContactName() {
-        val event = PhoneEventInfo(
+        val event = PhoneEventData(
             phone = "+12345678901",
             isIncoming = true,
             startTime = 0,
@@ -424,7 +424,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
      */
     @Test
     fun testContactNameNoPermission() {
-        val event = PhoneEventInfo(
+        val event = PhoneEventData(
             phone = "+12345678901",
             isIncoming = true,
             startTime = 0,
@@ -458,7 +458,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
      */
     @Test
     fun testUnknownContactName() {
-        val event = PhoneEventInfo(
+        val event = PhoneEventData(
             phone = "+1234 5678-901",
             isIncoming = true,
             startTime = 0,
@@ -484,7 +484,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
      */
     @Test
     fun testSearchPhoneLink() {
-        val event = PhoneEventInfo(
+        val event = PhoneEventData(
             phone = "+1234 5678-901",
             isIncoming = true,
             startTime = 0,
@@ -510,7 +510,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
      */
     @Test
     fun testIncomingCallBody() {
-        val event = PhoneEventInfo(
+        val event = PhoneEventData(
             phone = "+70123456789",
             isIncoming = true,
             startTime = defaultTime,
@@ -531,7 +531,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
      */
     @Test
     fun testOutgoingCallBody() {
-        val event = PhoneEventInfo(
+        val event = PhoneEventData(
             phone = "+70123456789",
             isIncoming = false,
             startTime = defaultTime,
@@ -552,7 +552,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
      */
     @Test
     fun testMissedCallBody() {
-        val event = PhoneEventInfo(
+        val event = PhoneEventData(
             phone = "+70123456789",
             startTime = defaultTime,
             isMissed = true,
@@ -569,7 +569,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
      */
     @Test
     fun testAllContentIncomingCall() {
-        val event = PhoneEventInfo(
+        val event = PhoneEventData(
             phone = "+12345678901",
             isIncoming = true,
             startTime = defaultTime,
@@ -603,7 +603,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
      */
     @Test
     fun testAllContentOutgoingCall() {
-        val event = PhoneEventInfo(
+        val event = PhoneEventData(
             phone = "+12345678901",
             isIncoming = false,
             startTime = defaultTime,
@@ -637,7 +637,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
      */
     @Test
     fun testAllContentMissedCall() {
-        val event = PhoneEventInfo(
+        val event = PhoneEventData(
             phone = "+12345678901",
             isIncoming = true,
             startTime = defaultTime,
@@ -671,7 +671,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
      */
     @Test
     fun testNonDefaultLocale() {
-        val event = PhoneEventInfo(
+        val event = PhoneEventData(
             phone = "+12345678901",
             isIncoming = true,
             startTime = defaultTime,
@@ -710,7 +710,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
      */
     @Test
     fun testFormatUrls() {
-        val event = PhoneEventInfo(
+        val event = PhoneEventData(
             phone = "+12345678901",
             isIncoming = true,
             startTime = 0,
@@ -729,7 +729,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
      */
     @Test
     fun testRemoteControlLinks() {
-        val event = PhoneEventInfo(
+        val event = PhoneEventData(
             phone = "+12345678901",
             isIncoming = true,
             startTime = defaultTime,

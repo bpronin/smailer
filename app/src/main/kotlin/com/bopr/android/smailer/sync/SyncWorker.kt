@@ -12,7 +12,7 @@ import androidx.work.WorkerParameters
 import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_ENABLED
 import com.bopr.android.smailer.external.Firebase
 import com.bopr.android.smailer.external.Firebase.Companion.FCM_REQUEST_DATA_SYNC
@@ -32,7 +32,7 @@ internal class SyncWorker(context: Context, workerParams: WorkerParameters) :
         val accountHelper = AccountHelper(applicationContext)
 
         if (settings.getBoolean(PREF_SYNC_ENABLED)) {
-            accountHelper.getGoogleAccount(settings.getString(PREF_SENDER_ACCOUNT))
+            accountHelper.getGoogleAccount(settings.getString(PREF_EMAIL_SENDER_ACCOUNT))
                 ?.let { account ->
                     Database(applicationContext).use { database ->
                         Synchronizer(applicationContext, account, database).run {

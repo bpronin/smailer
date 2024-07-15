@@ -2,7 +2,7 @@ package com.bopr.android.smailer
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
-import com.bopr.android.smailer.consumer.mail.MailPhoneEventFormatter.Companion.PHONE_SEARCH_TAG
+import com.bopr.android.smailer.processor.mail.MailPhoneEventFormatter.Companion.PHONE_SEARCH_TAG
 import com.bopr.android.smailer.util.SharedPreferencesWrapper
 import com.bopr.android.smailer.util.DEVICE_NAME
 
@@ -39,6 +39,7 @@ class Settings(context: Context) :
         putBooleanIfNotExists(PREF_TELEGRAM_MESSAGE_SHOW_EVENT_TIME, false)
         putBooleanIfNotExists(PREF_TELEGRAM_MESSAGE_SHOW_PROCESS_TIME, false)
         putBooleanIfNotExists(PREF_TELEGRAM_MESSAGE_SHOW_LOCATION, false)
+        putBooleanIfNotExists(PREF_PROCESS_BATTERY_LEVEL, false)
     }
 
     companion object {
@@ -46,7 +47,10 @@ class Settings(context: Context) :
 
         private const val SETTINGS_VERSION = 2
 
+        const val PREF_SETTINGS_VERSION = "settings_version" /* hidden */
+
         const val PREF_DEVICE_ALIAS = "device_alias"
+        const val PREF_PROCESS_BATTERY_LEVEL = "process_battery_level"
         const val PREF_EMAIL_CONTENT = "email_content"
         const val PREF_EMAIL_MESSENGER_ENABLED = "email_messenger_enabled"
         const val PREF_EMAIL_TRIGGERS = "email_triggers"
@@ -58,8 +62,7 @@ class Settings(context: Context) :
         const val PREF_REMOTE_CONTROL_ENABLED = "remote_control_enabled"
         const val PREF_REMOTE_CONTROL_FILTER_RECIPIENTS = "remote_control_filter_recipients"
         const val PREF_REMOTE_CONTROL_NOTIFICATIONS = "remote_control_notifications"
-        const val PREF_SENDER_ACCOUNT = "sender_account"
-        const val PREF_SETTINGS_VERSION = "settings_version" /* hidden */
+        const val PREF_EMAIL_SENDER_ACCOUNT = "sender_account"
         const val PREF_SYNC_ENABLED = "sync_enabled"
         const val PREF_TELEGRAM_BOT_TOKEN = "telegram_bot_token"
         const val PREF_TELEGRAM_MESSAGE_SHOW_DEVICE_NAME = "telegram_message_show_device_name"
@@ -78,7 +81,6 @@ class Settings(context: Context) :
         const val VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME = "time"
         const val VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT = "time_sent"
         const val VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS = "remote_control_links"
-        const val VAL_PREF_LOW_BATTERY_LEVEL = "low_battery_level"
         const val VAL_PREF_TRIGGER_IN_CALLS = "in_calls"
         const val VAL_PREF_TRIGGER_IN_SMS = "in_sms"
         const val VAL_PREF_TRIGGER_MISSED_CALLS = "missed_calls"
@@ -101,8 +103,7 @@ class Settings(context: Context) :
         //todo: replace with individual boolean options
         val DEFAULT_TRIGGERS: Set<String> = mutableSetOf(
             VAL_PREF_TRIGGER_IN_SMS,
-            VAL_PREF_TRIGGER_MISSED_CALLS,
-            VAL_PREF_LOW_BATTERY_LEVEL
+            VAL_PREF_TRIGGER_MISSED_CALLS
         )
     }
 

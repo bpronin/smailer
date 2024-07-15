@@ -12,7 +12,7 @@ import kotlin.annotation.AnnotationRetention.SOURCE
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 @Parcelize
-data class PhoneEventInfo(
+data class PhoneEventData(
     val phone: String,
     val isIncoming: Boolean = false,
     val startTime: Long,

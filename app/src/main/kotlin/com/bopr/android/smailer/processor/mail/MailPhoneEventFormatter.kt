@@ -1,4 +1,4 @@
-package com.bopr.android.smailer.consumer.mail
+package com.bopr.android.smailer.processor.mail
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
@@ -15,7 +15,7 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_LOCATI
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
+import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import com.bopr.android.smailer.util.checkPermission
 import com.bopr.android.smailer.util.escapePhone
 import com.bopr.android.smailer.util.eventTypePrefix
@@ -38,7 +38,7 @@ import java.util.Locale
  */
 class MailPhoneEventFormatter(
     private val context: Context,
-    private val event: PhoneEventInfo,
+    private val event: PhoneEventData,
     private val contactName: String? = null,
     private val deviceName: String? = null,
     private val serviceAccount: String? = null,

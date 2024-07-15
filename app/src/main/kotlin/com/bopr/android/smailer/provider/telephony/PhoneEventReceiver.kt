@@ -114,7 +114,7 @@ class PhoneEventReceiver : BroadcastReceiver() {
             val time = messages[0].timestampMillis
 
             context.startPhoneEventProcessing(
-                PhoneEventInfo(
+                PhoneEventData(
                     phone = messages[0].displayOriginatingAddress,
                     isIncoming = true,
                     startTime = time,
@@ -133,7 +133,7 @@ class PhoneEventReceiver : BroadcastReceiver() {
      */
     private fun processCall(context: Context) {
         context.startPhoneEventProcessing(
-            PhoneEventInfo(
+            PhoneEventData(
                 phone = callNumber!!,
                 isIncoming = isIncomingCall!!,
                 isMissed = isMissedCall!!,

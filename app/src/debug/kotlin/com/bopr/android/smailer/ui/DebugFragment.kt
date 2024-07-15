@@ -33,7 +33,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
-import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_DEFAULT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_CONTACT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME
@@ -42,12 +42,11 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_LOCATI
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_LOW_BATTERY_LEVEL
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
-import com.bopr.android.smailer.consumer.mail.MailMessage
+import com.bopr.android.smailer.processor.mail.MailMessage
 import com.bopr.android.smailer.control.MailControlProcessor
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.databaseName
@@ -56,11 +55,11 @@ import com.bopr.android.smailer.external.Firebase.Companion.FCM_REQUEST_DATA_SYN
 import com.bopr.android.smailer.external.GoogleDrive
 import com.bopr.android.smailer.external.GoogleMail
 import com.bopr.android.smailer.external.Telegram
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATE_IGNORED
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATE_PENDING
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATE_PROCESSED
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATUS_ACCEPTED
+import com.bopr.android.smailer.provider.telephony.PhoneEventData
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATE_IGNORED
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATE_PENDING
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATE_PROCESSED
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_ACCEPTED
 import com.bopr.android.smailer.provider.telephony.PhoneEventProcessor
 import com.bopr.android.smailer.provider.telephony.PhoneEventProcessorWorker.Companion.startPhoneEventProcessing
 import com.bopr.android.smailer.provider.telephony.SmsTransport.Companion.smsManager
@@ -273,7 +272,7 @@ class DebugFragment : BasePreferenceFragment() {
 
     private fun onPutInvalidAccount() {
         settings.update {
-            putString(PREF_SENDER_ACCOUNT, "unknown@gmail.com")
+            putString(PREF_EMAIL_SENDER_ACCOUNT, "unknown@gmail.com")
         }
     }
 
@@ -341,7 +340,7 @@ class DebugFragment : BasePreferenceFragment() {
         database = Database(requireContext())
         locator = GeoLocator(requireContext(), database)
         authorization = GoogleAuthorizationHelper(
-            requireActivity(), PREF_SENDER_ACCOUNT, MAIL_GOOGLE_COM, DRIVE_APPDATA
+            requireActivity(), PREF_EMAIL_SENDER_ACCOUNT, MAIL_GOOGLE_COM, DRIVE_APPDATA
         )
         notifications = NotificationsHelper(requireContext())
         accountHelper = AccountHelper(requireContext())
@@ -399,7 +398,7 @@ class DebugFragment : BasePreferenceFragment() {
 
     private fun onSetDebugPreferences() {
         settings.update {
-            putString(PREF_SENDER_ACCOUNT, developerEmail)
+            putString(PREF_EMAIL_SENDER_ACCOUNT, developerEmail)
             putString(PREF_REMOTE_CONTROL_ACCOUNT, developerEmail)
             putStringList(PREF_RECIPIENTS_ADDRESS, setOf(developerEmail, "nowhere@mail.com"))
             putStringSet(
@@ -408,7 +407,6 @@ class DebugFragment : BasePreferenceFragment() {
                     VAL_PREF_TRIGGER_IN_CALLS,
                     VAL_PREF_TRIGGER_MISSED_CALLS,
                     VAL_PREF_TRIGGER_OUT_CALLS,
-                    VAL_PREF_LOW_BATTERY_LEVEL
                 )
             )
             putStringSet(
@@ -474,7 +472,7 @@ class DebugFragment : BasePreferenceFragment() {
 
     private fun onProcessSingleEvent() {
         val start = System.currentTimeMillis()
-        val info = PhoneEventInfo(
+        val info = PhoneEventData(
             phone = "+1(234) 567-89-01",
             isIncoming = true,
             startTime = start,
@@ -511,7 +509,7 @@ class DebugFragment : BasePreferenceFragment() {
     private fun onAddHistoryItem() {
         database.commit {
             phoneEvents.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "+79052345670",
                     true,
                     System.currentTimeMillis(),
@@ -536,7 +534,7 @@ class DebugFragment : BasePreferenceFragment() {
         database.commit {
             batch {
                 phoneEvents.add(
-                    PhoneEventInfo(
+                    PhoneEventData(
                         "+79052345671",
                         true,
                         time,
@@ -552,7 +550,7 @@ class DebugFragment : BasePreferenceFragment() {
                     )
                 )
                 phoneEvents.add(
-                    PhoneEventInfo(
+                    PhoneEventData(
                         "+79052345672",
                         false,
                         1000.let { time += it; time },
@@ -568,7 +566,7 @@ class DebugFragment : BasePreferenceFragment() {
                     )
                 )
                 phoneEvents.add(
-                    PhoneEventInfo(
+                    PhoneEventData(
                         "+79052345673",
                         true,
                         1000.let { time += it; time },
@@ -584,7 +582,7 @@ class DebugFragment : BasePreferenceFragment() {
                     )
                 )
                 phoneEvents.add(
-                    PhoneEventInfo(
+                    PhoneEventData(
                         "+79052345674",
                         false,
                         1000.let { time += it; time },
@@ -600,7 +598,7 @@ class DebugFragment : BasePreferenceFragment() {
                     )
                 )
                 phoneEvents.add(
-                    PhoneEventInfo(
+                    PhoneEventData(
                         "+79052345675",
                         true,
                         1000.let { time += it; time },
@@ -616,7 +614,7 @@ class DebugFragment : BasePreferenceFragment() {
                     )
                 )
                 phoneEvents.add(
-                    PhoneEventInfo(
+                    PhoneEventData(
                         "+79052345671",
                         true,
                         1000.let { time += it; time },
@@ -632,7 +630,7 @@ class DebugFragment : BasePreferenceFragment() {
                     )
                 )
                 phoneEvents.add(
-                    PhoneEventInfo(
+                    PhoneEventData(
                         "+79052345672",
                         false,
                         1000.let { time += it; time },
@@ -648,7 +646,7 @@ class DebugFragment : BasePreferenceFragment() {
                     )
                 )
                 phoneEvents.add(
-                    PhoneEventInfo(
+                    PhoneEventData(
                         "+79052345673",
                         true,
                         1000.let { time += it; time },
@@ -664,7 +662,7 @@ class DebugFragment : BasePreferenceFragment() {
                     )
                 )
                 phoneEvents.add(
-                    PhoneEventInfo(
+                    PhoneEventData(
                         "+79052345674",
                         false,
                         1000.let { time += it; time },
@@ -680,7 +678,7 @@ class DebugFragment : BasePreferenceFragment() {
                     )
                 )
                 phoneEvents.add(
-                    PhoneEventInfo(
+                    PhoneEventData(
                         "+79052345675",
                         true,
                         1000.let { time += it; time },
@@ -810,7 +808,7 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun senderAccount(): Account {
-        return accountHelper.requireGoogleAccount(settings.getString(PREF_SENDER_ACCOUNT))
+        return accountHelper.requireGoogleAccount(settings.getString(PREF_EMAIL_SENDER_ACCOUNT))
     }
 
     private fun serviceAccount(): Account {

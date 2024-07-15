@@ -2,11 +2,11 @@ package com.bopr.android.smailer.util
 
 import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATUS_ACCEPTED
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATUS_NUMBER_BLACKLISTED
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATUS_TEXT_BLACKLISTED
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATUS_TRIGGER_OFF
+import com.bopr.android.smailer.provider.telephony.PhoneEventData
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_ACCEPTED
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_NUMBER_BLACKLISTED
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_TEXT_BLACKLISTED
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_TRIGGER_OFF
 import com.bopr.android.smailer.provider.telephony.PhoneEventFilter
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
@@ -14,15 +14,15 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 @SmallTest
-class PhoneEventInfoFilterTest : BaseTest() {
+class PhoneEventDataFilterTest : BaseTest() {
 
     private fun createEvent(phone: String, acceptor: String = "Device",
                             startTime: Long = 1000,
                             isIncoming: Boolean = true,
                             isMissed: Boolean = true,
                             isRead: Boolean = true,
-                            text: String? = null): PhoneEventInfo {
-        return PhoneEventInfo(
+                            text: String? = null): PhoneEventData {
+        return PhoneEventData(
                 phone = phone,
                 isIncoming = isIncoming,
                 startTime = startTime,

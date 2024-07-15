@@ -1,4 +1,4 @@
-package com.bopr.android.smailer.consumer.mail
+package com.bopr.android.smailer.processor.mail
 
 import java.io.File
 

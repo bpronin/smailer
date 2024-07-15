@@ -1,9 +1,9 @@
 package com.bopr.android.smailer.provider.telephony
 
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATUS_ACCEPTED
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATUS_NUMBER_BLACKLISTED
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATUS_TEXT_BLACKLISTED
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATUS_TRIGGER_OFF
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_ACCEPTED
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_NUMBER_BLACKLISTED
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_TEXT_BLACKLISTED
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_TRIGGER_OFF
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
@@ -32,7 +32,7 @@ class PhoneEventFilter(
      * @param event event
      * @return [STATUS_ACCEPTED] if event was accepted or explanation flags otherwise
      */
-    fun test(event: PhoneEventInfo): Int {
+    fun test(event: PhoneEventData): Int {
         var result = STATUS_ACCEPTED
         if (!testTrigger(event)) {
             result = result or STATUS_TRIGGER_OFF
@@ -46,7 +46,7 @@ class PhoneEventFilter(
         return result
     }
 
-    private fun testTrigger(event: PhoneEventInfo): Boolean {
+    private fun testTrigger(event: PhoneEventData): Boolean {
         return when {
             triggers.isEmpty() ->
                 false

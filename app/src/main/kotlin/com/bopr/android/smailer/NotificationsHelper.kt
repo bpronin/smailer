@@ -18,7 +18,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.TaskStackBuilder
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
-import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.ui.MainActivity
 import com.bopr.android.smailer.ui.RecipientsActivity
 import com.bopr.android.smailer.ui.RemoteControlActivity
@@ -133,10 +133,10 @@ class NotificationsHelper(private val context: Context) {
 
     internal fun onSettingsChanged(settings: Settings, key: String?) {
         when (key) {
-            PREF_SENDER_ACCOUNT ->
+            PREF_EMAIL_SENDER_ACCOUNT ->
                 if (AccountHelper(context).isGoogleAccountExists(
                         settings.getString(
-                            PREF_SENDER_ACCOUNT
+                            PREF_EMAIL_SENDER_ACCOUNT
                         )
                     )) {
                     cancelError(SENDER_ACCOUNT_ERROR)

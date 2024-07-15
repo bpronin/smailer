@@ -1,13 +1,13 @@
-package com.bopr.android.smailer.consumer.mail
+package com.bopr.android.smailer.processor.mail
 
 import android.content.Context
 import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.consumer.EventMessengerTransport
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
 import com.bopr.android.smailer.external.GoogleMail
+import com.bopr.android.smailer.processor.EventProcessor
+import com.bopr.android.smailer.provider.Event
 import com.bopr.android.smailer.util.Mockable
 import com.bopr.android.smailer.util.isValidEmailAddressList
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
@@ -19,16 +19,15 @@ import org.slf4j.LoggerFactory
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 @Mockable
-internal class MailTransport(context: Context) :
-    EventMessengerTransport(context) {
+internal class MailTransport(context: Context) : EventProcessor(context) {
 
     private val settings = Settings(context)
     private val accountHelper = AccountHelper(context)
     private val formatters = MailFormatterFactory(context)
     private val notifications by lazy { NotificationsHelper(context) }
 
-    override fun sendMessageFor(
-        event: PhoneEventInfo,
+    override fun process(
+        event: Event,
         onSuccess: () -> Unit,
         onError: (error: Exception) -> Unit
     ) {
@@ -36,7 +35,7 @@ internal class MailTransport(context: Context) :
         if (!checkRecipients(recipients)) return
 
         val account = accountHelper.requirePrimaryGoogleAccount()
-        val formatter = formatters.createFormatter(event)
+        val formatter = formatters.createFormatter(event.payload)
 
         val mailMessage = MailMessage(
             subject = formatter.formatSubject(),
@@ -54,7 +53,7 @@ internal class MailTransport(context: Context) :
     }
 
     fun checkRecipients(recipients: String?): Boolean {
-        if (recipients.isNullOrBlank()){
+        if (recipients.isNullOrBlank()) {
             notifications.showRecipientsError(R.string.no_recipients_specified)
             return false
         }

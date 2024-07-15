@@ -4,4 +4,6 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class BatteryLevelInfo(val title: String, val text: String) : Parcelable
+data class BatteryLevelData(
+    val text: String
+) : Parcelable

@@ -2,7 +2,7 @@ package com.bopr.android.smailer.data
 
 import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
+import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import com.bopr.android.smailer.util.GeoCoordinates
 import org.junit.After
 import org.junit.Assert
@@ -37,7 +37,7 @@ class DatabaseTest : BaseTest() {
 
         database.batch {
             events.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "1",
                     true,
                     1000L,
@@ -46,14 +46,14 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 1",
-                    PhoneEventInfo.STATE_PENDING,
+                    PhoneEventData.STATE_PENDING,
                     "device",
-                    PhoneEventInfo.STATUS_ACCEPTED,
+                    PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
                 )
             )
             events.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "2",
                     false,
                     2000L,
@@ -62,14 +62,14 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     null,
-                    PhoneEventInfo.STATE_PENDING,
+                    PhoneEventData.STATE_PENDING,
                     "device",
-                    PhoneEventInfo.STATUS_ACCEPTED,
+                    PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
                 )
             )
             events.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "3",
                     true,
                     3000L,
@@ -78,14 +78,14 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     null,
-                    PhoneEventInfo.STATE_PENDING,
+                    PhoneEventData.STATE_PENDING,
                     "device",
-                    PhoneEventInfo.STATUS_ACCEPTED,
+                    PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
                 )
             )
             events.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "4",
                     false,
                     4000L,
@@ -94,14 +94,14 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     null,
-                    PhoneEventInfo.STATE_PENDING,
+                    PhoneEventData.STATE_PENDING,
                     "device",
-                    PhoneEventInfo.STATUS_ACCEPTED,
+                    PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
                 )
             )
             events.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "5",
                     true,
                     5000L,
@@ -110,14 +110,14 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     null,
-                    PhoneEventInfo.STATE_PENDING,
+                    PhoneEventData.STATE_PENDING,
                     "device",
-                    PhoneEventInfo.STATUS_ACCEPTED,
+                    PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
                 )
             )
             events.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "6",
                     true,
                     6000L,
@@ -126,14 +126,14 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 1",
-                    PhoneEventInfo.STATE_PENDING,
+                    PhoneEventData.STATE_PENDING,
                     "device",
-                    PhoneEventInfo.STATUS_ACCEPTED,
+                    PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
                 )
             )
             events.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "7",
                     false,
                     7000L,
@@ -142,14 +142,14 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 2",
-                    PhoneEventInfo.STATE_PENDING,
+                    PhoneEventData.STATE_PENDING,
                     "device",
-                    PhoneEventInfo.STATUS_ACCEPTED,
+                    PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
                 )
             )
             events.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "8",
                     true,
                     8000L,
@@ -158,14 +158,14 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 3",
-                    PhoneEventInfo.STATE_PENDING,
+                    PhoneEventData.STATE_PENDING,
                     "device",
-                    PhoneEventInfo.STATUS_ACCEPTED,
+                    PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
                 )
             )
             events.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "9",
                     false,
                     9000L,
@@ -174,14 +174,14 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 4",
-                    PhoneEventInfo.STATE_PENDING,
+                    PhoneEventData.STATE_PENDING,
                     "device",
-                    PhoneEventInfo.STATUS_ACCEPTED,
+                    PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
                 )
             )
             events.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "10",
                     true,
                     10000L,
@@ -190,9 +190,9 @@ class DatabaseTest : BaseTest() {
                     "SMS text",
                     GeoCoordinates(10.5, 20.5),
                     "Test 10",
-                    PhoneEventInfo.STATE_PENDING,
+                    PhoneEventData.STATE_PENDING,
                     "device",
-                    PhoneEventInfo.STATUS_ACCEPTED,
+                    PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
                 )
             )
@@ -202,7 +202,7 @@ class DatabaseTest : BaseTest() {
 
         val event = events.first() /* descending order so it should be the last */
 
-        Assert.assertEquals(PhoneEventInfo.STATE_PENDING, event.state)
+        Assert.assertEquals(PhoneEventData.STATE_PENDING, event.state)
         Assert.assertEquals("10", event.phone)
         Assert.assertTrue(event.isIncoming)
         Assert.assertEquals(10000L, event.startTime)
@@ -218,11 +218,11 @@ class DatabaseTest : BaseTest() {
     @Test
     fun testUpdate() {
         database.phoneEvents.add(
-            PhoneEventInfo(
+            PhoneEventData(
                 phone = "1",
                 startTime = 0,
                 acceptor = "device",
-                state = PhoneEventInfo.STATE_PENDING,
+                state = PhoneEventData.STATE_PENDING,
                 isRead = false
             )
         )
@@ -232,17 +232,17 @@ class DatabaseTest : BaseTest() {
             Assert.assertEquals("1", phone)
             Assert.assertEquals(0, startTime)
             Assert.assertEquals("device", acceptor)
-            Assert.assertEquals(PhoneEventInfo.STATE_PENDING, state)
+            Assert.assertEquals(PhoneEventData.STATE_PENDING, state)
             Assert.assertEquals(false, isRead)
         }
 
         Assert.assertTrue(
             database.phoneEvents.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     phone = "1",
                     startTime = 0,
                     acceptor = "device",
-                    state = PhoneEventInfo.STATE_PROCESSED,
+                    state = PhoneEventData.STATE_PROCESSED,
                     isRead = true
                 )
             )
@@ -252,14 +252,14 @@ class DatabaseTest : BaseTest() {
             Assert.assertEquals("1", phone)
             Assert.assertEquals(0, startTime)
             Assert.assertEquals("device", acceptor)
-            Assert.assertEquals(PhoneEventInfo.STATE_PROCESSED, state)
+            Assert.assertEquals(PhoneEventData.STATE_PROCESSED, state)
             Assert.assertEquals(true, isRead)
         }
     }
 
     @Test
     fun testUpdateGet() {
-        var event = PhoneEventInfo(
+        var event = PhoneEventData(
             phone = "1",
             isIncoming = true,
             startTime = 1000L,
@@ -268,9 +268,9 @@ class DatabaseTest : BaseTest() {
             text = "SMS text",
             location = GeoCoordinates(10.5, 20.5),
             details = "Test 1",
-            state = PhoneEventInfo.STATE_PENDING,
+            state = PhoneEventData.STATE_PENDING,
             acceptor = "device",
-            processStatus = PhoneEventInfo.STATUS_ACCEPTED,
+            processStatus = PhoneEventData.STATUS_ACCEPTED,
             isRead = false
         )
 
@@ -282,7 +282,7 @@ class DatabaseTest : BaseTest() {
 
         event = events.first()
 
-        Assert.assertEquals(PhoneEventInfo.STATE_PENDING, event.state)
+        Assert.assertEquals(PhoneEventData.STATE_PENDING, event.state)
         Assert.assertEquals("1", event.phone)
         Assert.assertTrue(event.isIncoming)
         Assert.assertEquals(1000L, event.startTime)
@@ -293,7 +293,7 @@ class DatabaseTest : BaseTest() {
         Assert.assertEquals(20.5, event.location!!.longitude, 0.1)
         Assert.assertEquals("SMS text", event.text)
         Assert.assertEquals("Test 1", event.details)
-        Assert.assertEquals(PhoneEventInfo.STATE_PENDING, event.state)
+        Assert.assertEquals(PhoneEventData.STATE_PENDING, event.state)
 
         event = event.copy(
                 phone = "2",
@@ -310,7 +310,7 @@ class DatabaseTest : BaseTest() {
 
         event = events.first()
 
-        Assert.assertEquals(PhoneEventInfo.STATE_PENDING, event.state)
+        Assert.assertEquals(PhoneEventData.STATE_PENDING, event.state)
         Assert.assertEquals("2", event.phone)
         Assert.assertFalse(event.isIncoming)
         Assert.assertEquals(3000L, event.endTime!!)
@@ -328,7 +328,7 @@ class DatabaseTest : BaseTest() {
 
         database.batch {
             events.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "1",
                     true,
                     1000L,
@@ -337,14 +337,14 @@ class DatabaseTest : BaseTest() {
                     "SMS text",
                     GeoCoordinates(10.5, 20.5),
                     "Test 1",
-                    PhoneEventInfo.STATE_PENDING,
+                    PhoneEventData.STATE_PENDING,
                     "device",
-                    PhoneEventInfo.STATUS_ACCEPTED,
+                    PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
                 )
             )
             events.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "2",
                     false,
                     2000L,
@@ -353,14 +353,14 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     null,
-                    PhoneEventInfo.STATE_PENDING,
+                    PhoneEventData.STATE_PENDING,
                     "device",
-                    PhoneEventInfo.STATUS_ACCEPTED,
+                    PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
                 )
             )
             events.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "3",
                     true,
                     3000L,
@@ -369,14 +369,14 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     null,
-                    PhoneEventInfo.STATE_PENDING,
+                    PhoneEventData.STATE_PENDING,
                     "device",
-                    PhoneEventInfo.STATUS_ACCEPTED,
+                    PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
                 )
             )
             events.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "4",
                     false,
                     4000L,
@@ -385,14 +385,14 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     null,
-                    PhoneEventInfo.STATE_PENDING,
+                    PhoneEventData.STATE_PENDING,
                     "device",
-                    PhoneEventInfo.STATUS_ACCEPTED,
+                    PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
                 )
             )
             events.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "5",
                     true,
                     5000L,
@@ -401,14 +401,14 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     null,
-                    PhoneEventInfo.STATE_PENDING,
+                    PhoneEventData.STATE_PENDING,
                     "device",
-                    PhoneEventInfo.STATUS_ACCEPTED,
+                    PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
                 )
             )
             events.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "6",
                     true,
                     6000L,
@@ -417,14 +417,14 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 1",
-                    PhoneEventInfo.STATE_PENDING,
+                    PhoneEventData.STATE_PENDING,
                     "device",
-                    PhoneEventInfo.STATUS_ACCEPTED,
+                    PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
                 )
             )
             events.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "7",
                     false,
                     7000L,
@@ -433,14 +433,14 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 2",
-                    PhoneEventInfo.STATE_PENDING,
+                    PhoneEventData.STATE_PENDING,
                     "device",
-                    PhoneEventInfo.STATUS_ACCEPTED,
+                    PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
                 )
             )
             events.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "8",
                     true,
                     8000L,
@@ -449,14 +449,14 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 3",
-                    PhoneEventInfo.STATE_PENDING,
+                    PhoneEventData.STATE_PENDING,
                     "device",
-                    PhoneEventInfo.STATUS_ACCEPTED,
+                    PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
                 )
             )
             events.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "9",
                     false,
                     9000L,
@@ -465,14 +465,14 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 4",
-                    PhoneEventInfo.STATE_PENDING,
+                    PhoneEventData.STATE_PENDING,
                     "device",
-                    PhoneEventInfo.STATUS_ACCEPTED,
+                    PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
                 )
             )
             events.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "10",
                     true,
                     10000L,
@@ -481,9 +481,9 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 5",
-                    PhoneEventInfo.STATE_PENDING,
+                    PhoneEventData.STATE_PENDING,
                     "device",
-                    PhoneEventInfo.STATUS_ACCEPTED,
+                    PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
                 )
             )
@@ -521,7 +521,7 @@ class DatabaseTest : BaseTest() {
         val events = database.phoneEvents
         database.batch {
             events.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "1",
                     true,
                     1000L,
@@ -530,14 +530,14 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 1",
-                    PhoneEventInfo.STATE_PROCESSED,
+                    PhoneEventData.STATE_PROCESSED,
                     "device",
-                    PhoneEventInfo.STATUS_ACCEPTED,
+                    PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
                 )
             )
             events.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "2",
                     false,
                     2000L,
@@ -546,14 +546,14 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     null,
-                    PhoneEventInfo.STATE_PROCESSED,
+                    PhoneEventData.STATE_PROCESSED,
                     "device",
-                    PhoneEventInfo.STATUS_ACCEPTED,
+                    PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
                 )
             )
             events.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "3",
                     true,
                     3000L,
@@ -562,14 +562,14 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     null,
-                    PhoneEventInfo.STATE_PROCESSED,
+                    PhoneEventData.STATE_PROCESSED,
                     "device",
-                    PhoneEventInfo.STATUS_ACCEPTED,
+                    PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
                 )
             )
             events.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "4",
                     false,
                     4000L,
@@ -578,14 +578,14 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     null,
-                    PhoneEventInfo.STATE_IGNORED,
+                    PhoneEventData.STATE_IGNORED,
                     "device",
-                    PhoneEventInfo.STATUS_ACCEPTED,
+                    PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
                 )
             )
             events.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "5",
                     true,
                     5000L,
@@ -594,14 +594,14 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     null,
-                    PhoneEventInfo.STATE_IGNORED,
+                    PhoneEventData.STATE_IGNORED,
                     "device",
-                    PhoneEventInfo.STATUS_ACCEPTED,
+                    PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
                 )
             )
             events.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "6",
                     true,
                     6000L,
@@ -610,14 +610,14 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 1",
-                    PhoneEventInfo.STATE_PENDING,
+                    PhoneEventData.STATE_PENDING,
                     "device",
-                    PhoneEventInfo.STATUS_ACCEPTED,
+                    PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
                 )
             )
             events.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "7",
                     false,
                     7000L,
@@ -626,14 +626,14 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 2",
-                    PhoneEventInfo.STATE_PENDING,
+                    PhoneEventData.STATE_PENDING,
                     "device",
-                    PhoneEventInfo.STATUS_ACCEPTED,
+                    PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
                 )
             )
             events.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "8",
                     true,
                     8000L,
@@ -642,14 +642,14 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 3",
-                    PhoneEventInfo.STATE_PENDING,
+                    PhoneEventData.STATE_PENDING,
                     "device",
-                    PhoneEventInfo.STATUS_ACCEPTED,
+                    PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
                 )
             )
             events.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "9",
                     false,
                     9000L,
@@ -658,14 +658,14 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 4",
-                    PhoneEventInfo.STATE_PENDING,
+                    PhoneEventData.STATE_PENDING,
                     "device",
-                    PhoneEventInfo.STATUS_ACCEPTED,
+                    PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
                 )
             )
             events.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     "10",
                     true,
                     10000L,
@@ -674,9 +674,9 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 10",
-                    PhoneEventInfo.STATE_PENDING,
+                    PhoneEventData.STATE_PENDING,
                     "device",
-                    PhoneEventInfo.STATUS_ACCEPTED,
+                    PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
                 )
             )
@@ -694,7 +694,7 @@ class DatabaseTest : BaseTest() {
     fun testUnreadCount() {
         database.batch {
             phoneEvents.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     phone = "1",
                     startTime = 0,
                     acceptor = "device",
@@ -702,7 +702,7 @@ class DatabaseTest : BaseTest() {
                 )
             )
             phoneEvents.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     phone = "2",
                     startTime = 1,
                     acceptor = "device",
@@ -710,7 +710,7 @@ class DatabaseTest : BaseTest() {
                 )
             )
             phoneEvents.add(
-                PhoneEventInfo(
+                PhoneEventData(
                     phone = "3",
                     startTime = 2,
                     acceptor = "device",
@@ -726,11 +726,11 @@ class DatabaseTest : BaseTest() {
     fun testGetTransform() {
         val events = database.phoneEvents
         database.batch {
-            events.add(PhoneEventInfo(phone = "1", startTime = 0, acceptor = "device"))
-            events.add(PhoneEventInfo(phone = "2", startTime = 1, acceptor = "device"))
-            events.add(PhoneEventInfo(phone = "3", startTime = 2, acceptor = "device"))
-            events.add(PhoneEventInfo(phone = "4", startTime = 3, acceptor = "device"))
-            events.add(PhoneEventInfo(phone = "5", startTime = 4, acceptor = "device"))
+            events.add(PhoneEventData(phone = "1", startTime = 0, acceptor = "device"))
+            events.add(PhoneEventData(phone = "2", startTime = 1, acceptor = "device"))
+            events.add(PhoneEventData(phone = "3", startTime = 2, acceptor = "device"))
+            events.add(PhoneEventData(phone = "4", startTime = 3, acceptor = "device"))
+            events.add(PhoneEventData(phone = "5", startTime = 4, acceptor = "device"))
         }
 
         val phones = events.map { it.phone }
@@ -745,9 +745,9 @@ class DatabaseTest : BaseTest() {
     @Test
     fun testIteratorRemove() {
         database.batch {
-            phoneEvents.add(PhoneEventInfo(phone = "1", startTime = 0, acceptor = "device"))
-            phoneEvents.add(PhoneEventInfo(phone = "2", startTime = 1, acceptor = "device"))
-            phoneEvents.add(PhoneEventInfo(phone = "3", startTime = 2, acceptor = "device"))
+            phoneEvents.add(PhoneEventData(phone = "1", startTime = 0, acceptor = "device"))
+            phoneEvents.add(PhoneEventData(phone = "2", startTime = 1, acceptor = "device"))
+            phoneEvents.add(PhoneEventData(phone = "3", startTime = 2, acceptor = "device"))
         }
 
         val iterator = database.phoneEvents.iterator()
@@ -765,14 +765,14 @@ class DatabaseTest : BaseTest() {
     @Test
     fun testContains() {
         database.batch {
-            phoneEvents.add(PhoneEventInfo(phone = "1", startTime = 0, acceptor = "device"))
-            phoneEvents.add(PhoneEventInfo(phone = "2", startTime = 1, acceptor = "device"))
-            phoneEvents.add(PhoneEventInfo(phone = "3", startTime = 2, acceptor = "device"))
+            phoneEvents.add(PhoneEventData(phone = "1", startTime = 0, acceptor = "device"))
+            phoneEvents.add(PhoneEventData(phone = "2", startTime = 1, acceptor = "device"))
+            phoneEvents.add(PhoneEventData(phone = "3", startTime = 2, acceptor = "device"))
         }
 
         Assert.assertTrue(
             database.phoneEvents.contains(
-                PhoneEventInfo(
+                PhoneEventData(
                     phone = "1",
                     startTime = 0,
                     acceptor = "device"
@@ -782,8 +782,8 @@ class DatabaseTest : BaseTest() {
         Assert.assertTrue(
             database.phoneEvents.containsAll(
                 listOf(
-                    PhoneEventInfo(phone = "1", startTime = 0, acceptor = "device"),
-                    PhoneEventInfo(phone = "3", startTime = 2, acceptor = "device")
+                    PhoneEventData(phone = "1", startTime = 0, acceptor = "device"),
+                    PhoneEventData(phone = "3", startTime = 2, acceptor = "device")
                 )
             )
         )
@@ -792,9 +792,9 @@ class DatabaseTest : BaseTest() {
     @Test
     fun testAddAll() {
         database.phoneEvents.addAll(listOf(
-            PhoneEventInfo(phone = "1", startTime = 0, acceptor = "device"),
-            PhoneEventInfo(phone = "2", startTime = 1, acceptor = "device"),
-            PhoneEventInfo(phone = "3", startTime = 2, acceptor = "device")
+            PhoneEventData(phone = "1", startTime = 0, acceptor = "device"),
+            PhoneEventData(phone = "2", startTime = 1, acceptor = "device"),
+            PhoneEventData(phone = "3", startTime = 2, acceptor = "device")
         ))
 
         Assert.assertEquals(3, database.phoneEvents.size)
@@ -805,15 +805,15 @@ class DatabaseTest : BaseTest() {
     @Test
     fun testRemoveAll() {
         database.phoneEvents.addAll(listOf(
-            PhoneEventInfo(phone = "1", startTime = 0, acceptor = "device"),
-            PhoneEventInfo(phone = "2", startTime = 1, acceptor = "device"),
-            PhoneEventInfo(phone = "3", startTime = 2, acceptor = "device")
+            PhoneEventData(phone = "1", startTime = 0, acceptor = "device"),
+            PhoneEventData(phone = "2", startTime = 1, acceptor = "device"),
+            PhoneEventData(phone = "3", startTime = 2, acceptor = "device")
         ))
 
         database.phoneEvents.removeAll(listOf(
-            PhoneEventInfo(phone = "1", startTime = 0, acceptor = "device"),
-            PhoneEventInfo(phone = "3", startTime = 2, acceptor = "device"),
-            PhoneEventInfo(phone = "33", startTime = 33, acceptor = "device")
+            PhoneEventData(phone = "1", startTime = 0, acceptor = "device"),
+            PhoneEventData(phone = "3", startTime = 2, acceptor = "device"),
+            PhoneEventData(phone = "33", startTime = 33, acceptor = "device")
         ))
 
         Assert.assertEquals(1, database.phoneEvents.size)
@@ -823,15 +823,15 @@ class DatabaseTest : BaseTest() {
     @Test
     fun testRetainAll() {
         database.phoneEvents.addAll(listOf(
-            PhoneEventInfo(phone = "1", startTime = 0, acceptor = "device"),
-            PhoneEventInfo(phone = "2", startTime = 1, acceptor = "device"),
-            PhoneEventInfo(phone = "3", startTime = 2, acceptor = "device")
+            PhoneEventData(phone = "1", startTime = 0, acceptor = "device"),
+            PhoneEventData(phone = "2", startTime = 1, acceptor = "device"),
+            PhoneEventData(phone = "3", startTime = 2, acceptor = "device")
         ))
 
         database.phoneEvents.retainAll(listOf(
-            PhoneEventInfo(phone = "1", startTime = 0, acceptor = "device"),
-            PhoneEventInfo(phone = "3", startTime = 2, acceptor = "device"),
-            PhoneEventInfo(phone = "33", startTime = 33, acceptor = "device")
+            PhoneEventData(phone = "1", startTime = 0, acceptor = "device"),
+            PhoneEventData(phone = "3", startTime = 2, acceptor = "device"),
+            PhoneEventData(phone = "33", startTime = 33, acceptor = "device")
         ))
 
         Assert.assertEquals(2, database.phoneEvents.size)
@@ -842,14 +842,14 @@ class DatabaseTest : BaseTest() {
     @Test
     fun testReplaceAll() {
         database.phoneEvents.addAll(listOf(
-            PhoneEventInfo(phone = "1", startTime = 0, acceptor = "device"),
-            PhoneEventInfo(phone = "2", startTime = 1, acceptor = "device"),
-            PhoneEventInfo(phone = "3", startTime = 2, acceptor = "device")
+            PhoneEventData(phone = "1", startTime = 0, acceptor = "device"),
+            PhoneEventData(phone = "2", startTime = 1, acceptor = "device"),
+            PhoneEventData(phone = "3", startTime = 2, acceptor = "device")
         ))
 
         database.phoneEvents.replaceAll(listOf(
-            PhoneEventInfo(phone = "11", startTime = 11, acceptor = "device"),
-            PhoneEventInfo(phone = "22", startTime = 22, acceptor = "device")
+            PhoneEventData(phone = "11", startTime = 11, acceptor = "device"),
+            PhoneEventData(phone = "22", startTime = 22, acceptor = "device")
         ))
 
         Assert.assertEquals(2, database.phoneEvents.size)

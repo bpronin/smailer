@@ -1,9 +1,9 @@
-package com.bopr.android.smailer.consumer.mail
+package com.bopr.android.smailer.processor.mail
 
 import android.content.Context
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
+import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import com.bopr.android.smailer.util.parseLocale
 import com.bopr.android.smailer.util.tryGetContactName
 
@@ -11,12 +11,12 @@ class MailFormatterFactory(private val context: Context) {
 
     private val settings = Settings(context)
 
-    fun createFormatter(event: PhoneEventInfo): MailFormatter {
-        return when (event) {
-            is PhoneEventInfo -> MailPhoneEventFormatter(
+    fun createFormatter(data: Any): MailFormatter {
+        return when (data) {
+            is PhoneEventData -> MailPhoneEventFormatter(
                 context = context,
-                event = event,
-                contactName = tryGetContactName(context, event.phone),
+                event = data,
+                contactName = tryGetContactName(context, data.phone),
                 deviceName = settings.getDeviceName(),
                 options = settings.getEmailContent(),
                 serviceAccount = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT),
@@ -24,7 +24,7 @@ class MailFormatterFactory(private val context: Context) {
                 locale = parseLocale(settings.getMessageLocale())
             )
 //            is BatteryEvent -> BatteryEventMailFormatter(context)
-            else -> throw IllegalArgumentException("No formatter for ${event::class}")
+            else -> throw IllegalArgumentException("No formatter for ${data::class}")
         }
     }
 

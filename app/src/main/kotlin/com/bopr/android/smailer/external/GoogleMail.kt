@@ -2,7 +2,7 @@ package com.bopr.android.smailer.external
 
 import android.accounts.Account
 import android.content.Context
-import com.bopr.android.smailer.consumer.mail.MailMessage
+import com.bopr.android.smailer.processor.mail.MailMessage
 import com.bopr.android.smailer.util.Mockable
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.http.javanet.NetHttpTransport

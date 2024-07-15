@@ -1,7 +1,7 @@
 package com.bopr.android.smailer.ui
 
 
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
+import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.data.StringDataset
 import org.junit.Assert.assertEquals
@@ -31,9 +31,9 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
     private fun testClear() {
         database.commit {
             phoneEvents.clear()
-            phoneEvents.add(PhoneEventInfo(phone = "1", startTime = currentTimeMillis(), acceptor = "device-1"))
-            phoneEvents.add(PhoneEventInfo(phone = "2", startTime = currentTimeMillis(), acceptor = "device-2"))
-            phoneEvents.add(PhoneEventInfo(phone = "3", startTime = currentTimeMillis(), acceptor = "device-3"))
+            phoneEvents.add(PhoneEventData(phone = "1", startTime = currentTimeMillis(), acceptor = "device-1"))
+            phoneEvents.add(PhoneEventData(phone = "2", startTime = currentTimeMillis(), acceptor = "device-2"))
+            phoneEvents.add(PhoneEventData(phone = "3", startTime = currentTimeMillis(), acceptor = "device-3"))
         }
 
         assertRecyclerItemDisplayed("1")
@@ -54,9 +54,9 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
     private fun testClearCancel() {
         database.commit {
             phoneEvents.clear()
-            phoneEvents.add(PhoneEventInfo(phone = "1", startTime = currentTimeMillis(), acceptor = "device-1"))
-            phoneEvents.add(PhoneEventInfo(phone = "2", startTime = currentTimeMillis(), acceptor = "device-2"))
-            phoneEvents.add(PhoneEventInfo(phone = "3", startTime = currentTimeMillis(), acceptor = "device-3"))
+            phoneEvents.add(PhoneEventData(phone = "1", startTime = currentTimeMillis(), acceptor = "device-1"))
+            phoneEvents.add(PhoneEventData(phone = "2", startTime = currentTimeMillis(), acceptor = "device-2"))
+            phoneEvents.add(PhoneEventData(phone = "3", startTime = currentTimeMillis(), acceptor = "device-3"))
         }
 
         assertRecyclerItemDisplayed("1")
@@ -77,9 +77,9 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
     private fun testRemoveItem() {
         database.commit {
             phoneEvents.clear()
-            phoneEvents.add(PhoneEventInfo(phone = "1", startTime = currentTimeMillis(), acceptor = "device-1"))
-            phoneEvents.add(PhoneEventInfo(phone = "2", startTime = currentTimeMillis(), acceptor = "device-2"))
-            phoneEvents.add(PhoneEventInfo(phone = "3", startTime = currentTimeMillis(), acceptor = "device-3"))
+            phoneEvents.add(PhoneEventData(phone = "1", startTime = currentTimeMillis(), acceptor = "device-1"))
+            phoneEvents.add(PhoneEventData(phone = "2", startTime = currentTimeMillis(), acceptor = "device-2"))
+            phoneEvents.add(PhoneEventData(phone = "3", startTime = currentTimeMillis(), acceptor = "device-3"))
         }
 
         swipeRecyclerItem("2")
@@ -93,15 +93,15 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
         database.commit {
             phoneEvents.clear()
             phoneEvents.add(
-                PhoneEventInfo(phone = "1", startTime = currentTimeMillis(), acceptor = "device-1",
+                PhoneEventData(phone = "1", startTime = currentTimeMillis(), acceptor = "device-1",
                     isRead = false)
             )
             phoneEvents.add(
-                PhoneEventInfo(phone = "2", startTime = currentTimeMillis(), acceptor = "device-2",
+                PhoneEventData(phone = "2", startTime = currentTimeMillis(), acceptor = "device-2",
                     isRead = false)
             )
             phoneEvents.add(
-                PhoneEventInfo(phone = "3", startTime = currentTimeMillis(), acceptor = "device-3",
+                PhoneEventData(phone = "3", startTime = currentTimeMillis(), acceptor = "device-3",
                     isRead = false)
             )
         }
@@ -118,9 +118,9 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
         database.commit {
             dataset.clear()
             phoneEvents.clear()
-            phoneEvents.add(PhoneEventInfo(phone = "1", startTime = currentTimeMillis(), acceptor = "device-1"))
-            phoneEvents.add(PhoneEventInfo(phone = "phone", startTime = currentTimeMillis(), acceptor = "device-2", text = "text"))
-            phoneEvents.add(PhoneEventInfo(phone = "3", startTime = currentTimeMillis(), acceptor = "device-3"))
+            phoneEvents.add(PhoneEventData(phone = "1", startTime = currentTimeMillis(), acceptor = "device-1"))
+            phoneEvents.add(PhoneEventData(phone = "phone", startTime = currentTimeMillis(), acceptor = "device-2", text = "text"))
+            phoneEvents.add(PhoneEventData(phone = "3", startTime = currentTimeMillis(), acceptor = "device-3"))
         }
 
         assertTrue(dataset.isEmpty())

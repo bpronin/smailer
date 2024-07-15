@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import com.bopr.android.smailer.AppStartup.startUpAppServices
 import com.bopr.android.smailer.control.MailControlProcessor
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
+import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import com.bopr.android.smailer.provider.telephony.PhoneEventProcessor
 import com.bopr.android.smailer.provider.telephony.PhoneEventProcessorWorker.Companion.startPhoneEventProcessing
 import com.bopr.android.smailer.util.DEVICE_NAME
@@ -23,7 +23,7 @@ class DebugReceiver : BroadcastReceiver() {
         when (intent.action) {
             "PROCESS_PHONE_EVENT" -> {
                 context.startPhoneEventProcessing(
-                    PhoneEventInfo(
+                    PhoneEventData(
                         phone = "ADB DEBUG",
                         isIncoming = true,
                         startTime = currentTimeMillis(),

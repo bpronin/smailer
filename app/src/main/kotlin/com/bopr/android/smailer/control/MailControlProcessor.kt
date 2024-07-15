@@ -8,7 +8,7 @@ import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS
-import com.bopr.android.smailer.consumer.mail.MailMessage
+import com.bopr.android.smailer.processor.mail.MailMessage
 import com.bopr.android.smailer.external.GoogleMail
 import com.bopr.android.smailer.util.commaSplit
 import com.bopr.android.smailer.util.containsEmail

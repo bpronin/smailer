@@ -17,7 +17,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
-import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_CONTACT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_LOCATION
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_CALLS
@@ -108,7 +108,7 @@ class PermissionsHelper(val activity: FragmentActivity) {
         /* set default accounts at startup */
         settings.update {
             val accountName = accountHelper.getPrimaryGoogleAccount()?.name
-            putStringIfNotExists(PREF_SENDER_ACCOUNT, accountName)
+            putStringIfNotExists(PREF_EMAIL_SENDER_ACCOUNT, accountName)
             putStringIfNotExists(PREF_RECIPIENTS_ADDRESS, accountName)
             putStringIfNotExists(PREF_REMOTE_CONTROL_ACCOUNT, accountName)
         }

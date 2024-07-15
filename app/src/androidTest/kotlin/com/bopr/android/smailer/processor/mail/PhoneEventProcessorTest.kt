@@ -1,4 +1,4 @@
-package com.bopr.android.smailer.consumer.mail
+package com.bopr.android.smailer.processor.mail
 
 import android.Manifest
 import android.accounts.Account
@@ -13,9 +13,9 @@ import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.consumer.EventMessenger
+import com.bopr.android.smailer.processor.EventDispatcher
 import com.bopr.android.smailer.data.Database
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
+import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import com.bopr.android.smailer.provider.telephony.PhoneEventProcessor
 import com.bopr.android.smailer.util.GeoCoordinates
 import com.bopr.android.smailer.util.GeoLocator
@@ -51,16 +51,16 @@ class PhoneEventProcessorTest : BaseTest() {
 
     private lateinit var database: Database
     private lateinit var context: Context
-    private lateinit var messenger: EventMessenger
+    private lateinit var messenger: EventDispatcher
     private lateinit var notifications: NotificationsHelper
     private lateinit var preferences: SharedPreferences
     private lateinit var geoLocator: GeoLocator
     private lateinit var processor: PhoneEventProcessor
     private lateinit var accountManager: AccountManager
 
-    private fun testingEvent(text: String? = "Message"): PhoneEventInfo {
+    private fun testingEvent(text: String? = "Message"): PhoneEventData {
         val time = System.currentTimeMillis()
-        return PhoneEventInfo(
+        return PhoneEventData(
             phone = "+123",
             isIncoming = true,
             startTime = time,
@@ -77,7 +77,7 @@ class PhoneEventProcessorTest : BaseTest() {
         preferences = mock {
             on {
                 getString(
-                    eq(Settings.PREF_SENDER_ACCOUNT),
+                    eq(Settings.PREF_EMAIL_SENDER_ACCOUNT),
                     anyOrNull()
                 )
             }.doReturn("sender@mail.com")
@@ -183,8 +183,8 @@ class PhoneEventProcessorTest : BaseTest() {
         Assert.assertEquals(event.acceptor, savedEvent.acceptor)
         Assert.assertEquals(event.startTime, savedEvent.startTime)
         Assert.assertEquals(event.phone, savedEvent.phone)
-        Assert.assertEquals(PhoneEventInfo.STATE_PROCESSED, savedEvent.state)
-        Assert.assertEquals(PhoneEventInfo.STATUS_ACCEPTED, savedEvent.processStatus)
+        Assert.assertEquals(PhoneEventData.STATE_PROCESSED, savedEvent.state)
+        Assert.assertEquals(PhoneEventData.STATUS_ACCEPTED, savedEvent.processStatus)
         Assert.assertEquals(GeoCoordinates(60.0, 30.0), event.location)
     }
 
@@ -198,15 +198,15 @@ class PhoneEventProcessorTest : BaseTest() {
 
         processor.process(event)
 
-        verify(messenger, never()).sendMessageFor(any())
+        verify(messenger, never()).dispatch(any())
         verify(notifications, never()).showSenderAccountError()
         verify(notifications, never()).showRecipientsError(ArgumentMatchers.anyInt())
         verify(notifications, never()).showGoogleAccessError()
 
         val savedEvent = database.phoneEvents.first()
 
-        Assert.assertEquals(PhoneEventInfo.STATE_IGNORED, savedEvent.state)
-        Assert.assertEquals(PhoneEventInfo.STATUS_TRIGGER_OFF, savedEvent.processStatus)
+        Assert.assertEquals(PhoneEventData.STATE_IGNORED, savedEvent.state)
+        Assert.assertEquals(PhoneEventData.STATUS_TRIGGER_OFF, savedEvent.processStatus)
     }
 
     /**
@@ -214,19 +214,19 @@ class PhoneEventProcessorTest : BaseTest() {
      */
     @Test
     fun testProcessNoSender() {
-        whenever(preferences.getString(eq(Settings.PREF_SENDER_ACCOUNT), anyOrNull())).thenReturn(null)
+        whenever(preferences.getString(eq(Settings.PREF_EMAIL_SENDER_ACCOUNT), anyOrNull())).thenReturn(null)
 
         val event = testingEvent()
         processor.process(event)
 
 //        verify(messenger, never()).login(any(), any())
-        verify(messenger, never()).sendMessageFor(any())
+        verify(messenger, never()).dispatch(any())
         verify(notifications).showSenderAccountError()
 
         val savedEvent = database.phoneEvents.first()
 
-        Assert.assertEquals(PhoneEventInfo.STATE_PENDING, savedEvent.state)
-        Assert.assertEquals(PhoneEventInfo.STATUS_ACCEPTED, savedEvent.processStatus)
+        Assert.assertEquals(PhoneEventData.STATE_PENDING, savedEvent.state)
+        Assert.assertEquals(PhoneEventData.STATUS_ACCEPTED, savedEvent.processStatus)
     }
 
     /**
@@ -239,13 +239,13 @@ class PhoneEventProcessorTest : BaseTest() {
         val event = testingEvent()
         processor.process(event)
 
-        verify(messenger, never()).sendMessageFor(any())
+        verify(messenger, never()).dispatch(any())
         verify(notifications).showRecipientsError(eq(R.string.no_recipients_specified))
 
         val savedEvent = database.phoneEvents.first()
 
-        Assert.assertEquals(PhoneEventInfo.STATE_PENDING, savedEvent.state)
-        Assert.assertEquals(PhoneEventInfo.STATUS_ACCEPTED, savedEvent.processStatus)
+        Assert.assertEquals(PhoneEventData.STATE_PENDING, savedEvent.state)
+        Assert.assertEquals(PhoneEventData.STATUS_ACCEPTED, savedEvent.processStatus)
     }
 
     /**
@@ -253,21 +253,21 @@ class PhoneEventProcessorTest : BaseTest() {
      */
     @Test
     fun testProcessTransportSendFailed() {
-        doThrow(IOException("Test error")).whenever(messenger).sendMessageFor(any())
+        doThrow(IOException("Test error")).whenever(messenger).dispatch(any())
 
         val event = testingEvent()
         processor.process(event)
 
 //        verify(messenger).login(any(), any())
-        verify(messenger).sendMessageFor(any())
+        verify(messenger).dispatch(any())
         verify(notifications, never()).showSenderAccountError()
         verify(notifications, never()).showRecipientsError(ArgumentMatchers.anyInt())
         verify(notifications, never()).showGoogleAccessError()
 
         val savedEvent = database.phoneEvents.first()
 
-        Assert.assertEquals(PhoneEventInfo.STATE_PENDING, savedEvent.state)
-        Assert.assertEquals(PhoneEventInfo.STATUS_ACCEPTED, savedEvent.processStatus)
+        Assert.assertEquals(PhoneEventData.STATE_PENDING, savedEvent.state)
+        Assert.assertEquals(PhoneEventData.STATUS_ACCEPTED, savedEvent.processStatus)
     }
 
     /**
@@ -296,7 +296,7 @@ class PhoneEventProcessorTest : BaseTest() {
     @Test
     fun testProcessPending() {
         /* disable transport */
-        doThrow(IOException("Test error")).whenever(messenger).sendMessageFor(any())
+        doThrow(IOException("Test error")).whenever(messenger).dispatch(any())
 
         processor.process(testingEvent())
         processor.process(testingEvent())
@@ -318,7 +318,7 @@ class PhoneEventProcessorTest : BaseTest() {
         verify(notifications, never()).showGoogleAccessError()
 
         /* enable transport an try again */
-        doNothing().whenever(messenger).sendMessageFor(any())
+        doNothing().whenever(messenger).dispatch(any())
 
         processor.processPending()
 

@@ -12,7 +12,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_NOTIFICATIONS
 import com.bopr.android.smailer.Settings.Companion.sharedPreferencesName
-import com.bopr.android.smailer.consumer.mail.MailMessage
+import com.bopr.android.smailer.processor.mail.MailMessage
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.databaseName
 import com.bopr.android.smailer.external.GoogleMail

@@ -8,7 +8,7 @@ import com.android.volley.toolbox.Volley
 import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
 import com.google.firebase.messaging.FirebaseMessaging
 import org.json.JSONObject
 import org.slf4j.LoggerFactory
@@ -80,7 +80,7 @@ class Firebase(val context: Context) {
     }
 
     private fun getAccount(): Account? {
-        return accountHelper.getGoogleAccount(settings.getString(PREF_SENDER_ACCOUNT))
+        return accountHelper.getGoogleAccount(settings.getString(PREF_EMAIL_SENDER_ACCOUNT))
     }
 
     private fun formatUserId(email: String): String {

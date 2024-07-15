@@ -1,6 +1,6 @@
 package com.bopr.android.smailer.external
 
-import com.bopr.android.smailer.consumer.mail.MailMessage
+import com.bopr.android.smailer.processor.mail.MailMessage
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.security.AccessController

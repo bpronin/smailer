@@ -11,7 +11,7 @@ import com.bopr.android.smailer.PermissionsHelper
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
-import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.control.MailControlWorker.Companion.enableMailRemoteControl
 import com.bopr.android.smailer.provider.telephony.ContentObserverService.Companion.startContentObserver
 import com.bopr.android.smailer.sync.SyncWorker.Companion.syncAppDataWithGoogleCloud
@@ -72,8 +72,8 @@ class MainActivity : BaseMainActivity(MainFragment::class), OnSharedPreferenceCh
             PREF_REMOTE_CONTROL_ENABLED ->
                 enableMailRemoteControl()
 
-            PREF_SENDER_ACCOUNT -> {
-                if (accountHelper.isGoogleAccountExists(settings.getString(PREF_SENDER_ACCOUNT))) {
+            PREF_EMAIL_SENDER_ACCOUNT -> {
+                if (accountHelper.isGoogleAccountExists(settings.getString(PREF_EMAIL_SENDER_ACCOUNT))) {
                     syncAppDataWithGoogleCloud(SYNC_FORCE_DOWNLOAD)
                     resubscribeToFirebaseMessaging()
                 }

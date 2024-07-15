@@ -64,7 +64,7 @@ class ContentObserverService : Service() {
         contentResolver.query(CONTENT_SMS_SENT, null, "_id=?", arrayOf(id), null)?.useFirst {
             val date = getLong("date")
             context.startPhoneEventProcessing(
-                PhoneEventInfo(
+                PhoneEventData(
                     phone = getString("address"),
                     isIncoming = false,
                     startTime = date,

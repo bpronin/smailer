@@ -1,4 +1,4 @@
-package com.bopr.android.smailer.consumer.telegram
+package com.bopr.android.smailer.processor.telegram
 
 import android.content.Context
 import androidx.annotation.StringRes
@@ -10,7 +10,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_SHOW_EV
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_SHOW_HEADER
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_SHOW_LOCATION
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_SHOW_PROCESS_TIME
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
+import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import com.bopr.android.smailer.util.eventTypeText
 import com.bopr.android.smailer.util.formatDuration
 import com.bopr.android.smailer.util.httpEncoded
@@ -23,8 +23,8 @@ import java.text.DateFormat.getDateTimeInstance
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class TelegramPhoneEventFormatter(private val context: Context, private val event: PhoneEventInfo) :
-    MessageFormatter(context) {
+class TelegramPhoneEventFormatter(private val context: Context, private val event: PhoneEventData) :
+    TelegramMessageFormatter(context) {
 
     private val settings = Settings(context)
     private val timeFormat = getDateTimeInstance(SHORT, SHORT)

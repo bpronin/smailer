@@ -4,7 +4,7 @@ import android.accounts.Account
 import android.content.Context
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.util.GeoCoordinates.Companion.coordinatesOf
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
+import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import com.bopr.android.smailer.external.GoogleDrive
 import org.slf4j.LoggerFactory
 import java.io.IOException
@@ -109,7 +109,7 @@ internal class Synchronizer(context: Context,
         }
     }
 
-    private fun eventToData(event: PhoneEventInfo): SyncData.Event {
+    private fun eventToData(event: PhoneEventData): SyncData.Event {
         return SyncData.Event(
                 incoming = event.isIncoming,
                 missed = event.isMissed,
@@ -128,8 +128,8 @@ internal class Synchronizer(context: Context,
         )
     }
 
-    private fun dataToEvent(data: SyncData.Event): PhoneEventInfo {
-        return PhoneEventInfo(
+    private fun dataToEvent(data: SyncData.Event): PhoneEventData {
+        return PhoneEventData(
                 phone = data.phone,
                 isIncoming = data.incoming,
                 startTime = data.startTime,

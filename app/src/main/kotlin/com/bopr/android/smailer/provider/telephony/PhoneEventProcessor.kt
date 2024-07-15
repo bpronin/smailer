@@ -4,12 +4,13 @@ import android.content.Context
 import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
-import com.bopr.android.smailer.consumer.EventMessenger
 import com.bopr.android.smailer.data.Database
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATE_IGNORED
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATE_PENDING
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATE_PROCESSED
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATUS_ACCEPTED
+import com.bopr.android.smailer.processor.EventDispatcher
+import com.bopr.android.smailer.provider.Event
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATE_IGNORED
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATE_PENDING
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATE_PROCESSED
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_ACCEPTED
 import com.bopr.android.smailer.util.GeoLocator
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import org.slf4j.LoggerFactory
@@ -23,18 +24,18 @@ import java.lang.System.currentTimeMillis
 class PhoneEventProcessor(
     private val context: Context,
     private val database: Database = Database(context),
-    private val messenger: EventMessenger = EventMessenger(context),
+    private val eventDispatcher: EventDispatcher = EventDispatcher(context),
     private val notifications: NotificationsHelper = NotificationsHelper(context),
     private val locator: GeoLocator = GeoLocator(context, database)
 ) {
 
     private val settings: Settings = Settings(context)
 
-    fun process(event: PhoneEventInfo) {
-        log.debug("Processing: {}", event)
+    fun process(data: PhoneEventData) {
+        log.debug("Processing: {}", data)
 
         database.use {
-            event.apply {
+            data.apply {
                 location = locator.getLocation()
                 processStatus = eventFilter().test(this)
                 processTime = currentTimeMillis()
@@ -52,7 +53,7 @@ class PhoneEventProcessor(
             }
 
             database.commit {
-                phoneEvents.add(event)
+                phoneEvents.add(data)
             }
         }
     }
@@ -93,9 +94,9 @@ class PhoneEventProcessor(
 //        return false
     }
 
-    private fun sendMessage(event: PhoneEventInfo): Boolean {
+    private fun sendMessage(data: PhoneEventData): Boolean {
         return try {
-            messenger.sendMessageFor(event)
+            eventDispatcher.dispatch(Event(data))
 
             log.debug("Event message sent")
 

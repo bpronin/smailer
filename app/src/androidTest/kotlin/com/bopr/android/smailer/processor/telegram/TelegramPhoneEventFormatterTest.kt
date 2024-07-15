@@ -1,4 +1,4 @@
-package com.bopr.android.smailer.consumer.telegram
+package com.bopr.android.smailer.processor.telegram
 
 import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
@@ -10,7 +10,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_SHOW_HE
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_SHOW_EVENT_TIME
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_SHOW_LOCATION
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_SHOW_PROCESS_TIME
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
+import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import com.bopr.android.smailer.util.GeoCoordinates
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -40,7 +40,7 @@ class TelegramPhoneEventFormatterTest : BaseTest() {
             putString(PREF_DEVICE_ALIAS, "My Device")
         }
 
-        val event = PhoneEventInfo(
+        val event = PhoneEventData(
             phone = "+12345678901",
             isIncoming = true,
             startTime = testTime,
@@ -68,7 +68,7 @@ class TelegramPhoneEventFormatterTest : BaseTest() {
             putString(PREF_DEVICE_ALIAS, "My Device")
         }
 
-        val event = PhoneEventInfo(
+        val event = PhoneEventData(
             phone = "+12345678901",
             isIncoming = true,
             startTime = testTime,

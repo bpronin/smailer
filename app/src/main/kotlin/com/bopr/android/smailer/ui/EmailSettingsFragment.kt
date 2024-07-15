@@ -9,8 +9,8 @@ import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_MESSAGE_LOCALE
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
-import com.bopr.android.smailer.Settings.Companion.PREF_SENDER_ACCOUNT
-import com.bopr.android.smailer.consumer.mail.MailMessage
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
+import com.bopr.android.smailer.processor.mail.MailMessage
 import com.bopr.android.smailer.external.GoogleMail
 import com.bopr.android.smailer.util.DEVICE_NAME
 import com.bopr.android.smailer.util.commaSplit
@@ -36,7 +36,7 @@ class EmailSettingsFragment : BasePreferenceFragment() {
     override fun onCreatePreferences(bundle: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_email_settings)
 
-        requirePreference(PREF_SENDER_ACCOUNT).setOnPreferenceClickListener {
+        requirePreference(PREF_EMAIL_SENDER_ACCOUNT).setOnPreferenceClickListener {
             authorizationHelper.startAccountPicker()
             true
         }
@@ -53,7 +53,7 @@ class EmailSettingsFragment : BasePreferenceFragment() {
 
         accountHelper = AccountHelper(requireContext())
         authorizationHelper = GoogleAuthorizationHelper(
-            requireActivity(), PREF_SENDER_ACCOUNT, GMAIL_SEND, DRIVE_APPDATA
+            requireActivity(), PREF_EMAIL_SENDER_ACCOUNT, GMAIL_SEND, DRIVE_APPDATA
         )
     }
 
@@ -72,7 +72,7 @@ class EmailSettingsFragment : BasePreferenceFragment() {
             PREF_MESSAGE_LOCALE ->
                 updateLocalePreferenceView()
 
-            PREF_SENDER_ACCOUNT ->
+            PREF_EMAIL_SENDER_ACCOUNT ->
                 updateAccountPreferenceView()
 
             PREF_RECIPIENTS_ADDRESS ->
@@ -133,8 +133,8 @@ class EmailSettingsFragment : BasePreferenceFragment() {
     }
 
     private fun updateAccountPreferenceView() {
-        requirePreference(PREF_SENDER_ACCOUNT).apply {
-            val account = settings.getString(PREF_SENDER_ACCOUNT)
+        requirePreference(PREF_EMAIL_SENDER_ACCOUNT).apply {
+            val account = settings.getString(PREF_EMAIL_SENDER_ACCOUNT)
             if (account.isNullOrEmpty()) {
                 updateSummary(R.string.unspecified, SUMMARY_STYLE_ACCENTED)
             } else if (!accountHelper.isGoogleAccountExists(account)) {

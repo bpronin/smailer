@@ -1,4 +1,4 @@
-package com.bopr.android.smailer.consumer.mail
+package com.bopr.android.smailer.processor.mail
 
 import android.Manifest
 import android.annotation.TargetApi
@@ -10,7 +10,7 @@ import android.telephony.TelephonyManager
 import androidx.test.filters.SmallTest
 import androidx.test.rule.GrantPermissionRule
 import com.bopr.android.smailer.BaseTest
-import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
+import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import com.bopr.android.smailer.provider.telephony.PhoneEventReceiver
 import com.bopr.android.smailer.util.DEVICE_NAME
 import com.nhaarman.mockitokotlin2.anyOrNull
@@ -51,9 +51,9 @@ class PhoneEventReceiverTest : BaseTest() {
         return intent
     }
 
-    private fun Intent.getPhoneEventExtra(name: String): PhoneEventInfo? {
+    private fun Intent.getPhoneEventExtra(name: String): PhoneEventData? {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            getParcelableExtra(name, PhoneEventInfo::class.java)
+            getParcelableExtra(name, PhoneEventData::class.java)
         } else {
             @Suppress("DEPRECATION")
             return getParcelableExtra(name)
@@ -78,7 +78,7 @@ class PhoneEventReceiverTest : BaseTest() {
             getPhoneEventExtra("event")!!.run {
                 isIncoming && !isMissed && phone == "100"
                         && location == null && endTime != null && acceptor == DEVICE_NAME
-                        && state == PhoneEventInfo.STATE_PENDING
+                        && state == PhoneEventData.STATE_PENDING
             }
         })
     }
@@ -108,7 +108,7 @@ class PhoneEventReceiverTest : BaseTest() {
             getPhoneEventExtra("event")!!.run {
                 isIncoming && !isMissed && phone == "100"
                         && location == null && endTime != null && acceptor == DEVICE_NAME
-                        && state == PhoneEventInfo.STATE_PENDING
+                        && state == PhoneEventData.STATE_PENDING
             }
         })
     }
@@ -128,7 +128,7 @@ class PhoneEventReceiverTest : BaseTest() {
             getPhoneEventExtra("event")!!.run {
                 !isIncoming && !isMissed && phone == "200"
                         && location == null && endTime != null && acceptor == DEVICE_NAME
-                        && state == PhoneEventInfo.STATE_PENDING
+                        && state == PhoneEventData.STATE_PENDING
             }
         })
     }
@@ -148,7 +148,7 @@ class PhoneEventReceiverTest : BaseTest() {
             getPhoneEventExtra("event")!!.run {
                 isIncoming && isMissed && phone == "300"
                         && location == null && endTime != null && acceptor == DEVICE_NAME
-                        && state == PhoneEventInfo.STATE_PENDING
+                        && state == PhoneEventData.STATE_PENDING
             }
         })
     }
@@ -206,7 +206,7 @@ class PhoneEventReceiverTest : BaseTest() {
             getPhoneEventExtra("event")!!.run {
                 isSms && isIncoming && phone == "+15555215556" && text == "Text message"
                         && location == null && endTime != null && acceptor == DEVICE_NAME
-                        && state == PhoneEventInfo.STATE_PENDING
+                        && state == PhoneEventData.STATE_PENDING
             }
         })
     }
