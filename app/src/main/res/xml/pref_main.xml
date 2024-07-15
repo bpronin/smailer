@@ -14,7 +14,7 @@
     <androidx.preference.Preference
             android:icon="@drawable/ic_out"
             android:key="messengers"
-            android:title="@string/messengers" >
+            android:title="@string/messengers">
         <intent
                 android:targetClass="com.bopr.android.smailer.ui.EventConsumersActivity"
                 android:targetPackage="com.bopr.android.smailer" />
@@ -30,7 +30,7 @@
     </androidx.preference.Preference>
 
     <androidx.preference.Preference
-            android:icon="@drawable/ic_options"
+            android:icon="@drawable/ic_settings"
             android:key="options"
             android:title="@string/more_options">
         <intent

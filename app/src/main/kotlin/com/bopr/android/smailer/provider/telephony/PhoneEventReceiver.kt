@@ -11,7 +11,7 @@ import android.telephony.TelephonyManager.EXTRA_STATE_IDLE
 import android.telephony.TelephonyManager.EXTRA_STATE_OFFHOOK
 import android.telephony.TelephonyManager.EXTRA_STATE_RINGING
 import com.bopr.android.smailer.provider.telephony.PhoneEventProcessorWorker.Companion.startPhoneEventProcessing
-import com.bopr.android.smailer.util.deviceName
+import com.bopr.android.smailer.util.DEVICE_NAME
 import org.slf4j.LoggerFactory
 import java.lang.System.currentTimeMillis
 
@@ -122,7 +122,7 @@ class PhoneEventReceiver : BroadcastReceiver() {
                     text = messages.joinToString(
                         separator = "",
                         transform = { m -> m.displayMessageBody }),
-                    acceptor = deviceName()
+                    acceptor = DEVICE_NAME
                 )
             )
         }
@@ -139,7 +139,7 @@ class PhoneEventReceiver : BroadcastReceiver() {
                 isMissed = isMissedCall!!,
                 startTime = callStartTime!!,
                 endTime = callEndTime!!,
-                acceptor = deviceName()
+                acceptor = DEVICE_NAME
             )
         )
     }

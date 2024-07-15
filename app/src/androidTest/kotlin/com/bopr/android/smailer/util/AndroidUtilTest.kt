@@ -23,7 +23,7 @@ class AndroidUtilTest : BaseTest() {
 
     @Test
     fun testDeviceName() {
-        assertNotNull(deviceName())
+        assertNotNull(DEVICE_NAME)
     }
 
     @Test

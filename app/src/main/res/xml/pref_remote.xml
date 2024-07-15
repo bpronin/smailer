@@ -2,25 +2,24 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <androidx.preference.SwitchPreference
-        android:key="remote_control_enabled"
-        android:title="@string/allow_control_remotely" />
+            android:key="remote_control_enabled"
+            android:title="@string/allow_control_remotely" />
 
     <androidx.preference.PreferenceScreen
-        android:icon="@drawable/ic_account_round"
-        android:key="remote_control_account"
-        android:title="@string/remote_control_account" />
+            android:icon="@drawable/ic_account_round"
+            android:key="remote_control_account"
+            android:title="@string/remote_control_account" />
 
     <androidx.preference.SwitchPreference
-        android:key="remote_control_notifications"
-        android:title="@string/notify_remote_actions" />
+            android:key="remote_control_notifications"
+            android:title="@string/notify_remote_actions" />
 
     <androidx.preference.SwitchPreference
-        android:key="remote_control_filter_recipients"
-        android:title="@string/allow_only_recipients" />
+            android:key="remote_control_filter_recipients"
+            android:title="@string/allow_only_recipients" />
 
     <androidx.preference.Preference
-        android:key="remote_control_process_service_mail"
-        android:title="@string/process_service_mail"
-        />
+            android:key="remote_control_process_service_mail"
+            android:title="@string/process_service_mail" />
 
 </androidx.preference.PreferenceScreen>

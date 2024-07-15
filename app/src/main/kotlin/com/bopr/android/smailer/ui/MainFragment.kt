@@ -3,7 +3,6 @@ package com.bopr.android.smailer.ui
 import android.content.BroadcastReceiver
 import android.content.SharedPreferences
 import android.os.Bundle
-import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.data.Database
@@ -21,7 +20,6 @@ class MainFragment : BasePreferenceFragment() {
 
     private lateinit var database: Database
     private lateinit var databaseListener: BroadcastReceiver
-
 
 
     override fun onCreatePreferences(bundle: Bundle?, rootKey: String?) {
@@ -60,13 +58,12 @@ class MainFragment : BasePreferenceFragment() {
     }
 
     private fun updateHistoryPreferenceView() {
-        val preference = requirePreference("history")
-        updateSummary(
-            preference,
+        requirePreference("history").updateSummary(
             getQuantityString(
-                R.plurals.new_history_items, R.string.new_history_items_zero,
+                R.plurals.new_history_items,
+                R.string.new_history_items_zero,
                 database.phoneEvents.unreadCount
-            ), SUMMARY_STYLE_DEFAULT
+            )
         )
     }
 

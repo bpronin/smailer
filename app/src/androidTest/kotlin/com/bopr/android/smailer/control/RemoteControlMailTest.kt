@@ -20,7 +20,7 @@ import com.bopr.android.smailer.ui.EventFilterPhoneBlacklistActivity
 import com.bopr.android.smailer.ui.EventFilterPhoneWhitelistActivity
 import com.bopr.android.smailer.ui.EventFilterTextBlacklistActivity
 import com.bopr.android.smailer.ui.EventFilterTextWhitelistActivity
-import com.bopr.android.smailer.util.deviceName
+import com.bopr.android.smailer.util.DEVICE_NAME
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
@@ -30,9 +30,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.mockito.ArgumentMatchers.anyInt
 import java.lang.Thread.sleep
-import kotlin.reflect.KClass
 
 @LargeTest
 class RemoteControlMailTest : BaseTest() {
@@ -163,7 +161,7 @@ class RemoteControlMailTest : BaseTest() {
             send(
                 MailMessage(
                     subject = "Re: [SMailer] Incoming SMS from \"$sender\"",
-                    body = "To device \"${deviceName()}\" add phone \"1234567890\" to blacklist",
+                    body = "To device \"${DEVICE_NAME}\" add phone \"1234567890\" to blacklist",
                     recipients = account.name,
                     from = account.name
                 )
@@ -171,7 +169,7 @@ class RemoteControlMailTest : BaseTest() {
             send(
                 MailMessage(
                     subject = "Re: [SMailer] Incoming SMS from \"$sender\"",
-                    body = "To device \"${deviceName()}\" add phone \"0987654321\" to whitelist",
+                    body = "To device \"${DEVICE_NAME}\" add phone \"0987654321\" to whitelist",
                     recipients = account.name,
                     from = account.name
                 )
@@ -179,7 +177,7 @@ class RemoteControlMailTest : BaseTest() {
             send(
                 MailMessage(
                     subject = "Re: [SMailer] Incoming SMS from \"$sender\"",
-                    body = "To device \"${deviceName()}\" add text \"SPAM\" to blacklist",
+                    body = "To device \"${DEVICE_NAME}\" add text \"SPAM\" to blacklist",
                     recipients = account.name,
                     from = account.name
                 )
@@ -187,7 +185,7 @@ class RemoteControlMailTest : BaseTest() {
             send(
                 MailMessage(
                     subject = "Re: [SMailer] Incoming SMS from \"$sender\"",
-                    body = "To device \"${deviceName()}\" add text \"NON SPAM\" to whitelist",
+                    body = "To device \"${DEVICE_NAME}\" add text \"NON SPAM\" to whitelist",
                     recipients = account.name,
                     from = account.name
                 )
@@ -244,7 +242,7 @@ class RemoteControlMailTest : BaseTest() {
             send(
                 MailMessage(
                     subject = "Re: [SMailer] Incoming SMS from \"$sender\"",
-                    body = "To device \"${deviceName()}\" add phone \"1234567890\" to blacklist",
+                    body = "To device \"${DEVICE_NAME}\" add phone \"1234567890\" to blacklist",
                     recipients = account.name,
                     from = account.name
                 )
@@ -252,7 +250,7 @@ class RemoteControlMailTest : BaseTest() {
             send(
                 MailMessage(
                     subject = "Re: [SMailer] Incoming SMS from \"$sender\"",
-                    body = "To device \"${deviceName()}\" add phone \"0987654321\" to whitelist",
+                    body = "To device \"${DEVICE_NAME}\" add phone \"0987654321\" to whitelist",
                     recipients = account.name,
                     from = account.name
                 )
@@ -260,7 +258,7 @@ class RemoteControlMailTest : BaseTest() {
             send(
                 MailMessage(
                     subject = "Re: [SMailer] Incoming SMS from \"$sender\"",
-                    body = "To device \"${deviceName()}\" add text \"SPAM\" to blacklist",
+                    body = "To device \"${DEVICE_NAME}\" add text \"SPAM\" to blacklist",
                     recipients = account.name,
                     from = account.name
                 )
@@ -268,7 +266,7 @@ class RemoteControlMailTest : BaseTest() {
             send(
                 MailMessage(
                     subject = "Re: [SMailer] Incoming SMS from \"$sender\"",
-                    body = "To device \"${deviceName()}\" add text \"NON SPAM\" to whitelist",
+                    body = "To device \"${DEVICE_NAME}\" add text \"NON SPAM\" to whitelist",
                     recipients = account.name,
                     from = account.name
                 )
@@ -299,7 +297,7 @@ class RemoteControlMailTest : BaseTest() {
             send(
                 MailMessage(
                     subject = "Re: [SMailer] Incoming SMS from \"$sender\"",
-                    body = "To device \"${deviceName()}\" add phone \"1234567890\" to blacklist",
+                    body = "To device \"${DEVICE_NAME}\" add phone \"1234567890\" to blacklist",
                     recipients = account.name,
                     from = account.name
                 )
@@ -307,7 +305,7 @@ class RemoteControlMailTest : BaseTest() {
             send(
                 MailMessage(
                     subject = "Re: [SMailer] Incoming SMS from \"$sender\"",
-                    body = "To device \"${deviceName()}\" add phone \"0987654321\" to whitelist",
+                    body = "To device \"${DEVICE_NAME}\" add phone \"0987654321\" to whitelist",
                     recipients = account.name,
                     from = account.name
                 )
@@ -315,7 +313,7 @@ class RemoteControlMailTest : BaseTest() {
             send(
                 MailMessage(
                     subject = "Re: [SMailer] Incoming SMS from \"$sender\"",
-                    body = "To device \"${deviceName()}\" add text \"SPAM\" to blacklist",
+                    body = "To device \"${DEVICE_NAME}\" add text \"SPAM\" to blacklist",
                     recipients = account.name,
                     from = account.name
                 )
@@ -323,7 +321,7 @@ class RemoteControlMailTest : BaseTest() {
             send(
                 MailMessage(
                     subject = "Re: [SMailer] Incoming SMS from \"$sender\"",
-                    body = "To device \"${deviceName()}\" add text \"NON SPAM\" to whitelist",
+                    body = "To device \"${DEVICE_NAME}\" add text \"NON SPAM\" to whitelist",
                     recipients = account.name,
                     from = account.name
                 )

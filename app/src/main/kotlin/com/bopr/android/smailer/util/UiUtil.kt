@@ -161,11 +161,14 @@ fun RecyclerView.addOnItemSwipedListener(action: (RecyclerView.ViewHolder) -> Un
     }
 }
 
-fun <T> runInBackground(onPerform: () -> T) = runInBackground(onPerform) { _, _ -> }
-
-fun <T> runInBackground(onPerform: () -> T, onComplete: (T?, Throwable?) -> Unit) {
+fun <T> runInBackground(
+    onPerform: () -> T,
+    onComplete: () -> Unit = {},
+    onSuccess: (T) -> Unit = {},
+    onError: (Throwable) -> Unit = {}
+) {
     Executors.newSingleThreadExecutor().execute {
-        /* executor's thread*/
+        /* executor thread*/
         val result = try {
             onPerform()
         } catch (x: Throwable) {
@@ -174,28 +177,36 @@ fun <T> runInBackground(onPerform: () -> T, onComplete: (T?, Throwable?) -> Unit
 
         Handler(Looper.getMainLooper()).post {
             /* main thread */
+            onComplete()
             if (result is Throwable) {
-                onComplete(null, result)
+                onError(result)
             } else {
                 @Suppress("UNCHECKED_CAST")
-                onComplete(result as T, null)
+                onSuccess(result as T)
             }
         }
     }
 }
 
-fun <T> Preference.runLongTask(onPerform: () -> T, onComplete: (T?, Throwable?) -> Unit) {
+fun <T> Preference.runLongTask(
+    onPerform: () -> T,
+    onComplete: () -> Unit = {},
+    onSuccess: (T) -> Unit = {},
+    onError: (Throwable) -> Unit = {}
+) {
     val lastIcon = icon
     val progressIcon = AnimatedVectorDrawableCompat.create(context, R.drawable.animated_progress)!!
     icon = progressIcon
     progressIcon.start()
 
     runInBackground(
-        onPerform = onPerform,
-        onComplete = { result, error ->
+        onPerform,
+        onComplete = {
             progressIcon.stop()
             icon = lastIcon
-
-            onComplete(result, error)
-        })
+            onComplete()
+        },
+        onSuccess,
+        onError
+    )
 }

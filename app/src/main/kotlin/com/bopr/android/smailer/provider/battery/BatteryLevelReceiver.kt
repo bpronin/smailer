@@ -3,9 +3,6 @@ package com.bopr.android.smailer.provider.battery
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.consumer.EventMessenger
-import com.bopr.android.smailer.util.deviceName
 import org.slf4j.LoggerFactory
 
 /**

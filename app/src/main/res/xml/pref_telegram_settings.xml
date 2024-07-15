@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <androidx.preference.SwitchPreference
+            android:key="telegram_messenger_enabled"
+            android:icon="@drawable/ic_telegram"
+            android:title="@string/enabled" />
+
+    <androidx.preference.PreferenceCategory>
+
+        <androidx.preference.EditTextPreference
+                android:key="telegram_bot_token"
+                android:title="@string/telegram_bot_token" />
+
+    </androidx.preference.PreferenceCategory>
+
+    <androidx.preference.PreferenceCategory>
+
+        <androidx.preference.Preference
+                android:key="sent_test_telegram_message"
+                android:icon="@drawable/ic_test_message"
+                android:title="@string/send_test_telegram_message"
+                android:summary="@string/send_test_telegram_message_summary" />
+
+    </androidx.preference.PreferenceCategory>
+</androidx.preference.PreferenceScreen>

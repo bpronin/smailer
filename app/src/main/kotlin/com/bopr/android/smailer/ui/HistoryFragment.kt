@@ -18,15 +18,15 @@ import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.view.MenuProvider
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.bopr.android.smailer.provider.telephony.PhoneEventProcessor
+import com.bopr.android.smailer.R
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.data.Database.Companion.unregisterDatabaseListener
+import com.bopr.android.smailer.data.StringDataset
 import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
 import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATE_IGNORED
 import com.bopr.android.smailer.provider.telephony.PhoneEventInfo.Companion.STATE_PENDING
-import com.bopr.android.smailer.R
-import com.bopr.android.smailer.data.StringDataset
+import com.bopr.android.smailer.provider.telephony.PhoneEventProcessor
 import com.bopr.android.smailer.ui.HistoryFragment.Holder
 import com.bopr.android.smailer.util.addOnItemSwipedListener
 import com.bopr.android.smailer.util.eventDirectionImage
@@ -199,11 +199,14 @@ class HistoryFragment : RecyclerFragment<PhoneEventInfo, Holder>() {
     }
 
     private fun onProcessAllPending() {
-        runInBackground({
-            PhoneEventProcessor(requireContext()).processPending()
-        }, { _, _ ->
-            showToast(R.string.operation_complete)
-        })
+        runInBackground(
+            onPerform = {
+                PhoneEventProcessor(requireContext()).processPending()
+            },
+            onSuccess = { _ ->
+                showToast(R.string.operation_complete)
+            }
+        )
     }
 
     private fun onRemoveSelected() {

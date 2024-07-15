@@ -3,7 +3,7 @@ package com.bopr.android.smailer.ui
 
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
-import com.bopr.android.smailer.util.deviceName
+import com.bopr.android.smailer.util.DEVICE_NAME
 import org.junit.Test
 
 
@@ -109,7 +109,7 @@ class EmailSettingsActivityTest : BaseActivityTest(EmailSettingsActivity::class)
         clickOkButton()
 
         assertHomeDisplayed()
-        assertPreferenceSummaryIs(R.string.device_name, deviceName())
+        assertPreferenceSummaryIs(R.string.device_name, DEVICE_NAME)
     }
 
     private fun assertHomeDisplayed() {

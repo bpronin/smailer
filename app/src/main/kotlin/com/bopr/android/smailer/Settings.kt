@@ -2,9 +2,9 @@ package com.bopr.android.smailer
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
-import com.bopr.android.smailer.consumer.mail.PhoneEventMailFormatter.Companion.PHONE_SEARCH_TAG
+import com.bopr.android.smailer.consumer.mail.MailPhoneEventFormatter.Companion.PHONE_SEARCH_TAG
 import com.bopr.android.smailer.util.SharedPreferencesWrapper
-import com.bopr.android.smailer.util.deviceName
+import com.bopr.android.smailer.util.DEVICE_NAME
 
 /**
  * Settings.
@@ -18,7 +18,7 @@ class Settings(context: Context) :
     fun getEmailTriggers() = getStringSet(PREF_EMAIL_TRIGGERS)
     fun getEmailRecipients() = requireString(PREF_RECIPIENTS_ADDRESS, "")
     fun getMessageLocale() = requireString(PREF_MESSAGE_LOCALE, VAL_PREF_DEFAULT)
-    fun getDeviceName() = requireString(PREF_DEVICE_ALIAS, deviceName())
+    fun getDeviceName() = requireString(PREF_DEVICE_ALIAS, DEVICE_NAME)
     fun getPhoneSearchUrl() = requireString(PREF_PHONE_SEARCH_URL, DEFAULT_PHONE_SEARCH_URL)
 
     fun loadDefaults() = update {

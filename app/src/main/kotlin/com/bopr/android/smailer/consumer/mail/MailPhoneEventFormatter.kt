@@ -36,7 +36,7 @@ import java.util.Locale
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class PhoneEventMailFormatter(
+class MailPhoneEventFormatter(
     private val context: Context,
     private val event: PhoneEventInfo,
     private val contactName: String? = null,

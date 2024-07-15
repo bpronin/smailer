@@ -27,8 +27,8 @@ import com.bopr.android.smailer.NotificationsHelper.Companion.REMOTE_ACCOUNT_ERR
 import com.bopr.android.smailer.NotificationsHelper.Companion.SENDER_ACCOUNT_ERROR
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
-import com.bopr.android.smailer.Settings.Companion.PREF_MESSAGE_LOCALE
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
+import com.bopr.android.smailer.Settings.Companion.PREF_MESSAGE_LOCALE
 import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
@@ -69,13 +69,12 @@ import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_DOWNLOAD
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_UPLOAD
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.isIgnoreBatteryOptimizationRequired
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
+import com.bopr.android.smailer.util.DEVICE_NAME
 import com.bopr.android.smailer.util.GeoLocator
 import com.bopr.android.smailer.util.checkPermission
-import com.bopr.android.smailer.util.deviceName
 import com.bopr.android.smailer.util.escapeRegex
 import com.bopr.android.smailer.util.getContactName
 import com.bopr.android.smailer.util.readLogcatLog
-import com.bopr.android.smailer.util.runInBackground
 import com.bopr.android.smailer.util.runLongTask
 import com.bopr.android.smailer.util.showToast
 import com.google.api.services.drive.DriveScopes.DRIVE_APPDATA
@@ -114,21 +113,21 @@ class DebugFragment : BasePreferenceFragment() {
             addPreference("Process single event") {
                 onProcessSingleEvent()
             },
-            addPreference("Process pending events") { preference ->
-                onStartProcessPendingEvents(preference)
+            addPreference("Process pending events") {
+                onStartProcessPendingEvents(it)
             },
             addPreference("Send SMS") {
                 onSendSms()
             }
         )
         addCategory(screen, "Telegram",
-            addPreference("Send debug message") { preference ->
+            addPreference("Send debug message") {
                 onSendTelegramMessage()
             }
         )
         addCategory(screen, "Email",
-            addPreference("Send debug mail") { preference ->
-                onSendDebugMail(preference)
+            addPreference("Send debug mail") {
+                onSendDebugMail(it)
             }
         )
         addCategory(screen, "Settings",
@@ -153,17 +152,17 @@ class DebugFragment : BasePreferenceFragment() {
             }
         )
         addCategory(screen, "Google drive",
-            addPreference("Download from drive") { preference ->
-                onGoogleDriveDownload(preference)
+            addPreference("Download from drive") {
+                onGoogleDriveDownload(it)
             },
-            addPreference("Upload to drive") { preference ->
-                onGoogleDriveUpload(preference)
+            addPreference("Upload to drive") {
+                onGoogleDriveUpload(it)
             },
-            addPreference("Clear remote data") { preference ->
-                onGoogleDriveClear(preference)
+            addPreference("Clear remote data") {
+                onGoogleDriveClear(it)
             },
-            addPreference("Sync data") { preference ->
-                onGoogleDriveSync(preference)
+            addPreference("Sync data") {
+                onGoogleDriveSync(it)
             }
         )
         addCategory(screen, "Firebase",
@@ -218,8 +217,8 @@ class DebugFragment : BasePreferenceFragment() {
             }
         )
         addCategory(screen, "Logging",
-            addPreference("Send logs to developer") { preference ->
-                onSendLog(preference)
+            addPreference("Send logs to developer") {
+                onSendLog(it)
             },
             addPreference("Clear logs") {
                 onClearLogs()
@@ -248,13 +247,13 @@ class DebugFragment : BasePreferenceFragment() {
             }
         )
         addCategory(screen, "Email remote control",
-            addPreference("Process service mail") { preference ->
-                onProcessServiceMail(preference)
+            addPreference("Process service mail") {
+                onProcessServiceMail(it)
             }
         )
         addCategory(screen, "Other",
             addPreference("Get location") {
-                onGetLocation()
+                onGetLocation(it)
             },
             addPreference("Get contact") {
                 onGetContact()
@@ -279,7 +278,7 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun onSendLog(preference: Preference) {
-        runLongTask("Log", preference) {
+        runDefaultLongTask("Log", preference) {
             val context = requireContext()
 
             val attachments: MutableList<File> = mutableListOf()
@@ -297,7 +296,7 @@ class DebugFragment : BasePreferenceFragment() {
                 val message = MailMessage(
                     subject = "[SMailer] log: " + file.name,
                     from = account.name,
-                    body = "Device: " + deviceName() + "<br>File: " + file.name,
+                    body = "Device: " + DEVICE_NAME + "<br>File: " + file.name,
                     attachment = setOf(file),
                     recipients = developerEmail
                 )
@@ -308,13 +307,13 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun onSendDebugMail(preference: Preference) {
-        runLongTask("Mail", preference) {
+        runDefaultLongTask("Mail", preference) {
             val account = accountHelper.requirePrimaryGoogleAccount()
 
             val message = MailMessage(
                 from = account.name,
                 subject = "test subject",
-                body = "test message from " + deviceName(),
+                body = "test message from " + DEVICE_NAME,
                 recipients = developerEmail
             )
 
@@ -322,12 +321,18 @@ class DebugFragment : BasePreferenceFragment() {
         }
     }
 
-    private fun onGetLocation() {
-        runInBackground({
-            locator.getLocation()
-        }, { result, _ ->
-            showInfoDialog("Location", result?.format() ?: "No location received")
-        })
+    private fun onGetLocation(preference: Preference) {
+        preference.runLongTask(
+            onPerform = {
+                locator.getLocation()
+            },
+            onSuccess = { result ->
+                showInfoDialog("Location", result?.format() ?: "No location received")
+            },
+            onError = { error ->
+                showError("Location", error)
+            }
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -455,7 +460,7 @@ class DebugFragment : BasePreferenceFragment() {
 
     private fun onProcessServiceMail(preference: Preference) {
         if (settings.getBoolean(PREF_REMOTE_CONTROL_ENABLED)) {
-            runLongTask("Remote control", preference) {
+            runDefaultLongTask("Remote control", preference) {
                 MailControlProcessor(requireContext()).checkMailbox()
             }
         } else {
@@ -478,7 +483,7 @@ class DebugFragment : BasePreferenceFragment() {
             text = "Debug SMS message text",
             location = null,
             details = null,
-            acceptor = deviceName(),
+            acceptor = DEVICE_NAME,
             processStatus = STATUS_ACCEPTED,
             isRead = false
         )
@@ -487,7 +492,7 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun onStartProcessPendingEvents(preference: Preference) {
-        runLongTask("Event processing", preference) {
+        runDefaultLongTask("Event processing", preference) {
             PhoneEventProcessor(requireContext()).processPending()
         }
     }
@@ -516,7 +521,7 @@ class DebugFragment : BasePreferenceFragment() {
                     null,
                     null,
                     STATE_PENDING,
-                    deviceName(),
+                    DEVICE_NAME,
                     STATUS_ACCEPTED,
                     isRead = false
                 )
@@ -527,7 +532,7 @@ class DebugFragment : BasePreferenceFragment() {
 
     private fun onPopulateHistory() {
         var time = System.currentTimeMillis()
-        val recipient = deviceName()
+        val recipient = DEVICE_NAME
         database.commit {
             batch {
                 phoneEvents.add(
@@ -719,14 +724,14 @@ class DebugFragment : BasePreferenceFragment() {
     }
 
     private fun onGoogleDriveClear(preference: Preference) {
-        runLongTask("Google drive", preference) {
+        runDefaultLongTask("Google drive", preference) {
             GoogleDrive(requireContext(), senderAccount()).clear()
         }
     }
 
     private fun onGoogleDriveSync(preference: Preference) {
         ConfirmDialog("Synchronize with drive?") {
-            runLongTask("Google drive", preference) {
+            runDefaultLongTask("Google drive", preference) {
                 Synchronizer(requireContext(), senderAccount(), database).sync()
             }
         }.show(this)
@@ -734,7 +739,7 @@ class DebugFragment : BasePreferenceFragment() {
 
     private fun onGoogleDriveDownload(preference: Preference) {
         ConfirmDialog("Download from drive?") {
-            runLongTask("Google drive", preference) {
+            runDefaultLongTask("Google drive", preference) {
                 Synchronizer(requireContext(), senderAccount(), database).sync(SYNC_FORCE_DOWNLOAD)
             }
         }.show(this)
@@ -742,7 +747,7 @@ class DebugFragment : BasePreferenceFragment() {
 
     private fun onGoogleDriveUpload(preference: Preference) {
         ConfirmDialog("Upload to drive?") {
-            runLongTask("Google drive", preference) {
+            runDefaultLongTask("Google drive", preference) {
                 Synchronizer(requireContext(), senderAccount(), database).sync(SYNC_FORCE_UPLOAD)
             }
         }.show(this)
@@ -812,12 +817,16 @@ class DebugFragment : BasePreferenceFragment() {
         return accountHelper.requireGoogleAccount(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT))
     }
 
-    private fun runLongTask(title: String, preference: Preference, onPerform: () -> Unit) {
+    private fun runDefaultLongTask(title: String, preference: Preference, onPerform: () -> Unit) {
         preference.runLongTask(
-            onPerform = onPerform,
-            onComplete = { _, error ->
-                if (error != null) showError(title, error) else showComplete()
-            })
+            onPerform,
+            onSuccess = {
+                showComplete()
+            },
+            onError = { error ->
+                showError(title, error)
+            }
+        )
     }
 
     @SuppressLint("UnspecifiedRegisterReceiverFlag")

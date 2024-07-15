@@ -15,11 +15,9 @@ import java.io.InputStreamReader
 import java.io.PrintWriter
 
 /**
- * Returns device name.
+ * Returns current device name.
  */
-fun deviceName(): String {
-    return capitalize(Build.MANUFACTURER) + " " + Build.MODEL
-}
+val DEVICE_NAME get() = capitalize(Build.MANUFACTURER) + " " + Build.MODEL
 
 fun Context.permissionLabel(permissionName: String): String {
     return packageManager.run {

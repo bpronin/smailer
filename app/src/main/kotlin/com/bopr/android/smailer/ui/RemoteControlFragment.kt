@@ -11,7 +11,6 @@ import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_NOTIFICATIONS
 import com.bopr.android.smailer.control.MailControlProcessor
-import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.util.getQuantityString
 import com.bopr.android.smailer.util.runLongTask
 import com.bopr.android.smailer.util.showToast
@@ -67,44 +66,37 @@ class RemoteControlFragment : BasePreferenceFragment() {
     private fun onProcessServiceMail(preference: Preference) {
         preference.runLongTask(
             onPerform = {
-                requireContext().run {
-                    Database(this).use {
-                        MailControlProcessor(this).checkMailbox()
-                    }
-                }
+                MailControlProcessor(requireContext()).checkMailbox()
             },
-            onComplete = { result, error ->
-                /* if we live the page while processing then context becomes null. so "context?" */
-                if (error != null) {
-                    val errorMessage = error.message ?: error.toString()
-                    requireActivity().showInfoDialog(message = errorMessage)
-                } else
-                    context?.showToast(
-                        getQuantityString(
-                            R.plurals.mail_items,
-                            R.string.mail_items_zero,
-                            result!!
-                        )
-                    )
+            onSuccess = { result ->
+                showToast(
+                    getQuantityString(R.plurals.mail_items, R.string.mail_items_zero, result)
+                )
+            },
+            onError = { error ->
+                showInfoDialog(
+                    getString(R.string.remote_control),
+                    error.message ?: error.toString()
+                )
             }
         )
     }
 
     private fun updateAccountPreferenceView() {
-        val preference = requirePreference(PREF_REMOTE_CONTROL_ACCOUNT)
-        val account = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
-
-        if (account.isNullOrEmpty()) {
-            updateSummary(preference, getString(R.string.not_specified), SUMMARY_STYLE_ACCENTED)
-        } else if (!accountHelper.isGoogleAccountExists(account)) {
-            updateSummary(preference, account, SUMMARY_STYLE_UNDERWIVED)
-        } else {
-            updateSummary(preference, account, SUMMARY_STYLE_DEFAULT)
+        requirePreference(PREF_REMOTE_CONTROL_ACCOUNT).apply {
+            val account = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
+            if (account.isNullOrEmpty()) {
+                updateSummary(R.string.unspecified, SUMMARY_STYLE_ACCENTED)
+            } else if (!accountHelper.isGoogleAccountExists(account)) {
+                updateSummary(account, SUMMARY_STYLE_UNDERWIVED)
+            } else {
+                updateSummary(account, SUMMARY_STYLE_DEFAULT)
+            }
         }
     }
 
     private fun updateEnabledPreferenceView() {
-        val preference: SwitchPreference = findPreference(PREF_REMOTE_CONTROL_ENABLED)!!
+        val preference = requirePreferenceAs<SwitchPreference>(PREF_REMOTE_CONTROL_ENABLED)
         val value = settings.getBoolean(preference.key)
 
         requirePreference(PREF_REMOTE_CONTROL_ACCOUNT).isEnabled = value

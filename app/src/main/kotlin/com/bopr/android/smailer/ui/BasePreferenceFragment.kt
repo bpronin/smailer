@@ -8,6 +8,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.annotation.IntDef
+import androidx.annotation.StringRes
 import androidx.core.view.MenuProvider
 import androidx.preference.CheckBoxPreference
 import androidx.preference.EditTextPreference
@@ -32,7 +33,6 @@ import kotlin.annotation.AnnotationRetention.SOURCE
 abstract class BasePreferenceFragment : PreferenceFragmentCompat(),
     OnSharedPreferenceChangeListener {
 
-    //    protected val settings by lazyOf(Settings(requireContext()))
     protected lateinit var settings: Settings
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -115,28 +115,35 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(),
     /**
      * Updates summary of [Preference].
      *
-     * @param value      value
-     * @param preference preference
+     * @param text      value
      */
-    protected fun updateSummary(
-        preference: Preference,
-        value: CharSequence?,
-        @SummaryStyle style: Int
+    protected fun Preference.updateSummary(
+        text: CharSequence?,
+        @SummaryStyle style: Int = SUMMARY_STYLE_DEFAULT
     ) {
-        preference.apply {
-            summary = null  /* cleanup to refresh spannable style */
-            when (style) {
-                SUMMARY_STYLE_DEFAULT -> summary = value
+        summary = null  /* cleanup to refresh spannable style */
+        when (style) {
+            SUMMARY_STYLE_DEFAULT -> summary = text
 
-                SUMMARY_STYLE_UNDERWIVED -> summary = requireContext().underwivedText(value)
+            SUMMARY_STYLE_UNDERWIVED -> summary = requireContext().underwivedText(text)
 
-                SUMMARY_STYLE_ACCENTED -> summary = requireContext().accentedText(value)
-            }
+            SUMMARY_STYLE_ACCENTED -> summary = requireContext().accentedText(text)
         }
     }
 
+    protected fun Preference.updateSummary(
+        @StringRes valueRes: Int,
+        @SummaryStyle style: Int = SUMMARY_STYLE_DEFAULT
+    ) {
+        updateSummary(getString(valueRes), style)
+    }
+
+    protected fun <T : Preference> requirePreferenceAs(key: CharSequence): T {
+        return requireNotNull(findPreference(key))
+    }
+
     protected fun requirePreference(key: CharSequence): Preference {
-        return findPreference(key)!!
+        return requireNotNull(findPreference(key))
     }
 
     inner class FragmentMenuProvider : MenuProvider {

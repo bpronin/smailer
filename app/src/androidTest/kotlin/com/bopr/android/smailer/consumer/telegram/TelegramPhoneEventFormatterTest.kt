@@ -17,12 +17,12 @@ import org.junit.Test
 import java.util.GregorianCalendar
 
 /**
- * [PhoneEventTelegramFormatter] class tester.
+ * [TelegramPhoneEventFormatter] class tester.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 @SmallTest
-class PhoneEventTelegramFormatterTest : BaseTest() {
+class TelegramPhoneEventFormatterTest : BaseTest() {
 
     private val testTime = GregorianCalendar(2016, 1, 2, 3, 4, 5).time.time
     private val testCoordinates = GeoCoordinates(60.555, 30.555)
@@ -50,7 +50,7 @@ class PhoneEventTelegramFormatterTest : BaseTest() {
             acceptor = "device"
         )
 
-        val formatter = PhoneEventTelegramFormatter(targetContext, event)
+        val formatter = TelegramPhoneEventFormatter(targetContext, event)
 
         assertEquals("Message text", formatter.formatMessage())
     }
@@ -78,7 +78,7 @@ class PhoneEventTelegramFormatterTest : BaseTest() {
             processTime = testTime
         )
 
-        val formatter = PhoneEventTelegramFormatter(targetContext, event)
+        val formatter = TelegramPhoneEventFormatter(targetContext, event)
         val message = formatter.formatMessage()
 
         assertEquals(

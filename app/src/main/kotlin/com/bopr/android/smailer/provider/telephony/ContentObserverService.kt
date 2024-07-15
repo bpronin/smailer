@@ -19,7 +19,7 @@ import com.bopr.android.smailer.data.getLong
 import com.bopr.android.smailer.data.getString
 import com.bopr.android.smailer.data.getStringOrNull
 import com.bopr.android.smailer.data.useFirst
-import com.bopr.android.smailer.util.deviceName
+import com.bopr.android.smailer.util.DEVICE_NAME
 import org.slf4j.LoggerFactory
 
 /**
@@ -70,7 +70,7 @@ class ContentObserverService : Service() {
                     startTime = date,
                     endTime = date,
                     text = getStringOrNull("body"),
-                    acceptor = deviceName()
+                    acceptor = DEVICE_NAME
                 )
             )
         }

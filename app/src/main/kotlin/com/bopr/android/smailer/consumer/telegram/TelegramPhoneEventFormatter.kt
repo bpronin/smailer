@@ -23,7 +23,7 @@ import java.text.DateFormat.getDateTimeInstance
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class PhoneEventTelegramFormatter(private val context: Context, private val event: PhoneEventInfo) :
+class TelegramPhoneEventFormatter(private val context: Context, private val event: PhoneEventInfo) :
     MessageFormatter(context) {
 
     private val settings = Settings(context)

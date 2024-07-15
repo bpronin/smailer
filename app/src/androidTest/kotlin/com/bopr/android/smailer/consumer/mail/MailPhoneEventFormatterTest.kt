@@ -25,12 +25,12 @@ import java.util.GregorianCalendar
 import java.util.Locale
 
 /**
- * [PhoneEventMailFormatter] class tester.
+ * [MailPhoneEventFormatter] class tester.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 @SmallTest
-class PhoneEventMailFormatterTest : BaseTest() {
+class MailPhoneEventFormatterTest : BaseTest() {
 
     private lateinit var context: Context
     private val defaultTime = GregorianCalendar(2016, 1, 2, 3, 4, 5).time.time
@@ -62,7 +62,7 @@ class PhoneEventMailFormatterTest : BaseTest() {
             processTime = defaultTime
         )
 
-        val formatter = PhoneEventMailFormatter(
+        val formatter = MailPhoneEventFormatter(
             context, event,
             contactName = "John Dou",
             deviceName = "Device",
@@ -97,7 +97,7 @@ class PhoneEventMailFormatterTest : BaseTest() {
             acceptor = "device"
         )
 
-        val formatter = PhoneEventMailFormatter(context, event)
+        val formatter = MailPhoneEventFormatter(context, event)
 
         Assert.assertEquals("[SMailer] Incoming SMS from +70123456789", formatter.formatSubject())
     }
@@ -115,7 +115,7 @@ class PhoneEventMailFormatterTest : BaseTest() {
             acceptor = "device"
         )
 
-        val formatter = PhoneEventMailFormatter(context, event)
+        val formatter = MailPhoneEventFormatter(context, event)
 
         Assert.assertEquals("[SMailer] Outgoing SMS to +70123456789", formatter.formatSubject())
     }
@@ -132,7 +132,7 @@ class PhoneEventMailFormatterTest : BaseTest() {
             acceptor = "device"
         )
 
-        val formatter = PhoneEventMailFormatter(context, event)
+        val formatter = MailPhoneEventFormatter(context, event)
 
         Assert.assertEquals("[SMailer] Incoming call from +70123456789", formatter.formatSubject())
     }
@@ -149,7 +149,7 @@ class PhoneEventMailFormatterTest : BaseTest() {
             acceptor = "device"
         )
 
-        val formatter = PhoneEventMailFormatter(context, event)
+        val formatter = MailPhoneEventFormatter(context, event)
 
         Assert.assertEquals("[SMailer] Outgoing call to +70123456789", formatter.formatSubject())
     }
@@ -166,7 +166,7 @@ class PhoneEventMailFormatterTest : BaseTest() {
             acceptor = "device"
         )
 
-        val formatter = PhoneEventMailFormatter(context, event)
+        val formatter = MailPhoneEventFormatter(context, event)
 
         Assert.assertEquals("[SMailer] Missed call from +70123456789", formatter.formatSubject())
     }
@@ -184,7 +184,7 @@ class PhoneEventMailFormatterTest : BaseTest() {
             acceptor = "device"
         )
 
-        val formatter = PhoneEventMailFormatter(context, event)
+        val formatter = MailPhoneEventFormatter(context, event)
 
         MatcherAssert.assertThat(
             formatter.formatBody(),
@@ -206,7 +206,7 @@ class PhoneEventMailFormatterTest : BaseTest() {
             processTime = defaultTime
         )
 
-        val formatter = PhoneEventMailFormatter(
+        val formatter = MailPhoneEventFormatter(
             context, event,
             options = setOf(Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME)
         )
@@ -231,7 +231,7 @@ class PhoneEventMailFormatterTest : BaseTest() {
             processTime = defaultTime
         )
 
-        val formatter = PhoneEventMailFormatter(
+        val formatter = MailPhoneEventFormatter(
             context, event,
             deviceName = "The Device",
             options = setOf(Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME)
@@ -258,7 +258,7 @@ class PhoneEventMailFormatterTest : BaseTest() {
             processTime = defaultTime
         )
 
-        val formatter = PhoneEventMailFormatter(
+        val formatter = MailPhoneEventFormatter(
             context, event,
             options = setOf(Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME)
         )
@@ -284,7 +284,7 @@ class PhoneEventMailFormatterTest : BaseTest() {
             processTime = defaultTime
         )
 
-        val formatter = PhoneEventMailFormatter(
+        val formatter = MailPhoneEventFormatter(
             context, event,
             deviceName = "The Device",
             options = setOf(
@@ -314,7 +314,7 @@ class PhoneEventMailFormatterTest : BaseTest() {
             processTime = defaultTime
         )
 
-        val formatter = PhoneEventMailFormatter(
+        val formatter = MailPhoneEventFormatter(
             context, event,
             options = setOf(Settings.VAL_PREF_EMAIL_CONTENT_LOCATION)
         )
@@ -340,7 +340,7 @@ class PhoneEventMailFormatterTest : BaseTest() {
             processTime = defaultTime
         )
 
-        val formatter = PhoneEventMailFormatter(
+        val formatter = MailPhoneEventFormatter(
             context, event,
             options = setOf(Settings.VAL_PREF_EMAIL_CONTENT_LOCATION)
         )
@@ -381,7 +381,7 @@ class PhoneEventMailFormatterTest : BaseTest() {
             )
         ).thenReturn(PackageManager.PERMISSION_DENIED)
 
-        val formatter = PhoneEventMailFormatter(
+        val formatter = MailPhoneEventFormatter(
             context, event,
             options = setOf(Settings.VAL_PREF_EMAIL_CONTENT_LOCATION)
         )
@@ -406,7 +406,7 @@ class PhoneEventMailFormatterTest : BaseTest() {
             processTime = defaultTime
         )
 
-        val formatter = PhoneEventMailFormatter(
+        val formatter = MailPhoneEventFormatter(
             context, event,
             contactName = "John Dou",
             options = setOf(Settings.VAL_PREF_EMAIL_CONTENT_CONTACT)
@@ -441,7 +441,7 @@ class PhoneEventMailFormatterTest : BaseTest() {
             )
         ).thenReturn(PackageManager.PERMISSION_DENIED)
 
-        val formatter = PhoneEventMailFormatter(
+        val formatter = MailPhoneEventFormatter(
             context, event,
             options = setOf(Settings.VAL_PREF_EMAIL_CONTENT_CONTACT)
         )
@@ -467,7 +467,7 @@ class PhoneEventMailFormatterTest : BaseTest() {
             processTime = defaultTime
         )
 
-        val formatter = PhoneEventMailFormatter(
+        val formatter = MailPhoneEventFormatter(
             context, event,
             options = setOf(Settings.VAL_PREF_EMAIL_CONTENT_CONTACT)
         )
@@ -493,7 +493,7 @@ class PhoneEventMailFormatterTest : BaseTest() {
             processTime = defaultTime
         )
 
-        val formatter = PhoneEventMailFormatter(
+        val formatter = MailPhoneEventFormatter(
             context, event,
             phoneSearchUrl = "https://www.neberitrubku.ru/nomer-telefona/{phone}",
             options = setOf(Settings.VAL_PREF_EMAIL_CONTENT_CONTACT)
@@ -518,7 +518,7 @@ class PhoneEventMailFormatterTest : BaseTest() {
             acceptor = "device"
         )
 
-        val formatter = PhoneEventMailFormatter(context, event)
+        val formatter = MailPhoneEventFormatter(context, event)
 
         MatcherAssert.assertThat(
             formatter.formatBody(),
@@ -539,7 +539,7 @@ class PhoneEventMailFormatterTest : BaseTest() {
             acceptor = "device"
         )
 
-        val formatter = PhoneEventMailFormatter(context, event)
+        val formatter = MailPhoneEventFormatter(context, event)
 
         MatcherAssert.assertThat(
             formatter.formatBody(),
@@ -559,7 +559,7 @@ class PhoneEventMailFormatterTest : BaseTest() {
             acceptor = "device"
         )
 
-        val formatter = PhoneEventMailFormatter(context, event)
+        val formatter = MailPhoneEventFormatter(context, event)
 
         MatcherAssert.assertThat(formatter.formatBody(), HtmlMatcher.htmlEquals("missed_call.html"))
     }
@@ -579,7 +579,7 @@ class PhoneEventMailFormatterTest : BaseTest() {
             processTime = defaultTime
         )
 
-        val formatter = PhoneEventMailFormatter(
+        val formatter = MailPhoneEventFormatter(
             context, event,
             contactName = "John Dou",
             deviceName = "Device",
@@ -613,7 +613,7 @@ class PhoneEventMailFormatterTest : BaseTest() {
             processTime = defaultTime
         )
 
-        val formatter = PhoneEventMailFormatter(
+        val formatter = MailPhoneEventFormatter(
             context, event,
             contactName = "John Dou",
             deviceName = "Device",
@@ -648,7 +648,7 @@ class PhoneEventMailFormatterTest : BaseTest() {
             processTime = defaultTime
         )
 
-        val formatter = PhoneEventMailFormatter(
+        val formatter = MailPhoneEventFormatter(
             context, event,
             deviceName = "Device",
             options = setOf(
@@ -681,7 +681,7 @@ class PhoneEventMailFormatterTest : BaseTest() {
             processTime = defaultTime
         )
 
-        val formatter = PhoneEventMailFormatter(
+        val formatter = MailPhoneEventFormatter(
             context, event,
             contactName = "John Dou",
             deviceName = "Device",
@@ -719,7 +719,7 @@ class PhoneEventMailFormatterTest : BaseTest() {
             acceptor = "device"
         )
 
-        val formatter = PhoneEventMailFormatter(context, event)
+        val formatter = MailPhoneEventFormatter(context, event)
 
         MatcherAssert.assertThat(formatter.formatBody(), HtmlMatcher.htmlEquals("urls.html"))
     }
@@ -739,7 +739,7 @@ class PhoneEventMailFormatterTest : BaseTest() {
             acceptor = "device"
         )
 
-        val formatter = PhoneEventMailFormatter(
+        val formatter = MailPhoneEventFormatter(
             context, event,
             deviceName = "Device",
             serviceAccount = "service@mail.com",

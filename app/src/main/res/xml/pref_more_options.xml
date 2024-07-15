@@ -1,16 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <androidx.preference.SwitchPreference
-        android:key="notify_send_success"
-        android:title="@string/info_notifications"
-        android:summary="@string/notify_send_success"
-        />
+    <androidx.preference.EditTextPreference
+            android:dialogMessage="@string/device_name_to_show"
+            android:icon="@drawable/ic_device"
+            android:inputType="textNoSuggestions"
+            android:key="device_alias"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/device_name" />
 
+    <androidx.preference.EditTextPreference
+            android:dialogMessage="@string/phone_search_url_explanation"
+            android:icon="@drawable/ic_search"
+            android:inputType="textNoSuggestions"
+            android:key="phone_search_url"
+            android:selectAllOnFocus="true"
+            android:title="@string/phone_search_url" />
+
+    <androidx.preference.SwitchPreference
+            android:key="notify_send_success"
+            android:title="@string/info_notifications"
+            android:summary="@string/notify_send_success" />
+
+<!--
     <androidx.preference.Preference
-        android:key="reset_dialogs"
-        android:title="@string/reset_dialogs"
-        android:summary="@string/reset_dialogs_summary"
-        />
+            android:key="reset_dialogs"
+            android:title="@string/reset_dialogs"
+            android:summary="@string/reset_dialogs_summary" />
+-->
 
 </androidx.preference.PreferenceScreen>

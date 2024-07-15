@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Resources
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.fragment.app.Fragment
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
 import java.util.Locale
@@ -131,6 +132,11 @@ fun eventStateText(event: PhoneEventInfo): Int {
     }
 }
 
+@StringRes
+fun onOffText(value: Boolean): Int {
+    return if (value) R.string.on else R.string.off
+}
+
 fun Context.localeResources(locale: Locale): Resources {
     return if (locale == Locale.getDefault()) {
         resources
@@ -141,3 +147,4 @@ fun Context.localeResources(locale: Locale): Resources {
         createConfigurationContext(configuration).resources
     }
 }
+

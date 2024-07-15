@@ -5,6 +5,8 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.annotation.StringRes
 import androidx.preference.MultiSelectListPreference
+import com.bopr.android.smailer.R
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.TABLE_PHONE_BLACKLIST
 import com.bopr.android.smailer.data.Database.Companion.TABLE_PHONE_WHITELIST
@@ -12,8 +14,6 @@ import com.bopr.android.smailer.data.Database.Companion.TABLE_TEXT_BLACKLIST
 import com.bopr.android.smailer.data.Database.Companion.TABLE_TEXT_WHITELIST
 import com.bopr.android.smailer.data.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.data.Database.Companion.unregisterDatabaseListener
-import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
 
 /**
  * Rules settings fragment.
@@ -65,50 +65,57 @@ class RulesFragment : BasePreferenceFragment() {
     }
 
     private fun updatePhoneBlacklistPreferenceView() {
-        val preference = requirePreference("phone_blacklist")
-        val text = formatListSummary(database.phoneBlacklist,
-                R.string.unacceptable_phone_numbers, R.string._none)
+        val text = formatListSummary(
+            database.phoneBlacklist,
+            R.string.unacceptable_phone_numbers, R.string._none
+        )
 
-        updateSummary(preference, text, SUMMARY_STYLE_DEFAULT)
+        requirePreference("phone_blacklist").updateSummary(text)
     }
 
     private fun updatePhoneWhitelistPreferenceView() {
-        val preference = requirePreference("phone_whitelist")
-        val text = formatListSummary(database.phoneWhitelist,
-                R.string.acceptable_phone_numbers, R.string._any)
+        val text = formatListSummary(
+            database.phoneWhitelist,
+            R.string.acceptable_phone_numbers, R.string._any
+        )
 
-        updateSummary(preference, text, SUMMARY_STYLE_DEFAULT)
+        requirePreference("phone_whitelist").updateSummary(text, SUMMARY_STYLE_DEFAULT)
     }
 
     private fun updateTextBlacklistPreferenceView() {
         val preference = requirePreference("text_blacklist")
-        val text = formatListSummary(database.smsTextBlacklist,
-                R.string.unacceptable_words, R.string._none)
+        val text = formatListSummary(
+            database.smsTextBlacklist,
+            R.string.unacceptable_words, R.string._none
+        )
 
-        updateSummary(preference, text, SUMMARY_STYLE_DEFAULT)
+        preference.updateSummary(text, SUMMARY_STYLE_DEFAULT)
     }
 
     private fun updateTextWhitelistPreferenceView() {
         val preference = requirePreference("text_whitelist")
-        val formatListSummary = formatListSummary(database.smsTextWhitelist,
-                R.string.acceptable_words, R.string._any)
+        val formatListSummary = formatListSummary(
+            database.smsTextWhitelist,
+            R.string.acceptable_words, R.string._any
+        )
 
-        updateSummary(preference, formatListSummary, SUMMARY_STYLE_DEFAULT)
+        preference.updateSummary(formatListSummary, SUMMARY_STYLE_DEFAULT)
     }
 
     private fun updateTriggersPreferenceView() {
-        val preference: MultiSelectListPreference = findPreference(PREF_EMAIL_TRIGGERS)!!
-        val value = settings.getStringSet(preference.key)
-
-        if (value.isEmpty()) {
-            updateSummary(preference, getString(R.string.no_triggers_specified), SUMMARY_STYLE_ACCENTED)
-        } else {
-            updateSummary(preference, getString(R.string.events_causing_sending_mail), SUMMARY_STYLE_DEFAULT)
+        requirePreferenceAs<MultiSelectListPreference>(PREF_EMAIL_TRIGGERS).apply {
+            if (settings.getStringSet(PREF_EMAIL_TRIGGERS).isEmpty()) {
+                updateSummary(R.string.no_triggers_specified, SUMMARY_STYLE_ACCENTED)
+            } else {
+                updateSummary(R.string.events_causing_sending_mail, SUMMARY_STYLE_DEFAULT)
+            }
         }
     }
 
-    private fun formatListSummary(list: Set<String>, @StringRes patternRes: Int,
-                                  @StringRes emptyRes: Int): String {
+    private fun formatListSummary(
+        list: Set<String>, @StringRes patternRes: Int,
+        @StringRes emptyRes: Int
+    ): String {
         return getString(patternRes, if (list.isEmpty()) getString(emptyRes) else list.size)
     }
 

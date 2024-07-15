@@ -210,7 +210,7 @@ class PhoneEventProcessorTest : BaseTest() {
     }
 
     /**
-     * Test processing when sender account setting is not specified.
+     * Test processing when sender account setting is unspecified.
      */
     @Test
     fun testProcessNoSender() {
@@ -230,7 +230,7 @@ class PhoneEventProcessorTest : BaseTest() {
     }
 
     /**
-     * Test processing when recipients setting is not specified.
+     * Test processing when recipients setting is unspecified.
      */
     @Test
     fun testProcessNoRecipients() {

@@ -12,7 +12,7 @@ import androidx.test.rule.GrantPermissionRule
 import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.provider.telephony.PhoneEventInfo
 import com.bopr.android.smailer.provider.telephony.PhoneEventReceiver
-import com.bopr.android.smailer.util.deviceName
+import com.bopr.android.smailer.util.DEVICE_NAME
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.mock
@@ -77,7 +77,7 @@ class PhoneEventReceiverTest : BaseTest() {
         verify(context).startService(argThat {
             getPhoneEventExtra("event")!!.run {
                 isIncoming && !isMissed && phone == "100"
-                        && location == null && endTime != null && acceptor == deviceName()
+                        && location == null && endTime != null && acceptor == DEVICE_NAME
                         && state == PhoneEventInfo.STATE_PENDING
             }
         })
@@ -107,7 +107,7 @@ class PhoneEventReceiverTest : BaseTest() {
         verify(context).startService(argThat {
             getPhoneEventExtra("event")!!.run {
                 isIncoming && !isMissed && phone == "100"
-                        && location == null && endTime != null && acceptor == deviceName()
+                        && location == null && endTime != null && acceptor == DEVICE_NAME
                         && state == PhoneEventInfo.STATE_PENDING
             }
         })
@@ -127,7 +127,7 @@ class PhoneEventReceiverTest : BaseTest() {
         verify(context).startService(argThat {
             getPhoneEventExtra("event")!!.run {
                 !isIncoming && !isMissed && phone == "200"
-                        && location == null && endTime != null && acceptor == deviceName()
+                        && location == null && endTime != null && acceptor == DEVICE_NAME
                         && state == PhoneEventInfo.STATE_PENDING
             }
         })
@@ -147,7 +147,7 @@ class PhoneEventReceiverTest : BaseTest() {
         verify(context).startService(argThat {
             getPhoneEventExtra("event")!!.run {
                 isIncoming && isMissed && phone == "300"
-                        && location == null && endTime != null && acceptor == deviceName()
+                        && location == null && endTime != null && acceptor == DEVICE_NAME
                         && state == PhoneEventInfo.STATE_PENDING
             }
         })
@@ -205,7 +205,7 @@ class PhoneEventReceiverTest : BaseTest() {
         verify(context).startService(argThat {
             getPhoneEventExtra("event")!!.run {
                 isSms && isIncoming && phone == "+15555215556" && text == "Text message"
-                        && location == null && endTime != null && acceptor == deviceName()
+                        && location == null && endTime != null && acceptor == DEVICE_NAME
                         && state == PhoneEventInfo.STATE_PENDING
             }
         })

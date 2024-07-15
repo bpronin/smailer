@@ -13,7 +13,7 @@ class MailFormatterFactory(private val context: Context) {
 
     fun createFormatter(event: PhoneEventInfo): MailFormatter {
         return when (event) {
-            is PhoneEventInfo -> PhoneEventMailFormatter(
+            is PhoneEventInfo -> MailPhoneEventFormatter(
                 context = context,
                 event = event,
                 contactName = tryGetContactName(context, event.phone),
