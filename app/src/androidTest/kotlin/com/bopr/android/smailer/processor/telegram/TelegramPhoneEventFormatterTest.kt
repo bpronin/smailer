@@ -6,10 +6,10 @@ import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_DEVICE_ALIAS
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_SHOW_CALLER
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_SHOW_DEVICE_NAME
+import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_SHOW_DISPATCH_TIME
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_SHOW_HEADER
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_SHOW_EVENT_TIME
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_SHOW_LOCATION
-import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_SHOW_PROCESS_TIME
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import com.bopr.android.smailer.util.GeoCoordinates
 import org.junit.Assert.assertEquals
@@ -35,7 +35,7 @@ class TelegramPhoneEventFormatterTest : BaseTest() {
             putBoolean(PREF_TELEGRAM_MESSAGE_SHOW_CALLER, false)
             putBoolean(PREF_TELEGRAM_MESSAGE_SHOW_DEVICE_NAME, false)
             putBoolean(PREF_TELEGRAM_MESSAGE_SHOW_EVENT_TIME, false)
-            putBoolean(PREF_TELEGRAM_MESSAGE_SHOW_PROCESS_TIME, false)
+            putBoolean(PREF_TELEGRAM_MESSAGE_SHOW_DISPATCH_TIME, false)
             putBoolean(PREF_TELEGRAM_MESSAGE_SHOW_LOCATION, false)
             putString(PREF_DEVICE_ALIAS, "My Device")
         }
@@ -63,7 +63,7 @@ class TelegramPhoneEventFormatterTest : BaseTest() {
             putBoolean(PREF_TELEGRAM_MESSAGE_SHOW_CALLER, true)
             putBoolean(PREF_TELEGRAM_MESSAGE_SHOW_DEVICE_NAME, true)
             putBoolean(PREF_TELEGRAM_MESSAGE_SHOW_EVENT_TIME, true)
-            putBoolean(PREF_TELEGRAM_MESSAGE_SHOW_PROCESS_TIME, true)
+            putBoolean(PREF_TELEGRAM_MESSAGE_SHOW_DISPATCH_TIME, true)
             putBoolean(PREF_TELEGRAM_MESSAGE_SHOW_LOCATION, true)
             putString(PREF_DEVICE_ALIAS, "My Device")
         }

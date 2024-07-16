@@ -10,6 +10,7 @@ import android.telephony.TelephonyManager
 import androidx.test.filters.SmallTest
 import androidx.test.rule.GrantPermissionRule
 import com.bopr.android.smailer.BaseTest
+import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import com.bopr.android.smailer.provider.telephony.PhoneEventReceiver
 import com.bopr.android.smailer.util.DEVICE_NAME
@@ -78,7 +79,7 @@ class PhoneEventReceiverTest : BaseTest() {
             getPhoneEventExtra("event")!!.run {
                 isIncoming && !isMissed && phone == "100"
                         && location == null && endTime != null && acceptor == DEVICE_NAME
-                        && state == PhoneEventData.STATE_PENDING
+                        && state == STATE_PENDING
             }
         })
     }
@@ -108,7 +109,7 @@ class PhoneEventReceiverTest : BaseTest() {
             getPhoneEventExtra("event")!!.run {
                 isIncoming && !isMissed && phone == "100"
                         && location == null && endTime != null && acceptor == DEVICE_NAME
-                        && state == PhoneEventData.STATE_PENDING
+                        && state == STATE_PENDING
             }
         })
     }
@@ -128,7 +129,7 @@ class PhoneEventReceiverTest : BaseTest() {
             getPhoneEventExtra("event")!!.run {
                 !isIncoming && !isMissed && phone == "200"
                         && location == null && endTime != null && acceptor == DEVICE_NAME
-                        && state == PhoneEventData.STATE_PENDING
+                        && state == STATE_PENDING
             }
         })
     }
@@ -148,7 +149,7 @@ class PhoneEventReceiverTest : BaseTest() {
             getPhoneEventExtra("event")!!.run {
                 isIncoming && isMissed && phone == "300"
                         && location == null && endTime != null && acceptor == DEVICE_NAME
-                        && state == PhoneEventData.STATE_PENDING
+                        && state == STATE_PENDING
             }
         })
     }
@@ -206,7 +207,7 @@ class PhoneEventReceiverTest : BaseTest() {
             getPhoneEventExtra("event")!!.run {
                 isSms && isIncoming && phone == "+15555215556" && text == "Text message"
                         && location == null && endTime != null && acceptor == DEVICE_NAME
-                        && state == PhoneEventData.STATE_PENDING
+                        && state == STATE_PENDING
             }
         })
     }

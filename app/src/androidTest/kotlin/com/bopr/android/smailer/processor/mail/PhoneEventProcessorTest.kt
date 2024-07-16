@@ -15,6 +15,9 @@ import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.processor.EventDispatcher
 import com.bopr.android.smailer.data.Database
+import com.bopr.android.smailer.provider.EventState.Companion.STATE_IGNORED
+import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
+import com.bopr.android.smailer.provider.EventState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import com.bopr.android.smailer.provider.telephony.PhoneEventProcessor
 import com.bopr.android.smailer.util.GeoCoordinates
@@ -183,7 +186,7 @@ class PhoneEventProcessorTest : BaseTest() {
         Assert.assertEquals(event.acceptor, savedEvent.acceptor)
         Assert.assertEquals(event.startTime, savedEvent.startTime)
         Assert.assertEquals(event.phone, savedEvent.phone)
-        Assert.assertEquals(PhoneEventData.STATE_PROCESSED, savedEvent.state)
+        Assert.assertEquals(STATE_PROCESSED, savedEvent.state)
         Assert.assertEquals(PhoneEventData.STATUS_ACCEPTED, savedEvent.processStatus)
         Assert.assertEquals(GeoCoordinates(60.0, 30.0), event.location)
     }
@@ -205,7 +208,7 @@ class PhoneEventProcessorTest : BaseTest() {
 
         val savedEvent = database.phoneEvents.first()
 
-        Assert.assertEquals(PhoneEventData.STATE_IGNORED, savedEvent.state)
+        Assert.assertEquals(STATE_IGNORED, savedEvent.state)
         Assert.assertEquals(PhoneEventData.STATUS_TRIGGER_OFF, savedEvent.processStatus)
     }
 
@@ -225,7 +228,7 @@ class PhoneEventProcessorTest : BaseTest() {
 
         val savedEvent = database.phoneEvents.first()
 
-        Assert.assertEquals(PhoneEventData.STATE_PENDING, savedEvent.state)
+        Assert.assertEquals(STATE_PENDING, savedEvent.state)
         Assert.assertEquals(PhoneEventData.STATUS_ACCEPTED, savedEvent.processStatus)
     }
 
@@ -244,7 +247,7 @@ class PhoneEventProcessorTest : BaseTest() {
 
         val savedEvent = database.phoneEvents.first()
 
-        Assert.assertEquals(PhoneEventData.STATE_PENDING, savedEvent.state)
+        Assert.assertEquals(STATE_PENDING, savedEvent.state)
         Assert.assertEquals(PhoneEventData.STATUS_ACCEPTED, savedEvent.processStatus)
     }
 
@@ -266,7 +269,7 @@ class PhoneEventProcessorTest : BaseTest() {
 
         val savedEvent = database.phoneEvents.first()
 
-        Assert.assertEquals(PhoneEventData.STATE_PENDING, savedEvent.state)
+        Assert.assertEquals(STATE_PENDING, savedEvent.state)
         Assert.assertEquals(PhoneEventData.STATUS_ACCEPTED, savedEvent.processStatus)
     }
 

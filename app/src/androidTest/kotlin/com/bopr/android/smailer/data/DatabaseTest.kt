@@ -2,6 +2,9 @@ package com.bopr.android.smailer.data
 
 import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
+import com.bopr.android.smailer.provider.EventState.Companion.STATE_IGNORED
+import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
+import com.bopr.android.smailer.provider.EventState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import com.bopr.android.smailer.util.GeoCoordinates
 import org.junit.After
@@ -46,7 +49,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 1",
-                    PhoneEventData.STATE_PENDING,
+                    STATE_PENDING,
                     "device",
                     PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
@@ -62,7 +65,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     null,
-                    PhoneEventData.STATE_PENDING,
+                    STATE_PENDING,
                     "device",
                     PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
@@ -78,7 +81,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     null,
-                    PhoneEventData.STATE_PENDING,
+                    STATE_PENDING,
                     "device",
                     PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
@@ -94,7 +97,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     null,
-                    PhoneEventData.STATE_PENDING,
+                    STATE_PENDING,
                     "device",
                     PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
@@ -110,7 +113,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     null,
-                    PhoneEventData.STATE_PENDING,
+                    STATE_PENDING,
                     "device",
                     PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
@@ -126,7 +129,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 1",
-                    PhoneEventData.STATE_PENDING,
+                    STATE_PENDING,
                     "device",
                     PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
@@ -142,7 +145,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 2",
-                    PhoneEventData.STATE_PENDING,
+                    STATE_PENDING,
                     "device",
                     PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
@@ -158,7 +161,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 3",
-                    PhoneEventData.STATE_PENDING,
+                    STATE_PENDING,
                     "device",
                     PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
@@ -174,7 +177,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 4",
-                    PhoneEventData.STATE_PENDING,
+                    STATE_PENDING,
                     "device",
                     PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
@@ -190,7 +193,7 @@ class DatabaseTest : BaseTest() {
                     "SMS text",
                     GeoCoordinates(10.5, 20.5),
                     "Test 10",
-                    PhoneEventData.STATE_PENDING,
+                    STATE_PENDING,
                     "device",
                     PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
@@ -202,7 +205,7 @@ class DatabaseTest : BaseTest() {
 
         val event = events.first() /* descending order so it should be the last */
 
-        Assert.assertEquals(PhoneEventData.STATE_PENDING, event.state)
+        Assert.assertEquals(STATE_PENDING, event.state)
         Assert.assertEquals("10", event.phone)
         Assert.assertTrue(event.isIncoming)
         Assert.assertEquals(10000L, event.startTime)
@@ -222,7 +225,7 @@ class DatabaseTest : BaseTest() {
                 phone = "1",
                 startTime = 0,
                 acceptor = "device",
-                state = PhoneEventData.STATE_PENDING,
+                state = STATE_PENDING,
                 isRead = false
             )
         )
@@ -232,7 +235,7 @@ class DatabaseTest : BaseTest() {
             Assert.assertEquals("1", phone)
             Assert.assertEquals(0, startTime)
             Assert.assertEquals("device", acceptor)
-            Assert.assertEquals(PhoneEventData.STATE_PENDING, state)
+            Assert.assertEquals(STATE_PENDING, state)
             Assert.assertEquals(false, isRead)
         }
 
@@ -242,7 +245,7 @@ class DatabaseTest : BaseTest() {
                     phone = "1",
                     startTime = 0,
                     acceptor = "device",
-                    state = PhoneEventData.STATE_PROCESSED,
+                    state = STATE_PROCESSED,
                     isRead = true
                 )
             )
@@ -252,7 +255,7 @@ class DatabaseTest : BaseTest() {
             Assert.assertEquals("1", phone)
             Assert.assertEquals(0, startTime)
             Assert.assertEquals("device", acceptor)
-            Assert.assertEquals(PhoneEventData.STATE_PROCESSED, state)
+            Assert.assertEquals(STATE_PROCESSED, state)
             Assert.assertEquals(true, isRead)
         }
     }
@@ -268,7 +271,7 @@ class DatabaseTest : BaseTest() {
             text = "SMS text",
             location = GeoCoordinates(10.5, 20.5),
             details = "Test 1",
-            state = PhoneEventData.STATE_PENDING,
+            state = STATE_PENDING,
             acceptor = "device",
             processStatus = PhoneEventData.STATUS_ACCEPTED,
             isRead = false
@@ -282,7 +285,7 @@ class DatabaseTest : BaseTest() {
 
         event = events.first()
 
-        Assert.assertEquals(PhoneEventData.STATE_PENDING, event.state)
+        Assert.assertEquals(STATE_PENDING, event.state)
         Assert.assertEquals("1", event.phone)
         Assert.assertTrue(event.isIncoming)
         Assert.assertEquals(1000L, event.startTime)
@@ -293,7 +296,7 @@ class DatabaseTest : BaseTest() {
         Assert.assertEquals(20.5, event.location!!.longitude, 0.1)
         Assert.assertEquals("SMS text", event.text)
         Assert.assertEquals("Test 1", event.details)
-        Assert.assertEquals(PhoneEventData.STATE_PENDING, event.state)
+        Assert.assertEquals(STATE_PENDING, event.state)
 
         event = event.copy(
                 phone = "2",
@@ -310,7 +313,7 @@ class DatabaseTest : BaseTest() {
 
         event = events.first()
 
-        Assert.assertEquals(PhoneEventData.STATE_PENDING, event.state)
+        Assert.assertEquals(STATE_PENDING, event.state)
         Assert.assertEquals("2", event.phone)
         Assert.assertFalse(event.isIncoming)
         Assert.assertEquals(3000L, event.endTime!!)
@@ -337,7 +340,7 @@ class DatabaseTest : BaseTest() {
                     "SMS text",
                     GeoCoordinates(10.5, 20.5),
                     "Test 1",
-                    PhoneEventData.STATE_PENDING,
+                    STATE_PENDING,
                     "device",
                     PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
@@ -353,7 +356,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     null,
-                    PhoneEventData.STATE_PENDING,
+                    STATE_PENDING,
                     "device",
                     PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
@@ -369,7 +372,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     null,
-                    PhoneEventData.STATE_PENDING,
+                    STATE_PENDING,
                     "device",
                     PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
@@ -385,7 +388,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     null,
-                    PhoneEventData.STATE_PENDING,
+                    STATE_PENDING,
                     "device",
                     PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
@@ -401,7 +404,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     null,
-                    PhoneEventData.STATE_PENDING,
+                    STATE_PENDING,
                     "device",
                     PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
@@ -417,7 +420,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 1",
-                    PhoneEventData.STATE_PENDING,
+                    STATE_PENDING,
                     "device",
                     PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
@@ -433,7 +436,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 2",
-                    PhoneEventData.STATE_PENDING,
+                    STATE_PENDING,
                     "device",
                     PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
@@ -449,7 +452,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 3",
-                    PhoneEventData.STATE_PENDING,
+                    STATE_PENDING,
                     "device",
                     PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
@@ -465,7 +468,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 4",
-                    PhoneEventData.STATE_PENDING,
+                    STATE_PENDING,
                     "device",
                     PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
@@ -481,7 +484,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 5",
-                    PhoneEventData.STATE_PENDING,
+                    STATE_PENDING,
                     "device",
                     PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
@@ -530,7 +533,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 1",
-                    PhoneEventData.STATE_PROCESSED,
+                    STATE_PROCESSED,
                     "device",
                     PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
@@ -546,7 +549,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     null,
-                    PhoneEventData.STATE_PROCESSED,
+                    STATE_PROCESSED,
                     "device",
                     PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
@@ -562,7 +565,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     null,
-                    PhoneEventData.STATE_PROCESSED,
+                    STATE_PROCESSED,
                     "device",
                     PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
@@ -578,7 +581,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     null,
-                    PhoneEventData.STATE_IGNORED,
+                    STATE_IGNORED,
                     "device",
                     PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
@@ -594,7 +597,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     null,
-                    PhoneEventData.STATE_IGNORED,
+                    STATE_IGNORED,
                     "device",
                     PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
@@ -610,7 +613,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 1",
-                    PhoneEventData.STATE_PENDING,
+                    STATE_PENDING,
                     "device",
                     PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
@@ -626,7 +629,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 2",
-                    PhoneEventData.STATE_PENDING,
+                    STATE_PENDING,
                     "device",
                     PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
@@ -642,7 +645,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 3",
-                    PhoneEventData.STATE_PENDING,
+                    STATE_PENDING,
                     "device",
                     PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
@@ -658,7 +661,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 4",
-                    PhoneEventData.STATE_PENDING,
+                    STATE_PENDING,
                     "device",
                     PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
@@ -674,7 +677,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     null,
                     "Test 10",
-                    PhoneEventData.STATE_PENDING,
+                    STATE_PENDING,
                     "device",
                     PhoneEventData.STATUS_ACCEPTED,
                     isRead = false
