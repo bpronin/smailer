@@ -9,12 +9,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
-import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATE_IGNORED
-import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_NUMBER_BLACKLISTED
 import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_TEXT_BLACKLISTED
 import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_TRIGGER_OFF
 import com.bopr.android.smailer.R
+import com.bopr.android.smailer.provider.EventState.Companion.STATE_IGNORED
+import com.bopr.android.smailer.provider.EventState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.util.*
 
 /**
@@ -32,8 +32,8 @@ class HistoryDetailsDialogFragment(private val event: PhoneEventData) : BaseDial
                     findViewById<TextView>(R.id.text_title).text = event.phone
                     findViewById<TextView>(R.id.text_message).text = formatMessage(event)
                     findViewById<TextView>(R.id.text_time).text = formatTime(event.startTime)
-                    findViewById<ImageView>(R.id.image_event_result).setImageResource(eventStateImage(event))
-                    findViewById<TextView>(R.id.text_result).setText(eventStateText(event))
+                    findViewById<ImageView>(R.id.image_event_result).setImageResource(eventStateImage(event.state))
+                    findViewById<TextView>(R.id.text_result).setText(eventStateText(event.state))
                     findViewById<TextView>(R.id.text_type_title).setText(eventTypeText(event))
                     findViewById<TextView>(R.id.text_recipient).text = event.acceptor
                     findViewById<TextView>(R.id.text_result_time).run {

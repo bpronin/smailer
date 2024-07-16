@@ -26,7 +26,7 @@ class BatteryLevelReceiver : BroadcastReceiver() {
 
             if (Settings(context).getBoolean(Settings.PREF_PROCESS_BATTERY_LEVEL)) {
                 val data = BatteryLevelData("low battery")
-                val event = Event(data)
+                val event = Event(payload = data)
                 EventDispatcher(context).dispatch(event)
             }
         }

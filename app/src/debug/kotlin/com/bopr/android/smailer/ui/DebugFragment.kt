@@ -55,10 +55,10 @@ import com.bopr.android.smailer.external.Firebase.Companion.FCM_REQUEST_DATA_SYN
 import com.bopr.android.smailer.external.GoogleDrive
 import com.bopr.android.smailer.external.GoogleMail
 import com.bopr.android.smailer.external.Telegram
+import com.bopr.android.smailer.provider.EventState.Companion.STATE_IGNORED
+import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
+import com.bopr.android.smailer.provider.EventState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
-import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATE_IGNORED
-import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATE_PENDING
-import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_ACCEPTED
 import com.bopr.android.smailer.provider.telephony.PhoneEventProcessor
 import com.bopr.android.smailer.provider.telephony.PhoneEventProcessorWorker.Companion.startPhoneEventProcessing

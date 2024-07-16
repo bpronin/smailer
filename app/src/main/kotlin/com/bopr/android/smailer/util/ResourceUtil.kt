@@ -5,6 +5,10 @@ import android.content.res.Resources
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.bopr.android.smailer.R
+import com.bopr.android.smailer.provider.EventState
+import com.bopr.android.smailer.provider.EventState.Companion.STATE_IGNORED
+import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
+import com.bopr.android.smailer.provider.EventState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import java.util.Locale
 
@@ -63,16 +67,16 @@ fun eventDirectionImage(event: PhoneEventData): Int {
 }
 
 @DrawableRes
-fun eventStateImage(event: PhoneEventData): Int {
+fun eventStateImage(@EventState state: Int): Int {
     /* do not use direct drawable resources references here due to shrinker issue */
-    return when (event.state) {
-        PhoneEventData.STATE_PENDING ->
+    return when (state) {
+        STATE_PENDING ->
             RES_STATE_IMAGE[0]
 
-        PhoneEventData.STATE_PROCESSED ->
+        STATE_PROCESSED ->
             RES_STATE_IMAGE[1]
 
-        PhoneEventData.STATE_IGNORED ->
+        STATE_IGNORED ->
             RES_STATE_IMAGE[2]
 
         else ->
@@ -115,15 +119,15 @@ fun eventTypePrefix(event: PhoneEventData): Int {
 }
 
 @StringRes
-fun eventStateText(event: PhoneEventData): Int {
-    return when (event.state) {
-        PhoneEventData.STATE_PENDING ->
+fun eventStateText(@EventState state: Int): Int {
+    return when (state) {
+        STATE_PENDING ->
             R.string.pending
 
-        PhoneEventData.STATE_PROCESSED ->
+        STATE_PROCESSED ->
             R.string.processed
 
-        PhoneEventData.STATE_IGNORED ->
+        STATE_IGNORED ->
             R.string.ignored
 
         else ->

@@ -1,10 +1,10 @@
 package com.bopr.android.smailer.provider.telephony
 
 import android.os.Parcelable
-import androidx.annotation.IntDef
+import com.bopr.android.smailer.provider.EventState
+import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
 import com.bopr.android.smailer.util.GeoCoordinates
 import kotlinx.parcelize.Parcelize
-import kotlin.annotation.AnnotationRetention.SOURCE
 
 /**
  * Represents phone call or SMS event.
@@ -34,19 +34,11 @@ data class PhoneEventData(
     val callDuration: Long?
         get() = endTime?.minus(startTime)
 
-    @Retention(SOURCE)
-    @IntDef(STATE_PENDING, STATE_PROCESSED, STATE_IGNORED)
-    annotation class EventState
-
     companion object {
 
         const val STATUS_ACCEPTED = 0
         const val STATUS_NUMBER_BLACKLISTED = 1
         const val STATUS_TEXT_BLACKLISTED = 1 shl 1
         const val STATUS_TRIGGER_OFF = 1 shl 2
-
-        const val STATE_PENDING = 0
-        const val STATE_PROCESSED = 1
-        const val STATE_IGNORED = 2
     }
 }

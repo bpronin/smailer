@@ -23,9 +23,9 @@ import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.data.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.data.StringDataset
+import com.bopr.android.smailer.provider.EventState.Companion.STATE_IGNORED
+import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
-import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATE_IGNORED
-import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATE_PENDING
 import com.bopr.android.smailer.provider.telephony.PhoneEventProcessor
 import com.bopr.android.smailer.ui.HistoryFragment.Holder
 import com.bopr.android.smailer.util.addOnItemSwipedListener
@@ -162,7 +162,7 @@ class HistoryFragment : RecyclerFragment<PhoneEventData, Holder>() {
         holder.phoneView.text = item.phone
         holder.typeView.setImageResource(eventTypeImage(item))
         holder.directionView.setImageResource(eventDirectionImage(item))
-        holder.stateView.setImageResource(eventStateImage(item))
+        holder.stateView.setImageResource(eventStateImage(item.state))
 
         if (!item.isRead) {
             holder.phoneView.setTextColor(unreadItemTextColor)

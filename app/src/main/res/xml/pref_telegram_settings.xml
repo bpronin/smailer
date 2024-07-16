@@ -14,6 +14,33 @@
 
     </androidx.preference.PreferenceCategory>
 
+    <androidx.preference.PreferenceCategory android:title="@string/message_content">
+        <androidx.preference.CheckBoxPreference
+                android:key="telegram_message_show_header"
+                android:title="@string/header" />
+
+        <androidx.preference.CheckBoxPreference
+                android:key="telegram_message_show_event_time"
+                android:title="@string/event_time" />
+
+        <androidx.preference.CheckBoxPreference
+                android:key="telegram_message_show_dispatch_time"
+                android:title="@string/dispatch_time" />
+
+        <androidx.preference.CheckBoxPreference
+                android:key="telegram_message_show_caller"
+                android:title="@string/caller_name" />
+
+        <androidx.preference.CheckBoxPreference
+                android:key="telegram_message_show_location"
+                android:title="@string/device_location" />
+
+        <androidx.preference.CheckBoxPreference
+                android:key="telegram_message_show_device_name"
+                android:title="@string/device_name" />
+
+    </androidx.preference.PreferenceCategory>
+
     <androidx.preference.PreferenceCategory>
 
         <androidx.preference.Preference

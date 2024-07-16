@@ -197,6 +197,12 @@
     <string name="off">Выключено</string>
     <string name="settings">Параметры</string>
     <string name="low_battery_level">Низкий уровень батареи</string>
+    <string name="message_content">Содержание сообщения</string>
+    <string name="event_time">Время события</string>
+    <string name="dispatch_time">Время обработки</string>
+    <string name="device_location">Координаты устройства</string>
+    <string name="header">Заголовок</string>
+    <string name="caller_name">Имя звонившего</string>
 
     <plurals name="items_removed">
         <item quantity="one">%d запись удалена</item>

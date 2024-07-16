@@ -3,8 +3,8 @@ package com.bopr.android.smailer.data
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteOpenHelper
+import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
-import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATE_PENDING
 import com.bopr.android.smailer.util.GeoCoordinates
 import com.bopr.android.smailer.util.strings
 import org.slf4j.LoggerFactory

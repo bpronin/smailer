@@ -6,10 +6,10 @@ import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_SHOW_CALLER
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_SHOW_DEVICE_NAME
+import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_SHOW_DISPATCH_TIME
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_SHOW_EVENT_TIME
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_SHOW_HEADER
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_SHOW_LOCATION
-import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_SHOW_PROCESS_TIME
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import com.bopr.android.smailer.util.eventTypeText
 import com.bopr.android.smailer.util.formatDuration
@@ -120,7 +120,7 @@ class TelegramPhoneEventFormatter(private val context: Context, private val even
     }
 
     private fun getProcessTimeText(): String {
-        return if (settings.getBoolean(PREF_TELEGRAM_MESSAGE_SHOW_PROCESS_TIME)) {
+        return if (settings.getBoolean(PREF_TELEGRAM_MESSAGE_SHOW_DISPATCH_TIME)) {
             string(R.string._at_time, timeFormat.format(event.processTime))
         } else ""
     }

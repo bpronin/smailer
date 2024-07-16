@@ -37,7 +37,7 @@ class Settings(context: Context) :
         putBooleanIfNotExists(PREF_TELEGRAM_MESSAGE_SHOW_CALLER, false)
         putBooleanIfNotExists(PREF_TELEGRAM_MESSAGE_SHOW_DEVICE_NAME, false)
         putBooleanIfNotExists(PREF_TELEGRAM_MESSAGE_SHOW_EVENT_TIME, false)
-        putBooleanIfNotExists(PREF_TELEGRAM_MESSAGE_SHOW_PROCESS_TIME, false)
+        putBooleanIfNotExists(PREF_TELEGRAM_MESSAGE_SHOW_DISPATCH_TIME, false)
         putBooleanIfNotExists(PREF_TELEGRAM_MESSAGE_SHOW_LOCATION, false)
         putBooleanIfNotExists(PREF_PROCESS_BATTERY_LEVEL, false)
     }
@@ -67,7 +67,7 @@ class Settings(context: Context) :
         const val PREF_TELEGRAM_BOT_TOKEN = "telegram_bot_token"
         const val PREF_TELEGRAM_MESSAGE_SHOW_DEVICE_NAME = "telegram_message_show_device_name"
         const val PREF_TELEGRAM_MESSAGE_SHOW_EVENT_TIME = "telegram_message_show_event_time"
-        const val PREF_TELEGRAM_MESSAGE_SHOW_PROCESS_TIME = "telegram_message_show_process_time"
+        const val PREF_TELEGRAM_MESSAGE_SHOW_DISPATCH_TIME = "telegram_message_show_dispatch_time"
         const val PREF_TELEGRAM_MESSAGE_SHOW_LOCATION = "telegram_message_show_location"
         const val PREF_TELEGRAM_MESSAGE_SHOW_HEADER = "telegram_message_show_header"
         const val PREF_TELEGRAM_MESSAGE_SHOW_CALLER = "telegram_message_show_caller"

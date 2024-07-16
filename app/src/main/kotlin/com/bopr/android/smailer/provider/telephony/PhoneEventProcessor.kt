@@ -7,9 +7,9 @@ import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.processor.EventDispatcher
 import com.bopr.android.smailer.provider.Event
-import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATE_IGNORED
-import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATE_PENDING
-import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATE_PROCESSED
+import com.bopr.android.smailer.provider.EventState.Companion.STATE_IGNORED
+import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
+import com.bopr.android.smailer.provider.EventState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_ACCEPTED
 import com.bopr.android.smailer.util.GeoLocator
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
@@ -96,7 +96,7 @@ class PhoneEventProcessor(
 
     private fun sendMessage(data: PhoneEventData): Boolean {
         return try {
-            eventDispatcher.dispatch(Event(data))
+            eventDispatcher.dispatch(Event(payload = data))
 
             log.debug("Event message sent")
 
