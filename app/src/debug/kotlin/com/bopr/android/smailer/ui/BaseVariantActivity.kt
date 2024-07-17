@@ -12,14 +12,13 @@ import com.bopr.android.smailer.R
 import kotlin.reflect.KClass
 
 /**
- * Main application activity. Individual in different build variants.
+ * Base application activity. Specific in different build variants.
  *
- * For DEBUG build variant.
+ * For DEBUG build variant. With debug features.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-abstract class BaseMainActivity(fragmentClass: KClass<out Fragment>) :
-    BaseAppActivity(fragmentClass) {
+open class BaseVariantActivity(value: KClass<out Fragment>) : BaseActivity(value) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,5 +65,4 @@ abstract class BaseMainActivity(fragmentClass: KClass<out Fragment>) :
                 false
         }
     }
-
 }

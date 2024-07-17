@@ -2,7 +2,7 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <androidx.preference.SwitchPreference
-            android:key="telegram_messenger_enabled"
+            android:key="pref_telegram_messenger_enabled"
             android:icon="@drawable/ic_telegram"
             android:title="@string/enabled" />
 
@@ -13,33 +13,13 @@
                 android:title="@string/telegram_bot_token" />
 
     </androidx.preference.PreferenceCategory>
-
-    <androidx.preference.PreferenceCategory android:title="@string/message_content">
-        <androidx.preference.CheckBoxPreference
-                android:key="telegram_message_show_header"
-                android:title="@string/header" />
-
-        <androidx.preference.CheckBoxPreference
-                android:key="telegram_message_show_event_time"
-                android:title="@string/event_time" />
-
-        <androidx.preference.CheckBoxPreference
-                android:key="telegram_message_show_dispatch_time"
-                android:title="@string/dispatch_time" />
-
-        <androidx.preference.CheckBoxPreference
-                android:key="telegram_message_show_caller"
-                android:title="@string/caller_name" />
-
-        <androidx.preference.CheckBoxPreference
-                android:key="telegram_message_show_location"
-                android:title="@string/device_location" />
-
-        <androidx.preference.CheckBoxPreference
-                android:key="telegram_message_show_device_name"
-                android:title="@string/device_name" />
-
-    </androidx.preference.PreferenceCategory>
+                                                                        Db
+    <androidx.preference.MultiSelectListPreference
+            android:dialogTitle="@string/message_content"
+            android:entries="@array/telegram_message_content_names"
+            android:entryValues="@array/telegram_message_content_values"
+            android:key="pref_telegram_message_content"
+            android:title="@string/message_content" />
 
     <androidx.preference.PreferenceCategory>
 

@@ -9,6 +9,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.NotificationManager.IMPORTANCE_LOW
 import android.app.PendingIntent
+import android.app.PendingIntent.*
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
@@ -190,7 +191,7 @@ class NotificationsHelper(private val context: Context) {
     private fun activityIntent(activityClass: KClass<out Activity>): PendingIntent {
         return TaskStackBuilder.create(context)
             .addNextIntentWithParentStack(Intent(context, activityClass.java))
-            .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)!!
+            .getPendingIntent(0, FLAG_UPDATE_CURRENT or FLAG_IMMUTABLE)!!
     }
 
     companion object {

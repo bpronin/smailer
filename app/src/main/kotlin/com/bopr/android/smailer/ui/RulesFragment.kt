@@ -14,6 +14,9 @@ import com.bopr.android.smailer.data.Database.Companion.TABLE_TEXT_BLACKLIST
 import com.bopr.android.smailer.data.Database.Companion.TABLE_TEXT_WHITELIST
 import com.bopr.android.smailer.data.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.data.Database.Companion.unregisterDatabaseListener
+import com.bopr.android.smailer.util.SUMMARY_STYLE_ACCENTED
+import com.bopr.android.smailer.util.SUMMARY_STYLE_DEFAULT
+import com.bopr.android.smailer.util.updateSummary
 
 /**
  * Rules settings fragment.
@@ -58,7 +61,6 @@ class RulesFragment : BasePreferenceFragment() {
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        super.onSharedPreferenceChanged(sharedPreferences, key)
         if (key == PREF_EMAIL_TRIGGERS) {
             updateTriggersPreferenceView()
         }

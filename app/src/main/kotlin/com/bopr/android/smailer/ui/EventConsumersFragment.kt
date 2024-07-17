@@ -6,6 +6,7 @@ import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSENGER_ENABLED
 import com.bopr.android.smailer.util.onOffText
+import com.bopr.android.smailer.util.updateSummary
 
 /**
  * Event consumers settings fragment.
@@ -26,7 +27,6 @@ class EventConsumersFragment : BasePreferenceFragment() {
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        super.onSharedPreferenceChanged(sharedPreferences, key)
         when (key) {
             PREF_EMAIL_MESSENGER_ENABLED ->
                 updateEmailPreferenceView()

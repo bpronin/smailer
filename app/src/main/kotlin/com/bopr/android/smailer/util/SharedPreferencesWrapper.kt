@@ -2,6 +2,7 @@ package com.bopr.android.smailer.util
 
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import androidx.annotation.StringRes
 
 /* Must be subclass of SharedPreferences! Otherwise it leads to unpredictable results */
 open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPreferences) :
@@ -127,21 +128,21 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
             return this
         }
 
-        fun putStringIfNotExists(key: String, value: String?): EditorWrapper {
+        fun putOptString(key: String, value: String?): EditorWrapper {
             if (!contains(key)) {
                 putString(key, value)
             }
             return this
         }
 
-        fun putStringSetIfNotExists(key: String, values: Set<String>?): EditorWrapper {
+        fun putOptStringSet(key: String, values: Set<String>?): EditorWrapper {
             if (!contains(key)) {
                 putStringSet(key, values)
             }
             return this
         }
 
-        fun putBooleanIfNotExists(key: String, value: Boolean): EditorWrapper {
+        fun putOptBoolean(key: String, value: Boolean): EditorWrapper {
             if (!contains(key)) {
                 putBoolean(key, value)
             }

@@ -5,4 +5,4 @@ package com.bopr.android.smailer.ui
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class MoreOptionsActivity : BaseAppActivity(MoreOptionsFragment::class)
+class MoreOptionsActivity : BaseFlavorActivity(MoreOptionsFragment::class)

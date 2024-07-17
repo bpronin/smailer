@@ -13,10 +13,14 @@ import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.processor.mail.MailMessage
 import com.bopr.android.smailer.external.GoogleMail
 import com.bopr.android.smailer.util.DEVICE_NAME
+import com.bopr.android.smailer.util.SUMMARY_STYLE_ACCENTED
+import com.bopr.android.smailer.util.SUMMARY_STYLE_DEFAULT
+import com.bopr.android.smailer.util.SUMMARY_STYLE_UNDERWIVED
 import com.bopr.android.smailer.util.commaSplit
 import com.bopr.android.smailer.util.onOffText
 import com.bopr.android.smailer.util.runLongTask
 import com.bopr.android.smailer.util.showToast
+import com.bopr.android.smailer.util.updateSummary
 import com.google.api.services.drive.DriveScopes.DRIVE_APPDATA
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 
@@ -67,7 +71,6 @@ class EmailSettingsFragment : BasePreferenceFragment() {
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        super.onSharedPreferenceChanged(sharedPreferences, key)
         when (key) {
             PREF_MESSAGE_LOCALE ->
                 updateLocalePreferenceView()

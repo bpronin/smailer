@@ -8,13 +8,13 @@ import android.text.TextUtils.htmlEncode
 import androidx.annotation.StringRes
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.DEFAULT_PHONE_SEARCH_URL
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_CONTACT
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_HEADER
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_LOCATION
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_HEADER
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCATION
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_EVENT_TIME
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import com.bopr.android.smailer.util.checkPermission
 import com.bopr.android.smailer.util.escapePhone
@@ -104,7 +104,7 @@ class MailPhoneEventFormatter(
     }
 
     private fun formatHeader(): String {
-        return if (options.contains(VAL_PREF_EMAIL_CONTENT_HEADER)) {
+        return if (options.contains(VAL_PREF_MESSAGE_CONTENT_HEADER)) {
             return "<strong $HEADER_STYLE>${string(eventTypeText(event))}</strong><br><br>"
         } else ""
     }
@@ -139,7 +139,7 @@ class MailPhoneEventFormatter(
     }
 
     private fun formatCaller(): String {
-        if (options.contains(VAL_PREF_EMAIL_CONTENT_CONTACT)) {
+        if (options.contains(VAL_PREF_MESSAGE_CONTENT_CALLER)) {
             val telLink = "<a href=\"tel:${event.phone.httpEncoded()}\"" +
                     " style=\"text-decoration: none;\">&#9742;</a>${event.phone}"
 
@@ -171,25 +171,25 @@ class MailPhoneEventFormatter(
     }
 
     private fun formatEventTime(): String {
-        return if (options.contains(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME)) {
+        return if (options.contains(VAL_PREF_MESSAGE_CONTENT_EVENT_TIME)) {
             string(R.string.time_time, timeFormat.format(Date(event.startTime)))
         } else ""
     }
 
     private fun formatSendTime(): String {
-        return if (options.contains(VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT) && event.processTime != null) {
+        return if (options.contains(VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME) && event.processTime != null) {
             string(R.string._at_time, timeFormat.format(event.processTime))
         } else ""
     }
 
     private fun formatDeviceName(): String {
-        return if (options.contains(VAL_PREF_EMAIL_CONTENT_DEVICE_NAME) && !deviceName.isNullOrEmpty()) {
+        return if (options.contains(VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME) && !deviceName.isNullOrEmpty()) {
             string(R.string._from_device, deviceName)
         } else ""
     }
 
     private fun formatLocation(): String {
-        return if (options.contains(VAL_PREF_EMAIL_CONTENT_LOCATION)) {
+        return if (options.contains(VAL_PREF_MESSAGE_CONTENT_LOCATION)) {
             val coordinates = event.location
             return if (coordinates != null) {
                 val lt = coordinates.latitude
@@ -211,7 +211,7 @@ class MailPhoneEventFormatter(
     }
 
     private fun formatReplyLinks(): String {
-        return if (options.contains(VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS)
+        return if (options.contains(VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS)
             && !serviceAccount.isNullOrEmpty()
         ) {
 

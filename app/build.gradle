@@ -82,8 +82,9 @@ android {
             shrinkResources false
             minifyEnabled false
             manifestPlaceholders = [crashlyticsEnabled: "false"]
+            getIsDefault().set(true)
         }
-        staging {
+        staging /* minified debug */ {
             signingConfig signingConfigs.debug
             shrinkResources true
             minifyEnabled true
@@ -102,6 +103,7 @@ android {
     productFlavors {
         paid {
             dimension "main"
+            getIsDefault().set(true)
         }
         free {
             dimension "main"

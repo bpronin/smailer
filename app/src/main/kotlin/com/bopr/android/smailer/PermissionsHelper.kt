@@ -13,13 +13,13 @@ import androidx.activity.result.contract.ActivityResultContracts.RequestMultiple
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.FragmentActivity
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSAGE_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_CONTACT
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_LOCATION
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCATION
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
@@ -87,12 +87,12 @@ class PermissionsHelper(val activity: FragmentActivity) {
                 }
             }
 
-            PREF_EMAIL_CONTENT -> {
-                val content = settings.getStringSet(PREF_EMAIL_CONTENT)
-                if (content.contains(VAL_PREF_EMAIL_CONTENT_CONTACT)) {
+            PREF_EMAIL_MESSAGE_CONTENT -> {
+                val content = settings.getStringSet(PREF_EMAIL_MESSAGE_CONTENT)
+                if (content.contains(VAL_PREF_MESSAGE_CONTENT_CALLER)) {
                     requiredPermissions.add(READ_CONTACTS)
                 }
-                if (content.contains(VAL_PREF_EMAIL_CONTENT_LOCATION)) {
+                if (content.contains(VAL_PREF_MESSAGE_CONTENT_LOCATION)) {
                     requiredPermissions.add(ACCESS_COARSE_LOCATION)
                     requiredPermissions.add(ACCESS_FINE_LOCATION)
                 }
@@ -108,9 +108,9 @@ class PermissionsHelper(val activity: FragmentActivity) {
         /* set default accounts at startup */
         settings.update {
             val accountName = accountHelper.getPrimaryGoogleAccount()?.name
-            putStringIfNotExists(PREF_EMAIL_SENDER_ACCOUNT, accountName)
-            putStringIfNotExists(PREF_RECIPIENTS_ADDRESS, accountName)
-            putStringIfNotExists(PREF_REMOTE_CONTROL_ACCOUNT, accountName)
+            putOptString(PREF_EMAIL_SENDER_ACCOUNT, accountName)
+            putOptString(PREF_RECIPIENTS_ADDRESS, accountName)
+            putOptString(PREF_REMOTE_CONTROL_ACCOUNT, accountName)
         }
     }
 
@@ -119,7 +119,7 @@ class PermissionsHelper(val activity: FragmentActivity) {
 
         if (deniedPermissions.isNotEmpty()) {
             val triggers = settings.getEmailTriggers()
-            val content = settings.getStringSet(PREF_EMAIL_CONTENT)
+            val content = settings.getStringSet(PREF_EMAIL_MESSAGE_CONTENT)
 
             if (deniedPermissions.contains(RECEIVE_SMS)) {
                 triggers.remove(VAL_PREF_TRIGGER_IN_SMS)
@@ -135,17 +135,17 @@ class PermissionsHelper(val activity: FragmentActivity) {
                 triggers.remove(VAL_PREF_TRIGGER_MISSED_CALLS)
             }
             if (deniedPermissions.contains(READ_CONTACTS)) {
-                content.remove(VAL_PREF_EMAIL_CONTENT_CONTACT)
+                content.remove(VAL_PREF_MESSAGE_CONTENT_CALLER)
             }
             if (deniedPermissions.contains(ACCESS_COARSE_LOCATION)
                 || deniedPermissions.contains(ACCESS_FINE_LOCATION)
             ) {
-                content.remove(VAL_PREF_EMAIL_CONTENT_LOCATION)
+                content.remove(VAL_PREF_MESSAGE_CONTENT_LOCATION)
             }
 
             settings.update {
                 putStringSet(PREF_EMAIL_TRIGGERS, triggers)
-                putStringSet(PREF_EMAIL_CONTENT, content)
+                putStringSet(PREF_EMAIL_MESSAGE_CONTENT, content)
             }
         }
     }

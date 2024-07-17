@@ -4,12 +4,13 @@ import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_DEVICE_ALIAS
-import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_SHOW_CALLER
-import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_SHOW_DEVICE_NAME
-import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_SHOW_DISPATCH_TIME
-import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_SHOW_HEADER
-import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_SHOW_EVENT_TIME
-import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_SHOW_LOCATION
+import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_CONTENT
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_BODY
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_EVENT_TIME
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCATION
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import com.bopr.android.smailer.util.GeoCoordinates
 import org.junit.Assert.assertEquals
@@ -31,12 +32,36 @@ class TelegramPhoneEventFormatterTest : BaseTest() {
     fun testAllOptionsOff() {
         Settings(targetContext).update {
             clear()
-            putBoolean(PREF_TELEGRAM_MESSAGE_SHOW_HEADER, false)
-            putBoolean(PREF_TELEGRAM_MESSAGE_SHOW_CALLER, false)
-            putBoolean(PREF_TELEGRAM_MESSAGE_SHOW_DEVICE_NAME, false)
-            putBoolean(PREF_TELEGRAM_MESSAGE_SHOW_EVENT_TIME, false)
-            putBoolean(PREF_TELEGRAM_MESSAGE_SHOW_DISPATCH_TIME, false)
-            putBoolean(PREF_TELEGRAM_MESSAGE_SHOW_LOCATION, false)
+            putStringList(
+                PREF_TELEGRAM_MESSAGE_CONTENT, emptySet()
+            )
+            putString(PREF_DEVICE_ALIAS, "My Device")
+        }
+
+        val event = PhoneEventData(
+            phone = "+12345678901",
+            isIncoming = true,
+            startTime = testTime,
+            text = "Message text",
+            location = testCoordinates,
+            processTime = testTime,
+            acceptor = "device"
+        )
+
+        val formatter = TelegramPhoneEventFormatter(targetContext, event)
+
+        assertEquals("", formatter.formatMessage())
+    }
+
+    @Test
+    fun testDefaultOptions() {
+        Settings(targetContext).update {
+            clear()
+            putStringList(
+                PREF_TELEGRAM_MESSAGE_CONTENT, setOf(
+                    VAL_PREF_MESSAGE_CONTENT_BODY
+                )
+            )
             putString(PREF_DEVICE_ALIAS, "My Device")
         }
 
@@ -59,13 +84,20 @@ class TelegramPhoneEventFormatterTest : BaseTest() {
     fun testAllOptionsOn() {
         Settings(targetContext).update {
             clear()
-            putBoolean(PREF_TELEGRAM_MESSAGE_SHOW_HEADER, true)
-            putBoolean(PREF_TELEGRAM_MESSAGE_SHOW_CALLER, true)
-            putBoolean(PREF_TELEGRAM_MESSAGE_SHOW_DEVICE_NAME, true)
-            putBoolean(PREF_TELEGRAM_MESSAGE_SHOW_EVENT_TIME, true)
-            putBoolean(PREF_TELEGRAM_MESSAGE_SHOW_DISPATCH_TIME, true)
-            putBoolean(PREF_TELEGRAM_MESSAGE_SHOW_LOCATION, true)
-            putString(PREF_DEVICE_ALIAS, "My Device")
+            putStringList(
+                PREF_TELEGRAM_MESSAGE_CONTENT,
+                setOf(
+                    VAL_PREF_MESSAGE_CONTENT_CALLER,
+                    VAL_PREF_MESSAGE_CONTENT_LOCATION,
+                    VAL_PREF_MESSAGE_CONTENT_BODY,
+                    VAL_PREF_MESSAGE_CONTENT_EVENT_TIME,
+                    VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME,
+                    VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME
+                )
+            )
+            putString(
+                PREF_DEVICE_ALIAS, "My Device"
+            )
         }
 
         val event = PhoneEventData(

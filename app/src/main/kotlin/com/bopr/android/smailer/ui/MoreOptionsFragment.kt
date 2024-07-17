@@ -8,6 +8,7 @@ import com.bopr.android.smailer.Settings.Companion.DEFAULT_PHONE_SEARCH_URL
 import com.bopr.android.smailer.Settings.Companion.PREF_DEVICE_ALIAS
 import com.bopr.android.smailer.Settings.Companion.PREF_PHONE_SEARCH_URL
 import com.bopr.android.smailer.util.DEVICE_NAME
+import com.bopr.android.smailer.util.updateSummary
 
 /**
  * More options fragment.
@@ -50,7 +51,6 @@ class MoreOptionsFragment : BasePreferenceFragment() {
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        super.onSharedPreferenceChanged(sharedPreferences, key)
         when (key) {
             PREF_DEVICE_ALIAS ->
                 updateDeviceNamePreferenceView()

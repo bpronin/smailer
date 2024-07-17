@@ -8,13 +8,13 @@ import com.google.android.gms.ads.AdView
 import kotlin.reflect.KClass
 
 /**
- * Base application activity. Individual in different build variants.
+ * Base application activity. specific in different build variants.
  *
- * For FREE build variant
+ * For FREE build variant. With ads.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-abstract class BaseAppActivity(fragmentClass: KClass<out Fragment>) : BaseActivity(fragmentClass) {
+abstract class BaseFlavorActivity(fragmentClass: KClass<out Fragment>) : BaseActivity(fragmentClass) {
 
     private lateinit var adView: AdView
 

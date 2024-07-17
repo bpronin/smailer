@@ -1,8 +1,11 @@
 package com.bopr.android.smailer.ui
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import com.bopr.android.smailer.R
 import kotlin.reflect.KClass
@@ -19,6 +22,7 @@ abstract class BaseActivity(private val fragmentClass: KClass<out Fragment>) : A
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHomeButtonEnabled(true)
+        addMenuProvider(TheMenuProvider())
         setContentView(R.layout.activity_default)
 
         val fragmentManager = supportFragmentManager
@@ -45,5 +49,20 @@ abstract class BaseActivity(private val fragmentClass: KClass<out Fragment>) : A
     }
 
     protected fun requireFragment() = requireNotNull(fragment)
+
+    inner class TheMenuProvider : MenuProvider {
+
+        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            menuInflater.inflate(R.menu.menu_main, menu)
+        }
+
+        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+            return if (menuItem.itemId == R.id.action_about) {
+                AboutDialogFragment().show(this@BaseActivity)
+                true
+            } else
+                false
+        }
+    }
 
 }

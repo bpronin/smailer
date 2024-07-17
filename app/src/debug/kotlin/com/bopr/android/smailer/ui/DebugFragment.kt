@@ -19,6 +19,7 @@ import android.telephony.SmsManager.RESULT_ERROR_RADIO_OFF
 import android.text.InputType
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
+import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
 import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.NotificationsHelper
@@ -26,27 +27,28 @@ import com.bopr.android.smailer.NotificationsHelper.Companion.RECIPIENTS_ERROR
 import com.bopr.android.smailer.NotificationsHelper.Companion.REMOTE_ACCOUNT_ERROR
 import com.bopr.android.smailer.NotificationsHelper.Companion.SENDER_ACCOUNT_ERROR
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_CONTENT
+import com.bopr.android.smailer.Settings
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSAGE_CONTENT
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_MESSAGE_LOCALE
 import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_DEFAULT
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_CONTACT
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_HEADER
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_LOCATION
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_EVENT_TIME
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_HEADER
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCATION
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
-import com.bopr.android.smailer.processor.mail.MailMessage
+import com.bopr.android.smailer.Settings.Companion.sharedPreferencesName
 import com.bopr.android.smailer.control.MailControlProcessor
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.databaseName
@@ -55,6 +57,7 @@ import com.bopr.android.smailer.external.Firebase.Companion.FCM_REQUEST_DATA_SYN
 import com.bopr.android.smailer.external.GoogleDrive
 import com.bopr.android.smailer.external.GoogleMail
 import com.bopr.android.smailer.external.Telegram
+import com.bopr.android.smailer.processor.mail.MailMessage
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_PROCESSED
@@ -87,8 +90,9 @@ import java.io.File
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class DebugFragment : BasePreferenceFragment() {
+class DebugFragment : PreferenceFragmentCompat() {
 
+    private lateinit var settings: Settings
     private lateinit var locator: GeoLocator
     private lateinit var database: Database
     private lateinit var authorization: GoogleAuthorizationHelper
@@ -99,10 +103,33 @@ class DebugFragment : BasePreferenceFragment() {
     private val developerEmail by lazy { getString(R.string.developer_email) }
     private val firebase by lazy { Firebase(requireContext()) }
 
-//    private val requestPermissionLauncher =
+    //    private val requestPermissionLauncher =
 //        registerForActivityResult(RequestPermission()) { result: Boolean ->
 //            onPermissionRequestResult(result)
 //        }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        preferenceManager.sharedPreferencesName = sharedPreferencesName
+
+        settings = Settings(requireContext())
+        database = Database(requireContext())
+        locator = GeoLocator(requireContext(), database)
+        authorization = GoogleAuthorizationHelper(
+            requireActivity(), PREF_EMAIL_SENDER_ACCOUNT, MAIL_GOOGLE_COM, DRIVE_APPDATA
+        )
+        notifications = NotificationsHelper(requireContext())
+        accountHelper = AccountHelper(requireContext())
+
+        smsSendStatusReceiver = SentStatusReceiver().also {
+            registerReceiver(it, IntentFilter("SMS_SENT"))
+        }
+
+        smsDeliveryStatusReceiver = DeliveryStatusReceiver().also {
+            registerReceiver(it, IntentFilter("SMS_DELIVERED"))
+        }
+    }
+
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         /* do not use fragment's context. see: https://developer.android.com/guide/topics/ui/settings/programmatic-hierarchy*/
@@ -334,26 +361,6 @@ class DebugFragment : BasePreferenceFragment() {
         )
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        database = Database(requireContext())
-        locator = GeoLocator(requireContext(), database)
-        authorization = GoogleAuthorizationHelper(
-            requireActivity(), PREF_EMAIL_SENDER_ACCOUNT, MAIL_GOOGLE_COM, DRIVE_APPDATA
-        )
-        notifications = NotificationsHelper(requireContext())
-        accountHelper = AccountHelper(requireContext())
-
-        smsSendStatusReceiver = SentStatusReceiver().also {
-            registerReceiver(it, IntentFilter("SMS_SENT"))
-        }
-
-        smsDeliveryStatusReceiver = DeliveryStatusReceiver().also {
-            registerReceiver(it, IntentFilter("SMS_DELIVERED"))
-        }
-    }
-
     override fun onDestroy() {
         unregisterReceiver(smsSendStatusReceiver)
         unregisterReceiver(smsDeliveryStatusReceiver)
@@ -410,14 +417,14 @@ class DebugFragment : BasePreferenceFragment() {
                 )
             )
             putStringSet(
-                PREF_EMAIL_CONTENT, mutableSetOf(
-                    VAL_PREF_EMAIL_CONTENT_CONTACT,
-                    VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
-                    VAL_PREF_EMAIL_CONTENT_LOCATION,
-                    VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT,
-                    VAL_PREF_EMAIL_CONTENT_HEADER,
-                    VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS,
-                    VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME
+                PREF_EMAIL_MESSAGE_CONTENT, mutableSetOf(
+                    VAL_PREF_MESSAGE_CONTENT_CALLER,
+                    VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME,
+                    VAL_PREF_MESSAGE_CONTENT_LOCATION,
+                    VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME,
+                    VAL_PREF_MESSAGE_CONTENT_HEADER,
+                    VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS,
+                    VAL_PREF_MESSAGE_CONTENT_EVENT_TIME
                 )
             )
             putString(PREF_MESSAGE_LOCALE, VAL_PREF_DEFAULT)

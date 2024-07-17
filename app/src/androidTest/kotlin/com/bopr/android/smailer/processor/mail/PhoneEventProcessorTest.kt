@@ -104,10 +104,10 @@ class PhoneEventProcessorTest : BaseTest() {
             }.doReturn(Settings.DEFAULT_TRIGGERS)
             on {
                 getStringSet(
-                    eq(Settings.PREF_EMAIL_CONTENT),
+                    eq(Settings.PREF_EMAIL_MESSAGE_CONTENT),
                     anyOrNull()
                 )
-            }.doReturn(Settings.DEFAULT_EMAIL_CONTENT)
+            }.doReturn(Settings.DEFAULT_EMAIL_MESSAGE_CONTENT)
         }
 
         accountManager = mock {

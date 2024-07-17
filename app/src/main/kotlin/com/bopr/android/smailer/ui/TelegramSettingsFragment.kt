@@ -13,8 +13,11 @@ import com.bopr.android.smailer.external.TelegramException.Code.TELEGRAM_INVALID
 import com.bopr.android.smailer.external.TelegramException.Code.TELEGRAM_NO_CHAT
 import com.bopr.android.smailer.external.TelegramException.Code.TELEGRAM_NO_TOKEN
 import com.bopr.android.smailer.external.TelegramException.Code.TELEGRAM_REQUEST_FAILED
+import com.bopr.android.smailer.util.SUMMARY_STYLE_ACCENTED
+import com.bopr.android.smailer.util.SUMMARY_STYLE_DEFAULT
 import com.bopr.android.smailer.util.onOffText
 import com.bopr.android.smailer.util.showToast
+import com.bopr.android.smailer.util.updateSummary
 
 /**
  * Event consumers settings fragment.
@@ -45,7 +48,6 @@ class TelegramSettingsFragment : BasePreferenceFragment() {
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        super.onSharedPreferenceChanged(sharedPreferences, key)
         when (key) {
             PREF_TELEGRAM_BOT_TOKEN ->
                 updateTelegramBotTokenPreferenceView()

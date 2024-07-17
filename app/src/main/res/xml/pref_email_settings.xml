@@ -28,7 +28,7 @@
                 android:entries="@array/email_content_names"
                 android:entryValues="@array/email_content_values"
                 android:icon="@drawable/ic_content"
-                android:key="email_content"
+                android:key="email_message_content"
                 android:summary="@string/what_email_contains"
                 android:title="@string/email_content" />
 

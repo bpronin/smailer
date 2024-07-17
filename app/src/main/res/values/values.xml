@@ -13,19 +13,29 @@
     </string-array>
 
     <string-array name="email_content_values" translatable="false">
-        <item>header</item>
-        <item>time</item>
-        <item>time_sent</item>
-        <item>contact_name</item>
-        <item>device_name</item>
-        <item>location</item>
-        <item>remote_control_links</item>
+        <item>val_pref_message_content_header</item>
+        <item>val_pref_message_content_event_time</item>
+        <item>val_pref_message_content_dispatch_time</item>
+        <item>val_pref_message_content_caller_name</item>
+        <item>val_pref_message_content_device_name</item>
+        <item>val_pref_message_content_location</item>
+        <item>val_pref_message_content_control_links</item>
     </string-array>
 
     <string-array name="email_locale_values" translatable="false">
         <item>default</item>
         <item>en_US</item>
         <item>ru_RU</item>
+    </string-array>
+
+    <string-array name="telegram_message_content_values" translatable="false">
+        <item>val_pref_message_content_body</item>
+        <item>val_pref_message_content_header</item>
+        <item>val_pref_message_content_event_time</item>
+        <item>val_pref_message_content_dispatch_time</item>
+        <item>val_pref_message_content_caller_name</item>
+        <item>val_pref_message_content_device_name</item>
+        <item>val_pref_message_content_location</item>
     </string-array>
 
 </resources>

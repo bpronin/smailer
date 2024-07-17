@@ -11,9 +11,13 @@ import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_NOTIFICATIONS
 import com.bopr.android.smailer.control.MailControlProcessor
+import com.bopr.android.smailer.util.SUMMARY_STYLE_ACCENTED
+import com.bopr.android.smailer.util.SUMMARY_STYLE_DEFAULT
+import com.bopr.android.smailer.util.SUMMARY_STYLE_UNDERWIVED
 import com.bopr.android.smailer.util.getQuantityString
 import com.bopr.android.smailer.util.runLongTask
 import com.bopr.android.smailer.util.showToast
+import com.bopr.android.smailer.util.updateSummary
 import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
 
 // TODO: 24.02.2019 add help icon for remote control
@@ -54,8 +58,6 @@ class RemoteControlFragment : BasePreferenceFragment() {
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        super.onSharedPreferenceChanged(sharedPreferences, key)
-
         when (key) {
             PREF_REMOTE_CONTROL_ENABLED -> updateEnabledPreferenceView()
 

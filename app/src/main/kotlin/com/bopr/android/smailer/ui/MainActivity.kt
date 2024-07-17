@@ -9,14 +9,14 @@ import com.bopr.android.smailer.AppStartup.startUpAppServices
 import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.PermissionsHelper
 import com.bopr.android.smailer.Settings
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.control.MailControlWorker.Companion.enableMailRemoteControl
+import com.bopr.android.smailer.external.Firebase.Companion.resubscribeToFirebaseMessaging
 import com.bopr.android.smailer.provider.telephony.ContentObserverService.Companion.startContentObserver
 import com.bopr.android.smailer.sync.SyncWorker.Companion.syncAppDataWithGoogleCloud
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_DOWNLOAD
-import com.bopr.android.smailer.external.Firebase.Companion.resubscribeToFirebaseMessaging
 import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
 
 /**
@@ -24,7 +24,7 @@ import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatter
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class MainActivity : BaseMainActivity(MainFragment::class), OnSharedPreferenceChangeListener {
+class MainActivity : BaseFlavorActivity(MainFragment::class), OnSharedPreferenceChangeListener {
 
     private lateinit var settings: Settings
     private lateinit var backupManager: BackupManager

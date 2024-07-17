@@ -10,6 +10,7 @@ import com.bopr.android.smailer.data.Database.Companion.TABLE_PHONE_EVENTS
 import com.bopr.android.smailer.data.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.data.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.util.getQuantityString
+import com.bopr.android.smailer.util.updateSummary
 
 /**
  * Main settings fragment.
@@ -50,8 +51,6 @@ class MainFragment : BasePreferenceFragment() {
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        super.onSharedPreferenceChanged(sharedPreferences, key)
-
         when (key) {
             PREF_REMOTE_CONTROL_ENABLED -> updateRemoteControlPreferenceView()
         }

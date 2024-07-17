@@ -237,6 +237,16 @@
         <item>Device location</item>
         <item>Remote control links</item>
     </string-array>
+    
+    <string-array name="telegram_message_content_names">
+        <item>Body</item>
+        <item>Header</item>
+        <item>Call time</item>
+        <item>Sending time</item>
+        <item>Caller contact name</item>
+        <item>Device name</item>
+        <item>Device location</item>
+    </string-array>
 
     <string-array name="language_names">
         <item>System default</item>

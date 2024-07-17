@@ -8,6 +8,13 @@ import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.HtmlMatcher
 import com.bopr.android.smailer.Settings
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_EVENT_TIME
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_HEADER
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCATION
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import com.bopr.android.smailer.util.GeoCoordinates
 import com.nhaarman.mockitokotlin2.anyOrNull
@@ -68,13 +75,13 @@ class MailPhoneEventFormatterTest : BaseTest() {
             deviceName = "Device",
             serviceAccount = "service@mail.com",
             options = setOf(
-                Settings.VAL_PREF_EMAIL_CONTENT_HEADER,
-                Settings.VAL_PREF_EMAIL_CONTENT_CONTACT,
-                Settings.VAL_PREF_EMAIL_CONTENT_LOCATION,
-                Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
-                Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
-                Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT,
-                Settings.VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS
+                VAL_PREF_MESSAGE_CONTENT_HEADER,
+                VAL_PREF_MESSAGE_CONTENT_CALLER,
+                VAL_PREF_MESSAGE_CONTENT_LOCATION,
+                VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME,
+                VAL_PREF_MESSAGE_CONTENT_EVENT_TIME,
+                VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME,
+                VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS
             )
         )
 
@@ -193,7 +200,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
     }
 
     /**
-     * Check email body footer with [Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME] option switched on.
+     * Check email body footer with [Settings.VAL_PREF_MESSAGE_CONTENT_EVENT_TIME] option switched on.
      */
     @Test
     fun testFooterTimeOption() {
@@ -208,7 +215,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
 
         val formatter = MailPhoneEventFormatter(
             context, event,
-            options = setOf(Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME)
+            options = setOf(VAL_PREF_MESSAGE_CONTENT_EVENT_TIME)
         )
 
         MatcherAssert.assertThat(
@@ -218,7 +225,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
     }
 
     /**
-     * Check email body footer with [Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME] option switched on.
+     * Check email body footer with [Settings.VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME] option switched on.
      */
     @Test
     fun testFooterDeviceNameOption() {
@@ -234,7 +241,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
         val formatter = MailPhoneEventFormatter(
             context, event,
             deviceName = "The Device",
-            options = setOf(Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME)
+            options = setOf(VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME)
         )
 
         MatcherAssert.assertThat(
@@ -244,7 +251,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
     }
 
     /**
-     * Check email body footer with [Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME] option
+     * Check email body footer with [Settings.VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME] option
      * switched on and no devise name specified.
      */
     @Test
@@ -260,7 +267,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
 
         val formatter = MailPhoneEventFormatter(
             context, event,
-            options = setOf(Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME)
+            options = setOf(VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME)
         )
 
         MatcherAssert.assertThat(
@@ -270,8 +277,8 @@ class MailPhoneEventFormatterTest : BaseTest() {
     }
 
     /**
-     * Check email body footer with [Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME] and
-     * [Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME] options switched on.
+     * Check email body footer with [Settings.VAL_PREF_MESSAGE_CONTENT_EVENT_TIME] and
+     * [Settings.VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME] options switched on.
      */
     @Test
     fun testFooterDeviceNameTimeOption() {
@@ -288,8 +295,8 @@ class MailPhoneEventFormatterTest : BaseTest() {
             context, event,
             deviceName = "The Device",
             options = setOf(
-                Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
-                Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME
+                VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME,
+                VAL_PREF_MESSAGE_CONTENT_EVENT_TIME
             )
         )
 
@@ -300,7 +307,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
     }
 
     /**
-     * Check email body footer with [Settings.VAL_PREF_EMAIL_CONTENT_LOCATION] option switched on.
+     * Check email body footer with [Settings.VAL_PREF_MESSAGE_CONTENT_LOCATION] option switched on.
      */
     @Test
     fun testFooterLocation() {
@@ -316,7 +323,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
 
         val formatter = MailPhoneEventFormatter(
             context, event,
-            options = setOf(Settings.VAL_PREF_EMAIL_CONTENT_LOCATION)
+            options = setOf(VAL_PREF_MESSAGE_CONTENT_LOCATION)
         )
 
         MatcherAssert.assertThat(
@@ -326,7 +333,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
     }
 
     /**
-     * Check email body footer with [Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME] option
+     * Check email body footer with [Settings.VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME] option
      * switched on and no location specified in event.
      */
     @Test
@@ -342,7 +349,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
 
         val formatter = MailPhoneEventFormatter(
             context, event,
-            options = setOf(Settings.VAL_PREF_EMAIL_CONTENT_LOCATION)
+            options = setOf(VAL_PREF_MESSAGE_CONTENT_LOCATION)
         )
 
         MatcherAssert.assertThat(
@@ -352,7 +359,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
     }
 
     /**
-     * Check email body footer with [Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME] option
+     * Check email body footer with [Settings.VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME] option
      * switched on and no location permissions.
      */
     @Test
@@ -383,7 +390,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
 
         val formatter = MailPhoneEventFormatter(
             context, event,
-            options = setOf(Settings.VAL_PREF_EMAIL_CONTENT_LOCATION)
+            options = setOf(VAL_PREF_MESSAGE_CONTENT_LOCATION)
         )
 
         MatcherAssert.assertThat(
@@ -393,7 +400,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
     }
 
     /**
-     * Check email body footer with [Settings.VAL_PREF_EMAIL_CONTENT_CONTACT] option switched on.
+     * Check email body footer with [Settings.VAL_PREF_MESSAGE_CONTENT_CALLER] option switched on.
      */
     @Test
     fun testContactName() {
@@ -409,7 +416,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
         val formatter = MailPhoneEventFormatter(
             context, event,
             contactName = "John Dou",
-            options = setOf(Settings.VAL_PREF_EMAIL_CONTENT_CONTACT)
+            options = setOf(VAL_PREF_MESSAGE_CONTENT_CALLER)
         )
 
         MatcherAssert.assertThat(
@@ -419,7 +426,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
     }
 
     /**
-     * Check email body footer with [Settings.VAL_PREF_EMAIL_CONTENT_CONTACT] option switched on
+     * Check email body footer with [Settings.VAL_PREF_MESSAGE_CONTENT_CALLER] option switched on
      * and no permission to read contacts.
      */
     @Test
@@ -443,7 +450,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
 
         val formatter = MailPhoneEventFormatter(
             context, event,
-            options = setOf(Settings.VAL_PREF_EMAIL_CONTENT_CONTACT)
+            options = setOf(VAL_PREF_MESSAGE_CONTENT_CALLER)
         )
 
         MatcherAssert.assertThat(
@@ -453,7 +460,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
     }
 
     /**
-     * Check email body footer with [Settings.VAL_PREF_EMAIL_CONTENT_CONTACT] option switched on
+     * Check email body footer with [Settings.VAL_PREF_MESSAGE_CONTENT_CALLER] option switched on
      * and unknown contact name.
      */
     @Test
@@ -469,7 +476,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
 
         val formatter = MailPhoneEventFormatter(
             context, event,
-            options = setOf(Settings.VAL_PREF_EMAIL_CONTENT_CONTACT)
+            options = setOf(VAL_PREF_MESSAGE_CONTENT_CALLER)
         )
 
         MatcherAssert.assertThat(
@@ -479,7 +486,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
     }
 
     /**
-     * Check email body footer with [Settings.VAL_PREF_EMAIL_CONTENT_CONTACT] option switched on,
+     * Check email body footer with [Settings.VAL_PREF_MESSAGE_CONTENT_CALLER] option switched on,
      *  unknown contact name and custom search URL.
      */
     @Test
@@ -496,7 +503,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
         val formatter = MailPhoneEventFormatter(
             context, event,
             phoneSearchUrl = "https://www.neberitrubku.ru/nomer-telefona/{phone}",
-            options = setOf(Settings.VAL_PREF_EMAIL_CONTENT_CONTACT)
+            options = setOf(VAL_PREF_MESSAGE_CONTENT_CALLER)
         )
 
         MatcherAssert.assertThat(
@@ -584,11 +591,11 @@ class MailPhoneEventFormatterTest : BaseTest() {
             contactName = "John Dou",
             deviceName = "Device",
             options = setOf(
-                Settings.VAL_PREF_EMAIL_CONTENT_CONTACT,
-                Settings.VAL_PREF_EMAIL_CONTENT_LOCATION,
-                Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
-                Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
-                Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT
+                VAL_PREF_MESSAGE_CONTENT_CALLER,
+                VAL_PREF_MESSAGE_CONTENT_LOCATION,
+                VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME,
+                VAL_PREF_MESSAGE_CONTENT_EVENT_TIME,
+                VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME
             )
         )
 
@@ -618,11 +625,11 @@ class MailPhoneEventFormatterTest : BaseTest() {
             contactName = "John Dou",
             deviceName = "Device",
             options = setOf(
-                Settings.VAL_PREF_EMAIL_CONTENT_CONTACT,
-                Settings.VAL_PREF_EMAIL_CONTENT_LOCATION,
-                Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
-                Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
-                Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT
+                VAL_PREF_MESSAGE_CONTENT_CALLER,
+                VAL_PREF_MESSAGE_CONTENT_LOCATION,
+                VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME,
+                VAL_PREF_MESSAGE_CONTENT_EVENT_TIME,
+                VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME
             )
         )
 
@@ -652,11 +659,11 @@ class MailPhoneEventFormatterTest : BaseTest() {
             context, event,
             deviceName = "Device",
             options = setOf(
-                Settings.VAL_PREF_EMAIL_CONTENT_CONTACT,
-                Settings.VAL_PREF_EMAIL_CONTENT_LOCATION,
-                Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
-                Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
-                Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT
+                VAL_PREF_MESSAGE_CONTENT_CALLER,
+                VAL_PREF_MESSAGE_CONTENT_LOCATION,
+                VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME,
+                VAL_PREF_MESSAGE_CONTENT_EVENT_TIME,
+                VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME
             )
         )
 
@@ -688,13 +695,13 @@ class MailPhoneEventFormatterTest : BaseTest() {
             serviceAccount = "service@mail.com",
             locale = Locale("ru", "ru"),
             options = setOf(
-                Settings.VAL_PREF_EMAIL_CONTENT_HEADER,
-                Settings.VAL_PREF_EMAIL_CONTENT_CONTACT,
-                Settings.VAL_PREF_EMAIL_CONTENT_LOCATION,
-                Settings.VAL_PREF_EMAIL_CONTENT_DEVICE_NAME,
-                Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME,
-                Settings.VAL_PREF_EMAIL_CONTENT_MESSAGE_TIME_SENT,
-                Settings.VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS
+                VAL_PREF_MESSAGE_CONTENT_HEADER,
+                VAL_PREF_MESSAGE_CONTENT_CALLER,
+                VAL_PREF_MESSAGE_CONTENT_LOCATION,
+                VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME,
+                VAL_PREF_MESSAGE_CONTENT_EVENT_TIME,
+                VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME,
+                VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS
             )
         )
 
@@ -743,7 +750,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
             context, event,
             deviceName = "Device",
             serviceAccount = "service@mail.com",
-            options = setOf(Settings.VAL_PREF_EMAIL_CONTENT_REMOTE_COMMAND_LINKS)
+            options = setOf(VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS)
         )
 
         val body = formatter.formatBody()

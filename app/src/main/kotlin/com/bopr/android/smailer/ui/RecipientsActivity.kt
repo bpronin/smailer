@@ -5,4 +5,4 @@ package com.bopr.android.smailer.ui
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class RecipientsActivity : BaseAppActivity(RecipientsFragment::class)
+class RecipientsActivity : BaseFlavorActivity(RecipientsFragment::class)
