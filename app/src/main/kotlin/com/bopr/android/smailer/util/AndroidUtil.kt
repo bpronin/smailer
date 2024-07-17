@@ -26,12 +26,6 @@ import java.io.PrintWriter
  */
 val DEVICE_NAME get() = capitalize(Build.MANUFACTURER) + " " + Build.MODEL
 
-fun Context.permissionLabel(permissionName: String): String {
-    return packageManager.run {
-        getPermissionInfo(permissionName, 0).loadLabel(this).toString()
-    }
-}
-
 /**
  * NOTE: The method must be named exactly "checkPermission" to pass the IDE inspections and lint warnings
  * when checking methods annotated with [androidx.annotation.RequiresPermission].

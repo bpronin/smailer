@@ -26,7 +26,6 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
 import com.bopr.android.smailer.ui.showInfoDialog
-import com.bopr.android.smailer.util.permissionLabel
 import org.slf4j.LoggerFactory
 
 /**
@@ -35,20 +34,29 @@ import org.slf4j.LoggerFactory
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 class PermissionsHelper(
-    private val activity: FragmentActivity
+    private val activity: FragmentActivity,
+    private val onPermissionsRequestComplete: () -> Unit = {}
 ) {
+
+    private val items: Map<String, Int> = sortedMapOf(
+        RECEIVE_SMS to R.string.permission_rationale_receive_sms,
+        SEND_SMS to R.string.permission_rationale_send_sms,
+        READ_SMS to R.string.permission_rationale_read_sms,
+        READ_PHONE_STATE to R.string.permission_rationale_phone_state,
+        READ_CALL_LOG to R.string.permission_rationale_phone_state,
+        READ_CONTACTS to R.string.permission_rationale_read_contacts,
+        ACCESS_COARSE_LOCATION to R.string.permission_rationale_coarse_location,
+        ACCESS_FINE_LOCATION to R.string.permission_rationale_fine_location
+    )
 
     private val settings = Settings(activity)
     private val accountHelper = AccountHelper(activity)
-
     private val permissionRequestLauncher =
         activity.registerForActivityResult(RequestMultiplePermissions()) { result ->
             onPermissionRequestResult(result)
         }
 
     fun checkAll() {
-        log.debug("Checking all")
-
         checkPermissions(items.keys)
     }
 
@@ -61,6 +69,8 @@ class PermissionsHelper(
 
         if (deniedPermissions.isNotEmpty()) {
             activity.showInfoDialog(messageResId = R.string.since_permissions_not_granted)
+        } else {
+            onPermissionsRequestComplete()
         }
     }
 
@@ -153,7 +163,9 @@ class PermissionsHelper(
     }
 
     private fun checkPermissions(permissions: Collection<String>) {
-        if (!permissions.isEmpty()) {
+        if (permissions.isEmpty()) {
+            onPermissionsRequestComplete()
+        } else {
             log.debug("Checking: {}", permissions)
 
             val deniedPermissions = mutableListOf<String>()
@@ -168,7 +180,9 @@ class PermissionsHelper(
                 }
             }
 
-            if (deniedPermissions.isNotEmpty()) {
+            if (deniedPermissions.isEmpty()) {
+                onPermissionsRequestComplete()
+            } else {
                 if (unexplainedPermissions.isNotEmpty()) {
                     explainPermissions(unexplainedPermissions)
                 } else {
@@ -192,31 +206,24 @@ class PermissionsHelper(
     }
 
     private fun formatRationale(permissions: Collection<String>): String {
-        val sb = StringBuilder()
-        for (permission in permissions) {
-            sb.append(permissionRationale(permission)).append("\n\n")
+        return buildString {
+            for (permission in permissions) {
+                val value = items.getValue(permission)
+                append(activity.getString(value, getLabelFor(permission)))
+                append("\n\n")
+            }
         }
-        return sb.toString()
     }
 
-    private fun permissionRationale(permission: String): String {
-        return activity.getString(items.getValue(permission), activity.permissionLabel(permission))
+    private fun getLabelFor(permissionName: String): String {
+        return activity.packageManager.run {
+            getPermissionInfo(permissionName, 0).loadLabel(this).toString()
+        }
     }
 
     companion object {
 
-        private var nextRequestResult = 200
 
-        private val items: Map<String, Int> = sortedMapOf(
-            RECEIVE_SMS to R.string.permission_rationale_receive_sms,
-            SEND_SMS to R.string.permission_rationale_send_sms,
-            READ_SMS to R.string.permission_rationale_read_sms,
-            READ_PHONE_STATE to R.string.permission_rationale_phone_state,
-            READ_CALL_LOG to R.string.permission_rationale_phone_state,
-            READ_CONTACTS to R.string.permission_rationale_read_contacts,
-            ACCESS_COARSE_LOCATION to R.string.permission_rationale_coarse_location,
-            ACCESS_FINE_LOCATION to R.string.permission_rationale_fine_location
-        )
         private val log = LoggerFactory.getLogger("PermissionsHelper")
     }
 

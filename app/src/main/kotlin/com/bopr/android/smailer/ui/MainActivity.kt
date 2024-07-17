@@ -39,15 +39,16 @@ class MainActivity : BaseFlavorActivity(MainFragment::class), OnSharedPreference
         backupManager = BackupManager(this)
         notificationsHelper = NotificationsHelper(this)
         accountHelper = AccountHelper(this)
-        permissionsHelper = PermissionsHelper(this)
         settings = Settings(this).apply {
             loadDefaults()
             registerOnSharedPreferenceChangeListener(this@MainActivity)
         }
 
-        requireIgnoreBatteryOptimization(onComplete = {
-            permissionsHelper.checkAll()
-        })
+        permissionsHelper = PermissionsHelper(this){
+            requireIgnoreBatteryOptimization()
+        }
+        permissionsHelper.checkAll()
+
         startUpAppServices()
     }
 
@@ -55,13 +56,6 @@ class MainActivity : BaseFlavorActivity(MainFragment::class), OnSharedPreference
         settings.unregisterOnSharedPreferenceChangeListener(this)
         super.onDestroy()
     }
-
-//    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
-//                                            grantResults: IntArray) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-//        permissionsHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)
-//        requireFragment().onRequestPermissionsResult(requestCode, permissions, grantResults)
-//    }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
