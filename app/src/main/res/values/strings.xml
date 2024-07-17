@@ -112,7 +112,7 @@
     <string name="phone_search_url_explanation">URL to search for unknown phone numbers (leave blank to use default)</string>
     <string name="phone_search_url_must_contain_phone_tag">URL must contain {phone} tag</string>
     <string name="phone_whitelist">Phone whitelist</string>
-    <string name="proceed">Proceed</string>
+    <string name="proceed">Open settings</string>
     <string name="process_all_pending">Process pending</string>
     <string name="process_service_mail">Check service mail now</string>
     <string name="processed_at">at: %s</string>
@@ -204,6 +204,7 @@
     <string name="device_location">Device location</string>
     <string name="header">Header</string>
     <string name="caller_name">Caller name</string>
+    <string name="next_time">Next time</string>
 
     <plurals name="items_removed">
         <item quantity="one">Item removed</item>

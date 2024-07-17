@@ -2,11 +2,18 @@ package com.bopr.android.smailer.util
 
 import android.content.Context
 import android.content.Context.CONNECTIVITY_SERVICE
+import android.content.Context.POWER_SERVICE
+import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.net.ConnectivityManager
 import android.os.Build
+import android.os.PowerManager
+import android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import com.bopr.android.smailer.R
+import com.bopr.android.smailer.ui.ConfirmCheckDialog
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileOutputStream
@@ -66,6 +73,30 @@ fun Context.readLogcatLog(): File {
     return file
 }
 
+fun FragmentActivity.requireIgnoreBatteryOptimization(onComplete: () -> Unit = {}): Boolean {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        val powerManager = getSystemService(POWER_SERVICE) as PowerManager
+        if (!powerManager.isIgnoringBatteryOptimizations(packageName)) {
+            ConfirmCheckDialog(
+                title = getString(R.string.battery_optimization),
+                message = getString(R.string.battery_optimization_reason),
+                negativeButtonText = getString(R.string.next_time),
+                positiveButtonText = getString(R.string.proceed),
+                dialogTag = "battery-optimization-do-not-ask-again",
+                onPositiveAction = {
+                    startActivity(Intent(ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
+                },
+                onClose = onComplete
+            ).show(this)
+
+            return true
+        }
+    }
+
+    onComplete()
+    return false
+}
+
 /*
 fun Context.isInIdleMode(): Boolean {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -88,3 +119,4 @@ fun Context.registerIdleModeChangedReceiver(onChanged: (Boolean) -> Unit) {
     }
 }
 */
+

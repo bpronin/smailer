@@ -2,7 +2,6 @@ package com.bopr.android.smailer.ui
 
 
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.ui.BatteryOptimizationHelper.BATTERY_OPTIMIZATION_DIALOG_TAG
 import org.junit.Test
 
 
@@ -11,7 +10,7 @@ class MainActivityTest : BaseActivityTest(MainActivity::class) {
     override fun beforeActivityCreate() {
         settings.update {
             /* hide battery optimization dialog */
-            putBoolean(BATTERY_OPTIMIZATION_DIALOG_TAG, true)
+            putBoolean("battery-optimization-do-not-ask-again", true)
         }
     }
 

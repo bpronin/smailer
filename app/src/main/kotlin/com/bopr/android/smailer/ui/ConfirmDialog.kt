@@ -6,26 +6,32 @@ import androidx.appcompat.app.AlertDialog
 /**
  * Confirmation dialog.
  */
-open class ConfirmDialog(private val title: String? = null,
-                         private val message: String? = null,
-                         private val positiveButtonText: String? = null,
-                         private val negativeButtonText: String? = null,
-                         private val positiveAction: (() -> Unit)? = null
+open class ConfirmDialog(
+    private val title: String? = null,
+    private val message: String? = null,
+    private val positiveButtonText: String? = null,
+    private val negativeButtonText: String? = null,
+    private val onPositiveAction: () -> Unit = {},
+    private val onDismiss: () -> Unit = {}
+
 ) : BaseDialogFragment("confirm-dialog") {
 
     override fun onBuildDialog(builder: AlertDialog.Builder) {
         super.onBuildDialog(builder)
 
-        builder.setTitle(title)
-        builder.setMessage(message)
+        builder
+            .setTitle(title)
+            .setMessage(message)
+            .setOnDismissListener {
+                /**DOES NOT WWORk. See DialogFragment.java:342 */
+            }.setPositiveButton(positiveButtonText ?: getString(android.R.string.ok)) { _, _ ->
+                onPositiveAction()
+            }.setNegativeButton(negativeButtonText ?: getString(android.R.string.cancel), null)
+    }
 
-        val positiveText = positiveButtonText ?: getString(android.R.string.ok)
-        builder.setPositiveButton(positiveText) { _: DialogInterface, _: Int ->
-            positiveAction?.invoke()
-        }
-
-        val negativeText = negativeButtonText ?: getString(android.R.string.cancel)
-        builder.setNegativeButton(negativeText, null)
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        onDismiss()
     }
 
 }

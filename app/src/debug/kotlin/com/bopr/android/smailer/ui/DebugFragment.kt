@@ -69,14 +69,13 @@ import com.bopr.android.smailer.provider.telephony.SmsTransport.Companion.smsMan
 import com.bopr.android.smailer.sync.Synchronizer
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_DOWNLOAD
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_UPLOAD
-import com.bopr.android.smailer.ui.BatteryOptimizationHelper.isIgnoreBatteryOptimizationRequired
-import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
 import com.bopr.android.smailer.util.DEVICE_NAME
 import com.bopr.android.smailer.util.GeoLocator
 import com.bopr.android.smailer.util.checkPermission
 import com.bopr.android.smailer.util.escapeRegex
 import com.bopr.android.smailer.util.getContactName
 import com.bopr.android.smailer.util.readLogcatLog
+import com.bopr.android.smailer.util.requireIgnoreBatteryOptimization
 import com.bopr.android.smailer.util.runLongTask
 import com.bopr.android.smailer.util.showToast
 import com.google.api.services.drive.DriveScopes.DRIVE_APPDATA
@@ -170,9 +169,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                 onPutInvalidAccount()
             },
             addPreference("Require battery optimisation disabled") {
-                if (isIgnoreBatteryOptimizationRequired(context)) {
-                    requireIgnoreBatteryOptimization(requireActivity())
-                } else {
+                if (!requireActivity().requireIgnoreBatteryOptimization()) {
                     showInfoDialog("Battery", "Optimization already disabled")
                 }
             }

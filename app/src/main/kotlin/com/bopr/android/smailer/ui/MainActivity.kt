@@ -17,7 +17,7 @@ import com.bopr.android.smailer.external.Firebase.Companion.resubscribeToFirebas
 import com.bopr.android.smailer.provider.telephony.ContentObserverService.Companion.startContentObserver
 import com.bopr.android.smailer.sync.SyncWorker.Companion.syncAppDataWithGoogleCloud
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_DOWNLOAD
-import com.bopr.android.smailer.ui.BatteryOptimizationHelper.requireIgnoreBatteryOptimization
+import com.bopr.android.smailer.util.requireIgnoreBatteryOptimization
 
 /**
  * Main application activity.
@@ -34,21 +34,20 @@ class MainActivity : BaseFlavorActivity(MainFragment::class), OnSharedPreference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHomeButtonEnabled(false)
 
         backupManager = BackupManager(this)
         notificationsHelper = NotificationsHelper(this)
-        permissionsHelper = PermissionsHelper(this)
         accountHelper = AccountHelper(this)
-
+        permissionsHelper = PermissionsHelper(this)
         settings = Settings(this).apply {
             loadDefaults()
             registerOnSharedPreferenceChangeListener(this@MainActivity)
         }
 
-        permissionsHelper.checkAll()
-        requireIgnoreBatteryOptimization(this)
-        setHomeButtonEnabled(false)
-
+        requireIgnoreBatteryOptimization(onComplete = {
+            permissionsHelper.checkAll()
+        })
         startUpAppServices()
     }
 

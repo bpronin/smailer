@@ -8,16 +8,16 @@ import android.Manifest.permission.READ_PHONE_STATE
 import android.Manifest.permission.READ_SMS
 import android.Manifest.permission.RECEIVE_SMS
 import android.Manifest.permission.SEND_SMS
-import android.content.pm.PackageManager
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.FragmentActivity
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSAGE_CONTENT
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCATION
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_CALLS
@@ -34,7 +34,9 @@ import org.slf4j.LoggerFactory
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class PermissionsHelper(val activity: FragmentActivity) {
+class PermissionsHelper(
+    private val activity: FragmentActivity
+) {
 
     private val settings = Settings(activity)
     private val accountHelper = AccountHelper(activity)
@@ -68,7 +70,7 @@ class PermissionsHelper(val activity: FragmentActivity) {
     internal fun onSettingsChanged(key: String?) {
         log.debug("Handling preference changed: $key")
 
-        val requiredPermissions: MutableSet<String> = HashSet()
+        val requiredPermissions = mutableSetOf<String>()
         when (key) {
             PREF_EMAIL_TRIGGERS -> {
                 val triggers = settings.getEmailTriggers()
@@ -151,14 +153,14 @@ class PermissionsHelper(val activity: FragmentActivity) {
     }
 
     private fun checkPermissions(permissions: Collection<String>) {
-        if (permissions.isNotEmpty()) {
+        if (!permissions.isEmpty()) {
             log.debug("Checking: {}", permissions)
 
-            val deniedPermissions: MutableList<String> = ArrayList()
-            val unexplainedPermissions: MutableList<String> = ArrayList()
+            val deniedPermissions = mutableListOf<String>()
+            val unexplainedPermissions = mutableListOf<String>()
 
             for (p in permissions) {
-                if (checkSelfPermission(activity, p) != PackageManager.PERMISSION_GRANTED) {
+                if (checkSelfPermission(activity, p) != PERMISSION_GRANTED) {
                     deniedPermissions.add(p)
                     if (shouldShowRequestPermissionRationale(activity, p)) {
                         unexplainedPermissions.add(p)
