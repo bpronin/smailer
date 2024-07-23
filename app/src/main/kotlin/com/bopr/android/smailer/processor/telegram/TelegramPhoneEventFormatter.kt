@@ -1,22 +1,12 @@
 package com.bopr.android.smailer.processor.telegram
 
 import android.content.Context
-import androidx.annotation.StringRes
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_EVENT_TIME
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_HEADER
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCATION
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import com.bopr.android.smailer.util.eventTypeText
 import com.bopr.android.smailer.util.formatDuration
-import com.bopr.android.smailer.util.httpEncoded
 import com.bopr.android.smailer.util.tryGetContactName
-import java.text.DateFormat.SHORT
-import java.text.DateFormat.getDateTimeInstance
 
 /**
  * Formats Telegram message from phone event.
@@ -24,74 +14,33 @@ import java.text.DateFormat.getDateTimeInstance
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 class TelegramPhoneEventFormatter(private val context: Context, private val event: PhoneEventData) :
-    TelegramMessageFormatter(context) {
+    BaseTelegramEventFormatter(context, event.startTime, event.processTime, event.location) {
 
-    private val settings = Settings(context)
-    private val timeFormat = getDateTimeInstance(SHORT, SHORT)
-    private val newline = "\n".httpEncoded()
-
-    override fun formatMessage(): String {
-        return buildString {
-            appendHeader()
-            appendBody()
-            appendFooter()
-        }
+    override fun getHeaderText(): String {
+        return string(eventTypeText(event))
     }
 
-    private fun StringBuilder.appendHeader() {
-        if (!settings.hasTelegramMessageContent(VAL_PREF_MESSAGE_CONTENT_HEADER)) return
-
-        append("<b>")
-        append(string(eventTypeText(event)))
-        append(getEventTimeText())
-        append("</b>")
-        append(newline)
-        append(newline)
-    }
-
-    private fun StringBuilder.appendBody() {
-        when {
+    override fun getBodyText(): String {
+        return when {
             event.isMissed ->
-                append(string(R.string.you_had_missed_call))
+                string(R.string.you_had_missed_call)
 
             event.isSms ->
-                append(event.text!!)
+                event.text!!
 
             else -> {
                 val duration = formatDuration(event.callDuration)
                 if (event.isIncoming) {
-                    append(string(R.string.you_had_incoming_call, duration))
+                    string(R.string.you_had_incoming_call, duration)
                 } else {
-                    append(string(R.string.you_had_outgoing_call, duration))
+                    string(R.string.you_had_outgoing_call, duration)
                 }
             }
         }
     }
 
-    private fun StringBuilder.appendFooter() {
-        append(newline)
-        appendCallerText()
-
-        val deviceNameText = getDeviceNameText()
-        val processTimeText = getProcessTimeText()
-        if (deviceNameText.isNotEmpty() || processTimeText.isNotEmpty()) {
-            append(newline)
-            append("<i>")
-            append(string(R.string.sent_time_device, deviceNameText, processTimeText))
-            append("</i>")
-        }
-
-        val locationText = getLocationText()
-        if (locationText.isNotEmpty()) {
-            append(newline)
-            append("<i>")
-            append(string(R.string.last_known_location, locationText))
-            append("</i>")
-        }
-    }
-
-    private fun StringBuilder.appendCallerText() {
-        if (!settings.hasTelegramMessageContent(VAL_PREF_MESSAGE_CONTENT_CALLER)) return
+    override fun getSenderText(): String {
+        if (!settings.hasTelegramMessageContent(VAL_PREF_MESSAGE_CONTENT_CALLER)) return ""
 
         val patternRes = when {
             event.isSms -> R.string.sender_phone
@@ -101,44 +50,8 @@ class TelegramPhoneEventFormatter(private val context: Context, private val even
 
         val contact = tryGetContactName(context, event.phone) ?: string(R.string.unknown_contact)
 
-        append(newline)
-        append("<i>")
-        append(string(patternRes, event.phone, contact))
-        append("</i>")
+        return string(patternRes, event.phone, contact)
     }
 
-    private fun getDeviceNameText(): String {
-        return if (settings.hasTelegramMessageContent(VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME)) {
-            string(R.string._from_device, settings.getDeviceName())
-        } else ""
-    }
-
-    private fun getEventTimeText(): String {
-        return if (settings.hasTelegramMessageContent(VAL_PREF_MESSAGE_CONTENT_EVENT_TIME)) {
-            string(R.string._at_time, timeFormat.format(event.startTime))
-        } else ""
-    }
-
-    private fun getProcessTimeText(): String {
-        return if (settings.hasTelegramMessageContent(VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME)) {
-            string(R.string._at_time, timeFormat.format(event.processTime))
-        } else ""
-    }
-
-    private fun getLocationText(): String {
-        return if (settings.hasTelegramMessageContent(VAL_PREF_MESSAGE_CONTENT_LOCATION)) {
-            event.location?.run {
-                val text = format(degreeSymbol = "&#176;", separator = ", ")
-                "<a href=\"" +
-                        "https://www.google.com/maps/place/$latitude+$longitude/@$latitude,$longitude" +
-                        "\">$text</a>"
-            } ?: string(R.string.unknown_location)
-        } else ""
-    }
-
-    private fun string(@StringRes resId: Int, vararg formatArgs: Any?): String =
-        context.getString(resId, *formatArgs)
-
-    private fun string(@StringRes resId: Int) = context.getString(resId)
 
 }

@@ -9,12 +9,11 @@ import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_NOTIFICATIONS
 import com.bopr.android.smailer.control.MailControlProcessor
-import com.bopr.android.smailer.util.SUMMARY_STYLE_ACCENTED
-import com.bopr.android.smailer.util.SUMMARY_STYLE_DEFAULT
-import com.bopr.android.smailer.util.SUMMARY_STYLE_UNDERWIVED
+import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_ACCENTED
+import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_UNDERWIVED
 import com.bopr.android.smailer.util.getQuantityString
 import com.bopr.android.smailer.util.requirePreference
-import com.bopr.android.smailer.util.runLongTask
+import com.bopr.android.smailer.util.runBackgroundTask
 import com.bopr.android.smailer.util.setOnChangeListener
 import com.bopr.android.smailer.util.setOnClickListener
 import com.bopr.android.smailer.util.showToast
@@ -59,14 +58,14 @@ class RemoteControlFragment : BasePreferenceFragment(R.xml.pref_remote) {
                 } else if (!accountHelper.isGoogleAccountExists(account)) {
                     updateSummary(account, SUMMARY_STYLE_UNDERWIVED)
                 } else {
-                    updateSummary(account, SUMMARY_STYLE_DEFAULT)
+                    updateSummary(account)
                 }
             }
         }
     }
 
     private fun onProcessServiceMail(preference: Preference) {
-        preference.runLongTask(
+        preference.runBackgroundTask(
             onPerform = {
                 MailControlProcessor(requireContext()).checkMailbox()
             },

@@ -25,10 +25,8 @@ import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.preference.Preference
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.ui.WavyUnderlineSpan
 import java.util.concurrent.Executors
@@ -210,27 +208,4 @@ fun <T> runInBackground(
             result.fold(onSuccess, onError)
         }
     }
-}
-
-fun <T> Preference.runLongTask(
-    onPerform: () -> T,
-    onComplete: () -> Unit = {},
-    onSuccess: (T) -> Unit = {},
-    onError: (Throwable) -> Unit = {}
-) {
-    val lastIcon = icon
-    val progressIcon = AnimatedVectorDrawableCompat.create(context, R.drawable.animated_progress)!!
-    icon = progressIcon
-    progressIcon.start()
-
-    runInBackground(
-        onPerform,
-        onComplete = {
-            progressIcon.stop()
-            icon = lastIcon
-            onComplete()
-        },
-        onSuccess,
-        onError
-    )
 }

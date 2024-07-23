@@ -3,15 +3,12 @@ package com.bopr.android.smailer.ui
 import android.content.BroadcastReceiver
 import android.os.Bundle
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.TABLE_PHONE_EVENTS
 import com.bopr.android.smailer.data.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.data.Database.Companion.unregisterDatabaseListener
-import com.bopr.android.smailer.util.SUMMARY_STYLE_DEFAULT
 import com.bopr.android.smailer.util.getQuantityString
 import com.bopr.android.smailer.util.requirePreference
-import com.bopr.android.smailer.util.setOnChangeListener
 import com.bopr.android.smailer.util.updateSummary
 
 /**

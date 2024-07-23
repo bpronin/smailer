@@ -5,6 +5,13 @@ import android.content.res.Resources
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.bopr.android.smailer.R
+import com.bopr.android.smailer.processor.telegram.TelegramException
+import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_BAD_RESPONSE
+import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_INVALID_TOKEN
+import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_NO_CHAT
+import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_NO_CONNECTION
+import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_NO_TOKEN
+import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_REQUEST_FAILED
 import com.bopr.android.smailer.provider.EventState
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
@@ -138,6 +145,22 @@ fun eventStateText(@EventState state: Int): Int {
 @StringRes
 fun onOffText(value: Boolean): Int {
     return if (value) R.string.on else R.string.off
+}
+
+@StringRes
+fun telegramErrorText(error: TelegramException): Int {
+    return when (error.code) {
+        TELEGRAM_REQUEST_FAILED,
+        TELEGRAM_BAD_RESPONSE -> R.string.error_sending_test_message
+
+        TELEGRAM_NO_TOKEN -> R.string.no_telegram_bot_token
+
+        TELEGRAM_INVALID_TOKEN -> R.string.bad_telegram_bot_token
+
+        TELEGRAM_NO_CHAT -> R.string.require_start_chat
+
+        TELEGRAM_NO_CONNECTION -> R.string.no_network_try_later
+    }
 }
 
 fun Context.localeResources(locale: Locale): Resources {

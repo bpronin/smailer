@@ -6,20 +6,18 @@ import androidx.preference.Preference
 import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_ENABLED
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_MESSAGE_LOCALE
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
-import com.bopr.android.smailer.processor.mail.MailMessage
 import com.bopr.android.smailer.processor.mail.GoogleMail
+import com.bopr.android.smailer.processor.mail.MailMessage
 import com.bopr.android.smailer.util.DEVICE_NAME
-import com.bopr.android.smailer.util.SUMMARY_STYLE_ACCENTED
-import com.bopr.android.smailer.util.SUMMARY_STYLE_DEFAULT
-import com.bopr.android.smailer.util.SUMMARY_STYLE_UNDERWIVED
+import com.bopr.android.smailer.util.SummaryStyle.*
 import com.bopr.android.smailer.util.commaSplit
 import com.bopr.android.smailer.util.onOffText
 import com.bopr.android.smailer.util.requirePreference
 import com.bopr.android.smailer.util.requirePreferenceAs
-import com.bopr.android.smailer.util.runLongTask
+import com.bopr.android.smailer.util.runBackgroundTask
 import com.bopr.android.smailer.util.setOnChangeListener
 import com.bopr.android.smailer.util.setOnClickListener
 import com.bopr.android.smailer.util.showToast
@@ -49,7 +47,7 @@ class EmailSettingsFragment : BasePreferenceFragment(R.xml.pref_email_settings) 
                 if (index < 0) {
                     updateSummary(R.string.unspecified, SUMMARY_STYLE_ACCENTED)
                 } else {
-                    updateSummary(entries[index], SUMMARY_STYLE_DEFAULT)
+                    updateSummary(entries[index])
                 }
             }
         }
@@ -96,7 +94,7 @@ class EmailSettingsFragment : BasePreferenceFragment(R.xml.pref_email_settings) 
     }
 
     private fun onSendTestMessage(preference: Preference) {
-        preference.runLongTask(
+        preference.runBackgroundTask(
             onPerform = {
                 val account = accountHelper.requirePrimaryGoogleAccount()
 
@@ -134,13 +132,13 @@ class EmailSettingsFragment : BasePreferenceFragment(R.xml.pref_email_settings) 
             } else if (!accountHelper.isGoogleAccountExists(account)) {
                 updateSummary(account, SUMMARY_STYLE_UNDERWIVED)
             } else {
-                updateSummary(account, SUMMARY_STYLE_DEFAULT)
+                updateSummary(account)
             }
         }
     }
 
-     companion object{
+    companion object {
 
-         private const val PREF_SENT_TEST_EMAIL = "sent_test_email"
-     }
+        private const val PREF_SENT_TEST_EMAIL = "sent_test_email"
+    }
 }

@@ -12,8 +12,7 @@ import com.bopr.android.smailer.data.Database.Companion.TABLE_TEXT_BLACKLIST
 import com.bopr.android.smailer.data.Database.Companion.TABLE_TEXT_WHITELIST
 import com.bopr.android.smailer.data.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.data.Database.Companion.unregisterDatabaseListener
-import com.bopr.android.smailer.util.SUMMARY_STYLE_ACCENTED
-import com.bopr.android.smailer.util.SUMMARY_STYLE_DEFAULT
+import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_ACCENTED
 import com.bopr.android.smailer.util.requirePreference
 import com.bopr.android.smailer.util.setOnChangeListener
 import com.bopr.android.smailer.util.updateSummary
@@ -36,7 +35,7 @@ class RulesFragment : BasePreferenceFragment(R.xml.pref_rules) {
                 if (settings.getStringSet(key).isEmpty()) {
                     updateSummary(R.string.no_triggers_specified, SUMMARY_STYLE_ACCENTED)
                 } else {
-                    updateSummary(R.string.events_causing_sending_mail, SUMMARY_STYLE_DEFAULT)
+                    updateSummary(R.string.events_causing_sending_mail)
                 }
             }
         }

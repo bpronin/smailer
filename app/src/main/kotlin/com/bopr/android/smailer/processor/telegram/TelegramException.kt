@@ -9,7 +9,8 @@ class TelegramException(val code: Code, cause: Throwable? = null) :
         TELEGRAM_BAD_RESPONSE,
         TELEGRAM_NO_CHAT,
         TELEGRAM_NO_TOKEN,
-        TELEGRAM_INVALID_TOKEN
+        TELEGRAM_INVALID_TOKEN,
+        TELEGRAM_NO_CONNECTION
     }
     
 }

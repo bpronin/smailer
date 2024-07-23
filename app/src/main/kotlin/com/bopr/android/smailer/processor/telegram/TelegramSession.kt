@@ -2,10 +2,13 @@ package com.bopr.android.smailer.processor.telegram
 
 import android.content.Context
 import com.android.volley.AuthFailureError
+import com.android.volley.NetworkError
+import com.android.volley.TimeoutError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_BAD_RESPONSE
 import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_INVALID_TOKEN
+import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_NO_CONNECTION
 import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_NO_CHAT
 import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_NO_TOKEN
 import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_REQUEST_FAILED
@@ -114,6 +117,10 @@ class TelegramSession(context: Context, private val token: String?) {
                     when (error) {
                         is AuthFailureError ->
                             onError(TelegramException(TELEGRAM_INVALID_TOKEN, error))
+
+                        is NetworkError,
+                        is TimeoutError ->
+                            onError(TelegramException(TELEGRAM_NO_CONNECTION, error))
 
                         else ->
                             onError(TelegramException(TELEGRAM_REQUEST_FAILED, error))

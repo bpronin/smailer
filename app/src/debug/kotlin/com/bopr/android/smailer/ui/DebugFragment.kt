@@ -77,7 +77,7 @@ import com.bopr.android.smailer.util.escapeRegex
 import com.bopr.android.smailer.util.getContactName
 import com.bopr.android.smailer.util.readLogcatLog
 import com.bopr.android.smailer.util.requireIgnoreBatteryOptimization
-import com.bopr.android.smailer.util.runLongTask
+import com.bopr.android.smailer.util.runBackgroundTask
 import com.bopr.android.smailer.util.setOnClickListener
 import com.bopr.android.smailer.util.showToast
 import com.google.api.services.drive.DriveScopes.DRIVE_APPDATA
@@ -303,7 +303,7 @@ class DebugFragment : PreferenceFragmentCompat() {
     }
 
     private fun onSendLog(preference: Preference) {
-        runDefaultLongTask("Log", preference) {
+        runDefaultBackgroundTask("Log", preference) {
             val context = requireContext()
 
             val attachments: MutableList<File> = mutableListOf()
@@ -332,7 +332,7 @@ class DebugFragment : PreferenceFragmentCompat() {
     }
 
     private fun onSendDebugMail(preference: Preference) {
-        runDefaultLongTask("Mail", preference) {
+        runDefaultBackgroundTask("Mail", preference) {
             val account = accountHelper.requirePrimaryGoogleAccount()
 
             val message = MailMessage(
@@ -347,7 +347,7 @@ class DebugFragment : PreferenceFragmentCompat() {
     }
 
     private fun onGetLocation(preference: Preference) {
-        preference.runLongTask(
+        preference.runBackgroundTask(
             onPerform = {
                 locator.getLocation()
             },
@@ -457,7 +457,7 @@ class DebugFragment : PreferenceFragmentCompat() {
 
     private fun onProcessServiceMail(preference: Preference) {
         if (settings.getBoolean(PREF_REMOTE_CONTROL_ENABLED)) {
-            runDefaultLongTask("Remote control", preference) {
+            runDefaultBackgroundTask("Remote control", preference) {
                 MailControlProcessor(requireContext()).checkMailbox()
             }
         } else {
@@ -489,7 +489,7 @@ class DebugFragment : PreferenceFragmentCompat() {
     }
 
     private fun onStartProcessPendingEvents(preference: Preference) {
-        runDefaultLongTask("Event processing", preference) {
+        runDefaultBackgroundTask("Event processing", preference) {
             PhoneEventProcessor(requireContext()).processPending()
         }
     }
@@ -721,14 +721,14 @@ class DebugFragment : PreferenceFragmentCompat() {
     }
 
     private fun onGoogleDriveClear(preference: Preference) {
-        runDefaultLongTask("Google drive", preference) {
+        runDefaultBackgroundTask("Google drive", preference) {
             GoogleDrive(requireContext(), senderAccount()).clear()
         }
     }
 
     private fun onGoogleDriveSync(preference: Preference) {
         ConfirmDialog("Synchronize with drive?") {
-            runDefaultLongTask("Google drive", preference) {
+            runDefaultBackgroundTask("Google drive", preference) {
                 Synchronizer(requireContext(), senderAccount(), database).sync()
             }
         }.show(this)
@@ -736,7 +736,7 @@ class DebugFragment : PreferenceFragmentCompat() {
 
     private fun onGoogleDriveDownload(preference: Preference) {
         ConfirmDialog("Download from drive?") {
-            runDefaultLongTask("Google drive", preference) {
+            runDefaultBackgroundTask("Google drive", preference) {
                 Synchronizer(requireContext(), senderAccount(), database).sync(SYNC_FORCE_DOWNLOAD)
             }
         }.show(this)
@@ -744,7 +744,7 @@ class DebugFragment : PreferenceFragmentCompat() {
 
     private fun onGoogleDriveUpload(preference: Preference) {
         ConfirmDialog("Upload to drive?") {
-            runDefaultLongTask("Google drive", preference) {
+            runDefaultBackgroundTask("Google drive", preference) {
                 Synchronizer(requireContext(), senderAccount(), database).sync(SYNC_FORCE_UPLOAD)
             }
         }.show(this)
@@ -817,8 +817,8 @@ class DebugFragment : PreferenceFragmentCompat() {
         return accountHelper.requireGoogleAccount(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT))
     }
 
-    private fun runDefaultLongTask(title: String, preference: Preference, onPerform: () -> Unit) {
-        preference.runLongTask(
+    private fun runDefaultBackgroundTask(title: String, preference: Preference, onPerform: () -> Unit) {
+        preference.runBackgroundTask(
             onPerform,
             onSuccess = {
                 showComplete()

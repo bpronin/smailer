@@ -1,6 +1,7 @@
 package com.bopr.android.smailer.util
 
-import androidx.annotation.IntDef
+import android.graphics.drawable.Drawable
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
@@ -10,33 +11,74 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceGroup
 import androidx.preference.SeekBarPreference
 import androidx.preference.TwoStatePreference
-import kotlin.annotation.AnnotationRetention.SOURCE
+import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat.create
+import com.bopr.android.smailer.R
+import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_ACCENTED
+import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_DEFAULT
+import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_UNDERWIVED
 
-@Retention(SOURCE)
-@IntDef(SUMMARY_STYLE_DEFAULT, SUMMARY_STYLE_UNDERWIVED, SUMMARY_STYLE_ACCENTED)
-annotation class SummaryStyle
+enum class SummaryStyle {
+    SUMMARY_STYLE_DEFAULT,
+    SUMMARY_STYLE_UNDERWIVED,
+    SUMMARY_STYLE_ACCENTED
+}
 
-const val SUMMARY_STYLE_DEFAULT = 0
-const val SUMMARY_STYLE_UNDERWIVED = 1
-const val SUMMARY_STYLE_ACCENTED = 2
+fun <T> Preference.runBackgroundTask(
+    onPerform: () -> T,
+    onComplete: () -> Unit = {},
+    onSuccess: (T) -> Unit = {},
+    onError: (Throwable) -> Unit = {}
+) {
+    val progress = PreferenceProgress(this).apply { start() }
+
+    runInBackground(
+        onPerform,
+        onComplete = {
+            progress.stop()
+            onComplete()
+        },
+        onSuccess,
+        onError
+    )
+}
+
+class PreferenceProgress(
+    private val preference: Preference,
+    @DrawableRes progressIconRes: Int = R.drawable.animated_progress
+) {
+
+    private var originalIcon: Drawable? = null
+    private val progressIcon = create(preference.context, progressIconRes)!!
+
+    fun start() {
+        originalIcon = preference.icon
+        preference.icon = progressIcon
+        progressIcon.start()
+    }
+
+    fun stop() {
+        progressIcon.stop()
+        preference.icon = originalIcon
+    }
+}
 
 fun Preference.updateSummary(
     text: CharSequence?,
-    @SummaryStyle style: Int = SUMMARY_STYLE_DEFAULT
+    style: SummaryStyle = SUMMARY_STYLE_DEFAULT
 ) {
     summary = null  /* cleanup to refresh spannable style */
-    when (style) {
-        SUMMARY_STYLE_DEFAULT -> summary = text
+    summary = when (style) {
+        SUMMARY_STYLE_DEFAULT -> text
 
-        SUMMARY_STYLE_UNDERWIVED -> summary = context.underwivedText(text)
+        SUMMARY_STYLE_UNDERWIVED -> context.underwivedText(text)
 
-        SUMMARY_STYLE_ACCENTED -> summary = context.accentedText(text)
+        SUMMARY_STYLE_ACCENTED -> context.accentedText(text)
     }
 }
 
 fun Preference.updateSummary(
     @StringRes valueRes: Int,
-    @SummaryStyle style: Int = SUMMARY_STYLE_DEFAULT
+    style: SummaryStyle = SUMMARY_STYLE_DEFAULT
 ) {
     updateSummary(context.getString(valueRes), style)
 }

@@ -1,22 +1,20 @@
 package com.bopr.android.smailer.ui
 
 import android.os.Bundle
+import androidx.preference.Preference
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_BOT_TOKEN
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSENGER_ENABLED
-import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_BAD_RESPONSE
-import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_INVALID_TOKEN
-import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_NO_CHAT
-import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_NO_TOKEN
-import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_REQUEST_FAILED
+import com.bopr.android.smailer.processor.telegram.BaseTelegramEventFormatter
 import com.bopr.android.smailer.processor.telegram.TelegramSession
-import com.bopr.android.smailer.util.SUMMARY_STYLE_ACCENTED
-import com.bopr.android.smailer.util.SUMMARY_STYLE_DEFAULT
+import com.bopr.android.smailer.util.PreferenceProgress
+import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_ACCENTED
 import com.bopr.android.smailer.util.onOffText
 import com.bopr.android.smailer.util.requirePreference
 import com.bopr.android.smailer.util.setOnChangeListener
 import com.bopr.android.smailer.util.setOnClickListener
 import com.bopr.android.smailer.util.showToast
+import com.bopr.android.smailer.util.telegramErrorText
 import com.bopr.android.smailer.util.updateSummary
 
 /**
@@ -41,45 +39,52 @@ class TelegramSettingsFragment : BasePreferenceFragment(R.xml.pref_telegram_sett
                 if (token.isNullOrEmpty()) {
                     updateSummary(R.string.unspecified, SUMMARY_STYLE_ACCENTED)
                 } else {
-                    updateSummary(R.string.specified, SUMMARY_STYLE_DEFAULT)
+                    updateSummary(R.string.specified)
                 }
             }
         }
 
         requirePreference(SEND_TEST_TELEGRAM_MESSAGE).setOnClickListener {
-            onSendTestTelegramMessage()
+            onSendTestTelegramMessage(it)
         }
     }
 
-    private fun onSendTestTelegramMessage() {
+    private fun onSendTestTelegramMessage(preference: Preference) {
+        val formater = TestTelegramEventFormatter(System.currentTimeMillis())
+
+        val progress = PreferenceProgress(preference).apply { start() }
+
         TelegramSession(
             context = requireContext(),
             token = settings.getString(PREF_TELEGRAM_BOT_TOKEN)
         ).sendMessage(
-            message = "This is a test message",
+            message = formater.formatMessage(),
             onSuccess = {
+                progress.stop()
                 showToast(R.string.test_message_sent)
             },
             onError = { error ->
-                showInfoDialog(
-                    titleResId = R.string.test_message_failed,
-                    messageResId = when (error.code) {
-                        TELEGRAM_REQUEST_FAILED,
-                        TELEGRAM_BAD_RESPONSE ->
-                            R.string.error_sending_test_message
-
-                        TELEGRAM_NO_TOKEN ->
-                            R.string.no_telegram_bot_token
-
-                        TELEGRAM_INVALID_TOKEN ->
-                            R.string.bad_telegram_bot_token
-
-                        TELEGRAM_NO_CHAT ->
-                            R.string.require_start_chat
-                    }
-                )
+                progress.stop()
+                showInfoDialog(R.string.test_message_failed, telegramErrorText(error))
             }
         )
+    }
+
+    private inner class TestTelegramEventFormatter(time: Long) :
+        BaseTelegramEventFormatter(requireContext(), time, time, null) {
+
+        override fun getHeaderText(): String {
+            return getString(R.string.test_message)
+        }
+
+        override fun getBodyText(): String {
+            return getString(R.string.this_is_test_message)
+        }
+
+        override fun getSenderText(): String {
+            return getString(R.string.sender_of, getString(R.string.app_name))
+        }
+
     }
 
     companion object {

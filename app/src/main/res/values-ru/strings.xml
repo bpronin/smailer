@@ -138,6 +138,7 @@
     <string name="sender">Отправитель</string>
     <string name="sender_account_not_found">Аккаунт отправителя не найден</string>
     <string name="sender_phone">Отправитель: %1$s (%2$s)</string>
+    <string name="sender_of">Отправитель: %s</string>
     <string name="processed">Обработано</string>
     <string name="sent_sms">Отправлено SMS на номер %s</string>
     <string name="sent_time_device">Отправлено%1$s%2$s</string>
@@ -204,6 +205,9 @@
     <string name="header">Заголовок</string>
     <string name="caller_name">Имя звонившего</string>
     <string name="next_time">В другой раз</string>
+    <string name="no_network_try_later">Отсутствует соединение с сервером. Попробуйте позже.</string>
+    <string name="this_is_test_message">Это сообщение для проверки ваших настроек.</string>
+    <string name="test_message">Тестовое сообщение</string>
 
     <plurals name="items_removed">
         <item quantity="one">%d запись удалена</item>
@@ -242,6 +246,16 @@
         <item>Название устройства</item>
         <item>Местоположение устройства</item>
         <item>Ссылки удалённого управления</item>
+    </string-array>
+
+    <string-array name="telegram_message_content_names">
+        <item>Сообщение</item>
+        <item>Заголовок</item>
+        <item>Время звонка</item>
+        <item>Время отправления</item>
+        <item>Имя звонившего</item>
+        <item>Название устройства</item>
+        <item>Местоположение устройства</item>
     </string-array>
 
     <string-array name="language_names">

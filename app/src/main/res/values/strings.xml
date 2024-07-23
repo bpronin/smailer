@@ -138,6 +138,7 @@
     <string name="send_test_telegram_message_summary">Send test message to check your settings</string>
     <string name="sender">Account</string>
     <string name="sender_account_not_found">Sender account not found</string>
+    <string name="sender_of">Sender: %s</string>
     <string name="sender_phone">Sender: %1$s (%2$s)</string>
     <string name="processed">Processed</string>
     <string name="sent_sms">Sent SMS to %s</string>
@@ -205,6 +206,9 @@
     <string name="header">Header</string>
     <string name="caller_name">Caller name</string>
     <string name="next_time">Next time</string>
+    <string name="no_network_try_later">No connection to server. Please try later.</string>
+    <string name="this_is_test_message">This message is to check your settings.</string>
+    <string name="test_message">Test message</string>
 
     <plurals name="items_removed">
         <item quantity="one">Item removed</item>
