@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <androidx.preference.MultiSelectListPreference
+    <MultiSelectListPreference
             android:icon="@drawable/ic_triggers"
             android:entries="@array/trigger_names"
             android:entryValues="@array/trigger_values"
@@ -9,48 +9,48 @@
             android:summary="@string/events_causing_sending_mail"
             android:title="@string/triggers" />
 
-    <androidx.preference.PreferenceCategory
+    <PreferenceCategory
             android:icon="@drawable/ic_call"
             android:title="@string/phone_number_filter">
 
-        <androidx.preference.Preference
+        <Preference
                 android:key="phone_blacklist"
                 android:title="@string/blacklist">
             <intent
                     android:targetClass="com.bopr.android.smailer.ui.EventFilterPhoneBlacklistActivity"
                     android:targetPackage="com.bopr.android.smailer" />
-        </androidx.preference.Preference>
+        </Preference>
 
-        <androidx.preference.Preference
+        <Preference
                 android:key="phone_whitelist"
                 android:title="@string/whitelist">
             <intent
                     android:targetClass="com.bopr.android.smailer.ui.EventFilterPhoneWhitelistActivity"
                     android:targetPackage="com.bopr.android.smailer" />
-        </androidx.preference.Preference>
-    </androidx.preference.PreferenceCategory>
+        </Preference>
+    </PreferenceCategory>
 
-    <androidx.preference.PreferenceCategory
+    <PreferenceCategory
             android:icon="@drawable/ic_text"
             android:title="@string/text_filter">
 
-        <androidx.preference.Preference
+        <Preference
                 android:key="text_blacklist"
                 android:title="@string/blacklist">
             <intent
                     android:targetClass="com.bopr.android.smailer.ui.EventFilterTextBlacklistActivity"
                     android:targetPackage="com.bopr.android.smailer" />
-        </androidx.preference.Preference>
+        </Preference>
 
-        <androidx.preference.Preference
+        <Preference
                 android:key="text_whitelist"
                 android:title="@string/whitelist">
             <intent
                     android:targetClass="com.bopr.android.smailer.ui.EventFilterTextWhitelistActivity"
                     android:targetPackage="com.bopr.android.smailer" />
-        </androidx.preference.Preference>
+        </Preference>
 
-    </androidx.preference.PreferenceCategory>
+    </PreferenceCategory>
 
 
-</androidx.preference.PreferenceScreen>
+</PreferenceScreen>

@@ -5,7 +5,6 @@ import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.external.GoogleMail
 import com.bopr.android.smailer.processor.EventProcessor
 import com.bopr.android.smailer.provider.Event
 import com.bopr.android.smailer.util.Mockable

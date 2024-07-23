@@ -76,7 +76,7 @@
     <string name="no_permission_read_location">(no permission to read location)</string>
     <string name="no_recipients_specified">No recipients specified</string>
     <string name="no_triggers_specified">All triggers are disabled</string>
-    <string name="unspecified">Unspecified</string>
+    <string name="unspecified">Not set</string>
     <string name="specified">Specified</string>
     <string name="notifications">Notifications</string>
     <string name="notify_remote_actions">Display notification when actions are performed</string>
@@ -189,7 +189,7 @@
     <string name="test_message_sent">Test message sent.</string>
     <string name="bad_telegram_bot_token">Telegram bot token is invalid.</string>
     <string name="no_telegram_bot_token">No Telegram bot token specified.</string>
-    <string name="test_message_failed">Test message filed</string>
+    <string name="test_message_failed">Test message failed</string>
     <string name="addresses">%d addresses</string>
     <string name="unknown_location">unknown</string>
     <string name="telegram_settings">Telegram settings</string>

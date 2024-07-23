@@ -1,41 +1,37 @@
-package com.bopr.android.smailer.external
+package com.bopr.android.smailer.processor.telegram
 
 import android.content.Context
 import com.android.volley.AuthFailureError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
-import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_BOT_TOKEN
-import com.bopr.android.smailer.external.TelegramException.Code.TELEGRAM_BAD_RESPONSE
-import com.bopr.android.smailer.external.TelegramException.Code.TELEGRAM_INVALID_TOKEN
-import com.bopr.android.smailer.external.TelegramException.Code.TELEGRAM_NO_CHAT
-import com.bopr.android.smailer.external.TelegramException.Code.TELEGRAM_NO_TOKEN
-import com.bopr.android.smailer.external.TelegramException.Code.TELEGRAM_REQUEST_FAILED
-import com.bopr.android.smailer.util.Mockable
-import com.google.common.base.Strings.isNullOrEmpty
+import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_BAD_RESPONSE
+import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_INVALID_TOKEN
+import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_NO_CHAT
+import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_NO_TOKEN
+import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_REQUEST_FAILED
 import org.json.JSONObject
 import org.slf4j.LoggerFactory
+import java.net.URLEncoder
 
 /**
  * Telegram bot wrapper.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-@Mockable
-internal class Telegram(context: Context) {
+class TelegramSession(context: Context, private val token: String?) {
 
-    private val settings = Settings(context)
     private val requestQueue = Volley.newRequestQueue(context)
 
     fun sendMessage(
         message: String,
         onSuccess: () -> Unit = {},
-        onError: (error: Exception) -> Unit = {}
+        onError: (error: TelegramException) -> Unit = {}
     ) {
         requestUpdates(
             onSuccess = { chatId ->
                 requestSendMessage(
-                    chatId, message,
+                    chatId = chatId,
+                    text = fixMessageText(message),
                     onSuccess = onSuccess,
                     onError = onError
                 )
@@ -46,7 +42,7 @@ internal class Telegram(context: Context) {
 
     private fun requestUpdates(
         onSuccess: (chatId: String) -> Unit,
-        onError: (error: Exception) -> Unit
+        onError: (error: TelegramException) -> Unit
     ) {
         request(
             command = "getUpdates",
@@ -75,7 +71,7 @@ internal class Telegram(context: Context) {
         chatId: String,
         text: String,
         onSuccess: () -> Unit,
-        onError: (error: Exception) -> Unit
+        onError: (error: TelegramException) -> Unit
     ) {
         request(
             command = "sendMessage?" +
@@ -96,11 +92,9 @@ internal class Telegram(context: Context) {
     private fun request(
         command: String,
         onResponse: (response: JSONObject) -> Unit,
-        onError: (error: Exception) -> Unit
+        onError: (error: TelegramException) -> Unit
     ) {
-        val token = settings.getString(PREF_TELEGRAM_BOT_TOKEN)
-
-        if (isNullOrEmpty(token)) {
+        if (token.isNullOrEmpty()) {
             onError(TelegramException(TELEGRAM_NO_TOKEN))
         } else {
             val url = "$BASE_URL$token/$command"
@@ -108,19 +102,21 @@ internal class Telegram(context: Context) {
                 { response ->
                     try {
                         onResponse(response)
-                    } catch (x: Exception) {
+                    } catch (x: Throwable) {
                         log.error("Error while processing <$command> response.", x)
 
-                        onError(x)
+                        onError(TelegramException(TELEGRAM_REQUEST_FAILED, x))
                     }
                 },
                 { error ->
                     log.error("<$command> request failed.", error)
 
-                    if (error is AuthFailureError) {
-                        onError(TelegramException(TELEGRAM_INVALID_TOKEN, error))
-                    } else {
-                        onError(TelegramException(TELEGRAM_REQUEST_FAILED, error))
+                    when (error) {
+                        is AuthFailureError ->
+                            onError(TelegramException(TELEGRAM_INVALID_TOKEN, error))
+
+                        else ->
+                            onError(TelegramException(TELEGRAM_REQUEST_FAILED, error))
                     }
                 }
             )
@@ -129,9 +125,15 @@ internal class Telegram(context: Context) {
         }
     }
 
+    private fun fixMessageText(text: String): String {
+        return text.replace("\n", NEW_LINE)
+    }
+
     companion object {
 
         private val log = LoggerFactory.getLogger("Telegram")
+
+        private val NEW_LINE = URLEncoder.encode("\n", "UTF-8")
         private const val BASE_URL = "https://api.telegram.org/bot"
         private const val PARSE_MODE = "html"
     }

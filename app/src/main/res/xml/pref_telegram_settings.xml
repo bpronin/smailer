@@ -1,33 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <androidx.preference.SwitchPreference
+    <SwitchPreference
             android:key="pref_telegram_messenger_enabled"
             android:icon="@drawable/ic_telegram"
             android:title="@string/enabled" />
 
-    <androidx.preference.PreferenceCategory>
+    <PreferenceCategory>
 
-        <androidx.preference.EditTextPreference
+        <EditTextPreference
                 android:key="telegram_bot_token"
                 android:title="@string/telegram_bot_token" />
 
-    </androidx.preference.PreferenceCategory>
-                                                                        Db
-    <androidx.preference.MultiSelectListPreference
+    </PreferenceCategory>
+
+    <MultiSelectListPreference
             android:dialogTitle="@string/message_content"
             android:entries="@array/telegram_message_content_names"
             android:entryValues="@array/telegram_message_content_values"
             android:key="pref_telegram_message_content"
             android:title="@string/message_content" />
 
-    <androidx.preference.PreferenceCategory>
+    <PreferenceCategory>
 
-        <androidx.preference.Preference
-                android:key="sent_test_telegram_message"
+        <Preference
+                android:key="send_test_telegram_message"
                 android:icon="@drawable/ic_test_message"
                 android:title="@string/send_test_telegram_message"
                 android:summary="@string/send_test_telegram_message_summary" />
 
-    </androidx.preference.PreferenceCategory>
-</androidx.preference.PreferenceScreen>
+    </PreferenceCategory>
+
+</PreferenceScreen>

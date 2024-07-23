@@ -1,7 +1,6 @@
 package com.bopr.android.smailer.ui
 
 import android.content.BroadcastReceiver
-import android.content.SharedPreferences
 import android.os.Bundle
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
@@ -9,7 +8,10 @@ import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.TABLE_PHONE_EVENTS
 import com.bopr.android.smailer.data.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.data.Database.Companion.unregisterDatabaseListener
+import com.bopr.android.smailer.util.SUMMARY_STYLE_DEFAULT
 import com.bopr.android.smailer.util.getQuantityString
+import com.bopr.android.smailer.util.requirePreference
+import com.bopr.android.smailer.util.setOnChangeListener
 import com.bopr.android.smailer.util.updateSummary
 
 /**
@@ -17,18 +19,22 @@ import com.bopr.android.smailer.util.updateSummary
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class MainFragment : BasePreferenceFragment() {
+class MainFragment : BasePreferenceFragment(R.xml.pref_main) {
 
     private lateinit var database: Database
     private lateinit var databaseListener: BroadcastReceiver
 
-
-    override fun onCreatePreferences(bundle: Bundle?, rootKey: String?) {
-        addPreferencesFromResource(R.xml.pref_main)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+//        requirePreference(PREF_REMOTE_CONTROL_ENABLED).setOnChangeListener {
+//            it.updateSummary(
+//                getString(
+//                    if (settings.getBoolean(it.key)) R.string.enabled else R.string.disabled
+//                ),
+//                SUMMARY_STYLE_DEFAULT
+//            )
+//        }
 
         database = Database(requireContext())
         databaseListener = requireContext().registerDatabaseListener { tables ->
@@ -47,17 +53,10 @@ class MainFragment : BasePreferenceFragment() {
         super.onStart()
 
         updateHistoryPreferenceView()
-        updateRemoteControlPreferenceView()
-    }
-
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        when (key) {
-            PREF_REMOTE_CONTROL_ENABLED -> updateRemoteControlPreferenceView()
-        }
     }
 
     private fun updateHistoryPreferenceView() {
-        requirePreference("history").updateSummary(
+        requirePreference(PREF_HISTORY).updateSummary(
             getQuantityString(
                 R.plurals.new_history_items,
                 R.string.new_history_items_zero,
@@ -66,13 +65,8 @@ class MainFragment : BasePreferenceFragment() {
         )
     }
 
-    private fun updateRemoteControlPreferenceView() {
-//        val preference = requirePreference(PREF_REMOTE_CONTROL_ENABLED)
-//        val enabled = settings.getBoolean(preference.key)
-//        updateSummary(
-//            preference,
-//            getString(if (enabled) R.string.enabled else R.string.disabled),
-//            SUMMARY_STYLE_DEFAULT
-//        )
+    companion object {
+
+        private const val PREF_HISTORY = "history"
     }
 }

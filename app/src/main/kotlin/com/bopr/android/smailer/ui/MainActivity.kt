@@ -16,7 +16,6 @@ import com.bopr.android.smailer.control.MailControlWorker.Companion.enableMailRe
 import com.bopr.android.smailer.external.Firebase.Companion.resubscribeToFirebaseMessaging
 import com.bopr.android.smailer.provider.telephony.ContentObserverService.Companion.startContentObserver
 import com.bopr.android.smailer.sync.SyncWorker.Companion.syncAppDataWithGoogleCloud
-import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_DOWNLOAD
 import com.bopr.android.smailer.util.requireIgnoreBatteryOptimization
 
 /**
@@ -67,7 +66,7 @@ class MainActivity : BaseFlavorActivity(MainFragment::class), OnSharedPreference
 
             PREF_EMAIL_SENDER_ACCOUNT -> {
                 if (accountHelper.isGoogleAccountExists(settings.getString(PREF_EMAIL_SENDER_ACCOUNT))) {
-                    syncAppDataWithGoogleCloud(SYNC_FORCE_DOWNLOAD)
+                    syncAppDataWithGoogleCloud()
                     resubscribeToFirebaseMessaging()
                 }
             }

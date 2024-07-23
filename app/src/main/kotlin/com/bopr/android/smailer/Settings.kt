@@ -44,14 +44,11 @@ class Settings(context: Context) :
 
         private const val SETTINGS_VERSION = 2
 
-        const val PREF_SETTINGS_VERSION = "settings_version" /* hidden */
-
         const val PREF_DEVICE_ALIAS = "device_alias"
-
         const val PREF_DISPATCH_BATTERY_LEVEL = "dispatch_battery_level"
-
         const val PREF_EMAIL_MESSAGE_CONTENT = "email_message_content"
         const val PREF_EMAIL_MESSENGER_ENABLED = "email_messenger_enabled"
+        const val PREF_EMAIL_SENDER_ACCOUNT = "sender_account"
         const val PREF_EMAIL_TRIGGERS = "email_triggers"
         const val PREF_MESSAGE_LOCALE = "email_locale"
         const val PREF_NOTIFY_SEND_SUCCESS = "notify_send_success"
@@ -61,10 +58,9 @@ class Settings(context: Context) :
         const val PREF_REMOTE_CONTROL_ENABLED = "remote_control_enabled"
         const val PREF_REMOTE_CONTROL_FILTER_RECIPIENTS = "remote_control_filter_recipients"
         const val PREF_REMOTE_CONTROL_NOTIFICATIONS = "remote_control_notifications"
-        const val PREF_EMAIL_SENDER_ACCOUNT = "sender_account"
+        const val PREF_SETTINGS_VERSION = "settings_version"
         const val PREF_SYNC_ENABLED = "sync_enabled"
         const val PREF_TELEGRAM_BOT_TOKEN = "telegram_bot_token"
-
         const val PREF_TELEGRAM_MESSAGE_CONTENT = "pref_telegram_message_content"
         const val PREF_TELEGRAM_MESSENGER_ENABLED = "pref_telegram_messenger_enabled"
 

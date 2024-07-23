@@ -36,6 +36,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
+import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_BOT_TOKEN
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_DEFAULT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS
@@ -54,9 +55,9 @@ import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.databaseName
 import com.bopr.android.smailer.external.Firebase
 import com.bopr.android.smailer.external.Firebase.Companion.FCM_REQUEST_DATA_SYNC
-import com.bopr.android.smailer.external.GoogleDrive
-import com.bopr.android.smailer.external.GoogleMail
-import com.bopr.android.smailer.external.Telegram
+import com.bopr.android.smailer.processor.mail.GoogleDrive
+import com.bopr.android.smailer.processor.mail.GoogleMail
+import com.bopr.android.smailer.processor.telegram.TelegramSession
 import com.bopr.android.smailer.processor.mail.MailMessage
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
@@ -77,6 +78,7 @@ import com.bopr.android.smailer.util.getContactName
 import com.bopr.android.smailer.util.readLogcatLog
 import com.bopr.android.smailer.util.requireIgnoreBatteryOptimization
 import com.bopr.android.smailer.util.runLongTask
+import com.bopr.android.smailer.util.setOnClickListener
 import com.bopr.android.smailer.util.showToast
 import com.google.api.services.drive.DriveScopes.DRIVE_APPDATA
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
@@ -377,13 +379,7 @@ class DebugFragment : PreferenceFragmentCompat() {
         return Preference(requireContext()).apply {
             setIcon(R.drawable.ic_bullet)
             this.title = title
-            onPreferenceClickListener = object : DefaultClickListener() {
-
-                override fun onClick(preference: Preference) {
-                    onClick(preference)
-                }
-
-            }
+            setOnClickListener(onClick)
         }
     }
 
@@ -392,11 +388,10 @@ class DebugFragment : PreferenceFragmentCompat() {
         title: String,
         vararg preferences: Preference
     ) {
-        val category = PreferenceCategory(requireContext())
-        screen.addPreference(category)
-        category.title = title
-        for (preference in preferences) {
-            category.addPreference(preference)
+        PreferenceCategory(requireContext()).apply {
+            screen.addPreference(this)
+            this.title = title
+            preferences.forEach(::addPreference)
         }
     }
 
@@ -792,7 +787,10 @@ class DebugFragment : PreferenceFragmentCompat() {
     }
 
     private fun onSendTelegramMessage() {
-        Telegram(requireContext()).sendMessage(
+        TelegramSession(
+            context = requireContext(),
+            token = settings.getString(PREF_TELEGRAM_BOT_TOKEN)
+        ).sendMessage(
             message = "Debug message",
             onSuccess = {
                 showComplete()

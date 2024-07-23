@@ -161,6 +161,39 @@ fun RecyclerView.addOnItemSwipedListener(action: (RecyclerView.ViewHolder) -> Un
     }
 }
 
+/*
+fun <T> runInBackground(
+    onPerform: () -> T,
+    onComplete: () -> Unit = {},
+    onSuccess: (T) -> Unit = {},
+    onError: (Throwable) -> Unit = {}
+) {
+    Executors.newSingleThreadExecutor().execute {
+        */
+/* executor thread*//*
+
+        val result = try {
+            onPerform()
+        } catch (x: Throwable) {
+            x
+        }
+
+        Handler(Looper.getMainLooper()).post {
+            */
+/* main thread *//*
+
+            onComplete()
+            if (result is Throwable) {
+                onError(result)
+            } else {
+                @Suppress("UNCHECKED_CAST")
+                onSuccess(result as T)
+            }
+        }
+    }
+}
+*/
+
 fun <T> runInBackground(
     onPerform: () -> T,
     onComplete: () -> Unit = {},
@@ -169,21 +202,12 @@ fun <T> runInBackground(
 ) {
     Executors.newSingleThreadExecutor().execute {
         /* executor thread*/
-        val result = try {
-            onPerform()
-        } catch (x: Throwable) {
-            x
-        }
+        val result = runCatching(onPerform)
 
         Handler(Looper.getMainLooper()).post {
             /* main thread */
             onComplete()
-            if (result is Throwable) {
-                onError(result)
-            } else {
-                @Suppress("UNCHECKED_CAST")
-                onSuccess(result as T)
-            }
+            result.fold(onSuccess, onError)
         }
     }
 }

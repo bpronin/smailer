@@ -1,30 +1,29 @@
 package com.bopr.android.smailer.ui
 
+import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
-import androidx.preference.EditTextPreference
-import androidx.preference.ListPreference
-import androidx.preference.MultiSelectListPreference
+import androidx.annotation.XmlRes
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.PreferenceGroup
-import androidx.preference.SeekBarPreference
-import androidx.preference.TwoStatePreference
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.sharedPreferencesName
+import com.bopr.android.smailer.util.refreshView
 
 /**
  * Base [PreferenceFragmentCompat] with default behaviour.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-abstract class BasePreferenceFragment : PreferenceFragmentCompat(),
+abstract class BasePreferenceFragment(@XmlRes private val layoutRes: Int) :
+    PreferenceFragmentCompat(),
     OnSharedPreferenceChangeListener {
 
     protected lateinit var settings: Settings
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreatePreferences(bundle: Bundle?, rootKey: String?) {
+        addPreferencesFromResource(layoutRes)
+
         preferenceManager.sharedPreferencesName = sharedPreferencesName
 
         settings = Settings(requireContext())
@@ -33,6 +32,7 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(),
 
     override fun onDestroy() {
         settings.unregisterOnSharedPreferenceChangeListener(this)
+
         super.onDestroy()
     }
 
@@ -45,60 +45,17 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(),
     override fun onStart() {
         super.onStart()
 
-        /* when settings have changed from somewhere else but this fragment we need to
+        /* when settings have changed from somewhere else but this fragment, we need to
            forcibly refresh all views to reflect the changes */
-        refreshGroupViews(preferenceScreen)
+        preferenceScreen.refreshView()
     }
 
-    private fun refreshGroupViews(group: PreferenceGroup) {
-        val all = group.sharedPreferences!!.all
-        for (i in 0 until group.preferenceCount) {
-            group.getPreference(i).apply {
-                if (this is PreferenceGroup) {
-                    refreshGroupViews(this)
-                } else {
-                    val value = all[key]
-//                    callChangeListener(value)
-                    refreshPreferenceView(this, value)
-                }
-            }
-        }
-    }
-
-    private fun refreshPreferenceView(preference: Preference, value: Any?) {
-        try {
-            when (preference) {
-                is TwoStatePreference ->
-                    preference.isChecked = (value as Boolean?) ?: false
-
-                is EditTextPreference ->
-                    preference.text = value as String?
-
-                is ListPreference ->
-                    preference.value = value as String?
-
-                is SeekBarPreference ->
-                    preference.value = (value as Int?) ?: 0
-
-                is MultiSelectListPreference -> {
-                    @Suppress("UNCHECKED_CAST")
-                    preference.values = (value as Set<String>?) ?: emptySet()
-                }
-            }
-        } catch (x: Exception) {
-            throw IllegalArgumentException("Failed refreshing $preference", x)
-        }
-    }
-
-    protected fun <T : Preference> requirePreferenceAs(key: CharSequence): T {
-        return requireNotNull(findPreference(key))
-    }
-
-    protected fun requirePreference(key: CharSequence): Preference {
-        return requireNotNull(findPreference(key))
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        key?.run { findPreference<Preference>(key)?.refreshView() }
     }
 
     companion object {
         private const val DIALOG_FRAGMENT_TAG = "androidx.preference.PreferenceFragment.DIALOG"
     }
 }
+

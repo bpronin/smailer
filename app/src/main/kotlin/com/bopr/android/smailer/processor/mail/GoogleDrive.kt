@@ -1,4 +1,4 @@
-package com.bopr.android.smailer.external
+package com.bopr.android.smailer.processor.mail
 
 import android.accounts.Account
 import android.content.Context

@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
-        <androidx.preference.Preference
+        <Preference
                 android:key="email_settings"
                 app:icon="@drawable/ic_email"
                 android:title="@string/email">
             <intent
                     android:targetClass="com.bopr.android.smailer.ui.EmailSettingsActivity"
                     android:targetPackage="com.bopr.android.smailer" />
-        </androidx.preference.Preference>
+        </Preference>
 
-        <androidx.preference.Preference
+        <Preference
                 android:key="telegram_settings"
                 app:icon="@drawable/ic_telegram"
                 android:title="@string/telegram">
             <intent
                     android:targetClass="com.bopr.android.smailer.ui.TelegramSettingsActivity"
                     android:targetPackage="com.bopr.android.smailer" />
-        </androidx.preference.Preference>
+        </Preference>
 
-</androidx.preference.PreferenceScreen>
+</PreferenceScreen>

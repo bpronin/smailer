@@ -15,7 +15,7 @@ import com.bopr.android.smailer.Settings.Companion.sharedPreferencesName
 import com.bopr.android.smailer.processor.mail.MailMessage
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.databaseName
-import com.bopr.android.smailer.external.GoogleMail
+import com.bopr.android.smailer.processor.mail.GoogleMail
 import com.bopr.android.smailer.ui.EventFilterPhoneBlacklistActivity
 import com.bopr.android.smailer.ui.EventFilterPhoneWhitelistActivity
 import com.bopr.android.smailer.ui.EventFilterTextBlacklistActivity

@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.preference.PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <androidx.preference.SwitchPreference
+    <SwitchPreference
             android:key="email_messenger_enabled"
             android:icon="@drawable/ic_email"
             android:title="@string/enabled" />
 
-    <androidx.preference.PreferenceCategory>
+    <PreferenceCategory>
 
-        <androidx.preference.Preference
+        <Preference
                 android:icon="@drawable/ic_account_round"
                 android:key="sender_account"
                 android:title="@string/sender" />
 
-        <androidx.preference.Preference
+        <Preference
                 android:icon="@drawable/ic_recipient"
                 android:key="recipients_address"
                 android:title="@string/recipients">
             <intent
                     android:targetClass="com.bopr.android.smailer.ui.RecipientsActivity"
                     android:targetPackage="com.bopr.android.smailer" />
-        </androidx.preference.Preference>
+        </Preference>
 
-        <androidx.preference.MultiSelectListPreference
+        <MultiSelectListPreference
                 android:dialogTitle="@string/email_message_content"
                 android:entries="@array/email_content_names"
                 android:entryValues="@array/email_content_values"
@@ -32,7 +32,7 @@
                 android:summary="@string/what_email_contains"
                 android:title="@string/email_content" />
 
-        <androidx.preference.ListPreference
+        <ListPreference
                 android:dialogTitle="@string/email_language"
                 android:entries="@array/language_names"
                 android:entryValues="@array/email_locale_values"
@@ -40,15 +40,15 @@
                 android:key="email_locale"
                 android:title="@string/email_message_language" />
 
-    </androidx.preference.PreferenceCategory>
+    </PreferenceCategory>
 
-    <androidx.preference.PreferenceCategory app:title="@null">
+    <PreferenceCategory app:title="@null">
 
-        <androidx.preference.Preference
+        <Preference
                 android:key="sent_test_email"
                 android:icon="@drawable/ic_test_message"
                 android:title="@string/send_test_email"
                 android:summary="@string/send_test_email_summary" />
 
-    </androidx.preference.PreferenceCategory>
-</androidx.preference.PreferenceScreen>
+    </PreferenceCategory>
+</PreferenceScreen>

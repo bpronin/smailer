@@ -53,19 +53,19 @@ internal class SyncWorker(context: Context, workerParams: WorkerParameters) :
         private const val WORK_SYNC = "com.bopr.android.smailer.sync"
         private const val SYNC_OPTIONS = "options"
 
-        internal fun Context.syncAppDataWithGoogleCloud(mode: Int = SYNC_NORMAL) {
+        internal fun Context.syncAppDataWithGoogleCloud() {
             return // TODO: the app is deregistered from Google Console
             @Suppress("UNREACHABLE_CODE")
 
             if (Settings(this).getBoolean(PREF_SYNC_ENABLED)) {
-                log.debug("Sync requested in mode: $mode")
+                log.debug("Sync requested")
 
                 val constraints = Constraints.Builder()
                     .setRequiredNetworkType(CONNECTED)
                     .build()
 
                 val data = Data.Builder()
-                    .putInt(SYNC_OPTIONS, mode)
+                    .putInt(SYNC_OPTIONS, SYNC_NORMAL)
                     .build()
 
                 val request = OneTimeWorkRequest.Builder(SyncWorker::class.java)

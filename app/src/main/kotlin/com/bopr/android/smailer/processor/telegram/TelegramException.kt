@@ -1,4 +1,4 @@
-package com.bopr.android.smailer.external
+package com.bopr.android.smailer.processor.telegram
 
 
 class TelegramException(val code: Code, cause: Throwable? = null) :
