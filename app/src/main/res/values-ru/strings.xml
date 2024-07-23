@@ -240,10 +240,10 @@
 
     <string-array name="email_content_names">
         <item>Заголовок</item>
-        <item>Время звонка</item>
-        <item>Время отправления</item>
-        <item>Имя звонившего</item>
-        <item>Название устройства</item>
+        <item>Время сообщения/звонка</item>
+        <item>Время обработки</item>
+        <item>Отправитель/звонивший</item>
+        <item>Имя устройства</item>
         <item>Местоположение устройства</item>
         <item>Ссылки удалённого управления</item>
     </string-array>
@@ -251,10 +251,10 @@
     <string-array name="telegram_message_content_names">
         <item>Сообщение</item>
         <item>Заголовок</item>
-        <item>Время звонка</item>
-        <item>Время отправления</item>
-        <item>Имя звонившего</item>
-        <item>Название устройства</item>
+        <item>Время сообщения/звонка</item>
+        <item>Время обработки</item>
+        <item>Отправитель/звонивший</item>
+        <item>Имя устройства</item>
         <item>Местоположение устройства</item>
     </string-array>
 

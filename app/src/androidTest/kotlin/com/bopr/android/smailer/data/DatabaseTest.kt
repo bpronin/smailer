@@ -6,7 +6,7 @@ import com.bopr.android.smailer.provider.EventState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
-import com.bopr.android.smailer.util.GeoCoordinates
+import com.bopr.android.smailer.util.GeoLocation
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -191,7 +191,7 @@ class DatabaseTest : BaseTest() {
                     20000L,
                     false,
                     "SMS text",
-                    GeoCoordinates(10.5, 20.5),
+                    GeoLocation(10.5, 20.5),
                     "Test 10",
                     STATE_PENDING,
                     "device",
@@ -269,7 +269,7 @@ class DatabaseTest : BaseTest() {
             endTime = 2000L,
             isMissed = false,
             text = "SMS text",
-            location = GeoCoordinates(10.5, 20.5),
+            location = GeoLocation(10.5, 20.5),
             details = "Test 1",
             state = STATE_PENDING,
             acceptor = "device",
@@ -303,7 +303,7 @@ class DatabaseTest : BaseTest() {
                 isIncoming = false,
                 endTime = 3000L,
                 isMissed = true,
-                location = GeoCoordinates(11.5, 21.5),
+                location = GeoLocation(11.5, 21.5),
                 text = "New text",
                 details = "New details"
         )
@@ -338,7 +338,7 @@ class DatabaseTest : BaseTest() {
                     2000L,
                     false,
                     "SMS text",
-                    GeoCoordinates(10.5, 20.5),
+                    GeoLocation(10.5, 20.5),
                     "Test 1",
                     STATE_PENDING,
                     "device",
@@ -500,7 +500,7 @@ class DatabaseTest : BaseTest() {
 
     @Test
     fun testGetSetLocation() {
-        database.lastLocation = GeoCoordinates(30.0, 60.0)
+        database.lastLocation = GeoLocation(30.0, 60.0)
         val actual = database.lastLocation
 
         Assert.assertNotNull(actual)

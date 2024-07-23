@@ -57,8 +57,8 @@ import com.bopr.android.smailer.external.Firebase
 import com.bopr.android.smailer.external.Firebase.Companion.FCM_REQUEST_DATA_SYNC
 import com.bopr.android.smailer.processor.mail.GoogleDrive
 import com.bopr.android.smailer.processor.mail.GoogleMail
-import com.bopr.android.smailer.processor.telegram.TelegramSession
 import com.bopr.android.smailer.processor.mail.MailMessage
+import com.bopr.android.smailer.processor.telegram.TelegramSession
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_PROCESSED
@@ -71,7 +71,8 @@ import com.bopr.android.smailer.sync.Synchronizer
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_DOWNLOAD
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_UPLOAD
 import com.bopr.android.smailer.util.DEVICE_NAME
-import com.bopr.android.smailer.util.GeoLocator
+import com.bopr.android.smailer.util.GeoLocation.Companion.requestGeoLocation
+import com.bopr.android.smailer.util.PreferenceProgress
 import com.bopr.android.smailer.util.checkPermission
 import com.bopr.android.smailer.util.escapeRegex
 import com.bopr.android.smailer.util.getContactName
@@ -94,7 +95,6 @@ import java.io.File
 class DebugFragment : PreferenceFragmentCompat() {
 
     private lateinit var settings: Settings
-    private lateinit var locator: GeoLocator
     private lateinit var database: Database
     private lateinit var authorization: GoogleAuthorizationHelper
     private lateinit var notifications: NotificationsHelper
@@ -115,7 +115,6 @@ class DebugFragment : PreferenceFragmentCompat() {
 
         settings = Settings(requireContext())
         database = Database(requireContext())
-        locator = GeoLocator(requireContext(), database)
         authorization = GoogleAuthorizationHelper(
             requireActivity(), PREF_EMAIL_SENDER_ACCOUNT, MAIL_GOOGLE_COM, DRIVE_APPDATA
         )
@@ -347,17 +346,11 @@ class DebugFragment : PreferenceFragmentCompat() {
     }
 
     private fun onGetLocation(preference: Preference) {
-        preference.runBackgroundTask(
-            onPerform = {
-                locator.getLocation()
-            },
-            onSuccess = { result ->
-                showInfoDialog("Location", result?.format() ?: "No location received")
-            },
-            onError = { error ->
-                showError("Location", error)
-            }
-        )
+        val progress = PreferenceProgress(preference).apply { start() }
+        requireContext().requestGeoLocation(database) {
+            progress.stop()
+            showInfoDialog("Location", it?.format() ?: "No location received")
+        }
     }
 
     override fun onDestroy() {
@@ -817,7 +810,11 @@ class DebugFragment : PreferenceFragmentCompat() {
         return accountHelper.requireGoogleAccount(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT))
     }
 
-    private fun runDefaultBackgroundTask(title: String, preference: Preference, onPerform: () -> Unit) {
+    private fun runDefaultBackgroundTask(
+        title: String,
+        preference: Preference,
+        onPerform: () -> Unit
+    ) {
         preference.runBackgroundTask(
             onPerform,
             onSuccess = {

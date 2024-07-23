@@ -235,9 +235,9 @@
 
     <string-array name="email_content_names">
         <item>Header</item>
-        <item>Call time</item>
-        <item>Sending time</item>
-        <item>Caller contact name</item>
+        <item>Message/call time</item>
+        <item>Dispatch time</item>
+        <item>Sender/caller</item>
         <item>Device name</item>
         <item>Device location</item>
         <item>Remote control links</item>
@@ -246,9 +246,9 @@
     <string-array name="telegram_message_content_names">
         <item>Body</item>
         <item>Header</item>
-        <item>Call time</item>
-        <item>Sending time</item>
-        <item>Caller contact name</item>
+        <item>Message/call time</item>
+        <item>Dispatch time</item>
+        <item>Sender/caller</item>
         <item>Device name</item>
         <item>Device location</item>
     </string-array>

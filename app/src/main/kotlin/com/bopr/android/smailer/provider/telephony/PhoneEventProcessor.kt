@@ -11,7 +11,7 @@ import com.bopr.android.smailer.provider.EventState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_ACCEPTED
-import com.bopr.android.smailer.util.GeoLocator
+import com.bopr.android.smailer.util.GeoLocation.Companion.requestGeoLocation
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import org.slf4j.LoggerFactory
 import java.lang.System.currentTimeMillis
@@ -26,7 +26,6 @@ class PhoneEventProcessor(
     private val database: Database = Database(context),
     private val eventDispatcher: EventDispatcher = EventDispatcher(context),
     private val notifications: NotificationsHelper = NotificationsHelper(context),
-    private val locator: GeoLocator = GeoLocator(context, database)
 ) {
 
     private val settings: Settings = Settings(context)
@@ -35,25 +34,10 @@ class PhoneEventProcessor(
         log.debug("Processing: {}", data)
 
         database.use {
-            data.apply {
-                location = locator.getLocation()
-                processStatus = eventFilter().test(this)
-                processTime = currentTimeMillis()
-
-                if (processStatus != STATUS_ACCEPTED) {
-                    state = STATE_IGNORED
-                    log.debug("Ignored")
-                } else if (startMailSession() && sendMessage(this)) {
-                    state = STATE_PROCESSED
-                    log.debug("Processed")
-                } else {
-                    state = STATE_PENDING
-                    log.debug("Postponed")
+            updateEvent(data) {
+                database.commit {
+                    phoneEvents.add(data)
                 }
-            }
-
-            database.commit {
-                phoneEvents.add(data)
             }
         }
     }
@@ -80,6 +64,30 @@ class PhoneEventProcessor(
                     }
                 }
             }
+        }
+    }
+
+    private fun updateEvent(data: PhoneEventData, onComplete: () -> Unit) {
+        context.requestGeoLocation(database) { currentLocation ->
+
+            data.apply {
+                location = currentLocation
+                processStatus = eventFilter().test(this)
+                processTime = currentTimeMillis()
+
+                if (processStatus != STATUS_ACCEPTED) {
+                    state = STATE_IGNORED
+                    log.debug("Ignored")
+                } else if (startMailSession() && sendMessage(this)) {
+                    state = STATE_PROCESSED
+                    log.debug("Processed")
+                } else {
+                    state = STATE_PENDING
+                    log.debug("Postponed")
+                }
+            }
+
+            onComplete()
         }
     }
 

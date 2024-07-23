@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bopr.android.smailer.sync.SyncWorker.Companion.syncAppDataWithGoogleCloud
-import com.bopr.android.smailer.util.GeoCoordinates
+import com.bopr.android.smailer.util.GeoLocation
 import org.slf4j.LoggerFactory
 import java.io.Closeable
 import java.lang.System.currentTimeMillis
@@ -60,9 +60,9 @@ class Database(private val context: Context) : Closeable {
     /**
      * Returns last saved geolocation.
      */
-    var lastLocation: GeoCoordinates?
+    var lastLocation: GeoLocation?
         get() = querySystemTable(COLUMN_LAST_LATITUDE, COLUMN_LAST_LONGITUDE).useFirst {
-            GeoCoordinates(
+            GeoLocation(
                 getDouble(COLUMN_LAST_LATITUDE),
                 getDouble(COLUMN_LAST_LONGITUDE)
             )

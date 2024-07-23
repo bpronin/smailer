@@ -12,7 +12,7 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DISP
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_EVENT_TIME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCATION
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
-import com.bopr.android.smailer.util.GeoCoordinates
+import com.bopr.android.smailer.util.GeoLocation
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.util.GregorianCalendar
@@ -26,7 +26,7 @@ import java.util.GregorianCalendar
 class TelegramPhoneEventFormatterTest : BaseTest() {
 
     private val testTime = GregorianCalendar(2016, 1, 2, 3, 4, 5).time.time
-    private val testCoordinates = GeoCoordinates(60.555, 30.555)
+    private val testCoordinates = GeoLocation(60.555, 30.555)
 
     @Test
     fun testAllOptionsOff() {

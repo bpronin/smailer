@@ -20,7 +20,7 @@ import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import com.bopr.android.smailer.provider.telephony.PhoneEventProcessor
-import com.bopr.android.smailer.util.GeoCoordinates
+import com.bopr.android.smailer.util.GeoLocation
 import com.bopr.android.smailer.util.GeoLocator
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.anyOrNull
@@ -142,7 +142,7 @@ class PhoneEventProcessorTest : BaseTest() {
         }
 
         geoLocator = mock {
-            on { getLocation() }.doReturn(GeoCoordinates(60.0, 30.0))
+            on { getLocation() }.doReturn(GeoLocation(60.0, 30.0))
         }
 
         messenger = mock()
@@ -188,7 +188,7 @@ class PhoneEventProcessorTest : BaseTest() {
         Assert.assertEquals(event.phone, savedEvent.phone)
         Assert.assertEquals(STATE_PROCESSED, savedEvent.state)
         Assert.assertEquals(PhoneEventData.STATUS_ACCEPTED, savedEvent.processStatus)
-        Assert.assertEquals(GeoCoordinates(60.0, 30.0), event.location)
+        Assert.assertEquals(GeoLocation(60.0, 30.0), event.location)
     }
 
     /**

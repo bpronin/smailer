@@ -3,7 +3,7 @@ package com.bopr.android.smailer.provider.telephony
 import android.os.Parcelable
 import com.bopr.android.smailer.provider.EventState
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
-import com.bopr.android.smailer.util.GeoCoordinates
+import com.bopr.android.smailer.util.GeoLocation
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -19,7 +19,7 @@ data class PhoneEventData(
     val endTime: Long? = null,
     val isMissed: Boolean = false,
     val text: String? = null,
-    var location: GeoCoordinates? = null,
+    var location: GeoLocation? = null,
     var details: String? = null,
     @EventState var state: Int = STATE_PENDING,
     val acceptor: String,

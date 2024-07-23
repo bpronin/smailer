@@ -30,7 +30,7 @@ class GeoLocatorTest : BaseTest() {
         databaseName = "test.sqlite"
         targetContext.deleteDatabase(databaseName)
         database = Database(targetContext).apply {
-            lastLocation = GeoCoordinates(50.0, 60.0)
+            lastLocation = GeoLocation(50.0, 60.0)
         }
     }
 

@@ -7,7 +7,6 @@ import android.os.Parcelable
 import com.bopr.android.smailer.data.Database.Companion.COLUMN_ACCEPTOR
 import com.bopr.android.smailer.data.Database.Companion.COLUMN_LATITUDE
 import com.bopr.android.smailer.data.Database.Companion.COLUMN_LONGITUDE
-import com.bopr.android.smailer.data.Database.Companion.COLUMN_PROCESS_STATUS
 import com.bopr.android.smailer.data.Database.Companion.COLUMN_PROCESS_TIME
 import com.bopr.android.smailer.data.Database.Companion.COLUMN_READ
 import com.bopr.android.smailer.data.Database.Companion.COLUMN_START_TIME
@@ -15,7 +14,7 @@ import com.bopr.android.smailer.data.Database.Companion.COLUMN_STATE
 import com.bopr.android.smailer.data.Database.Companion.TABLE_EVENTS
 import com.bopr.android.smailer.provider.Event
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
-import com.bopr.android.smailer.util.GeoCoordinates
+import com.bopr.android.smailer.util.GeoLocation
 import com.bopr.android.smailer.util.strings
 import org.slf4j.LoggerFactory
 
@@ -75,7 +74,7 @@ class EventsDataset(
         return cursor.run {
             Event(
                 time = getLong(COLUMN_START_TIME),
-                location = GeoCoordinates.coordinatesOf(
+                location = GeoLocation.fromCoordinates(
                     getDoubleOrNull(COLUMN_LATITUDE),
                     getDoubleOrNull(COLUMN_LONGITUDE)
                 ),

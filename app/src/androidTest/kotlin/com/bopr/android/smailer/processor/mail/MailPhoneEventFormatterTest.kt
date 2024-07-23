@@ -16,7 +16,7 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_EVEN
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_HEADER
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCATION
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
-import com.bopr.android.smailer.util.GeoCoordinates
+import com.bopr.android.smailer.util.GeoLocation
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
@@ -41,7 +41,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
 
     private lateinit var context: Context
     private val defaultTime = GregorianCalendar(2016, 1, 2, 3, 4, 5).time.time
-    private val defaultCoordinates = GeoCoordinates(60.555, 30.555)
+    private val defaultCoordinates = GeoLocation(60.555, 30.555)
 
     @Before
     fun setUp() {

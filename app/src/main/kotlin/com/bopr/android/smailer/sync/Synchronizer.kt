@@ -3,7 +3,7 @@ package com.bopr.android.smailer.sync
 import android.accounts.Account
 import android.content.Context
 import com.bopr.android.smailer.data.Database
-import com.bopr.android.smailer.util.GeoCoordinates.Companion.coordinatesOf
+import com.bopr.android.smailer.util.GeoLocation.Companion.fromCoordinates
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import com.bopr.android.smailer.processor.mail.GoogleDrive
 import org.slf4j.LoggerFactory
@@ -136,7 +136,7 @@ internal class Synchronizer(context: Context,
                 endTime = data.endTime,
                 isMissed = data.missed,
                 text = data.text,
-                location = coordinatesOf(data.latitude, data.longitude),
+                location = fromCoordinates(data.latitude, data.longitude),
                 details = data.details,
                 state = data.state,
                 acceptor = data.recipient,

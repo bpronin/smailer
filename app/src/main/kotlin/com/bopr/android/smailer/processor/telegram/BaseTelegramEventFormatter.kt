@@ -10,7 +10,7 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DISP
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_EVENT_TIME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_HEADER
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCATION
-import com.bopr.android.smailer.util.GeoCoordinates
+import com.bopr.android.smailer.util.GeoLocation
 import com.bopr.android.smailer.util.httpEncoded
 import java.text.DateFormat.SHORT
 import java.text.DateFormat.getDateTimeInstance
@@ -19,7 +19,7 @@ abstract class BaseTelegramEventFormatter(
     private val context: Context,
     private val eventTime: Long?,
     private val dispatchTime: Long?,
-    private val location: GeoCoordinates?
+    private val location: GeoLocation?
 ) :
     TelegramMessageFormatter(context) {
 

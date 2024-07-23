@@ -7,6 +7,8 @@ import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_BOT_TOKEN
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSENGER_ENABLED
 import com.bopr.android.smailer.processor.telegram.BaseTelegramEventFormatter
 import com.bopr.android.smailer.processor.telegram.TelegramSession
+import com.bopr.android.smailer.util.GeoLocation
+import com.bopr.android.smailer.util.GeoLocation.Companion.requestGeoLocation
 import com.bopr.android.smailer.util.PreferenceProgress
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_ACCENTED
 import com.bopr.android.smailer.util.onOffText
@@ -50,28 +52,28 @@ class TelegramSettingsFragment : BasePreferenceFragment(R.xml.pref_telegram_sett
     }
 
     private fun onSendTestTelegramMessage(preference: Preference) {
-        val formater = TestTelegramEventFormatter(System.currentTimeMillis())
-
-        val progress = PreferenceProgress(preference).apply { start() }
-
-        TelegramSession(
-            context = requireContext(),
-            token = settings.getString(PREF_TELEGRAM_BOT_TOKEN)
-        ).sendMessage(
-            message = formater.formatMessage(),
-            onSuccess = {
-                progress.stop()
-                showToast(R.string.test_message_sent)
-            },
-            onError = { error ->
-                progress.stop()
-                showInfoDialog(R.string.test_message_failed, telegramErrorText(error))
-            }
-        )
+        requireContext().requestGeoLocation { location ->
+            val formater = TestTelegramEventFormatter(System.currentTimeMillis(), location)
+            val progress = PreferenceProgress(preference).apply { start() }
+            TelegramSession(
+                context = requireContext(),
+                token = settings.getString(PREF_TELEGRAM_BOT_TOKEN)
+            ).sendMessage(
+                message = formater.formatMessage(),
+                onSuccess = {
+                    progress.stop()
+                    showToast(R.string.test_message_sent)
+                },
+                onError = { error ->
+                    progress.stop()
+                    showInfoDialog(R.string.test_message_failed, telegramErrorText(error))
+                }
+            )
+        }
     }
 
-    private inner class TestTelegramEventFormatter(time: Long) :
-        BaseTelegramEventFormatter(requireContext(), time, time, null) {
+    private inner class TestTelegramEventFormatter(time: Long, location: GeoLocation?) :
+        BaseTelegramEventFormatter(requireContext(), time, time, location) {
 
         override fun getHeaderText(): String {
             return getString(R.string.test_message)

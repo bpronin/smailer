@@ -5,7 +5,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteOpenHelper
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
-import com.bopr.android.smailer.util.GeoCoordinates
+import com.bopr.android.smailer.util.GeoLocation
 import com.bopr.android.smailer.util.strings
 import org.slf4j.LoggerFactory
 
@@ -66,7 +66,7 @@ class PhoneEventsDataset(helper: SQLiteOpenHelper, modifications: MutableSet<Str
                 endTime = getLongOrNull(Database.COLUMN_END_TIME),
                 isMissed = getBoolean(Database.COLUMN_IS_MISSED),
                 text = getStringOrNull(Database.COLUMN_TEXT),
-                location = GeoCoordinates.coordinatesOf(
+                location = GeoLocation.fromCoordinates(
                     getDoubleOrNull(Database.COLUMN_LATITUDE),
                     getDoubleOrNull(Database.COLUMN_LONGITUDE)
                 ),

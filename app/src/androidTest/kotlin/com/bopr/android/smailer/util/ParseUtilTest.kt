@@ -19,7 +19,7 @@ class ParseUtilTest : BaseTest() {
             startTime = GregorianCalendar(2016, 1, 2, 3, 4, 5).time.time,
             endTime = GregorianCalendar(2016, 1, 2, 4, 5, 10).time.time,
             text = "Message",
-            location = GeoCoordinates(60.555, 30.555),
+            location = GeoLocation(60.555, 30.555),
             acceptor = "device"
         )
 
