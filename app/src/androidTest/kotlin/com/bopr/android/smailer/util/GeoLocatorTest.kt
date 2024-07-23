@@ -6,6 +6,7 @@ import androidx.test.rule.GrantPermissionRule
 import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.databaseName
+import com.bopr.android.smailer.util.GeoLocation.Companion.requestGeoLocation
 import org.junit.After
 import org.junit.Assert.assertNotNull
 import org.junit.Before
@@ -41,9 +42,9 @@ class GeoLocatorTest : BaseTest() {
 
     @Test
     fun testGetLocationGpsOn() {
-        val locator = GeoLocator(targetContext, database)
-        val location = locator.getLocation()
-        assertNotNull(location)
+        targetContext.requestGeoLocation(database){
+            assertNotNull(it)
+        }
     }
 
 }

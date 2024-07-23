@@ -23,7 +23,7 @@
                     android:targetPackage="com.bopr.android.smailer" />
         </Preference>
 
-        <MultiSelectListPreference
+        <ExtMultiSelectListPreference
                 android:dialogTitle="@string/email_message_content"
                 android:entries="@array/email_content_names"
                 android:entryValues="@array/email_content_values"

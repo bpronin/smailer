@@ -23,7 +23,7 @@ import com.bopr.android.smailer.util.requireIgnoreBatteryOptimization
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class MainActivity : BaseFlavorActivity(MainFragment::class), OnSharedPreferenceChangeListener {
+class MainActivity : FlavorBaseActivity(MainFragment::class), OnSharedPreferenceChangeListener {
 
     private lateinit var settings: Settings
     private lateinit var backupManager: BackupManager

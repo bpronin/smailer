@@ -148,3 +148,13 @@ fun <T : Preference> T.setOnChangeListener(onChange: (T) -> Unit) {
         true
     }
 }
+
+fun MultiSelectListPreference.titles(): List<CharSequence> {
+    val result = mutableListOf<CharSequence>()
+    for ((index, value) in entryValues.withIndex()) {
+        if(values.contains(value)){
+            result.add(entries[index])
+        }
+    }
+    return result
+}

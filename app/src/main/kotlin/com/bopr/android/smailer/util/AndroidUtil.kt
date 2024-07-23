@@ -24,7 +24,7 @@ import java.io.PrintWriter
 /**
  * Returns current device name.
  */
-val DEVICE_NAME get() = capitalize(Build.MANUFACTURER) + " " + Build.MODEL
+val DEVICE_NAME get() = Build.MANUFACTURER.capitalize() + " " + Build.MODEL
 
 /**
  * NOTE: The method must be named exactly "checkPermission" to pass the IDE inspections and lint warnings

@@ -60,10 +60,10 @@ class TextUtilTest : BaseTest() {
 
     @Test
     fun testCapitalize() {
-        assertEquals("Hello", capitalize("hello"))
-        assertEquals("Hello", capitalize("Hello"))
-        assertEquals("", capitalize(""))
-        assertNull(capitalize(null))
+        assertEquals("Hello", "hello".capitalize())
+        assertEquals("Hello", "Hello".capitalize())
+        assertEquals("", "".capitalize())
+        assertNull(null.capitalize())
     }
 
     @Test

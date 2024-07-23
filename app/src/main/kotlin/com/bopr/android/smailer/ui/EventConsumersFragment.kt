@@ -4,6 +4,9 @@ import android.content.SharedPreferences
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSENGER_ENABLED
+import com.bopr.android.smailer.util.SummaryStyle
+import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_ACCENTED
+import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_DEFAULT
 import com.bopr.android.smailer.util.onOffText
 import com.bopr.android.smailer.util.requirePreference
 import com.bopr.android.smailer.util.updateSummary
@@ -34,14 +37,16 @@ class EventConsumersFragment : BasePreferenceFragment(R.xml.pref_event_consumers
     }
 
     private fun updateEmailPreference() {
+        val enabled = settings.getBoolean(PREF_EMAIL_MESSENGER_ENABLED)
         requirePreference(PREF_EMAIL_SETTINGS).updateSummary(
-            onOffText(settings.getBoolean(PREF_EMAIL_MESSENGER_ENABLED)),
+            onOffText(enabled), if (enabled) SUMMARY_STYLE_DEFAULT else SUMMARY_STYLE_ACCENTED
         )
     }
 
     private fun updateTelegramPreference() {
+        val enabled = settings.getBoolean(PREF_TELEGRAM_MESSENGER_ENABLED)
         requirePreference(PREF_TELEGRAM_SETTINGS).updateSummary(
-            onOffText(settings.getBoolean(PREF_TELEGRAM_MESSENGER_ENABLED))
+            onOffText(enabled), if (enabled) SUMMARY_STYLE_DEFAULT else SUMMARY_STYLE_ACCENTED
         )
     }
 

@@ -21,7 +21,6 @@ import com.bopr.android.smailer.provider.EventState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import com.bopr.android.smailer.provider.telephony.PhoneEventProcessor
 import com.bopr.android.smailer.util.GeoLocation
-import com.bopr.android.smailer.util.GeoLocator
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.doNothing
@@ -57,7 +56,6 @@ class PhoneEventProcessorTest : BaseTest() {
     private lateinit var messenger: EventDispatcher
     private lateinit var notifications: NotificationsHelper
     private lateinit var preferences: SharedPreferences
-    private lateinit var geoLocator: GeoLocator
     private lateinit var processor: PhoneEventProcessor
     private lateinit var accountManager: AccountManager
 
@@ -141,10 +139,6 @@ class PhoneEventProcessorTest : BaseTest() {
             on { getSystemService(eq(Context.CONNECTIVITY_SERVICE)) }.doReturn(connectivityManager)
         }
 
-        geoLocator = mock {
-            on { getLocation() }.doReturn(GeoLocation(60.0, 30.0))
-        }
-
         messenger = mock()
         notifications = mock()
 
@@ -152,7 +146,7 @@ class PhoneEventProcessorTest : BaseTest() {
         targetContext.deleteDatabase(Database.databaseName)
         database = Database(targetContext) /* not a mock context here! */
 
-        processor = PhoneEventProcessor(context, database, messenger, notifications, geoLocator)
+        processor = PhoneEventProcessor(context, database, messenger, notifications)
     }
 
     @After

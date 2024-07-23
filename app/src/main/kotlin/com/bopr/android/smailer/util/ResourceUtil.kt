@@ -2,6 +2,7 @@ package com.bopr.android.smailer.util
 
 import android.content.Context
 import android.content.res.Resources
+import androidx.annotation.ArrayRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.bopr.android.smailer.R
@@ -173,4 +174,3 @@ fun Context.localeResources(locale: Locale): Resources {
         createConfigurationContext(configuration).resources
     }
 }
-

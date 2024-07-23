@@ -14,7 +14,7 @@
 
     </PreferenceCategory>
 
-    <MultiSelectListPreference
+    <ExtMultiSelectListPreference
             android:dialogTitle="@string/message_content"
             android:entries="@array/telegram_message_content_names"
             android:entryValues="@array/telegram_message_content_values"

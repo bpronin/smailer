@@ -72,12 +72,8 @@ fun decimalToDMS(
     return degrees.toString() + degreeSymbol + minutes + minuteSymbol + seconds + secondSymbol
 }
 
-fun capitalize(text: String?): String? {
-    return if (text.isNullOrBlank()) {
-        text
-    } else {
-        text.substring(0, 1).uppercase() + text.substring(1)
-    }
+fun String?.capitalize(): String? {
+    return this?.let { substring(0, 1).uppercase() + substring(1) }
 }
 
 fun formatDuration(duration: Long?): String? {

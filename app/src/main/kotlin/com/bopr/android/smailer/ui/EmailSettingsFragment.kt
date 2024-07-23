@@ -1,10 +1,13 @@
 package com.bopr.android.smailer.ui
 
 import android.os.Bundle
+import android.text.TextUtils
+import androidx.preference.ExtMultiSelectListPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.R
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSAGE_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_MESSAGE_LOCALE
@@ -21,6 +24,7 @@ import com.bopr.android.smailer.util.runBackgroundTask
 import com.bopr.android.smailer.util.setOnChangeListener
 import com.bopr.android.smailer.util.setOnClickListener
 import com.bopr.android.smailer.util.showToast
+import com.bopr.android.smailer.util.titles
 import com.bopr.android.smailer.util.updateSummary
 import com.google.api.services.drive.DriveScopes.DRIVE_APPDATA
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
@@ -34,12 +38,23 @@ class EmailSettingsFragment : BasePreferenceFragment(R.xml.pref_email_settings) 
 
     private lateinit var accountHelper: AccountHelper
     private lateinit var authorizationHelper: GoogleAuthorizationHelper
+
     //    private val requestPermissionLauncher = registerForActivityResult(RequestPermission()) { _ ->
 //        updateAccountPreferenceView()
 //    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        requirePreferenceAs<ExtMultiSelectListPreference>(PREF_EMAIL_MESSAGE_CONTENT).apply {
+            maxLines = 2
+            ellipsize = TextUtils.TruncateAt.END
+            setOnChangeListener {
+                it.apply {
+                    updateSummary(titles().joinToString(", "))
+                }
+            }
+        }
 
         requirePreferenceAs<ListPreference>(PREF_MESSAGE_LOCALE).setOnChangeListener {
             it.apply {

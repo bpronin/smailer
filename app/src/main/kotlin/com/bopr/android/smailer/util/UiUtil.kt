@@ -7,7 +7,6 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Spannable
 import android.text.SpannableString
-import android.text.style.CharacterStyle
 import android.text.style.ForegroundColorSpan
 import android.text.style.ParagraphStyle
 import android.view.View
@@ -41,23 +40,20 @@ import java.util.concurrent.Executors
  * Returns text underlined with wavy red line.
  */
 fun Context.underwivedText(value: CharSequence?): Spannable {
-    val spannable: Spannable = SpannableString(value)
-    val span: ParagraphStyle = WavyUnderlineSpan(ContextCompat.getColor(this, R.color.errorLine))
-    spannable.setSpan(span, 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-
-    return spannable
+    val span = WavyUnderlineSpan(ContextCompat.getColor(this, R.color.errorLine))
+    return SpannableString(value).apply {
+        setSpan(span, 0, length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+    }
 }
 
 /**
  * Returns text of accent color.
  */
 fun Context.accentedText(value: CharSequence?): Spannable {
-    val spannable: Spannable = SpannableString(value)
-    val span: CharacterStyle =
-        ForegroundColorSpan(ContextCompat.getColor(this, R.color.colorAccent))
-    spannable.setSpan(span, 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-
-    return spannable
+    val span = ForegroundColorSpan(ContextCompat.getColor(this, R.color.colorAccent))
+    return SpannableString(value).apply {
+        setSpan(span, 0, length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+    }
 }
 
 @ColorInt
@@ -159,7 +155,6 @@ fun RecyclerView.addOnItemSwipedListener(action: (RecyclerView.ViewHolder) -> Un
     }
 }
 
-/*
 fun <T> runInBackground(
     onPerform: () -> T,
     onComplete: () -> Unit = {},
@@ -167,43 +162,9 @@ fun <T> runInBackground(
     onError: (Throwable) -> Unit = {}
 ) {
     Executors.newSingleThreadExecutor().execute {
-        */
-/* executor thread*//*
-
-        val result = try {
-            onPerform()
-        } catch (x: Throwable) {
-            x
-        }
-
-        Handler(Looper.getMainLooper()).post {
-            */
-/* main thread *//*
-
-            onComplete()
-            if (result is Throwable) {
-                onError(result)
-            } else {
-                @Suppress("UNCHECKED_CAST")
-                onSuccess(result as T)
-            }
-        }
-    }
-}
-*/
-
-fun <T> runInBackground(
-    onPerform: () -> T,
-    onComplete: () -> Unit = {},
-    onSuccess: (T) -> Unit = {},
-    onError: (Throwable) -> Unit = {}
-) {
-    Executors.newSingleThreadExecutor().execute {
-        /* executor thread*/
         val result = runCatching(onPerform)
 
         Handler(Looper.getMainLooper()).post {
-            /* main thread */
             onComplete()
             result.fold(onSuccess, onError)
         }
