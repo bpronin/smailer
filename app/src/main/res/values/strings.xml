@@ -143,6 +143,7 @@
     <string name="processed">Processed</string>
     <string name="sent_sms">Sent SMS to %s</string>
     <string name="sent_time_device">Sent%1$s%2$s</string>
+    <string name="_on_date_at_time">\u0020on %1$s at %2$s</string>
     <string name="service_account_not_found">Service account not found</string>
     <string name="service_running">Service running</string>
     <string name="since_permissions_not_granted">Since not all required permissions is granted, some options have been disabled.</string>
@@ -236,19 +237,19 @@
     <string-array name="email_content_names">
         <item>Header</item>
         <item>Message/call time</item>
-        <item>Dispatch time</item>
         <item>Sender/caller</item>
+        <item>Dispatch time</item>
         <item>Device name</item>
         <item>Device location</item>
         <item>Remote control links</item>
     </string-array>
     
     <string-array name="telegram_message_content_names">
-        <item>Body</item>
+        <item>Message text</item>
         <item>Header</item>
         <item>Message/call time</item>
-        <item>Dispatch time</item>
         <item>Sender/caller</item>
+        <item>Dispatch time</item>
         <item>Device name</item>
         <item>Device location</item>
     </string-array>

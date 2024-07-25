@@ -93,15 +93,15 @@ class TelegramSettingsFragment : BasePreferenceFragment(R.xml.pref_telegram_sett
     private inner class TestTelegramEventFormatter(time: Long, location: GeoLocation?) :
         BaseTelegramEventFormatter(requireContext(), time, time, location) {
 
-        override fun getHeaderText(): String {
+        override fun getTitle(): String {
             return getString(R.string.test_message)
         }
 
-        override fun getBodyText(): String {
+        override fun getMessage(): String {
             return getString(R.string.this_is_test_message)
         }
 
-        override fun getSenderText(): String {
+        override fun getSenderName(): String {
             return getString(R.string.sender_of, getString(R.string.app_name))
         }
 

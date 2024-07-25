@@ -16,11 +16,11 @@ import com.bopr.android.smailer.util.tryGetContactName
 class TelegramPhoneEventFormatter(private val context: Context, private val event: PhoneEventData) :
     BaseTelegramEventFormatter(context, event.startTime, event.processTime, event.location) {
 
-    override fun getHeaderText(): String {
+    override fun getTitle(): String {
         return string(eventTypeText(event))
     }
 
-    override fun getBodyText(): String {
+    override fun getMessage(): String {
         return when {
             event.isMissed ->
                 string(R.string.you_had_missed_call)
@@ -39,7 +39,7 @@ class TelegramPhoneEventFormatter(private val context: Context, private val even
         }
     }
 
-    override fun getSenderText(): String {
+    override fun getSenderName(): String {
         if (!settings.hasTelegramMessageContent(VAL_PREF_MESSAGE_CONTENT_CALLER)) return ""
 
         val patternRes = when {

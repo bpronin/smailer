@@ -15,8 +15,8 @@
     <string-array name="email_content_values" translatable="false">
         <item>val_pref_message_content_header</item>
         <item>val_pref_message_content_event_time</item>
-        <item>val_pref_message_content_dispatch_time</item>
         <item>val_pref_message_content_caller</item>
+        <item>val_pref_message_content_dispatch_time</item>
         <item>val_pref_message_content_device_name</item>
         <item>val_pref_message_content_location</item>
         <item>val_pref_message_content_control_links</item>
@@ -32,8 +32,8 @@
         <item>val_pref_message_content_body</item>
         <item>val_pref_message_content_header</item>
         <item>val_pref_message_content_event_time</item>
-        <item>val_pref_message_content_dispatch_time</item>
         <item>val_pref_message_content_caller</item>
+        <item>val_pref_message_content_dispatch_time</item>
         <item>val_pref_message_content_device_name</item>
         <item>val_pref_message_content_location</item>
     </string-array>

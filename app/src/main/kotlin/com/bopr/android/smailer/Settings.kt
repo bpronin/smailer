@@ -205,22 +205,6 @@ class Settings(context: Context, changeListener: ChangeListener? = null) {
         const val VAL_PREF_TRIGGER_OUT_SMS = "out_sms"
 
         const val DEFAULT_PHONE_SEARCH_URL = "https://www.google.com/search?q=$PHONE_SEARCH_TAG"
-
-        val DEFAULT_EMAIL_MESSAGE_CONTENT = setOf(
-            VAL_PREF_MESSAGE_CONTENT_BODY,
-            VAL_PREF_MESSAGE_CONTENT_CALLER,
-            VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME,
-            VAL_PREF_MESSAGE_CONTENT_HEADER,
-            VAL_PREF_MESSAGE_CONTENT_LOCATION,
-            VAL_PREF_MESSAGE_CONTENT_EVENT_TIME,
-            VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME,
-            VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS
-        )
-
-        val DEFAULT_TRIGGERS: Set<String> = setOf(
-            VAL_PREF_TRIGGER_IN_SMS,
-            VAL_PREF_TRIGGER_MISSED_CALLS
-        )
     }
 
 }
