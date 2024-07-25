@@ -1,5 +1,6 @@
 package com.bopr.android.smailer.ui
 
+import VariantBaseActivity
 import androidx.fragment.app.Fragment
 import kotlin.reflect.KClass
 

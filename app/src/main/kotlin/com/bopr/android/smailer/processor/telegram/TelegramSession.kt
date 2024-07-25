@@ -57,16 +57,14 @@ class TelegramSession(context: Context, private val token: String?) {
         onError: (error: TelegramException) -> Unit
     ) {
         if (chatId.isNullOrEmpty()) {
-            onError(TelegramException(TELEGRAM_NO_CHAT))
+            onError(TelegramException(TELEGRAM_NO_CHAT, "Chat ID is null"))
             return
         }
 
         request(
             command = "getChat?chat_id=$chatId",
             onResponse = { response ->
-                detectRemoteError(response)?.run {
-                    throw TelegramException(TELEGRAM_NO_CHAT)
-                }
+                detectRemoteError(response, TELEGRAM_NO_CHAT)
 
                 onSuccess(
                     response
@@ -85,13 +83,11 @@ class TelegramSession(context: Context, private val token: String?) {
         request(
             command = "getUpdates",
             onResponse = { response ->
-                detectRemoteError(response)?.run {
-                    throw TelegramException(TELEGRAM_BAD_RESPONSE)
-                }
+                detectRemoteError(response, TELEGRAM_BAD_RESPONSE)
 
                 val data = response.getJSONArray("result")
                 if (data.length() == 0)
-                    throw TelegramException(TELEGRAM_NO_CHAT)
+                    throw TelegramException(TELEGRAM_NO_CHAT, "Empty updates")
 
                 val chatId = data.getJSONObject(0)
                     .getJSONObject("message")
@@ -116,9 +112,7 @@ class TelegramSession(context: Context, private val token: String?) {
                     "text=${fixMessageText(message)}&" +
                     "parse_mode=$PARSE_MODE",
             onResponse = { response ->
-                detectRemoteError(response)?.run {
-                    throw TelegramException(TELEGRAM_BAD_RESPONSE)
-                }
+                detectRemoteError(response, TELEGRAM_BAD_RESPONSE)
                 onSuccess(chatId)
             },
             onError = onError
@@ -131,7 +125,7 @@ class TelegramSession(context: Context, private val token: String?) {
         onError: (error: TelegramException) -> Unit
     ) {
         if (token.isNullOrEmpty()) {
-            onError(TelegramException(TELEGRAM_NO_TOKEN))
+            onError(TelegramException(TELEGRAM_NO_TOKEN, "Token is null"))
         } else {
             val url = "$BASE_URL$token/$command"
             val request = JsonObjectRequest(url,
@@ -149,14 +143,29 @@ class TelegramSession(context: Context, private val token: String?) {
 
                     when (error) {
                         is AuthFailureError ->
-                            onError(TelegramException(TELEGRAM_INVALID_TOKEN, cause = error))
+                            onError(
+                                TelegramException(
+                                    TELEGRAM_INVALID_TOKEN,
+                                    error.localizedMessage.orEmpty(), error
+                                )
+                            )
 
                         is NetworkError,
                         is TimeoutError ->
-                            onError(TelegramException(TELEGRAM_NO_CONNECTION, cause = error))
+                            onError(
+                                TelegramException(
+                                    TELEGRAM_NO_CONNECTION,
+                                    error.localizedMessage.orEmpty(), error
+                                )
+                            )
 
                         else ->
-                            onError(TelegramException(TELEGRAM_REQUEST_FAILED, cause = error))
+                            onError(
+                                TelegramException(
+                                    TELEGRAM_REQUEST_FAILED,
+                                    error.localizedMessage.orEmpty(), error
+                                )
+                            )
                     }
                 }
             )
@@ -165,16 +174,16 @@ class TelegramSession(context: Context, private val token: String?) {
         }
     }
 
-    private fun detectRemoteError(response: JSONObject): TelegramRemoteError? {
-        return if (!response.getBoolean("ok")) {
-            val error = TelegramRemoteError(
+    private fun detectRemoteError(
+        response: JSONObject,
+        exceptionCode: TelegramException.Code
+    ) {
+        if (!response.getBoolean("ok")) {
+            throw TelegramRemoteError(
+                exceptionCode,
                 response.getInt("error_code"), response.getString("description")
             )
-
-            log.warn("Remote error $error")
-
-            error
-        } else null
+        }
     }
 
     private fun fixMessageText(text: String): String {

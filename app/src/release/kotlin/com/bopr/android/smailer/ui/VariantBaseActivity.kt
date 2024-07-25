@@ -9,4 +9,4 @@ import kotlin.reflect.KClass
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-open class BaseVariantActivity(value: KClass<out Fragment>) : BaseActivity(value)
+open class VariantBaseActivity(value: KClass<out Fragment>) : BaseActivity(value)

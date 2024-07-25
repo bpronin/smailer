@@ -84,7 +84,10 @@ class TelegramSettingsFragment : BasePreferenceFragment(R.xml.pref_telegram_sett
                 },
                 onError = { error ->
                     progress.stop()
-                    showInfoDialog(R.string.test_message_failed, telegramErrorText(error))
+                    showInfoDialog(
+                        getString(R.string.test_message_failed),
+                        "${telegramErrorText(error)}\n${error.message}"
+                    )
                 }
             )
         }
