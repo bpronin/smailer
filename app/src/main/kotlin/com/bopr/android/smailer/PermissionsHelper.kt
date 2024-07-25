@@ -118,11 +118,11 @@ class PermissionsHelper(
         log.debug("Granted: {}", grantedPermissions)
 
         /* set default accounts at startup */
+        val accountName = accountHelper.getPrimaryGoogleAccount()?.name
         settings.update {
-            val accountName = accountHelper.getPrimaryGoogleAccount()?.name
-            putOptString(PREF_EMAIL_SENDER_ACCOUNT, accountName)
-            putOptString(PREF_RECIPIENTS_ADDRESS, accountName)
-            putOptString(PREF_REMOTE_CONTROL_ACCOUNT, accountName)
+            ifNotExists(PREF_EMAIL_SENDER_ACCOUNT) { putString(it, accountName) }
+            ifNotExists(PREF_RECIPIENTS_ADDRESS) { putString(it, accountName) }
+            ifNotExists(PREF_REMOTE_CONTROL_ACCOUNT) { putString(it, accountName) }
         }
     }
 

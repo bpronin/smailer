@@ -2,7 +2,6 @@ package com.bopr.android.smailer.util
 
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
-import androidx.annotation.StringRes
 
 /* Must be subclass of SharedPreferences! Otherwise it leads to unpredictable results */
 open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPreferences) :
@@ -72,11 +71,11 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
         return wrappedPreferences.contains(key)
     }
 
-    override fun edit(): EditorWrapper {
-        return EditorWrapper(wrappedPreferences.edit())
+    override fun edit(): SharedPreferences.Editor {
+        return wrappedPreferences.edit()
     }
 
-    fun update(action: EditorWrapper.() -> Unit) {
+    fun update(action: SharedPreferences.Editor.() -> Unit) {
         val editor = edit()
         action(editor)
         editor.apply()
@@ -90,83 +89,70 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
         wrappedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
     }
 
-    open inner class EditorWrapper(private val wrappedEditor: SharedPreferences.Editor) :
-        SharedPreferences.Editor {
-
-        override fun putString(key: String, value: String?): EditorWrapper {
-            wrappedEditor.putString(key, value)
-            return this
-        }
-
-        override fun putStringSet(key: String, values: Set<String>?): EditorWrapper {
-            wrappedEditor.putStringSet(key, values)
-            return this
-        }
-
-        fun putStringList(key: String, value: Collection<String>?): EditorWrapper {
-            putString(key, value?.let { commaJoin(value) })
-            return this
-        }
-
-        override fun putInt(key: String, value: Int): EditorWrapper {
-            wrappedEditor.putInt(key, value)
-            return this
-        }
-
-        override fun putLong(key: String, value: Long): EditorWrapper {
-            wrappedEditor.putLong(key, value)
-            return this
-        }
-
-        override fun putFloat(key: String, value: Float): EditorWrapper {
-            wrappedEditor.putFloat(key, value)
-            return this
-        }
-
-        override fun putBoolean(key: String, value: Boolean): EditorWrapper {
-            wrappedEditor.putBoolean(key, value)
-            return this
-        }
-
-        fun putOptString(key: String, value: String?): EditorWrapper {
-            if (!contains(key)) {
-                putString(key, value)
-            }
-            return this
-        }
-
-        fun putOptStringSet(key: String, values: Set<String>?): EditorWrapper {
-            if (!contains(key)) {
-                putStringSet(key, values)
-            }
-            return this
-        }
-
-        fun putOptBoolean(key: String, value: Boolean): EditorWrapper {
-            if (!contains(key)) {
-                putBoolean(key, value)
-            }
-            return this
-        }
-
-        override fun remove(key: String): EditorWrapper {
-            wrappedEditor.remove(key)
-            return this
-        }
-
-        override fun clear(): EditorWrapper {
-            wrappedEditor.clear()
-            return this
-        }
-
-        override fun commit(): Boolean {
-            return wrappedEditor.commit()
-        }
-
-        override fun apply() {
-            wrappedEditor.apply()
-        }
-
-    }
+//    open inner class EditorWrapper(private val wrappedEditor: SharedPreferences.Editor) :
+//        SharedPreferences.Editor {
+//
+//        override fun putString(key: String, value: String?): EditorWrapper {
+//            wrappedEditor.putString(key, value)
+//            return this
+//        }
+//
+//        override fun putStringSet(key: String, values: Set<String>?): EditorWrapper {
+//            wrappedEditor.putStringSet(key, values)
+//            return this
+//        }
+//
+//        fun putStringList(key: String, value: Collection<String>?): EditorWrapper {
+//            putString(key, value?.let { commaJoin(value) })
+//            return this
+//        }
+//
+//        override fun putInt(key: String, value: Int): EditorWrapper {
+//            wrappedEditor.putInt(key, value)
+//            return this
+//        }
+//
+//        override fun putLong(key: String, value: Long): EditorWrapper {
+//            wrappedEditor.putLong(key, value)
+//            return this
+//        }
+//
+//        override fun putFloat(key: String, value: Float): EditorWrapper {
+//            wrappedEditor.putFloat(key, value)
+//            return this
+//        }
+//
+//        override fun putBoolean(key: String, value: Boolean): EditorWrapper {
+//            wrappedEditor.putBoolean(key, value)
+//            return this
+//        }
+//
+//        inline fun ifNotExists(
+//            key: String,
+//            put: EditorWrapper.(key: String) -> EditorWrapper
+//        ): EditorWrapper {
+//            if (!contains(key)) put(key)
+//            return this
+//        }
+//
+//        override fun remove(key: String): EditorWrapper {
+//            wrappedEditor.remove(key)
+//            return this
+//        }
+//
+//        override fun clear(): EditorWrapper {
+//            wrappedEditor.clear()
+//            return this
+//        }
+//
+//        override fun commit(): Boolean {
+//            return wrappedEditor.commit()
+//        }
+//
+//        override fun apply() {
+//            wrappedEditor.apply()
+//        }
+//
+//    }
 
 }

@@ -4,6 +4,7 @@ import android.content.Context
 import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_BOT_TOKEN
+import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_CHAT_ID
 import com.bopr.android.smailer.processor.EventProcessor
 import com.bopr.android.smailer.provider.Event
 import com.bopr.android.smailer.ui.EventConsumersActivity
@@ -31,8 +32,12 @@ class TelegramTransport(context: Context) : EventProcessor(context) {
             context = context,
             token = settings.getString(PREF_TELEGRAM_BOT_TOKEN)
         ).sendMessage(
+            oldChatId = settings.getString(PREF_TELEGRAM_CHAT_ID),
             message = formatter.formatMessage(),
-            onSuccess = onSuccess,
+            onSuccess = { chatId ->
+                settings.update { putString(PREF_TELEGRAM_CHAT_ID, chatId) }
+                onSuccess()
+            },
             onError = { error ->
                 notifyError(error)
                 onError(error)

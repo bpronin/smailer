@@ -1,6 +1,5 @@
 package com.bopr.android.smailer.ui
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater.from
 import android.view.View
@@ -19,22 +18,23 @@ import com.bopr.android.smailer.util.underwivedText
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class RecipientsFragment : EditableRecyclerFragment<String, Holder>(), SharedPreferences.OnSharedPreferenceChangeListener {
+class RecipientsFragment : EditableRecyclerFragment<String, Holder>(),
+    Settings.ChangeListener {
 
     private lateinit var settings: Settings
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        settings = Settings(requireContext())
-        settings.registerOnSharedPreferenceChangeListener(this)
+        settings = Settings(requireContext(), this)
     }
 
     override fun onDestroy() {
-        settings.unregisterOnSharedPreferenceChangeListener(this)
+        settings.dispose()
+
         super.onDestroy()
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+    override fun onSettingsChanged(settings: Settings, key: String) {
         if (key == PREF_RECIPIENTS_ADDRESS) {
             refreshItems()
         }

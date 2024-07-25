@@ -1,8 +1,12 @@
 package com.bopr.android.smailer.processor.telegram
 
 
-class TelegramException(val code: Code, cause: Throwable? = null) :
-    Exception("Messenger error [${code.name}]", cause) {
+open class TelegramException(
+    val code: Code,
+    message: String? = null,
+    cause: Throwable? = null
+) :
+    Exception("Messenger error [${code.name}]${message?.let { " - $message" }?:""}", cause) {
 
     enum class Code {
         TELEGRAM_REQUEST_FAILED,
@@ -12,5 +16,5 @@ class TelegramException(val code: Code, cause: Throwable? = null) :
         TELEGRAM_INVALID_TOKEN,
         TELEGRAM_NO_CONNECTION
     }
-    
+
 }

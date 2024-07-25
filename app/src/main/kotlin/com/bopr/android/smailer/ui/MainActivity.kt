@@ -23,7 +23,7 @@ import com.bopr.android.smailer.util.requireIgnoreBatteryOptimization
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class MainActivity : FlavorBaseActivity(MainFragment::class), OnSharedPreferenceChangeListener {
+class MainActivity : FlavorBaseActivity(MainFragment::class), Settings.ChangeListener {
 
     private lateinit var settings: Settings
     private lateinit var backupManager: BackupManager
@@ -38,10 +38,7 @@ class MainActivity : FlavorBaseActivity(MainFragment::class), OnSharedPreference
         backupManager = BackupManager(this)
         notificationsHelper = NotificationsHelper(this)
         accountHelper = AccountHelper(this)
-        settings = Settings(this).apply {
-            loadDefaults()
-            registerOnSharedPreferenceChangeListener(this@MainActivity)
-        }
+        settings = Settings(this, this)
 
         permissionsHelper = PermissionsHelper(this){
             requireIgnoreBatteryOptimization()
@@ -52,11 +49,12 @@ class MainActivity : FlavorBaseActivity(MainFragment::class), OnSharedPreference
     }
 
     override fun onDestroy() {
-        settings.unregisterOnSharedPreferenceChangeListener(this)
+        settings.dispose()
+
         super.onDestroy()
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+    override fun onSettingsChanged(settings: Settings, key: String) {
         when (key) {
             PREF_EMAIL_TRIGGERS ->
                 startContentObserver()

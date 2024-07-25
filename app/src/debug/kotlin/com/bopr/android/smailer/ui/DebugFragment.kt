@@ -37,6 +37,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_BOT_TOKEN
+import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_CHAT_ID
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_DEFAULT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS
@@ -784,6 +785,7 @@ class DebugFragment : PreferenceFragmentCompat() {
             context = requireContext(),
             token = settings.getString(PREF_TELEGRAM_BOT_TOKEN)
         ).sendMessage(
+            oldChatId = null,
             message = "Debug message",
             onSuccess = {
                 showComplete()

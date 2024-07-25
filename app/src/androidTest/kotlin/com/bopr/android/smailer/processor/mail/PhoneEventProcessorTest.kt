@@ -13,6 +13,21 @@ import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSAGE_CONTENT
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
+import com.bopr.android.smailer.Settings.Companion.PREF_MESSAGE_LOCALE
+import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_BODY
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_EVENT_TIME
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_HEADER
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCATION
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.processor.EventDispatcher
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_IGNORED
@@ -78,34 +93,50 @@ class PhoneEventProcessorTest : BaseTest() {
         preferences = mock {
             on {
                 getString(
-                    eq(Settings.PREF_EMAIL_SENDER_ACCOUNT),
+                    eq(PREF_EMAIL_SENDER_ACCOUNT),
                     anyOrNull()
                 )
             }.doReturn("sender@mail.com")
             on {
                 getString(
-                    eq(Settings.PREF_RECIPIENTS_ADDRESS),
+                    eq(PREF_RECIPIENTS_ADDRESS),
                     anyOrNull()
                 )
             }.doReturn("recipient@mail.com")
             on {
                 getString(
-                    eq(Settings.PREF_MESSAGE_LOCALE),
+                    eq(PREF_MESSAGE_LOCALE),
                     anyOrNull()
                 )
             }.doReturn(Settings.VAL_PREF_DEFAULT)
             on {
                 getStringSet(
-                    eq(Settings.PREF_EMAIL_TRIGGERS),
+                    eq(PREF_EMAIL_TRIGGERS),
                     anyOrNull()
                 )
-            }.doReturn(Settings.DEFAULT_TRIGGERS)
+            }.doReturn(
+                setOf(
+                    VAL_PREF_TRIGGER_IN_SMS,
+                    VAL_PREF_TRIGGER_MISSED_CALLS
+                )
+            )
             on {
                 getStringSet(
-                    eq(Settings.PREF_EMAIL_MESSAGE_CONTENT),
+                    eq(PREF_EMAIL_MESSAGE_CONTENT),
                     anyOrNull()
                 )
-            }.doReturn(Settings.DEFAULT_EMAIL_MESSAGE_CONTENT)
+            }.doReturn(
+                setOf(
+                    VAL_PREF_MESSAGE_CONTENT_BODY,
+                    VAL_PREF_MESSAGE_CONTENT_CALLER,
+                    VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME,
+                    VAL_PREF_MESSAGE_CONTENT_HEADER,
+                    VAL_PREF_MESSAGE_CONTENT_LOCATION,
+                    VAL_PREF_MESSAGE_CONTENT_EVENT_TIME,
+                    VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME,
+                    VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS
+                )
+            )
         }
 
         accountManager = mock {
@@ -211,7 +242,7 @@ class PhoneEventProcessorTest : BaseTest() {
      */
     @Test
     fun testProcessNoSender() {
-        whenever(preferences.getString(eq(Settings.PREF_EMAIL_SENDER_ACCOUNT), anyOrNull())).thenReturn(null)
+        whenever(preferences.getString(eq(PREF_EMAIL_SENDER_ACCOUNT), anyOrNull())).thenReturn(null)
 
         val event = testingEvent()
         processor.process(event)
@@ -231,7 +262,7 @@ class PhoneEventProcessorTest : BaseTest() {
      */
     @Test
     fun testProcessNoRecipients() {
-        whenever(preferences.getString(eq(Settings.PREF_RECIPIENTS_ADDRESS), anyOrNull())).thenReturn(null)
+        whenever(preferences.getString(eq(PREF_RECIPIENTS_ADDRESS), anyOrNull())).thenReturn(null)
 
         val event = testingEvent()
         processor.process(event)

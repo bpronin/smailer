@@ -6,6 +6,7 @@ import androidx.preference.ExtMultiSelectListPreference
 import androidx.preference.Preference
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_BOT_TOKEN
+import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_CHAT_ID
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSENGER_ENABLED
 import com.bopr.android.smailer.processor.telegram.BaseTelegramEventFormatter
@@ -30,7 +31,7 @@ import com.bopr.android.smailer.util.updateSummary
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 class TelegramSettingsFragment : BasePreferenceFragment(R.xml.pref_telegram_settings) {
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -74,9 +75,11 @@ class TelegramSettingsFragment : BasePreferenceFragment(R.xml.pref_telegram_sett
                 context = requireContext(),
                 token = settings.getString(PREF_TELEGRAM_BOT_TOKEN)
             ).sendMessage(
+                oldChatId = settings.getString(PREF_TELEGRAM_CHAT_ID),
                 message = formater.formatMessage(),
-                onSuccess = {
+                onSuccess = { chatId ->
                     progress.stop()
+                    settings.update { putString(PREF_TELEGRAM_CHAT_ID, chatId) }
                     showToast(R.string.test_message_sent)
                 },
                 onError = { error ->

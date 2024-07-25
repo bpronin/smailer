@@ -8,8 +8,8 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_BAD_RESPONSE
 import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_INVALID_TOKEN
-import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_NO_CONNECTION
 import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_NO_CHAT
+import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_NO_CONNECTION
 import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_NO_TOKEN
 import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_REQUEST_FAILED
 import org.json.JSONObject
@@ -27,16 +27,51 @@ class TelegramSession(context: Context, private val token: String?) {
 
     fun sendMessage(
         message: String,
-        onSuccess: () -> Unit = {},
+        oldChatId: String?,
+        onSuccess: (chatId: String) -> Unit = {},
         onError: (error: TelegramException) -> Unit = {}
     ) {
-        requestUpdates(
+        requestChat(
+            oldChatId,
             onSuccess = { chatId ->
-                requestSendMessage(
-                    chatId = chatId,
-                    text = fixMessageText(message),
-                    onSuccess = onSuccess,
-                    onError = onError
+                requestSendMessage(chatId, message, onSuccess, onError)
+            },
+            onError = { error ->
+                if (error.code == TELEGRAM_NO_CHAT) {
+                    requestUpdates(
+                        onSuccess = { chatId ->
+                            requestSendMessage(chatId, message, onSuccess, onError)
+                        },
+                        onError = onError
+                    )
+                } else {
+                    onError(error)
+                }
+            }
+        )
+    }
+
+    private fun requestChat(
+        chatId: String?,
+        onSuccess: (String) -> Unit,
+        onError: (error: TelegramException) -> Unit
+    ) {
+        if (chatId.isNullOrEmpty()) {
+            onError(TelegramException(TELEGRAM_NO_CHAT))
+            return
+        }
+
+        request(
+            command = "getChat?chat_id=$chatId",
+            onResponse = { response ->
+                detectRemoteError(response)?.run {
+                    throw TelegramException(TELEGRAM_NO_CHAT)
+                }
+
+                onSuccess(
+                    response
+                        .getJSONObject("result")
+                        .getString("id")
                 )
             },
             onError = onError
@@ -50,21 +85,20 @@ class TelegramSession(context: Context, private val token: String?) {
         request(
             command = "getUpdates",
             onResponse = { response ->
-                if (!response.getBoolean("ok")) {
+                detectRemoteError(response)?.run {
                     throw TelegramException(TELEGRAM_BAD_RESPONSE)
-                } else {
-                    val updates = response.getJSONArray("result")
-                    if (updates.length() == 0) {
-                        throw TelegramException(TELEGRAM_NO_CHAT)
-                    } else {
-                        val chatId = updates.getJSONObject(0)
-                            .getJSONObject("message")
-                            .getJSONObject("chat")
-                            .getString("id")
-
-                        onSuccess(chatId)
-                    }
                 }
+
+                val data = response.getJSONArray("result")
+                if (data.length() == 0)
+                    throw TelegramException(TELEGRAM_NO_CHAT)
+
+                val chatId = data.getJSONObject(0)
+                    .getJSONObject("message")
+                    .getJSONObject("chat")
+                    .getString("id")
+
+                onSuccess(chatId)
             },
             onError = onError
         )
@@ -72,21 +106,20 @@ class TelegramSession(context: Context, private val token: String?) {
 
     private fun requestSendMessage(
         chatId: String,
-        text: String,
-        onSuccess: () -> Unit,
-        onError: (error: TelegramException) -> Unit
+        message: String,
+        onSuccess: (String) -> Unit,
+        onError: (TelegramException) -> Unit
     ) {
         request(
             command = "sendMessage?" +
                     "chat_id=$chatId&" +
-                    "text=$text&" +
+                    "text=${fixMessageText(message)}&" +
                     "parse_mode=$PARSE_MODE",
             onResponse = { response ->
-                if (!response.getBoolean("ok")) {
+                detectRemoteError(response)?.run {
                     throw TelegramException(TELEGRAM_BAD_RESPONSE)
-                } else {
-                    onSuccess()
                 }
+                onSuccess(chatId)
             },
             onError = onError
         )
@@ -105,31 +138,43 @@ class TelegramSession(context: Context, private val token: String?) {
                 { response ->
                     try {
                         onResponse(response)
-                    } catch (x: Throwable) {
+                    } catch (x: TelegramException) {
                         log.error("Error while processing <$command> response.", x)
 
-                        onError(TelegramException(TELEGRAM_REQUEST_FAILED, x))
+                        onError(x)
                     }
                 },
                 { error ->
-                    log.error("<$command> request failed.", error)
+                    log.error("Error while sending <$command> request.", error)
 
                     when (error) {
                         is AuthFailureError ->
-                            onError(TelegramException(TELEGRAM_INVALID_TOKEN, error))
+                            onError(TelegramException(TELEGRAM_INVALID_TOKEN, cause = error))
 
                         is NetworkError,
                         is TimeoutError ->
-                            onError(TelegramException(TELEGRAM_NO_CONNECTION, error))
+                            onError(TelegramException(TELEGRAM_NO_CONNECTION, cause = error))
 
                         else ->
-                            onError(TelegramException(TELEGRAM_REQUEST_FAILED, error))
+                            onError(TelegramException(TELEGRAM_REQUEST_FAILED, cause = error))
                     }
                 }
             )
 
             requestQueue.add(request)
         }
+    }
+
+    private fun detectRemoteError(response: JSONObject): TelegramRemoteError? {
+        return if (!response.getBoolean("ok")) {
+            val error = TelegramRemoteError(
+                response.getInt("error_code"), response.getString("description")
+            )
+
+            log.warn("Remote error $error")
+
+            error
+        } else null
     }
 
     private fun fixMessageText(text: String): String {

@@ -2,41 +2,165 @@ package com.bopr.android.smailer
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
-import androidx.annotation.StringRes
+import android.content.SharedPreferences
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import com.bopr.android.smailer.processor.mail.MailPhoneEventFormatter.Companion.PHONE_SEARCH_TAG
 import com.bopr.android.smailer.util.DEVICE_NAME
-import com.bopr.android.smailer.util.SharedPreferencesWrapper
+import com.bopr.android.smailer.util.commaJoin
+import com.bopr.android.smailer.util.commaSplit
 
 /**
- * Settings.
+ * Application settings. Wrapper for [SharedPreferences].
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class Settings(context: Context) :
-    SharedPreferencesWrapper(context.getSharedPreferences(sharedPreferencesName, MODE_PRIVATE)) {
+class Settings(context: Context, changeListener: ChangeListener? = null) {
+
+    private val preferences = context.getSharedPreferences(sharedPreferencesName, MODE_PRIVATE)
+    private var preferencesListener = changeListener?.let {
+        OnSharedPreferenceChangeListener { _, key ->
+            key?.run { it.onSettingsChanged(this@Settings, key) }
+        }.also {
+            preferences.registerOnSharedPreferenceChangeListener(it)
+        }
+    }
+
+    init {
+        if (SETTINGS_VERSION > getInt(PREF_SETTINGS_VERSION)) {
+            loadDefaults()
+        }
+    }
+
+    internal fun loadDefaults() {
+        update {
+            putInt(PREF_SETTINGS_VERSION, SETTINGS_VERSION)
+            ifNotExists(PREF_NOTIFY_SEND_SUCCESS) { putBoolean(it, false) }
+            ifNotExists(PREF_REMOTE_CONTROL_ENABLED) { putBoolean(it, false) }
+            ifNotExists(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS) { putBoolean(it, true) }
+            ifNotExists(PREF_REMOTE_CONTROL_NOTIFICATIONS) { putBoolean(it, true) }
+            ifNotExists(PREF_SYNC_ENABLED) { putBoolean(it, true) }
+            ifNotExists(PREF_EMAIL_MESSENGER_ENABLED) { putBoolean(it, false) }
+            ifNotExists(PREF_TELEGRAM_MESSENGER_ENABLED) { putBoolean(it, true) }
+            ifNotExists(PREF_DISPATCH_BATTERY_LEVEL) { putBoolean(it, false) }
+            ifNotExists(PREF_MESSAGE_LOCALE) { putString(it, VAL_PREF_DEFAULT) }
+            ifNotExists(PREF_EMAIL_MESSAGE_CONTENT) {
+                putStringSet(
+                    it, setOf(
+                        VAL_PREF_MESSAGE_CONTENT_BODY,
+                        VAL_PREF_MESSAGE_CONTENT_CALLER,
+                        VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME,
+                        VAL_PREF_MESSAGE_CONTENT_HEADER,
+                        VAL_PREF_MESSAGE_CONTENT_LOCATION,
+                        VAL_PREF_MESSAGE_CONTENT_EVENT_TIME,
+                        VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME,
+                        VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS
+                    )
+                )
+            }
+            ifNotExists(PREF_EMAIL_TRIGGERS) {
+                putStringSet(
+                    it, setOf(
+                        VAL_PREF_TRIGGER_IN_SMS,
+                        VAL_PREF_TRIGGER_MISSED_CALLS
+                    )
+                )
+            }
+            ifNotExists(PREF_TELEGRAM_MESSAGE_CONTENT) {
+                putStringSet(
+                    it, setOf(
+                        VAL_PREF_MESSAGE_CONTENT_BODY,
+                        VAL_PREF_MESSAGE_CONTENT_CALLER,
+                        VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME,
+                        VAL_PREF_MESSAGE_CONTENT_HEADER,
+                        VAL_PREF_MESSAGE_CONTENT_LOCATION,
+                        VAL_PREF_MESSAGE_CONTENT_EVENT_TIME,
+                        VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME
+                    )
+                )
+            }
+        }
+    }
 
     fun getEmailContent() = getStringSet(PREF_EMAIL_MESSAGE_CONTENT)
     fun getEmailTriggers() = getStringSet(PREF_EMAIL_TRIGGERS)
-    fun getEmailRecipients() = requireString(PREF_RECIPIENTS_ADDRESS, "")
-    fun getMessageLocale() = requireString(PREF_MESSAGE_LOCALE, VAL_PREF_DEFAULT)
-    fun getDeviceName() = requireString(PREF_DEVICE_ALIAS, DEVICE_NAME)
-    fun getPhoneSearchUrl() = requireString(PREF_PHONE_SEARCH_URL, DEFAULT_PHONE_SEARCH_URL)
-    fun hasTelegramMessageContent(key:String) = getStringSet(PREF_TELEGRAM_MESSAGE_CONTENT).contains(key)
+    fun getEmailRecipients() = getString(PREF_RECIPIENTS_ADDRESS, "")
+    fun getMessageLocale() = getString(PREF_MESSAGE_LOCALE, VAL_PREF_DEFAULT)
+    fun getDeviceName() = getString(PREF_DEVICE_ALIAS, DEVICE_NAME)
+    fun getPhoneSearchUrl() = getString(PREF_PHONE_SEARCH_URL, DEFAULT_PHONE_SEARCH_URL)
+    fun hasTelegramMessageContent(key: String) =
+        getStringSet(PREF_TELEGRAM_MESSAGE_CONTENT).contains(key)
 
-    fun loadDefaults() = update {
-        putInt(PREF_SETTINGS_VERSION, SETTINGS_VERSION)
-        putOptBoolean(PREF_NOTIFY_SEND_SUCCESS, false)
-        putOptBoolean(PREF_REMOTE_CONTROL_ENABLED, false)
-        putOptBoolean(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS, true)
-        putOptBoolean(PREF_REMOTE_CONTROL_NOTIFICATIONS, true)
-        putOptBoolean(PREF_SYNC_ENABLED, true)
-        putOptBoolean(PREF_EMAIL_MESSENGER_ENABLED, false)
-        putOptBoolean(PREF_TELEGRAM_MESSENGER_ENABLED, true)
-        putOptBoolean(PREF_DISPATCH_BATTERY_LEVEL, false)
-        putOptString(PREF_MESSAGE_LOCALE, VAL_PREF_DEFAULT)
-        putOptStringSet(PREF_EMAIL_MESSAGE_CONTENT, DEFAULT_EMAIL_MESSAGE_CONTENT)
-        putOptStringSet(PREF_TELEGRAM_MESSAGE_CONTENT, DEFAULT_TELEGRAM_MESSAGE_CONTENT)
-        putOptStringSet(PREF_EMAIL_TRIGGERS, DEFAULT_TRIGGERS)
+    fun dispose() {
+        preferencesListener?.run {
+            preferences.unregisterOnSharedPreferenceChangeListener(this)
+        }
+    }
+
+    fun getString(key: String): String? {
+        return preferences.getString(key, null)
+    }
+
+    fun getString(key: String, defaultValue: String): String {
+        return preferences.getString(key, defaultValue)!!
+    }
+
+    fun getBoolean(key: String): Boolean {
+        return preferences.getBoolean(key, false)
+    }
+
+    fun getInt(key: String): Int {
+        return preferences.getInt(key, 0)
+    }
+
+    fun getStringSet(key: String): MutableSet<String> {
+        return preferences.getStringSet(key, mutableSetOf())!!
+    }
+
+    fun getStringList(key: String): MutableList<String> {
+        return getString(key)?.let { commaSplit(it).toMutableList() } ?: mutableListOf()
+    }
+
+    fun update(action: Editor.() -> Unit) {
+        val edit = preferences.edit()
+        Editor(edit).action()
+        edit.apply()
+    }
+
+    inner class Editor(private val wrapped: SharedPreferences.Editor) {
+
+        fun clear() {
+            wrapped.clear()
+        }
+
+        fun ifNotExists(key: String, put: Editor.(key: String) -> Unit) {
+            if (!preferences.contains(key)) put(key)
+        }
+
+        fun putStringList(key: String, value: Collection<String>?) {
+            wrapped.putString(key, value?.let { commaJoin(value) })
+        }
+
+        fun putInt(key: String, value: Int) {
+            wrapped.putInt(key, value)
+        }
+
+        fun putBoolean(key: String, value: Boolean) {
+            wrapped.putBoolean(key, value)
+        }
+
+        fun putString(key: String, value: String?) {
+            wrapped.putString(key, value)
+        }
+
+        fun putStringSet(key: String, value: Set<String>) {
+            wrapped.putStringSet(key, value)
+        }
+
+    }
+
+    interface ChangeListener {
+
+        fun onSettingsChanged(settings: Settings, key: String)
     }
 
     companion object {
@@ -61,6 +185,7 @@ class Settings(context: Context) :
         const val PREF_SETTINGS_VERSION = "settings_version"
         const val PREF_SYNC_ENABLED = "sync_enabled"
         const val PREF_TELEGRAM_BOT_TOKEN = "telegram_bot_token"
+        const val PREF_TELEGRAM_CHAT_ID = "telegram_chat_id"
         const val PREF_TELEGRAM_MESSAGE_CONTENT = "pref_telegram_message_content"
         const val PREF_TELEGRAM_MESSENGER_ENABLED = "pref_telegram_messenger_enabled"
 
@@ -81,7 +206,7 @@ class Settings(context: Context) :
 
         const val DEFAULT_PHONE_SEARCH_URL = "https://www.google.com/search?q=$PHONE_SEARCH_TAG"
 
-        val DEFAULT_EMAIL_MESSAGE_CONTENT = mutableSetOf(
+        val DEFAULT_EMAIL_MESSAGE_CONTENT = setOf(
             VAL_PREF_MESSAGE_CONTENT_BODY,
             VAL_PREF_MESSAGE_CONTENT_CALLER,
             VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME,
@@ -92,17 +217,7 @@ class Settings(context: Context) :
             VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS
         )
 
-        val DEFAULT_TELEGRAM_MESSAGE_CONTENT = mutableSetOf(
-            VAL_PREF_MESSAGE_CONTENT_BODY,
-            VAL_PREF_MESSAGE_CONTENT_CALLER,
-            VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME,
-            VAL_PREF_MESSAGE_CONTENT_HEADER,
-            VAL_PREF_MESSAGE_CONTENT_LOCATION,
-            VAL_PREF_MESSAGE_CONTENT_EVENT_TIME,
-            VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME
-        )
-
-        val DEFAULT_TRIGGERS: Set<String> = mutableSetOf(
+        val DEFAULT_TRIGGERS: Set<String> = setOf(
             VAL_PREF_TRIGGER_IN_SMS,
             VAL_PREF_TRIGGER_MISSED_CALLS
         )

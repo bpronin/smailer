@@ -1,7 +1,5 @@
 package com.bopr.android.smailer.ui
 
-import android.content.SharedPreferences
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import androidx.annotation.XmlRes
 import androidx.preference.Preference
@@ -17,7 +15,7 @@ import com.bopr.android.smailer.util.refreshView
  */
 abstract class BasePreferenceFragment(@XmlRes private val layoutRes: Int) :
     PreferenceFragmentCompat(),
-    OnSharedPreferenceChangeListener {
+    Settings.ChangeListener {
 
     protected lateinit var settings: Settings
 
@@ -26,12 +24,11 @@ abstract class BasePreferenceFragment(@XmlRes private val layoutRes: Int) :
 
         preferenceManager.sharedPreferencesName = sharedPreferencesName
 
-        settings = Settings(requireContext())
-        settings.registerOnSharedPreferenceChangeListener(this)
+        settings = Settings(requireContext(), this)
     }
 
     override fun onDestroy() {
-        settings.unregisterOnSharedPreferenceChangeListener(this)
+        settings.dispose()
 
         super.onDestroy()
     }
@@ -50,8 +47,8 @@ abstract class BasePreferenceFragment(@XmlRes private val layoutRes: Int) :
         preferenceScreen.refreshView()
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        key?.run { findPreference<Preference>(key)?.refreshView() }
+    override fun onSettingsChanged(settings: Settings, key: String) {
+        findPreference<Preference>(key)?.refreshView()
     }
 
     companion object {
