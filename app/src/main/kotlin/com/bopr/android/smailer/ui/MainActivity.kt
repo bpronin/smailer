@@ -38,13 +38,12 @@ class MainActivity : FlavorBaseActivity(MainFragment::class), Settings.ChangeLis
         backupManager = BackupManager(this)
         notificationsHelper = NotificationsHelper(this)
         accountHelper = AccountHelper(this)
+        permissionsHelper = PermissionsHelper(this)
         settings = Settings(this, this)
 
-        permissionsHelper = PermissionsHelper(this){
-            requireIgnoreBatteryOptimization()
-        }
         permissionsHelper.checkAll()
 
+        requireIgnoreBatteryOptimization()
         startUpAppServices()
     }
 

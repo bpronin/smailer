@@ -148,14 +148,14 @@ android {
 dependencies {
     implementation fileTree(include: ["*.jar"], dir: "libs")
     implementation "androidx.core:core-ktx:1.13.1"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.3"
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4'
     implementation "androidx.preference:preference-ktx:1.2.1"
     implementation "androidx.work:work-runtime-ktx:2.9.0"
-    implementation "com.github.tony19:logback-android:2.0.0"
+    implementation 'com.github.tony19:logback-android:3.0.0'
     implementation "com.google.android.gms:play-services-auth:21.2.0"
     implementation "com.google.android.gms:play-services-location:21.3.0"
     implementation "com.google.android.material:material:1.12.0"
-    implementation "com.google.api-client:google-api-client-android:1.31.3"
+    implementation 'com.google.api-client:google-api-client-android:2.6.0'
     implementation "com.google.apis:google-api-services-drive:v3-rev99-1.23.0"
     implementation "com.google.apis:google-api-services-gmail:v1-rev98-1.25.0"
     implementation "com.google.firebase:firebase-analytics:22.0.2"
@@ -163,7 +163,7 @@ dependencies {
     implementation "com.google.firebase:firebase-messaging:24.0.0"
     implementation "com.sun.mail:android-mail:1.6.7"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.0.0"
-    implementation "org.slf4j:slf4j-api:1.7.36"
+    implementation 'org.slf4j:slf4j-api:2.0.13'
     implementation "com.android.volley:volley:1.2.1"
 
     freeImplementation "com.google.android.gms:play-services-ads:23.2.0"
@@ -176,7 +176,7 @@ dependencies {
     androidTestImplementation "androidx.test:rules:1.6.1"
     androidTestImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
     androidTestImplementation "junit:junit:4.13.2"
-    androidTestImplementation "org.mockito:mockito-android:3.2.4"
+    androidTestImplementation 'org.mockito:mockito-android:5.12.0'
 }
 
 allOpen {

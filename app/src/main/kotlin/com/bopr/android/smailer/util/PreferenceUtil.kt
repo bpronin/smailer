@@ -117,6 +117,10 @@ fun Preference.refreshView() {
                     getPreference(i).refreshView()
                 }
             }
+
+            else -> { /* is pure Preference */
+                callChangeListener(null)
+            }
         }
     } catch (x: Exception) {
         throw RuntimeException("Failed refreshing $this", x)
