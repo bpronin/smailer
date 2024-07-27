@@ -90,11 +90,11 @@ abstract class BaseTelegramEventFormatter(
         }
     }
 
-    abstract fun getTitle(): String?
+    protected abstract fun getTitle(): String?
 
-    abstract fun getMessage(): String?
+    protected abstract fun getMessage(): String?
 
-    abstract fun getSenderName(): String?
+    protected abstract fun getSenderName(): String?
 
     private fun getHeaderText(): String? {
         return if (settings.hasTelegramMessageContent(VAL_PREF_MESSAGE_CONTENT_HEADER))

@@ -4,16 +4,15 @@ import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.Context
 import android.location.Location
-import android.location.LocationRequest.PASSIVE_INTERVAL
-import android.os.Build
 import android.os.Looper
 import android.os.Parcelable
 import com.bopr.android.smailer.data.Database
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.LocationServices.getFusedLocationProviderClient
 import kotlinx.parcelize.Parcelize
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
+import java.util.concurrent.Executors.*
 
 /**
  * Geolocation coordinates.
@@ -79,22 +78,38 @@ data class GeoLocation(
                 return
             }
 
-            val request = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                LocationRequest.Builder(PASSIVE_INTERVAL).build()
-            } else {
-                @Suppress("DEPRECATION")
-                (LocationRequest())
-            }
-
-            val client = getFusedLocationProviderClient(this)
-            client.requestLocationUpdates(request, object : LocationCallback() {
-
-                override fun onLocationResult(result: LocationResult) {
-                    client.removeLocationUpdates(this)
-                    onComplete(result.lastLocation.toGeoLocation())
+            val request = CurrentLocationRequest.Builder().build()
+            getFusedLocationProviderClient(this)
+                .getCurrentLocation(request, null)
+                .addOnCompleteListener {
+                    onComplete(it.result.toGeoLocation())
                 }
-            }, Looper.getMainLooper())
         }
+
+
+//        private fun Context.requestCurrentLocation(onComplete: (GeoLocation?) -> Unit) {
+//            if (!checkPermission(ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION)) {
+//                onComplete(null)
+//                return
+//            }
+//
+//            val request = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+//                LocationRequest.Builder(PASSIVE_INTERVAL).build()
+//            } else {
+//                @Suppress("DEPRECATION")
+//                (LocationRequest())
+//            }
+//
+//            val looper = Looper()
+//            val client = getFusedLocationProviderClient(this)
+//            client.requestLocationUpdates(request, object : LocationCallback() {
+//
+//                override fun onLocationResult(result: LocationResult) {
+//                    client.removeLocationUpdates(this)
+//                    onComplete(result.lastLocation.toGeoLocation())
+//                }
+//            }, Looper.getMainLooper())
+//        }
 
     }
 }

@@ -24,8 +24,9 @@ class AccountHelper(context: Context) {
      * Returns primary device google account or throws an exception when no accounts registered.
      */
     @RequiresPermission(GET_ACCOUNTS /* api<=22 */)
+    @Throws(IllegalArgumentException::class)
     fun requirePrimaryGoogleAccount(): Account {
-        return requireNotNull(getPrimaryGoogleAccount())
+        return requireNotNull(getPrimaryGoogleAccount()) { "Primary Google account is not specified" }
     }
 
     /**
@@ -40,6 +41,7 @@ class AccountHelper(context: Context) {
      * Returns google account with specified name or throws an exception.
      */
     @RequiresPermission(GET_ACCOUNTS /* api<=22 */)
+    @Throws(IllegalArgumentException::class)
     fun requireGoogleAccount(accountName: String?): Account {
         return requireNotNull(getGoogleAccount(accountName)) { "Account $accountName does not exist" }
     }

@@ -34,15 +34,13 @@ class DebugReceiver : BroadcastReceiver() {
             }
 
             "PROCESS_PENDING_EVENTS" -> {
-                runInBackground({
+                runInBackground {
                     PhoneEventProcessor(context).processPending()
-                })
+                }
             }
 
             "PROCESS_SERVICE_MAIL" -> {
-                runInBackground({
-                    MailControlProcessor(context).checkMailbox()
-                })
+                MailControlProcessor(context).checkMailbox {}
             }
 
             "BOOT_COMPLETED" -> { /* we cannot debug BootReceiver directly */

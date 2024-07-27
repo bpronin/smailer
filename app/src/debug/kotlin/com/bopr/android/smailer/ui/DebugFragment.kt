@@ -23,9 +23,9 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
 import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.NotificationsHelper
+import com.bopr.android.smailer.NotificationsHelper.Companion.GOOGLE_ACCOUNT_ERROR
 import com.bopr.android.smailer.NotificationsHelper.Companion.RECIPIENTS_ERROR
-import com.bopr.android.smailer.NotificationsHelper.Companion.REMOTE_ACCOUNT_ERROR
-import com.bopr.android.smailer.NotificationsHelper.Companion.SENDER_ACCOUNT_ERROR
+import com.bopr.android.smailer.NotificationsHelper.Companion.SERVICE_ACCOUNT_ERROR
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSAGE_CONTENT
@@ -37,7 +37,6 @@ import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_BOT_TOKEN
-import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_CHAT_ID
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_DEFAULT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS
@@ -56,8 +55,8 @@ import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.databaseName
 import com.bopr.android.smailer.external.Firebase
 import com.bopr.android.smailer.external.Firebase.Companion.FCM_REQUEST_DATA_SYNC
-import com.bopr.android.smailer.processor.mail.GoogleDrive
-import com.bopr.android.smailer.processor.mail.GoogleMail
+import com.bopr.android.smailer.external.GoogleDrive
+import com.bopr.android.smailer.processor.mail.GoogleMailSession
 import com.bopr.android.smailer.processor.mail.MailMessage
 import com.bopr.android.smailer.processor.telegram.TelegramSession
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_IGNORED
@@ -80,6 +79,7 @@ import com.bopr.android.smailer.util.getContactName
 import com.bopr.android.smailer.util.readLogcatLog
 import com.bopr.android.smailer.util.requireIgnoreBatteryOptimization
 import com.bopr.android.smailer.util.runBackgroundTask
+import com.bopr.android.smailer.util.runLongTask
 import com.bopr.android.smailer.util.setOnClickListener
 import com.bopr.android.smailer.util.showToast
 import com.google.api.services.drive.DriveScopes.DRIVE_APPDATA
@@ -250,12 +250,6 @@ class DebugFragment : PreferenceFragmentCompat() {
             }
         )
         addCategory(screen, "Notifications",
-            addPreference("Show sender error") {
-                notifications.showSenderAccountError()
-            },
-            addPreference("Show recipients error") {
-                notifications.showRecipientsError(R.string.no_recipients_specified)
-            },
             addPreference("Show mail success") {
                 notifications.showMailSendSuccess()
             },
@@ -266,8 +260,8 @@ class DebugFragment : PreferenceFragmentCompat() {
                 )
             },
             addPreference("Cancel errors") {
-                notifications.cancelError(SENDER_ACCOUNT_ERROR)
-                notifications.cancelError(REMOTE_ACCOUNT_ERROR)
+                notifications.cancelError(GOOGLE_ACCOUNT_ERROR)
+                notifications.cancelError(SERVICE_ACCOUNT_ERROR)
                 notifications.cancelError(RECIPIENTS_ERROR)
             }
         )
@@ -303,47 +297,63 @@ class DebugFragment : PreferenceFragmentCompat() {
     }
 
     private fun onSendLog(preference: Preference) {
-        runDefaultBackgroundTask("Log", preference) {
-            val context = requireContext()
+        val progress = PreferenceProgress(preference).apply { start() }
+        val context = requireContext()
 
-            val attachments: MutableList<File> = mutableListOf()
-            attachments.add(context.getDatabasePath(databaseName))
-            attachments.add(context.readLogcatLog())
+        val attachments: MutableList<File> = mutableListOf()
+        attachments.add(context.getDatabasePath(databaseName))
+        attachments.add(context.readLogcatLog())
 
-            File(context.filesDir, "log").listFiles()?.let {
-                attachments.addAll(it)
-            }
+        File(context.filesDir, "log").listFiles()?.let {
+            attachments.addAll(it)
+        }
 
-            val account = accountHelper.requirePrimaryGoogleAccount()
+        val account = accountHelper.requirePrimaryGoogleAccount()
+        val session = GoogleMailSession(context, account, GMAIL_SEND)
+        for (file in attachments) {
+            val message = MailMessage(
+                subject = "[SMailer] log: " + file.name,
+                from = account.name,
+                body = "Device: " + DEVICE_NAME + "<br>File: " + file.name,
+                attachment = setOf(file),
+                recipients = developerEmail
+            )
 
-            val mailSession = GoogleMail(context, account, GMAIL_SEND)
-            for (file in attachments) {
-                val message = MailMessage(
-                    subject = "[SMailer] log: " + file.name,
-                    from = account.name,
-                    body = "Device: " + DEVICE_NAME + "<br>File: " + file.name,
-                    attachment = setOf(file),
-                    recipients = developerEmail
-                )
-                mailSession.send(message)
-            }
-
+            session.send(message,
+                onSuccess = {
+                    progress.stop()
+                    showComplete()
+                },
+                onError = { error ->
+                    progress.stop()
+                    showError("Log", error)
+                }
+            )
         }
     }
 
     private fun onSendDebugMail(preference: Preference) {
-        runDefaultBackgroundTask("Mail", preference) {
-            val account = accountHelper.requirePrimaryGoogleAccount()
+        val progress = PreferenceProgress(preference).apply { start() }
+        val account = accountHelper.requirePrimaryGoogleAccount()
 
-            val message = MailMessage(
-                from = account.name,
-                subject = "test subject",
-                body = "test message from " + DEVICE_NAME,
-                recipients = developerEmail
-            )
+        val message = MailMessage(
+            from = account.name,
+            subject = "test subject",
+            body = "test message from " + DEVICE_NAME,
+            recipients = developerEmail
+        )
 
-            GoogleMail(requireContext(), account, GMAIL_SEND).send(message)
-        }
+        GoogleMailSession(requireContext(), account, GMAIL_SEND).send(
+            message,
+            onSuccess = {
+                progress.stop()
+                showComplete()
+            },
+            onError = {
+                progress.stop()
+                showError("Mail", it)
+            }
+        )
     }
 
     private fun onGetLocation(preference: Preference) {
@@ -451,9 +461,16 @@ class DebugFragment : PreferenceFragmentCompat() {
 
     private fun onProcessServiceMail(preference: Preference) {
         if (settings.getBoolean(PREF_REMOTE_CONTROL_ENABLED)) {
-            runDefaultBackgroundTask("Remote control", preference) {
-                MailControlProcessor(requireContext()).checkMailbox()
-            }
+            val progress = PreferenceProgress(preference).apply { start() }
+            MailControlProcessor(requireContext()).checkMailbox(
+                onSuccess = {
+                    progress.stop()
+                    showComplete()
+                },
+                onError = {
+                    progress.stop()
+                    showError("Remote control", it)
+                })
         } else {
             showInfoDialog("Remote control", "Feature is disabled")
         }
@@ -810,6 +827,22 @@ class DebugFragment : PreferenceFragmentCompat() {
 
     private fun serviceAccount(): Account {
         return accountHelper.requireGoogleAccount(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT))
+    }
+
+    private fun runDefaultLongTask(
+        title: String,
+        preference: Preference,
+        onPerform: () -> Unit
+    ) {
+        preference.runLongTask(
+            onPerform,
+            onSuccess = {
+                showComplete()
+            },
+            onError = { error ->
+                showError(title, error)
+            }
+        )
     }
 
     private fun runDefaultBackgroundTask(

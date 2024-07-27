@@ -9,11 +9,11 @@ import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_NOTIFICATIONS
 import com.bopr.android.smailer.control.MailControlProcessor
+import com.bopr.android.smailer.util.PreferenceProgress
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_ACCENTED
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_UNDERWIVED
 import com.bopr.android.smailer.util.getQuantityString
 import com.bopr.android.smailer.util.requirePreference
-import com.bopr.android.smailer.util.runBackgroundTask
 import com.bopr.android.smailer.util.setOnChangeListener
 import com.bopr.android.smailer.util.setOnClickListener
 import com.bopr.android.smailer.util.showToast
@@ -65,16 +65,16 @@ class RemoteControlFragment : BasePreferenceFragment(R.xml.pref_remote) {
     }
 
     private fun onProcessServiceMail(preference: Preference) {
-        preference.runBackgroundTask(
-            onPerform = {
-                MailControlProcessor(requireContext()).checkMailbox()
-            },
+        val progress = PreferenceProgress(preference).apply { start() }
+        MailControlProcessor(requireContext()).checkMailbox(
             onSuccess = { result ->
+                progress.stop()
                 showToast(
                     getQuantityString(R.plurals.mail_items, R.string.mail_items_zero, result)
                 )
             },
             onError = { error ->
+                progress.stop()
                 showInfoDialog(
                     getString(R.string.remote_control),
                     error.message ?: error.toString()

@@ -3,6 +3,7 @@ package com.bopr.android.smailer.processor.mail
 import android.accounts.Account
 import android.content.Context
 import com.bopr.android.smailer.util.Mockable
+import com.bopr.android.smailer.util.execute
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
@@ -16,6 +17,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.util.*
+import java.util.concurrent.Executors
 import javax.activation.DataHandler
 import javax.activation.FileDataSource
 import javax.mail.Message.RecipientType.TO
@@ -30,21 +32,71 @@ import javax.mail.internet.*
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 @Mockable
-internal class GoogleMail(context: Context, account: Account, vararg scopes: String) {
+internal class GoogleMailSession(context: Context, account: Account, vararg scopes: String) {
 
     private val session = Session.getDefaultInstance(Properties(), null)
-    private val service =
-        Gmail.Builder(
-            NetHttpTransport(), JacksonFactory.getDefaultInstance(),
-            GoogleAccountCredential
-                .usingOAuth2(context, listOf(*scopes))
-                .setSelectedAccount(account)
+    private val service = Gmail.Builder(
+        NetHttpTransport(),
+        JacksonFactory.getDefaultInstance(),
+        GoogleAccountCredential
+            .usingOAuth2(context, listOf(*scopes))
+            .setSelectedAccount(account)
+    )
+        .setApplicationName("smailer")
+        .build()
+
+    private val executor = Executors.newSingleThreadExecutor()
+
+    fun send(
+        message: MailMessage,
+        onError: (Throwable) -> Unit = {},
+        onSuccess: () -> Unit
+    ) {
+        executor.execute(
+            onPerform = { internalSend(message) },
+            onSuccess = { onSuccess() },
+            onError = onError
         )
-            .setApplicationName("smailer")
-            .build()
+    }
+
+    fun list(
+        query: String,
+        onError: (Throwable) -> Unit = {},
+        onSuccess: (List<MailMessage>) -> Unit
+    ) {
+        executor.execute(
+            onPerform = { internalList(query) },
+            onSuccess = onSuccess,
+            onError = onError
+        )
+    }
+
+    fun markAsRead(
+        message: MailMessage,
+        onError: (Throwable) -> Unit = {},
+        onSuccess: () -> Unit
+    ) {
+        executor.execute(
+            onPerform = { internalMarkAsRead(message) },
+            onSuccess = { onSuccess() },
+            onError = onError
+        )
+    }
+
+    fun trash(
+        message: MailMessage,
+        onError: (Throwable) -> Unit = {},
+        onSuccess: () -> Unit
+    ) {
+        executor.execute(
+            onPerform = { internalTrash(message) },
+            onSuccess = { onSuccess() },
+            onError = onError
+        )
+    }
 
     @Throws(IOException::class)
-    fun send(message: MailMessage) {
+    private fun internalSend(message: MailMessage) {
         service.users()
             .messages()
             .send(ME, createContent(message))
@@ -54,7 +106,7 @@ internal class GoogleMail(context: Context, account: Account, vararg scopes: Str
     }
 
     @Throws(IOException::class)
-    fun list(query: String): List<MailMessage> {
+    private fun internalList(query: String): LinkedList<MailMessage> {
         val response = service
             .users()
             .messages()
@@ -72,11 +124,14 @@ internal class GoogleMail(context: Context, account: Account, vararg scopes: Str
                 result.add(readMessage(message))
             }
         }
+
+        log.debug("Message list received")
+
         return result
     }
 
     @Throws(IOException::class)
-    fun markAsRead(message: MailMessage) {
+    private fun internalMarkAsRead(message: MailMessage) {
         val content = ModifyMessageRequest()
             .setRemoveLabelIds(listOf("UNREAD")) /* case sensitive */
         service.users()
@@ -88,7 +143,7 @@ internal class GoogleMail(context: Context, account: Account, vararg scopes: Str
     }
 
     @Throws(IOException::class)
-    fun trash(message: MailMessage) {
+    private fun internalTrash(message: MailMessage) {
         service.users()
             .messages()
             .trash(ME, message.id)

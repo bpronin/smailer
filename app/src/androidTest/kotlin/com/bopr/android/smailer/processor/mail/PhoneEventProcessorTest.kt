@@ -202,7 +202,7 @@ class PhoneEventProcessorTest : BaseTest() {
 //                    && replyTo == null
 //                    && from == "sender@mail.com"
 //        })
-        verify(notifications, never()).showSenderAccountError()
+        verify(notifications, never()).showAccountError()
         verify(notifications, never()).showRecipientsError(ArgumentMatchers.anyInt())
         verify(notifications, never()).showGoogleAccessError()
 
@@ -227,7 +227,7 @@ class PhoneEventProcessorTest : BaseTest() {
         processor.process(event)
 
         verify(messenger, never()).dispatch(any())
-        verify(notifications, never()).showSenderAccountError()
+        verify(notifications, never()).showAccountError()
         verify(notifications, never()).showRecipientsError(ArgumentMatchers.anyInt())
         verify(notifications, never()).showGoogleAccessError()
 
@@ -249,7 +249,7 @@ class PhoneEventProcessorTest : BaseTest() {
 
 //        verify(messenger, never()).login(any(), any())
         verify(messenger, never()).dispatch(any())
-        verify(notifications).showSenderAccountError()
+        verify(notifications).showAccountError()
 
         val savedEvent = database.phoneEvents.first()
 
@@ -288,7 +288,7 @@ class PhoneEventProcessorTest : BaseTest() {
 
 //        verify(messenger).login(any(), any())
         verify(messenger).dispatch(any())
-        verify(notifications, never()).showSenderAccountError()
+        verify(notifications, never()).showAccountError()
         verify(notifications, never()).showRecipientsError(ArgumentMatchers.anyInt())
         verify(notifications, never()).showGoogleAccessError()
 
@@ -332,7 +332,7 @@ class PhoneEventProcessorTest : BaseTest() {
 
         Assert.assertEquals(3, database.phoneEvents.size)
         Assert.assertEquals(3, database.phoneEvents.filterPending.size)
-        verify(notifications, never()).showSenderAccountError()
+        verify(notifications, never()).showAccountError()
         verify(notifications, never()).showRecipientsError(ArgumentMatchers.anyInt())
         verify(notifications, never()).showGoogleAccessError()
 
@@ -341,7 +341,7 @@ class PhoneEventProcessorTest : BaseTest() {
 
         Assert.assertEquals(3, database.phoneEvents.size)
         Assert.assertEquals(3, database.phoneEvents.filterPending.size)
-        verify(notifications, never()).showSenderAccountError()
+        verify(notifications, never()).showAccountError()
         verify(notifications, never()).showRecipientsError(ArgumentMatchers.anyInt())
         verify(notifications, never()).showGoogleAccessError()
 
@@ -352,7 +352,7 @@ class PhoneEventProcessorTest : BaseTest() {
 
         Assert.assertEquals(3, database.phoneEvents.size)
         Assert.assertEquals(0, database.phoneEvents.filterPending.size)
-        verify(notifications, never()).showSenderAccountError()
+        verify(notifications, never()).showAccountError()
         verify(notifications, never()).showRecipientsError(ArgumentMatchers.anyInt())
         verify(notifications, never()).showGoogleAccessError()
     }

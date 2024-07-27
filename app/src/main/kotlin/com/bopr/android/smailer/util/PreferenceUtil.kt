@@ -23,6 +23,25 @@ enum class SummaryStyle {
     SUMMARY_STYLE_ACCENTED
 }
 
+fun <T> Preference.runLongTask(
+    onPerform: () -> T,
+    onComplete: () -> Unit = {},
+    onSuccess: (T) -> Unit = {},
+    onError: (Throwable) -> Unit = {}
+) {
+    val progress = PreferenceProgress(this).apply { start() }
+
+    runLater(
+        onComplete = {
+            progress.stop()
+            onComplete()
+        },
+        onSuccess = onSuccess,
+        onError = onError,
+        onPerform = onPerform
+    )
+}
+
 fun <T> Preference.runBackgroundTask(
     onPerform: () -> T,
     onComplete: () -> Unit = {},
@@ -32,13 +51,13 @@ fun <T> Preference.runBackgroundTask(
     val progress = PreferenceProgress(this).apply { start() }
 
     runInBackground(
-        onPerform,
         onComplete = {
             progress.stop()
             onComplete()
         },
-        onSuccess,
-        onError
+        onSuccess = onSuccess,
+        onError = onError,
+        onPerform = onPerform
     )
 }
 
@@ -156,7 +175,7 @@ fun <T : Preference> T.setOnChangeListener(onChange: (T) -> Unit) {
 fun MultiSelectListPreference.titles(): List<CharSequence> {
     val result = mutableListOf<CharSequence>()
     for ((index, value) in entryValues.withIndex()) {
-        if(values.contains(value)){
+        if (values.contains(value)) {
             result.add(entries[index])
         }
     }

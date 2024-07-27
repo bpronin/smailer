@@ -8,7 +8,6 @@ import android.os.Looper
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
-import android.text.style.ParagraphStyle
 import android.view.View
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
@@ -28,7 +27,9 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.ui.WavyUnderlineSpan
+import java.util.concurrent.Executor
 import java.util.concurrent.Executors
+import java.util.concurrent.Executors.*
 
 /**
  * Miscellaneous UI and resources utilities.
@@ -155,18 +156,35 @@ fun RecyclerView.addOnItemSwipedListener(action: (RecyclerView.ViewHolder) -> Un
     }
 }
 
-fun <T> runInBackground(
+fun <T> runLater(
     onPerform: () -> T,
+    onComplete: () -> Unit,
+    onSuccess: (T) -> Unit,
+    onError: (Throwable) -> Unit
+) {
+    val result = runCatching(onPerform)
+    Handler(Looper.getMainLooper()).post {
+        onComplete()
+        result.fold(onSuccess, onError)
+    }
+}
+
+fun <T> runInBackground(
     onComplete: () -> Unit = {},
     onSuccess: (T) -> Unit = {},
-    onError: (Throwable) -> Unit = {}
+    onError: (Throwable) -> Unit = {},
+    onPerform: () -> T
 ) {
-    Executors.newSingleThreadExecutor().execute {
-        val result = runCatching(onPerform)
+    newSingleThreadExecutor().execute(onComplete, onSuccess, onError, onPerform)
+}
 
-        Handler(Looper.getMainLooper()).post {
-            onComplete()
-            result.fold(onSuccess, onError)
-        }
+fun <T> Executor.execute(
+    onComplete: () -> Unit = {},
+    onSuccess: (T) -> Unit = {},
+    onError: (Throwable) -> Unit = {},
+    onPerform: () -> T
+) {
+    execute {
+        runLater(onPerform, onComplete, onSuccess, onError)
     }
 }

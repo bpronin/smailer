@@ -5,10 +5,8 @@ import com.bopr.android.smailer.provider.Event
 
 abstract class EventProcessor(val context: Context) {
 
-    abstract fun process(
-        event: Event,
-        onSuccess: () -> Unit,
-        onError: (error: Exception) -> Unit
-    )
+    abstract fun isEnabled(): Boolean
+
+    abstract fun process(event: Event)
 
 }

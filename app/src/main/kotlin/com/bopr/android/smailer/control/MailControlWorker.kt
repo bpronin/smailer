@@ -25,7 +25,7 @@ internal class MailControlWorker(context: Context, workerParams: WorkerParameter
     override fun doWork(): Result {
         applicationContext.run {
             if (isFeatureEnabled) {
-                MailControlProcessor(this).checkMailbox()
+                MailControlProcessor(this).checkMailbox {}
             }
         }
 

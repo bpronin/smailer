@@ -9,19 +9,11 @@ import com.bopr.android.smailer.util.tryGetContactName
 
 class MailFormatterFactory(private val context: Context) {
 
-    private val settings = Settings(context)
-
     fun createFormatter(data: Any): MailFormatter {
         return when (data) {
             is PhoneEventData -> MailPhoneEventFormatter(
                 context = context,
-                event = data,
-                contactName = tryGetContactName(context, data.phone),
-                deviceName = settings.getDeviceName(),
-                options = settings.getEmailContent(),
-                serviceAccount = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT),
-                phoneSearchUrl = settings.getPhoneSearchUrl(),
-                locale = parseLocale(settings.getMessageLocale())
+                event = data
             )
 //            is BatteryEvent -> BatteryEventMailFormatter(context)
             else -> throw IllegalArgumentException("No formatter for ${data::class}")

@@ -2,10 +2,10 @@ package com.bopr.android.smailer.processor.mail
 
 import android.content.Context
 
-abstract class MailFormatter(private val context: Context) {
+interface MailFormatter {
 
-    abstract fun formatSubject(): String?
+    fun formatSubject(): String?
 
-    abstract fun formatBody(): String?
+    fun formatBody(): String?
 
 }

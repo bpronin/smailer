@@ -1,20 +1,19 @@
 package com.bopr.android.smailer.control
 
-import android.accounts.Account
 import android.content.Context
 import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.NotificationsHelper
+import com.bopr.android.smailer.NotificationsHelper.Companion.SERVICE_ACCOUNT_ERROR
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS
+import com.bopr.android.smailer.processor.mail.GoogleMailSession
 import com.bopr.android.smailer.processor.mail.MailMessage
-import com.bopr.android.smailer.processor.mail.GoogleMail
+import com.bopr.android.smailer.ui.RemoteControlActivity
 import com.bopr.android.smailer.util.commaSplit
 import com.bopr.android.smailer.util.containsEmail
 import com.bopr.android.smailer.util.extractEmail
-import com.bopr.android.smailer.util.hasInternetConnection
-import com.google.android.gms.common.internal.Preconditions.checkNotMainThread
 import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
 import org.slf4j.LoggerFactory
 
@@ -32,16 +31,30 @@ internal class MailControlProcessor(
     private val parser = MailControlCommandInterpreter()
     private val query = "subject:Re:[${context.getString(R.string.app_name)}] label:inbox"
     private val accountHelper = AccountHelper(context)
-    private val executor = ControlCommandExecutor(context)
+    private val commandExecutor = ControlCommandExecutor(context)
 
-    fun checkMailbox(): Int {
-        checkNotMainThread() /* gmail won't work in main thread */
-        if (!checkInternet()) return 0
-        val account = requireAccount() ?: return 0
+    fun checkMailbox(onSuccess: (Int) -> Unit = {}, onError: (Throwable) -> Unit) {
+        val accountName = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
+        val account = accountHelper.getGoogleAccount(accountName)?:run{
+            log.warn("Service account [$accountName] not found")
 
-        val session = GoogleMail(context, account, MAIL_GOOGLE_COM)
-        val messages = session.list(query)
+            notifyNoAccount()
+            onError(Exception("Service account [$accountName] not found"))
+            return
+        }
 
+        val session = GoogleMailSession(context, account, MAIL_GOOGLE_COM)
+        session.list(
+            query,
+            onSuccess = { messages ->
+                readMessages(messages, session)
+                onSuccess(messages.size)
+            },
+            onError = onError
+        )
+    }
+
+    private fun readMessages(messages: List<MailMessage>, session: GoogleMailSession): Int {
         if (messages.isEmpty()) {
             log.debug("No service mail")
         } else {
@@ -57,9 +70,10 @@ internal class MailControlProcessor(
                                 log.debug("Not my mail")
 
                             else -> {
-                                session.markAsRead(message)
-                                executor.execute(command)
-                                session.trash(message)
+                                session.markAsRead(message) {
+                                    commandExecutor.execute(command)
+                                    session.trash(message) {}
+                                }
                             }
                         }
                     }
@@ -83,22 +97,12 @@ internal class MailControlProcessor(
         return true
     }
 
-    private fun checkInternet(): Boolean {
-        /* check it before all to avoid awaiting timeout while sending */
-        return context.hasInternetConnection().also {
-            if (!it) log.warn("No internet connection")
-        }
-    }
-
-    private fun requireAccount(): Account? {
-        val accountName = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
-        val googleAccount = accountHelper.getGoogleAccount(accountName)
-        return googleAccount.also {
-            if (it == null) {
-                notifications.showRemoteAccountError()
-                log.warn("Service account [$accountName] not found")
-            }
-        }
+    private fun notifyNoAccount() {
+        notifications.notifyError(
+            SERVICE_ACCOUNT_ERROR,
+            context.getString(R.string.service_account_not_found),
+            RemoteControlActivity::class
+        )
     }
 
     companion object {

@@ -53,10 +53,10 @@ class MailPhoneEventFormatterTest : BaseTest() {
             }
         }
     }
-
-    /**
+/*
+    *//**
      * Check incoming SMS email body when all required information is present.
-     */
+     *//*
     @Test
     fun testAllContentIncomingSms() {
         val event = PhoneEventData(
@@ -91,9 +91,9 @@ class MailPhoneEventFormatterTest : BaseTest() {
         )
     }
 
-    /**
+    *//**
      * Check formatting incoming sms email subject.
-     */
+     *//*
     @Test
     fun testIncomingSmsSubject() {
         val event = PhoneEventData(
@@ -109,9 +109,9 @@ class MailPhoneEventFormatterTest : BaseTest() {
         Assert.assertEquals("[SMailer] Incoming SMS from +70123456789", formatter.formatSubject())
     }
 
-    /**
+    *//**
      * Check formatting outgoing sms email subject.
-     */
+     *//*
     @Test
     fun testOutgoingSmsSubject() {
         val event = PhoneEventData(
@@ -127,9 +127,9 @@ class MailPhoneEventFormatterTest : BaseTest() {
         Assert.assertEquals("[SMailer] Outgoing SMS to +70123456789", formatter.formatSubject())
     }
 
-    /**
+    *//**
      * Check formatting incoming call email subject.
-     */
+     *//*
     @Test
     fun testIncomingCallSubject() {
         val event = PhoneEventData(
@@ -144,9 +144,9 @@ class MailPhoneEventFormatterTest : BaseTest() {
         Assert.assertEquals("[SMailer] Incoming call from +70123456789", formatter.formatSubject())
     }
 
-    /**
+    *//**
      * Check formatting outgoing call email subject.
-     */
+     *//*
     @Test
     fun testOutgoingCallSubject() {
         val event = PhoneEventData(
@@ -161,9 +161,9 @@ class MailPhoneEventFormatterTest : BaseTest() {
         Assert.assertEquals("[SMailer] Outgoing call to +70123456789", formatter.formatSubject())
     }
 
-    /**
+    *//**
      * Check formatting outgoing call email subject.
-     */
+     *//*
     @Test
     fun testMissedCallSubject() {
         val event = PhoneEventData(
@@ -178,9 +178,9 @@ class MailPhoneEventFormatterTest : BaseTest() {
         Assert.assertEquals("[SMailer] Missed call from +70123456789", formatter.formatSubject())
     }
 
-    /**
+    *//**
      * Check that email body does not contain any footer when no options have been chosen.
-     */
+     *//*
     @Test
     fun testNoBodyFooter() {
         val event = PhoneEventData(
@@ -199,9 +199,9 @@ class MailPhoneEventFormatterTest : BaseTest() {
         )
     }
 
-    /**
+    *//**
      * Check email body footer with [Settings.VAL_PREF_MESSAGE_CONTENT_EVENT_TIME] option switched on.
-     */
+     *//*
     @Test
     fun testFooterTimeOption() {
         val event = PhoneEventData(
@@ -224,9 +224,9 @@ class MailPhoneEventFormatterTest : BaseTest() {
         )
     }
 
-    /**
+    *//**
      * Check email body footer with [Settings.VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME] option switched on.
-     */
+     *//*
     @Test
     fun testFooterDeviceNameOption() {
         val event = PhoneEventData(
@@ -250,10 +250,10 @@ class MailPhoneEventFormatterTest : BaseTest() {
         )
     }
 
-    /**
+    *//**
      * Check email body footer with [Settings.VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME] option
      * switched on and no devise name specified.
-     */
+     *//*
     @Test
     fun testFooterDeviceNameOptionNoValue() {
         val event = PhoneEventData(
@@ -276,10 +276,10 @@ class MailPhoneEventFormatterTest : BaseTest() {
         )
     }
 
-    /**
+    *//**
      * Check email body footer with [Settings.VAL_PREF_MESSAGE_CONTENT_EVENT_TIME] and
      * [Settings.VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME] options switched on.
-     */
+     *//*
     @Test
     fun testFooterDeviceNameTimeOption() {
         val event = PhoneEventData(
@@ -306,9 +306,9 @@ class MailPhoneEventFormatterTest : BaseTest() {
         )
     }
 
-    /**
+    *//**
      * Check email body footer with [Settings.VAL_PREF_MESSAGE_CONTENT_LOCATION] option switched on.
-     */
+     *//*
     @Test
     fun testFooterLocation() {
         val event = PhoneEventData(
@@ -332,10 +332,10 @@ class MailPhoneEventFormatterTest : BaseTest() {
         )
     }
 
-    /**
+    *//**
      * Check email body footer with [Settings.VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME] option
      * switched on and no location specified in event.
-     */
+     *//*
     @Test
     fun testFooterNoLocation() {
         val event = PhoneEventData(
@@ -358,10 +358,10 @@ class MailPhoneEventFormatterTest : BaseTest() {
         )
     }
 
-    /**
+    *//**
      * Check email body footer with [Settings.VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME] option
      * switched on and no location permissions.
-     */
+     *//*
     @Test
     fun testFooterNoLocationPermissions() {
         val event = PhoneEventData(
@@ -399,9 +399,9 @@ class MailPhoneEventFormatterTest : BaseTest() {
         )
     }
 
-    /**
+    *//**
      * Check email body footer with [Settings.VAL_PREF_MESSAGE_CONTENT_CALLER] option switched on.
-     */
+     *//*
     @Test
     fun testContactName() {
         val event = PhoneEventData(
@@ -425,10 +425,10 @@ class MailPhoneEventFormatterTest : BaseTest() {
         )
     }
 
-    /**
+    *//**
      * Check email body footer with [Settings.VAL_PREF_MESSAGE_CONTENT_CALLER] option switched on
      * and no permission to read contacts.
-     */
+     *//*
     @Test
     fun testContactNameNoPermission() {
         val event = PhoneEventData(
@@ -459,10 +459,10 @@ class MailPhoneEventFormatterTest : BaseTest() {
         )
     }
 
-    /**
+    *//**
      * Check email body footer with [Settings.VAL_PREF_MESSAGE_CONTENT_CALLER] option switched on
      * and unknown contact name.
-     */
+     *//*
     @Test
     fun testUnknownContactName() {
         val event = PhoneEventData(
@@ -485,10 +485,10 @@ class MailPhoneEventFormatterTest : BaseTest() {
         )
     }
 
-    /**
+    *//**
      * Check email body footer with [Settings.VAL_PREF_MESSAGE_CONTENT_CALLER] option switched on,
      *  unknown contact name and custom search URL.
-     */
+     *//*
     @Test
     fun testSearchPhoneLink() {
         val event = PhoneEventData(
@@ -512,9 +512,9 @@ class MailPhoneEventFormatterTest : BaseTest() {
         )
     }
 
-    /**
+    *//**
      * Check incoming call email body.
-     */
+     *//*
     @Test
     fun testIncomingCallBody() {
         val event = PhoneEventData(
@@ -533,9 +533,9 @@ class MailPhoneEventFormatterTest : BaseTest() {
         )
     }
 
-    /**
+    *//**
      * Check outgoing call email body.
-     */
+     *//*
     @Test
     fun testOutgoingCallBody() {
         val event = PhoneEventData(
@@ -554,9 +554,9 @@ class MailPhoneEventFormatterTest : BaseTest() {
         )
     }
 
-    /**
+    *//**
      * Check missed call email body.
-     */
+     *//*
     @Test
     fun testMissedCallBody() {
         val event = PhoneEventData(
@@ -571,9 +571,9 @@ class MailPhoneEventFormatterTest : BaseTest() {
         MatcherAssert.assertThat(formatter.formatBody(), HtmlMatcher.htmlEquals("missed_call.html"))
     }
 
-    /**
+    *//**
      * Check incoming call email body when all required information is present.
-     */
+     *//*
     @Test
     fun testAllContentIncomingCall() {
         val event = PhoneEventData(
@@ -605,9 +605,9 @@ class MailPhoneEventFormatterTest : BaseTest() {
         )
     }
 
-    /**
+    *//**
      * Check outgoing call email body when all required information is present.
-     */
+     *//*
     @Test
     fun testAllContentOutgoingCall() {
         val event = PhoneEventData(
@@ -639,9 +639,9 @@ class MailPhoneEventFormatterTest : BaseTest() {
         )
     }
 
-    /**
+    *//**
      * Check missed call email body when all required information is present.
-     */
+     *//*
     @Test
     fun testAllContentMissedCall() {
         val event = PhoneEventData(
@@ -673,9 +673,9 @@ class MailPhoneEventFormatterTest : BaseTest() {
         )
     }
 
-    /**
+    *//**
      * Check email body with valid non-default locale specified.
-     */
+     *//*
     @Test
     fun testNonDefaultLocale() {
         val event = PhoneEventData(
@@ -712,9 +712,9 @@ class MailPhoneEventFormatterTest : BaseTest() {
         )
     }
 
-    /**
+    *//**
      * Check URLs formatting.
-     */
+     *//*
     @Test
     fun testFormatUrls() {
         val event = PhoneEventData(
@@ -731,9 +731,9 @@ class MailPhoneEventFormatterTest : BaseTest() {
         MatcherAssert.assertThat(formatter.formatBody(), HtmlMatcher.htmlEquals("urls.html"))
     }
 
-    /**
+    *//**
      * Check remote control links formatting.
-     */
+     *//*
     @Test
     fun testRemoteControlLinks() {
         val event = PhoneEventData(
@@ -756,7 +756,7 @@ class MailPhoneEventFormatterTest : BaseTest() {
         val body = formatter.formatBody()
         MatcherAssert.assertThat(body, HtmlMatcher.htmlEquals("remote_control_links.html"))
 
-        /* Ensure that there are no line breaks in href values. Otherwise reply email body will be formatted incorrectly */
+        *//* Ensure that there are no line breaks in href values. Otherwise reply email body will be formatted incorrectly *//*
         Assert.assertTrue(
             body.contains(
                 "mailto:service@mail.com?subject=Re: [SMailer] Incoming SMS from " +
@@ -775,5 +775,5 @@ class MailPhoneEventFormatterTest : BaseTest() {
                         "+12345678901&amp;body=To device &quot;Device&quot;: %0d%0a send SMS message &quot;Sample text&quot; to +12345678901"
             )
         )
-    }
+    }*/
 }

@@ -12,15 +12,20 @@ import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_MESSAGE_LOCALE
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
-import com.bopr.android.smailer.processor.mail.GoogleMail
+import com.bopr.android.smailer.processor.mail.BaseMailFormatter
+import com.bopr.android.smailer.processor.mail.GoogleMailSession
 import com.bopr.android.smailer.processor.mail.MailMessage
 import com.bopr.android.smailer.util.DEVICE_NAME
-import com.bopr.android.smailer.util.SummaryStyle.*
+import com.bopr.android.smailer.util.GeoLocation
+import com.bopr.android.smailer.util.GeoLocation.Companion.requestGeoLocation
+import com.bopr.android.smailer.util.PreferenceProgress
+import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_ACCENTED
+import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_DEFAULT
+import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_UNDERWIVED
 import com.bopr.android.smailer.util.commaSplit
 import com.bopr.android.smailer.util.onOffText
 import com.bopr.android.smailer.util.requirePreference
 import com.bopr.android.smailer.util.requirePreferenceAs
-import com.bopr.android.smailer.util.runBackgroundTask
 import com.bopr.android.smailer.util.setOnChangeListener
 import com.bopr.android.smailer.util.setOnClickListener
 import com.bopr.android.smailer.util.showToast
@@ -38,10 +43,6 @@ class EmailSettingsFragment : BasePreferenceFragment(R.xml.pref_email_settings) 
 
     private lateinit var accountHelper: AccountHelper
     private lateinit var authorizationHelper: GoogleAuthorizationHelper
-
-    //    private val requestPermissionLauncher = registerForActivityResult(RequestPermission()) { _ ->
-//        updateAccountPreferenceView()
-//    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,35 +110,34 @@ class EmailSettingsFragment : BasePreferenceFragment(R.xml.pref_email_settings) 
     }
 
     private fun onSendTestMessage(preference: Preference) {
-        preference.runBackgroundTask(
-            onPerform = {
-                val account = accountHelper.requirePrimaryGoogleAccount()
+        val account = accountHelper.getPrimaryGoogleAccount() ?: run {
+            showInfoDialog(R.string.sender_account_not_found)
+            return
+        }
 
-                val message = MailMessage(
+        val progress = PreferenceProgress(preference).apply { start() }
+        val time = System.currentTimeMillis()
+
+        requireContext().requestGeoLocation { location ->
+            val formatter = TestMailFormatter(time, location)
+            GoogleMailSession(requireContext(), account, GMAIL_SEND).send(
+                MailMessage(
                     from = account.name,
-                    subject = "Test",
-                    body = "This is test message from $DEVICE_NAME",
+                    subject = formatter.formatSubject(),
+                    body = formatter.formatBody(),
                     recipients = settings.getEmailRecipients()
-                )
-
-                GoogleMail(requireContext(), account, GMAIL_SEND).send(message)
-            },
-            onSuccess = {
-                showToast(R.string.test_message_sent)
-            },
-            onError = { _ ->
-                showInfoDialog(R.string.test_message_failed)
-            }
-        )
+                ),
+                onSuccess = {
+                    progress.stop()
+                    showToast(R.string.test_message_sent)
+                },
+                onError = {
+                    progress.stop()
+                    showInfoDialog(R.string.test_message_failed)
+                }
+            )
+        }
     }
-
-
-    //    override fun onRequestPermissionsResult(
-//        requestCode: Int, permissions: Array<String>,
-//        grantResults: IntArray
-//    ) {
-//        updateAccountPreferenceView()
-//    }
 
     private fun updateAccountPreferenceView() {
         requirePreference(PREF_EMAIL_SENDER_ACCOUNT).apply {
@@ -150,6 +150,31 @@ class EmailSettingsFragment : BasePreferenceFragment(R.xml.pref_email_settings) 
                 updateSummary(account)
             }
         }
+    }
+
+    private inner class TestMailFormatter(time: Long, location: GeoLocation?) :
+        BaseMailFormatter(requireContext(), time, time, location) {
+
+        override fun getSubject(): String {
+            return getString(R.string.test_message)
+        }
+
+        override fun getTitle(): String {
+            return getString(R.string.test_message)
+        }
+
+        override fun getMessage(): String {
+            return getString(R.string.this_is_test_message)
+        }
+
+        override fun getSenderName(): String {
+            return getString(R.string.sender_of, getString(R.string.app_name))
+        }
+
+        override fun getReplyLinks(): List<String>? {
+            return null
+        }
+
     }
 
     companion object {

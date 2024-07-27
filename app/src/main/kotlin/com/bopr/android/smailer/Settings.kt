@@ -87,6 +87,8 @@ class Settings(context: Context, changeListener: ChangeListener? = null) {
     fun getMessageLocale() = getString(PREF_MESSAGE_LOCALE, VAL_PREF_DEFAULT)
     fun getDeviceName() = getString(PREF_DEVICE_ALIAS, DEVICE_NAME)
     fun getPhoneSearchUrl() = getString(PREF_PHONE_SEARCH_URL, DEFAULT_PHONE_SEARCH_URL)
+    fun hasEmailContent(key: String) = getStringSet(PREF_EMAIL_MESSAGE_CONTENT).contains(key)
+
     fun hasTelegramMessageContent(key: String) =
         getStringSet(PREF_TELEGRAM_MESSAGE_CONTENT).contains(key)
 
@@ -125,6 +127,7 @@ class Settings(context: Context, changeListener: ChangeListener? = null) {
         Editor(edit).action()
         edit.apply()
     }
+
 
     inner class Editor(private val wrapped: SharedPreferences.Editor) {
 

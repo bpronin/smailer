@@ -15,7 +15,7 @@ import com.bopr.android.smailer.Settings.Companion.sharedPreferencesName
 import com.bopr.android.smailer.processor.mail.MailMessage
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.databaseName
-import com.bopr.android.smailer.processor.mail.GoogleMail
+import com.bopr.android.smailer.processor.mail.GoogleMailSession
 import com.bopr.android.smailer.ui.EventFilterPhoneBlacklistActivity
 import com.bopr.android.smailer.ui.EventFilterPhoneWhitelistActivity
 import com.bopr.android.smailer.ui.EventFilterTextBlacklistActivity
@@ -40,7 +40,7 @@ class RemoteControlMailTest : BaseTest() {
     private lateinit var database: Database
     private lateinit var processor: MailControlProcessor
     private lateinit var account: Account
-    private lateinit var transport: GoogleMail
+    private lateinit var transport: GoogleMailSession
     private lateinit var settings: Settings
 
     @Before
@@ -53,7 +53,7 @@ class RemoteControlMailTest : BaseTest() {
 
         settings = Settings(targetContext)
         account = AccountHelper(targetContext).requirePrimaryGoogleAccount()
-        transport = GoogleMail(targetContext, account)
+        transport = GoogleMailSession(targetContext, account)
 
         for (message in loadMail()) {
             transport.trash(message)

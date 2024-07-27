@@ -200,11 +200,11 @@ class HistoryFragment : RecyclerFragment<PhoneEventData, Holder>() {
 
     private fun onProcessAllPending() {
         runInBackground(
-            onPerform = {
-                PhoneEventProcessor(requireContext()).processPending()
-            },
             onSuccess = { _ ->
                 showToast(R.string.operation_complete)
+            },
+            onPerform = {
+                PhoneEventProcessor(requireContext()).processPending()
             }
         )
     }

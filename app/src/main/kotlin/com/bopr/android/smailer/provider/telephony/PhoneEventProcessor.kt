@@ -103,24 +103,16 @@ class PhoneEventProcessor(
     }
 
     private fun sendMessage(data: PhoneEventData): Boolean {
+        log.debug("Dispatching event")
+
         return try {
             eventDispatcher.dispatch(Event(payload = data))
-
-            log.debug("Event message sent")
-
             if (settings.getBoolean(PREF_NOTIFY_SEND_SUCCESS)) {
                 notifications.showMailSendSuccess()
             }
             true
-        } catch (x: UserRecoverableAuthIOException) {
-            /* this occurs when app has no permission to access google account or
-               sender account has been removed from outside of the device */
-            log.warn("Failed sending mail: ", x)
-
-            notifications.showGoogleAccessError()
-            false
         } catch (x: Exception) {
-            log.warn("Failed sending mail: ", x)
+            log.warn("Failed dispatching: ", x)
 
             false
         }
