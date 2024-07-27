@@ -11,12 +11,16 @@ import androidx.test.filters.SmallTest
 import androidx.test.rule.GrantPermissionRule
 import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.NotificationsHelper
+import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_GOOGLE_ACCESS
+import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_GOOGLE_ACCOUNT
+import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_MAIL_RECIPIENTS
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSAGE_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_MESSAGE_LOCALE
+import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_BODY
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
@@ -28,13 +32,16 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_HEAD
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCATION
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
-import com.bopr.android.smailer.processor.EventDispatcher
 import com.bopr.android.smailer.data.Database
+import com.bopr.android.smailer.processor.EventDispatcher
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import com.bopr.android.smailer.provider.telephony.PhoneEventProcessor
+import com.bopr.android.smailer.ui.EmailSettingsActivity
+import com.bopr.android.smailer.ui.MainActivity
+import com.bopr.android.smailer.ui.RecipientsActivity
 import com.bopr.android.smailer.util.GeoLocation
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.anyOrNull
@@ -52,6 +59,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.anyString
 import java.io.IOException
 
 /**
@@ -202,9 +210,9 @@ class PhoneEventProcessorTest : BaseTest() {
 //                    && replyTo == null
 //                    && from == "sender@mail.com"
 //        })
-        verify(notifications, never()).showAccountError()
-        verify(notifications, never()).showRecipientsError(ArgumentMatchers.anyInt())
-        verify(notifications, never()).showGoogleAccessError()
+        verifyNotifyAccountError()
+        verifyNotifyRecipientsError()
+        verifyNotifyGoogleAccessError()
 
         val savedEvent = database.phoneEvents.first()
 
@@ -227,9 +235,9 @@ class PhoneEventProcessorTest : BaseTest() {
         processor.process(event)
 
         verify(messenger, never()).dispatch(any())
-        verify(notifications, never()).showAccountError()
-        verify(notifications, never()).showRecipientsError(ArgumentMatchers.anyInt())
-        verify(notifications, never()).showGoogleAccessError()
+        verifyNotifyAccountError()
+        verifyNotifyRecipientsError()
+        verifyNotifyGoogleAccessError()
 
         val savedEvent = database.phoneEvents.first()
 
@@ -249,7 +257,11 @@ class PhoneEventProcessorTest : BaseTest() {
 
 //        verify(messenger, never()).login(any(), any())
         verify(messenger, never()).dispatch(any())
-        verify(notifications).showAccountError()
+        verify(notifications).notifyError(
+            eq(NTF_GOOGLE_ACCOUNT),
+            eq(getString(R.string.sender_account_not_found)),
+            eq(EmailSettingsActivity::class)
+        )
 
         val savedEvent = database.phoneEvents.first()
 
@@ -268,7 +280,11 @@ class PhoneEventProcessorTest : BaseTest() {
         processor.process(event)
 
         verify(messenger, never()).dispatch(any())
-        verify(notifications).showRecipientsError(eq(R.string.no_recipients_specified))
+        verify(notifications).notifyError(
+            NTF_MAIL_RECIPIENTS,
+            eq(getString(R.string.no_recipients_specified)),
+            RecipientsActivity::class
+        )
 
         val savedEvent = database.phoneEvents.first()
 
@@ -288,9 +304,9 @@ class PhoneEventProcessorTest : BaseTest() {
 
 //        verify(messenger).login(any(), any())
         verify(messenger).dispatch(any())
-        verify(notifications, never()).showAccountError()
-        verify(notifications, never()).showRecipientsError(ArgumentMatchers.anyInt())
-        verify(notifications, never()).showGoogleAccessError()
+        verifyNotifyAccountError()
+        verifyNotifyRecipientsError()
+        verifyNotifyGoogleAccessError()
 
         val savedEvent = database.phoneEvents.first()
 
@@ -304,18 +320,28 @@ class PhoneEventProcessorTest : BaseTest() {
     @Test
     fun testSuccessNotification() {
         /* the setting is OFF */
-        whenever(preferences.getBoolean(eq(Settings.PREF_NOTIFY_SEND_SUCCESS), anyOrNull())).thenReturn(false)
+        whenever(
+            preferences.getBoolean(
+                eq(Settings.PREF_NOTIFY_SEND_SUCCESS),
+                anyOrNull()
+            )
+        ).thenReturn(false)
 
         processor.process(testingEvent())
 
-        verify(notifications, never()).showMailSendSuccess()
+        verifyNotifyMailSuccess()
 
         /* the setting is ON */
-        whenever(preferences.getBoolean(eq(Settings.PREF_NOTIFY_SEND_SUCCESS), anyOrNull())).thenReturn(true)
+        whenever(
+            preferences.getBoolean(
+                eq(Settings.PREF_NOTIFY_SEND_SUCCESS),
+                anyOrNull()
+            )
+        ).thenReturn(true)
 
         processor.process(testingEvent())
 
-        verify(notifications).showMailSendSuccess()
+        verifyNotifyMailSuccess()
     }
 
     /**
@@ -332,18 +358,18 @@ class PhoneEventProcessorTest : BaseTest() {
 
         Assert.assertEquals(3, database.phoneEvents.size)
         Assert.assertEquals(3, database.phoneEvents.filterPending.size)
-        verify(notifications, never()).showAccountError()
-        verify(notifications, never()).showRecipientsError(ArgumentMatchers.anyInt())
-        verify(notifications, never()).showGoogleAccessError()
+        verifyNotifyAccountError()
+        verifyNotifyRecipientsError()
+        verifyNotifyGoogleAccessError()
 
         /* try resend with disabled transport */
         processor.processPending()
 
         Assert.assertEquals(3, database.phoneEvents.size)
         Assert.assertEquals(3, database.phoneEvents.filterPending.size)
-        verify(notifications, never()).showAccountError()
-        verify(notifications, never()).showRecipientsError(ArgumentMatchers.anyInt())
-        verify(notifications, never()).showGoogleAccessError()
+        verifyNotifyAccountError()
+        verifyNotifyRecipientsError()
+        verifyNotifyGoogleAccessError()
 
         /* enable transport an try again */
         doNothing().whenever(messenger).dispatch(any())
@@ -352,8 +378,40 @@ class PhoneEventProcessorTest : BaseTest() {
 
         Assert.assertEquals(3, database.phoneEvents.size)
         Assert.assertEquals(0, database.phoneEvents.filterPending.size)
-        verify(notifications, never()).showAccountError()
-        verify(notifications, never()).showRecipientsError(ArgumentMatchers.anyInt())
-        verify(notifications, never()).showGoogleAccessError()
+        verifyNotifyAccountError()
+        verifyNotifyRecipientsError()
+        verifyNotifyGoogleAccessError()
+    }
+
+    private fun verifyNotifyMailSuccess() {
+        verify(notifications, never()).notifyInfo(
+            eq(getString(R.string.email_successfully_send)),
+            eq(null),
+            eq(MainActivity::class)
+        )
+    }
+
+    private fun verifyNotifyAccountError() {
+        verify(notifications, never()).notifyError(
+            eq(NTF_GOOGLE_ACCOUNT),
+            eq(getString(R.string.sender_account_not_found)),
+            eq(EmailSettingsActivity::class)
+        )
+    }
+
+    private fun verifyNotifyGoogleAccessError() {
+        verify(notifications, never()).notifyError(
+            eq(NTF_GOOGLE_ACCESS),
+            eq(getString(R.string.no_access_to_google_account)),
+            eq(EmailSettingsActivity::class)
+        )
+    }
+
+    private fun verifyNotifyRecipientsError() {
+        verify(notifications, never()).notifyError(
+            eq(NTF_GOOGLE_ACCESS),
+            anyString(),
+            eq(RecipientsActivity::class)
+        )
     }
 }

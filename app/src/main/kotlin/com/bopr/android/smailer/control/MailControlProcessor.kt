@@ -66,7 +66,7 @@ internal class MailControlProcessor(
                             command == null ->
                                 log.debug("Not a service mail")
 
-                            command.acceptor != settings.getDeviceName() ->
+                            command.target != settings.getDeviceName() ->
                                 log.debug("Not my mail")
 
                             else -> {

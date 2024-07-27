@@ -1,7 +1,7 @@
 package com.bopr.android.smailer.control
 
 internal data class ControlCommand(
-    val acceptor: String?
+    val target: String?
 ) {
 
     lateinit var action: Action

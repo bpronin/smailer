@@ -80,11 +80,32 @@ class NotificationsHelper(private val context: Context) {
             .build()
     }
 
+    fun notifyInfo(title: String, text: String? = null, target: KClass<out Activity>) {
+        manager.notify(
+            TAG_MESSAGE, nextInfoNotificationId++, infoBuilder
+                .setWhen(currentTimeMillis())
+                .setContentTitle(title)
+                .setContentText(text)
+                .setContentIntent(activityIntent(target))
+                .build()
+        )
+    }
+
+    fun notifyError(notificationId: Int, text: String, target: KClass<out Activity>) {
+        manager.notify(
+            TAG_ERROR, notificationId, errorsBuilder
+                .setWhen(currentTimeMillis())
+                .setContentText(text)
+                .setContentIntent(activityIntent(target))
+                .build()
+        )
+    }
+
     internal fun cancelError(notificationId: Int) {
         manager.cancel(TAG_ERROR, notificationId)
     }
 
-    internal fun onSettingsChanged(settings: Settings, key: String?) {
+    internal fun applySettings(settings: Settings, key: String?) {
         when (key) {
             PREF_EMAIL_SENDER_ACCOUNT ->
                 if (accountHelper.isGoogleAccountExists(
@@ -107,27 +128,6 @@ class NotificationsHelper(private val context: Context) {
                     cancelError(NTF_MAIL_RECIPIENTS)
                 }
         }
-    }
-
-    fun notifyInfo(title: String, text: String? = null, target: KClass<out Activity>) {
-        manager.notify(
-            TAG_MESSAGE, nextInfoNotificationId++, infoBuilder
-                .setWhen(currentTimeMillis())
-                .setContentTitle(title)
-                .setContentText(text)
-                .setContentIntent(activityIntent(target))
-                .build()
-        )
-    }
-
-    fun notifyError(notificationId: Int, text: String, target: KClass<out Activity>) {
-        manager.notify(
-            TAG_ERROR, notificationId, errorsBuilder
-                .setWhen(currentTimeMillis())
-                .setContentText(text)
-                .setContentIntent(activityIntent(target))
-                .build()
-        )
     }
 
     private fun activityIntent(activityClass: KClass<out Activity>): PendingIntent {

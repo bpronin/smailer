@@ -41,7 +41,7 @@ internal class MailEventProcessor(context: Context) : EventProcessor(context) {
     }
 
     override fun prepare(): Boolean {
-        account = checkAccount(accountHelper.getPrimaryGoogleAccount())?: run { return false }
+        account = checkAccount(accountHelper.getPrimaryGoogleAccount()) ?: run { return false }
         session = GoogleMailSession(context, account, GMAIL_SEND)
         return true
     }
@@ -108,21 +108,21 @@ internal class MailEventProcessor(context: Context) : EventProcessor(context) {
     }
 
     private fun notifySendError(error: Throwable) {
-        var messageRes = R.string.unable_send_email
-        var errorCode = NTF_MAIL
-
         if (error is UserRecoverableAuthIOException) {
             /* this may happen when app has no permission to access google account or
                sender account has been removed from outside of the device */
-            errorCode = NTF_GOOGLE_ACCESS
-            messageRes = R.string.no_access_to_google_account
+            notifications.notifyError(
+                NTF_GOOGLE_ACCESS,
+                context.getString(R.string.no_access_to_google_account),
+                EmailSettingsActivity::class
+            )
+        } else {
+            notifications.notifyError(
+                NTF_MAIL,
+                context.getString(R.string.unable_send_email),
+                EmailSettingsActivity::class
+            )
         }
-
-        notifications.notifyError(
-            errorCode,
-            context.getString(messageRes),
-            EmailSettingsActivity::class
-        )
     }
 
     companion object {

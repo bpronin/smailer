@@ -72,11 +72,10 @@ class ControlCommandExecutorTest : BaseTest() {
     }
 
     private fun createCommand(
-        deviceName: String,
         action: ControlCommand.Action,
         argument: String
     ): ControlCommand {
-        return ControlCommand(deviceName).apply {
+        return ControlCommand("device").apply {
             this.action = action
             this.argument = argument
         }
@@ -86,19 +85,21 @@ class ControlCommandExecutorTest : BaseTest() {
     fun testAddPhoneToBlacklist() {
         val processor = ControlCommandExecutor(context, database, notifications = notifications)
 
-        processor.execute(createCommand("device", ADD_PHONE_TO_BLACKLIST, "100"))
-        processor.execute(createCommand("device", ADD_PHONE_TO_BLACKLIST, "200"))
+        processor.execute(createCommand(ADD_PHONE_TO_BLACKLIST, "100"))
+        processor.execute(createCommand(ADD_PHONE_TO_BLACKLIST, "200"))
         processor.execute(
-            createCommand("device", ADD_PHONE_TO_BLACKLIST, "200")
-        ) /* should be ignored */
+            createCommand(ADD_PHONE_TO_BLACKLIST, "200")
+        ) /* must be ignored */
 
         assertEquals(setOf("100", "200"), database.phoneBlacklist)
-        verify(notifications).showRemoteAction(
-            eq(targetContext.getString(R.string.phone_remotely_added_to_blacklist, "100")),
+        verify(notifications).notifyInfo(
+            eq(getString(R.string.remote_control)),
+            eq(getString(R.string.phone_remotely_added_to_blacklist, "100")),
             eq(EventFilterPhoneBlacklistActivity::class)
         )
-        verify(notifications).showRemoteAction(
-            eq(targetContext.getString(R.string.phone_remotely_added_to_blacklist, "200")),
+        verify(notifications).notifyInfo(
+            eq(getString(R.string.remote_control)),
+            eq(getString(R.string.phone_remotely_added_to_blacklist, "200")),
             eq(EventFilterPhoneBlacklistActivity::class)
         )
     }
@@ -107,23 +108,24 @@ class ControlCommandExecutorTest : BaseTest() {
     fun testAddPhoneToWhitelist() {
         val processor = ControlCommandExecutor(context, database, notifications = notifications)
 
-        processor.execute(createCommand("device", ADD_PHONE_TO_WHITELIST, "100"))
-        processor.execute(createCommand("device", ADD_PHONE_TO_WHITELIST, "200"))
+        processor.execute(createCommand(ADD_PHONE_TO_WHITELIST, "100"))
+        processor.execute(createCommand(ADD_PHONE_TO_WHITELIST, "200"))
         processor.execute(
             createCommand(
-                "device",
                 ADD_PHONE_TO_WHITELIST,
                 "200"
             )
-        ) /* should be ignored */
+        ) /* must be ignored */
 
         assertEquals(setOf("100", "200"), database.phoneWhitelist)
-        verify(notifications).showRemoteAction(
-            eq(targetContext.getString(R.string.phone_remotely_added_to_whitelist, "100")),
+        verify(notifications).notifyInfo(
+            eq(getString(R.string.remote_control)),
+            eq(getString(R.string.phone_remotely_added_to_whitelist, "100")),
             eq(EventFilterPhoneWhitelistActivity::class)
         )
-        verify(notifications).showRemoteAction(
-            eq(targetContext.getString(R.string.phone_remotely_added_to_whitelist, "200")),
+        verify(notifications).notifyInfo(
+            eq(getString(R.string.remote_control)),
+            eq(getString(R.string.phone_remotely_added_to_whitelist, "200")),
             eq(EventFilterPhoneWhitelistActivity::class)
         )
     }
@@ -132,18 +134,20 @@ class ControlCommandExecutorTest : BaseTest() {
     fun testAddTextToBlacklist() {
         val processor = ControlCommandExecutor(context, database, notifications = notifications)
 
-        processor.execute(createCommand("device", ADD_TEXT_TO_BLACKLIST, "100"))
-        processor.execute(createCommand("device", ADD_TEXT_TO_BLACKLIST, "200"))
-        processor.execute(createCommand("device", ADD_TEXT_TO_BLACKLIST, "200"))
-        /* should be ignored */
+        processor.execute(createCommand(ADD_TEXT_TO_BLACKLIST, "100"))
+        processor.execute(createCommand(ADD_TEXT_TO_BLACKLIST, "200"))
+        processor.execute(createCommand(ADD_TEXT_TO_BLACKLIST, "200"))
+        /* must be ignored */
 
         assertEquals(setOf("100", "200"), database.smsTextBlacklist)
-        verify(notifications).showRemoteAction(
-            eq(targetContext.getString(R.string.text_remotely_added_to_blacklist, "100")),
+        verify(notifications).notifyInfo(
+            eq(getString(R.string.remote_control)),
+            eq(getString(R.string.text_remotely_added_to_blacklist, "100")),
             eq(EventFilterPhoneBlacklistActivity::class)
         )
-        verify(notifications).showRemoteAction(
-            eq(targetContext.getString(R.string.text_remotely_added_to_blacklist, "200")),
+        verify(notifications).notifyInfo(
+            eq(getString(R.string.remote_control)),
+            eq(getString(R.string.text_remotely_added_to_blacklist, "200")),
             eq(EventFilterPhoneBlacklistActivity::class)
         )
     }
@@ -152,17 +156,19 @@ class ControlCommandExecutorTest : BaseTest() {
     fun testAddTextToWhitelist() {
         val processor = ControlCommandExecutor(context, database, notifications = notifications)
 
-        processor.execute(createCommand("device", ADD_TEXT_TO_WHITELIST, "100"))
-        processor.execute(createCommand("device", ADD_TEXT_TO_WHITELIST, "200"))
-        processor.execute(createCommand("device", ADD_TEXT_TO_WHITELIST, "200"))
+        processor.execute(createCommand(ADD_TEXT_TO_WHITELIST, "100"))
+        processor.execute(createCommand(ADD_TEXT_TO_WHITELIST, "200"))
+        processor.execute(createCommand(ADD_TEXT_TO_WHITELIST, "200"))
 
         assertEquals(setOf("100", "200"), database.smsTextWhitelist)
-        verify(notifications).showRemoteAction(
-            eq(targetContext.getString(R.string.text_remotely_added_to_whitelist, "100")),
+        verify(notifications).notifyInfo(
+            eq(getString(R.string.remote_control)),
+            eq(getString(R.string.text_remotely_added_to_whitelist, "100")),
             eq(EventFilterTextWhitelistActivity::class)
         )
-        verify(notifications).showRemoteAction(
-            eq(targetContext.getString(R.string.text_remotely_added_to_whitelist, "200")),
+        verify(notifications).notifyInfo(
+            eq(getString(R.string.remote_control)),
+            eq(getString(R.string.text_remotely_added_to_whitelist, "200")),
             eq(EventFilterTextWhitelistActivity::class)
         )
     }
@@ -173,16 +179,18 @@ class ControlCommandExecutorTest : BaseTest() {
 
         val processor = ControlCommandExecutor(context, database, notifications = notifications)
 
-        processor.execute(createCommand("device", REMOVE_PHONE_FROM_BLACKLIST, "100"))
-        processor.execute(createCommand("device", REMOVE_PHONE_FROM_BLACKLIST, "200"))
+        processor.execute(createCommand(REMOVE_PHONE_FROM_BLACKLIST, "100"))
+        processor.execute(createCommand(REMOVE_PHONE_FROM_BLACKLIST, "200"))
 
         assertEquals(setOf("300"), database.phoneBlacklist)
-        verify(notifications).showRemoteAction(
-            eq(targetContext.getString(R.string.phone_remotely_removed_from_blacklist, "100")),
+        verify(notifications).notifyInfo(
+            eq(getString(R.string.remote_control)),
+            eq(getString(R.string.phone_remotely_removed_from_blacklist, "100")),
             eq(EventFilterPhoneBlacklistActivity::class)
         )
-        verify(notifications).showRemoteAction(
-            eq(targetContext.getString(R.string.phone_remotely_removed_from_blacklist, "200")),
+        verify(notifications).notifyInfo(
+            eq(getString(R.string.remote_control)),
+            eq(getString(R.string.phone_remotely_removed_from_blacklist, "200")),
             eq(EventFilterPhoneBlacklistActivity::class)
         )
     }
@@ -193,16 +201,18 @@ class ControlCommandExecutorTest : BaseTest() {
 
         val processor = ControlCommandExecutor(context, database, notifications = notifications)
 
-        processor.execute(createCommand("device", REMOVE_PHONE_FROM_WHITELIST, "100"))
-        processor.execute(createCommand("device", REMOVE_PHONE_FROM_WHITELIST, "200"))
+        processor.execute(createCommand(REMOVE_PHONE_FROM_WHITELIST, "100"))
+        processor.execute(createCommand(REMOVE_PHONE_FROM_WHITELIST, "200"))
 
         assertEquals(setOf("300"), database.phoneWhitelist)
-        verify(notifications).showRemoteAction(
-            eq(targetContext.getString(R.string.phone_remotely_removed_from_whitelist, "100")),
+        verify(notifications).notifyInfo(
+            eq(getString(R.string.remote_control)),
+            eq(getString(R.string.phone_remotely_removed_from_whitelist, "100")),
             eq(EventFilterPhoneWhitelistActivity::class)
         )
-        verify(notifications).showRemoteAction(
-            eq(targetContext.getString(R.string.phone_remotely_removed_from_whitelist, "200")),
+        verify(notifications).notifyInfo(
+            eq(getString(R.string.remote_control)),
+            eq(getString(R.string.phone_remotely_removed_from_whitelist, "200")),
             eq(EventFilterPhoneWhitelistActivity::class)
         )
     }
@@ -213,16 +223,18 @@ class ControlCommandExecutorTest : BaseTest() {
 
         val processor = ControlCommandExecutor(context, database, notifications = notifications)
 
-        processor.execute(createCommand("device", REMOVE_TEXT_FROM_BLACKLIST, "100"))
-        processor.execute(createCommand("device", REMOVE_TEXT_FROM_BLACKLIST, "200"))
+        processor.execute(createCommand(REMOVE_TEXT_FROM_BLACKLIST, "100"))
+        processor.execute(createCommand(REMOVE_TEXT_FROM_BLACKLIST, "200"))
 
         assertEquals(setOf("300"), database.smsTextBlacklist)
-        verify(notifications).showRemoteAction(
-            eq(targetContext.getString(R.string.text_remotely_removed_from_blacklist, "100")),
+        verify(notifications).notifyInfo(
+            eq(getString(R.string.remote_control)),
+            eq(getString(R.string.text_remotely_removed_from_blacklist, "100")),
             eq(EventFilterPhoneBlacklistActivity::class)
         )
-        verify(notifications).showRemoteAction(
-            eq(targetContext.getString(R.string.text_remotely_removed_from_blacklist, "200")),
+        verify(notifications).notifyInfo(
+            eq(getString(R.string.remote_control)),
+            eq(getString(R.string.text_remotely_removed_from_blacklist, "200")),
             eq(EventFilterPhoneBlacklistActivity::class)
         )
     }
@@ -233,16 +245,18 @@ class ControlCommandExecutorTest : BaseTest() {
 
         val processor = ControlCommandExecutor(context, database, notifications = notifications)
 
-        processor.execute(createCommand("device", REMOVE_TEXT_FROM_WHITELIST, "100"))
-        processor.execute(createCommand("device", REMOVE_TEXT_FROM_WHITELIST, "200"))
+        processor.execute(createCommand(REMOVE_TEXT_FROM_WHITELIST, "100"))
+        processor.execute(createCommand(REMOVE_TEXT_FROM_WHITELIST, "200"))
 
         assertEquals(setOf("300"), database.smsTextWhitelist)
-        verify(notifications).showRemoteAction(
-            eq(targetContext.getString(R.string.text_remotely_removed_from_whitelist, "100")),
+        verify(notifications).notifyInfo(
+            eq(getString(R.string.remote_control)),
+            eq(getString(R.string.text_remotely_removed_from_whitelist, "100")),
             eq(EventFilterTextWhitelistActivity::class)
         )
-        verify(notifications).showRemoteAction(
-            eq(targetContext.getString(R.string.text_remotely_removed_from_whitelist, "200")),
+        verify(notifications).notifyInfo(
+            eq(getString(R.string.remote_control)),
+            eq(getString(R.string.text_remotely_removed_from_whitelist, "200")),
             eq(EventFilterTextWhitelistActivity::class)
         )
     }
@@ -263,8 +277,9 @@ class ControlCommandExecutorTest : BaseTest() {
         })
 
         verify(smsTransport).sendMessage(eq("100"), eq("Text"))
-        verify(notifications).showRemoteAction(
-            eq(targetContext.getString(R.string.sent_sms, "100")),
+        verify(notifications).notifyInfo(
+            eq(getString(R.string.remote_control)),
+            eq(getString(R.string.sent_sms, "100")),
             eq(MainActivity::class)
         )
     }

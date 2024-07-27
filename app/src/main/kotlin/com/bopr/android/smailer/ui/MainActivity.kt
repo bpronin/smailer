@@ -1,8 +1,6 @@
 package com.bopr.android.smailer.ui
 
 import android.app.backup.BackupManager
-import android.content.SharedPreferences
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.AppStartup.startUpAppServices
@@ -69,7 +67,7 @@ class MainActivity : FlavorBaseActivity(MainFragment::class), Settings.ChangeLis
             }
         }
 
-        notificationsHelper.onSettingsChanged(settings, key)
+        notificationsHelper.applySettings(settings, key)
         permissionsHelper.onSettingsChanged(key)
         backupManager.dataChanged()
     }
