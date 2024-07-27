@@ -26,7 +26,7 @@
         <Preference
                 android:key="send_test_telegram_message"
                 android:icon="@drawable/ic_test_message"
-                android:title="@string/send_test_telegram_message"
+                android:title="@string/test_settings"
                 android:summary="@string/send_test_telegram_message_summary" />
 
     </PreferenceCategory>

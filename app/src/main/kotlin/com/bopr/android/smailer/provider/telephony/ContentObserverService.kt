@@ -11,8 +11,8 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import com.bopr.android.smailer.NotificationsHelper
+import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_SERVICE
 import com.bopr.android.smailer.provider.telephony.PhoneEventProcessorWorker.Companion.startPhoneEventProcessing
-import com.bopr.android.smailer.NotificationsHelper.Companion.SERVICE_NOTIFICATION_ID
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
 import com.bopr.android.smailer.data.getLong
@@ -41,7 +41,7 @@ class ContentObserverService : Service() {
         log.debug("Running")
 
         contentResolver.registerContentObserver(CONTENT_SMS, true, contentObserver)
-        startForeground(SERVICE_NOTIFICATION_ID, notifications.serviceNotification())
+        startForeground(NTF_SERVICE, notifications.createServiceNotification())
         return super.onStartCommand(intent, flags, startId)
     }
 

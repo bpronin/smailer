@@ -28,7 +28,7 @@ class GoogleMailSessionTest : BaseTest() {
     fun test_List() {
         val account = AccountHelper(targetContext).requirePrimaryGoogleAccount()
         val mail = GoogleMailSession(targetContext, account, GMAIL_SEND)
-        val list = mail.list("label:inbox")
+        val list = mail.list("label:inbox"){}
 
         println(list)
     }

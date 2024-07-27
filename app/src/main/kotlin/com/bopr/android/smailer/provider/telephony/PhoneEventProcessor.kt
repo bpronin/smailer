@@ -2,6 +2,7 @@ package com.bopr.android.smailer.provider.telephony
 
 import android.content.Context
 import com.bopr.android.smailer.NotificationsHelper
+import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.data.Database
@@ -11,8 +12,8 @@ import com.bopr.android.smailer.provider.EventState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_ACCEPTED
+import com.bopr.android.smailer.ui.MainActivity
 import com.bopr.android.smailer.util.GeoLocation.Companion.requestGeoLocation
-import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import org.slf4j.LoggerFactory
 import java.lang.System.currentTimeMillis
 
@@ -50,15 +51,14 @@ class PhoneEventProcessor(
             } else {
                 log.debug("Processing ${pendingEvents.size} pending event(s)")
 
-                if (startMailSession()) {
-                    database.commit {
-                        batch {
-                            for (event in pendingEvents) {
-                                event.processTime = currentTimeMillis()
-                                if (sendMessage(event)) {
-                                    event.state = STATE_PROCESSED
-                                    phoneEvents.add(event)
-                                }
+                prepare()
+                database.commit {
+                    batch {
+                        for (event in pendingEvents) {
+                            event.processTime = currentTimeMillis()
+                            if (dispatch(event)) {
+                                event.state = STATE_PROCESSED
+                                phoneEvents.add(event)
                             }
                         }
                     }
@@ -70,6 +70,8 @@ class PhoneEventProcessor(
     private fun updateEvent(data: PhoneEventData, onComplete: () -> Unit) {
         context.requestGeoLocation(database) { currentLocation ->
 
+            prepare()
+
             data.apply {
                 location = currentLocation
                 processStatus = eventFilter().test(this)
@@ -78,7 +80,7 @@ class PhoneEventProcessor(
                 if (processStatus != STATUS_ACCEPTED) {
                     state = STATE_IGNORED
                     log.debug("Ignored")
-                } else if (startMailSession() && sendMessage(this)) {
+                } else if (dispatch(this)) {
                     state = STATE_PROCESSED
                     log.debug("Processed")
                 } else {
@@ -91,24 +93,19 @@ class PhoneEventProcessor(
         }
     }
 
-    private fun startMailSession(): Boolean {
-//        if (checkInternet() && checkRecipient()) {
-//            requireAccount()?.let {
-//                messenger.startSession()
-//                log.debug("Mail session started")
-        return true
-//            }
-//        }
-//        return false
+    private fun prepare() {
+        eventDispatcher.prepare()
+
+        log.debug("Dispatcher prepared")
     }
 
-    private fun sendMessage(data: PhoneEventData): Boolean {
+    private fun dispatch(data: PhoneEventData): Boolean {
         log.debug("Dispatching event")
 
         return try {
             eventDispatcher.dispatch(Event(payload = data))
             if (settings.getBoolean(PREF_NOTIFY_SEND_SUCCESS)) {
-                notifications.showMailSendSuccess()
+                notifySuccess()
             }
             true
         } catch (x: Exception) {
@@ -116,6 +113,14 @@ class PhoneEventProcessor(
 
             false
         }
+    }
+
+    private fun notifySuccess() {
+        notifications.notifyInfo(
+            context.getString(R.string.email_successfully_send),
+            null,
+            MainActivity::class
+        )
     }
 
     private fun eventFilter() = PhoneEventFilter(

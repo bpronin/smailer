@@ -94,6 +94,7 @@
     <string name="pending">Pending</string>
     <string name="permission_rationale_coarse_location">Permission to %s is needed to add device location into email message.</string>
     <string name="permission_rationale_fine_location">Permission to %s is needed to add device location into email message.</string>
+    <string name="permission_rationale_post_notifications">Permission to %s is needed to inform you about app status.</string>
     <string name="permission_rationale_phone_state">Permission to %s is needed to send out email when phone calls are received or made.</string>
     <string name="permission_rationale_read_contacts">Permission to %s is needed to add contact name into email message.</string>
     <string name="permission_rationale_read_sms">Permission to %s is needed to send out email when SMS has sent.</string>
@@ -151,7 +152,7 @@
     <string name="status">Status</string>
     <string name="sync_blacklist_and_log">Synchronize black/whitelists and call history across devices</string>
     <string name="synchronization">Synchronization</string>
-    <string name="check_settings">Please check your settings.</string>
+    <string name="check_settings">Please check your settings</string>
     <string name="text_blacklist">Text blacklist</string>
     <string name="text_filter">Text filter</string>
     <string name="text_fragment">Text fragment</string>
@@ -184,11 +185,11 @@
     <string name="send_email_message_on_events">Send email messages</string>
     <string name="telegram">Telegram</string>
     <string name="send_telegram_message_on_events">Send Telegram messages</string>
-    <string name="send_test_telegram_message">Check sending message</string>
+    <string name="test_settings">Test the settings</string>
     <string name="error_sending_test_message">An error occurred while sending message.</string>
     <string name="telegram_bot_token">Telegram bot token</string>
     <string name="require_start_chat">To receive messages you need to start conversation with your bot in Telegram application.</string>
-    <string name="test_message_sent">Test message sent.</string>
+    <string name="test_message_sent">Test message successfully sent.</string>
     <string name="bad_telegram_bot_token">Telegram bot token is invalid.</string>
     <string name="no_telegram_bot_token">No Telegram bot token specified.</string>
     <string name="test_message_failed">Test message failed</string>
@@ -210,6 +211,7 @@
     <string name="no_network_try_later">No connection to server. Please try later.</string>
     <string name="this_is_test_message">This message is to check your settings.</string>
     <string name="test_message">Test message</string>
+    <string name="unable_determine_chat">Unable to determine the chat to send messages to. Say \"Hi\" to your bot in Telegram app and try agayn.</string>
 
     <plurals name="items_removed">
         <item quantity="one">Item removed</item>

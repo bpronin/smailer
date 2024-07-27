@@ -7,6 +7,8 @@ abstract class EventProcessor(val context: Context) {
 
     abstract fun isEnabled(): Boolean
 
+    abstract fun prepare(): Boolean
+
     abstract fun process(event: Event)
 
 }

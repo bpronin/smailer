@@ -9,19 +9,18 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.NotificationManager.IMPORTANCE_LOW
 import android.app.PendingIntent
-import android.app.PendingIntent.*
+import android.app.PendingIntent.FLAG_IMMUTABLE
+import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.TaskStackBuilder
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
-import com.bopr.android.smailer.ui.EmailSettingsActivity
 import com.bopr.android.smailer.ui.MainActivity
-import com.bopr.android.smailer.ui.RemoteControlActivity
 import com.bopr.android.smailer.util.Mockable
 import com.bopr.android.smailer.util.isValidEmailAddressList
 import java.lang.System.currentTimeMillis
@@ -36,32 +35,26 @@ import kotlin.reflect.KClass
 class NotificationsHelper(private val context: Context) {
 
     private val manager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+    private val accountHelper by lazyOf(AccountHelper(context))
 
     private val statusBuilder: NotificationCompat.Builder =
         NotificationCompat.Builder(context, CHANNEL_ID_STATUS)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentIntent(activityIntent(MainActivity::class))
             .setOngoing(true)
-            .apply {
-                setCategory(CATEGORY_SERVICE)
-            }
+            .setCategory(CATEGORY_SERVICE)
 
     private val infoBuilder: NotificationCompat.Builder =
         NotificationCompat.Builder(context, CHANNEL_ID_NOTIFICATIONS)
             .setSmallIcon(R.drawable.ic_notification)
             .setAutoCancel(true)
-            .apply {
-                setCategory(CATEGORY_MESSAGE)
-            }
+            .setCategory(CATEGORY_MESSAGE)
 
     private val errorsBuilder: NotificationCompat.Builder =
         NotificationCompat.Builder(context, CHANNEL_ID_NOTIFICATIONS)
             .setSmallIcon(R.drawable.ic_notification)
-            .setAutoCancel(true)
-            .setContentText(context.getString(R.string.check_settings))
-            .apply {
-                setCategory(CATEGORY_ERROR)
-            }
+            .setContentTitle(context.getString(R.string.check_settings))
+            .setCategory(CATEGORY_ERROR)
 
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -80,35 +73,11 @@ class NotificationsHelper(private val context: Context) {
         }
     }
 
-    fun serviceNotification(): Notification {
+    fun createServiceNotification(): Notification {
         return statusBuilder
             .setWhen(currentTimeMillis())
             .setContentTitle(context.getString(R.string.service_running))
             .build()
-    }
-
-    fun showMailSendSuccess() {
-        notifyInfo(
-            context.getString(R.string.email_successfully_send),
-            null,
-            MainActivity::class
-        )
-    }
-
-    fun showRemoteAction(message: String, target: KClass<out Activity>) {
-        notifyInfo(
-            context.getString(R.string.remote_action),
-            message,
-            target
-        )
-    }
-
-    fun showRemoteAccountError() {
-        notifyError(
-            SERVICE_ACCOUNT_ERROR,
-            context.getString(R.string.service_account_not_found),
-            RemoteControlActivity::class
-        )
     }
 
     internal fun cancelError(notificationId: Int) {
@@ -118,26 +87,24 @@ class NotificationsHelper(private val context: Context) {
     internal fun onSettingsChanged(settings: Settings, key: String?) {
         when (key) {
             PREF_EMAIL_SENDER_ACCOUNT ->
-                if (AccountHelper(context).isGoogleAccountExists(
-                        settings.getString(
-                            PREF_EMAIL_SENDER_ACCOUNT
-                        )
-                    )) {
-                    cancelError(GOOGLE_ACCOUNT_ERROR)
+                if (accountHelper.isGoogleAccountExists(
+                        settings.getString(PREF_EMAIL_SENDER_ACCOUNT)
+                    )
+                ) {
+                    cancelError(NTF_GOOGLE_ACCOUNT)
                 }
 
             PREF_REMOTE_CONTROL_ACCOUNT ->
-                if (AccountHelper(context).isGoogleAccountExists(
-                        settings.getString(
-                            PREF_REMOTE_CONTROL_ACCOUNT
-                        )
-                    )) {
-                    cancelError(SERVICE_ACCOUNT_ERROR)
+                if (accountHelper.isGoogleAccountExists(
+                        settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
+                    )
+                ) {
+                    cancelError(NTF_SERVICE_ACCOUNT)
                 }
 
             PREF_RECIPIENTS_ADDRESS ->
                 if (isValidEmailAddressList(settings.getEmailRecipients())) {
-                    cancelError(RECIPIENTS_ERROR)
+                    cancelError(NTF_MAIL_RECIPIENTS)
                 }
         }
     }
@@ -153,11 +120,11 @@ class NotificationsHelper(private val context: Context) {
         )
     }
 
-    fun notifyError(notificationId: Int, title: String, target: KClass<out Activity>) {
+    fun notifyError(notificationId: Int, text: String, target: KClass<out Activity>) {
         manager.notify(
             TAG_ERROR, notificationId, errorsBuilder
                 .setWhen(currentTimeMillis())
-                .setContentTitle(title)
+                .setContentText(text)
                 .setContentIntent(activityIntent(target))
                 .build()
         )
@@ -179,15 +146,13 @@ class NotificationsHelper(private val context: Context) {
         private const val TAG_ERROR = "error"
         private const val TAG_MESSAGE = "message"
 
-        const val SERVICE_NOTIFICATION_ID = 19158
-
-        const val GOOGLE_ACCOUNT_ERROR = 1000
-        const val SERVICE_ACCOUNT_ERROR = 1001
-        const val RECIPIENTS_ERROR = 1002
-        const val GOOGLE_ACCESS_ERROR = 1003
-        const val GOOGLE_MAIL_ERROR = 1004
-
-        const val TELEGRAM_ERROR = 1005
+        const val NTF_GOOGLE_ACCESS = 1003
+        const val NTF_GOOGLE_ACCOUNT = 1000
+        const val NTF_MAIL = 1004
+        const val NTF_MAIL_RECIPIENTS = 1002
+        const val NTF_SERVICE = 19158
+        const val NTF_SERVICE_ACCOUNT = 1001
+        const val NTF_TELEGRAM = 1005
     }
 
 }

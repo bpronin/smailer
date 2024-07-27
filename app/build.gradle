@@ -43,7 +43,7 @@ android {
     compileSdk 34
 
     defaultConfig {
-        versionCode 97
+        versionCode 98
         versionName '1.10.0'
         applicationId "com.bopr.android.smailer"
         minSdkVersion 21

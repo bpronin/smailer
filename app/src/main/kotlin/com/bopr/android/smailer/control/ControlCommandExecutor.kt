@@ -149,7 +149,7 @@ internal class ControlCommandExecutor(
     private fun sendSms(phone: String?, message: String?) {
         if (context.checkPermission(SEND_SMS)) {
             smsTransport.sendMessage(phone, message)
-            showNotification(context.getString(R.string.sent_sms, phone), MainActivity::class)
+            notifySuccess(context.getString(R.string.sent_sms, phone), MainActivity::class)
 
             log.debug("Sent SMS: $message to $phone")
         } else {
@@ -166,7 +166,7 @@ internal class ControlCommandExecutor(
         if (!value.isNullOrEmpty()) {
             database.use {
                 if (database.commit { list.add(value) }) {
-                    showNotification(context.getString(messageRes, value), target)
+                    notifySuccess(context.getString(messageRes, value), target)
                 } else {
                     log.debug("Already in list")
                 }
@@ -183,7 +183,7 @@ internal class ControlCommandExecutor(
         if (!value.isNullOrEmpty()) {
             database.use {
                 if (database.commit { list.remove(value) }) {
-                    showNotification(context.getString(messageRes, value), target)
+                    notifySuccess(context.getString(messageRes, value), target)
                 } else {
                     log.debug("Not in list")
                 }
@@ -191,9 +191,13 @@ internal class ControlCommandExecutor(
         }
     }
 
-    private fun showNotification(message: String, target: KClass<out Activity>) {
+    private fun notifySuccess(message: String, target: KClass<out Activity>) {
         if (settings.getBoolean(PREF_REMOTE_CONTROL_NOTIFICATIONS)) {
-            notifications.showRemoteAction(message, target)
+            notifications.notifyInfo(
+                context.getString(R.string.remote_action),
+                message,
+                target
+            )
         }
     }
 

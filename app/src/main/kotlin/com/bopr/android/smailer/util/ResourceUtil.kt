@@ -2,7 +2,6 @@ package com.bopr.android.smailer.util
 
 import android.content.Context
 import android.content.res.Resources
-import androidx.annotation.ArrayRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.bopr.android.smailer.R
@@ -12,6 +11,7 @@ import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGR
 import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_NO_CHAT
 import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_NO_CONNECTION
 import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_NO_TOKEN
+import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_NO_UPDATES
 import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_REQUEST_FAILED
 import com.bopr.android.smailer.provider.EventState
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_IGNORED
@@ -157,6 +157,8 @@ fun telegramErrorText(error: TelegramException): Int {
         TELEGRAM_NO_TOKEN -> R.string.no_telegram_bot_token
 
         TELEGRAM_INVALID_TOKEN -> R.string.bad_telegram_bot_token
+
+        TELEGRAM_NO_UPDATES -> R.string.unable_determine_chat
 
         TELEGRAM_NO_CHAT -> R.string.require_start_chat
 

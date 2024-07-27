@@ -47,7 +47,7 @@
         <Preference
                 android:key="sent_test_email"
                 android:icon="@drawable/ic_test_message"
-                android:title="@string/send_test_email"
+                android:title="@string/test_settings"
                 android:summary="@string/send_test_email_summary" />
 
     </PreferenceCategory>

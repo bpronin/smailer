@@ -11,6 +11,7 @@ import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGR
 import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_NO_CHAT
 import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_NO_CONNECTION
 import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_NO_TOKEN
+import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_NO_UPDATES
 import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_REQUEST_FAILED
 import org.json.JSONObject
 import org.slf4j.LoggerFactory
@@ -87,7 +88,7 @@ class TelegramSession(context: Context, private val token: String?) {
 
                 val data = response.getJSONArray("result")
                 if (data.length() == 0)
-                    throw TelegramException(TELEGRAM_NO_CHAT, "Empty updates")
+                    throw TelegramException(TELEGRAM_NO_UPDATES, "Empty updates")
 
                 val chatId = data.getJSONObject(0)
                     .getJSONObject("message")

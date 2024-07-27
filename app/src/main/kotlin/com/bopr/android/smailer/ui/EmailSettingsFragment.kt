@@ -129,7 +129,7 @@ class EmailSettingsFragment : BasePreferenceFragment(R.xml.pref_email_settings) 
                 ),
                 onSuccess = {
                     progress.stop()
-                    showToast(R.string.test_message_sent)
+                    showInfoDialog(R.string.test_message_sent)
                 },
                 onError = {
                     progress.stop()

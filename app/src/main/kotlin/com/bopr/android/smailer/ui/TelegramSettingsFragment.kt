@@ -68,9 +68,10 @@ class TelegramSettingsFragment : BasePreferenceFragment(R.xml.pref_telegram_sett
     }
 
     private fun onSendTestTelegramMessage(preference: Preference) {
+        val progress = PreferenceProgress(preference).apply { start() }
+
         requireContext().requestGeoLocation { location ->
             val formater = TestTelegramEventFormatter(System.currentTimeMillis(), location)
-            val progress = PreferenceProgress(preference).apply { start() }
             TelegramSession(
                 context = requireContext(),
                 token = settings.getString(PREF_TELEGRAM_BOT_TOKEN)
@@ -80,13 +81,14 @@ class TelegramSettingsFragment : BasePreferenceFragment(R.xml.pref_telegram_sett
                 onSuccess = { chatId ->
                     progress.stop()
                     settings.update { putString(PREF_TELEGRAM_CHAT_ID, chatId) }
-                    showToast(R.string.test_message_sent)
+                    showInfoDialog(R.string.test_message_sent)
                 },
                 onError = { error ->
                     progress.stop()
                     showInfoDialog(
                         getString(R.string.test_message_failed),
-                        "${telegramErrorText(error)}\n${error.message}"
+                        requireContext().getString(telegramErrorText(error))
+//                        "${telegramErrorText(error)}\n${error.message}"
                     )
                 }
             )

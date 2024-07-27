@@ -23,9 +23,9 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
 import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.NotificationsHelper
-import com.bopr.android.smailer.NotificationsHelper.Companion.GOOGLE_ACCOUNT_ERROR
-import com.bopr.android.smailer.NotificationsHelper.Companion.RECIPIENTS_ERROR
-import com.bopr.android.smailer.NotificationsHelper.Companion.SERVICE_ACCOUNT_ERROR
+import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_GOOGLE_ACCOUNT
+import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_MAIL_RECIPIENTS
+import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_SERVICE_ACCOUNT
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSAGE_CONTENT
@@ -250,19 +250,10 @@ class DebugFragment : PreferenceFragmentCompat() {
             }
         )
         addCategory(screen, "Notifications",
-            addPreference("Show mail success") {
-                notifications.showMailSendSuccess()
-            },
-            addPreference("Show remote action") {
-                notifications.showRemoteAction(
-                    getString(R.string.text_remotely_added_to_blacklist, "spam text"),
-                    EventFilterTextBlacklistActivity::class
-                )
-            },
             addPreference("Cancel errors") {
-                notifications.cancelError(GOOGLE_ACCOUNT_ERROR)
-                notifications.cancelError(SERVICE_ACCOUNT_ERROR)
-                notifications.cancelError(RECIPIENTS_ERROR)
+                notifications.cancelError(NTF_GOOGLE_ACCOUNT)
+                notifications.cancelError(NTF_SERVICE_ACCOUNT)
+                notifications.cancelError(NTF_MAIL_RECIPIENTS)
             }
         )
         addCategory(screen, "Email remote control",

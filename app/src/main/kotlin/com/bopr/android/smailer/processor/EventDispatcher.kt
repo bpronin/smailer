@@ -15,18 +15,23 @@ import org.slf4j.LoggerFactory
 @Mockable
 class EventDispatcher(context: Context) {
 
-    private val processors = arrayOf(
+    private val availableProcessors = arrayOf(
         MailEventProcessor(context),
         TelegramEventProcessor(context)
     )
 
+    private lateinit var preparedProcessors: List<EventProcessor>
+
+    fun prepare() {
+        preparedProcessors = availableProcessors.filter { it.isEnabled() && it.prepare() }
+
+        log.debug("Prepared")
+    }
+
     fun dispatch(event: Event) {
-        processors
-            .filter { it.isEnabled() }
-            .forEach {
-                runCatching { it.process(event) }
-                    .onFailure { log.error("Event processing failed", it) }
-            }
+        preparedProcessors.forEach { it.process(event) }
+
+        log.debug("Dispatched {}", event)
     }
 
     companion object {

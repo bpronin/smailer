@@ -4,10 +4,10 @@ import android.accounts.Account
 import android.content.Context
 import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.NotificationsHelper
-import com.bopr.android.smailer.NotificationsHelper.Companion.GOOGLE_ACCESS_ERROR
-import com.bopr.android.smailer.NotificationsHelper.Companion.GOOGLE_ACCOUNT_ERROR
-import com.bopr.android.smailer.NotificationsHelper.Companion.GOOGLE_MAIL_ERROR
-import com.bopr.android.smailer.NotificationsHelper.Companion.RECIPIENTS_ERROR
+import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_GOOGLE_ACCESS
+import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_GOOGLE_ACCOUNT
+import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_MAIL
+import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_MAIL_RECIPIENTS
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_ENABLED
@@ -33,17 +33,24 @@ internal class MailEventProcessor(context: Context) : EventProcessor(context) {
     private val accountHelper = AccountHelper(context)
     private val formatters = MailFormatterFactory(context)
     private val notifications by lazy { NotificationsHelper(context) }
+    private lateinit var account: Account
+    private lateinit var session: GoogleMailSession
 
     override fun isEnabled(): Boolean {
         return settings.getBoolean(PREF_EMAIL_MESSENGER_ENABLED)
     }
 
+    override fun prepare(): Boolean {
+        account = checkAccount(accountHelper.getPrimaryGoogleAccount())?: run { return false }
+        session = GoogleMailSession(context, account, GMAIL_SEND)
+        return true
+    }
+
     override fun process(event: Event) {
         val recipients = checkRecipients(settings.getEmailRecipients()) ?: return
-        val account = checkAccount(accountHelper.getPrimaryGoogleAccount()) ?: return
         val formatter = formatters.createFormatter(event.payload)
 
-        GoogleMailSession(context, account, GMAIL_SEND).send(
+        session.send(
             MailMessage(
                 subject = formatter.formatSubject(),
                 body = formatter.formatBody(),
@@ -66,7 +73,7 @@ internal class MailEventProcessor(context: Context) : EventProcessor(context) {
             log.warn("No recipients")
 
             notifications.notifyError(
-                RECIPIENTS_ERROR,
+                NTF_MAIL_RECIPIENTS,
                 context.getString(R.string.no_recipients_specified),
                 RecipientsActivity::class
             )
@@ -77,7 +84,7 @@ internal class MailEventProcessor(context: Context) : EventProcessor(context) {
             log.warn("Recipients are invalid")
 
             notifications.notifyError(
-                RECIPIENTS_ERROR,
+                NTF_MAIL_RECIPIENTS,
                 context.getString(R.string.invalid_recipient),
                 RecipientsActivity::class
             )
@@ -92,7 +99,7 @@ internal class MailEventProcessor(context: Context) : EventProcessor(context) {
             log.warn("Invalid account")
 
             notifications.notifyError(
-                GOOGLE_ACCOUNT_ERROR,
+                NTF_GOOGLE_ACCOUNT,
                 context.getString(R.string.sender_account_not_found),
                 EmailSettingsActivity::class
             )
@@ -102,12 +109,12 @@ internal class MailEventProcessor(context: Context) : EventProcessor(context) {
 
     private fun notifySendError(error: Throwable) {
         var messageRes = R.string.unable_send_email
-        var errorCode = GOOGLE_MAIL_ERROR
+        var errorCode = NTF_MAIL
 
         if (error is UserRecoverableAuthIOException) {
-            /* this happens when app has no permission to access google account or
+            /* this may happen when app has no permission to access google account or
                sender account has been removed from outside of the device */
-            errorCode = GOOGLE_ACCESS_ERROR
+            errorCode = NTF_GOOGLE_ACCESS
             messageRes = R.string.no_access_to_google_account
         }
 

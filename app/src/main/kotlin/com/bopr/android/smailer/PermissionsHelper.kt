@@ -2,6 +2,7 @@ package com.bopr.android.smailer
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.Manifest.permission.READ_CALL_LOG
 import android.Manifest.permission.READ_CONTACTS
 import android.Manifest.permission.READ_PHONE_STATE
@@ -9,6 +10,7 @@ import android.Manifest.permission.READ_SMS
 import android.Manifest.permission.RECEIVE_SMS
 import android.Manifest.permission.SEND_SMS
 import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.os.Build
 import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat.checkSelfPermission
@@ -38,16 +40,20 @@ class PermissionsHelper(
     private val onPermissionsRequestComplete: () -> Unit = {}
 ) {
 
-    private val items: Map<String, Int> = sortedMapOf(
-        RECEIVE_SMS to R.string.permission_rationale_receive_sms,
-        SEND_SMS to R.string.permission_rationale_send_sms,
-        READ_SMS to R.string.permission_rationale_read_sms,
-        READ_PHONE_STATE to R.string.permission_rationale_phone_state,
-        READ_CALL_LOG to R.string.permission_rationale_phone_state,
-        READ_CONTACTS to R.string.permission_rationale_read_contacts,
-        ACCESS_COARSE_LOCATION to R.string.permission_rationale_coarse_location,
-        ACCESS_FINE_LOCATION to R.string.permission_rationale_fine_location
-    )
+    private val items: Map<String, Int> = sortedMapOf<String, Int>().apply {
+        put(RECEIVE_SMS, R.string.permission_rationale_receive_sms)
+        put(RECEIVE_SMS, R.string.permission_rationale_receive_sms)
+        put(SEND_SMS, R.string.permission_rationale_send_sms)
+        put(READ_SMS, R.string.permission_rationale_read_sms)
+        put(READ_PHONE_STATE, R.string.permission_rationale_phone_state)
+        put(READ_CALL_LOG, R.string.permission_rationale_phone_state)
+        put(READ_CONTACTS, R.string.permission_rationale_read_contacts)
+        put(ACCESS_COARSE_LOCATION, R.string.permission_rationale_coarse_location)
+        put(ACCESS_FINE_LOCATION, R.string.permission_rationale_fine_location)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            put(POST_NOTIFICATIONS, R.string.permission_rationale_post_notifications)
+        }
+    }
 
     private val settings = Settings(activity)
     private val accountHelper = AccountHelper(activity)
