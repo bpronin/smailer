@@ -73,11 +73,11 @@ class TextUtilTest : BaseTest() {
     }
 
     @Test
-    fun testReadStream() {
+    fun testReadText() {
         val stream = TestableByteArrayInputStream("ABC".toByteArray())
-        assertEquals("ABC", readStream(stream))
+        assertEquals("ABC", stream.readText())
         assertTrue(stream.isClosed)
-        assertEquals("", readStream(ByteArrayInputStream("".toByteArray())))
+        assertEquals("", ByteArrayInputStream("".toByteArray()).readText())
     }
 
     @Test

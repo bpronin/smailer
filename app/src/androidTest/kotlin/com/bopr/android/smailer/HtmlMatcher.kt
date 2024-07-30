@@ -1,7 +1,7 @@
 package com.bopr.android.smailer
 
 import androidx.test.platform.app.InstrumentationRegistry
-import com.bopr.android.smailer.util.readStream
+import com.bopr.android.smailer.util.readText
 import org.hamcrest.CustomTypeSafeMatcher
 import org.hamcrest.Description
 import java.io.IOException
@@ -57,7 +57,7 @@ internal open class HtmlMatcher private constructor(private val expected: String
         fun htmlEquals(resourceName: String): HtmlMatcher {
             try {
                 InstrumentationRegistry.getInstrumentation().context.assets.open(resourceName).use {
-                    return HtmlMatcher(readStream(it))
+                    return HtmlMatcher(it.readText())
                 }
             } catch (x: IOException) {
                 throw IllegalArgumentException("Invalid resource", x)

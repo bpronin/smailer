@@ -3,8 +3,8 @@ package com.bopr.android.smailer.util
 import android.util.Patterns.EMAIL_ADDRESS
 import java.io.InputStream
 import java.net.URLEncoder
+import java.nio.charset.Charset
 import java.util.Locale
-import java.util.Scanner
 import java.util.regex.Pattern
 import kotlin.math.abs
 
@@ -83,11 +83,8 @@ fun formatDuration(duration: Long?): String? {
     }
 }
 
-fun readStream(stream: InputStream): String {
-    /* \A =	The beginning of the input */
-    return Scanner(stream).useDelimiter("\\A").use {
-        if (it.hasNext()) return it.next() else ""
-    }
+fun InputStream.readText(charset: Charset = Charsets.UTF_8): String {
+    return bufferedReader(charset).use { it.readText() }
 }
 
 fun isValidUrl(url: String?): Boolean {
@@ -116,10 +113,4 @@ fun String.htmlReplaceUrlsWithLinks(): String {
     return sb.toString()
 }
 
-fun String.httpEncoded(): String {
-//    return try {
-    return URLEncoder.encode(this, "UTF-8")
-//    } catch (x: UnsupportedEncodingException) {
-//        throw RuntimeException(x)
-//    }
-}
+fun String.httpEncoded(): String = URLEncoder.encode(this, "UTF-8")

@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.bopr.android.smailer.processor.mail
 
 import android.Manifest
