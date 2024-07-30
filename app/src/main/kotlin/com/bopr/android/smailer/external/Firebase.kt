@@ -20,6 +20,7 @@ class Firebase(val context: Context) {
     private val settings = Settings(context)
     private val accountHelper = AccountHelper(context)
     private val firebaseMessaging = FirebaseMessaging.getInstance()
+    private val requestQueue = Volley.newRequestQueue(context)
 
     internal fun subscribe() {
         getAccount()?.let { account ->
@@ -52,7 +53,7 @@ class Firebase(val context: Context) {
                 }
 
                 val request = FirebaseRequest("https://fcm.googleapis.com/fcm/send", payload)
-                Volley.newRequestQueue(context).add(request)
+                requestQueue.add(request)
 
                 log.debug("Sent message: {}", payload)
             }
@@ -75,7 +76,7 @@ class Firebase(val context: Context) {
                     onComplete(response.toString(3))
                 }
             )
-            Volley.newRequestQueue(context).add(request)
+            requestQueue.add(request)
         }
     }
 
@@ -100,8 +101,7 @@ class Firebase(val context: Context) {
         payload: JSONObject? = null,
         onComplete: (JSONObject) -> Unit = {},
         onError: (VolleyError) -> Unit = {}
-    ) : JsonObjectRequest(
-        Method.POST, url, payload,
+    ) : JsonObjectRequest(Method.POST, url, payload,
         { response ->
             log.debug("Response: {}", response)
             onComplete(response)
@@ -112,16 +112,16 @@ class Firebase(val context: Context) {
         }) {
 
         override fun getHeaders(): Map<String, String> {
-            val key = context.getString(R.string.fcm_server_key)
             return mapOf(
-                "Authorization" to "key=$key",
+                "Authorization" to "key=${context.getString(R.string.fcm_server_key)}",
                 "Content-Type" to "application/json"
             )
         }
     }
 
     companion object {
-        private val log = LoggerFactory.getLogger("CloudMessaging")
+
+        private val log = LoggerFactory.getLogger("Firebase")
 
         const val FCM_REQUEST_DATA_SYNC = "request_data_sync"
         const val FCM_SENDER = "sender"

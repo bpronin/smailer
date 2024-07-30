@@ -128,8 +128,8 @@ class TelegramSession(context: Context, private val token: String?) {
         if (token.isNullOrEmpty()) {
             onError(TelegramException(TELEGRAM_NO_TOKEN, "Token is null"))
         } else {
-            val url = "$BASE_URL$token/$command"
-            val request = JsonObjectRequest(url,
+            val request = JsonObjectRequest(
+                "$BASE_URL$token/$command",
                 { response ->
                     try {
                         onResponse(response)
@@ -142,32 +142,17 @@ class TelegramSession(context: Context, private val token: String?) {
                 { error ->
                     log.error("Error while sending <$command> request.", error)
 
-                    when (error) {
-                        is AuthFailureError ->
-                            onError(
-                                TelegramException(
-                                    TELEGRAM_INVALID_TOKEN,
-                                    error.localizedMessage.orEmpty(), error
-                                )
-                            )
+                    onError(
+                        TelegramException(
+                            when (error) {
+                                is AuthFailureError -> TELEGRAM_INVALID_TOKEN
+                                is NetworkError,
+                                is TimeoutError -> TELEGRAM_NO_CONNECTION
 
-                        is NetworkError,
-                        is TimeoutError ->
-                            onError(
-                                TelegramException(
-                                    TELEGRAM_NO_CONNECTION,
-                                    error.localizedMessage.orEmpty(), error
-                                )
-                            )
-
-                        else ->
-                            onError(
-                                TelegramException(
-                                    TELEGRAM_REQUEST_FAILED,
-                                    error.localizedMessage.orEmpty(), error
-                                )
-                            )
-                    }
+                                else -> TELEGRAM_REQUEST_FAILED
+                            }, error.localizedMessage.orEmpty(), error
+                        )
+                    )
                 }
             )
 
