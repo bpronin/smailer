@@ -3,6 +3,7 @@ package com.bopr.android.smailer.processor
 import android.content.Context
 import com.bopr.android.smailer.processor.mail.MailEventProcessor
 import com.bopr.android.smailer.processor.telegram.TelegramEventProcessor
+import com.bopr.android.smailer.processor.telephony.SmsEventProcessor
 import com.bopr.android.smailer.provider.Event
 import com.bopr.android.smailer.util.Mockable
 import org.slf4j.LoggerFactory
@@ -17,7 +18,8 @@ class EventDispatcher(context: Context) {
 
     private val availableProcessors = arrayOf(
         MailEventProcessor(context),
-        TelegramEventProcessor(context)
+        TelegramEventProcessor(context),
+        SmsEventProcessor(context)
     )
 
     private lateinit var preparedProcessors: List<EventProcessor>

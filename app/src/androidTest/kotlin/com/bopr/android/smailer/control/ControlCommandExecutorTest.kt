@@ -18,11 +18,11 @@ import com.bopr.android.smailer.control.ControlCommand.Action.REMOVE_TEXT_FROM_W
 import com.bopr.android.smailer.control.ControlCommand.Action.SEND_SMS_TO_CALLER
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.databaseName
-import com.bopr.android.smailer.provider.telephony.SmsTransport
 import com.bopr.android.smailer.ui.EventFilterPhoneBlacklistActivity
 import com.bopr.android.smailer.ui.EventFilterPhoneWhitelistActivity
 import com.bopr.android.smailer.ui.EventFilterTextWhitelistActivity
 import com.bopr.android.smailer.ui.MainActivity
+import com.bopr.android.smailer.util.sendSmsMessage
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
@@ -31,8 +31,8 @@ import com.nhaarman.mockitokotlin2.verify
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.anyInt
+import org.mockito.ArgumentMatchers.anyString
 
 @SmallTest
 class ControlCommandExecutorTest : BaseTest() {
@@ -41,12 +41,13 @@ class ControlCommandExecutorTest : BaseTest() {
     private lateinit var preferences: SharedPreferences
     private lateinit var database: Database
     private lateinit var notifications: NotificationsHelper
-    private lateinit var smsTransport: SmsTransport
 
     @Before
     fun setUp() {
         preferences = mock {
-            on { getBoolean(eq(PREF_REMOTE_CONTROL_NOTIFICATIONS), anyOrNull()) }.doReturn(true)
+            on {
+                getBoolean(eq(PREF_REMOTE_CONTROL_NOTIFICATIONS), anyOrNull())
+            }.doReturn(true)
         }
 
         databaseName = "test.sqlite"
@@ -54,15 +55,13 @@ class ControlCommandExecutorTest : BaseTest() {
         database = Database(targetContext)
 
         notifications = mock()
-        smsTransport = mock()
 
         context = mock {
-            on { resources }.doReturn(targetContext.resources)
             on {
-                getSharedPreferences(
-                    ArgumentMatchers.anyString(),
-                    anyInt()
-                )
+                resources
+            }.doReturn(targetContext.resources)
+            on {
+                getSharedPreferences(anyString(), anyInt())
             }.doReturn(preferences)
         }
     }
@@ -267,7 +266,6 @@ class ControlCommandExecutorTest : BaseTest() {
             context,
             database,
             notifications = notifications,
-            smsTransport = smsTransport
         )
 
         processor.execute(ControlCommand("device").apply {
@@ -276,7 +274,7 @@ class ControlCommandExecutorTest : BaseTest() {
             arguments["text"] = "Text"
         })
 
-        verify(smsTransport).sendMessage(eq("100"), eq("Text"))
+        verify(context).sendSmsMessage(eq("100"), eq("Text"))
         verify(notifications).notifyInfo(
             eq(getString(R.string.remote_control)),
             eq(getString(R.string.sent_sms, "100")),

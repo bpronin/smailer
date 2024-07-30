@@ -1,5 +1,7 @@
 package com.bopr.android.smailer.ui
 
+import com.bopr.android.smailer.R
+
 /**
  * Base phone number lists fragment.
  *
@@ -8,7 +10,7 @@ package com.bopr.android.smailer.ui
 abstract class EventFilterPhoneListFragment(listName: String) : EventFilterListFragment(listName) {
 
     override fun createEditDialog(): BaseEditDialogFragment<String> {
-        return EditPhoneDialogFragment()
+        return EditPhoneDialogFragment(R.string.enter_phone_number_or_wildcard)
     }
 
 }

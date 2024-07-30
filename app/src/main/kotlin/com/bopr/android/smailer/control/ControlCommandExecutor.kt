@@ -19,13 +19,13 @@ import com.bopr.android.smailer.control.ControlCommand.Action.REMOVE_TEXT_FROM_W
 import com.bopr.android.smailer.control.ControlCommand.Action.SEND_SMS_TO_CALLER
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.StringDataset
-import com.bopr.android.smailer.provider.telephony.SmsTransport
 import com.bopr.android.smailer.ui.EventFilterPhoneBlacklistActivity
 import com.bopr.android.smailer.ui.EventFilterPhoneWhitelistActivity
 import com.bopr.android.smailer.ui.EventFilterTextBlacklistActivity
 import com.bopr.android.smailer.ui.EventFilterTextWhitelistActivity
 import com.bopr.android.smailer.ui.MainActivity
 import com.bopr.android.smailer.util.checkPermission
+import com.bopr.android.smailer.util.sendSmsMessage
 import org.slf4j.LoggerFactory
 import kotlin.reflect.KClass
 
@@ -39,7 +39,6 @@ internal class ControlCommandExecutor(
     private val database: Database = Database(context),
     private val settings: Settings = Settings(context),
     private val notifications: NotificationsHelper = NotificationsHelper(context),
-    private val smsTransport: SmsTransport = SmsTransport(context)
 ) {
 
     fun execute(command: ControlCommand) {
@@ -148,7 +147,7 @@ internal class ControlCommandExecutor(
 
     private fun sendSms(phone: String?, message: String?) {
         if (context.checkPermission(SEND_SMS)) {
-            smsTransport.sendMessage(phone, message)
+            context.sendSmsMessage(phone, message)
             notifySuccess(context.getString(R.string.sent_sms, phone), MainActivity::class)
 
             log.debug("Sent SMS: $message to $phone")

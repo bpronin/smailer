@@ -18,7 +18,7 @@ import androidx.fragment.app.FragmentActivity
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSAGE_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
-import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCATION
@@ -27,7 +27,7 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
-import com.bopr.android.smailer.ui.showInfoDialog
+import com.bopr.android.smailer.ui.InfoDialog.Companion.showInfoDialog
 import org.slf4j.LoggerFactory
 
 /**
@@ -74,7 +74,7 @@ class PermissionsHelper(
         onPermissionsDenied(deniedPermissions)
 
         if (deniedPermissions.isNotEmpty()) {
-            activity.showInfoDialog(messageResId = R.string.since_permissions_not_granted)
+            activity.showInfoDialog(messageRes = R.string.since_permissions_not_granted)
         } else {
             onPermissionsRequestComplete()
         }
@@ -127,7 +127,7 @@ class PermissionsHelper(
         val accountName = accountHelper.getPrimaryGoogleAccount()?.name
         settings.update {
             ifNotExists(PREF_EMAIL_SENDER_ACCOUNT) { putString(it, accountName) }
-            ifNotExists(PREF_RECIPIENTS_ADDRESS) { putString(it, accountName) }
+            ifNotExists(PREF_EMAIL_MESSENGER_RECIPIENTS) { putString(it, accountName) }
             ifNotExists(PREF_REMOTE_CONTROL_ACCOUNT) { putString(it, accountName) }
         }
     }

@@ -5,7 +5,6 @@ import android.accounts.Account
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
-import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -33,7 +32,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_MESSAGE_LOCALE
 import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
-import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_BOT_TOKEN
@@ -66,10 +65,10 @@ import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_ACCEPTED
 import com.bopr.android.smailer.provider.telephony.PhoneEventProcessor
 import com.bopr.android.smailer.provider.telephony.PhoneEventProcessorWorker.Companion.startPhoneEventProcessing
-import com.bopr.android.smailer.provider.telephony.SmsTransport.Companion.smsManager
 import com.bopr.android.smailer.sync.Synchronizer
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_DOWNLOAD
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_UPLOAD
+import com.bopr.android.smailer.ui.InfoDialog.Companion.showInfoDialog
 import com.bopr.android.smailer.util.DEVICE_NAME
 import com.bopr.android.smailer.util.GeoLocation.Companion.requestGeoLocation
 import com.bopr.android.smailer.util.PreferenceProgress
@@ -80,6 +79,7 @@ import com.bopr.android.smailer.util.readLogcatLog
 import com.bopr.android.smailer.util.requireIgnoreBatteryOptimization
 import com.bopr.android.smailer.util.runBackgroundTask
 import com.bopr.android.smailer.util.runLongTask
+import com.bopr.android.smailer.util.sendSmsMessage
 import com.bopr.android.smailer.util.setOnClickListener
 import com.bopr.android.smailer.util.showToast
 import com.google.api.services.drive.DriveScopes.DRIVE_APPDATA
@@ -130,7 +130,6 @@ class DebugFragment : PreferenceFragmentCompat() {
             registerReceiver(it, IntentFilter("SMS_DELIVERED"))
         }
     }
-
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         /* do not use fragment's context. see: https://developer.android.com/guide/topics/ui/settings/programmatic-hierarchy*/
@@ -394,7 +393,7 @@ class DebugFragment : PreferenceFragmentCompat() {
         settings.update {
             putString(PREF_EMAIL_SENDER_ACCOUNT, developerEmail)
             putString(PREF_REMOTE_CONTROL_ACCOUNT, developerEmail)
-            putStringList(PREF_RECIPIENTS_ADDRESS, setOf(developerEmail, "nowhere@mail.com"))
+            putStringList(PREF_EMAIL_MESSENGER_RECIPIENTS, setOf(developerEmail, "nowhere@mail.com"))
             putStringSet(
                 PREF_EMAIL_TRIGGERS, mutableSetOf(
                     VAL_PREF_TRIGGER_IN_SMS,
@@ -754,26 +753,13 @@ class DebugFragment : PreferenceFragmentCompat() {
 
     @SuppressLint("SetTextI18n")
     private fun onSendSms() {
-        InputDialog(title = "Phone number",
+        InputDialog(
+            title = "Phone number",
             inputType = InputType.TYPE_CLASS_PHONE,
             initialValue = "5556",
-            positiveAction = {
-                val sentIntent = PendingIntent.getBroadcast(
-                    requireContext(), 0, Intent("SMS_SENT"),
-                    PendingIntent.FLAG_IMMUTABLE
-                )
-                val deliveredIntent = PendingIntent.getBroadcast(
-                    requireContext(), 0, Intent("SMS_DELIVERED"),
-                    PendingIntent.FLAG_IMMUTABLE
-                )
+            positiveAction = { value ->
                 try {
-                    requireContext().smsManager.sendTextMessage(
-                        it,
-                        null,
-                        "Debug message",
-                        sentIntent,
-                        deliveredIntent
-                    )
+                    requireContext().sendSmsMessage(value, "Debug message")
                 } catch (x: Throwable) {
                     showError("SMS", x)
                 }

@@ -34,15 +34,16 @@ class Settings(context: Context, changeListener: ChangeListener? = null) {
     internal fun loadDefaults() {
         update {
             putInt(PREF_SETTINGS_VERSION, SETTINGS_VERSION)
+            ifNotExists(PREF_DISPATCH_BATTERY_LEVEL) { putBoolean(it, false) }
+            ifNotExists(PREF_EMAIL_MESSENGER_ENABLED) { putBoolean(it, false) }
+            ifNotExists(PREF_MESSAGE_LOCALE) { putString(it, VAL_PREF_DEFAULT) }
             ifNotExists(PREF_NOTIFY_SEND_SUCCESS) { putBoolean(it, false) }
             ifNotExists(PREF_REMOTE_CONTROL_ENABLED) { putBoolean(it, false) }
             ifNotExists(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS) { putBoolean(it, true) }
             ifNotExists(PREF_REMOTE_CONTROL_NOTIFICATIONS) { putBoolean(it, true) }
+            ifNotExists(PREF_SMS_MESSENGER_ENABLED) { putBoolean(it, false) }
             ifNotExists(PREF_SYNC_ENABLED) { putBoolean(it, true) }
-            ifNotExists(PREF_EMAIL_MESSENGER_ENABLED) { putBoolean(it, false) }
             ifNotExists(PREF_TELEGRAM_MESSENGER_ENABLED) { putBoolean(it, true) }
-            ifNotExists(PREF_DISPATCH_BATTERY_LEVEL) { putBoolean(it, false) }
-            ifNotExists(PREF_MESSAGE_LOCALE) { putString(it, VAL_PREF_DEFAULT) }
             ifNotExists(PREF_EMAIL_MESSAGE_CONTENT) {
                 putStringSet(
                     it, setOf(
@@ -81,16 +82,14 @@ class Settings(context: Context, changeListener: ChangeListener? = null) {
         }
     }
 
-    fun getEmailContent() = getStringSet(PREF_EMAIL_MESSAGE_CONTENT)
     fun getEmailTriggers() = getStringSet(PREF_EMAIL_TRIGGERS)
-    fun getEmailRecipients() = getString(PREF_RECIPIENTS_ADDRESS, "")
+    fun getEmailRecipients() = getString(PREF_EMAIL_MESSENGER_RECIPIENTS, "")
     fun getMessageLocale() = getString(PREF_MESSAGE_LOCALE, VAL_PREF_DEFAULT)
     fun getDeviceName() = getString(PREF_DEVICE_ALIAS, DEVICE_NAME)
     fun getPhoneSearchUrl() = getString(PREF_PHONE_SEARCH_URL, DEFAULT_PHONE_SEARCH_URL)
-    fun hasEmailContent(key: String) = getStringSet(PREF_EMAIL_MESSAGE_CONTENT).contains(key)
-
-    fun hasTelegramMessageContent(key: String) =
-        getStringSet(PREF_TELEGRAM_MESSAGE_CONTENT).contains(key)
+    fun hasEmailContent(value: String) = getStringSet(PREF_EMAIL_MESSAGE_CONTENT).contains(value)
+    fun hasTelegramMessageContent(value: String) =
+        getStringSet(PREF_TELEGRAM_MESSAGE_CONTENT).contains(value)
 
     fun dispose() {
         preferencesListener?.run {
@@ -127,7 +126,6 @@ class Settings(context: Context, changeListener: ChangeListener? = null) {
         Editor(edit).action()
         edit.apply()
     }
-
 
     inner class Editor(private val wrapped: SharedPreferences.Editor) {
 
@@ -180,7 +178,7 @@ class Settings(context: Context, changeListener: ChangeListener? = null) {
         const val PREF_MESSAGE_LOCALE = "email_locale"
         const val PREF_NOTIFY_SEND_SUCCESS = "notify_send_success"
         const val PREF_PHONE_SEARCH_URL = "phone_search_url"
-        const val PREF_RECIPIENTS_ADDRESS = "recipients_address"
+        const val PREF_EMAIL_MESSENGER_RECIPIENTS = "recipients_address"
         const val PREF_REMOTE_CONTROL_ACCOUNT = "remote_control_account"
         const val PREF_REMOTE_CONTROL_ENABLED = "remote_control_enabled"
         const val PREF_REMOTE_CONTROL_FILTER_RECIPIENTS = "remote_control_filter_recipients"
@@ -191,6 +189,8 @@ class Settings(context: Context, changeListener: ChangeListener? = null) {
         const val PREF_TELEGRAM_CHAT_ID = "telegram_chat_id"
         const val PREF_TELEGRAM_MESSAGE_CONTENT = "pref_telegram_message_content"
         const val PREF_TELEGRAM_MESSENGER_ENABLED = "pref_telegram_messenger_enabled"
+        const val PREF_SMS_MESSENGER_ENABLED = "pref_sms_messenger_enabled"
+        const val PREF_SMS_MESSENGER_RECIPIENTS = "pref_sms_messenger_recipients"
 
         const val VAL_PREF_DEFAULT = "default"
         const val VAL_PREF_MESSAGE_CONTENT_BODY = "val_pref_message_content_body"

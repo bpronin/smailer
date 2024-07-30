@@ -8,23 +8,22 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
-import com.bopr.android.smailer.ui.RecipientsFragment.Holder
-import com.bopr.android.smailer.util.isValidEmailAddress
-import com.bopr.android.smailer.util.underwivedText
+import com.bopr.android.smailer.Settings.Companion.PREF_SMS_MESSENGER_RECIPIENTS
+import com.bopr.android.smailer.ui.SmsRecipientsFragment.Holder
 
 /**
- * Recipients list fragment.
+ * Sms recipients list fragment.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class RecipientsFragment : EditableRecyclerFragment<String, Holder>(),
+class SmsRecipientsFragment : EditableRecyclerFragment<String, Holder>(),
     Settings.ChangeListener {
 
     private lateinit var settings: Settings
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         settings = Settings(requireContext(), this)
     }
 
@@ -35,18 +34,18 @@ class RecipientsFragment : EditableRecyclerFragment<String, Holder>(),
     }
 
     override fun onSettingsChanged(settings: Settings, key: String) {
-        if (key == PREF_RECIPIENTS_ADDRESS) {
+        if (key == PREF_SMS_MESSENGER_RECIPIENTS) {
             refreshItems()
         }
     }
 
     override fun loadItems(): Collection<String> {
-        return settings.getStringList(PREF_RECIPIENTS_ADDRESS).sorted()
+        return settings.getStringList(PREF_SMS_MESSENGER_RECIPIENTS).sorted()
     }
 
     override fun saveItems(items: Collection<String>) {
         settings.update {
-            putStringList(PREF_RECIPIENTS_ADDRESS, items)
+            putStringList(PREF_SMS_MESSENGER_RECIPIENTS, items)
         }
     }
 
@@ -60,14 +59,11 @@ class RecipientsFragment : EditableRecyclerFragment<String, Holder>(),
     }
 
     override fun bindViewHolder(item: String, holder: Holder) {
-        holder.textView.text = if (isValidEmailAddress(item))
-            item
-        else
-            requireContext().underwivedText(item)
+        holder.textView.text = item
     }
 
     override fun createEditDialog(): BaseEditDialogFragment<String> {
-        return EditEmailDialogFragment()
+        return EditPhoneDialogFragment(R.string.enter_phone_number)
     }
 
     class Holder(view: View) : ViewHolder(view) {

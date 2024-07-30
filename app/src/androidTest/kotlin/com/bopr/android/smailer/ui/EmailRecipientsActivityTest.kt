@@ -2,11 +2,11 @@ package com.bopr.android.smailer.ui
 
 
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_RECIPIENTS
 import org.junit.Test
 
 
-class RecipientsActivityTest : BaseActivityTest(RecipientsActivity::class) {
+class EmailRecipientsActivityTest : BaseActivityTest(EmailRecipientsActivity::class) {
 
     @Test
     fun testActivity() {
@@ -19,7 +19,7 @@ class RecipientsActivityTest : BaseActivityTest(RecipientsActivity::class) {
 
     private fun testAddItem() {
         settings.update {
-            putStringList(PREF_RECIPIENTS_ADDRESS, emptyList())
+            putStringList(PREF_EMAIL_MESSENGER_RECIPIENTS, emptyList())
         }
 
         clickFab()
@@ -34,7 +34,7 @@ class RecipientsActivityTest : BaseActivityTest(RecipientsActivity::class) {
 
     private fun testAddItemCancel() {
         settings.update {
-            putStringList(PREF_RECIPIENTS_ADDRESS, emptyList())
+            putStringList(PREF_EMAIL_MESSENGER_RECIPIENTS, emptyList())
         }
 
         clickFab()
@@ -49,7 +49,7 @@ class RecipientsActivityTest : BaseActivityTest(RecipientsActivity::class) {
 
     private fun testEditItem() {
         settings.update {
-            putStringList(PREF_RECIPIENTS_ADDRESS, listOf("user@mail.ru"))
+            putStringList(PREF_EMAIL_MESSENGER_RECIPIENTS, listOf("user@mail.ru"))
         }
 
         clickRecyclerItem("user@mail.ru")
@@ -65,7 +65,7 @@ class RecipientsActivityTest : BaseActivityTest(RecipientsActivity::class) {
 
     private fun testEditItemCancel() {
         settings.update {
-            putStringList(PREF_RECIPIENTS_ADDRESS, listOf("user@mail.ru"))
+            putStringList(PREF_EMAIL_MESSENGER_RECIPIENTS, listOf("user@mail.ru"))
         }
 
         clickRecyclerItem("user@mail.ru")
@@ -81,7 +81,7 @@ class RecipientsActivityTest : BaseActivityTest(RecipientsActivity::class) {
 
     private fun testRemoveItem() {
         settings.update {
-            putStringList(PREF_RECIPIENTS_ADDRESS, listOf("user@mail.ru"))
+            putStringList(PREF_EMAIL_MESSENGER_RECIPIENTS, listOf("user@mail.ru"))
         }
 
         swipeRecyclerItem("user@mail.ru")

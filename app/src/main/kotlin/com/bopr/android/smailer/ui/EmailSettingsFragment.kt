@@ -11,11 +11,11 @@ import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSAGE_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_MESSAGE_LOCALE
-import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_RECIPIENTS
 import com.bopr.android.smailer.processor.mail.BaseMailFormatter
 import com.bopr.android.smailer.processor.mail.GoogleMailSession
 import com.bopr.android.smailer.processor.mail.MailMessage
-import com.bopr.android.smailer.util.DEVICE_NAME
+import com.bopr.android.smailer.ui.InfoDialog.Companion.showInfoDialog
 import com.bopr.android.smailer.util.GeoLocation
 import com.bopr.android.smailer.util.GeoLocation.Companion.requestGeoLocation
 import com.bopr.android.smailer.util.PreferenceProgress
@@ -28,7 +28,6 @@ import com.bopr.android.smailer.util.requirePreference
 import com.bopr.android.smailer.util.requirePreferenceAs
 import com.bopr.android.smailer.util.setOnChangeListener
 import com.bopr.android.smailer.util.setOnClickListener
-import com.bopr.android.smailer.util.showToast
 import com.bopr.android.smailer.util.titles
 import com.bopr.android.smailer.util.updateSummary
 import com.google.api.services.drive.DriveScopes.DRIVE_APPDATA
@@ -77,7 +76,7 @@ class EmailSettingsFragment : BasePreferenceFragment(R.xml.pref_email_settings) 
             }
         }
 
-        requirePreference(PREF_RECIPIENTS_ADDRESS).setOnChangeListener {
+        requirePreference(PREF_EMAIL_MESSENGER_RECIPIENTS).setOnChangeListener {
             it.apply {
                 val addresses = commaSplit(settings.getEmailRecipients())
                 if (addresses.isEmpty()) {
@@ -179,6 +178,6 @@ class EmailSettingsFragment : BasePreferenceFragment(R.xml.pref_email_settings) 
 
     companion object {
 
-        private const val PREF_SENT_TEST_EMAIL = "sent_test_email"
+        private const val PREF_SENT_TEST_EMAIL = "send_test_email"
     }
 }

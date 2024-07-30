@@ -27,46 +27,50 @@ class InfoDialog(
             positiveAction?.invoke()
         }
     }
+
+    companion object{
+
+        fun Fragment.showInfoDialog(@StringRes messageRes: Int) {
+            showInfoDialog(getString(messageRes))
+        }
+
+        fun Fragment.showInfoDialog(@StringRes titleRes: Int, @StringRes messageRes: Int) {
+            showInfoDialog(getString(titleRes), getString(messageRes))
+        }
+
+        fun Fragment.showInfoDialog(message: String) {
+            InfoDialog(message = message).show(this)
+        }
+
+        fun Fragment.showInfoDialog(title: String, message: String) {
+            InfoDialog(title, message).show(this)
+        }
+
+        fun FragmentActivity.showInfoDialog(
+            title: String? = null,
+            message: String,
+            positiveButtonText: String? = null,
+            positiveAction: (() -> Unit)? = null
+        ) {
+            InfoDialog(title, message, positiveButtonText, positiveAction).show(this)
+        }
+
+        fun FragmentActivity.showInfoDialog(
+            @StringRes titleRes: Int? = null,
+            @StringRes messageRes: Int,
+            positiveButtonText: String? = null,
+            positiveAction: (() -> Unit)? = null
+        ) {
+            showInfoDialog(
+                titleRes?.let { getString(it) },
+                getString(messageRes),
+                positiveButtonText,
+                positiveAction
+            )
+        }
+    }
 }
 
-fun Fragment.showInfoDialog(@StringRes messageResId: Int) {
-    showInfoDialog(getString(messageResId))
-}
-
-fun Fragment.showInfoDialog(@StringRes titleResId: Int, @StringRes messageResId: Int) {
-    showInfoDialog(getString(titleResId), getString(messageResId))
-}
-
-fun Fragment.showInfoDialog(message: String) {
-    InfoDialog(message = message).show(this)
-}
-
-fun Fragment.showInfoDialog(title: String, message: String) {
-    InfoDialog(title, message).show(this)
-}
-
-fun FragmentActivity.showInfoDialog(
-    title: String? = null,
-    message: String,
-    positiveButtonText: String? = null,
-    positiveAction: (() -> Unit)? = null
-) {
-    InfoDialog(title, message, positiveButtonText, positiveAction).show(this)
-}
-
-fun FragmentActivity.showInfoDialog(
-    @StringRes titleResId: Int? = null,
-    @StringRes messageResId: Int,
-    positiveButtonText: String? = null,
-    positiveAction: (() -> Unit)? = null
-) {
-    showInfoDialog(
-        titleResId?.let { getString(it) },
-        getString(messageResId),
-        positiveButtonText,
-        positiveAction
-    )
-}
 
 
 

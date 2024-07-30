@@ -92,9 +92,9 @@
                 android:parentActivityName=".ui.MainActivity" />
 
         <activity
-                android:name=".ui.RecipientsActivity"
+                android:name=".ui.EmailRecipientsActivity"
                 android:label="@string/recipients"
-                android:parentActivityName=".ui.EventConsumersActivity" />
+                android:parentActivityName=".ui.EmailSettingsActivity" />
 
         <activity
                 android:name=".ui.EventFilterPhoneBlacklistActivity"
@@ -125,7 +125,15 @@
                 android:label="@string/telegram"
                 android:parentActivityName=".ui.EventConsumersActivity" />
 
-        <!--        <service android:name=".CallProcessorService" />-->
+        <activity android:name=".ui.SmsSettingsActivity"
+                android:label="@string/sms"
+                android:parentActivityName=".ui.EventConsumersActivity" />
+
+        <activity
+                android:name=".ui.SmsRecipientsActivity"
+                android:label="@string/recipients"
+                android:parentActivityName=".ui.SmsSettingsActivity" />
+
 
         <service android:name=".provider.telephony.ContentObserverService" />
 

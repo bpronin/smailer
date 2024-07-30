@@ -9,10 +9,10 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.annotation.StringRes
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.util.checkPermission
 import com.bopr.android.smailer.util.createPickContactIntent
-import com.bopr.android.smailer.util.emailFromIntent
 import com.bopr.android.smailer.util.phoneFromIntent
 import com.bopr.android.smailer.util.showSoftKeyboard
 import com.bopr.android.smailer.util.showToast
@@ -23,14 +23,16 @@ import org.slf4j.LoggerFactory
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class EditPhoneDialogFragment : BaseEditDialogFragment<String>("edit_phone_dialog") {
+class EditPhoneDialogFragment(@StringRes private val textRes: Int) :
+    BaseEditDialogFragment<String>("edit_phone_dialog") {
 
     private val log = LoggerFactory.getLogger("EditPhoneDialogFragment")
     private lateinit var editText: EditText
     private var initialValue: String? = null
-    private val contactPickerLauncher = registerForActivityResult(StartActivityForResult()) { result ->
-        onContactPickComplete(result)
-    }
+    private val contactPickerLauncher =
+        registerForActivityResult(StartActivityForResult()) { result ->
+            onContactPickComplete(result)
+        }
 
     override fun onCreateDialogView(inflater: LayoutInflater, root: ViewGroup?): View {
         val view = inflater.inflate(R.layout.editor_phone, root, false)
@@ -41,7 +43,7 @@ class EditPhoneDialogFragment : BaseEditDialogFragment<String>("edit_phone_dialo
         editText.post { editText.showSoftKeyboard() }
 
         /* custom message view. do not use setMessage() it's ugly */
-        view.findViewById<TextView>(R.id.dialog_message).setText(R.string.enter_phone_number)
+        view.findViewById<TextView>(R.id.dialog_message).setText(textRes)
 
         view.findViewById<View>(R.id.button_browse_contacts).setOnClickListener {
             if (checkPermission(READ_CONTACTS)) {

@@ -1,8 +1,8 @@
 package com.bopr.android.smailer.ui
 
 /**
- * Recipients list activity.
+ * SMS message settings activity.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class RecipientsActivity : FlavorBaseActivity(RecipientsFragment::class)
+class SmsSettingsActivity : FlavorBaseActivity(SmsSettingsFragment::class)

@@ -18,7 +18,7 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.TaskStackBuilder
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
-import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.ui.MainActivity
 import com.bopr.android.smailer.util.Mockable
@@ -123,7 +123,7 @@ class NotificationsHelper(private val context: Context) {
                     cancelError(NTF_SERVICE_ACCOUNT)
                 }
 
-            PREF_RECIPIENTS_ADDRESS ->
+            PREF_EMAIL_MESSENGER_RECIPIENTS ->
                 if (isValidEmailAddressList(settings.getEmailRecipients())) {
                     cancelError(NTF_MAIL_RECIPIENTS)
                 }
@@ -146,13 +146,14 @@ class NotificationsHelper(private val context: Context) {
         private const val TAG_ERROR = "error"
         private const val TAG_MESSAGE = "message"
 
-        const val NTF_GOOGLE_ACCESS = 1003
-        const val NTF_GOOGLE_ACCOUNT = 1000
-        const val NTF_MAIL = 1004
-        const val NTF_MAIL_RECIPIENTS = 1002
-        const val NTF_SERVICE = 19158
-        const val NTF_SERVICE_ACCOUNT = 1001
-        const val NTF_TELEGRAM = 1005
+        const val NTF_GOOGLE_ACCESS = 1001
+        const val NTF_GOOGLE_ACCOUNT = 1002
+        const val NTF_MAIL = 1003
+        const val NTF_MAIL_RECIPIENTS = 1004
+        const val NTF_SERVICE = 1005
+        const val NTF_SERVICE_ACCOUNT = 1006
+        const val NTF_TELEGRAM = 1007
+        const val NTF_TELEPHONY = 1008
     }
 
 }

@@ -14,7 +14,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_ENABLED
 import com.bopr.android.smailer.processor.EventProcessor
 import com.bopr.android.smailer.provider.Event
 import com.bopr.android.smailer.ui.EmailSettingsActivity
-import com.bopr.android.smailer.ui.RecipientsActivity
+import com.bopr.android.smailer.ui.EmailRecipientsActivity
 import com.bopr.android.smailer.util.Mockable
 import com.bopr.android.smailer.util.isValidEmailAddressList
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
@@ -75,7 +75,7 @@ internal class MailEventProcessor(context: Context) : EventProcessor(context) {
             notifications.notifyError(
                 NTF_MAIL_RECIPIENTS,
                 context.getString(R.string.no_recipients_specified),
-                RecipientsActivity::class
+                EmailRecipientsActivity::class
             )
             return null
         }
@@ -86,7 +86,7 @@ internal class MailEventProcessor(context: Context) : EventProcessor(context) {
             notifications.notifyError(
                 NTF_MAIL_RECIPIENTS,
                 context.getString(R.string.invalid_recipient),
-                RecipientsActivity::class
+                EmailRecipientsActivity::class
             )
             return null
         }
@@ -127,6 +127,6 @@ internal class MailEventProcessor(context: Context) : EventProcessor(context) {
 
     companion object {
 
-        private val log = LoggerFactory.getLogger("MailTransport")
+        private val log = LoggerFactory.getLogger("MailEventProcessor")
     }
 }

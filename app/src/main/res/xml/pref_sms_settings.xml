@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+            android:key="pref_sms_messenger_enabled"
+            android:icon="@drawable/ic_email"
+            android:title="@string/enabled" />
+
+    <PreferenceCategory>
+
+        <Preference
+                android:icon="@drawable/ic_recipient"
+                android:key="pref_sms_messenger_recipients"
+                android:title="@string/recipients">
+            <intent
+                    android:targetClass="com.bopr.android.smailer.ui.SmsRecipientsActivity"
+                    android:targetPackage="com.bopr.android.smailer" />
+        </Preference>
+    </PreferenceCategory>
+
+    <PreferenceCategory>
+
+        <Preference
+                android:key="pref_send_test_sms"
+                android:icon="@drawable/ic_test_message"
+                android:title="@string/test_settings"
+                android:summary="@string/send_test_sms_to_check_your_settings" />
+
+    </PreferenceCategory>
+</PreferenceScreen>

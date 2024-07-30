@@ -1,5 +1,8 @@
 package com.bopr.android.smailer.util
 
+import android.Manifest.permission.READ_CONTACTS
+import android.Manifest.permission.SEND_SMS
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Context.CONNECTIVITY_SERVICE
 import android.content.Context.POWER_SERVICE
@@ -9,6 +12,8 @@ import android.net.ConnectivityManager
 import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
+import android.telephony.SmsManager
+import androidx.annotation.RequiresPermission
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -65,6 +70,30 @@ fun Context.readLogcatLog(): File {
         throw Exception("Cannot get logcat ", x)
     }
     return file
+}
+
+fun Context.sendSmsMessage(phone: String?, message: String?) {
+    val smsManager = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        getSystemService(SmsManager::class.java)
+    } else {
+        @Suppress("DEPRECATION")
+        SmsManager.getDefault()
+    }
+
+    /*
+    val sentIntent = PendingIntent.getBroadcast(
+        this, 0, Intent("SMS_SENT"),
+        PendingIntent.FLAG_IMMUTABLE
+    )
+    val deliveredIntent = PendingIntent.getBroadcast(
+        this, 0, Intent("SMS_DELIVERED"),
+        PendingIntent.FLAG_IMMUTABLE
+    )
+    */
+
+    smsManager.apply {
+        sendMultipartTextMessage(phone, null, divideMessage(message), null, null)
+    }
 }
 
 fun FragmentActivity.requireIgnoreBatteryOptimization(onComplete: () -> Unit = {}): Boolean {

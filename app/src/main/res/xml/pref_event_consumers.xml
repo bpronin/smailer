@@ -20,4 +20,13 @@
                     android:targetPackage="com.bopr.android.smailer" />
         </Preference>
 
+        <Preference
+                android:key="sms_settings"
+                app:icon="@drawable/ic_sms"
+                android:title="@string/sms">
+            <intent
+                    android:targetClass="com.bopr.android.smailer.ui.SmsSettingsActivity"
+                    android:targetPackage="com.bopr.android.smailer" />
+        </Preference>
+
 </PreferenceScreen>

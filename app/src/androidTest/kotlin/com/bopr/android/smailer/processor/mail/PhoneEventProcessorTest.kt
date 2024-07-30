@@ -23,7 +23,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_MESSAGE_LOCALE
 import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
-import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_BODY
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS
@@ -43,7 +43,7 @@ import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import com.bopr.android.smailer.provider.telephony.PhoneEventProcessor
 import com.bopr.android.smailer.ui.EmailSettingsActivity
 import com.bopr.android.smailer.ui.MainActivity
-import com.bopr.android.smailer.ui.RecipientsActivity
+import com.bopr.android.smailer.ui.EmailRecipientsActivity
 import com.bopr.android.smailer.util.GeoLocation
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.anyOrNull
@@ -109,7 +109,7 @@ class PhoneEventProcessorTest : BaseTest() {
             }.doReturn("sender@mail.com")
             on {
                 getString(
-                    eq(PREF_RECIPIENTS_ADDRESS),
+                    eq(PREF_EMAIL_MESSENGER_RECIPIENTS),
                     anyOrNull()
                 )
             }.doReturn("recipient@mail.com")
@@ -276,7 +276,7 @@ class PhoneEventProcessorTest : BaseTest() {
      */
     @Test
     fun testProcessNoRecipients() {
-        whenever(preferences.getString(eq(PREF_RECIPIENTS_ADDRESS), anyOrNull())).thenReturn(null)
+        whenever(preferences.getString(eq(PREF_EMAIL_MESSENGER_RECIPIENTS), anyOrNull())).thenReturn(null)
 
         val event = testingEvent()
         processor.process(event)
@@ -285,7 +285,7 @@ class PhoneEventProcessorTest : BaseTest() {
         verify(notifications).notifyError(
             NTF_MAIL_RECIPIENTS,
             eq(getString(R.string.no_recipients_specified)),
-            RecipientsActivity::class
+            EmailRecipientsActivity::class
         )
 
         val savedEvent = database.phoneEvents.first()
@@ -413,7 +413,7 @@ class PhoneEventProcessorTest : BaseTest() {
         verify(notifications, never()).notifyError(
             eq(NTF_GOOGLE_ACCESS),
             anyString(),
-            eq(RecipientsActivity::class)
+            eq(EmailRecipientsActivity::class)
         )
     }
 }

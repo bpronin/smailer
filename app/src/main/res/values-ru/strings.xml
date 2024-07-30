@@ -48,7 +48,8 @@
     <string name="email_message_summary">Настройки почтового сообщения</string>
     <string name="email_successfully_send">Почта успешно отправлена.</string>
     <string name="enabled">Включено</string>
-    <string name="enter_phone_number">Укажите номер телефона. Допустимо использование символа * для пропуска группы знаков</string>
+    <string name="enter_phone_number">Укажите номер телефона.</string>
+    <string name="enter_phone_number_or_wildcard">Укажите номер телефона. Допустимо использование символа * для пропуска группы знаков</string>
     <string name="events_causing_sending_mail">События для отправки почты</string>
     <string name="geolocation_disabled">(определение местоположения отключено)</string>
     <string name="history_is_empty">Журнал пуст</string>
@@ -134,8 +135,9 @@
     <string name="select_from_contacts">Выбрать из контактов</string>
     <string name="send_sms_to_sender">отправить SMS звонившему</string>
     <string name="send_test_email">Проверить отправку почты</string>
-    <string name="send_test_email_summary">Отправить почту для проверки настроек</string>
-    <string name="send_test_telegram_message_summary">Отправить сообщение для проверки настроек</string>
+    <string name="send_test_email_to_check_your_settings">Отправить почту для проверки настроек</string>
+    <string name="send_test_message_to_check_your_settings">Отправить сообщение для проверки настроек</string>
+    <string name="send_test_sms_to_check_your_settings">Отправить SMS для проверки настроек</string>
     <string name="sender">Отправитель</string>
     <string name="sender_account_not_found">Аккаунт отправителя не найден</string>
     <string name="sender_phone">Отправитель: %1$s (%2$s)</string>
@@ -166,6 +168,7 @@
     <string name="trigger_off">Триггер отключен</string>
     <string name="triggers">Триггеры</string>
     <string name="unable_send_email">Не удалось отправить почту. %s</string>
+    <string name="unable_send_sms">Не удалось отправить SMS. %s</string>
     <string name="unacceptable_phone_numbers">Заблокированные номера (%s)</string>
     <string name="unacceptable_words">Заблокированные фразы (%s)</string>
     <string name="undo">Отмена</string>
@@ -211,6 +214,7 @@
     <string name="test_message">Тестовое сообщение</string>
     <string name="_on_date_at_time">\u0020%1$s в %2$s</string>
     <string name="unable_determine_chat">Не могу определить чат для сообщений. Напишите \"Hi\" вашему боту в приложении Telegram и попробуйте снова.</string>
+    <string name="sms">SMS</string>
 
     <plurals name="items_removed">
         <item quantity="one">%d запись удалена</item>

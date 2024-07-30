@@ -19,7 +19,7 @@
                 android:key="recipients_address"
                 android:title="@string/recipients">
             <intent
-                    android:targetClass="com.bopr.android.smailer.ui.RecipientsActivity"
+                    android:targetClass="com.bopr.android.smailer.ui.EmailRecipientsActivity"
                     android:targetPackage="com.bopr.android.smailer" />
         </Preference>
 
@@ -45,10 +45,10 @@
     <PreferenceCategory app:title="@null">
 
         <Preference
-                android:key="sent_test_email"
+                android:key="send_test_email"
                 android:icon="@drawable/ic_test_message"
                 android:title="@string/test_settings"
-                android:summary="@string/send_test_email_summary" />
+                android:summary="@string/send_test_email_to_check_your_settings" />
 
     </PreferenceCategory>
 </PreferenceScreen>

@@ -228,7 +228,7 @@ class HistoryFragment : RecyclerFragment<PhoneEventData, Holder>() {
 
     private fun addSelectionPhoneToFilterList(list: StringDataset, @StringRes titleRes: Int) {
         getSelectedItem()?.let { item ->
-            EditPhoneDialogFragment().apply {
+            EditPhoneDialogFragment(R.string.enter_phone_number_or_wildcard).apply {
                 setTitle(titleRes)
                 setValue(item.phone)
                 setOnOkClicked { addToFilterList(list, it) }

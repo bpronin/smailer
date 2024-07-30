@@ -2,35 +2,12 @@ package com.bopr.android.smailer.control
 
 import android.accounts.Account
 import androidx.test.filters.LargeTest
-import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.NotificationsHelper
-import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.Settings.Companion.PREF_RECIPIENTS_ADDRESS
-import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
-import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS
-import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_NOTIFICATIONS
-import com.bopr.android.smailer.Settings.Companion.sharedPreferencesName
-import com.bopr.android.smailer.processor.mail.MailMessage
 import com.bopr.android.smailer.data.Database
-import com.bopr.android.smailer.data.Database.Companion.databaseName
 import com.bopr.android.smailer.processor.mail.GoogleMailSession
-import com.bopr.android.smailer.ui.EventFilterPhoneBlacklistActivity
-import com.bopr.android.smailer.ui.EventFilterPhoneWhitelistActivity
-import com.bopr.android.smailer.ui.EventFilterTextBlacklistActivity
-import com.bopr.android.smailer.ui.EventFilterTextWhitelistActivity
-import com.bopr.android.smailer.util.DEVICE_NAME
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.never
-import com.nhaarman.mockitokotlin2.verify
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
-import java.lang.Thread.sleep
 
 @LargeTest
 class RemoteControlMailTest : BaseTest() {
