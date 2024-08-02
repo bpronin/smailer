@@ -30,10 +30,10 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
 
     private fun testClear() {
         database.commit {
-            phoneEvents.clear()
-            phoneEvents.add(PhoneEventData(phone = "1", startTime = currentTimeMillis(), acceptor = "device-1"))
-            phoneEvents.add(PhoneEventData(phone = "2", startTime = currentTimeMillis(), acceptor = "device-2"))
-            phoneEvents.add(PhoneEventData(phone = "3", startTime = currentTimeMillis(), acceptor = "device-3"))
+            events.clear()
+            events.add(PhoneEventData(phone = "1", startTime = currentTimeMillis(), acceptor = "device-1"))
+            events.add(PhoneEventData(phone = "2", startTime = currentTimeMillis(), acceptor = "device-2"))
+            events.add(PhoneEventData(phone = "3", startTime = currentTimeMillis(), acceptor = "device-3"))
         }
 
         assertRecyclerItemDisplayed("1")
@@ -53,10 +53,10 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
 
     private fun testClearCancel() {
         database.commit {
-            phoneEvents.clear()
-            phoneEvents.add(PhoneEventData(phone = "1", startTime = currentTimeMillis(), acceptor = "device-1"))
-            phoneEvents.add(PhoneEventData(phone = "2", startTime = currentTimeMillis(), acceptor = "device-2"))
-            phoneEvents.add(PhoneEventData(phone = "3", startTime = currentTimeMillis(), acceptor = "device-3"))
+            events.clear()
+            events.add(PhoneEventData(phone = "1", startTime = currentTimeMillis(), acceptor = "device-1"))
+            events.add(PhoneEventData(phone = "2", startTime = currentTimeMillis(), acceptor = "device-2"))
+            events.add(PhoneEventData(phone = "3", startTime = currentTimeMillis(), acceptor = "device-3"))
         }
 
         assertRecyclerItemDisplayed("1")
@@ -76,10 +76,10 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
 
     private fun testRemoveItem() {
         database.commit {
-            phoneEvents.clear()
-            phoneEvents.add(PhoneEventData(phone = "1", startTime = currentTimeMillis(), acceptor = "device-1"))
-            phoneEvents.add(PhoneEventData(phone = "2", startTime = currentTimeMillis(), acceptor = "device-2"))
-            phoneEvents.add(PhoneEventData(phone = "3", startTime = currentTimeMillis(), acceptor = "device-3"))
+            events.clear()
+            events.add(PhoneEventData(phone = "1", startTime = currentTimeMillis(), acceptor = "device-1"))
+            events.add(PhoneEventData(phone = "2", startTime = currentTimeMillis(), acceptor = "device-2"))
+            events.add(PhoneEventData(phone = "3", startTime = currentTimeMillis(), acceptor = "device-3"))
         }
 
         swipeRecyclerItem("2")
@@ -91,36 +91,36 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
 
     private fun testMarkAllAsRead() {
         database.commit {
-            phoneEvents.clear()
-            phoneEvents.add(
+            events.clear()
+            events.add(
                 PhoneEventData(phone = "1", startTime = currentTimeMillis(), acceptor = "device-1",
                     isRead = false)
             )
-            phoneEvents.add(
+            events.add(
                 PhoneEventData(phone = "2", startTime = currentTimeMillis(), acceptor = "device-2",
                     isRead = false)
             )
-            phoneEvents.add(
+            events.add(
                 PhoneEventData(phone = "3", startTime = currentTimeMillis(), acceptor = "device-3",
                     isRead = false)
             )
         }
 
-        assertEquals(3, database.phoneEvents.unreadCount)
+        assertEquals(3, database.events.unreadCount)
 
         clickOptionsMenuItem(R.string.mark_all_as_read)
 
-        assertEquals(0, database.phoneEvents.unreadCount)
+        assertEquals(0, database.events.unreadCount)
     }
 
     private fun testAddToList(dataset: StringDataset, menuTitle: Int, dialogTitle: Int, isCheckingText: Boolean,
                               isCancel: Boolean) {
         database.commit {
             dataset.clear()
-            phoneEvents.clear()
-            phoneEvents.add(PhoneEventData(phone = "1", startTime = currentTimeMillis(), acceptor = "device-1"))
-            phoneEvents.add(PhoneEventData(phone = "phone", startTime = currentTimeMillis(), acceptor = "device-2", text = "text"))
-            phoneEvents.add(PhoneEventData(phone = "3", startTime = currentTimeMillis(), acceptor = "device-3"))
+            events.clear()
+            events.add(PhoneEventData(phone = "1", startTime = currentTimeMillis(), acceptor = "device-1"))
+            events.add(PhoneEventData(phone = "phone", startTime = currentTimeMillis(), acceptor = "device-2", text = "text"))
+            events.add(PhoneEventData(phone = "3", startTime = currentTimeMillis(), acceptor = "device-3"))
         }
 
         assertTrue(dataset.isEmpty())

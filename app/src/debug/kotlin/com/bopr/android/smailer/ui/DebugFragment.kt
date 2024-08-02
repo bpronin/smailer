@@ -219,15 +219,15 @@ class DebugFragment : PreferenceFragmentCompat() {
                 onPopulateHistory()
             },
             addPreference("Mark all as unread") {
-                database.commit { batch { phoneEvents.markAllAsRead(false) } }
+                database.commit { batch { events.markAllAsRead(false) } }
                 showComplete()
             },
             addPreference("Mark all as read") {
-                database.commit { batch { phoneEvents.markAllAsRead(true) } }
+                database.commit { batch { events.markAllAsRead(true) } }
                 showComplete()
             },
             addPreference("Clear calls log") {
-                database.commit { batch { phoneEvents.clear() } }
+                database.commit { batch { events.clear() } }
                 showComplete()
             },
             addPreference("Destroy database") {
@@ -508,7 +508,7 @@ class DebugFragment : PreferenceFragmentCompat() {
 
     private fun onAddHistoryItem() {
         database.commit {
-            phoneEvents.add(
+            events.add(
                 PhoneEventData(
                     "+79052345670",
                     true,
@@ -533,7 +533,7 @@ class DebugFragment : PreferenceFragmentCompat() {
         val recipient = DEVICE_NAME
         database.commit {
             batch {
-                phoneEvents.add(
+                events.add(
                     PhoneEventData(
                         "+79052345671",
                         true,
@@ -549,7 +549,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         isRead = false
                     )
                 )
-                phoneEvents.add(
+                events.add(
                     PhoneEventData(
                         "+79052345672",
                         false,
@@ -565,7 +565,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         isRead = false
                     )
                 )
-                phoneEvents.add(
+                events.add(
                     PhoneEventData(
                         "+79052345673",
                         true,
@@ -581,7 +581,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         isRead = false
                     )
                 )
-                phoneEvents.add(
+                events.add(
                     PhoneEventData(
                         "+79052345674",
                         false,
@@ -597,7 +597,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         isRead = false
                     )
                 )
-                phoneEvents.add(
+                events.add(
                     PhoneEventData(
                         "+79052345675",
                         true,
@@ -613,7 +613,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         isRead = false
                     )
                 )
-                phoneEvents.add(
+                events.add(
                     PhoneEventData(
                         "+79052345671",
                         true,
@@ -629,7 +629,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         isRead = false
                     )
                 )
-                phoneEvents.add(
+                events.add(
                     PhoneEventData(
                         "+79052345672",
                         false,
@@ -645,7 +645,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         isRead = false
                     )
                 )
-                phoneEvents.add(
+                events.add(
                     PhoneEventData(
                         "+79052345673",
                         true,
@@ -661,7 +661,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         isRead = false
                     )
                 )
-                phoneEvents.add(
+                events.add(
                     PhoneEventData(
                         "+79052345674",
                         false,
@@ -677,7 +677,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         isRead = false
                     )
                 )
-                phoneEvents.add(
+                events.add(
                     PhoneEventData(
                         "+79052345675",
                         true,

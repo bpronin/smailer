@@ -92,7 +92,7 @@ internal class Synchronizer(context: Context,
                     phoneWhitelist = phoneWhitelist,
                     textBlacklist = smsTextBlacklist,
                     textWhitelist = smsTextWhitelist,
-                    events = phoneEvents.map(::eventToData)
+                    events = events.map(::eventToData)
             )
         }
     }
@@ -100,7 +100,7 @@ internal class Synchronizer(context: Context,
     private fun putLocalData(data: SyncData) {
         database.commit(false) {
             batch {
-                phoneEvents.replaceAll(data.events.map(::dataToEvent))
+                events.replaceAll(data.events.map(::dataToEvent))
                 phoneBlacklist.replaceAll(data.phoneBlacklist)
                 phoneWhitelist.replaceAll(data.phoneWhitelist)
                 smsTextBlacklist.replaceAll(data.textBlacklist)

@@ -46,9 +46,9 @@ class DatabaseListenerTest : BaseTest() {
 
         database.commit {
             batch {
-                phoneEvents.add(PhoneEventData(phone = "1", startTime = 0, acceptor = "device"))
-                phoneEvents.add(PhoneEventData(phone = "2", startTime = 1, acceptor = "device"))
-                phoneEvents.add(PhoneEventData(phone = "3", startTime = 2, acceptor = "device"))
+                events.add(PhoneEventData(phone = "1", startTime = 0, acceptor = "device"))
+                events.add(PhoneEventData(phone = "2", startTime = 1, acceptor = "device"))
+                events.add(PhoneEventData(phone = "3", startTime = 2, acceptor = "device"))
             }
         }
 

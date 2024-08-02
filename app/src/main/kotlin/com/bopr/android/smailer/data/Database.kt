@@ -26,9 +26,9 @@ class Database(private val context: Context) : Closeable {
     private val modifiedTables = mutableSetOf<String>()
 
     /**
-     * Returns all phone events.
+     * Returns all events.
      */
-    val phoneEvents = PhoneEventsDataset(helper, modifiedTables)
+    val events = EventsDataset(helper, modifiedTables)
 
     /**
      * Phone numbers blacklist.

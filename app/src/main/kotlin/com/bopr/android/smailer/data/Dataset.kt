@@ -47,7 +47,7 @@ abstract class Dataset<T>(
 
     override fun remove(element: T): Boolean {
         return write {
-            delete(tableName, keyClause, key(element)) != 0
+            delete(tableName, keyClause, keyOf(element)) != 0
         }
     }
 
@@ -128,7 +128,7 @@ abstract class Dataset<T>(
 
     protected abstract fun values(element: T): ContentValues
 
-    protected abstract fun key(element: T): Array<String>
+    protected abstract fun keyOf(element: T): Array<String>
 
     protected open fun query(): Cursor {
         return read {
@@ -148,7 +148,7 @@ abstract class Dataset<T>(
 
     protected open fun update(values: ContentValues, element: T): Boolean {
         return write {
-            update(tableName, values, keyClause, key(element)) != 0
+            update(tableName, values, keyClause, keyOf(element)) != 0
         }.also {
             if (it) {
                 log.debug("Updated: {}", values)

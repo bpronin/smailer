@@ -37,7 +37,7 @@ class PhoneEventProcessor(
         database.use {
             updateEvent(data) {
                 database.commit {
-                    phoneEvents.add(data)
+                    events.add(data)
                 }
             }
         }
@@ -45,7 +45,7 @@ class PhoneEventProcessor(
 
     fun processPending() {
         database.use {
-            val pendingEvents = database.phoneEvents.filterPending
+            val pendingEvents = database.events.filterPending
             if (pendingEvents.isEmpty()) {
                 log.debug("No pending events")
             } else {
@@ -58,7 +58,7 @@ class PhoneEventProcessor(
                             event.processTime = currentTimeMillis()
                             if (dispatch(event)) {
                                 event.state = STATE_PROCESSED
-                                phoneEvents.add(event)
+                                events.add(event)
                             }
                         }
                     }

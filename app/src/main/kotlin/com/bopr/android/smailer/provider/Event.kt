@@ -8,7 +8,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Event(
-    val time: Long = System.currentTimeMillis(),
+    val eventTime: Long = System.currentTimeMillis(),
     val device: String = DEVICE_NAME,
     @EventState var state: Int = STATE_PENDING,
     var processTime: Long? = null,

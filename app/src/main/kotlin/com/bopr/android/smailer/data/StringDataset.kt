@@ -11,7 +11,7 @@ class StringDataset(tableName: String, helper: SQLiteOpenHelper, modifications: 
 
     override val keyColumns = strings(COLUMN_VALUE)
 
-    override fun key(element: String): Array<String> {
+    override fun keyOf(element: String): Array<String> {
         return strings(element)
     }
 

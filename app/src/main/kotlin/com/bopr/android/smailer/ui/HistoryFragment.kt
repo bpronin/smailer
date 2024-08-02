@@ -148,7 +148,7 @@ class HistoryFragment : RecyclerFragment<PhoneEventData, Holder>() {
     }
 
     override fun loadItems(): Collection<PhoneEventData> {
-        return database.phoneEvents
+        return database.events
     }
 
     override fun createViewHolder(parent: ViewGroup): Holder {
@@ -176,25 +176,25 @@ class HistoryFragment : RecyclerFragment<PhoneEventData, Holder>() {
 
         if (!item.isRead) {
             item.isRead = true
-            database.phoneEvents.add(item) /* do not fire broadcast here */
+            database.events.add(item) /* do not fire broadcast here */
         }
     }
 
     private fun onClearData() {
         ConfirmDialog(getString(R.string.ask_clear_history)) {
-            database.commit { batch { phoneEvents.clear() } }
+            database.commit { batch { events.clear() } }
         }.show(this)
     }
 
     private fun onMarkAllAsRead() {
-        database.commit { batch { phoneEvents.markAllAsRead(true) } }
+        database.commit { batch { events.markAllAsRead(true) } }
         showToast(R.string.operation_complete)
     }
 
     private fun onMarkAsIgnored() {
         getSelectedItem()?.let {
             it.state = STATE_IGNORED
-            database.commit { phoneEvents.add(it) }
+            database.commit { events.add(it) }
         }
     }
 
@@ -212,7 +212,7 @@ class HistoryFragment : RecyclerFragment<PhoneEventData, Holder>() {
     private fun onRemoveSelected() {
         val selectedEvents = listAdapter.getItemsAt(selectedItemPosition)
 
-        database.commit { batch { phoneEvents.removeAll(selectedEvents) } }
+        database.commit { batch { events.removeAll(selectedEvents) } }
 
         Snackbar.make(
             recycler,
@@ -221,7 +221,7 @@ class HistoryFragment : RecyclerFragment<PhoneEventData, Holder>() {
         )
             .setActionTextColor(getColor(requireContext(), R.color.colorAccentText))
             .setAction(R.string.undo) {
-                database.commit { batch { phoneEvents.addAll(selectedEvents) } }
+                database.commit { batch { events.addAll(selectedEvents) } }
             }
             .show()
     }

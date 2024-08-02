@@ -216,7 +216,7 @@ class PhoneEventProcessorTest : BaseTest() {
         verifyNotifyRecipientsError()
         verifyNotifyGoogleAccessError()
 
-        val savedEvent = database.phoneEvents.first()
+        val savedEvent = database.events.first()
 
         Assert.assertEquals(event.acceptor, savedEvent.acceptor)
         Assert.assertEquals(event.startTime, savedEvent.startTime)
@@ -241,7 +241,7 @@ class PhoneEventProcessorTest : BaseTest() {
         verifyNotifyRecipientsError()
         verifyNotifyGoogleAccessError()
 
-        val savedEvent = database.phoneEvents.first()
+        val savedEvent = database.events.first()
 
         Assert.assertEquals(STATE_IGNORED, savedEvent.state)
         Assert.assertEquals(PhoneEventData.STATUS_TRIGGER_OFF, savedEvent.processStatus)
@@ -265,7 +265,7 @@ class PhoneEventProcessorTest : BaseTest() {
             eq(EmailSettingsActivity::class)
         )
 
-        val savedEvent = database.phoneEvents.first()
+        val savedEvent = database.events.first()
 
         Assert.assertEquals(STATE_PENDING, savedEvent.state)
         Assert.assertEquals(PhoneEventData.STATUS_ACCEPTED, savedEvent.processStatus)
@@ -288,7 +288,7 @@ class PhoneEventProcessorTest : BaseTest() {
             EmailRecipientsActivity::class
         )
 
-        val savedEvent = database.phoneEvents.first()
+        val savedEvent = database.events.first()
 
         Assert.assertEquals(STATE_PENDING, savedEvent.state)
         Assert.assertEquals(PhoneEventData.STATUS_ACCEPTED, savedEvent.processStatus)
@@ -310,7 +310,7 @@ class PhoneEventProcessorTest : BaseTest() {
         verifyNotifyRecipientsError()
         verifyNotifyGoogleAccessError()
 
-        val savedEvent = database.phoneEvents.first()
+        val savedEvent = database.events.first()
 
         Assert.assertEquals(STATE_PENDING, savedEvent.state)
         Assert.assertEquals(PhoneEventData.STATUS_ACCEPTED, savedEvent.processStatus)
@@ -358,8 +358,8 @@ class PhoneEventProcessorTest : BaseTest() {
         processor.process(testingEvent())
         processor.process(testingEvent())
 
-        Assert.assertEquals(3, database.phoneEvents.size)
-        Assert.assertEquals(3, database.phoneEvents.filterPending.size)
+        Assert.assertEquals(3, database.events.size)
+        Assert.assertEquals(3, database.events.filterPending.size)
         verifyNotifyAccountError()
         verifyNotifyRecipientsError()
         verifyNotifyGoogleAccessError()
@@ -367,8 +367,8 @@ class PhoneEventProcessorTest : BaseTest() {
         /* try resend with disabled transport */
         processor.processPending()
 
-        Assert.assertEquals(3, database.phoneEvents.size)
-        Assert.assertEquals(3, database.phoneEvents.filterPending.size)
+        Assert.assertEquals(3, database.events.size)
+        Assert.assertEquals(3, database.events.filterPending.size)
         verifyNotifyAccountError()
         verifyNotifyRecipientsError()
         verifyNotifyGoogleAccessError()
@@ -378,8 +378,8 @@ class PhoneEventProcessorTest : BaseTest() {
 
         processor.processPending()
 
-        Assert.assertEquals(3, database.phoneEvents.size)
-        Assert.assertEquals(0, database.phoneEvents.filterPending.size)
+        Assert.assertEquals(3, database.events.size)
+        Assert.assertEquals(0, database.events.filterPending.size)
         verifyNotifyAccountError()
         verifyNotifyRecipientsError()
         verifyNotifyGoogleAccessError()
