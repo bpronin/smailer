@@ -4,6 +4,7 @@
     <string name="_at_time">\u0020at %s</string>
     <string name="_from_device">\u0020from %s</string>
     <string name="_none">none</string>
+    <string name="_on_date_at_time">\u0020on %1$s at %2$s</string>
     <string name="_time_pattern" translatable="false">yyyy-MM-dd HH:mm:ss</string>
     <string name="about">About</string>
     <string name="acceptable_phone_numbers">Acceptable phone numbers (%s)</string>
@@ -19,27 +20,33 @@
     <string name="add_text_to_whitelist_action">Add text to whitelist</string>
     <string name="add_to_blacklist">Add to blacklist</string>
     <string name="add_to_whitelist">Add to whitelist</string>
+    <string name="addresses">%d addresses</string>
     <string name="allow_control_remotely">Allow to control application by sending email on service account</string>
     <string name="allow_only_recipients">Accept service mail only from recipients</string>
     <string name="app_version">Application version: %s</string>
     <string name="ask_clear_history">Clear history?</string>
     <string name="ask_clear_list">Clear list?</string>
+    <string name="bad_telegram_bot_token">Telegram bot token is invalid.</string>
     <string name="battery_optimization">Battery optimization</string>
     <string name="battery_optimization_reason">To make the application work properly when device is in standby mode please turn off battery optimization for it.</string>
     <string name="blacklist">Blacklist</string>
-    <string name="history">History</string>
     <string name="called_phone">Called: %1$s (%2$s)</string>
+    <string name="caller_name">Caller name</string>
     <string name="caller_phone">Caller: %1$s (%2$s)</string>
+    <string name="check_settings">Please check your settings</string>
     <string name="check_your_settings">Please check your settings</string>
     <string name="clear">Clear</string>
     <string name="contact_no_permission_read_contact">no permission to read contacts</string>
     <string name="copyright" translatable="false">Copyright © BoPr, 2016-2021</string>
+    <string name="device_location">Device location</string>
     <string name="device_name">Device name</string>
     <string name="device_name_to_show">Device name to be shown in email message (leave blank to use default)</string>
     <string name="disabled">Disabled</string>
+    <string name="dispatch_time">Dispatch time</string>
     <string name="do_not_ask_again">Don\'t ask again</string>
     <string name="do_not_process_call">Do not process call</string>
     <string name="edit">Edit</string>
+    <string name="email">Email</string>
     <string name="email_address">Email address</string>
     <string name="email_content">Email content</string>
     <string name="email_language">Email language</string>
@@ -47,13 +54,19 @@
     <string name="email_message_content">Email message content</string>
     <string name="email_message_language">Email message language</string>
     <string name="email_message_summary">Email message settings</string>
+    <string name="email_settings">Email settings</string>
     <string name="email_successfully_send">Email successfully sent</string>
     <string name="enabled">Enabled</string>
     <string name="enter_phone_number">Enter phone number.</string>
     <string name="enter_phone_number_or_wildcard">Enter phone number. You also may use * as a wildcard.</string>
+    <string name="error_sending_test_message">An error occurred while sending message.</string>
+    <string name="event_time">Event time</string>
     <string name="events_causing_sending_mail">Events causing sending email</string>
     <string name="geolocation_disabled">(location service disabled on device)</string>
+    <string name="header">Header</string>
+    <string name="history">History</string>
     <string name="history_is_empty">History is empty</string>
+    <string name="how_to_notify">How to notify about events</string>
     <string name="ignored">Ignored</string>
     <string name="incoming_call">Incoming call</string>
     <string name="incoming_call_from">Incoming call from</string>
@@ -67,26 +80,32 @@
     <string name="item_already_exists">%s is already exists</string>
     <string name="last_known_location">Last known device location: %s</string>
     <string name="list_is_empty">List is empty</string>
+    <string name="low_battery_level">Low battery level</string>
     <string name="mail_items_zero">No service mail</string>
     <string name="mark_all_as_read">Mark all as read</string>
+    <string name="message_content">Message content</string>
+    <string name="messengers">Messengers</string>
     <string name="missed_call">Missed call</string>
     <string name="missed_call_from">Missed call from</string>
+    <string name="more_options">More options</string>
     <string name="new_history_items_zero">No new records</string>
+    <string name="next_time">Next time</string>
     <string name="no_access_to_google_account">Application has no access to Google account</string>
     <string name="no_account_specified">No sender account specified.</string>
+    <string name="no_network_try_later">No connection to server. Please try later.</string>
     <string name="no_permission_read_location">(no permission to read location)</string>
     <string name="no_recipients_specified">No recipients specified</string>
+    <string name="no_telegram_bot_token">No Telegram bot token specified.</string>
     <string name="no_triggers_specified">All triggers are disabled</string>
-    <string name="unspecified">Not set</string>
-    <string name="specified">Specified</string>
     <string name="notifications">Notifications</string>
     <string name="notify_remote_actions">Display notification when actions are performed</string>
     <string name="notify_send_success">Display notification when email is successfully sent</string>
     <string name="number_in_blacklist">Number was in blacklist</string>
+    <string name="off">Off</string>
+    <string name="on">On</string>
     <string name="open_source">Open source</string>
     <string name="open_source_and_third_party">Open source and third party software</string>
     <string name="operation_complete" >Operation complete</string>
-    <string name="more_options">More options</string>
     <string name="outgoing_call">Outgoing call</string>
     <string name="outgoing_call_of">Outgoing call: %s</string>
     <string name="outgoing_call_to">Outgoing call to</string>
@@ -95,8 +114,8 @@
     <string name="pending">Pending</string>
     <string name="permission_rationale_coarse_location">Permission to %s is needed to add device location into email message.</string>
     <string name="permission_rationale_fine_location">Permission to %s is needed to add device location into email message.</string>
-    <string name="permission_rationale_post_notifications">Permission to %s is needed to inform you about app status.</string>
     <string name="permission_rationale_phone_state">Permission to %s is needed to send out email when phone calls are received or made.</string>
+    <string name="permission_rationale_post_notifications">Permission to %s is needed to inform you about app status.</string>
     <string name="permission_rationale_read_contacts">Permission to %s is needed to add contact name into email message.</string>
     <string name="permission_rationale_read_sms">Permission to %s is needed to send out email when SMS has sent.</string>
     <string name="permission_rationale_receive_sms">Permission to %s is needed to send out email when SMS has received.</string>
@@ -117,6 +136,7 @@
     <string name="proceed">Open settings</string>
     <string name="process_all_pending">Process pending</string>
     <string name="process_service_mail">Check service mail now</string>
+    <string name="processed">Processed</string>
     <string name="processed_at">at: %s</string>
     <string name="recipient_already_exists">Recipient %1$s is already exists</string>
     <string name="recipient_device">Recipient:</string>
@@ -129,32 +149,42 @@
     <string name="remove_phone_from_filter">Remove phone from all rules</string>
     <string name="remove_text_from_filter">Remove text from all rules</string>
     <string name="reply_ot_app">Reply to %s:</string>
+    <string name="require_start_chat">To receive messages you need to start conversation with your bot in Telegram application.</string>
     <string name="reset_dialogs">Reset dialogs</string>
     <string name="reset_dialogs_summary">Reset all dialogs with \"Don\'t show again\" option</string>
     <string name="rules">Rules</string>
     <string name="rules_for_sending">Rules for sending email</string>
     <string name="select_from_contacts">Select from contacts</string>
+    <string name="send_email_message_on_events">Send email messages</string>
     <string name="send_sms_to_sender">send SMS to the caller</string>
+    <string name="send_telegram_message_on_events">Send Telegram messages</string>
     <string name="send_test_email">Check sending email</string>
     <string name="send_test_email_to_check_your_settings">Send test email to check your settings</string>
-    <string name="send_test_sms_to_check_your_settings">Send test SMS to check your settings</string>
     <string name="send_test_message_to_check_your_settings">Send test message to check your settings</string>
+    <string name="send_test_sms_to_check_your_settings">Send test SMS to check your settings</string>
     <string name="sender">Account</string>
     <string name="sender_account_not_found">Sender account not found</string>
     <string name="sender_of">Sender: %s</string>
     <string name="sender_phone">Sender: %1$s (%2$s)</string>
-    <string name="processed">Processed</string>
     <string name="sent_sms">Sent SMS to %s</string>
     <string name="sent_time_device">Sent%1$s%2$s</string>
-    <string name="_on_date_at_time">\u0020on %1$s at %2$s</string>
     <string name="service_account_not_found">Service account not found</string>
     <string name="service_running">Service running</string>
+    <string name="settings">Settings</string>
     <string name="since_permissions_not_granted">Since not all required permissions is granted, some options have been disabled.</string>
+    <string name="sms">SMS</string>
     <string name="sort">Sort</string>
+    <string name="specified">Specified</string>
     <string name="status">Status</string>
     <string name="sync_blacklist_and_log">Synchronize black/whitelists and call history across devices</string>
     <string name="synchronization">Synchronization</string>
-    <string name="check_settings">Please check your settings</string>
+    <string name="telegram">Telegram</string>
+    <string name="telegram_bot_token">Telegram bot token</string>
+    <string name="telegram_settings">Telegram settings</string>
+    <string name="test_message">Test message</string>
+    <string name="test_message_failed">Test message failed</string>
+    <string name="test_message_sent">Test message successfully sent.</string>
+    <string name="test_settings">Test the settings</string>
     <string name="text_blacklist">Text blacklist</string>
     <string name="text_filter">Text filter</string>
     <string name="text_fragment">Text fragment</string>
@@ -165,57 +195,27 @@
     <string name="text_remotely_removed_from_whitelist">Text \"%s\" removed from whitelist"</string>
     <string name="text_removed_from_filter">Text removed from filter</string>
     <string name="text_whitelist">Text whitelist</string>
+    <string name="this_is_test_message">This message is to check your settings.</string>
     <string name="time">Time:</string>
     <string name="time_time">Time: %s</string>
     <string name="trigger_off">Trigger was off</string>
     <string name="triggers">Triggers</string>
+    <string name="unable_determine_chat">Unable to determine the chat to send messages to. Say \"Hi\" to your bot in Telegram app and try agayn.</string>
     <string name="unable_send_email">Unable to send email. %s</string>
     <string name="unable_send_sms">Unable to send SMS. %s</string>
     <string name="unacceptable_phone_numbers">Unacceptable phone numbers (%s)</string>
     <string name="unacceptable_words">Unacceptable phrases (%s)</string>
     <string name="undo">Undo</string>
+    <string name="unexpected_error">Something went wrong. Please check your network connection.</string>
     <string name="unknown_contact">Unknown contact</string>
+    <string name="unknown_location">unknown</string>
+    <string name="unspecified">Not set</string>
     <string name="what_email_contains">What information should the email include</string>
     <string name="when_send_email">Under which conditions the email should be sent</string>
     <string name="whitelist">Whitelist</string>
     <string name="you_had_incoming_call">You had an incoming call of %s duration.</string>
     <string name="you_had_missed_call">You had a missed call.</string>
     <string name="you_had_outgoing_call">You had an outgoing call of %s duration.</string>
-    <string name="unexpected_error">Something went wrong. Please check your network connection.</string>
-    <string name="how_to_notify">How to notify about events</string>
-    <string name="messengers">Messengers</string>
-    <string name="email">Email</string>
-    <string name="send_email_message_on_events">Send email messages</string>
-    <string name="telegram">Telegram</string>
-    <string name="send_telegram_message_on_events">Send Telegram messages</string>
-    <string name="test_settings">Test the settings</string>
-    <string name="error_sending_test_message">An error occurred while sending message.</string>
-    <string name="telegram_bot_token">Telegram bot token</string>
-    <string name="require_start_chat">To receive messages you need to start conversation with your bot in Telegram application.</string>
-    <string name="test_message_sent">Test message successfully sent.</string>
-    <string name="bad_telegram_bot_token">Telegram bot token is invalid.</string>
-    <string name="no_telegram_bot_token">No Telegram bot token specified.</string>
-    <string name="test_message_failed">Test message failed</string>
-    <string name="addresses">%d addresses</string>
-    <string name="unknown_location">unknown</string>
-    <string name="telegram_settings">Telegram settings</string>
-    <string name="email_settings">Email settings</string>
-    <string name="on">On</string>
-    <string name="off">Off</string>
-    <string name="settings">Settings</string>
-    <string name="low_battery_level">Low battery level</string>
-    <string name="message_content">Message content</string>
-    <string name="event_time">Event time</string>
-    <string name="dispatch_time">Dispatch time</string>
-    <string name="device_location">Device location</string>
-    <string name="header">Header</string>
-    <string name="caller_name">Caller name</string>
-    <string name="next_time">Next time</string>
-    <string name="no_network_try_later">No connection to server. Please try later.</string>
-    <string name="this_is_test_message">This message is to check your settings.</string>
-    <string name="test_message">Test message</string>
-    <string name="unable_determine_chat">Unable to determine the chat to send messages to. Say \"Hi\" to your bot in Telegram app and try agayn.</string>
-    <string name="sms">SMS</string>
 
     <plurals name="items_removed">
         <item quantity="one">Item removed</item>
@@ -241,21 +241,21 @@
     </string-array>
 
     <string-array name="email_content_names">
-        <item>Header</item>
+        <item>Title</item>
         <item>Message/call time</item>
         <item>Sender/caller</item>
-        <item>Dispatch time</item>
+        <item>Process time</item>
         <item>Device name</item>
         <item>Device location</item>
-        <item>Remote control links</item>
+        <item>Fast answer links</item>
     </string-array>
     
     <string-array name="telegram_message_content_names">
         <item>Message text</item>
-        <item>Header</item>
+        <item>Title</item>
         <item>Message/call time</item>
         <item>Sender/caller</item>
-        <item>Dispatch time</item>
+        <item>Process time</item>
         <item>Device name</item>
         <item>Device location</item>
     </string-array>

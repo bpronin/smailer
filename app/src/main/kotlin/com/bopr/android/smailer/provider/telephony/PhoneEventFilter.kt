@@ -9,8 +9,8 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
-import com.bopr.android.smailer.util.normalizePhone
-import com.bopr.android.smailer.util.phoneToRegEx
+import com.bopr.android.smailer.util.stripPhoneNumber
+import com.bopr.android.smailer.util.phoneNumberToRegEx
 import com.bopr.android.smailer.util.unescapeRegex
 import java.util.regex.PatternSyntaxException
 
@@ -80,9 +80,9 @@ class PhoneEventFilter(
     }
 
     private fun matchesPhone(patterns: Collection<String>, phone: String): Boolean {
-        val p = normalizePhone(phone)
+        val p = stripPhoneNumber(phone)
         for (pt in patterns) {
-            if (p.matches(phoneToRegEx(pt).toRegex())) {
+            if (p.matches(phoneNumberToRegEx(pt).toRegex())) {
                 return true
             }
         }

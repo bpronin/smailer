@@ -1,11 +1,7 @@
 package com.bopr.android.smailer.processor.mail
 
 import android.content.Context
-import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
-import com.bopr.android.smailer.util.parseLocale
-import com.bopr.android.smailer.util.tryGetContactName
 
 class MailFormatterFactory(private val context: Context) {
 

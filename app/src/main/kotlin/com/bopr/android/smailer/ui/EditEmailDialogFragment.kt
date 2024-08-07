@@ -27,9 +27,10 @@ class EditEmailDialogFragment : BaseEditDialogFragment<String>("edit_recipient_d
     private val log = LoggerFactory.getLogger("EditEmailDialogFragment")
     private lateinit var editText: TextView
     private var initialValue: String? = null
-    private val contactPickerLauncher = registerForActivityResult(StartActivityForResult()) { result ->
-        onContactPickComplete(result)
-    }
+    private val contactPickerLauncher =
+        registerForActivityResult(StartActivityForResult()) { result ->
+            onContactPickComplete(result)
+        }
 
     override fun onCreateDialogView(inflater: LayoutInflater, root: ViewGroup?): View {
         val view = inflater.inflate(R.layout.editor_email, root, false)
@@ -56,7 +57,7 @@ class EditEmailDialogFragment : BaseEditDialogFragment<String>("edit_recipient_d
     private fun onContactPickComplete(result: ActivityResult) {
         if (result.resultCode == RESULT_OK) {
             if (checkPermission(READ_CONTACTS)) {
-                editText.text = emailFromIntent(requireContext(), result.data)
+                editText.text = requireContext().emailFromIntent(result.data)
             } else {
                 log.warn("Missing required permission")
             }

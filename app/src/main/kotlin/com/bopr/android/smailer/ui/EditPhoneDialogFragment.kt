@@ -59,7 +59,7 @@ class EditPhoneDialogFragment(@StringRes private val textRes: Int) :
     private fun onContactPickComplete(result: ActivityResult) {
         if (result.resultCode == RESULT_OK) {
             if (checkPermission(READ_CONTACTS)) {
-                editText.setText(phoneFromIntent(requireContext(), result.data))
+                editText.setText(requireContext().phoneFromIntent(result.data))
             } else {
                 log.warn("Missing required permission")
             }

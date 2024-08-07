@@ -1,21 +1,20 @@
 package com.bopr.android.smailer.processor.mail
 
-import android.Manifest.permission.READ_CONTACTS
 import android.content.Context
 import android.text.TextUtils.htmlEncode
 import androidx.annotation.StringRes
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
-import com.bopr.android.smailer.util.checkPermission
-import com.bopr.android.smailer.util.escapePhone
+import com.bopr.android.smailer.util.escapePhoneNumber
 import com.bopr.android.smailer.util.eventTypePrefix
 import com.bopr.android.smailer.util.eventTypeText
 import com.bopr.android.smailer.util.formatDuration
+import com.bopr.android.smailer.util.formatPhoneNumber
+import com.bopr.android.smailer.util.getContactName
 import com.bopr.android.smailer.util.htmlReplaceUrlsWithLinks
 import com.bopr.android.smailer.util.httpEncoded
-import com.bopr.android.smailer.util.normalizePhone
-import com.bopr.android.smailer.util.tryGetContactName
+import com.bopr.android.smailer.util.stripPhoneNumber
 
 /**
  * Formats email subject and body from phone event.
@@ -34,10 +33,9 @@ class MailPhoneEventFormatter(
 
     private val serviceAccount = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
     private val phoneSearchUrl = settings.getPhoneSearchUrl()
-    private val contactName = tryGetContactName(context, event.phone)
 
     override fun getSubject(): String {
-        return "${string(eventTypePrefix(event))} ${escapePhone(event.phone)}"
+        return "${string(eventTypePrefix(event))} ${escapePhoneNumber(event.phone)}"
     }
 
     override fun getTitle(): String {
@@ -66,35 +64,31 @@ class MailPhoneEventFormatter(
     }
 
     override fun getSenderName(): String {
-        val telLink = "<a href=\"tel:${event.phone.httpEncoded()}\"" +
-                " style=\"text-decoration: none;\">&#9742;</a>${event.phone}"
+        val strippedPhone = stripPhoneNumber(event.phone)
+        val formattedPhone = formatPhoneNumber(event.phone)
 
-        val contact = if (contactName.isNullOrEmpty()) {
-            if (context.checkPermission(READ_CONTACTS)) {
-                val url = phoneSearchUrl.replace(PHONE_SEARCH_TAG, normalizePhone(event.phone))
-                "<a href=\"$url\">${string(R.string.unknown_contact)}</a>"
-            } else ""
-        } else {
-            contactName
-        }
+        val telLink = "<a href=\"tel:${formattedPhone.httpEncoded()}\"" +
+                " style=\"text-decoration: none;\">&#9742;</a>$strippedPhone"
+
+
+        val text = context.getContactName(event.phone)?.let {
+            val url = phoneSearchUrl.replace(PHONE_SEARCH_TAG, strippedPhone)
+            "<a href=\"$url\">${string(R.string.unknown_contact)}</a>"
+        }.orEmpty()
 
         val patternRes = when {
-            event.isSms ->
-                R.string.sender_phone
-
-            event.isIncoming ->
-                R.string.caller_phone
-
-            else ->
-                R.string.called_phone
+            event.isSms -> R.string.sender_phone
+            event.isIncoming -> R.string.caller_phone
+            else -> R.string.called_phone
         }
-        return string(patternRes, telLink, contact)
+
+        return string(patternRes, telLink, text)
     }
 
     override fun getReplyLinks(): List<String>? {
         if (serviceAccount.isNullOrEmpty()) return null
 
-        val phone = escapePhone(event.phone)
+        val phone = escapePhoneNumber(event.phone)
         val smsText = event.text ?: ""
         val subject = formatSubject()
 

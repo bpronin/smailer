@@ -429,7 +429,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                 title = "Phone number",
                 inputType = InputType.TYPE_CLASS_PHONE,
                 positiveAction = {
-                    val contact = getContactName(requireContext(), it)
+                    val contact = requireContext().getContactName(it)
                     val text = if (contact != null) "$it: $contact" else "Contact not found"
                     showInfoDialog("Contact", text)
                 }

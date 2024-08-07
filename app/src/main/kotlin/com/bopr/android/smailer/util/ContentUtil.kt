@@ -18,31 +18,6 @@ import com.bopr.android.smailer.data.getInt
 import com.bopr.android.smailer.data.getStringOrNull
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager.ACCOUNT_TYPE
 
-@RequiresPermission(READ_CONTACTS)
-fun getContactName(context: Context, phone: String): String? {
-    val uri = withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, encode(phone))
-    var result: String? = null
-    context.contentResolver.query(uri, arrayOf(PhoneLookup.DISPLAY_NAME), null, null, null)?.use {
-        if (it.moveToFirst()) {
-            result = it.getStringOrNull(PhoneLookup.DISPLAY_NAME)
-        }
-    }
-    return result
-}
-
-fun tryGetContactName(context: Context, phone: String): String? {
-    return if (context.checkPermission(READ_CONTACTS)) {
-        getContactName(context, phone)
-    } else {
-        null
-    }
-}
-
-@RequiresPermission(READ_CONTACTS)
-fun createPickContactIntent(): Intent {
-    return Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI)
-}
-
 fun createPickAccountIntent(account: Account?): Intent {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         newChooseAccountIntent(account, null, arrayOf(ACCOUNT_TYPE), null, null, null, null)
@@ -54,15 +29,33 @@ fun createPickAccountIntent(account: Account?): Intent {
 }
 
 @RequiresPermission(READ_CONTACTS)
-fun phoneFromIntent(context: Context, intent: Intent?): String? {
+fun createPickContactIntent(): Intent {
+    return Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI)
+}
+
+fun Context.getContactName(phone: String): String? {
+    if (!checkPermission(READ_CONTACTS)) return null
+
+    val uri = withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, encode(phone))
+    contentResolver.query(uri, arrayOf(PhoneLookup.DISPLAY_NAME), null, null, null)?.use {
+        if (it.moveToFirst()) {
+            return it.getStringOrNull(PhoneLookup.DISPLAY_NAME)
+        }
+    }
+
+    return null
+}
+
+@RequiresPermission(READ_CONTACTS)
+fun Context.phoneFromIntent(intent: Intent?): String? {
     val uri: Uri = intent!!.data!!
     var result: String? = null
-    context.contentResolver.query(uri, null, null, null, null)?.use {
+    contentResolver.query(uri, null, null, null, null)?.use {
         if (it.moveToFirst()) {
             val hasPhone = it.getInt(Contacts.HAS_PHONE_NUMBER)
             if (hasPhone == 1) {
                 val id = it.getString(it.getColumnIndexOrThrow(Contacts._ID))
-                result = retrievePhone(context, id)
+                result = retrievePhone(id)
             }
         }
     }
@@ -70,21 +63,21 @@ fun phoneFromIntent(context: Context, intent: Intent?): String? {
 }
 
 @RequiresPermission(READ_CONTACTS)
-fun emailFromIntent(context: Context, intent: Intent?): String? {
+fun Context.emailFromIntent(intent: Intent?): String? {
     val uri: Uri = intent!!.data!!
     var result: String? = null
-    context.contentResolver.query(uri, null, null, null, null)?.use {
+    contentResolver.query(uri, null, null, null, null)?.use {
         if (it.moveToFirst()) {
             val id = it.getString(it.getColumnIndexOrThrow(Contacts._ID))
-            result = retrieveEmail(context, id)
+            result = retrieveEmail(id)
         }
     }
     return result
 }
 
-private fun retrievePhone(context: Context, contactId: String): String? {
+private fun Context.retrievePhone(contactId: String): String? {
     var result: String? = null
-    context.contentResolver.query(
+    contentResolver.query(
         Phone.CONTENT_URI, null, "${Phone.CONTACT_ID} = $contactId",
         null, null
     )?.use {
@@ -95,9 +88,9 @@ private fun retrievePhone(context: Context, contactId: String): String? {
     return result
 }
 
-private fun retrieveEmail(context: Context, contactId: String): String? {
+private fun Context.retrieveEmail(contactId: String): String? {
     var result: String? = null
-    context.contentResolver.query(
+    contentResolver.query(
         Email.CONTENT_URI, null, "${Email.CONTACT_ID}=$contactId",
         null, null
     )?.use {

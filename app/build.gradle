@@ -43,11 +43,11 @@ android {
     compileSdk 34
 
     defaultConfig {
-        versionCode 98
+        versionCode 99
         versionName '1.10.0'
         applicationId "com.bopr.android.smailer"
         minSdkVersion 21
-        targetSdk 33
+        targetSdk 34
         archivesBaseName = "smailer-${versionName}"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

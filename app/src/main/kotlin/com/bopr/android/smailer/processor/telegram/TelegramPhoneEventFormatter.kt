@@ -6,7 +6,8 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALL
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import com.bopr.android.smailer.util.eventTypeText
 import com.bopr.android.smailer.util.formatDuration
-import com.bopr.android.smailer.util.tryGetContactName
+import com.bopr.android.smailer.util.formatPhoneNumber
+import com.bopr.android.smailer.util.getContactName
 
 /**
  * Formats Telegram message from phone event.
@@ -42,15 +43,15 @@ class TelegramPhoneEventFormatter(private val context: Context, private val even
     override fun getSenderName(): String {
         if (!settings.hasTelegramMessageContent(VAL_PREF_MESSAGE_CONTENT_CALLER)) return ""
 
-        val patternRes = when {
-            event.isSms -> R.string.sender_phone
-            event.isIncoming -> R.string.caller_phone
-            else -> R.string.called_phone
-        }
-
-        val contact = tryGetContactName(context, event.phone) ?: string(R.string.unknown_contact)
-
-        return string(patternRes, event.phone, contact)
+        return string(
+            when {
+                event.isSms -> R.string.sender_phone
+                event.isIncoming -> R.string.caller_phone
+                else -> R.string.called_phone
+            },
+            formatPhoneNumber(event.phone),
+            context.getContactName(event.phone).orEmpty()
+        )
     }
 
 
