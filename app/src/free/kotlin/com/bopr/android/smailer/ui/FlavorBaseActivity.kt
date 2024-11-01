@@ -8,15 +8,16 @@ import com.google.android.gms.ads.AdView
 import kotlin.reflect.KClass
 
 /**
- * Base application activity. specific in different build variants.
+ * Base application activity specific in different build flavors.
  *
- * For FREE build variant. With ads.
+ * For PAID build flavor. Without ads.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-abstract class BaseFlavorActivity(fragmentClass: KClass<out Fragment>) : BaseActivity(fragmentClass) {
+abstract class FlavorBaseActivity(fragmentClass: KClass<out Fragment>) :
+    VariantBaseActivity(fragmentClass) {
 
-    private lateinit var adView: AdView
+        private lateinit var adView: AdView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

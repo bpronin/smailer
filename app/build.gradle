@@ -14,58 +14,63 @@
 
 */
 
-apply plugin: "com.android.application"
-apply plugin: "kotlin-android"
-apply plugin: "kotlin-parcelize"
-apply plugin: "kotlin-allopen"
-apply plugin: "com.google.gms.google-services"
-apply plugin: "com.google.firebase.crashlytics"
-apply from: "user.gradle"
-
-if (!file("keystore.p12").exists()) {
-    throw new InvalidUserDataException("Required file /app/keystore.p12")
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-parcelize'
+    id 'kotlin-allopen'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
 }
 
-def local_gradle = "local.gradle"
-if (file(local_gradle).exists()) {
-    apply from: local_gradle
-} else {
-    local_gradle = "../.github/workflows/local.gradle"
-    if (file(local_gradle).exists()) {
-        apply from: local_gradle
+apply {
+    from('user.gradle')
+
+    if (file('local.gradle').exists()) {
+        from('local.gradle')
     } else {
-        throw new InvalidUserDataException("Required file /app/local.gradle")
+        def local_gradle = '../.github/workflows/local.gradle'
+        if (file(local_gradle).exists()) {
+            from(local_gradle)
+        } else {
+            throw new InvalidUserDataException('Required local.gradle file')
+        }
     }
+}
+
+/* check signing keystore */
+
+if (!file('keystore.p12').exists()) {
+    throw new InvalidUserDataException('Required file /app/keystore.p12')
 }
 
 android {
     namespace 'com.bopr.android.smailer'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
-        versionCode 99
-        versionName '1.10.0'
-        applicationId "com.bopr.android.smailer"
+        versionCode 100
+        versionName '1.10.1'
+        applicationId 'com.bopr.android.smailer'
         minSdkVersion 21
         targetSdk 34
-        archivesBaseName = "smailer-${versionName}"
+        base.archivesName = "smailer-$versionName"
         vectorDrawables.useSupportLibrary = true
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = 'androidx.test.runner.AndroidJUnitRunner'
     }
 
     sourceSets {
-        main.java.srcDirs += "src/main/kotlin"
-        debug.java.srcDirs += "src/debug/kotlin"
-        staging.java.srcDirs += "src/staging/kotlin"
-        free.java.srcDirs += "src/free/kotlin"
-        paid.java.srcDirs += "src/paid/kotlin"
-        androidTest.java.srcDirs += "src/androidTest/kotlin"
+        main.java.srcDirs += 'src/main/kotlin'
+        debug.java.srcDirs += 'src/debug/kotlin'
+        free.java.srcDirs += 'src/free/kotlin'
+        paid.java.srcDirs += 'src/paid/kotlin'
+        androidTest.java.srcDirs += 'src/androidTest/kotlin'
     }
 
     signingConfigs {
         release {
-            keyAlias "sample"
-            storeFile file("keystore.p12")
+            keyAlias 'sample'
+            storeFile file('keystore.p12')
             storePassword store_password
             keyPassword key_password
         }
@@ -73,46 +78,40 @@ android {
 
     buildTypes {
         configureEach {
-            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
-            resValue("string", "developer_email", developer_email)
-            resValue("string", "fcm_server_key", fcm_server_key)
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            resValue('string', 'developer_email', developer_email)
+            resValue('string', 'fcm_server_key', fcm_server_key)
         }
         debug {
             signingConfig signingConfigs.debug
             shrinkResources false
             minifyEnabled false
-            manifestPlaceholders = [crashlyticsEnabled: "false"]
+            manifestPlaceholders = [crashlyticsEnabled: 'false']
             getIsDefault().set(true)
-        }
-        staging /* minified debug */ {
-            signingConfig signingConfigs.debug
-            shrinkResources true
-            minifyEnabled true
-            manifestPlaceholders = [crashlyticsEnabled: "true"]
         }
         release {
             signingConfig signingConfigs.release
             shrinkResources true
             minifyEnabled true
-            manifestPlaceholders = [crashlyticsEnabled: "true"]
+            manifestPlaceholders = [crashlyticsEnabled: 'true']
         }
     }
 
-    flavorDimensions += "main"
+    flavorDimensions += 'main'
 
     productFlavors {
         paid {
-            dimension "main"
+            dimension 'main'
             getIsDefault().set(true)
         }
         free {
-            dimension "main"
+            dimension 'main'
         }
     }
 
     compileOptions {
-        sourceCompatibility = 17
-        targetCompatibility = 17
+        sourceCompatibility = 21
+        targetCompatibility = 21
     }
 
     testOptions {
@@ -122,20 +121,20 @@ android {
     packagingOptions {
         resources {
             pickFirsts += [
-                    "META-INF/DEPENDENCIES",
-                    "META-INF/LICENSE.txt",
-                    "META-INF/LICENSE.md",
-                    "META-INF/NOTICE.md",
-                    "META-INF/kotlinx-html.kotlin_module"
+                    'META-INF/DEPENDENCIES',
+                    'META-INF/LICENSE.txt',
+                    'META-INF/LICENSE.md',
+                    'META-INF/NOTICE.md',
+                    'META-INF/kotlinx-html.kotlin_module'
             ]
         }
     }
 
     configurations {
         configureEach {
-            exclude group: "org.apache.httpcomponents"
-            exclude group: "commons-logging", module: "commons-logging"
-            exclude group: "com.google.guava", module: "listenablefuture"
+            exclude group: 'org.apache.httpcomponents'
+            exclude group: 'commons-logging', module: 'commons-logging'
+            exclude group: 'com.google.guava', module: 'listenablefuture'
         }
     }
 
@@ -146,40 +145,48 @@ android {
 }
 
 dependencies {
-    implementation fileTree(include: ["*.jar"], dir: "libs")
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
 
-    implementation "androidx.core:core-ktx:1.13.1"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4"
-    implementation "androidx.preference:preference-ktx:1.2.1"
-    implementation "androidx.work:work-runtime-ktx:2.9.0"
-    implementation "com.android.volley:volley:1.2.1"
-    implementation "com.github.tony19:logback-android:3.0.0"
-    implementation "com.google.android.gms:play-services-auth:21.2.0"
-    implementation "com.google.android.gms:play-services-location:21.3.0"
-    implementation "com.google.android.material:material:1.12.0"
-    implementation "com.google.api-client:google-api-client-android:2.6.0"
-    implementation "com.google.apis:google-api-services-drive:v3-rev99-1.23.0"
-    implementation "com.google.apis:google-api-services-gmail:v1-rev98-1.25.0"
-    implementation "com.google.firebase:firebase-analytics:22.0.2"
-    implementation "com.google.firebase:firebase-crashlytics:19.0.3"
-    implementation "com.google.firebase:firebase-messaging:24.0.0"
-    implementation "com.sun.mail:android-mail:1.6.7"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.0.0"
-    implementation "org.slf4j:slf4j-api:2.0.13"
+    implementation 'androidx.core:core-ktx:1.15.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7'
+    implementation 'androidx.preference:preference-ktx:1.2.1'
+    implementation 'androidx.work:work-runtime-ktx:2.10.0'
+    implementation 'com.android.volley:volley:1.2.1'
+    implementation 'com.github.tony19:logback-android:3.0.0'
+    implementation 'com.google.android.gms:play-services-auth:21.2.0'
+    implementation 'com.google.android.gms:play-services-location:21.3.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'com.google.api-client:google-api-client-android:2.7.0'
+    implementation 'com.google.apis:google-api-services-drive:v3-rev99-1.23.0'
+    implementation 'com.google.apis:google-api-services-gmail:v1-rev98-1.25.0'
+    implementation 'com.google.firebase:firebase-analytics:22.1.2'
+    implementation 'com.google.firebase:firebase-crashlytics:19.2.1'
+    implementation 'com.google.firebase:firebase-messaging:24.0.3'
+    implementation 'com.sun.mail:android-mail:1.6.7'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.0.21'
+    implementation 'org.slf4j:slf4j-api:2.0.16'
 
-    freeImplementation "com.google.android.gms:play-services-ads:23.2.0"
+    freeImplementation 'com.google.android.gms:play-services-ads:23.5.0'
 
-    testImplementation "junit:junit:4.13.2"
+    testImplementation 'junit:junit:4.13.2'
 
-    androidTestImplementation "androidx.test.espresso:espresso-core:3.6.1"
-    androidTestImplementation "androidx.test.espresso:espresso-contrib:3.6.1"
-    androidTestImplementation "androidx.test.ext:junit:1.2.1"
-    androidTestImplementation "androidx.test:rules:1.6.1"
-    androidTestImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
-    androidTestImplementation "junit:junit:4.13.2"
-    androidTestImplementation "org.mockito:mockito-android:5.12.0"
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.6.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test:rules:1.6.1'
+    androidTestImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0'
+    androidTestImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'org.mockito:mockito-android:5.14.2'
 }
 
 allOpen {
-    annotation("com.bopr.android.smailer.util.Mockable")
+    annotation 'com.bopr.android.smailer.util.Mockable'
 }
+
+preBuild.finalizedBy updateReleaseInfo
+
+assemble.finalizedBy uploadRelease
+
+//afterEvaluate {
+//    assembleDebug.finalizedBy uploadRelease
+//}

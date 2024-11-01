@@ -10,7 +10,7 @@ import java.util.*
 data class BuildInfo(
     val number: String,
     val time: String,
-    val name: String
+    val name: String?
 ) {
 
     companion object {

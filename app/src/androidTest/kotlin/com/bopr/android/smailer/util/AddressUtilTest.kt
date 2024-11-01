@@ -13,6 +13,8 @@ class AddressUtilTest : BaseTest() {
     @Test
     fun test_FormatPhoneNumber() {
         assertEquals("+7 905 230-94-41", formatPhoneNumber("7 9 0523094   -41"))
+        assertEquals("SPORTMASTER", formatPhoneNumber("SPORTMASTER"))
+        assertEquals("", formatPhoneNumber(""))
     }
 
     @Test

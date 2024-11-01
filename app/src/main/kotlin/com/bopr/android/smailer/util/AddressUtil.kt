@@ -13,9 +13,9 @@ private val NON_PHONE_SYMBOLS = Regex("[^A-Za-z0-9*.]")
 
 fun formatPhoneNumber(s: String): String {
     return PhoneNumberUtils.formatNumber(
-        if (s.first() == '+') s else "+$s",
+        if (s.firstOrNull() == '+') s else "+$s",
         Locale.ROOT.country
-    )
+    ) ?: s
 }
 
 fun stripPhoneNumber(number: String): String {

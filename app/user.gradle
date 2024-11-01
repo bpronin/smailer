@@ -1,57 +1,24 @@
-if (file("local.gradle").exists()) {
-    apply from: "local.gradle"
-} else {
-    apply from: "../.github/workflows/local.gradle"
-}
-
 import java.text.SimpleDateFormat
 
-/* user defined procedures */
+tasks.register('updateReleaseInfo') {
+    def propsFile = new File(projectDir, 'src/main/assets/release.properties')
 
-def updateReleaseInfo = {
-    def propFile = new File(projectDir, 'src/main/assets/release.properties')
-    Properties props = new Properties()
-    props.load(new FileInputStream(propFile))
+    doFirst {
+        Properties props = new Properties()
+        props.load(new FileInputStream(propsFile))
 
-    def buildNumber = Integer.parseInt(props.getProperty('build_number')) + 1
+        def buildNumber = Integer.parseInt(props.getProperty('build_number')) + 1
+        props.setProperty("build_number", String.valueOf(buildNumber))
 
-    def df = new SimpleDateFormat('yyyy-MM-dd HH:mm:ss z')
-    df.setTimeZone(TimeZone.getTimeZone('UTC'))
-    def buildTime = df.format(new Date())
+        def format = new SimpleDateFormat('yyyy-MM-dd HH:mm:ss z')
+        format.setTimeZone(TimeZone.getTimeZone('UTC'))
+        props.setProperty('build_time', format.format(new Date()))
 
-    props.setProperty('build_number', String.valueOf(buildNumber))
-    props.setProperty('build_time', String.valueOf(buildTime))
-    props.store(new FileOutputStream(propFile), 'Release properties')
-
-    println('updating release build to: ' + buildNumber)
-}
-
-def uploadApk = { apkName ->
-    if (project.hasProperty('upload_path')) {
-        def srcPath = new File(projectDir, 'build/outputs/apk/')
-        def dstPath = new File(upload_path)
-        println("copying apk from: " + srcPath + " to: " + dstPath)
-        copy {
-            from fileTree(srcPath).include("**/*" + apkName + ".apk").files
-            into dstPath
-        }
-    } else {
-        println("Property not set")
+        props.store(new FileOutputStream(propsFile), 'Release properties')
     }
 }
 
-tasks.register("uploadRelease") {
-    doLast {
-        uploadApk("paid-staging")
-    }
-}
-
-assemble.doLast {
-    updateReleaseInfo()
-}
-
-afterEvaluate {
-    assemblePaidStaging.doLast {
-        uploadApk("paid-staging")
-    }
+tasks.register('uploadRelease', Copy) {
+    from fileTree('build/outputs/apk').include('**/*.apk').files
+    into upload_path
 }

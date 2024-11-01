@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        package="com.bopr.android.smailer">
+        xmlns:tools="http://schemas.android.com/tools">
 
     <uses-feature
             android:name="android.hardware.telephony"
@@ -51,6 +50,11 @@
         <meta-data
                 android:name="firebase_crashlytics_collection_enabled"
                 android:value="${crashlyticsEnabled}" />
+
+        <property
+                android:name="android.adservices.AD_SERVICES_CONFIG"
+                android:resource="@xml/ad_services_config"
+                tools:replace="android:resource" />
 
         <activity
                 android:name=".ui.MainActivity"
@@ -121,11 +125,13 @@
                 android:label="@string/email"
                 android:parentActivityName=".ui.EventConsumersActivity" />
 
-        <activity android:name=".ui.TelegramSettingsActivity"
+        <activity
+                android:name=".ui.TelegramSettingsActivity"
                 android:label="@string/telegram"
                 android:parentActivityName=".ui.EventConsumersActivity" />
 
-        <activity android:name=".ui.SmsSettingsActivity"
+        <activity
+                android:name=".ui.SmsSettingsActivity"
                 android:label="@string/sms"
                 android:parentActivityName=".ui.EventConsumersActivity" />
 
