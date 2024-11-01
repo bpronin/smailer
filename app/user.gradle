@@ -8,7 +8,7 @@ tasks.register('updateReleaseInfo') {
         props.load(new FileInputStream(propsFile))
 
         def buildNumber = Integer.parseInt(props.getProperty('build_number')) + 1
-        props.setProperty("build_number", String.valueOf(buildNumber))
+        props.setProperty('build_number', String.valueOf(buildNumber))
 
         def format = new SimpleDateFormat('yyyy-MM-dd HH:mm:ss z')
         format.setTimeZone(TimeZone.getTimeZone('UTC'))
@@ -19,6 +19,6 @@ tasks.register('updateReleaseInfo') {
 }
 
 tasks.register('uploadRelease', Copy) {
-    from fileTree('build/outputs/apk').include('**/*.apk').files
+    from fileTree('build/outputs/apk/paid').include('**/*.apk').files
     into upload_path
 }
