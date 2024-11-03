@@ -3,5 +3,4 @@
 *.iml
 **/build/
 /local.properties
-/app/keystore.p12
-/app/local.gradle
+/keystore.p12
