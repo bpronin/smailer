@@ -103,7 +103,7 @@ class TelegramSettingsFragment : BasePreferenceFragment(R.xml.pref_telegram_sett
             return getString(R.string.test_message)
         }
 
-        override fun getMessage(): String {
+        override fun getBody(): String {
             return getString(R.string.this_is_test_message)
         }
 

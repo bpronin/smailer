@@ -30,9 +30,9 @@
     <string name="battery_optimization">Battery optimization</string>
     <string name="battery_optimization_reason">To make the application work properly when device is in standby mode please turn off battery optimization for it.</string>
     <string name="blacklist">Blacklist</string>
-    <string name="called_phone">Called: %1$s (%2$s)</string>
+    <string name="called_phone">Called: %1$s%2$s</string>
     <string name="caller_name">Caller name</string>
-    <string name="caller_phone">Caller: %1$s (%2$s)</string>
+    <string name="caller_phone">Caller: %1$s%2$s</string>
     <string name="check_settings">Please check your settings</string>
     <string name="check_your_settings">Please check your settings</string>
     <string name="clear">Clear</string>
@@ -165,7 +165,7 @@
     <string name="sender">Account</string>
     <string name="sender_account_not_found">Sender account not found</string>
     <string name="sender_of">Sender: %s</string>
-    <string name="sender_phone">Sender: %1$s (%2$s)</string>
+    <string name="sender_phone">Sender: %1$s%2$s</string>
     <string name="sent_sms">Sent SMS to %s</string>
     <string name="sent_time_device">Sent%1$s%2$s</string>
     <string name="service_account_not_found">Service account not found</string>

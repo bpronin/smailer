@@ -100,12 +100,12 @@ android {
     flavorDimensions += listOf("main")
 
     productFlavors {
-        create("free") {
-            dimension = "main"
-        }
         create("paid") {
             dimension = "main"
             isDefault = true
+        }
+        create("free") {
+            dimension = "main"
         }
     }
 
@@ -128,7 +128,7 @@ android {
         }
     }
 
-    configurations.all() {
+    configurations.all {
         exclude("org.apache.httpcomponents")
         exclude("commons-logging", "commons-logging")
         exclude("com.google.guava", "listenablefuture")
@@ -198,7 +198,10 @@ tasks.register("updateReleaseInfo") {
 }
 
 tasks.register<Copy>("uploadRelease") {
-    from(fileTree(layout.buildDirectory.dir("outputs/apk")).files)
+    from(
+        fileTree(layout.buildDirectory.dir("outputs/apk/free")).files,
+        fileTree(layout.buildDirectory.dir("outputs/apk/paid")).files
+    )
     into(localProperties.getProperty("upload_path"))
     include("**/*.apk")
 }

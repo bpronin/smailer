@@ -30,9 +30,9 @@
     <string name="battery_optimization">Экономия заряда батареи</string>
     <string name="battery_optimization_reason">Чтобы приложение корректно работало когда устройство находиться в спящем режиме, отключите для него оптимизацию питания.</string>
     <string name="blacklist">Чёрный список</string>
-    <string name="called_phone">Вы звонили: %1$s (%2$s)</string>
+    <string name="called_phone">Вы звонили: %1$s%2$s</string>
     <string name="caller_name">Имя звонившего</string>
-    <string name="caller_phone">Вам звонил: %1$s (%2$s)</string>
+    <string name="caller_phone">Вам звонил: %1$s%2$s</string>
     <string name="check_settings">Проверьте ваши настройки</string>
     <string name="check_your_settings">Проверьте настройки приложения</string>
     <string name="clear">Очистить</string>
@@ -164,7 +164,7 @@
     <string name="sender">Отправитель</string>
     <string name="sender_account_not_found">Аккаунт отправителя не найден</string>
     <string name="sender_of">Отправитель: %s</string>
-    <string name="sender_phone">Отправитель: %1$s (%2$s)</string>
+    <string name="sender_phone">Отправитель: %1$s%2$s</string>
     <string name="sent_sms">Отправлено SMS на номер %s</string>
     <string name="sent_time_device">Отправлено%1$s%2$s</string>
     <string name="service_account_not_found">Сервисный аккаунт не найден</string>

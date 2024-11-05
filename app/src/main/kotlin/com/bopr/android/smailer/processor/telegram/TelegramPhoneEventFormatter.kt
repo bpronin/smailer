@@ -2,6 +2,7 @@ package com.bopr.android.smailer.processor.telegram
 
 import android.content.Context
 import com.bopr.android.smailer.R
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_BODY
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import com.bopr.android.smailer.util.eventTypeText
@@ -21,7 +22,9 @@ class TelegramPhoneEventFormatter(private val context: Context, private val even
         return string(eventTypeText(event))
     }
 
-    override fun getMessage(): String {
+    override fun getBody(): String {
+        if (!settings.hasTelegramMessageContent(VAL_PREF_MESSAGE_CONTENT_BODY)) return ""
+
         return when {
             event.isMissed ->
                 string(R.string.you_had_missed_call)
@@ -50,7 +53,7 @@ class TelegramPhoneEventFormatter(private val context: Context, private val even
                 else -> R.string.called_phone
             },
             formatPhoneNumber(event.phone),
-            context.getContactName(event.phone).orEmpty()
+            context.getContactName(event.phone)?.let { " ($it)" } ?: ""
         )
     }
 

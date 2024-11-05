@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.annotation.StringRes
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_BODY
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME
@@ -20,81 +21,79 @@ abstract class BaseTelegramEventFormatter(
     private val eventTime: Long?,
     private val dispatchTime: Long?,
     private val location: GeoLocation?
-) :
-    TelegramMessageFormatter(context) {
+) : TelegramMessageFormatter(context) {
 
     protected val settings = Settings(context)
 
-    private val newline = "\n".httpEncoded()
+    override fun formatMessage(): String = buildString {
 
-    override fun formatMessage(): String {
-        return buildString {
+        /* header */
 
-            /* header */
+        getHeaderText()?.let {
+            append("<b>")
+            append(it)
+            append("</b>")
+        }
 
-            val headerText = getHeaderText()
-            val eventTimeText = getEventTimeText()
-            headerText?.run {
-                append("<b>")
-                append(this)
-                append("</b>")
-                append(newline)
-            }
-            eventTimeText?.run {
-                append("<b>")
-                append(this)
-                append("</b>")
-                append(newline)
-            }
-            if (headerText != null || eventTimeText != null)
-                append(newline)
+        getEventTimeText()?.let {
+            appendSpacer()
+            append("<b>")
+            append(it)
+            append("</b>")
+        }
 
-            /* body */
+        /* body */
 
-            getMessage()?.run {
-                append(this)
-            }
+        getBodyText()?.let {
+            appendSpacer()
+            appendSpacer()
+            append(it)
+            appendSpacer()
+        }
 
-            /* footer */
+        /* footer */
 
-            val senderText = getSenderText()
-            val processTimeText = getDispatchTimeText()
-            val deviceNameText = getDeviceNameText()
+        getSenderText()?.let {
+            appendSpacer()
+            append("<i>")
+            append(it)
+            append("</i>")
+        }
 
-            if (senderText != null || processTimeText != null || deviceNameText != null)
-                append(newline)
-
-            senderText?.run {
-                append(newline)
-                append("<i>")
-                append(this)
-                append("</i>")
-            }
-            if (!deviceNameText.isNullOrEmpty() || !processTimeText.isNullOrEmpty()) {
-                append(newline)
-                append("<i>")
-                append(
-                    string(
-                        R.string.sent_time_device,
-                        deviceNameText.orEmpty(), processTimeText.orEmpty()
-                    )
+        val deviceNameText = getDeviceNameText()
+        val dispatchTimeText = getDispatchTimeText()
+        if (!deviceNameText.isNullOrEmpty() || !dispatchTimeText.isNullOrEmpty()) {
+            appendSpacer()
+            append("<i>")
+            append(
+                string(
+                    R.string.sent_time_device,
+                    deviceNameText.orEmpty(),
+                    dispatchTimeText.orEmpty()
                 )
-                append("</i>")
-            }
-            getLocationText()?.run {
-                append(newline)
-                append("<i>")
-                append(string(R.string.last_known_location, this))
-                append("</i>")
-            }
+            )
+            append("</i>")
+        }
+
+        getLocationText()?.let {
+            appendSpacer()
+            append("<i>")
+            append(string(R.string.last_known_location, it))
+            append("</i>")
         }
     }
 
     protected abstract fun getTitle(): String?
 
-    protected abstract fun getMessage(): String?
+    protected abstract fun getBody(): String?
 
     protected abstract fun getSenderName(): String?
+
+    private fun getBodyText(): String? {
+        return if (settings.hasTelegramMessageContent(VAL_PREF_MESSAGE_CONTENT_BODY))
+            getBody()
+        else null
+    }
 
     private fun getHeaderText(): String? {
         return if (settings.hasTelegramMessageContent(VAL_PREF_MESSAGE_CONTENT_HEADER))
@@ -151,9 +150,16 @@ abstract class BaseTelegramEventFormatter(
         else null
     }
 
-    protected fun string(@StringRes resId: Int, vararg formatArgs: Any?): String =
-        context.getString(resId, *formatArgs)
+    protected fun string(@StringRes resId: Int, vararg args: Any?) = context.getString(resId, *args)
 
     protected fun string(@StringRes resId: Int) = context.getString(resId)
 
+    protected fun StringBuilder.appendSpacer() {
+        if (isNotEmpty()) append(newline)
+    }
+    
+    companion object {
+
+        private val newline = "\n".httpEncoded()
+    }
 }
