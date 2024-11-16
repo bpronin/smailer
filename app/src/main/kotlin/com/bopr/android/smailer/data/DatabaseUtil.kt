@@ -6,6 +6,7 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.bopr.android.smailer.util.strings
+import com.bopr.android.smailer.util.useIt
 
 /**
  * Database utilities.
@@ -16,15 +17,19 @@ import com.bopr.android.smailer.util.strings
 val COUNT_SELECTION = strings("COUNT(*)")
 
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-inline fun SQLiteDatabase.query(table: String, projection: Array<out String>? = null, selection: String? = null,
-                                selectionArgs: Array<out String>? = null, groupBy: String? = null,
-                                having: String? = null, order: String? = null, limit: String? = null): Cursor {
+inline fun SQLiteDatabase.query(
+    table: String, projection: Array<out String>? = null, selection: String? = null,
+    selectionArgs: Array<out String>? = null, groupBy: String? = null,
+    having: String? = null, order: String? = null, limit: String? = null
+): Cursor {
     return query(table, projection, selection, selectionArgs, groupBy, having, order, limit)
 }
 
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-inline fun SQLiteDatabase.update(table: String, values: ContentValues, where: String? = null,
-                                 whereArgs: Array<out String>? = null): Int {
+inline fun SQLiteDatabase.update(
+    table: String, values: ContentValues, where: String? = null,
+    whereArgs: Array<out String>? = null
+): Int {
     return update(table, values, where, whereArgs)
 }
 
@@ -41,15 +46,17 @@ inline fun <T> SQLiteDatabase.batch(action: SQLiteDatabase.() -> T): T {
 
 inline fun SQLiteDatabase.getTables(): Set<String> {
     return query("sqlite_master", strings("name"), "type='table' AND name<>'android_metadata'")
-            .toSet { getString(0) }
+        .toSet { getString(0) }
 }
 
 inline fun SQLiteDatabase.isTableExists(name: String): Boolean {
     return count("sqlite_master", "type='table' AND name='$name'") == 1L
 }
 
-inline fun SQLiteDatabase.alterTable(table: String, schemaSql: String,
-                                     transform: Cursor.(String) -> String? = { getStringIfExists(it) }) {
+inline fun SQLiteDatabase.alterTable(
+    table: String, schemaSql: String,
+    transform: Cursor.(String) -> String? = { getStringIfExists(it) }
+) {
     val old = table + "_old"
     dropTable(old) /* ensure temp table is not exists */
     if (isTableExists(table)) {
@@ -62,11 +69,11 @@ inline fun SQLiteDatabase.alterTable(table: String, schemaSql: String,
     }
 }
 
-inline fun SQLiteDatabase.copyTable(src: String, dest: String,
-                                    transform: Cursor.(String) -> String? = { getStringIfExists(it) }) {
-    val columns = query(table = dest, limit = "1").use {
-        it.columnNames
-    }
+inline fun SQLiteDatabase.copyTable(
+    src: String, dest: String,
+    transform: Cursor.(String) -> String? = { getStringIfExists(it) }
+) {
+    val columns = query(table = dest, limit = "1").useIt { columnNames }
 
     query(src).useAll {
         val values = ContentValues()
@@ -81,8 +88,10 @@ inline fun SQLiteDatabase.dropTable(table: String) {
     execSQL("DROP TABLE IF EXISTS $table")
 }
 
-inline fun SQLiteDatabase.count(table: String, selection: String? = null,
-                                selectionArgs: Array<out String>? = null): Long {
+inline fun SQLiteDatabase.count(
+    table: String, selection: String? = null,
+    selectionArgs: Array<out String>? = null
+): Long {
     return query(table, COUNT_SELECTION, selection, selectionArgs).useFirst { getLong(0) }
 }
 

@@ -79,6 +79,7 @@
     <string name="item_already_exists">%s уже существует</string>
     <string name="last_known_location">Последнее известное местоположение: %s</string>
     <string name="list_is_empty">Список пуст</string>
+    <string name="location_request_failed">Ошибка запроса геолокации</string>
     <string name="low_battery_level">Низкий уровень батареи</string>
     <string name="mail_items_zero">Нет сервисной почты</string>
     <string name="mark_all_as_read">Отметить все как прочитанные</string>
@@ -94,7 +95,8 @@
     <string name="no_network_try_later">Отсутствует соединение с сервером. Попробуйте позже.</string>
     <string name="no_permission_read_location">нет разрешения на определение местоположения</string>
     <string name="no_recipients_specified">Не указаны получатели</string>
-    <string name="no_telegram_bot_token">Токен Telegram-бота не указан.</string>
+    <string name="no_telegram_bot_token">Не указан токен Telegram-бота.</string>
+    <string name="no_telegram_network_try_later">Отсутствует соединение с сервером Telegram. Попробуйте позже.</string>
     <string name="no_triggers_specified">Все триггеры отключены</string>
     <string name="notifications">Уведомления</string>
     <string name="notify_remote_actions">Показывать уведомление о выполнении операций</string>

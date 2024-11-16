@@ -1,9 +1,9 @@
 package com.bopr.android.smailer.provider.telephony
 
-import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_ACCEPTED
-import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_NUMBER_BLACKLISTED
-import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_TEXT_BLACKLISTED
-import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_TRIGGER_OFF
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.ACCEPT_STATE_ACCEPTED
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.ACCEPT_STATE_BYPASS_NUMBER_BLACKLISTED
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.ACCEPT_STATE_BYPASS_TEXT_BLACKLISTED
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.ACCEPT_STATE_BYPASS_TRIGGER_OFF
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
@@ -30,18 +30,18 @@ class PhoneEventFilter(
      * Tests if the filter accepts given event.
      *
      * @param event event
-     * @return [STATUS_ACCEPTED] if event was accepted or explanation flags otherwise
+     * @return [ACCEPT_STATE_ACCEPTED] if event accepted, explanation flags otherwise
      */
     fun test(event: PhoneEventData): Int {
-        var result = STATUS_ACCEPTED
+        var result = ACCEPT_STATE_ACCEPTED
         if (!testTrigger(event)) {
-            result = result or STATUS_TRIGGER_OFF
+            result = result or ACCEPT_STATE_BYPASS_TRIGGER_OFF
         }
         if (!testPhone(event.phone)) {
-            result = result or STATUS_NUMBER_BLACKLISTED
+            result = result or ACCEPT_STATE_BYPASS_NUMBER_BLACKLISTED
         }
         if (!testText(event.text)) {
-            result = result or STATUS_TEXT_BLACKLISTED
+            result = result or ACCEPT_STATE_BYPASS_TEXT_BLACKLISTED
         }
         return result
     }

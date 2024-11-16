@@ -6,19 +6,20 @@ import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.data.Database
-import com.bopr.android.smailer.processor.EventDispatcher
+import com.bopr.android.smailer.messenger.EventDispatcher
 import com.bopr.android.smailer.provider.Event
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_PROCESSED
-import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_ACCEPTED
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.ACCEPT_STATE_ACCEPTED
 import com.bopr.android.smailer.ui.MainActivity
-import com.bopr.android.smailer.util.GeoLocation.Companion.requestGeoLocation
-import org.slf4j.LoggerFactory
+import com.bopr.android.smailer.util.GeoLocation.Companion.getGeoLocation
+import com.bopr.android.smailer.util.Logger
+import com.bopr.android.smailer.util.useIt
 import java.lang.System.currentTimeMillis
 
 /**
- * Sends out messages for phone events.
+ * Precesses phone events.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
@@ -31,66 +32,81 @@ class PhoneEventProcessor(
 
     private val settings: Settings = Settings(context)
 
-    fun process(data: PhoneEventData) {
-        log.debug("Processing: {}", data)
+    fun process(event: PhoneEventData) {
+        log.debug("Processing: $event")
 
-        database.use {
-            updateEvent(data) {
-                database.commit {
-                    events.add(data)
-                }
+        database.useIt {
+            commit {
+                val currentLocation = context.getGeoLocation(this)
+                events.add(
+                    event.apply {
+                        location = currentLocation
+                        acceptState = eventFilter().test(this)
+                        processState = (if (acceptState == ACCEPT_STATE_ACCEPTED)
+                            STATE_PENDING else STATE_IGNORED)
+                    })
             }
+
+            processPending()
+
+//                context.requestGeoLocation(
+//                database = this,
+//                onSuccess = { currentLocation ->
+//                    commit {
+//                        events.add(
+//                            event.apply {
+//                                location = currentLocation
+//                                acceptState = eventFilter().test(this)
+//                                processState = (if (acceptState == ACCEPT_STATE_ACCEPTED)
+//                                    STATE_PENDING else STATE_IGNORED)
+//                            })
+//                    }
+//
+//                    processPending()
+//                },
+//                onError = { error ->
+//                    log.error("Processing failed", error)
+//                }
+//            )
         }
     }
 
-    fun processPending() {
-        database.use {
-            val pendingEvents = database.events.filterPending
+    fun processPending(): Int {
+        var processedEventsCount = 0
+
+        database.useIt {
+            val pendingEvents = events.filterPending
+
             if (pendingEvents.isEmpty()) {
                 log.debug("No pending events")
             } else {
                 log.debug("Processing ${pendingEvents.size} pending event(s)")
 
                 prepare()
-                database.commit {
+                commit {
                     batch {
                         for (event in pendingEvents) {
                             event.processTime = currentTimeMillis()
-                            if (dispatch(event)) {
-                                event.state = STATE_PROCESSED
-                                events.add(event)
-                            }
+                            dispatch(event,
+                                onSuccess = {
+                                    event.processState = STATE_PROCESSED
+                                    events.add(event)
+                                    processedEventsCount++
+                                },
+                                onError = {
+                                    event.processState = STATE_PENDING
+                                    events.add(event)
+                                }
+                            )
                         }
                     }
                 }
             }
         }
-    }
 
-    private fun updateEvent(data: PhoneEventData, onComplete: () -> Unit) {
-        context.requestGeoLocation(database) { currentLocation ->
+        log.debug("Processed $processedEventsCount event(s)")
 
-            prepare()
-
-            data.apply {
-                location = currentLocation
-                processStatus = eventFilter().test(this)
-                processTime = currentTimeMillis()
-
-                if (processStatus != STATUS_ACCEPTED) {
-                    state = STATE_IGNORED
-                    log.debug("Ignored")
-                } else if (dispatch(this)) {
-                    state = STATE_PROCESSED
-                    log.debug("Processed")
-                } else {
-                    state = STATE_PENDING
-                    log.debug("Postponed")
-                }
-            }
-
-            onComplete()
-        }
+        return processedEventsCount
     }
 
     private fun prepare() {
@@ -99,28 +115,33 @@ class PhoneEventProcessor(
         log.debug("Dispatcher prepared")
     }
 
-    private fun dispatch(data: PhoneEventData): Boolean {
-        log.debug("Dispatching event")
+    private fun dispatch(
+        data: PhoneEventData,
+        onSuccess: () -> Unit,
+        onError: (Throwable) -> Unit
+    ) {
+        log.debug("Dispatching event...")
 
-        return try {
-            eventDispatcher.dispatch(Event(payload = data))
-            if (settings.getBoolean(PREF_NOTIFY_SEND_SUCCESS)) {
+        eventDispatcher.dispatch(
+            Event(payload = data),
+            onSuccess = {
                 notifySuccess()
-            }
-            true
-        } catch (x: Exception) {
-            log.warn("Failed dispatching: ", x)
+                onSuccess()
+            },
+            onError = { error ->
+                log.warn("Dispatch failed: ", error)
 
-            false
-        }
+                onError(error)
+            }
+        )
     }
 
     private fun notifySuccess() {
-        notifications.notifyInfo(
-            context.getString(R.string.email_successfully_send),
-            null,
-            MainActivity::class
-        )
+        if (settings.getBoolean(PREF_NOTIFY_SEND_SUCCESS))
+            notifications.notifyInfo(
+                title = context.getString(R.string.email_successfully_send),
+                target = MainActivity::class
+            )
     }
 
     private fun eventFilter() = PhoneEventFilter(
@@ -133,7 +154,7 @@ class PhoneEventProcessor(
 
     companion object {
 
-        private val log = LoggerFactory.getLogger("PhoneEventProcessor")
+        private val log = Logger("PhoneEventProcessor")
     }
 
 }

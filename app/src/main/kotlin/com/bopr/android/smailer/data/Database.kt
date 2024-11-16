@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bopr.android.smailer.sync.SyncWorker.Companion.syncAppDataWithGoogleCloud
 import com.bopr.android.smailer.util.GeoLocation
-import org.slf4j.LoggerFactory
+import com.bopr.android.smailer.util.Logger
 import java.io.Closeable
 import java.lang.System.currentTimeMillis
 
@@ -72,7 +72,7 @@ class Database(private val context: Context) : Closeable {
             put(COLUMN_LAST_LONGITUDE, value?.longitude)
             put(COLUMN_LAST_LOCATION_TIME, currentTimeMillis())
         }).also {
-            log.debug("Updated last location to: {}", value)
+            log.debug("Updated last location to: $value")
         }
 
     /**
@@ -94,7 +94,7 @@ class Database(private val context: Context) : Closeable {
      */
     fun batch(action: Database.() -> Unit) {
         log.debug("Begin transaction")
-        helper.writableDatabase.batch { this@Database.action() }
+        helper.writableDatabase.batch { action() }
         log.debug("End transaction")
     }
 
@@ -172,7 +172,7 @@ class Database(private val context: Context) : Closeable {
 
     companion object {
 
-        private val log = LoggerFactory.getLogger("Database")
+        private val log = Logger("Database")
 
         var databaseName = "smailer.sqlite"
 
@@ -245,7 +245,7 @@ class Database(private val context: Context) : Closeable {
          * Sends database broadcast.
          */
         fun Context.sendDatabaseBroadcast(tables: Set<String>) {
-            log.debug("Broadcasting data changed: {}", tables)
+            log.debug("Broadcasting data changed: $tables")
 
             val intent = Intent(ACTION_DATABASE_CHANGED)
                 .putExtra(EXTRA_TABLES, tables.toTypedArray())

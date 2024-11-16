@@ -54,6 +54,7 @@ class NotificationsHelper(private val context: Context) {
         NotificationCompat.Builder(context, CHANNEL_ID_NOTIFICATIONS)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(context.getString(R.string.check_settings))
+            .setAutoCancel(true)
             .setCategory(CATEGORY_ERROR)
 
     init {

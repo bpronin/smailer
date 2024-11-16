@@ -34,15 +34,21 @@ fun isQuoted(s: String?): Boolean {
     return !s.isNullOrEmpty() && s.first() == '\"' && s.last() == '\"'
 }
 
-fun commaJoin(values: Collection<*>): String {
-    return values.joinToString(",") {
-        it.toString().replace(",", "/,")
+fun <T> Iterable<T>.commaJoin(): String {
+    return joinToString(",") {
+        it.toString().replace(",", "/,")  /* escape commas */
     }
 }
 
-fun commaSplit(s: String?): List<String> {
-    return if (!s.isNullOrEmpty()) {
-        s.split(COMMA_ESCAPED).map {
+fun <T> Array<out T>.commaJoin(): String {
+    return joinToString(",") {
+        it.toString().replace(",", "/,")  /* escape commas */
+    }
+}
+
+fun String?.commaSplit(): List<String> {
+    return if (!isNullOrEmpty()) {
+        split(COMMA_ESCAPED).map {
             it.trim().replace("/,", ",")
         }
     } else {
@@ -96,7 +102,7 @@ fun isValidEmailAddress(address: String?): Boolean {
 }
 
 fun isValidEmailAddressList(addresses: String?): Boolean {
-    return !addresses.isNullOrBlank() && commaSplit(addresses).all { isValidEmailAddress(it) }
+    return !addresses.isNullOrBlank() && addresses.commaSplit().all { isValidEmailAddress(it) }
 
 }
 

@@ -6,7 +6,7 @@ import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.util.GeoLocation.Companion.fromCoordinates
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import com.bopr.android.smailer.external.GoogleDrive
-import org.slf4j.LoggerFactory
+import com.bopr.android.smailer.util.Logger
 import java.io.IOException
 
 /**
@@ -121,8 +121,8 @@ internal class Synchronizer(context: Context,
                 details = event.details,
                 latitude = event.location?.latitude,
                 longitude = event.location?.longitude,
-                state = event.state,
-                processStatus = event.processStatus,
+                state = event.processState,
+                processStatus = event.acceptState,
                 processTime = event.processTime,
                 isRead = event.isRead
         )
@@ -138,17 +138,17 @@ internal class Synchronizer(context: Context,
                 text = data.text,
                 location = fromCoordinates(data.latitude, data.longitude),
                 details = data.details,
-                state = data.state,
+                processState = data.state,
                 acceptor = data.recipient,
                 isRead = data.isRead,
-                processStatus = data.processStatus,
+                acceptState = data.processStatus,
                 processTime = data.processTime
         )
     }
 
     companion object {
 
-        private val log = LoggerFactory.getLogger("Synchronizer")
+        private val log = Logger("Synchronizer")
 
         const val SYNC_NORMAL = 0
         const val SYNC_FORCE_DOWNLOAD = 1

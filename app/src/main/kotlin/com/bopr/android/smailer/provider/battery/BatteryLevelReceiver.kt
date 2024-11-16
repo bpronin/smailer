@@ -5,9 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_BATTERY_LOW
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.processor.EventDispatcher
+import com.bopr.android.smailer.messenger.EventDispatcher
 import com.bopr.android.smailer.provider.Event
-import org.slf4j.LoggerFactory
+import com.bopr.android.smailer.util.Logger
 
 /**
  * Starts email processing on low battery level.
@@ -16,10 +16,8 @@ import org.slf4j.LoggerFactory
  */
 class BatteryLevelReceiver : BroadcastReceiver() {
 
-    private val log = LoggerFactory.getLogger("BatteryLevelReceiver")
-
     override fun onReceive(context: Context, intent: Intent) {
-        log.debug("Received intent: {}", intent)
+        log.debug("Received intent: $intent" )
 
         if (intent.action == ACTION_BATTERY_LOW) {
             log.debug("Low battery level detected")
@@ -27,9 +25,13 @@ class BatteryLevelReceiver : BroadcastReceiver() {
             if (Settings(context).getBoolean(Settings.PREF_DISPATCH_BATTERY_LEVEL)) {
                 val data = BatteryLevelData("low battery")
                 val event = Event(payload = data)
-                EventDispatcher(context).dispatch(event)
+                EventDispatcher(context).dispatch(event, {}, {})
             }
         }
     }
 
+    companion object {
+
+        private val log = Logger("BatteryLevelReceiver")
+    }
 }

@@ -7,7 +7,7 @@ import com.bopr.android.smailer.external.Firebase.Companion.FCM_SENDER
 import com.bopr.android.smailer.sync.SyncWorker.Companion.syncAppDataWithGoogleCloud
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import org.slf4j.LoggerFactory
+import com.bopr.android.smailer.util.Logger
 
 /**
  * Performs actions when specific firebase messages received.
@@ -35,6 +35,6 @@ class FirebaseControlService : FirebaseMessagingService() {
 
     companion object {
 
-        private val log = LoggerFactory.getLogger("FirebaseControlService")
+        private val log = Logger("FirebaseControlService")
     }
 }

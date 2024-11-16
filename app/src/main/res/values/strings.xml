@@ -80,6 +80,7 @@
     <string name="item_already_exists">%s is already exists</string>
     <string name="last_known_location">Last known device location: %s</string>
     <string name="list_is_empty">List is empty</string>
+    <string name="location_request_failed">Geolocation request failed</string>
     <string name="low_battery_level">Low battery level</string>
     <string name="mail_items_zero">No service mail</string>
     <string name="mark_all_as_read">Mark all as read</string>
@@ -92,10 +93,11 @@
     <string name="next_time">Next time</string>
     <string name="no_access_to_google_account">Application has no access to Google account</string>
     <string name="no_account_specified">No sender account specified.</string>
-    <string name="no_network_try_later">No connection to server. Please try later.</string>
+    <string name="no_network_try_later">No connection to server. Please try later</string>
     <string name="no_permission_read_location">(no permission to read location)</string>
     <string name="no_recipients_specified">No recipients specified</string>
-    <string name="no_telegram_bot_token">No Telegram bot token specified.</string>
+    <string name="no_telegram_bot_token">No Telegram bot token specified</string>
+    <string name="no_telegram_network_try_later">No connection to Telegram server. Please try later</string>
     <string name="no_triggers_specified">All triggers are disabled</string>
     <string name="notifications">Notifications</string>
     <string name="notify_remote_actions">Display notification when actions are performed</string>

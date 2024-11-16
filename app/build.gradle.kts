@@ -45,8 +45,8 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        versionCode = 101
-        versionName = "1.10.2"
+        versionCode = 102
+        versionName = "1.10.3"
         applicationId = "com.bopr.android.smailer"
         minSdk = 21
         targetSdk = 35
@@ -146,7 +146,6 @@ dependencies {
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("androidx.work:work-runtime-ktx:2.10.0")
     implementation("com.android.volley:volley:1.2.1")
-    implementation("com.github.tony19:logback-android:3.0.0")
     implementation("com.google.android.gms:play-services-auth:21.2.0")
     implementation("com.google.android.gms:play-services-location:21.3.0")
     implementation("com.google.android.material:material:1.12.0")
@@ -158,7 +157,6 @@ dependencies {
     implementation("com.google.firebase:firebase-messaging:24.1.0")
     implementation("com.sun.mail:android-mail:1.6.7")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.0.21")
-    implementation("org.slf4j:slf4j-api:2.0.16")
 
     "freeImplementation"("com.google.android.gms:play-services-ads:23.5.0")
 

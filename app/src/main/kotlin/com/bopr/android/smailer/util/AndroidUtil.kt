@@ -1,8 +1,5 @@
 package com.bopr.android.smailer.util
 
-import android.Manifest.permission.READ_CONTACTS
-import android.Manifest.permission.SEND_SMS
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Context.CONNECTIVITY_SERVICE
 import android.content.Context.POWER_SERVICE
@@ -13,7 +10,6 @@ import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
 import android.telephony.SmsManager
-import androidx.annotation.RequiresPermission
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity

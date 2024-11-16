@@ -11,12 +11,12 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.annotation.StringRes
 import com.bopr.android.smailer.R
+import com.bopr.android.smailer.util.Logger
 import com.bopr.android.smailer.util.checkPermission
 import com.bopr.android.smailer.util.createPickContactIntent
 import com.bopr.android.smailer.util.phoneFromIntent
 import com.bopr.android.smailer.util.showSoftKeyboard
 import com.bopr.android.smailer.util.showToast
-import org.slf4j.LoggerFactory
 
 /**
  * Phone number editor dialog.
@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory
 class EditPhoneDialogFragment(@StringRes private val textRes: Int) :
     BaseEditDialogFragment<String>("edit_phone_dialog") {
 
-    private val log = LoggerFactory.getLogger("EditPhoneDialogFragment")
     private lateinit var editText: EditText
     private var initialValue: String? = null
     private val contactPickerLauncher =
@@ -72,5 +71,10 @@ class EditPhoneDialogFragment(@StringRes private val textRes: Int) :
 
     override fun getValue(): String? {
         return editText.text?.toString()
+    }
+
+    companion object {
+
+        private val log = Logger("ui.EditPhoneDialogFragment")
     }
 }

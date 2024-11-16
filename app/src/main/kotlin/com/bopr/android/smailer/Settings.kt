@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
-import com.bopr.android.smailer.processor.mail.MailPhoneEventFormatter.Companion.PHONE_SEARCH_TAG
+import com.bopr.android.smailer.messenger.mail.MailPhoneEventFormatter.Companion.PHONE_SEARCH_TAG
 import com.bopr.android.smailer.util.DEVICE_NAME
 import com.bopr.android.smailer.util.commaJoin
 import com.bopr.android.smailer.util.commaSplit
@@ -118,7 +118,7 @@ class Settings(context: Context, changeListener: ChangeListener? = null) {
     }
 
     fun getStringList(key: String): MutableList<String> {
-        return getString(key)?.let { commaSplit(it).toMutableList() } ?: mutableListOf()
+        return getString(key)?.commaSplit()?.toMutableList() ?: mutableListOf()
     }
 
     fun update(action: Editor.() -> Unit) {
@@ -138,7 +138,7 @@ class Settings(context: Context, changeListener: ChangeListener? = null) {
         }
 
         fun putStringList(key: String, value: Collection<String>?) {
-            wrapped.putString(key, value?.let { commaJoin(value) })
+            wrapped.putString(key, value?.commaJoin())
         }
 
         fun putInt(key: String, value: Int) {

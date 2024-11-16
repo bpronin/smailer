@@ -1,10 +1,10 @@
 package com.bopr.android.smailer.ui
 
 import android.os.Bundle
-import androidx.preference.Preference
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_SMS_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_SMS_MESSENGER_RECIPIENTS
+import com.bopr.android.smailer.ui.InfoDialog.Companion.showInfoDialog
 import com.bopr.android.smailer.util.GeoLocation.Companion.requestGeoLocation
 import com.bopr.android.smailer.util.PreferenceProgress
 import com.bopr.android.smailer.util.SummaryStyle.*
@@ -21,6 +21,10 @@ import com.bopr.android.smailer.util.updateSummary
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 class SmsSettingsFragment : BasePreferenceFragment(R.xml.pref_sms_settings) {
+
+    private val testSettingsProgress by lazy {
+        PreferenceProgress(requirePreference(PREF_SEND_TEST_SMS))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,21 +52,27 @@ class SmsSettingsFragment : BasePreferenceFragment(R.xml.pref_sms_settings) {
         }
 
         requirePreference(PREF_SEND_TEST_SMS).setOnClickListener {
-            onSendTestMessage(it)
+            onSendTestMessage()
         }
     }
 
-    private fun onSendTestMessage(preference: Preference) {
-        val progress = PreferenceProgress(preference).apply { start() }
-        val time = System.currentTimeMillis()
+    private fun onSendTestMessage() {
+        if (testSettingsProgress.running) return
 
-        requireContext().requestGeoLocation { location ->
+        testSettingsProgress.start()
 
-            settings.getStringList(PREF_SMS_MESSENGER_RECIPIENTS).forEach {
-                requireContext().sendSmsMessage(it, "Test message")
+        requireContext().requestGeoLocation(
+            onSuccess = { location ->
+                settings.getStringList(PREF_SMS_MESSENGER_RECIPIENTS).forEach {
+                    requireContext().sendSmsMessage(it, "Test message")
+                }
+                testSettingsProgress.stop()
+            },
+            onError = {
+                testSettingsProgress.stop()
+                showInfoDialog(R.string.test_message_failed, R.string.location_request_failed)
             }
-            progress.stop()
-        }
+        )
     }
 
     companion object {

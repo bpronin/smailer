@@ -5,10 +5,10 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteDatabase.CONFLICT_IGNORE
 import android.database.sqlite.SQLiteOpenHelper
-import org.slf4j.LoggerFactory
+import com.bopr.android.smailer.util.Logger
 
 /**
- * Convenience [Cursor] wrapper.
+ * Convenience [Cursor] wrapper. Represents [Cursor] as [MutableSet].
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
@@ -79,6 +79,7 @@ abstract class Dataset<T>(
     }
 
     override fun isEmpty(): Boolean {
+        @Suppress("ReplaceSizeZeroCheckWithIsEmpty")
         return size == 0
     }
 
@@ -141,7 +142,7 @@ abstract class Dataset<T>(
             insertWithOnConflict(tableName, null, values, CONFLICT_IGNORE) != -1L
         }.also {
             if (it) {
-                log.debug("Inserted: {}", values)
+                log.debug("Inserted: $values")
             }
         }
     }
@@ -151,7 +152,7 @@ abstract class Dataset<T>(
             update(tableName, values, keyClause, keyOf(element)) != 0
         }.also {
             if (it) {
-                log.debug("Updated: {}", values)
+                log.debug("Updated: $values")
             }
         }
     }
@@ -167,7 +168,7 @@ abstract class Dataset<T>(
     }
 
     companion object {
-        private val log = LoggerFactory.getLogger("Database")
+        private val log = Logger("Database")
     }
 
 }

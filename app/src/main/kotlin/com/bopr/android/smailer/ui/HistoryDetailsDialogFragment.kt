@@ -9,9 +9,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
-import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_NUMBER_BLACKLISTED
-import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_TEXT_BLACKLISTED
-import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_TRIGGER_OFF
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.ACCEPT_STATE_BYPASS_NUMBER_BLACKLISTED
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.ACCEPT_STATE_BYPASS_TEXT_BLACKLISTED
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.ACCEPT_STATE_BYPASS_TRIGGER_OFF
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_PROCESSED
@@ -32,16 +32,16 @@ class HistoryDetailsDialogFragment(private val event: PhoneEventData) : BaseDial
                     findViewById<TextView>(R.id.text_title).text = event.phone
                     findViewById<TextView>(R.id.text_message).text = formatMessage(event)
                     findViewById<TextView>(R.id.text_time).text = formatTime(event.startTime)
-                    findViewById<ImageView>(R.id.image_event_result).setImageResource(eventStateImage(event.state))
-                    findViewById<TextView>(R.id.text_result).setText(eventStateText(event.state))
+                    findViewById<ImageView>(R.id.image_event_result).setImageResource(eventStateImage(event.processState))
+                    findViewById<TextView>(R.id.text_result).setText(eventStateText(event.processState))
                     findViewById<TextView>(R.id.text_type_title).setText(eventTypeText(event))
                     findViewById<TextView>(R.id.text_recipient).text = event.acceptor
                     findViewById<TextView>(R.id.text_result_time).run {
-                        visibility = if (event.state == STATE_PROCESSED) VISIBLE else GONE
+                        visibility = if (event.processState == STATE_PROCESSED) VISIBLE else GONE
                         text = formatProcessTime(event)
                     }
                     findViewById<ImageView>(R.id.image_explain_result).run {
-                        visibility = if (event.state == STATE_IGNORED) VISIBLE else GONE
+                        visibility = if (event.processState == STATE_IGNORED) VISIBLE else GONE
                         setOnClickListener {
                             onExplainResult()
                         }
@@ -51,13 +51,13 @@ class HistoryDetailsDialogFragment(private val event: PhoneEventData) : BaseDial
 
     private fun onExplainResult() {
         val sb = StringBuilder()
-        if (event.processStatus and STATUS_NUMBER_BLACKLISTED != 0) {
+        if (event.acceptState and ACCEPT_STATE_BYPASS_NUMBER_BLACKLISTED != 0) {
             sb.append(getString(R.string.number_in_blacklist)).append("\n\n")
         }
-        if (event.processStatus and STATUS_TEXT_BLACKLISTED != 0) {
+        if (event.acceptState and ACCEPT_STATE_BYPASS_TEXT_BLACKLISTED != 0) {
             sb.append(getString(R.string.text_in_blacklist)).append("\n\n")
         }
-        if (event.processStatus and STATUS_TRIGGER_OFF != 0) {
+        if (event.acceptState and ACCEPT_STATE_BYPASS_TRIGGER_OFF != 0) {
             sb.append(getString(R.string.trigger_off)).append("\n\n")
         }
 

@@ -6,10 +6,6 @@
         android:title="@string/mark_all_as_read" />
 
     <item
-        android:id="@+id/action_process_all_pending"
-        android:title="@string/process_all_pending" />
-
-    <item
         android:id="@+id/action_clear"
         android:title="@string/clear" />
 

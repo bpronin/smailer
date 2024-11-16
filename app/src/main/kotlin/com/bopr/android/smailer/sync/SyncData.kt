@@ -2,7 +2,7 @@ package com.bopr.android.smailer.sync
 
 import com.bopr.android.smailer.provider.EventState
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
-import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_ACCEPTED
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.ACCEPT_STATE_ACCEPTED
 import com.google.api.client.util.Key
 
 /**
@@ -28,7 +28,7 @@ data class SyncData(
             @Key("latitude") var latitude: Double? = null,
             @Key("longitude") var longitude: Double? = null,
             @Key("state") @EventState var state: Int = STATE_PENDING,
-            @Key("process_status") var processStatus: Int = STATUS_ACCEPTED,
+            @Key("process_status") var processStatus: Int = ACCEPT_STATE_ACCEPTED,
             @Key("process_time") var processTime: Long? = null,
             @Key("is_read") var isRead: Boolean = false
     )

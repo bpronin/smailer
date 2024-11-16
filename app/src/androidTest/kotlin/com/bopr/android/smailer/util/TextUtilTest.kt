@@ -39,18 +39,18 @@ class TextUtilTest : BaseTest() {
 
     @Test
     fun testCommaJoin() {
-        assertEquals("1,2,3", commaJoin(listOf(1, 2, 3)))
-        assertEquals("a,b,c", commaJoin(listOf("a", "b", "c")))
-        assertEquals("a,a/,b,c", commaJoin(listOf("a", "a,b", "c")))
-        assertEquals("", commaJoin(emptyList<String>()))
+        assertEquals("1,2,3", listOf(1, 2, 3).commaJoin())
+        assertEquals("a,b,c", listOf("a", "b", "c").commaJoin())
+        assertEquals("a,a/,b,c", listOf("a", "a,b", "c").commaJoin())
+        assertEquals("", emptyList<String>().commaJoin())
     }
 
     @Test
     fun testCommaSplit() {
-        assertEquals(listOf("1", "2", "3"), commaSplit(" 1, 2, 3 "))
-        assertEquals(listOf("a", "b", "c"), commaSplit("a,b,c"))
-        assertEquals(listOf("a", "b", "a,b", "c"), commaSplit("a, b, a/,b, c"))
-        assertEquals(emptyList<String>(), commaSplit(""))
+        assertEquals(listOf("1", "2", "3"), " 1, 2, 3 ".commaSplit())
+        assertEquals(listOf("a", "b", "c"), "a,b,c".commaSplit())
+        assertEquals(listOf("a", "b", "a,b", "c"), "a, b, a/,b, c".commaSplit())
+        assertEquals(emptyList<String>(), "".commaSplit())
     }
 
     @Test

@@ -21,9 +21,9 @@ data class PhoneEventData(
     val text: String? = null,
     var location: GeoLocation? = null,
     var details: String? = null,
-    @EventState var state: Int = STATE_PENDING,
+    @EventState var processState: Int = STATE_PENDING,
     val acceptor: String,
-    var processStatus: Int = STATUS_ACCEPTED,
+    var acceptState: Int = ACCEPT_STATE_ACCEPTED,
     var processTime: Long? = null,
     var isRead: Boolean = false
 ) : Parcelable {
@@ -36,9 +36,9 @@ data class PhoneEventData(
 
     companion object {
 
-        const val STATUS_ACCEPTED = 0
-        const val STATUS_NUMBER_BLACKLISTED = 1
-        const val STATUS_TEXT_BLACKLISTED = 1 shl 1
-        const val STATUS_TRIGGER_OFF = 1 shl 2
+        const val ACCEPT_STATE_ACCEPTED = 0
+        const val ACCEPT_STATE_BYPASS_NUMBER_BLACKLISTED = 1
+        const val ACCEPT_STATE_BYPASS_TEXT_BLACKLISTED = 1 shl 1
+        const val ACCEPT_STATE_BYPASS_TRIGGER_OFF = 1 shl 2
     }
 }

@@ -26,7 +26,6 @@ import com.bopr.android.smailer.data.StringDataset
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
-import com.bopr.android.smailer.provider.telephony.PhoneEventProcessor
 import com.bopr.android.smailer.ui.HistoryFragment.Holder
 import com.bopr.android.smailer.util.addOnItemSwipedListener
 import com.bopr.android.smailer.util.eventDirectionImage
@@ -35,7 +34,6 @@ import com.bopr.android.smailer.util.eventTypeImage
 import com.bopr.android.smailer.util.formatDuration
 import com.bopr.android.smailer.util.getColorFromAttr
 import com.bopr.android.smailer.util.getQuantityString
-import com.bopr.android.smailer.util.runInBackground
 import com.bopr.android.smailer.util.showToast
 import com.google.android.material.snackbar.Snackbar
 
@@ -96,7 +94,7 @@ class HistoryFragment : RecyclerFragment<PhoneEventData, Holder>() {
     override fun onCreateItemContextMenu(menu: ContextMenu, item: PhoneEventData) {
         requireActivity().menuInflater.inflate(R.menu.menu_context_history, menu)
 
-        if (item.state != STATE_PENDING) {
+        if (item.processState != STATE_PENDING) {
             menu.removeItem(R.id.action_ignore)
         }
 
@@ -162,7 +160,7 @@ class HistoryFragment : RecyclerFragment<PhoneEventData, Holder>() {
         holder.phoneView.text = item.phone
         holder.typeView.setImageResource(eventTypeImage(item))
         holder.directionView.setImageResource(eventDirectionImage(item))
-        holder.stateView.setImageResource(eventStateImage(item.state))
+        holder.stateView.setImageResource(eventStateImage(item.processState))
 
         if (!item.isRead) {
             holder.phoneView.setTextColor(unreadItemTextColor)
@@ -193,20 +191,9 @@ class HistoryFragment : RecyclerFragment<PhoneEventData, Holder>() {
 
     private fun onMarkAsIgnored() {
         getSelectedItem()?.let {
-            it.state = STATE_IGNORED
+            it.processState = STATE_IGNORED
             database.commit { events.add(it) }
         }
-    }
-
-    private fun onProcessAllPending() {
-        runInBackground(
-            onSuccess = { _ ->
-                showToast(R.string.operation_complete)
-            },
-            onPerform = {
-                PhoneEventProcessor(requireContext()).processPending()
-            }
-        )
     }
 
     private fun onRemoveSelected() {
@@ -295,11 +282,6 @@ class HistoryFragment : RecyclerFragment<PhoneEventData, Holder>() {
 
                 R.id.action_mark_all_as_read -> {
                     onMarkAllAsRead()
-                    true
-                }
-
-                R.id.action_process_all_pending -> {
-                    onProcessAllPending()
                     true
                 }
 

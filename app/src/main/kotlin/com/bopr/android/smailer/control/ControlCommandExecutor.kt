@@ -26,7 +26,8 @@ import com.bopr.android.smailer.ui.EventFilterTextWhitelistActivity
 import com.bopr.android.smailer.ui.MainActivity
 import com.bopr.android.smailer.util.checkPermission
 import com.bopr.android.smailer.util.sendSmsMessage
-import org.slf4j.LoggerFactory
+import com.bopr.android.smailer.util.useIt
+import com.bopr.android.smailer.util.Logger
 import kotlin.reflect.KClass
 
 /**
@@ -42,7 +43,7 @@ internal class ControlCommandExecutor(
 ) {
 
     fun execute(command: ControlCommand) {
-        log.debug("Executing: {}", command)
+        log.debug("Executing: $command")
 
         when (command.action) {
             ADD_PHONE_TO_BLACKLIST ->
@@ -163,8 +164,8 @@ internal class ControlCommandExecutor(
         target: KClass<out Activity>
     ) {
         if (!value.isNullOrEmpty()) {
-            database.use {
-                if (database.commit { list.add(value) }) {
+            database.useIt {
+                if (commit { list.add(value) }) {
                     notifySuccess(context.getString(messageRes, value), target)
                 } else {
                     log.debug("Already in list")
@@ -180,8 +181,8 @@ internal class ControlCommandExecutor(
         target: KClass<out Activity>
     ) {
         if (!value.isNullOrEmpty()) {
-            database.use {
-                if (database.commit { list.remove(value) }) {
+            database.useIt {
+                if (commit { list.remove(value) }) {
                     notifySuccess(context.getString(messageRes, value), target)
                 } else {
                     log.debug("Not in list")
@@ -202,6 +203,6 @@ internal class ControlCommandExecutor(
 
     companion object {
 
-        private val log = LoggerFactory.getLogger("ControlCommandProcessor")
+        private val log = Logger("ControlCommandProcessor")
     }
 }

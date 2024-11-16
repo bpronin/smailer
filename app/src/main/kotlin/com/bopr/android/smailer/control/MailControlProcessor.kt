@@ -8,14 +8,14 @@ import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS
-import com.bopr.android.smailer.processor.mail.GoogleMailSession
-import com.bopr.android.smailer.processor.mail.MailMessage
+import com.bopr.android.smailer.messenger.mail.GoogleMailSession
+import com.bopr.android.smailer.messenger.mail.MailMessage
 import com.bopr.android.smailer.ui.RemoteControlActivity
 import com.bopr.android.smailer.util.commaSplit
 import com.bopr.android.smailer.util.containsEmail
 import com.bopr.android.smailer.util.extractEmail
 import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
-import org.slf4j.LoggerFactory
+import com.bopr.android.smailer.util.Logger
 
 /**
  * Checks service mailbox for messages containing control commands and performs it.
@@ -87,7 +87,7 @@ internal class MailControlProcessor(
     private fun acceptMessage(message: MailMessage): Boolean {
         if (settings.getBoolean(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS)) {
             val address = extractEmail(message.from)!!
-            val recipients = commaSplit(settings.getEmailRecipients())
+            val recipients = settings.getEmailRecipients().commaSplit()
             if (!recipients.containsEmail(address)) {
                 log.debug("Address $address rejected")
 
@@ -107,6 +107,6 @@ internal class MailControlProcessor(
 
     companion object {
 
-        private val log = LoggerFactory.getLogger("MailControlProcessor")
+        private val log = Logger("MailControlProcessor")
     }
 }

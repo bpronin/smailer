@@ -4,15 +4,13 @@ import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.Context
 import android.location.Location
-import android.os.Looper
 import android.os.Parcelable
 import com.bopr.android.smailer.data.Database
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.LocationServices.getFusedLocationProviderClient
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
 import kotlinx.parcelize.Parcelize
-import java.util.concurrent.Executor
-import java.util.concurrent.Executors
-import java.util.concurrent.Executors.*
 
 /**
  * Geolocation coordinates.
@@ -55,26 +53,54 @@ data class GeoLocation(
         fun fromCoordinates(latitude: Double?, longitude: Double?): GeoLocation? {
             return if (latitude != null && longitude != null) {
                 GeoLocation(latitude, longitude)
-            } else {
-                null
-            }
+            } else null
         }
 
+        /**
+         * Obtains geolocation synchronously.
+         */
+        fun Context.getGeoLocation(database: Database? = null): GeoLocation? {
+            val location = getCurrentGeoLocation()
+            database?.lastLocation = location
+            return location
+        }
+
+        /**
+         * Obtains geolocation asynchronously.
+         */
         fun Context.requestGeoLocation(
             database: Database? = null,
-            onComplete: (GeoLocation?) -> Unit
+            onSuccess: (GeoLocation?) -> Unit,
+            onError: (Throwable) -> Unit
         ) {
-            requestCurrentLocation { result ->
-                result?.apply {
-                    database?.lastLocation = this
-                }
-                onComplete(result)
+            requestCurrentGeoLocation(
+                onSuccess = { result ->
+                    result?.apply {
+                        database?.lastLocation = this
+                    }
+                    onSuccess(result)
+                },
+                onError
+            )
+        }
+
+        private fun Context.getCurrentGeoLocation(): GeoLocation? {
+            if (!checkPermission(ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION))
+                throw IllegalStateException("Geolocation permissions required")
+
+            val client = getFusedLocationProviderClient(this)
+            val request = CurrentLocationRequest.Builder().build()
+            return runBlocking {
+                client.getCurrentLocation(request, null).await().toGeoLocation()
             }
         }
 
-        private fun Context.requestCurrentLocation(onComplete: (GeoLocation?) -> Unit) {
+        private fun Context.requestCurrentGeoLocation(
+            onSuccess: (GeoLocation?) -> Unit,
+            onError: (Throwable) -> Unit
+        ) {
             if (!checkPermission(ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION)) {
-                onComplete(null)
+                onError(IllegalStateException("Required geolocation permissions"))
                 return
             }
 
@@ -82,34 +108,12 @@ data class GeoLocation(
             getFusedLocationProviderClient(this)
                 .getCurrentLocation(request, null)
                 .addOnCompleteListener {
-                    onComplete(it.result.toGeoLocation())
+                    onSuccess(it.result.toGeoLocation())
+                }
+                .addOnFailureListener { error ->
+                    onError(error)
                 }
         }
-
-
-//        private fun Context.requestCurrentLocation(onComplete: (GeoLocation?) -> Unit) {
-//            if (!checkPermission(ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION)) {
-//                onComplete(null)
-//                return
-//            }
-//
-//            val request = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-//                LocationRequest.Builder(PASSIVE_INTERVAL).build()
-//            } else {
-//                @Suppress("DEPRECATION")
-//                (LocationRequest())
-//            }
-//
-//            val looper = Looper()
-//            val client = getFusedLocationProviderClient(this)
-//            client.requestLocationUpdates(request, object : LocationCallback() {
-//
-//                override fun onLocationResult(result: LocationResult) {
-//                    client.removeLocationUpdates(this)
-//                    onComplete(result.lastLocation.toGeoLocation())
-//                }
-//            }, Looper.getMainLooper())
-//        }
 
     }
 }

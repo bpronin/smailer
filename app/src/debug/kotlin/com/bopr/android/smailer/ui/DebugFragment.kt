@@ -28,11 +28,11 @@ import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_SERVICE_ACCOUN
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSAGE_CONTENT
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_MESSAGE_LOCALE
 import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_BOT_TOKEN
@@ -55,14 +55,14 @@ import com.bopr.android.smailer.data.Database.Companion.databaseName
 import com.bopr.android.smailer.external.Firebase
 import com.bopr.android.smailer.external.Firebase.Companion.FCM_REQUEST_DATA_SYNC
 import com.bopr.android.smailer.external.GoogleDrive
-import com.bopr.android.smailer.processor.mail.GoogleMailSession
-import com.bopr.android.smailer.processor.mail.MailMessage
-import com.bopr.android.smailer.processor.telegram.TelegramSession
+import com.bopr.android.smailer.messenger.mail.GoogleMailSession
+import com.bopr.android.smailer.messenger.mail.MailMessage
+import com.bopr.android.smailer.messenger.telegram.TelegramSession
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
-import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.STATUS_ACCEPTED
+import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.ACCEPT_STATE_ACCEPTED
 import com.bopr.android.smailer.provider.telephony.PhoneEventProcessor
 import com.bopr.android.smailer.provider.telephony.PhoneEventProcessorWorker.Companion.startPhoneEventProcessing
 import com.bopr.android.smailer.sync.Synchronizer
@@ -70,7 +70,7 @@ import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_DOWNLOAD
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_UPLOAD
 import com.bopr.android.smailer.ui.InfoDialog.Companion.showInfoDialog
 import com.bopr.android.smailer.util.DEVICE_NAME
-import com.bopr.android.smailer.util.GeoLocation.Companion.requestGeoLocation
+import com.bopr.android.smailer.util.GeoLocation.Companion.getGeoLocation
 import com.bopr.android.smailer.util.PreferenceProgress
 import com.bopr.android.smailer.util.checkPermission
 import com.bopr.android.smailer.util.escapeRegex
@@ -78,15 +78,15 @@ import com.bopr.android.smailer.util.getContactName
 import com.bopr.android.smailer.util.readLogcatLog
 import com.bopr.android.smailer.util.requireIgnoreBatteryOptimization
 import com.bopr.android.smailer.util.runBackgroundTask
-import com.bopr.android.smailer.util.runLongTask
 import com.bopr.android.smailer.util.sendSmsMessage
 import com.bopr.android.smailer.util.setOnClickListener
 import com.bopr.android.smailer.util.showToast
 import com.google.api.services.drive.DriveScopes.DRIVE_APPDATA
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
-import org.slf4j.LoggerFactory
+import com.bopr.android.smailer.util.Logger
 import java.io.File
+import java.lang.System.*
 
 /**
  * For debug purposes.
@@ -140,7 +140,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                 onProcessSingleEvent()
             },
             addPreference("Process pending events") {
-                onStartProcessPendingEvents(it)
+                onProcessPendingEvents(it)
             },
             addPreference("Send SMS") {
                 onSendSms()
@@ -261,8 +261,8 @@ class DebugFragment : PreferenceFragmentCompat() {
             }
         )
         addCategory(screen, "Other",
-            addPreference("Get location") {
-                onGetLocation(it)
+            addPreference("Get geolocation") {
+                onGetGeoLocation(it)
             },
             addPreference("Get contact") {
                 onGetContact()
@@ -329,7 +329,7 @@ class DebugFragment : PreferenceFragmentCompat() {
         val message = MailMessage(
             from = account.name,
             subject = "test subject",
-            body = "test message from " + DEVICE_NAME,
+            body = "test message from $DEVICE_NAME",
             recipients = developerEmail
         )
 
@@ -346,12 +346,18 @@ class DebugFragment : PreferenceFragmentCompat() {
         )
     }
 
-    private fun onGetLocation(preference: Preference) {
-        val progress = PreferenceProgress(preference).apply { start() }
-        requireContext().requestGeoLocation(database) {
-            progress.stop()
-            showInfoDialog("Location", it?.format() ?: "No location received")
-        }
+    private fun onGetGeoLocation(preference: Preference) {
+        preference.runBackgroundTask(
+            onPerform = {
+                requireContext().getGeoLocation()
+            },
+            onSuccess = {
+                showInfoDialog("Geolocation", it?.format() ?: "No geolocation received")
+            },
+            onError = { error ->
+                showError("Geolocation", error)
+            }
+        )
     }
 
     override fun onDestroy() {
@@ -361,13 +367,13 @@ class DebugFragment : PreferenceFragmentCompat() {
         super.onDestroy()
     }
 
-    private fun onPermissionRequestResult(granted: Boolean) {
-        if (granted) {
-            showInfoDialog("Permission", "Granted")
-        } else {
-            showInfoDialog("Permission", "Denied")
-        }
-    }
+//    private fun onPermissionRequestResult(granted: Boolean) {
+//        if (granted) {
+//            showInfoDialog("Permission", "Granted")
+//        } else {
+//            showInfoDialog("Permission", "Denied")
+//        }
+//    }
 
     private fun addPreference(title: String, onClick: (Preference) -> Unit): Preference {
         return Preference(requireContext()).apply {
@@ -393,7 +399,10 @@ class DebugFragment : PreferenceFragmentCompat() {
         settings.update {
             putString(PREF_EMAIL_SENDER_ACCOUNT, developerEmail)
             putString(PREF_REMOTE_CONTROL_ACCOUNT, developerEmail)
-            putStringList(PREF_EMAIL_MESSENGER_RECIPIENTS, setOf(developerEmail, "nowhere@mail.com"))
+            putStringList(
+                PREF_EMAIL_MESSENGER_RECIPIENTS,
+                setOf(developerEmail, "nowhere@mail.com")
+            )
             putStringSet(
                 PREF_EMAIL_TRIGGERS, mutableSetOf(
                     VAL_PREF_TRIGGER_IN_SMS,
@@ -471,7 +480,7 @@ class DebugFragment : PreferenceFragmentCompat() {
     }
 
     private fun onProcessSingleEvent() {
-        val start = System.currentTimeMillis()
+        val start = currentTimeMillis()
         val info = PhoneEventData(
             phone = "+1(234) 567-89-01",
             isIncoming = true,
@@ -482,17 +491,25 @@ class DebugFragment : PreferenceFragmentCompat() {
             location = null,
             details = null,
             acceptor = DEVICE_NAME,
-            processStatus = STATUS_ACCEPTED,
+            acceptState = ACCEPT_STATE_ACCEPTED,
             isRead = false
         )
         requireContext().startPhoneEventProcessing(info)
         showComplete()
     }
 
-    private fun onStartProcessPendingEvents(preference: Preference) {
-        runDefaultBackgroundTask("Event processing", preference) {
-            PhoneEventProcessor(requireContext()).processPending()
-        }
+    private fun onProcessPendingEvents(preference: Preference) {
+        preference.runBackgroundTask(
+            onPerform = {
+                PhoneEventProcessor(requireContext()).processPending()
+            },
+            onSuccess = { it ->
+                showInfoDialog("Event processing", "$it events processed")
+            },
+            onError = { error ->
+                showError("Event processing", error)
+            }
+        )
     }
 
     private fun onClearLogs() {
@@ -512,7 +529,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                 PhoneEventData(
                     "+79052345670",
                     true,
-                    System.currentTimeMillis(),
+                    currentTimeMillis(),
                     null,
                     false,
                     "Debug message",
@@ -520,7 +537,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                     null,
                     STATE_PENDING,
                     DEVICE_NAME,
-                    STATUS_ACCEPTED,
+                    ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
@@ -529,7 +546,7 @@ class DebugFragment : PreferenceFragmentCompat() {
     }
 
     private fun onPopulateHistory() {
-        var time = System.currentTimeMillis()
+        var time = currentTimeMillis()
         val recipient = DEVICE_NAME
         database.commit {
             batch {
@@ -545,7 +562,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         null,
                         STATE_PENDING,
                         recipient,
-                        STATUS_ACCEPTED,
+                        ACCEPT_STATE_ACCEPTED,
                         isRead = false
                     )
                 )
@@ -561,7 +578,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         null,
                         STATE_PROCESSED,
                         recipient,
-                        STATUS_ACCEPTED,
+                        ACCEPT_STATE_ACCEPTED,
                         isRead = false
                     )
                 )
@@ -577,7 +594,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         null,
                         STATE_IGNORED,
                         recipient,
-                        STATUS_ACCEPTED,
+                        ACCEPT_STATE_ACCEPTED,
                         isRead = false
                     )
                 )
@@ -593,7 +610,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         null,
                         STATE_PENDING,
                         recipient,
-                        STATUS_ACCEPTED,
+                        ACCEPT_STATE_ACCEPTED,
                         isRead = false
                     )
                 )
@@ -609,7 +626,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         null,
                         STATE_PENDING,
                         recipient,
-                        STATUS_ACCEPTED,
+                        ACCEPT_STATE_ACCEPTED,
                         isRead = false
                     )
                 )
@@ -625,7 +642,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         "Test exception +79052345671",
                         STATE_PENDING,
                         recipient,
-                        STATUS_ACCEPTED,
+                        ACCEPT_STATE_ACCEPTED,
                         isRead = false
                     )
                 )
@@ -641,7 +658,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         "Test exception +79052345672",
                         STATE_PENDING,
                         recipient,
-                        STATUS_ACCEPTED,
+                        ACCEPT_STATE_ACCEPTED,
                         isRead = false
                     )
                 )
@@ -657,7 +674,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         "Test exception +79052345673",
                         STATE_PENDING,
                         recipient,
-                        STATUS_ACCEPTED,
+                        ACCEPT_STATE_ACCEPTED,
                         isRead = false
                     )
                 )
@@ -673,7 +690,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         "Test exception +79052345674",
                         STATE_PENDING,
                         recipient,
-                        STATUS_ACCEPTED,
+                        ACCEPT_STATE_ACCEPTED,
                         isRead = false
                     )
                 )
@@ -689,7 +706,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         "Test exception +79052345675",
                         STATE_PENDING,
                         recipient,
-                        STATUS_ACCEPTED,
+                        ACCEPT_STATE_ACCEPTED,
                         isRead = false
                     )
                 )
@@ -722,14 +739,14 @@ class DebugFragment : PreferenceFragmentCompat() {
     }
 
     private fun onGoogleDriveClear(preference: Preference) {
-        runDefaultBackgroundTask("Google drive", preference) {
+        runBackgroundGoogleDriveTask(preference) {
             GoogleDrive(requireContext(), senderAccount()).clear()
         }
     }
 
     private fun onGoogleDriveSync(preference: Preference) {
         ConfirmDialog("Synchronize with drive?") {
-            runDefaultBackgroundTask("Google drive", preference) {
+            runBackgroundGoogleDriveTask(preference) {
                 Synchronizer(requireContext(), senderAccount(), database).sync()
             }
         }.show(this)
@@ -737,7 +754,7 @@ class DebugFragment : PreferenceFragmentCompat() {
 
     private fun onGoogleDriveDownload(preference: Preference) {
         ConfirmDialog("Download from drive?") {
-            runDefaultBackgroundTask("Google drive", preference) {
+            runBackgroundGoogleDriveTask(preference) {
                 Synchronizer(requireContext(), senderAccount(), database).sync(SYNC_FORCE_DOWNLOAD)
             }
         }.show(this)
@@ -745,7 +762,7 @@ class DebugFragment : PreferenceFragmentCompat() {
 
     private fun onGoogleDriveUpload(preference: Preference) {
         ConfirmDialog("Upload to drive?") {
-            runDefaultBackgroundTask("Google drive", preference) {
+            runBackgroundGoogleDriveTask(preference) {
                 Synchronizer(requireContext(), senderAccount(), database).sync(SYNC_FORCE_UPLOAD)
             }
         }.show(this)
@@ -806,24 +823,7 @@ class DebugFragment : PreferenceFragmentCompat() {
         return accountHelper.requireGoogleAccount(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT))
     }
 
-    private fun runDefaultLongTask(
-        title: String,
-        preference: Preference,
-        onPerform: () -> Unit
-    ) {
-        preference.runLongTask(
-            onPerform,
-            onSuccess = {
-                showComplete()
-            },
-            onError = { error ->
-                showError(title, error)
-            }
-        )
-    }
-
-    private fun runDefaultBackgroundTask(
-        title: String,
+    private fun runBackgroundGoogleDriveTask(
         preference: Preference,
         onPerform: () -> Unit
     ) {
@@ -833,7 +833,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                 showComplete()
             },
             onError = { error ->
-                showError(title, error)
+                showError("Google drive", error)
             }
         )
     }
@@ -849,16 +849,6 @@ class DebugFragment : PreferenceFragmentCompat() {
 
     private fun unregisterReceiver(receiver: BroadcastReceiver) {
         requireContext().unregisterReceiver(receiver)
-    }
-
-    private abstract inner class DefaultClickListener : Preference.OnPreferenceClickListener {
-
-        protected abstract fun onClick(preference: Preference)
-
-        override fun onPreferenceClick(preference: Preference): Boolean {
-            onClick(preference)
-            return true
-        }
     }
 
     private inner class SentStatusReceiver : BroadcastReceiver() {
@@ -908,6 +898,6 @@ class DebugFragment : PreferenceFragmentCompat() {
 
     companion object {
 
-        private val log = LoggerFactory.getLogger("DebugFragment")
+        private val log = Logger("ui.DebugFragment")
     }
 }

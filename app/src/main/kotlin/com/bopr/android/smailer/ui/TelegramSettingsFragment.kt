@@ -3,14 +3,13 @@ package com.bopr.android.smailer.ui
 import android.os.Bundle
 import android.text.TextUtils
 import androidx.preference.ExtMultiSelectListPreference
-import androidx.preference.Preference
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_BOT_TOKEN
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_CHAT_ID
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSENGER_ENABLED
-import com.bopr.android.smailer.processor.telegram.BaseTelegramEventFormatter
-import com.bopr.android.smailer.processor.telegram.TelegramSession
+import com.bopr.android.smailer.messenger.telegram.BaseTelegramEventFormatter
+import com.bopr.android.smailer.messenger.telegram.TelegramSession
 import com.bopr.android.smailer.ui.InfoDialog.Companion.showInfoDialog
 import com.bopr.android.smailer.util.GeoLocation
 import com.bopr.android.smailer.util.GeoLocation.Companion.requestGeoLocation
@@ -21,10 +20,10 @@ import com.bopr.android.smailer.util.requirePreference
 import com.bopr.android.smailer.util.requirePreferenceAs
 import com.bopr.android.smailer.util.setOnChangeListener
 import com.bopr.android.smailer.util.setOnClickListener
-import com.bopr.android.smailer.util.showToast
 import com.bopr.android.smailer.util.telegramErrorText
 import com.bopr.android.smailer.util.titles
 import com.bopr.android.smailer.util.updateSummary
+import java.lang.System.*
 
 /**
  * Event consumers settings fragment.
@@ -32,6 +31,10 @@ import com.bopr.android.smailer.util.updateSummary
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 class TelegramSettingsFragment : BasePreferenceFragment(R.xml.pref_telegram_settings) {
+
+    private val testSettingsProgress by lazy {
+        PreferenceProgress(requirePreference(SEND_TEST_TELEGRAM_MESSAGE))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,36 +67,40 @@ class TelegramSettingsFragment : BasePreferenceFragment(R.xml.pref_telegram_sett
         }
 
         requirePreference(SEND_TEST_TELEGRAM_MESSAGE).setOnClickListener {
-            onSendTestTelegramMessage(it)
+            onSendTestTelegramMessage()
         }
     }
 
-    private fun onSendTestTelegramMessage(preference: Preference) {
-        val progress = PreferenceProgress(preference).apply { start() }
+    private fun onSendTestTelegramMessage() {
+        if (testSettingsProgress.running) return
+        
+        testSettingsProgress.start()
 
-        requireContext().requestGeoLocation { location ->
-            val formater = TestTelegramEventFormatter(System.currentTimeMillis(), location)
-            TelegramSession(
-                context = requireContext(),
-                token = settings.getString(PREF_TELEGRAM_BOT_TOKEN)
-            ).sendMessage(
-                oldChatId = settings.getString(PREF_TELEGRAM_CHAT_ID),
-                message = formater.formatMessage(),
-                onSuccess = { chatId ->
-                    progress.stop()
-                    settings.update { putString(PREF_TELEGRAM_CHAT_ID, chatId) }
-                    showInfoDialog(R.string.test_message_sent)
-                },
-                onError = { error ->
-                    progress.stop()
-                    showInfoDialog(
-                        getString(R.string.test_message_failed),
-                        requireContext().getString(telegramErrorText(error))
-//                        "${telegramErrorText(error)}\n${error.message}"
-                    )
-                }
-            )
-        }
+        requireContext().requestGeoLocation(
+            onSuccess = { location ->
+                val formater = TestTelegramEventFormatter(currentTimeMillis(), location)
+                TelegramSession(
+                    context = requireContext(),
+                    token = settings.getString(PREF_TELEGRAM_BOT_TOKEN)
+                ).sendMessage(
+                    oldChatId = settings.getString(PREF_TELEGRAM_CHAT_ID),
+                    message = formater.formatMessage(),
+                    onSuccess = { chatId ->
+                        testSettingsProgress.stop()
+                        settings.update { putString(PREF_TELEGRAM_CHAT_ID, chatId) }
+                        showInfoDialog(R.string.test_message_sent)
+                    },
+                    onError = { error ->
+                        testSettingsProgress.stop()
+                        showInfoDialog(R.string.test_message_failed, telegramErrorText(error))
+                    }
+                )
+            },
+            onError = {
+                testSettingsProgress.stop()
+                showInfoDialog(R.string.test_message_failed, R.string.location_request_failed)
+            }
+        )
     }
 
     private inner class TestTelegramEventFormatter(time: Long, location: GeoLocation?) :

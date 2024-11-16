@@ -23,25 +23,6 @@ enum class SummaryStyle {
     SUMMARY_STYLE_ACCENTED
 }
 
-fun <T> Preference.runLongTask(
-    onPerform: () -> T,
-    onComplete: () -> Unit = {},
-    onSuccess: (T) -> Unit = {},
-    onError: (Throwable) -> Unit = {}
-) {
-    val progress = PreferenceProgress(this).apply { start() }
-
-    runLater(
-        onComplete = {
-            progress.stop()
-            onComplete()
-        },
-        onSuccess = onSuccess,
-        onError = onError,
-        onPerform = onPerform
-    )
-}
-
 fun <T> Preference.runBackgroundTask(
     onPerform: () -> T,
     onComplete: () -> Unit = {},
@@ -66,16 +47,19 @@ class PreferenceProgress(
     @DrawableRes progressIconRes: Int = R.drawable.animated_progress
 ) {
 
+    var running = false
     private var originalIcon: Drawable? = null
     private val progressIcon = create(preference.context, progressIconRes)!!
 
     fun start() {
+        running = true
         originalIcon = preference.icon
         preference.icon = progressIcon
         progressIcon.start()
     }
 
     fun stop() {
+        running = false
         progressIcon.stop()
         preference.icon = originalIcon
     }

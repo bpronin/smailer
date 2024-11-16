@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.StringRes
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.*
@@ -16,7 +17,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 /**
  * Base fragment with [RecyclerView].
  */
-abstract class RecyclerFragment<I, H : ViewHolder> : BaseFragment() {
+abstract class RecyclerFragment<I, H : ViewHolder> : Fragment() {
 
     protected lateinit var recycler: RecyclerView
     protected lateinit var listAdapter: ListAdapter
@@ -43,7 +44,7 @@ abstract class RecyclerFragment<I, H : ViewHolder> : BaseFragment() {
             adapter = listAdapter
         }
 
-        view.findViewById<FloatingActionButton>(R.id.button_add).visibility = View.GONE
+        view.findViewById<FloatingActionButton>(R.id.button_add).visibility = GONE
 
         view.findViewById<TextView>(R.id.text_empty).setText(emptyTextRes)
 
@@ -86,7 +87,7 @@ abstract class RecyclerFragment<I, H : ViewHolder> : BaseFragment() {
     private fun updateEmptyText() {
         view?.apply {
             findViewById<View>(R.id.text_empty).visibility =
-                    if (listAdapter.itemCount == 0) View.VISIBLE else View.GONE
+                    if (listAdapter.itemCount == 0) VISIBLE else GONE
         }
     }
 

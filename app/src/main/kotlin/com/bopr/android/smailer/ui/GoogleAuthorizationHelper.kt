@@ -7,8 +7,8 @@ import androidx.activity.result.contract.ActivityResultContracts.StartActivityFo
 import androidx.fragment.app.FragmentActivity
 import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.Settings
+import com.bopr.android.smailer.util.Logger
 import com.bopr.android.smailer.util.createPickAccountIntent
-import org.slf4j.LoggerFactory
 
 /**
  * Convenient class to deal with Google authentication.
@@ -21,7 +21,6 @@ class GoogleAuthorizationHelper(
     vararg scopes: String?
 ) {
 
-    private val log = LoggerFactory.getLogger("GoogleAuthorizationHelper")
     private val scopes = setOf(*scopes)
     private val accountHelper = AccountHelper(activity)
     private val settings = Settings(activity)
@@ -62,4 +61,8 @@ class GoogleAuthorizationHelper(
         )
     }
 
+    companion object {
+
+        private val log = Logger("ui.GoogleAuthorizationHelper")
+    }
 }

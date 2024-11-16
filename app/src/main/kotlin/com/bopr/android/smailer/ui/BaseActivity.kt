@@ -22,7 +22,7 @@ abstract class BaseActivity(private val fragmentClass: KClass<out Fragment>) : A
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHomeButtonEnabled(true)
-        addMenuProvider(TheMenuProvider())
+        addMenuProvider(ActivityMenuProvider())
         setContentView(R.layout.activity_default)
 
         val fragmentManager = supportFragmentManager
@@ -48,9 +48,7 @@ abstract class BaseActivity(private val fragmentClass: KClass<out Fragment>) : A
         return super.onOptionsItemSelected(item)
     }
 
-    protected fun requireFragment() = requireNotNull(fragment)
-
-    inner class TheMenuProvider : MenuProvider {
+    inner class ActivityMenuProvider : MenuProvider {
 
         override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
             menuInflater.inflate(R.menu.menu_main, menu)

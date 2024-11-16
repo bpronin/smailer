@@ -16,9 +16,9 @@ import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.FragmentActivity
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSAGE_CONTENT
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCATION
@@ -28,7 +28,7 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
 import com.bopr.android.smailer.ui.InfoDialog.Companion.showInfoDialog
-import org.slf4j.LoggerFactory
+import com.bopr.android.smailer.util.Logger
 
 /**
  * Responsible for permissions checking.
@@ -121,7 +121,7 @@ class PermissionsHelper(
     }
 
     private fun onPermissionsGranted(grantedPermissions: Set<String>) {
-        log.debug("Granted: {}", grantedPermissions)
+        log.debug("Granted: $grantedPermissions")
 
         /* set default accounts at startup */
         val accountName = accountHelper.getPrimaryGoogleAccount()?.name
@@ -133,7 +133,7 @@ class PermissionsHelper(
     }
 
     private fun onPermissionsDenied(deniedPermissions: Collection<String>) {
-        log.debug("Denied: {}", deniedPermissions)
+        log.debug("Denied: $deniedPermissions")
 
         if (deniedPermissions.isNotEmpty()) {
             val triggers = settings.getEmailTriggers()
@@ -172,7 +172,7 @@ class PermissionsHelper(
         if (permissions.isEmpty()) {
             onPermissionsRequestComplete()
         } else {
-            log.debug("Checking: {}", permissions)
+            log.debug("Checking: $permissions")
 
             val deniedPermissions = mutableListOf<String>()
             val unexplainedPermissions = mutableListOf<String>()
@@ -199,12 +199,12 @@ class PermissionsHelper(
     }
 
     private fun requestPermissions(permissions: List<String>) {
-        log.debug("Requesting : {}", permissions)
+        log.debug("Requesting : $permissions")
         permissionRequestLauncher.launch(permissions.toTypedArray())
     }
 
     private fun explainPermissions(permissions: List<String>) {
-        log.debug("Explaining : {}", permissions)
+        log.debug("Explaining : $permissions")
 
         activity.showInfoDialog(message = formatRationale(permissions)) {
             requestPermissions(permissions)
@@ -228,9 +228,7 @@ class PermissionsHelper(
     }
 
     companion object {
-
-
-        private val log = LoggerFactory.getLogger("PermissionsHelper")
+        private val log = Logger("PermissionsHelper")
     }
 
 }

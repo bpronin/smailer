@@ -3,6 +3,7 @@ package com.bopr.android.smailer.external
 import android.accounts.Account
 import android.content.Context
 import com.bopr.android.smailer.util.Mockable
+import com.bopr.android.smailer.util.useIt
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.http.ByteArrayContent
 import com.google.api.client.http.javanet.NetHttpTransport
@@ -10,7 +11,7 @@ import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes.DRIVE_APPDATA
 import com.google.api.services.drive.model.File
-import org.slf4j.LoggerFactory
+import com.bopr.android.smailer.util.Logger
 import java.io.IOException
 import java.io.InputStream
 import java.io.StringWriter
@@ -53,9 +54,9 @@ internal class GoogleDrive(context: Context, account: Account) {
     @Throws(IOException::class)
     fun upload(filename: String, data: Any) {
         val writer: Writer = StringWriter()
-        jacksonFactory().createJsonGenerator(writer).use {
-            it.serialize(data)
-            it.flush()
+        jacksonFactory().createJsonGenerator(writer).useIt {
+            serialize(data)
+            flush()
             write(filename, writer.toString())
         }
     }
@@ -144,7 +145,7 @@ internal class GoogleDrive(context: Context, account: Account) {
 
         private const val APP_DATA_FOLDER = "appDataFolder"
         private const val MIME_JSON = "text/json"
-        private val log = LoggerFactory.getLogger("GoogleDrive")
+        private val log = Logger("GoogleDrive")
     }
 
 }

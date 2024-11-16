@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_BOOT_COMPLETED
 import com.bopr.android.smailer.AppStartup.startUpAppServices
-import org.slf4j.LoggerFactory
+import com.bopr.android.smailer.util.Logger
 
 /**
  * Starts application at device boot.
@@ -14,13 +14,15 @@ import org.slf4j.LoggerFactory
  */
 class BootReceiver : BroadcastReceiver() {
 
-    private val log = LoggerFactory.getLogger("BootReceiver")
-
     override fun onReceive(context: Context, intent: Intent) {
-        log.debug("Received intent: {}", intent)
+        log.debug("Received intent: $intent")
 
         if (intent.action == ACTION_BOOT_COMPLETED) {
             context.startUpAppServices()
         }
+    }
+
+    companion object{
+        private val log = Logger("BootReceiver")
     }
 }

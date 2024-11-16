@@ -77,7 +77,7 @@ class MainFragment : BasePreferenceFragment(R.xml.pref_main) {
     private fun updateMessengersPreference() {
         val titles = messengerPrefs.filterKeys { settings.getBoolean(it) }
             .values.map { getString(it) }
-        val text = commaJoin(titles)
+        val text = titles.commaJoin()
 
         requirePreference(PREF_MESSENGERS).run {
             if (titles.isNotEmpty()) {

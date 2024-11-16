@@ -5,14 +5,14 @@ import android.content.res.Resources
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.processor.telegram.TelegramException
-import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_BAD_RESPONSE
-import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_INVALID_TOKEN
-import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_NO_CHAT
-import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_NO_CONNECTION
-import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_NO_TOKEN
-import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_NO_UPDATES
-import com.bopr.android.smailer.processor.telegram.TelegramException.Code.TELEGRAM_REQUEST_FAILED
+import com.bopr.android.smailer.messenger.telegram.TelegramException
+import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_BAD_RESPONSE
+import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_INVALID_TOKEN
+import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_NO_CHAT
+import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_NO_CONNECTION
+import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_NO_TOKEN
+import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_NO_UPDATES
+import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_REQUEST_FAILED
 import com.bopr.android.smailer.provider.EventState
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
@@ -21,7 +21,7 @@ import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import java.util.Locale
 
 /**
- * To prevent drawables from being shrinked by R8's resource shrinker we have to
+ * To prevent drawables from being shrunk by R8's resource shrinker we have to
  * hold theirs hardcoded references.
  */
 private val RES_DIRECTION_IMAGE = intArrayOf(
@@ -31,7 +31,7 @@ private val RES_DIRECTION_IMAGE = intArrayOf(
 )
 
 /**
- * To prevent drawables from being shrinked by R8's resource shrinker we have to
+ * To prevent drawables from being shrunk by R8's resource shrinker we have to
  * hold theirs hardcoded references.
  */
 private val RES_STATE_IMAGE = intArrayOf(
@@ -41,7 +41,7 @@ private val RES_STATE_IMAGE = intArrayOf(
 )
 
 /**
- * To prevent drawables from being shrinked by R8's resource shrinker we have to
+ * To prevent drawables from being shrunk by R8's resource shrinker we have to
  * hold theirs hardcoded references.
  */
 private val RES_TYPE_IMAGE = intArrayOf(
@@ -162,7 +162,7 @@ fun telegramErrorText(error: TelegramException): Int {
 
         TELEGRAM_NO_CHAT -> R.string.require_start_chat
 
-        TELEGRAM_NO_CONNECTION -> R.string.no_network_try_later
+        TELEGRAM_NO_CONNECTION -> R.string.no_telegram_network_try_later
     }
 }
 

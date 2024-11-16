@@ -11,7 +11,7 @@ import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
 import com.google.firebase.messaging.FirebaseMessaging
 import org.json.JSONObject
-import org.slf4j.LoggerFactory
+import com.bopr.android.smailer.util.Logger
 import java.util.Locale
 
 class Firebase(val context: Context) {
@@ -55,7 +55,7 @@ class Firebase(val context: Context) {
                 val request = FirebaseRequest("https://fcm.googleapis.com/fcm/send", payload)
                 requestQueue.add(request)
 
-                log.debug("Sent message: {}", payload)
+                log.debug("Sent message: $payload")
             }
         } ?: log.warn("No account")
     }
@@ -103,7 +103,7 @@ class Firebase(val context: Context) {
         onError: (VolleyError) -> Unit = {}
     ) : JsonObjectRequest(Method.POST, url, payload,
         { response ->
-            log.debug("Response: {}", response)
+            log.debug("Response: $response", )
             onComplete(response)
         },
         { error ->
@@ -121,7 +121,7 @@ class Firebase(val context: Context) {
 
     companion object {
 
-        private val log = LoggerFactory.getLogger("Firebase")
+        private val log = Logger("Firebase")
 
         const val FCM_REQUEST_DATA_SYNC = "request_data_sync"
         const val FCM_SENDER = "sender"

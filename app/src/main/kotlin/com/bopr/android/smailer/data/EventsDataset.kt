@@ -22,7 +22,7 @@ import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
 import com.bopr.android.smailer.provider.telephony.PhoneEventData
 import com.bopr.android.smailer.util.GeoLocation
 import com.bopr.android.smailer.util.strings
-import org.slf4j.LoggerFactory
+import com.bopr.android.smailer.util.Logger
 
 class EventsDataset(helper: SQLiteOpenHelper, modifications: MutableSet<String>) :
     Dataset<PhoneEventData>(TABLE_PHONE_EVENTS, helper, modifications) {
@@ -86,9 +86,9 @@ class EventsDataset(helper: SQLiteOpenHelper, modifications: MutableSet<String>)
                     getDoubleOrNull(COLUMN_LONGITUDE)
                 ),
                 details = getStringOrNull(COLUMN_DETAILS),
-                state = getInt(COLUMN_STATE),
+                processState = getInt(COLUMN_STATE),
                 acceptor = getString(COLUMN_ACCEPTOR),
-                processStatus = getInt(COLUMN_PROCESS_STATUS),
+                acceptState = getInt(COLUMN_PROCESS_STATUS),
                 processTime = getLongOrNull(COLUMN_PROCESS_TIME),
                 isRead = getBoolean(COLUMN_READ)
             )
@@ -100,8 +100,8 @@ class EventsDataset(helper: SQLiteOpenHelper, modifications: MutableSet<String>)
             put(COLUMN_PHONE, element.phone)
             put(COLUMN_ACCEPTOR, element.acceptor)
             put(COLUMN_START_TIME, element.startTime)
-            put(COLUMN_STATE, element.state)
-            put(COLUMN_PROCESS_STATUS, element.processStatus)
+            put(COLUMN_STATE, element.processState)
+            put(COLUMN_PROCESS_STATUS, element.acceptState)
             put(COLUMN_PROCESS_TIME, element.processTime)
             put(COLUMN_IS_INCOMING, element.isIncoming)
             put(COLUMN_IS_MISSED, element.isMissed)
@@ -118,6 +118,6 @@ class EventsDataset(helper: SQLiteOpenHelper, modifications: MutableSet<String>)
 
     companion object {
 
-        private val log = LoggerFactory.getLogger("Database")
+        private val log = Logger("Database")
     }
 }

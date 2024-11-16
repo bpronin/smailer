@@ -6,7 +6,7 @@ import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.data.Database
-import com.bopr.android.smailer.processor.mail.GoogleMailSession
+import com.bopr.android.smailer.messenger.mail.GoogleMailSession
 import com.nhaarman.mockitokotlin2.mock
 
 @LargeTest

@@ -17,7 +17,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_ENABLED
 import com.bopr.android.smailer.external.Firebase
 import com.bopr.android.smailer.external.Firebase.Companion.FCM_REQUEST_DATA_SYNC
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_NORMAL
-import org.slf4j.LoggerFactory
+import com.bopr.android.smailer.util.Logger
 
 /**
  * Worker used in synchronization application data with google drive.
@@ -49,7 +49,7 @@ internal class SyncWorker(context: Context, workerParams: WorkerParameters) :
 
     internal companion object {
 
-        private val log = LoggerFactory.getLogger("SyncWorker")
+        private val log = Logger("SyncWorker")
         private const val WORK_SYNC = "com.bopr.android.smailer.sync"
         private const val SYNC_OPTIONS = "options"
 

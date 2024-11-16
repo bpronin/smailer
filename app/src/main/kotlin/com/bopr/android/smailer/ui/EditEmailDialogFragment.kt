@@ -10,12 +10,12 @@ import android.widget.TextView
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import com.bopr.android.smailer.R
+import com.bopr.android.smailer.util.Logger
 import com.bopr.android.smailer.util.checkPermission
 import com.bopr.android.smailer.util.createPickContactIntent
 import com.bopr.android.smailer.util.emailFromIntent
 import com.bopr.android.smailer.util.showSoftKeyboard
 import com.bopr.android.smailer.util.showToast
-import org.slf4j.LoggerFactory
 
 /**
  * Email editor dialog.
@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory
  */
 class EditEmailDialogFragment : BaseEditDialogFragment<String>("edit_recipient_dialog") {
 
-    private val log = LoggerFactory.getLogger("EditEmailDialogFragment")
     private lateinit var editText: TextView
     private var initialValue: String? = null
     private val contactPickerLauncher =
@@ -70,5 +69,10 @@ class EditEmailDialogFragment : BaseEditDialogFragment<String>("edit_recipient_d
 
     override fun getValue(): String? {
         return editText.text?.toString()
+    }
+
+    companion object {
+
+        private val log = Logger("ui.EditEmailDialogFragment")
     }
 }

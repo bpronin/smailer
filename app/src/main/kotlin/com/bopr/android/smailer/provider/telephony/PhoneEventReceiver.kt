@@ -12,18 +12,18 @@ import android.telephony.TelephonyManager.EXTRA_STATE_OFFHOOK
 import android.telephony.TelephonyManager.EXTRA_STATE_RINGING
 import com.bopr.android.smailer.provider.telephony.PhoneEventProcessorWorker.Companion.startPhoneEventProcessing
 import com.bopr.android.smailer.util.DEVICE_NAME
-import org.slf4j.LoggerFactory
+import com.bopr.android.smailer.util.Logger
 import java.lang.System.currentTimeMillis
 
 /**
- * Receives phone call and sms intents and starts mailer service.
+ * Receives phone call and sms intents and starts messengers service.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 class PhoneEventReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        log.debug("Received intent: {}", intent)
+        log.debug("Received intent: $intent")
 
         when (intent.action) {
             ACTION_PHONE_STATE_CHANGED ->
@@ -146,7 +146,7 @@ class PhoneEventReceiver : BroadcastReceiver() {
 
     companion object {
 
-        private val log = LoggerFactory.getLogger("PhoneEventReceiver")
+        private val log = Logger("PhoneEventReceiver")
 
         const val SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED"
 

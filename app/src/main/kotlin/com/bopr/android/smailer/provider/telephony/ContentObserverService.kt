@@ -20,7 +20,7 @@ import com.bopr.android.smailer.data.getString
 import com.bopr.android.smailer.data.getStringOrNull
 import com.bopr.android.smailer.data.useFirst
 import com.bopr.android.smailer.util.DEVICE_NAME
-import org.slf4j.LoggerFactory
+import com.bopr.android.smailer.util.Logger
 
 /**
  * Listens to changes in sms content. Used to process outgoing SMS.
@@ -60,7 +60,7 @@ class ContentObserverService : Service() {
     private fun processOutgoingSms(id: String) {
         log.debug("Processing outgoing sms: $id")
 
-        val context = this  //todo: why? contentResolver is also Context
+        val context = this  //TODO: why? contentResolver is also Context
         contentResolver.query(CONTENT_SMS_SENT, null, "_id=?", arrayOf(id), null)?.useFirst {
             val date = getLong("date")
             context.startPhoneEventProcessing(
@@ -88,7 +88,7 @@ class ContentObserverService : Service() {
             selfChange: Boolean,
             uri: Uri?
         ) { /* this method may be called multiple times so we need to remember processed uri */
-            log.debug("Processing uri: {}", uri)
+            log.debug("Processing uri: $uri", )
 
             uri?.let {
                 if (uri != lastProcessed) {
@@ -116,7 +116,7 @@ class ContentObserverService : Service() {
 
     companion object {
 
-        private val log = LoggerFactory.getLogger("ContentObserverService")
+        private val log = Logger("ContentObserverService")
         private val CONTENT_SMS_SENT = Uri.parse("content://sms/sent")
         private val CONTENT_SMS = Uri.parse("content://sms")
 
