@@ -36,7 +36,7 @@ class EventConsumersFragment : BasePreferenceFragment(R.xml.pref_event_consumers
 
             PREF_TELEGRAM_MESSENGER_ENABLED -> updateTelegramPreference()
 
-            PREF_SMS_MESSENGER_RECIPIENTS -> updateSmsPreference()
+            PREF_SMS_MESSENGER_ENABLED -> updateSmsPreference()
         }
     }
 
