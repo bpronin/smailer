@@ -49,7 +49,7 @@ android {
         versionName = "1.10.2"
         applicationId = "com.bopr.android.smailer"
         minSdk = 21
-        targetSdk = 34
+        targetSdk = 35
         base.archivesName = "smailer-$versionName"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -155,7 +155,7 @@ dependencies {
     implementation("com.google.apis:google-api-services-gmail:v1-rev98-1.25.0")
     implementation("com.google.firebase:firebase-analytics:22.1.2")
     implementation("com.google.firebase:firebase-crashlytics:19.2.1")
-    implementation("com.google.firebase:firebase-messaging:24.0.3")
+    implementation("com.google.firebase:firebase-messaging:24.1.0")
     implementation("com.sun.mail:android-mail:1.6.7")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.0.21")
     implementation("org.slf4j:slf4j-api:2.0.16")

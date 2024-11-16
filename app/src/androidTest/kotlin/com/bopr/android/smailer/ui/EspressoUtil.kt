@@ -15,7 +15,6 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers.isPlatformPopup
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.platform.app.InstrumentationRegistry
-import com.bopr.android.smailer.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.hamcrest.Description
 import org.hamcrest.Matcher
@@ -88,7 +87,7 @@ fun clickPreference(title: Int) {
 fun clickPreferenceAt(title: Int, position: Int) {
     onView(allOf(
             preferenceTitle(title),
-            isDescendantOfA(childAtPosition(allOf(withId(R.id.recycler_view)), position)))
+            isDescendantOfA(childAtPosition(allOf(withId(androidx.preference.R.id.recycler_view)), position)))
     ).perform(click())
 }
 
@@ -104,7 +103,7 @@ fun clickOptionsMenuItem(title: Int) {
 fun clickBackButton() {
     onView(allOf(
             withContentDescription("Navigate up"),
-            withParent(withId(R.id.action_bar)))
+            withParent(withId(androidx.appcompat.R.id.action_bar)))
     ).perform(click())
 }
 
@@ -155,7 +154,7 @@ fun inputText(text: String) {
 fun assertPageDisplayed(title: Int) {
     onView(allOf(
             withText(title),
-            withParent(withId(R.id.action_bar)))
+            withParent(withId(androidx.appcompat.R.id.action_bar)))
     ).check(matches(isDisplayed()))
 }
 
