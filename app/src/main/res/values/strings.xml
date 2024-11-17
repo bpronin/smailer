@@ -61,7 +61,7 @@
     <string name="enter_phone_number_or_wildcard">Enter phone number. You also may use * as a wildcard.</string>
     <string name="error_sending_test_message">An error occurred while sending message.</string>
     <string name="event_time">Event time</string>
-    <string name="events_causing_sending_mail">Events causing sending email</string>
+    <string name="email_processing_triggers">Events causing sending email</string>
     <string name="geolocation_disabled">(location service disabled on device)</string>
     <string name="header">Header</string>
     <string name="history">History</string>

@@ -60,7 +60,7 @@
     <string name="enter_phone_number_or_wildcard">Укажите номер телефона. Допустимо использование символа * для пропуска группы знаков</string>
     <string name="error_sending_test_message">В процессе отправки тестового сообщения произошла ошибка.</string>
     <string name="event_time">Время события</string>
-    <string name="events_causing_sending_mail">События для отправки почты</string>
+    <string name="email_processing_triggers">События для отправки почты</string>
     <string name="geolocation_disabled">(определение местоположения отключено)</string>
     <string name="header">Заголовок</string>
     <string name="history">История</string>

@@ -13,15 +13,15 @@ import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGR
 import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_NO_TOKEN
 import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_NO_UPDATES
 import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_REQUEST_FAILED
-import com.bopr.android.smailer.provider.EventState
-import com.bopr.android.smailer.provider.EventState.Companion.STATE_IGNORED
-import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
-import com.bopr.android.smailer.provider.EventState.Companion.STATE_PROCESSED
-import com.bopr.android.smailer.provider.telephony.PhoneEventData
+import com.bopr.android.smailer.messenger.MessageState
+import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_IGNORED
+import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_PENDING
+import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_PROCESSED
+import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
 import java.util.Locale
 
 /**
- * To prevent drawables from being shrunk by R8's resource shrinker we have to
+ * NOTE: To prevent drawables from being shrunk by R8's resource shrinker we have to
  * hold theirs hardcoded references.
  */
 private val RES_DIRECTION_IMAGE = intArrayOf(
@@ -31,7 +31,7 @@ private val RES_DIRECTION_IMAGE = intArrayOf(
 )
 
 /**
- * To prevent drawables from being shrunk by R8's resource shrinker we have to
+ * NOTE: To prevent drawables from being shrunk by R8's resource shrinker we have to
  * hold theirs hardcoded references.
  */
 private val RES_STATE_IMAGE = intArrayOf(
@@ -41,7 +41,7 @@ private val RES_STATE_IMAGE = intArrayOf(
 )
 
 /**
- * To prevent drawables from being shrunk by R8's resource shrinker we have to
+ * NOTE: To prevent drawables from being shrunk by R8's resource shrinker we have to
  * hold theirs hardcoded references.
  */
 private val RES_TYPE_IMAGE = intArrayOf(
@@ -50,9 +50,9 @@ private val RES_TYPE_IMAGE = intArrayOf(
 )
 
 @DrawableRes
-fun eventTypeImage(event: PhoneEventData): Int {
+fun phoneCallTypeImage(info: PhoneCallInfo): Int {
     /* do not use direct drawable resources references here due to shrinker issue */
-    return if (event.isSms) {
+    return if (info.isSms) {
         RES_TYPE_IMAGE[0]
     } else {
         RES_TYPE_IMAGE[1]
@@ -60,13 +60,13 @@ fun eventTypeImage(event: PhoneEventData): Int {
 }
 
 @DrawableRes
-fun eventDirectionImage(event: PhoneEventData): Int {
+fun phoneCallDirectionImage(info: PhoneCallInfo): Int {
     /* do not use direct drawable resources references here due to shrinker issue */
     return when {
-        event.isMissed ->
+        info.isMissed ->
             RES_DIRECTION_IMAGE[0]
 
-        event.isIncoming ->
+        info.isIncoming ->
             RES_DIRECTION_IMAGE[1]
 
         else ->
@@ -75,7 +75,7 @@ fun eventDirectionImage(event: PhoneEventData): Int {
 }
 
 @DrawableRes
-fun eventStateImage(@EventState state: Int): Int {
+fun messageStateImage(@MessageState state: Int): Int {
     /* do not use direct drawable resources references here due to shrinker issue */
     return when (state) {
         STATE_PENDING ->
@@ -93,16 +93,16 @@ fun eventStateImage(@EventState state: Int): Int {
 }
 
 @StringRes
-fun eventTypeText(event: PhoneEventData): Int {
-    return if (event.isSms) {
-        if (event.isIncoming) {
+fun phoneCallTypeText(info: PhoneCallInfo): Int {
+    return if (info.isSms) {
+        if (info.isIncoming) {
             R.string.incoming_sms
         } else {
             R.string.outgoing_sms
         }
-    } else if (event.isMissed) {
+    } else if (info.isMissed) {
         R.string.missed_call
-    } else if (event.isIncoming) {
+    } else if (info.isIncoming) {
         R.string.incoming_call
     } else {
         R.string.outgoing_call
@@ -110,16 +110,16 @@ fun eventTypeText(event: PhoneEventData): Int {
 }
 
 @StringRes
-fun eventTypePrefix(event: PhoneEventData): Int {
-    return if (event.isSms) {
-        if (event.isIncoming) {
+fun phoneCallTypePrefix(info: PhoneCallInfo): Int {
+    return if (info.isSms) {
+        if (info.isIncoming) {
             R.string.incoming_sms_from
         } else {
             R.string.outgoing_sms_to
         }
-    } else if (event.isMissed) {
+    } else if (info.isMissed) {
         R.string.missed_call_from
-    } else if (event.isIncoming) {
+    } else if (info.isIncoming) {
         R.string.incoming_call_from
     } else {
         R.string.outgoing_call_to
@@ -127,7 +127,7 @@ fun eventTypePrefix(event: PhoneEventData): Int {
 }
 
 @StringRes
-fun eventStateText(@EventState state: Int): Int {
+fun messageStateText(@MessageState state: Int): Int {
     return when (state) {
         STATE_PENDING ->
             R.string.pending

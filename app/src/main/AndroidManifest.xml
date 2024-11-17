@@ -71,7 +71,7 @@
                 android:parentActivityName=".ui.MainActivity" />
 
         <activity
-                android:name=".ui.EventConsumersActivity"
+                android:name=".ui.MessengersActivity"
                 android:label="@string/messengers"
                 android:parentActivityName=".ui.MainActivity" />
 
@@ -101,39 +101,39 @@
                 android:parentActivityName=".ui.EmailSettingsActivity" />
 
         <activity
-                android:name=".ui.EventFilterPhoneBlacklistActivity"
+                android:name=".ui.PhoneBlacklistFilterActivity"
                 android:label="@string/phone_blacklist"
                 android:parentActivityName=".ui.RulesActivity" />
 
         <activity
-                android:name=".ui.EventFilterPhoneWhitelistActivity"
+                android:name=".ui.PhoneWhitelistFilterActivity"
                 android:label="@string/phone_whitelist"
                 android:parentActivityName=".ui.RulesActivity" />
 
         <activity
-                android:name=".ui.EventFilterTextBlacklistActivity"
+                android:name=".ui.TextBlacklistFilterActivity"
                 android:label="@string/text_blacklist"
                 android:parentActivityName=".ui.RulesActivity" />
 
         <activity
-                android:name=".ui.EventFilterTextWhitelistActivity"
+                android:name=".ui.TextWhitelistFilterActivity"
                 android:label="@string/text_whitelist"
                 android:parentActivityName=".ui.RulesActivity" />
 
         <activity
                 android:name=".ui.EmailSettingsActivity"
                 android:label="@string/email"
-                android:parentActivityName=".ui.EventConsumersActivity" />
+                android:parentActivityName=".ui.MessengersActivity" />
 
         <activity
                 android:name=".ui.TelegramSettingsActivity"
                 android:label="@string/telegram"
-                android:parentActivityName=".ui.EventConsumersActivity" />
+                android:parentActivityName=".ui.MessengersActivity" />
 
         <activity
                 android:name=".ui.SmsSettingsActivity"
                 android:label="@string/sms"
-                android:parentActivityName=".ui.EventConsumersActivity" />
+                android:parentActivityName=".ui.MessengersActivity" />
 
         <activity
                 android:name=".ui.SmsRecipientsActivity"
@@ -144,7 +144,7 @@
         <service android:name=".provider.telephony.ContentObserverService" />
 
         <receiver
-                android:name=".provider.telephony.PhoneEventReceiver"
+                android:name=".provider.telephony.PhoneCallReceiver"
                 android:exported="true"
                 android:permission="android.permission.BROADCAST_SMS">
             <intent-filter>

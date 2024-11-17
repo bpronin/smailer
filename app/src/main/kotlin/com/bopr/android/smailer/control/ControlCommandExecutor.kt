@@ -19,10 +19,10 @@ import com.bopr.android.smailer.control.ControlCommand.Action.REMOVE_TEXT_FROM_W
 import com.bopr.android.smailer.control.ControlCommand.Action.SEND_SMS_TO_CALLER
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.StringDataset
-import com.bopr.android.smailer.ui.EventFilterPhoneBlacklistActivity
-import com.bopr.android.smailer.ui.EventFilterPhoneWhitelistActivity
-import com.bopr.android.smailer.ui.EventFilterTextBlacklistActivity
-import com.bopr.android.smailer.ui.EventFilterTextWhitelistActivity
+import com.bopr.android.smailer.ui.PhoneBlacklistFilterActivity
+import com.bopr.android.smailer.ui.PhoneWhitelistFilterActivity
+import com.bopr.android.smailer.ui.TextBlacklistFilterActivity
+import com.bopr.android.smailer.ui.TextWhitelistFilterActivity
 import com.bopr.android.smailer.ui.MainActivity
 import com.bopr.android.smailer.util.checkPermission
 import com.bopr.android.smailer.util.sendSmsMessage
@@ -77,36 +77,36 @@ internal class ControlCommandExecutor(
 
     private fun addTextToWhitelist(text: String?) {
         addToFilterList(
-            database.smsTextWhitelist, text,
+            database.textWhitelist, text,
             R.string.text_remotely_added_to_whitelist,
-            EventFilterTextWhitelistActivity::class
+            TextWhitelistFilterActivity::class
         )
     }
 
     private fun removeTextFromWhitelist(text: String?) {
         removeFromFilterList(
-            database.smsTextWhitelist,
+            database.textWhitelist,
             text,
             R.string.text_remotely_removed_from_whitelist,
-            EventFilterTextWhitelistActivity::class
+            TextWhitelistFilterActivity::class
         )
     }
 
     private fun addTextToBlacklist(text: String?) {
         addToFilterList(
-            database.smsTextBlacklist,
+            database.textBlacklist,
             text,
             R.string.text_remotely_added_to_blacklist,
-            EventFilterTextBlacklistActivity::class
+            TextBlacklistFilterActivity::class
         )
     }
 
     private fun removeTextFromBlacklist(text: String?) {
         removeFromFilterList(
-            database.smsTextBlacklist,
+            database.textBlacklist,
             text,
             R.string.text_remotely_removed_from_blacklist,
-            EventFilterTextBlacklistActivity::class
+            TextBlacklistFilterActivity::class
         )
     }
 
@@ -115,7 +115,7 @@ internal class ControlCommandExecutor(
             database.phoneWhitelist,
             phone,
             R.string.phone_remotely_added_to_whitelist,
-            EventFilterPhoneWhitelistActivity::class
+            PhoneWhitelistFilterActivity::class
         )
     }
 
@@ -124,7 +124,7 @@ internal class ControlCommandExecutor(
             database.phoneWhitelist,
             phone,
             R.string.phone_remotely_removed_from_whitelist,
-            EventFilterPhoneWhitelistActivity::class
+            PhoneWhitelistFilterActivity::class
         )
     }
 
@@ -133,7 +133,7 @@ internal class ControlCommandExecutor(
             database.phoneBlacklist,
             phone,
             R.string.phone_remotely_added_to_blacklist,
-            EventFilterPhoneBlacklistActivity::class
+            PhoneBlacklistFilterActivity::class
         )
     }
 
@@ -142,7 +142,7 @@ internal class ControlCommandExecutor(
             database.phoneBlacklist,
             phone,
             R.string.phone_remotely_removed_from_blacklist,
-            EventFilterPhoneBlacklistActivity::class
+            PhoneBlacklistFilterActivity::class
         )
     }
 

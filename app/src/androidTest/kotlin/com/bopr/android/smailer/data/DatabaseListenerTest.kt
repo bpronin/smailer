@@ -5,7 +5,7 @@ import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.data.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.data.Database.Companion.unregisterDatabaseListener
-import com.bopr.android.smailer.provider.telephony.PhoneEventData
+import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -46,9 +46,9 @@ class DatabaseListenerTest : BaseTest() {
 
         database.commit {
             batch {
-                events.add(PhoneEventData(phone = "1", startTime = 0, acceptor = "device"))
-                events.add(PhoneEventData(phone = "2", startTime = 1, acceptor = "device"))
-                events.add(PhoneEventData(phone = "3", startTime = 2, acceptor = "device"))
+                phoneCalls.add(PhoneCallInfo(phone = "1", startTime = 0, acceptor = "device"))
+                phoneCalls.add(PhoneCallInfo(phone = "2", startTime = 1, acceptor = "device"))
+                phoneCalls.add(PhoneCallInfo(phone = "3", startTime = 2, acceptor = "device"))
             }
         }
 

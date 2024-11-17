@@ -46,8 +46,8 @@ class SyncTest : BaseTest() {
         database.commit {
             phoneBlacklist.addAll(setOf("PBA", "PBB", "PBC"))
             phoneWhitelist.addAll(setOf("PWA", "PWB", "PWC"))
-            smsTextBlacklist.addAll(setOf("TBA", "TBB", "TBC"))
-            smsTextWhitelist.addAll(setOf("TWA", "TWB", "TWC"))
+            textBlacklist.addAll(setOf("TBA", "TBB", "TBC"))
+            textWhitelist.addAll(setOf("TWA", "TWB", "TWC"))
         }
 
         sync.sync(SYNC_FORCE_UPLOAD)
@@ -61,8 +61,8 @@ class SyncTest : BaseTest() {
             (this as SyncData).run {
                 phoneBlacklist == database.phoneBlacklist
                         && phoneWhitelist == database.phoneWhitelist
-                        && textBlacklist == database.smsTextBlacklist
-                        && textWhitelist == database.smsTextWhitelist
+                        && textBlacklist == database.textBlacklist
+                        && textWhitelist == database.textWhitelist
             }
         })
 

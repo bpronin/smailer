@@ -18,9 +18,9 @@ import com.bopr.android.smailer.control.ControlCommand.Action.REMOVE_TEXT_FROM_W
 import com.bopr.android.smailer.control.ControlCommand.Action.SEND_SMS_TO_CALLER
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.databaseName
-import com.bopr.android.smailer.ui.EventFilterPhoneBlacklistActivity
-import com.bopr.android.smailer.ui.EventFilterPhoneWhitelistActivity
-import com.bopr.android.smailer.ui.EventFilterTextWhitelistActivity
+import com.bopr.android.smailer.ui.PhoneBlacklistFilterActivity
+import com.bopr.android.smailer.ui.PhoneWhitelistFilterActivity
+import com.bopr.android.smailer.ui.TextWhitelistFilterActivity
 import com.bopr.android.smailer.ui.MainActivity
 import com.bopr.android.smailer.util.sendSmsMessage
 import com.nhaarman.mockitokotlin2.anyOrNull
@@ -94,12 +94,12 @@ class ControlCommandExecutorTest : BaseTest() {
         verify(notifications).notifyInfo(
             eq(getString(R.string.remote_control)),
             eq(getString(R.string.phone_remotely_added_to_blacklist, "100")),
-            eq(EventFilterPhoneBlacklistActivity::class)
+            eq(PhoneBlacklistFilterActivity::class)
         )
         verify(notifications).notifyInfo(
             eq(getString(R.string.remote_control)),
             eq(getString(R.string.phone_remotely_added_to_blacklist, "200")),
-            eq(EventFilterPhoneBlacklistActivity::class)
+            eq(PhoneBlacklistFilterActivity::class)
         )
     }
 
@@ -120,12 +120,12 @@ class ControlCommandExecutorTest : BaseTest() {
         verify(notifications).notifyInfo(
             eq(getString(R.string.remote_control)),
             eq(getString(R.string.phone_remotely_added_to_whitelist, "100")),
-            eq(EventFilterPhoneWhitelistActivity::class)
+            eq(PhoneWhitelistFilterActivity::class)
         )
         verify(notifications).notifyInfo(
             eq(getString(R.string.remote_control)),
             eq(getString(R.string.phone_remotely_added_to_whitelist, "200")),
-            eq(EventFilterPhoneWhitelistActivity::class)
+            eq(PhoneWhitelistFilterActivity::class)
         )
     }
 
@@ -138,16 +138,16 @@ class ControlCommandExecutorTest : BaseTest() {
         processor.execute(createCommand(ADD_TEXT_TO_BLACKLIST, "200"))
         /* must be ignored */
 
-        assertEquals(setOf("100", "200"), database.smsTextBlacklist)
+        assertEquals(setOf("100", "200"), database.textBlacklist)
         verify(notifications).notifyInfo(
             eq(getString(R.string.remote_control)),
             eq(getString(R.string.text_remotely_added_to_blacklist, "100")),
-            eq(EventFilterPhoneBlacklistActivity::class)
+            eq(PhoneBlacklistFilterActivity::class)
         )
         verify(notifications).notifyInfo(
             eq(getString(R.string.remote_control)),
             eq(getString(R.string.text_remotely_added_to_blacklist, "200")),
-            eq(EventFilterPhoneBlacklistActivity::class)
+            eq(PhoneBlacklistFilterActivity::class)
         )
     }
 
@@ -159,16 +159,16 @@ class ControlCommandExecutorTest : BaseTest() {
         processor.execute(createCommand(ADD_TEXT_TO_WHITELIST, "200"))
         processor.execute(createCommand(ADD_TEXT_TO_WHITELIST, "200"))
 
-        assertEquals(setOf("100", "200"), database.smsTextWhitelist)
+        assertEquals(setOf("100", "200"), database.textWhitelist)
         verify(notifications).notifyInfo(
             eq(getString(R.string.remote_control)),
             eq(getString(R.string.text_remotely_added_to_whitelist, "100")),
-            eq(EventFilterTextWhitelistActivity::class)
+            eq(TextWhitelistFilterActivity::class)
         )
         verify(notifications).notifyInfo(
             eq(getString(R.string.remote_control)),
             eq(getString(R.string.text_remotely_added_to_whitelist, "200")),
-            eq(EventFilterTextWhitelistActivity::class)
+            eq(TextWhitelistFilterActivity::class)
         )
     }
 
@@ -185,12 +185,12 @@ class ControlCommandExecutorTest : BaseTest() {
         verify(notifications).notifyInfo(
             eq(getString(R.string.remote_control)),
             eq(getString(R.string.phone_remotely_removed_from_blacklist, "100")),
-            eq(EventFilterPhoneBlacklistActivity::class)
+            eq(PhoneBlacklistFilterActivity::class)
         )
         verify(notifications).notifyInfo(
             eq(getString(R.string.remote_control)),
             eq(getString(R.string.phone_remotely_removed_from_blacklist, "200")),
-            eq(EventFilterPhoneBlacklistActivity::class)
+            eq(PhoneBlacklistFilterActivity::class)
         )
     }
 
@@ -207,56 +207,56 @@ class ControlCommandExecutorTest : BaseTest() {
         verify(notifications).notifyInfo(
             eq(getString(R.string.remote_control)),
             eq(getString(R.string.phone_remotely_removed_from_whitelist, "100")),
-            eq(EventFilterPhoneWhitelistActivity::class)
+            eq(PhoneWhitelistFilterActivity::class)
         )
         verify(notifications).notifyInfo(
             eq(getString(R.string.remote_control)),
             eq(getString(R.string.phone_remotely_removed_from_whitelist, "200")),
-            eq(EventFilterPhoneWhitelistActivity::class)
+            eq(PhoneWhitelistFilterActivity::class)
         )
     }
 
     @Test
     fun testRemoveTextFromBlacklist() {
-        database.smsTextBlacklist.replaceAll(setOf("100", "200", "300"))
+        database.textBlacklist.replaceAll(setOf("100", "200", "300"))
 
         val processor = ControlCommandExecutor(context, database, notifications = notifications)
 
         processor.execute(createCommand(REMOVE_TEXT_FROM_BLACKLIST, "100"))
         processor.execute(createCommand(REMOVE_TEXT_FROM_BLACKLIST, "200"))
 
-        assertEquals(setOf("300"), database.smsTextBlacklist)
+        assertEquals(setOf("300"), database.textBlacklist)
         verify(notifications).notifyInfo(
             eq(getString(R.string.remote_control)),
             eq(getString(R.string.text_remotely_removed_from_blacklist, "100")),
-            eq(EventFilterPhoneBlacklistActivity::class)
+            eq(PhoneBlacklistFilterActivity::class)
         )
         verify(notifications).notifyInfo(
             eq(getString(R.string.remote_control)),
             eq(getString(R.string.text_remotely_removed_from_blacklist, "200")),
-            eq(EventFilterPhoneBlacklistActivity::class)
+            eq(PhoneBlacklistFilterActivity::class)
         )
     }
 
     @Test
     fun testRemoveTextFromWhitelist() {
-        database.smsTextWhitelist.replaceAll(setOf("100", "200", "300"))
+        database.textWhitelist.replaceAll(setOf("100", "200", "300"))
 
         val processor = ControlCommandExecutor(context, database, notifications = notifications)
 
         processor.execute(createCommand(REMOVE_TEXT_FROM_WHITELIST, "100"))
         processor.execute(createCommand(REMOVE_TEXT_FROM_WHITELIST, "200"))
 
-        assertEquals(setOf("300"), database.smsTextWhitelist)
+        assertEquals(setOf("300"), database.textWhitelist)
         verify(notifications).notifyInfo(
             eq(getString(R.string.remote_control)),
             eq(getString(R.string.text_remotely_removed_from_whitelist, "100")),
-            eq(EventFilterTextWhitelistActivity::class)
+            eq(TextWhitelistFilterActivity::class)
         )
         verify(notifications).notifyInfo(
             eq(getString(R.string.remote_control)),
             eq(getString(R.string.text_remotely_removed_from_whitelist, "200")),
-            eq(EventFilterTextWhitelistActivity::class)
+            eq(TextWhitelistFilterActivity::class)
         )
     }
 

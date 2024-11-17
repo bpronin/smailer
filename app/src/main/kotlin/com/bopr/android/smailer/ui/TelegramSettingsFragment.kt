@@ -8,7 +8,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_BOT_TOKEN
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_CHAT_ID
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSENGER_ENABLED
-import com.bopr.android.smailer.messenger.telegram.BaseTelegramEventFormatter
+import com.bopr.android.smailer.messenger.telegram.BaseTelegramFormatter
 import com.bopr.android.smailer.messenger.telegram.TelegramSession
 import com.bopr.android.smailer.ui.InfoDialog.Companion.showInfoDialog
 import com.bopr.android.smailer.util.GeoLocation
@@ -26,7 +26,7 @@ import com.bopr.android.smailer.util.updateSummary
 import java.lang.System.*
 
 /**
- * Event consumers settings fragment.
+ * Telegram messenger settings fragment.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
@@ -78,7 +78,7 @@ class TelegramSettingsFragment : BasePreferenceFragment(R.xml.pref_telegram_sett
 
         requireContext().requestGeoLocation(
             onSuccess = { location ->
-                val formater = TestTelegramEventFormatter(currentTimeMillis(), location)
+                val formater = TestTelegramFormatter(currentTimeMillis(), location)
                 TelegramSession(
                     context = requireContext(),
                     token = settings.getString(PREF_TELEGRAM_BOT_TOKEN)
@@ -102,8 +102,8 @@ class TelegramSettingsFragment : BasePreferenceFragment(R.xml.pref_telegram_sett
         }
     }
 
-    private inner class TestTelegramEventFormatter(time: Long, location: GeoLocation?) :
-        BaseTelegramEventFormatter(requireContext(), time, time, location) {
+    private inner class TestTelegramFormatter(time: Long, location: GeoLocation?) :
+        BaseTelegramFormatter(requireContext(), time, time, location) {
 
         override fun getTitle(): String {
             return getString(R.string.test_message)

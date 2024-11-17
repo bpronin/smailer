@@ -4,7 +4,7 @@ import android.accounts.Account
 import android.content.Context
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.util.GeoLocation.Companion.fromCoordinates
-import com.bopr.android.smailer.provider.telephony.PhoneEventData
+import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
 import com.bopr.android.smailer.external.GoogleDrive
 import com.bopr.android.smailer.util.Logger
 import java.io.IOException
@@ -90,9 +90,9 @@ internal class Synchronizer(context: Context,
             SyncData(
                     phoneBlacklist = phoneBlacklist,
                     phoneWhitelist = phoneWhitelist,
-                    textBlacklist = smsTextBlacklist,
-                    textWhitelist = smsTextWhitelist,
-                    events = events.map(::eventToData)
+                    textBlacklist = textBlacklist,
+                    textWhitelist = textWhitelist,
+                    phoneCalls = phoneCalls.map(::phoneCallToData)
             )
         }
     }
@@ -100,36 +100,36 @@ internal class Synchronizer(context: Context,
     private fun putLocalData(data: SyncData) {
         database.commit(false) {
             batch {
-                events.replaceAll(data.events.map(::dataToEvent))
+                phoneCalls.replaceAll(data.phoneCalls.map(::dataToPhoneCall))
                 phoneBlacklist.replaceAll(data.phoneBlacklist)
                 phoneWhitelist.replaceAll(data.phoneWhitelist)
-                smsTextBlacklist.replaceAll(data.textBlacklist)
-                smsTextWhitelist.replaceAll(data.textWhitelist)
+                textBlacklist.replaceAll(data.textBlacklist)
+                textWhitelist.replaceAll(data.textWhitelist)
             }
         }
     }
 
-    private fun eventToData(event: PhoneEventData): SyncData.Event {
-        return SyncData.Event(
-                incoming = event.isIncoming,
-                missed = event.isMissed,
-                phone = event.phone,
-                recipient = event.acceptor,
-                startTime = event.startTime,
-                endTime = event.endTime,
-                text = event.text,
-                details = event.details,
-                latitude = event.location?.latitude,
-                longitude = event.location?.longitude,
-                state = event.processState,
-                processStatus = event.acceptState,
-                processTime = event.processTime,
-                isRead = event.isRead
+    private fun phoneCallToData(info: PhoneCallInfo): SyncData.PhoneCall {
+        return SyncData.PhoneCall(
+                incoming = info.isIncoming,
+                missed = info.isMissed,
+                phone = info.phone,
+                recipient = info.acceptor,
+                startTime = info.startTime,
+                endTime = info.endTime,
+                text = info.text,
+                details = info.details,
+                latitude = info.location?.latitude,
+                longitude = info.location?.longitude,
+                state = info.processState,
+                processStatus = info.acceptState,
+                processTime = info.processTime,
+                isRead = info.isRead
         )
     }
 
-    private fun dataToEvent(data: SyncData.Event): PhoneEventData {
-        return PhoneEventData(
+    private fun dataToPhoneCall(data: SyncData.PhoneCall): PhoneCallInfo {
+        return PhoneCallInfo(
                 phone = data.phone,
                 isIncoming = data.incoming,
                 startTime = data.startTime,

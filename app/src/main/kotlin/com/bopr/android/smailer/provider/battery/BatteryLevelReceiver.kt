@@ -5,12 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_BATTERY_LOW
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.messenger.EventDispatcher
-import com.bopr.android.smailer.provider.Event
+import com.bopr.android.smailer.messenger.MessageDispatcher
+import com.bopr.android.smailer.messenger.Message
 import com.bopr.android.smailer.util.Logger
 
 /**
- * Starts email processing on low battery level.
+ * Processes battery events.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
@@ -23,9 +23,9 @@ class BatteryLevelReceiver : BroadcastReceiver() {
             log.debug("Low battery level detected")
 
             if (Settings(context).getBoolean(Settings.PREF_DISPATCH_BATTERY_LEVEL)) {
-                val data = BatteryLevelData("low battery")
-                val event = Event(payload = data)
-                EventDispatcher(context).dispatch(event, {}, {})
+                val info = BatteryInfo("low battery")
+                val message = Message(payload = info)
+                MessageDispatcher(context).dispatch(message, {}, {})
             }
         }
     }

@@ -45,8 +45,8 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        versionCode = 102
-        versionName = "1.10.3"
+        versionCode = 103
+        versionName = "1.10.4"
         applicationId = "com.bopr.android.smailer"
         minSdk = 21
         targetSdk = 35

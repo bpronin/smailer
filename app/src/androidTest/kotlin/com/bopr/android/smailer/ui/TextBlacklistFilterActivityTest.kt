@@ -1,0 +1,8 @@
+package com.bopr.android.smailer.ui
+
+
+import com.bopr.android.smailer.data.Database.Companion.TABLE_TEXT_BLACKLIST
+
+
+class TextBlacklistFilterActivityTest : BaseFilterTextActivityTest(
+        TextBlacklistFilterActivity::class, TABLE_TEXT_BLACKLIST)

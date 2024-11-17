@@ -23,14 +23,14 @@ import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.data.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.data.StringDataset
-import com.bopr.android.smailer.provider.EventState.Companion.STATE_IGNORED
-import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
-import com.bopr.android.smailer.provider.telephony.PhoneEventData
+import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_IGNORED
+import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_PENDING
+import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
 import com.bopr.android.smailer.ui.HistoryFragment.Holder
 import com.bopr.android.smailer.util.addOnItemSwipedListener
-import com.bopr.android.smailer.util.eventDirectionImage
-import com.bopr.android.smailer.util.eventStateImage
-import com.bopr.android.smailer.util.eventTypeImage
+import com.bopr.android.smailer.util.phoneCallDirectionImage
+import com.bopr.android.smailer.util.messageStateImage
+import com.bopr.android.smailer.util.phoneCallTypeImage
 import com.bopr.android.smailer.util.formatDuration
 import com.bopr.android.smailer.util.getColorFromAttr
 import com.bopr.android.smailer.util.getQuantityString
@@ -42,7 +42,7 @@ import com.google.android.material.snackbar.Snackbar
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class HistoryFragment : RecyclerFragment<PhoneEventData, Holder>() {
+class HistoryFragment : RecyclerFragment<PhoneCallInfo, Holder>() {
 
     private lateinit var database: Database
     private lateinit var databaseListener: BroadcastReceiver
@@ -91,7 +91,7 @@ class HistoryFragment : RecyclerFragment<PhoneEventData, Holder>() {
         requireActivity().addMenuProvider(FragmentMenuProvider())
     }
 
-    override fun onCreateItemContextMenu(menu: ContextMenu, item: PhoneEventData) {
+    override fun onCreateItemContextMenu(menu: ContextMenu, item: PhoneCallInfo) {
         requireActivity().menuInflater.inflate(R.menu.menu_context_history, menu)
 
         if (item.processState != STATE_PENDING) {
@@ -122,12 +122,12 @@ class HistoryFragment : RecyclerFragment<PhoneEventData, Holder>() {
             }
 
             R.id.action_add_text_to_blacklist -> {
-                addSelectionTextToFilterList(database.smsTextBlacklist, R.string.add_to_blacklist)
+                addSelectionTextToFilterList(database.textBlacklist, R.string.add_to_blacklist)
                 true
             }
 
             R.id.action_add_text_to_whitelist -> {
-                addSelectionTextToFilterList(database.smsTextWhitelist, R.string.add_to_whitelist)
+                addSelectionTextToFilterList(database.textWhitelist, R.string.add_to_whitelist)
                 true
             }
 
@@ -141,12 +141,12 @@ class HistoryFragment : RecyclerFragment<PhoneEventData, Holder>() {
         }
     }
 
-    override fun onItemClick(item: PhoneEventData) {
+    override fun onItemClick(item: PhoneCallInfo) {
         HistoryDetailsDialogFragment(item).show(this)
     }
 
-    override fun loadItems(): Collection<PhoneEventData> {
-        return database.events
+    override fun loadItems(): Collection<PhoneCallInfo> {
+        return database.phoneCalls
     }
 
     override fun createViewHolder(parent: ViewGroup): Holder {
@@ -154,13 +154,13 @@ class HistoryFragment : RecyclerFragment<PhoneEventData, Holder>() {
         return Holder(view)
     }
 
-    override fun bindViewHolder(item: PhoneEventData, holder: Holder) {
+    override fun bindViewHolder(item: PhoneCallInfo, holder: Holder) {
         holder.timeView.text = DateFormat.format(getString(R.string._time_pattern), item.startTime)
         holder.textView.text = formatSummary(item)
         holder.phoneView.text = item.phone
-        holder.typeView.setImageResource(eventTypeImage(item))
-        holder.directionView.setImageResource(eventDirectionImage(item))
-        holder.stateView.setImageResource(eventStateImage(item.processState))
+        holder.typeView.setImageResource(phoneCallTypeImage(item))
+        holder.directionView.setImageResource(phoneCallDirectionImage(item))
+        holder.stateView.setImageResource(messageStateImage(item.processState))
 
         if (!item.isRead) {
             holder.phoneView.setTextColor(unreadItemTextColor)
@@ -174,41 +174,41 @@ class HistoryFragment : RecyclerFragment<PhoneEventData, Holder>() {
 
         if (!item.isRead) {
             item.isRead = true
-            database.events.add(item) /* do not fire broadcast here */
+            database.phoneCalls.add(item) /* do not fire broadcast here */
         }
     }
 
     private fun onClearData() {
         ConfirmDialog(getString(R.string.ask_clear_history)) {
-            database.commit { batch { events.clear() } }
+            database.commit { batch { phoneCalls.clear() } }
         }.show(this)
     }
 
     private fun onMarkAllAsRead() {
-        database.commit { batch { events.markAllAsRead(true) } }
+        database.commit { batch { phoneCalls.markAllAsRead(true) } }
         showToast(R.string.operation_complete)
     }
 
     private fun onMarkAsIgnored() {
         getSelectedItem()?.let {
             it.processState = STATE_IGNORED
-            database.commit { events.add(it) }
+            database.commit { phoneCalls.add(it) }
         }
     }
 
     private fun onRemoveSelected() {
-        val selectedEvents = listAdapter.getItemsAt(selectedItemPosition)
+        val selectedItems = listAdapter.getItemsAt(selectedItemPosition)
 
-        database.commit { batch { events.removeAll(selectedEvents) } }
+        database.commit { batch { phoneCalls.removeAll(selectedItems) } }
 
         Snackbar.make(
             recycler,
-            getQuantityString(R.plurals.items_removed, selectedEvents.size),
+            getQuantityString(R.plurals.items_removed, selectedItems.size),
             Snackbar.LENGTH_LONG
         )
             .setActionTextColor(getColor(requireContext(), R.color.colorAccentText))
             .setAction(R.string.undo) {
-                database.commit { batch { events.addAll(selectedEvents) } }
+                database.commit { batch { phoneCalls.addAll(selectedItems) } }
             }
             .show()
     }
@@ -241,19 +241,19 @@ class HistoryFragment : RecyclerFragment<PhoneEventData, Holder>() {
         }
     }
 
-    private fun formatSummary(event: PhoneEventData): CharSequence? {
+    private fun formatSummary(info: PhoneCallInfo): CharSequence? {
         return when {
-            event.isSms ->
-                event.text
+            info.isSms ->
+                info.text
 
-            event.isMissed ->
+            info.isMissed ->
                 getString(R.string.missed_call)
 
-            event.isIncoming ->
-                getString(R.string.incoming_call_of, formatDuration(event.callDuration))
+            info.isIncoming ->
+                getString(R.string.incoming_call_of, formatDuration(info.callDuration))
 
             else ->
-                getString(R.string.outgoing_call_of, formatDuration(event.callDuration))
+                getString(R.string.outgoing_call_of, formatDuration(info.callDuration))
         }
     }
 

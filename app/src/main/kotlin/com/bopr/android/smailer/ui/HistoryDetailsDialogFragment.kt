@@ -8,13 +8,13 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import com.bopr.android.smailer.provider.telephony.PhoneEventData
-import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.ACCEPT_STATE_BYPASS_NUMBER_BLACKLISTED
-import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.ACCEPT_STATE_BYPASS_TEXT_BLACKLISTED
-import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.ACCEPT_STATE_BYPASS_TRIGGER_OFF
+import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
+import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.ACCEPT_STATE_BYPASS_NUMBER_BLACKLISTED
+import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.ACCEPT_STATE_BYPASS_TEXT_BLACKLISTED
+import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.ACCEPT_STATE_BYPASS_TRIGGER_OFF
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.provider.EventState.Companion.STATE_IGNORED
-import com.bopr.android.smailer.provider.EventState.Companion.STATE_PROCESSED
+import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_IGNORED
+import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.util.*
 
 /**
@@ -22,26 +22,26 @@ import com.bopr.android.smailer.util.*
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class HistoryDetailsDialogFragment(private val event: PhoneEventData) : BaseDialogFragment("log_details_dialog") {
+class HistoryDetailsDialogFragment(private val info: PhoneCallInfo) : BaseDialogFragment("log_details_dialog") {
 
     override fun onCreateDialogView(inflater: LayoutInflater, root: ViewGroup?): View {
         return inflater.inflate(R.layout.dialog_history_details, root, false)
                 .apply {
-                    findViewById<ImageView>(R.id.image_event_type).setImageResource(eventTypeImage(event))
-                    findViewById<ImageView>(R.id.image_event_direction).setImageResource(eventDirectionImage(event))
-                    findViewById<TextView>(R.id.text_title).text = event.phone
-                    findViewById<TextView>(R.id.text_message).text = formatMessage(event)
-                    findViewById<TextView>(R.id.text_time).text = formatTime(event.startTime)
-                    findViewById<ImageView>(R.id.image_event_result).setImageResource(eventStateImage(event.processState))
-                    findViewById<TextView>(R.id.text_result).setText(eventStateText(event.processState))
-                    findViewById<TextView>(R.id.text_type_title).setText(eventTypeText(event))
-                    findViewById<TextView>(R.id.text_recipient).text = event.acceptor
+                    findViewById<ImageView>(R.id.image_phone_call_type).setImageResource(phoneCallTypeImage(info))
+                    findViewById<ImageView>(R.id.image_phone_call_direction).setImageResource(phoneCallDirectionImage(info))
+                    findViewById<TextView>(R.id.text_title).text = info.phone
+                    findViewById<TextView>(R.id.text_message).text = formatMessage(info)
+                    findViewById<TextView>(R.id.text_time).text = formatTime(info.startTime)
+                    findViewById<ImageView>(R.id.image_processing_result).setImageResource(messageStateImage(info.processState))
+                    findViewById<TextView>(R.id.text_result).setText(messageStateText(info.processState))
+                    findViewById<TextView>(R.id.text_type_title).setText(phoneCallTypeText(info))
+                    findViewById<TextView>(R.id.text_recipient).text = info.acceptor
                     findViewById<TextView>(R.id.text_result_time).run {
-                        visibility = if (event.processState == STATE_PROCESSED) VISIBLE else GONE
-                        text = formatProcessTime(event)
+                        visibility = if (info.processState == STATE_PROCESSED) VISIBLE else GONE
+                        text = formatProcessTime(info)
                     }
                     findViewById<ImageView>(R.id.image_explain_result).run {
-                        visibility = if (event.processState == STATE_IGNORED) VISIBLE else GONE
+                        visibility = if (info.processState == STATE_IGNORED) VISIBLE else GONE
                         setOnClickListener {
                             onExplainResult()
                         }
@@ -51,38 +51,38 @@ class HistoryDetailsDialogFragment(private val event: PhoneEventData) : BaseDial
 
     private fun onExplainResult() {
         val sb = StringBuilder()
-        if (event.acceptState and ACCEPT_STATE_BYPASS_NUMBER_BLACKLISTED != 0) {
+        if (info.acceptState and ACCEPT_STATE_BYPASS_NUMBER_BLACKLISTED != 0) {
             sb.append(getString(R.string.number_in_blacklist)).append("\n\n")
         }
-        if (event.acceptState and ACCEPT_STATE_BYPASS_TEXT_BLACKLISTED != 0) {
+        if (info.acceptState and ACCEPT_STATE_BYPASS_TEXT_BLACKLISTED != 0) {
             sb.append(getString(R.string.text_in_blacklist)).append("\n\n")
         }
-        if (event.acceptState and ACCEPT_STATE_BYPASS_TRIGGER_OFF != 0) {
+        if (info.acceptState and ACCEPT_STATE_BYPASS_TRIGGER_OFF != 0) {
             sb.append(getString(R.string.trigger_off)).append("\n\n")
         }
 
         MessageDialog(getString(R.string.ignored), sb.toString()).show(this)
     }
 
-    private fun formatMessage(event: PhoneEventData): CharSequence? {
+    private fun formatMessage(info: PhoneCallInfo): CharSequence? {
         return when {
-            event.isSms ->
-                event.text
-            event.isMissed ->
+            info.isSms ->
+                info.text
+            info.isMissed ->
                 getString(R.string.you_had_missed_call)
             else -> {
-                val pattern = if (event.isIncoming) {
+                val pattern = if (info.isIncoming) {
                     R.string.you_had_incoming_call
                 } else {
                     R.string.you_had_outgoing_call
                 }
-                getString(pattern, formatDuration(event.callDuration))
+                getString(pattern, formatDuration(info.callDuration))
             }
         }
     }
 
-    private fun formatProcessTime(event: PhoneEventData): CharSequence? {
-        return event.processTime?.run {
+    private fun formatProcessTime(info: PhoneCallInfo): CharSequence? {
+        return info.processTime?.run {
             getString(R.string.processed_at, formatTime(this))
         }
     }

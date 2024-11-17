@@ -35,7 +35,7 @@ class RulesFragment : BasePreferenceFragment(R.xml.pref_rules) {
                 if (settings.getStringSet(key).isEmpty()) {
                     updateSummary(R.string.no_triggers_specified, SUMMARY_STYLE_ACCENTED)
                 } else {
-                    updateSummary(R.string.events_causing_sending_mail)
+                    updateSummary(R.string.email_processing_triggers)
                 }
             }
         }
@@ -84,7 +84,7 @@ class RulesFragment : BasePreferenceFragment(R.xml.pref_rules) {
     private fun updateTextBlacklistPreferenceView() {
         requirePreference(PREF_TEXT_BLACKLIST).updateSummary(
             formatListSummary(
-                database.smsTextBlacklist, R.string.unacceptable_words, R.string._none
+                database.textBlacklist, R.string.unacceptable_words, R.string._none
             )
         )
     }
@@ -92,7 +92,7 @@ class RulesFragment : BasePreferenceFragment(R.xml.pref_rules) {
     private fun updateTextWhitelistPreferenceView() {
         requirePreference(PREF_TEXT_WHITELIST).updateSummary(
             formatListSummary(
-                database.smsTextWhitelist, R.string.acceptable_words, R.string._any
+                database.textWhitelist, R.string.acceptable_words, R.string._any
             )
         )
     }

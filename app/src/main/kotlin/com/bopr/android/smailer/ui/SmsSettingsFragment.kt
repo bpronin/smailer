@@ -16,7 +16,7 @@ import com.bopr.android.smailer.util.setOnClickListener
 import com.bopr.android.smailer.util.updateSummary
 
 /**
- * Email settings fragment.
+ * SMS messenger settings fragment.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */

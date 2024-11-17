@@ -2,13 +2,13 @@ package com.bopr.android.smailer.data
 
 import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
-import com.bopr.android.smailer.provider.EventState.Companion.STATE_IGNORED
-import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
-import com.bopr.android.smailer.provider.EventState.Companion.STATE_PROCESSED
-import com.bopr.android.smailer.provider.telephony.PhoneEventData
+import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_IGNORED
+import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_PENDING
+import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_PROCESSED
+import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
 import com.bopr.android.smailer.util.GeoLocation
 import org.junit.After
-import org.junit.Assert
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
@@ -36,11 +36,11 @@ class DatabaseTest : BaseTest() {
 
     @Test
     fun testAdd() {
-        val events = database.events
+        val dataset = database.phoneCalls
 
         database.batch {
-            events.add(
-                PhoneEventData(
+            dataset.add(
+                PhoneCallInfo(
                     "1",
                     true,
                     1000L,
@@ -51,12 +51,12 @@ class DatabaseTest : BaseTest() {
                     "Test 1",
                     STATE_PENDING,
                     "device",
-                    PhoneEventData.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
-            events.add(
-                PhoneEventData(
+            dataset.add(
+                PhoneCallInfo(
                     "2",
                     false,
                     2000L,
@@ -67,12 +67,12 @@ class DatabaseTest : BaseTest() {
                     null,
                     STATE_PENDING,
                     "device",
-                    PhoneEventData.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
-            events.add(
-                PhoneEventData(
+            dataset.add(
+                PhoneCallInfo(
                     "3",
                     true,
                     3000L,
@@ -83,12 +83,12 @@ class DatabaseTest : BaseTest() {
                     null,
                     STATE_PENDING,
                     "device",
-                    PhoneEventData.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
-            events.add(
-                PhoneEventData(
+            dataset.add(
+                PhoneCallInfo(
                     "4",
                     false,
                     4000L,
@@ -99,12 +99,12 @@ class DatabaseTest : BaseTest() {
                     null,
                     STATE_PENDING,
                     "device",
-                    PhoneEventData.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
-            events.add(
-                PhoneEventData(
+            dataset.add(
+                PhoneCallInfo(
                     "5",
                     true,
                     5000L,
@@ -115,12 +115,12 @@ class DatabaseTest : BaseTest() {
                     null,
                     STATE_PENDING,
                     "device",
-                    PhoneEventData.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
-            events.add(
-                PhoneEventData(
+            dataset.add(
+                PhoneCallInfo(
                     "6",
                     true,
                     6000L,
@@ -131,12 +131,12 @@ class DatabaseTest : BaseTest() {
                     "Test 1",
                     STATE_PENDING,
                     "device",
-                    PhoneEventData.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
-            events.add(
-                PhoneEventData(
+            dataset.add(
+                PhoneCallInfo(
                     "7",
                     false,
                     7000L,
@@ -147,12 +147,12 @@ class DatabaseTest : BaseTest() {
                     "Test 2",
                     STATE_PENDING,
                     "device",
-                    PhoneEventData.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
-            events.add(
-                PhoneEventData(
+            dataset.add(
+                PhoneCallInfo(
                     "8",
                     true,
                     8000L,
@@ -163,12 +163,12 @@ class DatabaseTest : BaseTest() {
                     "Test 3",
                     STATE_PENDING,
                     "device",
-                    PhoneEventData.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
-            events.add(
-                PhoneEventData(
+            dataset.add(
+                PhoneCallInfo(
                     "9",
                     false,
                     9000L,
@@ -179,12 +179,12 @@ class DatabaseTest : BaseTest() {
                     "Test 4",
                     STATE_PENDING,
                     "device",
-                    PhoneEventData.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
-            events.add(
-                PhoneEventData(
+            dataset.add(
+                PhoneCallInfo(
                     "10",
                     true,
                     10000L,
@@ -195,33 +195,33 @@ class DatabaseTest : BaseTest() {
                     "Test 10",
                     STATE_PENDING,
                     "device",
-                    PhoneEventData.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
         }
 
-        Assert.assertEquals(10, events.size)
+        assertEquals(10, dataset.size)
 
-        val event = events.first() /* descending order so it should be the last */
+        val record = dataset.first() /* descending order so it should be the last */
 
-        Assert.assertEquals(STATE_PENDING, event.processState)
-        Assert.assertEquals("10", event.phone)
-        Assert.assertTrue(event.isIncoming)
-        Assert.assertEquals(10000L, event.startTime)
-        Assert.assertEquals(20000L, event.endTime!!)
-        Assert.assertFalse(event.isMissed)
-        Assert.assertTrue(event.isSms)
-        Assert.assertEquals(10.5, event.location!!.latitude, 0.1)
-        Assert.assertEquals(20.5, event.location!!.longitude, 0.1)
-        Assert.assertEquals("SMS text", event.text)
-        Assert.assertEquals("Test 10", event.details)
+        assertEquals(STATE_PENDING, record.processState)
+        assertEquals("10", record.phone)
+        assertTrue(record.isIncoming)
+        assertEquals(10000L, record.startTime)
+        assertEquals(20000L, record.endTime!!)
+        assertFalse(record.isMissed)
+        assertTrue(record.isSms)
+        assertEquals(10.5, record.location!!.latitude, 0.1)
+        assertEquals(20.5, record.location!!.longitude, 0.1)
+        assertEquals("SMS text", record.text)
+        assertEquals("Test 10", record.details)
     }
 
     @Test
     fun testUpdate() {
-        database.events.add(
-            PhoneEventData(
+        database.phoneCalls.add(
+            PhoneCallInfo(
                 phone = "1",
                 startTime = 0,
                 acceptor = "device",
@@ -230,18 +230,18 @@ class DatabaseTest : BaseTest() {
             )
         )
 
-        Assert.assertEquals(1, database.events.size)
-        database.events.first().run {
-            Assert.assertEquals("1", phone)
-            Assert.assertEquals(0, startTime)
-            Assert.assertEquals("device", acceptor)
-            Assert.assertEquals(STATE_PENDING, processState)
-            Assert.assertEquals(false, isRead)
+        assertEquals(1, database.phoneCalls.size)
+        database.phoneCalls.first().run {
+            assertEquals("1", phone)
+            assertEquals(0, startTime)
+            assertEquals("device", acceptor)
+            assertEquals(STATE_PENDING, processState)
+            assertEquals(false, isRead)
         }
 
-        Assert.assertTrue(
-            database.events.add(
-                PhoneEventData(
+        assertTrue(
+            database.phoneCalls.add(
+                PhoneCallInfo(
                     phone = "1",
                     startTime = 0,
                     acceptor = "device",
@@ -250,19 +250,19 @@ class DatabaseTest : BaseTest() {
                 )
             )
         )
-        Assert.assertEquals(1, database.events.size)
-        database.events.first().run {
-            Assert.assertEquals("1", phone)
-            Assert.assertEquals(0, startTime)
-            Assert.assertEquals("device", acceptor)
-            Assert.assertEquals(STATE_PROCESSED, processState)
-            Assert.assertEquals(true, isRead)
+        assertEquals(1, database.phoneCalls.size)
+        database.phoneCalls.first().run {
+            assertEquals("1", phone)
+            assertEquals(0, startTime)
+            assertEquals("device", acceptor)
+            assertEquals(STATE_PROCESSED, processState)
+            assertEquals(true, isRead)
         }
     }
 
     @Test
     fun testUpdateGet() {
-        var event = PhoneEventData(
+        var info = PhoneCallInfo(
             phone = "1",
             isIncoming = true,
             startTime = 1000L,
@@ -273,65 +273,65 @@ class DatabaseTest : BaseTest() {
             details = "Test 1",
             processState = STATE_PENDING,
             acceptor = "device",
-            acceptState = PhoneEventData.ACCEPT_STATE_ACCEPTED,
+            acceptState = PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
             isRead = false
         )
 
-        val events = database.events
+        val dataset = database.phoneCalls
 
-        events.add(event)
+        dataset.add(info)
 
-        Assert.assertEquals(1, events.size)
+        assertEquals(1, dataset.size)
 
-        event = events.first()
+        info = dataset.first()
 
-        Assert.assertEquals(STATE_PENDING, event.processState)
-        Assert.assertEquals("1", event.phone)
-        Assert.assertTrue(event.isIncoming)
-        Assert.assertEquals(1000L, event.startTime)
-        Assert.assertEquals(2000L, event.endTime!!)
-        Assert.assertFalse(event.isMissed)
-        Assert.assertTrue(event.isSms)
-        Assert.assertEquals(10.5, event.location!!.latitude, 0.1)
-        Assert.assertEquals(20.5, event.location!!.longitude, 0.1)
-        Assert.assertEquals("SMS text", event.text)
-        Assert.assertEquals("Test 1", event.details)
-        Assert.assertEquals(STATE_PENDING, event.processState)
+        assertEquals(STATE_PENDING, info.processState)
+        assertEquals("1", info.phone)
+        assertTrue(info.isIncoming)
+        assertEquals(1000L, info.startTime)
+        assertEquals(2000L, info.endTime!!)
+        assertFalse(info.isMissed)
+        assertTrue(info.isSms)
+        assertEquals(10.5, info.location!!.latitude, 0.1)
+        assertEquals(20.5, info.location!!.longitude, 0.1)
+        assertEquals("SMS text", info.text)
+        assertEquals("Test 1", info.details)
+        assertEquals(STATE_PENDING, info.processState)
 
-        event = event.copy(
-                phone = "2",
-                isIncoming = false,
-                endTime = 3000L,
-                isMissed = true,
-                location = GeoLocation(11.5, 21.5),
-                text = "New text",
-                details = "New details"
+        info = info.copy(
+            phone = "2",
+            isIncoming = false,
+            endTime = 3000L,
+            isMissed = true,
+            location = GeoLocation(11.5, 21.5),
+            text = "New text",
+            details = "New details"
         )
-        events.add(event)
+        dataset.add(info)
 
-        Assert.assertEquals(1, events.size)
+        assertEquals(1, dataset.size)
 
-        event = events.first()
+        info = dataset.first()
 
-        Assert.assertEquals(STATE_PENDING, event.processState)
-        Assert.assertEquals("2", event.phone)
-        Assert.assertFalse(event.isIncoming)
-        Assert.assertEquals(3000L, event.endTime!!)
-        Assert.assertTrue(event.isMissed)
-        Assert.assertTrue(event.isSms)
-        Assert.assertEquals(11.5, event.location!!.latitude, 0.1)
-        Assert.assertEquals(21.5, event.location!!.longitude, 0.1)
-        Assert.assertEquals("New text", event.text)
-        Assert.assertEquals("New details", event.details)
+        assertEquals(STATE_PENDING, info.processState)
+        assertEquals("2", info.phone)
+        assertFalse(info.isIncoming)
+        assertEquals(3000L, info.endTime!!)
+        assertTrue(info.isMissed)
+        assertTrue(info.isSms)
+        assertEquals(11.5, info.location!!.latitude, 0.1)
+        assertEquals(21.5, info.location!!.longitude, 0.1)
+        assertEquals("New text", info.text)
+        assertEquals("New details", info.details)
     }
 
     @Test
     fun testClear() {
-        val events = database.events
+        val dataset = database.phoneCalls
 
         database.batch {
-            events.add(
-                PhoneEventData(
+            dataset.add(
+                PhoneCallInfo(
                     "1",
                     true,
                     1000L,
@@ -342,12 +342,12 @@ class DatabaseTest : BaseTest() {
                     "Test 1",
                     STATE_PENDING,
                     "device",
-                    PhoneEventData.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
-            events.add(
-                PhoneEventData(
+            dataset.add(
+                PhoneCallInfo(
                     "2",
                     false,
                     2000L,
@@ -358,12 +358,12 @@ class DatabaseTest : BaseTest() {
                     null,
                     STATE_PENDING,
                     "device",
-                    PhoneEventData.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
-            events.add(
-                PhoneEventData(
+            dataset.add(
+                PhoneCallInfo(
                     "3",
                     true,
                     3000L,
@@ -374,12 +374,12 @@ class DatabaseTest : BaseTest() {
                     null,
                     STATE_PENDING,
                     "device",
-                    PhoneEventData.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
-            events.add(
-                PhoneEventData(
+            dataset.add(
+                PhoneCallInfo(
                     "4",
                     false,
                     4000L,
@@ -390,12 +390,12 @@ class DatabaseTest : BaseTest() {
                     null,
                     STATE_PENDING,
                     "device",
-                    PhoneEventData.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
-            events.add(
-                PhoneEventData(
+            dataset.add(
+                PhoneCallInfo(
                     "5",
                     true,
                     5000L,
@@ -406,12 +406,12 @@ class DatabaseTest : BaseTest() {
                     null,
                     STATE_PENDING,
                     "device",
-                    PhoneEventData.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
-            events.add(
-                PhoneEventData(
+            dataset.add(
+                PhoneCallInfo(
                     "6",
                     true,
                     6000L,
@@ -422,12 +422,12 @@ class DatabaseTest : BaseTest() {
                     "Test 1",
                     STATE_PENDING,
                     "device",
-                    PhoneEventData.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
-            events.add(
-                PhoneEventData(
+            dataset.add(
+                PhoneCallInfo(
                     "7",
                     false,
                     7000L,
@@ -438,12 +438,12 @@ class DatabaseTest : BaseTest() {
                     "Test 2",
                     STATE_PENDING,
                     "device",
-                    PhoneEventData.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
-            events.add(
-                PhoneEventData(
+            dataset.add(
+                PhoneCallInfo(
                     "8",
                     true,
                     8000L,
@@ -454,12 +454,12 @@ class DatabaseTest : BaseTest() {
                     "Test 3",
                     STATE_PENDING,
                     "device",
-                    PhoneEventData.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
-            events.add(
-                PhoneEventData(
+            dataset.add(
+                PhoneCallInfo(
                     "9",
                     false,
                     9000L,
@@ -470,12 +470,12 @@ class DatabaseTest : BaseTest() {
                     "Test 4",
                     STATE_PENDING,
                     "device",
-                    PhoneEventData.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
-            events.add(
-                PhoneEventData(
+            dataset.add(
+                PhoneCallInfo(
                     "10",
                     true,
                     10000L,
@@ -486,16 +486,16 @@ class DatabaseTest : BaseTest() {
                     "Test 5",
                     STATE_PENDING,
                     "device",
-                    PhoneEventData.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
         }
-        Assert.assertEquals(10, events.size)
+        assertEquals(10, dataset.size)
 
-        events.clear()
+        dataset.clear()
 
-        Assert.assertEquals(0, events.size)
+        assertEquals(0, dataset.size)
     }
 
     @Test
@@ -503,10 +503,10 @@ class DatabaseTest : BaseTest() {
         database.lastLocation = GeoLocation(30.0, 60.0)
         val actual = database.lastLocation
 
-        Assert.assertNotNull(actual)
+        assertNotNull(actual)
         actual?.run {
-            Assert.assertEquals(30.0, latitude, 0.1)
-            Assert.assertEquals(60.0, longitude, 0.1)
+            assertEquals(30.0, latitude, 0.1)
+            assertEquals(60.0, longitude, 0.1)
         }
     }
 
@@ -514,17 +514,18 @@ class DatabaseTest : BaseTest() {
     fun testGetSetList() {
         database.phoneBlacklist.addAll(setOf("A", "B", "C"))
 
-        Assert.assertEquals(setOf("A", "B", "C"), database.phoneBlacklist)
-        Assert.assertFalse(database.phoneBlacklist.add("A"))
-        Assert.assertEquals(setOf("A", "B", "C"), database.phoneBlacklist)
+        assertEquals(setOf("A", "B", "C"), database.phoneBlacklist)
+        assertFalse(database.phoneBlacklist.add("A"))
+        assertEquals(setOf("A", "B", "C"), database.phoneBlacklist)
     }
 
     @Test
     fun testFilterPending() {
-        val events = database.events
+        val dataset = database.phoneCalls
+
         database.batch {
-            events.add(
-                PhoneEventData(
+            dataset.add(
+                PhoneCallInfo(
                     "1",
                     true,
                     1000L,
@@ -535,12 +536,12 @@ class DatabaseTest : BaseTest() {
                     "Test 1",
                     STATE_PROCESSED,
                     "device",
-                    PhoneEventData.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
-            events.add(
-                PhoneEventData(
+            dataset.add(
+                PhoneCallInfo(
                     "2",
                     false,
                     2000L,
@@ -551,12 +552,12 @@ class DatabaseTest : BaseTest() {
                     null,
                     STATE_PROCESSED,
                     "device",
-                    PhoneEventData.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
-            events.add(
-                PhoneEventData(
+            dataset.add(
+                PhoneCallInfo(
                     "3",
                     true,
                     3000L,
@@ -567,12 +568,12 @@ class DatabaseTest : BaseTest() {
                     null,
                     STATE_PROCESSED,
                     "device",
-                    PhoneEventData.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
-            events.add(
-                PhoneEventData(
+            dataset.add(
+                PhoneCallInfo(
                     "4",
                     false,
                     4000L,
@@ -583,12 +584,12 @@ class DatabaseTest : BaseTest() {
                     null,
                     STATE_IGNORED,
                     "device",
-                    PhoneEventData.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
-            events.add(
-                PhoneEventData(
+            dataset.add(
+                PhoneCallInfo(
                     "5",
                     true,
                     5000L,
@@ -599,12 +600,12 @@ class DatabaseTest : BaseTest() {
                     null,
                     STATE_IGNORED,
                     "device",
-                    PhoneEventData.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
-            events.add(
-                PhoneEventData(
+            dataset.add(
+                PhoneCallInfo(
                     "6",
                     true,
                     6000L,
@@ -615,12 +616,12 @@ class DatabaseTest : BaseTest() {
                     "Test 1",
                     STATE_PENDING,
                     "device",
-                    PhoneEventData.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
-            events.add(
-                PhoneEventData(
+            dataset.add(
+                PhoneCallInfo(
                     "7",
                     false,
                     7000L,
@@ -631,12 +632,12 @@ class DatabaseTest : BaseTest() {
                     "Test 2",
                     STATE_PENDING,
                     "device",
-                    PhoneEventData.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
-            events.add(
-                PhoneEventData(
+            dataset.add(
+                PhoneCallInfo(
                     "8",
                     true,
                     8000L,
@@ -647,12 +648,12 @@ class DatabaseTest : BaseTest() {
                     "Test 3",
                     STATE_PENDING,
                     "device",
-                    PhoneEventData.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
-            events.add(
-                PhoneEventData(
+            dataset.add(
+                PhoneCallInfo(
                     "9",
                     false,
                     9000L,
@@ -663,12 +664,12 @@ class DatabaseTest : BaseTest() {
                     "Test 4",
                     STATE_PENDING,
                     "device",
-                    PhoneEventData.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
-            events.add(
-                PhoneEventData(
+            dataset.add(
+                PhoneCallInfo(
                     "10",
                     true,
                     10000L,
@@ -679,41 +680,41 @@ class DatabaseTest : BaseTest() {
                     "Test 10",
                     STATE_PENDING,
                     "device",
-                    PhoneEventData.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
                     isRead = false
                 )
             )
         }
-        val pendingEvents = events.filterPending
+        val pendingRecords = dataset.filterPending
 
-        Assert.assertEquals(5, pendingEvents.size)
+        assertEquals(5, pendingRecords.size)
 
-        val details = pendingEvents.first().details /* descending order so it should be the last */
+        val details = pendingRecords.first().details /* descending order so it should be the last */
 
-        Assert.assertEquals("Test 10", details)
+        assertEquals("Test 10", details)
     }
 
     @Test
     fun testUnreadCount() {
         database.batch {
-            events.add(
-                PhoneEventData(
+            phoneCalls.add(
+                PhoneCallInfo(
                     phone = "1",
                     startTime = 0,
                     acceptor = "device",
                     isRead = true
                 )
             )
-            events.add(
-                PhoneEventData(
+            phoneCalls.add(
+                PhoneCallInfo(
                     phone = "2",
                     startTime = 1,
                     acceptor = "device",
                     isRead = false
                 )
             )
-            events.add(
-                PhoneEventData(
+            phoneCalls.add(
+                PhoneCallInfo(
                     phone = "3",
                     startTime = 2,
                     acceptor = "device",
@@ -722,71 +723,72 @@ class DatabaseTest : BaseTest() {
             )
         }
 
-        Assert.assertEquals(2, database.events.unreadCount)
+        assertEquals(2, database.phoneCalls.unreadCount)
     }
 
     @Test
     fun testGetTransform() {
-        val events = database.events
+        val dataset = database.phoneCalls
+
         database.batch {
-            events.add(PhoneEventData(phone = "1", startTime = 0, acceptor = "device"))
-            events.add(PhoneEventData(phone = "2", startTime = 1, acceptor = "device"))
-            events.add(PhoneEventData(phone = "3", startTime = 2, acceptor = "device"))
-            events.add(PhoneEventData(phone = "4", startTime = 3, acceptor = "device"))
-            events.add(PhoneEventData(phone = "5", startTime = 4, acceptor = "device"))
+            dataset.add(PhoneCallInfo(phone = "1", startTime = 0, acceptor = "device"))
+            dataset.add(PhoneCallInfo(phone = "2", startTime = 1, acceptor = "device"))
+            dataset.add(PhoneCallInfo(phone = "3", startTime = 2, acceptor = "device"))
+            dataset.add(PhoneCallInfo(phone = "4", startTime = 3, acceptor = "device"))
+            dataset.add(PhoneCallInfo(phone = "5", startTime = 4, acceptor = "device"))
         }
 
-        val phones = events.map { it.phone }
+        val phones = dataset.map { it.phone }
 
-        Assert.assertEquals(5, phones.size)
+        assertEquals(5, phones.size)
 
-        Assert.assertEquals("5", phones[0])
-        Assert.assertEquals("3", phones[2])
-        Assert.assertEquals("1", phones[4])
+        assertEquals("5", phones[0])
+        assertEquals("3", phones[2])
+        assertEquals("1", phones[4])
     }
 
     @Test
     fun testIteratorRemove() {
         database.batch {
-            events.add(PhoneEventData(phone = "1", startTime = 0, acceptor = "device"))
-            events.add(PhoneEventData(phone = "2", startTime = 1, acceptor = "device"))
-            events.add(PhoneEventData(phone = "3", startTime = 2, acceptor = "device"))
+            phoneCalls.add(PhoneCallInfo(phone = "1", startTime = 0, acceptor = "device"))
+            phoneCalls.add(PhoneCallInfo(phone = "2", startTime = 1, acceptor = "device"))
+            phoneCalls.add(PhoneCallInfo(phone = "3", startTime = 2, acceptor = "device"))
         }
 
-        val iterator = database.events.iterator()
+        val iterator = database.phoneCalls.iterator()
         while (iterator.hasNext()) {
             if (iterator.next().phone == "1") {
                 iterator.remove()
             }
         }
 
-        Assert.assertEquals(2, database.events.size)
-        Assert.assertEquals("3", database.events.first().phone)
-        Assert.assertEquals("2", database.events.last().phone)
+        assertEquals(2, database.phoneCalls.size)
+        assertEquals("3", database.phoneCalls.first().phone)
+        assertEquals("2", database.phoneCalls.last().phone)
     }
 
     @Test
     fun testContains() {
         database.batch {
-            events.add(PhoneEventData(phone = "1", startTime = 0, acceptor = "device"))
-            events.add(PhoneEventData(phone = "2", startTime = 1, acceptor = "device"))
-            events.add(PhoneEventData(phone = "3", startTime = 2, acceptor = "device"))
+            phoneCalls.add(PhoneCallInfo(phone = "1", startTime = 0, acceptor = "device"))
+            phoneCalls.add(PhoneCallInfo(phone = "2", startTime = 1, acceptor = "device"))
+            phoneCalls.add(PhoneCallInfo(phone = "3", startTime = 2, acceptor = "device"))
         }
 
-        Assert.assertTrue(
-            database.events.contains(
-                PhoneEventData(
+        assertTrue(
+            database.phoneCalls.contains(
+                PhoneCallInfo(
                     phone = "1",
                     startTime = 0,
                     acceptor = "device"
                 )
             )
         )
-        Assert.assertTrue(
-            database.events.containsAll(
+        assertTrue(
+            database.phoneCalls.containsAll(
                 listOf(
-                    PhoneEventData(phone = "1", startTime = 0, acceptor = "device"),
-                    PhoneEventData(phone = "3", startTime = 2, acceptor = "device")
+                    PhoneCallInfo(phone = "1", startTime = 0, acceptor = "device"),
+                    PhoneCallInfo(phone = "3", startTime = 2, acceptor = "device")
                 )
             )
         )
@@ -794,70 +796,84 @@ class DatabaseTest : BaseTest() {
 
     @Test
     fun testAddAll() {
-        database.events.addAll(listOf(
-            PhoneEventData(phone = "1", startTime = 0, acceptor = "device"),
-            PhoneEventData(phone = "2", startTime = 1, acceptor = "device"),
-            PhoneEventData(phone = "3", startTime = 2, acceptor = "device")
-        ))
+        database.phoneCalls.addAll(
+            listOf(
+                PhoneCallInfo(phone = "1", startTime = 0, acceptor = "device"),
+                PhoneCallInfo(phone = "2", startTime = 1, acceptor = "device"),
+                PhoneCallInfo(phone = "3", startTime = 2, acceptor = "device")
+            )
+        )
 
-        Assert.assertEquals(3, database.events.size)
-        Assert.assertEquals("3", database.events.first().phone)
-        Assert.assertEquals("1", database.events.last().phone)
+        assertEquals(3, database.phoneCalls.size)
+        assertEquals("3", database.phoneCalls.first().phone)
+        assertEquals("1", database.phoneCalls.last().phone)
     }
 
     @Test
     fun testRemoveAll() {
-        database.events.addAll(listOf(
-            PhoneEventData(phone = "1", startTime = 0, acceptor = "device"),
-            PhoneEventData(phone = "2", startTime = 1, acceptor = "device"),
-            PhoneEventData(phone = "3", startTime = 2, acceptor = "device")
-        ))
+        database.phoneCalls.addAll(
+            listOf(
+                PhoneCallInfo(phone = "1", startTime = 0, acceptor = "device"),
+                PhoneCallInfo(phone = "2", startTime = 1, acceptor = "device"),
+                PhoneCallInfo(phone = "3", startTime = 2, acceptor = "device")
+            )
+        )
 
-        database.events.removeAll(listOf(
-            PhoneEventData(phone = "1", startTime = 0, acceptor = "device"),
-            PhoneEventData(phone = "3", startTime = 2, acceptor = "device"),
-            PhoneEventData(phone = "33", startTime = 33, acceptor = "device")
-        ))
+        database.phoneCalls.removeAll(
+            listOf(
+                PhoneCallInfo(phone = "1", startTime = 0, acceptor = "device"),
+                PhoneCallInfo(phone = "3", startTime = 2, acceptor = "device"),
+                PhoneCallInfo(phone = "33", startTime = 33, acceptor = "device")
+            )
+        )
 
-        Assert.assertEquals(1, database.events.size)
-        Assert.assertEquals("2", database.events.first().phone)
+        assertEquals(1, database.phoneCalls.size)
+        assertEquals("2", database.phoneCalls.first().phone)
     }
 
     @Test
     fun testRetainAll() {
-        database.events.addAll(listOf(
-            PhoneEventData(phone = "1", startTime = 0, acceptor = "device"),
-            PhoneEventData(phone = "2", startTime = 1, acceptor = "device"),
-            PhoneEventData(phone = "3", startTime = 2, acceptor = "device")
-        ))
+        database.phoneCalls.addAll(
+            listOf(
+                PhoneCallInfo(phone = "1", startTime = 0, acceptor = "device"),
+                PhoneCallInfo(phone = "2", startTime = 1, acceptor = "device"),
+                PhoneCallInfo(phone = "3", startTime = 2, acceptor = "device")
+            )
+        )
 
-        database.events.retainAll(listOf(
-            PhoneEventData(phone = "1", startTime = 0, acceptor = "device"),
-            PhoneEventData(phone = "3", startTime = 2, acceptor = "device"),
-            PhoneEventData(phone = "33", startTime = 33, acceptor = "device")
-        ))
+        database.phoneCalls.retainAll(
+            listOf(
+                PhoneCallInfo(phone = "1", startTime = 0, acceptor = "device"),
+                PhoneCallInfo(phone = "3", startTime = 2, acceptor = "device"),
+                PhoneCallInfo(phone = "33", startTime = 33, acceptor = "device")
+            )
+        )
 
-        Assert.assertEquals(2, database.events.size)
-        Assert.assertEquals("3", database.events.first().phone)
-        Assert.assertEquals("1", database.events.last().phone)
+        assertEquals(2, database.phoneCalls.size)
+        assertEquals("3", database.phoneCalls.first().phone)
+        assertEquals("1", database.phoneCalls.last().phone)
     }
 
     @Test
     fun testReplaceAll() {
-        database.events.addAll(listOf(
-            PhoneEventData(phone = "1", startTime = 0, acceptor = "device"),
-            PhoneEventData(phone = "2", startTime = 1, acceptor = "device"),
-            PhoneEventData(phone = "3", startTime = 2, acceptor = "device")
-        ))
+        database.phoneCalls.addAll(
+            listOf(
+                PhoneCallInfo(phone = "1", startTime = 0, acceptor = "device"),
+                PhoneCallInfo(phone = "2", startTime = 1, acceptor = "device"),
+                PhoneCallInfo(phone = "3", startTime = 2, acceptor = "device")
+            )
+        )
 
-        database.events.replaceAll(listOf(
-            PhoneEventData(phone = "11", startTime = 11, acceptor = "device"),
-            PhoneEventData(phone = "22", startTime = 22, acceptor = "device")
-        ))
+        database.phoneCalls.replaceAll(
+            listOf(
+                PhoneCallInfo(phone = "11", startTime = 11, acceptor = "device"),
+                PhoneCallInfo(phone = "22", startTime = 22, acceptor = "device")
+            )
+        )
 
-        Assert.assertEquals(2, database.events.size)
-        Assert.assertEquals("22", database.events.first().phone)
-        Assert.assertEquals("11", database.events.last().phone)
+        assertEquals(2, database.phoneCalls.size)
+        assertEquals("22", database.phoneCalls.first().phone)
+        assertEquals("11", database.phoneCalls.last().phone)
     }
 
 }

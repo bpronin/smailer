@@ -24,7 +24,10 @@ import com.bopr.android.smailer.util.Logger
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class SyncWorker(context: Context, workerParams: WorkerParameters) :
+internal class SyncWorker(
+    context: Context,
+    workerParams: WorkerParameters
+) :
     Worker(context, workerParams) {
 
     override fun doWork(): Result {
@@ -54,7 +57,7 @@ internal class SyncWorker(context: Context, workerParams: WorkerParameters) :
         private const val SYNC_OPTIONS = "options"
 
         internal fun Context.syncAppDataWithGoogleCloud() {
-            return // TODO: the app is deregistered from Google Console
+            return // TODO: what if the app is unregistered from Google Console
             @Suppress("UNREACHABLE_CODE")
 
             if (Settings(this).getBoolean(PREF_SYNC_ENABLED)) {

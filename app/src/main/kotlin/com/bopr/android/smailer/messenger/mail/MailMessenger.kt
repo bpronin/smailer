@@ -12,7 +12,7 @@ import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_ENABLED
 import com.bopr.android.smailer.messenger.Messenger
-import com.bopr.android.smailer.provider.Event
+import com.bopr.android.smailer.messenger.Message
 import com.bopr.android.smailer.ui.EmailRecipientsActivity
 import com.bopr.android.smailer.ui.EmailSettingsActivity
 import com.bopr.android.smailer.util.Mockable
@@ -47,12 +47,12 @@ internal class MailMessenger(context: Context) : Messenger(context) {
     }
 
     override fun sendMessage(
-        event: Event,
+        message: Message,
         onSuccess: () -> Unit,
         onError: (Throwable) -> Unit
     ) {
         val recipients = checkRecipients(settings.getEmailRecipients()) ?: return
-        val formatter = formatters.createFormatter(event.payload)
+        val formatter = formatters.createFormatter(message.payload)
 
         session.send(
             MailMessage(
@@ -63,6 +63,7 @@ internal class MailMessenger(context: Context) : Messenger(context) {
             ),
             onSuccess = {
                 log.debug("Successfully sent")
+
                 onSuccess()
             },
             onError = { error ->
@@ -133,6 +134,6 @@ internal class MailMessenger(context: Context) : Messenger(context) {
 
     companion object {
 
-        private val log = Logger("MailEventProcessor")
+        private val log = Logger("MailMessenger")
     }
 }

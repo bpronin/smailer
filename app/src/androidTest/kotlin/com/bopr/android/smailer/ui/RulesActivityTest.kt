@@ -77,7 +77,7 @@ class RulesActivityTest : BaseActivityTest(RulesActivity::class) {
         clickOkButton()
 
         assertHomeDisplayed()
-        assertPreferenceSummaryIs(R.string.triggers, R.string.events_causing_sending_mail)
+        assertPreferenceSummaryIs(R.string.triggers, R.string.email_processing_triggers)
     }
 
     private fun testTriggersPreferenceUncheckAll() {
@@ -111,7 +111,7 @@ class RulesActivityTest : BaseActivityTest(RulesActivity::class) {
         clickCancelButton()
 
         assertHomeDisplayed()
-        assertPreferenceSummaryIs(R.string.triggers, R.string.events_causing_sending_mail)
+        assertPreferenceSummaryIs(R.string.triggers, R.string.email_processing_triggers)
     }
 
     private fun assertHomeDisplayed() {

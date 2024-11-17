@@ -26,9 +26,9 @@ class Database(private val context: Context) : Closeable {
     private val modifiedTables = mutableSetOf<String>()
 
     /**
-     * Returns all events.
+     * Phone calls dataset.
      */
-    val events = EventsDataset(helper, modifiedTables)
+    val phoneCalls = PhoneCallDataset(helper, modifiedTables)
 
     /**
      * Phone numbers blacklist.
@@ -43,18 +43,18 @@ class Database(private val context: Context) : Closeable {
     /**
      * SMS text blacklist.
      */
-    val smsTextBlacklist = StringDataset(TABLE_TEXT_BLACKLIST, helper, modifiedTables)
+    val textBlacklist = StringDataset(TABLE_TEXT_BLACKLIST, helper, modifiedTables)
 
     /**
      * SMS text whitelist.
      */
-    val smsTextWhitelist = StringDataset(TABLE_TEXT_WHITELIST, helper, modifiedTables)
+    val textWhitelist = StringDataset(TABLE_TEXT_WHITELIST, helper, modifiedTables)
 
-    val phoneEventsFilters = mapOf(
+    val phoneCallsFilters = mapOf(
         TABLE_PHONE_BLACKLIST to phoneBlacklist,
         TABLE_PHONE_WHITELIST to phoneWhitelist,
-        TABLE_TEXT_BLACKLIST to smsTextBlacklist,
-        TABLE_TEXT_WHITELIST to smsTextWhitelist
+        TABLE_TEXT_BLACKLIST to textBlacklist,
+        TABLE_TEXT_WHITELIST to textWhitelist
     )
 
     /**
@@ -138,7 +138,7 @@ class Database(private val context: Context) : Closeable {
         override fun onCreate(db: SQLiteDatabase) {
             db.batch {
                 execSQL(SQL_CREATE_SYSTEM)
-                execSQL(SQL_CREATE_EVENTS)
+                execSQL(SQL_CREATE_PHONE_CALLS)
                 execSQL(SQL_CREATE_LIST(TABLE_PHONE_BLACKLIST))
                 execSQL(SQL_CREATE_LIST(TABLE_PHONE_WHITELIST))
                 execSQL(SQL_CREATE_LIST(TABLE_TEXT_BLACKLIST))
@@ -158,7 +158,7 @@ class Database(private val context: Context) : Closeable {
             if (DB_VERSION > oldVersion) {
                 db.batch {
                     alterTable(TABLE_SYSTEM, SQL_CREATE_SYSTEM)
-                    alterTable(TABLE_PHONE_EVENTS, SQL_CREATE_EVENTS)
+                    alterTable(TABLE_PHONE_CALLS, SQL_CREATE_PHONE_CALLS)
                     alterTable(TABLE_PHONE_BLACKLIST, SQL_CREATE_LIST(TABLE_PHONE_BLACKLIST))
                     alterTable(TABLE_PHONE_WHITELIST, SQL_CREATE_LIST(TABLE_PHONE_WHITELIST))
                     alterTable(TABLE_TEXT_BLACKLIST, SQL_CREATE_LIST(TABLE_TEXT_BLACKLIST))
@@ -203,8 +203,7 @@ class Database(private val context: Context) : Closeable {
         private const val EXTRA_TABLES = "tables"
 
         private const val TABLE_SYSTEM = "system_data"
-//        const val TABLE_EVENTS = "events"
-        const val TABLE_PHONE_EVENTS = "phone_events"
+        const val TABLE_PHONE_CALLS = "phone_events"
         const val TABLE_PHONE_BLACKLIST = "phone_blacklist"
         const val TABLE_PHONE_WHITELIST = "phone_whitelist"
         const val TABLE_TEXT_BLACKLIST = "text_blacklist"
@@ -218,7 +217,7 @@ class Database(private val context: Context) : Closeable {
                 COLUMN_UPDATE_TIME + " INTEGER" +
                 ")"
 
-        private const val SQL_CREATE_EVENTS = "CREATE TABLE " + TABLE_PHONE_EVENTS + " (" +
+        private const val SQL_CREATE_PHONE_CALLS = "CREATE TABLE " + TABLE_PHONE_CALLS + " (" +
                 COLUMN_PHONE + " TEXT(25) NOT NULL," +
                 COLUMN_IS_INCOMING + " INTEGER, " +
                 COLUMN_IS_MISSED + " INTEGER, " +

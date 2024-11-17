@@ -41,7 +41,7 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALL
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_EVENT_TIME
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CREATION_TIME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_HEADER
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCATION
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_CALLS
@@ -58,13 +58,13 @@ import com.bopr.android.smailer.external.GoogleDrive
 import com.bopr.android.smailer.messenger.mail.GoogleMailSession
 import com.bopr.android.smailer.messenger.mail.MailMessage
 import com.bopr.android.smailer.messenger.telegram.TelegramSession
-import com.bopr.android.smailer.provider.EventState.Companion.STATE_IGNORED
-import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
-import com.bopr.android.smailer.provider.EventState.Companion.STATE_PROCESSED
-import com.bopr.android.smailer.provider.telephony.PhoneEventData
-import com.bopr.android.smailer.provider.telephony.PhoneEventData.Companion.ACCEPT_STATE_ACCEPTED
-import com.bopr.android.smailer.provider.telephony.PhoneEventProcessor
-import com.bopr.android.smailer.provider.telephony.PhoneEventProcessorWorker.Companion.startPhoneEventProcessing
+import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_IGNORED
+import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_PENDING
+import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_PROCESSED
+import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
+import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.ACCEPT_STATE_ACCEPTED
+import com.bopr.android.smailer.provider.telephony.PhoneCallProcessor
+import com.bopr.android.smailer.provider.telephony.PhoneCallProcessorWorker.Companion.startPhoneCallProcessing
 import com.bopr.android.smailer.sync.Synchronizer
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_DOWNLOAD
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_UPLOAD
@@ -137,10 +137,10 @@ class DebugFragment : PreferenceFragmentCompat() {
         val screen = preferenceManager.createPreferenceScreen(context)
         addCategory(screen, "Event processing",
             addPreference("Process single event") {
-                onProcessSingleEvent()
+                onProcessSingle()
             },
             addPreference("Process pending events") {
-                onProcessPendingEvents(it)
+                onProcessPending(it)
             },
             addPreference("Send SMS") {
                 onSendSms()
@@ -219,15 +219,15 @@ class DebugFragment : PreferenceFragmentCompat() {
                 onPopulateHistory()
             },
             addPreference("Mark all as unread") {
-                database.commit { batch { events.markAllAsRead(false) } }
+                database.commit { batch { phoneCalls.markAllAsRead(false) } }
                 showComplete()
             },
             addPreference("Mark all as read") {
-                database.commit { batch { events.markAllAsRead(true) } }
+                database.commit { batch { phoneCalls.markAllAsRead(true) } }
                 showComplete()
             },
             addPreference("Clear calls log") {
-                database.commit { batch { events.clear() } }
+                database.commit { batch { phoneCalls.clear() } }
                 showComplete()
             },
             addPreference("Destroy database") {
@@ -419,7 +419,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                     VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME,
                     VAL_PREF_MESSAGE_CONTENT_HEADER,
                     VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS,
-                    VAL_PREF_MESSAGE_CONTENT_EVENT_TIME
+                    VAL_PREF_MESSAGE_CONTENT_CREATION_TIME
                 )
             )
             putString(PREF_MESSAGE_LOCALE, VAL_PREF_DEFAULT)
@@ -427,7 +427,7 @@ class DebugFragment : PreferenceFragmentCompat() {
         }
 
         database.phoneBlacklist.replaceAll(setOf("+123456789", "+9876543*"))
-        database.smsTextBlacklist.replaceAll(setOf("Bad text", escapeRegex("Expression")))
+        database.textBlacklist.replaceAll(setOf("Bad text", escapeRegex("Expression")))
 
         showComplete()
     }
@@ -479,9 +479,9 @@ class DebugFragment : PreferenceFragmentCompat() {
         authorization.startAccountPicker()
     }
 
-    private fun onProcessSingleEvent() {
+    private fun onProcessSingle() {
         val start = currentTimeMillis()
-        val info = PhoneEventData(
+        val info = PhoneCallInfo(
             phone = "+1(234) 567-89-01",
             isIncoming = true,
             startTime = start,
@@ -494,14 +494,14 @@ class DebugFragment : PreferenceFragmentCompat() {
             acceptState = ACCEPT_STATE_ACCEPTED,
             isRead = false
         )
-        requireContext().startPhoneEventProcessing(info)
+        requireContext().startPhoneCallProcessing(info)
         showComplete()
     }
 
-    private fun onProcessPendingEvents(preference: Preference) {
+    private fun onProcessPending(preference: Preference) {
         preference.runBackgroundTask(
             onPerform = {
-                PhoneEventProcessor(requireContext()).processPending()
+                PhoneCallProcessor(requireContext()).processRecords()
             },
             onSuccess = { it ->
                 showInfoDialog("Event processing", "$it events processed")
@@ -525,8 +525,8 @@ class DebugFragment : PreferenceFragmentCompat() {
 
     private fun onAddHistoryItem() {
         database.commit {
-            events.add(
-                PhoneEventData(
+            phoneCalls.add(
+                PhoneCallInfo(
                     "+79052345670",
                     true,
                     currentTimeMillis(),
@@ -550,8 +550,8 @@ class DebugFragment : PreferenceFragmentCompat() {
         val recipient = DEVICE_NAME
         database.commit {
             batch {
-                events.add(
-                    PhoneEventData(
+                phoneCalls.add(
+                    PhoneCallInfo(
                         "+79052345671",
                         true,
                         time,
@@ -566,8 +566,8 @@ class DebugFragment : PreferenceFragmentCompat() {
                         isRead = false
                     )
                 )
-                events.add(
-                    PhoneEventData(
+                phoneCalls.add(
+                    PhoneCallInfo(
                         "+79052345672",
                         false,
                         1000.let { time += it; time },
@@ -582,8 +582,8 @@ class DebugFragment : PreferenceFragmentCompat() {
                         isRead = false
                     )
                 )
-                events.add(
-                    PhoneEventData(
+                phoneCalls.add(
+                    PhoneCallInfo(
                         "+79052345673",
                         true,
                         1000.let { time += it; time },
@@ -598,8 +598,8 @@ class DebugFragment : PreferenceFragmentCompat() {
                         isRead = false
                     )
                 )
-                events.add(
-                    PhoneEventData(
+                phoneCalls.add(
+                    PhoneCallInfo(
                         "+79052345674",
                         false,
                         1000.let { time += it; time },
@@ -614,8 +614,8 @@ class DebugFragment : PreferenceFragmentCompat() {
                         isRead = false
                     )
                 )
-                events.add(
-                    PhoneEventData(
+                phoneCalls.add(
+                    PhoneCallInfo(
                         "+79052345675",
                         true,
                         1000.let { time += it; time },
@@ -630,8 +630,8 @@ class DebugFragment : PreferenceFragmentCompat() {
                         isRead = false
                     )
                 )
-                events.add(
-                    PhoneEventData(
+                phoneCalls.add(
+                    PhoneCallInfo(
                         "+79052345671",
                         true,
                         1000.let { time += it; time },
@@ -646,8 +646,8 @@ class DebugFragment : PreferenceFragmentCompat() {
                         isRead = false
                     )
                 )
-                events.add(
-                    PhoneEventData(
+                phoneCalls.add(
+                    PhoneCallInfo(
                         "+79052345672",
                         false,
                         1000.let { time += it; time },
@@ -662,8 +662,8 @@ class DebugFragment : PreferenceFragmentCompat() {
                         isRead = false
                     )
                 )
-                events.add(
-                    PhoneEventData(
+                phoneCalls.add(
+                    PhoneCallInfo(
                         "+79052345673",
                         true,
                         1000.let { time += it; time },
@@ -678,8 +678,8 @@ class DebugFragment : PreferenceFragmentCompat() {
                         isRead = false
                     )
                 )
-                events.add(
-                    PhoneEventData(
+                phoneCalls.add(
+                    PhoneCallInfo(
                         "+79052345674",
                         false,
                         1000.let { time += it; time },
@@ -694,8 +694,8 @@ class DebugFragment : PreferenceFragmentCompat() {
                         isRead = false
                     )
                 )
-                events.add(
-                    PhoneEventData(
+                phoneCalls.add(
+                    PhoneCallInfo(
                         "+79052345675",
                         true,
                         1000.let { time += it; time },

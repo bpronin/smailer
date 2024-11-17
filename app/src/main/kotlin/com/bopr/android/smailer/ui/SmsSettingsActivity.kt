@@ -1,7 +1,7 @@
 package com.bopr.android.smailer.ui
 
 /**
- * SMS message settings activity.
+ * SMS messenger settings activity.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */

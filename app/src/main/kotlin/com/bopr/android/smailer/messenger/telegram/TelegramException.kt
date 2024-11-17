@@ -5,9 +5,7 @@ open class TelegramException(
     val code: Code,
     message: String,
     cause: Throwable? = null
-) :
-//    Exception("Messenger error [${code.name}]${message?.let { " - $message" }?:""}", cause) {
-    Exception("Messenger error [${code.name}] - $message", cause) {
+) : Exception("Messenger error [${code.name}] - $message", cause) {
 
     enum class Code {
         TELEGRAM_REQUEST_FAILED,

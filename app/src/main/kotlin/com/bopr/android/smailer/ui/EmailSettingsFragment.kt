@@ -34,7 +34,7 @@ import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 import java.lang.System.*
 
 /**
- * Email settings fragment.
+ * Email messenger settings fragment.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */

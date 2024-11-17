@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
-import com.bopr.android.smailer.messenger.mail.MailPhoneEventFormatter.Companion.PHONE_SEARCH_TAG
+import com.bopr.android.smailer.messenger.mail.PhoneCallEmailFormatter.Companion.PHONE_SEARCH_TAG
 import com.bopr.android.smailer.util.DEVICE_NAME
 import com.bopr.android.smailer.util.commaJoin
 import com.bopr.android.smailer.util.commaSplit
@@ -52,7 +52,7 @@ class Settings(context: Context, changeListener: ChangeListener? = null) {
                         VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME,
                         VAL_PREF_MESSAGE_CONTENT_HEADER,
                         VAL_PREF_MESSAGE_CONTENT_LOCATION,
-                        VAL_PREF_MESSAGE_CONTENT_EVENT_TIME,
+                        VAL_PREF_MESSAGE_CONTENT_CREATION_TIME,
                         VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME,
                         VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS
                     )
@@ -74,7 +74,7 @@ class Settings(context: Context, changeListener: ChangeListener? = null) {
                         VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME,
                         VAL_PREF_MESSAGE_CONTENT_HEADER,
                         VAL_PREF_MESSAGE_CONTENT_LOCATION,
-                        VAL_PREF_MESSAGE_CONTENT_EVENT_TIME,
+                        VAL_PREF_MESSAGE_CONTENT_CREATION_TIME,
                         VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME
                     )
                 )
@@ -198,7 +198,7 @@ class Settings(context: Context, changeListener: ChangeListener? = null) {
         const val VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME = "val_pref_message_content_device_name"
         const val VAL_PREF_MESSAGE_CONTENT_HEADER = "val_pref_message_content_header"
         const val VAL_PREF_MESSAGE_CONTENT_LOCATION = "val_pref_message_content_location"
-        const val VAL_PREF_MESSAGE_CONTENT_EVENT_TIME = "val_pref_message_content_event_time"
+        const val VAL_PREF_MESSAGE_CONTENT_CREATION_TIME = "val_pref_message_content_event_time"
         const val VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME = "val_pref_message_content_dispatch_time"
         const val VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS = "val_pref_message_content_control_links"
         const val VAL_PREF_TRIGGER_IN_CALLS = "in_calls"

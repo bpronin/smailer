@@ -12,7 +12,7 @@ import android.os.IBinder
 import android.os.Looper
 import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_SERVICE
-import com.bopr.android.smailer.provider.telephony.PhoneEventProcessorWorker.Companion.startPhoneEventProcessing
+import com.bopr.android.smailer.provider.telephony.PhoneCallProcessorWorker.Companion.startPhoneCallProcessing
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
 import com.bopr.android.smailer.data.getLong
@@ -62,13 +62,12 @@ class ContentObserverService : Service() {
 
         val context = this  //TODO: why? contentResolver is also Context
         contentResolver.query(CONTENT_SMS_SENT, null, "_id=?", arrayOf(id), null)?.useFirst {
-            val date = getLong("date")
-            context.startPhoneEventProcessing(
-                PhoneEventData(
+            context.startPhoneCallProcessing(
+                PhoneCallInfo(
                     phone = getString("address"),
                     isIncoming = false,
-                    startTime = date,
-                    endTime = date,
+                    startTime = getLong("date"),
+                    endTime = getLong("date"),
                     text = getStringOrNull("body"),
                     acceptor = DEVICE_NAME
                 )

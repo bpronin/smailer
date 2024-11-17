@@ -185,7 +185,8 @@ class TelegramSession(context: Context, private val token: String?) {
         if (!response.getBoolean("ok")) {
             throw TelegramRemoteError(
                 exceptionCode,
-                response.getInt("error_code"), response.getString("description")
+                response.getInt("error_code"),
+                response.getString("description")
             )
         }
     }

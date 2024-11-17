@@ -23,19 +23,19 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:id="@+id/image_event_type"
+            android:id="@+id/image_phone_call_type"
             android:layout_width="32sp"
             android:layout_height="32sp"
             android:layout_gravity="center"
-            android:contentDescription="Event type"
+            android:contentDescription="Phone call type"
             app:srcCompat="@drawable/ic_call" />
 
         <ImageView
-            android:id="@+id/image_event_direction"
+            android:id="@+id/image_phone_call_direction"
             android:layout_width="32sp"
             android:layout_height="32sp"
             android:layout_gravity="center"
-            android:contentDescription="Call direction"
+            android:contentDescription="Phone call direction"
             app:srcCompat="@drawable/ic_call_in" />
 
         <TextView
@@ -113,10 +113,10 @@
         tools:ignore="UseCompoundDrawables">
 
         <ImageView
-            android:id="@+id/image_event_result"
+            android:id="@+id/image_processing_result"
             android:layout_width="28sp"
             android:layout_height="28sp"
-            android:contentDescription="Result"
+            android:contentDescription="Processing result"
             android:padding="4dp"
             app:srcCompat="@drawable/ic_state_block" />
 

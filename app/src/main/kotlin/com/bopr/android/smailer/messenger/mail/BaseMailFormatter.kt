@@ -8,9 +8,9 @@ import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CREATION_TIME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_EVENT_TIME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_HEADER
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCATION
 import com.bopr.android.smailer.util.GeoLocation
@@ -24,7 +24,7 @@ import java.util.Locale
 
 abstract class BaseMailFormatter(
     private val context: Context,
-    private val eventTime: Long?,
+    private val creationTime: Long?,
     private val dispatchTime: Long?,
     private val location: GeoLocation?
 ) : MailFormatter {
@@ -88,31 +88,29 @@ abstract class BaseMailFormatter(
 
     private fun formatFooter(): String {
         val callerText = formatSender()
-        val timeText = formatEventTime()
+        val timeText = formatCreationTime()
         val deviceNameText = formatDeviceName()
         val sendTimeText = formatDispatchTime()
         val locationText = formatLocation()
 
-        val sb = StringBuilder()
+        return buildString {
+            append(callerText)
 
-        sb.append(callerText)
+            if (timeText.isNotEmpty()) {
+                if (isNotEmpty()) append("<br>")
+                append(timeText)
+            }
 
-        if (timeText.isNotEmpty()) {
-            if (sb.isNotEmpty()) sb.append("<br>")
-            sb.append(timeText)
+            if (locationText.isNotEmpty()) {
+                if (isNotEmpty()) append("<br>")
+                append(locationText)
+            }
+
+            if (deviceNameText.isNotEmpty() || sendTimeText.isNotEmpty()) {
+                if (isNotEmpty()) append("<br>")
+                append(string(R.string.sent_time_device, deviceNameText, sendTimeText))
+            }
         }
-
-        if (locationText.isNotEmpty()) {
-            if (sb.isNotEmpty()) sb.append("<br>")
-            sb.append(locationText)
-        }
-
-        if (deviceNameText.isNotEmpty() || sendTimeText.isNotEmpty()) {
-            if (sb.isNotEmpty()) sb.append("<br>")
-            sb.append(string(R.string.sent_time_device, deviceNameText, sendTimeText))
-        }
-
-        return sb.toString()
     }
 
     private fun formatSender(): String {
@@ -121,9 +119,12 @@ abstract class BaseMailFormatter(
         } else ""
     }
 
-    private fun formatEventTime(): String {
-        return if (eventTime != null && settings.hasEmailContent(VAL_PREF_MESSAGE_CONTENT_EVENT_TIME)) {
-            string(R.string.time_time, timeFormat.format(Date(eventTime)))
+    private fun formatCreationTime(): String {
+        return if (creationTime != null && settings.hasEmailContent(
+                VAL_PREF_MESSAGE_CONTENT_CREATION_TIME
+            )
+        ) {
+            string(R.string.time_time, timeFormat.format(Date(creationTime)))
         } else ""
     }
 

@@ -8,7 +8,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_BOT_TOKEN
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_CHAT_ID
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSENGER_ENABLED
 import com.bopr.android.smailer.messenger.Messenger
-import com.bopr.android.smailer.provider.Event
+import com.bopr.android.smailer.messenger.Message
 import com.bopr.android.smailer.ui.TelegramSettingsActivity
 import com.bopr.android.smailer.util.Logger
 import com.bopr.android.smailer.util.telegramErrorText
@@ -21,7 +21,7 @@ import com.bopr.android.smailer.util.telegramErrorText
 class TelegramMessenger(context: Context) : Messenger(context) {
 
     private val settings = Settings(context)
-    private val formatters = TelegramMessageFormatterFactory(context)
+    private val formatters = TelegramFormatterFactory(context)
     private val notifications by lazyOf(NotificationsHelper(context))
     private lateinit var session: TelegramSession
 
@@ -41,7 +41,7 @@ class TelegramMessenger(context: Context) : Messenger(context) {
     }
 
     override fun sendMessage(
-        event: Event,
+        message: Message,
         onSuccess: () -> Unit,
         onError: (Throwable) -> Unit
     ) {
@@ -49,7 +49,7 @@ class TelegramMessenger(context: Context) : Messenger(context) {
 
         session.sendMessage(
             oldChatId = settings.getString(PREF_TELEGRAM_CHAT_ID),
-            message = formatters.createFormatter(event.payload).formatMessage(),
+            message = formatters.createFormatter(message.payload).formatMessage(),
             onSuccess = { chatId ->
                 log.debug("Sent")
 

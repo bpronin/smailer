@@ -8,8 +8,8 @@ import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_SMS_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_SMS_MESSENGER_RECIPIENTS
 import com.bopr.android.smailer.messenger.Messenger
-import com.bopr.android.smailer.provider.Event
-import com.bopr.android.smailer.provider.telephony.PhoneEventData
+import com.bopr.android.smailer.messenger.Message
+import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
 import com.bopr.android.smailer.ui.SmsSettingsActivity
 import com.bopr.android.smailer.util.Mockable
 import com.bopr.android.smailer.util.formatDuration
@@ -17,7 +17,7 @@ import com.bopr.android.smailer.util.sendSmsMessage
 import com.bopr.android.smailer.util.Logger
 
 /**
- * SMS transport.
+ * SMS messenger.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
@@ -36,13 +36,13 @@ internal class SmsMessenger(context: Context) : Messenger(context) {
     }
 
     override fun sendMessage(
-        event: Event,
+        message: Message,
         onSuccess: () -> Unit,
         onError: (Throwable) -> Unit
     ) {
         settings.getStringList(PREF_SMS_MESSENGER_RECIPIENTS).forEach {
             try {
-                context.sendSmsMessage(it, formatMessage(event))
+                context.sendSmsMessage(it, formatMessage(message))
                 onSuccess()
             } catch (x: Exception) {
                 notifySendError()
@@ -51,32 +51,32 @@ internal class SmsMessenger(context: Context) : Messenger(context) {
         }
     }
 
-    private fun formatMessage(event: Event): String {
-        return when (event.payload) {
-            is PhoneEventData ->
-                formatPhoneEventMessage(event.payload)
+    private fun formatMessage(message: Message): String {
+        return when (message.payload) {
+            is PhoneCallInfo ->
+                formatPhoneCallMessage(message.payload)
 //            is BatteryEvent ->
 //              formatBatteryEventMessage(event.payload)
             else ->
-                throw IllegalArgumentException("No formatter for ${event.payload::class}")
+                throw IllegalArgumentException("No formatter for ${message.payload::class}")
         }
     }
 
-    private fun formatPhoneEventMessage(event: PhoneEventData): String {
+    private fun formatPhoneCallMessage(info: PhoneCallInfo): String {
         return when {
-            event.isSms ->
-                event.text!!
+            info.isSms ->
+                info.text!!
 
-            event.isMissed ->
+            info.isMissed ->
                 context.getString(R.string.you_had_missed_call)
 
             else ->
                 context.getString(
-                    if (event.isIncoming)
+                    if (info.isIncoming)
                         R.string.you_had_incoming_call
                     else
                         R.string.you_had_outgoing_call,
-                    formatDuration(event.callDuration)
+                    formatDuration(info.callDuration)
                 )
         }
     }
@@ -91,6 +91,6 @@ internal class SmsMessenger(context: Context) : Messenger(context) {
 
     companion object {
 
-        private val log = Logger("SmsEventProcessor")
+        private val log = Logger("SmsMessenger")
     }
 }

@@ -6,7 +6,7 @@
             android:entries="@array/trigger_names"
             android:entryValues="@array/trigger_values"
             android:key="email_triggers"
-            android:summary="@string/events_causing_sending_mail"
+            android:summary="@string/email_processing_triggers"
             android:title="@string/triggers" />
 
     <PreferenceCategory
@@ -17,7 +17,7 @@
                 android:key="phone_blacklist"
                 android:title="@string/blacklist">
             <intent
-                    android:targetClass="com.bopr.android.smailer.ui.EventFilterPhoneBlacklistActivity"
+                    android:targetClass="com.bopr.android.smailer.ui.PhoneBlacklistFilterActivity"
                     android:targetPackage="com.bopr.android.smailer" />
         </Preference>
 
@@ -25,7 +25,7 @@
                 android:key="phone_whitelist"
                 android:title="@string/whitelist">
             <intent
-                    android:targetClass="com.bopr.android.smailer.ui.EventFilterPhoneWhitelistActivity"
+                    android:targetClass="com.bopr.android.smailer.ui.PhoneWhitelistFilterActivity"
                     android:targetPackage="com.bopr.android.smailer" />
         </Preference>
     </PreferenceCategory>
@@ -38,7 +38,7 @@
                 android:key="text_blacklist"
                 android:title="@string/blacklist">
             <intent
-                    android:targetClass="com.bopr.android.smailer.ui.EventFilterTextBlacklistActivity"
+                    android:targetClass="com.bopr.android.smailer.ui.TextBlacklistFilterActivity"
                     android:targetPackage="com.bopr.android.smailer" />
         </Preference>
 
@@ -46,7 +46,7 @@
                 android:key="text_whitelist"
                 android:title="@string/whitelist">
             <intent
-                    android:targetClass="com.bopr.android.smailer.ui.EventFilterTextWhitelistActivity"
+                    android:targetClass="com.bopr.android.smailer.ui.TextWhitelistFilterActivity"
                     android:targetPackage="com.bopr.android.smailer" />
         </Preference>
 

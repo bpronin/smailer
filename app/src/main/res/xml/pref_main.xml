@@ -16,7 +16,7 @@
             android:key="messengers"
             android:title="@string/messengers">
         <intent
-                android:targetClass="com.bopr.android.smailer.ui.EventConsumersActivity"
+                android:targetClass="com.bopr.android.smailer.ui.MessengersActivity"
                 android:targetPackage="com.bopr.android.smailer" />
     </Preference>
 
