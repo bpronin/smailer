@@ -4,7 +4,6 @@ import androidx.annotation.IntDef
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_PENDING
 import com.bopr.android.smailer.provider.EventState.Companion.STATE_PROCESSED
-import com.bopr.android.smailer.provider.telephony.PhoneEventData
 
 @Retention(AnnotationRetention.SOURCE)
 @IntDef(STATE_PENDING, STATE_PROCESSED, STATE_IGNORED)

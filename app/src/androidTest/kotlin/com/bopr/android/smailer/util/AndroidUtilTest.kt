@@ -18,8 +18,8 @@ class AndroidUtilTest : BaseTest() {
 
     @get:Rule
     /* somehow it gives access to account list in API>=26 */
-    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(READ_CONTACTS)
-//    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(GET_ACCOUNTS)
+    val permissionRule = GrantPermissionRule.grant(READ_CONTACTS)
+//    val permissionRule = GrantPermissionRule.grant(GET_ACCOUNTS)
 
     @Test
     fun testDeviceName() {

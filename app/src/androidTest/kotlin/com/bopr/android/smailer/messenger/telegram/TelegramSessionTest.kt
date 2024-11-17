@@ -1,6 +1,5 @@
 package com.bopr.android.smailer.messenger.telegram
 
-import android.util.Log
 import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
 import org.junit.Test
@@ -8,8 +7,6 @@ import java.util.concurrent.CountDownLatch
 
 @SmallTest
 class TelegramSessionTest : BaseTest() {
-
-    private val TAG = "TelegramSessionTest"
 
     @Test
     fun sendMessage() {
@@ -21,13 +18,11 @@ class TelegramSessionTest : BaseTest() {
         ).sendMessage(
             oldChatId = null,
             message = "Test telegram session",
-            onSuccess = { chatId ->
-                Log.i(TAG, "sendMessage: $chatId")
+            onSuccess = {
                 latch.countDown()
 
             },
-            onError = { error ->
-                Log.e(TAG, "sendMessage", error)
+            onError = {
                 latch.countDown()
             }
         )

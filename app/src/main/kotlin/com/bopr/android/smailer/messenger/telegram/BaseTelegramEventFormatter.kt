@@ -21,7 +21,7 @@ abstract class BaseTelegramEventFormatter(
     private val eventTime: Long?,
     private val dispatchTime: Long?,
     private val location: GeoLocation?
-) : TelegramMessageFormatter(context) {
+) : TelegramMessageFormatter() {
 
     protected val settings = Settings(context)
 

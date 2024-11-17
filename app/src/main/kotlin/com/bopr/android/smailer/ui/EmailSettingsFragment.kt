@@ -142,12 +142,11 @@ class EmailSettingsFragment : BasePreferenceFragment(R.xml.pref_email_settings) 
                         showInfoDialog(R.string.test_message_failed)
                     }
                 )
-            },
-            onError = {
-                testSettingsProgress.stop()
-                showInfoDialog(R.string.test_message_failed, R.string.location_request_failed)
             }
-        )
+        ) {
+            testSettingsProgress.stop()
+            showInfoDialog(R.string.test_message_failed, R.string.location_request_failed)
+        }
     }
 
     private fun updateAccountPreferenceView() {

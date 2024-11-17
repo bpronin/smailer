@@ -5,5 +5,4 @@ import com.bopr.android.smailer.data.Database.Companion.TABLE_PHONE_BLACKLIST
 
 
 class EventFilterPhoneBlacklistActivityTest : BaseEventFilterListActivityTest(
-        EventFilterPhoneBlacklistActivity::class, TABLE_PHONE_BLACKLIST) {
-}
+        EventFilterPhoneBlacklistActivity::class, TABLE_PHONE_BLACKLIST)

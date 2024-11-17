@@ -17,7 +17,6 @@ import com.bopr.android.smailer.util.GeoLocation
 import com.bopr.android.smailer.util.checkPermission
 import com.bopr.android.smailer.util.localeResources
 import com.bopr.android.smailer.util.parseLocale
-import com.bopr.android.smailer.util.Logger
 import java.text.DateFormat.LONG
 import java.text.DateFormat.getDateTimeInstance
 import java.util.Date
@@ -191,9 +190,6 @@ abstract class BaseMailFormatter(
 
     companion object {
 
-        private val log = Logger("MailFormatter")
-
-        const val PHONE_SEARCH_TAG = "{phone}"
         private const val LINE =
             "<hr style=\"border: none; background-color: #e0e0e0; height: 1px;\">"
         private const val BODY_STYLE =

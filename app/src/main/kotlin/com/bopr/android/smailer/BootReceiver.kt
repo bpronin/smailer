@@ -22,7 +22,8 @@ class BootReceiver : BroadcastReceiver() {
         }
     }
 
-    companion object{
+    companion object {
+
         private val log = Logger("BootReceiver")
     }
 }

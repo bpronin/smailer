@@ -202,7 +202,7 @@
     <string name="time_time">Time: %s</string>
     <string name="trigger_off">Trigger was off</string>
     <string name="triggers">Triggers</string>
-    <string name="unable_determine_chat">Unable to determine the chat to send messages to. Say \"Hi\" to your bot in Telegram app and try agayn.</string>
+    <string name="unable_determine_chat">Unable to determine the chat to send messages to. Say \"Hi\" to your bot in Telegram app and try again.</string>
     <string name="unable_send_email">Unable to send email. %s</string>
     <string name="unable_send_sms">Unable to send SMS. %s</string>
     <string name="unacceptable_phone_numbers">Unacceptable phone numbers (%s)</string>

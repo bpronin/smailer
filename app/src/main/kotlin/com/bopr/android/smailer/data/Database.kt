@@ -203,7 +203,7 @@ class Database(private val context: Context) : Closeable {
         private const val EXTRA_TABLES = "tables"
 
         private const val TABLE_SYSTEM = "system_data"
-        const val TABLE_EVENTS = "events"
+//        const val TABLE_EVENTS = "events"
         const val TABLE_PHONE_EVENTS = "phone_events"
         const val TABLE_PHONE_BLACKLIST = "phone_blacklist"
         const val TABLE_PHONE_WHITELIST = "phone_whitelist"

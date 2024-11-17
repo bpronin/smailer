@@ -208,6 +208,12 @@ tasks.named("preBuild") {
     finalizedBy("updateReleaseInfo")
 }
 
-tasks.named("assemble") {
-    finalizedBy("uploadRelease")
+//tasks.named("assemble") {
+//    finalizedBy("uploadRelease")
+//}
+
+afterEvaluate {
+    tasks.named("assemblePaidDebug") {
+        finalizedBy("uploadRelease")
+    }
 }

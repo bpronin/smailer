@@ -1,6 +1,5 @@
 package com.bopr.android.smailer
 
-import android.content.Context
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.work.WorkManager
 import org.junit.BeforeClass
@@ -17,11 +16,11 @@ abstract class BaseTest {
 
     companion object {
 
-        val targetContext: Context = InstrumentationRegistry.getInstrumentation().targetContext
+        val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
 
-        fun getString(resId: Int): String = targetContext.getString(resId)
+        fun getString(resId: Int) = targetContext.getString(resId)
 
-        fun getString(resId: Int, vararg args:Any?): String = targetContext.getString(resId, args)
+        fun getString(resId: Int, vararg args: Any?) = targetContext.getString(resId, args)
 
         @BeforeClass
         @JvmStatic

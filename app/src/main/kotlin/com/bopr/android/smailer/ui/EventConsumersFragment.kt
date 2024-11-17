@@ -4,7 +4,6 @@ import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_SMS_MESSENGER_ENABLED
-import com.bopr.android.smailer.Settings.Companion.PREF_SMS_MESSENGER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSENGER_ENABLED
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_ACCENTED
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_DEFAULT
@@ -45,11 +44,11 @@ class EventConsumersFragment : BasePreferenceFragment(R.xml.pref_event_consumers
     }
 
     private fun updateEmailPreference() {
-        updatePreference(PREF_EMAIL_MESSENGER_ENABLED,PREF_EMAIL_SETTINGS)
+        updatePreference(PREF_EMAIL_MESSENGER_ENABLED, PREF_EMAIL_SETTINGS)
     }
 
     private fun updateTelegramPreference() {
-        updatePreference(PREF_TELEGRAM_MESSENGER_ENABLED,PREF_TELEGRAM_SETTINGS)
+        updatePreference(PREF_TELEGRAM_MESSENGER_ENABLED, PREF_TELEGRAM_SETTINGS)
     }
 
     private fun updatePreference(masterKey: String, key: String) {

@@ -52,12 +52,12 @@ class PhoneEventReceiverTest : BaseTest() {
         return intent
     }
 
-    private fun Intent.getPhoneEventExtra(name: String): PhoneEventData? {
+    private fun Intent.getPhoneEventExtra(): PhoneEventData? {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            getParcelableExtra(name, PhoneEventData::class.java)
+            getParcelableExtra("event", PhoneEventData::class.java)
         } else {
             @Suppress("DEPRECATION")
-            return getParcelableExtra(name)
+            return getParcelableExtra("event")
         }
     }
 
@@ -76,7 +76,7 @@ class PhoneEventReceiverTest : BaseTest() {
 
         receiver.onReceive(context, calStateIntent(TelephonyManager.EXTRA_STATE_IDLE, "100"))
         verify(context).startService(argThat {
-            getPhoneEventExtra("event")!!.run {
+            getPhoneEventExtra()!!.run {
                 isIncoming && !isMissed && phone == "100"
                         && location == null && endTime != null && acceptor == DEVICE_NAME
                         && processState == STATE_PENDING
@@ -106,7 +106,7 @@ class PhoneEventReceiverTest : BaseTest() {
 
         receiver.onReceive(context, calStateIntent(TelephonyManager.EXTRA_STATE_IDLE, "100"))
         verify(context).startService(argThat {
-            getPhoneEventExtra("event")!!.run {
+            getPhoneEventExtra()!!.run {
                 isIncoming && !isMissed && phone == "100"
                         && location == null && endTime != null && acceptor == DEVICE_NAME
                         && processState == STATE_PENDING
@@ -126,7 +126,7 @@ class PhoneEventReceiverTest : BaseTest() {
 
         receiver.onReceive(context, calStateIntent(TelephonyManager.EXTRA_STATE_IDLE, "200"))
         verify(context).startService(argThat {
-            getPhoneEventExtra("event")!!.run {
+            getPhoneEventExtra()!!.run {
                 !isIncoming && !isMissed && phone == "200"
                         && location == null && endTime != null && acceptor == DEVICE_NAME
                         && processState == STATE_PENDING
@@ -146,7 +146,7 @@ class PhoneEventReceiverTest : BaseTest() {
 
         receiver.onReceive(context, calStateIntent(TelephonyManager.EXTRA_STATE_IDLE, "300"))
         verify(context).startService(argThat {
-            getPhoneEventExtra("event")!!.run {
+            getPhoneEventExtra()!!.run {
                 isIncoming && isMissed && phone == "300"
                         && location == null && endTime != null && acceptor == DEVICE_NAME
                         && processState == STATE_PENDING
@@ -204,7 +204,7 @@ class PhoneEventReceiverTest : BaseTest() {
         receiver.onReceive(context, intent)
 
         verify(context).startService(argThat {
-            getPhoneEventExtra("event")!!.run {
+            getPhoneEventExtra()!!.run {
                 isSms && isIncoming && phone == "+15555215556" && text == "Text message"
                         && location == null && endTime != null && acceptor == DEVICE_NAME
                         && processState == STATE_PENDING

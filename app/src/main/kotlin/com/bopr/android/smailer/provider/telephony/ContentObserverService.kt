@@ -88,7 +88,7 @@ class ContentObserverService : Service() {
             selfChange: Boolean,
             uri: Uri?
         ) { /* this method may be called multiple times so we need to remember processed uri */
-            log.debug("Processing uri: $uri", )
+            log.debug("Processing uri: $uri")
 
             uri?.let {
                 if (uri != lastProcessed) {

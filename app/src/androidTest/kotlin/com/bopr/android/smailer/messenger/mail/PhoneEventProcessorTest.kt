@@ -23,6 +23,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_RECIPIEN
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_MESSAGE_LOCALE
+import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_BODY
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS
@@ -59,8 +60,7 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.anyString
+import org.mockito.ArgumentMatchers.*
 import java.io.IOException
 
 /**
@@ -83,7 +83,7 @@ class PhoneEventProcessorTest : BaseTest() {
     private lateinit var processor: PhoneEventProcessor
     private lateinit var accountManager: AccountManager
 
-    private fun testingEvent(text: String? = "Message"): PhoneEventData {
+    private fun testingEvent(): PhoneEventData {
         val time = System.currentTimeMillis()
         return PhoneEventData(
             phone = "+123",
@@ -91,7 +91,6 @@ class PhoneEventProcessorTest : BaseTest() {
             startTime = time,
             endTime = time + 1000,
             isMissed = false,
-            text = text,
             acceptor = "device"
         )
     }
@@ -171,8 +170,8 @@ class PhoneEventProcessorTest : BaseTest() {
             on { resources }.doReturn(targetContext.resources)
             on {
                 getSharedPreferences(
-                    ArgumentMatchers.anyString(),
-                    ArgumentMatchers.anyInt()
+                    anyString(),
+                    anyInt()
                 )
             }.doReturn(preferences)
             on { getSystemService(eq(Context.ACCOUNT_SERVICE)) }.doReturn(accountManager)
@@ -231,7 +230,7 @@ class PhoneEventProcessorTest : BaseTest() {
     @Test
     fun testProcessIgnored() {
         /* make the event not an SMS then default filter will deny it */
-        val event = testingEvent(null)
+        val event = testingEvent()
 
         processor.process(event)
 
@@ -328,7 +327,7 @@ class PhoneEventProcessorTest : BaseTest() {
         /* the setting is OFF */
         whenever(
             preferences.getBoolean(
-                eq(Settings.PREF_NOTIFY_SEND_SUCCESS),
+                eq(PREF_NOTIFY_SEND_SUCCESS),
                 anyOrNull()
             )
         ).thenReturn(false)
@@ -340,7 +339,7 @@ class PhoneEventProcessorTest : BaseTest() {
         /* the setting is ON */
         whenever(
             preferences.getBoolean(
-                eq(Settings.PREF_NOTIFY_SEND_SUCCESS),
+                eq(PREF_NOTIFY_SEND_SUCCESS),
                 anyOrNull()
             )
         ).thenReturn(true)

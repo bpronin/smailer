@@ -95,12 +95,11 @@ class TelegramSettingsFragment : BasePreferenceFragment(R.xml.pref_telegram_sett
                         showInfoDialog(R.string.test_message_failed, telegramErrorText(error))
                     }
                 )
-            },
-            onError = {
-                testSettingsProgress.stop()
-                showInfoDialog(R.string.test_message_failed, R.string.location_request_failed)
             }
-        )
+        ) {
+            testSettingsProgress.stop()
+            showInfoDialog(R.string.test_message_failed, R.string.location_request_failed)
+        }
     }
 
     private inner class TestTelegramEventFormatter(time: Long, location: GeoLocation?) :

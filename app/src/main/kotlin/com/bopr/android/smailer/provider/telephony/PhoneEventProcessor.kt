@@ -37,10 +37,9 @@ class PhoneEventProcessor(
 
         database.useIt {
             commit {
-                val currentLocation = context.getGeoLocation(this)
                 events.add(
                     event.apply {
-                        location = currentLocation
+                        location = context.getGeoLocation()
                         acceptState = eventFilter().test(this)
                         processState = (if (acceptState == ACCEPT_STATE_ACCEPTED)
                             STATE_PENDING else STATE_IGNORED)
@@ -48,26 +47,6 @@ class PhoneEventProcessor(
             }
 
             processPending()
-
-//                context.requestGeoLocation(
-//                database = this,
-//                onSuccess = { currentLocation ->
-//                    commit {
-//                        events.add(
-//                            event.apply {
-//                                location = currentLocation
-//                                acceptState = eventFilter().test(this)
-//                                processState = (if (acceptState == ACCEPT_STATE_ACCEPTED)
-//                                    STATE_PENDING else STATE_IGNORED)
-//                            })
-//                    }
-//
-//                    processPending()
-//                },
-//                onError = { error ->
-//                    log.error("Processing failed", error)
-//                }
-//            )
         }
     }
 

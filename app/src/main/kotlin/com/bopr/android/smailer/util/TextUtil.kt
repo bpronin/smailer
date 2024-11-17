@@ -40,11 +40,11 @@ fun <T> Iterable<T>.commaJoin(): String {
     }
 }
 
-fun <T> Array<out T>.commaJoin(): String {
-    return joinToString(",") {
-        it.toString().replace(",", "/,")  /* escape commas */
-    }
-}
+//fun <T> Array<out T>.commaJoin(): String {
+//    return joinToString(",") {
+//        it.toString().replace(",", "/,")  /* escape commas */
+//    }
+//}
 
 fun String?.commaSplit(): List<String> {
     return if (!isNullOrEmpty()) {

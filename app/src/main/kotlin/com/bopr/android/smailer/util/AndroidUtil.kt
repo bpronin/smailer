@@ -1,11 +1,9 @@
 package com.bopr.android.smailer.util
 
 import android.content.Context
-import android.content.Context.CONNECTIVITY_SERVICE
 import android.content.Context.POWER_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
-import android.net.ConnectivityManager
 import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
@@ -41,13 +39,6 @@ fun Context.checkPermission(vararg permissions: String): Boolean {
 
 fun Fragment.checkPermission(vararg permissions: String): Boolean {
     return requireContext().checkPermission(*permissions)
-}
-
-fun Context.hasInternetConnection(): Boolean {
-    (getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager).run {
-        @Suppress("DEPRECATION")
-        return activeNetworkInfo?.isConnectedOrConnecting ?: false
-    }
 }
 
 fun Context.readLogcatLog(): File {

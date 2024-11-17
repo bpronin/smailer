@@ -28,7 +28,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.ui.WavyUnderlineSpan
 import java.util.concurrent.Executor
-import java.util.concurrent.Executors
 import java.util.concurrent.Executors.*
 
 /**
@@ -67,10 +66,6 @@ fun Context.getColorFromAttr(@AttrRes attr: Int): Int {
 
 fun Context.showToast(text: String) {
     Toast.makeText(this, text, Toast.LENGTH_LONG).show()
-}
-
-fun Context.showToast(@StringRes textRes: Int) {
-    showToast(getString(textRes))
 }
 
 fun Fragment.showToast(text: String) {

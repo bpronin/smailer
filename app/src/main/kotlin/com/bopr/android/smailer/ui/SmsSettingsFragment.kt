@@ -67,12 +67,11 @@ class SmsSettingsFragment : BasePreferenceFragment(R.xml.pref_sms_settings) {
                     requireContext().sendSmsMessage(it, "Test message")
                 }
                 testSettingsProgress.stop()
-            },
-            onError = {
-                testSettingsProgress.stop()
-                showInfoDialog(R.string.test_message_failed, R.string.location_request_failed)
             }
-        )
+        ) {
+            testSettingsProgress.stop()
+            showInfoDialog(R.string.test_message_failed, R.string.location_request_failed)
+        }
     }
 
     companion object {

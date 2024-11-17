@@ -10,7 +10,6 @@ import com.bopr.android.smailer.util.Logger
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-@Suppress("unused")
 class AppBackupAgent : BackupAgentHelper() {
 
     override fun onCreate() {
@@ -20,7 +19,8 @@ class AppBackupAgent : BackupAgentHelper() {
         //        addHelper("database", new FileBackupHelper(this, "../databases/" + Settings.DB_NAME));
     }
 
-    companion object{
+    companion object {
+
         private val log = Logger("Backup")
     }
 }

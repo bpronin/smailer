@@ -103,7 +103,7 @@ class Firebase(val context: Context) {
         onError: (VolleyError) -> Unit = {}
     ) : JsonObjectRequest(Method.POST, url, payload,
         { response ->
-            log.debug("Response: $response", )
+            log.debug("Response: $response")
             onComplete(response)
         },
         { error ->
