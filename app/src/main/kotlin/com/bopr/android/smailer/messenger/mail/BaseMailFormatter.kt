@@ -81,7 +81,7 @@ abstract class BaseMailFormatter(
     }
 
     private fun formatHeader(): String {
-        return if (settings.hasEmailContent(VAL_PREF_MESSAGE_CONTENT_HEADER)) {
+        return if (settings.hasMailContent(VAL_PREF_MESSAGE_CONTENT_HEADER)) {
             return "<strong $HEADER_STYLE>${getTitle()}</strong><br><br>"
         } else ""
     }
@@ -114,13 +114,13 @@ abstract class BaseMailFormatter(
     }
 
     private fun formatSender(): String {
-        return if (settings.hasEmailContent(VAL_PREF_MESSAGE_CONTENT_CALLER)) {
+        return if (settings.hasMailContent(VAL_PREF_MESSAGE_CONTENT_CALLER)) {
             getSenderName().orEmpty()
         } else ""
     }
 
     private fun formatCreationTime(): String {
-        return if (creationTime != null && settings.hasEmailContent(
+        return if (creationTime != null && settings.hasMailContent(
                 VAL_PREF_MESSAGE_CONTENT_CREATION_TIME
             )
         ) {
@@ -129,7 +129,7 @@ abstract class BaseMailFormatter(
     }
 
     private fun formatDispatchTime(): String {
-        return if (dispatchTime != null && settings.hasEmailContent(
+        return if (dispatchTime != null && settings.hasMailContent(
                 VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME
             )
         ) {
@@ -138,13 +138,13 @@ abstract class BaseMailFormatter(
     }
 
     private fun formatDeviceName(): String {
-        return if (settings.hasEmailContent(VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME)) {
+        return if (settings.hasMailContent(VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME)) {
             string(R.string._from_device, settings.getDeviceName())
         } else ""
     }
 
     private fun formatLocation(): String {
-        if (!settings.hasEmailContent(VAL_PREF_MESSAGE_CONTENT_LOCATION)) return ""
+        if (!settings.hasMailContent(VAL_PREF_MESSAGE_CONTENT_LOCATION)) return ""
 
         return if (location != null) {
             val lt = location.latitude
@@ -165,7 +165,7 @@ abstract class BaseMailFormatter(
     }
 
     private fun formatReplyLinks(): String {
-        if (!settings.hasEmailContent(VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS)) return ""
+        if (!settings.hasMailContent(VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS)) return ""
 
         return getReplyLinks()?.let { links ->
             return buildString {

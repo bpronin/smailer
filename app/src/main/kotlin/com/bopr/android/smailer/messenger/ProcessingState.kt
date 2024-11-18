@@ -4,13 +4,14 @@ import androidx.annotation.IntDef
 
 @Retention(AnnotationRetention.SOURCE)
 @IntDef(
-    MessageState.Companion.STATE_PENDING,
-    MessageState.Companion.STATE_PROCESSED,
-    MessageState.Companion.STATE_IGNORED
+    ProcessingState.Companion.STATE_PENDING,
+    ProcessingState.Companion.STATE_PROCESSED,
+    ProcessingState.Companion.STATE_IGNORED
 )
-annotation class MessageState {
+annotation class ProcessingState {
 
     companion object {
+
         const val STATE_PENDING = 0
         const val STATE_PROCESSED = 1
         const val STATE_IGNORED = 2

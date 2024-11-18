@@ -18,11 +18,11 @@ import com.bopr.android.smailer.data.Database.Companion.COLUMN_START_TIME
 import com.bopr.android.smailer.data.Database.Companion.COLUMN_STATE
 import com.bopr.android.smailer.data.Database.Companion.COLUMN_TEXT
 import com.bopr.android.smailer.data.Database.Companion.TABLE_PHONE_CALLS
-import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_PENDING
+import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_PENDING
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
 import com.bopr.android.smailer.util.GeoLocation
-import com.bopr.android.smailer.util.strings
 import com.bopr.android.smailer.util.Logger
+import com.bopr.android.smailer.util.strings
 
 class PhoneCallDataset(helper: SQLiteOpenHelper, modifications: MutableSet<String>) :
     Dataset<PhoneCallInfo>(TABLE_PHONE_CALLS, helper, modifications) {
@@ -62,57 +62,50 @@ class PhoneCallDataset(helper: SQLiteOpenHelper, modifications: MutableSet<Strin
         log.debug("All events marked as read")
     }
 
-    override fun query(): Cursor {
-        return read {
-            query(tableName, order = "$COLUMN_START_TIME DESC")
-        }
+    override fun query(): Cursor = read {
+        query(tableName, order = "$COLUMN_START_TIME DESC")
     }
 
-    override fun keyOf(element: PhoneCallInfo): Array<String> {
-        return strings(element.startTime, element.acceptor)
+    override fun keyOf(element: PhoneCallInfo): Array<String> =
+        strings(element.startTime, element.acceptor)
+
+    override fun get(cursor: Cursor): PhoneCallInfo = cursor.run {
+        PhoneCallInfo(
+            phone = getString(COLUMN_PHONE),
+            isIncoming = getBoolean(COLUMN_IS_INCOMING),
+            startTime = getLong(COLUMN_START_TIME),
+            endTime = getLongOrNull(COLUMN_END_TIME),
+            isMissed = getBoolean(COLUMN_IS_MISSED),
+            text = getStringOrNull(COLUMN_TEXT),
+            location = GeoLocation.fromCoordinates(
+                getDoubleOrNull(COLUMN_LATITUDE),
+                getDoubleOrNull(COLUMN_LONGITUDE)
+            ),
+            details = getStringOrNull(COLUMN_DETAILS),
+            processState = getInt(COLUMN_STATE),
+            acceptor = getString(COLUMN_ACCEPTOR),
+            bypassFlags = getInt(COLUMN_PROCESS_STATUS),
+            processTime = getLongOrNull(COLUMN_PROCESS_TIME),
+            isRead = getBoolean(COLUMN_READ)
+        )
     }
 
-    override fun get(cursor: Cursor): PhoneCallInfo {
-        return cursor.run {
-            PhoneCallInfo(
-                phone = getString(COLUMN_PHONE),
-                isIncoming = getBoolean(COLUMN_IS_INCOMING),
-                startTime = getLong(COLUMN_START_TIME),
-                endTime = getLongOrNull(COLUMN_END_TIME),
-                isMissed = getBoolean(COLUMN_IS_MISSED),
-                text = getStringOrNull(COLUMN_TEXT),
-                location = GeoLocation.fromCoordinates(
-                    getDoubleOrNull(COLUMN_LATITUDE),
-                    getDoubleOrNull(COLUMN_LONGITUDE)
-                ),
-                details = getStringOrNull(COLUMN_DETAILS),
-                processState = getInt(COLUMN_STATE),
-                acceptor = getString(COLUMN_ACCEPTOR),
-                acceptState = getInt(COLUMN_PROCESS_STATUS),
-                processTime = getLongOrNull(COLUMN_PROCESS_TIME),
-                isRead = getBoolean(COLUMN_READ)
-            )
-        }
-    }
-
-    override fun values(element: PhoneCallInfo): ContentValues {
-        return values {
-            put(COLUMN_PHONE, element.phone)
-            put(COLUMN_ACCEPTOR, element.acceptor)
-            put(COLUMN_START_TIME, element.startTime)
-            put(COLUMN_STATE, element.processState)
-            put(COLUMN_PROCESS_STATUS, element.acceptState)
-            put(COLUMN_PROCESS_TIME, element.processTime)
-            put(COLUMN_IS_INCOMING, element.isIncoming)
-            put(COLUMN_IS_MISSED, element.isMissed)
-            put(COLUMN_END_TIME, element.endTime)
-            put(COLUMN_TEXT, element.text)
-            put(COLUMN_DETAILS, element.details)
-            put(COLUMN_READ, element.isRead)
-            element.location?.run {
-                put(COLUMN_LATITUDE, latitude)
-                put(COLUMN_LONGITUDE, longitude)
-            }
+    override fun values(element: PhoneCallInfo): ContentValues = values {
+        put(COLUMN_PHONE, element.phone)
+        put(COLUMN_ACCEPTOR, element.acceptor)
+        put(COLUMN_START_TIME, element.startTime)
+        put(COLUMN_STATE, element.processState)
+        put(COLUMN_PROCESS_STATUS, element.bypassFlags)
+        put(COLUMN_PROCESS_TIME, element.processTime)
+        put(COLUMN_IS_INCOMING, element.isIncoming)
+        put(COLUMN_IS_MISSED, element.isMissed)
+        put(COLUMN_END_TIME, element.endTime)
+        put(COLUMN_TEXT, element.text)
+        put(COLUMN_DETAILS, element.details)
+        put(COLUMN_READ, element.isRead)
+        element.location?.run {
+            put(COLUMN_LATITUDE, latitude)
+            put(COLUMN_LONGITUDE, longitude)
         }
     }
 

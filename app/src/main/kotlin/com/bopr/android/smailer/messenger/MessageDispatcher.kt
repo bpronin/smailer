@@ -4,8 +4,8 @@ import android.content.Context
 import com.bopr.android.smailer.messenger.mail.MailMessenger
 import com.bopr.android.smailer.messenger.telegram.TelegramMessenger
 import com.bopr.android.smailer.messenger.telephony.SmsMessenger
-import com.bopr.android.smailer.util.Mockable
 import com.bopr.android.smailer.util.Logger
+import com.bopr.android.smailer.util.Mockable
 
 /**
  * Dispatch message to appropriate messenger.
@@ -23,10 +23,10 @@ class MessageDispatcher(context: Context) {
 
     private lateinit var preparedMessengers: List<Messenger>
 
-    fun prepare() {
-        preparedMessengers = availableMessengers.filter { it.isEnabled() && it.prepare() }
+    fun initialize() {
+        preparedMessengers = availableMessengers.filter { it.isEnabled() && it.initialize() }
 
-        log.debug("Prepared")
+        log.debug("Initialized")
     }
 
     fun dispatch(
@@ -34,22 +34,12 @@ class MessageDispatcher(context: Context) {
         onSuccess: () -> Unit,
         onError: (Throwable) -> Unit
     ) {
-        // TODO: use coroutines or threads and collect errors
-        var lastError: Throwable? = null
-
-        preparedMessengers.forEach {
-            it.sendMessage(message,
-                onSuccess = {
-
-                },
-                onError = { error ->
-                    lastError = error
-                })
+        for (messenger in preparedMessengers) {
+            // TODO: what if some of messengers succeeded and some failed ?
+            messenger.sendMessage(message, onSuccess, onError)
         }
 
-        log.debug("Dispatched $message")
-
-        if (lastError == null) onSuccess() else onError(lastError)
+        log.debug("Dispatched").verb(message)
     }
 
     companion object {

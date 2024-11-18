@@ -21,7 +21,7 @@ import com.bopr.android.smailer.util.stripPhoneNumber
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class PhoneCallEmailFormatter(
+class PhoneCallMailFormatter(
     private val context: Context,
     private val info: PhoneCallInfo
 ) : BaseMailFormatter(

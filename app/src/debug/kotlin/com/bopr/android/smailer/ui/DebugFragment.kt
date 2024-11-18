@@ -27,10 +27,10 @@ import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_MAIL_RECIPIENT
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_SERVICE_ACCOUNT
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSAGE_CONTENT
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_RECIPIENTS
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
+import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSAGE_CONTENT
+import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_RECIPIENTS
+import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_MESSAGE_LOCALE
 import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
@@ -58,13 +58,13 @@ import com.bopr.android.smailer.external.GoogleDrive
 import com.bopr.android.smailer.messenger.mail.GoogleMailSession
 import com.bopr.android.smailer.messenger.mail.MailMessage
 import com.bopr.android.smailer.messenger.telegram.TelegramSession
-import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_IGNORED
-import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_PENDING
-import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_PROCESSED
+import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_IGNORED
+import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_PENDING
+import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.ACCEPT_STATE_ACCEPTED
+import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.FLAG_BYPASS_NONE
 import com.bopr.android.smailer.provider.telephony.PhoneCallProcessor
-import com.bopr.android.smailer.provider.telephony.PhoneCallProcessorWorker.Companion.startPhoneCallProcessing
+import com.bopr.android.smailer.provider.telephony.PhoneCallProcessor.Companion.processPhoneCall
 import com.bopr.android.smailer.sync.Synchronizer
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_DOWNLOAD
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_UPLOAD
@@ -117,7 +117,7 @@ class DebugFragment : PreferenceFragmentCompat() {
         settings = Settings(requireContext())
         database = Database(requireContext())
         authorization = GoogleAuthorizationHelper(
-            requireActivity(), PREF_EMAIL_SENDER_ACCOUNT, MAIL_GOOGLE_COM, DRIVE_APPDATA
+            requireActivity(), PREF_MAIL_SENDER_ACCOUNT, MAIL_GOOGLE_COM, DRIVE_APPDATA
         )
         notifications = NotificationsHelper(requireContext())
         accountHelper = AccountHelper(requireContext())
@@ -282,7 +282,7 @@ class DebugFragment : PreferenceFragmentCompat() {
 
     private fun onPutInvalidAccount() {
         settings.update {
-            putString(PREF_EMAIL_SENDER_ACCOUNT, "unknown@gmail.com")
+            putString(PREF_MAIL_SENDER_ACCOUNT, "unknown@gmail.com")
         }
     }
 
@@ -397,14 +397,14 @@ class DebugFragment : PreferenceFragmentCompat() {
 
     private fun onSetDebugPreferences() {
         settings.update {
-            putString(PREF_EMAIL_SENDER_ACCOUNT, developerEmail)
+            putString(PREF_MAIL_SENDER_ACCOUNT, developerEmail)
             putString(PREF_REMOTE_CONTROL_ACCOUNT, developerEmail)
             putStringList(
-                PREF_EMAIL_MESSENGER_RECIPIENTS,
+                PREF_MAIL_MESSENGER_RECIPIENTS,
                 setOf(developerEmail, "nowhere@mail.com")
             )
             putStringSet(
-                PREF_EMAIL_TRIGGERS, mutableSetOf(
+                PREF_MAIL_TRIGGERS, mutableSetOf(
                     VAL_PREF_TRIGGER_IN_SMS,
                     VAL_PREF_TRIGGER_IN_CALLS,
                     VAL_PREF_TRIGGER_MISSED_CALLS,
@@ -412,7 +412,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                 )
             )
             putStringSet(
-                PREF_EMAIL_MESSAGE_CONTENT, mutableSetOf(
+                PREF_MAIL_MESSAGE_CONTENT, mutableSetOf(
                     VAL_PREF_MESSAGE_CONTENT_CALLER,
                     VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME,
                     VAL_PREF_MESSAGE_CONTENT_LOCATION,
@@ -491,10 +491,10 @@ class DebugFragment : PreferenceFragmentCompat() {
             location = null,
             details = null,
             acceptor = DEVICE_NAME,
-            acceptState = ACCEPT_STATE_ACCEPTED,
+            bypassFlags = FLAG_BYPASS_NONE,
             isRead = false
         )
-        requireContext().startPhoneCallProcessing(info)
+        requireContext().processPhoneCall(info)
         showComplete()
     }
 
@@ -537,7 +537,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                     null,
                     STATE_PENDING,
                     DEVICE_NAME,
-                    ACCEPT_STATE_ACCEPTED,
+                    FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -562,7 +562,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         null,
                         STATE_PENDING,
                         recipient,
-                        ACCEPT_STATE_ACCEPTED,
+                        FLAG_BYPASS_NONE,
                         isRead = false
                     )
                 )
@@ -578,7 +578,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         null,
                         STATE_PROCESSED,
                         recipient,
-                        ACCEPT_STATE_ACCEPTED,
+                        FLAG_BYPASS_NONE,
                         isRead = false
                     )
                 )
@@ -594,7 +594,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         null,
                         STATE_IGNORED,
                         recipient,
-                        ACCEPT_STATE_ACCEPTED,
+                        FLAG_BYPASS_NONE,
                         isRead = false
                     )
                 )
@@ -610,7 +610,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         null,
                         STATE_PENDING,
                         recipient,
-                        ACCEPT_STATE_ACCEPTED,
+                        FLAG_BYPASS_NONE,
                         isRead = false
                     )
                 )
@@ -626,7 +626,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         null,
                         STATE_PENDING,
                         recipient,
-                        ACCEPT_STATE_ACCEPTED,
+                        FLAG_BYPASS_NONE,
                         isRead = false
                     )
                 )
@@ -642,7 +642,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         "Test exception +79052345671",
                         STATE_PENDING,
                         recipient,
-                        ACCEPT_STATE_ACCEPTED,
+                        FLAG_BYPASS_NONE,
                         isRead = false
                     )
                 )
@@ -658,7 +658,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         "Test exception +79052345672",
                         STATE_PENDING,
                         recipient,
-                        ACCEPT_STATE_ACCEPTED,
+                        FLAG_BYPASS_NONE,
                         isRead = false
                     )
                 )
@@ -674,7 +674,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         "Test exception +79052345673",
                         STATE_PENDING,
                         recipient,
-                        ACCEPT_STATE_ACCEPTED,
+                        FLAG_BYPASS_NONE,
                         isRead = false
                     )
                 )
@@ -690,7 +690,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         "Test exception +79052345674",
                         STATE_PENDING,
                         recipient,
-                        ACCEPT_STATE_ACCEPTED,
+                        FLAG_BYPASS_NONE,
                         isRead = false
                     )
                 )
@@ -706,7 +706,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         "Test exception +79052345675",
                         STATE_PENDING,
                         recipient,
-                        ACCEPT_STATE_ACCEPTED,
+                        FLAG_BYPASS_NONE,
                         isRead = false
                     )
                 )
@@ -816,7 +816,7 @@ class DebugFragment : PreferenceFragmentCompat() {
     }
 
     private fun senderAccount(): Account {
-        return accountHelper.requireGoogleAccount(settings.getString(PREF_EMAIL_SENDER_ACCOUNT))
+        return accountHelper.requireGoogleAccount(settings.getString(PREF_MAIL_SENDER_ACCOUNT))
     }
 
     private fun serviceAccount(): Account {

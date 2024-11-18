@@ -18,7 +18,7 @@ import com.bopr.android.smailer.util.telegramErrorText
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class TelegramMessenger(context: Context) : Messenger(context) {
+class TelegramMessenger(private val context: Context) : Messenger {
 
     private val settings = Settings(context)
     private val formatters = TelegramFormatterFactory(context)
@@ -29,7 +29,7 @@ class TelegramMessenger(context: Context) : Messenger(context) {
         return settings.getBoolean(PREF_TELEGRAM_MESSENGER_ENABLED)
     }
 
-    override fun prepare(): Boolean {
+    override fun initialize(): Boolean {
         log.debug("Preparing")
 
         session = TelegramSession(

@@ -13,10 +13,10 @@ import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGR
 import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_NO_TOKEN
 import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_NO_UPDATES
 import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_REQUEST_FAILED
-import com.bopr.android.smailer.messenger.MessageState
-import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_IGNORED
-import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_PENDING
-import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_PROCESSED
+import com.bopr.android.smailer.messenger.ProcessingState
+import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_IGNORED
+import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_PENDING
+import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
 import java.util.Locale
 
@@ -75,7 +75,7 @@ fun phoneCallDirectionImage(info: PhoneCallInfo): Int {
 }
 
 @DrawableRes
-fun messageStateImage(@MessageState state: Int): Int {
+fun messageStateImage(@ProcessingState state: Int): Int {
     /* do not use direct drawable resources references here due to shrinker issue */
     return when (state) {
         STATE_PENDING ->
@@ -127,7 +127,7 @@ fun phoneCallTypePrefix(info: PhoneCallInfo): Int {
 }
 
 @StringRes
-fun messageStateText(@MessageState state: Int): Int {
+fun messageStateText(@ProcessingState state: Int): Int {
     return when (state) {
         STATE_PENDING ->
             R.string.pending

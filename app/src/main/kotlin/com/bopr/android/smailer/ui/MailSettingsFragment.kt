@@ -6,10 +6,10 @@ import androidx.preference.ExtMultiSelectListPreference
 import androidx.preference.ListPreference
 import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSAGE_CONTENT
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_ENABLED
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_RECIPIENTS
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSAGE_CONTENT
+import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_ENABLED
+import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_RECIPIENTS
+import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_MESSAGE_LOCALE
 import com.bopr.android.smailer.messenger.mail.BaseMailFormatter
 import com.bopr.android.smailer.messenger.mail.GoogleMailSession
@@ -38,18 +38,18 @@ import java.lang.System.*
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class EmailSettingsFragment : BasePreferenceFragment(R.xml.pref_email_settings) {
+class MailSettingsFragment : BasePreferenceFragment(R.xml.pref_email_settings) {
 
     private lateinit var accountHelper: AccountHelper
     private lateinit var authorizationHelper: GoogleAuthorizationHelper
     private val testSettingsProgress by lazy {
-        PreferenceProgress(requirePreference(PREF_SENT_TEST_EMAIL))
+        PreferenceProgress(requirePreference(PREF_SENT_TEST_MAIL))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        requirePreferenceAs<ExtMultiSelectListPreference>(PREF_EMAIL_MESSAGE_CONTENT).apply {
+        requirePreferenceAs<ExtMultiSelectListPreference>(PREF_MAIL_MESSAGE_CONTENT).apply {
             maxLines = 2
             ellipsize = TextUtils.TruncateAt.END
             setOnChangeListener {
@@ -70,7 +70,7 @@ class EmailSettingsFragment : BasePreferenceFragment(R.xml.pref_email_settings) 
             }
         }
 
-        requirePreference(PREF_EMAIL_SENDER_ACCOUNT).apply {
+        requirePreference(PREF_MAIL_SENDER_ACCOUNT).apply {
             setOnChangeListener {
                 updateAccountPreferenceView()
             }
@@ -79,9 +79,9 @@ class EmailSettingsFragment : BasePreferenceFragment(R.xml.pref_email_settings) 
             }
         }
 
-        requirePreference(PREF_EMAIL_MESSENGER_RECIPIENTS).setOnChangeListener {
+        requirePreference(PREF_MAIL_MESSENGER_RECIPIENTS).setOnChangeListener {
             it.apply {
-                val addresses = settings.getEmailRecipients().commaSplit()
+                val addresses = settings.getMailRecipients().commaSplit()
                 if (addresses.isEmpty()) {
                     updateSummary(R.string.unspecified, SUMMARY_STYLE_ACCENTED)
                 } else if (addresses.size == 1) {
@@ -95,19 +95,19 @@ class EmailSettingsFragment : BasePreferenceFragment(R.xml.pref_email_settings) 
             }
         }
 
-        requirePreference(PREF_EMAIL_MESSENGER_ENABLED).setOnChangeListener {
+        requirePreference(PREF_MAIL_MESSENGER_ENABLED).setOnChangeListener {
             it.apply {
-                setTitle(onOffText(settings.getBoolean(PREF_EMAIL_MESSENGER_ENABLED)))
+                setTitle(onOffText(settings.getBoolean(PREF_MAIL_MESSENGER_ENABLED)))
             }
         }
 
-        requirePreference(PREF_SENT_TEST_EMAIL).setOnClickListener {
+        requirePreference(PREF_SENT_TEST_MAIL).setOnClickListener {
             onSendTestMessage()
         }
 
         accountHelper = AccountHelper(requireContext())
         authorizationHelper = GoogleAuthorizationHelper(
-            requireActivity(), PREF_EMAIL_SENDER_ACCOUNT, GMAIL_SEND, DRIVE_APPDATA
+            requireActivity(), PREF_MAIL_SENDER_ACCOUNT, GMAIL_SEND, DRIVE_APPDATA
         )
     }
 
@@ -131,7 +131,7 @@ class EmailSettingsFragment : BasePreferenceFragment(R.xml.pref_email_settings) 
                         from = account.name,
                         subject = formatter.formatSubject(),
                         body = formatter.formatBody(),
-                        recipients = settings.getEmailRecipients()
+                        recipients = settings.getMailRecipients()
                     ),
                     onSuccess = {
                         testSettingsProgress.stop()
@@ -150,8 +150,8 @@ class EmailSettingsFragment : BasePreferenceFragment(R.xml.pref_email_settings) 
     }
 
     private fun updateAccountPreferenceView() {
-        requirePreference(PREF_EMAIL_SENDER_ACCOUNT).apply {
-            val account = settings.getString(PREF_EMAIL_SENDER_ACCOUNT)
+        requirePreference(PREF_MAIL_SENDER_ACCOUNT).apply {
+            val account = settings.getString(PREF_MAIL_SENDER_ACCOUNT)
             if (account.isNullOrEmpty()) {
                 updateSummary(R.string.unspecified, SUMMARY_STYLE_ACCENTED)
             } else if (!accountHelper.isGoogleAccountExists(account)) {
@@ -189,6 +189,6 @@ class EmailSettingsFragment : BasePreferenceFragment(R.xml.pref_email_settings) 
 
     companion object {
 
-        private const val PREF_SENT_TEST_EMAIL = "send_test_email"
+        private const val PREF_SENT_TEST_MAIL = "send_test_email"
     }
 }

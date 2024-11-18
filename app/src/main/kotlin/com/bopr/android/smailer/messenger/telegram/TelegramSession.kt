@@ -14,8 +14,9 @@ import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGR
 import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_NO_UPDATES
 import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_REQUEST_FAILED
 import com.bopr.android.smailer.util.Logger
+import com.bopr.android.smailer.util.appendAsHttpParams
+import com.bopr.android.smailer.util.httpEncoded
 import org.json.JSONObject
-import java.net.URLEncoder
 
 /**
  * Telegram bot wrapper.
@@ -108,7 +109,7 @@ class TelegramSession(context: Context, private val token: String?) {
             params = mapOf(
                 "chat_id" to chatId,
                 "text" to fixMessageText(message),
-                "parse_mode" to PARSE_MODE
+                "parse_mode" to "html"
             ),
             onResponse = {
                 detectRemoteError(it, TELEGRAM_BAD_RESPONSE)
@@ -129,17 +130,17 @@ class TelegramSession(context: Context, private val token: String?) {
             return
         }
 
-        log.debug("Requesting <$command>")
+        log.debug("Requesting <$command>").verb(params)
 
         val request = JsonObjectRequest(
             buildUrl(command, params),
             { response ->
                 try {
-                    log.debug("Received response <$command>")
+                    log.debug("Received response <$command>").verb(params)
 
                     onResponse(response)
                 } catch (x: TelegramException) {
-                    log.error("Error processing response <$command>", x)
+                    log.error("Error processing response <$command>", x).verb(params)
 
                     onError(x)
                 }
@@ -165,17 +166,11 @@ class TelegramSession(context: Context, private val token: String?) {
     }
 
     private fun buildUrl(command: String, params: Map<String, Any>) = buildString {
-        append(BASE_URL)
+        append("https://api.telegram.org/bot")
         append(token)
         append("/")
         append(command)
-
-        params.entries.joinTo(
-            this,
-            prefix = "?",
-            separator = "&",
-            transform = { "${it.key}=${it.value}" }
-        )
+        appendAsHttpParams(params)
     }
 
     private fun detectRemoteError(
@@ -199,9 +194,7 @@ class TelegramSession(context: Context, private val token: String?) {
 
         private val log = Logger("TelegramSession")
 
-        private val NEW_LINE = URLEncoder.encode("\n", "UTF-8")
-        private const val BASE_URL = "https://api.telegram.org/bot"
-        private const val PARSE_MODE = "html"
+        private val NEW_LINE = "\n".httpEncoded()
     }
 
 }

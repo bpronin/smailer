@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
-import com.bopr.android.smailer.messenger.mail.PhoneCallEmailFormatter.Companion.PHONE_SEARCH_TAG
+import com.bopr.android.smailer.messenger.mail.PhoneCallMailFormatter.Companion.PHONE_SEARCH_TAG
 import com.bopr.android.smailer.util.DEVICE_NAME
 import com.bopr.android.smailer.util.commaJoin
 import com.bopr.android.smailer.util.commaSplit
@@ -35,7 +35,7 @@ class Settings(context: Context, changeListener: ChangeListener? = null) {
         update {
             putInt(PREF_SETTINGS_VERSION, SETTINGS_VERSION)
             ifNotExists(PREF_DISPATCH_BATTERY_LEVEL) { putBoolean(it, false) }
-            ifNotExists(PREF_EMAIL_MESSENGER_ENABLED) { putBoolean(it, false) }
+            ifNotExists(PREF_MAIL_MESSENGER_ENABLED) { putBoolean(it, false) }
             ifNotExists(PREF_MESSAGE_LOCALE) { putString(it, VAL_PREF_DEFAULT) }
             ifNotExists(PREF_NOTIFY_SEND_SUCCESS) { putBoolean(it, false) }
             ifNotExists(PREF_REMOTE_CONTROL_ENABLED) { putBoolean(it, false) }
@@ -44,7 +44,7 @@ class Settings(context: Context, changeListener: ChangeListener? = null) {
             ifNotExists(PREF_SMS_MESSENGER_ENABLED) { putBoolean(it, false) }
             ifNotExists(PREF_SYNC_ENABLED) { putBoolean(it, true) }
             ifNotExists(PREF_TELEGRAM_MESSENGER_ENABLED) { putBoolean(it, true) }
-            ifNotExists(PREF_EMAIL_MESSAGE_CONTENT) {
+            ifNotExists(PREF_MAIL_MESSAGE_CONTENT) {
                 putStringSet(
                     it, setOf(
                         VAL_PREF_MESSAGE_CONTENT_BODY,
@@ -58,7 +58,7 @@ class Settings(context: Context, changeListener: ChangeListener? = null) {
                     )
                 )
             }
-            ifNotExists(PREF_EMAIL_TRIGGERS) {
+            ifNotExists(PREF_MAIL_TRIGGERS) {
                 putStringSet(
                     it, setOf(
                         VAL_PREF_TRIGGER_IN_SMS,
@@ -82,12 +82,12 @@ class Settings(context: Context, changeListener: ChangeListener? = null) {
         }
     }
 
-    fun getEmailTriggers() = getStringSet(PREF_EMAIL_TRIGGERS)
-    fun getEmailRecipients() = getString(PREF_EMAIL_MESSENGER_RECIPIENTS, "")
+    fun getMailTriggers() = getStringSet(PREF_MAIL_TRIGGERS)
+    fun getMailRecipients() = getString(PREF_MAIL_MESSENGER_RECIPIENTS, "")
     fun getMessageLocale() = getString(PREF_MESSAGE_LOCALE, VAL_PREF_DEFAULT)
     fun getDeviceName() = getString(PREF_DEVICE_ALIAS, DEVICE_NAME)
     fun getPhoneSearchUrl() = getString(PREF_PHONE_SEARCH_URL, DEFAULT_PHONE_SEARCH_URL)
-    fun hasEmailContent(value: String) = getStringSet(PREF_EMAIL_MESSAGE_CONTENT).contains(value)
+    fun hasMailContent(value: String) = getStringSet(PREF_MAIL_MESSAGE_CONTENT).contains(value)
     fun hasTelegramMessageContent(value: String) =
         getStringSet(PREF_TELEGRAM_MESSAGE_CONTENT).contains(value)
 
@@ -171,36 +171,36 @@ class Settings(context: Context, changeListener: ChangeListener? = null) {
 
         const val PREF_DEVICE_ALIAS = "device_alias"
         const val PREF_DISPATCH_BATTERY_LEVEL = "dispatch_battery_level"
-        const val PREF_EMAIL_MESSAGE_CONTENT = "email_message_content"
-        const val PREF_EMAIL_MESSENGER_ENABLED = "email_messenger_enabled"
-        const val PREF_EMAIL_SENDER_ACCOUNT = "sender_account"
-        const val PREF_EMAIL_TRIGGERS = "email_triggers"
+        const val PREF_MAIL_MESSAGE_CONTENT = "email_message_content"
+        const val PREF_MAIL_MESSENGER_ENABLED = "email_messenger_enabled"
+        const val PREF_MAIL_MESSENGER_RECIPIENTS = "recipients_address"
+        const val PREF_MAIL_SENDER_ACCOUNT = "sender_account"
+        const val PREF_MAIL_TRIGGERS = "email_triggers"
         const val PREF_MESSAGE_LOCALE = "email_locale"
         const val PREF_NOTIFY_SEND_SUCCESS = "notify_send_success"
         const val PREF_PHONE_SEARCH_URL = "phone_search_url"
-        const val PREF_EMAIL_MESSENGER_RECIPIENTS = "recipients_address"
         const val PREF_REMOTE_CONTROL_ACCOUNT = "remote_control_account"
         const val PREF_REMOTE_CONTROL_ENABLED = "remote_control_enabled"
         const val PREF_REMOTE_CONTROL_FILTER_RECIPIENTS = "remote_control_filter_recipients"
         const val PREF_REMOTE_CONTROL_NOTIFICATIONS = "remote_control_notifications"
         const val PREF_SETTINGS_VERSION = "settings_version"
+        const val PREF_SMS_MESSENGER_ENABLED = "pref_sms_messenger_enabled"
+        const val PREF_SMS_MESSENGER_RECIPIENTS = "pref_sms_messenger_recipients"
         const val PREF_SYNC_ENABLED = "sync_enabled"
         const val PREF_TELEGRAM_BOT_TOKEN = "telegram_bot_token"
         const val PREF_TELEGRAM_CHAT_ID = "telegram_chat_id"
         const val PREF_TELEGRAM_MESSAGE_CONTENT = "pref_telegram_message_content"
         const val PREF_TELEGRAM_MESSENGER_ENABLED = "pref_telegram_messenger_enabled"
-        const val PREF_SMS_MESSENGER_ENABLED = "pref_sms_messenger_enabled"
-        const val PREF_SMS_MESSENGER_RECIPIENTS = "pref_sms_messenger_recipients"
 
         const val VAL_PREF_DEFAULT = "default"
         const val VAL_PREF_MESSAGE_CONTENT_BODY = "val_pref_message_content_body"
         const val VAL_PREF_MESSAGE_CONTENT_CALLER = "val_pref_message_content_caller"
+        const val VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS = "val_pref_message_content_control_links"
+        const val VAL_PREF_MESSAGE_CONTENT_CREATION_TIME = "val_pref_message_content_event_time"
         const val VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME = "val_pref_message_content_device_name"
+        const val VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME = "val_pref_message_content_dispatch_time"
         const val VAL_PREF_MESSAGE_CONTENT_HEADER = "val_pref_message_content_header"
         const val VAL_PREF_MESSAGE_CONTENT_LOCATION = "val_pref_message_content_location"
-        const val VAL_PREF_MESSAGE_CONTENT_CREATION_TIME = "val_pref_message_content_event_time"
-        const val VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME = "val_pref_message_content_dispatch_time"
-        const val VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS = "val_pref_message_content_control_links"
         const val VAL_PREF_TRIGGER_IN_CALLS = "in_calls"
         const val VAL_PREF_TRIGGER_IN_SMS = "in_sms"
         const val VAL_PREF_TRIGGER_MISSED_CALLS = "missed_calls"

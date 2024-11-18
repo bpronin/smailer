@@ -8,7 +8,7 @@ class MailFormatterFactory(private val context: Context) {
 
     fun createFormatter(data: Any): MailFormatter {
         return when (data) {
-            is PhoneCallInfo -> PhoneCallEmailFormatter(context, data)
+            is PhoneCallInfo -> PhoneCallMailFormatter(context, data)
 
             is BatteryInfo -> BatteryLevelMailFormatter(context, data)
 

@@ -2,7 +2,7 @@ package com.bopr.android.smailer.ui
 
 
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
+import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_TRIGGERS
 import org.junit.Test
 
 
@@ -10,7 +10,7 @@ class RulesActivityTest : BaseActivityTest(RulesActivity::class) {
 
     override fun beforeActivityCreate() {
         settings.update {
-            putStringSet(PREF_EMAIL_TRIGGERS, emptySet())
+            putStringSet(PREF_MAIL_TRIGGERS, emptySet())
         }
     }
 

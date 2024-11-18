@@ -7,10 +7,10 @@ import com.bopr.android.smailer.AppStartup.startUpAppServices
 import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.PermissionsHelper
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
+import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
-import com.bopr.android.smailer.control.MailControlWorker.Companion.enableMailRemoteControl
+import com.bopr.android.smailer.control.MailRemoteControlWorker.Companion.enableMailRemoteControl
 import com.bopr.android.smailer.external.Firebase.Companion.resubscribeToFirebaseMessaging
 import com.bopr.android.smailer.provider.telephony.ContentObserverService.Companion.startContentObserver
 import com.bopr.android.smailer.sync.SyncWorker.Companion.syncAppDataWithGoogleCloud
@@ -53,14 +53,14 @@ class MainActivity : FlavorBaseActivity(MainFragment::class), Settings.ChangeLis
 
     override fun onSettingsChanged(settings: Settings, key: String) {
         when (key) {
-            PREF_EMAIL_TRIGGERS ->
+            PREF_MAIL_TRIGGERS ->
                 startContentObserver()
 
             PREF_REMOTE_CONTROL_ENABLED ->
                 enableMailRemoteControl()
 
-            PREF_EMAIL_SENDER_ACCOUNT -> {
-                if (accountHelper.isGoogleAccountExists(settings.getString(PREF_EMAIL_SENDER_ACCOUNT))) {
+            PREF_MAIL_SENDER_ACCOUNT -> {
+                if (accountHelper.isGoogleAccountExists(settings.getString(PREF_MAIL_SENDER_ACCOUNT))) {
                     syncAppDataWithGoogleCloud()
                     resubscribeToFirebaseMessaging()
                 }

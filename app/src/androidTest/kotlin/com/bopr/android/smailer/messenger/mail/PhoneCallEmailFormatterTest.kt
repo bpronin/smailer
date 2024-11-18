@@ -13,7 +13,7 @@ import org.junit.Before
 import java.util.GregorianCalendar
 
 /**
- * [PhoneCallEmailFormatter] class tester.
+ * [PhoneCallMailFormatter] class tester.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */

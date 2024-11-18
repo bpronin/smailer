@@ -96,9 +96,9 @@
                 android:parentActivityName=".ui.MainActivity" />
 
         <activity
-                android:name=".ui.EmailRecipientsActivity"
+                android:name=".ui.MailRecipientsActivity"
                 android:label="@string/recipients"
-                android:parentActivityName=".ui.EmailSettingsActivity" />
+                android:parentActivityName=".ui.MailSettingsActivity" />
 
         <activity
                 android:name=".ui.PhoneBlacklistFilterActivity"
@@ -121,7 +121,7 @@
                 android:parentActivityName=".ui.RulesActivity" />
 
         <activity
-                android:name=".ui.EmailSettingsActivity"
+                android:name=".ui.MailSettingsActivity"
                 android:label="@string/email"
                 android:parentActivityName=".ui.MessengersActivity" />
 

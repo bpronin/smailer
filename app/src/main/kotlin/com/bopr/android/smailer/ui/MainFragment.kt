@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver
 import android.os.Bundle
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_ENABLED
+import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_SMS_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSENGER_ENABLED
 import com.bopr.android.smailer.data.Database
@@ -95,7 +95,7 @@ class MainFragment : BasePreferenceFragment(R.xml.pref_main) {
         private const val PREF_MESSENGERS = "messengers"
 
         private val messengerPrefs = mapOf(
-            PREF_EMAIL_MESSENGER_ENABLED to R.string.email,
+            PREF_MAIL_MESSENGER_ENABLED to R.string.email,
             PREF_TELEGRAM_MESSENGER_ENABLED to R.string.telegram,
             PREF_SMS_MESSENGER_ENABLED to R.string.sms
         )

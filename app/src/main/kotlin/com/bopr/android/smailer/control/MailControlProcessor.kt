@@ -87,7 +87,7 @@ internal class MailControlProcessor(
     private fun acceptMessage(message: MailMessage): Boolean {
         if (settings.getBoolean(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS)) {
             val address = extractEmail(message.from)!!
-            val recipients = settings.getEmailRecipients().commaSplit()
+            val recipients = settings.getMailRecipients().commaSplit()
             if (!recipients.containsEmail(address)) {
                 log.debug("Address $address rejected")
 

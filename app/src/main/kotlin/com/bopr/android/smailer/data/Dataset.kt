@@ -13,22 +13,15 @@ import com.bopr.android.smailer.util.Logger
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 abstract class Dataset<T>(
-        protected val tableName: String,
-        protected val helper: SQLiteOpenHelper,
-        protected val modifications: MutableSet<String>
+    protected val tableName: String,
+    protected val helper: SQLiteOpenHelper,
+    protected val modifications: MutableSet<String>
 ) : MutableSet<T> {
 
     protected abstract val keyColumns: Array<String>
-
-    private val keyClause by lazy {
-        keyColumns.joinToString(" AND ") { "$it=?" }
-    }
-
-    private val rowSet
-        get() = query().toSet(::get)
-
-    override val size
-        get() = read { count(tableName).toInt() }
+    private val keyClause by lazy { keyColumns.joinToString(" AND ") { "$it=?" } }
+    private val rowSet get() = query().toSet(::get)
+    override val size get() = read { count(tableName).toInt() }
 
     override fun add(element: T): Boolean {
         val values = values(element)
@@ -45,10 +38,8 @@ abstract class Dataset<T>(
         return affected != 0
     }
 
-    override fun remove(element: T): Boolean {
-        return write {
-            delete(tableName, keyClause, keyOf(element)) != 0
-        }
+    override fun remove(element: T): Boolean = write {
+        delete(tableName, keyClause, keyOf(element)) != 0
     }
 
     override fun removeAll(elements: Collection<T>): Boolean {
@@ -58,6 +49,7 @@ abstract class Dataset<T>(
         }
 
         log.debug("$affected items(s) removed")
+
         return affected != 0
     }
 
@@ -68,14 +60,16 @@ abstract class Dataset<T>(
         }
 
         log.debug("$affected items(s) removed in retain")
+
         return affected != 0
     }
 
     override fun clear() {
         write {
-            delete(tableName, null, null)
+            delete(tableName, null, null).also {
+                log.debug("All items removed from $tableName")
+            }
         }
-        log.debug("All items removed from $tableName")
     }
 
     override fun isEmpty(): Boolean {
@@ -83,13 +77,9 @@ abstract class Dataset<T>(
         return size == 0
     }
 
-    override fun contains(element: T): Boolean {
-        return rowSet.contains(element)
-    }
+    override fun contains(element: T): Boolean = rowSet.contains(element)
 
-    override fun containsAll(elements: Collection<T>): Boolean {
-        return rowSet.containsAll(elements)
-    }
+    override fun containsAll(elements: Collection<T>): Boolean = rowSet.containsAll(elements)
 
     override fun iterator(): MutableIterator<T> {
         val iterator = rowSet.iterator()
@@ -112,18 +102,16 @@ abstract class Dataset<T>(
         }
     }
 
+    fun put(element: T) = add(element)
+
     fun replaceAll(elements: Collection<T>): Boolean {
         clear()
         return addAll(elements)
     }
 
-    open fun first(): T {
-        return query().useFirst(::get)
-    }
+    open fun first(): T = query().useFirst(::get)
 
-    open fun last(): T {
-        return query().useLast(::get)
-    }
+    open fun last(): T = query().useLast(::get)
 
     protected abstract fun get(cursor: Cursor): T
 
@@ -131,43 +119,30 @@ abstract class Dataset<T>(
 
     protected abstract fun keyOf(element: T): Array<String>
 
-    protected open fun query(): Cursor {
-        return read {
-            query(tableName)
+    protected open fun query(): Cursor = read { query(tableName) }
+
+    protected open fun insert(values: ContentValues): Boolean = write {
+        insertWithOnConflict(tableName, null, values, CONFLICT_IGNORE) != -1L
+    }.also {
+        if (it) log.debug("Inserted").verb(values)
+    }
+
+    protected open fun update(values: ContentValues, element: T): Boolean = write {
+        update(tableName, values, keyClause, keyOf(element)) != 0
+    }.also {
+        if (it) log.debug("Updated").verb(values)
+    }
+
+    protected inline fun <R> read(action: SQLiteDatabase.() -> R): R =
+        helper.readableDatabase.action()
+
+    protected inline fun <R> write(action: SQLiteDatabase.() -> R): R =
+        helper.writableDatabase.action().also<R> {
+            modifications.add(tableName)
         }
-    }
-
-    protected open fun insert(values: ContentValues): Boolean {
-        return write {
-            insertWithOnConflict(tableName, null, values, CONFLICT_IGNORE) != -1L
-        }.also {
-            if (it) {
-                log.debug("Inserted: $values")
-            }
-        }
-    }
-
-    protected open fun update(values: ContentValues, element: T): Boolean {
-        return write {
-            update(tableName, values, keyClause, keyOf(element)) != 0
-        }.also {
-            if (it) {
-                log.debug("Updated: $values")
-            }
-        }
-    }
-
-    protected inline fun <R> read(action: SQLiteDatabase.() -> R): R {
-        return helper.readableDatabase.action()
-    }
-
-    protected inline fun <R> write(action: SQLiteDatabase.() -> R): R {
-        val result = helper.writableDatabase.action()
-        modifications.add(tableName)
-        return result
-    }
 
     companion object {
+
         private val log = Logger("Database")
     }
 

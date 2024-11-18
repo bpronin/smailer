@@ -9,7 +9,7 @@ import com.bopr.android.smailer.util.isValidEmailAddress
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class EmailTextValidator(view: TextView) : TextValidator(view) {
+class MailTextValidator(view: TextView) : TextValidator(view) {
 
     override fun getErrorMessage(text: String?): String? {
         return when {

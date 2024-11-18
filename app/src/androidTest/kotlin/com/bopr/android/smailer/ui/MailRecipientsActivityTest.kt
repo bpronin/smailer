@@ -2,11 +2,11 @@ package com.bopr.android.smailer.ui
 
 
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_RECIPIENTS
+import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_RECIPIENTS
 import org.junit.Test
 
 
-class EmailRecipientsActivityTest : BaseActivityTest(EmailRecipientsActivity::class) {
+class MailRecipientsActivityTest : BaseActivityTest(MailRecipientsActivity::class) {
 
     @Test
     fun testActivity() {
@@ -19,7 +19,7 @@ class EmailRecipientsActivityTest : BaseActivityTest(EmailRecipientsActivity::cl
 
     private fun testAddItem() {
         settings.update {
-            putStringList(PREF_EMAIL_MESSENGER_RECIPIENTS, emptyList())
+            putStringList(PREF_MAIL_MESSENGER_RECIPIENTS, emptyList())
         }
 
         clickFab()
@@ -34,7 +34,7 @@ class EmailRecipientsActivityTest : BaseActivityTest(EmailRecipientsActivity::cl
 
     private fun testAddItemCancel() {
         settings.update {
-            putStringList(PREF_EMAIL_MESSENGER_RECIPIENTS, emptyList())
+            putStringList(PREF_MAIL_MESSENGER_RECIPIENTS, emptyList())
         }
 
         clickFab()
@@ -49,7 +49,7 @@ class EmailRecipientsActivityTest : BaseActivityTest(EmailRecipientsActivity::cl
 
     private fun testEditItem() {
         settings.update {
-            putStringList(PREF_EMAIL_MESSENGER_RECIPIENTS, listOf("user@mail.ru"))
+            putStringList(PREF_MAIL_MESSENGER_RECIPIENTS, listOf("user@mail.ru"))
         }
 
         clickRecyclerItem("user@mail.ru")
@@ -65,7 +65,7 @@ class EmailRecipientsActivityTest : BaseActivityTest(EmailRecipientsActivity::cl
 
     private fun testEditItemCancel() {
         settings.update {
-            putStringList(PREF_EMAIL_MESSENGER_RECIPIENTS, listOf("user@mail.ru"))
+            putStringList(PREF_MAIL_MESSENGER_RECIPIENTS, listOf("user@mail.ru"))
         }
 
         clickRecyclerItem("user@mail.ru")
@@ -81,7 +81,7 @@ class EmailRecipientsActivityTest : BaseActivityTest(EmailRecipientsActivity::cl
 
     private fun testRemoveItem() {
         settings.update {
-            putStringList(PREF_EMAIL_MESSENGER_RECIPIENTS, listOf("user@mail.ru"))
+            putStringList(PREF_MAIL_MESSENGER_RECIPIENTS, listOf("user@mail.ru"))
         }
 
         swipeRecyclerItem("user@mail.ru")

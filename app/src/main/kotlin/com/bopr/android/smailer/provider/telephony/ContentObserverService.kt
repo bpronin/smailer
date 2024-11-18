@@ -12,13 +12,13 @@ import android.os.IBinder
 import android.os.Looper
 import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_SERVICE
-import com.bopr.android.smailer.provider.telephony.PhoneCallProcessorWorker.Companion.startPhoneCallProcessing
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
 import com.bopr.android.smailer.data.getLong
 import com.bopr.android.smailer.data.getString
 import com.bopr.android.smailer.data.getStringOrNull
 import com.bopr.android.smailer.data.useFirst
+import com.bopr.android.smailer.provider.telephony.PhoneCallProcessor.Companion.processPhoneCall
 import com.bopr.android.smailer.util.DEVICE_NAME
 import com.bopr.android.smailer.util.Logger
 
@@ -49,7 +49,7 @@ class ContentObserverService : Service() {
         contentResolver.unregisterContentObserver(contentObserver)
         super.onDestroy()
 
-        log.debug("Destroyed")
+        log.verb("Destroyed")
     }
 
     override fun onBind(intent: Intent): IBinder? {
@@ -60,9 +60,9 @@ class ContentObserverService : Service() {
     private fun processOutgoingSms(id: String) {
         log.debug("Processing outgoing sms: $id")
 
-        val context = this  //TODO: why? contentResolver is also Context
+        val context = this  //TODO: why? contentResolver is also Context itself
         contentResolver.query(CONTENT_SMS_SENT, null, "_id=?", arrayOf(id), null)?.useFirst {
-            context.startPhoneCallProcessing(
+            context.processPhoneCall(
                 PhoneCallInfo(
                     phone = getString("address"),
                     isIncoming = false,
@@ -124,7 +124,7 @@ class ContentObserverService : Service() {
          */
         fun Context.startContentObserver() {
             val intent = Intent(this, ContentObserverService::class.java)
-            val triggers = Settings(this).getEmailTriggers()
+            val triggers = Settings(this).getMailTriggers()
 
             if (triggers.contains(VAL_PREF_TRIGGER_OUT_SMS)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -133,11 +133,11 @@ class ContentObserverService : Service() {
                     startService(intent)
                 }
 
-                log.debug("Enabled")
+                log.debug("Service enabled")
             } else {
                 stopService(intent)
 
-                log.debug("Disabled")
+                log.debug("Service disabled")
             }
         }
     }

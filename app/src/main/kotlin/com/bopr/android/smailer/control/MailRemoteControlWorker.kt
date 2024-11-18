@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class MailControlWorker(context: Context, workerParams: WorkerParameters) :
+internal class MailRemoteControlWorker(context: Context, workerParams: WorkerParameters) :
     Worker(context, workerParams) {
 
     override fun doWork(): Result {
@@ -34,7 +34,8 @@ internal class MailControlWorker(context: Context, workerParams: WorkerParameter
 
     internal companion object {
 
-        private val log = Logger("MailRemoteControlWorker")
+        private val log = Logger("MailRemoteControl")
+
         private const val WORK_REMOTE_CONTROL = "com.bopr.android.smailer.remote_control"
         private val Context.isFeatureEnabled
             get() = Settings(this).getBoolean(
@@ -44,14 +45,14 @@ internal class MailControlWorker(context: Context, workerParams: WorkerParameter
         fun Context.enableMailRemoteControl() {
             val manager = WorkManager.getInstance(this)
             if (isFeatureEnabled) {
-                log.debug("Enabled")
+                log.debug("Service enabled")
 
                 val constraints = Constraints.Builder()
                     .setRequiredNetworkType(CONNECTED)
                     .build()
 
                 val request = PeriodicWorkRequest.Builder(
-                    MailControlWorker::class.java,
+                    MailRemoteControlWorker::class.java,
                     MIN_PERIODIC_INTERVAL_MILLIS,
                     MILLISECONDS
                 )
@@ -60,7 +61,7 @@ internal class MailControlWorker(context: Context, workerParams: WorkerParameter
 
                 manager.enqueueUniquePeriodicWork(WORK_REMOTE_CONTROL, UPDATE, request)
             } else {
-                log.debug("Disabled")
+                log.debug("Service disabled")
 
                 manager.cancelUniqueWork(WORK_REMOTE_CONTROL)
             }

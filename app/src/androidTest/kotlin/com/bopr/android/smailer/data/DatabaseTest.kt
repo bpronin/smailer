@@ -2,9 +2,9 @@ package com.bopr.android.smailer.data
 
 import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
-import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_IGNORED
-import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_PENDING
-import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_PROCESSED
+import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_IGNORED
+import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_PENDING
+import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
 import com.bopr.android.smailer.util.GeoLocation
 import org.junit.After
@@ -51,7 +51,7 @@ class DatabaseTest : BaseTest() {
                     "Test 1",
                     STATE_PENDING,
                     "device",
-                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -67,7 +67,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     STATE_PENDING,
                     "device",
-                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -83,7 +83,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     STATE_PENDING,
                     "device",
-                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -99,7 +99,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     STATE_PENDING,
                     "device",
-                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -115,7 +115,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     STATE_PENDING,
                     "device",
-                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -131,7 +131,7 @@ class DatabaseTest : BaseTest() {
                     "Test 1",
                     STATE_PENDING,
                     "device",
-                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -147,7 +147,7 @@ class DatabaseTest : BaseTest() {
                     "Test 2",
                     STATE_PENDING,
                     "device",
-                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -163,7 +163,7 @@ class DatabaseTest : BaseTest() {
                     "Test 3",
                     STATE_PENDING,
                     "device",
-                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -179,7 +179,7 @@ class DatabaseTest : BaseTest() {
                     "Test 4",
                     STATE_PENDING,
                     "device",
-                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -195,7 +195,7 @@ class DatabaseTest : BaseTest() {
                     "Test 10",
                     STATE_PENDING,
                     "device",
-                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -273,7 +273,7 @@ class DatabaseTest : BaseTest() {
             details = "Test 1",
             processState = STATE_PENDING,
             acceptor = "device",
-            acceptState = PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+            bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
             isRead = false
         )
 
@@ -342,7 +342,7 @@ class DatabaseTest : BaseTest() {
                     "Test 1",
                     STATE_PENDING,
                     "device",
-                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -358,7 +358,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     STATE_PENDING,
                     "device",
-                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -374,7 +374,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     STATE_PENDING,
                     "device",
-                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -390,7 +390,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     STATE_PENDING,
                     "device",
-                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -406,7 +406,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     STATE_PENDING,
                     "device",
-                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -422,7 +422,7 @@ class DatabaseTest : BaseTest() {
                     "Test 1",
                     STATE_PENDING,
                     "device",
-                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -438,7 +438,7 @@ class DatabaseTest : BaseTest() {
                     "Test 2",
                     STATE_PENDING,
                     "device",
-                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -454,7 +454,7 @@ class DatabaseTest : BaseTest() {
                     "Test 3",
                     STATE_PENDING,
                     "device",
-                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -470,7 +470,7 @@ class DatabaseTest : BaseTest() {
                     "Test 4",
                     STATE_PENDING,
                     "device",
-                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -486,7 +486,7 @@ class DatabaseTest : BaseTest() {
                     "Test 5",
                     STATE_PENDING,
                     "device",
-                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -496,18 +496,6 @@ class DatabaseTest : BaseTest() {
         dataset.clear()
 
         assertEquals(0, dataset.size)
-    }
-
-    @Test
-    fun testGetSetLocation() {
-        database.lastLocation = GeoLocation(30.0, 60.0)
-        val actual = database.lastLocation
-
-        assertNotNull(actual)
-        actual?.run {
-            assertEquals(30.0, latitude, 0.1)
-            assertEquals(60.0, longitude, 0.1)
-        }
     }
 
     @Test
@@ -536,7 +524,7 @@ class DatabaseTest : BaseTest() {
                     "Test 1",
                     STATE_PROCESSED,
                     "device",
-                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -552,7 +540,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     STATE_PROCESSED,
                     "device",
-                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -568,7 +556,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     STATE_PROCESSED,
                     "device",
-                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -584,7 +572,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     STATE_IGNORED,
                     "device",
-                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -600,7 +588,7 @@ class DatabaseTest : BaseTest() {
                     null,
                     STATE_IGNORED,
                     "device",
-                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -616,7 +604,7 @@ class DatabaseTest : BaseTest() {
                     "Test 1",
                     STATE_PENDING,
                     "device",
-                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -632,7 +620,7 @@ class DatabaseTest : BaseTest() {
                     "Test 2",
                     STATE_PENDING,
                     "device",
-                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -648,7 +636,7 @@ class DatabaseTest : BaseTest() {
                     "Test 3",
                     STATE_PENDING,
                     "device",
-                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -664,7 +652,7 @@ class DatabaseTest : BaseTest() {
                     "Test 4",
                     STATE_PENDING,
                     "device",
-                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -680,7 +668,7 @@ class DatabaseTest : BaseTest() {
                     "Test 10",
                     STATE_PENDING,
                     "device",
-                    PhoneCallInfo.ACCEPT_STATE_ACCEPTED,
+                    PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )

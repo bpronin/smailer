@@ -10,7 +10,6 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bopr.android.smailer.sync.SyncWorker.Companion.syncAppDataWithGoogleCloud
-import com.bopr.android.smailer.util.GeoLocation
 import com.bopr.android.smailer.util.Logger
 import java.io.Closeable
 import java.lang.System.currentTimeMillis
@@ -58,24 +57,6 @@ class Database(private val context: Context) : Closeable {
     )
 
     /**
-     * Returns last saved geolocation.
-     */
-    var lastLocation: GeoLocation?
-        get() = querySystemTable(COLUMN_LAST_LATITUDE, COLUMN_LAST_LONGITUDE).useFirst {
-            GeoLocation(
-                getDouble(COLUMN_LAST_LATITUDE),
-                getDouble(COLUMN_LAST_LONGITUDE)
-            )
-        }
-        set(value) = updateSystemTable(values {
-            put(COLUMN_LAST_LATITUDE, value?.latitude)
-            put(COLUMN_LAST_LONGITUDE, value?.longitude)
-            put(COLUMN_LAST_LOCATION_TIME, currentTimeMillis())
-        }).also {
-            log.debug("Updated last location to: $value")
-        }
-
-    /**
      * Returns last database modification time.
      * @see [commit]
      */
@@ -86,16 +67,18 @@ class Database(private val context: Context) : Closeable {
         internal set(value) = updateSystemTable(values {
             put(COLUMN_UPDATE_TIME, value)
         }).also {
-            log.debug("Update time: %tF %tT".format(value, value))
+            log.verb("Update time: %tF %tT".format(value, value))
         }
 
     /**
      * Performs write transaction. Rollback it when failed.
      */
     fun batch(action: Database.() -> Unit) {
-        log.debug("Begin transaction")
+        log.debug("Begin batch")
+
         helper.writableDatabase.batch { action() }
-        log.debug("End transaction")
+
+        log.debug("End batch")
     }
 
     /**
@@ -192,9 +175,6 @@ class Database(private val context: Context) : Closeable {
         const val COLUMN_STATE = "state"
         const val COLUMN_PROCESS_STATUS = "state_reason"
         const val COLUMN_PROCESS_TIME = "process_time"
-        const val COLUMN_LAST_LATITUDE = "last_latitude"
-        const val COLUMN_LAST_LONGITUDE = "last_longitude"
-        const val COLUMN_LAST_LOCATION_TIME = "last_location_time"
         const val COLUMN_UPDATE_TIME = "last_update_time"
         const val COLUMN_READ = "message_read"
         const val COLUMN_ACCEPTOR = "recipient"
@@ -211,9 +191,6 @@ class Database(private val context: Context) : Closeable {
 
         private const val SQL_CREATE_SYSTEM = "CREATE TABLE " + TABLE_SYSTEM + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY, " +
-                COLUMN_LAST_LATITUDE + " REAL," +
-                COLUMN_LAST_LONGITUDE + " REAL," +
-                COLUMN_LAST_LOCATION_TIME + " INTEGER," +
                 COLUMN_UPDATE_TIME + " INTEGER" +
                 ")"
 

@@ -22,7 +22,7 @@ import com.bopr.android.smailer.util.showToast
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class EditEmailDialogFragment : BaseEditDialogFragment<String>("edit_recipient_dialog") {
+class EditMailDialogFragment : BaseEditDialogFragment<String>("edit_recipient_dialog") {
 
     private lateinit var editText: TextView
     private var initialValue: String? = null
@@ -35,7 +35,7 @@ class EditEmailDialogFragment : BaseEditDialogFragment<String>("edit_recipient_d
         val view = inflater.inflate(R.layout.editor_email, root, false)
 
         editText = view.findViewById<EditText>(android.R.id.edit).apply {
-            addTextChangedListener(EmailTextValidator(this))
+            addTextChangedListener(MailTextValidator(this))
             setText(initialValue)
         }
         editText.post { editText.showSoftKeyboard() }

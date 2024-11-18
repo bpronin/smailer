@@ -2,7 +2,7 @@ package com.bopr.android.smailer.ui
 
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_ENABLED
+import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_SMS_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSENGER_ENABLED
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_ACCENTED
@@ -31,7 +31,7 @@ class MessengersFragment : BasePreferenceFragment(R.xml.pref_messengers) {
         super.onSettingsChanged(settings, key)
 
         when (key) {
-            PREF_EMAIL_MESSENGER_ENABLED -> updateEmailPreference()
+            PREF_MAIL_MESSENGER_ENABLED -> updateEmailPreference()
 
             PREF_TELEGRAM_MESSENGER_ENABLED -> updateTelegramPreference()
 
@@ -44,7 +44,7 @@ class MessengersFragment : BasePreferenceFragment(R.xml.pref_messengers) {
     }
 
     private fun updateEmailPreference() {
-        updatePreference(PREF_EMAIL_MESSENGER_ENABLED, PREF_EMAIL_SETTINGS)
+        updatePreference(PREF_MAIL_MESSENGER_ENABLED, PREF_EMAIL_SETTINGS)
     }
 
     private fun updateTelegramPreference() {

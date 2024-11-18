@@ -18,10 +18,10 @@ import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_GOOGLE_ACCOUNT
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_MAIL_RECIPIENTS
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSAGE_CONTENT
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_RECIPIENTS
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
+import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSAGE_CONTENT
+import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_RECIPIENTS
+import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_MESSAGE_LOCALE
 import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_BODY
@@ -36,13 +36,13 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.messenger.MessageDispatcher
-import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_IGNORED
-import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_PENDING
-import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_PROCESSED
+import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_IGNORED
+import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_PENDING
+import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
 import com.bopr.android.smailer.provider.telephony.PhoneCallProcessor
-import com.bopr.android.smailer.ui.EmailRecipientsActivity
-import com.bopr.android.smailer.ui.EmailSettingsActivity
+import com.bopr.android.smailer.ui.MailRecipientsActivity
+import com.bopr.android.smailer.ui.MailSettingsActivity
 import com.bopr.android.smailer.ui.MainActivity
 import com.bopr.android.smailer.util.GeoLocation
 import com.nhaarman.mockitokotlin2.any
@@ -101,13 +101,13 @@ class PhoneCallProcessorTest : BaseTest() {
         preferences = mock {
             on {
                 getString(
-                    eq(PREF_EMAIL_SENDER_ACCOUNT),
+                    eq(PREF_MAIL_SENDER_ACCOUNT),
                     anyOrNull()
                 )
             }.doReturn("sender@mail.com")
             on {
                 getString(
-                    eq(PREF_EMAIL_MESSENGER_RECIPIENTS),
+                    eq(PREF_MAIL_MESSENGER_RECIPIENTS),
                     anyOrNull()
                 )
             }.doReturn("recipient@mail.com")
@@ -119,7 +119,7 @@ class PhoneCallProcessorTest : BaseTest() {
             }.doReturn(Settings.VAL_PREF_DEFAULT)
             on {
                 getStringSet(
-                    eq(PREF_EMAIL_TRIGGERS),
+                    eq(PREF_MAIL_TRIGGERS),
                     anyOrNull()
                 )
             }.doReturn(
@@ -130,7 +130,7 @@ class PhoneCallProcessorTest : BaseTest() {
             )
             on {
                 getStringSet(
-                    eq(PREF_EMAIL_MESSAGE_CONTENT),
+                    eq(PREF_MAIL_MESSAGE_CONTENT),
                     anyOrNull()
                 )
             }.doReturn(
@@ -200,7 +200,8 @@ class PhoneCallProcessorTest : BaseTest() {
     fun testProcessMailSent() {
         val call = testingCall()
 
-        processor.process(call)
+        processor.addRecord(call)
+        processor.processRecords()
 
 //        verify(messenger).sendMessagesFor(argThat {
 //            id == null
@@ -221,7 +222,7 @@ class PhoneCallProcessorTest : BaseTest() {
         assertEquals(call.startTime, savedRecord.startTime)
         assertEquals(call.phone, savedRecord.phone)
         assertEquals(STATE_PROCESSED, savedRecord.processState)
-        assertEquals(PhoneCallInfo.ACCEPT_STATE_ACCEPTED, savedRecord.acceptState)
+        assertEquals(PhoneCallInfo.FLAG_BYPASS_NONE, savedRecord.bypassFlags)
         assertEquals(GeoLocation(60.0, 30.0), call.location)
     }
 
@@ -233,7 +234,8 @@ class PhoneCallProcessorTest : BaseTest() {
         /* make the call not an SMS then default filter will deny it */
         val call = testingCall()
 
-        processor.process(call)
+        processor.addRecord(call)
+        processor.processRecords()
 
         verify(messenger, never()).dispatch(any(), any(), any())
         verifyNotifyAccountError()
@@ -243,7 +245,7 @@ class PhoneCallProcessorTest : BaseTest() {
         val savedCall = database.phoneCalls.first()
 
         assertEquals(STATE_IGNORED, savedCall.processState)
-        assertEquals(PhoneCallInfo.ACCEPT_STATE_BYPASS_TRIGGER_OFF, savedCall.acceptState)
+        assertEquals(PhoneCallInfo.FLAG_BYPASS_TRIGGER_OFF, savedCall.bypassFlags)
     }
 
     /**
@@ -251,23 +253,24 @@ class PhoneCallProcessorTest : BaseTest() {
      */
     @Test
     fun testProcessNoSender() {
-        whenever(preferences.getString(eq(PREF_EMAIL_SENDER_ACCOUNT), anyOrNull())).thenReturn(null)
+        whenever(preferences.getString(eq(PREF_MAIL_SENDER_ACCOUNT), anyOrNull())).thenReturn(null)
 
         val call = testingCall()
-        processor.process(call)
+        processor.addRecord(call)
+        processor.processRecords()
 
 //        verify(messenger, never()).login(any(), any())
         verify(messenger, never()).dispatch(any(), any(), any())
         verify(notifications).notifyError(
             eq(NTF_GOOGLE_ACCOUNT),
             eq(getString(R.string.sender_account_not_found)),
-            eq(EmailSettingsActivity::class)
+            eq(MailSettingsActivity::class)
         )
 
         val savedCall = database.phoneCalls.first()
 
         assertEquals(STATE_PENDING, savedCall.processState)
-        assertEquals(PhoneCallInfo.ACCEPT_STATE_ACCEPTED, savedCall.acceptState)
+        assertEquals(PhoneCallInfo.FLAG_BYPASS_NONE, savedCall.bypassFlags)
     }
 
     /**
@@ -277,25 +280,26 @@ class PhoneCallProcessorTest : BaseTest() {
     fun testProcessNoRecipients() {
         whenever(
             preferences.getString(
-                eq(PREF_EMAIL_MESSENGER_RECIPIENTS),
+                eq(PREF_MAIL_MESSENGER_RECIPIENTS),
                 anyOrNull()
             )
         ).thenReturn(null)
 
         val call = testingCall()
-        processor.process(call)
+        processor.addRecord(call)
+        processor.processRecords()
 
         verify(messenger, never()).dispatch(any(), any(), any())
         verify(notifications).notifyError(
             NTF_MAIL_RECIPIENTS,
             eq(getString(R.string.no_recipients_specified)),
-            EmailRecipientsActivity::class
+            MailRecipientsActivity::class
         )
 
         val savedCall = database.phoneCalls.first()
 
         assertEquals(STATE_PENDING, savedCall.processState)
-        assertEquals(PhoneCallInfo.ACCEPT_STATE_ACCEPTED, savedCall.acceptState)
+        assertEquals(PhoneCallInfo.FLAG_BYPASS_NONE, savedCall.bypassFlags)
     }
 
     /**
@@ -306,7 +310,8 @@ class PhoneCallProcessorTest : BaseTest() {
         doThrow(IOException("Test error")).whenever(messenger).dispatch(any(), any(), any())
 
         val call = testingCall()
-        processor.process(call)
+        processor.addRecord(call)
+        processor.processRecords()
 
 //        verify(messenger).login(any(), any())
         verify(messenger).dispatch(any(), any(), any())
@@ -317,7 +322,7 @@ class PhoneCallProcessorTest : BaseTest() {
         val savedCall = database.phoneCalls.first()
 
         assertEquals(STATE_PENDING, savedCall.processState)
-        assertEquals(PhoneCallInfo.ACCEPT_STATE_ACCEPTED, savedCall.acceptState)
+        assertEquals(PhoneCallInfo.FLAG_BYPASS_NONE, savedCall.bypassFlags)
     }
 
     /**
@@ -333,7 +338,8 @@ class PhoneCallProcessorTest : BaseTest() {
             )
         ).thenReturn(false)
 
-        processor.process(testingCall())
+        processor.addRecord(testingCall())
+        processor.processRecords()
 
         verifyNotifyMailSuccess()
 
@@ -345,7 +351,8 @@ class PhoneCallProcessorTest : BaseTest() {
             )
         ).thenReturn(true)
 
-        processor.process(testingCall())
+        processor.addRecord(testingCall())
+        processor.processRecords()
 
         verifyNotifyMailSuccess()
     }
@@ -358,9 +365,10 @@ class PhoneCallProcessorTest : BaseTest() {
         /* disable transport */
         doThrow(IOException("Test error")).whenever(messenger).dispatch(any(), any(), any())
 
-        processor.process(testingCall())
-        processor.process(testingCall())
-        processor.process(testingCall())
+        processor.addRecord(testingCall())
+        processor.addRecord(testingCall())
+        processor.addRecord(testingCall())
+        processor.processRecords()
 
         assertEquals(3, database.phoneCalls.size)
         assertEquals(3, database.phoneCalls.filterPending.size)
@@ -401,7 +409,7 @@ class PhoneCallProcessorTest : BaseTest() {
         verify(notifications, never()).notifyError(
             eq(NTF_GOOGLE_ACCOUNT),
             eq(getString(R.string.sender_account_not_found)),
-            eq(EmailSettingsActivity::class)
+            eq(MailSettingsActivity::class)
         )
     }
 
@@ -409,7 +417,7 @@ class PhoneCallProcessorTest : BaseTest() {
         verify(notifications, never()).notifyError(
             eq(NTF_GOOGLE_ACCESS),
             eq(getString(R.string.no_access_to_google_account)),
-            eq(EmailSettingsActivity::class)
+            eq(MailSettingsActivity::class)
         )
     }
 
@@ -417,7 +425,7 @@ class PhoneCallProcessorTest : BaseTest() {
         verify(notifications, never()).notifyError(
             eq(NTF_GOOGLE_ACCESS),
             anyString(),
-            eq(EmailRecipientsActivity::class)
+            eq(MailRecipientsActivity::class)
         )
     }
 }

@@ -15,10 +15,10 @@ import androidx.activity.result.contract.ActivityResultContracts.RequestMultiple
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.FragmentActivity
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSAGE_CONTENT
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_RECIPIENTS
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_SENDER_ACCOUNT
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
+import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSAGE_CONTENT
+import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_RECIPIENTS
+import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCATION
@@ -88,8 +88,8 @@ class PermissionsHelper(
 
         val requiredPermissions = mutableSetOf<String>()
         when (key) {
-            PREF_EMAIL_TRIGGERS -> {
-                val triggers = settings.getEmailTriggers()
+            PREF_MAIL_TRIGGERS -> {
+                val triggers = settings.getMailTriggers()
                 if (triggers.contains(VAL_PREF_TRIGGER_IN_SMS)) {
                     requiredPermissions.add(RECEIVE_SMS)
                 }
@@ -105,8 +105,8 @@ class PermissionsHelper(
                 }
             }
 
-            PREF_EMAIL_MESSAGE_CONTENT -> {
-                val content = settings.getStringSet(PREF_EMAIL_MESSAGE_CONTENT)
+            PREF_MAIL_MESSAGE_CONTENT -> {
+                val content = settings.getStringSet(PREF_MAIL_MESSAGE_CONTENT)
                 if (content.contains(VAL_PREF_MESSAGE_CONTENT_CALLER)) {
                     requiredPermissions.add(READ_CONTACTS)
                 }
@@ -126,8 +126,8 @@ class PermissionsHelper(
         /* set default accounts at startup */
         val accountName = accountHelper.getPrimaryGoogleAccount()?.name
         settings.update {
-            ifNotExists(PREF_EMAIL_SENDER_ACCOUNT) { putString(it, accountName) }
-            ifNotExists(PREF_EMAIL_MESSENGER_RECIPIENTS) { putString(it, accountName) }
+            ifNotExists(PREF_MAIL_SENDER_ACCOUNT) { putString(it, accountName) }
+            ifNotExists(PREF_MAIL_MESSENGER_RECIPIENTS) { putString(it, accountName) }
             ifNotExists(PREF_REMOTE_CONTROL_ACCOUNT) { putString(it, accountName) }
         }
     }
@@ -136,8 +136,8 @@ class PermissionsHelper(
         log.debug("Denied: $deniedPermissions")
 
         if (deniedPermissions.isNotEmpty()) {
-            val triggers = settings.getEmailTriggers()
-            val content = settings.getStringSet(PREF_EMAIL_MESSAGE_CONTENT)
+            val triggers = settings.getMailTriggers()
+            val content = settings.getStringSet(PREF_MAIL_MESSAGE_CONTENT)
 
             if (deniedPermissions.contains(RECEIVE_SMS)) {
                 triggers.remove(VAL_PREF_TRIGGER_IN_SMS)
@@ -162,8 +162,8 @@ class PermissionsHelper(
             }
 
             settings.update {
-                putStringSet(PREF_EMAIL_TRIGGERS, triggers)
-                putStringSet(PREF_EMAIL_MESSAGE_CONTENT, content)
+                putStringSet(PREF_MAIL_TRIGGERS, triggers)
+                putStringSet(PREF_MAIL_MESSAGE_CONTENT, content)
             }
         }
     }
@@ -172,7 +172,7 @@ class PermissionsHelper(
         if (permissions.isEmpty()) {
             onPermissionsRequestComplete()
         } else {
-            log.debug("Checking: $permissions")
+            log.debug("Checking permissions").verb(permissions)
 
             val deniedPermissions = mutableListOf<String>()
             val unexplainedPermissions = mutableListOf<String>()

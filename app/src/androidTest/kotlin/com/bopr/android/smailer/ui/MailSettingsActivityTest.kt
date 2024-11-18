@@ -2,16 +2,16 @@ package com.bopr.android.smailer.ui
 
 
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSAGE_CONTENT
+import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSAGE_CONTENT
 import com.bopr.android.smailer.util.DEVICE_NAME
 import org.junit.Test
 
 
-class EmailSettingsActivityTest : BaseActivityTest(EmailSettingsActivity::class) {
+class MailSettingsActivityTest : BaseActivityTest(MailSettingsActivity::class) {
 
     override fun beforeActivityCreate() {
         settings.update {
-            putStringSet(PREF_EMAIL_MESSAGE_CONTENT, emptySet())
+            putStringSet(PREF_MAIL_MESSAGE_CONTENT, emptySet())
         }
     }
 

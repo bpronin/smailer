@@ -1,21 +1,25 @@
 package com.bopr.android.smailer.provider.telephony
 
 import android.content.Context
+import androidx.work.BackoffPolicy.EXPONENTIAL
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
 import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.data.Database
-import com.bopr.android.smailer.messenger.MessageDispatcher
 import com.bopr.android.smailer.messenger.Message
-import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_IGNORED
-import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_PENDING
-import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_PROCESSED
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.ACCEPT_STATE_ACCEPTED
+import com.bopr.android.smailer.messenger.MessageDispatcher
+import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_IGNORED
+import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_PENDING
+import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_PROCESSED
+import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.FLAG_BYPASS_NONE
 import com.bopr.android.smailer.ui.MainActivity
 import com.bopr.android.smailer.util.GeoLocation.Companion.getGeoLocation
 import com.bopr.android.smailer.util.Logger
 import java.lang.System.currentTimeMillis
+import java.util.concurrent.TimeUnit.MINUTES
 
 /**
  * Precesses phone events.
@@ -31,70 +35,64 @@ class PhoneCallProcessor(
 
     private val settings: Settings = Settings(context)
 
-    fun process(info: PhoneCallInfo) {
-        addRecord(info)
-        processRecords()
-    }
-
     fun addRecord(info: PhoneCallInfo) {
-        log.debug("Adding: $info")
+        log.debug("Add record").verb(info)
 
-        database.use {
-            database.commit {
-                phoneCalls.add(
-                    info.apply {
-                        location = context.getGeoLocation()
-                        acceptState = recordFilter().test(this)
-                        processState = if (acceptState == ACCEPT_STATE_ACCEPTED)
-                            STATE_PENDING else STATE_IGNORED
-                    }
-                )
-            }
-        }
+        commitRecord(info.apply {
+            bypassFlags = getBypassFlags(this)
+            processState = if (bypassFlags == FLAG_BYPASS_NONE) STATE_PENDING else STATE_IGNORED
+        })
     }
 
     fun processRecords(): Int {
-        var processedCount = 0
-
-        database.use {
-            val pendingRecords = database.phoneCalls.filterPending
-
-            if (pendingRecords.isNotEmpty()) {
-                log.debug("Processing ${pendingRecords.size} record(s)")
-
-                prepareDispatcher()
-
-                database.commit {
-                    batch {
-                        for (record in pendingRecords) {
-                            record.processTime = currentTimeMillis()
-                            dispatchRecord(
-                                info = record,
-                                onSuccess = {
-                                    record.processState = STATE_PROCESSED
-                                    phoneCalls.add(record)
-                                    processedCount++
-                                },
-                                onError = {
-                                    record.processState = STATE_PENDING
-                                    phoneCalls.add(record)
-                                }
-                            )
-                        }
-                    }
-                }
-            } else {
-                log.debug("No pending records")
-            }
+        val records = database.use {
+            it.phoneCalls.filterPending
         }
 
-        log.debug("Processed $processedCount record(s)")
+        val recordsCount = records.size
 
-        return processedCount
+        if (recordsCount > 0) {
+            log.debug("Processing $recordsCount record(s)")
+
+            prepareDispatcher()
+
+            for (record in records) {
+                record.apply {
+                    processTime = currentTimeMillis()
+                    location = context.getGeoLocation()
+                }
+
+                dispatchRecord(
+                    info = record,
+                    onSuccess = {
+                        commitRecord(record.apply {
+                            processState = STATE_PROCESSED
+                        })
+                    },
+                    onError = {
+                        commitRecord(record.apply {
+                            processState = STATE_PENDING
+                        })
+                    }
+                )
+            }
+        } else {
+            log.debug("No pending records")
+        }
+
+        return recordsCount
+    }
+
+    private fun commitRecord(info: PhoneCallInfo) {
+        database.use {
+            it.commit {
+                phoneCalls.put(info)
+            }
+        }
     }
 
     private fun prepareDispatcher() {
-        dispatcher.prepare()
+        dispatcher.initialize()
 
         log.debug("Dispatcher prepared")
     }
@@ -130,17 +128,30 @@ class PhoneCallProcessor(
             )
     }
 
-    private fun recordFilter() = PhoneCallFilter(
-        settings.getEmailTriggers(),
+    private fun getBypassFlags(info: PhoneCallInfo) = PhoneCallFilter(
+        settings.getMailTriggers(),
         database.phoneBlacklist,
         database.phoneWhitelist,
         database.textBlacklist,
         database.textWhitelist
-    )
+    ).test(info)
+
 
     companion object {
 
         private val log = Logger("PhoneCallProcessor")
+
+        fun Context.processPhoneCall(info: PhoneCallInfo) {
+            /* add record to database now */
+            PhoneCallProcessor(this).addRecord(info)
+
+            /* process it later */
+            WorkManager.getInstance(this).enqueue(
+                OneTimeWorkRequest.Builder(PhoneCallProcessingWorker::class.java)
+                    .setBackoffCriteria(EXPONENTIAL, 1, MINUTES)
+                    .build()
+            )
+        }
     }
 
 }

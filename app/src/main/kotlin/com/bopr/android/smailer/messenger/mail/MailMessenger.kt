@@ -10,11 +10,11 @@ import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_MAIL
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_MAIL_RECIPIENTS
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_ENABLED
+import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_ENABLED
 import com.bopr.android.smailer.messenger.Messenger
 import com.bopr.android.smailer.messenger.Message
-import com.bopr.android.smailer.ui.EmailRecipientsActivity
-import com.bopr.android.smailer.ui.EmailSettingsActivity
+import com.bopr.android.smailer.ui.MailRecipientsActivity
+import com.bopr.android.smailer.ui.MailSettingsActivity
 import com.bopr.android.smailer.util.Mockable
 import com.bopr.android.smailer.util.isValidEmailAddressList
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
@@ -27,7 +27,7 @@ import com.bopr.android.smailer.util.Logger
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 @Mockable
-internal class MailMessenger(context: Context) : Messenger(context) {
+internal class MailMessenger(private val context: Context) : Messenger {
 
     private val settings = Settings(context)
     private val accountHelper = AccountHelper(context)
@@ -37,10 +37,10 @@ internal class MailMessenger(context: Context) : Messenger(context) {
     private lateinit var session: GoogleMailSession
 
     override fun isEnabled(): Boolean {
-        return settings.getBoolean(PREF_EMAIL_MESSENGER_ENABLED)
+        return settings.getBoolean(PREF_MAIL_MESSENGER_ENABLED)
     }
 
-    override fun prepare(): Boolean {
+    override fun initialize(): Boolean {
         account = checkAccount(accountHelper.getPrimaryGoogleAccount()) ?: run { return false }
         session = GoogleMailSession(context, account, GMAIL_SEND)
         return true
@@ -51,7 +51,7 @@ internal class MailMessenger(context: Context) : Messenger(context) {
         onSuccess: () -> Unit,
         onError: (Throwable) -> Unit
     ) {
-        val recipients = checkRecipients(settings.getEmailRecipients()) ?: return
+        val recipients = checkRecipients(settings.getMailRecipients()) ?: return
         val formatter = formatters.createFormatter(message.payload)
 
         session.send(
@@ -82,7 +82,7 @@ internal class MailMessenger(context: Context) : Messenger(context) {
             notifications.notifyError(
                 NTF_MAIL_RECIPIENTS,
                 context.getString(R.string.no_recipients_specified),
-                EmailRecipientsActivity::class
+                MailRecipientsActivity::class
             )
             return null
         }
@@ -93,7 +93,7 @@ internal class MailMessenger(context: Context) : Messenger(context) {
             notifications.notifyError(
                 NTF_MAIL_RECIPIENTS,
                 context.getString(R.string.invalid_recipient),
-                EmailRecipientsActivity::class
+                MailRecipientsActivity::class
             )
             return null
         }
@@ -108,7 +108,7 @@ internal class MailMessenger(context: Context) : Messenger(context) {
             notifications.notifyError(
                 NTF_GOOGLE_ACCOUNT,
                 context.getString(R.string.sender_account_not_found),
-                EmailSettingsActivity::class
+                MailSettingsActivity::class
             )
             null
         }
@@ -121,13 +121,13 @@ internal class MailMessenger(context: Context) : Messenger(context) {
             notifications.notifyError(
                 NTF_GOOGLE_ACCESS,
                 context.getString(R.string.no_access_to_google_account),
-                EmailSettingsActivity::class
+                MailSettingsActivity::class
             )
         } else {
             notifications.notifyError(
                 NTF_MAIL,
                 context.getString(R.string.unable_send_email),
-                EmailSettingsActivity::class
+                MailSettingsActivity::class
             )
         }
     }

@@ -7,7 +7,7 @@
                 app:icon="@drawable/ic_email"
                 android:title="@string/email">
             <intent
-                    android:targetClass="com.bopr.android.smailer.ui.EmailSettingsActivity"
+                    android:targetClass="com.bopr.android.smailer.ui.MailSettingsActivity"
                     android:targetPackage="com.bopr.android.smailer" />
         </Preference>
 

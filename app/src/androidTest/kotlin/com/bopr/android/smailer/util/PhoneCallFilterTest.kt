@@ -3,10 +3,10 @@ package com.bopr.android.smailer.util
 import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.ACCEPT_STATE_ACCEPTED
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.ACCEPT_STATE_BYPASS_NUMBER_BLACKLISTED
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.ACCEPT_STATE_BYPASS_TEXT_BLACKLISTED
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.ACCEPT_STATE_BYPASS_TRIGGER_OFF
+import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.FLAG_BYPASS_NONE
+import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.FLAG_BYPASS_NUMBER_BLACKLISTED
+import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.FLAG_BYPASS_TEXT_BLACKLISTED
+import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.FLAG_BYPASS_TRIGGER_OFF
 import com.bopr.android.smailer.provider.telephony.PhoneCallFilter
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
@@ -38,7 +38,7 @@ class PhoneCallFilterTest : BaseTest() {
         val call = createCallInfo("123")
         val filter = PhoneCallFilter()
 
-        assertEquals(ACCEPT_STATE_BYPASS_TRIGGER_OFF, filter.test(call))
+        assertEquals(FLAG_BYPASS_TRIGGER_OFF, filter.test(call))
     }
 
     @Test
@@ -52,7 +52,7 @@ class PhoneCallFilterTest : BaseTest() {
                 text = "This is a message for Bob or Ann"
         )
 
-        assertEquals(ACCEPT_STATE_ACCEPTED, filter.test(call))
+        assertEquals(FLAG_BYPASS_NONE, filter.test(call))
     }
 
     @Test
@@ -67,26 +67,26 @@ class PhoneCallFilterTest : BaseTest() {
                 phone = "111"
         )
 
-        assertEquals(ACCEPT_STATE_ACCEPTED, filter.test(call))
+        assertEquals(FLAG_BYPASS_NONE, filter.test(call))
 
         filter.phoneBlacklist = setOf("111", "333")
         call = call.copy(phone = "111")
 
-        assertEquals(ACCEPT_STATE_BYPASS_NUMBER_BLACKLISTED, filter.test(call))
+        assertEquals(FLAG_BYPASS_NUMBER_BLACKLISTED, filter.test(call))
 
         filter.phoneBlacklist = setOf("+1(11)", "333")
         call = call.copy(phone = "1 11")
 
-        assertEquals(ACCEPT_STATE_BYPASS_NUMBER_BLACKLISTED, filter.test(call))
+        assertEquals(FLAG_BYPASS_NUMBER_BLACKLISTED, filter.test(call))
 
         call = call.copy(phone = "222")
 
-        assertEquals(ACCEPT_STATE_ACCEPTED, filter.test(call))
+        assertEquals(FLAG_BYPASS_NONE, filter.test(call))
 
         filter.phoneBlacklist = setOf("111", "222")
         call = call.copy(phone = "222")
 
-        assertEquals(ACCEPT_STATE_BYPASS_NUMBER_BLACKLISTED, filter.test(call))
+        assertEquals(FLAG_BYPASS_NUMBER_BLACKLISTED, filter.test(call))
     }
 
     @Test
@@ -102,15 +102,15 @@ class PhoneCallFilterTest : BaseTest() {
                 phone = "+79628810559"
         )
 
-        assertEquals(ACCEPT_STATE_BYPASS_NUMBER_BLACKLISTED, filter.test(call))
+        assertEquals(FLAG_BYPASS_NUMBER_BLACKLISTED, filter.test(call))
 
         call = call.copy(phone = "+79628810558")
 
-        assertEquals(ACCEPT_STATE_BYPASS_NUMBER_BLACKLISTED, filter.test(call))
+        assertEquals(FLAG_BYPASS_NUMBER_BLACKLISTED, filter.test(call))
 
         call = call.copy(phone = "+79628811111")
 
-        assertEquals(ACCEPT_STATE_ACCEPTED, filter.test(call))
+        assertEquals(FLAG_BYPASS_NONE, filter.test(call))
     }
 
     @Test
@@ -125,21 +125,21 @@ class PhoneCallFilterTest : BaseTest() {
                 phone = "111"
         )
 
-        assertEquals(ACCEPT_STATE_ACCEPTED, filter.test(call))
+        assertEquals(FLAG_BYPASS_NONE, filter.test(call))
 
         filter.phoneWhitelist = setOf("111", "333")
         call = call.copy(phone = "111")
 
-        assertEquals(ACCEPT_STATE_ACCEPTED, filter.test(call))
+        assertEquals(FLAG_BYPASS_NONE, filter.test(call))
 
         call = call.copy(phone = "222")
 
-        assertEquals(ACCEPT_STATE_ACCEPTED, filter.test(call))
+        assertEquals(FLAG_BYPASS_NONE, filter.test(call))
 
         filter.phoneWhitelist = setOf("111", "222")
         call = call.copy(phone = "222")
 
-        assertEquals(ACCEPT_STATE_ACCEPTED, filter.test(call))
+        assertEquals(FLAG_BYPASS_NONE, filter.test(call))
     }
 
     @Test
@@ -153,23 +153,23 @@ class PhoneCallFilterTest : BaseTest() {
         val filter = PhoneCallFilter(
                 triggers = setOf(VAL_PREF_TRIGGER_IN_SMS)
         )
-        assertEquals(ACCEPT_STATE_ACCEPTED, filter.test(call))
+        assertEquals(FLAG_BYPASS_NONE, filter.test(call))
 
         call = call.copy(text = "This is a message for Bob or Ann")
         filter.textBlacklist = setOf("Bob", "Ann")
-        assertEquals(ACCEPT_STATE_BYPASS_TEXT_BLACKLISTED, filter.test(call))
+        assertEquals(FLAG_BYPASS_TEXT_BLACKLISTED, filter.test(call))
 
         call = call.copy(text = "This is a message for Bobson or Ann")
         filter.textBlacklist = setOf("BOB")
-        assertEquals(ACCEPT_STATE_BYPASS_TEXT_BLACKLISTED, filter.test(call))
+        assertEquals(FLAG_BYPASS_TEXT_BLACKLISTED, filter.test(call))
 
         call = call.copy(text = "This is a message for Bob or Ann")
         filter.textBlacklist = setOf("bob")
-        assertEquals(ACCEPT_STATE_BYPASS_TEXT_BLACKLISTED, filter.test(call))
+        assertEquals(FLAG_BYPASS_TEXT_BLACKLISTED, filter.test(call))
 
         call = call.copy(text = "This is a message")
         filter.textBlacklist = setOf("Bob", "Ann")
-        assertEquals(ACCEPT_STATE_ACCEPTED, filter.test(call))
+        assertEquals(FLAG_BYPASS_NONE, filter.test(call))
     }
 
     @Test
@@ -182,23 +182,23 @@ class PhoneCallFilterTest : BaseTest() {
         val filter = PhoneCallFilter().apply {
             triggers = setOf(VAL_PREF_TRIGGER_IN_SMS)
         }
-        assertEquals(ACCEPT_STATE_ACCEPTED, filter.test(call))
+        assertEquals(FLAG_BYPASS_NONE, filter.test(call))
 
         filter.textBlacklist = setOf(escapeRegex("REGEX:.*John.*"))
         call = call.copy(text = "This is a message for Bob or Ann")
-        assertEquals(ACCEPT_STATE_ACCEPTED, filter.test(call))
+        assertEquals(FLAG_BYPASS_NONE, filter.test(call))
 
         filter.textBlacklist = setOf("REX:(.*)John(.*)", "REGEX:.*someone.*", "REGEX:.*other*")
         call = call.copy(text = "This is a message for John or someone else")
-        assertEquals(ACCEPT_STATE_BYPASS_TEXT_BLACKLISTED, filter.test(call))
+        assertEquals(FLAG_BYPASS_TEXT_BLACKLISTED, filter.test(call))
 
         filter.textBlacklist = setOf("REGEX:(?i:.*SOMEONE.*)")
         call = call.copy(text = "This is a message for John or someone else")
-        assertEquals(ACCEPT_STATE_BYPASS_TEXT_BLACKLISTED, filter.test(call))
+        assertEquals(FLAG_BYPASS_TEXT_BLACKLISTED, filter.test(call))
 
         filter.textBlacklist = setOf("REGEX:?i:.*SOMEONE.*") /* invalid pattern */
         call = call.copy(text = "This is a message for John or someone else")
-        assertEquals(ACCEPT_STATE_ACCEPTED, filter.test(call))
+        assertEquals(FLAG_BYPASS_NONE, filter.test(call))
     }
 
     @Test
@@ -212,14 +212,14 @@ class PhoneCallFilterTest : BaseTest() {
                 isIncoming = true,
                 text = "This is a message for Bob or Ann"
         )
-        assertEquals(ACCEPT_STATE_ACCEPTED, filter.test(call))
+        assertEquals(FLAG_BYPASS_NONE, filter.test(call))
 
         filter.textWhitelist = setOf("Bob", "Ann")
         call = call.copy(text = "This is a message for Bob or Ann")
-        assertEquals(ACCEPT_STATE_ACCEPTED, filter.test(call))
+        assertEquals(FLAG_BYPASS_NONE, filter.test(call))
 
         filter.textWhitelist = setOf("Bob", "Ann")
         call = call.copy(text = "This is a message")
-        assertEquals(ACCEPT_STATE_ACCEPTED, filter.test(call))
+        assertEquals(FLAG_BYPASS_NONE, filter.test(call))
     }
 }

@@ -8,8 +8,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_MESSENGER_RECIPIENTS
-import com.bopr.android.smailer.ui.EmailRecipientsFragment.Holder
+import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_RECIPIENTS
+import com.bopr.android.smailer.ui.MailRecipientsFragment.Holder
 import com.bopr.android.smailer.util.isValidEmailAddress
 import com.bopr.android.smailer.util.underwivedText
 
@@ -18,7 +18,7 @@ import com.bopr.android.smailer.util.underwivedText
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class EmailRecipientsFragment : EditableRecyclerFragment<String, Holder>(),
+class MailRecipientsFragment : EditableRecyclerFragment<String, Holder>(),
     Settings.ChangeListener {
 
     private lateinit var settings: Settings
@@ -36,18 +36,18 @@ class EmailRecipientsFragment : EditableRecyclerFragment<String, Holder>(),
     }
 
     override fun onSettingsChanged(settings: Settings, key: String) {
-        if (key == PREF_EMAIL_MESSENGER_RECIPIENTS) {
+        if (key == PREF_MAIL_MESSENGER_RECIPIENTS) {
             refreshItems()
         }
     }
 
     override fun loadItems(): Collection<String> {
-        return settings.getStringList(PREF_EMAIL_MESSENGER_RECIPIENTS).sorted()
+        return settings.getStringList(PREF_MAIL_MESSENGER_RECIPIENTS).sorted()
     }
 
     override fun saveItems(items: Collection<String>) {
         settings.update {
-            putStringList(PREF_EMAIL_MESSENGER_RECIPIENTS, items)
+            putStringList(PREF_MAIL_MESSENGER_RECIPIENTS, items)
         }
     }
 
@@ -68,7 +68,7 @@ class EmailRecipientsFragment : EditableRecyclerFragment<String, Holder>(),
     }
 
     override fun createEditDialog(): BaseEditDialogFragment<String> {
-        return EditEmailDialogFragment()
+        return EditMailDialogFragment()
     }
 
     class Holder(view: View) : ViewHolder(view) {

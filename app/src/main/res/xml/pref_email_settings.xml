@@ -19,7 +19,7 @@
                 android:key="recipients_address"
                 android:title="@string/recipients">
             <intent
-                    android:targetClass="com.bopr.android.smailer.ui.EmailRecipientsActivity"
+                    android:targetClass="com.bopr.android.smailer.ui.MailRecipientsActivity"
                     android:targetPackage="com.bopr.android.smailer" />
         </Preference>
 

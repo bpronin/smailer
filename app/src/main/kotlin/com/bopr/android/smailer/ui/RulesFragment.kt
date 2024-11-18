@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver
 import android.os.Bundle
 import androidx.annotation.StringRes
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_TRIGGERS
+import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_TRIGGERS
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.TABLE_PHONE_BLACKLIST
 import com.bopr.android.smailer.data.Database.Companion.TABLE_PHONE_WHITELIST
@@ -30,7 +30,7 @@ class RulesFragment : BasePreferenceFragment(R.xml.pref_rules) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        requirePreference(PREF_EMAIL_TRIGGERS).setOnChangeListener {
+        requirePreference(PREF_MAIL_TRIGGERS).setOnChangeListener {
             it.apply {
                 if (settings.getStringSet(key).isEmpty()) {
                     updateSummary(R.string.no_triggers_specified, SUMMARY_STYLE_ACCENTED)

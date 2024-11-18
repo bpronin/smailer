@@ -1,19 +1,17 @@
 package com.bopr.android.smailer.messenger
 
-import android.content.Context
-
 /**
- * Abstract messenger. Ancestors use specific transport to send messages.
+ * Sends informative messages to user.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-abstract class Messenger(protected val context: Context) {
+interface Messenger {
 
-    abstract fun isEnabled(): Boolean
+    fun isEnabled(): Boolean
 
-    abstract fun prepare(): Boolean
+    fun initialize(): Boolean
 
-    abstract fun sendMessage(
+    fun sendMessage(
         message: Message,
         onSuccess: () -> Unit,
         onError: (Throwable) -> Unit

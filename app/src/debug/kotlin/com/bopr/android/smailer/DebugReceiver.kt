@@ -7,7 +7,7 @@ import com.bopr.android.smailer.AppStartup.startUpAppServices
 import com.bopr.android.smailer.control.MailControlProcessor
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
 import com.bopr.android.smailer.provider.telephony.PhoneCallProcessor
-import com.bopr.android.smailer.provider.telephony.PhoneCallProcessorWorker.Companion.startPhoneCallProcessing
+import com.bopr.android.smailer.provider.telephony.PhoneCallProcessor.Companion.processPhoneCall
 import com.bopr.android.smailer.util.DEVICE_NAME
 import com.bopr.android.smailer.util.runInBackground
 import java.lang.System.currentTimeMillis
@@ -22,7 +22,7 @@ class DebugReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
             "PROCESS_PHONE_EVENT" -> {
-                context.startPhoneCallProcessing(
+                context.processPhoneCall(
                     PhoneCallInfo(
                         phone = "ADB DEBUG",
                         isIncoming = true,

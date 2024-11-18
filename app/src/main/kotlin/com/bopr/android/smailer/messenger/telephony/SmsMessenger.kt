@@ -22,7 +22,7 @@ import com.bopr.android.smailer.util.Logger
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 @Mockable
-internal class SmsMessenger(context: Context) : Messenger(context) {
+internal class SmsMessenger(private val context: Context) : Messenger {
 
     private val settings = Settings(context)
     private val notifications by lazy { NotificationsHelper(context) }
@@ -31,7 +31,7 @@ internal class SmsMessenger(context: Context) : Messenger(context) {
         return settings.getBoolean(PREF_SMS_MESSENGER_ENABLED)
     }
 
-    override fun prepare(): Boolean {
+    override fun initialize(): Boolean {
         return true
     }
 

@@ -122,7 +122,7 @@ internal class Synchronizer(context: Context,
                 latitude = info.location?.latitude,
                 longitude = info.location?.longitude,
                 state = info.processState,
-                processStatus = info.acceptState,
+                processStatus = info.bypassFlags,
                 processTime = info.processTime,
                 isRead = info.isRead
         )
@@ -141,7 +141,7 @@ internal class Synchronizer(context: Context,
                 processState = data.state,
                 acceptor = data.recipient,
                 isRead = data.isRead,
-                acceptState = data.processStatus,
+                bypassFlags = data.processStatus,
                 processTime = data.processTime
         )
     }

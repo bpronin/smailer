@@ -1,7 +1,7 @@
 package com.bopr.android.smailer.ui
 
 import android.widget.TextView
-import com.bopr.android.smailer.messenger.mail.PhoneCallEmailFormatter.Companion.PHONE_SEARCH_TAG
+import com.bopr.android.smailer.messenger.mail.PhoneCallMailFormatter.Companion.PHONE_SEARCH_TAG
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.util.isValidUrl
 

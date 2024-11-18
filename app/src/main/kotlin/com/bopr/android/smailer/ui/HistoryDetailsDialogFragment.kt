@@ -9,12 +9,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.ACCEPT_STATE_BYPASS_NUMBER_BLACKLISTED
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.ACCEPT_STATE_BYPASS_TEXT_BLACKLISTED
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.ACCEPT_STATE_BYPASS_TRIGGER_OFF
+import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.FLAG_BYPASS_NUMBER_BLACKLISTED
+import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.FLAG_BYPASS_TEXT_BLACKLISTED
+import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.FLAG_BYPASS_TRIGGER_OFF
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_IGNORED
-import com.bopr.android.smailer.messenger.MessageState.Companion.STATE_PROCESSED
+import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_IGNORED
+import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.util.*
 
 /**
@@ -51,13 +51,13 @@ class HistoryDetailsDialogFragment(private val info: PhoneCallInfo) : BaseDialog
 
     private fun onExplainResult() {
         val sb = StringBuilder()
-        if (info.acceptState and ACCEPT_STATE_BYPASS_NUMBER_BLACKLISTED != 0) {
+        if (info.bypassFlags and FLAG_BYPASS_NUMBER_BLACKLISTED != 0) {
             sb.append(getString(R.string.number_in_blacklist)).append("\n\n")
         }
-        if (info.acceptState and ACCEPT_STATE_BYPASS_TEXT_BLACKLISTED != 0) {
+        if (info.bypassFlags and FLAG_BYPASS_TEXT_BLACKLISTED != 0) {
             sb.append(getString(R.string.text_in_blacklist)).append("\n\n")
         }
-        if (info.acceptState and ACCEPT_STATE_BYPASS_TRIGGER_OFF != 0) {
+        if (info.bypassFlags and FLAG_BYPASS_TRIGGER_OFF != 0) {
             sb.append(getString(R.string.trigger_off)).append("\n\n")
         }
 
