@@ -6,6 +6,7 @@ import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.util.GeoLocation.Companion.fromCoordinates
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
 import com.bopr.android.smailer.external.GoogleDrive
+import com.bopr.android.smailer.util.Bits
 import com.bopr.android.smailer.util.Logger
 import java.io.IOException
 
@@ -122,7 +123,7 @@ internal class Synchronizer(context: Context,
                 latitude = info.location?.latitude,
                 longitude = info.location?.longitude,
                 state = info.processState,
-                processStatus = info.bypassFlags,
+                processStatus = info.bypassFlags.toInt(),
                 processTime = info.processTime,
                 isRead = info.isRead
         )
@@ -141,7 +142,7 @@ internal class Synchronizer(context: Context,
                 processState = data.state,
                 acceptor = data.recipient,
                 isRead = data.isRead,
-                bypassFlags = data.processStatus,
+                bypassFlags = Bits(data.processStatus),
                 processTime = data.processTime
         )
     }

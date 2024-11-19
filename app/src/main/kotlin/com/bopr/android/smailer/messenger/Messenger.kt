@@ -7,8 +7,6 @@ package com.bopr.android.smailer.messenger
  */
 interface Messenger {
 
-    fun isEnabled(): Boolean
-
     fun initialize(): Boolean
 
     fun sendMessage(

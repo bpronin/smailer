@@ -15,18 +15,20 @@ import com.bopr.android.smailer.util.Mockable
 @Mockable
 class MessageDispatcher(context: Context) {
 
-    private val availableMessengers = arrayOf(
+    private val messengers = arrayOf(
         MailMessenger(context),
         TelegramMessenger(context),
         SmsMessenger(context)
     )
 
-    private lateinit var preparedMessengers: List<Messenger>
+    fun initialize(): Boolean {
+        log.debug("Initializing")
 
-    fun initialize() {
-        preparedMessengers = availableMessengers.filter { it.isEnabled() && it.initialize() }
-
-        log.debug("Initialized")
+        var initialized = false
+        messengers.forEach {
+            initialized = initialized or it.initialize()
+        }
+        return initialized
     }
 
     fun dispatch(
@@ -34,12 +36,9 @@ class MessageDispatcher(context: Context) {
         onSuccess: () -> Unit,
         onError: (Throwable) -> Unit
     ) {
-        for (messenger in preparedMessengers) {
-            // TODO: what if some of messengers succeeded and some failed ?
-            messenger.sendMessage(message, onSuccess, onError)
-        }
+        log.debug("Dispatching").verb(message)
 
-        log.debug("Dispatched").verb(message)
+        messengers.forEach { it.sendMessage(message, onSuccess, onError) }
     }
 
     companion object {

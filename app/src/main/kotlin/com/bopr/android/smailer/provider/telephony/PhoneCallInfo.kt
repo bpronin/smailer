@@ -3,6 +3,8 @@ package com.bopr.android.smailer.provider.telephony
 import android.os.Parcelable
 import com.bopr.android.smailer.messenger.ProcessingState
 import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_PENDING
+import com.bopr.android.smailer.util.Bits
+import com.bopr.android.smailer.util.Bits.Companion.bit
 import com.bopr.android.smailer.util.GeoLocation
 import kotlinx.parcelize.Parcelize
 
@@ -23,7 +25,7 @@ data class PhoneCallInfo(
     var details: String? = null,
     @ProcessingState var processState: Int = STATE_PENDING,
     val acceptor: String,
-    var bypassFlags: Int = FLAG_BYPASS_NONE,
+    var bypassFlags: Bits = FLAG_BYPASS_NONE,
     var processTime: Long? = null,
     var isRead: Boolean = false
 ) : Parcelable {
@@ -35,9 +37,10 @@ data class PhoneCallInfo(
 
         /* informative flags */
 
-        const val FLAG_BYPASS_NONE = 0
-        const val FLAG_BYPASS_NUMBER_BLACKLISTED = 1
-        const val FLAG_BYPASS_TEXT_BLACKLISTED = 1 shl 1
-        const val FLAG_BYPASS_TRIGGER_OFF = 1 shl 2
+        val FLAG_BYPASS_NONE = Bits()
+        val FLAG_BYPASS_NO_CONSUMERS = bit(0)
+        val FLAG_BYPASS_NUMBER_BLACKLISTED = bit(1)
+        val FLAG_BYPASS_TEXT_BLACKLISTED = bit(2)
+        val FLAG_BYPASS_TRIGGER_OFF = bit(3)
     }
 }

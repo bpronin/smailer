@@ -28,7 +28,7 @@ data class SyncData(
             @Key("latitude") var latitude: Double? = null,
             @Key("longitude") var longitude: Double? = null,
             @Key("state") @ProcessingState var state: Int = STATE_PENDING,
-            @Key("process_status") var processStatus: Int = FLAG_BYPASS_NONE,
+            @Key("process_status") var processStatus: Int = FLAG_BYPASS_NONE.toInt(),
             @Key("process_time") var processTime: Long? = null,
             @Key("is_read") var isRead: Boolean = false
     )

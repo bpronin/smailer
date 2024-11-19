@@ -11,15 +11,16 @@ import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_MAIL_RECIPIENT
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_ENABLED
-import com.bopr.android.smailer.messenger.Messenger
 import com.bopr.android.smailer.messenger.Message
+import com.bopr.android.smailer.messenger.Message.Companion.FLAG_SENT_BY_MAIL
+import com.bopr.android.smailer.messenger.Messenger
 import com.bopr.android.smailer.ui.MailRecipientsActivity
 import com.bopr.android.smailer.ui.MailSettingsActivity
+import com.bopr.android.smailer.util.Logger
 import com.bopr.android.smailer.util.Mockable
 import com.bopr.android.smailer.util.isValidEmailAddressList
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
-import com.bopr.android.smailer.util.Logger
 
 /**
  * Mail transport.
@@ -33,17 +34,20 @@ internal class MailMessenger(private val context: Context) : Messenger {
     private val accountHelper = AccountHelper(context)
     private val formatters = MailFormatterFactory(context)
     private val notifications by lazy { NotificationsHelper(context) }
-    private lateinit var account: Account
-    private lateinit var session: GoogleMailSession
-
-    override fun isEnabled(): Boolean {
-        return settings.getBoolean(PREF_MAIL_MESSENGER_ENABLED)
-    }
+    private var account: Account? = null
+    private var session: GoogleMailSession? = null
 
     override fun initialize(): Boolean {
-        account = checkAccount(accountHelper.getPrimaryGoogleAccount()) ?: run { return false }
-        session = GoogleMailSession(context, account, GMAIL_SEND)
-        return true
+        if (settings.getBoolean(PREF_MAIL_MESSENGER_ENABLED)) {
+            account = checkAccount(accountHelper.getPrimaryGoogleAccount())?.also {
+                session = GoogleMailSession(context, it, GMAIL_SEND)
+
+                log.debug("Initialized")
+
+                return true
+            }
+        }
+        return false
     }
 
     override fun sendMessage(
@@ -51,28 +55,35 @@ internal class MailMessenger(private val context: Context) : Messenger {
         onSuccess: () -> Unit,
         onError: (Throwable) -> Unit
     ) {
-        val recipients = checkRecipients(settings.getMailRecipients()) ?: return
-        val formatter = formatters.createFormatter(message.payload)
+        if (FLAG_SENT_BY_MAIL in message.processedFlags) return
 
-        session.send(
-            MailMessage(
-                subject = formatter.formatSubject(),
-                body = formatter.formatBody(),
-                from = account.name,
-                recipients = recipients
-            ),
-            onSuccess = {
-                log.debug("Successfully sent")
+        session?.run {
+            log.debug("Sending").verb(message)
 
-                onSuccess()
-            },
-            onError = { error ->
-                log.error("Send failed", error)
+            val recipients = checkRecipients(settings.getMailRecipients()) ?: return
+            val formatter = formatters.createFormatter(message.payload)
 
-                notifySendError(error)
-                onError(error)
-            }
-        )
+            send(
+                MailMessage(
+                    subject = formatter.formatSubject(),
+                    body = formatter.formatBody(),
+                    from = account?.name,
+                    recipients = recipients
+                ),
+                onSuccess = {
+                    log.debug("Successfully sent")
+
+                    message.processedFlags += FLAG_SENT_BY_MAIL
+                    onSuccess()
+                },
+                onError = { error ->
+                    log.error("Send failed", error)
+
+                    message.processedFlags -= FLAG_SENT_BY_MAIL
+                    notifySendError(error)
+                    onError(error)
+                })
+        }
     }
 
     fun checkRecipients(recipients: String?): String? {

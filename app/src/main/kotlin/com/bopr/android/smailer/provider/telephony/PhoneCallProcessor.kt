@@ -15,7 +15,9 @@ import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_IGNORE
 import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_PENDING
 import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.FLAG_BYPASS_NONE
+import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.FLAG_BYPASS_NO_CONSUMERS
 import com.bopr.android.smailer.ui.MainActivity
+import com.bopr.android.smailer.util.Bits
 import com.bopr.android.smailer.util.GeoLocation.Companion.getGeoLocation
 import com.bopr.android.smailer.util.Logger
 import java.lang.System.currentTimeMillis
@@ -29,95 +31,75 @@ import java.util.concurrent.TimeUnit.MINUTES
 class PhoneCallProcessor(
     private val context: Context,
     private val database: Database = Database(context),
-    private val dispatcher: MessageDispatcher = MessageDispatcher(context),
     private val notifications: NotificationsHelper = NotificationsHelper(context),
 ) {
 
-    private val settings: Settings = Settings(context)
+    private val settings = Settings(context)
+    private val dispatcher = MessageDispatcher(context)
 
     fun addRecord(info: PhoneCallInfo) {
         log.debug("Add record").verb(info)
 
-        commitRecord(info.apply {
-            bypassFlags = getBypassFlags(this)
-            processState = if (bypassFlags == FLAG_BYPASS_NONE) STATE_PENDING else STATE_IGNORED
+        putRecord(info.apply {
+            bypassFlags = detectBypassFlags(this)
+            if (bypassFlags != FLAG_BYPASS_NONE) processState = STATE_IGNORED
         })
     }
 
     fun processRecords(): Int {
-        val records = database.use {
-            it.phoneCalls.filterPending
+        val records = database.use { it.phoneCalls.filterPending }
+        if (records.isEmpty()) {
+            log.debug("No pending records")
+
+            return 0
         }
 
-        val recordsCount = records.size
+        log.debug("Processing ${records.size} record(s)")
 
-        if (recordsCount > 0) {
-            log.debug("Processing $recordsCount record(s)")
+        val canDispatch = dispatcher.initialize()
 
-            prepareDispatcher()
-
-            for (record in records) {
+        for (record in records) {
+            if (canDispatch) {
                 record.apply {
                     processTime = currentTimeMillis()
                     location = context.getGeoLocation()
                 }
 
-                dispatchRecord(
-                    info = record,
+                val message = Message(payload = record)
+
+                log.debug("Dispatching message").verb(message)
+
+                dispatcher.dispatch(
+                    message,
                     onSuccess = {
-                        commitRecord(record.apply {
+                        notifySuccess()
+                        putRecord(record.apply {
                             processState = STATE_PROCESSED
                         })
                     },
                     onError = {
-                        commitRecord(record.apply {
+                        putRecord(record.apply {
                             processState = STATE_PENDING
                         })
                     }
                 )
+            } else {
+                putRecord(record.apply {
+                    bypassFlags += FLAG_BYPASS_NO_CONSUMERS
+                    processState = STATE_IGNORED
+                })
             }
-        } else {
-            log.debug("No pending records")
         }
 
-        return recordsCount
+        return records.size
     }
 
-    private fun commitRecord(info: PhoneCallInfo) {
+    private fun putRecord(info: PhoneCallInfo) {
         database.use {
             it.commit {
                 phoneCalls.put(info)
             }
         }
-    }
-
-    private fun prepareDispatcher() {
-        dispatcher.initialize()
-
-        log.debug("Dispatcher prepared")
-    }
-
-    private fun dispatchRecord(
-        info: PhoneCallInfo,
-        onSuccess: () -> Unit,
-        onError: (Throwable) -> Unit
-    ) {
-        val message = Message(payload = info)
-
-        log.debug("Dispatching message")
-
-        dispatcher.dispatch(
-            message,
-            onSuccess = {
-                notifySuccess()
-                onSuccess()
-            },
-            onError = {
-                log.warn("Dispatch failed: ", it)
-
-                onError(it)
-            }
-        )
     }
 
     private fun notifySuccess() {
@@ -128,14 +110,15 @@ class PhoneCallProcessor(
             )
     }
 
-    private fun getBypassFlags(info: PhoneCallInfo) = PhoneCallFilter(
-        settings.getMailTriggers(),
-        database.phoneBlacklist,
-        database.phoneWhitelist,
-        database.textBlacklist,
-        database.textWhitelist
-    ).test(info)
-
+    private fun detectBypassFlags(info: PhoneCallInfo): Bits {
+        return PhoneCallFilter(
+            settings.getMailTriggers(),
+            database.phoneBlacklist,
+            database.phoneWhitelist,
+            database.textBlacklist,
+            database.textWhitelist
+        ).test(info)
+    }
 
     companion object {
 

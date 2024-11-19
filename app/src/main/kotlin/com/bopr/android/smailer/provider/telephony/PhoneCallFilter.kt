@@ -9,6 +9,7 @@ import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.FLAG_
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.FLAG_BYPASS_NUMBER_BLACKLISTED
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.FLAG_BYPASS_TEXT_BLACKLISTED
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.FLAG_BYPASS_TRIGGER_OFF
+import com.bopr.android.smailer.util.Bits
 import com.bopr.android.smailer.util.phoneNumberToRegEx
 import com.bopr.android.smailer.util.stripPhoneNumber
 import com.bopr.android.smailer.util.unescapeRegex
@@ -33,11 +34,11 @@ class PhoneCallFilter(
      * @param info event
      * @return [FLAG_BYPASS_NONE] if event accepted, explanation flags otherwise
      */
-    fun test(info: PhoneCallInfo): Int {
+    fun test(info: PhoneCallInfo): Bits {
         var result = FLAG_BYPASS_NONE
-        if (!testTrigger(info)) result = result or FLAG_BYPASS_TRIGGER_OFF
-        if (!testPhone(info.phone)) result = result or FLAG_BYPASS_NUMBER_BLACKLISTED
-        if (!testText(info.text)) result = result or FLAG_BYPASS_TEXT_BLACKLISTED
+        if (!testTrigger(info)) result += FLAG_BYPASS_TRIGGER_OFF
+        if (!testPhone(info.phone)) result += FLAG_BYPASS_NUMBER_BLACKLISTED
+        if (!testText(info.text)) result += FLAG_BYPASS_TEXT_BLACKLISTED
         return result
     }
 
