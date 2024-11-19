@@ -45,11 +45,13 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        versionCode = 103
-        versionName = "1.10.4"
+        versionCode = 104
+        versionName = "1.10.5"
         applicationId = "com.bopr.android.smailer"
         minSdk = 21
-        targetSdk = 35
+        /* check action bar not overlapping content when migrating to 35
+        * see also: https://developer.android.com/develop/ui/views/layout/edge-to-edge#kts*/
+        targetSdk = 34
         base.archivesName = "smailer-$versionName"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

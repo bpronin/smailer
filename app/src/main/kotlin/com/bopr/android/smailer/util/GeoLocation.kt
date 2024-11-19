@@ -80,7 +80,7 @@ data class GeoLocation(
             onError: (Throwable) -> Unit
         ) {
             if (!checkPermission(ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION)) {
-                onError(IllegalStateException("Required geolocation permissions"))
+                onError(IllegalStateException("Geolocation permissions required"))
                 return
             }
 
