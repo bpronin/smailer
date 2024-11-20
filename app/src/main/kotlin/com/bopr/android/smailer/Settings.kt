@@ -42,8 +42,16 @@ class Settings(context: Context, changeListener: ChangeListener? = null) {
             ifNotExists(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS) { putBoolean(it, true) }
             ifNotExists(PREF_REMOTE_CONTROL_NOTIFICATIONS) { putBoolean(it, true) }
             ifNotExists(PREF_SMS_MESSENGER_ENABLED) { putBoolean(it, false) }
-            ifNotExists(PREF_SYNC_ENABLED) { putBoolean(it, true) }
             ifNotExists(PREF_TELEGRAM_MESSENGER_ENABLED) { putBoolean(it, true) }
+            ifNotExists(PREF_SYNC_ENABLED) { putBoolean(it, true) }
+            ifNotExists(PREF_PHONE_PROCESS_TRIGGERS) {
+                putStringSet(
+                    it, setOf(
+                        VAL_PREF_TRIGGER_IN_SMS,
+                        VAL_PREF_TRIGGER_MISSED_CALLS
+                    )
+                )
+            }
             ifNotExists(PREF_MAIL_MESSAGE_CONTENT) {
                 putStringSet(
                     it, setOf(
@@ -55,14 +63,6 @@ class Settings(context: Context, changeListener: ChangeListener? = null) {
                         VAL_PREF_MESSAGE_CONTENT_CREATION_TIME,
                         VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME,
                         VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS
-                    )
-                )
-            }
-            ifNotExists(PREF_MAIL_TRIGGERS) {
-                putStringSet(
-                    it, setOf(
-                        VAL_PREF_TRIGGER_IN_SMS,
-                        VAL_PREF_TRIGGER_MISSED_CALLS
                     )
                 )
             }
@@ -82,7 +82,7 @@ class Settings(context: Context, changeListener: ChangeListener? = null) {
         }
     }
 
-    fun getMailTriggers() = getStringSet(PREF_MAIL_TRIGGERS)
+    fun getPhoneProcessTriggers() = getStringSet(PREF_PHONE_PROCESS_TRIGGERS)
     fun getMailRecipients() = getString(PREF_MAIL_MESSENGER_RECIPIENTS, "")
     fun getMessageLocale() = getString(PREF_MESSAGE_LOCALE, VAL_PREF_DEFAULT)
     fun getDeviceName() = getString(PREF_DEVICE_ALIAS, DEVICE_NAME)
@@ -175,7 +175,7 @@ class Settings(context: Context, changeListener: ChangeListener? = null) {
         const val PREF_MAIL_MESSENGER_ENABLED = "email_messenger_enabled"
         const val PREF_MAIL_MESSENGER_RECIPIENTS = "recipients_address"
         const val PREF_MAIL_SENDER_ACCOUNT = "sender_account"
-        const val PREF_MAIL_TRIGGERS = "email_triggers"
+        const val PREF_PHONE_PROCESS_TRIGGERS = "email_triggers"
         const val PREF_MESSAGE_LOCALE = "email_locale"
         const val PREF_NOTIFY_SEND_SUCCESS = "notify_send_success"
         const val PREF_PHONE_SEARCH_URL = "phone_search_url"
@@ -208,6 +208,10 @@ class Settings(context: Context, changeListener: ChangeListener? = null) {
         const val VAL_PREF_TRIGGER_OUT_SMS = "out_sms"
 
         const val DEFAULT_PHONE_SEARCH_URL = "https://www.google.com/search?q=$PHONE_SEARCH_TAG"
+
+        // TODO: implement settings map
+        //private val settingsMap = mutableMapOf<Context, Settings>()
+        //val Context.settings get() = settingsMap.getOrPut(this) { Settings(this) }
     }
 
 }

@@ -9,11 +9,12 @@ import com.bopr.android.smailer.Settings.Companion.PREF_DEVICE_ALIAS
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_CONTENT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_BODY
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CREATION_TIME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CREATION_TIME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_HEADER
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCATION
+import com.bopr.android.smailer.messenger.Event
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
 import com.bopr.android.smailer.util.GeoLocation
 import com.bopr.android.smailer.util.getContactName
@@ -51,13 +52,17 @@ class PhoneCallTelegramFormatterTest : BaseTest() {
             phone = "+12345678901",
             isIncoming = true,
             startTime = testTime,
-            text = "Message text",
-            location = testCoordinates,
-            processTime = testTime,
-            acceptor = "device"
+            text = "Message text"
         )
 
-        val formatter = PhoneCallTelegramFormatter(targetContext, info)
+        val event = Event(
+            payload = info,
+            location = testCoordinates,
+            processTime = testTime,
+            target = "device"
+        )
+
+        val formatter = PhoneCallTelegramFormatter(targetContext, event, info)
 
         assertEquals("", formatter.formatMessage())
     }
@@ -77,13 +82,17 @@ class PhoneCallTelegramFormatterTest : BaseTest() {
             phone = "+12345678901",
             isIncoming = true,
             startTime = testTime,
-            text = "Message text",
-            location = testCoordinates,
-            processTime = testTime,
-            acceptor = "device"
+            text = "Message text"
         )
 
-        val formatter = PhoneCallTelegramFormatter(targetContext, info)
+        val event = Event(
+            payload = info,
+            location = testCoordinates,
+            processTime = testTime,
+            target = "device"
+        )
+
+        val formatter = PhoneCallTelegramFormatter(targetContext, event, info)
 
         assertEquals("Message text%0A", formatter.formatMessage())
     }
@@ -116,13 +125,17 @@ class PhoneCallTelegramFormatterTest : BaseTest() {
             phone = "+12345678901",
             isIncoming = true,
             startTime = testTime,
-            text = "Message text",
+            text = "Message text"
+        )
+
+        val event = Event(
+            payload = info,
             location = testCoordinates,
-            acceptor = "device",
+            target = "device",
             processTime = testTime
         )
 
-        val formatter = PhoneCallTelegramFormatter(targetContext, info)
+        val formatter = PhoneCallTelegramFormatter(targetContext, event, info)
 
         assertEquals(
             "<b>Incoming SMS</b>"
@@ -164,13 +177,17 @@ class PhoneCallTelegramFormatterTest : BaseTest() {
             phone = "+12223334444",
             isIncoming = true,
             startTime = testTime,
-            text = "Message text",
-            location = testCoordinates,
-            processTime = testTime,
-            acceptor = "device"
+            text = "Message text"
         )
 
-        val formatter = PhoneCallTelegramFormatter(targetContext, info)
+        val event = Event(
+            payload = info,
+            location = testCoordinates,
+            processTime = testTime,
+            target = "device"
+        )
+
+        val formatter = PhoneCallTelegramFormatter(targetContext, event, info)
 
         assertEquals("<i>Sender: +1 222-333-4444</i>", formatter.formatMessage())
     }

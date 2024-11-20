@@ -4,6 +4,7 @@ import android.content.Context
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_BODY
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
+import com.bopr.android.smailer.messenger.Event
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
 import com.bopr.android.smailer.util.phoneCallTypeText
 import com.bopr.android.smailer.util.formatDuration
@@ -16,13 +17,14 @@ import com.bopr.android.smailer.util.getContactName
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 class PhoneCallTelegramFormatter(
-    private val context: Context,
+    context: Context,
+    event: Event,
     private val info: PhoneCallInfo
 ) : BaseTelegramFormatter(
     context,
     info.startTime,
-    info.processTime,
-    info.location
+    event.processTime,
+    event.location
 ) {
 
     override fun getTitle(): String {

@@ -8,7 +8,7 @@ import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.PermissionsHelper
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
-import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_TRIGGERS
+import com.bopr.android.smailer.Settings.Companion.PREF_PHONE_PROCESS_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.control.MailRemoteControlWorker.Companion.enableMailRemoteControl
 import com.bopr.android.smailer.external.Firebase.Companion.resubscribeToFirebaseMessaging
@@ -53,7 +53,7 @@ class MainActivity : FlavorBaseActivity(MainFragment::class), Settings.ChangeLis
 
     override fun onSettingsChanged(settings: Settings, key: String) {
         when (key) {
-            PREF_MAIL_TRIGGERS ->
+            PREF_PHONE_PROCESS_TRIGGERS ->
                 startContentObserver()
 
             PREF_REMOTE_CONTROL_ENABLED ->

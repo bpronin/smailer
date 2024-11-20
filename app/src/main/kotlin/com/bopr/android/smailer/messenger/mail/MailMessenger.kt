@@ -11,11 +11,13 @@ import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_MAIL_RECIPIENT
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_ENABLED
+import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.messenger.Event
 import com.bopr.android.smailer.messenger.Event.Companion.FLAG_SENT_BY_MAIL
 import com.bopr.android.smailer.messenger.Messenger
 import com.bopr.android.smailer.ui.MailRecipientsActivity
 import com.bopr.android.smailer.ui.MailSettingsActivity
+import com.bopr.android.smailer.ui.MainActivity
 import com.bopr.android.smailer.util.Logger
 import com.bopr.android.smailer.util.Mockable
 import com.bopr.android.smailer.util.isValidEmailAddressList
@@ -61,7 +63,7 @@ internal class MailMessenger(private val context: Context) : Messenger {
             log.debug("Sending").verb(event)
 
             val recipients = checkRecipients(settings.getMailRecipients()) ?: return
-            val formatter = formatters.createFormatter(event.payload)
+            val formatter = formatters.createFormatter(event)
 
             send(
                 MailMessage(
@@ -74,6 +76,7 @@ internal class MailMessenger(private val context: Context) : Messenger {
                     log.debug("Successfully sent")
 
                     event.processFlags += FLAG_SENT_BY_MAIL
+                    notifySendSuccess()
                     onSuccess()
                 },
                 onError = { error ->
@@ -123,6 +126,14 @@ internal class MailMessenger(private val context: Context) : Messenger {
             )
             null
         }
+    }
+
+    private fun notifySendSuccess() {
+        if (settings.getBoolean(PREF_NOTIFY_SEND_SUCCESS))
+            notifications.notifyInfo(
+                title = context.getString(R.string.email_successfully_send),
+                target = MainActivity::class
+            )
     }
 
     private fun notifySendError(error: Throwable) {

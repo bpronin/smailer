@@ -23,17 +23,18 @@ import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.data.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.data.StringDataset
+import com.bopr.android.smailer.messenger.Event
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PENDING
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
 import com.bopr.android.smailer.ui.HistoryFragment.Holder
 import com.bopr.android.smailer.util.addOnItemSwipedListener
-import com.bopr.android.smailer.util.phoneCallDirectionImage
-import com.bopr.android.smailer.util.messageStateImage
-import com.bopr.android.smailer.util.phoneCallTypeImage
 import com.bopr.android.smailer.util.formatDuration
 import com.bopr.android.smailer.util.getColorFromAttr
 import com.bopr.android.smailer.util.getQuantityString
+import com.bopr.android.smailer.util.messageStateImage
+import com.bopr.android.smailer.util.phoneCallDirectionImage
+import com.bopr.android.smailer.util.phoneCallTypeImage
 import com.bopr.android.smailer.util.showToast
 import com.google.android.material.snackbar.Snackbar
 
@@ -42,7 +43,7 @@ import com.google.android.material.snackbar.Snackbar
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class HistoryFragment : RecyclerFragment<PhoneCallInfo, Holder>() {
+class HistoryFragment : RecyclerFragment<Event, Holder>() {
 
     private lateinit var database: Database
     private lateinit var databaseListener: BroadcastReceiver
@@ -91,16 +92,18 @@ class HistoryFragment : RecyclerFragment<PhoneCallInfo, Holder>() {
         requireActivity().addMenuProvider(FragmentMenuProvider())
     }
 
-    override fun onCreateItemContextMenu(menu: ContextMenu, item: PhoneCallInfo) {
+    override fun onCreateItemContextMenu(menu: ContextMenu, item: Event) {
         requireActivity().menuInflater.inflate(R.menu.menu_context_history, menu)
 
         if (item.processState != STATE_PENDING) {
             menu.removeItem(R.id.action_ignore)
         }
 
-        if (!item.isSms) {
-            menu.removeItem(R.id.action_add_text_to_blacklist)
-            menu.removeItem(R.id.action_add_text_to_whitelist)
+        (item.payload as? PhoneCallInfo)?.let {
+            if (!it.isSms) {
+                menu.removeItem(R.id.action_add_text_to_blacklist)
+                menu.removeItem(R.id.action_add_text_to_whitelist)
+            }
         }
     }
 
@@ -141,12 +144,12 @@ class HistoryFragment : RecyclerFragment<PhoneCallInfo, Holder>() {
         }
     }
 
-    override fun onItemClick(item: PhoneCallInfo) {
+    override fun onItemClick(item: Event) {
         HistoryDetailsDialogFragment(item).show(this)
     }
 
-    override fun loadItems(): Collection<PhoneCallInfo> {
-        return database.phoneCalls
+    override fun loadItems(): Collection<Event> {
+        return database.events
     }
 
     override fun createViewHolder(parent: ViewGroup): Holder {
@@ -154,52 +157,60 @@ class HistoryFragment : RecyclerFragment<PhoneCallInfo, Holder>() {
         return Holder(view)
     }
 
-    override fun bindViewHolder(item: PhoneCallInfo, holder: Holder) {
-        holder.timeView.text = DateFormat.format(getString(R.string._time_pattern), item.startTime)
-        holder.textView.text = formatSummary(item)
-        holder.phoneView.text = item.phone
-        holder.typeView.setImageResource(phoneCallTypeImage(item))
-        holder.directionView.setImageResource(phoneCallDirectionImage(item))
-        holder.stateView.setImageResource(messageStateImage(item.processState))
+    override fun bindViewHolder(item: Event, holder: Holder) {
+        holder.apply {
+            stateView.setImageResource(messageStateImage(item.processState))
+            textView.text = formatSummary(item)
 
-        if (!item.isRead) {
-            holder.phoneView.setTextColor(unreadItemTextColor)
-            holder.textView.setTextColor(unreadItemTextColor)
-            holder.timeView.setTextColor(unreadItemTextColor)
-        } else {
-            holder.phoneView.setTextColor(defaultItemTextColor)
-            holder.textView.setTextColor(defaultItemTextColor)
-            holder.timeView.setTextColor(defaultItemTextColor)
-        }
+            if (!item.isRead) {
+                phoneView.setTextColor(unreadItemTextColor)
+                textView.setTextColor(unreadItemTextColor)
+                timeView.setTextColor(unreadItemTextColor)
+            } else {
+                phoneView.setTextColor(defaultItemTextColor)
+                textView.setTextColor(defaultItemTextColor)
+                timeView.setTextColor(defaultItemTextColor)
+            }
 
-        if (!item.isRead) {
-            item.isRead = true
-            database.phoneCalls.add(item) /* do not fire broadcast here */
+            if (!item.isRead) {
+                item.isRead = true
+                database.events.add(item) /* do not commit to not fire broadcast here */
+            }
+
+            (item.payload as? PhoneCallInfo)?.let {
+                timeView.text = DateFormat.format(
+                    getString(R.string._time_pattern),
+                    it.startTime
+                )
+                phoneView.text = it.phone
+                typeView.setImageResource(phoneCallTypeImage(it))
+                directionView.setImageResource(phoneCallDirectionImage(it))
+            }
         }
     }
 
     private fun onClearData() {
         ConfirmDialog(getString(R.string.ask_clear_history)) {
-            database.commit { batch { phoneCalls.clear() } }
+            database.commit { batch { events.clear() } }
         }.show(this)
     }
 
     private fun onMarkAllAsRead() {
-        database.commit { batch { phoneCalls.markAllAsRead(true) } }
+        database.commit { batch { events.markAllAsRead(true) } }
         showToast(R.string.operation_complete)
     }
 
     private fun onMarkAsIgnored() {
         getSelectedItem()?.let {
             it.processState = STATE_IGNORED
-            database.commit { phoneCalls.add(it) }
+            database.commit { events.add(it) }
         }
     }
 
     private fun onRemoveSelected() {
         val selectedItems = listAdapter.getItemsAt(selectedItemPosition)
 
-        database.commit { batch { phoneCalls.removeAll(selectedItems) } }
+        database.commit { batch { events.removeAll(selectedItems) } }
 
         Snackbar.make(
             recycler,
@@ -208,18 +219,20 @@ class HistoryFragment : RecyclerFragment<PhoneCallInfo, Holder>() {
         )
             .setActionTextColor(getColor(requireContext(), R.color.colorAccentText))
             .setAction(R.string.undo) {
-                database.commit { batch { phoneCalls.addAll(selectedItems) } }
+                database.commit { batch { events.addAll(selectedItems) } }
             }
             .show()
     }
 
     private fun addSelectionPhoneToFilterList(list: StringDataset, @StringRes titleRes: Int) {
-        getSelectedItem()?.let { item ->
-            EditPhoneDialogFragment(R.string.enter_phone_number_or_wildcard).apply {
-                setTitle(titleRes)
-                setValue(item.phone)
-                setOnOkClicked { addToFilterList(list, it) }
-            }.show(this)
+        getSelectedItem()?.let { event ->
+            (event.payload as? PhoneCallInfo)?.let {
+                EditPhoneDialogFragment(R.string.enter_phone_number_or_wildcard).apply {
+                    setTitle(titleRes)
+                    setValue(it.phone)
+                    setOnOkClicked { addToFilterList(list, it) }
+                }.show(this)
+            }
         }
     }
 
@@ -232,28 +245,34 @@ class HistoryFragment : RecyclerFragment<PhoneCallInfo, Holder>() {
     }
 
     private fun addSelectionTextToFilterList(list: StringDataset, @StringRes titleRes: Int) {
-        getSelectedItem()?.let { item ->
-            EditTextDialogFragment().apply {
-                setTitle(titleRes)
-                setValue(item.text)
-                setOnOkClicked { addToFilterList(list, it) }
-            }.show(this)
+        getSelectedItem()?.let { event ->
+            (event.payload as? PhoneCallInfo)?.let {
+                EditTextDialogFragment().apply {
+                    setTitle(titleRes)
+                    setValue(it.text)
+                    setOnOkClicked { addToFilterList(list, it) }
+                }.show(this)
+            }
         }
     }
 
-    private fun formatSummary(info: PhoneCallInfo): CharSequence? {
+    private fun formatSummary(event: Event): CharSequence? {
+        return (event.payload as? PhoneCallInfo)?.let {
+            formatPhoneCallSummary(it)
+        }
+    }
+
+    private fun formatPhoneCallSummary(info: PhoneCallInfo): CharSequence? {
         return when {
-            info.isSms ->
-                info.text
+            info.isSms -> info.text
 
-            info.isMissed ->
-                getString(R.string.missed_call)
+            info.isMissed -> getString(R.string.missed_call)
 
-            info.isIncoming ->
-                getString(R.string.incoming_call_of, formatDuration(info.callDuration))
+            info.isIncoming -> getString(
+                R.string.incoming_call_of, formatDuration(info.callDuration)
+            )
 
-            else ->
-                getString(R.string.outgoing_call_of, formatDuration(info.callDuration))
+            else -> getString(R.string.outgoing_call_of, formatDuration(info.callDuration))
         }
     }
 

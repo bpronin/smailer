@@ -23,9 +23,9 @@ import java.util.Date
 import java.util.Locale
 
 abstract class BaseMailFormatter(
-    private val context: Context,
-    private val creationTime: Long?,
-    private val dispatchTime: Long?,
+    protected val context: Context,
+    private val eventTime: Long?,
+    private val processTime: Long?,
     private val location: GeoLocation?
 ) : MailFormatter {
 
@@ -120,20 +120,20 @@ abstract class BaseMailFormatter(
     }
 
     private fun formatCreationTime(): String {
-        return if (creationTime != null && settings.hasMailContent(
+        return if (eventTime != null && settings.hasMailContent(
                 VAL_PREF_MESSAGE_CONTENT_CREATION_TIME
             )
         ) {
-            string(R.string.time_time, timeFormat.format(Date(creationTime)))
+            string(R.string.time_time, timeFormat.format(Date(eventTime)))
         } else ""
     }
 
     private fun formatDispatchTime(): String {
-        return if (dispatchTime != null && settings.hasMailContent(
+        return if (processTime != null && settings.hasMailContent(
                 VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME
             )
         ) {
-            string(R.string._at_time, timeFormat.format(dispatchTime))
+            string(R.string._at_time, timeFormat.format(processTime))
         } else ""
     }
 

@@ -17,9 +17,8 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
 import com.bopr.android.smailer.data.getLong
 import com.bopr.android.smailer.data.getString
 import com.bopr.android.smailer.data.getStringOrNull
-import com.bopr.android.smailer.data.useFirst
+import com.bopr.android.smailer.data.withFirst
 import com.bopr.android.smailer.provider.telephony.PhoneCallProcessor.Companion.processPhoneCall
-import com.bopr.android.smailer.util.DEVICE_NAME
 import com.bopr.android.smailer.util.Logger
 
 /**
@@ -61,15 +60,14 @@ class ContentObserverService : Service() {
         log.debug("Processing outgoing sms: $id")
 
         val context = this  //TODO: why? contentResolver is also Context itself
-        contentResolver.query(CONTENT_SMS_SENT, null, "_id=?", arrayOf(id), null)?.useFirst {
+        contentResolver.query(CONTENT_SMS_SENT, null, "_id=?", arrayOf(id), null)?.withFirst {
             context.processPhoneCall(
                 PhoneCallInfo(
                     phone = getString("address"),
                     isIncoming = false,
                     startTime = getLong("date"),
                     endTime = getLong("date"),
-                    text = getStringOrNull("body"),
-                    acceptor = DEVICE_NAME
+                    text = getStringOrNull("body")
                 )
             )
         }
@@ -124,7 +122,7 @@ class ContentObserverService : Service() {
          */
         fun Context.startContentObserver() {
             val intent = Intent(this, ContentObserverService::class.java)
-            val triggers = Settings(this).getMailTriggers()
+            val triggers = Settings(this).getPhoneProcessTriggers()
 
             if (triggers.contains(VAL_PREF_TRIGGER_OUT_SMS)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

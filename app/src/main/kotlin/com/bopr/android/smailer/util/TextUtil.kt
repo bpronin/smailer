@@ -16,7 +16,7 @@ val WEB_URL_PATTERN: Pattern = Pattern.compile("(?:\\S+)://\\S+")
 private val COMMA_ESCAPED = Regex("(?<!/),")  /* matches commas not preceded by slash symbol */
 private const val REGEX_ = "REGEX:"
 
-fun strings(vararg values: Any) = Array(values.size) { values[it].toString() }
+fun stringArrayOf(vararg values: Any?) = Array(values.size) { values[it].toString() }
 
 fun escapeRegex(s: String) = REGEX_ + s
 

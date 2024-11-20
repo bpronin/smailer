@@ -17,9 +17,9 @@ import java.text.DateFormat
 import java.text.DateFormat.SHORT
 
 abstract class BaseTelegramFormatter(
-    private val context: Context,
-    private val creationTime: Long?,
-    private val dispatchTime: Long?,
+    protected val context: Context,
+    private val eventTime: Long?,
+    private val processTime: Long?,
     private val location: GeoLocation?
 ) : TelegramFormatter {
 
@@ -108,21 +108,21 @@ abstract class BaseTelegramFormatter(
     }
 
     private fun getCreationTimeText(): String? {
-        return if (creationTime != null &&
+        return if (eventTime != null &&
             settings.hasTelegramMessageContent(VAL_PREF_MESSAGE_CONTENT_CREATION_TIME)
         )
-            DateFormat.getDateTimeInstance(SHORT, SHORT).format(creationTime)
+            DateFormat.getDateTimeInstance(SHORT, SHORT).format(eventTime)
         else null
     }
 
     private fun getDispatchTimeText(): String? {
-        return if (dispatchTime != null &&
+        return if (processTime != null &&
             settings.hasTelegramMessageContent(VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME)
         ) {
             string(
                 R.string._on_date_at_time,
-                DateFormat.getDateInstance(SHORT).format(dispatchTime),
-                DateFormat.getTimeInstance().format(dispatchTime)
+                DateFormat.getDateInstance(SHORT).format(processTime),
+                DateFormat.getTimeInstance().format(processTime)
             )
         } else null
     }

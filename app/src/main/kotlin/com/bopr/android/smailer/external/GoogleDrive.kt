@@ -3,7 +3,6 @@ package com.bopr.android.smailer.external
 import android.accounts.Account
 import android.content.Context
 import com.bopr.android.smailer.util.Mockable
-import com.bopr.android.smailer.util.useIt
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.http.ByteArrayContent
 import com.google.api.client.http.javanet.NetHttpTransport
@@ -54,9 +53,9 @@ internal class GoogleDrive(context: Context, account: Account) {
     @Throws(IOException::class)
     fun upload(filename: String, data: Any) {
         val writer: Writer = StringWriter()
-        jacksonFactory().createJsonGenerator(writer).useIt {
-            serialize(data)
-            flush()
+        jacksonFactory().createJsonGenerator(writer).use {
+            it.serialize(data)
+            it.flush()
             write(filename, writer.toString())
         }
     }

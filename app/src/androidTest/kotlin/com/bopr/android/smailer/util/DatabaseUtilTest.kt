@@ -6,6 +6,7 @@ import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.data.alterTable
 import com.bopr.android.smailer.data.copyTable
+import com.bopr.android.smailer.data.forEach
 import com.bopr.android.smailer.data.getInt
 import com.bopr.android.smailer.data.getString
 import com.bopr.android.smailer.data.getStringIfExists
@@ -13,8 +14,8 @@ import com.bopr.android.smailer.data.getStringOrNull
 import com.bopr.android.smailer.data.getTables
 import com.bopr.android.smailer.data.query
 import com.bopr.android.smailer.data.toSet
-import com.bopr.android.smailer.data.useAll
 import com.bopr.android.smailer.data.values
+import com.bopr.android.smailer.data.write
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -51,17 +52,21 @@ class DatabaseUtilTest : BaseTest() {
 
     @Test
     fun testIsTableExists() {
-        helper.writableDatabase.apply {
+        helper.write {
             assertTrue(getTables().isEmpty())
 
-            execSQL("CREATE TABLE TABLE_1 (" +
-                    "ID INTEGER PRIMARY KEY, " +
-                    "COLUMN_1 TEXT(25)" +
-                    ")")
-            execSQL("CREATE TABLE TABLE_2 (" +
-                    "ID INTEGER PRIMARY KEY, " +
-                    "COLUMN_1 TEXT(25)" +
-                    ")")
+            execSQL(
+                "CREATE TABLE TABLE_1 (" +
+                        "ID INTEGER PRIMARY KEY, " +
+                        "COLUMN_1 TEXT(25)" +
+                        ")"
+            )
+            execSQL(
+                "CREATE TABLE TABLE_2 (" +
+                        "ID INTEGER PRIMARY KEY, " +
+                        "COLUMN_1 TEXT(25)" +
+                        ")"
+            )
 
             assertEquals(setOf("TABLE_1", "TABLE_2"), getTables())
 
@@ -73,15 +78,19 @@ class DatabaseUtilTest : BaseTest() {
 
     @Test
     fun testCopyTable() {
-        helper.writableDatabase.apply {
-            execSQL("CREATE TABLE TABLE_1 (" +
-                    "ID INTEGER PRIMARY KEY, " +
-                    "COLUMN_1 TEXT(25)" +
-                    ")")
-            execSQL("CREATE TABLE TABLE_2 (" +
-                    "ID INTEGER PRIMARY KEY, " +
-                    "COLUMN_1 TEXT(25)" +
-                    ")")
+        helper.write {
+            execSQL(
+                "CREATE TABLE TABLE_1 (" +
+                        "ID INTEGER PRIMARY KEY, " +
+                        "COLUMN_1 TEXT(25)" +
+                        ")"
+            )
+            execSQL(
+                "CREATE TABLE TABLE_2 (" +
+                        "ID INTEGER PRIMARY KEY, " +
+                        "COLUMN_1 TEXT(25)" +
+                        ")"
+            )
             insert("TABLE_1", null, values { put("ID", 10); put("COLUMN_1", "A") })
             insert("TABLE_1", null, values { put("ID", 11); put("COLUMN_1", "B") })
             insert("TABLE_1", null, values { put("ID", 12); put("COLUMN_1", "C") })
@@ -90,7 +99,7 @@ class DatabaseUtilTest : BaseTest() {
 
             val ids = mutableListOf<Int>()
             val values = mutableListOf<String?>()
-            query("TABLE_2").useAll {
+            query("TABLE_2").forEach {
                 ids.add(getInt("ID"))
                 values.add(getString("COLUMN_1"))
             }
@@ -102,15 +111,19 @@ class DatabaseUtilTest : BaseTest() {
 
     @Test
     fun testCopyTableNoColumn() {
-        helper.writableDatabase.apply {
-            execSQL("CREATE TABLE TABLE_1 (" +
-                    "ID INTEGER PRIMARY KEY, " +
-                    "COLUMN_1 TEXT(25)" +
-                    ")")
-            execSQL("CREATE TABLE TABLE_2 (" +
-                    "ID INTEGER PRIMARY KEY, " +
-                    "COLUMN_2 TEXT(25)" +
-                    ")")
+        helper.write {
+            execSQL(
+                "CREATE TABLE TABLE_1 (" +
+                        "ID INTEGER PRIMARY KEY, " +
+                        "COLUMN_1 TEXT(25)" +
+                        ")"
+            )
+            execSQL(
+                "CREATE TABLE TABLE_2 (" +
+                        "ID INTEGER PRIMARY KEY, " +
+                        "COLUMN_2 TEXT(25)" +
+                        ")"
+            )
             insert("TABLE_1", null, values { put("ID", 10); put("COLUMN_1", "A") })
             insert("TABLE_1", null, values { put("ID", 11); put("COLUMN_1", "B") })
             insert("TABLE_1", null, values { put("ID", 12); put("COLUMN_1", "C") })
@@ -119,7 +132,7 @@ class DatabaseUtilTest : BaseTest() {
 
             val ids = mutableListOf<Int>()
             val values = mutableListOf<String?>()
-            query("TABLE_2").useAll {
+            query("TABLE_2").forEach {
                 ids.add(getInt("ID"))
                 values.add(getStringOrNull("COLUMN_2"))
             }
@@ -131,15 +144,19 @@ class DatabaseUtilTest : BaseTest() {
 
     @Test
     fun testCopyTableTransform() {
-        helper.writableDatabase.apply {
-            execSQL("CREATE TABLE TABLE_1 (" +
-                    "ID INTEGER PRIMARY KEY, " +
-                    "COLUMN_1 TEXT(25)" +
-                    ")")
-            execSQL("CREATE TABLE TABLE_2 (" +
-                    "ID INTEGER PRIMARY KEY, " +
-                    "COLUMN_2 TEXT(25)" +
-                    ")")
+        helper.write {
+            execSQL(
+                "CREATE TABLE TABLE_1 (" +
+                        "ID INTEGER PRIMARY KEY, " +
+                        "COLUMN_1 TEXT(25)" +
+                        ")"
+            )
+            execSQL(
+                "CREATE TABLE TABLE_2 (" +
+                        "ID INTEGER PRIMARY KEY, " +
+                        "COLUMN_2 TEXT(25)" +
+                        ")"
+            )
             insert("TABLE_1", null, values { put("ID", 10); put("COLUMN_1", "A") })
             insert("TABLE_1", null, values { put("ID", 11); put("COLUMN_1", "B") })
             insert("TABLE_1", null, values { put("ID", 12); put("COLUMN_1", "C") })
@@ -153,7 +170,7 @@ class DatabaseUtilTest : BaseTest() {
 
             val ids = mutableListOf<Int>()
             val values = mutableListOf<String?>()
-            query("TABLE_2").useAll {
+            query("TABLE_2").forEach {
                 ids.add(getInt("ID"))
                 values.add(getString("COLUMN_2"))
             }
@@ -165,19 +182,23 @@ class DatabaseUtilTest : BaseTest() {
 
     @Test
     fun testAlterTable() {
-        helper.writableDatabase.apply {
-            execSQL("CREATE TABLE TABLE_1 (" +
-                    "ID INTEGER PRIMARY KEY, " +
-                    "COLUMN_1 TEXT(25)" +
-                    ")")
+        helper.write {
+            execSQL(
+                "CREATE TABLE TABLE_1 (" +
+                        "ID INTEGER PRIMARY KEY, " +
+                        "COLUMN_1 TEXT(25)" +
+                        ")"
+            )
             insert("TABLE_1", null, values { put("ID", 0); put("COLUMN_1", "A") })
             insert("TABLE_1", null, values { put("ID", 1); put("COLUMN_1", "B") })
             insert("TABLE_1", null, values { put("ID", 2); put("COLUMN_1", "C") })
 
-            alterTable("TABLE_1", "CREATE TABLE TABLE_1 (" +
-                    "ID INTEGER PRIMARY KEY, " +
-                    "COLUMN_2 TEXT(25)" +
-                    ")")
+            alterTable(
+                "TABLE_1", "CREATE TABLE TABLE_1 (" +
+                        "ID INTEGER PRIMARY KEY, " +
+                        "COLUMN_2 TEXT(25)" +
+                        ")"
+            )
             { column: String ->
                 if (column == "COLUMN_2")
                     getString("COLUMN_1") + "_PRIM"
@@ -196,11 +217,13 @@ class DatabaseUtilTest : BaseTest() {
 
     @Test
     fun testAlterTableNoSource() {
-        helper.writableDatabase.apply {
-            alterTable("TABLE_1", "CREATE TABLE TABLE_1 (" +
-                    "ID INTEGER PRIMARY KEY, " +
-                    "COLUMN_2 TEXT(25)" +
-                    ")")
+        helper.write {
+            alterTable(
+                "TABLE_1", "CREATE TABLE TABLE_1 (" +
+                        "ID INTEGER PRIMARY KEY, " +
+                        "COLUMN_2 TEXT(25)" +
+                        ")"
+            )
             { column: String ->
                 if (column == "COLUMN_2")
                     getString("COLUMN_1") + "_PRIM"
@@ -217,24 +240,24 @@ class DatabaseUtilTest : BaseTest() {
         }
     }
 
-/*
-    @Test
-    fun testCursorIterator() {
-        helper.writableDatabase.apply {
-            execSQL("CREATE TABLE TABLE_1 (" +
-                    "ID INTEGER PRIMARY KEY, " +
-                    "COLUMN_1 TEXT(25)" +
-                    ")")
-            insert("TABLE_1", null, values { put("ID", 10); put("COLUMN_1", "A") })
-            insert("TABLE_1", null, values { put("ID", 11); put("COLUMN_1", "B") })
-            insert("TABLE_1", null, values { put("ID", 12); put("COLUMN_1", "C") })
+    /*
+        @Test
+        fun testCursorIterator() {
+            helper.writableDatabase.apply {
+                execSQL("CREATE TABLE TABLE_1 (" +
+                        "ID INTEGER PRIMARY KEY, " +
+                        "COLUMN_1 TEXT(25)" +
+                        ")")
+                insert("TABLE_1", null, values { put("ID", 10); put("COLUMN_1", "A") })
+                insert("TABLE_1", null, values { put("ID", 11); put("COLUMN_1", "B") })
+                insert("TABLE_1", null, values { put("ID", 12); put("COLUMN_1", "C") })
 
-            val cursor = query("TABLE_1")
-            val iterator = CursorIterator(cursor) { it.getString("COLUMN_1") }
+                val cursor = query("TABLE_1")
+                val iterator = CursorIterator(cursor) { it.getString("COLUMN_1") }
 
-            assertEquals(listOf("A", "B", "C"), iterator.asSequence().toList())
-            assertThrows(IllegalStateException::class.java) { */
-/* must be closed *//*
+                assertEquals(listOf("A", "B", "C"), iterator.asSequence().toList())
+                assertThrows(IllegalStateException::class.java) { */
+    /* must be closed *//*
 
                 cursor.moveToFirst()
             }
@@ -262,7 +285,7 @@ class DatabaseUtilTest : BaseTest() {
             }
 
             assertThrows(IllegalStateException::class.java) { */
-/* must be closed *//*
+    /* must be closed *//*
 
                 cursor.moveToFirst()
             }
@@ -283,7 +306,7 @@ class DatabaseUtilTest : BaseTest() {
 
             assertEquals(emptyList<String>(), iterator.asSequence().toList())
             */
-/* NOTE: if cursor is empty and closed exception won't be thrown when we access it *//*
+    /* NOTE: if cursor is empty and closed exception won't be thrown when we access it *//*
 
         }
     }
@@ -318,7 +341,7 @@ class DatabaseUtilTest : BaseTest() {
             }
 
             assertThrows(IllegalStateException::class.java) {  */
-/* must be closed *//*
+    /* must be closed *//*
 
                 cursor.moveToFirst()
             }

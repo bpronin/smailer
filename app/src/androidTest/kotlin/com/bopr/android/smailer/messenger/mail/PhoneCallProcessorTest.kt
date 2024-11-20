@@ -17,24 +17,25 @@ import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_GOOGLE_ACCESS
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_GOOGLE_ACCOUNT
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_MAIL_RECIPIENTS
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSAGE_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
-import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_MESSAGE_LOCALE
 import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
+import com.bopr.android.smailer.Settings.Companion.PREF_PHONE_PROCESS_TRIGGERS
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_DEFAULT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_BODY
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CREATION_TIME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CREATION_TIME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_HEADER
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCATION
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.data.Database
+import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_TRIGGER_OFF
 import com.bopr.android.smailer.messenger.MessageDispatcher
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PENDING
@@ -90,8 +91,7 @@ class PhoneCallProcessorTest : BaseTest() {
             isIncoming = true,
             startTime = time,
             endTime = time + 1000,
-            isMissed = false,
-            acceptor = "device"
+            isMissed = false
         )
     }
 
@@ -116,10 +116,10 @@ class PhoneCallProcessorTest : BaseTest() {
                     eq(PREF_MESSAGE_LOCALE),
                     anyOrNull()
                 )
-            }.doReturn(Settings.VAL_PREF_DEFAULT)
+            }.doReturn(VAL_PREF_DEFAULT)
             on {
                 getStringSet(
-                    eq(PREF_MAIL_TRIGGERS),
+                    eq(PREF_PHONE_PROCESS_TRIGGERS),
                     anyOrNull()
                 )
             }.doReturn(
@@ -185,7 +185,7 @@ class PhoneCallProcessorTest : BaseTest() {
         targetContext.deleteDatabase(Database.databaseName)
         database = Database(targetContext) /* not a mock context here! */
 
-        processor = PhoneCallProcessor(context, database, notifications)
+        processor = PhoneCallProcessor(context)
     }
 
     @After
@@ -216,14 +216,13 @@ class PhoneCallProcessorTest : BaseTest() {
         verifyNotifyRecipientsError()
         verifyNotifyGoogleAccessError()
 
-        val savedRecord = database.phoneCalls.first()
+        val savedEvent = database.events.first()
+        val info = savedEvent.payload as PhoneCallInfo
 
-        assertEquals(call.acceptor, savedRecord.acceptor)
-        assertEquals(call.startTime, savedRecord.startTime)
-        assertEquals(call.phone, savedRecord.phone)
-        assertEquals(STATE_PROCESSED, savedRecord.processState)
-        assertEquals(PhoneCallInfo.FLAG_BYPASS_NONE, savedRecord.bypassFlags)
-        assertEquals(GeoLocation(60.0, 30.0), call.location)
+        assertEquals(call.phone, info.phone)
+        assertEquals(STATE_PROCESSED, savedEvent.processState)
+        assertTrue(savedEvent.bypassFlags.isEmpty())
+        assertEquals(GeoLocation(60.0, 30.0), savedEvent.location)
     }
 
     /**
@@ -242,10 +241,10 @@ class PhoneCallProcessorTest : BaseTest() {
         verifyNotifyRecipientsError()
         verifyNotifyGoogleAccessError()
 
-        val savedCall = database.phoneCalls.first()
+        val savedEvent = database.events.first()
 
-        assertEquals(STATE_IGNORED, savedCall.processState)
-        assertEquals(PhoneCallInfo.FLAG_BYPASS_TRIGGER_OFF, savedCall.bypassFlags)
+        assertEquals(STATE_IGNORED, savedEvent.processState)
+        assertEquals(FLAG_BYPASS_TRIGGER_OFF, savedEvent.bypassFlags)
     }
 
     /**
@@ -267,10 +266,10 @@ class PhoneCallProcessorTest : BaseTest() {
             eq(MailSettingsActivity::class)
         )
 
-        val savedCall = database.phoneCalls.first()
+        val savedEvent = database.events.first()
 
-        assertEquals(STATE_PENDING, savedCall.processState)
-        assertEquals(PhoneCallInfo.FLAG_BYPASS_NONE, savedCall.bypassFlags)
+        assertEquals(STATE_PENDING, savedEvent.processState)
+        assertTrue(savedEvent.bypassFlags.isEmpty())
     }
 
     /**
@@ -296,10 +295,10 @@ class PhoneCallProcessorTest : BaseTest() {
             MailRecipientsActivity::class
         )
 
-        val savedCall = database.phoneCalls.first()
+        val savedEvent = database.events.first()
 
-        assertEquals(STATE_PENDING, savedCall.processState)
-        assertEquals(PhoneCallInfo.FLAG_BYPASS_NONE, savedCall.bypassFlags)
+        assertEquals(STATE_PENDING, savedEvent.processState)
+        assertTrue(savedEvent.bypassFlags.isEmpty())
     }
 
     /**
@@ -319,10 +318,10 @@ class PhoneCallProcessorTest : BaseTest() {
         verifyNotifyRecipientsError()
         verifyNotifyGoogleAccessError()
 
-        val savedCall = database.phoneCalls.first()
+        val savedEvent = database.events.first()
 
-        assertEquals(STATE_PENDING, savedCall.processState)
-        assertEquals(PhoneCallInfo.FLAG_BYPASS_NONE, savedCall.bypassFlags)
+        assertEquals(STATE_PENDING, savedEvent.processState)
+        assertTrue(savedEvent.bypassFlags.isEmpty())
     }
 
     /**
@@ -370,8 +369,8 @@ class PhoneCallProcessorTest : BaseTest() {
         processor.add(testingCall())
         processor.process()
 
-        assertEquals(3, database.phoneCalls.size)
-        assertEquals(3, database.phoneCalls.filterPending.size)
+        assertEquals(3, database.events.size)
+        assertEquals(3, database.events.pending.size)
         verifyNotifyAccountError()
         verifyNotifyRecipientsError()
         verifyNotifyGoogleAccessError()
@@ -379,8 +378,8 @@ class PhoneCallProcessorTest : BaseTest() {
         /* try resend with disabled transport */
         processor.process()
 
-        assertEquals(3, database.phoneCalls.size)
-        assertEquals(3, database.phoneCalls.filterPending.size)
+        assertEquals(3, database.events.size)
+        assertEquals(3, database.events.pending.size)
         verifyNotifyAccountError()
         verifyNotifyRecipientsError()
         verifyNotifyGoogleAccessError()
@@ -390,8 +389,8 @@ class PhoneCallProcessorTest : BaseTest() {
 
         processor.process()
 
-        assertEquals(3, database.phoneCalls.size)
-        assertEquals(0, database.phoneCalls.filterPending.size)
+        assertEquals(3, database.events.size)
+        assertEquals(0, database.events.pending.size)
         verifyNotifyAccountError()
         verifyNotifyRecipientsError()
         verifyNotifyGoogleAccessError()

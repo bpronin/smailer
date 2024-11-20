@@ -10,10 +10,8 @@ import android.telephony.TelephonyManager
 import androidx.test.filters.SmallTest
 import androidx.test.rule.GrantPermissionRule
 import com.bopr.android.smailer.BaseTest
-import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PENDING
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
 import com.bopr.android.smailer.provider.telephony.PhoneCallReceiver
-import com.bopr.android.smailer.util.DEVICE_NAME
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.mock
@@ -77,9 +75,7 @@ class PhoneCallReceiverTest : BaseTest() {
         receiver.onReceive(context, calStateIntent(TelephonyManager.EXTRA_STATE_IDLE, "100"))
         verify(context).startService(argThat {
             getPhoneCallExtra()!!.run {
-                isIncoming && !isMissed && phone == "100"
-                        && location == null && endTime != null && acceptor == DEVICE_NAME
-                        && processState == STATE_PENDING
+                isIncoming && !isMissed && phone == "100" && endTime != null
             }
         })
     }
@@ -107,9 +103,7 @@ class PhoneCallReceiverTest : BaseTest() {
         receiver.onReceive(context, calStateIntent(TelephonyManager.EXTRA_STATE_IDLE, "100"))
         verify(context).startService(argThat {
             getPhoneCallExtra()!!.run {
-                isIncoming && !isMissed && phone == "100"
-                        && location == null && endTime != null && acceptor == DEVICE_NAME
-                        && processState == STATE_PENDING
+                isIncoming && !isMissed && phone == "100" && endTime != null
             }
         })
     }
@@ -127,9 +121,7 @@ class PhoneCallReceiverTest : BaseTest() {
         receiver.onReceive(context, calStateIntent(TelephonyManager.EXTRA_STATE_IDLE, "200"))
         verify(context).startService(argThat {
             getPhoneCallExtra()!!.run {
-                !isIncoming && !isMissed && phone == "200"
-                        && location == null && endTime != null && acceptor == DEVICE_NAME
-                        && processState == STATE_PENDING
+                !isIncoming && !isMissed && phone == "200" && endTime != null
             }
         })
     }
@@ -147,9 +139,7 @@ class PhoneCallReceiverTest : BaseTest() {
         receiver.onReceive(context, calStateIntent(TelephonyManager.EXTRA_STATE_IDLE, "300"))
         verify(context).startService(argThat {
             getPhoneCallExtra()!!.run {
-                isIncoming && isMissed && phone == "300"
-                        && location == null && endTime != null && acceptor == DEVICE_NAME
-                        && processState == STATE_PENDING
+                isIncoming && isMissed && phone == "300" && endTime != null
             }
         })
     }
@@ -166,37 +156,8 @@ class PhoneCallReceiverTest : BaseTest() {
         intent.putExtra(
             "pdus", arrayOf<Any>(
                 byteArrayOf(
-                    0,
-                    32,
-                    11,
-                    -111,
-                    81,
-                    85,
-                    37,
-                    81,
-                    85,
-                    -10,
-                    0,
-                    0,
-                    2,
-                    16,
-                    98,
-                    2,
-                    16,
-                    -109,
-                    41,
-                    12,
-                    -44,
-                    50,
-                    -98,
-                    14,
-                    106,
-                    -105,
-                    -25,
-                    -13,
-                    -16,
-                    -71,
-                    12
+                    0, 32, 11, -111, 81, 85, 37, 81, 85, -10, 0, 0, 2, 16, 98, 2, 16, -109,
+                    41, 12, -44, 50, -98, 14, 106, -105, -25, -13, -16, -71, 12
                 )
             )
         )
@@ -206,8 +167,7 @@ class PhoneCallReceiverTest : BaseTest() {
         verify(context).startService(argThat {
             getPhoneCallExtra()!!.run {
                 isSms && isIncoming && phone == "+15555215556" && text == "Text message"
-                        && location == null && endTime != null && acceptor == DEVICE_NAME
-                        && processState == STATE_PENDING
+                        && endTime != null
             }
         })
     }

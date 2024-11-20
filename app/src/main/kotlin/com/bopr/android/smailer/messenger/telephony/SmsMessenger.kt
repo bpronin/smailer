@@ -5,12 +5,15 @@ import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_TELEPHONY
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
+import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.PREF_SMS_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_SMS_MESSENGER_RECIPIENTS
 import com.bopr.android.smailer.messenger.Event
 import com.bopr.android.smailer.messenger.Event.Companion.FLAG_SENT_BY_SMS
 import com.bopr.android.smailer.messenger.Messenger
+import com.bopr.android.smailer.provider.battery.BatteryInfo
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
+import com.bopr.android.smailer.ui.MainActivity
 import com.bopr.android.smailer.ui.SmsSettingsActivity
 import com.bopr.android.smailer.util.Logger
 import com.bopr.android.smailer.util.Mockable
@@ -54,6 +57,7 @@ internal class SmsMessenger(private val context: Context) : Messenger {
 
                 context.sendSmsMessage(it, formatMessage(event))
                 event.processFlags += FLAG_SENT_BY_SMS
+                notifySendSuccess()
                 onSuccess()
             } catch (x: Exception) {
                 log.warn("Send failed", x)
@@ -69,7 +73,7 @@ internal class SmsMessenger(private val context: Context) : Messenger {
         val payload = event.payload
         return when (payload) {
             is PhoneCallInfo -> formatPhoneCallMessage(payload)
-//            is BatteryEvent ->  formatBatteryEventMessage(event.payload)
+            is BatteryInfo ->  formatBatteryEventMessage(payload)
             else -> throw IllegalArgumentException("No formatter for $payload")
         }
     }
@@ -88,6 +92,18 @@ internal class SmsMessenger(private val context: Context) : Messenger {
                 formatDuration(info.callDuration)
             )
         }
+    }
+
+    private fun formatBatteryEventMessage(info: BatteryInfo): String {
+        return info.text
+    }
+
+    private fun notifySendSuccess() {
+        if (settings.getBoolean(PREF_NOTIFY_SEND_SUCCESS))
+            notifications.notifyInfo(
+                title = context.getString(R.string.sms_successfully_send),
+                target = MainActivity::class
+            )
     }
 
     private fun notifySendError() {

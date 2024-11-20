@@ -5,6 +5,7 @@ import android.text.TextUtils.htmlEncode
 import androidx.annotation.StringRes
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
+import com.bopr.android.smailer.messenger.Event
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
 import com.bopr.android.smailer.util.escapePhoneNumber
 import com.bopr.android.smailer.util.phoneCallTypePrefix
@@ -22,13 +23,14 @@ import com.bopr.android.smailer.util.stripPhoneNumber
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 class PhoneCallMailFormatter(
-    private val context: Context,
+    context: Context,
+    event:Event,
     private val info: PhoneCallInfo
 ) : BaseMailFormatter(
     context,
     info.startTime,
-    info.processTime,
-    info.location
+    event.processTime,
+    event.location
 ) {
 
     private val serviceAccount = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)

@@ -18,7 +18,7 @@ import androidx.fragment.app.FragmentActivity
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSAGE_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
-import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_TRIGGERS
+import com.bopr.android.smailer.Settings.Companion.PREF_PHONE_PROCESS_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCATION
@@ -88,8 +88,8 @@ class PermissionsHelper(
 
         val requiredPermissions = mutableSetOf<String>()
         when (key) {
-            PREF_MAIL_TRIGGERS -> {
-                val triggers = settings.getMailTriggers()
+            PREF_PHONE_PROCESS_TRIGGERS -> {
+                val triggers = settings.getPhoneProcessTriggers()
                 if (triggers.contains(VAL_PREF_TRIGGER_IN_SMS)) {
                     requiredPermissions.add(RECEIVE_SMS)
                 }
@@ -136,7 +136,7 @@ class PermissionsHelper(
         log.debug("Denied: $deniedPermissions")
 
         if (deniedPermissions.isNotEmpty()) {
-            val triggers = settings.getMailTriggers()
+            val triggers = settings.getPhoneProcessTriggers()
             val content = settings.getStringSet(PREF_MAIL_MESSAGE_CONTENT)
 
             if (deniedPermissions.contains(RECEIVE_SMS)) {
@@ -162,7 +162,7 @@ class PermissionsHelper(
             }
 
             settings.update {
-                putStringSet(PREF_MAIL_TRIGGERS, triggers)
+                putStringSet(PREF_PHONE_PROCESS_TRIGGERS, triggers)
                 putStringSet(PREF_MAIL_MESSAGE_CONTENT, content)
             }
         }

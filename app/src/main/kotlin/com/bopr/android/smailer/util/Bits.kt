@@ -39,6 +39,10 @@ class Bits(private var value: Int = 0) : Parcelable {
 
     fun toInt() = value
 
+    fun isEmpty() = value == 0
+
+    fun isNotEmpty() = value != 0
+
     companion object {
 
         fun bit(index: Int) = Bits().set(index, true)

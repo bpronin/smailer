@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.bopr.android.smailer.R
+import com.bopr.android.smailer.messenger.Event
 import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_NUMBER_BLACKLISTED
 import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_TEXT_BLACKLISTED
 import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_TRIGGER_OFF
@@ -22,57 +23,69 @@ import com.bopr.android.smailer.util.*
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class HistoryDetailsDialogFragment(private val info: PhoneCallInfo) :
+class HistoryDetailsDialogFragment(private val event: Event) :
     BaseDialogFragment("log_details_dialog") {
 
     override fun onCreateDialogView(inflater: LayoutInflater, root: ViewGroup?): View {
-        return inflater.inflate(R.layout.dialog_history_details, root, false)
-            .apply {
-                findViewById<ImageView>(R.id.image_phone_call_type).setImageResource(
-                    phoneCallTypeImage(info)
-                )
-                findViewById<ImageView>(R.id.image_phone_call_direction).setImageResource(
-                    phoneCallDirectionImage(info)
-                )
-                findViewById<TextView>(R.id.text_title).text = info.phone
-                findViewById<TextView>(R.id.text_message).text = formatMessage(info)
-                findViewById<TextView>(R.id.text_time).text = formatTime(info.startTime)
-                findViewById<ImageView>(R.id.image_processing_result).setImageResource(
-                    messageStateImage(info.processState)
-                )
-                findViewById<TextView>(R.id.text_result).setText(messageStateText(info.processState))
-                findViewById<TextView>(R.id.text_type_title).setText(phoneCallTypeText(info))
-                findViewById<TextView>(R.id.text_recipient).text = info.acceptor
-                findViewById<TextView>(R.id.text_result_time).run {
-                    visibility = if (info.processState == STATE_PROCESSED) VISIBLE else GONE
-                    text = formatProcessTime(info)
-                }
-                findViewById<ImageView>(R.id.image_explain_result).run {
-                    visibility = if (info.processState == STATE_IGNORED) VISIBLE else GONE
-                    setOnClickListener {
-                        onExplainResult()
-                    }
+        return inflater.inflate(R.layout.dialog_history_details, root, false).apply {
+            findViewById<ImageView>(R.id.image_processing_result).setImageResource(
+                messageStateImage(event.processState)
+            )
+            findViewById<TextView>(R.id.text_result).setText(messageStateText(event.processState))
+            findViewById<TextView>(R.id.text_recipient).text = event.target
+            findViewById<TextView>(R.id.text_result_time).run {
+                visibility = if (event.processState == STATE_PROCESSED) VISIBLE else GONE
+                text = formatProcessTime(event)
+            }
+            findViewById<ImageView>(R.id.image_explain_result).run {
+                visibility = if (event.processState == STATE_IGNORED) VISIBLE else GONE
+                setOnClickListener {
+                    onExplainResult()
                 }
             }
+
+            (event.payload as? PhoneCallInfo)?.let {
+                findViewById<ImageView>(R.id.image_phone_call_type).setImageResource(
+                    phoneCallTypeImage(it)
+                )
+                findViewById<ImageView>(R.id.image_phone_call_direction).setImageResource(
+                    phoneCallDirectionImage(it)
+                )
+                findViewById<TextView>(R.id.text_title).text = it.phone
+                findViewById<TextView>(R.id.text_message).text = formatMessage(it)
+                findViewById<TextView>(R.id.text_time).text = formatTime(it.startTime)
+                findViewById<TextView>(R.id.text_type_title).setText(phoneCallTypeText(it))
+            }
+        }
     }
 
     private fun onExplainResult() {
         val msg = buildString {
-            if (FLAG_BYPASS_NUMBER_BLACKLISTED in info.bypassFlags) {
+            if (FLAG_BYPASS_NUMBER_BLACKLISTED in event.bypassFlags) {
                 append(getString(R.string.number_in_blacklist))
                 append("\n\n")
             }
-            if (FLAG_BYPASS_TEXT_BLACKLISTED in info.bypassFlags) {
+            if (FLAG_BYPASS_TEXT_BLACKLISTED in event.bypassFlags) {
                 append(getString(R.string.text_in_blacklist))
                 append("\n\n")
             }
-            if (FLAG_BYPASS_TRIGGER_OFF in info.bypassFlags) {
+            if (FLAG_BYPASS_TRIGGER_OFF in event.bypassFlags) {
                 append(getString(R.string.trigger_off))
                 append("\n\n")
             }
         }
 
         MessageDialog(getString(R.string.ignored), msg).show(this)
+    }
+
+    private fun formatProcessTime(event: Event): CharSequence? {
+        return event.processTime?.run {
+            getString(R.string.processed_at, formatTime(this))
+        }
+    }
+
+    private fun formatTime(time: Long): CharSequence {
+        return DateFormat.format(getString(R.string._time_pattern), time)
     }
 
     private fun formatMessage(info: PhoneCallInfo): CharSequence? {
@@ -92,15 +105,5 @@ class HistoryDetailsDialogFragment(private val info: PhoneCallInfo) :
                 getString(pattern, formatDuration(info.callDuration))
             }
         }
-    }
-
-    private fun formatProcessTime(info: PhoneCallInfo): CharSequence? {
-        return info.processTime?.run {
-            getString(R.string.processed_at, formatTime(this))
-        }
-    }
-
-    private fun formatTime(time: Long): CharSequence {
-        return DateFormat.format(getString(R.string._time_pattern), time)
     }
 }

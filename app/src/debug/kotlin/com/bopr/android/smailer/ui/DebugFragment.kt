@@ -30,9 +30,9 @@ import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSAGE_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
-import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_MESSAGE_LOCALE
 import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
+import com.bopr.android.smailer.Settings.Companion.PREF_PHONE_PROCESS_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_BOT_TOKEN
@@ -55,9 +55,9 @@ import com.bopr.android.smailer.data.Database.Companion.databaseName
 import com.bopr.android.smailer.external.Firebase
 import com.bopr.android.smailer.external.Firebase.Companion.FCM_REQUEST_DATA_SYNC
 import com.bopr.android.smailer.external.GoogleDrive
-import com.bopr.android.smailer.messenger.Event.Companion.FLAG_ACCEPTED
+import com.bopr.android.smailer.messenger.Event
+import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_NO_CONSUMERS
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
-import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PENDING
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.messenger.mail.GoogleMailSession
 import com.bopr.android.smailer.messenger.mail.MailMessage
@@ -219,15 +219,15 @@ class DebugFragment : PreferenceFragmentCompat() {
                 onPopulateHistory()
             },
             addPreference("Mark all as unread") {
-                database.commit { batch { phoneCalls.markAllAsRead(false) } }
+                database.commit { batch { events.markAllAsRead(false) } }
                 showComplete()
             },
             addPreference("Mark all as read") {
-                database.commit { batch { phoneCalls.markAllAsRead(true) } }
+                database.commit { batch { events.markAllAsRead(true) } }
                 showComplete()
             },
             addPreference("Clear calls log") {
-                database.commit { batch { phoneCalls.clear() } }
+                database.commit { batch { events.clear() } }
                 showComplete()
             },
             addPreference("Destroy database") {
@@ -404,7 +404,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                 setOf(developerEmail, "nowhere@mail.com")
             )
             putStringSet(
-                PREF_MAIL_TRIGGERS, mutableSetOf(
+                PREF_PHONE_PROCESS_TRIGGERS, mutableSetOf(
                     VAL_PREF_TRIGGER_IN_SMS,
                     VAL_PREF_TRIGGER_IN_CALLS,
                     VAL_PREF_TRIGGER_MISSED_CALLS,
@@ -481,19 +481,16 @@ class DebugFragment : PreferenceFragmentCompat() {
 
     private fun onProcessSingle() {
         val start = currentTimeMillis()
-        val info = PhoneCallInfo(
-            phone = "+1(234) 567-89-01",
-            isIncoming = true,
-            startTime = start,
-            endTime = start + 10000,
-            isMissed = false,
-            text = "Debug SMS message text",
-            location = null,
-            acceptor = DEVICE_NAME,
-            bypassFlags = FLAG_ACCEPTED,
-            isRead = false
+        requireContext().processPhoneCall(
+            PhoneCallInfo(
+                phone = "+1(234) 567-89-01",
+                isIncoming = true,
+                startTime = start,
+                endTime = start + 10000,
+                isMissed = false,
+                text = "Debug SMS message text"
+            )
         )
-        requireContext().processPhoneCall(info)
         showComplete()
     }
 
@@ -524,19 +521,16 @@ class DebugFragment : PreferenceFragmentCompat() {
 
     private fun onAddHistoryItem() {
         database.commit {
-            phoneCalls.add(
-                PhoneCallInfo(
-                    phone = "+79052345670",
-                    isIncoming = true,
-                    startTime = currentTimeMillis(),
-                    endTime = null,
-                    isMissed = false,
-                    text = "Debug message",
-                    location = null,
-                    processState = STATE_PENDING,
-                    acceptor = DEVICE_NAME,
-                    bypassFlags = FLAG_ACCEPTED,
-                    isRead = false
+            events.add(
+                Event(
+                    payload = PhoneCallInfo(
+                        phone = "+79052345670",
+                        isIncoming = true,
+                        startTime = currentTimeMillis(),
+                        endTime = null,
+                        isMissed = false,
+                        text = "Debug message"
+                    )
                 )
             )
         }
@@ -545,159 +539,134 @@ class DebugFragment : PreferenceFragmentCompat() {
 
     private fun onPopulateHistory() {
         var time = currentTimeMillis()
-        val recipient = DEVICE_NAME
         database.commit {
             batch {
-                phoneCalls.add(
-                    PhoneCallInfo(
-                        phone = "+79052345671",
-                        isIncoming = true,
-                        startTime = time,
-                        endTime = null,
-                        isMissed = false,
-                        text = "Debug message",
-                        location = null,
-                        processState = STATE_PENDING,
-                        acceptor = recipient,
-                        bypassFlags = FLAG_ACCEPTED,
-                        isRead = false
+                events.apply {
+                    add(
+                        Event(
+                            payload = PhoneCallInfo(
+                                phone = "+79052345671",
+                                isIncoming = true,
+                                startTime = time,
+                                endTime = null,
+                                isMissed = false,
+                                text = "Debug message"
+                            )
+                        )
                     )
-                )
-                phoneCalls.add(
-                    PhoneCallInfo(
-                        phone = "+79052345672",
-                        isIncoming = false,
-                        startTime = 1000.let { time += it; time },
-                        endTime = null,
-                        isMissed = false,
-                        text = "Debug message",
-                        location = null,
-                        processState = STATE_PROCESSED,
-                        acceptor = recipient,
-                        bypassFlags = FLAG_ACCEPTED,
-                        isRead = false
+                    add(
+                        Event(
+                            processState = STATE_PROCESSED,
+                            payload = PhoneCallInfo(
+                                phone = "+79052345672",
+                                isIncoming = false,
+                                startTime = 1000.let { time += it; time },
+                                endTime = null,
+                                isMissed = false,
+                                text = "Debug message"
+                            )
+                        )
                     )
-                )
-                phoneCalls.add(
-                    PhoneCallInfo(
-                        phone = "+79052345673",
-                        isIncoming = true,
-                        startTime = 1000.let { time += it; time },
-                        endTime = time + 10000,
-                        isMissed = false,
-                        text = null,
-                        location = null,
-                        processState = STATE_IGNORED,
-                        acceptor = recipient,
-                        bypassFlags = FLAG_ACCEPTED,
-                        isRead = false
+                    add(
+                        Event(
+                            processState = STATE_IGNORED,
+                            payload = PhoneCallInfo(
+                                phone = "+79052345673",
+                                isIncoming = true,
+                                startTime = 1000.let { time += it; time },
+                                endTime = time + 10000,
+                                isMissed = false,
+                                text = null
+                            )
+                        )
                     )
-                )
-                phoneCalls.add(
-                    PhoneCallInfo(
-                        phone = "+79052345674",
-                        isIncoming = false,
-                        startTime = 1000.let { time += it; time },
-                        endTime = time + 10000,
-                        isMissed = false,
-                        text = null,
-                        location = null,
-                        processState = STATE_PENDING,
-                        acceptor = recipient,
-                        bypassFlags = FLAG_ACCEPTED,
-                        isRead = false
+                    add(
+                        Event(
+                            isRead = true,
+                            payload = PhoneCallInfo(
+                                phone = "+79052345674",
+                                isIncoming = false,
+                                startTime = 1000.let { time += it; time },
+                                endTime = time + 10000,
+                                isMissed = false,
+                                text = null
+                            )
+                        )
                     )
-                )
-                phoneCalls.add(
-                    PhoneCallInfo(
-                        phone = "+79052345675",
-                        isIncoming = true,
-                        startTime = 1000.let { time += it; time },
-                        endTime = time + 10000,
-                        isMissed = true,
-                        text = null,
-                        location = null,
-                        processState = STATE_PENDING,
-                        acceptor = recipient,
-                        bypassFlags = FLAG_ACCEPTED,
-                        isRead = false
+                    add(
+                        Event(
+                            bypassFlags = FLAG_BYPASS_NO_CONSUMERS,
+                            payload = PhoneCallInfo(
+                                phone = "+79052345675",
+                                isIncoming = true,
+                                startTime = 1000.let { time += it; time },
+                                endTime = time + 10000,
+                                isMissed = true,
+                                text = null
+                            )
+                        )
                     )
-                )
-                phoneCalls.add(
-                    PhoneCallInfo(
-                        phone = "+79052345671",
-                        isIncoming = true,
-                        startTime = 1000.let { time += it; time },
-                        endTime = null,
-                        isMissed = false,
-                        text = "Debug message",
-                        location = null,
-                        processState = STATE_PENDING,
-                        acceptor = recipient,
-                        bypassFlags = FLAG_ACCEPTED,
-                        isRead = false
+                    add(
+                        Event(
+                            payload = PhoneCallInfo(
+                                phone = "+79052345671",
+                                isIncoming = true,
+                                startTime = 1000.let { time += it; time },
+                                endTime = null,
+                                isMissed = false,
+                                text = "Debug message"
+                            )
+                        )
                     )
-                )
-                phoneCalls.add(
-                    PhoneCallInfo(
-                        phone = "+79052345672",
-                        isIncoming = false,
-                        startTime = 1000.let { time += it; time },
-                        endTime = null,
-                        isMissed = false,
-                        text = "Debug message",
-                        location = null,
-                        processState = STATE_PENDING,
-                        acceptor = recipient,
-                        bypassFlags = FLAG_ACCEPTED,
-                        isRead = false
+                    add(
+                        Event(
+                            payload = PhoneCallInfo(
+                                phone = "+79052345672",
+                                isIncoming = false,
+                                startTime = 1000.let { time += it; time },
+                                endTime = null,
+                                isMissed = false,
+                                text = "Debug message"
+                            )
+                        )
                     )
-                )
-                phoneCalls.add(
-                    PhoneCallInfo(
-                        phone = "+79052345673",
-                        isIncoming = true,
-                        startTime = 1000.let { time += it; time },
-                        endTime = time + 10000,
-                        isMissed = false,
-                        text = null,
-                        location = null,
-                        processState = STATE_PENDING,
-                        acceptor = recipient,
-                        bypassFlags = FLAG_ACCEPTED,
-                        isRead = false
+                    add(
+                        Event(
+                            payload = PhoneCallInfo(
+                                phone = "+79052345673",
+                                isIncoming = true,
+                                startTime = 1000.let { time += it; time },
+                                endTime = time + 10000,
+                                isMissed = false,
+                                text = null
+                            )
+                        )
                     )
-                )
-                phoneCalls.add(
-                    PhoneCallInfo(
-                        phone = "+79052345674",
-                        isIncoming = false,
-                        startTime = 1000.let { time += it; time },
-                        endTime = time + 10000,
-                        isMissed = false,
-                        text = null,
-                        location = null,
-                        processState = STATE_PENDING,
-                        acceptor = recipient,
-                        bypassFlags = FLAG_ACCEPTED,
-                        isRead = false
+                    add(
+                        Event(
+                            payload = PhoneCallInfo(
+                                phone = "+79052345674",
+                                isIncoming = false,
+                                startTime = 1000.let { time += it; time },
+                                endTime = time + 10000,
+                                isMissed = false,
+                                text = null
+                            )
+                        )
                     )
-                )
-                phoneCalls.add(
-                    PhoneCallInfo(
-                        phone = "+79052345675",
-                        isIncoming = true,
-                        startTime = 1000.let { time += it; time },
-                        endTime = time + 10000,
-                        isMissed = true,
-                        text = null,
-                        location = null,
-                        processState = STATE_PENDING,
-                        acceptor = recipient,
-                        bypassFlags = FLAG_ACCEPTED,
-                        isRead = false
+                    add(
+                        Event(
+                            payload = PhoneCallInfo(
+                                phone = "+79052345675",
+                                isIncoming = true,
+                                startTime = 1000.let { time += it; time },
+                                endTime = time + 10000,
+                                isMissed = true,
+                                text = null
+                            )
+                        )
                     )
-                )
+                }
             }
         }
         showComplete()

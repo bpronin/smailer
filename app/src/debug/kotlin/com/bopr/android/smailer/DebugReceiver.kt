@@ -8,7 +8,6 @@ import com.bopr.android.smailer.control.MailControlProcessor
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
 import com.bopr.android.smailer.provider.telephony.PhoneCallProcessor
 import com.bopr.android.smailer.provider.telephony.PhoneCallProcessor.Companion.processPhoneCall
-import com.bopr.android.smailer.util.DEVICE_NAME
 import com.bopr.android.smailer.util.runInBackground
 import java.lang.System.currentTimeMillis
 
@@ -27,8 +26,7 @@ class DebugReceiver : BroadcastReceiver() {
                         phone = "ADB DEBUG",
                         isIncoming = true,
                         startTime = currentTimeMillis(),
-                        text = "Message text",
-                        acceptor = DEVICE_NAME
+                        text = "Message text"
                     )
                 )
             }

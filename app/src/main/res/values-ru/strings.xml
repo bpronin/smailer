@@ -54,7 +54,9 @@
     <string name="email_message_language">Язык почтового сообщения</string>
     <string name="email_message_summary">Настройки почтового сообщения</string>
     <string name="email_settings">Email settings</string>
-    <string name="email_successfully_send">Почта успешно отправлена.</string>
+    <string name="email_successfully_send">Почта успешно отправлена</string>
+    <string name="telegram_successfully_send">Сообщение Telegram успешно отправлено</string>
+    <string name="sms_successfully_send">SMS успешно отправлено</string>
     <string name="enabled">Включено</string>
     <string name="enter_phone_number">Укажите номер телефона.</string>
     <string name="enter_phone_number_or_wildcard">Укажите номер телефона. Допустимо использование символа * для пропуска группы знаков</string>

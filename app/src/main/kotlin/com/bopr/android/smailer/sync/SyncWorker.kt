@@ -37,8 +37,8 @@ internal class SyncWorker(
         if (settings.getBoolean(PREF_SYNC_ENABLED)) {
             accountHelper.getGoogleAccount(settings.getString(PREF_MAIL_SENDER_ACCOUNT))
                 ?.let { account ->
-                    Database(applicationContext).use { database ->
-                        Synchronizer(applicationContext, account, database).run {
+                    Database(applicationContext).useIt {
+                        Synchronizer(applicationContext, account, this).run {
                             val mode = inputData.getInt(SYNC_OPTIONS, SYNC_NORMAL)
                             if (sync(mode)) {
                                 Firebase(applicationContext).send(FCM_REQUEST_DATA_SYNC)

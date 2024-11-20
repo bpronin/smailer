@@ -45,8 +45,8 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        versionCode = 104
-        versionName = "1.10.5"
+        versionCode = 105
+        versionName = "1.11.0"
         applicationId = "com.bopr.android.smailer"
         minSdk = 21
         /* check action bar not overlapping content when migrating to 35

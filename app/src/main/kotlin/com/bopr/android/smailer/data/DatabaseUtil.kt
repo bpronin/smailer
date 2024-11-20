@@ -5,8 +5,10 @@ package com.bopr.android.smailer.data
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-import com.bopr.android.smailer.util.strings
-import com.bopr.android.smailer.util.useIt
+import android.database.sqlite.SQLiteDatabase.CONFLICT_REPLACE
+import android.database.sqlite.SQLiteOpenHelper
+import com.bopr.android.smailer.util.Logger
+import com.bopr.android.smailer.util.stringArrayOf
 
 /**
  * Database utilities.
@@ -14,23 +16,61 @@ import com.bopr.android.smailer.util.useIt
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 
-val COUNT_SELECTION = strings("COUNT(*)")
+private val log = Logger("Database")
+
+val COUNT_SELECTION = stringArrayOf("COUNT(*)")
+
+fun <R> SQLiteOpenHelper.read(action: SQLiteDatabase.() -> R): R = readableDatabase.action()
+
+fun <R> SQLiteOpenHelper.write(action: SQLiteDatabase.() -> R): R = writableDatabase.action()
+
+fun SQLiteDatabase.replace(table: String, values: ContentValues): Boolean {
+    log.debug("Insert into [$table]").verb(values)
+
+    val result = insertWithOnConflict(table, null, values, CONFLICT_REPLACE) != -1L
+
+    if (!result) log.debug("Replaced")
+
+    return result
+}
 
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-inline fun SQLiteDatabase.query(
-    table: String, projection: Array<out String>? = null, selection: String? = null,
-    selectionArgs: Array<out String>? = null, groupBy: String? = null,
-    having: String? = null, order: String? = null, limit: String? = null
+fun SQLiteDatabase.update(
+    table: String,
+    values: ContentValues,
+    where: String? = null,
+    whereArgs: Array<out String>? = null
+): Boolean {
+    log.debug("Update [$table]").verb(values)
+
+    return update(table, values, where, whereArgs) != 0
+}
+
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
+fun SQLiteDatabase.query(
+    table: String,
+    projection: Array<out String>? = null,
+    selection: String? = null,
+    selectionArgs: Array<out String>? = null,
+    groupBy: String? = null,
+    having: String? = null,
+    order: String? = null,
+    limit: String? = null
 ): Cursor {
+    log.debug("Query [$table]")
+
     return query(table, projection, selection, selectionArgs, groupBy, having, order, limit)
 }
 
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-inline fun SQLiteDatabase.update(
-    table: String, values: ContentValues, where: String? = null,
-    whereArgs: Array<out String>? = null
-): Int {
-    return update(table, values, where, whereArgs)
+fun SQLiteDatabase.delete(
+    table: String,
+    selection: String? = null,
+    selectionArgs: Array<out String>? = null
+) {
+    log.debug("Delete from [$table]")
+
+    delete(table, selection, selectionArgs)
 }
 
 inline fun <T> SQLiteDatabase.batch(action: SQLiteDatabase.() -> T): T {
@@ -45,7 +85,11 @@ inline fun <T> SQLiteDatabase.batch(action: SQLiteDatabase.() -> T): T {
 }
 
 inline fun SQLiteDatabase.getTables(): Set<String> {
-    return query("sqlite_master", strings("name"), "type='table' AND name<>'android_metadata'")
+    return query(
+        "sqlite_master",
+        stringArrayOf("name"),
+        "type='table' AND name<>'android_metadata'"
+    )
         .toSet { getString(0) }
 }
 
@@ -73,9 +117,9 @@ inline fun SQLiteDatabase.copyTable(
     src: String, dest: String,
     transform: Cursor.(String) -> String? = { getStringIfExists(it) }
 ) {
-    val columns = query(table = dest, limit = "1").useIt { columnNames }
+    val columns = query(table = dest, limit = "1").use { it.columnNames }
 
-    query(src).useAll {
+    query(src).forEach {
         val values = ContentValues()
         for (column in columns) {
             values.put(column, transform(column))
@@ -84,7 +128,9 @@ inline fun SQLiteDatabase.copyTable(
     }
 }
 
-inline fun SQLiteDatabase.dropTable(table: String) {
+fun SQLiteDatabase.dropTable(table: String) {
+    log.debug("Drop [$table]")
+
     execSQL("DROP TABLE IF EXISTS $table")
 }
 
@@ -92,7 +138,7 @@ inline fun SQLiteDatabase.count(
     table: String, selection: String? = null,
     selectionArgs: Array<out String>? = null
 ): Long {
-    return query(table, COUNT_SELECTION, selection, selectionArgs).useFirst { getLong(0) }
+    return query(table, COUNT_SELECTION, selection, selectionArgs).withFirst { getLong(0) }
 }
 
 inline fun Cursor.getString(columnName: String): String {
@@ -147,21 +193,21 @@ inline fun Cursor.getStringIfExists(columnName: String): String? {
     return if (columnIndex != -1) getString(columnIndex) else null
 }
 
-inline fun <T> Cursor.useFirst(action: Cursor.() -> T): T {
+inline fun <T> Cursor.withFirst(action: Cursor.() -> T): T {
     return use {
         moveToFirst()
         if (!isAfterLast) action() else throw NoSuchElementException("Row set is empty.")
     }
 }
 
-inline fun <T> Cursor.useLast(action: Cursor.() -> T): T {
+inline fun <T> Cursor.withLast(action: Cursor.() -> T): T {
     return use {
         moveToLast()
         if (!isAfterLast) action() else throw NoSuchElementException("Row set is empty.")
     }
 }
 
-inline fun Cursor.useAll(action: Cursor.() -> Unit) {
+inline fun Cursor.forEach(action: Cursor.() -> Unit) {
     use {
         moveToFirst()
         while (!isAfterLast) {
@@ -171,11 +217,24 @@ inline fun Cursor.useAll(action: Cursor.() -> Unit) {
     }
 }
 
+//fun Cursor.iterator(): Iterator<Cursor> {
+//    val me = this
+//    moveToFirst()
+//    return object : Iterator<Cursor> {
+//
+//        override fun hasNext() = !isAfterLast
+//
+//        override fun next(): Cursor {
+//            moveToNext()
+//            return me
+//        }
+//
+//    }
+//}
+
 inline fun <T> Cursor.toSet(get: Cursor.() -> T): Set<T> {
     val set = mutableSetOf<T>()
-    useAll {
-        set.add(get())
-    }
+    forEach { set.add(get()) }
     return set
 }
 

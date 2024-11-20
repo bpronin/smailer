@@ -11,22 +11,21 @@ import java.lang.System.*
 
 @Parcelize
 data class Event(
-    val createTime: Long = currentTimeMillis(),
-    val acceptor: String = DEVICE_NAME,
-    var bypassFlags: Bits = FLAG_ACCEPTED,
+    val timestamp: Long = currentTimeMillis(),
+    val target: String = DEVICE_NAME,
+    var bypassFlags: Bits = Bits(),
     @ProcessState var processState: Int = STATE_PENDING,
-    var processFlags: Bits = FLAG_UNPROCESSED,
+    var processFlags: Bits = Bits(),
     var processTime: Long? = null,
     var location: GeoLocation? = null,
     var isRead: Boolean = false,
-    var payload: Parcelable? = null
+    val payload: EventPayload
 ) : Parcelable {
 
     companion object {
 
         /* Bypass flags. Explain why an event was not processed. */
 
-        val FLAG_ACCEPTED = Bits()
         val FLAG_BYPASS_NO_CONSUMERS = bit(0)
         val FLAG_BYPASS_NUMBER_BLACKLISTED = bit(1)
         val FLAG_BYPASS_TEXT_BLACKLISTED = bit(2)
@@ -34,7 +33,6 @@ data class Event(
 
         /* Processing lags. Explains how exactly an event was processed. */
 
-        val FLAG_UNPROCESSED = Bits()
         val FLAG_SENT_BY_MAIL = bit(0)
         val FLAG_SENT_BY_TELEGRAM = bit(1)
         val FLAG_SENT_BY_SMS = bit(2)

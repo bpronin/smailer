@@ -3,11 +3,14 @@ package com.bopr.android.smailer.sync
 import android.accounts.Account
 import android.content.Context
 import com.bopr.android.smailer.data.Database
-import com.bopr.android.smailer.util.GeoLocation.Companion.fromCoordinates
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
 import com.bopr.android.smailer.external.GoogleDrive
+import com.bopr.android.smailer.messenger.Event
+import com.bopr.android.smailer.messenger.EventPayload
+import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
 import com.bopr.android.smailer.util.Bits
+import com.bopr.android.smailer.util.GeoLocation.Companion.fromCoordinates
 import com.bopr.android.smailer.util.Logger
+import kotlinx.parcelize.Parcelize
 import java.io.IOException
 
 /**
@@ -15,12 +18,14 @@ import java.io.IOException
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class Synchronizer(context: Context,
-                            account: Account,
-                            private val database: Database,
-                            private val drive: GoogleDrive = GoogleDrive(context, account),
-                            private val metaFile: String = "meta.json",
-                            private val dataFile: String = "data.json") {
+internal class Synchronizer(
+    context: Context,
+    account: Account,
+    private val database: Database,
+    private val drive: GoogleDrive = GoogleDrive(context, account),
+    private val metaFile: String = "meta.json",
+    private val dataFile: String = "data.json"
+) {
 
     /**
      * Synchronizes database with google drive.
@@ -34,10 +39,12 @@ internal class Synchronizer(context: Context,
             SYNC_FORCE_DOWNLOAD -> {
                 download()
             }
+
             SYNC_FORCE_UPLOAD -> {
                 upload()
                 return true
             }
+
             else -> {
                 val databaseTime = database.updateTime
                 val meta = drive.download(metaFile, SyncMetaData::class)
@@ -46,9 +53,11 @@ internal class Synchronizer(context: Context,
                         upload()
                         return true
                     }
+
                     meta.time != databaseTime -> {
                         download()
                     }
+
                     else -> {
                         log.debug("Data is up to date")
                     }
@@ -89,11 +98,13 @@ internal class Synchronizer(context: Context,
     private fun getLocalData(): SyncData {
         return database.run {
             SyncData(
-                    phoneBlacklist = phoneBlacklist,
-                    phoneWhitelist = phoneWhitelist,
-                    textBlacklist = textBlacklist,
-                    textWhitelist = textWhitelist,
-                    phoneCalls = phoneCalls.map(::phoneCallToData)
+                phoneBlacklist = phoneBlacklist,
+                phoneWhitelist = phoneWhitelist,
+                textBlacklist = textBlacklist,
+                textWhitelist = textWhitelist,
+                events = events.map(::eventToData),
+
+//                    phoneCalls = phoneCalls.map(::phoneCallToData)
             )
         }
     }
@@ -101,7 +112,8 @@ internal class Synchronizer(context: Context,
     private fun putLocalData(data: SyncData) {
         database.commit(false) {
             batch {
-                phoneCalls.replaceAll(data.phoneCalls.map(::dataToPhoneCall))
+                events.replaceAll(data.events.map(::dataToEvent))
+//                phoneCalls.replaceAll(data.phoneCalls.map(::dataToPhoneCall))
                 phoneBlacklist.replaceAll(data.phoneBlacklist)
                 phoneWhitelist.replaceAll(data.phoneWhitelist)
                 textBlacklist.replaceAll(data.textBlacklist)
@@ -110,42 +122,60 @@ internal class Synchronizer(context: Context,
         }
     }
 
+    // TODO: read and write raw records directly from database
+    //  do not convert into Payload objects
+
+    private fun eventToData(event: Event): SyncData.Event {
+        return SyncData.Event(
+            timestamp = event.timestamp,
+            target = event.target,
+            latitude = event.location?.latitude,
+            longitude = event.location?.longitude,
+            processState = event.processState,
+            bypassFlags = event.bypassFlags.toInt(),
+            processFlags = event.processFlags.toInt(),
+            processTime = event.processTime,
+            isRead = event.isRead
+        )
+    }
+
+    @Suppress("PARCELABLE_PRIMARY_CONSTRUCTOR_IS_EMPTY")
+    @Parcelize
+    class DummyPayload() : EventPayload
+
+    private fun dataToEvent(data: SyncData.Event): Event {
+        return Event(
+            timestamp = data.timestamp,
+            target = data.target,
+            location = fromCoordinates(data.latitude, data.longitude),
+            processState = data.processState,
+            bypassFlags = Bits(data.bypassFlags),
+            processFlags = Bits(data.processFlags),
+            processTime = data.processTime,
+            isRead = data.isRead,
+            payload = DummyPayload()
+        )
+    }
+
     private fun phoneCallToData(info: PhoneCallInfo): SyncData.PhoneCall {
         return SyncData.PhoneCall(
-                incoming = info.isIncoming,
-                missed = info.isMissed,
-                phone = info.phone,
-                recipient = info.acceptor,
-                startTime = info.startTime,
-                endTime = info.endTime,
-                text = info.text,
-
-                latitude = info.location?.latitude,
-                longitude = info.location?.longitude,
-                state = info.processState,
-                bypassFlags = info.bypassFlags.toInt(),
-                processFlags = info.processFlags.toInt(),
-                processTime = info.processTime,
-                isRead = info.isRead
+            incoming = info.isIncoming,
+            missed = info.isMissed,
+            phone = info.phone,
+            startTime = info.startTime,
+            endTime = info.endTime,
+            text = info.text
         )
     }
 
     private fun dataToPhoneCall(data: SyncData.PhoneCall): PhoneCallInfo {
         return PhoneCallInfo(
-                phone = data.phone,
-                isIncoming = data.incoming,
-                startTime = data.startTime,
-                endTime = data.endTime,
-                isMissed = data.missed,
-                text = data.text,
-
-                location = fromCoordinates(data.latitude, data.longitude),
-                processState = data.state,
-                acceptor = data.recipient,
-                isRead = data.isRead,
-                bypassFlags = Bits(data.bypassFlags),
-                processFlags = Bits(data.processFlags),
-                processTime = data.processTime
+            phone = data.phone,
+            isIncoming = data.incoming,
+            startTime = data.startTime,
+            endTime = data.endTime,
+            isMissed = data.missed,
+            text = data.text
         )
     }
 

@@ -27,7 +27,7 @@ class Firebase(val context: Context) {
             subscribedTopic = formatTopic(account).also {
                 firebaseMessaging.subscribeToTopic(it)
 
-                log.debug("Subscribed to: $it")
+                log.debug("Subscribed to topic").verb(it)
             }
         } ?: log.debug("No account")
     }
@@ -36,7 +36,8 @@ class Firebase(val context: Context) {
         subscribedTopic?.run {
             firebaseMessaging.unsubscribeFromTopic(this)
 
-            log.debug("Unsubscribed from: $this")
+            log.debug("Unsubscribed from topic").verb(this)
+
             subscribedTopic = null
         }
     }
@@ -55,14 +56,14 @@ class Firebase(val context: Context) {
                 val request = FirebaseRequest("https://fcm.googleapis.com/fcm/send", payload)
                 requestQueue.add(request)
 
-                log.debug("Sent message: $payload")
+                log.debug("Sent message").verb(payload)
             }
         } ?: log.warn("No account")
     }
 
     internal fun requestToken(onComplete: (String) -> Unit) {
         firebaseMessaging.token.addOnCompleteListener {
-            log.debug("Token received")
+            log.debug("Token received").verb(it.result)
 
             onComplete(it.result)
         }
@@ -103,11 +104,13 @@ class Firebase(val context: Context) {
         onError: (VolleyError) -> Unit = {}
     ) : JsonObjectRequest(Method.POST, url, payload,
         { response ->
-            log.debug("Response: $response")
+            log.debug("Response").verb(response)
+
             onComplete(response)
         },
         { error ->
-            log.warn("Request failed: ", error)
+            log.warn("Request failed", error)
+
             onError(error)
         }) {
 

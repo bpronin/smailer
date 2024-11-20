@@ -19,15 +19,14 @@ import com.bopr.android.smailer.control.ControlCommand.Action.REMOVE_TEXT_FROM_W
 import com.bopr.android.smailer.control.ControlCommand.Action.SEND_SMS_TO_CALLER
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.StringDataset
+import com.bopr.android.smailer.ui.MainActivity
 import com.bopr.android.smailer.ui.PhoneBlacklistFilterActivity
 import com.bopr.android.smailer.ui.PhoneWhitelistFilterActivity
 import com.bopr.android.smailer.ui.TextBlacklistFilterActivity
 import com.bopr.android.smailer.ui.TextWhitelistFilterActivity
-import com.bopr.android.smailer.ui.MainActivity
+import com.bopr.android.smailer.util.Logger
 import com.bopr.android.smailer.util.checkPermission
 import com.bopr.android.smailer.util.sendSmsMessage
-import com.bopr.android.smailer.util.useIt
-import com.bopr.android.smailer.util.Logger
 import kotlin.reflect.KClass
 
 /**

@@ -56,6 +56,8 @@
     <string name="email_message_summary">Email message settings</string>
     <string name="email_settings">Email settings</string>
     <string name="email_successfully_send">Email successfully sent</string>
+    <string name="telegram_successfully_send">Telegram message successfully sent</string>
+    <string name="sms_successfully_send">SMS successfully sent</string>
     <string name="enabled">Enabled</string>
     <string name="enter_phone_number">Enter phone number.</string>
     <string name="enter_phone_number_or_wildcard">Enter phone number. You also may use * as a wildcard.</string>
