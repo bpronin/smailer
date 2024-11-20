@@ -9,12 +9,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_IGNORED
-import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_PROCESSED
+import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_NUMBER_BLACKLISTED
+import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_TEXT_BLACKLISTED
+import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_TRIGGER_OFF
+import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
+import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.FLAG_BYPASS_NUMBER_BLACKLISTED
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.FLAG_BYPASS_TEXT_BLACKLISTED
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.FLAG_BYPASS_TRIGGER_OFF
 import com.bopr.android.smailer.util.*
 
 /**

@@ -24,29 +24,11 @@ class Database(private val context: Context) : Closeable {
     private val helper: DbHelper = DbHelper(context)
     private val modifiedTables = mutableSetOf<String>()
 
-    /**
-     * Phone calls dataset.
-     */
+    val events = EventDataset(helper, modifiedTables)
     val phoneCalls = PhoneCallDataset(helper, modifiedTables)
-
-    /**
-     * Phone numbers blacklist.
-     */
     val phoneBlacklist = StringDataset(TABLE_PHONE_BLACKLIST, helper, modifiedTables)
-
-    /**
-     * Phone numbers whitelist.
-     */
     val phoneWhitelist = StringDataset(TABLE_PHONE_WHITELIST, helper, modifiedTables)
-
-    /**
-     * SMS text blacklist.
-     */
     val textBlacklist = StringDataset(TABLE_TEXT_BLACKLIST, helper, modifiedTables)
-
-    /**
-     * SMS text whitelist.
-     */
     val textWhitelist = StringDataset(TABLE_TEXT_WHITELIST, helper, modifiedTables)
 
     val phoneCallsFilters = mapOf(
@@ -121,6 +103,7 @@ class Database(private val context: Context) : Closeable {
         override fun onCreate(db: SQLiteDatabase) {
             db.batch {
                 execSQL(SQL_CREATE_SYSTEM)
+                execSQL(SQL_CREATE_EVENTS)
                 execSQL(SQL_CREATE_PHONE_CALLS)
                 execSQL(SQL_CREATE_LIST(TABLE_PHONE_BLACKLIST))
                 execSQL(SQL_CREATE_LIST(TABLE_PHONE_WHITELIST))
@@ -141,6 +124,7 @@ class Database(private val context: Context) : Closeable {
             if (DB_VERSION > oldVersion) {
                 db.batch {
                     alterTable(TABLE_SYSTEM, SQL_CREATE_SYSTEM)
+                    alterTable(TABLE_EVENTS, SQL_CREATE_EVENTS)
                     alterTable(TABLE_PHONE_CALLS, SQL_CREATE_PHONE_CALLS)
                     alterTable(TABLE_PHONE_BLACKLIST, SQL_CREATE_LIST(TABLE_PHONE_BLACKLIST))
                     alterTable(TABLE_PHONE_WHITELIST, SQL_CREATE_LIST(TABLE_PHONE_WHITELIST))
@@ -159,7 +143,7 @@ class Database(private val context: Context) : Closeable {
 
         var databaseName = "smailer.sqlite"
 
-        private const val DB_VERSION = 9
+        private const val DB_VERSION = 10
 
         const val COLUMN_ID = "_id"
         const val COLUMN_IS_INCOMING = "is_incoming"
@@ -169,7 +153,7 @@ class Database(private val context: Context) : Closeable {
         const val COLUMN_LONGITUDE = "longitude"
         const val COLUMN_TEXT = "message_text"
         const val COLUMN_VALUE = "value"
-        const val COLUMN_DETAILS = "details"
+        const val COLUMN_CREATE_TIME = "create_time"
         const val COLUMN_START_TIME = "start_time"
         const val COLUMN_END_TIME = "end_time"
         const val COLUMN_STATE = "state"
@@ -178,11 +162,14 @@ class Database(private val context: Context) : Closeable {
         const val COLUMN_UPDATE_TIME = "last_update_time"
         const val COLUMN_READ = "message_read"
         const val COLUMN_ACCEPTOR = "recipient"
+        const val COLUMN_BYPASS = "bypass"
+        const val COLUMN_PROCESS = "process"
 
         private const val ACTION_DATABASE_CHANGED = "database_changed"
         private const val EXTRA_TABLES = "tables"
 
         private const val TABLE_SYSTEM = "system_data"
+        const val TABLE_EVENTS = "events"
         const val TABLE_PHONE_CALLS = "phone_events"
         const val TABLE_PHONE_BLACKLIST = "phone_blacklist"
         const val TABLE_PHONE_WHITELIST = "phone_whitelist"
@@ -208,8 +195,20 @@ class Database(private val context: Context) : Closeable {
                 COLUMN_PROCESS_STATUS + " INTEGER, " +
                 COLUMN_PROCESS_TIME + " INTEGER, " +
                 COLUMN_READ + " INTEGER NOT NULL DEFAULT(0), " +
-                COLUMN_DETAILS + " TEXT(256), " +
                 "PRIMARY KEY (" + COLUMN_START_TIME + ", " + COLUMN_ACCEPTOR + ")" +
+                ")"
+
+        private const val SQL_CREATE_EVENTS = "CREATE TABLE " + TABLE_EVENTS + " (" +
+                COLUMN_CREATE_TIME + " INTEGER NOT NULL, " +
+                COLUMN_LATITUDE + " REAL, " +
+                COLUMN_LONGITUDE + " REAL, " +
+                COLUMN_ACCEPTOR + " TEXT(25) NOT NULL," +
+                COLUMN_STATE + " INTEGER, " +
+                COLUMN_BYPASS + " INTEGER, " +
+                COLUMN_PROCESS + " INTEGER, " +
+                COLUMN_PROCESS_TIME + " INTEGER, " +
+                COLUMN_READ + " INTEGER NOT NULL DEFAULT(0), " +
+                "PRIMARY KEY (" + COLUMN_CREATE_TIME + ", " + COLUMN_ACCEPTOR + ")" +
                 ")"
 
         @Suppress("FunctionName")

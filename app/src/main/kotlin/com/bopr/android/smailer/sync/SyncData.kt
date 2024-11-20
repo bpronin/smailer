@@ -1,8 +1,9 @@
 package com.bopr.android.smailer.sync
 
-import com.bopr.android.smailer.messenger.ProcessingState
-import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_PENDING
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.FLAG_BYPASS_NONE
+import com.bopr.android.smailer.messenger.Event.Companion.FLAG_ACCEPTED
+import com.bopr.android.smailer.messenger.Event.Companion.FLAG_UNPROCESSED
+import com.bopr.android.smailer.messenger.ProcessState
+import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PENDING
 import com.google.api.client.util.Key
 
 /**
@@ -24,12 +25,12 @@ data class SyncData(
             @Key("start_time") var startTime: Long = 0,
             @Key("end_time") var endTime: Long? = null,
             @Key("message_text") var text: String? = null,
-            @Key("details") var details: String? = null,
             @Key("latitude") var latitude: Double? = null,
             @Key("longitude") var longitude: Double? = null,
-            @Key("state") @ProcessingState var state: Int = STATE_PENDING,
-            @Key("process_status") var processStatus: Int = FLAG_BYPASS_NONE.toInt(),
+            @Key("state") @ProcessState var state: Int = STATE_PENDING,
             @Key("process_time") var processTime: Long? = null,
+            @Key("bypass_flags") var bypassFlags: Int = FLAG_ACCEPTED.toInt(),
+            @Key("process_flags") var processFlags: Int = FLAG_UNPROCESSED.toInt(),
             @Key("is_read") var isRead: Boolean = false
     )
 }

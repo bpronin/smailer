@@ -1,7 +1,6 @@
 package com.bopr.android.smailer.provider.telephony
 
 import android.content.Context
-import androidx.work.BackoffPolicy.EXPONENTIAL
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.bopr.android.smailer.NotificationsHelper
@@ -9,19 +8,19 @@ import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.data.Database
-import com.bopr.android.smailer.messenger.Message
+import com.bopr.android.smailer.messenger.Event
+import com.bopr.android.smailer.messenger.Event.Companion.FLAG_ACCEPTED
+import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_NO_CONSUMERS
 import com.bopr.android.smailer.messenger.MessageDispatcher
-import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_IGNORED
-import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_PENDING
-import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_PROCESSED
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.FLAG_BYPASS_NONE
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.FLAG_BYPASS_NO_CONSUMERS
+import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
+import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PENDING
+import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PROCESSED
+import com.bopr.android.smailer.provider.Processor
 import com.bopr.android.smailer.ui.MainActivity
 import com.bopr.android.smailer.util.Bits
 import com.bopr.android.smailer.util.GeoLocation.Companion.getGeoLocation
 import com.bopr.android.smailer.util.Logger
 import java.lang.System.currentTimeMillis
-import java.util.concurrent.TimeUnit.MINUTES
 
 /**
  * Precesses phone events.
@@ -32,21 +31,21 @@ class PhoneCallProcessor(
     private val context: Context,
     private val database: Database = Database(context),
     private val notifications: NotificationsHelper = NotificationsHelper(context),
-) {
+) : Processor<PhoneCallInfo> {
 
     private val settings = Settings(context)
     private val dispatcher = MessageDispatcher(context)
 
-    fun addRecord(info: PhoneCallInfo) {
+    override fun add(info: PhoneCallInfo) {
         log.debug("Add record").verb(info)
 
         putRecord(info.apply {
             bypassFlags = detectBypassFlags(this)
-            if (bypassFlags != FLAG_BYPASS_NONE) processState = STATE_IGNORED
+            if (bypassFlags != FLAG_ACCEPTED) processState = STATE_IGNORED
         })
     }
 
-    fun processRecords(): Int {
+    override fun process(): Int {
         val records = database.use { it.phoneCalls.filterPending }
         if (records.isEmpty()) {
             log.debug("No pending records")
@@ -65,12 +64,12 @@ class PhoneCallProcessor(
                     location = context.getGeoLocation()
                 }
 
-                val message = Message(payload = record)
+                val event = Event(payload = record)
 
-                log.debug("Dispatching message").verb(message)
+                log.debug("Dispatching message").verb(event)
 
                 dispatcher.dispatch(
-                    message,
+                    event,
                     onSuccess = {
                         notifySuccess()
                         putRecord(record.apply {
@@ -125,14 +124,12 @@ class PhoneCallProcessor(
         private val log = Logger("PhoneCallProcessor")
 
         fun Context.processPhoneCall(info: PhoneCallInfo) {
-            /* add record to database now */
-            PhoneCallProcessor(this).addRecord(info)
+            /* add record to database */
+            PhoneCallProcessor(this).add(info)
 
             /* process it later */
             WorkManager.getInstance(this).enqueue(
-                OneTimeWorkRequest.Builder(PhoneCallProcessingWorker::class.java)
-                    .setBackoffCriteria(EXPONENTIAL, 1, MINUTES)
-                    .build()
+                OneTimeWorkRequest.Builder(PhoneCallProcessingWorker::class.java).build()
             )
         }
     }

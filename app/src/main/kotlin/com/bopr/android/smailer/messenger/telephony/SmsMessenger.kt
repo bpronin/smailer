@@ -7,8 +7,8 @@ import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_SMS_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_SMS_MESSENGER_RECIPIENTS
-import com.bopr.android.smailer.messenger.Message
-import com.bopr.android.smailer.messenger.Message.Companion.FLAG_SENT_BY_SMS
+import com.bopr.android.smailer.messenger.Event
+import com.bopr.android.smailer.messenger.Event.Companion.FLAG_SENT_BY_SMS
 import com.bopr.android.smailer.messenger.Messenger
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
 import com.bopr.android.smailer.ui.SmsSettingsActivity
@@ -38,60 +38,55 @@ internal class SmsMessenger(private val context: Context) : Messenger {
     }
 
     override fun sendMessage(
-        message: Message,
+        event: Event,
         onSuccess: () -> Unit,
         onError: (Throwable) -> Unit
     ) {
         if (!settings.getBoolean(PREF_SMS_MESSENGER_ENABLED)
-            || FLAG_SENT_BY_SMS in message.processedFlags
+            || FLAG_SENT_BY_SMS in event.processFlags
         ) return
 
-        log.debug("Sending").verb(message)
+        log.debug("Sending").verb(event)
 
         settings.getStringList(PREF_SMS_MESSENGER_RECIPIENTS).forEach {
             try {
                 log.debug("Sent")
 
-                context.sendSmsMessage(it, formatMessage(message))
-                message.processedFlags += FLAG_SENT_BY_SMS
+                context.sendSmsMessage(it, formatMessage(event))
+                event.processFlags += FLAG_SENT_BY_SMS
                 onSuccess()
             } catch (x: Exception) {
                 log.warn("Send failed", x)
 
-                message.processedFlags -= FLAG_SENT_BY_SMS
+                event.processFlags -= FLAG_SENT_BY_SMS
                 notifySendError()
                 onError(x)
             }
         }
     }
 
-    private fun formatMessage(message: Message): String {
-        return when (message.payload) {
-            is PhoneCallInfo ->
-                formatPhoneCallMessage(message.payload)
-//            is BatteryEvent ->
-//              formatBatteryEventMessage(event.payload)
-            else ->
-                throw IllegalArgumentException("No formatter for ${message.payload::class}")
+    private fun formatMessage(event: Event): String {
+        val payload = event.payload
+        return when (payload) {
+            is PhoneCallInfo -> formatPhoneCallMessage(payload)
+//            is BatteryEvent ->  formatBatteryEventMessage(event.payload)
+            else -> throw IllegalArgumentException("No formatter for $payload")
         }
     }
 
-    private fun formatPhoneCallMessage(info: PhoneCallInfo): String {
+    private fun formatPhoneCallMessage(info: PhoneCallInfo?): String {
         return when {
-            info.isSms ->
-                info.text!!
+            info == null -> ""
+            info.isSms -> info.text!!
+            info.isMissed -> context.getString(R.string.you_had_missed_call)
 
-            info.isMissed ->
-                context.getString(R.string.you_had_missed_call)
-
-            else ->
-                context.getString(
-                    if (info.isIncoming)
-                        R.string.you_had_incoming_call
-                    else
-                        R.string.you_had_outgoing_call,
-                    formatDuration(info.callDuration)
-                )
+            else -> context.getString(
+                if (info.isIncoming)
+                    R.string.you_had_incoming_call
+                else
+                    R.string.you_had_outgoing_call,
+                formatDuration(info.callDuration)
+            )
         }
     }
 

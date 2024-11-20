@@ -7,8 +7,8 @@ import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_BOT_TOKEN
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_CHAT_ID
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSENGER_ENABLED
-import com.bopr.android.smailer.messenger.Message
-import com.bopr.android.smailer.messenger.Message.Companion.FLAG_SENT_BY_TELEGRAM
+import com.bopr.android.smailer.messenger.Event
+import com.bopr.android.smailer.messenger.Event.Companion.FLAG_SENT_BY_TELEGRAM
 import com.bopr.android.smailer.messenger.Messenger
 import com.bopr.android.smailer.ui.TelegramSettingsActivity
 import com.bopr.android.smailer.util.Logger
@@ -40,29 +40,29 @@ class TelegramMessenger(private val context: Context) : Messenger {
     }
 
     override fun sendMessage(
-        message: Message,
+        event: Event,
         onSuccess: () -> Unit,
         onError: (Throwable) -> Unit
     ) {
-        if (FLAG_SENT_BY_TELEGRAM in message.processedFlags) return
+        if (FLAG_SENT_BY_TELEGRAM in event.processFlags) return
 
         session?.run {
-            log.debug("Sending").verb(message)
+            log.debug("Sending").verb(event)
 
             sendMessage(
                 oldChatId = settings.getString(PREF_TELEGRAM_CHAT_ID),
-                message = formatters.createFormatter(message.payload).formatMessage(),
+                message = formatters.createFormatter(event.payload).formatMessage(),
                 onSuccess = { chatId ->
                     log.debug("Sent")
 
-                    message.processedFlags += FLAG_SENT_BY_TELEGRAM
+                    event.processFlags += FLAG_SENT_BY_TELEGRAM
                     settings.update { putString(PREF_TELEGRAM_CHAT_ID, chatId) }
                     onSuccess()
                 },
                 onError = {
                     log.warn("Send failed", it)
 
-                    message.processedFlags -= FLAG_SENT_BY_TELEGRAM
+                    event.processFlags -= FLAG_SENT_BY_TELEGRAM
                     notifyError(it)
                     onError(it)
                 })

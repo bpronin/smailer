@@ -10,7 +10,7 @@ interface Messenger {
     fun initialize(): Boolean
 
     fun sendMessage(
-        message: Message,
+        event: Event,
         onSuccess: () -> Unit,
         onError: (Throwable) -> Unit
     )

@@ -1,10 +1,12 @@
 package com.bopr.android.smailer.provider.telephony
 
 import android.os.Parcelable
-import com.bopr.android.smailer.messenger.ProcessingState
-import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_PENDING
+import com.bopr.android.smailer.messenger.Event.Companion.FLAG_ACCEPTED
+import com.bopr.android.smailer.messenger.Event.Companion.FLAG_UNPROCESSED
+import com.bopr.android.smailer.messenger.ProcessState
+import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PENDING
 import com.bopr.android.smailer.util.Bits
-import com.bopr.android.smailer.util.Bits.Companion.bit
+import com.bopr.android.smailer.util.DEVICE_NAME
 import com.bopr.android.smailer.util.GeoLocation
 import kotlinx.parcelize.Parcelize
 
@@ -21,26 +23,16 @@ data class PhoneCallInfo(
     val endTime: Long? = null,
     val isMissed: Boolean = false,
     val text: String? = null,
+
+    val acceptor: String = DEVICE_NAME,
     var location: GeoLocation? = null,
-    var details: String? = null,
-    @ProcessingState var processState: Int = STATE_PENDING,
-    val acceptor: String,
-    var bypassFlags: Bits = FLAG_BYPASS_NONE,
+    @ProcessState var processState: Int = STATE_PENDING,
+    var bypassFlags: Bits = FLAG_ACCEPTED,
+    var processFlags: Bits = FLAG_UNPROCESSED,
     var processTime: Long? = null,
     var isRead: Boolean = false
 ) : Parcelable {
 
     val isSms get() = text != null
     val callDuration get() = endTime?.minus(startTime)
-
-    companion object {
-
-        /* informative flags */
-
-        val FLAG_BYPASS_NONE = Bits()
-        val FLAG_BYPASS_NO_CONSUMERS = bit(0)
-        val FLAG_BYPASS_NUMBER_BLACKLISTED = bit(1)
-        val FLAG_BYPASS_TEXT_BLACKLISTED = bit(2)
-        val FLAG_BYPASS_TRIGGER_OFF = bit(3)
-    }
 }

@@ -5,6 +5,7 @@ import android.content.res.Resources
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.bopr.android.smailer.R
+import com.bopr.android.smailer.messenger.ProcessState
 import com.bopr.android.smailer.messenger.telegram.TelegramException
 import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_BAD_RESPONSE
 import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_INVALID_TOKEN
@@ -13,10 +14,9 @@ import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGR
 import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_NO_TOKEN
 import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_NO_UPDATES
 import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_REQUEST_FAILED
-import com.bopr.android.smailer.messenger.ProcessingState
-import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_IGNORED
-import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_PENDING
-import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_PROCESSED
+import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
+import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PENDING
+import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
 import java.util.Locale
 
@@ -75,7 +75,7 @@ fun phoneCallDirectionImage(info: PhoneCallInfo): Int {
 }
 
 @DrawableRes
-fun messageStateImage(@ProcessingState state: Int): Int {
+fun messageStateImage(@ProcessState state: Int): Int {
     /* do not use direct drawable resources references here due to shrinker issue */
     return when (state) {
         STATE_PENDING ->
@@ -127,7 +127,7 @@ fun phoneCallTypePrefix(info: PhoneCallInfo): Int {
 }
 
 @StringRes
-fun messageStateText(@ProcessingState state: Int): Int {
+fun messageStateText(@ProcessState state: Int): Int {
     return when (state) {
         STATE_PENDING ->
             R.string.pending

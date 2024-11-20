@@ -35,7 +35,7 @@ class DebugReceiver : BroadcastReceiver() {
 
             "PROCESS_PENDING_EVENTS" -> {
                 runInBackground {
-                    PhoneCallProcessor(context).processRecords()
+                    PhoneCallProcessor(context).process()
                 }
             }
 

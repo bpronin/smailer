@@ -5,10 +5,10 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.FLAG_BYPASS_NONE
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.FLAG_BYPASS_NUMBER_BLACKLISTED
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.FLAG_BYPASS_TEXT_BLACKLISTED
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.FLAG_BYPASS_TRIGGER_OFF
+import com.bopr.android.smailer.messenger.Event.Companion.FLAG_ACCEPTED
+import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_NUMBER_BLACKLISTED
+import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_TEXT_BLACKLISTED
+import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_TRIGGER_OFF
 import com.bopr.android.smailer.util.Bits
 import com.bopr.android.smailer.util.phoneNumberToRegEx
 import com.bopr.android.smailer.util.stripPhoneNumber
@@ -32,10 +32,10 @@ class PhoneCallFilter(
      * Tests if the filter accepts given event.
      *
      * @param info event
-     * @return [FLAG_BYPASS_NONE] if event accepted, explanation flags otherwise
+     * @return [FLAG_ACCEPTED] if event accepted, explanation flags otherwise
      */
     fun test(info: PhoneCallInfo): Bits {
-        var result = FLAG_BYPASS_NONE
+        var result = FLAG_ACCEPTED
         if (!testTrigger(info)) result += FLAG_BYPASS_TRIGGER_OFF
         if (!testPhone(info.phone)) result += FLAG_BYPASS_NUMBER_BLACKLISTED
         if (!testText(info.text)) result += FLAG_BYPASS_TEXT_BLACKLISTED

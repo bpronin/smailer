@@ -119,11 +119,12 @@ internal class Synchronizer(context: Context,
                 startTime = info.startTime,
                 endTime = info.endTime,
                 text = info.text,
-                details = info.details,
+
                 latitude = info.location?.latitude,
                 longitude = info.location?.longitude,
                 state = info.processState,
-                processStatus = info.bypassFlags.toInt(),
+                bypassFlags = info.bypassFlags.toInt(),
+                processFlags = info.processFlags.toInt(),
                 processTime = info.processTime,
                 isRead = info.isRead
         )
@@ -137,12 +138,13 @@ internal class Synchronizer(context: Context,
                 endTime = data.endTime,
                 isMissed = data.missed,
                 text = data.text,
+
                 location = fromCoordinates(data.latitude, data.longitude),
-                details = data.details,
                 processState = data.state,
                 acceptor = data.recipient,
                 isRead = data.isRead,
-                bypassFlags = Bits(data.processStatus),
+                bypassFlags = Bits(data.bypassFlags),
+                processFlags = Bits(data.processFlags),
                 processTime = data.processTime
         )
     }

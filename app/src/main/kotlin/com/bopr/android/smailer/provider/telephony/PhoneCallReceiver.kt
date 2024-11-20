@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.provider.Telephony
-import android.telephony.SmsMessage
 import android.telephony.TelephonyManager.ACTION_PHONE_STATE_CHANGED
 import android.telephony.TelephonyManager.EXTRA_INCOMING_NUMBER
 import android.telephony.TelephonyManager.EXTRA_STATE
@@ -12,7 +11,6 @@ import android.telephony.TelephonyManager.EXTRA_STATE_IDLE
 import android.telephony.TelephonyManager.EXTRA_STATE_OFFHOOK
 import android.telephony.TelephonyManager.EXTRA_STATE_RINGING
 import com.bopr.android.smailer.provider.telephony.PhoneCallProcessor.Companion.processPhoneCall
-import com.bopr.android.smailer.util.DEVICE_NAME
 import com.bopr.android.smailer.util.Logger
 import java.lang.System.currentTimeMillis
 
@@ -117,10 +115,9 @@ class PhoneCallReceiver : BroadcastReceiver() {
                     isIncoming = true,
                     startTime = messages[0].timestampMillis,
                     endTime = messages[0].timestampMillis,
-                    text = messages.joinToString<SmsMessage>(
+                    text = messages.joinToString(
                         separator = "",
-                        transform = { it.displayMessageBody }),
-                    acceptor = DEVICE_NAME
+                        transform = { it.displayMessageBody })
                 )
             )
         }
@@ -136,8 +133,7 @@ class PhoneCallReceiver : BroadcastReceiver() {
                 isIncoming = isIncomingCall!!,
                 isMissed = isMissedCall!!,
                 startTime = callStartTime!!,
-                endTime = callEndTime!!,
-                acceptor = DEVICE_NAME
+                endTime = callEndTime!!
             )
         )
     }

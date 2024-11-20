@@ -4,11 +4,11 @@ import androidx.annotation.IntDef
 
 @Retention(AnnotationRetention.SOURCE)
 @IntDef(
-    ProcessingState.Companion.STATE_PENDING,
-    ProcessingState.Companion.STATE_PROCESSED,
-    ProcessingState.Companion.STATE_IGNORED
+    ProcessState.Companion.STATE_PENDING,
+    ProcessState.Companion.STATE_PROCESSED,
+    ProcessState.Companion.STATE_IGNORED
 )
-annotation class ProcessingState {
+annotation class ProcessState {
 
     companion object {
 

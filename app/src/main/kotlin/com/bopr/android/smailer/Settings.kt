@@ -137,10 +137,6 @@ class Settings(context: Context, changeListener: ChangeListener? = null) {
             if (!preferences.contains(key)) put(key)
         }
 
-        fun putStringList(key: String, value: Collection<String>?) {
-            wrapped.putString(key, value?.commaJoin())
-        }
-
         fun putInt(key: String, value: Int) {
             wrapped.putInt(key, value)
         }
@@ -151,6 +147,10 @@ class Settings(context: Context, changeListener: ChangeListener? = null) {
 
         fun putString(key: String, value: String?) {
             wrapped.putString(key, value)
+        }
+
+        fun putStringList(key: String, value: Collection<String>?) {
+            wrapped.putString(key, value?.commaJoin())
         }
 
         fun putStringSet(key: String, value: Set<String>) {

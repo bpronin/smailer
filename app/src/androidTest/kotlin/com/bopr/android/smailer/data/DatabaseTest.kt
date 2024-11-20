@@ -2,9 +2,9 @@ package com.bopr.android.smailer.data
 
 import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
-import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_IGNORED
-import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_PENDING
-import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_PROCESSED
+import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
+import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PENDING
+import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
 import com.bopr.android.smailer.util.GeoLocation
 import org.junit.After
@@ -41,161 +41,151 @@ class DatabaseTest : BaseTest() {
         database.batch {
             dataset.add(
                 PhoneCallInfo(
-                    "1",
-                    true,
-                    1000L,
-                    0L,
-                    true,
-                    null,
-                    null,
-                    "Test 1",
-                    STATE_PENDING,
-                    "device",
-                    PhoneCallInfo.FLAG_BYPASS_NONE,
+                    phone = "1",
+                    isIncoming = true,
+                    startTime = 1000L,
+                    endTime = 0L,
+                    isMissed = true,
+                    text = null,
+                    location = null,
+                    processState = STATE_PENDING,
+                    acceptor = "device",
+                    bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
             dataset.add(
                 PhoneCallInfo(
-                    "2",
-                    false,
-                    2000L,
-                    0L,
-                    false,
-                    null,
-                    null,
-                    null,
-                    STATE_PENDING,
-                    "device",
-                    PhoneCallInfo.FLAG_BYPASS_NONE,
+                    phone = "2",
+                    isIncoming = false,
+                    startTime = 2000L,
+                    endTime = 0L,
+                    isMissed = false,
+                    text = null,
+                    location = null,
+                    processState = STATE_PENDING,
+                    acceptor = "device",
+                    bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
             dataset.add(
                 PhoneCallInfo(
-                    "3",
-                    true,
-                    3000L,
-                    0L,
-                    false,
-                    null,
-                    null,
-                    null,
-                    STATE_PENDING,
-                    "device",
-                    PhoneCallInfo.FLAG_BYPASS_NONE,
+                    phone = "3",
+                    isIncoming = true,
+                    startTime = 3000L,
+                    endTime = 0L,
+                    isMissed = false,
+                    text = null,
+                    location = null,
+                    processState = STATE_PENDING,
+                    acceptor = "device",
+                    bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
             dataset.add(
                 PhoneCallInfo(
-                    "4",
-                    false,
-                    4000L,
-                    0L,
-                    false,
-                    null,
-                    null,
-                    null,
-                    STATE_PENDING,
-                    "device",
-                    PhoneCallInfo.FLAG_BYPASS_NONE,
+                    phone = "4",
+                    isIncoming = false,
+                    startTime = 4000L,
+                    endTime = 0L,
+                    isMissed = false,
+                    text = null,
+                    location = null,
+                    processState = STATE_PENDING,
+                    acceptor = "device",
+                    bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
             dataset.add(
                 PhoneCallInfo(
-                    "5",
-                    true,
-                    5000L,
-                    0L,
-                    true,
-                    null,
-                    null,
-                    null,
-                    STATE_PENDING,
-                    "device",
-                    PhoneCallInfo.FLAG_BYPASS_NONE,
+                    phone = "5",
+                    isIncoming = true,
+                    startTime = 5000L,
+                    endTime = 0L,
+                    isMissed = true,
+                    text = null,
+                    location = null,
+                    processState = STATE_PENDING,
+                    acceptor = "device",
+                    bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
             dataset.add(
                 PhoneCallInfo(
-                    "6",
-                    true,
-                    6000L,
-                    7000L,
-                    false,
-                    null,
-                    null,
-                    "Test 1",
-                    STATE_PENDING,
-                    "device",
-                    PhoneCallInfo.FLAG_BYPASS_NONE,
+                    phone = "6",
+                    isIncoming = true,
+                    startTime = 6000L,
+                    endTime = 7000L,
+                    isMissed = false,
+                    text = null,
+                    location = null,
+                    processState = STATE_PENDING,
+                    acceptor = "device",
+                    bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
             dataset.add(
                 PhoneCallInfo(
-                    "7",
-                    false,
-                    7000L,
-                    0L,
-                    false,
-                    null,
-                    null,
-                    "Test 2",
-                    STATE_PENDING,
-                    "device",
-                    PhoneCallInfo.FLAG_BYPASS_NONE,
+                    phone = "7",
+                    isIncoming = false,
+                    startTime = 7000L,
+                    endTime = 0L,
+                    isMissed = false,
+                    text = null,
+                    location = null,
+                    processState = STATE_PENDING,
+                    acceptor = "device",
+                    bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
             dataset.add(
                 PhoneCallInfo(
-                    "8",
-                    true,
-                    8000L,
-                    0L,
-                    false,
-                    null,
-                    null,
-                    "Test 3",
-                    STATE_PENDING,
-                    "device",
-                    PhoneCallInfo.FLAG_BYPASS_NONE,
+                    phone = "8",
+                    isIncoming = true,
+                    startTime = 8000L,
+                    endTime = 0L,
+                    isMissed = false,
+                    text = null,
+                    location = null,
+                    processState = STATE_PENDING,
+                    acceptor = "device",
+                    bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
             dataset.add(
                 PhoneCallInfo(
-                    "9",
-                    false,
-                    9000L,
-                    0L,
-                    false,
-                    null,
-                    null,
-                    "Test 4",
-                    STATE_PENDING,
-                    "device",
-                    PhoneCallInfo.FLAG_BYPASS_NONE,
+                    phone = "9",
+                    isIncoming = false,
+                    startTime = 9000L,
+                    endTime = 0L,
+                    isMissed = false,
+                    text = null,
+                    location = null,
+                    processState = STATE_PENDING,
+                    acceptor = "device",
+                    bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
             dataset.add(
                 PhoneCallInfo(
-                    "10",
-                    true,
-                    10000L,
-                    20000L,
-                    false,
-                    "SMS text",
-                    GeoLocation(10.5, 20.5),
-                    "Test 10",
-                    STATE_PENDING,
-                    "device",
-                    PhoneCallInfo.FLAG_BYPASS_NONE,
+                    phone = "10",
+                    isIncoming = true,
+                    startTime = 10000L,
+                    endTime = 20000L,
+                    isMissed = false,
+                    text = "SMS text",
+                    location = GeoLocation(10.5, 20.5),
+                    processState = STATE_PENDING,
+                    acceptor = "device",
+                    bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -215,7 +205,6 @@ class DatabaseTest : BaseTest() {
         assertEquals(10.5, record.location!!.latitude, 0.1)
         assertEquals(20.5, record.location!!.longitude, 0.1)
         assertEquals("SMS text", record.text)
-        assertEquals("Test 10", record.details)
     }
 
     @Test
@@ -270,7 +259,6 @@ class DatabaseTest : BaseTest() {
             isMissed = false,
             text = "SMS text",
             location = GeoLocation(10.5, 20.5),
-            details = "Test 1",
             processState = STATE_PENDING,
             acceptor = "device",
             bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
@@ -295,7 +283,6 @@ class DatabaseTest : BaseTest() {
         assertEquals(10.5, info.location!!.latitude, 0.1)
         assertEquals(20.5, info.location!!.longitude, 0.1)
         assertEquals("SMS text", info.text)
-        assertEquals("Test 1", info.details)
         assertEquals(STATE_PENDING, info.processState)
 
         info = info.copy(
@@ -305,7 +292,6 @@ class DatabaseTest : BaseTest() {
             isMissed = true,
             location = GeoLocation(11.5, 21.5),
             text = "New text",
-            details = "New details"
         )
         dataset.add(info)
 
@@ -322,7 +308,6 @@ class DatabaseTest : BaseTest() {
         assertEquals(11.5, info.location!!.latitude, 0.1)
         assertEquals(21.5, info.location!!.longitude, 0.1)
         assertEquals("New text", info.text)
-        assertEquals("New details", info.details)
     }
 
     @Test
@@ -332,161 +317,151 @@ class DatabaseTest : BaseTest() {
         database.batch {
             dataset.add(
                 PhoneCallInfo(
-                    "1",
-                    true,
-                    1000L,
-                    2000L,
-                    false,
-                    "SMS text",
-                    GeoLocation(10.5, 20.5),
-                    "Test 1",
-                    STATE_PENDING,
-                    "device",
-                    PhoneCallInfo.FLAG_BYPASS_NONE,
+                    phone = "1",
+                    isIncoming = true,
+                    startTime = 1000L,
+                    endTime = 2000L,
+                    isMissed = false,
+                    text = "SMS text",
+                    location = GeoLocation(10.5, 20.5),
+                    processState = STATE_PENDING,
+                    acceptor = "device",
+                    bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
             dataset.add(
                 PhoneCallInfo(
-                    "2",
-                    false,
-                    2000L,
-                    0L,
-                    false,
-                    null,
-                    null,
-                    null,
-                    STATE_PENDING,
-                    "device",
-                    PhoneCallInfo.FLAG_BYPASS_NONE,
+                    phone = "2",
+                    isIncoming = false,
+                    startTime = 2000L,
+                    endTime = 0L,
+                    isMissed = false,
+                    text = null,
+                    location = null,
+                    processState = STATE_PENDING,
+                    acceptor = "device",
+                    bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
             dataset.add(
                 PhoneCallInfo(
-                    "3",
-                    true,
-                    3000L,
-                    0L,
-                    false,
-                    null,
-                    null,
-                    null,
-                    STATE_PENDING,
-                    "device",
-                    PhoneCallInfo.FLAG_BYPASS_NONE,
+                    phone = "3",
+                    isIncoming = true,
+                    startTime = 3000L,
+                    endTime = 0L,
+                    isMissed = false,
+                    text = null,
+                    location = null,
+                    processState = STATE_PENDING,
+                    acceptor = "device",
+                    bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
             dataset.add(
                 PhoneCallInfo(
-                    "4",
-                    false,
-                    4000L,
-                    0L,
-                    false,
-                    null,
-                    null,
-                    null,
-                    STATE_PENDING,
-                    "device",
-                    PhoneCallInfo.FLAG_BYPASS_NONE,
+                    phone = "4",
+                    isIncoming = false,
+                    startTime = 4000L,
+                    endTime = 0L,
+                    isMissed = false,
+                    text = null,
+                    location = null,
+                    processState = STATE_PENDING,
+                    acceptor = "device",
+                    bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
             dataset.add(
                 PhoneCallInfo(
-                    "5",
-                    true,
-                    5000L,
-                    0L,
-                    true,
-                    null,
-                    null,
-                    null,
-                    STATE_PENDING,
-                    "device",
-                    PhoneCallInfo.FLAG_BYPASS_NONE,
+                    phone = "5",
+                    isIncoming = true,
+                    startTime = 5000L,
+                    endTime = 0L,
+                    isMissed = true,
+                    text = null,
+                    location = null,
+                    processState = STATE_PENDING,
+                    acceptor = "device",
+                    bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
             dataset.add(
                 PhoneCallInfo(
-                    "6",
-                    true,
-                    6000L,
-                    7000L,
-                    false,
-                    null,
-                    null,
-                    "Test 1",
-                    STATE_PENDING,
-                    "device",
-                    PhoneCallInfo.FLAG_BYPASS_NONE,
+                    phone = "6",
+                    isIncoming = true,
+                    startTime = 6000L,
+                    endTime = 7000L,
+                    isMissed = false,
+                    text = null,
+                    location = null,
+                    processState = STATE_PENDING,
+                    acceptor = "device",
+                    bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
             dataset.add(
                 PhoneCallInfo(
-                    "7",
-                    false,
-                    7000L,
-                    0L,
-                    false,
-                    null,
-                    null,
-                    "Test 2",
-                    STATE_PENDING,
-                    "device",
-                    PhoneCallInfo.FLAG_BYPASS_NONE,
+                    phone = "7",
+                    isIncoming = false,
+                    startTime = 7000L,
+                    endTime = 0L,
+                    isMissed = false,
+                    text = null,
+                    location = null,
+                    processState = STATE_PENDING,
+                    acceptor = "device",
+                    bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
             dataset.add(
                 PhoneCallInfo(
-                    "8",
-                    true,
-                    8000L,
-                    0L,
-                    false,
-                    null,
-                    null,
-                    "Test 3",
-                    STATE_PENDING,
-                    "device",
-                    PhoneCallInfo.FLAG_BYPASS_NONE,
+                    phone = "8",
+                    isIncoming = true,
+                    startTime = 8000L,
+                    endTime = 0L,
+                    isMissed = false,
+                    text = null,
+                    location = null,
+                    processState = STATE_PENDING,
+                    acceptor = "device",
+                    bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
             dataset.add(
                 PhoneCallInfo(
-                    "9",
-                    false,
-                    9000L,
-                    0L,
-                    false,
-                    null,
-                    null,
-                    "Test 4",
-                    STATE_PENDING,
-                    "device",
-                    PhoneCallInfo.FLAG_BYPASS_NONE,
+                    phone = "9",
+                    isIncoming = false,
+                    startTime = 9000L,
+                    endTime = 0L,
+                    isMissed = false,
+                    text = null,
+                    location = null,
+                    processState = STATE_PENDING,
+                    acceptor = "device",
+                    bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
             dataset.add(
                 PhoneCallInfo(
-                    "10",
-                    true,
-                    10000L,
-                    0L,
-                    true,
-                    null,
-                    null,
-                    "Test 5",
-                    STATE_PENDING,
-                    "device",
-                    PhoneCallInfo.FLAG_BYPASS_NONE,
+                    phone = "10",
+                    isIncoming = true,
+                    startTime = 10000L,
+                    endTime = 0L,
+                    isMissed = true,
+                    text = null,
+                    location = null,
+                    processState = STATE_PENDING,
+                    acceptor = "device",
+                    bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -514,161 +489,151 @@ class DatabaseTest : BaseTest() {
         database.batch {
             dataset.add(
                 PhoneCallInfo(
-                    "1",
-                    true,
-                    1000L,
-                    0L,
-                    true,
-                    null,
-                    null,
-                    "Test 1",
-                    STATE_PROCESSED,
-                    "device",
-                    PhoneCallInfo.FLAG_BYPASS_NONE,
+                    phone = "1",
+                    isIncoming = true,
+                    startTime = 1000L,
+                    endTime = 0L,
+                    isMissed = true,
+                    text = null,
+                    location = null,
+                    processState = STATE_PROCESSED,
+                    acceptor = "device",
+                    bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
             dataset.add(
                 PhoneCallInfo(
-                    "2",
-                    false,
-                    2000L,
-                    0L,
-                    false,
-                    null,
-                    null,
-                    null,
-                    STATE_PROCESSED,
-                    "device",
-                    PhoneCallInfo.FLAG_BYPASS_NONE,
+                    phone = "2",
+                    isIncoming = false,
+                    startTime = 2000L,
+                    endTime = 0L,
+                    isMissed = false,
+                    text = null,
+                    location = null,
+                    processState = STATE_PROCESSED,
+                    acceptor = "device",
+                    bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
             dataset.add(
                 PhoneCallInfo(
-                    "3",
-                    true,
-                    3000L,
-                    0L,
-                    false,
-                    null,
-                    null,
-                    null,
-                    STATE_PROCESSED,
-                    "device",
-                    PhoneCallInfo.FLAG_BYPASS_NONE,
+                    phone = "3",
+                    isIncoming = true,
+                    startTime = 3000L,
+                    endTime = 0L,
+                    isMissed = false,
+                    text = null,
+                    location = null,
+                    processState = STATE_PROCESSED,
+                    acceptor = "device",
+                    bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
             dataset.add(
                 PhoneCallInfo(
-                    "4",
-                    false,
-                    4000L,
-                    0L,
-                    false,
-                    null,
-                    null,
-                    null,
-                    STATE_IGNORED,
-                    "device",
-                    PhoneCallInfo.FLAG_BYPASS_NONE,
+                    phone = "4",
+                    isIncoming = false,
+                    startTime = 4000L,
+                    endTime = 0L,
+                    isMissed = false,
+                    text = null,
+                    location = null,
+                    processState = STATE_IGNORED,
+                    acceptor = "device",
+                    bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
             dataset.add(
                 PhoneCallInfo(
-                    "5",
-                    true,
-                    5000L,
-                    0L,
-                    true,
-                    null,
-                    null,
-                    null,
-                    STATE_IGNORED,
-                    "device",
-                    PhoneCallInfo.FLAG_BYPASS_NONE,
+                    phone = "5",
+                    isIncoming = true,
+                    startTime = 5000L,
+                    endTime = 0L,
+                    isMissed = true,
+                    text = null,
+                    location = null,
+                    processState = STATE_IGNORED,
+                    acceptor = "device",
+                    bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
             dataset.add(
                 PhoneCallInfo(
-                    "6",
-                    true,
-                    6000L,
-                    7000L,
-                    false,
-                    null,
-                    null,
-                    "Test 1",
-                    STATE_PENDING,
-                    "device",
-                    PhoneCallInfo.FLAG_BYPASS_NONE,
+                    phone = "6",
+                    isIncoming = true,
+                    startTime = 6000L,
+                    endTime = 7000L,
+                    isMissed = false,
+                    text = null,
+                    location = null,
+                    processState = STATE_PENDING,
+                    acceptor = "device",
+                    bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
             dataset.add(
                 PhoneCallInfo(
-                    "7",
-                    false,
-                    7000L,
-                    0L,
-                    false,
-                    null,
-                    null,
-                    "Test 2",
-                    STATE_PENDING,
-                    "device",
-                    PhoneCallInfo.FLAG_BYPASS_NONE,
+                    phone = "7",
+                    isIncoming = false,
+                    startTime = 7000L,
+                    endTime = 0L,
+                    isMissed = false,
+                    text = null,
+                    location = null,
+                    processState = STATE_PENDING,
+                    acceptor = "device",
+                    bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
             dataset.add(
                 PhoneCallInfo(
-                    "8",
-                    true,
-                    8000L,
-                    0L,
-                    false,
-                    null,
-                    null,
-                    "Test 3",
-                    STATE_PENDING,
-                    "device",
-                    PhoneCallInfo.FLAG_BYPASS_NONE,
+                    phone = "8",
+                    isIncoming = true,
+                    startTime = 8000L,
+                    endTime = 0L,
+                    isMissed = false,
+                    text = null,
+                    location = null,
+                    processState = STATE_PENDING,
+                    acceptor = "device",
+                    bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
             dataset.add(
                 PhoneCallInfo(
-                    "9",
-                    false,
-                    9000L,
-                    0L,
-                    false,
-                    null,
-                    null,
-                    "Test 4",
-                    STATE_PENDING,
-                    "device",
-                    PhoneCallInfo.FLAG_BYPASS_NONE,
+                    phone = "9",
+                    isIncoming = false,
+                    startTime = 9000L,
+                    endTime = 0L,
+                    isMissed = false,
+                    text = null,
+                    location = null,
+                    processState = STATE_PENDING,
+                    acceptor = "device",
+                    bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
             dataset.add(
                 PhoneCallInfo(
-                    "10",
-                    true,
-                    10000L,
-                    20000L,
-                    false,
-                    null,
-                    null,
-                    "Test 10",
-                    STATE_PENDING,
-                    "device",
-                    PhoneCallInfo.FLAG_BYPASS_NONE,
+                    phone = "10",
+                    isIncoming = true,
+                    startTime = 10000L,
+                    endTime = 20000L,
+                    isMissed = false,
+                    text = null,
+                    location = null,
+                    processState = STATE_PENDING,
+                    acceptor = "device",
+                    bypassFlags = PhoneCallInfo.FLAG_BYPASS_NONE,
                     isRead = false
                 )
             )
@@ -676,10 +641,6 @@ class DatabaseTest : BaseTest() {
         val pendingRecords = dataset.filterPending
 
         assertEquals(5, pendingRecords.size)
-
-        val details = pendingRecords.first().details /* descending order so it should be the last */
-
-        assertEquals("Test 10", details)
     }
 
     @Test

@@ -4,7 +4,6 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteOpenHelper
 import com.bopr.android.smailer.data.Database.Companion.COLUMN_ACCEPTOR
-import com.bopr.android.smailer.data.Database.Companion.COLUMN_DETAILS
 import com.bopr.android.smailer.data.Database.Companion.COLUMN_END_TIME
 import com.bopr.android.smailer.data.Database.Companion.COLUMN_IS_INCOMING
 import com.bopr.android.smailer.data.Database.Companion.COLUMN_IS_MISSED
@@ -18,7 +17,7 @@ import com.bopr.android.smailer.data.Database.Companion.COLUMN_START_TIME
 import com.bopr.android.smailer.data.Database.Companion.COLUMN_STATE
 import com.bopr.android.smailer.data.Database.Companion.COLUMN_TEXT
 import com.bopr.android.smailer.data.Database.Companion.TABLE_PHONE_CALLS
-import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_PENDING
+import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PENDING
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
 import com.bopr.android.smailer.util.Bits
 import com.bopr.android.smailer.util.GeoLocation.Companion.fromCoordinates
@@ -82,7 +81,6 @@ class PhoneCallDataset(helper: SQLiteOpenHelper, modifications: MutableSet<Strin
                 getDoubleOrNull(COLUMN_LATITUDE),
                 getDoubleOrNull(COLUMN_LONGITUDE)
             ),
-            details = getStringOrNull(COLUMN_DETAILS),
             processState = getInt(COLUMN_STATE),
             acceptor = getString(COLUMN_ACCEPTOR),
             bypassFlags = Bits(getInt(COLUMN_PROCESS_STATUS)),
@@ -102,7 +100,6 @@ class PhoneCallDataset(helper: SQLiteOpenHelper, modifications: MutableSet<Strin
         put(COLUMN_IS_MISSED, element.isMissed)
         put(COLUMN_END_TIME, element.endTime)
         put(COLUMN_TEXT, element.text)
-        put(COLUMN_DETAILS, element.details)
         put(COLUMN_READ, element.isRead)
         element.location?.run {
             put(COLUMN_LATITUDE, latitude)

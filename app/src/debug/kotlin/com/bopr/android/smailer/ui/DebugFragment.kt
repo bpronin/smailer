@@ -39,9 +39,9 @@ import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_BOT_TOKEN
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_DEFAULT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CREATION_TIME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CREATION_TIME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_HEADER
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCATION
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_CALLS
@@ -55,14 +55,14 @@ import com.bopr.android.smailer.data.Database.Companion.databaseName
 import com.bopr.android.smailer.external.Firebase
 import com.bopr.android.smailer.external.Firebase.Companion.FCM_REQUEST_DATA_SYNC
 import com.bopr.android.smailer.external.GoogleDrive
+import com.bopr.android.smailer.messenger.Event.Companion.FLAG_ACCEPTED
+import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
+import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PENDING
+import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.messenger.mail.GoogleMailSession
 import com.bopr.android.smailer.messenger.mail.MailMessage
 import com.bopr.android.smailer.messenger.telegram.TelegramSession
-import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_IGNORED
-import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_PENDING
-import com.bopr.android.smailer.messenger.ProcessingState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo.Companion.FLAG_BYPASS_NONE
 import com.bopr.android.smailer.provider.telephony.PhoneCallProcessor
 import com.bopr.android.smailer.provider.telephony.PhoneCallProcessor.Companion.processPhoneCall
 import com.bopr.android.smailer.sync.Synchronizer
@@ -71,6 +71,7 @@ import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_UPLOAD
 import com.bopr.android.smailer.ui.InfoDialog.Companion.showInfoDialog
 import com.bopr.android.smailer.util.DEVICE_NAME
 import com.bopr.android.smailer.util.GeoLocation.Companion.getGeoLocation
+import com.bopr.android.smailer.util.Logger
 import com.bopr.android.smailer.util.PreferenceProgress
 import com.bopr.android.smailer.util.checkPermission
 import com.bopr.android.smailer.util.escapeRegex
@@ -84,7 +85,6 @@ import com.bopr.android.smailer.util.showToast
 import com.google.api.services.drive.DriveScopes.DRIVE_APPDATA
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
-import com.bopr.android.smailer.util.Logger
 import java.io.File
 import java.lang.System.*
 
@@ -489,9 +489,8 @@ class DebugFragment : PreferenceFragmentCompat() {
             isMissed = false,
             text = "Debug SMS message text",
             location = null,
-            details = null,
             acceptor = DEVICE_NAME,
-            bypassFlags = FLAG_BYPASS_NONE,
+            bypassFlags = FLAG_ACCEPTED,
             isRead = false
         )
         requireContext().processPhoneCall(info)
@@ -501,7 +500,7 @@ class DebugFragment : PreferenceFragmentCompat() {
     private fun onProcessPending(preference: Preference) {
         preference.runBackgroundTask(
             onPerform = {
-                PhoneCallProcessor(requireContext()).processRecords()
+                PhoneCallProcessor(requireContext()).process()
             },
             onSuccess = { it ->
                 showInfoDialog("Event processing", "$it events processed")
@@ -527,17 +526,16 @@ class DebugFragment : PreferenceFragmentCompat() {
         database.commit {
             phoneCalls.add(
                 PhoneCallInfo(
-                    "+79052345670",
-                    true,
-                    currentTimeMillis(),
-                    null,
-                    false,
-                    "Debug message",
-                    null,
-                    null,
-                    STATE_PENDING,
-                    DEVICE_NAME,
-                    FLAG_BYPASS_NONE,
+                    phone = "+79052345670",
+                    isIncoming = true,
+                    startTime = currentTimeMillis(),
+                    endTime = null,
+                    isMissed = false,
+                    text = "Debug message",
+                    location = null,
+                    processState = STATE_PENDING,
+                    acceptor = DEVICE_NAME,
+                    bypassFlags = FLAG_ACCEPTED,
                     isRead = false
                 )
             )
@@ -552,161 +550,151 @@ class DebugFragment : PreferenceFragmentCompat() {
             batch {
                 phoneCalls.add(
                     PhoneCallInfo(
-                        "+79052345671",
-                        true,
-                        time,
-                        null,
-                        false,
-                        "Debug message",
-                        null,
-                        null,
-                        STATE_PENDING,
-                        recipient,
-                        FLAG_BYPASS_NONE,
+                        phone = "+79052345671",
+                        isIncoming = true,
+                        startTime = time,
+                        endTime = null,
+                        isMissed = false,
+                        text = "Debug message",
+                        location = null,
+                        processState = STATE_PENDING,
+                        acceptor = recipient,
+                        bypassFlags = FLAG_ACCEPTED,
                         isRead = false
                     )
                 )
                 phoneCalls.add(
                     PhoneCallInfo(
-                        "+79052345672",
-                        false,
-                        1000.let { time += it; time },
-                        null,
-                        false,
-                        "Debug message",
-                        null,
-                        null,
-                        STATE_PROCESSED,
-                        recipient,
-                        FLAG_BYPASS_NONE,
+                        phone = "+79052345672",
+                        isIncoming = false,
+                        startTime = 1000.let { time += it; time },
+                        endTime = null,
+                        isMissed = false,
+                        text = "Debug message",
+                        location = null,
+                        processState = STATE_PROCESSED,
+                        acceptor = recipient,
+                        bypassFlags = FLAG_ACCEPTED,
                         isRead = false
                     )
                 )
                 phoneCalls.add(
                     PhoneCallInfo(
-                        "+79052345673",
-                        true,
-                        1000.let { time += it; time },
-                        time + 10000,
-                        false,
-                        null,
-                        null,
-                        null,
-                        STATE_IGNORED,
-                        recipient,
-                        FLAG_BYPASS_NONE,
+                        phone = "+79052345673",
+                        isIncoming = true,
+                        startTime = 1000.let { time += it; time },
+                        endTime = time + 10000,
+                        isMissed = false,
+                        text = null,
+                        location = null,
+                        processState = STATE_IGNORED,
+                        acceptor = recipient,
+                        bypassFlags = FLAG_ACCEPTED,
                         isRead = false
                     )
                 )
                 phoneCalls.add(
                     PhoneCallInfo(
-                        "+79052345674",
-                        false,
-                        1000.let { time += it; time },
-                        time + 10000,
-                        false,
-                        null,
-                        null,
-                        null,
-                        STATE_PENDING,
-                        recipient,
-                        FLAG_BYPASS_NONE,
+                        phone = "+79052345674",
+                        isIncoming = false,
+                        startTime = 1000.let { time += it; time },
+                        endTime = time + 10000,
+                        isMissed = false,
+                        text = null,
+                        location = null,
+                        processState = STATE_PENDING,
+                        acceptor = recipient,
+                        bypassFlags = FLAG_ACCEPTED,
                         isRead = false
                     )
                 )
                 phoneCalls.add(
                     PhoneCallInfo(
-                        "+79052345675",
-                        true,
-                        1000.let { time += it; time },
-                        time + 10000,
-                        true,
-                        null,
-                        null,
-                        null,
-                        STATE_PENDING,
-                        recipient,
-                        FLAG_BYPASS_NONE,
+                        phone = "+79052345675",
+                        isIncoming = true,
+                        startTime = 1000.let { time += it; time },
+                        endTime = time + 10000,
+                        isMissed = true,
+                        text = null,
+                        location = null,
+                        processState = STATE_PENDING,
+                        acceptor = recipient,
+                        bypassFlags = FLAG_ACCEPTED,
                         isRead = false
                     )
                 )
                 phoneCalls.add(
                     PhoneCallInfo(
-                        "+79052345671",
-                        true,
-                        1000.let { time += it; time },
-                        null,
-                        false,
-                        "Debug message",
-                        null,
-                        "Test exception +79052345671",
-                        STATE_PENDING,
-                        recipient,
-                        FLAG_BYPASS_NONE,
+                        phone = "+79052345671",
+                        isIncoming = true,
+                        startTime = 1000.let { time += it; time },
+                        endTime = null,
+                        isMissed = false,
+                        text = "Debug message",
+                        location = null,
+                        processState = STATE_PENDING,
+                        acceptor = recipient,
+                        bypassFlags = FLAG_ACCEPTED,
                         isRead = false
                     )
                 )
                 phoneCalls.add(
                     PhoneCallInfo(
-                        "+79052345672",
-                        false,
-                        1000.let { time += it; time },
-                        null,
-                        false,
-                        "Debug message",
-                        null,
-                        "Test exception +79052345672",
-                        STATE_PENDING,
-                        recipient,
-                        FLAG_BYPASS_NONE,
+                        phone = "+79052345672",
+                        isIncoming = false,
+                        startTime = 1000.let { time += it; time },
+                        endTime = null,
+                        isMissed = false,
+                        text = "Debug message",
+                        location = null,
+                        processState = STATE_PENDING,
+                        acceptor = recipient,
+                        bypassFlags = FLAG_ACCEPTED,
                         isRead = false
                     )
                 )
                 phoneCalls.add(
                     PhoneCallInfo(
-                        "+79052345673",
-                        true,
-                        1000.let { time += it; time },
-                        time + 10000,
-                        false,
-                        null,
-                        null,
-                        "Test exception +79052345673",
-                        STATE_PENDING,
-                        recipient,
-                        FLAG_BYPASS_NONE,
+                        phone = "+79052345673",
+                        isIncoming = true,
+                        startTime = 1000.let { time += it; time },
+                        endTime = time + 10000,
+                        isMissed = false,
+                        text = null,
+                        location = null,
+                        processState = STATE_PENDING,
+                        acceptor = recipient,
+                        bypassFlags = FLAG_ACCEPTED,
                         isRead = false
                     )
                 )
                 phoneCalls.add(
                     PhoneCallInfo(
-                        "+79052345674",
-                        false,
-                        1000.let { time += it; time },
-                        time + 10000,
-                        false,
-                        null,
-                        null,
-                        "Test exception +79052345674",
-                        STATE_PENDING,
-                        recipient,
-                        FLAG_BYPASS_NONE,
+                        phone = "+79052345674",
+                        isIncoming = false,
+                        startTime = 1000.let { time += it; time },
+                        endTime = time + 10000,
+                        isMissed = false,
+                        text = null,
+                        location = null,
+                        processState = STATE_PENDING,
+                        acceptor = recipient,
+                        bypassFlags = FLAG_ACCEPTED,
                         isRead = false
                     )
                 )
                 phoneCalls.add(
                     PhoneCallInfo(
-                        "+79052345675",
-                        true,
-                        1000.let { time += it; time },
-                        time + 10000,
-                        true,
-                        null,
-                        null,
-                        "Test exception +79052345675",
-                        STATE_PENDING,
-                        recipient,
-                        FLAG_BYPASS_NONE,
+                        phone = "+79052345675",
+                        isIncoming = true,
+                        startTime = 1000.let { time += it; time },
+                        endTime = time + 10000,
+                        isMissed = true,
+                        text = null,
+                        location = null,
+                        processState = STATE_PENDING,
+                        acceptor = recipient,
+                        bypassFlags = FLAG_ACCEPTED,
                         isRead = false
                     )
                 )

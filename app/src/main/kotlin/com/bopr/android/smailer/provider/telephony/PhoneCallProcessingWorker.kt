@@ -11,7 +11,7 @@ class PhoneCallProcessingWorker(
     Worker(context, workerParams) {
 
     override fun doWork(): Result {
-        PhoneCallProcessor(applicationContext).processRecords()
+        PhoneCallProcessor(applicationContext).process()
         return Result.success()
     }
 }

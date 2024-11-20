@@ -32,13 +32,13 @@ class MessageDispatcher(context: Context) {
     }
 
     fun dispatch(
-        message: Message,
+        event: Event,
         onSuccess: () -> Unit,
         onError: (Throwable) -> Unit
     ) {
-        log.debug("Dispatching").verb(message)
+        log.debug("Dispatching").verb(event)
 
-        messengers.forEach { it.sendMessage(message, onSuccess, onError) }
+        messengers.forEach { it.sendMessage(event, onSuccess, onError) }
     }
 
     companion object {

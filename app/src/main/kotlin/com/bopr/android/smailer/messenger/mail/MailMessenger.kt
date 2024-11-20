@@ -11,8 +11,8 @@ import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_MAIL_RECIPIENT
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_ENABLED
-import com.bopr.android.smailer.messenger.Message
-import com.bopr.android.smailer.messenger.Message.Companion.FLAG_SENT_BY_MAIL
+import com.bopr.android.smailer.messenger.Event
+import com.bopr.android.smailer.messenger.Event.Companion.FLAG_SENT_BY_MAIL
 import com.bopr.android.smailer.messenger.Messenger
 import com.bopr.android.smailer.ui.MailRecipientsActivity
 import com.bopr.android.smailer.ui.MailSettingsActivity
@@ -51,17 +51,17 @@ internal class MailMessenger(private val context: Context) : Messenger {
     }
 
     override fun sendMessage(
-        message: Message,
+        event: Event,
         onSuccess: () -> Unit,
         onError: (Throwable) -> Unit
     ) {
-        if (FLAG_SENT_BY_MAIL in message.processedFlags) return
+        if (FLAG_SENT_BY_MAIL in event.processFlags) return
 
         session?.run {
-            log.debug("Sending").verb(message)
+            log.debug("Sending").verb(event)
 
             val recipients = checkRecipients(settings.getMailRecipients()) ?: return
-            val formatter = formatters.createFormatter(message.payload)
+            val formatter = formatters.createFormatter(event.payload)
 
             send(
                 MailMessage(
@@ -73,13 +73,13 @@ internal class MailMessenger(private val context: Context) : Messenger {
                 onSuccess = {
                     log.debug("Successfully sent")
 
-                    message.processedFlags += FLAG_SENT_BY_MAIL
+                    event.processFlags += FLAG_SENT_BY_MAIL
                     onSuccess()
                 },
                 onError = { error ->
                     log.error("Send failed", error)
 
-                    message.processedFlags -= FLAG_SENT_BY_MAIL
+                    event.processFlags -= FLAG_SENT_BY_MAIL
                     notifySendError(error)
                     onError(error)
                 })
