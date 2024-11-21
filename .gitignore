@@ -1,6 +1,7 @@
-.idea
-.gradle
-*.iml
 **/build/
-/local.properties
-/keystore.p12
+*.iml
+.gradle
+.idea
+.kotlin
+keystore.p12
+local.properties
