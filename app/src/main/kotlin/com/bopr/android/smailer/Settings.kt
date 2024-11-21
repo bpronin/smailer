@@ -4,8 +4,11 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import androidx.fragment.app.Fragment
 import com.bopr.android.smailer.messenger.mail.PhoneCallMailFormatter.Companion.PHONE_SEARCH_TAG
+import com.bopr.android.smailer.util.ContextOwner
 import com.bopr.android.smailer.util.DEVICE_NAME
+import com.bopr.android.smailer.util.Logger
 import com.bopr.android.smailer.util.commaJoin
 import com.bopr.android.smailer.util.commaSplit
 
@@ -14,18 +17,14 @@ import com.bopr.android.smailer.util.commaSplit
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class Settings(context: Context, changeListener: ChangeListener? = null) {
+class Settings private constructor(context: Context) {
 
     private val preferences = context.getSharedPreferences(sharedPreferencesName, MODE_PRIVATE)
-    private var preferencesListener = changeListener?.let {
-        OnSharedPreferenceChangeListener { _, key ->
-            key?.run { it.onSettingsChanged(this@Settings, key) }
-        }.also {
-            preferences.registerOnSharedPreferenceChangeListener(it)
-        }
-    }
+    private var listeners = mutableMapOf<ChangeListener, OnSharedPreferenceChangeListener>()
 
     init {
+        log.debug("Instantiated for context [${context.hashCode()}]").verb(context)
+
         if (SETTINGS_VERSION > getInt(PREF_SETTINGS_VERSION)) {
             loadDefaults()
         }
@@ -91,12 +90,6 @@ class Settings(context: Context, changeListener: ChangeListener? = null) {
     fun hasTelegramMessageContent(value: String) =
         getStringSet(PREF_TELEGRAM_MESSAGE_CONTENT).contains(value)
 
-    fun dispose() {
-        preferencesListener?.run {
-            preferences.unregisterOnSharedPreferenceChangeListener(this)
-        }
-    }
-
     fun getString(key: String): String? {
         return preferences.getString(key, null)
     }
@@ -159,12 +152,40 @@ class Settings(context: Context, changeListener: ChangeListener? = null) {
 
     }
 
+    fun registerListener(listener: ChangeListener) {
+        object : OnSharedPreferenceChangeListener {
+
+            override fun onSharedPreferenceChanged(preferences: SharedPreferences?, key: String?) {
+                key?.let {
+                    log.debug("Notify listener [${listener.hashCode()}]. key: $listener")
+
+                    listener.onSettingsChanged(this@Settings, it)
+                }
+            }
+        }.also {
+            preferences.registerOnSharedPreferenceChangeListener(it)
+            listeners.put(listener, it)
+
+            log.debug("Listener registered [${listener.hashCode()}]").verb(listener)
+        }
+    }
+
+    fun unregisterListener(listener: ChangeListener) {
+        listeners.remove(listener)?.let {
+            preferences.unregisterOnSharedPreferenceChangeListener(it)
+
+            log.debug("Listener unregistered [${listener.hashCode()}]").verb(listener)
+        }
+    }
+
     interface ChangeListener {
 
         fun onSettingsChanged(settings: Settings, key: String)
     }
 
     companion object {
+        val log = Logger("Settings")
+
         var sharedPreferencesName = "com.bopr.android.smailer_preferences"
 
         private const val SETTINGS_VERSION = 2
@@ -209,9 +230,14 @@ class Settings(context: Context, changeListener: ChangeListener? = null) {
 
         const val DEFAULT_PHONE_SEARCH_URL = "https://www.google.com/search?q=$PHONE_SEARCH_TAG"
 
-        // TODO: implement settings map
-        //private val settingsMap = mutableMapOf<Context, Settings>()
-        //val Context.settings get() = settingsMap.getOrPut(this) { Settings(this) }
+        @Volatile
+        private var instance: Settings? = null
+        val Context.settings
+            get() = instance ?: synchronized(this) {
+                instance ?: Settings(this).also { instance = it }
+            }
+        val ContextOwner.settings get() = requireContext().settings
+//        val Fragment.settings get() = requireContext().settings
     }
 
 }

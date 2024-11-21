@@ -12,12 +12,13 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.*
 import com.bopr.android.smailer.R
+import com.bopr.android.smailer.util.ContextOwner
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 /**
  * Base fragment with [RecyclerView].
  */
-abstract class RecyclerFragment<I, H : ViewHolder> : Fragment() {
+abstract class RecyclerFragment<I, H : ViewHolder> : Fragment(), ContextOwner {
 
     protected lateinit var recycler: RecyclerView
     protected lateinit var listAdapter: ListAdapter
@@ -26,8 +27,10 @@ abstract class RecyclerFragment<I, H : ViewHolder> : Fragment() {
     @StringRes
     protected var emptyTextRes: Int = R.string.list_is_empty
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val view = inflater.inflate(R.layout.fragment_recycler, container, false)
 
         listAdapter = ListAdapter().apply {
@@ -40,7 +43,12 @@ abstract class RecyclerFragment<I, H : ViewHolder> : Fragment() {
         }
 
         recycler = view.findViewById<RecyclerView>(android.R.id.list).apply {
-            addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
+            addItemDecoration(
+                DividerItemDecoration(
+                    requireContext(),
+                    DividerItemDecoration.VERTICAL
+                )
+            )
             adapter = listAdapter
         }
 
@@ -87,7 +95,7 @@ abstract class RecyclerFragment<I, H : ViewHolder> : Fragment() {
     private fun updateEmptyText() {
         view?.apply {
             findViewById<View>(R.id.text_empty).visibility =
-                    if (listAdapter.itemCount == 0) VISIBLE else GONE
+                if (listAdapter.itemCount == 0) VISIBLE else GONE
         }
     }
 

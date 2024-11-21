@@ -8,6 +8,7 @@ import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS
+import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.messenger.mail.GoogleMailSession
 import com.bopr.android.smailer.messenger.mail.MailMessage
 import com.bopr.android.smailer.ui.RemoteControlActivity
@@ -24,7 +25,7 @@ import com.bopr.android.smailer.util.Logger
  */
 internal class MailControlProcessor(
     private val context: Context,
-    private val settings: Settings = Settings(context),
+    private val settings: Settings = context.settings,
     private val notifications: NotificationsHelper = NotificationsHelper(context),
 ) {
 

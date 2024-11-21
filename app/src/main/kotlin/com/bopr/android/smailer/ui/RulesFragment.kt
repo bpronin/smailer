@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.annotation.StringRes
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_PHONE_PROCESS_TRIGGERS
+import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.TABLE_PHONE_BLACKLIST
 import com.bopr.android.smailer.data.Database.Companion.TABLE_PHONE_WHITELIST

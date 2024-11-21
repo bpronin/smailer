@@ -50,7 +50,7 @@ abstract class ReadonlyDataset<T>(
 
     protected abstract fun get(cursor: Cursor): T
 
-    protected open fun query(): Cursor = read { query(tableName) }
+    protected open fun query(): Cursor = read { queryRecords(tableName) }
 
     protected inline fun <R> read(action: SQLiteDatabase.() -> R): R =
         helper.readableDatabase.action()

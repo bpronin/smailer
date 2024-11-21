@@ -24,7 +24,7 @@ fun <R> SQLiteOpenHelper.read(action: SQLiteDatabase.() -> R): R = readableDatab
 
 fun <R> SQLiteOpenHelper.write(action: SQLiteDatabase.() -> R): R = writableDatabase.action()
 
-fun SQLiteDatabase.replace(table: String, values: ContentValues): Boolean {
+fun SQLiteDatabase.replaceRecords(table: String, values: ContentValues): Boolean {
     log.debug("Insert into [$table]").verb(values)
 
     val result = insertWithOnConflict(table, null, values, CONFLICT_REPLACE) != -1L
@@ -34,8 +34,7 @@ fun SQLiteDatabase.replace(table: String, values: ContentValues): Boolean {
     return result
 }
 
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-fun SQLiteDatabase.update(
+fun SQLiteDatabase.updateRecords(
     table: String,
     values: ContentValues,
     where: String? = null,
@@ -46,8 +45,7 @@ fun SQLiteDatabase.update(
     return update(table, values, where, whereArgs) != 0
 }
 
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-fun SQLiteDatabase.query(
+fun SQLiteDatabase.queryRecords(
     table: String,
     projection: Array<out String>? = null,
     selection: String? = null,
@@ -62,8 +60,7 @@ fun SQLiteDatabase.query(
     return query(table, projection, selection, selectionArgs, groupBy, having, order, limit)
 }
 
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-fun SQLiteDatabase.delete(
+fun SQLiteDatabase.deleteRecords(
     table: String,
     selection: String? = null,
     selectionArgs: Array<out String>? = null
@@ -73,7 +70,7 @@ fun SQLiteDatabase.delete(
     delete(table, selection, selectionArgs)
 }
 
-inline fun <T> SQLiteDatabase.batch(action: SQLiteDatabase.() -> T): T {
+inline fun <T> SQLiteDatabase.batchRecords(action: SQLiteDatabase.() -> T): T {
     beginTransaction()
     try {
         val result = action()
@@ -85,7 +82,7 @@ inline fun <T> SQLiteDatabase.batch(action: SQLiteDatabase.() -> T): T {
 }
 
 inline fun SQLiteDatabase.getTables(): Set<String> {
-    return query(
+    return queryRecords(
         "sqlite_master",
         stringArrayOf("name"),
         "type='table' AND name<>'android_metadata'"
@@ -117,9 +114,9 @@ inline fun SQLiteDatabase.copyTable(
     src: String, dest: String,
     transform: Cursor.(String) -> String? = { getStringIfExists(it) }
 ) {
-    val columns = query(table = dest, limit = "1").use { it.columnNames }
+    val columns = queryRecords(table = dest, limit = "1").use { it.columnNames }
 
-    query(src).forEach {
+    queryRecords(src).forEach {
         val values = ContentValues()
         for (column in columns) {
             values.put(column, transform(column))
@@ -138,7 +135,7 @@ inline fun SQLiteDatabase.count(
     table: String, selection: String? = null,
     selectionArgs: Array<out String>? = null
 ): Long {
-    return query(table, COUNT_SELECTION, selection, selectionArgs).withFirst { getLong(0) }
+    return queryRecords(table, COUNT_SELECTION, selection, selectionArgs).withFirst { getLong(0) }
 }
 
 inline fun Cursor.getString(columnName: String): String {

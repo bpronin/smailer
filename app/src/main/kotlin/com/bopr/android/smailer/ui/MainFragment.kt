@@ -7,6 +7,7 @@ import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_SMS_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSENGER_ENABLED
+import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.TABLE_PHONE_CALLS
 import com.bopr.android.smailer.data.Database.Companion.registerDatabaseListener

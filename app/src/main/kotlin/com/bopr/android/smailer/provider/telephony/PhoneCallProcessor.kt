@@ -3,6 +3,7 @@ package com.bopr.android.smailer.provider.telephony
 import android.content.Context
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
+import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.provider.Processor
 import com.bopr.android.smailer.util.Bits
 

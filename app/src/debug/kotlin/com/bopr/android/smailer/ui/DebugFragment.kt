@@ -114,7 +114,6 @@ class DebugFragment : PreferenceFragmentCompat() {
         super.onCreate(savedInstanceState)
         preferenceManager.sharedPreferencesName = sharedPreferencesName
 
-        settings = Settings(requireContext())
         database = Database(requireContext())
         authorization = GoogleAuthorizationHelper(
             requireActivity(), PREF_MAIL_SENDER_ACCOUNT, MAIL_GOOGLE_COM, DRIVE_APPDATA

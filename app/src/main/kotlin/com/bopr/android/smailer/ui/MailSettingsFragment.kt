@@ -11,6 +11,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_MESSAGE_LOCALE
+import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.messenger.mail.BaseMailFormatter
 import com.bopr.android.smailer.messenger.mail.GoogleMailSession
 import com.bopr.android.smailer.messenger.mail.MailMessage

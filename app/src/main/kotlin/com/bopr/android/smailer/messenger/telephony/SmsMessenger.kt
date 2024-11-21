@@ -4,10 +4,10 @@ import android.content.Context
 import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_TELEPHONY
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.PREF_SMS_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_SMS_MESSENGER_RECIPIENTS
+import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.messenger.Event
 import com.bopr.android.smailer.messenger.Event.Companion.FLAG_SENT_BY_SMS
 import com.bopr.android.smailer.messenger.Messenger
@@ -28,8 +28,9 @@ import com.bopr.android.smailer.util.sendSmsMessage
 @Mockable
 internal class SmsMessenger(private val context: Context) : Messenger {
 
-    private val settings = Settings(context)
     private val notifications by lazy { NotificationsHelper(context) }
+
+    override fun requireContext() = context
 
     override fun initialize(): Boolean {
         if (settings.getBoolean(PREF_SMS_MESSENGER_ENABLED)) {
@@ -73,7 +74,7 @@ internal class SmsMessenger(private val context: Context) : Messenger {
         val payload = event.payload
         return when (payload) {
             is PhoneCallInfo -> formatPhoneCallMessage(payload)
-            is BatteryInfo ->  formatBatteryEventMessage(payload)
+            is BatteryInfo -> formatBatteryEventMessage(payload)
             else -> throw IllegalArgumentException("No formatter for $payload")
         }
     }

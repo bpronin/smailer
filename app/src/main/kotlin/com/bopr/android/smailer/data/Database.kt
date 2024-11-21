@@ -62,7 +62,7 @@ class Database(private val context: Context) : Closeable {
     fun batch(action: Database.() -> Unit) {
         log.debug("Begin batch")
 
-        helper.write { batch(action) }
+        helper.write { batchRecords{action()} }
 
         log.debug("End batch")
     }
@@ -97,16 +97,16 @@ class Database(private val context: Context) : Closeable {
     }
 
     private fun querySystemTable() =
-        helper.read { query(TABLE_SYSTEM, arrayOf(COLUMN_UPDATE_TIME), "$COLUMN_ID=0") }
+        helper.read { queryRecords(TABLE_SYSTEM, arrayOf(COLUMN_UPDATE_TIME), "$COLUMN_ID=0") }
 
     private fun updateSystemTable(values: ContentValues) =
-        helper.write { update(TABLE_SYSTEM, values, "$COLUMN_ID=0") }
+        helper.write { updateRecords(TABLE_SYSTEM, values, "$COLUMN_ID=0") }
 
     inner class DbHelper(context: Context) :
         SQLiteOpenHelper(context, databaseName, null, DB_VERSION) {
 
         override fun onCreate(db: SQLiteDatabase) {
-            db.batch {
+            db.batchRecords {
                 execSQL(SQL_CREATE_SYSTEM)
                 execSQL(SQL_CREATE_EVENTS)
                 execSQL(SQL_CREATE_PHONE_CALLS)
@@ -127,7 +127,7 @@ class Database(private val context: Context) : Closeable {
             newVersion: Int
         ) { /* see https://www.techonthenet.com/sqlite/tables/alter_table.php */
             if (DB_VERSION > oldVersion) {
-                db.batch {
+                db.batchRecords {
                     alterTable(TABLE_SYSTEM, SQL_CREATE_SYSTEM)
                     alterTable(TABLE_EVENTS, SQL_CREATE_EVENTS)
                     alterTable(TABLE_PHONE_CALLS, SQL_CREATE_PHONE_CALLS)

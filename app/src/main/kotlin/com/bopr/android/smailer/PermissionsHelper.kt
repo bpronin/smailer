@@ -27,6 +27,7 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
+import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.ui.InfoDialog.Companion.showInfoDialog
 import com.bopr.android.smailer.util.Logger
 
@@ -55,7 +56,7 @@ class PermissionsHelper(
         }
     }
 
-    private val settings = Settings(activity)
+    private val settings = activity.settings
     private val accountHelper = AccountHelper(activity)
     private val permissionRequestLauncher =
         activity.registerForActivityResult(RequestMultiplePermissions()) { result ->

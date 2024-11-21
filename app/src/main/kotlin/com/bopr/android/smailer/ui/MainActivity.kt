@@ -10,6 +10,7 @@ import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_PHONE_PROCESS_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
+import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.control.MailRemoteControlWorker.Companion.enableMailRemoteControl
 import com.bopr.android.smailer.external.Firebase.Companion.resubscribeToFirebaseMessaging
 import com.bopr.android.smailer.provider.telephony.ContentObserverService.Companion.startContentObserver
@@ -23,7 +24,6 @@ import com.bopr.android.smailer.util.requireIgnoreBatteryOptimization
  */
 class MainActivity : FlavorBaseActivity(MainFragment::class), Settings.ChangeListener {
 
-    private lateinit var settings: Settings
     private lateinit var backupManager: BackupManager
     private lateinit var permissionsHelper: PermissionsHelper
     private lateinit var notificationsHelper: NotificationsHelper
@@ -37,18 +37,20 @@ class MainActivity : FlavorBaseActivity(MainFragment::class), Settings.ChangeLis
         notificationsHelper = NotificationsHelper(this)
         accountHelper = AccountHelper(this)
         permissionsHelper = PermissionsHelper(this)
-        settings = Settings(this, this)
-
         permissionsHelper.checkAll()
 
         requireIgnoreBatteryOptimization()
         startUpAppServices()
     }
 
-    override fun onDestroy() {
-        settings.dispose()
+    override fun onStart() {
+        super.onStart()
+        settings.registerListener(this)
+    }
 
-        super.onDestroy()
+    override fun onStop() {
+        settings.unregisterListener(this)
+        super.onStop()
     }
 
     override fun onSettingsChanged(settings: Settings, key: String) {

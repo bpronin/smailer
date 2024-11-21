@@ -5,7 +5,6 @@ import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.Context
 import androidx.annotation.StringRes
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CREATION_TIME
@@ -13,6 +12,7 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DEVI
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_HEADER
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCATION
+import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.util.GeoLocation
 import com.bopr.android.smailer.util.checkPermission
 import com.bopr.android.smailer.util.localeResources
@@ -29,7 +29,7 @@ abstract class BaseMailFormatter(
     private val location: GeoLocation?
 ) : MailFormatter {
 
-    protected val settings = Settings(context)
+    protected val settings = context.settings
     private val locale: Locale = parseLocale(settings.getMessageLocale())
     private val resources = context.localeResources(locale)
     private val timeFormat = getDateTimeInstance(LONG, LONG, locale)

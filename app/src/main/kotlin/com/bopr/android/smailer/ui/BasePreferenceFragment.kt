@@ -5,7 +5,9 @@ import androidx.annotation.XmlRes
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.bopr.android.smailer.Settings
+import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.Settings.Companion.sharedPreferencesName
+import com.bopr.android.smailer.util.ContextOwner
 import com.bopr.android.smailer.util.refreshView
 
 /**
@@ -14,23 +16,11 @@ import com.bopr.android.smailer.util.refreshView
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 abstract class BasePreferenceFragment(@XmlRes private val layoutRes: Int) :
-    PreferenceFragmentCompat(),
-    Settings.ChangeListener {
-
-    protected lateinit var settings: Settings
+    PreferenceFragmentCompat(), Settings.ChangeListener, ContextOwner {
 
     override fun onCreatePreferences(bundle: Bundle?, rootKey: String?) {
         addPreferencesFromResource(layoutRes)
-
         preferenceManager.sharedPreferencesName = sharedPreferencesName
-
-        settings = Settings(requireContext(), this)
-    }
-
-    override fun onDestroy() {
-        settings.dispose()
-
-        super.onDestroy()
     }
 
     override fun onDisplayPreferenceDialog(preference: Preference) {
@@ -45,6 +35,13 @@ abstract class BasePreferenceFragment(@XmlRes private val layoutRes: Int) :
         /* when settings have changed from somewhere else but this fragment, we need to
            forcibly refresh all views to reflect the changes */
         preferenceScreen.refreshView()
+
+        settings.registerListener(this)
+    }
+
+    override fun onStop() {
+        settings.unregisterListener(this)
+        super.onStop()
     }
 
     override fun onSettingsChanged(settings: Settings, key: String) {

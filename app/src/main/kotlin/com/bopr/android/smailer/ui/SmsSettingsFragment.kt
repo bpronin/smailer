@@ -4,6 +4,7 @@ import android.os.Bundle
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_SMS_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_SMS_MESSENGER_RECIPIENTS
+import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.ui.InfoDialog.Companion.showInfoDialog
 import com.bopr.android.smailer.util.GeoLocation.Companion.requestGeoLocation
 import com.bopr.android.smailer.util.PreferenceProgress

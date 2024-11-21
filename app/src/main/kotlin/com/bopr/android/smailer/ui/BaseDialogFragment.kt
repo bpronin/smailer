@@ -10,11 +10,13 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
+import com.bopr.android.smailer.util.ContextOwner
 
 /**
  * Base dialog fragment.
  */
-abstract class BaseDialogFragment(private val fragmentTag: String?) : DialogFragment() {
+abstract class BaseDialogFragment(private val fragmentTag: String?) :
+    DialogFragment(), ContextOwner {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         var dialog = dialog
@@ -29,7 +31,7 @@ abstract class BaseDialogFragment(private val fragmentTag: String?) : DialogFrag
     override fun show(manager: FragmentManager, tag: String?) {
         try {
             super.show(manager, tag)
-        } catch (x: IllegalStateException) {
+        } catch (_: IllegalStateException) {
             /* workaround for issue: https://issuetracker.google.com/issues/36938035 */
         }
     }

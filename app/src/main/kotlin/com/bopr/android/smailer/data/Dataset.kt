@@ -22,7 +22,7 @@ abstract class Dataset<T>(
     private val rowSet get() = query().toSet(::get) // TODO: get rid of it
     override val size get() = read { count(tableName).toInt() }
 
-    override fun add(element: T) = write(tableName) { replace(it, values(element)) }
+    override fun add(element: T) = write(tableName) { replaceRecords(it, values(element)) }
 
     override fun addAll(elements: Collection<T>): Boolean {
         var affected = 0
@@ -66,7 +66,7 @@ abstract class Dataset<T>(
     }
 
     override fun clear() = write(tableName) {
-        delete(tableName)
+        deleteRecords(tableName)
     }
 
     override fun isEmpty(): Boolean {
@@ -111,7 +111,7 @@ abstract class Dataset<T>(
 
     protected abstract fun get(cursor: Cursor): T
 
-    protected open fun query() = read { query(tableName) }
+    protected open fun query() = read { queryRecords(tableName) }
 
     protected fun <R> read(action: SQLiteDatabase.() -> R): R = helper.read(action)
 

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.bopr.android.smailer.Settings.Companion.PREF_DISPATCH_BATTERY_LEVEL
+import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_TRIGGER_OFF
 import com.bopr.android.smailer.provider.Processor
 import com.bopr.android.smailer.util.Bits

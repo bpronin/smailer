@@ -7,17 +7,17 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.settings
+import com.bopr.android.smailer.util.Logger
 import com.google.firebase.messaging.FirebaseMessaging
 import org.json.JSONObject
-import com.bopr.android.smailer.util.Logger
 import java.util.Locale
 
 class Firebase(val context: Context) {
 
     private var subscribedTopic: String? = null
-    private val settings = Settings(context)
+    private val settings = context.settings
     private val accountHelper = AccountHelper(context)
     private val firebaseMessaging = FirebaseMessaging.getInstance()
     private val requestQueue = Volley.newRequestQueue(context)

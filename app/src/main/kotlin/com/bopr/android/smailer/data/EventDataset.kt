@@ -52,7 +52,7 @@ class EventDataset(
      */
     val pending
         get() = read {
-            query(
+            queryRecords(
                 table = tableName,
                 selection = "$COLUMN_STATE=${STATE_PENDING}",
                 order = "$COLUMN_TIMESTAMP DESC"
@@ -63,13 +63,13 @@ class EventDataset(
      * Marks all events as read.
      */
     fun markAllAsRead(read: Boolean) = write(tableName) {
-        update(it, values {
+        updateRecords(it, values {
             put(COLUMN_READ, read)
         })
     }
 
     override fun query() = read {
-        query(tableName, order = "$COLUMN_TIMESTAMP DESC")
+        queryRecords(tableName, order = "$COLUMN_TIMESTAMP DESC")
     }
 
     override fun get(cursor: Cursor) = cursor.run {
@@ -118,7 +118,7 @@ class EventDataset(
     private fun getPayload(payloadType: Int, timestamp: Long, target: String): EventPayload {
         return when (payloadType) {
             PAYLOAD_TYPE_PHONE_CALL -> read {
-                query(
+                queryRecords(
                     table = TABLE_PHONE_CALLS,
                     selection = "$COLUMN_TIMESTAMP=$timestamp AND $COLUMN_TARGET='$target'"
                 ).withFirst {
@@ -145,7 +145,7 @@ class EventDataset(
         when (payload) {
             is PhoneCallInfo -> payload.apply {
                 write(TABLE_PHONE_CALLS) {
-                    replace(it, values {
+                    replaceRecords(it, values {
                         put(COLUMN_TIMESTAMP, timestamp)
                         put(COLUMN_TARGET, target)
                         put(COLUMN_PHONE, phone)

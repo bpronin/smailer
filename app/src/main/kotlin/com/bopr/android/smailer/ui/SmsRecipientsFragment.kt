@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_SMS_MESSENGER_RECIPIENTS
+import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.ui.SmsRecipientsFragment.Holder
 
 /**
@@ -19,18 +20,14 @@ import com.bopr.android.smailer.ui.SmsRecipientsFragment.Holder
 class SmsRecipientsFragment : EditableRecyclerFragment<String, Holder>(),
     Settings.ChangeListener {
 
-    private lateinit var settings: Settings
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        settings = Settings(requireContext(), this)
+    override fun onStart() {
+        super.onStart()
+        settings.registerListener(this)
     }
 
-    override fun onDestroy() {
-        settings.dispose()
-
-        super.onDestroy()
+    override fun onStop() {
+        settings.unregisterListener(this)
+        super.onStop()
     }
 
     override fun onSettingsChanged(settings: Settings, key: String) {

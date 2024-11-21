@@ -6,7 +6,7 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.fragment.app.FragmentActivity
 import com.bopr.android.smailer.AccountHelper
-import com.bopr.android.smailer.Settings
+import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.util.Logger
 import com.bopr.android.smailer.util.createPickAccountIntent
 
@@ -23,7 +23,7 @@ class GoogleAuthorizationHelper(
 
     private val scopes = setOf(*scopes)
     private val accountHelper = AccountHelper(activity)
-    private val settings = Settings(activity)
+    private val settings = activity.settings
     private val accountPickerLauncher =
         activity.registerForActivityResult(StartActivityForResult()) { result ->
             onAccountPickerResult(result)

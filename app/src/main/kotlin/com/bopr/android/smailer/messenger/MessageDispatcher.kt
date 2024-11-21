@@ -15,7 +15,7 @@ import com.bopr.android.smailer.util.Mockable
 @Mockable
 class MessageDispatcher(context: Context) {
 
-    private val messengers = arrayOf(
+    private val messengers: Array<Messenger> = arrayOf(
         MailMessenger(context),
         TelegramMessenger(context),
         SmsMessenger(context)

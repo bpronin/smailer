@@ -6,6 +6,7 @@ import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.DEFAULT_PHONE_SEARCH_URL
 import com.bopr.android.smailer.Settings.Companion.PREF_DEVICE_ALIAS
 import com.bopr.android.smailer.Settings.Companion.PREF_PHONE_SEARCH_URL
+import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.util.DEVICE_NAME
 import com.bopr.android.smailer.util.requirePreferenceAs
 import com.bopr.android.smailer.util.setOnChangeListener

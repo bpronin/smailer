@@ -8,6 +8,7 @@ import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_NOTIFICATIONS
+import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.control.ControlCommand.Action.ADD_PHONE_TO_BLACKLIST
 import com.bopr.android.smailer.control.ControlCommand.Action.ADD_PHONE_TO_WHITELIST
 import com.bopr.android.smailer.control.ControlCommand.Action.ADD_TEXT_TO_BLACKLIST
@@ -37,7 +38,7 @@ import kotlin.reflect.KClass
 internal class ControlCommandExecutor(
     private val context: Context,
     private val database: Database = Database(context),
-    private val settings: Settings = Settings(context),
+    private val settings: Settings = context.settings,
     private val notifications: NotificationsHelper = NotificationsHelper(context),
 ) {
 

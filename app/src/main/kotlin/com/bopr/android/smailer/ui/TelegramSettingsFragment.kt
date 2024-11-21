@@ -8,6 +8,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_BOT_TOKEN
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_CHAT_ID
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSENGER_ENABLED
+import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.messenger.telegram.BaseTelegramFormatter
 import com.bopr.android.smailer.messenger.telegram.TelegramSession
 import com.bopr.android.smailer.ui.InfoDialog.Companion.showInfoDialog

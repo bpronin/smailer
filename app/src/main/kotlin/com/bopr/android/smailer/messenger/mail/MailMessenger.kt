@@ -9,9 +9,9 @@ import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_GOOGLE_ACCOUNT
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_MAIL
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_MAIL_RECIPIENTS
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
+import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.messenger.Event
 import com.bopr.android.smailer.messenger.Event.Companion.FLAG_SENT_BY_MAIL
 import com.bopr.android.smailer.messenger.Messenger
@@ -32,12 +32,13 @@ import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 @Mockable
 internal class MailMessenger(private val context: Context) : Messenger {
 
-    private val settings = Settings(context)
     private val accountHelper = AccountHelper(context)
     private val formatters = MailFormatterFactory(context)
     private val notifications by lazy { NotificationsHelper(context) }
     private var account: Account? = null
     private var session: GoogleMailSession? = null
+
+    override fun requireContext() = context
 
     override fun initialize(): Boolean {
         if (settings.getBoolean(PREF_MAIL_MESSENGER_ENABLED)) {

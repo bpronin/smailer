@@ -11,6 +11,7 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DISP
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CREATION_TIME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_HEADER
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCATION
+import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.util.GeoLocation
 import com.bopr.android.smailer.util.httpEncoded
 import java.text.DateFormat
@@ -23,7 +24,7 @@ abstract class BaseTelegramFormatter(
     private val location: GeoLocation?
 ) : TelegramFormatter {
 
-    protected val settings = Settings(context)
+    protected val settings = context.settings
 
     override fun formatMessage(): String = buildString {
 

@@ -4,11 +4,11 @@ import android.content.Context
 import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_TELEGRAM
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_BOT_TOKEN
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_CHAT_ID
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSENGER_ENABLED
+import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.messenger.Event
 import com.bopr.android.smailer.messenger.Event.Companion.FLAG_SENT_BY_TELEGRAM
 import com.bopr.android.smailer.messenger.Messenger
@@ -24,10 +24,11 @@ import com.bopr.android.smailer.util.telegramErrorText
  */
 class TelegramMessenger(private val context: Context) : Messenger {
 
-    private val settings = Settings(context)
     private val formatters = TelegramFormatterFactory(context)
     private val notifications by lazyOf(NotificationsHelper(context))
     private var session: TelegramSession? = null
+
+    override fun requireContext() = context
 
     override fun initialize(): Boolean {
         if (settings.getBoolean(PREF_TELEGRAM_MESSENGER_ENABLED)) {

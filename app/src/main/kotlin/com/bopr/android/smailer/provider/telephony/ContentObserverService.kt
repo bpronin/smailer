@@ -12,8 +12,8 @@ import android.os.IBinder
 import android.os.Looper
 import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_SERVICE
-import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
+import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.data.getLong
 import com.bopr.android.smailer.data.getString
 import com.bopr.android.smailer.data.getStringOrNull
@@ -122,7 +122,7 @@ class ContentObserverService : Service() {
          */
         fun Context.startContentObserver() {
             val intent = Intent(this, ContentObserverService::class.java)
-            val triggers = Settings(this).getPhoneProcessTriggers()
+            val triggers = settings.getPhoneProcessTriggers()
 
             if (triggers.contains(VAL_PREF_TRIGGER_OUT_SMS)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

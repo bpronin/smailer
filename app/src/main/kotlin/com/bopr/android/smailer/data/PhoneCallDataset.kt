@@ -20,7 +20,7 @@ class PhoneCallDataset(helper: SQLiteOpenHelper) :
     override val keyColumns = stringArrayOf(COLUMN_TIMESTAMP, COLUMN_TARGET)
 
     override fun query() = read {
-        query(tableName, order = "$COLUMN_START_TIME DESC")
+        queryRecords(tableName, order = "$COLUMN_START_TIME DESC")
     }
 
     override fun get(cursor: Cursor) = cursor.run {

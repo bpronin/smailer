@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import androidx.fragment.app.FragmentActivity
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings
+import com.bopr.android.smailer.Settings.Companion.settings
 
 /**
  * Confirmation dialog with "Do not ask again" checkbox.
@@ -43,16 +43,15 @@ class ConfirmCheckDialog(
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
 
-        Settings(requireContext()).update {
+        settings.update {
             putBoolean(dialogTag, checkBox.isChecked)
         }
     }
 
     override fun show(activity: FragmentActivity) {
-        val settings = Settings(activity)
-        if (!settings.getBoolean(dialogTag)) {
+        if (!activity.settings.getBoolean(dialogTag)) {
             super.show(activity)
-        }else{
+        } else {
             onClose()
         }
     }
