@@ -13,7 +13,7 @@ import com.bopr.android.smailer.data.getStringIfExists
 import com.bopr.android.smailer.data.getStringOrNull
 import com.bopr.android.smailer.data.getTables
 import com.bopr.android.smailer.data.query
-import com.bopr.android.smailer.data.toSet
+import com.bopr.android.smailer.data.drainToSet
 import com.bopr.android.smailer.data.values
 import com.bopr.android.smailer.data.write
 import org.junit.After
@@ -206,7 +206,7 @@ class DatabaseUtilTest : BaseTest() {
                     null
             }
 
-            val values = query("TABLE_1").toSet {
+            val values = query("TABLE_1").drainToSet {
                 getString("COLUMN_2")
             }
 
@@ -231,7 +231,7 @@ class DatabaseUtilTest : BaseTest() {
                     null
             }
 
-            val values = query("TABLE_1").toSet {
+            val values = query("TABLE_1").drainToSet {
                 getString("COLUMN_2")
             }
 
