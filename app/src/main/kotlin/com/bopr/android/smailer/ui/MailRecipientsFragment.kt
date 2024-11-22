@@ -1,12 +1,12 @@
 package com.bopr.android.smailer.ui
 
+import android.content.SharedPreferences.*
 import android.view.LayoutInflater.from
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.ui.MailRecipientsFragment.Holder
@@ -18,23 +18,21 @@ import com.bopr.android.smailer.util.underwivedText
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class MailRecipientsFragment : EditableRecyclerFragment<String, Holder>(),
-    Settings.ChangeListener {
+class MailRecipientsFragment : EditableRecyclerFragment<String, Holder>(){
+
+    lateinit var settingsListener: OnSharedPreferenceChangeListener
 
     override fun onStart() {
         super.onStart()
-        settings.registerListener(this)
+
+        settingsListener = settings.registerListener { _, key ->
+            if (key == PREF_MAIL_MESSENGER_RECIPIENTS) refreshItems()
+        }
     }
 
     override fun onStop() {
-        settings.unregisterListener(this)
+        settings.unregisterListener(settingsListener)
         super.onStop()
-    }
-
-    override fun onSettingsChanged(settings: Settings, key: String) {
-        if (key == PREF_MAIL_MESSENGER_RECIPIENTS) {
-            refreshItems()
-        }
     }
 
     override fun loadItems(): Collection<String> {

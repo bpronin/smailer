@@ -6,14 +6,11 @@ import androidx.annotation.StringRes
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_PHONE_PROCESS_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.settings
-import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.TABLE_PHONE_BLACKLIST
 import com.bopr.android.smailer.data.Database.Companion.TABLE_PHONE_WHITELIST
 import com.bopr.android.smailer.data.Database.Companion.TABLE_TEXT_BLACKLIST
 import com.bopr.android.smailer.data.Database.Companion.TABLE_TEXT_WHITELIST
 import com.bopr.android.smailer.data.Database.Companion.database
-import com.bopr.android.smailer.data.Database.Companion.registerDatabaseListener
-import com.bopr.android.smailer.data.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_ACCENTED
 import com.bopr.android.smailer.util.requirePreference
 import com.bopr.android.smailer.util.setOnChangeListener
@@ -41,7 +38,7 @@ class RulesFragment : BasePreferenceFragment(R.xml.pref_rules) {
             }
         }
 
-        databaseListener = requireContext().registerDatabaseListener { tables ->
+        databaseListener = database.registerListener { tables ->
             if (tables.contains(TABLE_PHONE_BLACKLIST)) updatePhoneBlacklistPreferenceView()
             if (tables.contains(TABLE_PHONE_WHITELIST)) updatePhoneWhitelistPreferenceView()
             if (tables.contains(TABLE_TEXT_BLACKLIST)) updateTextBlacklistPreferenceView()
@@ -50,7 +47,7 @@ class RulesFragment : BasePreferenceFragment(R.xml.pref_rules) {
     }
 
     override fun onDestroy() {
-        requireContext().unregisterDatabaseListener(databaseListener)
+        database.unregisterListener(databaseListener)
         database.close()
 
         super.onDestroy()

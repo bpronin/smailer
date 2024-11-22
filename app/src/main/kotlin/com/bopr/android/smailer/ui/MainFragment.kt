@@ -10,8 +10,6 @@ import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSENGER_ENABL
 import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.data.Database.Companion.TABLE_PHONE_CALLS
 import com.bopr.android.smailer.data.Database.Companion.database
-import com.bopr.android.smailer.data.Database.Companion.registerDatabaseListener
-import com.bopr.android.smailer.data.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_ACCENTED
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_DEFAULT
 import com.bopr.android.smailer.util.commaJoin
@@ -40,13 +38,13 @@ class MainFragment : BasePreferenceFragment(R.xml.pref_main) {
 //            )
 //        }
 
-        databaseListener = requireContext().registerDatabaseListener { tables ->
+        databaseListener = database.registerListener { tables ->
             if (tables.contains(TABLE_PHONE_CALLS)) updateHistoryPreferenceView()
         }
     }
 
     override fun onDestroy() {
-        requireContext().unregisterDatabaseListener(databaseListener)
+        database.unregisterListener(databaseListener)
         database.close()
 
         super.onDestroy()

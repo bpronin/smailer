@@ -19,10 +19,7 @@ import androidx.core.content.ContextCompat.getColor
 import androidx.core.view.MenuProvider
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.database
-import com.bopr.android.smailer.data.Database.Companion.registerDatabaseListener
-import com.bopr.android.smailer.data.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.data.StringDataset
 import com.bopr.android.smailer.messenger.Event
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
@@ -60,14 +57,14 @@ class HistoryFragment : RecyclerFragment<Event, Holder>() {
         defaultItemTextColor = context.getColorFromAttr(android.R.attr.textColorSecondary)
         unreadItemTextColor = context.getColorFromAttr(android.R.attr.textColorPrimary)
 
-        databaseListener = context.registerDatabaseListener {
+        databaseListener = database.registerListener {
             refreshItems()
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        requireContext().unregisterDatabaseListener(databaseListener)
+        database.unregisterListener(databaseListener)
         database.close()
     }
 

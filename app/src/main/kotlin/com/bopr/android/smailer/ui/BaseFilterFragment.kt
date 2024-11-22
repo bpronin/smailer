@@ -12,9 +12,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.MenuProvider
 import androidx.recyclerview.widget.RecyclerView
-import com.bopr.android.smailer.data.Database
-import com.bopr.android.smailer.data.Database.Companion.registerDatabaseListener
-import com.bopr.android.smailer.data.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.data.StringDataset
@@ -34,16 +31,14 @@ abstract class BaseFilterFragment(private val listName: String) :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val context = requireContext()
-
         list = database.phoneCallsFilters.getValue(listName)
-        databaseListener = context.registerDatabaseListener { tables ->
+        databaseListener = database.registerListener { tables ->
             if (tables.contains(listName)) refreshItems()
         }
     }
 
     override fun onDestroy() {
-        requireContext().unregisterDatabaseListener(databaseListener)
+        database.unregisterListener(databaseListener)
         database.close()
         super.onDestroy()
     }

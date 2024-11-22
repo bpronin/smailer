@@ -4,8 +4,6 @@ import android.content.BroadcastReceiver
 import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.data.Database.Companion.database
-import com.bopr.android.smailer.data.Database.Companion.registerDatabaseListener
-import com.bopr.android.smailer.data.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.messenger.Event
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
 import org.junit.After
@@ -35,14 +33,14 @@ class DatabaseListenerTest : BaseTest() {
 
     @After
     fun tearDown() {
-        targetContext.unregisterDatabaseListener(listener)
+        database.unregisterListener(listener)
         database.close()
     }
 
     @Test
     fun testListener() {
         val latch = CountDownLatch(1)
-        listener = targetContext.registerDatabaseListener {
+        listener = database.registerListener {
             latch.countDown()
         }
 

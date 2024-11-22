@@ -20,7 +20,6 @@ import com.bopr.android.smailer.util.commaSplit
 class Settings private constructor(context: Context) {
 
     private val preferences = context.getSharedPreferences(sharedPreferencesName, MODE_PRIVATE)
-    private var listeners = mutableMapOf<ChangeListener, OnSharedPreferenceChangeListener>()
 
     init {
         log.debug("Instantiated for context [${context.hashCode()}]").verb(context)
@@ -152,35 +151,27 @@ class Settings private constructor(context: Context) {
 
     }
 
-    fun registerListener(listener: ChangeListener) {
-        object : OnSharedPreferenceChangeListener {
+    fun registerListener(onChange: (settings: Settings, key: String) -> Unit): OnSharedPreferenceChangeListener {
+        return object : OnSharedPreferenceChangeListener {
 
             override fun onSharedPreferenceChanged(preferences: SharedPreferences?, key: String?) {
                 key?.let {
-                    log.debug("Notify listener [${listener.hashCode()}]. key: $listener")
+                    log.debug("Notify listener [${hashCode()}]. key: $it")
 
-                    listener.onSettingsChanged(this@Settings, it)
+                    onChange(this@Settings, it)
                 }
             }
         }.also {
             preferences.registerOnSharedPreferenceChangeListener(it)
-            listeners.put(listener, it)
 
-            log.debug("Listener registered [${listener.hashCode()}]").verb(listener)
+            log.debug("Listener registered [${it.hashCode()}]")
         }
     }
 
-    fun unregisterListener(listener: ChangeListener) {
-        listeners.remove(listener)?.let {
-            preferences.unregisterOnSharedPreferenceChangeListener(it)
+    fun unregisterListener(listener: OnSharedPreferenceChangeListener) {
+        preferences.unregisterOnSharedPreferenceChangeListener(listener)
 
-            log.debug("Listener unregistered [${listener.hashCode()}]").verb(listener)
-        }
-    }
-
-    interface ChangeListener {
-
-        fun onSettingsChanged(settings: Settings, key: String)
+        log.debug("Listener unregistered [${listener.hashCode()}]").verb(listener)
     }
 
     companion object {

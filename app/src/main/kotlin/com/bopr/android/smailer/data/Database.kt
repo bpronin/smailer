@@ -23,6 +23,8 @@ import java.lang.System.currentTimeMillis
 class Database private constructor(private val context: Context) : Closeable {
 
     private val helper: DbHelper = DbHelper(context)
+    private val broadcastManager by lazy { LocalBroadcastManager.getInstance(context) }
+
     private val lastModified = mutableSetOf<String>()
 
     val events = EventDataset(helper, lastModified) // TODO: make it not a database member
@@ -79,7 +81,7 @@ class Database private constructor(private val context: Context) : Closeable {
             log.debug("Commit $lastModified")
 
             updateTime = currentTimeMillis()
-            context.sendDatabaseBroadcast(lastModified)
+            sendDatabaseBroadcast(lastModified)
             lastModified.clear()
 
             if (syncRequired) {
@@ -87,6 +89,43 @@ class Database private constructor(private val context: Context) : Closeable {
             }
         }
         return result
+    }
+
+    /**
+     * Sends database broadcast.
+     */
+    private fun sendDatabaseBroadcast(tables: Set<String>) {
+        log.debug("Broadcasting data changed: $tables")
+
+        val intent = Intent(ACTION_DATABASE_CHANGED)
+            .putExtra(EXTRA_TABLES, tables.toTypedArray())
+        broadcastManager.sendBroadcast(intent)
+    }
+
+    /**
+     * Creates and registers database broadcast receiver.
+     */
+
+    fun registerListener(onChange: (Set<String>) -> Unit): BroadcastReceiver {
+        val listener = object : BroadcastReceiver() {
+
+            override fun onReceive(context: Context, intent: Intent) {
+                onChange(intent.getStringArrayExtra(EXTRA_TABLES)?.toSet() ?: emptySet())
+            }
+        }
+        broadcastManager.registerReceiver(listener, IntentFilter(ACTION_DATABASE_CHANGED))
+
+        log.debug("Listener registered: [${listener.hashCode()}]")
+        return listener
+    }
+
+    /**
+     * Unregisters database broadcast receiver.
+     */
+    fun unregisterListener(listener: BroadcastReceiver) {
+        broadcastManager.unregisterReceiver(listener)
+
+        log.debug("Listener unregistered: [${listener.hashCode()}]")
     }
 
     /**
@@ -229,46 +268,6 @@ class Database private constructor(private val context: Context) : Closeable {
         private const val SQL_CREATE_PHONE_WHITELIST =
             "CREATE TABLE $TABLE_PHONE_WHITELIST(" +
                     "$COLUMN_VALUE TEXT(256) PRIMARY KEY NOT NULL)"
-
-        /**
-         * Sends database broadcast.
-         */
-        fun Context.sendDatabaseBroadcast(tables: Set<String>) {
-            log.debug("Broadcasting data changed: $tables")
-
-            val intent = Intent(ACTION_DATABASE_CHANGED)
-                .putExtra(EXTRA_TABLES, tables.toTypedArray())
-            LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
-        }
-
-        /**
-         * Creates and registers database broadcast receiver.
-         */
-        fun Context.registerDatabaseListener(onChange: (Set<String>) -> Unit)
-                : BroadcastReceiver {
-            val listener = object : BroadcastReceiver() {
-
-                override fun onReceive(context: Context, intent: Intent) {
-                    onChange(intent.getStringArrayExtra(EXTRA_TABLES)?.toSet() ?: emptySet())
-                }
-            }
-            LocalBroadcastManager.getInstance(this).registerReceiver(
-                listener,
-                IntentFilter(ACTION_DATABASE_CHANGED)
-            )
-
-            log.debug("Listener registered: [${listener.hashCode()}]")
-            return listener
-        }
-
-        /**
-         * Unregisters database broadcast receiver.
-         */
-        fun Context.unregisterDatabaseListener(listener: BroadcastReceiver) {
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(listener)
-
-            log.debug("Listener unregistered: [${listener.hashCode()}]")
-        }
 
         private val singletonHolder = SingletonHolder<Database> { Database(it) }
         val Context.database get() = singletonHolder.getInstance(this)

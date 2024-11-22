@@ -1,13 +1,12 @@
 package com.bopr.android.smailer.ui
 
-import android.os.Bundle
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.view.LayoutInflater.from
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_SMS_MESSENGER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.ui.SmsRecipientsFragment.Holder
@@ -17,23 +16,20 @@ import com.bopr.android.smailer.ui.SmsRecipientsFragment.Holder
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class SmsRecipientsFragment : EditableRecyclerFragment<String, Holder>(),
-    Settings.ChangeListener {
+class SmsRecipientsFragment : EditableRecyclerFragment<String, Holder>() {
+
+    private lateinit var settingsListener: OnSharedPreferenceChangeListener
 
     override fun onStart() {
         super.onStart()
-        settings.registerListener(this)
+        settingsListener = settings.registerListener { _, key ->
+            if (key == PREF_SMS_MESSENGER_RECIPIENTS) refreshItems()
+        }
     }
 
     override fun onStop() {
-        settings.unregisterListener(this)
+        settings.unregisterListener(settingsListener)
         super.onStop()
-    }
-
-    override fun onSettingsChanged(settings: Settings, key: String) {
-        if (key == PREF_SMS_MESSENGER_RECIPIENTS) {
-            refreshItems()
-        }
     }
 
     override fun loadItems(): Collection<String> {

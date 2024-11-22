@@ -1,6 +1,7 @@
 package com.bopr.android.smailer.ui
 
 import android.app.backup.BackupManager
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.AppStartup.startUpAppServices
@@ -22,12 +23,13 @@ import com.bopr.android.smailer.util.requireIgnoreBatteryOptimization
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class MainActivity : FlavorBaseActivity(MainFragment::class), Settings.ChangeListener {
+class MainActivity : FlavorBaseActivity(MainFragment::class) {
 
     private lateinit var backupManager: BackupManager
     private lateinit var permissionsHelper: PermissionsHelper
     private lateinit var notificationsHelper: NotificationsHelper
     private lateinit var accountHelper: AccountHelper
+    private lateinit var settingsListener: OnSharedPreferenceChangeListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,15 +47,15 @@ class MainActivity : FlavorBaseActivity(MainFragment::class), Settings.ChangeLis
 
     override fun onStart() {
         super.onStart()
-        settings.registerListener(this)
+        settingsListener = settings.registerListener(::onSettingsChanged)
     }
 
     override fun onStop() {
-        settings.unregisterListener(this)
+        settings.unregisterListener(settingsListener)
         super.onStop()
     }
 
-    override fun onSettingsChanged(settings: Settings, key: String) {
+    private fun onSettingsChanged(settings: Settings, key: String) {
         when (key) {
             PREF_PHONE_PROCESS_TRIGGERS ->
                 startContentObserver()
