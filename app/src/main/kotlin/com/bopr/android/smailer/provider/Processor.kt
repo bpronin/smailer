@@ -11,12 +11,12 @@ import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PENDING
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.util.Bits
-import com.bopr.android.smailer.util.ContextOwner
+import com.bopr.android.smailer.util.ContextHolder
 import com.bopr.android.smailer.util.GeoLocation.Companion.getGeoLocation
 import com.bopr.android.smailer.util.Logger
 import java.lang.System.currentTimeMillis
 
-abstract class Processor<T : EventPayload>(private val context: Context) : ContextOwner {
+abstract class Processor<T : EventPayload>(private val context: Context) : ContextHolder {
 
     protected val database: Database = Database(context)
     protected val dispatcher = MessageDispatcher(context)

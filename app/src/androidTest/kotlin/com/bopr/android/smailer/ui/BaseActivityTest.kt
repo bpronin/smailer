@@ -9,6 +9,7 @@ import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.databaseName
 import com.bopr.android.smailer.Settings
+import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.Settings.Companion.sharedPreferencesName
 import org.junit.After
 import org.junit.Rule
@@ -42,7 +43,7 @@ abstract class BaseActivityTest(private val activityClass: KClass<out Activity>)
             targetContext.deleteSharedPreferences(sharedPreferencesName)
             targetContext.deleteDatabase(databaseName)
 
-            settings = Settings(targetContext)
+            settings = targetContext.settings
             database = Database(targetContext)
 
             beforeActivityCreate()

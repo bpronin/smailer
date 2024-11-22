@@ -268,5 +268,4 @@ class Database(private val context: Context) : Closeable {
             log.debug("Listener unregistered: [${listener.hashCode()}]")
         }
     }
-
 }

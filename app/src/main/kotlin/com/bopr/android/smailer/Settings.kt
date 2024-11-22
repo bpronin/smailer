@@ -4,11 +4,11 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
-import androidx.fragment.app.Fragment
 import com.bopr.android.smailer.messenger.mail.PhoneCallMailFormatter.Companion.PHONE_SEARCH_TAG
-import com.bopr.android.smailer.util.ContextOwner
+import com.bopr.android.smailer.util.ContextHolder
 import com.bopr.android.smailer.util.DEVICE_NAME
 import com.bopr.android.smailer.util.Logger
+import com.bopr.android.smailer.util.SingletonHolder
 import com.bopr.android.smailer.util.commaJoin
 import com.bopr.android.smailer.util.commaSplit
 
@@ -230,14 +230,9 @@ class Settings private constructor(context: Context) {
 
         const val DEFAULT_PHONE_SEARCH_URL = "https://www.google.com/search?q=$PHONE_SEARCH_TAG"
 
-        @Volatile
-        private var instance: Settings? = null
-        val Context.settings
-            get() = instance ?: synchronized(this) {
-                instance ?: Settings(this).also { instance = it }
-            }
-        val ContextOwner.settings get() = requireContext().settings
-//        val Fragment.settings get() = requireContext().settings
+        private val singletonHolder = SingletonHolder<Settings> { Settings(it) }
+        val Context.settings get() = singletonHolder.getInstance(this)
+        val ContextHolder.settings get() = singletonHolder.getInstance(this)
     }
 
 }

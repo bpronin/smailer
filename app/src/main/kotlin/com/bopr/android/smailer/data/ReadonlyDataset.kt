@@ -15,7 +15,7 @@ abstract class ReadonlyDataset<T>(
 ) : Set<T> {
 
     protected abstract val keyColumns: Array<String>
-    private val rowSet get() = query().toSet(::get)
+    private val rowSet get() = query().drainToSet(::get)
     override val size get() = read { count(tableName).toInt() }
 
     override fun isEmpty(): Boolean {

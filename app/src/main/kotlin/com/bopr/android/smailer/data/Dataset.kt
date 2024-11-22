@@ -19,7 +19,7 @@ abstract class Dataset<T>(
 
     protected abstract val keyColumns: Array<String>
     private val keyClause by lazy { keyColumns.joinToString(" AND ") { "$it=?" } }
-    private val rowSet get() = query().toSet(::get) // TODO: get rid of it
+    private val rowSet get() = query().drainToSet(::get) // TODO: get rid of it
     override val size get() = read { count(tableName).toInt() }
 
     override fun add(element: T) = write(tableName) { replaceRecords(it, values(element)) }

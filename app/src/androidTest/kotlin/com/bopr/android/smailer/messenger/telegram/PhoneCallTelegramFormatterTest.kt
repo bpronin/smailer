@@ -14,6 +14,7 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DEVI
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_HEADER
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCATION
+import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.messenger.Event
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
 import com.bopr.android.smailer.util.GeoLocation
@@ -41,7 +42,7 @@ class PhoneCallTelegramFormatterTest : BaseTest() {
 
     @Test
     fun testAllOptionsOff() {
-        Settings(targetContext).update {
+        targetContext.settings.update {
             clear()
             putStringSet(
                 PREF_TELEGRAM_MESSAGE_CONTENT, emptySet()
@@ -69,7 +70,7 @@ class PhoneCallTelegramFormatterTest : BaseTest() {
 
     @Test
     fun testDefaultOptions() {
-        Settings(targetContext).update {
+        targetContext.settings.update {
             clear()
             putStringSet(
                 PREF_TELEGRAM_MESSAGE_CONTENT, setOf(
@@ -102,7 +103,7 @@ class PhoneCallTelegramFormatterTest : BaseTest() {
         /* ensure contact is present on the device */
         assertNotNull(targetContext.getContactName("+12345678901"))
 
-        Settings(targetContext).update {
+        targetContext.settings.update {
             clear()
             putStringSet(
                 PREF_TELEGRAM_MESSAGE_CONTENT,
@@ -163,7 +164,7 @@ class PhoneCallTelegramFormatterTest : BaseTest() {
         /* ensure contact is not present on the device */
         assertNull(targetContext.getContactName("+12223334444"))
 
-        Settings(targetContext).update {
+        targetContext.settings.update {
             clear()
             putStringSet(
                 PREF_TELEGRAM_MESSAGE_CONTENT,

@@ -57,7 +57,7 @@ class EventDataset(
                 selection = "$COLUMN_STATE=${STATE_PENDING}",
                 order = "$COLUMN_TIMESTAMP DESC"
             )
-        }.toSet(::get)
+        }.drainToSet(::get)
 
     /**
      * Marks all events as read.

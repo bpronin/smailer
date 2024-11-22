@@ -12,13 +12,13 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.*
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.util.ContextOwner
+import com.bopr.android.smailer.util.ContextHolder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 /**
  * Base fragment with [RecyclerView].
  */
-abstract class RecyclerFragment<I, H : ViewHolder> : Fragment(), ContextOwner {
+abstract class RecyclerFragment<I, H : ViewHolder> : Fragment(), ContextHolder {
 
     protected lateinit var recycler: RecyclerView
     protected lateinit var listAdapter: ListAdapter

@@ -87,7 +87,7 @@ inline fun SQLiteDatabase.getTables(): Set<String> {
         stringArrayOf("name"),
         "type='table' AND name<>'android_metadata'"
     )
-        .toSet { getString(0) }
+        .drainToSet { getString(0) }
 }
 
 inline fun SQLiteDatabase.isTableExists(name: String): Boolean {
@@ -229,7 +229,7 @@ inline fun Cursor.forEach(action: Cursor.() -> Unit) {
 //    }
 //}
 
-inline fun <T> Cursor.toSet(get: Cursor.() -> T): Set<T> {
+inline fun <T> Cursor.drainToSet(get: Cursor.() -> T): Set<T> {
     val set = mutableSetOf<T>()
     forEach { set.add(get()) }
     return set
