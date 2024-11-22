@@ -10,13 +10,11 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
-import com.bopr.android.smailer.util.ContextHolder
 
 /**
  * Base dialog fragment.
  */
-abstract class BaseDialogFragment(private val fragmentTag: String?) :
-    DialogFragment(), ContextHolder {
+abstract class BaseDialogFragment(private val fragmentTag: String?) : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         var dialog = dialog

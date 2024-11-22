@@ -17,6 +17,7 @@ import com.bopr.android.smailer.control.ControlCommand.Action.REMOVE_TEXT_FROM_B
 import com.bopr.android.smailer.control.ControlCommand.Action.REMOVE_TEXT_FROM_WHITELIST
 import com.bopr.android.smailer.control.ControlCommand.Action.SEND_SMS_TO_CALLER
 import com.bopr.android.smailer.data.Database
+import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.data.Database.Companion.databaseName
 import com.bopr.android.smailer.ui.PhoneBlacklistFilterActivity
 import com.bopr.android.smailer.ui.PhoneWhitelistFilterActivity
@@ -52,7 +53,7 @@ class ControlCommandExecutorTest : BaseTest() {
 
         databaseName = "test.sqlite"
         targetContext.deleteDatabase(databaseName)
-        database = Database(targetContext)
+        database = targetContext.database
 
         notifications = mock()
 

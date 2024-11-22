@@ -3,6 +3,7 @@ package com.bopr.android.smailer.sync
 import android.accounts.Account
 import android.content.Context
 import com.bopr.android.smailer.data.Database
+import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.external.GoogleDrive
 import com.bopr.android.smailer.messenger.Event
 import com.bopr.android.smailer.messenger.EventPayload
@@ -21,7 +22,7 @@ import java.io.IOException
 internal class Synchronizer(
     context: Context,
     account: Account,
-    private val database: Database,
+    private val database: Database = context.database,
     private val drive: GoogleDrive = GoogleDrive(context, account),
     private val metaFile: String = "meta.json",
     private val dataFile: String = "data.json"

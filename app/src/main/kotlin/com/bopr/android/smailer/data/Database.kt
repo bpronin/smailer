@@ -7,9 +7,11 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bopr.android.smailer.sync.SyncWorker.Companion.syncAppDataWithGoogleCloud
 import com.bopr.android.smailer.util.Logger
+import com.bopr.android.smailer.util.SingletonHolder
 import java.io.Closeable
 import java.lang.System.currentTimeMillis
 
@@ -18,7 +20,7 @@ import java.lang.System.currentTimeMillis
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class Database(private val context: Context) : Closeable {
+class Database private constructor(private val context: Context) : Closeable {
 
     private val helper: DbHelper = DbHelper(context)
     private val lastModified = mutableSetOf<String>()
@@ -62,7 +64,7 @@ class Database(private val context: Context) : Closeable {
     fun batch(action: Database.() -> Unit) {
         log.debug("Begin batch")
 
-        helper.write { batchRecords{action()} }
+        helper.write { batchRecords { action() } }
 
         log.debug("End batch")
     }
@@ -267,5 +269,10 @@ class Database(private val context: Context) : Closeable {
 
             log.debug("Listener unregistered: [${listener.hashCode()}]")
         }
+
+        private val singletonHolder = SingletonHolder<Database> { Database(it) }
+        val Context.database get() = singletonHolder.getInstance(this)
+        val Fragment.database get() = requireContext().database
     }
+
 }

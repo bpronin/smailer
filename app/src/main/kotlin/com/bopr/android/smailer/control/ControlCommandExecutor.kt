@@ -19,6 +19,7 @@ import com.bopr.android.smailer.control.ControlCommand.Action.REMOVE_TEXT_FROM_B
 import com.bopr.android.smailer.control.ControlCommand.Action.REMOVE_TEXT_FROM_WHITELIST
 import com.bopr.android.smailer.control.ControlCommand.Action.SEND_SMS_TO_CALLER
 import com.bopr.android.smailer.data.Database
+import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.data.StringDataset
 import com.bopr.android.smailer.ui.MainActivity
 import com.bopr.android.smailer.ui.PhoneBlacklistFilterActivity
@@ -37,7 +38,7 @@ import kotlin.reflect.KClass
  */
 internal class ControlCommandExecutor(
     private val context: Context,
-    private val database: Database = Database(context),
+    private val database: Database = context.database,
     private val settings: Settings = context.settings,
     private val notifications: NotificationsHelper = NotificationsHelper(context),
 ) {

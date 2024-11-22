@@ -14,11 +14,11 @@ import com.bopr.android.smailer.util.Bits
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class BatteryEventProcessor(context: Context) : Processor<BatteryInfo>(context) {
+class BatteryEventProcessor(private val context: Context) : Processor<BatteryInfo>(context) {
 
     override fun getBypassReason(data: BatteryInfo): Bits {
         var flags = Bits()
-        if (!settings.getBoolean(PREF_DISPATCH_BATTERY_LEVEL)) {
+        if (!context.settings.getBoolean(PREF_DISPATCH_BATTERY_LEVEL)) {
             flags += FLAG_BYPASS_TRIGGER_OFF
         }
         return flags

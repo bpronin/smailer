@@ -7,7 +7,6 @@ import androidx.preference.PreferenceFragmentCompat
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.Settings.Companion.sharedPreferencesName
-import com.bopr.android.smailer.util.ContextHolder
 import com.bopr.android.smailer.util.refreshView
 
 /**
@@ -16,7 +15,7 @@ import com.bopr.android.smailer.util.refreshView
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 abstract class BasePreferenceFragment(@XmlRes private val layoutRes: Int) :
-    PreferenceFragmentCompat(), Settings.ChangeListener, ContextHolder {
+    PreferenceFragmentCompat(), Settings.ChangeListener {
 
     override fun onCreatePreferences(bundle: Bundle?, rootKey: String?) {
         addPreferencesFromResource(layoutRes)

@@ -24,11 +24,10 @@ import com.bopr.android.smailer.util.telegramErrorText
  */
 class TelegramMessenger(private val context: Context) : Messenger {
 
+    private val settings = context.settings
     private val formatters = TelegramFormatterFactory(context)
     private val notifications by lazyOf(NotificationsHelper(context))
     private var session: TelegramSession? = null
-
-    override fun requireContext() = context
 
     override fun initialize(): Boolean {
         if (settings.getBoolean(PREF_TELEGRAM_MESSENGER_ENABLED)) {

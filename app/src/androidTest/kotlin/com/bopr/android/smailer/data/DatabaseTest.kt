@@ -2,6 +2,8 @@ package com.bopr.android.smailer.data
 
 import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
+import com.bopr.android.smailer.data.Database.Companion.database
+import com.bopr.android.smailer.data.Database.Companion.databaseName
 import com.bopr.android.smailer.messenger.Event
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PENDING
@@ -25,9 +27,9 @@ class DatabaseTest : BaseTest() {
 
     @Before
     fun setUp() {
-        Database.databaseName = "test.sqlite"
-        targetContext.deleteDatabase(Database.databaseName)
-        database = Database(targetContext)
+        databaseName = "test.sqlite"
+        targetContext.deleteDatabase(databaseName)
+        database = targetContext.database
     }
 
     @After

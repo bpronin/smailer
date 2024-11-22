@@ -11,6 +11,7 @@ import com.bopr.android.smailer.data.Database.Companion.databaseName
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.Settings.Companion.sharedPreferencesName
+import com.bopr.android.smailer.data.Database.Companion.database
 import org.junit.After
 import org.junit.Rule
 import org.junit.runner.RunWith
@@ -44,7 +45,7 @@ abstract class BaseActivityTest(private val activityClass: KClass<out Activity>)
             targetContext.deleteDatabase(databaseName)
 
             settings = targetContext.settings
-            database = Database(targetContext)
+            database = targetContext.database
 
             beforeActivityCreate()
             return ActivityScenarioRule(activityClass.java)

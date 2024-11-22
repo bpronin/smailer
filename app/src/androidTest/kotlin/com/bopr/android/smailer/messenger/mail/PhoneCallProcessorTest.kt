@@ -35,6 +35,7 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCA
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.data.Database
+import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_TRIGGER_OFF
 import com.bopr.android.smailer.messenger.MessageDispatcher
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
@@ -183,7 +184,7 @@ class PhoneCallProcessorTest : BaseTest() {
 
         Database.databaseName = "test.sqlite"
         targetContext.deleteDatabase(Database.databaseName)
-        database = Database(targetContext) /* not a mock context here! */
+        database = targetContext.database /* not a mock context here! */
 
         processor = PhoneCallProcessor(context)
     }

@@ -13,7 +13,7 @@ import com.bopr.android.smailer.AccountHelper
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_ENABLED
 import com.bopr.android.smailer.Settings.Companion.settings
-import com.bopr.android.smailer.data.Database
+import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.external.Firebase
 import com.bopr.android.smailer.external.Firebase.Companion.FCM_REQUEST_DATA_SYNC
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_NORMAL
@@ -24,10 +24,7 @@ import com.bopr.android.smailer.util.Logger
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class SyncWorker(
-    context: Context,
-    workerParams: WorkerParameters
-) :
+internal class SyncWorker(context: Context, workerParams: WorkerParameters) :
     Worker(context, workerParams) {
 
     override fun doWork(): Result {
@@ -37,7 +34,7 @@ internal class SyncWorker(
         if (settings.getBoolean(PREF_SYNC_ENABLED)) {
             accountHelper.getGoogleAccount(settings.getString(PREF_MAIL_SENDER_ACCOUNT))
                 ?.let { account ->
-                    Database(applicationContext).useIt {
+                    applicationContext.database.useIt {
                         Synchronizer(applicationContext, account, this).run {
                             val mode = inputData.getInt(SYNC_OPTIONS, SYNC_NORMAL)
                             if (sync(mode)) {

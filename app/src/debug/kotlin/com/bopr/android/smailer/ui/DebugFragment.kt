@@ -48,9 +48,11 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
+import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.Settings.Companion.sharedPreferencesName
 import com.bopr.android.smailer.control.MailControlProcessor
 import com.bopr.android.smailer.data.Database
+import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.data.Database.Companion.databaseName
 import com.bopr.android.smailer.external.Firebase
 import com.bopr.android.smailer.external.Firebase.Companion.FCM_REQUEST_DATA_SYNC
@@ -95,8 +97,6 @@ import java.lang.System.*
  */
 class DebugFragment : PreferenceFragmentCompat() {
 
-    private lateinit var settings: Settings
-    private lateinit var database: Database
     private lateinit var authorization: GoogleAuthorizationHelper
     private lateinit var notifications: NotificationsHelper
     private lateinit var accountHelper: AccountHelper
@@ -114,7 +114,6 @@ class DebugFragment : PreferenceFragmentCompat() {
         super.onCreate(savedInstanceState)
         preferenceManager.sharedPreferencesName = sharedPreferencesName
 
-        database = Database(requireContext())
         authorization = GoogleAuthorizationHelper(
             requireActivity(), PREF_MAIL_SENDER_ACCOUNT, MAIL_GOOGLE_COM, DRIVE_APPDATA
         )

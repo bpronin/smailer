@@ -3,6 +3,7 @@ package com.bopr.android.smailer.data
 import android.content.BroadcastReceiver
 import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
+import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.data.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.data.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.messenger.Event
@@ -29,7 +30,7 @@ class DatabaseListenerTest : BaseTest() {
     fun setUp() {
         Database.databaseName = "test.sqlite"
         targetContext.deleteDatabase(Database.databaseName)
-        database = Database(targetContext)
+        database = targetContext.database
     }
 
     @After

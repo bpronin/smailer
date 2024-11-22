@@ -15,7 +15,6 @@ import com.bopr.android.smailer.control.MailRemoteControlWorker.Companion.enable
 import com.bopr.android.smailer.external.Firebase.Companion.resubscribeToFirebaseMessaging
 import com.bopr.android.smailer.provider.telephony.ContentObserverService.Companion.startContentObserver
 import com.bopr.android.smailer.sync.SyncWorker.Companion.syncAppDataWithGoogleCloud
-import com.bopr.android.smailer.util.ContextHolder
 import com.bopr.android.smailer.util.requireIgnoreBatteryOptimization
 
 /**
@@ -31,7 +30,6 @@ class MainActivity : FlavorBaseActivity(MainFragment::class), Settings.ChangeLis
     private lateinit var accountHelper: AccountHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        applicationContext
         super.onCreate(savedInstanceState)
         setHomeButtonEnabled(false)
 

@@ -2,7 +2,7 @@ package com.bopr.android.smailer.provider
 
 import android.content.Context
 import com.bopr.android.smailer.NotificationsHelper
-import com.bopr.android.smailer.data.Database
+import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.messenger.Event
 import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_NO_CONSUMERS
 import com.bopr.android.smailer.messenger.EventPayload
@@ -11,20 +11,16 @@ import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PENDING
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.util.Bits
-import com.bopr.android.smailer.util.ContextHolder
 import com.bopr.android.smailer.util.GeoLocation.Companion.getGeoLocation
 import com.bopr.android.smailer.util.Logger
 import java.lang.System.currentTimeMillis
 
-abstract class Processor<T : EventPayload>(private val context: Context) : ContextHolder {
+abstract class Processor<T : EventPayload>(private val context: Context) {
 
-    protected val database: Database = Database(context)
     protected val dispatcher = MessageDispatcher(context)
     protected val notifications by lazy { NotificationsHelper(context) }
 
     abstract fun getBypassReason(data: T): Bits
-
-    override fun requireContext() = context
 
     fun add(data: T) {
         log.debug("Add record").verb(data)
@@ -41,7 +37,7 @@ abstract class Processor<T : EventPayload>(private val context: Context) : Conte
     }
 
     fun process(): Int {
-        val events = database.useIt { events.pending }
+        val events = context.database.useIt { events.pending }
         if (events.isEmpty()) {
             log.debug("No unprocessed events")
 
@@ -86,7 +82,7 @@ abstract class Processor<T : EventPayload>(private val context: Context) : Conte
     }
 
     private fun putRecord(event: Event) {
-        database.useIt {
+        context.database.useIt {
             commit {
                 events.put(event)
             }

@@ -16,6 +16,7 @@ import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.data.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.R
+import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.data.StringDataset
 import com.bopr.android.smailer.ui.BaseFilterFragment.Holder
 
@@ -27,7 +28,6 @@ import com.bopr.android.smailer.ui.BaseFilterFragment.Holder
 abstract class BaseFilterFragment(private val listName: String) :
     EditableRecyclerFragment<String, Holder>() {
 
-    private lateinit var database: Database
     private lateinit var databaseListener: BroadcastReceiver
     private lateinit var list: StringDataset
 
@@ -36,7 +36,6 @@ abstract class BaseFilterFragment(private val listName: String) :
 
         val context = requireContext()
 
-        database = Database(context)
         list = database.phoneCallsFilters.getValue(listName)
         databaseListener = context.registerDatabaseListener { tables ->
             if (tables.contains(listName)) refreshItems()

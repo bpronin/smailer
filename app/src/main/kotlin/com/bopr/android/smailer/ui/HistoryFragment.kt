@@ -20,6 +20,7 @@ import androidx.core.view.MenuProvider
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.data.Database
+import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.data.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.data.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.data.StringDataset
@@ -45,7 +46,6 @@ import com.google.android.material.snackbar.Snackbar
  */
 class HistoryFragment : RecyclerFragment<Event, Holder>() {
 
-    private lateinit var database: Database
     private lateinit var databaseListener: BroadcastReceiver
     private var defaultItemTextColor: Int = 0
     private var unreadItemTextColor: Int = 0
@@ -60,7 +60,6 @@ class HistoryFragment : RecyclerFragment<Event, Holder>() {
         defaultItemTextColor = context.getColorFromAttr(android.R.attr.textColorSecondary)
         unreadItemTextColor = context.getColorFromAttr(android.R.attr.textColorPrimary)
 
-        database = Database(context)
         databaseListener = context.registerDatabaseListener {
             refreshItems()
         }

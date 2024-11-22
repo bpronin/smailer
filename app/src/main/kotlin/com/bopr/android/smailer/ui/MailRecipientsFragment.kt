@@ -1,6 +1,5 @@
 package com.bopr.android.smailer.ui
 
-import android.os.Bundle
 import android.view.LayoutInflater.from
 import android.view.View
 import android.view.ViewGroup

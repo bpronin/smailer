@@ -32,13 +32,13 @@ import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 @Mockable
 internal class MailMessenger(private val context: Context) : Messenger {
 
+    private val settings = context.settings
     private val accountHelper = AccountHelper(context)
     private val formatters = MailFormatterFactory(context)
     private val notifications by lazy { NotificationsHelper(context) }
     private var account: Account? = null
-    private var session: GoogleMailSession? = null
 
-    override fun requireContext() = context
+    private var session: GoogleMailSession? = null
 
     override fun initialize(): Boolean {
         if (settings.getBoolean(PREF_MAIL_MESSENGER_ENABLED)) {

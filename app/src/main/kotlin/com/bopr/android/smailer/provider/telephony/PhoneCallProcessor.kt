@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.bopr.android.smailer.Settings.Companion.settings
+import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.provider.Processor
 import com.bopr.android.smailer.util.Bits
 
@@ -13,6 +14,9 @@ import com.bopr.android.smailer.util.Bits
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 class PhoneCallProcessor(context: Context) : Processor<PhoneCallInfo>(context) {
+
+    private val settings = context.settings
+    private val database = context.database
 
     override fun getBypassReason(info: PhoneCallInfo): Bits {
         return PhoneCallFilter(

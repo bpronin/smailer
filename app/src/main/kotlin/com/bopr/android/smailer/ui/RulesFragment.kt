@@ -11,6 +11,7 @@ import com.bopr.android.smailer.data.Database.Companion.TABLE_PHONE_BLACKLIST
 import com.bopr.android.smailer.data.Database.Companion.TABLE_PHONE_WHITELIST
 import com.bopr.android.smailer.data.Database.Companion.TABLE_TEXT_BLACKLIST
 import com.bopr.android.smailer.data.Database.Companion.TABLE_TEXT_WHITELIST
+import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.data.Database.Companion.registerDatabaseListener
 import com.bopr.android.smailer.data.Database.Companion.unregisterDatabaseListener
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_ACCENTED
@@ -25,7 +26,6 @@ import com.bopr.android.smailer.util.updateSummary
  */
 class RulesFragment : BasePreferenceFragment(R.xml.pref_rules) {
 
-    private lateinit var database: Database
     private lateinit var databaseListener: BroadcastReceiver
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,7 +41,6 @@ class RulesFragment : BasePreferenceFragment(R.xml.pref_rules) {
             }
         }
 
-        database = Database(requireContext())
         databaseListener = requireContext().registerDatabaseListener { tables ->
             if (tables.contains(TABLE_PHONE_BLACKLIST)) updatePhoneBlacklistPreferenceView()
             if (tables.contains(TABLE_PHONE_WHITELIST)) updatePhoneWhitelistPreferenceView()

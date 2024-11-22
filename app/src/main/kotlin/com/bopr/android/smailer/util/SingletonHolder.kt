@@ -1,7 +1,6 @@
 package com.bopr.android.smailer.util
 
 import android.content.Context
-import com.bopr.android.smailer.Settings.Companion.settings
 
 class SingletonHolder<T>(val onCreateInstance: (Context) -> T) {
 
@@ -13,6 +12,4 @@ class SingletonHolder<T>(val onCreateInstance: (Context) -> T) {
         * since we want application-wide singleton */
         instance ?: onCreateInstance(context.applicationContext).also { instance = it }
     }
-
-    fun getInstance(holder: ContextHolder) = holder.requireContext().settings
 }
