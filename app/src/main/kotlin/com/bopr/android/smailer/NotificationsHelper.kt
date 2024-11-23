@@ -17,6 +17,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.TaskStackBuilder
+import com.bopr.android.smailer.AccountHelper.Companion.accounts
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
@@ -35,7 +36,6 @@ import kotlin.reflect.KClass
 class NotificationsHelper(private val context: Context) {
 
     private val manager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-    private val accountHelper by lazyOf(AccountHelper(context))
 
     private val statusBuilder: NotificationCompat.Builder =
         NotificationCompat.Builder(context, CHANNEL_ID_STATUS)
@@ -109,7 +109,7 @@ class NotificationsHelper(private val context: Context) {
     internal fun applySettings(settings: Settings, key: String?) {
         when (key) {
             PREF_MAIL_SENDER_ACCOUNT ->
-                if (accountHelper.isGoogleAccountExists(
+                if (context.accounts.isGoogleAccountExists(
                         settings.getString(PREF_MAIL_SENDER_ACCOUNT)
                     )
                 ) {
@@ -117,7 +117,7 @@ class NotificationsHelper(private val context: Context) {
                 }
 
             PREF_REMOTE_CONTROL_ACCOUNT ->
-                if (accountHelper.isGoogleAccountExists(
+                if (context.accounts.isGoogleAccountExists(
                         settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
                     )
                 ) {

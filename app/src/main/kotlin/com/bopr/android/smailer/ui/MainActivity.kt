@@ -3,19 +3,15 @@ package com.bopr.android.smailer.ui
 import android.app.backup.BackupManager
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
-import com.bopr.android.smailer.AccountHelper
-import com.bopr.android.smailer.AppStartup.startUpAppServices
+import com.bopr.android.smailer.AppStartup.startupApplication
 import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.PermissionsHelper
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_PHONE_PROCESS_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.control.MailRemoteControlWorker.Companion.enableMailRemoteControl
-import com.bopr.android.smailer.external.Firebase.Companion.resubscribeToFirebaseMessaging
 import com.bopr.android.smailer.provider.telephony.ContentObserverService.Companion.startContentObserver
-import com.bopr.android.smailer.sync.SyncWorker.Companion.syncAppDataWithGoogleCloud
 import com.bopr.android.smailer.util.requireIgnoreBatteryOptimization
 
 /**
@@ -28,7 +24,6 @@ class MainActivity : FlavorBaseActivity(MainFragment::class) {
     private lateinit var backupManager: BackupManager
     private lateinit var permissionsHelper: PermissionsHelper
     private lateinit var notificationsHelper: NotificationsHelper
-    private lateinit var accountHelper: AccountHelper
     private lateinit var settingsListener: OnSharedPreferenceChangeListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,12 +32,11 @@ class MainActivity : FlavorBaseActivity(MainFragment::class) {
 
         backupManager = BackupManager(this)
         notificationsHelper = NotificationsHelper(this)
-        accountHelper = AccountHelper(this)
         permissionsHelper = PermissionsHelper(this)
         permissionsHelper.checkAll()
 
         requireIgnoreBatteryOptimization()
-        startUpAppServices()
+        startupApplication()
     }
 
     override fun onStart() {
@@ -62,13 +56,6 @@ class MainActivity : FlavorBaseActivity(MainFragment::class) {
 
             PREF_REMOTE_CONTROL_ENABLED ->
                 enableMailRemoteControl()
-
-            PREF_MAIL_SENDER_ACCOUNT -> {
-                if (accountHelper.isGoogleAccountExists(settings.getString(PREF_MAIL_SENDER_ACCOUNT))) {
-                    syncAppDataWithGoogleCloud()
-                    resubscribeToFirebaseMessaging()
-                }
-            }
         }
 
         notificationsHelper.applySettings(settings, key)

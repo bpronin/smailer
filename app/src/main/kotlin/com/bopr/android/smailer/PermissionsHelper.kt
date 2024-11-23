@@ -15,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts.RequestMultiple
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.FragmentActivity
+import com.bopr.android.smailer.AccountHelper.Companion.accounts
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSAGE_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
@@ -57,7 +58,6 @@ class PermissionsHelper(
     }
 
     private val settings = activity.settings
-    private val accountHelper = AccountHelper(activity)
     private val permissionRequestLauncher =
         activity.registerForActivityResult(RequestMultiplePermissions()) { result ->
             onPermissionRequestResult(result)
@@ -125,7 +125,7 @@ class PermissionsHelper(
         log.debug("Granted: $grantedPermissions")
 
         /* set default accounts at startup */
-        val accountName = accountHelper.getPrimaryGoogleAccount()?.name
+        val accountName = activity.accounts.getPrimaryGoogleAccount()?.name
         settings.update {
             ifNotExists(PREF_MAIL_SENDER_ACCOUNT) { putString(it, accountName) }
             ifNotExists(PREF_MAIL_MESSENGER_RECIPIENTS) { putString(it, accountName) }

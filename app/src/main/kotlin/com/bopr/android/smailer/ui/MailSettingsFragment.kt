@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.text.TextUtils
 import androidx.preference.ExtMultiSelectListPreference
 import androidx.preference.ListPreference
-import com.bopr.android.smailer.AccountHelper
+import com.bopr.android.smailer.AccountHelper.Companion.accounts
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSAGE_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_ENABLED
@@ -41,7 +41,6 @@ import java.lang.System.*
  */
 class MailSettingsFragment : BasePreferenceFragment(R.xml.pref_email_settings) {
 
-    private lateinit var accountHelper: AccountHelper
     private lateinit var authorizationHelper: GoogleAuthorizationHelper
     private val testSettingsProgress by lazy {
         PreferenceProgress(requirePreference(PREF_SENT_TEST_MAIL))
@@ -106,7 +105,6 @@ class MailSettingsFragment : BasePreferenceFragment(R.xml.pref_email_settings) {
             onSendTestMessage()
         }
 
-        accountHelper = AccountHelper(requireContext())
         authorizationHelper = GoogleAuthorizationHelper(
             requireActivity(), PREF_MAIL_SENDER_ACCOUNT, GMAIL_SEND, DRIVE_APPDATA
         )
@@ -117,7 +115,7 @@ class MailSettingsFragment : BasePreferenceFragment(R.xml.pref_email_settings) {
 
         testSettingsProgress.start()
 
-        val account = accountHelper.getPrimaryGoogleAccount() ?: run {
+        val account = requireContext().accounts.getPrimaryGoogleAccount() ?: run {
             showInfoDialog(R.string.sender_account_not_found)
             return
         }
@@ -155,7 +153,7 @@ class MailSettingsFragment : BasePreferenceFragment(R.xml.pref_email_settings) {
             val account = settings.getString(PREF_MAIL_SENDER_ACCOUNT)
             if (account.isNullOrEmpty()) {
                 updateSummary(R.string.unspecified, SUMMARY_STYLE_ACCENTED)
-            } else if (!accountHelper.isGoogleAccountExists(account)) {
+            } else if (!requireContext().accounts.isGoogleAccountExists(account)) {
                 updateSummary(account, SUMMARY_STYLE_UNDERWIVED)
             } else {
                 updateSummary(account)

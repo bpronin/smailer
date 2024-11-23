@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_BOOT_COMPLETED
-import com.bopr.android.smailer.AppStartup.startUpAppServices
+import com.bopr.android.smailer.AppStartup.startupApplication
 import com.bopr.android.smailer.util.Logger
 
 /**
@@ -18,7 +18,7 @@ class BootReceiver : BroadcastReceiver() {
         log.debug("Received intent: $intent")
 
         if (intent.action == ACTION_BOOT_COMPLETED) {
-            context.startUpAppServices()
+            context.startupApplication()
         }
     }
 

@@ -1,40 +1,37 @@
 package com.bopr.android.smailer
 
 import android.Manifest.permission.GET_ACCOUNTS
-import android.accounts.Account
+import android.accounts.AccountManager
 import android.accounts.AccountManager.KEY_ACCOUNT_NAME
 import android.app.Activity
 import android.content.Context
 import androidx.annotation.RequiresPermission
-import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager
+import com.bopr.android.smailer.util.SingletonHolder
 
-class AccountHelper(context: Context) {
+class AccountHelper private constructor (context: Context) {
 
-    private val googleAccountManager = GoogleAccountManager(context)
+    private val manager = AccountManager.get(context)
 
     /**
      * Returns primary device google account or null when no accounts registered.
      */
     @RequiresPermission(GET_ACCOUNTS /* api<=22 */)
-    fun getPrimaryGoogleAccount(): Account? {
-        return googleAccountManager.accounts.firstOrNull()
-    }
+    fun getPrimaryGoogleAccount() = manager.accounts.firstOrNull()
 
     /**
      * Returns primary device google account or throws an exception when no accounts registered.
      */
     @RequiresPermission(GET_ACCOUNTS /* api<=22 */)
     @Throws(IllegalArgumentException::class)
-    fun requirePrimaryGoogleAccount(): Account {
-        return requireNotNull(getPrimaryGoogleAccount()) { "Primary Google account is not specified" }
-    }
+    fun requirePrimaryGoogleAccount() =
+        requireNotNull(getPrimaryGoogleAccount()) { "Primary Google account is not specified" }
 
     /**
      * Returns google account with specified name or null.
      */
     @RequiresPermission(GET_ACCOUNTS /* api<=22 */)
-    fun getGoogleAccount(accountName: String?): Account? {
-        return googleAccountManager.getAccountByName(accountName)
+    fun getGoogleAccount(accountName: String?) = accountName.let {
+        manager.getAccountsByType("com.google").find { it.name == accountName }
     }
 
     /**
@@ -42,36 +39,42 @@ class AccountHelper(context: Context) {
      */
     @RequiresPermission(GET_ACCOUNTS /* api<=22 */)
     @Throws(IllegalArgumentException::class)
-    fun requireGoogleAccount(accountName: String?): Account {
-        return requireNotNull(getGoogleAccount(accountName)) { "Account $accountName does not exist" }
-    }
+    fun requireGoogleAccount(accountName: String?) =
+        requireNotNull(getGoogleAccount(accountName)) { "Account $accountName does not exist" }
 
     /**
      * Returns true if account exists.
      */
     @RequiresPermission(GET_ACCOUNTS /* api<=22 */)
-    fun isGoogleAccountExists(accountName: String?): Boolean {
-        return getGoogleAccount(accountName) != null
-    }
+    fun isGoogleAccountExists(accountName: String?) = getGoogleAccount(accountName) != null
 
+    /**
+     * Gets an auth token for a particular account, prompting the user for credentials if necessary.
+     */
     fun requestGoogleAuthToken(
         activity: Activity,
         accountName: String?,
         scopes: Set<String?>,
         onResponse: (String?) -> Unit
     ) {
-        googleAccountManager.accountManager.getAuthToken(
+        manager.getAuthToken(
             getGoogleAccount(accountName),
             "oauth2: " + scopes.joinToString(" "),
             null,
             activity,
-            { future ->
-                future.result?.run {
+            {
+                it.result?.run {
                     onResponse(getString(KEY_ACCOUNT_NAME))
                 }
             },
             null
         )
+    }
+
+    companion object{
+
+        private val singletonHolder = SingletonHolder{ AccountHelper(it) }
+        val Context.accounts get() = singletonHolder.getInstance(this)
     }
 
 //    /**

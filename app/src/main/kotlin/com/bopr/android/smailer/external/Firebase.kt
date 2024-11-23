@@ -5,20 +5,19 @@ import android.content.Context
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
-import com.bopr.android.smailer.AccountHelper
+import com.bopr.android.smailer.AccountHelper.Companion.accounts
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.util.Logger
+import com.bopr.android.smailer.util.SingletonHolder
 import com.google.firebase.messaging.FirebaseMessaging
 import org.json.JSONObject
 import java.util.Locale
 
-class Firebase(val context: Context) {
+class Firebase private constructor(val context: Context) {
 
     private var subscribedTopic: String? = null
-    private val settings = context.settings
-    private val accountHelper = AccountHelper(context)
     private val firebaseMessaging = FirebaseMessaging.getInstance()
     private val requestQueue = Volley.newRequestQueue(context)
 
@@ -81,9 +80,13 @@ class Firebase(val context: Context) {
         }
     }
 
-    private fun getAccount(): Account? {
-        return accountHelper.getGoogleAccount(settings.getString(PREF_MAIL_SENDER_ACCOUNT))
-    }
+    private fun getAccount() =
+        context.run {
+            accounts.getGoogleAccount(
+                settings.getString(PREF_MAIL_SENDER_ACCOUNT)
+            )
+        }
+
 
     private fun formatUserId(email: String): String {
         val parts = email.lowercase(Locale.ROOT).split("@")
@@ -130,15 +133,7 @@ class Firebase(val context: Context) {
         const val FCM_SENDER = "sender"
         const val FCM_ACTION = "action"
 
-        fun Context.subscribeToFirebaseMessaging() {
-            Firebase(this).subscribe()
-        }
-
-        fun Context.resubscribeToFirebaseMessaging() {
-            Firebase(this).apply {
-                unsubscribe()
-                subscribe()
-            }
-        }
+        private val singletonHolder = SingletonHolder { Firebase(it) }
+        val Context.firebase get() = singletonHolder.getInstance(this)
     }
 }

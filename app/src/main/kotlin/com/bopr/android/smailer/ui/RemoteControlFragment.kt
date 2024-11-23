@@ -2,7 +2,7 @@ package com.bopr.android.smailer.ui
 
 import android.os.Bundle
 import androidx.preference.Preference
-import com.bopr.android.smailer.AccountHelper
+import com.bopr.android.smailer.AccountHelper.Companion.accounts
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
@@ -26,12 +26,10 @@ import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
 class RemoteControlFragment : BasePreferenceFragment(R.xml.pref_remote) {
 
     private lateinit var authorizationHelper: GoogleAuthorizationHelper
-    private lateinit var accountHelper: AccountHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        accountHelper = AccountHelper(requireContext())
         authorizationHelper = GoogleAuthorizationHelper(
             requireActivity(), PREF_REMOTE_CONTROL_ACCOUNT, MAIL_GOOGLE_COM
         )
@@ -57,7 +55,7 @@ class RemoteControlFragment : BasePreferenceFragment(R.xml.pref_remote) {
             it.apply {
                 if (account.isNullOrEmpty()) {
                     updateSummary(R.string.unspecified, SUMMARY_STYLE_ACCENTED)
-                } else if (!accountHelper.isGoogleAccountExists(account)) {
+                } else if (!requireContext().accounts.isGoogleAccountExists(account)) {
                     updateSummary(account, SUMMARY_STYLE_UNDERWIVED)
                 } else {
                     updateSummary(account)

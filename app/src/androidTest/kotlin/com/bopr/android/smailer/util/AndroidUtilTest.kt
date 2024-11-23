@@ -2,7 +2,7 @@ package com.bopr.android.smailer.util
 
 import android.Manifest.permission.READ_CONTACTS
 import androidx.test.rule.GrantPermissionRule
-import com.bopr.android.smailer.AccountHelper
+import com.bopr.android.smailer.AccountHelper.Companion.accounts
 import com.bopr.android.smailer.BaseTest
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -17,7 +17,7 @@ import org.junit.Test
 class AndroidUtilTest : BaseTest() {
 
     @get:Rule
-    /* somehow it gives access to account list in API>=26 */
+            /* somehow it gives access to account list in API>=26 */
     val permissionRule = GrantPermissionRule.grant(READ_CONTACTS)
 //    val permissionRule = GrantPermissionRule.grant(GET_ACCOUNTS)
 
@@ -28,12 +28,12 @@ class AndroidUtilTest : BaseTest() {
 
     @Test
     fun testPrimaryAccount() {
-        assertNotNull(AccountHelper(targetContext).getPrimaryGoogleAccount())
+        assertNotNull(targetContext.accounts.getPrimaryGoogleAccount())
     }
 
     @Test
     fun testGetAccount() {
-        assertNull(AccountHelper(targetContext).getGoogleAccount(""))
+        assertNull(targetContext.accounts.getGoogleAccount(""))
     }
 
 }

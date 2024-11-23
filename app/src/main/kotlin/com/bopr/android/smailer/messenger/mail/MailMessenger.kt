@@ -2,7 +2,7 @@ package com.bopr.android.smailer.messenger.mail
 
 import android.accounts.Account
 import android.content.Context
-import com.bopr.android.smailer.AccountHelper
+import com.bopr.android.smailer.AccountHelper.Companion.accounts
 import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_GOOGLE_ACCESS
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_GOOGLE_ACCOUNT
@@ -33,16 +33,14 @@ import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 internal class MailMessenger(private val context: Context) : Messenger {
 
     private val settings = context.settings
-    private val accountHelper = AccountHelper(context)
     private val formatters = MailFormatterFactory(context)
     private val notifications by lazy { NotificationsHelper(context) }
     private var account: Account? = null
-
     private var session: GoogleMailSession? = null
 
     override fun initialize(): Boolean {
         if (settings.getBoolean(PREF_MAIL_MESSENGER_ENABLED)) {
-            account = checkAccount(accountHelper.getPrimaryGoogleAccount())?.also {
+            account = checkAccount(context.accounts.getPrimaryGoogleAccount())?.also {
                 session = GoogleMailSession(context, it, GMAIL_SEND)
 
                 log.debug("Initialized")

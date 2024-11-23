@@ -9,14 +9,15 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.bopr.android.smailer.AccountHelper
+import com.bopr.android.smailer.AccountHelper.Companion.accounts
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_ENABLED
 import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.data.Database.Companion.database
-import com.bopr.android.smailer.external.Firebase
 import com.bopr.android.smailer.external.Firebase.Companion.FCM_REQUEST_DATA_SYNC
+import com.bopr.android.smailer.external.Firebase.Companion.firebase
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_NORMAL
+import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_OPTIONS
 import com.bopr.android.smailer.util.Logger
 
 /**
@@ -28,54 +29,25 @@ internal class SyncWorker(context: Context, workerParams: WorkerParameters) :
     Worker(context, workerParams) {
 
     override fun doWork(): Result {
-        val settings = applicationContext.settings
-        val accountHelper = AccountHelper(applicationContext)
-
-        if (settings.getBoolean(PREF_SYNC_ENABLED)) {
-            accountHelper.getGoogleAccount(settings.getString(PREF_MAIL_SENDER_ACCOUNT))
-                ?.let { account ->
-                    applicationContext.database.useIt {
-                        Synchronizer(applicationContext, account, this).run {
+        applicationContext.run {
+            if (settings.getBoolean(PREF_SYNC_ENABLED)) {
+                accounts.getGoogleAccount(
+                    settings.getString(PREF_MAIL_SENDER_ACCOUNT)
+                )?.let { account ->
+                        Synchronizer(applicationContext, account).run {
                             val mode = inputData.getInt(SYNC_OPTIONS, SYNC_NORMAL)
                             if (sync(mode)) {
-                                Firebase(applicationContext).send(FCM_REQUEST_DATA_SYNC)
+                                firebase.send(FCM_REQUEST_DATA_SYNC)
                             }
                         }
-                    }
                 } ?: log.warn("No sync account")
+            }
         }
         return Result.success()
     }
 
-    internal companion object {
+    companion object {
 
         private val log = Logger("SyncWorker")
-        private const val WORK_SYNC = "com.bopr.android.smailer.sync"
-        private const val SYNC_OPTIONS = "options"
-
-        internal fun Context.syncAppDataWithGoogleCloud() {
-            return // TODO: what if the app is unregistered from Google Console
-            @Suppress("UNREACHABLE_CODE")
-
-            if (settings.getBoolean(PREF_SYNC_ENABLED)) {
-                log.debug("Sync requested")
-
-                val constraints = Constraints.Builder()
-                    .setRequiredNetworkType(CONNECTED)
-                    .build()
-
-                val data = Data.Builder()
-                    .putInt(SYNC_OPTIONS, SYNC_NORMAL)
-                    .build()
-
-                val request = OneTimeWorkRequest.Builder(SyncWorker::class.java)
-                    .setConstraints(constraints)
-                    .setInputData(data)
-                    .build()
-
-                WorkManager.getInstance(this).enqueueUniqueWork(WORK_SYNC, KEEP, request)
-            }
-        }
-
     }
 }

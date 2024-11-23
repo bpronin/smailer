@@ -5,7 +5,7 @@ import android.app.Activity.RESULT_OK
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.fragment.app.FragmentActivity
-import com.bopr.android.smailer.AccountHelper
+import com.bopr.android.smailer.AccountHelper.Companion.accounts
 import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.util.Logger
 import com.bopr.android.smailer.util.createPickAccountIntent
@@ -22,7 +22,6 @@ class GoogleAuthorizationHelper(
 ) {
 
     private val scopes = setOf(*scopes)
-    private val accountHelper = AccountHelper(activity)
     private val settings = activity.settings
     private val accountPickerLauncher =
         activity.registerForActivityResult(StartActivityForResult()) { result ->
@@ -33,7 +32,7 @@ class GoogleAuthorizationHelper(
      * Brings up system account selection dialog.
      */
     fun startAccountPicker() {
-        val account = accountHelper.getGoogleAccount(settings.getString(accountSettingName))
+        val account = activity.accounts.getGoogleAccount(settings.getString(accountSettingName))
         accountPickerLauncher.launch(createPickAccountIntent(account))
     }
 
@@ -47,7 +46,7 @@ class GoogleAuthorizationHelper(
     private fun requestPermission(accountName: String?) {
         log.debug("Requesting permission for: $accountName")
 
-        accountHelper.requestGoogleAuthToken(
+        activity.accounts.requestGoogleAuthToken(
             activity,
             accountName,
             scopes,

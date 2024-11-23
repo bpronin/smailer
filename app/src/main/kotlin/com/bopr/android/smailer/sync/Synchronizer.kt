@@ -2,6 +2,16 @@ package com.bopr.android.smailer.sync
 
 import android.accounts.Account
 import android.content.Context
+import androidx.work.Constraints
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy.KEEP
+import androidx.work.NetworkType.CONNECTED
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
+import com.bopr.android.smailer.AccountHelper.Companion.accounts
+import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_ENABLED
+import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.external.GoogleDrive
@@ -97,7 +107,7 @@ internal class Synchronizer(
     }
 
     private fun getLocalData(): SyncData {
-        return database.run {
+        return database.useIt {
             SyncData(
                 phoneBlacklist = phoneBlacklist,
                 phoneWhitelist = phoneWhitelist,
@@ -111,7 +121,7 @@ internal class Synchronizer(
     }
 
     private fun putLocalData(data: SyncData) {
-        database.commit(false) {
+        database.useIt {
             batch {
                 events.replaceAll(data.events.map(::dataToEvent))
 //                phoneCalls.replaceAll(data.phoneCalls.map(::dataToPhoneCall))
@@ -187,5 +197,48 @@ internal class Synchronizer(
         const val SYNC_NORMAL = 0
         const val SYNC_FORCE_DOWNLOAD = 1
         const val SYNC_FORCE_UPLOAD = 2
+        const val SYNC_OPTIONS = "options"
+
+        internal fun Context.startGoogleCloudSync() {
+            database.registerListener { syncAppDataWithGoogleCloud() }
+
+            settings.registerListener { _, key ->
+                if (key == PREF_MAIL_SENDER_ACCOUNT) {
+                    if (accounts.isGoogleAccountExists(settings.getString(PREF_MAIL_SENDER_ACCOUNT))
+                    ) syncAppDataWithGoogleCloud()
+                }
+            }
+        }
+
+        fun Context.syncAppDataWithGoogleCloud() {
+
+            return // TODO: what if the app is unregistered from Google Console
+
+            @Suppress("UNREACHABLE_CODE")
+
+            if (settings.getBoolean(PREF_SYNC_ENABLED)) {
+                log.debug("Sync requested")
+
+                val constraints = Constraints.Builder()
+                    .setRequiredNetworkType(CONNECTED)
+                    .build()
+
+                val data = Data.Builder()
+                    .putInt(SYNC_OPTIONS, SYNC_NORMAL)
+                    .build()
+
+                val request = OneTimeWorkRequest.Builder(SyncWorker::class.java)
+                    .setConstraints(constraints)
+                    .setInputData(data)
+                    .build()
+
+                WorkManager.getInstance(this).enqueueUniqueWork(
+                    "com.bopr.android.smailer.sync",
+                    KEEP,
+                    request
+                )
+            }
+        }
+
     }
 }

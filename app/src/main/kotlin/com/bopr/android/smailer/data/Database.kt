@@ -9,7 +9,6 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.bopr.android.smailer.sync.SyncWorker.Companion.syncAppDataWithGoogleCloud
 import com.bopr.android.smailer.util.Logger
 import com.bopr.android.smailer.util.SingletonHolder
 import java.io.Closeable
@@ -75,7 +74,7 @@ class Database private constructor(private val context: Context) : Closeable {
      * Performs specified action then updates modification time, fires change event
      * and requests google drive synchronization.
      */
-    fun <T> commit(syncRequired: Boolean = true, action: Database.() -> T): T {
+    fun <T> commit(action: Database.() -> T): T {
         val result = action(this)
         if (lastModified.isNotEmpty()) {
             log.debug("Commit $lastModified")
@@ -83,10 +82,6 @@ class Database private constructor(private val context: Context) : Closeable {
             updateTime = currentTimeMillis()
             sendDatabaseBroadcast(lastModified)
             lastModified.clear()
-
-            if (syncRequired) {
-                context.syncAppDataWithGoogleCloud()
-            }
         }
         return result
     }
@@ -269,7 +264,7 @@ class Database private constructor(private val context: Context) : Closeable {
             "CREATE TABLE $TABLE_PHONE_WHITELIST(" +
                     "$COLUMN_VALUE TEXT(256) PRIMARY KEY NOT NULL)"
 
-        private val singletonHolder = SingletonHolder<Database> { Database(it) }
+        private val singletonHolder = SingletonHolder { Database(it) }
         val Context.database get() = singletonHolder.getInstance(this)
         val Fragment.database get() = requireContext().database
     }

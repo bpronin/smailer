@@ -1,10 +1,10 @@
 package com.bopr.android.smailer
 
 import android.content.Context
+import com.bopr.android.smailer.control.FirebaseControlService.Companion.startFirebaseMessaging
 import com.bopr.android.smailer.control.MailRemoteControlWorker.Companion.enableMailRemoteControl
-import com.bopr.android.smailer.external.Firebase.Companion.subscribeToFirebaseMessaging
 import com.bopr.android.smailer.provider.telephony.ContentObserverService.Companion.startContentObserver
-import com.bopr.android.smailer.sync.SyncWorker.Companion.syncAppDataWithGoogleCloud
+import com.bopr.android.smailer.sync.Synchronizer.Companion.startGoogleCloudSync
 
 /**
  * Application startup routines.
@@ -13,11 +13,11 @@ import com.bopr.android.smailer.sync.SyncWorker.Companion.syncAppDataWithGoogleC
  */
 object AppStartup {
 
-    fun Context.startUpAppServices() {
+    fun Context.startupApplication() {
         startContentObserver()
         enableMailRemoteControl()
-        syncAppDataWithGoogleCloud()
-        subscribeToFirebaseMessaging()
+        startGoogleCloudSync()
+        startFirebaseMessaging()
     }
 
 }

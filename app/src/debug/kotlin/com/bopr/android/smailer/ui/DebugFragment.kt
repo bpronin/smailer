@@ -56,6 +56,7 @@ import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.data.Database.Companion.databaseName
 import com.bopr.android.smailer.external.Firebase
 import com.bopr.android.smailer.external.Firebase.Companion.FCM_REQUEST_DATA_SYNC
+import com.bopr.android.smailer.external.Firebase.Companion.firebase
 import com.bopr.android.smailer.external.GoogleDrive
 import com.bopr.android.smailer.messenger.Event
 import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_NO_CONSUMERS
@@ -103,7 +104,6 @@ class DebugFragment : PreferenceFragmentCompat() {
     private lateinit var smsSendStatusReceiver: BroadcastReceiver
     private lateinit var smsDeliveryStatusReceiver: BroadcastReceiver
     private val developerEmail by lazy { getString(R.string.developer_email) }
-    private val firebase by lazy { Firebase(requireContext()) }
 
     //    private val requestPermissionLauncher =
 //        registerForActivityResult(RequestPermission()) { result: Boolean ->
@@ -118,7 +118,6 @@ class DebugFragment : PreferenceFragmentCompat() {
             requireActivity(), PREF_MAIL_SENDER_ACCOUNT, MAIL_GOOGLE_COM, DRIVE_APPDATA
         )
         notifications = NotificationsHelper(requireContext())
-        accountHelper = AccountHelper(requireContext())
 
         smsSendStatusReceiver = SentStatusReceiver().also {
             registerReceiver(it, IntentFilter("SMS_SENT"))
@@ -189,21 +188,21 @@ class DebugFragment : PreferenceFragmentCompat() {
         )
         addCategory(screen, "Firebase",
             addPreference("Send message") {
-                firebase.send(FCM_REQUEST_DATA_SYNC)
+                requireContext().firebase.send(FCM_REQUEST_DATA_SYNC)
             },
             addPreference("Subscribe") {
-                firebase.subscribe()
+                requireContext().firebase.subscribe()
             },
             addPreference("Unsubscribe") {
-                firebase.unsubscribe()
+                requireContext().firebase.unsubscribe()
             },
             addPreference("Get current token") {
-                firebase.requestToken { token ->
+                requireContext().firebase.requestToken { token ->
                     showInfoDialog("Firebase token", token)
                 }
             },
             addPreference("Get server info") {
-                firebase.requestInfo { info ->
+                requireContext().firebase.requestInfo { info ->
                     showInfoDialog("Info", info)
                 }
             }

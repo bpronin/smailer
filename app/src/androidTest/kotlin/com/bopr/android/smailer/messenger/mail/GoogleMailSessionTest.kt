@@ -4,7 +4,7 @@ import android.Manifest.permission.GET_ACCOUNTS
 import android.Manifest.permission.READ_CONTACTS
 import androidx.test.filters.SmallTest
 import androidx.test.rule.GrantPermissionRule
-import com.bopr.android.smailer.AccountHelper
+import com.bopr.android.smailer.AccountHelper.Companion.accounts
 import com.bopr.android.smailer.BaseTest
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 import org.junit.Rule
@@ -26,9 +26,9 @@ class GoogleMailSessionTest : BaseTest() {
 
     @Test
     fun test_List() {
-        val account = AccountHelper(targetContext).requirePrimaryGoogleAccount()
+        val account = targetContext.accounts.requirePrimaryGoogleAccount()
         val mail = GoogleMailSession(targetContext, account, GMAIL_SEND)
-        mail.list("label:inbox"){
+        mail.list("label:inbox") {
             println(it)
         }
 

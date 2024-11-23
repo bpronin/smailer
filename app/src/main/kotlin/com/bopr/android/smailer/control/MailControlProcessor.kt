@@ -1,7 +1,7 @@
 package com.bopr.android.smailer.control
 
 import android.content.Context
-import com.bopr.android.smailer.AccountHelper
+import com.bopr.android.smailer.AccountHelper.Companion.accounts
 import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_SERVICE_ACCOUNT
 import com.bopr.android.smailer.R
@@ -12,11 +12,11 @@ import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.messenger.mail.GoogleMailSession
 import com.bopr.android.smailer.messenger.mail.MailMessage
 import com.bopr.android.smailer.ui.RemoteControlActivity
+import com.bopr.android.smailer.util.Logger
 import com.bopr.android.smailer.util.commaSplit
 import com.bopr.android.smailer.util.containsEmail
 import com.bopr.android.smailer.util.extractEmail
 import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
-import com.bopr.android.smailer.util.Logger
 
 /**
  * Checks service mailbox for messages containing control commands and performs it.
@@ -31,12 +31,11 @@ internal class MailControlProcessor(
 
     private val parser = MailControlCommandInterpreter()
     private val query = "subject:Re:[${context.getString(R.string.app_name)}] label:inbox"
-    private val accountHelper = AccountHelper(context)
     private val commandExecutor = ControlCommandExecutor(context)
 
     fun checkMailbox(onSuccess: (Int) -> Unit = {}, onError: (Throwable) -> Unit) {
         val accountName = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
-        val account = accountHelper.getGoogleAccount(accountName)?:run{
+        val account = context.accounts.getGoogleAccount(accountName) ?: run {
             log.warn("Service account [$accountName] not found")
 
             notifyNoAccount()
