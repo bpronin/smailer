@@ -18,14 +18,12 @@ class ConfirmCheckDialog(
     positiveButtonText: String? = null,
     negativeButtonText: String? = null,
     private val dialogTag: String,
-    onPositiveAction: () -> Unit = {},
-    private val onClose: () -> Unit = {}
+    private val onClose: (Boolean) -> Unit
 ) : ConfirmDialog(
     title,
     message,
     positiveButtonText,
     negativeButtonText,
-    onPositiveAction,
     onClose
 ) {
 
@@ -49,10 +47,10 @@ class ConfirmCheckDialog(
     }
 
     override fun show(activity: FragmentActivity) {
-        if (!activity.settings.getBoolean(dialogTag)) {
-            super.show(activity)
+        if (activity.settings.getBoolean(dialogTag)) {
+            onClose(true)
         } else {
-            onClose()
+            super.show(activity)
         }
     }
 

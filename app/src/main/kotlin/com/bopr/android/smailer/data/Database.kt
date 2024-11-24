@@ -110,7 +110,7 @@ class Database private constructor(private val context: Context) : Closeable {
         }
         broadcastManager.registerReceiver(listener, IntentFilter(ACTION_DATABASE_CHANGED))
 
-        log.debug("Listener registered: [${listener.hashCode()}]")
+        log.debug("Listener registered [${listener.hashCode()}]")
         return listener
     }
 
@@ -120,7 +120,7 @@ class Database private constructor(private val context: Context) : Closeable {
     fun unregisterListener(listener: BroadcastReceiver) {
         broadcastManager.unregisterReceiver(listener)
 
-        log.debug("Listener unregistered: [${listener.hashCode()}]")
+        log.debug("Listener unregistered [${listener.hashCode()}]")
     }
 
     /**

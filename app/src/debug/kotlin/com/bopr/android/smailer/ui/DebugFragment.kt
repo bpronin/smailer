@@ -62,13 +62,14 @@ import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.messenger.mail.GoogleMailSession
 import com.bopr.android.smailer.messenger.mail.MailMessage
 import com.bopr.android.smailer.messenger.telegram.TelegramSession
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
 import com.bopr.android.smailer.provider.telephony.PhoneCallEventProcessor
 import com.bopr.android.smailer.provider.telephony.PhoneCallEventProcessor.Companion.processPhoneCall
+import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
 import com.bopr.android.smailer.sync.Synchronizer
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_DOWNLOAD
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_UPLOAD
 import com.bopr.android.smailer.ui.InfoDialog.Companion.showInfoDialog
+import com.bopr.android.smailer.util.BatteryOptimizationRequest.Companion.requireIgnoreBatteryOptimization
 import com.bopr.android.smailer.util.DEVICE_NAME
 import com.bopr.android.smailer.util.GeoLocation.Companion.getGeoLocation
 import com.bopr.android.smailer.util.Logger
@@ -77,7 +78,6 @@ import com.bopr.android.smailer.util.checkPermission
 import com.bopr.android.smailer.util.escapeRegex
 import com.bopr.android.smailer.util.getContactName
 import com.bopr.android.smailer.util.readLogcatLog
-import com.bopr.android.smailer.util.requireIgnoreBatteryOptimization
 import com.bopr.android.smailer.util.runBackgroundTask
 import com.bopr.android.smailer.util.sendSmsMessage
 import com.bopr.android.smailer.util.setOnClickListener
@@ -163,9 +163,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                 onPutInvalidAccount()
             },
             addPreference("Require battery optimisation disabled") {
-                if (!requireActivity().requireIgnoreBatteryOptimization()) {
-                    showInfoDialog("Battery", "Optimization already disabled")
-                }
+                requireActivity().requireIgnoreBatteryOptimization()
             }
         )
         addCategory(screen, "Google drive",

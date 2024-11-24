@@ -3,7 +3,7 @@ package com.bopr.android.smailer.ui
 import android.os.Bundle
 import com.bopr.android.smailer.AppStartup.startupApplication
 import com.bopr.android.smailer.PermissionsHelper
-import com.bopr.android.smailer.util.requireIgnoreBatteryOptimization
+import com.bopr.android.smailer.util.BatteryOptimizationRequest.Companion.requireIgnoreBatteryOptimization
 
 /**
  * Main application activity.
@@ -17,12 +17,11 @@ class MainActivity : FlavorBaseActivity(MainFragment::class) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHomeButtonEnabled(false)
-
         permissionsHelper = PermissionsHelper(this)
-        permissionsHelper.checkAll()
-
-        requireIgnoreBatteryOptimization()
-        startupApplication()
+        requireIgnoreBatteryOptimization {
+            permissionsHelper.checkAll()
+            startupApplication()
+        }
     }
 
     override fun onDestroy() {

@@ -11,10 +11,10 @@ open class ConfirmDialog(
     private val message: String? = null,
     private val positiveButtonText: String? = null,
     private val negativeButtonText: String? = null,
-    private val onPositiveAction: () -> Unit = {},
-    private val onDismiss: () -> Unit = {}
-
+    private val onClose: (Boolean) -> Unit
 ) : BaseDialogFragment("confirm-dialog") {
+
+    private var dialogResult = false
 
     override fun onBuildDialog(builder: AlertDialog.Builder) {
         super.onBuildDialog(builder)
@@ -25,13 +25,13 @@ open class ConfirmDialog(
             .setOnDismissListener {
                 /**DOES NOT WWORk. See DialogFragment.java:342 */
             }.setPositiveButton(positiveButtonText ?: getString(android.R.string.ok)) { _, _ ->
-                onPositiveAction()
+                dialogResult = true
             }.setNegativeButton(negativeButtonText ?: getString(android.R.string.cancel), null)
     }
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        onDismiss()
+        onClose(dialogResult)
     }
 
 }

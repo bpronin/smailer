@@ -28,7 +28,7 @@
     <string name="ask_clear_list">Clear list?</string>
     <string name="bad_telegram_bot_token">Telegram bot token is invalid.</string>
     <string name="battery_optimization">Battery optimization</string>
-    <string name="battery_optimization_reason">To make the application work properly when device is in standby mode please turn off battery optimization for it.</string>
+    <string name="battery_optimization_reason">To ensure that the app continues to work properly when your device is in standby mode, disable battery optimization for the app.</string>
     <string name="blacklist">Blacklist</string>
     <string name="called_phone">Called: %1$s%2$s</string>
     <string name="caller_name">Caller name</string>
@@ -37,14 +37,14 @@
     <string name="check_your_settings">Please check your settings</string>
     <string name="clear">Clear</string>
     <string name="contact_no_permission_read_contact">no permission to read contacts</string>
-    <string name="copyright" translatable="false">Copyright © BoPr, 2016-2021</string>
+    <string name="copyright" translatable="false">Copyright © BoPr, 2016-2024</string>
     <string name="device_location">Device location</string>
     <string name="device_name">Device name</string>
     <string name="device_name_to_show">Device name to be shown in the message (leave blank to use default)</string>
     <string name="disabled">Disabled</string>
     <string name="dispatch_time">Dispatch time</string>
-    <string name="do_not_ask_again">Don\'t ask again</string>
-    <string name="do_not_process_call">Do not process call</string>
+    <string name="do_not_ask_again">Don\'t ask me again</string>
+    <string name="do_not_process_call">Do not process the call</string>
     <string name="edit">Edit</string>
     <string name="email">Email</string>
     <string name="email_address">Email address</string>
