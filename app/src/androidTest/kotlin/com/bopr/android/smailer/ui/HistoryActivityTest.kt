@@ -35,8 +35,8 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             events.add(
                 Event(
                     payload = PhoneCallInfo(
-                        phone = "1",
-                        startTime = currentTimeMillis()
+                        startTime = currentTimeMillis(),
+                        phone = "1"
                     ),
                     target = "device-1"
                 )
@@ -44,8 +44,8 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             events.add(
                 Event(
                     payload = PhoneCallInfo(
-                        phone = "2",
-                        startTime = currentTimeMillis()
+                        startTime = currentTimeMillis(),
+                        phone = "2"
                     ),
                     target = "device-2"
                 )
@@ -53,8 +53,8 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             events.add(
                 Event(
                     payload = PhoneCallInfo(
-                        phone = "3",
-                        startTime = currentTimeMillis()
+                        startTime = currentTimeMillis(),
+                        phone = "3"
                     ),
                     target = "device-3"
                 )
@@ -82,8 +82,8 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             events.add(
                 Event(
                     payload = PhoneCallInfo(
-                        phone = "1",
-                        startTime = currentTimeMillis()
+                        startTime = currentTimeMillis(),
+                        phone = "1"
                     ),
                     target = "device-1"
                 )
@@ -91,8 +91,8 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             events.add(
                 Event(
                     payload = PhoneCallInfo(
-                        phone = "2",
-                        startTime = currentTimeMillis()
+                        startTime = currentTimeMillis(),
+                        phone = "2"
                     ),
                     target = "device-2"
                 )
@@ -100,8 +100,8 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             events.add(
                 Event(
                     payload = PhoneCallInfo(
-                        phone = "3",
-                        startTime = currentTimeMillis()
+                        startTime = currentTimeMillis(),
+                        phone = "3"
                     ),
                     target = "device-3"
                 )
@@ -129,8 +129,8 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             events.add(
                 Event(
                     payload = PhoneCallInfo(
-                        phone = "1",
-                        startTime = currentTimeMillis()
+                        startTime = currentTimeMillis(),
+                        phone = "1"
                     ),
                     target = "device-1"
                 )
@@ -138,8 +138,8 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             events.add(
                 Event(
                     payload = PhoneCallInfo(
-                        phone = "2",
-                        startTime = currentTimeMillis()
+                        startTime = currentTimeMillis(),
+                        phone = "2"
                     ),
                     target = "device-2"
                 )
@@ -147,8 +147,8 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             events.add(
                 Event(
                     payload = PhoneCallInfo(
-                        phone = "3",
-                        startTime = currentTimeMillis()
+                        startTime = currentTimeMillis(),
+                        phone = "3"
                     ),
                     target = "device-3"
                 )
@@ -168,8 +168,8 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             events.add(
                 Event(
                     payload = PhoneCallInfo(
-                        phone = "1",
-                        startTime = currentTimeMillis()
+                        startTime = currentTimeMillis(),
+                        phone = "1"
                     ),
                     target = "device-1",
                     isRead = false
@@ -178,8 +178,8 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             events.add(
                 Event(
                     payload = PhoneCallInfo(
-                        phone = "2",
-                        startTime = currentTimeMillis()
+                        startTime = currentTimeMillis(),
+                        phone = "2"
                     ),
                     target = "device-2",
                     isRead = false
@@ -188,8 +188,8 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             events.add(
                 Event(
                     payload = PhoneCallInfo(
-                        phone = "3",
-                        startTime = currentTimeMillis()
+                        startTime = currentTimeMillis(),
+                        phone = "3"
                     ),
                     target = "device-3",
                     isRead = false
@@ -214,8 +214,8 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             events.add(
                 Event(
                     payload = PhoneCallInfo(
-                        phone = "1",
-                        startTime = currentTimeMillis()
+                        startTime = currentTimeMillis(),
+                        phone = "1"
                     ),
                     target = "device-1"
                 )
@@ -223,8 +223,8 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             events.add(
                 Event(
                     payload = PhoneCallInfo(
-                        phone = "phone",
                         startTime = currentTimeMillis(),
+                        phone = "phone",
                         text = "text"
                     ),
 
@@ -234,8 +234,8 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             events.add(
                 Event(
                     payload = PhoneCallInfo(
-                        phone = "3",
-                        startTime = currentTimeMillis()
+                        startTime = currentTimeMillis(),
+                        phone = "3"
                     ),
                     target = "device-3"
                 )

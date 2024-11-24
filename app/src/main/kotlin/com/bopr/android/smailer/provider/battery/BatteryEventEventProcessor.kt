@@ -6,7 +6,7 @@ import androidx.work.WorkManager
 import com.bopr.android.smailer.Settings.Companion.PREF_DISPATCH_BATTERY_LEVEL
 import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_TRIGGER_OFF
-import com.bopr.android.smailer.provider.Processor
+import com.bopr.android.smailer.provider.EventProcessor
 import com.bopr.android.smailer.util.Bits
 
 /**
@@ -14,7 +14,7 @@ import com.bopr.android.smailer.util.Bits
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class BatteryEventProcessor(private val context: Context) : Processor<BatteryInfo>(context) {
+class BatteryEventEventProcessor(private val context: Context) : EventProcessor<BatteryInfo>(context) {
 
     override fun getBypassReason(data: BatteryInfo): Bits {
         var flags = Bits()
@@ -27,7 +27,7 @@ class BatteryEventProcessor(private val context: Context) : Processor<BatteryInf
     companion object {
 
         fun Context.processBatteryEvent(info: BatteryInfo) {
-            BatteryEventProcessor(this).add(info)
+            BatteryEventEventProcessor(this).add(info)
             WorkManager.getInstance(this).enqueue(
                 OneTimeWorkRequest.Builder(BatteryEventProcessWorker::class.java).build()
             )

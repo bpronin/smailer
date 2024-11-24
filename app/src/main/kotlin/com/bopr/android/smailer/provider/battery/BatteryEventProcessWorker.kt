@@ -13,7 +13,7 @@ class BatteryEventProcessWorker(
     Worker(context, workerParams) {
 
     override fun doWork() = try {
-        BatteryEventProcessor(applicationContext).process()
+        BatteryEventEventProcessor(applicationContext).process()
         success()
     } catch (x: Throwable) {
         log.error("Work failed", x)

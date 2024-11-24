@@ -4,9 +4,8 @@ import android.Manifest.permission.SEND_SMS
 import android.app.Activity
 import android.content.Context
 import androidx.annotation.StringRes
-import com.bopr.android.smailer.NotificationsHelper
+import com.bopr.android.smailer.NotificationsHelper.Companion.notifications
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_NOTIFICATIONS
 import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.control.ControlCommand.Action.ADD_PHONE_TO_BLACKLIST
@@ -18,7 +17,6 @@ import com.bopr.android.smailer.control.ControlCommand.Action.REMOVE_PHONE_FROM_
 import com.bopr.android.smailer.control.ControlCommand.Action.REMOVE_TEXT_FROM_BLACKLIST
 import com.bopr.android.smailer.control.ControlCommand.Action.REMOVE_TEXT_FROM_WHITELIST
 import com.bopr.android.smailer.control.ControlCommand.Action.SEND_SMS_TO_CALLER
-import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.data.StringDataset
 import com.bopr.android.smailer.ui.MainActivity
@@ -36,12 +34,11 @@ import kotlin.reflect.KClass
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class ControlCommandExecutor(
-    private val context: Context,
-    private val database: Database = context.database,
-    private val settings: Settings = context.settings,
-    private val notifications: NotificationsHelper = NotificationsHelper(context),
-) {
+internal class ControlCommandExecutor(private val context: Context) {
+
+    private val database = context.database
+    private val settings = context.settings
+    private val notifications = context.notifications
 
     fun execute(command: ControlCommand) {
         log.debug("Executing: $command")

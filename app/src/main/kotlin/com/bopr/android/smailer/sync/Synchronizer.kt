@@ -2,16 +2,6 @@ package com.bopr.android.smailer.sync
 
 import android.accounts.Account
 import android.content.Context
-import androidx.work.Constraints
-import androidx.work.Data
-import androidx.work.ExistingWorkPolicy.KEEP
-import androidx.work.NetworkType.CONNECTED
-import androidx.work.OneTimeWorkRequest
-import androidx.work.WorkManager
-import com.bopr.android.smailer.AccountHelper.Companion.accounts
-import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
-import com.bopr.android.smailer.Settings.Companion.PREF_SYNC_ENABLED
-import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.external.GoogleDrive
@@ -181,9 +171,9 @@ internal class Synchronizer(
 
     private fun dataToPhoneCall(data: SyncData.PhoneCall): PhoneCallInfo {
         return PhoneCallInfo(
+            startTime = data.startTime,
             phone = data.phone,
             isIncoming = data.incoming,
-            startTime = data.startTime,
             endTime = data.endTime,
             isMissed = data.missed,
             text = data.text
@@ -197,48 +187,5 @@ internal class Synchronizer(
         const val SYNC_NORMAL = 0
         const val SYNC_FORCE_DOWNLOAD = 1
         const val SYNC_FORCE_UPLOAD = 2
-        const val SYNC_OPTIONS = "options"
-
-        internal fun Context.startGoogleCloudSync() {
-            database.registerListener { syncAppDataWithGoogleCloud() }
-
-            settings.registerListener { _, key ->
-                if (key == PREF_MAIL_SENDER_ACCOUNT) {
-                    if (accounts.isGoogleAccountExists(settings.getString(PREF_MAIL_SENDER_ACCOUNT))
-                    ) syncAppDataWithGoogleCloud()
-                }
-            }
-        }
-
-        fun Context.syncAppDataWithGoogleCloud() {
-
-            return // TODO: what if the app is unregistered from Google Console
-
-            @Suppress("UNREACHABLE_CODE")
-
-            if (settings.getBoolean(PREF_SYNC_ENABLED)) {
-                log.debug("Sync requested")
-
-                val constraints = Constraints.Builder()
-                    .setRequiredNetworkType(CONNECTED)
-                    .build()
-
-                val data = Data.Builder()
-                    .putInt(SYNC_OPTIONS, SYNC_NORMAL)
-                    .build()
-
-                val request = OneTimeWorkRequest.Builder(SyncWorker::class.java)
-                    .setConstraints(constraints)
-                    .setInputData(data)
-                    .build()
-
-                WorkManager.getInstance(this).enqueueUniqueWork(
-                    "com.bopr.android.smailer.sync",
-                    KEEP,
-                    request
-                )
-            }
-        }
-
     }
 }

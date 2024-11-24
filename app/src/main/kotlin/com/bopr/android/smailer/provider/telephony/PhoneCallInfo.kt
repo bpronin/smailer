@@ -10,9 +10,9 @@ import kotlinx.parcelize.Parcelize
  */
 @Parcelize
 data class PhoneCallInfo(
+    val startTime: Long,
     val phone: String,
     val isIncoming: Boolean = false,
-    val startTime: Long,
     val endTime: Long? = null,
     val isMissed: Boolean = false,
     val text: String? = null,

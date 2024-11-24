@@ -4,10 +4,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.bopr.android.smailer.AppStartup.startupApplication
-import com.bopr.android.smailer.control.MailControlProcessor
+import com.bopr.android.smailer.control.mail.MailControlProcessor
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
-import com.bopr.android.smailer.provider.telephony.PhoneCallProcessor
-import com.bopr.android.smailer.provider.telephony.PhoneCallProcessor.Companion.processPhoneCall
+import com.bopr.android.smailer.provider.telephony.PhoneCallEventProcessor
+import com.bopr.android.smailer.provider.telephony.PhoneCallEventProcessor.Companion.processPhoneCall
 import com.bopr.android.smailer.util.runInBackground
 import java.lang.System.currentTimeMillis
 
@@ -23,9 +23,9 @@ class DebugReceiver : BroadcastReceiver() {
             "PROCESS_PHONE_EVENT" -> {
                 context.processPhoneCall(
                     PhoneCallInfo(
+                        startTime = currentTimeMillis(),
                         phone = "ADB DEBUG",
                         isIncoming = true,
-                        startTime = currentTimeMillis(),
                         text = "Message text"
                     )
                 )
@@ -33,7 +33,7 @@ class DebugReceiver : BroadcastReceiver() {
 
             "PROCESS_PENDING_EVENTS" -> {
                 runInBackground {
-                    PhoneCallProcessor(context).process()
+                    PhoneCallEventProcessor(context).process()
                 }
             }
 

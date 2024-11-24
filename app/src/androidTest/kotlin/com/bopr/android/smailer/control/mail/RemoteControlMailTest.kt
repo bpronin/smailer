@@ -1,4 +1,4 @@
-package com.bopr.android.smailer.control
+package com.bopr.android.smailer.control.mail
 
 import android.accounts.Account
 import androidx.test.filters.LargeTest

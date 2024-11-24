@@ -4,7 +4,7 @@ import android.Manifest.permission.GET_ACCOUNTS
 import android.Manifest.permission.READ_CONTACTS
 import androidx.test.filters.SmallTest
 import androidx.test.rule.GrantPermissionRule
-import com.bopr.android.smailer.AccountHelper.Companion.accounts
+import com.bopr.android.smailer.AccountsHelper.Companion.accounts
 import com.bopr.android.smailer.BaseTest
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 import org.junit.Rule

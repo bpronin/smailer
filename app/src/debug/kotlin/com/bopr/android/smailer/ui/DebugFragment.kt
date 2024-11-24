@@ -20,13 +20,12 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
-import com.bopr.android.smailer.AccountHelper
+import com.bopr.android.smailer.AccountsHelper
 import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_GOOGLE_ACCOUNT
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_MAIL_RECIPIENTS
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_SERVICE_ACCOUNT
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSAGE_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
@@ -50,11 +49,9 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
 import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.Settings.Companion.sharedPreferencesName
-import com.bopr.android.smailer.control.MailControlProcessor
-import com.bopr.android.smailer.data.Database
+import com.bopr.android.smailer.control.mail.MailControlProcessor
 import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.data.Database.Companion.databaseName
-import com.bopr.android.smailer.external.Firebase
 import com.bopr.android.smailer.external.Firebase.Companion.FCM_REQUEST_DATA_SYNC
 import com.bopr.android.smailer.external.Firebase.Companion.firebase
 import com.bopr.android.smailer.external.GoogleDrive
@@ -66,8 +63,8 @@ import com.bopr.android.smailer.messenger.mail.GoogleMailSession
 import com.bopr.android.smailer.messenger.mail.MailMessage
 import com.bopr.android.smailer.messenger.telegram.TelegramSession
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
-import com.bopr.android.smailer.provider.telephony.PhoneCallProcessor
-import com.bopr.android.smailer.provider.telephony.PhoneCallProcessor.Companion.processPhoneCall
+import com.bopr.android.smailer.provider.telephony.PhoneCallEventProcessor
+import com.bopr.android.smailer.provider.telephony.PhoneCallEventProcessor.Companion.processPhoneCall
 import com.bopr.android.smailer.sync.Synchronizer
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_DOWNLOAD
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_UPLOAD
@@ -100,7 +97,7 @@ class DebugFragment : PreferenceFragmentCompat() {
 
     private lateinit var authorization: GoogleAuthorizationHelper
     private lateinit var notifications: NotificationsHelper
-    private lateinit var accountHelper: AccountHelper
+    private lateinit var accountsHelper: AccountsHelper
     private lateinit var smsSendStatusReceiver: BroadcastReceiver
     private lateinit var smsDeliveryStatusReceiver: BroadcastReceiver
     private val developerEmail by lazy { getString(R.string.developer_email) }
@@ -117,7 +114,6 @@ class DebugFragment : PreferenceFragmentCompat() {
         authorization = GoogleAuthorizationHelper(
             requireActivity(), PREF_MAIL_SENDER_ACCOUNT, MAIL_GOOGLE_COM, DRIVE_APPDATA
         )
-        notifications = NotificationsHelper(requireContext())
 
         smsSendStatusReceiver = SentStatusReceiver().also {
             registerReceiver(it, IntentFilter("SMS_SENT"))
@@ -295,7 +291,7 @@ class DebugFragment : PreferenceFragmentCompat() {
             attachments.addAll(it)
         }
 
-        val account = accountHelper.requirePrimaryGoogleAccount()
+        val account = accountsHelper.requirePrimaryGoogleAccount()
         val session = GoogleMailSession(context, account, GMAIL_SEND)
         for (file in attachments) {
             val message = MailMessage(
@@ -321,7 +317,7 @@ class DebugFragment : PreferenceFragmentCompat() {
 
     private fun onSendDebugMail(preference: Preference) {
         val progress = PreferenceProgress(preference).apply { start() }
-        val account = accountHelper.requirePrimaryGoogleAccount()
+        val account = accountsHelper.requirePrimaryGoogleAccount()
 
         val message = MailMessage(
             from = account.name,
@@ -480,11 +476,10 @@ class DebugFragment : PreferenceFragmentCompat() {
         val start = currentTimeMillis()
         requireContext().processPhoneCall(
             PhoneCallInfo(
+                startTime = start,
                 phone = "+1(234) 567-89-01",
                 isIncoming = true,
-                startTime = start,
                 endTime = start + 10000,
-                isMissed = false,
                 text = "Debug SMS message text"
             )
         )
@@ -494,7 +489,7 @@ class DebugFragment : PreferenceFragmentCompat() {
     private fun onProcessPending(preference: Preference) {
         preference.runBackgroundTask(
             onPerform = {
-                PhoneCallProcessor(requireContext()).process()
+                PhoneCallEventProcessor(requireContext()).process()
             },
             onSuccess = { it ->
                 showInfoDialog("Event processing", "$it events processed")
@@ -521,11 +516,9 @@ class DebugFragment : PreferenceFragmentCompat() {
             events.add(
                 Event(
                     payload = PhoneCallInfo(
+                        startTime = currentTimeMillis(),
                         phone = "+79052345670",
                         isIncoming = true,
-                        startTime = currentTimeMillis(),
-                        endTime = null,
-                        isMissed = false,
                         text = "Debug message"
                     )
                 )
@@ -542,11 +535,9 @@ class DebugFragment : PreferenceFragmentCompat() {
                     add(
                         Event(
                             payload = PhoneCallInfo(
+                                startTime = time,
                                 phone = "+79052345671",
                                 isIncoming = true,
-                                startTime = time,
-                                endTime = null,
-                                isMissed = false,
                                 text = "Debug message"
                             )
                         )
@@ -555,11 +546,8 @@ class DebugFragment : PreferenceFragmentCompat() {
                         Event(
                             processState = STATE_PROCESSED,
                             payload = PhoneCallInfo(
-                                phone = "+79052345672",
-                                isIncoming = false,
                                 startTime = 1000.let { time += it; time },
-                                endTime = null,
-                                isMissed = false,
+                                phone = "+79052345672",
                                 text = "Debug message"
                             )
                         )
@@ -568,12 +556,10 @@ class DebugFragment : PreferenceFragmentCompat() {
                         Event(
                             processState = STATE_IGNORED,
                             payload = PhoneCallInfo(
+                                startTime = 1000.let { time += it; time },
                                 phone = "+79052345673",
                                 isIncoming = true,
-                                startTime = 1000.let { time += it; time },
-                                endTime = time + 10000,
-                                isMissed = false,
-                                text = null
+                                endTime = time + 10000
                             )
                         )
                     )
@@ -581,12 +567,9 @@ class DebugFragment : PreferenceFragmentCompat() {
                         Event(
                             isRead = true,
                             payload = PhoneCallInfo(
-                                phone = "+79052345674",
-                                isIncoming = false,
                                 startTime = 1000.let { time += it; time },
-                                endTime = time + 10000,
-                                isMissed = false,
-                                text = null
+                                phone = "+79052345674",
+                                endTime = time + 10000
                             )
                         )
                     )
@@ -594,23 +577,20 @@ class DebugFragment : PreferenceFragmentCompat() {
                         Event(
                             bypassFlags = FLAG_BYPASS_NO_CONSUMERS,
                             payload = PhoneCallInfo(
+                                startTime = 1000.let { time += it; time },
                                 phone = "+79052345675",
                                 isIncoming = true,
-                                startTime = 1000.let { time += it; time },
                                 endTime = time + 10000,
-                                isMissed = true,
-                                text = null
+                                isMissed = true
                             )
                         )
                     )
                     add(
                         Event(
                             payload = PhoneCallInfo(
+                                startTime = 1000.let { time += it; time },
                                 phone = "+79052345671",
                                 isIncoming = true,
-                                startTime = 1000.let { time += it; time },
-                                endTime = null,
-                                isMissed = false,
                                 text = "Debug message"
                             )
                         )
@@ -618,11 +598,8 @@ class DebugFragment : PreferenceFragmentCompat() {
                     add(
                         Event(
                             payload = PhoneCallInfo(
+                                startTime = 1000.let { time += it; time },
                                 phone = "+79052345672",
-                                isIncoming = false,
-                                startTime = 1000.let { time += it; time },
-                                endTime = null,
-                                isMissed = false,
                                 text = "Debug message"
                             )
                         )
@@ -630,36 +607,30 @@ class DebugFragment : PreferenceFragmentCompat() {
                     add(
                         Event(
                             payload = PhoneCallInfo(
+                                startTime = 1000.let { time += it; time },
                                 phone = "+79052345673",
                                 isIncoming = true,
-                                startTime = 1000.let { time += it; time },
-                                endTime = time + 10000,
-                                isMissed = false,
-                                text = null
+                                endTime = time + 10000
                             )
                         )
                     )
                     add(
                         Event(
                             payload = PhoneCallInfo(
+                                startTime = 1000.let { time += it; time },
                                 phone = "+79052345674",
-                                isIncoming = false,
-                                startTime = 1000.let { time += it; time },
-                                endTime = time + 10000,
-                                isMissed = false,
-                                text = null
+                                endTime = time + 10000
                             )
                         )
                     )
                     add(
                         Event(
                             payload = PhoneCallInfo(
+                                startTime = 1000.let { time += it; time },
                                 phone = "+79052345675",
                                 isIncoming = true,
-                                startTime = 1000.let { time += it; time },
                                 endTime = time + 10000,
-                                isMissed = true,
-                                text = null
+                                isMissed = true
                             )
                         )
                     )
@@ -741,7 +712,7 @@ class DebugFragment : PreferenceFragmentCompat() {
     private fun onShowAccounts() {
         val s = "Selected: ${senderAccount().name}\n\n" +
                 "Service: ${serviceAccount().name}\n\n" +
-                "Primary: ${accountHelper.getPrimaryGoogleAccount()?.name}"
+                "Primary: ${accountsHelper.getPrimaryGoogleAccount()?.name}"
         showInfoDialog("Accounts", s)
     }
 
@@ -770,11 +741,11 @@ class DebugFragment : PreferenceFragmentCompat() {
     }
 
     private fun senderAccount(): Account {
-        return accountHelper.requireGoogleAccount(settings.getString(PREF_MAIL_SENDER_ACCOUNT))
+        return accountsHelper.requireGoogleAccount(settings.getString(PREF_MAIL_SENDER_ACCOUNT))
     }
 
     private fun serviceAccount(): Account {
-        return accountHelper.requireGoogleAccount(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT))
+        return accountsHelper.requireGoogleAccount(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT))
     }
 
     private fun runBackgroundGoogleDriveTask(

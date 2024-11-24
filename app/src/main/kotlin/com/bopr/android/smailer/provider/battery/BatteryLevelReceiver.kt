@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_BATTERY_LOW
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.provider.battery.BatteryEventProcessor.Companion.processBatteryEvent
+import com.bopr.android.smailer.provider.battery.BatteryEventEventProcessor.Companion.processBatteryEvent
 import com.bopr.android.smailer.util.Logger
 
 /**

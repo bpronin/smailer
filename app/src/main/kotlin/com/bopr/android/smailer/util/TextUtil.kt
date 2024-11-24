@@ -77,7 +77,11 @@ fun decimalToDMS(
 }
 
 fun String?.capitalize() =
-    this?.let { substring(0, 1).uppercase() + substring(1) }
+    this?.let {
+        if (isNotEmpty())
+            substring(0, 1).uppercase() + substring(1)
+        else ""
+    }
 
 fun formatDuration(duration: Long?) =
     duration?.let {

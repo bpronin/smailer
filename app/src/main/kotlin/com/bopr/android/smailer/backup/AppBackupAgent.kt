@@ -1,4 +1,4 @@
-package com.bopr.android.smailer
+package com.bopr.android.smailer.backup
 
 import android.app.backup.BackupAgentHelper
 import android.app.backup.SharedPreferencesBackupHelper
@@ -16,7 +16,7 @@ class AppBackupAgent : BackupAgentHelper() {
         log.debug("Created")
 
         addHelper("settings", SharedPreferencesBackupHelper(this, sharedPreferencesName))
-        //        addHelper("database", new FileBackupHelper(this, "../databases/" + Settings.DB_NAME));
+        //addHelper("database", new FileBackupHelper(this, "../databases/" + Settings.DB_NAME));
     }
 
     companion object {

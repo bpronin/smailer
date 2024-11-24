@@ -16,9 +16,9 @@ class ParseUtilTest : BaseTest() {
     fun testParcelize() {
         val source = Event(
             payload = PhoneCallInfo(
+                startTime = GregorianCalendar(2016, 1, 2, 3, 4, 5).time.time,
                 phone = "+12345678901",
                 isIncoming = true,
-                startTime = GregorianCalendar(2016, 1, 2, 3, 4, 5).time.time,
                 endTime = GregorianCalendar(2016, 1, 2, 4, 5, 10).time.time,
                 text = "Message"
             ),

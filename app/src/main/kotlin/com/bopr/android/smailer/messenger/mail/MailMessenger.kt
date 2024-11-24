@@ -2,12 +2,12 @@ package com.bopr.android.smailer.messenger.mail
 
 import android.accounts.Account
 import android.content.Context
-import com.bopr.android.smailer.AccountHelper.Companion.accounts
-import com.bopr.android.smailer.NotificationsHelper
+import com.bopr.android.smailer.AccountsHelper.Companion.accounts
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_GOOGLE_ACCESS
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_GOOGLE_ACCOUNT
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_MAIL
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_MAIL_RECIPIENTS
+import com.bopr.android.smailer.NotificationsHelper.Companion.notifications
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
@@ -33,8 +33,8 @@ import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 internal class MailMessenger(private val context: Context) : Messenger {
 
     private val settings = context.settings
+    private val notifications = context.notifications
     private val formatters = MailFormatterFactory(context)
-    private val notifications by lazy { NotificationsHelper(context) }
     private var account: Account? = null
     private var session: GoogleMailSession? = null
 

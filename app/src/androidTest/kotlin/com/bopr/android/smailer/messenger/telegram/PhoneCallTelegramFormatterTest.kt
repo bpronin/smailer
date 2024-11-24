@@ -4,7 +4,6 @@ import android.Manifest.permission.READ_CONTACTS
 import androidx.test.filters.SmallTest
 import androidx.test.rule.GrantPermissionRule
 import com.bopr.android.smailer.BaseTest
-import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_DEVICE_ALIAS
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_CONTENT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_BODY
@@ -50,9 +49,9 @@ class PhoneCallTelegramFormatterTest : BaseTest() {
         }
 
         val info = PhoneCallInfo(
+            startTime = testTime,
             phone = "+12345678901",
             isIncoming = true,
-            startTime = testTime,
             text = "Message text"
         )
 
@@ -80,9 +79,9 @@ class PhoneCallTelegramFormatterTest : BaseTest() {
         }
 
         val info = PhoneCallInfo(
+            startTime = testTime,
             phone = "+12345678901",
             isIncoming = true,
-            startTime = testTime,
             text = "Message text"
         )
 
@@ -123,9 +122,9 @@ class PhoneCallTelegramFormatterTest : BaseTest() {
         }
 
         val info = PhoneCallInfo(
+            startTime = testTime,
             phone = "+12345678901",
             isIncoming = true,
-            startTime = testTime,
             text = "Message text"
         )
 
@@ -175,9 +174,9 @@ class PhoneCallTelegramFormatterTest : BaseTest() {
         }
 
         val info = PhoneCallInfo(
+            startTime = testTime,
             phone = "+12223334444",
             isIncoming = true,
-            startTime = testTime,
             text = "Message text"
         )
 

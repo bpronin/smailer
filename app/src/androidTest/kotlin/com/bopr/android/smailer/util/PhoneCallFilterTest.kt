@@ -24,9 +24,9 @@ class PhoneCallFilterTest : BaseTest() {
         text: String? = null
     ): PhoneCallInfo {
         return PhoneCallInfo(
+            startTime = startTime,
             phone = phone,
             isIncoming = isIncoming,
-            startTime = startTime,
             isMissed = isMissed,
             text = text
         )

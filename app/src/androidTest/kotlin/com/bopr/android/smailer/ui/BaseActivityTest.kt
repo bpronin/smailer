@@ -4,14 +4,14 @@ package com.bopr.android.smailer.ui
 import android.app.Activity
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.filters.LargeTest
-import androidx.test.rule.GrantPermissionRule
+import androidx.test.rule.GrantPermissionRule.*
 import com.bopr.android.smailer.BaseTest
-import com.bopr.android.smailer.data.Database
-import com.bopr.android.smailer.data.Database.Companion.databaseName
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.Settings.Companion.sharedPreferencesName
+import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.database
+import com.bopr.android.smailer.data.Database.Companion.databaseName
 import org.junit.After
 import org.junit.Rule
 import org.junit.runner.RunWith
@@ -23,17 +23,16 @@ import kotlin.reflect.KClass
 abstract class BaseActivityTest(private val activityClass: KClass<out Activity>) : BaseTest() {
 
     @get:Rule
-    val grantPermissionRule: GrantPermissionRule =
-            GrantPermissionRule.grant(
-                    "android.permission.RECEIVE_SMS",
-                    "android.permission.SEND_SMS",
-                    "android.permission.ACCESS_FINE_LOCATION",
-                    "android.permission.READ_CONTACTS",
-                    "android.permission.READ_SMS",
-                    "android.permission.ACCESS_COARSE_LOCATION",
-                    "android.permission.READ_CALL_LOG",
-                    "android.permission.READ_PHONE_STATE")
-
+    val grantPermissionRule = grant(
+        "android.permission.RECEIVE_SMS",
+        "android.permission.SEND_SMS",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.READ_CONTACTS",
+        "android.permission.READ_SMS",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.READ_CALL_LOG",
+        "android.permission.READ_PHONE_STATE"
+    )
 
     @get:Rule
     val activityTestRule: ActivityScenarioRule<out Activity>

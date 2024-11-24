@@ -1,5 +1,6 @@
-package com.bopr.android.smailer.control
+package com.bopr.android.smailer.control.mail
 
+import com.bopr.android.smailer.control.ControlCommand
 import com.bopr.android.smailer.control.ControlCommand.Action.ADD_PHONE_TO_BLACKLIST
 import com.bopr.android.smailer.control.ControlCommand.Action.ADD_PHONE_TO_WHITELIST
 import com.bopr.android.smailer.control.ControlCommand.Action.ADD_TEXT_TO_BLACKLIST
@@ -17,8 +18,8 @@ import java.util.Scanner
 import java.util.regex.Pattern
 
 /**
- * Parses mail text into control command.
- * Command mail message example: "To device My Device. Add phone +1234567901 to blacklist."
+ * Parses email body into control command.
+ * For example: "To device My Device. Add phone +1234567901 to blacklist."
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
@@ -113,7 +114,7 @@ internal class MailControlCommandInterpreter {
     private fun nextPhone(scanner: Scanner): String? {
         return scanner.findWithinHorizon(PHONE_OR_QUOTATION_PATTERN, 0)?.let { text ->
             scanner.match().group(2)    /* found quotation */
-                ?: text               /* found pure number */
+                ?: text                 /* found pure number */
         }
     }
 

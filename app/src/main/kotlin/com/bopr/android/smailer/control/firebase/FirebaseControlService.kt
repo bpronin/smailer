@@ -1,15 +1,10 @@
-package com.bopr.android.smailer.control
+package com.bopr.android.smailer.control.firebase
 
-import android.content.Context
-import com.bopr.android.smailer.AccountHelper.Companion.accounts
-import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
-import com.bopr.android.smailer.Settings.Companion.settings
-import com.bopr.android.smailer.external.Firebase
 import com.bopr.android.smailer.external.Firebase.Companion.FCM_ACTION
 import com.bopr.android.smailer.external.Firebase.Companion.FCM_REQUEST_DATA_SYNC
 import com.bopr.android.smailer.external.Firebase.Companion.FCM_SENDER
 import com.bopr.android.smailer.external.Firebase.Companion.firebase
-import com.bopr.android.smailer.sync.Synchronizer.Companion.syncAppDataWithGoogleCloud
+import com.bopr.android.smailer.sync.SyncManager.Companion.startGoogleCloudSync
 import com.bopr.android.smailer.util.Logger
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -28,7 +23,7 @@ class FirebaseControlService : FirebaseMessagingService() {
             if (message.data[FCM_SENDER] == token) {
                 log.debug("Ignored self message")
             } else if (message.data[FCM_ACTION] == FCM_REQUEST_DATA_SYNC) {
-                syncAppDataWithGoogleCloud()
+                startGoogleCloudSync()
             }
         }
     }
@@ -40,20 +35,6 @@ class FirebaseControlService : FirebaseMessagingService() {
 
     companion object {
 
-        private val log = Logger("FirebaseControlService")
-
-        fun Context.startFirebaseMessaging() {
-            firebase.subscribe()
-            settings.registerListener { _, key ->
-                if (key == PREF_MAIL_SENDER_ACCOUNT) {
-                    if (accounts.isGoogleAccountExists(settings.getString(PREF_MAIL_SENDER_ACCOUNT))) {
-                        firebase.apply<Firebase> {
-                            unsubscribe()
-                            subscribe()
-                        }
-                    }
-                }
-            }
-        }
+        private val log = Logger("FirebaseControl")
     }
 }

@@ -5,7 +5,7 @@ import android.content.Context
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
-import com.bopr.android.smailer.AccountHelper.Companion.accounts
+import com.bopr.android.smailer.AccountsHelper.Companion.accounts
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.settings

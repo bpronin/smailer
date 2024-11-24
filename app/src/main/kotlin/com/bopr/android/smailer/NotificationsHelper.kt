@@ -17,12 +17,14 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.TaskStackBuilder
-import com.bopr.android.smailer.AccountHelper.Companion.accounts
-import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
+import androidx.fragment.app.Fragment
+import com.bopr.android.smailer.AccountsHelper.Companion.accounts
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_RECIPIENTS
+import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.ui.MainActivity
 import com.bopr.android.smailer.util.Mockable
+import com.bopr.android.smailer.util.SingletonHolder
 import com.bopr.android.smailer.util.isValidEmailAddressList
 import java.lang.System.currentTimeMillis
 import kotlin.reflect.KClass
@@ -33,7 +35,8 @@ import kotlin.reflect.KClass
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 @Mockable
-class NotificationsHelper(private val context: Context) {
+class NotificationsHelper private constructor(private val context: Context) :
+    SettingsAware(context) {
 
     private val manager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
@@ -106,7 +109,7 @@ class NotificationsHelper(private val context: Context) {
         manager.cancel(TAG_ERROR, notificationId)
     }
 
-    internal fun applySettings(settings: Settings, key: String?) {
+    override fun onSettingsChanged(settings: Settings, key: String) {
         when (key) {
             PREF_MAIL_SENDER_ACCOUNT ->
                 if (context.accounts.isGoogleAccountExists(
@@ -155,6 +158,10 @@ class NotificationsHelper(private val context: Context) {
         const val NTF_SERVICE_ACCOUNT = 1006
         const val NTF_TELEGRAM = 1007
         const val NTF_TELEPHONY = 1008
+
+        private val singletonHolder = SingletonHolder { NotificationsHelper(it) }
+        val Context.notifications get() = singletonHolder.getInstance(this)
+        val Fragment.notifications get() = requireContext().notifications
     }
 
 }

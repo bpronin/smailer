@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.text.TextUtils
 import androidx.preference.ExtMultiSelectListPreference
 import androidx.preference.ListPreference
-import com.bopr.android.smailer.AccountHelper.Companion.accounts
+import com.bopr.android.smailer.AccountsHelper.Companion.accounts
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSAGE_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_ENABLED

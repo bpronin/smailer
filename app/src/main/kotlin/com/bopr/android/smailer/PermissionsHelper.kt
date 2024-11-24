@@ -15,7 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts.RequestMultiple
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.FragmentActivity
-import com.bopr.android.smailer.AccountHelper.Companion.accounts
+import com.bopr.android.smailer.AccountsHelper.Companion.accounts
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSAGE_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
@@ -28,7 +28,6 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
-import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.ui.InfoDialog.Companion.showInfoDialog
 import com.bopr.android.smailer.util.Logger
 
@@ -40,7 +39,7 @@ import com.bopr.android.smailer.util.Logger
 class PermissionsHelper(
     private val activity: FragmentActivity,
     private val onPermissionsRequestComplete: () -> Unit = {}
-) {
+) : SettingsAware(activity) {
 
     private val items: Map<String, Int> = sortedMapOf<String, Int>().apply {
         put(RECEIVE_SMS, R.string.permission_rationale_receive_sms)
@@ -57,7 +56,6 @@ class PermissionsHelper(
         }
     }
 
-    private val settings = activity.settings
     private val permissionRequestLauncher =
         activity.registerForActivityResult(RequestMultiplePermissions()) { result ->
             onPermissionRequestResult(result)
@@ -81,10 +79,7 @@ class PermissionsHelper(
         }
     }
 
-    /**
-     * To be added into owner's onSharedPreferenceChanged()
-     */
-    internal fun onSettingsChanged(key: String?) {
+    override fun onSettingsChanged(settings: Settings, key: String) {
         log.debug("Handling preference changed: $key")
 
         val requiredPermissions = mutableSetOf<String>()
@@ -229,6 +224,7 @@ class PermissionsHelper(
     }
 
     companion object {
+
         private val log = Logger("PermissionsHelper")
     }
 

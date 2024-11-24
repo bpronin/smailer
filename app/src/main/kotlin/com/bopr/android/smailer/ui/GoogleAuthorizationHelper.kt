@@ -5,7 +5,7 @@ import android.app.Activity.RESULT_OK
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.fragment.app.FragmentActivity
-import com.bopr.android.smailer.AccountHelper.Companion.accounts
+import com.bopr.android.smailer.AccountsHelper.Companion.accounts
 import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.util.Logger
 import com.bopr.android.smailer.util.createPickAccountIntent

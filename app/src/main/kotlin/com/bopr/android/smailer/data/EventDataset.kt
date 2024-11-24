@@ -123,9 +123,9 @@ class EventDataset(
                     selection = "$COLUMN_TIMESTAMP=$timestamp AND $COLUMN_TARGET='$target'"
                 ).withFirst {
                     PhoneCallInfo(
+                        startTime = getLong(COLUMN_START_TIME),
                         phone = getString(COLUMN_PHONE),
                         isIncoming = getBoolean(COLUMN_IS_INCOMING),
-                        startTime = getLong(COLUMN_START_TIME),
                         endTime = getLongOrNull(COLUMN_END_TIME),
                         isMissed = getBoolean(COLUMN_IS_MISSED),
                         text = getStringOrNull(COLUMN_TEXT)

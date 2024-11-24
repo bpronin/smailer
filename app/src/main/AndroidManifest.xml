@@ -33,7 +33,7 @@
 
     <application
             android:allowBackup="true"
-            android:backupAgent=".AppBackupAgent"
+            android:backupAgent=".backup.AppBackupAgent"
             android:fullBackupContent="@xml/backup_scheme"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
@@ -170,7 +170,7 @@
         </receiver>
 
         <service
-                android:name=".control.FirebaseControlService"
+                android:name=".control.firebase.FirebaseControlService"
                 android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

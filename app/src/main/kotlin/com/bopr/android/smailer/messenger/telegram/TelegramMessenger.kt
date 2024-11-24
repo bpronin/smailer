@@ -1,8 +1,8 @@
 package com.bopr.android.smailer.messenger.telegram
 
 import android.content.Context
-import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_TELEGRAM
+import com.bopr.android.smailer.NotificationsHelper.Companion.notifications
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_BOT_TOKEN
@@ -25,8 +25,8 @@ import com.bopr.android.smailer.util.telegramErrorText
 class TelegramMessenger(private val context: Context) : Messenger {
 
     private val settings = context.settings
+    private val notifications = context.notifications
     private val formatters = TelegramFormatterFactory(context)
-    private val notifications by lazyOf(NotificationsHelper(context))
     private var session: TelegramSession? = null
 
     override fun initialize(): Boolean {

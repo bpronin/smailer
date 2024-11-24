@@ -2,23 +2,19 @@ package com.bopr.android.smailer.provider.telephony
 
 import android.annotation.SuppressLint
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.database.ContentObserver
 import android.net.Uri
-import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
-import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_SERVICE
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
-import com.bopr.android.smailer.Settings.Companion.settings
+import com.bopr.android.smailer.NotificationsHelper.Companion.notifications
 import com.bopr.android.smailer.data.getLong
 import com.bopr.android.smailer.data.getString
 import com.bopr.android.smailer.data.getStringOrNull
 import com.bopr.android.smailer.data.withFirst
-import com.bopr.android.smailer.provider.telephony.PhoneCallProcessor.Companion.processPhoneCall
+import com.bopr.android.smailer.provider.telephony.PhoneCallEventProcessor.Companion.processPhoneCall
 import com.bopr.android.smailer.util.Logger
 
 /**
@@ -29,10 +25,8 @@ import com.bopr.android.smailer.util.Logger
 class ContentObserverService : Service() {
 
     private lateinit var contentObserver: ContentObserver
-    private lateinit var notifications: NotificationsHelper
 
     override fun onCreate() {
-        notifications = NotificationsHelper(this)
         contentObserver = SmsContentObserver()
     }
 
@@ -63,9 +57,8 @@ class ContentObserverService : Service() {
         contentResolver.query(CONTENT_SMS_SENT, null, "_id=?", arrayOf(id), null)?.withFirst {
             context.processPhoneCall(
                 PhoneCallInfo(
-                    phone = getString("address"),
-                    isIncoming = false,
                     startTime = getLong("date"),
+                    phone = getString("address"),
                     endTime = getLong("date"),
                     text = getStringOrNull("body")
                 )
@@ -113,30 +106,8 @@ class ContentObserverService : Service() {
 
     companion object {
 
-        private val log = Logger("ContentObserverService")
+        private val log = Logger("ContentObserver")
         private val CONTENT_SMS_SENT = Uri.parse("content://sms/sent")
         private val CONTENT_SMS = Uri.parse("content://sms")
-
-        /**
-         * Starts or stops the service depending on corresponding settings.
-         */
-        fun Context.startContentObserver() {
-            val intent = Intent(this, ContentObserverService::class.java)
-            val triggers = settings.getPhoneProcessTriggers()
-
-            if (triggers.contains(VAL_PREF_TRIGGER_OUT_SMS)) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    startForegroundService(intent)
-                } else {
-                    startService(intent)
-                }
-
-                log.debug("Service enabled")
-            } else {
-                stopService(intent)
-
-                log.debug("Service disabled")
-            }
-        }
     }
 }

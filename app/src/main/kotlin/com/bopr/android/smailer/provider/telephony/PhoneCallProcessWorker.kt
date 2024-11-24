@@ -13,7 +13,7 @@ class PhoneCallProcessWorker(
     Worker(context, workerParams) {
 
     override fun doWork() = try {
-        PhoneCallProcessor(applicationContext).process()
+        PhoneCallEventProcessor(applicationContext).process()
         success()
     } catch (x: Throwable) {
         log.error("Work failed", x)

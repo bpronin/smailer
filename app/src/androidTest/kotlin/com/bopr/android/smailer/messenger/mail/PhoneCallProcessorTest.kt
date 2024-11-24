@@ -42,7 +42,7 @@ import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PENDING
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
-import com.bopr.android.smailer.provider.telephony.PhoneCallProcessor
+import com.bopr.android.smailer.provider.telephony.PhoneCallEventProcessor
 import com.bopr.android.smailer.ui.MailRecipientsActivity
 import com.bopr.android.smailer.ui.MailSettingsActivity
 import com.bopr.android.smailer.ui.MainActivity
@@ -66,7 +66,7 @@ import org.mockito.ArgumentMatchers.*
 import java.io.IOException
 
 /**
- * [PhoneCallProcessor] tester.
+ * [PhoneCallEventProcessor] tester.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
@@ -82,17 +82,16 @@ class PhoneCallProcessorTest : BaseTest() {
     private lateinit var messenger: MessageDispatcher
     private lateinit var notifications: NotificationsHelper
     private lateinit var preferences: SharedPreferences
-    private lateinit var processor: PhoneCallProcessor
+    private lateinit var processor: PhoneCallEventProcessor
     private lateinit var accountManager: AccountManager
 
     private fun testingCall(): PhoneCallInfo {
         val time = System.currentTimeMillis()
         return PhoneCallInfo(
+            startTime = time,
             phone = "+123",
             isIncoming = true,
-            startTime = time,
-            endTime = time + 1000,
-            isMissed = false
+            endTime = time + 1000
         )
     }
 
@@ -186,7 +185,7 @@ class PhoneCallProcessorTest : BaseTest() {
         targetContext.deleteDatabase(Database.databaseName)
         database = targetContext.database /* not a mock context here! */
 
-        processor = PhoneCallProcessor(context)
+        processor = PhoneCallEventProcessor(context)
     }
 
     @After

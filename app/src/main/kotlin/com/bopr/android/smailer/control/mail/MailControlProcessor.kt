@@ -1,14 +1,14 @@
-package com.bopr.android.smailer.control
+package com.bopr.android.smailer.control.mail
 
 import android.content.Context
-import com.bopr.android.smailer.AccountHelper.Companion.accounts
-import com.bopr.android.smailer.NotificationsHelper
+import com.bopr.android.smailer.AccountsHelper.Companion.accounts
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_SERVICE_ACCOUNT
+import com.bopr.android.smailer.NotificationsHelper.Companion.notifications
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.settings
+import com.bopr.android.smailer.control.ControlCommandExecutor
 import com.bopr.android.smailer.messenger.mail.GoogleMailSession
 import com.bopr.android.smailer.messenger.mail.MailMessage
 import com.bopr.android.smailer.ui.RemoteControlActivity
@@ -23,17 +23,15 @@ import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class MailControlProcessor(
-    private val context: Context,
-    private val settings: Settings = context.settings,
-    private val notifications: NotificationsHelper = NotificationsHelper(context),
-) {
+internal class MailControlProcessor(private val context: Context) {
 
-    private val parser = MailControlCommandInterpreter()
+    private val settings = context.settings
+    private val notifications = context.notifications
+    private val interpreter = MailControlCommandInterpreter()
     private val query = "subject:Re:[${context.getString(R.string.app_name)}] label:inbox"
     private val commandExecutor = ControlCommandExecutor(context)
 
-    fun checkMailbox(onSuccess: (Int) -> Unit = {}, onError: (Throwable) -> Unit) {
+    fun checkMailbox(onSuccess: (Int) -> Unit = {}, onError: (Throwable) -> Unit = {}) {
         val accountName = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
         val account = context.accounts.getGoogleAccount(accountName) ?: run {
             log.warn("Service account [$accountName] not found")
@@ -61,7 +59,7 @@ internal class MailControlProcessor(
             for (message in messages) {
                 if (acceptMessage(message)) {
                     message.body?.let {
-                        val command = parser.interpret(it)
+                        val command = interpreter.interpret(it)
                         when {
                             command == null ->
                                 log.debug("Not a service mail")
@@ -107,6 +105,6 @@ internal class MailControlProcessor(
 
     companion object {
 
-        private val log = Logger("MailControlProcessor")
+        private val log = Logger("MailControl")
     }
 }

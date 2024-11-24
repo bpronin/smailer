@@ -1,7 +1,6 @@
 package com.bopr.android.smailer.provider
 
 import android.content.Context
-import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.messenger.Event
 import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_NO_CONSUMERS
@@ -15,23 +14,22 @@ import com.bopr.android.smailer.util.GeoLocation.Companion.getGeoLocation
 import com.bopr.android.smailer.util.Logger
 import java.lang.System.currentTimeMillis
 
-abstract class Processor<T : EventPayload>(private val context: Context) {
+abstract class EventProcessor<T : EventPayload>(private val context: Context) {
 
     protected val dispatcher = MessageDispatcher(context)
-    protected val notifications by lazy { NotificationsHelper(context) }
 
     abstract fun getBypassReason(data: T): Bits
 
-    fun add(data: T) {
-        log.debug("Add record").verb(data)
+    fun add(eventData: T) {
+        log.debug("Add record").verb(eventData)
 
-        val bypassFlags = getBypassReason(data)
+        val bypassFlags = getBypassReason(eventData)
 
         putRecord(
             Event(
                 bypassFlags = bypassFlags,
                 processState = if (bypassFlags.isEmpty()) STATE_PENDING else STATE_IGNORED,
-                payload = data
+                payload = eventData
             )
         )
     }

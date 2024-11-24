@@ -1,4 +1,4 @@
-package com.bopr.android.smailer.control
+package com.bopr.android.smailer.control.mail
 
 import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
@@ -8,9 +8,9 @@ import org.junit.Test
 
 @SmallTest
 class MailControlCommandInterpreterTest : BaseTest() {
-    
+
     private val interpreter get() = MailControlCommandInterpreter()
-        
+
     @Test
     fun testParseEmpty() {
         assertNull(interpreter.interpret(""))
@@ -223,5 +223,5 @@ class MailControlCommandInterpreterTest : BaseTest() {
         assertNull(command.arguments["text"])
         assertEquals("+12345", command.arguments["phone"])
     }
-    
+
 }

@@ -3,11 +3,13 @@ package com.bopr.android.smailer.data
 import android.content.BroadcastReceiver
 import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
+import com.bopr.android.smailer.data.Database.Companion.TABLE_EVENTS
+import com.bopr.android.smailer.data.Database.Companion.TABLE_PHONE_CALLS
 import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.messenger.Event
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
 import org.junit.After
-import org.junit.Assert
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import java.util.concurrent.CountDownLatch
@@ -40,19 +42,26 @@ class DatabaseListenerTest : BaseTest() {
     @Test
     fun testListener() {
         val latch = CountDownLatch(1)
+        var modifications: Set<String>? = null
+
         listener = database.registerListener {
+            modifications = it
             latch.countDown()
         }
 
         database.commit {
-            batch {
-                events.add(Event(payload = PhoneCallInfo(phone = "1", startTime = 0)))
-                events.add(Event(payload = PhoneCallInfo(phone = "2", startTime = 0)))
-                events.add(Event(payload = PhoneCallInfo(phone = "3", startTime = 0)))
+            events.apply {
+                add(Event(timestamp = 1, payload = PhoneCallInfo(startTime = 0, phone = "1")))
+                add(Event(timestamp = 2, payload = PhoneCallInfo(startTime = 0, phone = "2")))
+                add(Event(timestamp = 3, payload = PhoneCallInfo(startTime = 0, phone = "3")))
             }
         }
 
-        Assert.assertTrue(latch.await(5, TimeUnit.SECONDS))
+        assertTrue(latch.await(5, TimeUnit.SECONDS))
+        assertNotNull(modifications)
+        modifications?.run {
+            assertTrue(containsAll(setOf(TABLE_EVENTS, TABLE_PHONE_CALLS)))
+        }
     }
 
 }

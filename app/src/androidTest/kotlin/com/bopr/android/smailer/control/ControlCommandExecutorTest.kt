@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.NotificationsHelper
+import com.bopr.android.smailer.NotificationsHelper.Companion.notifications
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_NOTIFICATIONS
 import com.bopr.android.smailer.control.ControlCommand.Action.ADD_PHONE_TO_BLACKLIST
@@ -19,10 +20,10 @@ import com.bopr.android.smailer.control.ControlCommand.Action.SEND_SMS_TO_CALLER
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.data.Database.Companion.databaseName
+import com.bopr.android.smailer.ui.MainActivity
 import com.bopr.android.smailer.ui.PhoneBlacklistFilterActivity
 import com.bopr.android.smailer.ui.PhoneWhitelistFilterActivity
 import com.bopr.android.smailer.ui.TextWhitelistFilterActivity
-import com.bopr.android.smailer.ui.MainActivity
 import com.bopr.android.smailer.util.sendSmsMessage
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.doReturn
@@ -54,13 +55,18 @@ class ControlCommandExecutorTest : BaseTest() {
         databaseName = "test.sqlite"
         targetContext.deleteDatabase(databaseName)
         database = targetContext.database
-
         notifications = mock()
 
         context = mock {
             on {
                 resources
             }.doReturn(targetContext.resources)
+            on {
+                applicationContext
+            }.doReturn(targetContext.applicationContext)
+            on {
+                notifications
+            }.doReturn(notifications)
             on {
                 getSharedPreferences(anyString(), anyInt())
             }.doReturn(preferences)
@@ -83,7 +89,7 @@ class ControlCommandExecutorTest : BaseTest() {
 
     @Test
     fun testAddPhoneToBlacklist() {
-        val processor = ControlCommandExecutor(context, database, notifications = notifications)
+        val processor = ControlCommandExecutor(context)
 
         processor.execute(createCommand(ADD_PHONE_TO_BLACKLIST, "100"))
         processor.execute(createCommand(ADD_PHONE_TO_BLACKLIST, "200"))
@@ -106,7 +112,7 @@ class ControlCommandExecutorTest : BaseTest() {
 
     @Test
     fun testAddPhoneToWhitelist() {
-        val processor = ControlCommandExecutor(context, database, notifications = notifications)
+        val processor = ControlCommandExecutor(context)
 
         processor.execute(createCommand(ADD_PHONE_TO_WHITELIST, "100"))
         processor.execute(createCommand(ADD_PHONE_TO_WHITELIST, "200"))
@@ -132,7 +138,7 @@ class ControlCommandExecutorTest : BaseTest() {
 
     @Test
     fun testAddTextToBlacklist() {
-        val processor = ControlCommandExecutor(context, database, notifications = notifications)
+        val processor = ControlCommandExecutor(context)
 
         processor.execute(createCommand(ADD_TEXT_TO_BLACKLIST, "100"))
         processor.execute(createCommand(ADD_TEXT_TO_BLACKLIST, "200"))
@@ -154,7 +160,7 @@ class ControlCommandExecutorTest : BaseTest() {
 
     @Test
     fun testAddTextToWhitelist() {
-        val processor = ControlCommandExecutor(context, database, notifications = notifications)
+        val processor = ControlCommandExecutor(context)
 
         processor.execute(createCommand(ADD_TEXT_TO_WHITELIST, "100"))
         processor.execute(createCommand(ADD_TEXT_TO_WHITELIST, "200"))
@@ -177,7 +183,7 @@ class ControlCommandExecutorTest : BaseTest() {
     fun testRemovePhoneFromBlacklist() {
         database.phoneBlacklist.replaceAll(setOf("100", "200", "300"))
 
-        val processor = ControlCommandExecutor(context, database, notifications = notifications)
+        val processor = ControlCommandExecutor(context)
 
         processor.execute(createCommand(REMOVE_PHONE_FROM_BLACKLIST, "100"))
         processor.execute(createCommand(REMOVE_PHONE_FROM_BLACKLIST, "200"))
@@ -199,7 +205,7 @@ class ControlCommandExecutorTest : BaseTest() {
     fun testRemovePhoneFromWhitelist() {
         database.phoneWhitelist.replaceAll(setOf("100", "200", "300"))
 
-        val processor = ControlCommandExecutor(context, database, notifications = notifications)
+        val processor = ControlCommandExecutor(context)
 
         processor.execute(createCommand(REMOVE_PHONE_FROM_WHITELIST, "100"))
         processor.execute(createCommand(REMOVE_PHONE_FROM_WHITELIST, "200"))
@@ -221,7 +227,7 @@ class ControlCommandExecutorTest : BaseTest() {
     fun testRemoveTextFromBlacklist() {
         database.textBlacklist.replaceAll(setOf("100", "200", "300"))
 
-        val processor = ControlCommandExecutor(context, database, notifications = notifications)
+        val processor = ControlCommandExecutor(context)
 
         processor.execute(createCommand(REMOVE_TEXT_FROM_BLACKLIST, "100"))
         processor.execute(createCommand(REMOVE_TEXT_FROM_BLACKLIST, "200"))
@@ -243,7 +249,7 @@ class ControlCommandExecutorTest : BaseTest() {
     fun testRemoveTextFromWhitelist() {
         database.textWhitelist.replaceAll(setOf("100", "200", "300"))
 
-        val processor = ControlCommandExecutor(context, database, notifications = notifications)
+        val processor = ControlCommandExecutor(context)
 
         processor.execute(createCommand(REMOVE_TEXT_FROM_WHITELIST, "100"))
         processor.execute(createCommand(REMOVE_TEXT_FROM_WHITELIST, "200"))
@@ -263,11 +269,7 @@ class ControlCommandExecutorTest : BaseTest() {
 
     @Test
     fun testSendSms() {
-        val processor = ControlCommandExecutor(
-            context,
-            database,
-            notifications = notifications,
-        )
+        val processor = ControlCommandExecutor(context)
 
         processor.execute(ControlCommand("device").apply {
             action = SEND_SMS_TO_CALLER

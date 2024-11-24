@@ -3,7 +3,7 @@ package com.bopr.android.smailer.sync
 import android.Manifest.permission.READ_CONTACTS
 import android.accounts.Account
 import androidx.test.rule.GrantPermissionRule
-import com.bopr.android.smailer.AccountHelper.Companion.accounts
+import com.bopr.android.smailer.AccountsHelper.Companion.accounts
 import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.database

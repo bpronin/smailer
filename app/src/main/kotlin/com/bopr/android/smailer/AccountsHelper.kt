@@ -8,7 +8,7 @@ import android.content.Context
 import androidx.annotation.RequiresPermission
 import com.bopr.android.smailer.util.SingletonHolder
 
-class AccountHelper private constructor (context: Context) {
+class AccountsHelper private constructor (context: Context) {
 
     private val manager = AccountManager.get(context)
 
@@ -73,7 +73,7 @@ class AccountHelper private constructor (context: Context) {
 
     companion object{
 
-        private val singletonHolder = SingletonHolder{ AccountHelper(it) }
+        private val singletonHolder = SingletonHolder{ AccountsHelper(it) }
         val Context.accounts get() = singletonHolder.getInstance(this)
     }
 
