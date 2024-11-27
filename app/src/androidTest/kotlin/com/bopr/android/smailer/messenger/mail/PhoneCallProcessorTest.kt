@@ -35,6 +35,7 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCA
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.data.Database
+import com.bopr.android.smailer.data.Database.Companion.DATABASE_NAME
 import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_TRIGGER_OFF
 import com.bopr.android.smailer.messenger.MessageDispatcher
@@ -85,7 +86,7 @@ class PhoneCallProcessorTest : BaseTest() {
     private lateinit var processor: PhoneCallEventProcessor
     private lateinit var accountManager: AccountManager
 
-    private fun testingCall(): PhoneCallInfo {
+    private fun defaultPayload(): PhoneCallInfo {
         val time = System.currentTimeMillis()
         return PhoneCallInfo(
             startTime = time,
@@ -181,9 +182,11 @@ class PhoneCallProcessorTest : BaseTest() {
         messenger = mock()
         notifications = mock()
 
-        Database.databaseName = "test.sqlite"
-        targetContext.deleteDatabase(Database.databaseName)
-        database = targetContext.database /* not a mock context here! */
+        database = targetContext.database
+//            .apply {
+//            name = "test.sqlite"
+//            destroy()
+//        } /* not a mock context here! */
 
         processor = PhoneCallEventProcessor(context)
     }
@@ -198,7 +201,7 @@ class PhoneCallProcessorTest : BaseTest() {
      */
     @Test
     fun testProcessMailSent() {
-        val call = testingCall()
+        val call = defaultPayload()
 
         processor.add(call)
         processor.process()
@@ -231,7 +234,7 @@ class PhoneCallProcessorTest : BaseTest() {
     @Test
     fun testProcessIgnored() {
         /* make the call not an SMS then default filter will deny it */
-        val call = testingCall()
+        val call = defaultPayload()
 
         processor.add(call)
         processor.process()
@@ -254,7 +257,7 @@ class PhoneCallProcessorTest : BaseTest() {
     fun testProcessNoSender() {
         whenever(preferences.getString(eq(PREF_MAIL_SENDER_ACCOUNT), anyOrNull())).thenReturn(null)
 
-        val call = testingCall()
+        val call = defaultPayload()
         processor.add(call)
         processor.process()
 
@@ -284,7 +287,7 @@ class PhoneCallProcessorTest : BaseTest() {
             )
         ).thenReturn(null)
 
-        val call = testingCall()
+        val call = defaultPayload()
         processor.add(call)
         processor.process()
 
@@ -308,7 +311,7 @@ class PhoneCallProcessorTest : BaseTest() {
     fun testProcessTransportSendFailed() {
         doThrow(IOException("Test error")).whenever(messenger).dispatch(any(), any(), any())
 
-        val call = testingCall()
+        val call = defaultPayload()
         processor.add(call)
         processor.process()
 
@@ -337,7 +340,7 @@ class PhoneCallProcessorTest : BaseTest() {
             )
         ).thenReturn(false)
 
-        processor.add(testingCall())
+        processor.add(defaultPayload())
         processor.process()
 
         verifyNotifyMailSuccess()
@@ -350,7 +353,7 @@ class PhoneCallProcessorTest : BaseTest() {
             )
         ).thenReturn(true)
 
-        processor.add(testingCall())
+        processor.add(defaultPayload())
         processor.process()
 
         verifyNotifyMailSuccess()
@@ -364,9 +367,9 @@ class PhoneCallProcessorTest : BaseTest() {
         /* disable transport */
         doThrow(IOException("Test error")).whenever(messenger).dispatch(any(), any(), any())
 
-        processor.add(testingCall())
-        processor.add(testingCall())
-        processor.add(testingCall())
+        processor.add(defaultPayload())
+        processor.add(defaultPayload())
+        processor.add(defaultPayload())
         processor.process()
 
         assertEquals(3, database.events.size)

@@ -2,8 +2,8 @@ package com.bopr.android.smailer.data
 
 import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
+import com.bopr.android.smailer.data.Database.Companion.DATABASE_NAME
 import com.bopr.android.smailer.data.Database.Companion.database
-import com.bopr.android.smailer.data.Database.Companion.databaseName
 import com.bopr.android.smailer.messenger.Event
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PENDING
@@ -23,14 +23,12 @@ import org.junit.Test
 @SmallTest
 class DatabaseTest : BaseTest() {
 
-    private lateinit var database: Database
+    private val database = targetContext.database
     private val defaultPayload = PhoneCallInfo(startTime = 0, phone = "1")
 
     @Before
     fun setUp() {
-        databaseName = "test.sqlite"
-        targetContext.deleteDatabase(databaseName)
-        database = targetContext.database
+        database.destroy()
     }
 
     @After
@@ -146,7 +144,7 @@ class DatabaseTest : BaseTest() {
 
         assertEquals(1, database.events.size)
 
-        database.events.first(). run {
+        database.events.first().run {
             assertEquals(0, timestamp)
             assertEquals(11.5, location!!.latitude, 0.1)
             assertEquals(21.5, location!!.longitude, 0.1)

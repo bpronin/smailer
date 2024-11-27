@@ -113,7 +113,8 @@ abstract class Dataset<T>(
 
     protected open fun query() = read { queryRecords(tableName) }
 
-    protected fun <R> read(action: SQLiteDatabase.() -> R): R = helper.read(action)
+    protected fun <R> read(action: SQLiteDatabase.() -> R): R =
+        helper.read(action)
 
     protected fun <R> write(table: String, action: SQLiteDatabase.(String) -> R): R =
         helper.write { action(table) }.also { lastModified.add(table) }

@@ -24,9 +24,7 @@ class GoogleAuthorizationHelper(
     private val scopes = setOf(*scopes)
     private val settings = activity.settings
     private val accountPickerLauncher =
-        activity.registerForActivityResult(StartActivityForResult()) { result ->
-            onAccountPickerResult(result)
-        }
+        activity.registerForActivityResult(StartActivityForResult(), ::onAccountPickerResult)
 
     /**
      * Brings up system account selection dialog.
@@ -34,6 +32,7 @@ class GoogleAuthorizationHelper(
     fun startAccountPicker() {
         val account = activity.accounts.getGoogleAccount(settings.getString(accountSettingName))
         accountPickerLauncher.launch(createPickAccountIntent(account))
+        accountPickerLauncher.unregister()
     }
 
     private fun onAccountPickerResult(result: ActivityResult) {

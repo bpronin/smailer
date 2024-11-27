@@ -2,7 +2,7 @@ package com.bopr.android.smailer.util
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
-import androidx.test.rule.GrantPermissionRule
+import androidx.test.rule.GrantPermissionRule.*
 import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.util.GeoLocation.Companion.getGeoLocation
 import org.junit.Assert.assertEquals
@@ -18,7 +18,7 @@ import org.junit.Test
 class GeoLocationTest : BaseTest() {
 
     @get:Rule
-    var permissionRule = GrantPermissionRule.grant(
+    var permissionRule = grant(
         ACCESS_COARSE_LOCATION,
         ACCESS_FINE_LOCATION
     )
@@ -36,6 +36,21 @@ class GeoLocationTest : BaseTest() {
 
     @Test
     fun testGetGeoLocation() {
+//        getFusedLocationProviderClient(targetContext).apply {
+//            setMockMode(true)
+//            setMockLocation(Location("flp").apply {
+//                latitude = 1.0
+//                longitude = 2.0
+//            })
+//            val request = CurrentLocationRequest.Builder()
+//                .setDurationMillis(5000)
+//                .build()
+//            val l = runBlocking {
+//                getCurrentLocation(request, null).await()
+//            }
+//            print(l)
+//        }
+
         assertNotNull(targetContext.getGeoLocation())
     }
 

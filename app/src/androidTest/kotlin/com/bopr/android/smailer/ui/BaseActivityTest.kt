@@ -11,7 +11,6 @@ import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.Settings.Companion.sharedPreferencesName
 import com.bopr.android.smailer.data.Database
 import com.bopr.android.smailer.data.Database.Companion.database
-import com.bopr.android.smailer.data.Database.Companion.databaseName
 import org.junit.After
 import org.junit.Rule
 import org.junit.runner.RunWith
@@ -38,13 +37,15 @@ abstract class BaseActivityTest(private val activityClass: KClass<out Activity>)
     val activityTestRule: ActivityScenarioRule<out Activity>
         get() {
             sharedPreferencesName = "test.preferences"
-            databaseName = "test.sqlite"
-
             targetContext.deleteSharedPreferences(sharedPreferencesName)
-            targetContext.deleteDatabase(databaseName)
 
             settings = targetContext.settings
+
             database = targetContext.database
+//                .apply {
+//                name = "test.sqlite"
+//                destroy()
+//            }
 
             beforeActivityCreate()
             return ActivityScenarioRule(activityClass.java)

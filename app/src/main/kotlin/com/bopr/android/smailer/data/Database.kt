@@ -21,12 +21,17 @@ import java.lang.System.currentTimeMillis
  */
 class Database private constructor(private val context: Context) : Closeable {
 
-    private val helper: DbHelper = DbHelper(context)
+    private val helper = DbHelper()
     private val broadcastManager by lazy { LocalBroadcastManager.getInstance(context) }
-
     private val lastModified = mutableSetOf<String>()
 
-    val events = EventDataset(helper, lastModified) // TODO: make it not a database member
+    val name
+        get() = helper.databaseName
+//        set(value) {
+//            helper = DbHelper(value)
+//        }
+
+    val events = EventDataset(helper, lastModified)
     val phoneBlacklist = StringDataset(TABLE_PHONE_BLACKLIST, helper, lastModified)
     val phoneWhitelist = StringDataset(TABLE_PHONE_WHITELIST, helper, lastModified)
     val textBlacklist = StringDataset(TABLE_TEXT_BLACKLIST, helper, lastModified)
@@ -123,6 +128,11 @@ class Database private constructor(private val context: Context) : Closeable {
         log.debug("Listener unregistered [${listener.hashCode()}]")
     }
 
+    fun destroy() {
+        if (!context.deleteDatabase(name))
+            log.warn("Destroy failed")
+    }
+
     /**
      * Closes open database object.
      */
@@ -138,8 +148,8 @@ class Database private constructor(private val context: Context) : Closeable {
     private fun updateSystemTable(values: ContentValues) =
         helper.write { updateRecords(TABLE_SYSTEM, values, "$COLUMN_ID=0") }
 
-    inner class DbHelper(context: Context) :
-        SQLiteOpenHelper(context, databaseName, null, DB_VERSION) {
+    inner class DbHelper() :
+        SQLiteOpenHelper(context, DATABASE_NAME, null, DB_VERSION) {
 
         override fun onCreate(db: SQLiteDatabase) {
             db.batchRecords {
@@ -182,8 +192,7 @@ class Database private constructor(private val context: Context) : Closeable {
 
         private val log = Logger("Database")
 
-        var databaseName = "smailer.sqlite"
-
+        internal var DATABASE_NAME = "smailer.sqlite"
         private const val DB_VERSION = 10
 
         const val COLUMN_BYPASS = "bypass"

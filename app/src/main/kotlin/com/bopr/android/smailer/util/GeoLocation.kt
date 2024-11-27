@@ -43,17 +43,12 @@ data class GeoLocation(
 
     companion object {
 
-        fun Location?.toGeoLocation(): GeoLocation? {
-            return this?.run {
-                fromCoordinates(latitude, longitude)
-            }
-        }
+        fun Location?.toGeoLocation() = this?.run { fromCoordinates(latitude, longitude) }
 
-        fun fromCoordinates(latitude: Double?, longitude: Double?): GeoLocation? {
-            return if (latitude != null && longitude != null) {
+        fun fromCoordinates(latitude: Double?, longitude: Double?) =
+            if (latitude != null && longitude != null) {
                 GeoLocation(latitude, longitude)
             } else null
-        }
 
         /**
          * Obtains geolocation synchronously.

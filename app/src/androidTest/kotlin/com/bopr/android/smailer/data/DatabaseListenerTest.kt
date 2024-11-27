@@ -1,8 +1,8 @@
 package com.bopr.android.smailer.data
 
-import android.content.BroadcastReceiver
 import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
+import com.bopr.android.smailer.data.Database.Companion.DATABASE_NAME
 import com.bopr.android.smailer.data.Database.Companion.TABLE_EVENTS
 import com.bopr.android.smailer.data.Database.Companion.TABLE_PHONE_CALLS
 import com.bopr.android.smailer.data.Database.Companion.database
@@ -23,19 +23,15 @@ import java.util.concurrent.TimeUnit
 @SmallTest
 class DatabaseListenerTest : BaseTest() {
 
-    private lateinit var database: Database
-    private lateinit var listener: BroadcastReceiver
+    private val database = targetContext.database
 
     @Before
     fun setUp() {
-        Database.databaseName = "test.sqlite"
-        targetContext.deleteDatabase(Database.databaseName)
-        database = targetContext.database
+        database.destroy()
     }
 
     @After
     fun tearDown() {
-        database.unregisterListener(listener)
         database.close()
     }
 
@@ -44,7 +40,7 @@ class DatabaseListenerTest : BaseTest() {
         val latch = CountDownLatch(1)
         var modifications: Set<String>? = null
 
-        listener = database.registerListener {
+        var listener = database.registerListener {
             modifications = it
             latch.countDown()
         }
@@ -56,6 +52,8 @@ class DatabaseListenerTest : BaseTest() {
                 add(Event(timestamp = 3, payload = PhoneCallInfo(startTime = 0, phone = "3")))
             }
         }
+
+        database.unregisterListener(listener)
 
         assertTrue(latch.await(5, TimeUnit.SECONDS))
         assertNotNull(modifications)

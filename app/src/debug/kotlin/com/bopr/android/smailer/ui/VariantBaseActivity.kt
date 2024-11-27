@@ -1,5 +1,6 @@
 package com.bopr.android.smailer.ui
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -29,26 +30,17 @@ open class VariantBaseActivity(value: KClass<out Fragment>) : BaseActivity(value
     private fun handleStartupParams(intent: Intent) {
         intent.getStringExtra("target")?.let {
             when (it) {
-                "debug" ->
-                    startDebugActivity()
-
-                "remote_control" ->
-                    startActivity(Intent(this, RemoteControlActivity::class.java))
-
-                "rules" ->
-                    startActivity(Intent(this, RulesActivity::class.java))
-
-                "history" ->
-                    startActivity(Intent(this, HistoryActivity::class.java))
-
-                else ->
-                    Log.e("", "Invalid target: $it")
+                "debug" -> startActivity(DebugActivity::class)
+                "remote_control" -> startActivity(RemoteControlActivity::class)
+                "rules" -> startActivity(RulesActivity::class)
+                "history" -> startActivity(HistoryActivity::class)
+                else -> Log.e("", "Invalid target: $it")
             }
         }
     }
 
-    private fun startDebugActivity() {
-        startActivity(Intent(this, DebugActivity::class.java))
+    private fun startActivity(klass: KClass<out Activity>) {
+        startActivity(Intent(this, klass.java))
     }
 
     private inner class ActivityMenuProvider : MenuProvider {
@@ -59,7 +51,7 @@ open class VariantBaseActivity(value: KClass<out Fragment>) : BaseActivity(value
 
         override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
             return if (menuItem.itemId == R.id.action_debug) {
-                startDebugActivity()
+                startActivity(DebugActivity::class)
                 true
             } else
                 false

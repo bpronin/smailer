@@ -2,6 +2,7 @@ package com.bopr.android.smailer
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.work.WorkManager
+import com.bopr.android.smailer.data.Database.Companion.DATABASE_NAME
 import org.junit.BeforeClass
 import java.util.Locale
 import java.util.TimeZone
@@ -17,9 +18,7 @@ abstract class BaseTest {
     companion object {
 
         val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
-
         fun getString(resId: Int) = targetContext.getString(resId)
-
         fun getString(resId: Int, vararg args: Any?) = targetContext.getString(resId, args)
 
         @BeforeClass
@@ -30,6 +29,8 @@ abstract class BaseTest {
 
             Locale.setDefault(Locale.US)
             TimeZone.setDefault(TimeZone.getTimeZone("America/New_York"))
+
+            DATABASE_NAME = "test.sqlite"
         }
     }
 }

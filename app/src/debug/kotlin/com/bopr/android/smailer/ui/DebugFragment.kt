@@ -51,7 +51,6 @@ import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.Settings.Companion.sharedPreferencesName
 import com.bopr.android.smailer.control.mail.MailControlProcessor
 import com.bopr.android.smailer.data.Database.Companion.database
-import com.bopr.android.smailer.data.Database.Companion.databaseName
 import com.bopr.android.smailer.external.Firebase.Companion.FCM_REQUEST_DATA_SYNC
 import com.bopr.android.smailer.external.Firebase.Companion.firebase
 import com.bopr.android.smailer.external.GoogleDrive
@@ -222,7 +221,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                 showComplete()
             },
             addPreference("Destroy database") {
-                requireContext().deleteDatabase(databaseName)
+                database.destroy()
                 showComplete()
             }
         )
@@ -282,7 +281,7 @@ class DebugFragment : PreferenceFragmentCompat() {
         val context = requireContext()
 
         val attachments: MutableList<File> = mutableListOf()
-        attachments.add(context.getDatabasePath(databaseName))
+        attachments.add(context.getDatabasePath(database.name))
         attachments.add(context.readLogcatLog())
 
         File(context.filesDir, "log").listFiles()?.let {
