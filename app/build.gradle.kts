@@ -48,7 +48,7 @@ android {
         versionCode = 105
         versionName = "1.11.0"
         applicationId = "com.bopr.android.smailer"
-        minSdk = 21
+        minSdk = 23
         /* check action bar not overlapping content when migrating to 35
         * see also: https://developer.android.com/develop/ui/views/layout/edge-to-edge#kts*/
         targetSdk = 34
@@ -75,19 +75,19 @@ android {
             resValue("string", "fcm_server_key", localProperties.getProperty("fcm_server_key"))
         }
         debug {
+            manifestPlaceholders += mapOf("crashlyticsEnabled" to "false")
             signingConfig = signingConfigs.getByName("debug")
             isDebuggable = true
             isShrinkResources = false
             isMinifyEnabled = false
-            manifestPlaceholders += mapOf("crashlyticsEnabled" to "false")
             isDefault = true
         }
         release {
+            manifestPlaceholders += mapOf("crashlyticsEnabled" to "true")
             signingConfig = signingConfigs.getByName("release")
             isDebuggable = false
             isShrinkResources = true
             isMinifyEnabled = true
-            manifestPlaceholders += mapOf("crashlyticsEnabled" to "true")
         }
 //        create("staging") { /* minified debuggable */
 //            signingConfig = signingConfigs.getByName("debug")
@@ -143,24 +143,24 @@ android {
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.15.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
+    implementation("androidx.core:core-ktx:1.16.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.1")
     implementation("androidx.preference:preference-ktx:1.2.1")
-    implementation("androidx.work:work-runtime-ktx:2.10.0")
+    implementation("androidx.work:work-runtime-ktx:2.10.1")
     implementation("com.android.volley:volley:1.2.1")
-    implementation("com.google.android.gms:play-services-auth:21.2.0")
+    implementation("com.google.android.gms:play-services-auth:21.3.0")
     implementation("com.google.android.gms:play-services-location:21.3.0")
     implementation("com.google.android.material:material:1.12.0")
-    implementation("com.google.api-client:google-api-client-android:2.7.0")
+    implementation("com.google.api-client:google-api-client-android:2.8.0")
     implementation("com.google.apis:google-api-services-drive:v3-rev99-1.23.0")
     implementation("com.google.apis:google-api-services-gmail:v1-rev98-1.25.0")
-    implementation("com.google.firebase:firebase-analytics:22.1.2")
-    implementation("com.google.firebase:firebase-crashlytics:19.2.1")
-    implementation("com.google.firebase:firebase-messaging:24.1.0")
+    implementation("com.google.firebase:firebase-analytics:22.4.0")
+    implementation("com.google.firebase:firebase-crashlytics:19.4.4")
+    implementation("com.google.firebase:firebase-messaging:24.1.1")
     implementation("com.sun.mail:android-mail:1.6.7")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.0.21")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.1.21")
 
-    "freeImplementation"("com.google.android.gms:play-services-ads:23.5.0")
+    "freeImplementation"("com.google.android.gms:play-services-ads:24.3.0")
 
     testImplementation("junit:junit:4.13.2")
 
@@ -170,7 +170,7 @@ dependencies {
     androidTestImplementation("androidx.test:rules:1.6.1")
     androidTestImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
     androidTestImplementation("junit:junit:4.13.2")
-    androidTestImplementation("org.mockito:mockito-android:5.14.2")
+    androidTestImplementation("org.mockito:mockito-android:5.18.0")
 }
 
 allOpen {

@@ -1,6 +1,8 @@
 package com.bopr.android.smailer.messenger.mail
 
 import android.Manifest
+import android.Manifest.permission
+import android.Manifest.permission.*
 import android.annotation.TargetApi
 import android.content.Context
 import android.content.Intent
@@ -9,6 +11,7 @@ import android.telephony.SmsMessage
 import android.telephony.TelephonyManager
 import androidx.test.filters.SmallTest
 import androidx.test.rule.GrantPermissionRule
+import androidx.test.rule.GrantPermissionRule.*
 import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
 import com.bopr.android.smailer.provider.telephony.PhoneCallReceiver
@@ -30,9 +33,9 @@ import org.junit.Test
 class PhoneCallReceiverTest : BaseTest() {
 
     @get:Rule
-    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(
-        Manifest.permission.READ_CALL_LOG,
-        Manifest.permission.READ_PHONE_STATE
+    val permissionRule = grant(
+        READ_CALL_LOG,
+        READ_PHONE_STATE
     )
 
     private lateinit var context: Context

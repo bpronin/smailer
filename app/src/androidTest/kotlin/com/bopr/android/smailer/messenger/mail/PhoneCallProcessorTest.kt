@@ -3,6 +3,8 @@
 package com.bopr.android.smailer.messenger.mail
 
 import android.Manifest
+import android.Manifest.permission
+import android.Manifest.permission.*
 import android.accounts.Account
 import android.accounts.AccountManager
 import android.content.Context
@@ -11,6 +13,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import androidx.test.filters.SmallTest
 import androidx.test.rule.GrantPermissionRule
+import androidx.test.rule.GrantPermissionRule.*
 import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_GOOGLE_ACCESS
@@ -75,8 +78,7 @@ import java.io.IOException
 class PhoneCallProcessorTest : BaseTest() {
 
     @get:Rule
-    var permissionRule: GrantPermissionRule =
-        GrantPermissionRule.grant(Manifest.permission.READ_CONTACTS)
+    var permissionRule = grant(READ_CONTACTS)
 
     private lateinit var database: Database
     private lateinit var context: Context
