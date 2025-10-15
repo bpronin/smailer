@@ -24,7 +24,7 @@ import com.bopr.android.smailer.data.StringDataset
 import com.bopr.android.smailer.messenger.Event
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PENDING
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
+import com.bopr.android.smailer.provider.telephony.PhoneCallData
 import com.bopr.android.smailer.ui.HistoryFragment.Holder
 import com.bopr.android.smailer.util.addOnItemSwipedListener
 import com.bopr.android.smailer.util.formatDuration
@@ -95,7 +95,7 @@ class HistoryFragment : RecyclerFragment<Event, Holder>() {
             menu.removeItem(R.id.action_ignore)
         }
 
-        (item.payload as? PhoneCallInfo)?.let {
+        (item.payload as? PhoneCallData)?.let {
             if (!it.isSms) {
                 menu.removeItem(R.id.action_add_text_to_blacklist)
                 menu.removeItem(R.id.action_add_text_to_whitelist)
@@ -173,7 +173,7 @@ class HistoryFragment : RecyclerFragment<Event, Holder>() {
                 database.events.add(item) /* do not commit to not fire broadcast here */
             }
 
-            (item.payload as? PhoneCallInfo)?.let {
+            (item.payload as? PhoneCallData)?.let {
                 timeView.text = DateFormat.format(
                     getString(R.string._time_pattern),
                     it.startTime
@@ -222,7 +222,7 @@ class HistoryFragment : RecyclerFragment<Event, Holder>() {
 
     private fun addSelectionPhoneToFilterList(list: StringDataset, @StringRes titleRes: Int) {
         getSelectedItem()?.let { event ->
-            (event.payload as? PhoneCallInfo)?.let {
+            (event.payload as? PhoneCallData)?.let {
                 EditPhoneDialogFragment(R.string.enter_phone_number_or_wildcard).apply {
                     setTitle(titleRes)
                     setValue(it.phone)
@@ -242,7 +242,7 @@ class HistoryFragment : RecyclerFragment<Event, Holder>() {
 
     private fun addSelectionTextToFilterList(list: StringDataset, @StringRes titleRes: Int) {
         getSelectedItem()?.let { event ->
-            (event.payload as? PhoneCallInfo)?.let {
+            (event.payload as? PhoneCallData)?.let {
                 EditTextDialogFragment().apply {
                     setTitle(titleRes)
                     setValue(it.text)
@@ -253,12 +253,12 @@ class HistoryFragment : RecyclerFragment<Event, Holder>() {
     }
 
     private fun formatSummary(event: Event): CharSequence? {
-        return (event.payload as? PhoneCallInfo)?.let {
+        return (event.payload as? PhoneCallData)?.let {
             formatPhoneCallSummary(it)
         }
     }
 
-    private fun formatPhoneCallSummary(info: PhoneCallInfo): CharSequence? {
+    private fun formatPhoneCallSummary(info: PhoneCallData): CharSequence? {
         return when {
             info.isSms -> info.text
 

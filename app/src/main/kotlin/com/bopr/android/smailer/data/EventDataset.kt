@@ -23,8 +23,8 @@ import com.bopr.android.smailer.data.Database.Companion.TABLE_PHONE_CALLS
 import com.bopr.android.smailer.messenger.Event
 import com.bopr.android.smailer.messenger.EventPayload
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PENDING
-import com.bopr.android.smailer.provider.battery.BatteryInfo
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
+import com.bopr.android.smailer.provider.battery.BatteryData
+import com.bopr.android.smailer.provider.telephony.PhoneCallData
 import com.bopr.android.smailer.util.Bits
 import com.bopr.android.smailer.util.GeoLocation.Companion.fromCoordinates
 import com.bopr.android.smailer.util.stringArrayOf
@@ -122,7 +122,7 @@ class EventDataset(
                     table = TABLE_PHONE_CALLS,
                     selection = "$COLUMN_TIMESTAMP=$timestamp AND $COLUMN_TARGET='$target'"
                 ).withFirst {
-                    PhoneCallInfo(
+                    PhoneCallData(
                         startTime = getLong(COLUMN_START_TIME),
                         phone = getString(COLUMN_PHONE),
                         isIncoming = getBoolean(COLUMN_IS_INCOMING),
@@ -143,7 +143,7 @@ class EventDataset(
 
     private fun putPayload(timestamp: Long, target: String, payload: EventPayload): Int {
         when (payload) {
-            is PhoneCallInfo -> payload.apply {
+            is PhoneCallData -> payload.apply {
                 write(TABLE_PHONE_CALLS) {
                     replaceRecords(it, values {
                         put(COLUMN_TIMESTAMP, timestamp)
@@ -160,7 +160,7 @@ class EventDataset(
                 return PAYLOAD_TYPE_PHONE_CALL
             }
 
-            is BatteryInfo -> payload.apply {
+            is BatteryData -> payload.apply {
 //                write {
 //                    // TODO: implement
 //                }

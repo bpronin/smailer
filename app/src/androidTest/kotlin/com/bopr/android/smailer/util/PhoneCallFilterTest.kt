@@ -8,7 +8,7 @@ import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_NUMBER_BLA
 import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_TEXT_BLACKLISTED
 import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_TRIGGER_OFF
 import com.bopr.android.smailer.provider.telephony.PhoneCallFilter
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
+import com.bopr.android.smailer.provider.telephony.PhoneCallData
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -22,8 +22,8 @@ class PhoneCallFilterTest : BaseTest() {
         isIncoming: Boolean = true,
         isMissed: Boolean = true,
         text: String? = null
-    ): PhoneCallInfo {
-        return PhoneCallInfo(
+    ): PhoneCallData {
+        return PhoneCallData(
             startTime = startTime,
             phone = phone,
             isIncoming = isIncoming,

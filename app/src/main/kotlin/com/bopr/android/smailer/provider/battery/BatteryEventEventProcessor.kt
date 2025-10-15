@@ -14,9 +14,9 @@ import com.bopr.android.smailer.util.Bits
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class BatteryEventEventProcessor(private val context: Context) : EventProcessor<BatteryInfo>(context) {
+class BatteryEventEventProcessor(private val context: Context) : EventProcessor<BatteryData>(context) {
 
-    override fun getBypassReason(data: BatteryInfo): Bits {
+    override fun getBypassReason(data: BatteryData): Bits {
         var flags = Bits()
         if (!context.settings.getBoolean(PREF_DISPATCH_BATTERY_LEVEL)) {
             flags += FLAG_BYPASS_TRIGGER_OFF
@@ -26,7 +26,7 @@ class BatteryEventEventProcessor(private val context: Context) : EventProcessor<
 
     companion object {
 
-        fun Context.processBatteryEvent(info: BatteryInfo) {
+        fun Context.processBatteryEvent(info: BatteryData) {
             BatteryEventEventProcessor(this).add(info)
             WorkManager.getInstance(this).enqueue(
                 OneTimeWorkRequest.Builder(BatteryEventProcessWorker::class.java).build()

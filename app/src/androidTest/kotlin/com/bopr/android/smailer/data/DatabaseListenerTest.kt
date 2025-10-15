@@ -2,12 +2,11 @@ package com.bopr.android.smailer.data
 
 import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
-import com.bopr.android.smailer.data.Database.Companion.DATABASE_NAME
 import com.bopr.android.smailer.data.Database.Companion.TABLE_EVENTS
 import com.bopr.android.smailer.data.Database.Companion.TABLE_PHONE_CALLS
 import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.messenger.Event
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
+import com.bopr.android.smailer.provider.telephony.PhoneCallData
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -47,9 +46,9 @@ class DatabaseListenerTest : BaseTest() {
 
         database.commit {
             events.apply {
-                add(Event(timestamp = 1, payload = PhoneCallInfo(startTime = 0, phone = "1")))
-                add(Event(timestamp = 2, payload = PhoneCallInfo(startTime = 0, phone = "2")))
-                add(Event(timestamp = 3, payload = PhoneCallInfo(startTime = 0, phone = "3")))
+                add(Event(timestamp = 1, payload = PhoneCallData(startTime = 0, phone = "1")))
+                add(Event(timestamp = 2, payload = PhoneCallData(startTime = 0, phone = "2")))
+                add(Event(timestamp = 3, payload = PhoneCallData(startTime = 0, phone = "3")))
             }
         }
 

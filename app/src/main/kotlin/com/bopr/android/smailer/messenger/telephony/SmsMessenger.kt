@@ -11,8 +11,8 @@ import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.messenger.Event
 import com.bopr.android.smailer.messenger.Event.Companion.FLAG_SENT_BY_SMS
 import com.bopr.android.smailer.messenger.Messenger
-import com.bopr.android.smailer.provider.battery.BatteryInfo
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
+import com.bopr.android.smailer.provider.battery.BatteryData
+import com.bopr.android.smailer.provider.telephony.PhoneCallData
 import com.bopr.android.smailer.ui.MainActivity
 import com.bopr.android.smailer.ui.SmsSettingsActivity
 import com.bopr.android.smailer.util.Logger
@@ -72,13 +72,13 @@ internal class SmsMessenger(private val context: Context) : Messenger {
     private fun formatMessage(event: Event): String {
         val payload = event.payload
         return when (payload) {
-            is PhoneCallInfo -> formatPhoneCallMessage(payload)
-            is BatteryInfo -> formatBatteryEventMessage(payload)
+            is PhoneCallData -> formatPhoneCallMessage(payload)
+            is BatteryData -> formatBatteryEventMessage(payload)
             else -> throw IllegalArgumentException("No formatter for $payload")
         }
     }
 
-    private fun formatPhoneCallMessage(info: PhoneCallInfo?): String {
+    private fun formatPhoneCallMessage(info: PhoneCallData?): String {
         return when {
             info == null -> ""
             info.isSms -> info.text!!
@@ -94,7 +94,7 @@ internal class SmsMessenger(private val context: Context) : Messenger {
         }
     }
 
-    private fun formatBatteryEventMessage(info: BatteryInfo): String {
+    private fun formatBatteryEventMessage(info: BatteryData): String {
         return info.text
     }
 

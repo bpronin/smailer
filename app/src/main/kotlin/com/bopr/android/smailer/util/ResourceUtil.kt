@@ -17,7 +17,7 @@ import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGR
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PENDING
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PROCESSED
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
+import com.bopr.android.smailer.provider.telephony.PhoneCallData
 import java.util.Locale
 
 /**
@@ -50,7 +50,7 @@ private val RES_TYPE_IMAGE = intArrayOf(
 )
 
 @DrawableRes
-fun phoneCallTypeImage(info: PhoneCallInfo): Int {
+fun phoneCallTypeImage(info: PhoneCallData): Int {
     /* do not use direct drawable resources references here due to shrinker issue */
     return if (info.isSms) {
         RES_TYPE_IMAGE[0]
@@ -60,7 +60,7 @@ fun phoneCallTypeImage(info: PhoneCallInfo): Int {
 }
 
 @DrawableRes
-fun phoneCallDirectionImage(info: PhoneCallInfo): Int {
+fun phoneCallDirectionImage(info: PhoneCallData): Int {
     /* do not use direct drawable resources references here due to shrinker issue */
     return when {
         info.isMissed ->
@@ -93,7 +93,7 @@ fun messageStateImage(@ProcessState state: Int): Int {
 }
 
 @StringRes
-fun phoneCallTypeText(info: PhoneCallInfo): Int {
+fun phoneCallTypeText(info: PhoneCallData): Int {
     return if (info.isSms) {
         if (info.isIncoming) {
             R.string.incoming_sms
@@ -110,7 +110,7 @@ fun phoneCallTypeText(info: PhoneCallInfo): Int {
 }
 
 @StringRes
-fun phoneCallTypePrefix(info: PhoneCallInfo): Int {
+fun phoneCallTypePrefix(info: PhoneCallData): Int {
     return if (info.isSms) {
         if (info.isIncoming) {
             R.string.incoming_sms_from

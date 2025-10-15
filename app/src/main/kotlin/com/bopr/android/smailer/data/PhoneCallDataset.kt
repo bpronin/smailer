@@ -11,11 +11,11 @@ import com.bopr.android.smailer.data.Database.Companion.COLUMN_TARGET
 import com.bopr.android.smailer.data.Database.Companion.COLUMN_TEXT
 import com.bopr.android.smailer.data.Database.Companion.COLUMN_TIMESTAMP
 import com.bopr.android.smailer.data.Database.Companion.TABLE_PHONE_CALLS
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
+import com.bopr.android.smailer.provider.telephony.PhoneCallData
 import com.bopr.android.smailer.util.stringArrayOf
 
 class PhoneCallDataset(helper: SQLiteOpenHelper) :
-    ReadonlyDataset<PhoneCallInfo>(TABLE_PHONE_CALLS, helper) {
+    ReadonlyDataset<PhoneCallData>(TABLE_PHONE_CALLS, helper) {
 
     override val keyColumns = stringArrayOf(COLUMN_TIMESTAMP, COLUMN_TARGET)
 
@@ -24,7 +24,7 @@ class PhoneCallDataset(helper: SQLiteOpenHelper) :
     }
 
     override fun get(cursor: Cursor) = cursor.run {
-        PhoneCallInfo(
+        PhoneCallData(
             startTime = getLong(COLUMN_START_TIME),
             phone = getString(COLUMN_PHONE),
             isIncoming = getBoolean(COLUMN_IS_INCOMING),

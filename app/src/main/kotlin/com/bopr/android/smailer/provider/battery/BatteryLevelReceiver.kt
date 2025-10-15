@@ -22,7 +22,7 @@ class BatteryLevelReceiver : BroadcastReceiver() {
             log.debug("Low battery level detected")
 
             context.processBatteryEvent(
-                BatteryInfo(context.getString(R.string.low_battery_level))
+                BatteryData(context.getString(R.string.low_battery_level))
             )
         }
     }

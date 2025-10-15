@@ -2,8 +2,6 @@
 
 package com.bopr.android.smailer.messenger.mail
 
-import android.Manifest
-import android.Manifest.permission
 import android.Manifest.permission.*
 import android.accounts.Account
 import android.accounts.AccountManager
@@ -12,7 +10,6 @@ import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import androidx.test.filters.SmallTest
-import androidx.test.rule.GrantPermissionRule
 import androidx.test.rule.GrantPermissionRule.*
 import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.NotificationsHelper
@@ -38,14 +35,13 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCA
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.data.Database
-import com.bopr.android.smailer.data.Database.Companion.DATABASE_NAME
 import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_TRIGGER_OFF
 import com.bopr.android.smailer.messenger.MessageDispatcher
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PENDING
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PROCESSED
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
+import com.bopr.android.smailer.provider.telephony.PhoneCallData
 import com.bopr.android.smailer.provider.telephony.PhoneCallEventProcessor
 import com.bopr.android.smailer.ui.MailRecipientsActivity
 import com.bopr.android.smailer.ui.MailSettingsActivity
@@ -88,9 +84,9 @@ class PhoneCallProcessorTest : BaseTest() {
     private lateinit var processor: PhoneCallEventProcessor
     private lateinit var accountManager: AccountManager
 
-    private fun defaultPayload(): PhoneCallInfo {
+    private fun defaultPayload(): PhoneCallData {
         val time = System.currentTimeMillis()
-        return PhoneCallInfo(
+        return PhoneCallData(
             startTime = time,
             phone = "+123",
             isIncoming = true,
@@ -222,7 +218,7 @@ class PhoneCallProcessorTest : BaseTest() {
         verifyNotifyGoogleAccessError()
 
         val savedEvent = database.events.first()
-        val info = savedEvent.payload as PhoneCallInfo
+        val info = savedEvent.payload as PhoneCallData
 
         assertEquals(call.phone, info.phone)
         assertEquals(STATE_PROCESSED, savedEvent.processState)

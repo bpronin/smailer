@@ -110,7 +110,7 @@ class PhoneCallReceiver : BroadcastReceiver() {
         if (messages.isNotEmpty()) {
             /* NOTE: time zone on emulator may be incorrect */
             context.processPhoneCall(
-                PhoneCallInfo(
+                PhoneCallData(
                     startTime = messages[0].timestampMillis,
                     phone = messages[0].displayOriginatingAddress,
                     isIncoming = true,
@@ -128,7 +128,7 @@ class PhoneCallReceiver : BroadcastReceiver() {
      */
     private fun processCall(context: Context) {
         context.processPhoneCall(
-            PhoneCallInfo(
+            PhoneCallData(
                 startTime = callStartTime!!,
                 phone = callNumber!!,
                 isIncoming = isIncomingCall!!,

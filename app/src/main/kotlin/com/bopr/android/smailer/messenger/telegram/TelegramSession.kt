@@ -29,6 +29,7 @@ class TelegramSession(context: Context, private val token: String?) {
 
     fun sendMessage(
         message: String,
+        messageFormat: String,
         oldChatId: String?,
         onSuccess: (chatId: String) -> Unit = {},
         onError: (error: TelegramException) -> Unit = {}
@@ -36,13 +37,13 @@ class TelegramSession(context: Context, private val token: String?) {
         requestChat(
             oldChatId,
             onSuccess = { chatId ->
-                requestSendMessage(chatId, message, onSuccess, onError)
+                requestSendMessage(chatId, message, messageFormat, onSuccess, onError)
             },
             onError = { error ->
                 if (error.code == TELEGRAM_NO_CHAT) {
                     requestUpdates(
                         onSuccess = { chatId ->
-                            requestSendMessage(chatId, message, onSuccess, onError)
+                            requestSendMessage(chatId, message, messageFormat, onSuccess, onError)
                         },
                         onError = onError
                     )
@@ -101,6 +102,7 @@ class TelegramSession(context: Context, private val token: String?) {
     private fun requestSendMessage(
         chatId: String,
         message: String,
+        messageFormat: String,
         onSuccess: (String) -> Unit,
         onError: (TelegramException) -> Unit
     ) {
@@ -109,7 +111,7 @@ class TelegramSession(context: Context, private val token: String?) {
             params = mapOf(
                 "chat_id" to chatId,
                 "text" to message.httpEncoded(),
-                "parse_mode" to "html"
+                "parse_mode" to messageFormat
             ),
             onResponse = {
                 detectRemoteError(it, TELEGRAM_BAD_RESPONSE)
@@ -121,12 +123,12 @@ class TelegramSession(context: Context, private val token: String?) {
 
     private fun request(
         command: String,
-        params: Map<String, Any> = emptyMap<String, Any>(),
+        params: Map<String, Any> = emptyMap(),
         onResponse: (JSONObject) -> Unit,
         onError: (TelegramException) -> Unit
     ) {
         if (token.isNullOrEmpty()) {
-            onError(TelegramException(TELEGRAM_NO_TOKEN, "Token is null"))
+            onError(TelegramException(TELEGRAM_NO_TOKEN, "Token is undefined"))
             return
         }
 

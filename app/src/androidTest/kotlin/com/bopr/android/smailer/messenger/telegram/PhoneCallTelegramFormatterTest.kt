@@ -15,7 +15,7 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_HEAD
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCATION
 import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.messenger.Event
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
+import com.bopr.android.smailer.provider.telephony.PhoneCallData
 import com.bopr.android.smailer.util.GeoLocation
 import com.bopr.android.smailer.util.getContactName
 import org.junit.Assert.assertEquals
@@ -48,7 +48,7 @@ class PhoneCallTelegramFormatterTest : BaseTest() {
             )
         }
 
-        val info = PhoneCallInfo(
+        val info = PhoneCallData(
             startTime = testTime,
             phone = "+12345678901",
             isIncoming = true,
@@ -78,7 +78,7 @@ class PhoneCallTelegramFormatterTest : BaseTest() {
             )
         }
 
-        val info = PhoneCallInfo(
+        val info = PhoneCallData(
             startTime = testTime,
             phone = "+12345678901",
             isIncoming = true,
@@ -121,7 +121,7 @@ class PhoneCallTelegramFormatterTest : BaseTest() {
             )
         }
 
-        val info = PhoneCallInfo(
+        val info = PhoneCallData(
             startTime = testTime,
             phone = "+12345678901",
             isIncoming = true,
@@ -173,7 +173,7 @@ class PhoneCallTelegramFormatterTest : BaseTest() {
             )
         }
 
-        val info = PhoneCallInfo(
+        val info = PhoneCallData(
             startTime = testTime,
             phone = "+12223334444",
             isIncoming = true,

@@ -51,9 +51,11 @@ class TelegramMessenger(private val context: Context) : Messenger {
         session?.run {
             log.debug("Sending").verb(event)
 
+            val formatter = formatters.createFormatter(event)
             sendMessage(
                 oldChatId = settings.getString(PREF_TELEGRAM_CHAT_ID),
-                message = formatters.createFormatter(event).formatMessage(),
+                message = formatter.formatMessage(),
+                messageFormat = formatter.format,
                 onSuccess = { chatId ->
                     log.debug("Sent")
 

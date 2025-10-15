@@ -5,7 +5,7 @@ import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_BODY
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
 import com.bopr.android.smailer.messenger.Event
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
+import com.bopr.android.smailer.provider.telephony.PhoneCallData
 import com.bopr.android.smailer.util.phoneCallTypeText
 import com.bopr.android.smailer.util.formatDuration
 import com.bopr.android.smailer.util.formatPhoneNumber
@@ -19,7 +19,7 @@ import com.bopr.android.smailer.util.getContactName
 class PhoneCallTelegramFormatter(
     context: Context,
     event: Event,
-    private val info: PhoneCallInfo
+    private val info: PhoneCallData
 ) : BaseTelegramFormatter(
     context,
     info.startTime,

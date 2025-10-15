@@ -1,6 +1,7 @@
 package com.bopr.android.smailer.messenger.telegram
 
 import android.content.Context
+import android.text.Html.escapeHtml
 import androidx.annotation.StringRes
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_BODY
@@ -24,6 +25,8 @@ abstract class BaseTelegramFormatter(
 ) : TelegramFormatter {
 
     protected val settings = context.settings
+
+    override val format: String = "HTML"
 
     override fun formatMessage(): String = buildString {
 
@@ -91,7 +94,7 @@ abstract class BaseTelegramFormatter(
 
     private fun getBodyText(): String? {
         return if (settings.hasTelegramMessageContent(VAL_PREF_MESSAGE_CONTENT_BODY))
-            getBody()
+            escapeHtml(getBody())
         else null
     }
 

@@ -86,6 +86,7 @@ class TelegramSettingsFragment : BasePreferenceFragment(R.xml.pref_telegram_sett
                 ).sendMessage(
                     oldChatId = settings.getString(PREF_TELEGRAM_CHAT_ID),
                     message = formater.formatMessage(),
+                    messageFormat = "HTML",
                     onSuccess = { chatId ->
                         testSettingsProgress.stop()
                         settings.update { putString(PREF_TELEGRAM_CHAT_ID, chatId) }

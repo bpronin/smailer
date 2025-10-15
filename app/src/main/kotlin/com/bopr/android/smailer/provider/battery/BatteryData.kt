@@ -4,6 +4,6 @@ import com.bopr.android.smailer.messenger.EventPayload
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class BatteryInfo(
+data class BatteryData(
     val text: String
 ) : EventPayload

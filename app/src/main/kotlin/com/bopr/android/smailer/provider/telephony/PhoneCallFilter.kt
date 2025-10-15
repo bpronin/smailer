@@ -33,7 +33,7 @@ class PhoneCallFilter(
      * @param info phone call info
      * @return empty flags if event accepted or explanation flags otherwise
      */
-    fun test(info: PhoneCallInfo): Bits {
+    fun test(info: PhoneCallData): Bits {
         var result = Bits()
         if (!testTrigger(info)) result += FLAG_BYPASS_TRIGGER_OFF
         if (!testPhone(info.phone)) result += FLAG_BYPASS_NUMBER_BLACKLISTED
@@ -41,7 +41,7 @@ class PhoneCallFilter(
         return result
     }
 
-    private fun testTrigger(info: PhoneCallInfo): Boolean {
+    private fun testTrigger(info: PhoneCallData): Boolean {
         return when {
             triggers.isEmpty() ->
                 false

@@ -1,7 +1,7 @@
 package com.bopr.android.smailer.ui
 
 
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
+import com.bopr.android.smailer.provider.telephony.PhoneCallData
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.data.StringDataset
 import com.bopr.android.smailer.messenger.Event
@@ -34,7 +34,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             events.clear()
             events.add(
                 Event(
-                    payload = PhoneCallInfo(
+                    payload = PhoneCallData(
                         startTime = currentTimeMillis(),
                         phone = "1"
                     ),
@@ -43,7 +43,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             )
             events.add(
                 Event(
-                    payload = PhoneCallInfo(
+                    payload = PhoneCallData(
                         startTime = currentTimeMillis(),
                         phone = "2"
                     ),
@@ -52,7 +52,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             )
             events.add(
                 Event(
-                    payload = PhoneCallInfo(
+                    payload = PhoneCallData(
                         startTime = currentTimeMillis(),
                         phone = "3"
                     ),
@@ -81,7 +81,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             events.clear()
             events.add(
                 Event(
-                    payload = PhoneCallInfo(
+                    payload = PhoneCallData(
                         startTime = currentTimeMillis(),
                         phone = "1"
                     ),
@@ -90,7 +90,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             )
             events.add(
                 Event(
-                    payload = PhoneCallInfo(
+                    payload = PhoneCallData(
                         startTime = currentTimeMillis(),
                         phone = "2"
                     ),
@@ -99,7 +99,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             )
             events.add(
                 Event(
-                    payload = PhoneCallInfo(
+                    payload = PhoneCallData(
                         startTime = currentTimeMillis(),
                         phone = "3"
                     ),
@@ -128,7 +128,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             events.clear()
             events.add(
                 Event(
-                    payload = PhoneCallInfo(
+                    payload = PhoneCallData(
                         startTime = currentTimeMillis(),
                         phone = "1"
                     ),
@@ -137,7 +137,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             )
             events.add(
                 Event(
-                    payload = PhoneCallInfo(
+                    payload = PhoneCallData(
                         startTime = currentTimeMillis(),
                         phone = "2"
                     ),
@@ -146,7 +146,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             )
             events.add(
                 Event(
-                    payload = PhoneCallInfo(
+                    payload = PhoneCallData(
                         startTime = currentTimeMillis(),
                         phone = "3"
                     ),
@@ -167,7 +167,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             events.clear()
             events.add(
                 Event(
-                    payload = PhoneCallInfo(
+                    payload = PhoneCallData(
                         startTime = currentTimeMillis(),
                         phone = "1"
                     ),
@@ -177,7 +177,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             )
             events.add(
                 Event(
-                    payload = PhoneCallInfo(
+                    payload = PhoneCallData(
                         startTime = currentTimeMillis(),
                         phone = "2"
                     ),
@@ -187,7 +187,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             )
             events.add(
                 Event(
-                    payload = PhoneCallInfo(
+                    payload = PhoneCallData(
                         startTime = currentTimeMillis(),
                         phone = "3"
                     ),
@@ -213,7 +213,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             events.clear()
             events.add(
                 Event(
-                    payload = PhoneCallInfo(
+                    payload = PhoneCallData(
                         startTime = currentTimeMillis(),
                         phone = "1"
                     ),
@@ -222,7 +222,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             )
             events.add(
                 Event(
-                    payload = PhoneCallInfo(
+                    payload = PhoneCallData(
                         startTime = currentTimeMillis(),
                         phone = "phone",
                         text = "text"
@@ -233,7 +233,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             )
             events.add(
                 Event(
-                    payload = PhoneCallInfo(
+                    payload = PhoneCallData(
                         startTime = currentTimeMillis(),
                         phone = "3"
                     ),

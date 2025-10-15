@@ -55,7 +55,7 @@ class ContentObserverService : Service() {
 
         contentResolver.query(CONTENT_SMS_SENT, null, "_id=?", arrayOf(id), null)?.withFirst {
             processPhoneCall(
-                PhoneCallInfo(
+                PhoneCallData(
                     startTime = getLong("date"),
                     phone = getString("address"),
                     endTime = getLong("date"),

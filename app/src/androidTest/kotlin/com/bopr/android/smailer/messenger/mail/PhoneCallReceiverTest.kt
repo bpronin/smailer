@@ -1,7 +1,5 @@
 package com.bopr.android.smailer.messenger.mail
 
-import android.Manifest
-import android.Manifest.permission
 import android.Manifest.permission.*
 import android.annotation.TargetApi
 import android.content.Context
@@ -10,10 +8,9 @@ import android.os.Build
 import android.telephony.SmsMessage
 import android.telephony.TelephonyManager
 import androidx.test.filters.SmallTest
-import androidx.test.rule.GrantPermissionRule
 import androidx.test.rule.GrantPermissionRule.*
 import com.bopr.android.smailer.BaseTest
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
+import com.bopr.android.smailer.provider.telephony.PhoneCallData
 import com.bopr.android.smailer.provider.telephony.PhoneCallReceiver
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.argThat
@@ -53,9 +50,9 @@ class PhoneCallReceiverTest : BaseTest() {
         return intent
     }
 
-    private fun Intent.getPhoneCallExtra(): PhoneCallInfo? {
+    private fun Intent.getPhoneCallExtra(): PhoneCallData? {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            getParcelableExtra("event", PhoneCallInfo::class.java)
+            getParcelableExtra("event", PhoneCallData::class.java)
         } else {
             @Suppress("DEPRECATION")
             return getParcelableExtra("event")

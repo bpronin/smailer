@@ -13,12 +13,12 @@ import com.bopr.android.smailer.util.Bits
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class PhoneCallEventProcessor(context: Context) : EventProcessor<PhoneCallInfo>(context) {
+class PhoneCallEventProcessor(context: Context) : EventProcessor<PhoneCallData>(context) {
 
     private val settings = context.settings
     private val database = context.database
 
-    override fun getBypassReason(info: PhoneCallInfo): Bits {
+    override fun getBypassReason(info: PhoneCallData): Bits {
         return PhoneCallFilter(
             settings.getPhoneProcessTriggers(),
             database.phoneBlacklist,
@@ -30,7 +30,7 @@ class PhoneCallEventProcessor(context: Context) : EventProcessor<PhoneCallInfo>(
 
     companion object {
 
-        fun Context.processPhoneCall(info: PhoneCallInfo) {
+        fun Context.processPhoneCall(info: PhoneCallData) {
             PhoneCallEventProcessor(this).add(info)
             WorkManager.getInstance(this).enqueue(
                 OneTimeWorkRequest.Builder(PhoneCallProcessWorker::class.java).build()

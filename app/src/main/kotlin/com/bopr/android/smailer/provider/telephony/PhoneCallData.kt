@@ -9,7 +9,7 @@ import kotlinx.parcelize.Parcelize
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 @Parcelize
-data class PhoneCallInfo(
+data class PhoneCallData(
     val startTime: Long,
     val phone: String,
     val isIncoming: Boolean = false,

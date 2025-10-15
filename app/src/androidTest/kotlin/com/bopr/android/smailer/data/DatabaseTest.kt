@@ -2,13 +2,12 @@ package com.bopr.android.smailer.data
 
 import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
-import com.bopr.android.smailer.data.Database.Companion.DATABASE_NAME
 import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.messenger.Event
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PENDING
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PROCESSED
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
+import com.bopr.android.smailer.provider.telephony.PhoneCallData
 import com.bopr.android.smailer.util.GeoLocation
 import org.junit.After
 import org.junit.Assert.*
@@ -24,7 +23,7 @@ import org.junit.Test
 class DatabaseTest : BaseTest() {
 
     private val database = targetContext.database
-    private val defaultPayload = PhoneCallInfo(startTime = 0, phone = "1")
+    private val defaultPayload = PhoneCallData(startTime = 0, phone = "1")
 
     @Before
     fun setUp() {
@@ -93,7 +92,7 @@ class DatabaseTest : BaseTest() {
         database.events.first().run {
             assertEquals(STATE_PROCESSED, processState)
             assertTrue(isRead)
-            (payload as PhoneCallInfo).run {
+            (payload as PhoneCallData).run {
                 assertEquals(2, startTime)
                 assertEquals("2", phone)
             }
@@ -106,7 +105,7 @@ class DatabaseTest : BaseTest() {
             Event(
                 timestamp = 0,
                 location = GeoLocation(10.5, 20.5),
-                payload = PhoneCallInfo(
+                payload = PhoneCallData(
                     startTime = 1000L,
                     phone = "1",
                     isIncoming = true,
@@ -124,7 +123,7 @@ class DatabaseTest : BaseTest() {
             assertEquals(20.5, location!!.longitude, 0.1)
             assertEquals(STATE_PENDING, processState)
 
-            (payload as PhoneCallInfo).run {
+            (payload as PhoneCallData).run {
                 assertEquals("1", phone)
                 assertTrue(isIncoming)
                 assertEquals(1000L, startTime)
@@ -150,7 +149,7 @@ class DatabaseTest : BaseTest() {
             assertEquals(21.5, location!!.longitude, 0.1)
             assertEquals(STATE_IGNORED, processState)
 
-            (payload as PhoneCallInfo).run {
+            (payload as PhoneCallData).run {
                 assertEquals("1", phone)
                 assertTrue(isIncoming)
                 assertEquals(1000L, startTime)

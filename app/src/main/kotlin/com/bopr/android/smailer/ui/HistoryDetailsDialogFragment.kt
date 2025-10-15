@@ -15,7 +15,7 @@ import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_TEXT_BLACK
 import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_TRIGGER_OFF
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PROCESSED
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
+import com.bopr.android.smailer.provider.telephony.PhoneCallData
 import com.bopr.android.smailer.util.*
 
 /**
@@ -44,7 +44,7 @@ class HistoryDetailsDialogFragment(private val event: Event) :
                 }
             }
 
-            (event.payload as? PhoneCallInfo)?.let {
+            (event.payload as? PhoneCallData)?.let {
                 findViewById<ImageView>(R.id.image_phone_call_type).setImageResource(
                     phoneCallTypeImage(it)
                 )
@@ -88,7 +88,7 @@ class HistoryDetailsDialogFragment(private val event: Event) :
         return DateFormat.format(getString(R.string._time_pattern), time)
     }
 
-    private fun formatMessage(info: PhoneCallInfo): CharSequence? {
+    private fun formatMessage(info: PhoneCallData): CharSequence? {
         return when {
             info.isSms ->
                 info.text

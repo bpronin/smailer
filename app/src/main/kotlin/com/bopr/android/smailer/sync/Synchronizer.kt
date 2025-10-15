@@ -7,7 +7,7 @@ import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.external.GoogleDrive
 import com.bopr.android.smailer.messenger.Event
 import com.bopr.android.smailer.messenger.EventPayload
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
+import com.bopr.android.smailer.provider.telephony.PhoneCallData
 import com.bopr.android.smailer.util.Bits
 import com.bopr.android.smailer.util.GeoLocation.Companion.fromCoordinates
 import com.bopr.android.smailer.util.Logger
@@ -158,7 +158,7 @@ internal class Synchronizer(
         )
     }
 
-    private fun phoneCallToData(info: PhoneCallInfo): SyncData.PhoneCall {
+    private fun phoneCallToData(info: PhoneCallData): SyncData.PhoneCall {
         return SyncData.PhoneCall(
             incoming = info.isIncoming,
             missed = info.isMissed,
@@ -169,8 +169,8 @@ internal class Synchronizer(
         )
     }
 
-    private fun dataToPhoneCall(data: SyncData.PhoneCall): PhoneCallInfo {
-        return PhoneCallInfo(
+    private fun dataToPhoneCall(data: SyncData.PhoneCall): PhoneCallData {
+        return PhoneCallData(
             startTime = data.startTime,
             phone = data.phone,
             isIncoming = data.incoming,

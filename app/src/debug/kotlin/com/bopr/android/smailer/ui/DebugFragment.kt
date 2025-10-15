@@ -63,7 +63,7 @@ import com.bopr.android.smailer.messenger.mail.MailMessage
 import com.bopr.android.smailer.messenger.telegram.TelegramSession
 import com.bopr.android.smailer.provider.telephony.PhoneCallEventProcessor
 import com.bopr.android.smailer.provider.telephony.PhoneCallEventProcessor.Companion.processPhoneCall
-import com.bopr.android.smailer.provider.telephony.PhoneCallInfo
+import com.bopr.android.smailer.provider.telephony.PhoneCallData
 import com.bopr.android.smailer.sync.Synchronizer
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_DOWNLOAD
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_UPLOAD
@@ -472,7 +472,7 @@ class DebugFragment : PreferenceFragmentCompat() {
     private fun onProcessSingle() {
         val start = currentTimeMillis()
         requireContext().processPhoneCall(
-            PhoneCallInfo(
+            PhoneCallData(
                 startTime = start,
                 phone = "+1(234) 567-89-01",
                 isIncoming = true,
@@ -512,7 +512,7 @@ class DebugFragment : PreferenceFragmentCompat() {
         database.commit {
             events.add(
                 Event(
-                    payload = PhoneCallInfo(
+                    payload = PhoneCallData(
                         startTime = currentTimeMillis(),
                         phone = "+79052345670",
                         isIncoming = true,
@@ -531,7 +531,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                 events.apply {
                     add(
                         Event(
-                            payload = PhoneCallInfo(
+                            payload = PhoneCallData(
                                 startTime = time,
                                 phone = "+79052345671",
                                 isIncoming = true,
@@ -542,7 +542,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                     add(
                         Event(
                             processState = STATE_PROCESSED,
-                            payload = PhoneCallInfo(
+                            payload = PhoneCallData(
                                 startTime = 1000.let { time += it; time },
                                 phone = "+79052345672",
                                 text = "Debug message"
@@ -552,7 +552,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                     add(
                         Event(
                             processState = STATE_IGNORED,
-                            payload = PhoneCallInfo(
+                            payload = PhoneCallData(
                                 startTime = 1000.let { time += it; time },
                                 phone = "+79052345673",
                                 isIncoming = true,
@@ -563,7 +563,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                     add(
                         Event(
                             isRead = true,
-                            payload = PhoneCallInfo(
+                            payload = PhoneCallData(
                                 startTime = 1000.let { time += it; time },
                                 phone = "+79052345674",
                                 endTime = time + 10000
@@ -573,7 +573,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                     add(
                         Event(
                             bypassFlags = FLAG_BYPASS_NO_CONSUMERS,
-                            payload = PhoneCallInfo(
+                            payload = PhoneCallData(
                                 startTime = 1000.let { time += it; time },
                                 phone = "+79052345675",
                                 isIncoming = true,
@@ -584,7 +584,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                     )
                     add(
                         Event(
-                            payload = PhoneCallInfo(
+                            payload = PhoneCallData(
                                 startTime = 1000.let { time += it; time },
                                 phone = "+79052345671",
                                 isIncoming = true,
@@ -594,7 +594,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                     )
                     add(
                         Event(
-                            payload = PhoneCallInfo(
+                            payload = PhoneCallData(
                                 startTime = 1000.let { time += it; time },
                                 phone = "+79052345672",
                                 text = "Debug message"
@@ -603,7 +603,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                     )
                     add(
                         Event(
-                            payload = PhoneCallInfo(
+                            payload = PhoneCallData(
                                 startTime = 1000.let { time += it; time },
                                 phone = "+79052345673",
                                 isIncoming = true,
@@ -613,7 +613,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                     )
                     add(
                         Event(
-                            payload = PhoneCallInfo(
+                            payload = PhoneCallData(
                                 startTime = 1000.let { time += it; time },
                                 phone = "+79052345674",
                                 endTime = time + 10000
@@ -622,7 +622,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                     )
                     add(
                         Event(
-                            payload = PhoneCallInfo(
+                            payload = PhoneCallData(
                                 startTime = 1000.let { time += it; time },
                                 phone = "+79052345675",
                                 isIncoming = true,
@@ -720,6 +720,7 @@ class DebugFragment : PreferenceFragmentCompat() {
         ).sendMessage(
             oldChatId = null,
             message = "Debug message",
+            messageFormat = "HTML",
             onSuccess = {
                 showComplete()
             },
