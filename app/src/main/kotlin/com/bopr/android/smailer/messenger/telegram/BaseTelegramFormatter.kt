@@ -3,12 +3,11 @@ package com.bopr.android.smailer.messenger.telegram
 import android.content.Context
 import androidx.annotation.StringRes
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_BODY
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
+import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CREATION_TIME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME
-import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CREATION_TIME
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_HEADER
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCATION
 import com.bopr.android.smailer.Settings.Companion.settings
@@ -156,11 +155,6 @@ abstract class BaseTelegramFormatter(
     protected fun string(@StringRes resId: Int) = context.getString(resId)
 
     protected fun StringBuilder.appendSpacer() {
-        if (isNotEmpty()) append(newline)
-    }
-    
-    companion object {
-
-        private val newline = "\n".httpEncoded()
+        if (isNotEmpty()) appendLine()
     }
 }

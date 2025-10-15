@@ -108,7 +108,7 @@ class TelegramSession(context: Context, private val token: String?) {
             command = "sendMessage",
             params = mapOf(
                 "chat_id" to chatId,
-                "text" to fixMessageText(message),
+                "text" to message.httpEncoded(),
                 "parse_mode" to "html"
             ),
             onResponse = {
@@ -186,15 +186,9 @@ class TelegramSession(context: Context, private val token: String?) {
         }
     }
 
-    private fun fixMessageText(text: String): String {
-        return text.replace("\n", NEW_LINE)
-    }
-
     companion object {
 
         private val log = Logger("TelegramSession")
-
-        private val NEW_LINE = "\n".httpEncoded()
     }
 
 }

@@ -198,7 +198,7 @@
     <string name="text_remotely_removed_from_whitelist">Текст \"%s\" удалён из белого списка"</string>
     <string name="text_removed_from_filter">%Текст удалён из фильтра</string>
     <string name="text_whitelist">Белый список фраз</string>
-    <string name="this_is_test_message">Это сообщение для проверки ваших настроек.</string>
+    <string name="this_is_test_message">Это сообщение для проверки ваших настроек. Если вы его видите, то все настроено верно.</string>
     <string name="time">Время:</string>
     <string name="time_time">Время: %s</string>
     <string name="trigger_off">Триггер отключен</string>

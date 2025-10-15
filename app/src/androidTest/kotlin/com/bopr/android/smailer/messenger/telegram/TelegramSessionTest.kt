@@ -2,6 +2,7 @@ package com.bopr.android.smailer.messenger.telegram
 
 import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
+import com.bopr.android.smailer.R
 import org.junit.Test
 import java.util.concurrent.CountDownLatch
 
@@ -14,13 +15,13 @@ class TelegramSessionTest : BaseTest() {
 
         TelegramSession(
             context = targetContext,
-            token = "6736609275:AAGYlecb8G_9iJVyOG6Btau3vLrQ_ddJ7NY2"
+            token = Companion.getString(R.string.debug_telegram_token)
         ).sendMessage(
             oldChatId = null,
-            message = "Test telegram session",
+            message = "<b>Bold</b> <i>italic</i> &amp; &lt;#&gt;\nNew line here",
+            messageFormat = "HTML",
             onSuccess = {
                 latch.countDown()
-
             },
             onError = {
                 latch.countDown()

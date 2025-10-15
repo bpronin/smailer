@@ -6,7 +6,7 @@ import java.net.URLEncoder
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.HttpsURLConnection.HTTP_OK
 
-fun String.httpEncoded() = URLEncoder.encode(this, "UTF-8")
+fun String.httpEncoded(): String = URLEncoder.encode(this, "UTF-8")
 
 fun Appendable.appendAsHttpParams(map: Map<*, *>) = map.entries.joinTo(
     this,

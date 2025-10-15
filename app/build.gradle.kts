@@ -81,6 +81,7 @@ android {
             isShrinkResources = false
             isMinifyEnabled = false
             isDefault = true
+            resValue("string", "debug_telegram_token", localProperties.getProperty("debug_telegram_token"))
         }
         release {
             manifestPlaceholders += mapOf("crashlyticsEnabled" to "true")
