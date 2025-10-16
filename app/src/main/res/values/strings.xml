@@ -98,8 +98,8 @@
     <string name="no_network_try_later">No connection to server. Please try later</string>
     <string name="no_permission_read_location">(no permission to read location)</string>
     <string name="no_recipients_specified">No recipients specified</string>
-    <string name="no_telegram_bot_token">No Telegram bot token specified</string>
-    <string name="no_telegram_network_try_later">No connection to Telegram server. Please try later</string>
+    <string name="no_telegram_bot_token">Telegram bot token not specified</string>
+    <string name="no_telegram_network_try_later">No connection to Telegram server. Please try later.</string>
     <string name="no_triggers_specified">All triggers are disabled</string>
     <string name="notifications">Notifications</string>
     <string name="notify_remote_actions">Display notification when actions are performed</string>
@@ -109,7 +109,7 @@
     <string name="on">On</string>
     <string name="open_source">Open source</string>
     <string name="open_source_and_third_party">Open source and third party software</string>
-    <string name="operation_complete" >Operation complete</string>
+    <string name="operation_complete">Operation complete</string>
     <string name="outgoing_call">Outgoing call</string>
     <string name="outgoing_call_of">Outgoing call: %s</string>
     <string name="outgoing_call_to">Outgoing call to</string>
@@ -199,12 +199,12 @@
     <string name="text_remotely_removed_from_whitelist">Text \"%s\" removed from whitelist"</string>
     <string name="text_removed_from_filter">Text removed from filter</string>
     <string name="text_whitelist">Text whitelist</string>
-    <string name="this_is_test_message">This message is to check your settings. If you see it your settings is OK.</string>
+    <string name="this_is_test_message">This message is to check your settings. If you received it, your settings are correct.</string>
     <string name="time">Time:</string>
     <string name="time_time">Time: %s</string>
     <string name="trigger_off">Trigger was off</string>
     <string name="triggers">Triggers</string>
-    <string name="unable_determine_chat">Unable to open the chat to send messages to. Open Telegram app and send \"Hi\" to your bot then try again.</string>
+    <string name="unable_determine_chat">Unable to determine which chat to send messages to. Open Telegram app, send \"Hi\" to your SMS bot, and try again.</string>
     <string name="unable_send_email">Unable to send email. %s</string>
     <string name="unable_send_sms">Unable to send SMS. %s</string>
     <string name="unacceptable_phone_numbers">Unacceptable phone numbers (%s)</string>
@@ -213,13 +213,15 @@
     <string name="unexpected_error">Something went wrong. Please check your network connection.</string>
     <string name="unknown_contact">Unknown contact</string>
     <string name="unknown_location">unknown</string>
-    <string name="unspecified">Not set</string>
+    <string name="unspecified">Not specified</string>
     <string name="what_email_contains">Information that the message should contain</string>
     <string name="when_send_email">Conditions under which the message should be sent</string>
     <string name="whitelist">Whitelist</string>
     <string name="you_had_incoming_call">You had an incoming call of %s duration.</string>
     <string name="you_had_missed_call">You had a missed call.</string>
     <string name="you_had_outgoing_call">You had an outgoing call of %s duration.</string>
+    <string name="how_to_obtain_telegram_bot_token">To obtain token open @BotFather chat in Telegram app  
+        and send /mybots command. Choose your SMS bot and then tap \"API Token\".</string>
 
     <plurals name="items_removed">
         <item quantity="one">Item removed</item>
@@ -253,7 +255,7 @@
         <item>Device location</item>
         <item>Fast answer links</item>
     </string-array>
-    
+
     <string-array name="telegram_message_content_names">
         <item>Message text</item>
         <item>Title</item>

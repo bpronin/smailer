@@ -203,7 +203,7 @@
     <string name="time_time">Время: %s</string>
     <string name="trigger_off">Триггер отключен</string>
     <string name="triggers">Триггеры</string>
-    <string name="unable_determine_chat">Не могу определить чат для сообщений. Напишите \"Hi\" вашему боту в приложении Telegram и попробуйте снова.</string>
+    <string name="unable_determine_chat">Невозможно определить чат для получения сообщений. Напишите \"Hi\" вашему боту в приложении Telegram и попробуйте снова.</string>
     <string name="unable_send_email">Не удалось отправить почту. %s</string>
     <string name="unable_send_sms">Не удалось отправить SMS. %s</string>
     <string name="unacceptable_phone_numbers">Заблокированные номера (%s)</string>
@@ -219,6 +219,8 @@
     <string name="you_had_incoming_call">Входящий звонок длительностью %s.</string>
     <string name="you_had_missed_call">Пропущенный звонок.</string>
     <string name="you_had_outgoing_call">Исходящий звонок длительностью %s.</string>
+    <string name="how_to_obtain_telegram_bot_token">Для получения токена в приложении Telegram откройте чат с @BotFather 
+        и отправьте команду /mybots. Выберите вашего бота для SMS и затем \"API Token\". </string>
 
     <plurals name="items_removed">
         <item quantity="one">%d запись удалена</item>

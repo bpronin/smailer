@@ -159,7 +159,7 @@ dependencies {
     implementation("com.google.firebase:firebase-crashlytics:20.0.3")
     implementation("com.google.firebase:firebase-messaging:25.0.1")
     implementation("com.sun.mail:android-mail:1.6.8")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.1.21")
+//    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.1.21")
 
     "freeImplementation"("com.google.android.gms:play-services-ads:24.7.0")
 
@@ -199,12 +199,18 @@ tasks.register("updateReleaseInfo") {
 }
 
 tasks.register<Copy>("uploadRelease") {
+    val uploadPath = localProperties.getProperty("upload_path")
+    
     from(
         fileTree(layout.buildDirectory.dir("outputs/apk/free")).files,
         fileTree(layout.buildDirectory.dir("outputs/apk/paid")).files
     )
-    into(localProperties.getProperty("upload_path"))
-    include("**/*.apk")
+    into(uploadPath)
+    include("**/*.apk") 
+    
+    doLast {
+        logger.lifecycle("Uploaded release APK to $uploadPath.")
+    }
 }
 
 tasks.named("preBuild") {

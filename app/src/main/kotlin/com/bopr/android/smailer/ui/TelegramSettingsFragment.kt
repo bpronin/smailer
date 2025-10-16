@@ -75,6 +75,12 @@ class TelegramSettingsFragment : BasePreferenceFragment(R.xml.pref_telegram_sett
     private fun onSendTestTelegramMessage() {
         if (testSettingsProgress.running) return
         
+        val token = settings.getString(PREF_TELEGRAM_BOT_TOKEN)
+        if (token.isNullOrEmpty()) {
+            showInfoDialog(R.string.no_telegram_bot_token, R.string.how_to_obtain_telegram_bot_token)
+            return
+        }
+        
         testSettingsProgress.start()
 
         requireContext().requestGeoLocation(
@@ -82,7 +88,7 @@ class TelegramSettingsFragment : BasePreferenceFragment(R.xml.pref_telegram_sett
                 val formater = TestTelegramFormatter(currentTimeMillis(), location)
                 TelegramSession(
                     context = requireContext(),
-                    token = settings.getString(PREF_TELEGRAM_BOT_TOKEN)
+                    token = token
                 ).sendMessage(
                     oldChatId = settings.getString(PREF_TELEGRAM_CHAT_ID),
                     message = formater.formatMessage(),
