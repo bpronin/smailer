@@ -20,7 +20,7 @@ import com.bopr.android.smailer.util.showToast
 /**
  * Email editor dialog.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 class EditMailDialogFragment : BaseEditDialogFragment<String>("edit_recipient_dialog") {
 

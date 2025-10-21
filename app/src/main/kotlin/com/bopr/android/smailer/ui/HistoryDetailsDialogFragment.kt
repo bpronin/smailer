@@ -21,7 +21,7 @@ import com.bopr.android.smailer.util.*
 /**
  * Call history log item details dialog fragment.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 class HistoryDetailsDialogFragment(private val event: Event) :
     BaseDialogFragment("log_details_dialog") {

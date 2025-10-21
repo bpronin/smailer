@@ -8,6 +8,8 @@ import androidx.fragment.app.FragmentActivity
 
 /**
  * Common info dialog.
+ * 
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 class InfoDialog(
     private val title: String? = null,

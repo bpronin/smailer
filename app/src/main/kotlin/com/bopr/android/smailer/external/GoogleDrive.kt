@@ -20,7 +20,7 @@ import kotlin.reflect.KClass
 /**
  * Google drive session.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 @Mockable
 internal class GoogleDrive(context: Context, account: Account) {

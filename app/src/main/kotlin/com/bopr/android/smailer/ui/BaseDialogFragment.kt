@@ -13,6 +13,8 @@ import androidx.fragment.app.FragmentManager
 
 /**
  * Base dialog fragment.
+ * 
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 abstract class BaseDialogFragment(private val fragmentTag: String?) : DialogFragment() {
 

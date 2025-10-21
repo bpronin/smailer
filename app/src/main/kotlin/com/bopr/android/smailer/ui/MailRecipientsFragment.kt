@@ -16,7 +16,7 @@ import com.bopr.android.smailer.util.underwivedText
 /**
  * Email recipients list fragment.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 class MailRecipientsFragment : EditableRecyclerFragment<String, Holder>(){
 

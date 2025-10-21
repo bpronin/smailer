@@ -14,7 +14,7 @@ import com.bopr.android.smailer.util.unescapeRegex
 /**
  * Text editor dialog.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 class EditTextDialogFragment : BaseEditDialogFragment<String>("edit_text_filter_item_dialog") {
 

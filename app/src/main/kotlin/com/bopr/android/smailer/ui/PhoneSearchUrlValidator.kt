@@ -8,7 +8,7 @@ import com.bopr.android.smailer.util.isValidUrl
 /**
  * Checks that [TextView]'s input matches phone search pattern URL format.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 class PhoneSearchUrlValidator(view: TextView) : TextValidator(view) {
 

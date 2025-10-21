@@ -23,6 +23,11 @@ import com.bopr.android.smailer.util.updateSummary
 import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
 
 // TODO: 24.02.2019 add help icon for remote control
+/**
+ * Remote control settings fragment.
+ * 
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
+ */
 class RemoteControlFragment : BasePreferenceFragment(R.xml.pref_remote) {
 
     private lateinit var authorizationHelper: GoogleAuthorizationHelper

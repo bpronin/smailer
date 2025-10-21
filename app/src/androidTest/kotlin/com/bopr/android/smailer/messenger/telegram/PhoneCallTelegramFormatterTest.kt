@@ -28,7 +28,7 @@ import java.util.GregorianCalendar
 /**
  * [PhoneCallTelegramFormatter] class tester.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 @SmallTest
 class PhoneCallTelegramFormatterTest : BaseTest() {

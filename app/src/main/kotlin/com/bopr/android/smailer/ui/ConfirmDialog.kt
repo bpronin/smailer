@@ -5,6 +5,8 @@ import androidx.appcompat.app.AlertDialog
 
 /**
  * Confirmation dialog.
+ * 
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 open class ConfirmDialog(
     private val title: String? = null,

@@ -37,7 +37,7 @@ import java.lang.System.*
 /**
  * Email messenger settings fragment.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 class MailSettingsFragment : BasePreferenceFragment(R.xml.pref_email_settings) {
 

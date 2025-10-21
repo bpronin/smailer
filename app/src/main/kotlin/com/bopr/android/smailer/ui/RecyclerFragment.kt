@@ -16,6 +16,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 /**
  * Base fragment with [RecyclerView].
+ * 
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 abstract class RecyclerFragment<I, H : ViewHolder> : Fragment() {
 

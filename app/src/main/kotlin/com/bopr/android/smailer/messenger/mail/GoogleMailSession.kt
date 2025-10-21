@@ -29,7 +29,7 @@ import javax.mail.internet.*
 /**
  * Gmail mail session.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 @Mockable
 internal class GoogleMailSession(context: Context, account: Account, vararg scopes: String) {

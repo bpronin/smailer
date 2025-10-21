@@ -20,7 +20,7 @@ import com.bopr.android.smailer.util.stripPhoneNumber
 /**
  * Formats email subject and body from phone event.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 class PhoneCallMailFormatter(
     context: Context,

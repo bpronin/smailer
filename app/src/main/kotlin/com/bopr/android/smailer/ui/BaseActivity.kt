@@ -13,7 +13,7 @@ import kotlin.reflect.KClass
 /**
  * Base application activity with default behaviour.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 abstract class BaseActivity(private val fragmentClass: KClass<out Fragment>) : AppCompatActivity() {
 

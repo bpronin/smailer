@@ -9,6 +9,11 @@ import androidx.annotation.RequiresPermission
 import androidx.fragment.app.Fragment
 import com.bopr.android.smailer.util.SingletonHolder
 
+/**
+ * Helper class for working with Google accounts.
+ * 
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
+ */
 class AccountsHelper private constructor(context: Context) {
 
     private val manager = AccountManager.get(context)

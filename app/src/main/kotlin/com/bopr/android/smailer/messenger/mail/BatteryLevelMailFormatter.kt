@@ -8,7 +8,7 @@ import com.bopr.android.smailer.provider.battery.BatteryData
 /**
  * Formats email subject and body for battery events.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 class BatteryLevelMailFormatter(
     private val context: Context,

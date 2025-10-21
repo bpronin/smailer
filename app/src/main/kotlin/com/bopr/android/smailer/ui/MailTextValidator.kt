@@ -7,7 +7,7 @@ import com.bopr.android.smailer.util.isValidEmailAddress
 /**
  * Checks that [TextView]'s input matches email address format.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 class MailTextValidator(view: TextView) : TextValidator(view) {
 

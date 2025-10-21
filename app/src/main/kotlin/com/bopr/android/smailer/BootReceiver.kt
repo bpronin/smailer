@@ -10,7 +10,7 @@ import com.bopr.android.smailer.util.Logger
 /**
  * Starts application at device boot.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 class BootReceiver : BroadcastReceiver() {
 

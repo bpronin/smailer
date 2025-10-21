@@ -21,7 +21,7 @@ import com.bopr.android.smailer.util.showToast
 /**
  * Phone number editor dialog.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 class EditPhoneDialogFragment(@StringRes private val textRes: Int) :
     BaseEditDialogFragment<String>("edit_phone_dialog") {

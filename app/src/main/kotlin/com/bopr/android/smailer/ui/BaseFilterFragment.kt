@@ -20,7 +20,7 @@ import com.bopr.android.smailer.ui.BaseFilterFragment.Holder
 /**
  * Base for black/whitelist fragments.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 abstract class BaseFilterFragment(private val listName: String) :
     EditableRecyclerFragment<String, Holder>() {

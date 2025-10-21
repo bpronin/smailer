@@ -8,7 +8,7 @@ import android.text.style.LineBackgroundSpan
 /**
  * Draws wavy line under the text.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 class WavyUnderlineSpan(
         private val lineColor: Int = Color.RED,

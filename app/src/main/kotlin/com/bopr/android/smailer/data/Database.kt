@@ -17,7 +17,7 @@ import java.lang.System.currentTimeMillis
 /**
  * Application database.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 class Database private constructor(private val context: Context) : Closeable {
 

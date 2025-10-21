@@ -23,7 +23,7 @@ import com.bopr.android.smailer.util.sendSmsMessage
 /**
  * SMS messenger.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 @Mockable
 internal class SmsMessenger(private val context: Context) : Messenger {

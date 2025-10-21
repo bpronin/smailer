@@ -5,6 +5,8 @@ import androidx.appcompat.app.AlertDialog
 
 /**
  * Base dialog fragment with value editor.
+ * 
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 abstract class BaseEditDialogFragment<V>(dialogTag: String) : BaseDialogFragment(dialogTag) {
 

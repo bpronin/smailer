@@ -5,6 +5,8 @@ import androidx.appcompat.app.AlertDialog
 
 /**
  * Common message dialog fragment.
+ * 
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 class MessageDialog(private val title: String? = null,
                     private val message: String? = null,

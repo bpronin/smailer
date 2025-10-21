@@ -90,7 +90,7 @@ import java.lang.System.currentTimeMillis
 /**
  * For debug purposes.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 class DebugFragment : PreferenceFragmentCompat() {
 

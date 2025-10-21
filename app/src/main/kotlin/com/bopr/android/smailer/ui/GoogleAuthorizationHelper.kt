@@ -13,7 +13,7 @@ import com.bopr.android.smailer.util.createPickAccountIntent
 /**
  * Convenient class to deal with Google authentication.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 class GoogleAuthorizationHelper(
     private val activity: FragmentActivity,

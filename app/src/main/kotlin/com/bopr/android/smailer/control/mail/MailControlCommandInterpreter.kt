@@ -21,7 +21,7 @@ import java.util.regex.Pattern
  * Parses email body into control command.
  * For example: "To device My Device. Add phone +1234567901 to blacklist."
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 internal class MailControlCommandInterpreter {
 

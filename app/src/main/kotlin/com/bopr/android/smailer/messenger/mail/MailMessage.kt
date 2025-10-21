@@ -5,7 +5,7 @@ import java.io.File
 /**
  * Email message.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 data class MailMessage(
         val id: String? = null,

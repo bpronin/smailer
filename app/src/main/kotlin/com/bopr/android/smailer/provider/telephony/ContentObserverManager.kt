@@ -14,7 +14,7 @@ import com.bopr.android.smailer.util.SingletonHolder
 /**
  * Listens to changes in sms content. Used to process outgoing SMS.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 class ContentObserverManager private constructor(private val context: Context) :
     SettingsAware(context) {

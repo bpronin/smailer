@@ -17,6 +17,8 @@ import com.google.android.material.snackbar.Snackbar
 
 /**
  * Base fragment with editable recycler view.
+ * 
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 abstract class EditableRecyclerFragment<I, H : ViewHolder> : RecyclerFragment<I, H>() {
 

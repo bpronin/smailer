@@ -13,7 +13,7 @@ import com.bopr.android.smailer.util.refreshView
 /**
  * Base [PreferenceFragmentCompat] with default behaviour.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 abstract class BasePreferenceFragment(@XmlRes private val layoutRes: Int) :
     PreferenceFragmentCompat() {

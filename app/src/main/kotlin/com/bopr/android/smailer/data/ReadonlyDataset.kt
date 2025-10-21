@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper
 /**
  * Convenience [Cursor] wrapper. Represents [Cursor] as [MutableSet].
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 abstract class ReadonlyDataset<T>(
     protected val tableName: String,

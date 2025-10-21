@@ -17,7 +17,7 @@ import java.io.IOException
 /**
  * Performs synchronization application data with google drive.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 internal class Synchronizer(
     context: Context,

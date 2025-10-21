@@ -15,7 +15,7 @@ import androidx.core.net.toUri
 /**
  * Legal info fragment. Displays list of used open source libs.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 class LegalInfoFragment : ListFragment() {
 

@@ -12,7 +12,7 @@ import com.google.firebase.messaging.RemoteMessage
 /**
  * Performs actions when specific firebase messages received.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 class FirebaseControlService : FirebaseMessagingService() {
 

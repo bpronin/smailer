@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
 /**
  * Periodically checks service mailbox for messages containing control commands.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 internal class MailControlManager private constructor(context: Context) :
     SettingsAware(context) {

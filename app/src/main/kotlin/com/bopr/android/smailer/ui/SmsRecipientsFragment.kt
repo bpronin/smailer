@@ -14,7 +14,7 @@ import com.bopr.android.smailer.ui.SmsRecipientsFragment.Holder
 /**
  * Sms recipients list fragment.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 class SmsRecipientsFragment : EditableRecyclerFragment<String, Holder>() {
 

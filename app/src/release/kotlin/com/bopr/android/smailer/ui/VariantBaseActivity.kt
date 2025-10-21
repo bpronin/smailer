@@ -8,6 +8,6 @@ import kotlin.reflect.KClass
  *
  * For RELEASE build variant. Without debug features.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 open class VariantBaseActivity(value: KClass<out Fragment>) : BaseActivity(value)

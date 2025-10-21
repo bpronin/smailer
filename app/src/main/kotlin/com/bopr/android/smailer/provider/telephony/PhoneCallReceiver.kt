@@ -17,7 +17,7 @@ import java.lang.System.currentTimeMillis
 /**
  * Receives phone call and sms intents and starts messengers service.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 class PhoneCallReceiver : BroadcastReceiver() {
 

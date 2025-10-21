@@ -15,7 +15,7 @@ import com.bopr.android.smailer.util.Logger
 /**
  * Worker used in synchronization application data with google drive.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 internal class SyncWorker(context: Context, workerParams: WorkerParameters) :
     Worker(context, workerParams) {

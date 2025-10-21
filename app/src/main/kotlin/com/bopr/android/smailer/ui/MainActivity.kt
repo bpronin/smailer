@@ -10,7 +10,7 @@ import com.bopr.android.smailer.util.BackgroundActivityHelper
 /**
  * Main application activity.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 class MainActivity : FlavorBaseActivity(MainFragment::class) {
     

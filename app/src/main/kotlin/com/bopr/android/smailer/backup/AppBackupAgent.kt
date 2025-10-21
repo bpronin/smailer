@@ -8,7 +8,7 @@ import com.bopr.android.smailer.util.Logger
 /**
  * Backup agent. Required on Android 2.2 (API level 8) to Android 6.0 (API level 23).
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 class AppBackupAgent : BackupAgentHelper() {
 

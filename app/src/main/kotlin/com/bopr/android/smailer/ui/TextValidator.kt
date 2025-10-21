@@ -9,7 +9,7 @@ import com.bopr.android.smailer.R
 /**
  * Abstract [TextView] input validator.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 abstract class TextValidator(protected val view: TextView) : TextWatcher {
 

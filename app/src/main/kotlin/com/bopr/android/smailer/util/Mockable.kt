@@ -6,5 +6,6 @@ package com.bopr.android.smailer.util
  * See allOpen{} clause in build.gradle
  *
  * @see <a href="https://kotlinlang.org/docs/reference/compiler-plugins.html#all-open-compiler-plugin">here</a>
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 annotation class Mockable 

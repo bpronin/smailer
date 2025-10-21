@@ -12,7 +12,7 @@ import com.bopr.android.smailer.R
 /**
  * About dialog fragment.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 class AboutDialogFragment : BaseDialogFragment("about_dialog") {
 

@@ -12,14 +12,17 @@ import com.bopr.android.smailer.R
 
 /**
  * Common dialog with text input field.
+ * 
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
-class InputDialog(private val title: String? = null,
-                  private val message: String? = null,
-                  private val inputType: Int = InputType.TYPE_CLASS_TEXT,
-                  private val initialValue: String? = null,
-                  private val positiveButtonText: String? = null,
-                  private val negativeButtonText: String? = null,
-                  private val positiveAction: ((String) -> Unit)? = null
+class InputDialog(
+    private val title: String? = null,
+    private val message: String? = null,
+    private val inputType: Int = InputType.TYPE_CLASS_TEXT,
+    private val initialValue: String? = null,
+    private val positiveButtonText: String? = null,
+    private val negativeButtonText: String? = null,
+    private val positiveAction: ((String) -> Unit)? = null
 ) : BaseDialogFragment("input-dialog") {
 
     private lateinit var editor: EditText
@@ -33,7 +36,8 @@ class InputDialog(private val title: String? = null,
 
         @SuppressLint("InflateParams")
         val container = (LayoutInflater.from(context).inflate(
-                R.layout.alert_dialog_view_container, null) as ViewGroup)
+            R.layout.alert_dialog_view_container, null
+        ) as ViewGroup)
         container.addView(editor)
         return container
     }

@@ -21,7 +21,7 @@ import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
 /**
  * Checks service mailbox for messages containing control commands and performs it.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 internal class MailControlProcessor(private val context: Context) {
 

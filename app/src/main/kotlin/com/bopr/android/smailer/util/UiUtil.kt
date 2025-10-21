@@ -33,7 +33,7 @@ import java.util.concurrent.Executors.*
 /**
  * Miscellaneous UI and resources utilities.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 
 /**

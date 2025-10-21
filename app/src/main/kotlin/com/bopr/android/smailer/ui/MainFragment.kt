@@ -20,7 +20,7 @@ import com.bopr.android.smailer.util.updateSummary
 /**
  * Main settings fragment.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 class MainFragment : BasePreferenceFragment(R.xml.pref_main) {
 

@@ -27,7 +27,7 @@ import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 /**
  * Mail transport.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 @Mockable
 internal class MailMessenger(private val context: Context) : Messenger {

@@ -25,7 +25,7 @@ import org.junit.Test
 /**
  * AndroidUtil tester.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 @SmallTest
 class DatabaseUtilTest : BaseTest() {
