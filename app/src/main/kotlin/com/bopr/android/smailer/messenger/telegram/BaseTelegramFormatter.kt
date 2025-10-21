@@ -13,7 +13,6 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_HEAD
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCATION
 import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.util.GeoLocation
-import com.bopr.android.smailer.util.httpEncoded
 import java.text.DateFormat
 import java.text.DateFormat.SHORT
 
@@ -146,7 +145,7 @@ abstract class BaseTelegramFormatter(
                     append("/@")
                     append("$latitude,$longitude")
                     append("\">")
-                    append(format(degreeSymbol = "&#176;", separator = ", ").httpEncoded())
+                    append(format(degreeSymbol = "&#176;", separator = ", "))
                     append("</a>")
                 }
             } ?: string(R.string.unknown_location)
