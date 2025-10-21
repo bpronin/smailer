@@ -3,6 +3,7 @@ package com.bopr.android.smailer.util
 import android.Manifest.permission.READ_CONTACTS
 import android.accounts.Account
 import android.accounts.AccountManager.newChooseAccountIntent
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -18,6 +19,7 @@ import com.bopr.android.smailer.data.getInt
 import com.bopr.android.smailer.data.getStringOrNull
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager.ACCOUNT_TYPE
 
+@SuppressLint("ObsoleteSdkInt")
 fun createPickAccountIntent(account: Account?): Intent {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         newChooseAccountIntent(account, null, arrayOf(ACCOUNT_TYPE), null, null, null, null)
@@ -25,7 +27,6 @@ fun createPickAccountIntent(account: Account?): Intent {
         @Suppress("DEPRECATION")
         newChooseAccountIntent(account, null, arrayOf(ACCOUNT_TYPE), false, null, null, null, null)
     }
-
 }
 
 @RequiresPermission(READ_CONTACTS)

@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.fragment.app.ListFragment
 import com.bopr.android.smailer.R
+import androidx.core.net.toUri
 
 /**
  * Legal info fragment. Displays list of used open source libs.
@@ -22,7 +23,7 @@ class LegalInfoFragment : ListFragment() {
         val data: MutableList<Item> = mutableListOf()
         for (line in resources.getStringArray(R.array.open_source)) {
             val s = line.split("|")
-            data.add(Item(s[0], Uri.parse(s[1])))
+            data.add(Item(s[0], s[1].toUri()))
         }
 
         listAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, data)

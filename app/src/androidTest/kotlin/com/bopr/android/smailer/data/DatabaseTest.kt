@@ -117,7 +117,7 @@ class DatabaseTest : BaseTest() {
 
         assertEquals(1, database.events.size)
 
-        var event = database.events.first().apply {
+        val event = database.events.first().apply {
             assertEquals(0, timestamp)
             assertEquals(10.5, location!!.latitude, 0.1)
             assertEquals(20.5, location!!.longitude, 0.1)

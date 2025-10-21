@@ -19,7 +19,6 @@ abstract class ReadonlyDataset<T>(
     override val size get() = read { count(tableName).toInt() }
 
     override fun isEmpty(): Boolean {
-        @Suppress("ReplaceSizeZeroCheckWithIsEmpty")
         return size == 0
     }
 
@@ -43,8 +42,6 @@ abstract class ReadonlyDataset<T>(
             }
         }
     }
-
-    open fun first(): T = query().withFirst(::get)
 
     open fun last(): T = query().withLast(::get)
 

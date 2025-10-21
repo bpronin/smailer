@@ -16,6 +16,7 @@ import com.bopr.android.smailer.data.getStringOrNull
 import com.bopr.android.smailer.data.withFirst
 import com.bopr.android.smailer.provider.telephony.PhoneCallEventProcessor.Companion.processPhoneCall
 import com.bopr.android.smailer.util.Logger
+import androidx.core.net.toUri
 
 /**
  * Listens to changes in sms content. Used to process outgoing SMS.
@@ -106,7 +107,7 @@ class ContentObserverService : Service() {
     companion object {
 
         private val log = Logger("ContentObserver")
-        private val CONTENT_SMS_SENT = Uri.parse("content://sms/sent")
-        private val CONTENT_SMS = Uri.parse("content://sms")
+        private val CONTENT_SMS_SENT = "content://sms/sent".toUri()
+        private val CONTENT_SMS = "content://sms".toUri()
     }
 }

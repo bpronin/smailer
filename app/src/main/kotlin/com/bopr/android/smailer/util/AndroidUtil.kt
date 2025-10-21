@@ -1,5 +1,6 @@
 package com.bopr.android.smailer.util
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Build
@@ -52,6 +53,7 @@ fun Context.readLogcatLog(): File {
     return file
 }
 
+@SuppressLint("ObsoleteSdkInt")
 fun Context.sendSmsMessage(phone: String?, message: String?) {
     val smsManager = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         getSystemService(SmsManager::class.java)

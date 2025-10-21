@@ -68,7 +68,7 @@ abstract class RecyclerFragment<I, H : ViewHolder> : Fragment() {
     }
 
     protected fun updateSelectedItemPosition(holder: ViewHolder) {
-        selectedItemPosition = holder.adapterPosition
+        selectedItemPosition = holder.layoutPosition
     }
 
     protected fun getSelectedItem(): I? {

@@ -70,7 +70,7 @@ abstract class Dataset<T>(
     }
 
     override fun isEmpty(): Boolean {
-        @Suppress("ReplaceSizeZeroCheckWithIsEmpty") return size == 0
+        return size == 0
     }
 
     override fun contains(element: T): Boolean = rowSet.contains(element)

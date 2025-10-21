@@ -39,7 +39,7 @@ class DatabaseListenerTest : BaseTest() {
         val latch = CountDownLatch(1)
         var modifications: Set<String>? = null
 
-        var listener = database.registerListener {
+        val listener = database.registerListener {
             modifications = it
             latch.countDown()
         }

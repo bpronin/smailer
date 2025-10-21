@@ -226,7 +226,7 @@ class HistoryFragment : RecyclerFragment<Event, Holder>() {
                 EditPhoneDialogFragment(R.string.enter_phone_number_or_wildcard).apply {
                     setTitle(titleRes)
                     setValue(it.phone)
-                    setOnOkClicked { addToFilterList(list, it) }
+                    setOnOkClicked { action -> addToFilterList(list, action) }
                 }.show(this)
             }
         }
@@ -246,7 +246,7 @@ class HistoryFragment : RecyclerFragment<Event, Holder>() {
                 EditTextDialogFragment().apply {
                     setTitle(titleRes)
                     setValue(it.text)
-                    setOnOkClicked { addToFilterList(list, it) }
+                    setOnOkClicked { action -> addToFilterList(list, action) }
                 }.show(this)
             }
         }

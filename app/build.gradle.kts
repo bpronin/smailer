@@ -45,8 +45,8 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        versionCode = 106
-        versionName = "1.11.1"
+        versionCode = 107
+        versionName = "1.11.2"
         applicationId = "com.bopr.android.smailer"
         minSdk = 23
         /* check action bar not overlapping content when migrating to 35
@@ -159,7 +159,6 @@ dependencies {
     implementation("com.google.firebase:firebase-crashlytics:20.0.3")
     implementation("com.google.firebase:firebase-messaging:25.0.1")
     implementation("com.sun.mail:android-mail:1.6.8")
-//    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.1.21")
 
     "freeImplementation"("com.google.android.gms:play-services-ads:24.7.0")
 
@@ -216,10 +215,6 @@ tasks.register<Copy>("uploadRelease") {
 tasks.named("preBuild") {
     finalizedBy("updateReleaseInfo")
 }
-
-//tasks.named("assemble") {
-//    finalizedBy("uploadRelease")
-//}
 
 afterEvaluate {
     tasks.named("assemblePaidDebug") {

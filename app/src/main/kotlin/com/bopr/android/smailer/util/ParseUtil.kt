@@ -30,15 +30,31 @@ fun <T : Parcelable> unparcelize(bytes: ByteArray, valueClass: KClass<T>): T {
     }
 }
 
+/**
+ * Parses a locale string to a Locale object.
+ *
+ * The code can be a standard language tag (e.g., "en-US") or use an underscore ("en_US").
+ * If the code matches VAL_PREF_DEFAULT, the system's default locale is returned.
+ *
+ * @param code The locale string to parse.
+ * @return The corresponding Locale object.
+ * @throws IllegalArgumentException if the code format is invalid.
+ */
 fun parseLocale(code: String): Locale {
-    return if (code == VAL_PREF_DEFAULT) {
-        Locale.getDefault()
-    } else {
-        val a = code.split("_")
-        if (a.size == 2) {
-            Locale(a[0], a[1])
-        } else {
-            throw IllegalArgumentException("Invalid locale code: $code")
-        }
+    if (code == VAL_PREF_DEFAULT) {
+        return Locale.getDefault()
     }
+
+    // The standard format is "en-US", so we replace "_" with "-" to be compliant.
+    val languageTag = code.replace('_', '-')
+
+    // Locale.forLanguageTag is robust and handles "en", "en-US", etc.
+    // It returns an empty locale for malformed tags, so we can check for that.
+    val locale = Locale.forLanguageTag(languageTag)
+
+    if (locale.language.isEmpty()) {
+        throw IllegalArgumentException("Invalid locale code: $code")
+    }
+
+    return locale
 }
