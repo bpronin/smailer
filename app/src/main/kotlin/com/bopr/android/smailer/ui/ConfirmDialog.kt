@@ -11,7 +11,7 @@ open class ConfirmDialog(
     private val message: String? = null,
     private val positiveButtonText: String? = null,
     private val negativeButtonText: String? = null,
-    private val onClose: (Boolean) -> Unit
+    private val onClose: (confirmed: Boolean) -> Unit
 ) : BaseDialogFragment("confirm-dialog") {
 
     private var dialogResult = false

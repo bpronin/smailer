@@ -20,11 +20,11 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
-import com.bopr.android.smailer.AccountsHelper
-import com.bopr.android.smailer.NotificationsHelper
+import com.bopr.android.smailer.AccountsHelper.Companion.accounts
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_GOOGLE_ACCOUNT
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_MAIL_RECIPIENTS
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_SERVICE_ACCOUNT
+import com.bopr.android.smailer.NotificationsHelper.Companion.notifications
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSAGE_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_RECIPIENTS
@@ -61,14 +61,14 @@ import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.messenger.mail.GoogleMailSession
 import com.bopr.android.smailer.messenger.mail.MailMessage
 import com.bopr.android.smailer.messenger.telegram.TelegramSession
+import com.bopr.android.smailer.provider.telephony.PhoneCallData
 import com.bopr.android.smailer.provider.telephony.PhoneCallEventProcessor
 import com.bopr.android.smailer.provider.telephony.PhoneCallEventProcessor.Companion.processPhoneCall
-import com.bopr.android.smailer.provider.telephony.PhoneCallData
 import com.bopr.android.smailer.sync.Synchronizer
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_DOWNLOAD
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_UPLOAD
 import com.bopr.android.smailer.ui.InfoDialog.Companion.showInfoDialog
-import com.bopr.android.smailer.util.BatteryOptimizationRequest.Companion.requireIgnoreBatteryOptimization
+import com.bopr.android.smailer.util.BackgroundActivityHelper
 import com.bopr.android.smailer.util.DEVICE_NAME
 import com.bopr.android.smailer.util.GeoLocation.Companion.getGeoLocation
 import com.bopr.android.smailer.util.Logger
@@ -85,7 +85,7 @@ import com.google.api.services.drive.DriveScopes.DRIVE_APPDATA
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
 import java.io.File
-import java.lang.System.*
+import java.lang.System.currentTimeMillis
 
 /**
  * For debug purposes.
@@ -94,11 +94,10 @@ import java.lang.System.*
  */
 class DebugFragment : PreferenceFragmentCompat() {
 
-    private lateinit var authorization: GoogleAuthorizationHelper
-    private lateinit var notifications: NotificationsHelper
-    private lateinit var accountsHelper: AccountsHelper
+    private lateinit var authorizationHelper: GoogleAuthorizationHelper
     private lateinit var smsSendStatusReceiver: BroadcastReceiver
     private lateinit var smsDeliveryStatusReceiver: BroadcastReceiver
+    private lateinit var backgroundActivityHelper: BackgroundActivityHelper
     private val developerEmail by lazy { getString(R.string.developer_email) }
 
     //    private val requestPermissionLauncher =
@@ -110,7 +109,7 @@ class DebugFragment : PreferenceFragmentCompat() {
         super.onCreate(savedInstanceState)
         preferenceManager.sharedPreferencesName = sharedPreferencesName
 
-        authorization = GoogleAuthorizationHelper(
+        authorizationHelper = GoogleAuthorizationHelper(
             requireActivity(), PREF_MAIL_SENDER_ACCOUNT, MAIL_GOOGLE_COM, DRIVE_APPDATA
         )
 
@@ -121,13 +120,18 @@ class DebugFragment : PreferenceFragmentCompat() {
         smsDeliveryStatusReceiver = DeliveryStatusReceiver().also {
             registerReceiver(it, IntentFilter("SMS_DELIVERED"))
         }
+
+        backgroundActivityHelper = BackgroundActivityHelper(requireActivity()) {
+            showComplete()
+        }
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         /* do not use fragment's context. see: https://developer.android.com/guide/topics/ui/settings/programmatic-hierarchy*/
         val context = preferenceManager.context
         val screen = preferenceManager.createPreferenceScreen(context)
-        addCategory(screen, "Event processing",
+        addCategory(
+            screen, "Event processing",
             addPreference("Process single event") {
                 onProcessSingle()
             },
@@ -138,17 +142,20 @@ class DebugFragment : PreferenceFragmentCompat() {
                 onSendSms()
             }
         )
-        addCategory(screen, "Telegram",
+        addCategory(
+            screen, "Telegram",
             addPreference("Send debug message") {
                 onSendTelegramMessage()
             }
         )
-        addCategory(screen, "Email",
+        addCategory(
+            screen, "Email",
             addPreference("Send debug mail") {
                 onSendDebugMail(it)
             }
         )
-        addCategory(screen, "Settings",
+        addCategory(
+            screen, "Settings",
             addPreference("Populate settings") {
                 onSetDebugPreferences()
             },
@@ -161,11 +168,12 @@ class DebugFragment : PreferenceFragmentCompat() {
             addPreference("Put invalid account") {
                 onPutInvalidAccount()
             },
-            addPreference("Require battery optimisation disabled") {
-                requireActivity().requireIgnoreBatteryOptimization()
+            addPreference("Check ignoring battery optimisation") {
+                backgroundActivityHelper.check()
             }
         )
-        addCategory(screen, "Google drive",
+        addCategory(
+            screen, "Google drive",
             addPreference("Download from drive") {
                 onGoogleDriveDownload(it)
             },
@@ -179,7 +187,8 @@ class DebugFragment : PreferenceFragmentCompat() {
                 onGoogleDriveSync(it)
             }
         )
-        addCategory(screen, "Firebase",
+        addCategory(
+            screen, "Firebase",
             addPreference("Send message") {
                 requireContext().firebase.send(FCM_REQUEST_DATA_SYNC)
             },
@@ -225,12 +234,14 @@ class DebugFragment : PreferenceFragmentCompat() {
                 showComplete()
             }
         )
-        addCategory(screen, "Permissions",
+        addCategory(
+            screen, "Permissions",
             addPreference("Request gmail api permission") {
                 onRequestGooglePermission()
             }
         )
-        addCategory(screen, "Logging",
+        addCategory(
+            screen, "Logging",
             addPreference("Send logs to developer") {
                 onSendLog(it)
             },
@@ -238,19 +249,22 @@ class DebugFragment : PreferenceFragmentCompat() {
                 onClearLogs()
             }
         )
-        addCategory(screen, "Notifications",
+        addCategory(
+            screen, "Notifications",
             addPreference("Cancel errors") {
                 notifications.cancelError(NTF_GOOGLE_ACCOUNT)
                 notifications.cancelError(NTF_SERVICE_ACCOUNT)
                 notifications.cancelError(NTF_MAIL_RECIPIENTS)
             }
         )
-        addCategory(screen, "Email remote control",
+        addCategory(
+            screen, "Email remote control",
             addPreference("Process service mail") {
                 onProcessServiceMail(it)
             }
         )
-        addCategory(screen, "Other",
+        addCategory(
+            screen, "Other",
             addPreference("Get geolocation") {
                 onGetGeoLocation(it)
             },
@@ -288,7 +302,7 @@ class DebugFragment : PreferenceFragmentCompat() {
             attachments.addAll(it)
         }
 
-        val account = accountsHelper.requirePrimaryGoogleAccount()
+        val account = accounts.requirePrimaryGoogleAccount()
         val session = GoogleMailSession(context, account, GMAIL_SEND)
         for (file in attachments) {
             val message = MailMessage(
@@ -299,7 +313,8 @@ class DebugFragment : PreferenceFragmentCompat() {
                 recipients = developerEmail
             )
 
-            session.send(message,
+            session.send(
+                message,
                 onSuccess = {
                     progress.stop()
                     showComplete()
@@ -314,7 +329,7 @@ class DebugFragment : PreferenceFragmentCompat() {
 
     private fun onSendDebugMail(preference: Preference) {
         val progress = PreferenceProgress(preference).apply { start() }
-        val account = accountsHelper.requirePrimaryGoogleAccount()
+        val account = accounts.requirePrimaryGoogleAccount()
 
         val message = MailMessage(
             from = account.name,
@@ -466,7 +481,7 @@ class DebugFragment : PreferenceFragmentCompat() {
     }
 
     private fun onRequestGooglePermission() {
-        authorization.startAccountPicker()
+        authorizationHelper.startAccountPicker()
     }
 
     private fun onProcessSingle() {
@@ -709,7 +724,7 @@ class DebugFragment : PreferenceFragmentCompat() {
     private fun onShowAccounts() {
         val s = "Selected: ${senderAccount().name}\n\n" +
                 "Service: ${serviceAccount().name}\n\n" +
-                "Primary: ${accountsHelper.getPrimaryGoogleAccount()?.name}"
+                "Primary: ${accounts.getPrimaryGoogleAccount()?.name}"
         showInfoDialog("Accounts", s)
     }
 
@@ -739,11 +754,11 @@ class DebugFragment : PreferenceFragmentCompat() {
     }
 
     private fun senderAccount(): Account {
-        return accountsHelper.requireGoogleAccount(settings.getString(PREF_MAIL_SENDER_ACCOUNT))
+        return accounts.requireGoogleAccount(settings.getString(PREF_MAIL_SENDER_ACCOUNT))
     }
 
     private fun serviceAccount(): Account {
-        return accountsHelper.requireGoogleAccount(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT))
+        return accounts.requireGoogleAccount(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT))
     }
 
     private fun runBackgroundGoogleDriveTask(

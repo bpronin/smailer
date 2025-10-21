@@ -222,6 +222,10 @@
     <string name="you_had_outgoing_call">You had an outgoing call of %s duration.</string>
     <string name="how_to_obtain_telegram_bot_token">To obtain token open @BotFather chat in Telegram app  
         and send /mybots command. Choose your SMS bot and then tap \"API Token\".</string>
+    <string name="background_activity_restricted_title">Background Activity Restricted</string>
+    <string name="background_activity_restricted_reason">For the app to work reliably in the background, please allow it to use background activity. On the next screen, go to the "App battery usage" section and ensure the "Allow background activity" switch is enabled.</string>
+    <string name="settings_title">Settings</string>
+    <string name="ask_later">Ask later</string>
 
     <plurals name="items_removed">
         <item quantity="one">Item removed</item>

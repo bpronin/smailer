@@ -11,6 +11,7 @@ import com.bopr.android.smailer.util.Logger
 import com.bopr.android.smailer.util.SingletonHolder
 import com.bopr.android.smailer.util.commaJoin
 import com.bopr.android.smailer.util.commaSplit
+import androidx.core.content.edit
 
 /**
  * Application settings. Wrapper for [SharedPreferences].
@@ -114,9 +115,9 @@ class Settings private constructor(context: Context) {
     }
 
     fun update(action: Editor.() -> Unit) {
-        val edit = preferences.edit()
-        Editor(edit).action()
-        edit.apply()
+        preferences.edit {
+            Editor(this).action()
+        }
     }
 
     inner class Editor(private val wrapped: SharedPreferences.Editor) {
@@ -196,23 +197,23 @@ class Settings private constructor(context: Context) {
         const val PREF_REMOTE_CONTROL_FILTER_RECIPIENTS = "remote_control_filter_recipients"
         const val PREF_REMOTE_CONTROL_NOTIFICATIONS = "remote_control_notifications"
         const val PREF_SETTINGS_VERSION = "settings_version"
-        const val PREF_SMS_MESSENGER_ENABLED = "pref_sms_messenger_enabled"
-        const val PREF_SMS_MESSENGER_RECIPIENTS = "pref_sms_messenger_recipients"
+        const val PREF_SMS_MESSENGER_ENABLED = "sms_messenger_enabled"
+        const val PREF_SMS_MESSENGER_RECIPIENTS = "sms_messenger_recipients"
         const val PREF_SYNC_ENABLED = "sync_enabled"
         const val PREF_TELEGRAM_BOT_TOKEN = "telegram_bot_token"
         const val PREF_TELEGRAM_CHAT_ID = "telegram_chat_id"
-        const val PREF_TELEGRAM_MESSAGE_CONTENT = "pref_telegram_message_content"
-        const val PREF_TELEGRAM_MESSENGER_ENABLED = "pref_telegram_messenger_enabled"
+        const val PREF_TELEGRAM_MESSAGE_CONTENT = "telegram_message_content"
+        const val PREF_TELEGRAM_MESSENGER_ENABLED = "telegram_messenger_enabled"
 
         const val VAL_PREF_DEFAULT = "default"
-        const val VAL_PREF_MESSAGE_CONTENT_BODY = "val_pref_message_content_body"
-        const val VAL_PREF_MESSAGE_CONTENT_CALLER = "val_pref_message_content_caller"
-        const val VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS = "val_pref_message_content_control_links"
-        const val VAL_PREF_MESSAGE_CONTENT_CREATION_TIME = "val_pref_message_content_event_time"
-        const val VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME = "val_pref_message_content_device_name"
-        const val VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME = "val_pref_message_content_dispatch_time"
-        const val VAL_PREF_MESSAGE_CONTENT_HEADER = "val_pref_message_content_header"
-        const val VAL_PREF_MESSAGE_CONTENT_LOCATION = "val_pref_message_content_location"
+        const val VAL_PREF_MESSAGE_CONTENT_BODY = "message_content_body"
+        const val VAL_PREF_MESSAGE_CONTENT_CALLER = "message_content_caller"
+        const val VAL_PREF_MESSAGE_CONTENT_CONTROL_LINKS = "message_content_control_links"
+        const val VAL_PREF_MESSAGE_CONTENT_CREATION_TIME = "message_content_event_time"
+        const val VAL_PREF_MESSAGE_CONTENT_DEVICE_NAME = "message_content_device_name"
+        const val VAL_PREF_MESSAGE_CONTENT_DISPATCH_TIME = "message_content_dispatch_time"
+        const val VAL_PREF_MESSAGE_CONTENT_HEADER = "message_content_header"
+        const val VAL_PREF_MESSAGE_CONTENT_LOCATION = "message_content_location"
         const val VAL_PREF_TRIGGER_IN_CALLS = "in_calls"
         const val VAL_PREF_TRIGGER_IN_SMS = "in_sms"
         const val VAL_PREF_TRIGGER_MISSED_CALLS = "missed_calls"

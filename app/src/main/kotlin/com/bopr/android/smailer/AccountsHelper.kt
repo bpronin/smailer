@@ -6,9 +6,10 @@ import android.accounts.AccountManager.KEY_ACCOUNT_NAME
 import android.app.Activity
 import android.content.Context
 import androidx.annotation.RequiresPermission
+import androidx.fragment.app.Fragment
 import com.bopr.android.smailer.util.SingletonHolder
 
-class AccountsHelper private constructor (context: Context) {
+class AccountsHelper private constructor(context: Context) {
 
     private val manager = AccountManager.get(context)
 
@@ -71,10 +72,11 @@ class AccountsHelper private constructor (context: Context) {
         )
     }
 
-    companion object{
+    companion object {
 
-        private val singletonHolder = SingletonHolder{ AccountsHelper(it) }
+        private val singletonHolder = SingletonHolder { AccountsHelper(it) }
         val Context.accounts get() = singletonHolder.getInstance(this)
+        val Fragment.accounts get() = requireContext().accounts
     }
 
 //    /**

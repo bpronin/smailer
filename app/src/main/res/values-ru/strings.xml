@@ -221,6 +221,10 @@
     <string name="you_had_outgoing_call">Исходящий звонок длительностью %s.</string>
     <string name="how_to_obtain_telegram_bot_token">Для получения токена в приложении Telegram откройте чат с @BotFather 
         и отправьте команду /mybots. Выберите вашего бота для SMS и затем \"API Token\". </string>
+    <string name="background_activity_restricted_title">Фоновая активность ограничена</string>
+    <string name="background_activity_restricted_reason">Для надежной работы приложения в фоновом режиме, пожалуйста, разрешите ему фоновую активность. На следующем экране перейдите в раздел \"Расход заряда батареи\" (или \"App battery usage\") и убедитесь, что переключатель \"Разрешить фоновую активность\" (или \"Allow background activity\") включен.</string>
+    <string name="settings_title">Настройки</string>
+    <string name="ask_later">Спросить позже</string>
 
     <plurals name="items_removed">
         <item quantity="one">%d запись удалена</item>
