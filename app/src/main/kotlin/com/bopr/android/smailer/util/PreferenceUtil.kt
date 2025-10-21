@@ -55,6 +55,7 @@ class PreferenceProgress(
         running = true
         originalIcon = preference.icon
         preference.icon = progressIcon
+        preference.isEnabled = false
         progressIcon.start()
     }
 
@@ -62,6 +63,7 @@ class PreferenceProgress(
         running = false
         progressIcon.stop()
         preference.icon = originalIcon
+        preference.isEnabled = true
     }
 }
 

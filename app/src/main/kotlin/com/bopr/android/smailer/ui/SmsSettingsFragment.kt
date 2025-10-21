@@ -19,7 +19,7 @@ import com.bopr.android.smailer.util.updateSummary
 /**
  * SMS messenger settings fragment.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 class SmsSettingsFragment : BasePreferenceFragment(R.xml.pref_sms_settings) {
 
@@ -77,6 +77,6 @@ class SmsSettingsFragment : BasePreferenceFragment(R.xml.pref_sms_settings) {
 
     companion object {
 
-        private const val PREF_SEND_TEST_SMS = "pref_send_test_sms"
+        private const val PREF_SEND_TEST_SMS = "send_test_sms"
     }
 }

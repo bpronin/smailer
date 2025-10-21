@@ -2,7 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <SwitchPreference
-            android:key="pref_telegram_messenger_enabled"
+            android:key="telegram_messenger_enabled"
             android:icon="@drawable/ic_telegram"
             android:title="@string/enabled" />
 
@@ -18,7 +18,7 @@
             android:dialogTitle="@string/message_content"
             android:entries="@array/telegram_message_content_names"
             android:entryValues="@array/telegram_message_content_values"
-            android:key="pref_telegram_message_content"
+            android:key="telegram_message_content"
             android:title="@string/message_content" />
 
     <PreferenceCategory>

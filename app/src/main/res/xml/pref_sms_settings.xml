@@ -2,7 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <SwitchPreference
-            android:key="pref_sms_messenger_enabled"
+            android:key="sms_messenger_enabled"
             android:icon="@drawable/ic_email"
             android:title="@string/enabled" />
 
@@ -10,7 +10,7 @@
 
         <Preference
                 android:icon="@drawable/ic_recipient"
-                android:key="pref_sms_messenger_recipients"
+                android:key="sms_messenger_recipients"
                 android:title="@string/recipients">
             <intent
                     android:targetClass="com.bopr.android.smailer.ui.SmsRecipientsActivity"
@@ -21,7 +21,7 @@
     <PreferenceCategory>
 
         <Preference
-                android:key="pref_send_test_sms"
+                android:key="send_test_sms"
                 android:icon="@drawable/ic_test_message"
                 android:title="@string/test_settings"
                 android:summary="@string/send_test_sms_to_check_your_settings" />
