@@ -45,8 +45,8 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        versionCode = 107
-        versionName = "1.11.2"
+        versionCode = 108
+        versionName = "1.11.3"
         applicationId = "com.bopr.android.smailer"
         minSdk = 23
         /* check action bar not overlapping content when migrating to 35
@@ -137,9 +137,9 @@ android {
 
 dependencies {
     implementation("androidx.core:core-ktx:1.17.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
-    implementation("androidx.work:work-runtime-ktx:2.10.5")
+    implementation("androidx.work:work-runtime-ktx:2.11.0")
     implementation("com.android.volley:volley:1.2.1")
     implementation("com.google.android.gms:play-services-auth:21.4.0")
     implementation("com.google.android.gms:play-services-location:21.3.0")
