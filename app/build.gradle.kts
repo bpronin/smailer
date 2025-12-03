@@ -84,20 +84,12 @@ android {
             resValue("string", "debug_telegram_token", localProperties.getProperty("debug_telegram_token"))
         }
         release {
-            manifestPlaceholders += mapOf("crashlyticsEnabled" to "true")
+            manifestPlaceholders += mapOf("crashlyticsEnabled" to "false")
             signingConfig = signingConfigs.getByName("release")
             isDebuggable = false
-            isShrinkResources = true
-            isMinifyEnabled = true
-        }
-//        create("staging") { /* minified debuggable */
-//            signingConfig = signingConfigs.getByName("debug")
-//            isDebuggable = true
 //            isShrinkResources = true
 //            isMinifyEnabled = true
-//            manifestPlaceholders += mapOf("crashlyticsEnabled" to "false")
-//            sourceSets +=
-//        }
+        }
     }
 
     flavorDimensions += listOf("main")
