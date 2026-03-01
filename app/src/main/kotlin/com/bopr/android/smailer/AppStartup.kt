@@ -4,6 +4,8 @@ import android.content.Context
 import com.bopr.android.smailer.backup.AppBackupManager.Companion.startAndroidBackup
 import com.bopr.android.smailer.control.firebase.FirebaseControlManager.Companion.startFirebaseMessaging
 import com.bopr.android.smailer.control.mail.MailControlManager.Companion.startMailControl
+import com.bopr.android.smailer.control.web.WebServerManager
+import com.bopr.android.smailer.control.web.WebServerManager.Companion.startWebServer
 import com.bopr.android.smailer.provider.telephony.ContentObserverManager.Companion.startContentObserver
 import com.bopr.android.smailer.sync.SyncManager.Companion.startGoogleCloudSync
 
@@ -20,6 +22,7 @@ object AppStartup {
         startGoogleCloudSync()
         startFirebaseMessaging()
         startAndroidBackup()
+        startWebServer()
     }
 
 }

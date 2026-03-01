@@ -257,6 +257,15 @@ class DebugFragment : PreferenceFragmentCompat() {
                 notifications.cancelError(NTF_MAIL_RECIPIENTS)
             }
         )
+//        addCategory(
+//            screen, "Web remote control",
+//            addPreference("Start server") {
+//                onStartWebServer(it)
+//            },
+//            addPreference("Stop server") {
+//                onStopWebServer(it)
+//            }
+//        )
         addCategory(
             screen, "Email remote control",
             addPreference("Process service mail") {
@@ -503,7 +512,7 @@ class DebugFragment : PreferenceFragmentCompat() {
             onPerform = {
                 PhoneCallEventProcessor(requireContext()).process()
             },
-            onSuccess = { it ->
+            onSuccess = {
                 showInfoDialog("Event processing", "$it events processed")
             },
             onError = { error ->
@@ -812,7 +821,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                     "Unknown error"
             }
 
-            showInfoDialog("SMS", message)
+            this@DebugFragment.showInfoDialog("SMS", message)
         }
     }
 
@@ -830,7 +839,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                     "Message not delivered"
             }
 
-            showInfoDialog("SMS", message)
+            this@DebugFragment.showInfoDialog("SMS", message)
         }
     }
 

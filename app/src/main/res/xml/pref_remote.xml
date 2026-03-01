@@ -22,4 +22,9 @@
             android:key="remote_control_process_service_mail"
             android:title="@string/process_service_mail" />
 
+    <PreferenceScreen
+        android:title="Web Server">
+        <intent android:action="com.bopr.android.smailer.ui.WebServerSettingsActivity"/>
+    </PreferenceScreen>
+
 </PreferenceScreen>

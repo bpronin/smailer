@@ -136,6 +136,11 @@
                 android:parentActivityName=".ui.MessengersActivity" />
 
         <activity
+                android:name=".ui.WebServerSettingsActivity"
+                android:label="Web Server"
+                android:parentActivityName=".ui.RemoteControlActivity" />
+
+        <activity
                 android:name=".ui.SmsRecipientsActivity"
                 android:label="@string/recipients"
                 android:parentActivityName=".ui.SmsSettingsActivity" />
