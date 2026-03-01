@@ -10,7 +10,7 @@
     <user_dir>/.android/debug.keystore (password "android") to api console:
     https://console.developers.google.com/apis/credentials/oauthclient/376904884028-f0m6ki37c8b4cf93aktk0jgag3tiu922.apps.googleusercontent.com?project=smailer-24874
 
-    Uninstall all application"s apk-s from device before running tests cause they may lead to unpredictable results
+    Uninstall all application's apk-s from device before running tests cause they may lead to unpredictable results
 
 */
 
@@ -36,7 +36,7 @@ val localProperties = Properties().apply {
     file.reader().use(::load)
 }
 
-val keyStore = rootProject.file("keystore.p12").apply {
+val keyStore: File = rootProject.file("keystore.p12").apply {
     if (!exists()) throw InvalidUserDataException("Required file $this")
 }
 
@@ -139,16 +139,16 @@ dependencies {
     implementation("androidx.core:core-ktx:1.17.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
-    implementation("androidx.work:work-runtime-ktx:2.11.0")
+    implementation("androidx.work:work-runtime-ktx:2.11.1")
     implementation("com.android.volley:volley:1.2.1")
-    implementation("com.google.android.gms:play-services-auth:21.4.0")
+    implementation("com.google.android.gms:play-services-auth:21.5.1")
     implementation("com.google.android.gms:play-services-location:21.3.0")
     implementation("com.google.android.material:material:1.13.0")
-    implementation("com.google.api-client:google-api-client-android:2.8.1")
+    implementation("com.google.api-client:google-api-client-android:2.9.0")
     implementation("com.google.apis:google-api-services-drive:v3-rev99-1.23.0")
     implementation("com.google.apis:google-api-services-gmail:v1-rev98-1.25.0")
     implementation("com.google.firebase:firebase-analytics:23.0.0")
-    implementation("com.google.firebase:firebase-crashlytics:20.0.3")
+    implementation("com.google.firebase:firebase-crashlytics:20.0.4")
     implementation("com.google.firebase:firebase-messaging:25.0.1")
     implementation("com.sun.mail:android-mail:1.6.8")
 
@@ -162,7 +162,7 @@ dependencies {
     androidTestImplementation("androidx.test:rules:1.7.0")
     androidTestImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
     androidTestImplementation("junit:junit:4.13.2")
-    androidTestImplementation("org.mockito:mockito-android:5.20.0")
+    androidTestImplementation("org.mockito:mockito-android:5.22.0")
 }
 
 allOpen {
