@@ -49,9 +49,7 @@ android {
         versionName = "1.11.3"
         applicationId = "com.bopr.android.smailer"
         minSdk = 23
-        /* check action bar not overlapping content when migrating to 35
-        * see also: https://developer.android.com/develop/ui/views/layout/edge-to-edge#kts*/
-        targetSdk = 34
+        targetSdk = 35
         base.archivesName = "smailer-$versionName"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -152,7 +150,7 @@ dependencies {
     implementation("com.google.firebase:firebase-messaging:25.0.1")
     implementation("com.sun.mail:android-mail:1.6.8")
 
-    "freeImplementation"("com.google.android.gms:play-services-ads:24.7.0")
+    "freeImplementation"("com.google.android.gms:play-services-ads:25.0.0")
 
     testImplementation("junit:junit:4.13.2")
 
