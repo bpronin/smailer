@@ -29,27 +29,27 @@ plugins {
 }
 
 val localProperties = Properties().apply {
-    val file = rootProject.file("local.properties").let {
+    rootProject.file("local.properties").let {
         if (it.exists()) it else rootProject.file(".github/workflows/local.properties")
-    }
-
-    file.reader().use(::load)
+    }.reader().use(::load)
 }
 
-val keyStore: File = rootProject.file("keystore.p12").apply {
-    if (!exists()) throw InvalidUserDataException("Required file $this")
+fun getLocalProperty(name: String): String {
+    return localProperties.getProperty(name) ?: ""
 }
 
-android {
+android{
+//extensions.configure<ApplicationExtension> {
     namespace = "com.bopr.android.smailer"
     compileSdk = 36
 
     defaultConfig {
+        minSdk = 23
+        //noinspection OldTargetApi
+        targetSdk = 35
         versionCode = 108
         versionName = "1.11.3"
         applicationId = "com.bopr.android.smailer"
-        minSdk = 23
-        targetSdk = 35
         base.archivesName = "smailer-$versionName"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -57,10 +57,12 @@ android {
 
     signingConfigs {
         create("release") {
-            keyAlias = "sample"
-            storeFile = keyStore
-            storePassword = localProperties.getProperty("store_password")
-            keyPassword = localProperties.getProperty("key_password")
+            keyAlias = getLocalProperty("key_alias")
+            storeFile = rootProject.file("keystore.p12").apply {
+                if (!exists()) throw InvalidUserDataException("Required file $this")
+            }
+            storePassword = getLocalProperty("store_password")
+            keyPassword = getLocalProperty("key_password")
         }
     }
 
@@ -69,8 +71,8 @@ android {
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
-            resValue("string", "developer_email", localProperties.getProperty("developer_email"))
-            resValue("string", "fcm_server_key", localProperties.getProperty("fcm_server_key"))
+            resValue("string", "developer_email", getLocalProperty("developer_email"))
+            resValue("string", "fcm_server_key", getLocalProperty("fcm_server_key"))
         }
         debug {
             manifestPlaceholders += mapOf("crashlyticsEnabled" to "false")
@@ -79,14 +81,18 @@ android {
             isShrinkResources = false
             isMinifyEnabled = false
             isDefault = true
-            resValue("string", "debug_telegram_token", localProperties.getProperty("debug_telegram_token"))
+            resValue(
+                "string",
+                "debug_telegram_token",
+                getLocalProperty("debug_telegram_token")
+            )
         }
         release {
             manifestPlaceholders += mapOf("crashlyticsEnabled" to "false")
             signingConfig = signingConfigs.getByName("release")
             isDebuggable = false
-//            isShrinkResources = true
-//            isMinifyEnabled = true
+            isShrinkResources = true
+            isMinifyEnabled = true
         }
     }
 
@@ -188,15 +194,15 @@ tasks.register("updateReleaseInfo") {
 }
 
 tasks.register<Copy>("uploadRelease") {
-    val uploadPath = localProperties.getProperty("upload_path")
-    
+    val uploadPath = getLocalProperty("upload_path")
+
     from(
         fileTree(layout.buildDirectory.dir("outputs/apk/free")).files,
         fileTree(layout.buildDirectory.dir("outputs/apk/paid")).files
     )
     into(uploadPath)
-    include("**/*.apk") 
-    
+    include("**/*.apk")
+
     doLast {
         logger.lifecycle("Uploaded release APK to $uploadPath.")
     }

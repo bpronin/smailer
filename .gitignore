@@ -3,5 +3,5 @@
 .gradle
 .idea
 .kotlin
-keystore.p12
+app/keystore.p12
 local.properties
