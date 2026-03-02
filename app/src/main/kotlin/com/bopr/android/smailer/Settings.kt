@@ -40,8 +40,7 @@ class Settings private constructor(context: Context) {
             ifNotExists(PREF_EMAIL_REMOTE_CONTROL_ENABLED) { putBoolean(it, false) }
             ifNotExists(PREF_EMAIL_REMOTE_CONTROL_FILTER_RECIPIENTS) { putBoolean(it, true) }
             ifNotExists(PREF_WEB_REMOTE_CONTROL_ENABLED) { putBoolean(it, false) }
-            ifNotExists(PREF_WEB_SERVER_HOST) { putString(it, "0.0.0.0") }
-            ifNotExists(PREF_WEB_SERVER_PORT) { putString(it, "48958") }
+            ifNotExists(PREF_WEB_SERVER_PORT) { putString(it, DEFAULT_WEB_SERVER_PORT) }
             ifNotExists(PREF_EMAIL_REMOTE_CONTROL_NOTIFICATIONS) { putBoolean(it, true) }
             ifNotExists(PREF_SMS_MESSENGER_ENABLED) { putBoolean(it, false) }
             ifNotExists(PREF_TELEGRAM_MESSENGER_ENABLED) { putBoolean(it, true) }
@@ -199,7 +198,6 @@ class Settings private constructor(context: Context) {
         const val PREF_EMAIL_REMOTE_CONTROL_ENABLED = "email_remote_control_enabled"
         const val PREF_EMAIL_REMOTE_CONTROL_FILTER_RECIPIENTS = "email_remote_control_filter_recipients"
         const val PREF_WEB_REMOTE_CONTROL_ENABLED = "web_remote_control_enabled"
-        const val PREF_WEB_SERVER_HOST = "web_server_host"
         const val PREF_WEB_SERVER_PORT = "web_server_port"
         const val PREF_EMAIL_REMOTE_CONTROL_NOTIFICATIONS = "email_remote_control_notifications"
         const val PREF_SETTINGS_VERSION = "settings_version"
@@ -227,7 +225,8 @@ class Settings private constructor(context: Context) {
         const val VAL_PREF_TRIGGER_OUT_SMS = "out_sms"
 
         const val DEFAULT_PHONE_SEARCH_URL = "https://www.google.com/search?q=$PHONE_SEARCH_TAG"
-
+        const val DEFAULT_WEB_SERVER_PORT  = "8888"
+        
         private val singletonHolder = SingletonHolder { Settings(it) }
         val Context.settings get() = singletonHolder.getInstance(this)
         val Fragment.settings get() = requireContext().settings

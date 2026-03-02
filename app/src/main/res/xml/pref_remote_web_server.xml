@@ -2,19 +2,24 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <SwitchPreference
-        android:defaultValue="false"
-        android:key="web_remote_control_enabled"
-        android:title="@string/enable_web_remote_control" />
+            android:key="web_remote_control_enabled"
+            android:defaultValue="false"
+            android:title="@string/enable_web_remote_control" />
 
     <EditTextPreference
-        android:dependency="web_remote_control_enabled"
-        android:key="web_server_host"
-        android:title="@string/web_server_host" />
+            android:key="web_server_port"
+            android:inputType="number"
+            android:title="@string/web_server_port" />
 
-    <EditTextPreference
-        android:dependency="web_remote_control_enabled"
-        android:inputType="number"
-        android:key="web_server_port"
-        android:title="@string/web_server_port" />
+    <PreferenceCategory>
+
+        <Preference
+                android:key="test_web_server"
+                android:icon="@drawable/ic_test_message"
+                android:title="@string/test_settings"
+                android:dependency="web_remote_control_enabled"
+                android:summary="@string/open_browser_at_localhost" />
+
+    </PreferenceCategory>
 
 </PreferenceScreen>

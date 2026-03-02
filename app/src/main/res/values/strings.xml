@@ -226,12 +226,14 @@
     <string name="background_activity_restricted_reason">For the app to work reliably in the background, please allow it to use background activity. On the next screen, go to the "App battery usage" section and ensure the "Allow background activity" switch is enabled.</string>
     <string name="settings_title">Settings</string>
     <string name="ask_later">Ask later</string>
-    <string name="web">Web</string>
+    <string name="web" translatable="false">Web</string>
     <string name="web_remote_control">Web remote control</string>
     <string name="email_remote_control">Email remote control</string>
     <string name="enable_web_remote_control">Enable web control</string>
     <string name="web_server_host">Server host</string>
     <string name="web_server_port">Server port</string>
+    <string name="test_web_server">Test server</string>
+    <string name="open_browser_at_localhost">Open browser at %s</string>
 
     <plurals name="items_removed">
         <item quantity="one">Item removed</item>
