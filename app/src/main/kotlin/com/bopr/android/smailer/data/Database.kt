@@ -77,7 +77,7 @@ class Database private constructor(private val context: Context) : Closeable {
 
     /**
      * Performs specified action then updates modification time, fires change event
-     * and requests google drive synchronization.
+     * and requests Google Drive synchronization.
      */
     fun <T> commit(action: Database.() -> T): T {
         val result = action(this)
@@ -148,7 +148,7 @@ class Database private constructor(private val context: Context) : Closeable {
     private fun updateSystemTable(values: ContentValues) =
         helper.write { updateRecords(TABLE_SYSTEM, values, "$COLUMN_ID=0") }
 
-    inner class DbHelper() :
+    inner class DbHelper :
         SQLiteOpenHelper(context, DATABASE_NAME, null, DB_VERSION) {
 
         override fun onCreate(db: SQLiteDatabase) {

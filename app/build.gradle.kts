@@ -119,14 +119,13 @@ android{
     packaging {
         resources {
             pickFirsts += listOf(
-                "META-INF/*",
-//                "META-INF/DEPENDENCIES",
-//                "META-INF/LICENSE.txt",
-//                "META-INF/LICENSE.md",
-//                "META-INF/NOTICE.md",
-//                "META-INF/kotlinx-html.kotlin_module",
-//                "META-INF/INDEX.LIST",
-//                "META-INF/io.netty.versions.properties",
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE.txt",
+                "META-INF/LICENSE.md",
+                "META-INF/NOTICE.md",
+                "META-INF/kotlinx-html.kotlin_module",
+                "META-INF/INDEX.LIST",
+                "META-INF/io.netty.versions.properties",
             )
         }
     }
@@ -161,6 +160,7 @@ dependencies {
     implementation("com.sun.mail:android-mail:1.6.8")
     implementation ("io.ktor:ktor-server-core:3.4.0")
     implementation ("io.ktor:ktor-server-netty:3.4.0")
+    implementation ("io.ktor:ktor-server-html-builder:3.4.0")
     
     "freeImplementation"("com.google.android.gms:play-services-ads:25.0.0")
 
