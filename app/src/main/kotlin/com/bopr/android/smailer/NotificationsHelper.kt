@@ -21,7 +21,7 @@ import androidx.fragment.app.Fragment
 import com.bopr.android.smailer.AccountsHelper.Companion.accounts
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
-import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.ui.MainActivity
 import com.bopr.android.smailer.util.Mockable
 import com.bopr.android.smailer.util.SingletonHolder
@@ -119,9 +119,9 @@ class NotificationsHelper private constructor(private val context: Context) :
                     cancelError(NTF_GOOGLE_ACCOUNT)
                 }
 
-            PREF_REMOTE_CONTROL_ACCOUNT ->
+            PREF_EMAIL_REMOTE_CONTROL_ACCOUNT ->
                 if (context.accounts.isGoogleAccountExists(
-                        settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
+                        settings.getString(PREF_EMAIL_REMOTE_CONTROL_ACCOUNT)
                     )
                 ) {
                     cancelError(NTF_SERVICE_ACCOUNT)

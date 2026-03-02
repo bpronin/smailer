@@ -1,30 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <SwitchPreference
-            android:key="remote_control_enabled"
-            android:title="@string/allow_control_remotely" />
-
-    <PreferenceScreen
-            android:icon="@drawable/ic_account_round"
-            android:key="remote_control_account"
-            android:title="@string/remote_control_account" />
-
-    <SwitchPreference
-            android:key="remote_control_notifications"
-            android:title="@string/notify_remote_actions" />
-
-    <SwitchPreference
-            android:key="remote_control_filter_recipients"
-            android:title="@string/allow_only_recipients" />
+    <Preference
+            android:key="email_remote_control"
+            android:title="@string/email"
+            android:icon="@drawable/ic_email">
+        <intent
+                android:targetClass="com.bopr.android.smailer.ui.EmailRemoteControlActivity"
+                android:targetPackage="com.bopr.android.smailer" />
+    </Preference>
 
     <Preference
-            android:key="remote_control_process_service_mail"
-            android:title="@string/process_service_mail" />
-
-    <PreferenceScreen
-        android:title="Web Server">
-        <intent android:action="com.bopr.android.smailer.ui.WebServerSettingsActivity"/>
-    </PreferenceScreen>
-
+            android:key="web_remote_control"
+            android:title="@string/web"
+            android:icon="@drawable/ic_language">
+        <intent
+                android:targetClass="com.bopr.android.smailer.ui.WebServerRemoteControlActivity"
+                android:targetPackage="com.bopr.android.smailer" />
+    </Preference>
 </PreferenceScreen>

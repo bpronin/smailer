@@ -8,7 +8,7 @@ import androidx.work.PeriodicWorkRequest
 import androidx.work.PeriodicWorkRequest.Companion.MIN_PERIODIC_INTERVAL_MILLIS
 import androidx.work.WorkManager
 import com.bopr.android.smailer.Settings
-import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.SettingsAware
 import com.bopr.android.smailer.util.Logger
 import com.bopr.android.smailer.util.SingletonHolder
@@ -25,7 +25,7 @@ internal class MailControlManager private constructor(context: Context) :
     private val workManager = WorkManager.getInstance(context)
 
     fun startWork() {
-        if (settings.getBoolean(PREF_REMOTE_CONTROL_ENABLED)) {
+        if (settings.getBoolean(PREF_EMAIL_REMOTE_CONTROL_ENABLED)) {
             workManager.enqueueUniquePeriodicWork(
                 WORK_REMOTE_CONTROL,
                 UPDATE,
@@ -53,7 +53,7 @@ internal class MailControlManager private constructor(context: Context) :
     }
 
     override fun onSettingsChanged(settings: Settings, key: String) {
-        if (key == PREF_REMOTE_CONTROL_ENABLED) startWork()
+        if (key == PREF_EMAIL_REMOTE_CONTROL_ENABLED) startWork()
     }
 
     override fun dispose() {

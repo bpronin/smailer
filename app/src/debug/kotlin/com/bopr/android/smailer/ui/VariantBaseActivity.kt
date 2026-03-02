@@ -31,7 +31,7 @@ open class VariantBaseActivity(value: KClass<out Fragment>) : BaseActivity(value
         intent.getStringExtra("target")?.let {
             when (it) {
                 "debug" -> startActivity(DebugActivity::class)
-                "remote_control" -> startActivity(RemoteControlActivity::class)
+                "remote_control" -> startActivity(EmailRemoteControlActivity::class)
                 "rules" -> startActivity(RulesActivity::class)
                 "history" -> startActivity(HistoryActivity::class)
                 else -> Log.e("", "Invalid target: $it")

@@ -147,7 +147,7 @@
     <string name="regular_expression">Регулярное выражение</string>
     <string name="remote_action">Удалённое действие</string>
     <string name="remote_control">Удалённое управление</string>
-    <string name="remote_control_account">Сервисный аккаунт</string>
+    <string name="email_remote_control_account">Сервисный аккаунт</string>
     <string name="remove">Удалить</string>
     <string name="remove_phone_from_filter">Исключить номер из правил</string>
     <string name="remove_text_from_filter">Исключить текст из правил</string>

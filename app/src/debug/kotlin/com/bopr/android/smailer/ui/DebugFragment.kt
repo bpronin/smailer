@@ -32,8 +32,8 @@ import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_MESSAGE_LOCALE
 import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.PREF_PHONE_PROCESS_TRIGGERS
-import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
-import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_REMOTE_CONTROL_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_BOT_TOKEN
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_DEFAULT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
@@ -412,7 +412,7 @@ class DebugFragment : PreferenceFragmentCompat() {
     private fun onSetDebugPreferences() {
         settings.update {
             putString(PREF_MAIL_SENDER_ACCOUNT, developerEmail)
-            putString(PREF_REMOTE_CONTROL_ACCOUNT, developerEmail)
+            putString(PREF_EMAIL_REMOTE_CONTROL_ACCOUNT, developerEmail)
             putStringList(
                 PREF_MAIL_MESSENGER_RECIPIENTS,
                 setOf(developerEmail, "nowhere@mail.com")
@@ -473,7 +473,7 @@ class DebugFragment : PreferenceFragmentCompat() {
     }
 
     private fun onProcessServiceMail(preference: Preference) {
-        if (settings.getBoolean(PREF_REMOTE_CONTROL_ENABLED)) {
+        if (settings.getBoolean(PREF_EMAIL_REMOTE_CONTROL_ENABLED)) {
             val progress = PreferenceProgress(preference).apply { start() }
             MailControlProcessor(requireContext()).checkMailbox(
                 onSuccess = {
@@ -767,7 +767,7 @@ class DebugFragment : PreferenceFragmentCompat() {
     }
 
     private fun serviceAccount(): Account {
-        return accounts.requireGoogleAccount(settings.getString(PREF_REMOTE_CONTROL_ACCOUNT))
+        return accounts.requireGoogleAccount(settings.getString(PREF_EMAIL_REMOTE_CONTROL_ACCOUNT))
     }
 
     private fun runBackgroundGoogleDriveTask(

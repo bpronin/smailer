@@ -30,6 +30,15 @@
     </Preference>
 
     <Preference
+            android:icon="@drawable/ic_remote"
+            android:key="remote_control"
+            android:title="@string/remote_control">
+        <intent
+                android:targetClass="com.bopr.android.smailer.ui.RemoteControlActivity"
+                android:targetPackage="com.bopr.android.smailer" />
+    </Preference>
+
+    <Preference
             android:icon="@drawable/ic_settings"
             android:key="options"
             android:title="@string/more_options">

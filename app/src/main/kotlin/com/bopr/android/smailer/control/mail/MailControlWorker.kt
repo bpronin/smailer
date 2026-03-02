@@ -3,7 +3,7 @@ package com.bopr.android.smailer.control.mail
 import android.content.Context
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ENABLED
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.util.Logger
 
@@ -16,7 +16,7 @@ internal class MailControlWorker(context: Context, workerParams: WorkerParameter
     Worker(context, workerParams) {
 
     override fun doWork(): Result {
-        if (applicationContext.settings.getBoolean(PREF_REMOTE_CONTROL_ENABLED)) {
+        if (applicationContext.settings.getBoolean(PREF_EMAIL_REMOTE_CONTROL_ENABLED)) {
             log.debug("Working")
 
             MailControlProcessor(applicationContext).checkMailbox()

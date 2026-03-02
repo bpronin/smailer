@@ -37,9 +37,12 @@ class Settings private constructor(context: Context) {
             ifNotExists(PREF_MAIL_MESSENGER_ENABLED) { putBoolean(it, false) }
             ifNotExists(PREF_MESSAGE_LOCALE) { putString(it, VAL_PREF_DEFAULT) }
             ifNotExists(PREF_NOTIFY_SEND_SUCCESS) { putBoolean(it, false) }
-            ifNotExists(PREF_REMOTE_CONTROL_ENABLED) { putBoolean(it, false) }
-            ifNotExists(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS) { putBoolean(it, true) }
-            ifNotExists(PREF_REMOTE_CONTROL_NOTIFICATIONS) { putBoolean(it, true) }
+            ifNotExists(PREF_EMAIL_REMOTE_CONTROL_ENABLED) { putBoolean(it, false) }
+            ifNotExists(PREF_EMAIL_REMOTE_CONTROL_FILTER_RECIPIENTS) { putBoolean(it, true) }
+            ifNotExists(PREF_WEB_REMOTE_CONTROL_ENABLED) { putBoolean(it, false) }
+            ifNotExists(PREF_WEB_SERVER_HOST) { putString(it, "0.0.0.0") }
+            ifNotExists(PREF_WEB_SERVER_PORT) { putString(it, "48958") }
+            ifNotExists(PREF_EMAIL_REMOTE_CONTROL_NOTIFICATIONS) { putBoolean(it, true) }
             ifNotExists(PREF_SMS_MESSENGER_ENABLED) { putBoolean(it, false) }
             ifNotExists(PREF_TELEGRAM_MESSENGER_ENABLED) { putBoolean(it, true) }
             ifNotExists(PREF_SYNC_ENABLED) { putBoolean(it, true) }
@@ -192,10 +195,13 @@ class Settings private constructor(context: Context) {
         const val PREF_MESSAGE_LOCALE = "email_locale"
         const val PREF_NOTIFY_SEND_SUCCESS = "notify_send_success"
         const val PREF_PHONE_SEARCH_URL = "phone_search_url"
-        const val PREF_REMOTE_CONTROL_ACCOUNT = "remote_control_account"
-        const val PREF_REMOTE_CONTROL_ENABLED = "remote_control_enabled"
-        const val PREF_REMOTE_CONTROL_FILTER_RECIPIENTS = "remote_control_filter_recipients"
-        const val PREF_REMOTE_CONTROL_NOTIFICATIONS = "remote_control_notifications"
+        const val PREF_EMAIL_REMOTE_CONTROL_ACCOUNT = "email_remote_control_account"
+        const val PREF_EMAIL_REMOTE_CONTROL_ENABLED = "email_remote_control_enabled"
+        const val PREF_EMAIL_REMOTE_CONTROL_FILTER_RECIPIENTS = "email_remote_control_filter_recipients"
+        const val PREF_WEB_REMOTE_CONTROL_ENABLED = "web_remote_control_enabled"
+        const val PREF_WEB_SERVER_HOST = "web_server_host"
+        const val PREF_WEB_SERVER_PORT = "web_server_port"
+        const val PREF_EMAIL_REMOTE_CONTROL_NOTIFICATIONS = "email_remote_control_notifications"
         const val PREF_SETTINGS_VERSION = "settings_version"
         const val PREF_SMS_MESSENGER_ENABLED = "sms_messenger_enabled"
         const val PREF_SMS_MESSENGER_RECIPIENTS = "sms_messenger_recipients"

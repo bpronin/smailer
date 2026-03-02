@@ -20,7 +20,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSAGE_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_PHONE_PROCESS_TRIGGERS
-import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_LOCATION
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_CALLS
@@ -124,7 +124,7 @@ class PermissionsHelper(
         settings.update {
             ifNotExists(PREF_MAIL_SENDER_ACCOUNT) { putString(it, accountName) }
             ifNotExists(PREF_MAIL_MESSENGER_RECIPIENTS) { putString(it, accountName) }
-            ifNotExists(PREF_REMOTE_CONTROL_ACCOUNT) { putString(it, accountName) }
+            ifNotExists(PREF_EMAIL_REMOTE_CONTROL_ACCOUNT) { putString(it, accountName) }
         }
     }
 

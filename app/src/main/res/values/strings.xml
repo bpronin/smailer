@@ -148,7 +148,7 @@
     <string name="regular_expression">Regular expression</string>
     <string name="remote_action">Remote action</string>
     <string name="remote_control">Remote control</string>
-    <string name="remote_control_account">Service account</string>
+    <string name="email_remote_control_account">Service account</string>
     <string name="remove">Remove</string>
     <string name="remove_phone_from_filter">Remove phone from all rules</string>
     <string name="remove_text_from_filter">Remove text from all rules</string>
@@ -226,6 +226,12 @@
     <string name="background_activity_restricted_reason">For the app to work reliably in the background, please allow it to use background activity. On the next screen, go to the "App battery usage" section and ensure the "Allow background activity" switch is enabled.</string>
     <string name="settings_title">Settings</string>
     <string name="ask_later">Ask later</string>
+    <string name="web">Web</string>
+    <string name="web_remote_control">Web remote control</string>
+    <string name="email_remote_control">Email remote control</string>
+    <string name="enable_web_remote_control">Enable web control</string>
+    <string name="web_server_host">Server host</string>
+    <string name="web_server_port">Server port</string>
 
     <plurals name="items_removed">
         <item quantity="one">Item removed</item>

@@ -4,7 +4,7 @@ import android.content.Context
 import android.text.TextUtils.htmlEncode
 import androidx.annotation.StringRes
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.messenger.Event
 import com.bopr.android.smailer.provider.telephony.PhoneCallData
 import com.bopr.android.smailer.util.escapePhoneNumber
@@ -33,7 +33,7 @@ class PhoneCallMailFormatter(
     event.location
 ) {
 
-    private val serviceAccount = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
+    private val serviceAccount = settings.getString(PREF_EMAIL_REMOTE_CONTROL_ACCOUNT)
     private val phoneSearchUrl = settings.getPhoneSearchUrl()
 
     override fun getSubject(): String {

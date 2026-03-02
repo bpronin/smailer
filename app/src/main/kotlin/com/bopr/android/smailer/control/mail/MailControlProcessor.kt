@@ -5,13 +5,13 @@ import com.bopr.android.smailer.AccountsHelper.Companion.accounts
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_SERVICE_ACCOUNT
 import com.bopr.android.smailer.NotificationsHelper.Companion.notifications
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_ACCOUNT
-import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_FILTER_RECIPIENTS
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_REMOTE_CONTROL_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_REMOTE_CONTROL_FILTER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.control.ControlCommandExecutor
 import com.bopr.android.smailer.messenger.mail.GoogleMailSession
 import com.bopr.android.smailer.messenger.mail.MailMessage
-import com.bopr.android.smailer.ui.RemoteControlActivity
+import com.bopr.android.smailer.ui.EmailRemoteControlActivity
 import com.bopr.android.smailer.util.Logger
 import com.bopr.android.smailer.util.commaSplit
 import com.bopr.android.smailer.util.containsEmail
@@ -32,7 +32,7 @@ internal class MailControlProcessor(private val context: Context) {
     private val commandExecutor = ControlCommandExecutor(context)
 
     fun checkMailbox(onSuccess: (Int) -> Unit = {}, onError: (Throwable) -> Unit = {}) {
-        val accountName = settings.getString(PREF_REMOTE_CONTROL_ACCOUNT)
+        val accountName = settings.getString(PREF_EMAIL_REMOTE_CONTROL_ACCOUNT)
         val account = context.accounts.getGoogleAccount(accountName) ?: run {
             log.warn("Service account [$accountName] not found")
 
@@ -83,7 +83,7 @@ internal class MailControlProcessor(private val context: Context) {
     }
 
     private fun acceptMessage(message: MailMessage): Boolean {
-        if (settings.getBoolean(PREF_REMOTE_CONTROL_FILTER_RECIPIENTS)) {
+        if (settings.getBoolean(PREF_EMAIL_REMOTE_CONTROL_FILTER_RECIPIENTS)) {
             val address = extractEmail(message.from)!!
             val recipients = settings.getMailRecipients().commaSplit()
             if (!recipients.containsEmail(address)) {
@@ -99,7 +99,7 @@ internal class MailControlProcessor(private val context: Context) {
         notifications.notifyError(
             NTF_SERVICE_ACCOUNT,
             context.getString(R.string.service_account_not_found),
-            RemoteControlActivity::class
+            EmailRemoteControlActivity::class
         )
     }
 
