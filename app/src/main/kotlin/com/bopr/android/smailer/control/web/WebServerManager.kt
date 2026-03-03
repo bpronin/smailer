@@ -16,6 +16,7 @@ import com.bopr.android.smailer.util.SingletonHolder
 import io.ktor.server.engine.EmbeddedServer
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.html.respondHtml
+import io.ktor.server.http.content.staticResources
 import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
 import io.ktor.server.netty.NettyApplicationEngine.Configuration
@@ -53,12 +54,11 @@ class WebServerManager private constructor(private val context: Context) :
 
         this.server = embeddedServer(Netty, port) {
             routing {
-                get("/") {
-                    respondIndex()
-                }
+                staticResources("/", "")
                 get("/history") {
                     respondHistory()
                 }
+
             }
         }.start(false)
 
@@ -88,22 +88,6 @@ class WebServerManager private constructor(private val context: Context) :
             PREF_WEB_SERVER_PORT -> {
                 stop()
                 toggleEnabled()
-            }
-        }
-    }
-
-    private suspend fun RoutingContext.respondIndex() {
-        call.respondHtml {
-            head {
-                title { +"Index" }
-                default()
-            }
-            body {
-                this.apply {
-                    p {
-                        a("/history") { +"Get history" }
-                    }
-                }
             }
         }
     }

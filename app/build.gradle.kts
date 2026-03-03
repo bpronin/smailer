@@ -66,7 +66,13 @@ android{
             keyPassword = getLocalProperty("key_password")
         }
     }
-
+    
+    sourceSets {
+        getByName("main") {
+            resources.directories.add("src/main/web")
+        }
+    }
+    
     buildTypes {
         all {
             proguardFiles(
