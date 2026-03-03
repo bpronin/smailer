@@ -39,6 +39,7 @@ import kotlinx.html.thead
 import kotlinx.html.title
 import kotlinx.html.tr
 import kotlinx.html.ul
+import kotlinx.html.unsafe
 
 /**
  * Web server manager.
@@ -119,14 +120,16 @@ class WebServerManager private constructor(private val context: Context) :
             head {
                 default()
                 style {
-                    +"table { border-collapse: collapse; width: 100%; }"
-                    +"th, td { border: 1px solid #ccc; padding: 8px; }"
-                    +"th { background-color: #f2f2f2; font-weight:700; }"
-                    +"th.col-type { width: 10%;}"
-                    +"th.col-phone { width: 20%; }"
-                    +"th.col-text { width: auto;}"
-                    +"th.col-time { width: 20%; }"
-                    +"td.col-text { font-size: 60%;}"
+                    unsafe {
+                        +"table { border-collapse: collapse; width: 100%; }"
+                        +"th, td { border: 1px solid #ccc; padding: 8px; }"
+                        +"th { background-color: #f2f2f2; font-weight:700; }"
+                        +"th.col-type { width: 10%;}"
+                        +"th.col-phone { width: 20%; }"
+                        +"th.col-text { width: auto;}"
+                        +"th.col-time { width: 20%; }"
+//                        +"td.col-text { font-size: 60%;}"
+                    }
                 }
             }
             body {
@@ -181,8 +184,10 @@ class WebServerManager private constructor(private val context: Context) :
             href = "https://fonts.googleapis.com/css2?family=Roboto:wght@100..900&display=swap"
         }
         style {
-            +"body { font-family: 'Roboto', sans-serif; }"
-            +"h1 { font-size: large; font-weight: 700; }"
+            unsafe {
+                +"body { font-family: 'Roboto', sans-serif; }"
+                +"h1 { font-size: large; font-weight: 700; }"
+            }
         }
     }
 
