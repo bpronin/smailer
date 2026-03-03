@@ -54,11 +54,12 @@ class WebServerManager private constructor(private val context: Context) :
 
         this.server = embeddedServer(Netty, port) {
             routing {
-                staticResources("/", "")
+                get("/") {
+                    respondIndex()
+                }
                 get("/history") {
                     respondHistory()
                 }
-
             }
         }.start(false)
 
@@ -92,11 +93,27 @@ class WebServerManager private constructor(private val context: Context) :
         }
     }
 
+    private suspend fun RoutingContext.respondIndex() {
+        call.respondHtml {
+            head {
+                title { +"Smailer" }
+                default()
+            }
+            body {
+                this.apply {
+                    p {
+                        a("/history") { +"Call history" }
+                    }
+                }
+            }
+        }
+    }
+
     private suspend fun RoutingContext.respondHistory() {
         val events = context.database.events
         call.respondHtml {
             head {
-                title { +"History" }
+                title { +"Call history" }
                 default()
             }
             body {
@@ -145,9 +162,9 @@ class WebServerManager private constructor(private val context: Context) :
             href = "https://fonts.googleapis.com/css2?family=Roboto:wght@100..900&display=swap"
         }
         style {
-            +"body { font-family: 'Roboto', sans-serif; }"
-            +"table { border-collapse: collapse; width: 50%; }"
-            +"th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }"
+            +"body { font-family: 'Roboto', sans-serif; }\n"
+            +"table { border-collapse: collapse; width: 50%; }\n"
+            +"th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }\n"
             +"th { background-color: #f2f2f2; font-weight:700; }"
         }
     }

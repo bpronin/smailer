@@ -67,12 +67,6 @@ android{
         }
     }
     
-    sourceSets {
-        getByName("main") {
-            resources.directories.add("src/main/web")
-        }
-    }
-    
     buildTypes {
         all {
             proguardFiles(
