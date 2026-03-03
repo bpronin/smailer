@@ -13,6 +13,8 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStreamReader
 import java.io.PrintWriter
+import java.net.Inet4Address
+import java.net.NetworkInterface
 
 /**
  * Returns current device name.
@@ -76,6 +78,18 @@ fun Context.sendSmsMessage(phone: String?, message: String?) {
     smsManager.apply {
         sendMultipartTextMessage(phone, null, divideMessage(message), null, null)
     }
+}
+
+fun localIpAddress(): String? {
+    val interfaces = NetworkInterface.getNetworkInterfaces()
+    for (i in interfaces) {
+        for (a in i.inetAddresses) {
+            if (!a.isLoopbackAddress && a is Inet4Address) {
+                return a.hostAddress
+            }
+        }
+    }
+    return null
 }
 
 /*
