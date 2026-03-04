@@ -47,7 +47,7 @@ class ContentObserverManager private constructor(private val context: Context) :
         private val log = Logger("ContentObserver")
 
         private val singletonHolder = SingletonHolder { ContentObserverManager(it) }
-        internal fun Context.startContentObserver() =
+        internal fun Context.enableContentObserver() =
             singletonHolder.getInstance(this).startService()
     }
 }

@@ -1,18 +1,20 @@
 package com.bopr.android.smailer.control.web
 
+import android.content.Context
+import com.bopr.android.smailer.R
 import kotlinx.html.a
 import kotlinx.html.li
 import kotlinx.html.ul
 
-class IndexPage : BaseHtmlTemplate() {
+class IndexPage(context: Context) : BaseHtmlTemplate() {
     init {
         pageTitle {
-            +"SMailer"
+            +context.getString(R.string.app_name)
         }
         content {
             ul {
                 li {
-                    a("/history") { +"Call history" }
+                    a("/history") { +context.getString(R.string.history) }
                 }
             }
         }

@@ -28,16 +28,16 @@ class HistoryPage(private val context: Context) : BaseHtmlTemplate() {
             }
         }
         pageTitle {
-            +"Call history"
+            +context.getString(R.string.history)
         }
         content {
             table {
                 thead {
                     tr {
-                        th(classes = "col-type") { +"Type" }
-                        th(classes = "col-phone") { +"Phone" }
-                        th(classes = "col-text") { +"Text" }
-                        th(classes = "col-time") { +"Time" }
+                        th(classes = "col-type") { +context.getString(R.string.type) }
+                        th(classes = "col-phone") { +context.getString(R.string.phone_number) }
+                        th(classes = "col-text") { +context.getString(R.string.sms_text) }
+                        th(classes = "col-time") { +context.getString(R.string.event_time) }
                     }
                 }
 

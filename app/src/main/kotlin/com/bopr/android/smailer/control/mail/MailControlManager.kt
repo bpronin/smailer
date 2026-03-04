@@ -24,29 +24,33 @@ internal class MailControlManager private constructor(context: Context) :
 
     private val workManager = WorkManager.getInstance(context)
 
-    fun startWork() {
+    private fun enable() {
         if (settings.getBoolean(PREF_EMAIL_REMOTE_CONTROL_ENABLED)) {
-            workManager.enqueueUniquePeriodicWork(
-                WORK_REMOTE_CONTROL,
-                UPDATE,
-                PeriodicWorkRequest.Builder(
-                    MailControlWorker::class.java,
-                    MIN_PERIODIC_INTERVAL_MILLIS,
-                    MILLISECONDS
-                ).setConstraints(
-                    Constraints.Builder()
-                        .setRequiredNetworkType(CONNECTED)
-                        .build()
-                ).build()
-            )
-
-            log.debug("Running")
+            startWork()
         } else {
             cancelWork()
         }
     }
 
-    fun cancelWork() {
+    private fun startWork() {
+        workManager.enqueueUniquePeriodicWork(
+            WORK_REMOTE_CONTROL,
+            UPDATE,
+            PeriodicWorkRequest.Builder(
+                MailControlWorker::class.java,
+                MIN_PERIODIC_INTERVAL_MILLIS,
+                MILLISECONDS
+            ).setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(CONNECTED)
+                    .build()
+            ).build()
+        )
+
+        log.debug("Running")
+    }
+
+    private fun cancelWork() {
         workManager.cancelUniqueWork(WORK_REMOTE_CONTROL)
 
         log.debug("Canceled")
@@ -70,7 +74,7 @@ internal class MailControlManager private constructor(context: Context) :
         private const val WORK_REMOTE_CONTROL = "com.bopr.android.smailer.remote_control"
 
         private val singletonHolder = SingletonHolder { MailControlManager(it) }
-        internal fun Context.startMailControl() =
-            singletonHolder.getInstance(this).startWork()
+        internal fun Context.enableMailRemoteControl() =
+            singletonHolder.getInstance(this).enable()
     }
 }

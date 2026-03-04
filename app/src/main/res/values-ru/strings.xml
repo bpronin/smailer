@@ -225,6 +225,8 @@
     <string name="background_activity_restricted_reason">Для надежной работы приложения в фоновом режиме, пожалуйста, разрешите ему фоновую активность. На следующем экране перейдите в раздел \"Расход заряда батареи\" (или \"App battery usage\") и убедитесь, что переключатель \"Разрешить фоновую активность\" (или \"Allow background activity\") включен.</string>
     <string name="settings_title">Настройки</string>
     <string name="ask_later">Спросить позже</string>
+    <string name="sms_text">Текст</string>
+    <string name="type">Тип</string>
 
     <plurals name="items_removed">
         <item quantity="one">%d запись удалена</item>

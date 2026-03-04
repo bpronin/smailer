@@ -3,9 +3,9 @@ package com.bopr.android.smailer
 import android.content.Context
 import com.bopr.android.smailer.backup.AppBackupManager.Companion.startAndroidBackup
 import com.bopr.android.smailer.control.firebase.FirebaseControlManager.Companion.startFirebaseMessaging
-import com.bopr.android.smailer.control.mail.MailControlManager.Companion.startMailControl
-import com.bopr.android.smailer.control.web.WebServerManager.Companion.enableWebServer
-import com.bopr.android.smailer.provider.telephony.ContentObserverManager.Companion.startContentObserver
+import com.bopr.android.smailer.control.mail.MailControlManager.Companion.enableMailRemoteControl
+import com.bopr.android.smailer.control.web.WebServerManager.Companion.enableWebRemoteControl
+import com.bopr.android.smailer.provider.telephony.ContentObserverManager.Companion.enableContentObserver
 import com.bopr.android.smailer.sync.SyncManager.Companion.startGoogleCloudSync
 
 /**
@@ -16,12 +16,12 @@ import com.bopr.android.smailer.sync.SyncManager.Companion.startGoogleCloudSync
 object AppStartup {
 
     fun Context.startupApplication() {
-        startContentObserver()
-        startMailControl()
+        enableContentObserver()
+        enableMailRemoteControl()
+        enableWebRemoteControl()
         startGoogleCloudSync()
         startFirebaseMessaging()
         startAndroidBackup()
-        enableWebServer()
     }
 
 }

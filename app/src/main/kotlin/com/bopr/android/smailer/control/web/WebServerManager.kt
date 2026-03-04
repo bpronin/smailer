@@ -35,7 +35,7 @@ class WebServerManager private constructor(private val context: Context) :
         this.server = embeddedServer(Netty, port) {
             routing {
                 get("/") {
-                    call.respondHtmlTemplate(IndexPage()) { }
+                    call.respondHtmlTemplate(IndexPage(context)) { }
                 }
                 get("/history") {
                     call.respondHtmlTemplate(HistoryPage(context)) { }
@@ -53,7 +53,7 @@ class WebServerManager private constructor(private val context: Context) :
         }
     }
 
-    private fun toggleEnabled() {
+    private fun enable() {
         if (context.settings.getBoolean(PREF_WEB_REMOTE_CONTROL_ENABLED)) {
             start(
                 context.settings.getString(PREF_WEB_SERVER_PORT, DEFAULT_WEB_SERVER_PORT).toInt()
@@ -65,17 +65,18 @@ class WebServerManager private constructor(private val context: Context) :
 
     override fun onSettingsChanged(settings: Settings, key: String) {
         when (key) {
-            PREF_WEB_REMOTE_CONTROL_ENABLED -> toggleEnabled()
+            PREF_WEB_REMOTE_CONTROL_ENABLED -> enable()
             PREF_WEB_SERVER_PORT -> {
                 stop()
-                toggleEnabled()
+                enable()
             }
         }
     }
 
     companion object {
         private val log = Logger("WebRemoteControl")
-        private val singletonHolder = SingletonHolder { WebServerManager(it) }
-        internal fun Context.enableWebServer() = singletonHolder.getInstance(this).toggleEnabled()
+        private val webServerManager = SingletonHolder { WebServerManager(it) }
+        internal fun Context.enableWebRemoteControl() =
+            webServerManager.getInstance(this).enable()
     }
 }
