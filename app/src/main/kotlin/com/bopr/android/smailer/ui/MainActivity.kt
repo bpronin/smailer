@@ -3,7 +3,7 @@ package com.bopr.android.smailer.ui
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.lifecycle.ViewModel
-import com.bopr.android.smailer.AppStartup.startupApplication
+import com.bopr.android.smailer.AppStartup.startAppServices
 import com.bopr.android.smailer.PermissionsHelper
 import com.bopr.android.smailer.util.BackgroundActivityHelper
 
@@ -34,7 +34,7 @@ class MainActivity : FlavorBaseActivity(MainFragment::class) {
 
     private fun onBackgroundActivityCheckComplete() {
         permissionsHelper.checkAll()
-        startupApplication()
+        startAppServices()
     }
 
     override fun onDestroy() {

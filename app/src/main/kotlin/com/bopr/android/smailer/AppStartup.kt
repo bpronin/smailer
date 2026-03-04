@@ -15,7 +15,7 @@ import com.bopr.android.smailer.sync.SyncManager.Companion.startGoogleCloudSync
  */
 object AppStartup {
 
-    fun Context.startupApplication() {
+    fun Context.startAppServices() {
         enableContentObserver()
         enableMailRemoteControl()
         enableWebRemoteControl()

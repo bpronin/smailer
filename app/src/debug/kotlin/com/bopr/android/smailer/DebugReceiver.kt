@@ -3,7 +3,7 @@ package com.bopr.android.smailer
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.bopr.android.smailer.AppStartup.startupApplication
+import com.bopr.android.smailer.AppStartup.startAppServices
 import com.bopr.android.smailer.control.mail.MailControlProcessor
 import com.bopr.android.smailer.provider.telephony.PhoneCallData
 import com.bopr.android.smailer.provider.telephony.PhoneCallEventProcessor
@@ -42,7 +42,7 @@ class DebugReceiver : BroadcastReceiver() {
             }
 
             "BOOT_COMPLETED" -> { /* we cannot debug BootReceiver directly */
-                context.startupApplication()
+                context.startAppServices()
             }
         }
     }
