@@ -42,7 +42,7 @@ android{
 //extensions.configure<ApplicationExtension> {
     namespace = "com.bopr.android.smailer"
     compileSdk = 36
-
+    
     defaultConfig {
         minSdk = 26
         targetSdk = 36
@@ -93,6 +93,10 @@ android{
             isShrinkResources = true
             isMinifyEnabled = true
         }
+    }
+
+    buildFeatures {
+        resValues = true
     }
 
     flavorDimensions += listOf("main")
