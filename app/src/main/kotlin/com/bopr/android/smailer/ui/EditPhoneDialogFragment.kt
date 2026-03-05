@@ -23,7 +23,7 @@ import com.bopr.android.smailer.util.showToast
  *
  * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
-class EditPhoneDialogFragment(@StringRes private val textRes: Int) :
+class EditPhoneDialogFragment(@field:StringRes private val textRes: Int) :
     BaseEditDialogFragment<String>("edit_phone_dialog") {
 
     private lateinit var editText: EditText

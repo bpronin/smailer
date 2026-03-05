@@ -15,7 +15,7 @@ import com.bopr.android.smailer.util.refreshView
  *
  * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
-abstract class BasePreferenceFragment(@XmlRes private val layoutRes: Int) :
+abstract class BasePreferenceFragment(@field:XmlRes private val layoutRes: Int) :
     PreferenceFragmentCompat() {
 
     private lateinit var settingsListener: OnSharedPreferenceChangeListener

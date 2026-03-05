@@ -6,11 +6,11 @@ import com.bopr.android.smailer.util.Mockable
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.http.ByteArrayContent
 import com.google.api.client.http.javanet.NetHttpTransport
-import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes.DRIVE_APPDATA
 import com.google.api.services.drive.model.File
 import com.bopr.android.smailer.util.Logger
+import com.google.api.client.json.gson.GsonFactory
 import java.io.IOException
 import java.io.InputStream
 import java.io.StringWriter
@@ -27,7 +27,7 @@ internal class GoogleDrive(context: Context, account: Account) {
 
     private val service: Drive =
         Drive.Builder(
-            NetHttpTransport(), jacksonFactory(), GoogleAccountCredential
+            NetHttpTransport(), factory(), GoogleAccountCredential
                 .usingOAuth2(context, setOf(DRIVE_APPDATA))
                 .setSelectedAccount(account)
         )
@@ -46,14 +46,14 @@ internal class GoogleDrive(context: Context, account: Account) {
     @Throws(IOException::class)
     fun <T : Any> download(filename: String, dataClass: KClass<out T>): T? {
         return open(filename)?.let {
-            jacksonFactory().createJsonParser(it).parseAndClose(dataClass.java)
+            factory().createJsonParser(it).parseAndClose(dataClass.java)
         }
     }
 
     @Throws(IOException::class)
     fun upload(filename: String, data: Any) {
         val writer: Writer = StringWriter()
-        jacksonFactory().createJsonGenerator(writer).use {
+        factory().createJsonGenerator(writer).use {
             it.serialize(data)
             it.flush()
             write(filename, writer.toString())
@@ -138,7 +138,7 @@ internal class GoogleDrive(context: Context, account: Account) {
         return null
     }
 
-    private fun jacksonFactory() = JacksonFactory.getDefaultInstance()
+    private fun factory() = GsonFactory.getDefaultInstance()
 
     companion object {
 

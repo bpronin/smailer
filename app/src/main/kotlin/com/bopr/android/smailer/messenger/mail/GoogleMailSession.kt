@@ -6,13 +6,13 @@ import com.bopr.android.smailer.util.Mockable
 import com.bopr.android.smailer.util.execute
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.http.javanet.NetHttpTransport
-import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.client.util.StringUtils.newStringUtf8
 import com.google.api.services.gmail.Gmail
 import com.google.api.services.gmail.model.Message
 import com.google.api.services.gmail.model.ModifyMessageRequest
 import com.google.common.io.BaseEncoding
 import com.bopr.android.smailer.util.Logger
+import com.google.api.client.json.gson.GsonFactory
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
@@ -37,7 +37,7 @@ internal class GoogleMailSession(context: Context, account: Account, vararg scop
     private val session = Session.getDefaultInstance(Properties(), null)
     private val service = Gmail.Builder(
         NetHttpTransport(),
-        JacksonFactory.getDefaultInstance(),
+        GsonFactory.getDefaultInstance(),
         GoogleAccountCredential
             .usingOAuth2(context, listOf(*scopes))
             .setSelectedAccount(account)
