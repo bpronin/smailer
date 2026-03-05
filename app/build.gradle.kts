@@ -22,7 +22,6 @@ import java.util.TimeZone
 
 plugins {
     id("com.android.application")
-    id("kotlin-android")
     id("kotlin-parcelize")
     id("kotlin-allopen")
     id("com.google.gms.google-services")
