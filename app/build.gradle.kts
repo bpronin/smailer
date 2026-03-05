@@ -14,7 +14,6 @@
 
 */
 
-import org.gradle.kotlin.dsl.implementation
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Properties
@@ -41,10 +40,11 @@ fun localProperty(name: String): String {
 android {
     namespace = "com.bopr.android.smailer"
     compileSdk = 36
-    
+
     defaultConfig {
         minSdk = 26
-        targetSdk = 36
+        //noinspection OldTargetApi
+        targetSdk = 35
         versionCode = 110
         versionName = "1.12.1"
         applicationId = "com.bopr.android.smailer"
@@ -63,7 +63,7 @@ android {
             keyPassword = localProperty("key_password")
         }
     }
-    
+
     buildTypes {
         all {
             proguardFiles(
@@ -98,7 +98,7 @@ android {
         resValues = true
     }
 
-    flavorDimensions += listOf("main")
+    flavorDimensions += "main"
 
     productFlavors {
         create("paid") {
@@ -140,7 +140,7 @@ android {
     lint {
         abortOnError = false
     }
-
+    
 }
 
 dependencies {
@@ -159,10 +159,10 @@ dependencies {
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.messaging)
     implementation(libs.android.mail)
-    implementation (libs.ktor.server.core)
-    implementation (libs.ktor.server.netty)
-    implementation (libs.ktor.server.html.builder)
-    
+    implementation(libs.ktor.server.core)
+    implementation(libs.ktor.server.netty)
+    implementation(libs.ktor.server.html.builder)
+
     "freeImplementation"(libs.play.services.ads)
 
     testImplementation(libs.junit)
@@ -187,8 +187,8 @@ tasks.register("updateReleaseInfo") {
         Properties().apply {
             file.reader().use(::load)
 
-            val n = getProperty("build_number").toInt() + 1
-            setProperty("build_number", n.toString())
+            val buildNumber = getProperty("build_number").toInt() + 1
+            setProperty("build_number", buildNumber.toString())
 
             SimpleDateFormat("yyyy-MM-dd HH:mm:ss z").apply {
                 timeZone = TimeZone.getTimeZone("UTC")

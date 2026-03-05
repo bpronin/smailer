@@ -7,7 +7,7 @@ import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.NotificationsHelper
 import com.bopr.android.smailer.NotificationsHelper.Companion.notifications
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings.Companion.PREF_REMOTE_CONTROL_NOTIFICATIONS
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_REMOTE_CONTROL_NOTIFICATIONS
 import com.bopr.android.smailer.control.ControlCommand.Action.ADD_PHONE_TO_BLACKLIST
 import com.bopr.android.smailer.control.ControlCommand.Action.ADD_PHONE_TO_WHITELIST
 import com.bopr.android.smailer.control.ControlCommand.Action.ADD_TEXT_TO_BLACKLIST
@@ -47,7 +47,7 @@ class ControlCommandExecutorTest : BaseTest() {
     fun setUp() {
         preferences = mock {
             on {
-                getBoolean(eq(PREF_REMOTE_CONTROL_NOTIFICATIONS), anyOrNull())
+                getBoolean(eq(PREF_EMAIL_REMOTE_CONTROL_NOTIFICATIONS), anyOrNull())
             }.doReturn(true)
         }
 
