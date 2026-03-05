@@ -7,14 +7,14 @@ import com.bopr.android.smailer.util.Bits.Companion.bit
 import com.bopr.android.smailer.util.DEVICE_NAME
 import com.bopr.android.smailer.util.GeoLocation
 import kotlinx.parcelize.Parcelize
-import java.lang.System.*
+import java.lang.System.currentTimeMillis
 
 @Parcelize
 data class Event(
     val timestamp: Long = currentTimeMillis(),
     val target: String = DEVICE_NAME,
     var bypassFlags: Bits = Bits(),
-    @ProcessState var processState: Int = STATE_PENDING,
+    @property:ProcessState var processState: Int = STATE_PENDING,
     var processFlags: Bits = Bits(),
     var processTime: Long? = null,
     var location: GeoLocation? = null,

@@ -18,14 +18,14 @@ class PhoneCallEventProcessor(context: Context) : EventProcessor<PhoneCallData>(
     private val settings = context.settings
     private val database = context.database
 
-    override fun getBypassReason(info: PhoneCallData): Bits {
+    override fun getBypassReason(data: PhoneCallData): Bits {
         return PhoneCallFilter(
             settings.getPhoneProcessTriggers(),
             database.phoneBlacklist,
             database.phoneWhitelist,
             database.textBlacklist,
             database.textWhitelist
-        ).test(info)
+        ).test(data)
     }
 
     companion object {

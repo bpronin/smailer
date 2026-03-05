@@ -21,7 +21,7 @@ data class SyncData(
         @Key("timestamp") var timestamp: Long = 0,
         @Key("target") var target: String = "",
         @Key("bypass_flags") var bypassFlags: Int = 0,
-        @Key("process_state") @ProcessState var processState: Int = 0,
+        @Key("process_state") @property:ProcessState var processState: Int = 0,
         @Key("process_time") var processTime: Long? = null,
         @Key("process_flags") var processFlags: Int = 0,
         @Key("latitude") var latitude: Double? = null,
