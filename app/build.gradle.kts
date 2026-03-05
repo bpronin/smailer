@@ -46,8 +46,7 @@ android{
 
     defaultConfig {
         minSdk = 26
-        //noinspection OldTargetApi
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 109
         versionName = "1.12.0"
         applicationId = "com.bopr.android.smailer"
