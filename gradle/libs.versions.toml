@@ -20,7 +20,6 @@ ktorServerCore = "3.4.1"
 ktorServerNetty = "3.4.1"
 ktorServerHtmlBuilder = "3.4.1"
 lifecycleRuntimeKtx = "2.10.0"
-kotlin = "2.3.10"
 mockitoAndroid = "5.22.0"
 mockitoKotlin = "2.2.0"
 playServicesAds = "25.0.0"
@@ -67,4 +66,3 @@ volley = { module = "com.android.volley:volley", version.ref = "volley" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

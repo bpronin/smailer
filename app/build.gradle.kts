@@ -34,20 +34,19 @@ val localProperties = Properties().apply {
     }.reader().use(::load)
 }
 
-fun getLocalProperty(name: String): String {
+fun localProperty(name: String): String {
     return localProperties.getProperty(name) ?: ""
 }
 
-android{
-//extensions.configure<ApplicationExtension> {
+android {
     namespace = "com.bopr.android.smailer"
     compileSdk = 36
     
     defaultConfig {
         minSdk = 26
         targetSdk = 36
-        versionCode = 109
-        versionName = "1.12.0"
+        versionCode = 110
+        versionName = "1.12.1"
         applicationId = "com.bopr.android.smailer"
         base.archivesName = "smailer-$versionName"
         vectorDrawables.useSupportLibrary = true
@@ -56,12 +55,12 @@ android{
 
     signingConfigs {
         create("release") {
-            keyAlias = getLocalProperty("key_alias")
+            keyAlias = localProperty("key_alias")
             storeFile = rootProject.file("keystore.p12").apply {
                 if (!exists()) throw InvalidUserDataException("Required file $this")
             }
-            storePassword = getLocalProperty("store_password")
-            keyPassword = getLocalProperty("key_password")
+            storePassword = localProperty("store_password")
+            keyPassword = localProperty("key_password")
         }
     }
     
@@ -70,8 +69,8 @@ android{
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
-            resValue("string", "developer_email", getLocalProperty("developer_email"))
-            resValue("string", "fcm_server_key", getLocalProperty("fcm_server_key"))
+            resValue("string", "developer_email", localProperty("developer_email"))
+            resValue("string", "fcm_server_key", localProperty("fcm_server_key"))
         }
         debug {
             manifestPlaceholders += mapOf("crashlyticsEnabled" to "false")
@@ -83,7 +82,7 @@ android{
             resValue(
                 "string",
                 "debug_telegram_token",
-                getLocalProperty("debug_telegram_token")
+                localProperty("debug_telegram_token")
             )
         }
         release {
@@ -202,7 +201,7 @@ tasks.register("updateReleaseInfo") {
 }
 
 tasks.register<Copy>("uploadRelease") {
-    val uploadPath = getLocalProperty("upload_path")
+    val uploadPath = localProperty("upload_path")
 
     from(
         fileTree(layout.buildDirectory.dir("outputs/apk/free")).files,
