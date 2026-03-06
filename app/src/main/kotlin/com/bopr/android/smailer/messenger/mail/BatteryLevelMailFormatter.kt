@@ -16,12 +16,12 @@ class BatteryLevelMailFormatter(
     private val info: BatteryData
 ) : MailFormatter {
 
-    override fun formatSubject(): String? {
+    override fun formatSubject(): String {
         // TODO: implement
         return "[${context.getString(R.string.app_name)}]"
     }
 
-    override fun formatBody(): String? {
+    override fun formatBody(): String {
         // TODO: implement
         return info.text
     }

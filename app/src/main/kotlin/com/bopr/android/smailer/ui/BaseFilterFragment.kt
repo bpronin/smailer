@@ -124,7 +124,7 @@ abstract class BaseFilterFragment(private val listName: String) :
         }
     }
 
-    inner class Holder(view: View) : RecyclerView.ViewHolder(view) {
+    class Holder(view: View) : RecyclerView.ViewHolder(view) {
 
         val textView: TextView = view.findViewById(R.id.text)
     }

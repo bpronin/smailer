@@ -8,8 +8,7 @@ import com.bopr.android.smailer.provider.telephony.PhoneCallData
 class TelegramFormatterFactory(private val context: Context) {
 
     fun createFormatter(event: Event): TelegramFormatter {
-        val payload = event.payload
-        return when (payload) {
+        return when (val payload = event.payload) {
             is PhoneCallData ->
                 PhoneCallTelegramFormatter(context, event, payload)
             is BatteryData ->

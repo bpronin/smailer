@@ -70,8 +70,7 @@ internal class SmsMessenger(private val context: Context) : Messenger {
     }
 
     private fun formatMessage(event: Event): String {
-        val payload = event.payload
-        return when (payload) {
+        return when (val payload = event.payload) {
             is PhoneCallData -> formatPhoneCallMessage(payload)
             is BatteryData -> formatBatteryEventMessage(payload)
             else -> throw IllegalArgumentException("No formatter for $payload")

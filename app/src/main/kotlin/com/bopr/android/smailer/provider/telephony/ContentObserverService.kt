@@ -3,8 +3,11 @@ package com.bopr.android.smailer.provider.telephony
 import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Intent
+import android.content.pm.ServiceInfo
+import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
 import android.database.ContentObserver
 import android.net.Uri
+import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
@@ -35,7 +38,14 @@ class ContentObserverService : Service() {
         log.debug("Running")
 
         contentResolver.registerContentObserver(CONTENT_SMS, true, contentObserver)
-        startForeground(NTF_SERVICE, notifications.createServiceNotification())
+        
+        val notification = notifications.createServiceNotification()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(NTF_SERVICE, notification, FOREGROUND_SERVICE_TYPE_DATA_SYNC)
+        } else {
+            startForeground(NTF_SERVICE, notification)
+        }
+        
         return super.onStartCommand(intent, flags, startId)
     }
 

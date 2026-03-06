@@ -3,7 +3,6 @@ package com.bopr.android.smailer.messenger.mail
 import android.Manifest.permission.GET_ACCOUNTS
 import android.Manifest.permission.READ_CONTACTS
 import androidx.test.filters.SmallTest
-import androidx.test.rule.GrantPermissionRule
 import androidx.test.rule.GrantPermissionRule.*
 import com.bopr.android.smailer.AccountsHelper.Companion.accounts
 import com.bopr.android.smailer.BaseTest

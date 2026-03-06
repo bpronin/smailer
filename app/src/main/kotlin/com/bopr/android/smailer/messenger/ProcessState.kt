@@ -4,9 +4,9 @@ import androidx.annotation.IntDef
 
 @Retention(AnnotationRetention.SOURCE)
 @IntDef(
-    ProcessState.Companion.STATE_PENDING,
-    ProcessState.Companion.STATE_PROCESSED,
-    ProcessState.Companion.STATE_IGNORED
+    ProcessState.STATE_PENDING,
+    ProcessState.STATE_PROCESSED,
+    ProcessState.STATE_IGNORED
 )
 annotation class ProcessState {
 

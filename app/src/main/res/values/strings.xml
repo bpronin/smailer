@@ -230,7 +230,6 @@
     <string name="web_remote_control">Web remote control</string>
     <string name="email_remote_control">Email remote control</string>
     <string name="enable_web_remote_control">Enable web control</string>
-    <string name="web_server_host">Server host</string>
     <string name="web_server_port">Server port</string>
     <string name="test_web_server">Test server</string>
     <string name="open_browser_at_localhost">Open browser at %s</string>

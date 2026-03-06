@@ -6,7 +6,6 @@ import androidx.test.rule.GrantPermissionRule
 import com.bopr.android.smailer.AccountsHelper.Companion.accounts
 import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.data.Database
-import com.bopr.android.smailer.data.Database.Companion.DATABASE_NAME
 import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.external.GoogleDrive
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_UPLOAD

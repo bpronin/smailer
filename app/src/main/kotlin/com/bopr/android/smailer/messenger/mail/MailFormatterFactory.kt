@@ -8,8 +8,7 @@ import com.bopr.android.smailer.provider.telephony.PhoneCallData
 class MailFormatterFactory(private val context: Context) {
 
     fun createFormatter(event: Event): MailFormatter {
-        val data = event.payload
-        return when (data) {
+        return when (val data = event.payload) {
             is PhoneCallData ->
                 PhoneCallMailFormatter(context, event, data)
             is BatteryData ->

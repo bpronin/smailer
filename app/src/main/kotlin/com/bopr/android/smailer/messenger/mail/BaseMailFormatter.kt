@@ -82,7 +82,7 @@ abstract class BaseMailFormatter(
 
     private fun formatHeader(): String {
         return if (settings.hasMailContent(VAL_PREF_MESSAGE_CONTENT_HEADER)) {
-            return "<strong $HEADER_STYLE>${getTitle()}</strong><br><br>"
+            "<strong $HEADER_STYLE>${getTitle()}</strong><br><br>"
         } else ""
     }
 

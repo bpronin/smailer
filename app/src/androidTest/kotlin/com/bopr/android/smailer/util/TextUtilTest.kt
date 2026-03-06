@@ -3,7 +3,10 @@ package com.bopr.android.smailer.util
 import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
 import com.google.api.client.testing.util.TestableByteArrayInputStream
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.ByteArrayInputStream
 import java.util.concurrent.TimeUnit
@@ -68,7 +71,10 @@ class TextUtilTest : BaseTest() {
 
     @Test
     fun testFormatDuration() {
-        val duration = TimeUnit.HOURS.toMillis(15) + TimeUnit.MINUTES.toMillis(16) + TimeUnit.SECONDS.toMillis(17)
+        val duration =
+            TimeUnit.HOURS.toMillis(15) + TimeUnit.MINUTES.toMillis(16) + TimeUnit.SECONDS.toMillis(
+                17
+            )
         assertEquals("15:16:17", formatDuration(duration))
     }
 
@@ -109,6 +115,14 @@ class TextUtilTest : BaseTest() {
         assertEquals("text", unescapeRegex("REGEX:text"))
         assertEquals("REGEX:", unescapeRegex("REGEX:REGEX:"))
         assertEquals("", unescapeRegex("REGEX:"))
+    }
+
+    @Test
+    fun testHtmlReplaceUrlsWithLinks() {
+        assertEquals(
+            "<a href=\"http://google.com\">http://google.com</a>",
+            "http://google.com".htmlReplaceUrlsWithLinks()
+        )
     }
 
 }

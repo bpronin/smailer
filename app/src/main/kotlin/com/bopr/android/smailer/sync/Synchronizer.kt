@@ -142,7 +142,7 @@ internal class Synchronizer(
 
     @Suppress("PARCELABLE_PRIMARY_CONSTRUCTOR_IS_EMPTY")
     @Parcelize
-    class DummyPayload() : EventPayload
+    class DummyPayload : EventPayload
 
     private fun dataToEvent(data: SyncData.Event): Event {
         return Event(

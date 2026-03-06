@@ -225,6 +225,7 @@
     <string name="background_activity_restricted_reason">Для надежной работы приложения в фоновом режиме, пожалуйста, разрешите ему фоновую активность. На следующем экране перейдите в раздел \"Расход заряда батареи\" (или \"App battery usage\") и убедитесь, что переключатель \"Разрешить фоновую активность\" (или \"Allow background activity\") включен.</string>
     <string name="settings_title">Настройки</string>
     <string name="ask_later">Спросить позже</string>
+    <string name="open_browser_at_localhost">Открыть браузер по адресу %s</string>
     <string name="sms_text">Текст</string>
     <string name="type">Тип</string>
 
@@ -282,5 +283,10 @@
         <item>Английский</item>
         <item>Русский</item>
     </string-array>
+    <string name="web_server_port">Порт</string>
+    <string name="test_web_server">Тест настроек сервера</string>
+    <string name="web_remote_control">Управление по web</string>
+    <string name="email_remote_control">Включить управление по email</string>
+    <string name="enable_web_remote_control">Включить управление по web</string>
 
 </resources>

@@ -35,16 +35,6 @@ fun <T> Iterable<T>.commaJoin() =
         it.toString().replace(",", "/,")  /* escape commas */
     }
 
-fun String?.commaSplit(): List<String> {
-    return if (!isNullOrEmpty()) {
-        split(COMMA_ESCAPED).map {
-            it.trim().replace("/,", ",")
-        }
-    } else {
-        emptyList() /* to match commaJoin("") */
-    }
-}
-
 fun decimalToDMS(
     coordinate: Double,
     degreeSymbol: String,
@@ -76,6 +66,16 @@ fun decimalToDMS(
     }
 }
 
+fun String?.commaSplit(): List<String> {
+    return if (!isNullOrEmpty()) {
+        split(COMMA_ESCAPED).map {
+            it.trim().replace("/,", ",")
+        }
+    } else {
+        emptyList() /* to match commaJoin("") */
+    }
+}
+
 fun String?.capitalize() =
     this?.let {
         if (isNotEmpty())
@@ -83,14 +83,27 @@ fun String?.capitalize() =
         else ""
     }
 
+fun String.htmlReplaceUrlsWithLinks(): String {
+    val buffer = StringBuffer()
+
+    val matcher = WEB_URL_PATTERN.matcher(this)
+    while (matcher.find()) {
+        val url = matcher.group()
+        matcher.appendReplacement(buffer, "<a href=\"$url\">$url</a>")
+    }
+    matcher.appendTail(buffer)
+
+    return buffer.toString()
+}
+
+fun InputStream.readText(charset: Charset = Charsets.UTF_8) =
+    bufferedReader(charset).use { it.readText() }
+
 fun formatDuration(duration: Long?) =
     duration?.let {
         val seconds = duration / 1000
         String.format(Locale.US, "%d:%02d:%02d", seconds / 3600, seconds % 3600 / 60, seconds % 60)
     }
-
-fun InputStream.readText(charset: Charset = Charsets.UTF_8) =
-    bufferedReader(charset).use { it.readText() }
 
 fun isValidUrl(url: String?) =
     !url.isNullOrBlank() && WEB_URL_PATTERN.matcher(url).matches()
@@ -100,17 +113,4 @@ fun isValidEmailAddress(address: String?) =
 
 fun isValidEmailAddressList(addresses: String?) =
     !addresses.isNullOrBlank() && addresses.commaSplit().all { isValidEmailAddress(it) }
-
-fun String.htmlReplaceUrlsWithLinks(): String {
-    return StringBuffer().apply {
-        val matcher = WEB_URL_PATTERN.matcher(this)
-
-        while (matcher.find()) {
-            val url = matcher.group()
-            matcher.appendReplacement(this, "<a href=\"$url\">$url</a>")
-        }
-
-        matcher.appendTail(this)
-    }.toString()
-}
 

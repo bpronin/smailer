@@ -15,7 +15,7 @@ class TelegramSessionTest : BaseTest() {
 
         TelegramSession(
             context = targetContext,
-            token = Companion.getString(R.string.debug_telegram_token)
+            token = getString(R.string.debug_telegram_token)
         ).sendMessage(
             oldChatId = null,
             message = "<b>Bold</b> <i>italic</i> &amp; &lt;#&gt;\nNew line here",

@@ -63,6 +63,3 @@ play-services-ads = { module = "com.google.android.gms:play-services-ads", versi
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 volley = { module = "com.android.volley:volley", version.ref = "volley" }
-
-[plugins]
-android-application = { id = "com.android.application", version.ref = "agp" }

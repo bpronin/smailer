@@ -272,7 +272,7 @@ class HistoryFragment : RecyclerFragment<Event, Holder>() {
         }
     }
 
-    inner class Holder(view: View) : ViewHolder(view) {
+    class Holder(view: View) : ViewHolder(view) {
 
         val typeView: ImageView = view.findViewById(R.id.list_item_type)
         val directionView: ImageView = view.findViewById(R.id.list_item_direction)

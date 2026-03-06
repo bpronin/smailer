@@ -15,7 +15,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /><!-- To check internet connection -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" /><!-- To add contact name into email body. Also somehow it gives access to account list in API>=26  -->
+    <uses-permission android:name="android.permission.READ_CONTACTS" /><!-- To add contact name into email body. Also, somehow it gives access to account list in API>=26  -->
     <uses-permission android:name="android.permission.RECEIVE_SMS" /><!-- To process incoming sms -->
     <uses-permission android:name="android.permission.READ_SMS" /><!-- To process outgoing SMS-->
     <uses-permission android:name="android.permission.READ_CALL_LOG" /><!-- To process calls in never versions -->
@@ -26,9 +26,10 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" /><!-- To process incoming phone calls -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /><!-- To restart application services at device boot -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /><!-- To run content listener in foreground service -->
-    <uses-permission android:name="android.permission.USE_CREDENTIALS" />  <!--To use account manager for google authorization-->
-    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />  <!--To sync data with Google drive -->
-    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" /> <!--To sync data with Google drive -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" /> <!-- To run content listener in foreground service  -->
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />  <!--To use account manager for Google authorization-->
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />  <!--To sync data with Google Drive -->
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" /> <!--To sync data with Google Drive -->
     <uses-permission android:name="android.permission.SEND_SMS" /> <!--To send SMS from  -->
 
     <application
@@ -85,7 +86,7 @@
                 android:name=".ui.MoreOptionsActivity"
                 android:label="@string/more_options"
                 android:parentActivityName=".ui.MainActivity" />
-        
+
         <activity
                 android:name=".ui.LegalInfoActivity"
                 android:label="@string/open_source"
@@ -151,7 +152,10 @@
                 android:label="@string/recipients"
                 android:parentActivityName=".ui.SmsSettingsActivity" />
 
-        <service android:name=".provider.telephony.ContentObserverService" />
+        <service
+                android:name=".provider.telephony.ContentObserverService"
+                android:exported="false"
+                android:foregroundServiceType="specialUse" />
 
         <receiver
                 android:name=".provider.telephony.PhoneCallReceiver"

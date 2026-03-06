@@ -36,7 +36,7 @@ class LegalInfoFragment : ListFragment() {
         startActivity(Intent(Intent.ACTION_VIEW, item.url))
     }
 
-    private inner class Item(val name: String, val url: Uri) {
+    private class Item(val name: String, val url: Uri) {
 
         override fun toString(): String {
             return name

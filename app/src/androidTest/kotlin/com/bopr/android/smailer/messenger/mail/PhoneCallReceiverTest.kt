@@ -55,7 +55,7 @@ class PhoneCallReceiverTest : BaseTest() {
             getParcelableExtra("event", PhoneCallData::class.java)
         } else {
             @Suppress("DEPRECATION")
-            return getParcelableExtra("event")
+            (getParcelableExtra("event"))
         }
     }
 
