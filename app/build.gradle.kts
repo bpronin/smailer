@@ -184,18 +184,18 @@ tasks.register("updateReleaseInfo") {
     val file = file("src/main/assets/release.properties")
 
     doFirst {
-        Properties().apply {
-            file.reader().use(::load)
+        Properties().also { properties ->
+            file.reader().use { properties.load(it) }
 
-            val buildNumber = getProperty("build_number").toInt() + 1
-            setProperty("build_number", buildNumber.toString())
+            val buildNumber = properties.getProperty("build_number", "0").toInt() + 1
+            properties.setProperty("build_number", buildNumber.toString())
 
             SimpleDateFormat("yyyy-MM-dd HH:mm:ss z").apply {
                 timeZone = TimeZone.getTimeZone("UTC")
-                setProperty("build_time", format(Date()))
+                properties.setProperty("build_time", format(Date()))
             }
 
-            file.writer().use { store(it, "Release properties") }
+            file.writer().use { properties.store(it, "Release properties") }
         }
     }
 }
