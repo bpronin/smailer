@@ -45,8 +45,8 @@ android {
         minSdk = 26
         //noinspection OldTargetApi
         targetSdk = 35
-        versionCode = 110
-        versionName = "1.12.1"
+        versionCode = 111
+        versionName = "1.12.2"
         applicationId = "com.bopr.android.smailer"
         base.archivesName = "smailer-$versionName"
         vectorDrawables.useSupportLibrary = true
