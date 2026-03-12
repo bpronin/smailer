@@ -5,3 +5,5 @@
 .kotlin
 app/keystore.p12
 local.properties
+/gradle/gradle-daemon-jvm.properties
+/keystore.p12
