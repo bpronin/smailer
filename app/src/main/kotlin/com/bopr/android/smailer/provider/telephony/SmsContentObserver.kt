@@ -27,6 +27,8 @@ internal class SmsContentObserver(private val context: Context) : ContentObserve
     Handler(Looper.getMainLooper())
 ) {
 
+    private var lastProcessedId: Long = -1
+
     private fun processContent() {
         context.contentResolver.query(
             "content://sms/sent".toUri(),
@@ -35,30 +37,34 @@ internal class SmsContentObserver(private val context: Context) : ContentObserve
             null,
             "$DATE DESC LIMIT 1"
         )?.tryWithFirst {
-            context.scheduleProcessPhoneCall(
-                PhoneCallData(
-                    startTime = getLong(DATE),
-                    phone = getString(ADDRESS),
-                    endTime = getLong(DATE),
-                    text = getStringOrNull(BODY)
+            val id = getLong(_ID)
+            if (lastProcessedId != id) {
+                lastProcessedId = id
+                
+                context.scheduleProcessPhoneCall(
+                    PhoneCallData(
+                        startTime = getLong(DATE),
+                        phone = getString(ADDRESS),
+                        endTime = getLong(DATE),
+                        text = getStringOrNull(BODY)
+                    )
                 )
-            )
+            }
         }
     }
 
     override fun onChange(selfChange: Boolean, uri: Uri?) {
         uri?.let {
             log.debug("Content changed: $it")
-            processContent()
+            val segments = uri.pathSegments
+            if (segments.size == 1 && segments[0] != "raw") {
+                processContent()
+            }
         }
     }
 
     fun register() {
-        context.contentResolver.registerContentObserver(
-            "content://sms".toUri(),
-            true,
-            this
-        )
+        context.contentResolver.registerContentObserver("content://sms".toUri(), true, this)
         log.debug("Enabled")
     }
 
