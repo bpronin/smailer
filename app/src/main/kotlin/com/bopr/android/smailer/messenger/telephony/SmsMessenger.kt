@@ -31,16 +31,15 @@ internal class SmsMessenger(private val context: Context) : Messenger {
     private val settings = context.settings
     private val notifications = context.notifications
 
-    override fun initialize(): Boolean {
+    override fun prepare(): Boolean {
         if (settings.getBoolean(PREF_SMS_MESSENGER_ENABLED)) {
-            log.debug("Initialized")
+            log.debug("Prepared")
             return true
         }
-
         return false
     }
 
-    override fun sendMessage(
+    override fun send(
         event: Event,
         onSuccess: () -> Unit,
         onError: (Throwable) -> Unit

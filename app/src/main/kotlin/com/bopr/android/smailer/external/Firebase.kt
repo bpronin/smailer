@@ -10,7 +10,7 @@ import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.util.Logger
-import com.bopr.android.smailer.util.SingletonHolder
+import com.bopr.android.smailer.util.Singleton
 import com.google.firebase.messaging.FirebaseMessaging
 import org.json.JSONObject
 import java.util.Locale
@@ -133,7 +133,7 @@ class Firebase private constructor(val context: Context) {
         const val FCM_SENDER = "sender"
         const val FCM_ACTION = "action"
 
-        private val singletonHolder = SingletonHolder { Firebase(it) }
-        val Context.firebase get() = singletonHolder.getInstance(this)
+        private val singleton = Singleton { Firebase(it) }
+        val Context.firebase get() = singleton.getInstance(this)
     }
 }

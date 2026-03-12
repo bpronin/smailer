@@ -17,7 +17,7 @@ import com.bopr.android.smailer.sync.SyncWorker.Companion.SYNC_OPTIONS
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_NORMAL
 import com.bopr.android.smailer.util.Disposable
 import com.bopr.android.smailer.util.Logger
-import com.bopr.android.smailer.util.SingletonHolder
+import com.bopr.android.smailer.util.Singleton
 
 class SyncManager private constructor(private val context: Context) : Disposable {
 
@@ -63,8 +63,8 @@ class SyncManager private constructor(private val context: Context) : Disposable
 
         private val log = Logger("Synchronizer")
 
-        private val singletonHolder = SingletonHolder { SyncManager(it) }
+        private val singleton = Singleton { SyncManager(it) }
         internal fun Context.startGoogleCloudSync() =
-            singletonHolder.getInstance(this).startWork()
+            singleton.getInstance(this).startWork()
     }
 }

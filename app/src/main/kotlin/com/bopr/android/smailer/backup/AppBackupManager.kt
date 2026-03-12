@@ -4,7 +4,7 @@ import android.app.backup.BackupManager
 import android.content.Context
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.SettingsAware
-import com.bopr.android.smailer.util.SingletonHolder
+import com.bopr.android.smailer.util.Singleton
 
 /**
  * Listens to application data changes and notifies Android backup system.
@@ -21,7 +21,7 @@ class AppBackupManager private constructor(context: Context) : SettingsAware(con
 
     companion object {
 
-        private val singletonHolder = SingletonHolder { AppBackupManager(it) }
-        internal fun Context.startAndroidBackup() = singletonHolder.getInstance(this)
+        private val singleton = Singleton { AppBackupManager(it) }
+        internal fun Context.startAndroidBackup() = singleton.getInstance(this)
     }
 }

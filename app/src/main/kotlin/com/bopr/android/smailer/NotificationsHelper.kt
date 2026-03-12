@@ -24,7 +24,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.ui.MainActivity
 import com.bopr.android.smailer.util.Mockable
-import com.bopr.android.smailer.util.SingletonHolder
+import com.bopr.android.smailer.util.Singleton
 import com.bopr.android.smailer.util.isValidEmailAddressList
 import java.lang.System.currentTimeMillis
 import kotlin.reflect.KClass
@@ -159,8 +159,8 @@ class NotificationsHelper private constructor(private val context: Context) :
         const val NTF_TELEGRAM = 1007
         const val NTF_TELEPHONY = 1008
 
-        private val singletonHolder = SingletonHolder { NotificationsHelper(it) }
-        val Context.notifications get() = singletonHolder.getInstance(this)
+        private val singleton = Singleton { NotificationsHelper(it) }
+        val Context.notifications get() = singleton.getInstance(this)
         val Fragment.notifications get() = requireContext().notifications
     }
 

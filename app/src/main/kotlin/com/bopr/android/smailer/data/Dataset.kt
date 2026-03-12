@@ -22,7 +22,9 @@ abstract class Dataset<T>(
     private val rowSet get() = query().drainToSet(::get) // TODO: get rid of it
     override val size get() = read { count(tableName).toInt() }
 
-    override fun add(element: T) = write(tableName) { replaceRecords(it, values(element)) }
+    override fun add(element: T): Boolean = write(tableName) {
+        replaceRecords(it, values(element))
+    }
 
     override fun addAll(elements: Collection<T>): Boolean {
         var affected = 0
@@ -34,7 +36,7 @@ abstract class Dataset<T>(
         return affected != 0
     }
 
-    override fun remove(element: T) = write(tableName) {
+    override fun remove(element: T): Boolean = write(tableName) {
         delete(tableName, keyClause, keyOf(element)) != 0
     }
 

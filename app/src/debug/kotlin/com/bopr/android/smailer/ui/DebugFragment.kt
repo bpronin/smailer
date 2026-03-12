@@ -26,14 +26,14 @@ import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_MAIL_RECIPIENT
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_SERVICE_ACCOUNT
 import com.bopr.android.smailer.NotificationsHelper.Companion.notifications
 import com.bopr.android.smailer.R
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_REMOTE_CONTROL_ACCOUNT
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSAGE_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_MESSAGE_LOCALE
 import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.PREF_PHONE_PROCESS_TRIGGERS
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_REMOTE_CONTROL_ACCOUNT
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_BOT_TOKEN
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_DEFAULT
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_MESSAGE_CONTENT_CALLER
@@ -62,8 +62,8 @@ import com.bopr.android.smailer.messenger.mail.GoogleMailSession
 import com.bopr.android.smailer.messenger.mail.MailMessage
 import com.bopr.android.smailer.messenger.telegram.TelegramSession
 import com.bopr.android.smailer.provider.telephony.PhoneCallData
-import com.bopr.android.smailer.provider.telephony.PhoneCallEventProcessor
-import com.bopr.android.smailer.provider.telephony.PhoneCallEventProcessor.Companion.processPhoneCall
+import com.bopr.android.smailer.provider.telephony.PhoneCallEventProcessor.Companion.processPendingPhoneCalls
+import com.bopr.android.smailer.provider.telephony.PhoneCallEventProcessor.Companion.scheduleProcessPhoneCall
 import com.bopr.android.smailer.sync.Synchronizer
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_DOWNLOAD
 import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_UPLOAD
@@ -495,7 +495,7 @@ class DebugFragment : PreferenceFragmentCompat() {
 
     private fun onProcessSingle() {
         val start = currentTimeMillis()
-        requireContext().processPhoneCall(
+        requireContext().scheduleProcessPhoneCall(
             PhoneCallData(
                 startTime = start,
                 phone = "+1(234) 567-89-01",
@@ -510,7 +510,7 @@ class DebugFragment : PreferenceFragmentCompat() {
     private fun onProcessPending(preference: Preference) {
         preference.runBackgroundTask(
             onPerform = {
-                PhoneCallEventProcessor(requireContext()).process()
+                requireContext().processPendingPhoneCalls()
             },
             onSuccess = {
                 showInfoDialog("Event processing", "$it events processed")

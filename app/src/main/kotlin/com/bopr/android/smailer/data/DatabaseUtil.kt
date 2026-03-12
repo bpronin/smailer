@@ -197,6 +197,13 @@ inline fun <T> Cursor.withFirst(action: Cursor.() -> T): T {
     }
 }
 
+inline fun <T> Cursor.tryWithFirst(action: Cursor.() -> T): T? {
+    return use {
+        moveToFirst()
+        if (!isAfterLast) action() else null
+    }
+}
+
 inline fun <T> Cursor.withLast(action: Cursor.() -> T): T {
     return use {
         moveToLast()

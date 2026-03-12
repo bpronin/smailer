@@ -7,7 +7,7 @@ import android.app.Activity
 import android.content.Context
 import androidx.annotation.RequiresPermission
 import androidx.fragment.app.Fragment
-import com.bopr.android.smailer.util.SingletonHolder
+import com.bopr.android.smailer.util.Singleton
 
 /**
  * Helper class for working with Google accounts.
@@ -79,8 +79,8 @@ class AccountsHelper private constructor(context: Context) {
 
     companion object {
 
-        private val singletonHolder = SingletonHolder { AccountsHelper(it) }
-        val Context.accounts get() = singletonHolder.getInstance(this)
+        private val singleton = Singleton { AccountsHelper(it) }
+        val Context.accounts get() = singleton.getInstance(this)
         val Fragment.accounts get() = requireContext().accounts
     }
 

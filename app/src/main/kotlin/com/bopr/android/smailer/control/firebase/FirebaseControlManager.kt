@@ -8,7 +8,7 @@ import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.SettingsAware
 import com.bopr.android.smailer.external.Firebase.Companion.firebase
 import com.bopr.android.smailer.util.Logger
-import com.bopr.android.smailer.util.SingletonHolder
+import com.bopr.android.smailer.util.Singleton
 
 class FirebaseControlManager private constructor(private val context: Context) :
     SettingsAware(context) {
@@ -35,8 +35,8 @@ class FirebaseControlManager private constructor(private val context: Context) :
 
         private val log = Logger("FirebaseControl")
 
-        private val singletonHolder = SingletonHolder { FirebaseControlManager(it) }
+        private val singleton = Singleton { FirebaseControlManager(it) }
         internal fun Context.startFirebaseMessaging() =
-            singletonHolder.getInstance(this).startService()
+            singleton.getInstance(this).startService()
     }
 }

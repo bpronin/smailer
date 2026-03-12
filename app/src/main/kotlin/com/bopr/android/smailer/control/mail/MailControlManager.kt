@@ -11,7 +11,7 @@ import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_REMOTE_CONTROL_ENABLED
 import com.bopr.android.smailer.SettingsAware
 import com.bopr.android.smailer.util.Logger
-import com.bopr.android.smailer.util.SingletonHolder
+import com.bopr.android.smailer.util.Singleton
 import java.util.concurrent.TimeUnit.MILLISECONDS
 
 /**
@@ -73,8 +73,8 @@ internal class MailControlManager private constructor(context: Context) :
 
         private const val WORK_REMOTE_CONTROL = "com.bopr.android.smailer.remote_control"
 
-        private val singletonHolder = SingletonHolder { MailControlManager(it) }
+        private val singleton = Singleton { MailControlManager(it) }
         internal fun Context.enableMailRemoteControl() =
-            singletonHolder.getInstance(this).enable()
+            singleton.getInstance(this).enable()
     }
 }

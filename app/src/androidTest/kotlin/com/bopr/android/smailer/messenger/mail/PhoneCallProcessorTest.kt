@@ -201,8 +201,8 @@ class PhoneCallProcessorTest : BaseTest() {
     fun testProcessMailSent() {
         val call = defaultPayload()
 
-        processor.add(call)
-        processor.process()
+        processor.addRecord(call)
+        processor.processPending()
 
 //        verify(messenger).sendMessagesFor(argThat {
 //            id == null
@@ -234,8 +234,8 @@ class PhoneCallProcessorTest : BaseTest() {
         /* make the call not an SMS then default filter will deny it */
         val call = defaultPayload()
 
-        processor.add(call)
-        processor.process()
+        processor.addRecord(call)
+        processor.processPending()
 
         verify(messenger, never()).dispatch(any(), any(), any())
         verifyNotifyAccountError()
@@ -256,8 +256,8 @@ class PhoneCallProcessorTest : BaseTest() {
         whenever(preferences.getString(eq(PREF_MAIL_SENDER_ACCOUNT), anyOrNull())).thenReturn(null)
 
         val call = defaultPayload()
-        processor.add(call)
-        processor.process()
+        processor.addRecord(call)
+        processor.processPending()
 
 //        verify(messenger, never()).login(any(), any())
         verify(messenger, never()).dispatch(any(), any(), any())
@@ -286,8 +286,8 @@ class PhoneCallProcessorTest : BaseTest() {
         ).thenReturn(null)
 
         val call = defaultPayload()
-        processor.add(call)
-        processor.process()
+        processor.addRecord(call)
+        processor.processPending()
 
         verify(messenger, never()).dispatch(any(), any(), any())
         verify(notifications).notifyError(
@@ -310,8 +310,8 @@ class PhoneCallProcessorTest : BaseTest() {
         doThrow(IOException("Test error")).whenever(messenger).dispatch(any(), any(), any())
 
         val call = defaultPayload()
-        processor.add(call)
-        processor.process()
+        processor.addRecord(call)
+        processor.processPending()
 
 //        verify(messenger).login(any(), any())
         verify(messenger).dispatch(any(), any(), any())
@@ -338,8 +338,8 @@ class PhoneCallProcessorTest : BaseTest() {
             )
         ).thenReturn(false)
 
-        processor.add(defaultPayload())
-        processor.process()
+        processor.addRecord(defaultPayload())
+        processor.processPending()
 
         verifyNotifyMailSuccess()
 
@@ -351,8 +351,8 @@ class PhoneCallProcessorTest : BaseTest() {
             )
         ).thenReturn(true)
 
-        processor.add(defaultPayload())
-        processor.process()
+        processor.addRecord(defaultPayload())
+        processor.processPending()
 
         verifyNotifyMailSuccess()
     }
@@ -365,10 +365,10 @@ class PhoneCallProcessorTest : BaseTest() {
         /* disable transport */
         doThrow(IOException("Test error")).whenever(messenger).dispatch(any(), any(), any())
 
-        processor.add(defaultPayload())
-        processor.add(defaultPayload())
-        processor.add(defaultPayload())
-        processor.process()
+        processor.addRecord(defaultPayload())
+        processor.addRecord(defaultPayload())
+        processor.addRecord(defaultPayload())
+        processor.processPending()
 
         assertEquals(3, database.events.size)
         assertEquals(3, database.events.pending.size)
@@ -377,7 +377,7 @@ class PhoneCallProcessorTest : BaseTest() {
         verifyNotifyGoogleAccessError()
 
         /* try resend with disabled transport */
-        processor.process()
+        processor.processPending()
 
         assertEquals(3, database.events.size)
         assertEquals(3, database.events.pending.size)
@@ -388,7 +388,7 @@ class PhoneCallProcessorTest : BaseTest() {
         /* enable transport an try again */
         doNothing().whenever(messenger).dispatch(any(), any(), any())
 
-        processor.process()
+        processor.processPending()
 
         assertEquals(3, database.events.size)
         assertEquals(0, database.events.pending.size)

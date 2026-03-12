@@ -5,12 +5,17 @@ import android.database.ContentObserver
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
+import android.provider.BaseColumns._ID
+import android.provider.Telephony.TextBasedSmsColumns.ADDRESS
+import android.provider.Telephony.TextBasedSmsColumns.BODY
+import android.provider.Telephony.TextBasedSmsColumns.DATE
+import android.provider.Telephony.TextBasedSmsColumns.TYPE
 import androidx.core.net.toUri
 import com.bopr.android.smailer.data.getLong
 import com.bopr.android.smailer.data.getString
 import com.bopr.android.smailer.data.getStringOrNull
-import com.bopr.android.smailer.data.withFirst
-import com.bopr.android.smailer.provider.telephony.PhoneCallEventProcessor.Companion.processPhoneCall
+import com.bopr.android.smailer.data.tryWithFirst
+import com.bopr.android.smailer.provider.telephony.PhoneCallEventProcessor.Companion.scheduleProcessPhoneCall
 import com.bopr.android.smailer.util.Logger
 
 /**
@@ -22,35 +27,29 @@ internal class SmsContentObserver(private val context: Context) : ContentObserve
     Handler(Looper.getMainLooper())
 ) {
 
-    private fun processContent(smsId: String) {
-        context.applicationContext.apply {
-            contentResolver.query(
-                "content://sms/sent".toUri(),
-                null,
-                "_id=?",
-                arrayOf(smsId),
-                null
-            )?.withFirst {
-                processPhoneCall(
-                    PhoneCallData(
-                        startTime = getLong("date"),
-                        phone = getString("address"),
-                        endTime = getLong("date"),
-                        text = getStringOrNull("body")
-                    )
+    private fun processContent() {
+        context.contentResolver.query(
+            "content://sms/sent".toUri(),
+            arrayOf(_ID, DATE, ADDRESS, BODY, TYPE),
+            null,
+            null,
+            "$DATE DESC LIMIT 1"
+        )?.tryWithFirst {
+            context.scheduleProcessPhoneCall(
+                PhoneCallData(
+                    startTime = getLong(DATE),
+                    phone = getString(ADDRESS),
+                    endTime = getLong(DATE),
+                    text = getStringOrNull(BODY)
                 )
-            }
+            )
         }
     }
 
     override fun onChange(selfChange: Boolean, uri: Uri?) {
         uri?.let {
             log.debug("Content changed: $it")
-            val segments = uri.pathSegments
-            if (segments.isNotEmpty() && (segments[0] == "sent" || segments.size > 1)) {
-                val smsId = if (segments[0] == "sent") segments[1] else segments[0]
-                processContent(smsId)
-            }
+            processContent()
         }
     }
 

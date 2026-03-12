@@ -10,7 +10,7 @@ import android.telephony.TelephonyManager.EXTRA_STATE
 import android.telephony.TelephonyManager.EXTRA_STATE_IDLE
 import android.telephony.TelephonyManager.EXTRA_STATE_OFFHOOK
 import android.telephony.TelephonyManager.EXTRA_STATE_RINGING
-import com.bopr.android.smailer.provider.telephony.PhoneCallEventProcessor.Companion.processPhoneCall
+import com.bopr.android.smailer.provider.telephony.PhoneCallEventProcessor.Companion.scheduleProcessPhoneCall
 import com.bopr.android.smailer.util.Logger
 import java.lang.System.currentTimeMillis
 
@@ -109,7 +109,7 @@ class PhoneCallReceiver : BroadcastReceiver() {
 
         if (messages.isNotEmpty()) {
             /* NOTE: time zone on emulator may be incorrect */
-            context.processPhoneCall(
+            context.scheduleProcessPhoneCall(
                 PhoneCallData(
                     startTime = messages[0].timestampMillis,
                     phone = messages[0].displayOriginatingAddress,
@@ -127,7 +127,7 @@ class PhoneCallReceiver : BroadcastReceiver() {
      * Processes last call
      */
     private fun processCall(context: Context) {
-        context.processPhoneCall(
+        context.scheduleProcessPhoneCall(
             PhoneCallData(
                 startTime = callStartTime!!,
                 phone = callNumber!!,

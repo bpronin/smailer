@@ -38,12 +38,12 @@ internal class MailMessenger(private val context: Context) : Messenger {
     private var account: Account? = null
     private var session: GoogleMailSession? = null
 
-    override fun initialize(): Boolean {
+    override fun prepare(): Boolean {
         if (settings.getBoolean(PREF_MAIL_MESSENGER_ENABLED)) {
             account = checkAccount(context.accounts.getPrimaryGoogleAccount())?.also {
                 session = GoogleMailSession(context, it, GMAIL_SEND)
 
-                log.debug("Initialized")
+                log.debug("Prepared")
 
                 return true
             }
@@ -51,7 +51,7 @@ internal class MailMessenger(private val context: Context) : Messenger {
         return false
     }
 
-    override fun sendMessage(
+    override fun send(
         event: Event,
         onSuccess: () -> Unit,
         onError: (Throwable) -> Unit

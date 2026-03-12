@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bopr.android.smailer.util.Logger
-import com.bopr.android.smailer.util.SingletonHolder
+import com.bopr.android.smailer.util.Singleton
 import java.io.Closeable
 import java.lang.System.currentTimeMillis
 
@@ -58,11 +58,7 @@ class Database private constructor(private val context: Context) : Closeable {
             })
         }
 
-    fun <R> useIt(action: Database.() -> R): R {
-        log.debug("Using")
-
-        return use(action)
-    }
+    fun <R> useIt(action: Database.() -> R): R = use(action)
 
     /**
      * Performs write transaction. Rollback it when failed.
@@ -273,8 +269,8 @@ class Database private constructor(private val context: Context) : Closeable {
             "CREATE TABLE $TABLE_PHONE_WHITELIST(" +
                     "$COLUMN_VALUE TEXT(256) PRIMARY KEY NOT NULL)"
 
-        private val singletonHolder = SingletonHolder { Database(it) }
-        val Context.database get() = singletonHolder.getInstance(this)
+        private val singleton = Singleton { Database(it) }
+        val Context.database get() = singleton.getInstance(this)
         val Fragment.database get() = requireContext().database
     }
 

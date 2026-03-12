@@ -2,7 +2,7 @@ package com.bopr.android.smailer.util
 
 import android.content.Context
 
-class SingletonHolder<T>(val onCreateInstance: (Context) -> T) {
+class Singleton<T>(val onCreateInstance: (Context) -> T) {
 
     @Volatile
     private var instance: T? = null

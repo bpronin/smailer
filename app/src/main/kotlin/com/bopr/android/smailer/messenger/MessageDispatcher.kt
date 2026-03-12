@@ -21,28 +21,23 @@ class MessageDispatcher(context: Context) {
         SmsMessenger(context)
     )
 
-    fun initialize(): Boolean {
-        log.debug("Initializing")
+    fun prepare(): Boolean {
+        log.debug("Preparing")
 
-        var initialized = false
+        var prepared = false
         messengers.forEach {
-            initialized = initialized or it.initialize()
+            prepared = prepared or it.prepare()
         }
-        return initialized
+        return prepared
     }
 
-    fun dispatch(
-        event: Event,
-        onSuccess: () -> Unit,
-        onError: (Throwable) -> Unit
-    ) {
-        log.debug("Dispatching").verb(event)
+    fun dispatch(event: Event, onSuccess: () -> Unit, onError: (Throwable) -> Unit) {
+        log.debug("Dispatching: $event")
 
-        messengers.forEach { it.sendMessage(event, onSuccess, onError) }
+        messengers.forEach { it.send(event, onSuccess, onError) }
     }
 
     companion object {
-
         private val log = Logger("MessageDispatcher")
     }
 }

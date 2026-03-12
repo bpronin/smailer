@@ -1,40 +1,53 @@
 package com.bopr.android.smailer.provider.telephony
 
 import android.content.Context
-import androidx.work.OneTimeWorkRequest
-import androidx.work.WorkManager
+import androidx.work.WorkerParameters
 import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.provider.EventProcessor
+import com.bopr.android.smailer.provider.EventProcessorWorker
 import com.bopr.android.smailer.util.Bits
+import com.bopr.android.smailer.util.Singleton
 
 /**
  * Precesses phone events.
  *
  * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
-class PhoneCallEventProcessor(context: Context) : EventProcessor<PhoneCallData>(context) {
+class PhoneCallEventProcessor private constructor(private val context: Context) :
+    EventProcessor<PhoneCallData>(context) {
 
-    private val settings = context.settings
-    private val database = context.database
+    override fun getBypassReason(payload: PhoneCallData): Bits {
+        val filter = context.run {
+            PhoneCallFilter(
+                settings.getPhoneProcessTriggers(),
+                database.phoneBlacklist,
+                database.phoneWhitelist,
+                database.textBlacklist,
+                database.textWhitelist
+            )
+        }
 
-    override fun getBypassReason(data: PhoneCallData): Bits {
-        return PhoneCallFilter(
-            settings.getPhoneProcessTriggers(),
-            database.phoneBlacklist,
-            database.phoneWhitelist,
-            database.textBlacklist,
-            database.textWhitelist
-        ).test(data)
+        return filter.test(payload)
+    }
+
+    internal class ProcessWorker(context: Context, workerParams: WorkerParameters) :
+        EventProcessorWorker(context, workerParams) {
+
+        override fun doProcessEvents() {
+            applicationContext.processPendingPhoneCalls()
+        }
     }
 
     companion object {
+        private val singleton = Singleton { PhoneCallEventProcessor(it) }
 
-        fun Context.processPhoneCall(info: PhoneCallData) {
-            PhoneCallEventProcessor(this).add(info)
-            WorkManager.getInstance(this).enqueue(
-                OneTimeWorkRequest.Builder(PhoneCallProcessWorker::class.java).build()
-            )
+        internal fun Context.scheduleProcessPhoneCall(data: PhoneCallData) {
+            singleton.getInstance(this).scheduleProcess(data, ProcessWorker::class)
+        }
+
+        internal fun Context.processPendingPhoneCalls() {
+            singleton.getInstance(this).processPending()
         }
     }
 

@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import com.bopr.android.smailer.messenger.mail.PhoneCallMailFormatter.Companion.PHONE_SEARCH_TAG
 import com.bopr.android.smailer.util.DEVICE_NAME
 import com.bopr.android.smailer.util.Logger
-import com.bopr.android.smailer.util.SingletonHolder
+import com.bopr.android.smailer.util.Singleton
 import com.bopr.android.smailer.util.commaJoin
 import com.bopr.android.smailer.util.commaSplit
 import androidx.core.content.edit
@@ -227,8 +227,8 @@ class Settings private constructor(context: Context) {
         const val DEFAULT_PHONE_SEARCH_URL = "https://www.google.com/search?q=$PHONE_SEARCH_TAG"
         const val DEFAULT_WEB_SERVER_PORT  = "8888"
         
-        private val singletonHolder = SingletonHolder { Settings(it) }
-        val Context.settings get() = singletonHolder.getInstance(this)
+        private val singleton = Singleton { Settings(it) }
+        val Context.settings get() = singleton.getInstance(this)
         val Fragment.settings get() = requireContext().settings
     }
 

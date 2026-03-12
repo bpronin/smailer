@@ -1,6 +1,8 @@
 package com.bopr.android.smailer.provider
 
 import android.content.Context
+import androidx.work.OneTimeWorkRequest.Builder
+import androidx.work.WorkManager
 import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.messenger.Event
 import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_NO_CONSUMERS
@@ -13,28 +15,28 @@ import com.bopr.android.smailer.util.Bits
 import com.bopr.android.smailer.util.GeoLocation.Companion.getGeoLocation
 import com.bopr.android.smailer.util.Logger
 import java.lang.System.currentTimeMillis
+import kotlin.reflect.KClass
 
-abstract class EventProcessor<T : EventPayload>(private val context: Context) {
+abstract class EventProcessor<P : EventPayload>(private val context: Context) {
 
-    protected val dispatcher = MessageDispatcher(context)
+    private val dispatcher = MessageDispatcher(context)
 
-    abstract fun getBypassReason(data: T): Bits
-
-    fun add(eventData: T) {
-        log.debug("Add record").verb(eventData)
-
-        val bypassFlags = getBypassReason(eventData)
-
-        putRecord(
-            Event(
-                bypassFlags = bypassFlags,
-                processState = if (bypassFlags.isEmpty()) STATE_PENDING else STATE_IGNORED,
-                payload = eventData
-            )
+    fun scheduleProcess(payload: P, worker: KClass<out EventProcessorWorker>) {
+        val flags = getBypassReason(payload)
+        val event = Event(
+            bypassFlags = flags,
+            processState = if (flags.isEmpty()) STATE_PENDING else STATE_IGNORED,
+            payload = payload
         )
+
+        log.debug("Scheduling process: $event")
+
+        if (updateDatabase(event)) {
+            WorkManager.getInstance(context).enqueue(Builder(worker).build())
+        }
     }
 
-    fun process(): Int {
+    fun processPending(): Int {
         val events = context.database.useIt { events.pending }
         if (events.isEmpty()) {
             log.debug("No unprocessed events")
@@ -44,7 +46,7 @@ abstract class EventProcessor<T : EventPayload>(private val context: Context) {
 
         log.debug("Processing ${events.size} event(s)")
 
-        val canDispatch = dispatcher.initialize()
+        val canDispatch = dispatcher.prepare()
 
         for (event in events) {
             if (canDispatch) {
@@ -53,23 +55,21 @@ abstract class EventProcessor<T : EventPayload>(private val context: Context) {
                     location = context.getGeoLocation()
                 }
 
-                log.debug("Dispatching event").verb(event)
-
                 dispatcher.dispatch(
                     event,
                     onSuccess = {
-                        putRecord(event.apply {
+                        updateDatabase(event.apply {
                             processState = STATE_PROCESSED
                         })
                     },
                     onError = {
-                        putRecord(event.apply {
+                        updateDatabase(event.apply {
                             processState = STATE_PENDING
                         })
                     }
                 )
             } else {
-                putRecord(event.apply {
+                updateDatabase(event.apply {
                     bypassFlags += FLAG_BYPASS_NO_CONSUMERS
                     processState = STATE_IGNORED
                 })
@@ -79,16 +79,13 @@ abstract class EventProcessor<T : EventPayload>(private val context: Context) {
         return events.size
     }
 
-    private fun putRecord(event: Event) {
-        context.database.useIt {
-            commit {
-                events.put(event)
-            }
-        }
+    abstract fun getBypassReason(payload: P): Bits
+
+    private fun updateDatabase(event: Event) = context.database.useIt {
+        commit { events.put(event) }
     }
 
     companion object {
-
         private val log = Logger("EventProcessor")
     }
 }
