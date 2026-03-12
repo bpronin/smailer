@@ -5,7 +5,6 @@ import com.bopr.android.smailer.AppServiceManager.Companion.enableAppService
 import com.bopr.android.smailer.backup.AppBackupManager.Companion.startAndroidBackup
 import com.bopr.android.smailer.control.firebase.FirebaseControlManager.Companion.startFirebaseMessaging
 import com.bopr.android.smailer.control.mail.MailControlManager.Companion.enableMailRemoteControl
-import com.bopr.android.smailer.provider.telephony.ContentObserverManager.Companion.enableContentObserver
 import com.bopr.android.smailer.sync.SyncManager.Companion.startGoogleCloudSync
 
 /**

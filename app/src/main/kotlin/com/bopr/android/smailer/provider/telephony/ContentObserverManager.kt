@@ -1,53 +1,54 @@
 package com.bopr.android.smailer.provider.telephony
 
 import android.content.Context
-import android.content.Intent
-import android.database.ContentObserver
-import android.os.Build
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_PHONE_PROCESS_TRIGGERS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
 import com.bopr.android.smailer.SettingsAware
 import com.bopr.android.smailer.util.Logger
-import com.bopr.android.smailer.util.SingletonHolder
 
 /**
- * Listens to changes in sms content. Used to process outgoing SMS.
+ * Content observers manager. Enables or disables content observers depending on settings.
  *
  * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
-class ContentObserverManager private constructor(private val context: Context) :
-    SettingsAware(context) {
+class ContentObserverManager(private val context: Context) : SettingsAware(context) {
 
-    private fun startService() {
-        val intent = Intent(context, ContentObserver::class.java)
-        val triggers = settings.getPhoneProcessTriggers()
+    private var smsObserver: SmsContentObserver? = null
 
-        if (triggers.contains(VAL_PREF_TRIGGER_OUT_SMS)) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(intent)
-            } else {
-                context.startService(intent)
-            }
-
-            log.debug("Service enabled")
+    fun enable() {
+        if (settings.getPhoneProcessTriggers().contains(VAL_PREF_TRIGGER_OUT_SMS)) {
+            registerObserver()
         } else {
-            context.stopService(intent)
-
-            log.debug("Service disabled")
+            unregisterObserver()
         }
     }
 
+    private fun registerObserver() {
+        if (smsObserver != null) {
+            log.warn("SMS observer already enabled")
+        } else {
+            smsObserver = SmsContentObserver(context).apply { register() }
+        }
+    }
+
+    private fun unregisterObserver() {
+        smsObserver?.apply {
+            unregister()
+            smsObserver = null
+        }
+    }
+
+    override fun dispose() {
+        unregisterObserver()
+        super.dispose()
+    }
+
     override fun onSettingsChanged(settings: Settings, key: String) {
-        if (key == PREF_PHONE_PROCESS_TRIGGERS) startService()
+        if (key == PREF_PHONE_PROCESS_TRIGGERS) enable()
     }
 
     companion object {
-
         private val log = Logger("ContentObserver")
-
-        private val singletonHolder = SingletonHolder { ContentObserverManager(it) }
-        internal fun Context.enableContentObserver() =
-            singletonHolder.getInstance(this).startService()
     }
 }
