@@ -6,6 +6,9 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.messenger.ProcessState
+import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
+import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PENDING
+import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.messenger.telegram.TelegramException
 import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_BAD_RESPONSE
 import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_INVALID_TOKEN
@@ -14,9 +17,6 @@ import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGR
 import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_NO_TOKEN
 import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_NO_UPDATES
 import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_REQUEST_FAILED
-import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
-import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PENDING
-import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.provider.telephony.PhoneCallData
 import java.util.Locale
 
@@ -93,16 +93,16 @@ fun messageStateImage(@ProcessState state: Int): Int {
 }
 
 @StringRes
-fun phoneCallTypeText(info: PhoneCallData): Int {
-    return if (info.isSms) {
-        if (info.isIncoming) {
+fun phoneCallTypeText(data: PhoneCallData): Int {
+    return if (data.isSms) {
+        if (data.isIncoming) {
             R.string.incoming_sms
         } else {
             R.string.outgoing_sms
         }
-    } else if (info.isMissed) {
+    } else if (data.isMissed) {
         R.string.missed_call
-    } else if (info.isIncoming) {
+    } else if (data.isIncoming) {
         R.string.incoming_call
     } else {
         R.string.outgoing_call
@@ -110,19 +110,36 @@ fun phoneCallTypeText(info: PhoneCallData): Int {
 }
 
 @StringRes
-fun phoneCallTypePrefix(info: PhoneCallData): Int {
-    return if (info.isSms) {
-        if (info.isIncoming) {
+fun phoneCallTypePrefix(data: PhoneCallData): Int {
+    return if (data.isSms) {
+        if (data.isIncoming) {
             R.string.incoming_sms_from
         } else {
             R.string.outgoing_sms_to
         }
-    } else if (info.isMissed) {
+    } else if (data.isMissed) {
         R.string.missed_call_from
-    } else if (info.isIncoming) {
+    } else if (data.isIncoming) {
         R.string.incoming_call_from
     } else {
         R.string.outgoing_call_to
+    }
+}
+
+@StringRes
+fun phoneCallAddressFormat(data: PhoneCallData): Int {
+    return if (data.isSms) {
+        if (data.isIncoming) {
+            R.string.sender_phone
+        } else {
+            R.string.addressee_phone
+        }
+    } else if (data.isMissed) {
+        R.string.caller_phone
+    } else if (data.isIncoming) {
+        R.string.caller_phone
+    } else {
+        R.string.called_phone
     }
 }
 

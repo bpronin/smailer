@@ -15,6 +15,7 @@ import com.bopr.android.smailer.util.formatPhoneNumber
 import com.bopr.android.smailer.util.getContactName
 import com.bopr.android.smailer.util.htmlReplaceUrlsWithLinks
 import com.bopr.android.smailer.util.httpEncoded
+import com.bopr.android.smailer.util.phoneCallAddressFormat
 import com.bopr.android.smailer.util.stripPhoneNumber
 
 /**
@@ -25,10 +26,10 @@ import com.bopr.android.smailer.util.stripPhoneNumber
 class PhoneCallMailFormatter(
     context: Context,
     event:Event,
-    private val info: PhoneCallData
+    private val data: PhoneCallData
 ) : BaseMailFormatter(
     context,
-    info.startTime,
+    data.startTime,
     event.processTime,
     event.location
 ) {
@@ -37,26 +38,26 @@ class PhoneCallMailFormatter(
     private val phoneSearchUrl = settings.getPhoneSearchUrl()
 
     override fun getSubject(): String {
-        return "${string(phoneCallTypePrefix(info))} ${escapePhoneNumber(info.phone)}"
+        return "${string(phoneCallTypePrefix(data))} ${escapePhoneNumber(data.phone)}"
     }
 
     override fun getTitle(): String {
-        return string(phoneCallTypeText(info))
+        return string(phoneCallTypeText(data))
     }
 
     override fun getMessage(): String {
         return when {
-            info.isMissed -> {
+            data.isMissed -> {
                 string(R.string.you_had_missed_call)
             }
 
-            info.isSms -> {
-                info.text!!.htmlReplaceUrlsWithLinks()
+            data.isSms -> {
+                data.text!!.htmlReplaceUrlsWithLinks()
             }
 
             else -> {
-                val duration = formatDuration(info.callDuration)
-                if (info.isIncoming) {
+                val duration = formatDuration(data.callDuration)
+                if (data.isIncoming) {
                     string(R.string.you_had_incoming_call, duration)
                 } else {
                     string(R.string.you_had_outgoing_call, duration)
@@ -66,32 +67,25 @@ class PhoneCallMailFormatter(
     }
 
     override fun getSenderName(): String {
-        val strippedPhone = stripPhoneNumber(info.phone)
-        val formattedPhone = formatPhoneNumber(info.phone)
+        val strippedPhone = stripPhoneNumber(data.phone)
+        val formattedPhone = formatPhoneNumber(data.phone)
 
         val telLink = "<a href=\"tel:${formattedPhone.httpEncoded()}\"" +
                 " style=\"text-decoration: none;\">&#9742;</a>$strippedPhone"
 
-
-        val text = context.getContactName(info.phone)?.let {
+        val text = context.getContactName(data.phone)?.let {
             val url = phoneSearchUrl.replace(PHONE_SEARCH_TAG, strippedPhone)
             "<a href=\"$url\">${string(R.string.unknown_contact)}</a>"
         }.orEmpty()
 
-        val patternRes = when {
-            info.isSms -> R.string.sender_phone
-            info.isIncoming -> R.string.caller_phone
-            else -> R.string.called_phone
-        }
-
-        return string(patternRes, telLink, text)
+        return string(phoneCallAddressFormat(data), telLink, text)
     }
 
     override fun getReplyLinks(): List<String>? {
         if (serviceAccount.isNullOrEmpty()) return null
 
-        val phone = escapePhoneNumber(info.phone)
-        val smsText = info.text ?: ""
+        val phone = escapePhoneNumber(data.phone)
+        val smsText = data.text ?: ""
         val subject = formatSubject()
 
         return listOf(

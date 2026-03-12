@@ -170,6 +170,7 @@
     <string name="sender_account_not_found">Sender account not found</string>
     <string name="sender_of">Sender: %s</string>
     <string name="sender_phone">Sender: %1$s%2$s</string>
+    <string name="addressee_phone">Addressee: %1$s%2$s</string>
     <string name="sent_sms">Sent SMS to %s</string>
     <string name="sent_time_device">Sent%1$s%2$s</string>
     <string name="service_account_not_found">Service account not found</string>

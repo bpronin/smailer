@@ -169,6 +169,7 @@
     <string name="sender_account_not_found">Аккаунт отправителя не найден</string>
     <string name="sender_of">Отправитель: %s</string>
     <string name="sender_phone">Отправитель: %1$s%2$s</string>
+    <string name="addressee_phone">Адресат: %1$s%2$s</string>
     <string name="sent_sms">Отправлено SMS на номер %s</string>
     <string name="sent_time_device">Отправлено%1$s%2$s</string>
     <string name="service_account_not_found">Сервисный аккаунт не найден</string>
