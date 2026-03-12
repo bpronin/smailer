@@ -1,8 +1,12 @@
 package com.bopr.android.smailer.util
 
 import android.annotation.SuppressLint
+import android.app.Notification
+import android.app.Service
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
 import android.os.Build
 import android.telephony.SmsManager
 import androidx.core.content.ContextCompat.checkSelfPermission
@@ -77,6 +81,22 @@ fun Context.sendSmsMessage(phone: String?, message: String?) {
 
     smsManager.apply {
         sendMultipartTextMessage(phone, null, divideMessage(message), null, null)
+    }
+}
+
+fun Context.startForegroundServiceCompat(intent: Intent) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        startForegroundService(intent)
+    } else {
+        startService(intent)
+    }
+}
+
+fun Service.startForegroundCompat(id: Int, notification: Notification) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        startForeground(id, notification, FOREGROUND_SERVICE_TYPE_DATA_SYNC)
+    } else {
+        startForeground(id, notification)
     }
 }
 

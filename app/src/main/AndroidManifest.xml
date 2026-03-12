@@ -153,10 +153,18 @@
                 android:parentActivityName=".ui.SmsSettingsActivity" />
 
         <service
-                android:name=".provider.telephony.ContentObserverService"
+                android:name=".AppService"
                 android:exported="false"
                 android:foregroundServiceType="dataSync" />
-
+        
+        <service
+                android:name=".control.firebase.FirebaseControlService"
+                android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        
         <receiver
                 android:name=".provider.telephony.PhoneCallReceiver"
                 android:exported="true"
@@ -182,14 +190,6 @@
                 <action android:name="android.intent.action.BATTERY_LOW" />
             </intent-filter>
         </receiver>
-
-        <service
-                android:name=".control.firebase.FirebaseControlService"
-                android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
 
     </application>
 
