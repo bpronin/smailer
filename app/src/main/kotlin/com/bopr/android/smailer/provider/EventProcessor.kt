@@ -83,7 +83,7 @@ abstract class EventProcessor<P : EventPayload>(private val context: Context) {
     abstract fun getBypassReason(payload: P): Bits
 
     private fun updateDatabase(event: Event) = context.database.commit {
-        events.replace(event)
+        events.updateState(event)
     }
 
     companion object {

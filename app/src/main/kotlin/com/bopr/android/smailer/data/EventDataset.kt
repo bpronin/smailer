@@ -57,12 +57,28 @@ class EventDataset(
         ).drainToSet(::get)
     }
 
-    /**
-     * Marks all events as read.
-     */
-    fun markAllAsRead(read: Boolean) = write {
+    fun updateState(event: Event) = write {
+        updateRecords(
+            it, values {
+                put(COLUMN_STATE, event.processState)
+                put(COLUMN_BYPASS, event.bypassFlags.toInt())
+            },
+            keyClause, keyOf(event)
+        )
+    }
+
+    fun updateRead(event: Event) = write {
+        updateRecords(
+            it, values {
+                put(COLUMN_READ, event.isRead)
+            },
+            keyClause, keyOf(event)
+        )
+    }
+
+    fun updateAllRead(read: Boolean) = write {
         updateRecords(it, values {
-            COLUMN_READ to read
+            put(COLUMN_READ, read)
         })
     }
 

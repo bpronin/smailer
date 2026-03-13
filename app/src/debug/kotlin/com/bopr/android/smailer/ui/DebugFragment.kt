@@ -218,11 +218,11 @@ class DebugFragment : PreferenceFragmentCompat() {
                 onPopulateHistory()
             },
             addPreference("Mark all as unread") {
-                database.commit { events.markAllAsRead(false) }
+                database.commit { events.updateAllRead(false) }
                 showComplete()
             },
             addPreference("Mark all as read") {
-                database.commit { events.markAllAsRead(true) }
+                database.commit { events.updateAllRead(true) }
                 showComplete()
             },
             addPreference("Clear calls log") {

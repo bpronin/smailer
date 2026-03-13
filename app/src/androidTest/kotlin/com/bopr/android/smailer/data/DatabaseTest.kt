@@ -62,13 +62,14 @@ class DatabaseTest : BaseTest() {
     }
 
     @Test
-    fun testReplace() {
+    fun testUpdate() {
         with(database.events) {
-            insert(Event(timestamp = 0, target = "1", payload = defaultPayload))
+            insert(Event(timestamp = 0, target = "1", isRead = false, payload = defaultPayload))
             assertTrue(
-                replace(Event(timestamp = 0, target = "1", payload = defaultPayload))
+                update(Event(timestamp = 0, target = "1", isRead = true, payload = defaultPayload))
             )
             assertEquals(1, size)
+            assertTrue(drain().first().isRead)
         }
     }
 
@@ -97,8 +98,7 @@ class DatabaseTest : BaseTest() {
                 )
             )
 
-            val drain = drain()
-            drain.apply {
+            drain().apply {
                 assertEquals(2, size)
                 assertEquals(4, first().timestamp)
                 assertEquals(3, last().timestamp)

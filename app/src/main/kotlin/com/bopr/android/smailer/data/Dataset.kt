@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.bopr.android.smailer.messenger.Event
 import com.bopr.android.smailer.util.Logger
 
 /**
@@ -18,7 +19,7 @@ abstract class Dataset<T>(
 ) {
 
     protected abstract val keyColumns: Array<String>
-    private val keyClause by lazy { keyColumns.joinToString(" AND ") { "$it=?" } }
+    protected val keyClause by lazy { keyColumns.joinToString(" AND ") { "$it=?" } }
     val size get() = read { count(tableName).toInt() }
 
     open fun insert(element: T) = write {
@@ -27,10 +28,6 @@ abstract class Dataset<T>(
 
     fun insert(elements: Iterable<T>) =
         forAll(elements, ::insert).also { log.debug("Inserted $it item(s)") } != 0
-
-    open fun replace(element: T) = write {
-        replaceRecord(it, values(element))
-    }
 
     open fun delete(element: T) = write {
         deleteRecords(it, keyClause, keyOf(element))
@@ -73,7 +70,7 @@ abstract class Dataset<T>(
         }
         return affected
     }
-
+    
     companion object {
 
         private val log = Logger("Database")
