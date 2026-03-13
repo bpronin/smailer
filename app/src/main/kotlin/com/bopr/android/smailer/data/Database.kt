@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bopr.android.smailer.util.Logger
 import com.bopr.android.smailer.util.Singleton
+import java.io.Closeable
 import java.lang.System.currentTimeMillis
 
 /**
@@ -18,7 +19,7 @@ import java.lang.System.currentTimeMillis
  *
  * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
-class Database private constructor(private val context: Context) {
+class Database private constructor(private val context: Context): Closeable {
 
     private val helper = DbHelper()
     private val broadcastManager by lazy { LocalBroadcastManager.getInstance(context) }
@@ -51,9 +52,7 @@ class Database private constructor(private val context: Context) {
                 put(COLUMN_UPDATE_TIME, value)
             })
         }
-
-//    fun <R> useIt(action: Database.() -> R): R = use(action)
-
+    
     /**
      * Performs write transaction. Rollback it when failed.
      */
@@ -123,14 +122,12 @@ class Database private constructor(private val context: Context) {
             log.warn("Destroy failed")
     }
 
-//    /**
-//     * Closes open database object.
-//     */
-//    override fun close() {
-//        helper.close()
-//        
-//        log.info("Closed")
-//    }
+//    fun <R> useIt(action: Database.() -> R): R = use(action)
+
+    override fun close() {
+        helper.close()
+        log.info("Closed")
+    }
 
     private fun querySystemTable() =
         helper.read { queryRecords(TABLE_SYSTEM, arrayOf(COLUMN_UPDATE_TIME), "$COLUMN_ID=0") }
@@ -146,6 +143,7 @@ class Database private constructor(private val context: Context) {
                 execSQL(SQL_CREATE_SYSTEM)
                 execSQL(SQL_CREATE_EVENTS)
                 execSQL(SQL_CREATE_PHONE_CALLS)
+                execSQL(SQL_CREATE_BATTERY)
                 execSQL(SQL_CREATE_PHONE_BLACKLIST)
                 execSQL(SQL_CREATE_PHONE_WHITELIST)
                 execSQL(SQL_CREATE_TEXT_BLACKLIST)
@@ -167,6 +165,7 @@ class Database private constructor(private val context: Context) {
                     alterTable(TABLE_SYSTEM, SQL_CREATE_SYSTEM)
                     alterTable(TABLE_EVENTS, SQL_CREATE_EVENTS)
                     alterTable(TABLE_PHONE_CALLS, SQL_CREATE_PHONE_CALLS)
+                    alterTable(TABLE_BATTERY, SQL_CREATE_BATTERY)
                     alterTable(TABLE_PHONE_BLACKLIST, SQL_CREATE_PHONE_BLACKLIST)
                     alterTable(TABLE_PHONE_WHITELIST, SQL_CREATE_PHONE_WHITELIST)
                     alterTable(TABLE_TEXT_BLACKLIST, SQL_CREATE_TEXT_BLACKLIST)
@@ -212,6 +211,7 @@ class Database private constructor(private val context: Context) {
         const val TABLE_EVENTS = "events"
         const val TABLE_PHONE_BLACKLIST = "phone_blacklist"
         const val TABLE_PHONE_CALLS = "phone_events"
+        const val TABLE_BATTERY = "battery_events"
         const val TABLE_PHONE_WHITELIST = "phone_whitelist"
         const val TABLE_TEXT_BLACKLIST = "text_blacklist"
         const val TABLE_TEXT_WHITELIST = "text_whitelist"
@@ -245,6 +245,13 @@ class Database private constructor(private val context: Context) {
                     "$COLUMN_TARGET TEXT(25) NOT NULL," +
                     "$COLUMN_TEXT TEXT(256)," +
                     "$COLUMN_TIMESTAMP INTEGER NOT NULL," +
+                    "PRIMARY KEY($COLUMN_TIMESTAMP, $COLUMN_TARGET))"
+
+        private const val SQL_CREATE_BATTERY =
+            "CREATE TABLE $TABLE_BATTERY(" +
+                    "$COLUMN_TIMESTAMP INTEGER NOT NULL," +
+                    "$COLUMN_TARGET TEXT(25) NOT NULL," +
+                    "$COLUMN_TEXT TEXT(256)," +
                     "PRIMARY KEY($COLUMN_TIMESTAMP, $COLUMN_TARGET))"
 
         private const val SQL_CREATE_TEXT_BLACKLIST =

@@ -39,28 +39,18 @@ abstract class Dataset<T>(
     fun delete(elements: Iterable<T>) =
         forAll(elements, ::delete).also { log.debug("Deleted $it item(s)") } != 0
 
-    fun clear() = write {
+    open fun clear() = write {
         deleteRecords(it)
     }
 
     fun replaceAll(elements: Iterable<T>) = write {
         batchUpdate {
-            deleteRecords(it)
-            for (element in elements) {
-                insertRecord(it, values(element))
-            }
+            clear()
+            insert(elements)
         }
     }
 
     fun drain(): Set<T> = query().drainToSet(::get)
-
-    private fun forAll(elements: Iterable<T>, action: (T) -> Boolean): Int {
-        var affected = 0
-        for (element in elements) {
-            if (action(element)) affected++
-        }
-        return affected
-    }
 
     protected abstract fun values(element: T): ContentValues
 
@@ -75,6 +65,14 @@ abstract class Dataset<T>(
 
     protected fun <R> write(action: SQLiteDatabase.(table: String) -> R): R =
         helper.write { action(tableName) }.also { lastModified.add(tableName) }
+
+    private fun forAll(elements: Iterable<T>, action: (T) -> Boolean): Int {
+        var affected = 0
+        for (element in elements) {
+            if (action(element)) affected++
+        }
+        return affected
+    }
 
     companion object {
 

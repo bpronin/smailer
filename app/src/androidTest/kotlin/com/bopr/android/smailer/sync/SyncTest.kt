@@ -41,10 +41,10 @@ class SyncTest : BaseTest() {
         val sync = Synchronizer(targetContext, account, database, drive)
 
         database.commit {
-            phoneBlacklist.addAll(setOf("PBA", "PBB", "PBC"))
-            phoneWhitelist.addAll(setOf("PWA", "PWB", "PWC"))
-            textBlacklist.addAll(setOf("TBA", "TBB", "TBC"))
-            textWhitelist.addAll(setOf("TWA", "TWB", "TWC"))
+            phoneBlacklist.insert(setOf("PBA", "PBB", "PBC"))
+            phoneWhitelist.insert(setOf("PWA", "PWB", "PWC"))
+            textBlacklist.insert(setOf("TBA", "TBB", "TBC"))
+            textWhitelist.insert(setOf("TWA", "TWB", "TWC"))
         }
 
         sync.sync(SYNC_FORCE_UPLOAD)
@@ -71,7 +71,7 @@ class SyncTest : BaseTest() {
 
         sync.clear()
 
-        database.commit { phoneBlacklist.addAll(setOf("A", "B", "C")) }
+        database.commit { phoneBlacklist.insert(setOf("A", "B", "C")) }
 
         assertEquals(setOf("A", "B", "C"), database.phoneBlacklist)
         assertFalse(database.updateTime == 0L)
@@ -80,7 +80,7 @@ class SyncTest : BaseTest() {
 
         database.commit { phoneBlacklist.clear() }
 
-        assertTrue(database.phoneBlacklist.isEmpty())
+        assertEquals(0, database.phoneBlacklist.size)
 
         database.updateTime = 0  /* before last sync to force download */
 

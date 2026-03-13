@@ -64,7 +64,7 @@ class MainFragment : BasePreferenceFragment(R.xml.pref_main) {
             getQuantityString(
                 R.plurals.new_history_items,
                 R.string.new_history_items_zero,
-                database.events.unreadCount()
+                database.events.getUnreadCount()
             )
         )
     }

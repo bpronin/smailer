@@ -18,6 +18,7 @@ import com.bopr.android.smailer.data.Database.Companion.COLUMN_TARGET
 import com.bopr.android.smailer.data.Database.Companion.COLUMN_TEXT
 import com.bopr.android.smailer.data.Database.Companion.COLUMN_TIMESTAMP
 import com.bopr.android.smailer.data.Database.Companion.COLUMN_TYPE
+import com.bopr.android.smailer.data.Database.Companion.TABLE_BATTERY
 import com.bopr.android.smailer.data.Database.Companion.TABLE_EVENTS
 import com.bopr.android.smailer.data.Database.Companion.TABLE_PHONE_CALLS
 import com.bopr.android.smailer.messenger.Event
@@ -41,14 +42,14 @@ class EventDataset(
     /**
      * Returns count of unread events.
      */
-    fun unreadCount() = read {
+    fun getUnreadCount() = read {
         count(tableName, "$COLUMN_READ<>1")
     }
 
     /**
      * Returns pending events.
      */
-    fun pending() = read {
+    fun drainPending() = read {
         queryRecords(
             table = tableName,
             where = "$COLUMN_STATE=${STATE_PENDING}",
@@ -61,7 +62,7 @@ class EventDataset(
      */
     fun markAllAsRead(read: Boolean) = write {
         updateRecords(it, values {
-            put(COLUMN_READ, read)
+            COLUMN_READ to read
         })
     }
 
@@ -69,12 +70,29 @@ class EventDataset(
         queryRecords(tableName, order = "$COLUMN_TIMESTAMP DESC")
     }
 
-    override fun insert(element: Event) = super.insert(element).also {
-        insertPayload(element.timestamp, element.target, element.payload)
+    override fun insert(element: Event) = write {
+        batchUpdate {
+            super.insert(element).also {
+                insertPayload(element.timestamp, element.target, element.payload)
+            }
+        }
     }
 
-    override fun delete(element: Event) = super.delete(element).also {
-        deletePayload(element.timestamp, element.target, element.payload)
+    override fun delete(element: Event) = write {
+        batchUpdate {
+            super.delete(element).also {
+                deletePayload(element.timestamp, element.target, element.payload)
+            }
+        }
+    }
+
+    override fun clear() = write {
+        batchUpdate {
+            super.clear().also {
+                deleteRecords(TABLE_PHONE_CALLS)
+                deleteRecords(TABLE_BATTERY)
+            }
+        }
     }
 
     override fun get(cursor: Cursor) = cursor.run {
@@ -142,8 +160,14 @@ class EventDataset(
             }
 
             PAYLOAD_TYPE_BATTERY -> read {
-                // TODO: implement
-                BatteryData("")
+                queryRecords(
+                    table = TABLE_BATTERY,
+                    where = "$COLUMN_TIMESTAMP=$timestamp AND $COLUMN_TARGET='$target'"
+                ).withFirst {
+                    BatteryData(
+                        text = getString(COLUMN_TEXT)
+                    )
+                }
             }
 
             else -> throw IllegalArgumentException("Unknown payload type")
@@ -167,8 +191,14 @@ class EventDataset(
                 })
             }
 
-            is BatteryData -> {
-                // TODO: implement
+            is BatteryData -> write {
+                insertRecord(TABLE_BATTERY, values {
+                    payload.apply {
+                        put(COLUMN_TIMESTAMP, timestamp)
+                        put(COLUMN_TARGET, target)
+                        put(COLUMN_TEXT, text)
+                    }
+                })
             }
 
             else -> throw IllegalArgumentException("Unknown payload type")
@@ -185,7 +215,10 @@ class EventDataset(
             }
 
             is BatteryData -> write {
-                // TODO: implement
+                deleteRecords(
+                    table = TABLE_BATTERY,
+                    where = "$COLUMN_TIMESTAMP=$timestamp AND $COLUMN_TARGET='$target'"
+                )
             }
 
             else -> throw IllegalArgumentException("Unknown payload type")

@@ -32,7 +32,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
     private fun testClear() {
         database.commit {
             events.clear()
-            events.add(
+            events.insert(
                 Event(
                     payload = PhoneCallData(
                         startTime = currentTimeMillis(),
@@ -41,7 +41,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
                     target = "device-1"
                 )
             )
-            events.add(
+            events.insert(
                 Event(
                     payload = PhoneCallData(
                         startTime = currentTimeMillis(),
@@ -50,7 +50,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
                     target = "device-2"
                 )
             )
-            events.add(
+            events.insert(
                 Event(
                     payload = PhoneCallData(
                         startTime = currentTimeMillis(),
@@ -79,7 +79,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
     private fun testClearCancel() {
         database.commit {
             events.clear()
-            events.add(
+            events.insert(
                 Event(
                     payload = PhoneCallData(
                         startTime = currentTimeMillis(),
@@ -88,7 +88,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
                     target = "device-1"
                 )
             )
-            events.add(
+            events.insert(
                 Event(
                     payload = PhoneCallData(
                         startTime = currentTimeMillis(),
@@ -97,7 +97,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
                     target = "device-2"
                 )
             )
-            events.add(
+            events.insert(
                 Event(
                     payload = PhoneCallData(
                         startTime = currentTimeMillis(),
@@ -126,7 +126,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
     private fun testRemoveItem() {
         database.commit {
             events.clear()
-            events.add(
+            events.insert(
                 Event(
                     payload = PhoneCallData(
                         startTime = currentTimeMillis(),
@@ -135,7 +135,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
                     target = "device-1"
                 )
             )
-            events.add(
+            events.insert(
                 Event(
                     payload = PhoneCallData(
                         startTime = currentTimeMillis(),
@@ -144,7 +144,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
                     target = "device-2"
                 )
             )
-            events.add(
+            events.insert(
                 Event(
                     payload = PhoneCallData(
                         startTime = currentTimeMillis(),
@@ -165,7 +165,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
     private fun testMarkAllAsRead() {
         database.commit {
             events.clear()
-            events.add(
+            events.insert(
                 Event(
                     payload = PhoneCallData(
                         startTime = currentTimeMillis(),
@@ -175,7 +175,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
                     isRead = false
                 )
             )
-            events.add(
+            events.insert(
                 Event(
                     payload = PhoneCallData(
                         startTime = currentTimeMillis(),
@@ -185,7 +185,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
                     isRead = false
                 )
             )
-            events.add(
+            events.insert(
                 Event(
                     payload = PhoneCallData(
                         startTime = currentTimeMillis(),
@@ -197,11 +197,11 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             )
         }
 
-        assertEquals(3, database.events.unreadCount)
+        assertEquals(3, database.events.getUnreadCount())
 
         clickOptionsMenuItem(R.string.mark_all_as_read)
 
-        assertEquals(0, database.events.unreadCount)
+        assertEquals(0, database.events.getUnreadCount())
     }
 
     private fun testAddToList(
@@ -211,7 +211,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
         database.commit {
             dataset.clear()
             events.clear()
-            events.add(
+            events.insert(
                 Event(
                     payload = PhoneCallData(
                         startTime = currentTimeMillis(),
@@ -220,7 +220,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
                     target = "device-1"
                 )
             )
-            events.add(
+            events.insert(
                 Event(
                     payload = PhoneCallData(
                         startTime = currentTimeMillis(),
@@ -231,7 +231,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
                     target = "device-2"
                 )
             )
-            events.add(
+            events.insert(
                 Event(
                     payload = PhoneCallData(
                         startTime = currentTimeMillis(),
@@ -242,7 +242,7 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
             )
         }
 
-        assertTrue(dataset.isEmpty())
+        assertEquals(0, dataset.size)
 
         longClickRecyclerItem("phone")
         clickContextMenuItem(menuTitle)
@@ -263,14 +263,14 @@ class HistoryActivityTest : BaseActivityTest(HistoryActivity::class) {
         assertRecyclerItemDisplayed("phone")
 
         if (isCancel) {
-            assertTrue(dataset.isEmpty())
+            assertEquals(0, dataset.size)
         } else {
             assertRecyclerItemDisplayed("phone")
             assertEquals(1, dataset.size)
             if (isCheckingText) {
-                assertTrue(dataset.contains("text"))
+                assertTrue(dataset.drain().contains("text"))
             } else {
-                assertTrue(dataset.contains("phone"))
+                assertTrue(dataset.drain().contains("phone"))
             }
         }
     }
