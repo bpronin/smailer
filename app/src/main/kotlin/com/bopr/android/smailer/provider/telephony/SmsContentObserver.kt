@@ -9,8 +9,10 @@ import android.provider.BaseColumns._ID
 import android.provider.Telephony.TextBasedSmsColumns.ADDRESS
 import android.provider.Telephony.TextBasedSmsColumns.BODY
 import android.provider.Telephony.TextBasedSmsColumns.DATE
+import android.provider.Telephony.TextBasedSmsColumns.MESSAGE_TYPE_SENT
 import android.provider.Telephony.TextBasedSmsColumns.TYPE
 import androidx.core.net.toUri
+import com.bopr.android.smailer.data.getInt
 import com.bopr.android.smailer.data.getLong
 import com.bopr.android.smailer.data.getString
 import com.bopr.android.smailer.data.getStringOrNull
@@ -29,26 +31,30 @@ internal class SmsContentObserver(private val context: Context) : ContentObserve
 
     private var lastProcessedId: Long = -1
 
-    private fun processContent() {
+    private fun processContent(id: Long) {
+        if (lastProcessedId == id) {
+            return
+        }
+        lastProcessedId = id
+
         context.contentResolver.query(
-            "content://sms/sent".toUri(),
-            arrayOf(_ID, DATE, ADDRESS, BODY, TYPE),
-            null,
-            null,
-            "$DATE DESC LIMIT 1"
+            contentUri,
+            arrayOf(DATE, ADDRESS, BODY, TYPE),
+            "$_ID = $id",
+            null, null
         )?.tryWithFirst {
-            val id = getLong(_ID)
-            if (lastProcessedId != id) {
-                lastProcessedId = id
-                
-                context.scheduleProcessPhoneCall(
-                    PhoneCallData(
-                        startTime = getLong(DATE),
-                        phone = getString(ADDRESS),
-                        endTime = getLong(DATE),
-                        text = getStringOrNull(BODY)
+            when (getInt(TYPE)) {
+                MESSAGE_TYPE_SENT -> {
+                    log.debug("Found processable content: $id")
+                    context.scheduleProcessPhoneCall(
+                        PhoneCallData(
+                            startTime = getLong(DATE),
+                            phone = getString(ADDRESS),
+                            endTime = getLong(DATE),
+                            text = getStringOrNull(BODY)
+                        )
                     )
-                )
+                }
             }
         }
     }
@@ -56,15 +62,15 @@ internal class SmsContentObserver(private val context: Context) : ContentObserve
     override fun onChange(selfChange: Boolean, uri: Uri?) {
         uri?.let {
             log.debug("Content changed: $it")
-            val segments = uri.pathSegments
-            if (segments.size == 1 && segments[0] != "raw") {
-                processContent()
+            val segments = it.pathSegments
+            if (segments.isNotEmpty() && segments[0] != "raw") {
+                processContent(segments[0].toLong())
             }
         }
     }
 
     fun register() {
-        context.contentResolver.registerContentObserver("content://sms".toUri(), true, this)
+        context.contentResolver.registerContentObserver(contentUri, true, this)
         log.debug("Enabled")
     }
 
@@ -75,5 +81,6 @@ internal class SmsContentObserver(private val context: Context) : ContentObserve
 
     companion object {
         private val log = Logger("SmsObserver")
+        private val contentUri = "content://sms".toUri()
     }
 }

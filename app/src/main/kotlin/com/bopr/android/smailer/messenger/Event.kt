@@ -24,7 +24,7 @@ data class Event(
 
     companion object {
 
-        /* Bypass flags. Explain why an event was not processed. */
+        /* Bypass flags. Explains why an event was not processed. */
 
         val FLAG_BYPASS_NO_CONSUMERS = bit(0)
         val FLAG_BYPASS_NUMBER_BLACKLISTED = bit(1)
