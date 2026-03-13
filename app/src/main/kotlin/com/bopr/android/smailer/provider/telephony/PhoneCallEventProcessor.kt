@@ -21,10 +21,10 @@ class PhoneCallEventProcessor private constructor(private val context: Context) 
         val filter = context.run {
             PhoneCallFilter(
                 settings.getPhoneProcessTriggers(),
-                database.phoneBlacklist,
-                database.phoneWhitelist,
-                database.textBlacklist,
-                database.textWhitelist
+                database.phoneBlacklist.drain(),
+                database.phoneWhitelist.drain(),
+                database.textBlacklist.drain(),
+                database.textWhitelist.drain()
             )
         }
 

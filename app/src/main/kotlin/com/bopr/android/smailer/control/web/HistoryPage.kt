@@ -41,7 +41,7 @@ class HistoryPage(private val context: Context) : BaseHtmlTemplate() {
                     }
                 }
 
-                context.database.events.forEach { event ->
+                for (event in context.database.events.drain()) {
                     (event.payload as? PhoneCallData)?.let {
                         tr {
                             td(classes = "col-type") {

@@ -218,15 +218,15 @@ class DebugFragment : PreferenceFragmentCompat() {
                 onPopulateHistory()
             },
             addPreference("Mark all as unread") {
-                database.commit { batch { events.markAllAsRead(false) } }
+                database.commit { events.markAllAsRead(false) }
                 showComplete()
             },
             addPreference("Mark all as read") {
-                database.commit { batch { events.markAllAsRead(true) } }
+                database.commit { events.markAllAsRead(true) }
                 showComplete()
             },
             addPreference("Clear calls log") {
-                database.commit { batch { events.clear() } }
+                database.commit { events.clear() }
                 showComplete()
             },
             addPreference("Destroy database") {
@@ -377,7 +377,6 @@ class DebugFragment : PreferenceFragmentCompat() {
     override fun onDestroy() {
         unregisterReceiver(smsSendStatusReceiver)
         unregisterReceiver(smsDeliveryStatusReceiver)
-        database.close()
         super.onDestroy()
     }
 
@@ -534,7 +533,7 @@ class DebugFragment : PreferenceFragmentCompat() {
 
     private fun onAddHistoryItem() {
         database.commit {
-            events.add(
+            events.insert(
                 Event(
                     payload = PhoneCallData(
                         startTime = currentTimeMillis(),
@@ -551,112 +550,92 @@ class DebugFragment : PreferenceFragmentCompat() {
     private fun onPopulateHistory() {
         var time = currentTimeMillis()
         database.commit {
-            batch {
-                events.apply {
-                    add(
-                        Event(
-                            payload = PhoneCallData(
-                                startTime = time,
-                                phone = "+79052345671",
-                                isIncoming = true,
-                                text = "Debug message"
-                            )
+            events.insert(
+                listOf(
+                    Event(
+                        payload = PhoneCallData(
+                            startTime = time,
+                            phone = "+79052345671",
+                            isIncoming = true,
+                            text = "Debug message"
+                        )
+                    ),
+                    Event(
+                        processState = STATE_PROCESSED,
+                        payload = PhoneCallData(
+                            startTime = 1000.let { time += it; time },
+                            phone = "+79052345672",
+                            text = "Debug message"
+                        )
+                    ),
+                    Event(
+                        processState = STATE_IGNORED,
+                        payload = PhoneCallData(
+                            startTime = 1000.let { time += it; time },
+                            phone = "+79052345673",
+                            isIncoming = true,
+                            endTime = time + 10000
+                        )
+                    ),
+                    Event(
+                        isRead = true,
+                        payload = PhoneCallData(
+                            startTime = 1000.let { time += it; time },
+                            phone = "+79052345674",
+                            endTime = time + 10000
+                        )
+                    ),
+                    Event(
+                        bypassFlags = FLAG_BYPASS_NO_CONSUMERS,
+                        payload = PhoneCallData(
+                            startTime = 1000.let { time += it; time },
+                            phone = "+79052345675",
+                            isIncoming = true,
+                            endTime = time + 10000,
+                            isMissed = true
+                        )
+                    ),
+                    Event(
+                        payload = PhoneCallData(
+                            startTime = 1000.let { time += it; time },
+                            phone = "+79052345671",
+                            isIncoming = true,
+                            text = "Debug message"
+                        )
+                    ),
+                    Event(
+                        payload = PhoneCallData(
+                            startTime = 1000.let { time += it; time },
+                            phone = "+79052345672",
+                            text = "Debug message"
+                        )
+                    ),
+                    Event(
+                        payload = PhoneCallData(
+                            startTime = 1000.let { time += it; time },
+                            phone = "+79052345673",
+                            isIncoming = true,
+                            endTime = time + 10000
+                        )
+                    ),
+                    Event(
+                        payload = PhoneCallData(
+                            startTime = 1000.let { time += it; time },
+                            phone = "+79052345674",
+                            endTime = time + 10000
+                        )
+                    ),
+                    Event(
+                        payload = PhoneCallData(
+                            startTime = 1000.let { time += it; time },
+                            phone = "+79052345675",
+                            isIncoming = true,
+                            endTime = time + 10000,
+                            isMissed = true
                         )
                     )
-                    add(
-                        Event(
-                            processState = STATE_PROCESSED,
-                            payload = PhoneCallData(
-                                startTime = 1000.let { time += it; time },
-                                phone = "+79052345672",
-                                text = "Debug message"
-                            )
-                        )
-                    )
-                    add(
-                        Event(
-                            processState = STATE_IGNORED,
-                            payload = PhoneCallData(
-                                startTime = 1000.let { time += it; time },
-                                phone = "+79052345673",
-                                isIncoming = true,
-                                endTime = time + 10000
-                            )
-                        )
-                    )
-                    add(
-                        Event(
-                            isRead = true,
-                            payload = PhoneCallData(
-                                startTime = 1000.let { time += it; time },
-                                phone = "+79052345674",
-                                endTime = time + 10000
-                            )
-                        )
-                    )
-                    add(
-                        Event(
-                            bypassFlags = FLAG_BYPASS_NO_CONSUMERS,
-                            payload = PhoneCallData(
-                                startTime = 1000.let { time += it; time },
-                                phone = "+79052345675",
-                                isIncoming = true,
-                                endTime = time + 10000,
-                                isMissed = true
-                            )
-                        )
-                    )
-                    add(
-                        Event(
-                            payload = PhoneCallData(
-                                startTime = 1000.let { time += it; time },
-                                phone = "+79052345671",
-                                isIncoming = true,
-                                text = "Debug message"
-                            )
-                        )
-                    )
-                    add(
-                        Event(
-                            payload = PhoneCallData(
-                                startTime = 1000.let { time += it; time },
-                                phone = "+79052345672",
-                                text = "Debug message"
-                            )
-                        )
-                    )
-                    add(
-                        Event(
-                            payload = PhoneCallData(
-                                startTime = 1000.let { time += it; time },
-                                phone = "+79052345673",
-                                isIncoming = true,
-                                endTime = time + 10000
-                            )
-                        )
-                    )
-                    add(
-                        Event(
-                            payload = PhoneCallData(
-                                startTime = 1000.let { time += it; time },
-                                phone = "+79052345674",
-                                endTime = time + 10000
-                            )
-                        )
-                    )
-                    add(
-                        Event(
-                            payload = PhoneCallData(
-                                startTime = 1000.let { time += it; time },
-                                phone = "+79052345675",
-                                isIncoming = true,
-                                endTime = time + 10000,
-                                isMissed = true
-                            )
-                        )
-                    )
-                }
-            }
+                )
+            )
         }
         showComplete()
     }

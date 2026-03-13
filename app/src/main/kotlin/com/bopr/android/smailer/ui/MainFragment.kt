@@ -8,7 +8,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_SMS_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.settings
-import com.bopr.android.smailer.data.Database.Companion.TABLE_PHONE_CALLS
+import com.bopr.android.smailer.data.Database.Companion.TABLE_EVENTS
 import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_ACCENTED
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_DEFAULT
@@ -39,14 +39,12 @@ class MainFragment : BasePreferenceFragment(R.xml.pref_main) {
 //        }
 
         databaseListener = database.registerListener { tables ->
-            if (tables.contains(TABLE_PHONE_CALLS)) updateHistoryPreferenceView()
+            if (tables.contains(TABLE_EVENTS)) updateHistoryPreferenceView()
         }
     }
 
     override fun onDestroy() {
         database.unregisterListener(databaseListener)
-        database.close()
-
         super.onDestroy()
     }
 
@@ -66,7 +64,7 @@ class MainFragment : BasePreferenceFragment(R.xml.pref_main) {
             getQuantityString(
                 R.plurals.new_history_items,
                 R.string.new_history_items_zero,
-                database.events.unreadCount
+                database.events.unreadCount()
             )
         )
     }

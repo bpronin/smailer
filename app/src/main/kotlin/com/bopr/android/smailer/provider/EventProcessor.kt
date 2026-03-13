@@ -31,13 +31,14 @@ abstract class EventProcessor<P : EventPayload>(private val context: Context) {
 
         log.debug("Scheduling process: $event")
 
-        if (updateDatabase(event)) {
+        val inserted = context.database.commit { events.insert(event) }
+        if (inserted) {
             WorkManager.getInstance(context).enqueue(Builder(worker).build())
         }
     }
 
     fun processPending(): Int {
-        val events = context.database.useIt { events.pending }
+        val events = context.database.events.pending()
         if (events.isEmpty()) {
             log.debug("No unprocessed events")
 
@@ -81,8 +82,8 @@ abstract class EventProcessor<P : EventPayload>(private val context: Context) {
 
     abstract fun getBypassReason(payload: P): Bits
 
-    private fun updateDatabase(event: Event) = context.database.useIt {
-        commit { events.put(event) }
+    private fun updateDatabase(event: Event) = context.database.commit {
+        events.replace(event)
     }
 
     companion object {

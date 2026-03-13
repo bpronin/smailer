@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bopr.android.smailer.util.Logger
 import com.bopr.android.smailer.util.Singleton
-import java.io.Closeable
 import java.lang.System.currentTimeMillis
 
 /**
@@ -19,18 +18,13 @@ import java.lang.System.currentTimeMillis
  *
  * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
-class Database private constructor(private val context: Context) : Closeable {
+class Database private constructor(private val context: Context) {
 
     private val helper = DbHelper()
     private val broadcastManager by lazy { LocalBroadcastManager.getInstance(context) }
     private val lastModified = mutableSetOf<String>()
 
-    val name
-        get() = helper.databaseName
-//        set(value) {
-//            helper = DbHelper(value)
-//        }
-
+    val name: String get() = helper.databaseName
     val events = EventDataset(helper, lastModified)
     val phoneBlacklist = StringDataset(TABLE_PHONE_BLACKLIST, helper, lastModified)
     val phoneWhitelist = StringDataset(TABLE_PHONE_WHITELIST, helper, lastModified)
@@ -58,15 +52,15 @@ class Database private constructor(private val context: Context) : Closeable {
             })
         }
 
-    fun <R> useIt(action: Database.() -> R): R = use(action)
+//    fun <R> useIt(action: Database.() -> R): R = use(action)
 
     /**
      * Performs write transaction. Rollback it when failed.
      */
-    fun batch(action: Database.() -> Unit) {
+    fun batchUpdate(action: Database.() -> Unit) {
         log.debug("Begin batch")
 
-        helper.write { batchRecords { action() } }
+        helper.write { batchUpdate { action() } }
 
         log.debug("End batch")
     }
@@ -81,7 +75,7 @@ class Database private constructor(private val context: Context) : Closeable {
             log.debug("Commit $lastModified")
 
             updateTime = currentTimeMillis()
-            sendDatabaseBroadcast(lastModified)
+            sendBroadcast(lastModified)
             lastModified.clear()
         }
         return result
@@ -90,7 +84,7 @@ class Database private constructor(private val context: Context) : Closeable {
     /**
      * Sends database broadcast.
      */
-    private fun sendDatabaseBroadcast(tables: Set<String>) {
+    private fun sendBroadcast(tables: Set<String>) {
         log.debug("Broadcasting data changed: $tables")
 
         val intent = Intent(ACTION_DATABASE_CHANGED)
@@ -129,14 +123,14 @@ class Database private constructor(private val context: Context) : Closeable {
             log.warn("Destroy failed")
     }
 
-    /**
-     * Closes open database object.
-     */
-    override fun close() {
-        helper.close()
-
-        log.debug("Closed")
-    }
+//    /**
+//     * Closes open database object.
+//     */
+//    override fun close() {
+//        helper.close()
+//        
+//        log.info("Closed")
+//    }
 
     private fun querySystemTable() =
         helper.read { queryRecords(TABLE_SYSTEM, arrayOf(COLUMN_UPDATE_TIME), "$COLUMN_ID=0") }
@@ -148,7 +142,7 @@ class Database private constructor(private val context: Context) : Closeable {
         SQLiteOpenHelper(context, DATABASE_NAME, null, DB_VERSION) {
 
         override fun onCreate(db: SQLiteDatabase) {
-            db.batchRecords {
+            db.batchUpdate {
                 execSQL(SQL_CREATE_SYSTEM)
                 execSQL(SQL_CREATE_EVENTS)
                 execSQL(SQL_CREATE_PHONE_CALLS)
@@ -169,7 +163,7 @@ class Database private constructor(private val context: Context) : Closeable {
             newVersion: Int
         ) { /* see https://www.techonthenet.com/sqlite/tables/alter_table.php */
             if (DB_VERSION > oldVersion) {
-                db.batchRecords {
+                db.batchUpdate {
                     alterTable(TABLE_SYSTEM, SQL_CREATE_SYSTEM)
                     alterTable(TABLE_EVENTS, SQL_CREATE_EVENTS)
                     alterTable(TABLE_PHONE_CALLS, SQL_CREATE_PHONE_CALLS)

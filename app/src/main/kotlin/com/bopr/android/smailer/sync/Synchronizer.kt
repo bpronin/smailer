@@ -8,6 +8,9 @@ import com.bopr.android.smailer.external.GoogleDrive
 import com.bopr.android.smailer.messenger.Event
 import com.bopr.android.smailer.messenger.EventPayload
 import com.bopr.android.smailer.provider.telephony.PhoneCallData
+import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_DOWNLOAD
+import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_FORCE_UPLOAD
+import com.bopr.android.smailer.sync.Synchronizer.Companion.SYNC_NORMAL
 import com.bopr.android.smailer.util.Bits
 import com.bopr.android.smailer.util.GeoLocation.Companion.fromCoordinates
 import com.bopr.android.smailer.util.Logger
@@ -97,29 +100,26 @@ internal class Synchronizer(
     }
 
     private fun getLocalData(): SyncData {
-        return database.useIt {
+        return database.run {
             SyncData(
-                phoneBlacklist = phoneBlacklist,
-                phoneWhitelist = phoneWhitelist,
-                textBlacklist = textBlacklist,
-                textWhitelist = textWhitelist,
-                events = events.map(::eventToData),
-
-//                    phoneCalls = phoneCalls.map(::phoneCallToData)
+                phoneBlacklist = phoneBlacklist.drain(),
+                phoneWhitelist = phoneWhitelist.drain(),
+                textBlacklist = textBlacklist.drain(),
+                textWhitelist = textWhitelist.drain(),
+                events = events.drain().map(::eventToData),
+//              phoneCalls = phoneCalls.map(::phoneCallToData)
             )
         }
     }
 
     private fun putLocalData(data: SyncData) {
-        database.useIt {
-            batch {
-                events.replaceAll(data.events.map(::dataToEvent))
-//                phoneCalls.replaceAll(data.phoneCalls.map(::dataToPhoneCall))
-                phoneBlacklist.replaceAll(data.phoneBlacklist)
-                phoneWhitelist.replaceAll(data.phoneWhitelist)
-                textBlacklist.replaceAll(data.textBlacklist)
-                textWhitelist.replaceAll(data.textWhitelist)
-            }
+        database.batchUpdate {
+            events.replaceAll(data.events.map(::dataToEvent))
+//              phoneCalls.replaceAll(data.phoneCalls.map(::dataToPhoneCall))
+            phoneBlacklist.replaceAll(data.phoneBlacklist)
+            phoneWhitelist.replaceAll(data.phoneWhitelist)
+            textBlacklist.replaceAll(data.textBlacklist)
+            textWhitelist.replaceAll(data.textWhitelist)
         }
     }
 

@@ -37,7 +37,7 @@ class DatabaseTest : BaseTest() {
 
     @Test
     fun testAdd() {
-        database.batch {
+        database.batchUpdate {
             events.run {
                 add(Event(timestamp = 1, payload = defaultPayload))
                 add(Event(timestamp = 2, payload = defaultPayload))
@@ -163,7 +163,7 @@ class DatabaseTest : BaseTest() {
 
     @Test
     fun testClear() {
-        database.batch {
+        database.batchUpdate {
             events.apply {
                 add(Event(timestamp = 1, payload = defaultPayload))
                 add(Event(timestamp = 2, payload = defaultPayload))
@@ -189,7 +189,7 @@ class DatabaseTest : BaseTest() {
 
     @Test
     fun testFilterPending() {
-        database.batch {
+        database.batchUpdate {
             events.apply {
                 add(Event(payload = defaultPayload))
                 add(Event(payload = defaultPayload, processState = STATE_PROCESSED))
@@ -202,7 +202,7 @@ class DatabaseTest : BaseTest() {
 
     @Test
     fun testUnreadCount() {
-        database.batch {
+        database.batchUpdate {
             events.apply {
                 add(Event(payload = defaultPayload))
                 add(Event(payload = defaultPayload))
@@ -215,7 +215,7 @@ class DatabaseTest : BaseTest() {
 
     @Test
     fun testGetTransform() {
-        database.batch {
+        database.batchUpdate {
             events.apply {
                 add(Event(timestamp = 1, payload = defaultPayload))
                 add(Event(timestamp = 2, payload = defaultPayload))
@@ -233,7 +233,7 @@ class DatabaseTest : BaseTest() {
 
     @Test
     fun testIteratorRemove() {
-        database.batch {
+        database.batchUpdate {
             events.apply {
                 add(Event(timestamp = 1, payload = defaultPayload))
                 add(Event(timestamp = 2, payload = defaultPayload))
@@ -255,7 +255,7 @@ class DatabaseTest : BaseTest() {
 
     @Test
     fun testContains() {
-        database.batch {
+        database.batchUpdate {
             events.apply {
                 add(Event(timestamp = 1, payload = defaultPayload))
                 add(Event(timestamp = 2, payload = defaultPayload))

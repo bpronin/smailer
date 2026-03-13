@@ -26,12 +26,12 @@ abstract class BaseFilterFragment(private val listName: String) :
     EditableRecyclerFragment<String, Holder>() {
 
     private lateinit var databaseListener: BroadcastReceiver
-    private lateinit var list: StringDataset
+    private lateinit var dataset: StringDataset
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        list = database.phoneCallsFilters.getValue(listName)
+        dataset = database.phoneCallsFilters.getValue(listName)
         databaseListener = database.registerListener { tables ->
             if (tables.contains(listName)) refreshItems()
         }
@@ -39,7 +39,6 @@ abstract class BaseFilterFragment(private val listName: String) :
 
     override fun onDestroy() {
         database.unregisterListener(databaseListener)
-        database.close()
         super.onDestroy()
     }
 
@@ -70,11 +69,11 @@ abstract class BaseFilterFragment(private val listName: String) :
     }
 
     override fun loadItems(): Collection<String> {
-        return list
+        return dataset.drain()
     }
 
     override fun saveItems(items: Collection<String>) {
-        database.commit { batch { list.replaceAll(items) } }
+        database.commit { dataset.replaceAll(items)  }
     }
 
     override fun isValidItem(item: String): Boolean {

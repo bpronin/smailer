@@ -5,6 +5,7 @@ package com.bopr.android.smailer.data
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteDatabase.CONFLICT_IGNORE
 import android.database.sqlite.SQLiteDatabase.CONFLICT_REPLACE
 import android.database.sqlite.SQLiteOpenHelper
 import com.bopr.android.smailer.util.Logger
@@ -16,69 +17,75 @@ import com.bopr.android.smailer.util.stringArrayOf
  * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 
-private val log = Logger("Database")
+val log = Logger("Database")
 
 val COUNT_SELECTION = stringArrayOf("COUNT(*)")
 
-fun <R> SQLiteOpenHelper.read(action: SQLiteDatabase.() -> R): R = readableDatabase.action()
+inline fun <R> SQLiteOpenHelper.read(action: SQLiteDatabase.() -> R): R = readableDatabase.action()
 
-fun <R> SQLiteOpenHelper.write(action: SQLiteDatabase.() -> R): R = writableDatabase.action()
+inline fun <R> SQLiteOpenHelper.write(action: SQLiteDatabase.() -> R): R = writableDatabase.action()
 
-fun SQLiteDatabase.replaceRecords(table: String, values: ContentValues): Boolean {
-    log.debug("Insert into [$table]").verb(values)
+inline fun SQLiteDatabase.insertRecord(table: String, values: ContentValues): Boolean {
+    log.debug("Insert into '$table' [$values]")
 
-    val result = insertWithOnConflict(table, null, values, CONFLICT_REPLACE) != -1L
-
-    if (!result) log.debug("Replaced")
-
-    return result
+    return (insertWithOnConflict(table, null, values, CONFLICT_IGNORE) != -1L).also {
+        if (!it) log.warn("Ignored")
+    }
 }
 
-fun SQLiteDatabase.updateRecords(
+inline fun SQLiteDatabase.replaceRecord(table: String, values: ContentValues): Boolean {
+    log.debug("Replace into '$table' [$values]")
+
+    return (insertWithOnConflict(table, null, values, CONFLICT_REPLACE) != -1L).also {
+        if (it) log.debug("Inserted") else log.debug("Replaced")
+    }
+}
+
+inline fun SQLiteDatabase.deleteRecords(
+    table: String,
+    where: String? = null,
+    whereArgs: Array<out String>? = null
+): Boolean {
+    log.debug(
+        "Delete from '$table' " +
+                "${where?.let { "where $it" } ?: "all"} ${whereArgs?.let { "(${it.joinToString()})" } ?: ""}")
+
+    return (delete(table, where, whereArgs) != 0).also {
+        if (!it) log.warn("Ignored")
+    }
+}
+
+inline fun SQLiteDatabase.updateRecords(
     table: String,
     values: ContentValues,
     where: String? = null,
     whereArgs: Array<out String>? = null
 ): Boolean {
-    log.debug("Update [$table]").verb(values)
+    log.debug(
+        "Update '$table'" +
+            " ${where?.let { "where $it" } ?: "all"} ${whereArgs?.let { "(${it.joinToString()})" } ?: ""}" +
+            " [$values]")
 
-    return update(table, values, where, whereArgs) != 0
+    return (update(table, values, where, whereArgs) != 0).also {
+        if (!it) log.warn("Ignored")
+    }
 }
 
-fun SQLiteDatabase.queryRecords(
+inline fun SQLiteDatabase.queryRecords(
     table: String,
     projection: Array<out String>? = null,
-    selection: String? = null,
-    selectionArgs: Array<out String>? = null,
+    where: String? = null,
+    whereArgs: Array<out String>? = null,
     groupBy: String? = null,
     having: String? = null,
     order: String? = null,
     limit: String? = null
 ): Cursor {
-    log.debug("Query [$table]")
+    log.debug(
+        "Query '$table' " +
+            "${where?.let { "where $it" } ?: "all"} ${whereArgs?.let { "(${it.joinToString()})" } ?: ""}")
 
-    return query(table, projection, selection, selectionArgs, groupBy, having, order, limit)
-}
-
-fun SQLiteDatabase.deleteRecords(
-    table: String,
-    selection: String? = null,
-    selectionArgs: Array<out String>? = null
-) {
-    log.debug("Delete from [$table]")
-
-    delete(table, selection, selectionArgs)
-}
-
-inline fun <T> SQLiteDatabase.batchRecords(action: SQLiteDatabase.() -> T): T {
-    beginTransaction()
-    try {
-        val result = action()
-        setTransactionSuccessful()
-        return result
-    } finally {
-        endTransaction()
-    }
+    return query(table, projection, where, whereArgs, groupBy, having, order, limit)
 }
 
 inline fun SQLiteDatabase.getTables(): Set<String> {
@@ -86,8 +93,7 @@ inline fun SQLiteDatabase.getTables(): Set<String> {
         "sqlite_master",
         stringArrayOf("name"),
         "type='table' AND name<>'android_metadata'"
-    )
-        .drainToSet { getString(0) }
+    ).drainToSet { getString(0) }
 }
 
 inline fun SQLiteDatabase.isTableExists(name: String): Boolean {
@@ -132,10 +138,21 @@ fun SQLiteDatabase.dropTable(table: String) {
 }
 
 inline fun SQLiteDatabase.count(
-    table: String, selection: String? = null,
-    selectionArgs: Array<out String>? = null
+    table: String,
+    selection: String? = null,
 ): Long {
-    return queryRecords(table, COUNT_SELECTION, selection, selectionArgs).withFirst { getLong(0) }
+    return queryRecords(table, COUNT_SELECTION, selection, null).withFirst { getLong(0) }
+}
+
+inline fun <T> SQLiteDatabase.batchUpdate(action: SQLiteDatabase.() -> T): T {
+    beginTransaction()
+    try {
+        val result = action()
+        setTransactionSuccessful()
+        return result
+    } finally {
+        endTransaction()
+    }
 }
 
 inline fun Cursor.getString(columnName: String): String {
@@ -143,46 +160,34 @@ inline fun Cursor.getString(columnName: String): String {
 }
 
 inline fun Cursor.getInt(columnName: String): Int {
-    return getInt(getColumnIndexOrThrow((columnName)))
+    return getInt(getColumnIndexOrThrow(columnName))
 }
 
 inline fun Cursor.getLong(columnName: String): Long {
-    return getLong(getColumnIndexOrThrow((columnName)))
+    return getLong(getColumnIndexOrThrow(columnName))
 }
 
 inline fun Cursor.getDouble(columnName: String): Double {
-    return getDouble(getColumnIndexOrThrow((columnName)))
+    return getDouble(getColumnIndexOrThrow(columnName))
 }
 
 inline fun Cursor.getBoolean(columnName: String): Boolean {
     return getInt(columnName) != 0
 }
 
-inline fun Cursor.getStringOrNull(columnName: String): String? {
-    val index = getColumnIndex(columnName)
-    return if (isNull(index)) null else getString(index)
-}
+inline fun Cursor.getStringOrNull(columnName: String): String? =
+    getNullable(columnName, Cursor::getString)
 
-inline fun Cursor.getIntOrNull(columnName: String): Int? {
-    val index = getColumnIndex(columnName)
-    return if (isNull(index)) null else getInt(index)
-}
+inline fun Cursor.getIntOrNull(columnName: String): Int? = getNullable(columnName, Cursor::getInt)
 
-inline fun Cursor.getLongOrNull(columnName: String): Long? {
-    val index = getColumnIndex(columnName)
-    return if (isNull(index)) null else getLong(index)
-}
+inline fun Cursor.getLongOrNull(columnName: String): Long? =
+    getNullable(columnName, Cursor::getLong)
 
-inline fun Cursor.getDoubleOrNull(columnName: String): Double? {
-    val index = getColumnIndex(columnName)
-    return if (isNull(index)) null else getDouble(index)
-}
+inline fun Cursor.getDoubleOrNull(columnName: String): Double? =
+    getNullable(columnName, Cursor::getDouble)
 
-inline fun Cursor.getBooleanOrNull(columnName: String): Boolean? {
-    val index = getColumnIndex(columnName)
-    return if (isNull(index)) null else {
-        getInt(index) != 0
-    }
+inline fun Cursor.getBooleanOrNull(columnName: String): Boolean? = getNullable(columnName) {
+    getInt(it) != 0
 }
 
 inline fun Cursor.getStringIfExists(columnName: String): String? {
@@ -190,57 +195,55 @@ inline fun Cursor.getStringIfExists(columnName: String): String? {
     return if (columnIndex != -1) getString(columnIndex) else null
 }
 
-inline fun <T> Cursor.withFirst(action: Cursor.() -> T): T {
-    return use {
-        moveToFirst()
-        if (!isAfterLast) action() else throw NoSuchElementException("Row set is empty.")
+inline fun <T> Cursor.getNullable(columnName: String, get: Cursor.(columnIndex: Int) -> T): T? {
+    val columnIndex = getColumnIndexOrThrow(columnName)
+    return if (isNull(columnIndex)) null else get(columnIndex)
+}
+
+inline fun <T> Cursor.withFirst(action: Cursor.() -> T): T = use {
+    moveToFirst()
+    if (!isAfterLast) action() else throw NoSuchElementException("Row set is empty.")
+}
+
+inline fun <T> Cursor.tryWithFirst(action: Cursor.() -> T): T? = use {
+    moveToFirst()
+    if (!isAfterLast) action() else null
+}
+
+inline fun Cursor.forEach(action: Cursor.() -> Unit) = use {
+    moveToFirst()
+    while (!isAfterLast) {
+        action()
+        moveToNext()
     }
 }
 
-inline fun <T> Cursor.tryWithFirst(action: Cursor.() -> T): T? {
-    return use {
-        moveToFirst()
-        if (!isAfterLast) action() else null
-    }
-}
+//inline fun <T> Cursor.withLast(action: Cursor.() -> T): T {
+//    return use {
+//        moveToLast()
+//        if (!isAfterLast) action() else throw NoSuchElementException("Row set is empty.")
+//    }
+//}
 
-inline fun <T> Cursor.withLast(action: Cursor.() -> T): T {
-    return use {
-        moveToLast()
-        if (!isAfterLast) action() else throw NoSuchElementException("Row set is empty.")
-    }
-}
-
-inline fun Cursor.forEach(action: Cursor.() -> Unit) {
-    use {
-        moveToFirst()
-        while (!isAfterLast) {
-            action()
-            moveToNext()
-        }
-    }
-}
-
-//fun Cursor.iterator(): Iterator<Cursor> {
-//    val me = this
+//fun <T> Cursor.iterator(get: Cursor.() -> T): Iterator<T> {
+//    val cursor = this
 //    moveToFirst()
-//    return object : Iterator<Cursor> {
+//    return object : Iterator<T> {
 //
 //        override fun hasNext() = !isAfterLast
 //
-//        override fun next(): Cursor {
+//        override fun next(): T {
+//            val next = cursor.get()
 //            moveToNext()
-//            return me
+//            return next
 //        }
-//
 //    }
 //}
 
 inline fun <T> Cursor.drainToSet(get: Cursor.() -> T): Set<T> {
-    val set = mutableSetOf<T>()
-    forEach { set.add(get()) }
-    return set
+    return mutableSetOf<T>().also {
+        forEach { it.add(get()) }
+    }
 }
 
-inline fun values(action: ContentValues.() -> Unit): ContentValues = ContentValues().apply(action)
-
+inline fun values(action: ContentValues.() -> Unit) = ContentValues().apply(action)

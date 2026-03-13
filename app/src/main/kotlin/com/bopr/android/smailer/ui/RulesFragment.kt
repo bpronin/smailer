@@ -48,8 +48,6 @@ class RulesFragment : BasePreferenceFragment(R.xml.pref_rules) {
 
     override fun onDestroy() {
         database.unregisterListener(databaseListener)
-        database.close()
-
         super.onDestroy()
     }
 
@@ -65,7 +63,7 @@ class RulesFragment : BasePreferenceFragment(R.xml.pref_rules) {
     private fun updatePhoneBlacklistPreferenceView() {
         requirePreference(PREF_PHONE_BLACKLIST).updateSummary(
             formatListSummary(
-                database.phoneBlacklist, R.string.unacceptable_phone_numbers, R.string._none
+                database.phoneBlacklist.size, R.string.unacceptable_phone_numbers, R.string._none
             )
         )
     }
@@ -73,7 +71,7 @@ class RulesFragment : BasePreferenceFragment(R.xml.pref_rules) {
     private fun updatePhoneWhitelistPreferenceView() {
         requirePreference(PREF_PHONE_WHITELIST).updateSummary(
             formatListSummary(
-                database.phoneWhitelist, R.string.acceptable_phone_numbers, R.string._any
+                database.phoneWhitelist.size, R.string.acceptable_phone_numbers, R.string._any
             )
         )
     }
@@ -81,7 +79,7 @@ class RulesFragment : BasePreferenceFragment(R.xml.pref_rules) {
     private fun updateTextBlacklistPreferenceView() {
         requirePreference(PREF_TEXT_BLACKLIST).updateSummary(
             formatListSummary(
-                database.textBlacklist, R.string.unacceptable_words, R.string._none
+                database.textBlacklist.size, R.string.unacceptable_words, R.string._none
             )
         )
     }
@@ -89,17 +87,16 @@ class RulesFragment : BasePreferenceFragment(R.xml.pref_rules) {
     private fun updateTextWhitelistPreferenceView() {
         requirePreference(PREF_TEXT_WHITELIST).updateSummary(
             formatListSummary(
-                database.textWhitelist, R.string.acceptable_words, R.string._any
+                database.textWhitelist.size, R.string.acceptable_words, R.string._any
             )
         )
     }
 
     private fun formatListSummary(
-        list: Set<String>, @StringRes patternRes: Int,
+        listSize: Int,
+        @StringRes patternRes: Int,
         @StringRes emptyRes: Int
-    ): String {
-        return getString(patternRes, if (list.isEmpty()) getString(emptyRes) else list.size)
-    }
+    ) = getString(patternRes, if (listSize == 0) getString(emptyRes) else listSize)
 
     companion object {
 

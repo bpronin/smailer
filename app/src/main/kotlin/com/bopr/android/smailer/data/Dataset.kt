@@ -13,99 +13,54 @@ import com.bopr.android.smailer.util.Logger
  */
 abstract class Dataset<T>(
     protected val tableName: String,
-    protected val helper: SQLiteOpenHelper,
+    private val helper: SQLiteOpenHelper,
     protected val lastModified: MutableSet<String>
-) : MutableSet<T> {
+) {
 
     protected abstract val keyColumns: Array<String>
     private val keyClause by lazy { keyColumns.joinToString(" AND ") { "$it=?" } }
-    private val rowSet get() = query().drainToSet(::get) // TODO: get rid of it
-    override val size get() = read { count(tableName).toInt() }
+    val size get() = read { count(tableName).toInt() }
 
-    override fun add(element: T): Boolean = write(tableName) {
-        replaceRecords(it, values(element))
+    open fun insert(element: T) = write {
+        insertRecord(it, values(element))
     }
 
-    override fun addAll(elements: Collection<T>): Boolean {
-        var affected = 0
-        for (e in elements) {
-            if (add(e)) affected++
-        }
+    fun insert(elements: Iterable<T>) =
+        forAll(elements, ::insert).also { log.debug("Inserted $it item(s)") } != 0
 
-        log.debug("$affected items(s) added")
-        return affected != 0
+    open fun replace(element: T) = write {
+        replaceRecord(it, values(element))
     }
 
-    override fun remove(element: T): Boolean = write(tableName) {
-        delete(tableName, keyClause, keyOf(element)) != 0
+    open fun delete(element: T) = write {
+        deleteRecords(it, keyClause, keyOf(element))
     }
 
-    override fun removeAll(elements: Collection<T>): Boolean {
-        var affected = 0
-        for (e in elements) {
-            if (remove(e)) affected++
-        }
+    fun delete(elements: Iterable<T>) =
+        forAll(elements, ::delete).also { log.debug("Deleted $it item(s)") } != 0
 
-        log.debug("$affected items(s) removed")
-
-        return affected != 0
+    fun clear() = write {
+        deleteRecords(it)
     }
 
-    override fun retainAll(elements: Collection<T>): Boolean {
-        var affected = 0
-        for (e in rowSet) {
-            if (!elements.contains(e) && remove(e)) affected++
-        }
-
-//        query().forEach {
-//            val e = get(this)
-//            if (!elements.contains(e) && remove(e)) affected++
-//        }
-
-        log.debug("$affected items(s) removed in retain")
-
-        return affected != 0
-    }
-
-    override fun clear() = write(tableName) {
-        deleteRecords(tableName)
-    }
-
-    override fun isEmpty(): Boolean {
-        return size == 0
-    }
-
-    override fun contains(element: T): Boolean = rowSet.contains(element)
-
-    override fun containsAll(elements: Collection<T>): Boolean = rowSet.containsAll(elements)
-
-    override fun iterator(): MutableIterator<T> {
-        val iterator = rowSet.iterator()
-
-        return object : MutableIterator<T> {
-
-            var current: T? = null
-
-            override fun hasNext() = iterator.hasNext()
-
-            override fun next() = iterator.next().also { current = it }
-
-            override fun remove() {
-                remove(current)
+    fun replaceAll(elements: Iterable<T>) = write {
+        batchUpdate {
+            deleteRecords(it)
+            for (element in elements) {
+                insertRecord(it, values(element))
             }
         }
     }
 
-    fun put(element: T) = add(element)
+    fun drain(): Set<T> = query().drainToSet(::get)
 
-    fun replaceAll(elements: Collection<T>): Boolean {
-        clear()
-        return addAll(elements)
+    private fun forAll(elements: Iterable<T>, action: (T) -> Boolean): Int {
+        var affected = 0
+        for (element in elements) {
+            if (action(element)) affected++
+        }
+        return affected
     }
-
-    fun first(): T = query().withFirst(::get)
-
-    fun last(): T = query().withLast(::get)
 
     protected abstract fun values(element: T): ContentValues
 
@@ -118,8 +73,8 @@ abstract class Dataset<T>(
     protected fun <R> read(action: SQLiteDatabase.() -> R): R =
         helper.read(action)
 
-    protected fun <R> write(table: String, action: SQLiteDatabase.(String) -> R): R =
-        helper.write { action(table) }.also { lastModified.add(table) }
+    protected fun <R> write(action: SQLiteDatabase.(table: String) -> R): R =
+        helper.write { action(tableName) }.also { lastModified.add(tableName) }
 
     companion object {
 

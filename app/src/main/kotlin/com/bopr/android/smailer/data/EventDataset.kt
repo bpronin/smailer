@@ -32,8 +32,7 @@ import com.bopr.android.smailer.util.stringArrayOf
 class EventDataset(
     helper: SQLiteOpenHelper,
     modifications: MutableSet<String>
-) :
-    Dataset<Event>(TABLE_EVENTS, helper, modifications) {
+) : Dataset<Event>(TABLE_EVENTS, helper, modifications) {
 
     override val keyColumns = stringArrayOf(COLUMN_TIMESTAMP, COLUMN_TARGET)
 
@@ -42,27 +41,25 @@ class EventDataset(
     /**
      * Returns count of unread events.
      */
-    val unreadCount
-        get() = read {
-            count(tableName, "$COLUMN_READ<>1")
-        }
+    fun unreadCount() = read {
+        count(tableName, "$COLUMN_READ<>1")
+    }
 
     /**
      * Returns pending events.
      */
-    val pending
-        get() = read {
-            queryRecords(
-                table = tableName,
-                selection = "$COLUMN_STATE=${STATE_PENDING}",
-                order = "$COLUMN_TIMESTAMP DESC"
-            )
-        }.drainToSet(::get)
+    fun pending() = read {
+        queryRecords(
+            table = tableName,
+            where = "$COLUMN_STATE=${STATE_PENDING}",
+            order = "$COLUMN_TIMESTAMP DESC"
+        ).drainToSet(::get)
+    }
 
     /**
      * Marks all events as read.
      */
-    fun markAllAsRead(read: Boolean) = write(tableName) {
+    fun markAllAsRead(read: Boolean) = write {
         updateRecords(it, values {
             put(COLUMN_READ, read)
         })
@@ -70,6 +67,14 @@ class EventDataset(
 
     override fun query() = read {
         queryRecords(tableName, order = "$COLUMN_TIMESTAMP DESC")
+    }
+
+    override fun insert(element: Event) = super.insert(element).also {
+        insertPayload(element.timestamp, element.target, element.payload)
+    }
+
+    override fun delete(element: Event) = super.delete(element).also {
+        deletePayload(element.timestamp, element.target, element.payload)
     }
 
     override fun get(cursor: Cursor) = cursor.run {
@@ -108,10 +113,13 @@ class EventDataset(
                 put(COLUMN_LATITUDE, latitude)
                 put(COLUMN_LONGITUDE, longitude)
             }
-
-            putPayload(timestamp, target, payload).also {
-                put(COLUMN_TYPE, it)
-            }
+            put(
+                COLUMN_TYPE, when (payload) {
+                    is PhoneCallData -> PAYLOAD_TYPE_PHONE_CALL
+                    is BatteryData -> PAYLOAD_TYPE_BATTERY
+                    else -> throw IllegalArgumentException("Unknown payload type")
+                }
+            )
         }
     }
 
@@ -120,7 +128,7 @@ class EventDataset(
             PAYLOAD_TYPE_PHONE_CALL -> read {
                 queryRecords(
                     table = TABLE_PHONE_CALLS,
-                    selection = "$COLUMN_TIMESTAMP=$timestamp AND $COLUMN_TARGET='$target'"
+                    where = "$COLUMN_TIMESTAMP=$timestamp AND $COLUMN_TARGET='$target'"
                 ).withFirst {
                     PhoneCallData(
                         startTime = getLong(COLUMN_START_TIME),
@@ -133,19 +141,20 @@ class EventDataset(
                 }
             }
 
-            //PAYLOAD_BATTERY -> read {
-            //TODO:
-            // }
+            PAYLOAD_TYPE_BATTERY -> read {
+                // TODO: implement
+                BatteryData("")
+            }
 
             else -> throw IllegalArgumentException("Unknown payload type")
         }
     }
 
-    private fun putPayload(timestamp: Long, target: String, payload: EventPayload): Int {
+    private fun insertPayload(timestamp: Long, target: String, payload: EventPayload) {
         when (payload) {
-            is PhoneCallData -> payload.apply {
-                write(TABLE_PHONE_CALLS) {
-                    replaceRecords(it, values {
+            is PhoneCallData -> write {
+                insertRecord(TABLE_PHONE_CALLS, values {
+                    payload.apply {
                         put(COLUMN_TIMESTAMP, timestamp)
                         put(COLUMN_TARGET, target)
                         put(COLUMN_PHONE, phone)
@@ -154,17 +163,29 @@ class EventDataset(
                         put(COLUMN_IS_MISSED, isMissed)
                         put(COLUMN_END_TIME, endTime)
                         put(COLUMN_TEXT, text)
-                    })
-                }
-
-                return PAYLOAD_TYPE_PHONE_CALL
+                    }
+                })
             }
 
-            is BatteryData -> payload.apply {
-//                write {
-//                    // TODO: implement
-//                }
-                return PAYLOAD_TYPE_BATTERY
+            is BatteryData -> {
+                // TODO: implement
+            }
+
+            else -> throw IllegalArgumentException("Unknown payload type")
+        }
+    }
+
+    private fun deletePayload(timestamp: Long, target: String, payload: EventPayload) {
+        when (payload) {
+            is PhoneCallData -> write {
+                deleteRecords(
+                    table = TABLE_PHONE_CALLS,
+                    where = "$COLUMN_TIMESTAMP=$timestamp AND $COLUMN_TARGET='$target'"
+                )
+            }
+
+            is BatteryData -> write {
+                // TODO: implement
             }
 
             else -> throw IllegalArgumentException("Unknown payload type")

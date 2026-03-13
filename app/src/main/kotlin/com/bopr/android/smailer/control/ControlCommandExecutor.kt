@@ -156,18 +156,16 @@ internal class ControlCommandExecutor(private val context: Context) {
     }
 
     private fun addToFilterList(
-        list: StringDataset,
+        dataset: StringDataset,
         value: String?,
         @StringRes messageRes: Int,
         target: KClass<out Activity>
     ) {
         if (!value.isNullOrEmpty()) {
-            database.useIt {
-                if (commit { list.add(value) }) {
-                    notifySuccess(context.getString(messageRes, value), target)
-                } else {
-                    log.debug("Already in list")
-                }
+            if (database.commit { dataset.insert(value) }) {
+                notifySuccess(context.getString(messageRes, value), target)
+            } else {
+                log.debug("Already in list")
             }
         }
     }
@@ -179,12 +177,10 @@ internal class ControlCommandExecutor(private val context: Context) {
         target: KClass<out Activity>
     ) {
         if (!value.isNullOrEmpty()) {
-            database.useIt {
-                if (commit { list.remove(value) }) {
-                    notifySuccess(context.getString(messageRes, value), target)
-                } else {
-                    log.debug("Not in list")
-                }
+            if (database.commit { list.delete(value) }) {
+                notifySuccess(context.getString(messageRes, value), target)
+            } else {
+                log.debug("Not in list")
             }
         }
     }
