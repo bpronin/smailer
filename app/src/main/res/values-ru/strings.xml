@@ -210,7 +210,7 @@
     <string name="unacceptable_phone_numbers">Заблокированные номера (%s)</string>
     <string name="unacceptable_words">Заблокированные фразы (%s)</string>
     <string name="undo">Отмена</string>
-    <string name="unexpected_error">Что-то пошло не тек. Проверьте соединение м с интернетом.</string>
+    <string name="unexpected_error">Что-то пошло не тек. Проверьте соединение с интернетом.</string>
     <string name="unknown_contact">Неизвестный контакт</string>
     <string name="unknown_location">неизвестно</string>
     <string name="unspecified">Не определено</string>
@@ -291,5 +291,8 @@
     <string name="enable_web_remote_control">Включить управление по web</string>
     <string name="user">Логин</string>
     <string name="password">Пароль</string>
+    <string name="test_pocketbase_connection">Проверить соединение</string>
+    <string name="test_connection_success">Соединение успешно проверено</string>
+    <string name="test_connection_failed">Не удалось установить соединение</string>
 
 </resources>

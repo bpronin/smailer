@@ -21,5 +21,15 @@
                 android:title="@string/password" />
 
     </PreferenceCategory>
+    
+    <PreferenceCategory>
 
+        <Preference
+                android:key="test_pocketbase_connection"
+                android:icon="@drawable/ic_test_message"
+                android:title="@string/test_settings"
+                android:summary="@string/test_pocketbase_connection" />
+
+    </PreferenceCategory>
+    
 </PreferenceScreen>

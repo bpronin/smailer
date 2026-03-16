@@ -22,32 +22,13 @@ class PocketbaseClient(private val baseUrl: String) {
     private var authToken: String? = null
     private val client = OkHttpClient().newBuilder().addInterceptor(AuthInterceptor()).build()
 
-    suspend fun auth(user: String, password: String, isSuperuser: Boolean = false) =
-        withContext(Dispatchers.IO) {
-            val json = """
-            {
-                "identity": "$user",
-                "password": "$password"
-            }
-            """
-
-            val collection = if (isSuperuser) "_superusers" else "users"
-            val request = Request.Builder()
-                .url(collectionUrl("$collection/auth-with-password"))
-                .post(createBody(json))
-                .build()
-
-            authToken = null
-            client.newCall(request).execute().use { response ->
-                if (response.isSuccessful) {
-                    val json = JSONObject(response.body.string())
-                    authToken = json.getString("token")
-                    log.debug("Auth success")
-                } else {
-                    throw RuntimeException("Auth failed: $response")
-                }
-            }
+    suspend fun auth(user: String, password: String) {
+        try {
+            tryAuth(user, password, false)
+        } catch (_: Throwable) {
+            tryAuth(user, password, true)
         }
+    }
 
     suspend fun insertEvent(event: Event): String? =
         insertIntoEvents(event)?.also {
@@ -95,6 +76,41 @@ class PocketbaseClient(private val baseUrl: String) {
         """
     )
 
+    private suspend fun tryAuth(user: String, password: String, asSuperuser: Boolean) =
+        withContext(Dispatchers.IO) {
+            val json = """
+            {
+                "identity": "$user",
+                "password": "$password"
+            }
+            """
+
+            val collection = if (asSuperuser) {
+                log.debug("Auth as superuser: $user")
+                "_superusers"
+            } else {
+                log.debug("Auth as regular user: $user")
+                "users"
+            }
+
+            val request = Request.Builder()
+                .url(collectionUrl("$collection/auth-with-password"))
+                .post(createBody(json))
+                .build()
+
+            authToken = null
+            client.newCall(request).execute().use { response ->
+                if (response.isSuccessful) {
+                    val json = JSONObject(response.body.string())
+                    authToken = json.getString("token")
+                    log.debug("Auth success")
+                } else {
+                    log.debug("Auth failed")
+                    throw PocketbaseRemoteError("Auth failed", response)
+                }
+            }
+        }
+
     private suspend fun insertInto(collection: String, json: String): String? =
         withContext(Dispatchers.IO) {
             if (authToken == null) throw IllegalStateException("Not authenticated")
@@ -109,7 +125,7 @@ class PocketbaseClient(private val baseUrl: String) {
                     log.debug("Insert into '$collection' success")
                     JSONObject(response.body.string()).getString("id")
                 } else {
-                    throw RuntimeException("Insert into '$collection' failed: ${response.body.string()}")
+                    throw PocketbaseRemoteError("Insert into '$collection' failed", response)
                 }
             }
         }

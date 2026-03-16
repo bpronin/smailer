@@ -34,7 +34,7 @@ import java.lang.System.*
 class TelegramSettingsFragment : BasePreferenceFragment(R.xml.pref_telegram_settings) {
 
     private val testSettingsProgress by lazy {
-        PreferenceProgress(requirePreference(SEND_TEST_TELEGRAM_MESSAGE))
+        PreferenceProgress(requirePreference(PREF_SEND_TEST_TELEGRAM_MESSAGE))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,7 +67,7 @@ class TelegramSettingsFragment : BasePreferenceFragment(R.xml.pref_telegram_sett
             }
         }
 
-        requirePreference(SEND_TEST_TELEGRAM_MESSAGE).setOnClickListener {
+        requirePreference(PREF_SEND_TEST_TELEGRAM_MESSAGE).setOnClickListener {
             onSendTestTelegramMessage()
         }
     }
@@ -129,6 +129,6 @@ class TelegramSettingsFragment : BasePreferenceFragment(R.xml.pref_telegram_sett
 
     companion object {
 
-        private const val SEND_TEST_TELEGRAM_MESSAGE = "send_test_telegram_message"
+        private const val PREF_SEND_TEST_TELEGRAM_MESSAGE = "send_test_telegram_message"
     }
 }
