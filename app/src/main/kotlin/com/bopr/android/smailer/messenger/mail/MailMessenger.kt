@@ -25,7 +25,7 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecovera
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 
 /**
- * Mail transport.
+ * Email messenger.
  *
  * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
@@ -40,7 +40,7 @@ internal class MailMessenger(private val context: Context) : Messenger(context, 
         if (context.settings.getBoolean(PREF_MAIL_MESSENGER_ENABLED)) {
             account = checkAccount(context.accounts.getPrimaryGoogleAccount())?.also {
                 session = GoogleMailSession(context, it, GMAIL_SEND)
-                log.debug("Prepared")
+                log.debug("Session created")
                 return true
             }
         }

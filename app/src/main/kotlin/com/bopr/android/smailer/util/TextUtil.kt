@@ -30,7 +30,7 @@ fun unescapeRegex(s: String?): String? {
 fun isQuoted(s: String?) =
     !s.isNullOrEmpty() && s.first() == '\"' && s.last() == '\"'
 
-fun <T> Iterable<T>.commaJoin() =
+fun <T> Iterable<T>.joinToStringEscaped() =
     joinToString(",") {
         it.toString().replace(",", "/,")  /* escape commas */
     }

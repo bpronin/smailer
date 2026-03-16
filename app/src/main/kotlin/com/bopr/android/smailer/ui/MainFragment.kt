@@ -5,6 +5,7 @@ import android.os.Bundle
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_ENABLED
+import com.bopr.android.smailer.Settings.Companion.PREF_POCKETBASE_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_SMS_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.settings
@@ -12,7 +13,6 @@ import com.bopr.android.smailer.data.Database.Companion.TABLE_EVENTS
 import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_ACCENTED
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_DEFAULT
-import com.bopr.android.smailer.util.commaJoin
 import com.bopr.android.smailer.util.getQuantityString
 import com.bopr.android.smailer.util.requirePreference
 import com.bopr.android.smailer.util.updateSummary
@@ -28,15 +28,6 @@ class MainFragment : BasePreferenceFragment(R.xml.pref_main) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-//        requirePreference(PREF_REMOTE_CONTROL_ENABLED).setOnChangeListener {
-//            it.updateSummary(
-//                getString(
-//                    if (settings.getBoolean(it.key)) R.string.enabled else R.string.disabled
-//                ),
-//                SUMMARY_STYLE_DEFAULT
-//            )
-//        }
 
         databaseListener = database.registerListener { tables ->
             if (tables.contains(TABLE_EVENTS)) updateHistoryPreferenceView()
@@ -72,11 +63,10 @@ class MainFragment : BasePreferenceFragment(R.xml.pref_main) {
     private fun updateMessengersPreference() {
         val titles = messengerPrefs.filterKeys { settings.getBoolean(it) }
             .values.map { getString(it) }
-        val text = titles.commaJoin()
 
         requirePreference(PREF_MESSENGERS).run {
             if (titles.isNotEmpty()) {
-                updateSummary(text, SUMMARY_STYLE_DEFAULT)
+                updateSummary(titles.joinToString(), SUMMARY_STYLE_DEFAULT)
             } else {
                 updateSummary(getString(R.string.unspecified), SUMMARY_STYLE_ACCENTED)
             }
@@ -92,7 +82,8 @@ class MainFragment : BasePreferenceFragment(R.xml.pref_main) {
         private val messengerPrefs = mapOf(
             PREF_MAIL_MESSENGER_ENABLED to R.string.email,
             PREF_TELEGRAM_MESSENGER_ENABLED to R.string.telegram,
-            PREF_SMS_MESSENGER_ENABLED to R.string.sms
+            PREF_SMS_MESSENGER_ENABLED to R.string.sms,
+            PREF_POCKETBASE_MESSENGER_ENABLED to R.string.pocketbase
         )
     }
 }

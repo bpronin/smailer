@@ -42,10 +42,10 @@ class TextUtilTest : BaseTest() {
 
     @Test
     fun testCommaJoin() {
-        assertEquals("1,2,3", listOf(1, 2, 3).commaJoin())
-        assertEquals("a,b,c", listOf("a", "b", "c").commaJoin())
-        assertEquals("a,a/,b,c", listOf("a", "a,b", "c").commaJoin())
-        assertEquals("", emptyList<String>().commaJoin())
+        assertEquals("1,2,3", listOf(1, 2, 3).joinToStringEscaped())
+        assertEquals("a,b,c", listOf("a", "b", "c").joinToStringEscaped())
+        assertEquals("a,a/,b,c", listOf("a", "a,b", "c").joinToStringEscaped())
+        assertEquals("", emptyList<String>().joinToStringEscaped())
     }
 
     @Test

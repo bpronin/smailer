@@ -3,6 +3,7 @@ package com.bopr.android.smailer.ui
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_ENABLED
+import com.bopr.android.smailer.Settings.Companion.PREF_POCKETBASE_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_SMS_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.settings
@@ -26,6 +27,7 @@ class MessengersFragment : BasePreferenceFragment(R.xml.pref_messengers) {
         updateEmailPreference()
         updateTelegramPreference()
         updateSmsPreference()
+        updatePocketbasePreference()
     }
 
     override fun onSettingsChanged(settings: Settings, key: String) {
@@ -33,10 +35,9 @@ class MessengersFragment : BasePreferenceFragment(R.xml.pref_messengers) {
 
         when (key) {
             PREF_MAIL_MESSENGER_ENABLED -> updateEmailPreference()
-
             PREF_TELEGRAM_MESSENGER_ENABLED -> updateTelegramPreference()
-
             PREF_SMS_MESSENGER_ENABLED -> updateSmsPreference()
+            PREF_POCKETBASE_MESSENGER_ENABLED -> updatePocketbasePreference()
         }
     }
 
@@ -51,6 +52,10 @@ class MessengersFragment : BasePreferenceFragment(R.xml.pref_messengers) {
     private fun updateTelegramPreference() {
         updatePreference(PREF_TELEGRAM_MESSENGER_ENABLED, PREF_TELEGRAM_SETTINGS)
     }
+    
+    private fun updatePocketbasePreference() {
+        updatePreference(PREF_POCKETBASE_MESSENGER_ENABLED, PREF_POCKETBASE_SETTINGS)
+    }
 
     private fun updatePreference(masterKey: String, key: String) {
         val enabled = settings.getBoolean(masterKey)
@@ -64,5 +69,6 @@ class MessengersFragment : BasePreferenceFragment(R.xml.pref_messengers) {
         private const val PREF_EMAIL_SETTINGS = "email_settings"
         private const val PREF_TELEGRAM_SETTINGS = "telegram_settings"
         private const val PREF_SMS_SETTINGS = "sms_settings"
+        private const val PREF_POCKETBASE_SETTINGS = "pocketbase_settings"
     }
 }

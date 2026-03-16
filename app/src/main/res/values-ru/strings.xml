@@ -289,5 +289,7 @@
     <string name="web_remote_control">Управление по web</string>
     <string name="email_remote_control">Включить управление по email</string>
     <string name="enable_web_remote_control">Включить управление по web</string>
+    <string name="user">Логин</string>
+    <string name="password">Пароль</string>
 
 </resources>

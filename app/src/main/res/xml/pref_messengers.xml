@@ -28,5 +28,14 @@
                     android:targetClass="com.bopr.android.smailer.ui.SmsSettingsActivity"
                     android:targetPackage="com.bopr.android.smailer" />
         </Preference>
+        
+    <Preference
+                android:key="pocketbase_settings"
+                app:icon="@drawable/ic_database"
+                android:title="@string/pocketbase">
+            <intent
+                    android:targetClass="com.bopr.android.smailer.ui.PocketbaseSettingsActivity"
+                    android:targetPackage="com.bopr.android.smailer" />
+        </Preference>
 
 </PreferenceScreen>

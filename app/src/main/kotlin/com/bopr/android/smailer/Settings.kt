@@ -9,7 +9,7 @@ import com.bopr.android.smailer.messenger.mail.PhoneCallMailFormatter.Companion.
 import com.bopr.android.smailer.util.DEVICE_NAME
 import com.bopr.android.smailer.util.Logger
 import com.bopr.android.smailer.util.Singleton
-import com.bopr.android.smailer.util.commaJoin
+import com.bopr.android.smailer.util.joinToStringEscaped
 import com.bopr.android.smailer.util.commaSplit
 import androidx.core.content.edit
 
@@ -146,7 +146,7 @@ class Settings private constructor(context: Context) {
         }
 
         fun putStringList(key: String, value: Collection<String>?) {
-            wrapped.putString(key, value?.commaJoin())
+            wrapped.putString(key, value?.joinToStringEscaped())
         }
 
         fun putStringSet(key: String, value: Set<String>) {
@@ -209,10 +209,10 @@ class Settings private constructor(context: Context) {
         const val PREF_TELEGRAM_CHAT_ID = "telegram_chat_id"
         const val PREF_TELEGRAM_MESSAGE_CONTENT = "telegram_message_content"
         const val PREF_TELEGRAM_MESSENGER_ENABLED = "telegram_messenger_enabled"
-        const val PREF_POCKETBASE_MESSENGER_ENABLED = "pref_messenger_enabled"
-        const val PREF_POCKETBASE_BASE_URL = "pref_pocketbase_base_url"
-        const val PREF_POCKETBASE_USER = "pref_pocketbase_user"
-        const val PREF_POCKETBASE_PASSWORD = "pref_pocketbase_password"
+        const val PREF_POCKETBASE_MESSENGER_ENABLED = "pocketbase_messenger_enabled"
+        const val PREF_POCKETBASE_BASE_URL = "pocketbase_base_url"
+        const val PREF_POCKETBASE_USER = "pocketbase_user"
+        const val PREF_POCKETBASE_PASSWORD = "pocketbase_password"
 
         const val VAL_PREF_DEFAULT = "default"
         const val VAL_PREF_MESSAGE_CONTENT_BODY = "message_content_body"

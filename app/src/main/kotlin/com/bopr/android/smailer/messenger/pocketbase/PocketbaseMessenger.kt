@@ -12,10 +12,15 @@ import com.bopr.android.smailer.messenger.Event.Companion.SENT_BY_POCKETBASE
 import com.bopr.android.smailer.messenger.Messenger
 import com.bopr.android.smailer.util.Logger
 
+/**
+ * Pocketbase messenger.
+ *
+ * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
+ */
 class PocketbaseMessenger(private val context: Context) : Messenger(context, SENT_BY_POCKETBASE) {
 
     private var client: PocketbaseClient? = null
- 
+
     override suspend fun prepare(): Boolean {
         val settings = context.settings
         if (settings.getBoolean(PREF_POCKETBASE_MESSENGER_ENABLED)) {

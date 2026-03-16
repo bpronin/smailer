@@ -127,6 +127,11 @@
                 android:name=".ui.TelegramSettingsActivity"
                 android:label="@string/telegram"
                 android:parentActivityName=".ui.MessengersActivity" />
+        
+        <activity
+                android:name=".ui.PocketbaseSettingsActivity"
+                android:label="@string/pocketbase"
+                android:parentActivityName=".ui.MessengersActivity" />
 
         <activity
                 android:name=".ui.SmsSettingsActivity"

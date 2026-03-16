@@ -236,6 +236,10 @@
     <string name="open_browser_at_localhost">Open browser at %s</string>
     <string name="sms_text">Text</string>
     <string name="type">Type</string>
+    <string name="pocketbase" translatable="false">Pocketbase</string>
+    <string name="user">Username</string>
+    <string name="password">Password</string>
+    <string name="url" translatable="false">URL</string>
 
     <plurals name="items_removed">
         <item quantity="one">Item removed</item>

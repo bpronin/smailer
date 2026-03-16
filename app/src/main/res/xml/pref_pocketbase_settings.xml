@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+            android:key="pocketbase_messenger_enabled"
+            android:icon="@drawable/ic_database"
+            android:title="@string/enabled" />
+
+    <PreferenceCategory>
+
+        <EditTextPreference
+                android:key="pocketbase_base_url"
+                android:title="@string/url" />
+        
+        <EditTextPreference
+                android:key="pocketbase_user"
+                android:title="@string/user" />
+
+        <EditTextPreference
+                android:key="pocketbase_password"
+                android:title="@string/password" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
