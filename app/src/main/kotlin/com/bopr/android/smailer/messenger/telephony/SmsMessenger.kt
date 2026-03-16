@@ -93,7 +93,7 @@ internal class SmsMessenger(private val context: Context) : Messenger {
     }
 
     private fun formatBatteryEventMessage(info: BatteryData): String {
-        return info.text
+        return info.level
     }
 
     private fun notifySendSuccess() {

@@ -42,7 +42,8 @@
             android:restoreAnyVersion="true"
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
-            tools:ignore="GoogleAppIndexingWarning">
+            tools:ignore="GoogleAppIndexingWarning"
+            android:usesCleartextTraffic="true">
 
         <!-- See: https://developer.android.com/google/backup/signup -->
         <meta-data

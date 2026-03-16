@@ -46,9 +46,9 @@ class DatabaseListenerTest : BaseTest() {
 
         database.commit {
             events.apply {
-                insert(Event(timestamp = 1, payload = PhoneCallData(startTime = 0, phone = "1")))
-                insert(Event(timestamp = 2, payload = PhoneCallData(startTime = 0, phone = "2")))
-                insert(Event(timestamp = 3, payload = PhoneCallData(startTime = 0, phone = "3")))
+                insert(Event(time = 1, payload = PhoneCallData(startTime = 0, phone = "1")))
+                insert(Event(time = 2, payload = PhoneCallData(startTime = 0, phone = "2")))
+                insert(Event(time = 3, payload = PhoneCallData(startTime = 0, phone = "3")))
             }
         }
 

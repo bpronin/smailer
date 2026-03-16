@@ -25,6 +25,7 @@ plugins {
     id("kotlin-allopen")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
+    kotlin("plugin.serialization") version "2.3.10"
 }
 
 val localProperties = Properties().apply {
@@ -140,7 +141,7 @@ android {
     lint {
         abortOnError = false
     }
-    
+
 }
 
 dependencies {
@@ -148,7 +149,8 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.preference.ktx)
     implementation(libs.androidx.work.runtime.ktx)
-    implementation(libs.volley)
+    implementation(libs.volley) //todo: replace with okhttp
+    implementation(libs.okhttp)
     implementation(libs.play.services.auth)
     implementation(libs.play.services.location)
     implementation(libs.material)
@@ -162,7 +164,7 @@ dependencies {
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.netty)
     implementation(libs.ktor.server.html.builder)
-
+    
     "freeImplementation"(libs.play.services.ads)
 
     testImplementation(libs.junit)

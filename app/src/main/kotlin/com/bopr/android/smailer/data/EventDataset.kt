@@ -37,7 +37,7 @@ class EventDataset(
 
     override val keyColumns = stringArrayOf(COLUMN_TIMESTAMP, COLUMN_TARGET)
 
-    override fun keyOf(element: Event) = stringArrayOf(element.timestamp, element.target)
+    override fun keyOf(element: Event) = stringArrayOf(element.time, element.target)
 
     /**
      * Returns count of unread events.
@@ -55,6 +55,18 @@ class EventDataset(
             where = "$COLUMN_STATE=${STATE_PENDING}",
             order = "$COLUMN_TIMESTAMP DESC"
         ).drainToSet(::get)
+    }
+
+    override fun query() = read {
+        queryRecords(tableName, order = "$COLUMN_TIMESTAMP DESC")
+    }
+
+    override fun insert(element: Event) = write {
+        batchUpdate {
+            super.insert(element).also {
+                insertPayload(element.time, element.target, element.payload)
+            }
+        }
     }
 
     fun updateState(event: Event) = write {
@@ -82,22 +94,10 @@ class EventDataset(
         })
     }
 
-    override fun query() = read {
-        queryRecords(tableName, order = "$COLUMN_TIMESTAMP DESC")
-    }
-
-    override fun insert(element: Event) = write {
-        batchUpdate {
-            super.insert(element).also {
-                insertPayload(element.timestamp, element.target, element.payload)
-            }
-        }
-    }
-
     override fun delete(element: Event) = write {
         batchUpdate {
             super.delete(element).also {
-                deletePayload(element.timestamp, element.target, element.payload)
+                deletePayload(element.time, element.target, element.payload)
             }
         }
     }
@@ -115,7 +115,7 @@ class EventDataset(
         val timestamp = getLong(COLUMN_TIMESTAMP)
         val target = getString(COLUMN_TARGET)
         Event(
-            timestamp = timestamp,
+            time = timestamp,
             target = target,
             bypassFlags = Bits(getInt(COLUMN_BYPASS)),
             processFlags = Bits(getInt(COLUMN_PROCESS)),
@@ -136,7 +136,7 @@ class EventDataset(
 
     override fun values(element: Event) = values {
         element.apply {
-            put(COLUMN_TIMESTAMP, timestamp)
+            put(COLUMN_TIMESTAMP, time)
             put(COLUMN_TARGET, target)
             put(COLUMN_BYPASS, bypassFlags.toInt())
             put(COLUMN_PROCESS, processFlags.toInt())
@@ -181,7 +181,7 @@ class EventDataset(
                     where = "$COLUMN_TIMESTAMP=$timestamp AND $COLUMN_TARGET='$target'"
                 ).withFirst {
                     BatteryData(
-                        text = getString(COLUMN_TEXT)
+                        level = getString(COLUMN_TEXT)
                     )
                 }
             }
@@ -212,7 +212,7 @@ class EventDataset(
                     payload.apply {
                         put(COLUMN_TIMESTAMP, timestamp)
                         put(COLUMN_TARGET, target)
-                        put(COLUMN_TEXT, text)
+                        put(COLUMN_TEXT, level)
                     }
                 })
             }

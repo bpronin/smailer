@@ -5,5 +5,5 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class BatteryData(
-    val text: String
+    val level: String
 ) : EventPayload

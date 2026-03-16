@@ -10,7 +10,7 @@ import org.hamcrest.CoreMatchers.instanceOf
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import java.util.*
+import java.util.Locale
 
 /**
  * AndroidUtil tester.
@@ -41,13 +41,25 @@ class UiUtilTest : BaseTest() {
     @Test
     fun testQuantityString() {
         val configuration = targetContext.resources.configuration
-        configuration.setLocale(Locale("ru", "ru"))
+        configuration.setLocale(Locale.of("ru", "ru"))
         val res = targetContext.createConfigurationContext(configuration).resources
 
-        assertEquals("Нет сервисной почты", res.quantityString(R.plurals.mail_items, R.string.mail_items_zero, 0))
-        assertEquals("Получено 1 сообщение", res.quantityString(R.plurals.mail_items, R.string.mail_items_zero, 1))
-        assertEquals("Получено 2 сообщения", res.quantityString(R.plurals.mail_items, R.string.mail_items_zero, 2))
-        assertEquals("Получено 10 сообщений", res.quantityString(R.plurals.mail_items, R.string.mail_items_zero, 10))
+        assertEquals(
+            "Нет сервисной почты",
+            res.quantityString(R.plurals.mail_items, R.string.mail_items_zero, 0)
+        )
+        assertEquals(
+            "Получено 1 сообщение",
+            res.quantityString(R.plurals.mail_items, R.string.mail_items_zero, 1)
+        )
+        assertEquals(
+            "Получено 2 сообщения",
+            res.quantityString(R.plurals.mail_items, R.string.mail_items_zero, 2)
+        )
+        assertEquals(
+            "Получено 10 сообщений",
+            res.quantityString(R.plurals.mail_items, R.string.mail_items_zero, 10)
+        )
     }
 
 }

@@ -23,7 +23,7 @@ class BatteryLevelMailFormatter(
 
     override fun formatBody(): String {
         // TODO: implement
-        return info.text
+        return info.level
     }
 
 }

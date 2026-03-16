@@ -18,6 +18,7 @@ import com.bopr.android.smailer.util.appendAsHttpParams
 import com.bopr.android.smailer.util.httpEncoded
 import org.json.JSONObject
 
+//todo: migrate to okhttp
 /**
  * Telegram bot wrapper.
  *

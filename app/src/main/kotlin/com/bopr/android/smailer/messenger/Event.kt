@@ -11,7 +11,7 @@ import java.lang.System.currentTimeMillis
 
 @Parcelize
 data class Event(
-    val timestamp: Long = currentTimeMillis(),
+    val time: Long = currentTimeMillis(),
     val target: String = DEVICE_NAME,
     var bypassFlags: Bits = Bits(),
     @property:ProcessState var processState: Int = STATE_PENDING,

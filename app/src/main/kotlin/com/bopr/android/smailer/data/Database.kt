@@ -254,6 +254,7 @@ class Database private constructor(private val context: Context): Closeable {
                     "$COLUMN_TEXT TEXT(256)," +
                     "PRIMARY KEY($COLUMN_TIMESTAMP, $COLUMN_TARGET))"
 
+        //todo: put all in one BW_LIST table
         private const val SQL_CREATE_TEXT_BLACKLIST =
             "CREATE TABLE $TABLE_TEXT_BLACKLIST(" +
                     "$COLUMN_VALUE TEXT(256) PRIMARY KEY NOT NULL)"

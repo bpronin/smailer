@@ -39,12 +39,12 @@ class DatabaseTest : BaseTest() {
     @Test
     fun testInsert() {
         with(database.events) {
-            assertTrue(insert(Event(timestamp = 1, payload = defaultPayload)))
-            assertTrue(insert(Event(timestamp = 2, payload = defaultPayload)))
-            assertTrue(insert(Event(timestamp = 3, payload = defaultPayload)))
+            assertTrue(insert(Event(time = 1, payload = defaultPayload)))
+            assertTrue(insert(Event(time = 2, payload = defaultPayload)))
+            assertTrue(insert(Event(time = 3, payload = defaultPayload)))
             drain().apply {
                 assertEquals(3, size)
-                assertEquals(3, first().timestamp)
+                assertEquals(3, first().time)
                 assertEquals(STATE_PENDING, first().processState)
             }
         }
@@ -53,9 +53,9 @@ class DatabaseTest : BaseTest() {
     @Test
     fun testReinsert() {
         with(database.events) {
-            insert(Event(timestamp = 0, target = "1", payload = defaultPayload))
+            insert(Event(time = 0, target = "1", payload = defaultPayload))
             assertFalse(
-                insert(Event(timestamp = 0, target = "1", payload = defaultPayload))
+                insert(Event(time = 0, target = "1", payload = defaultPayload))
             )
             assertEquals(1, size)
         }
@@ -64,9 +64,9 @@ class DatabaseTest : BaseTest() {
     @Test
     fun testUpdate() {
         with(database.events) {
-            insert(Event(timestamp = 0, target = "1", isRead = false, payload = defaultPayload))
+            insert(Event(time = 0, target = "1", isRead = false, payload = defaultPayload))
             assertTrue(
-                update(Event(timestamp = 0, target = "1", isRead = true, payload = defaultPayload))
+                updateRead(Event(time = 0, target = "1", isRead = true, payload = defaultPayload))
             )
             assertEquals(1, size)
             assertTrue(drain().first().isRead)
@@ -85,23 +85,23 @@ class DatabaseTest : BaseTest() {
         with(database.events) {
             insert(
                 setOf(
-                    Event(timestamp = 1, payload = defaultPayload),
-                    Event(timestamp = 2, payload = defaultPayload),
-                    Event(timestamp = 3, payload = defaultPayload)
+                    Event(time = 1, payload = defaultPayload),
+                    Event(time = 2, payload = defaultPayload),
+                    Event(time = 3, payload = defaultPayload)
                 )
             )
 
             replaceAll(
                 setOf(
-                    Event(timestamp = 3, payload = defaultPayload),
-                    Event(timestamp = 4, payload = defaultPayload)
+                    Event(time = 3, payload = defaultPayload),
+                    Event(time = 4, payload = defaultPayload)
                 )
             )
 
             drain().apply {
                 assertEquals(2, size)
-                assertEquals(4, first().timestamp)
-                assertEquals(3, last().timestamp)
+                assertEquals(4, first().time)
+                assertEquals(3, last().time)
             }
         }
     }
@@ -109,9 +109,9 @@ class DatabaseTest : BaseTest() {
     @Test
     fun testClear() {
         with(database.events) {
-            insert(Event(timestamp = 0, target = "1", payload = defaultPayload))
-            insert(Event(timestamp = 1, target = "1", payload = defaultPayload))
-            insert(Event(timestamp = 2, target = "1", payload = defaultPayload))
+            insert(Event(time = 0, target = "1", payload = defaultPayload))
+            insert(Event(time = 1, target = "1", payload = defaultPayload))
+            insert(Event(time = 2, target = "1", payload = defaultPayload))
 
             clear()
      
@@ -124,23 +124,23 @@ class DatabaseTest : BaseTest() {
         with(database.events) {
             insert(
                 setOf(
-                    Event(timestamp = 1, payload = defaultPayload),
-                    Event(timestamp = 2, payload = defaultPayload),
-                    Event(timestamp = 3, payload = defaultPayload)
+                    Event(time = 1, payload = defaultPayload),
+                    Event(time = 2, payload = defaultPayload),
+                    Event(time = 3, payload = defaultPayload)
                 )
             )
 
             delete(
                 setOf(
-                    Event(timestamp = 1, payload = defaultPayload),
-                    Event(timestamp = 2, payload = defaultPayload),
-                    Event(timestamp = 4, payload = defaultPayload)
+                    Event(time = 1, payload = defaultPayload),
+                    Event(time = 2, payload = defaultPayload),
+                    Event(time = 4, payload = defaultPayload)
                 )
             )
 
             drain().apply {
                 assertEquals(1, size)
-                assertEquals(3, first().timestamp)
+                assertEquals(3, first().time)
             }
         }
     }

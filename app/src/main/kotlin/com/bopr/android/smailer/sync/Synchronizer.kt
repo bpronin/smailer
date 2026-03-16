@@ -128,7 +128,7 @@ internal class Synchronizer(
 
     private fun eventToData(event: Event): SyncData.Event {
         return SyncData.Event(
-            timestamp = event.timestamp,
+            timestamp = event.time,
             target = event.target,
             latitude = event.location?.latitude,
             longitude = event.location?.longitude,
@@ -146,7 +146,7 @@ internal class Synchronizer(
 
     private fun dataToEvent(data: SyncData.Event): Event {
         return Event(
-            timestamp = data.timestamp,
+            time = data.timestamp,
             target = data.target,
             location = fromCoordinates(data.latitude, data.longitude),
             processState = data.processState,

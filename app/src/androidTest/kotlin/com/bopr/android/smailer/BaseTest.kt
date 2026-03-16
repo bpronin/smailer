@@ -1,5 +1,6 @@
 package com.bopr.android.smailer
 
+import android.content.Context
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.work.WorkManager
 import com.bopr.android.smailer.data.Database.Companion.DATABASE_NAME
@@ -17,7 +18,7 @@ abstract class BaseTest {
 
     companion object {
 
-        val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
+        val targetContext: Context = InstrumentationRegistry.getInstrumentation().targetContext
         fun getString(resId: Int) = targetContext.getString(resId)
         fun getString(resId: Int, vararg args: Any?) = targetContext.getString(resId, args)
 

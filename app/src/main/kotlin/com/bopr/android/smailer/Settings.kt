@@ -23,7 +23,7 @@ class Settings private constructor(context: Context) {
     private val preferences = context.getSharedPreferences(sharedPreferencesName, MODE_PRIVATE)
 
     init {
-        log.debug("Instantiated for context [${context.hashCode()}]").verb(context)
+        log.debug("Instantiated for context: [$context]")
 
         if (SETTINGS_VERSION > getInt(PREF_SETTINGS_VERSION)) {
             loadDefaults()
@@ -159,7 +159,7 @@ class Settings private constructor(context: Context) {
 
             override fun onSharedPreferenceChanged(preferences: SharedPreferences?, key: String?) {
                 key?.let {
-                    log.debug("Notify listener [${hashCode()}]. key: $it")
+                    log.debug("Notify listener: [$this]. key: $it")
 
                     onChange(this@Settings, it)
                 }
@@ -167,18 +167,18 @@ class Settings private constructor(context: Context) {
         }.also {
             preferences.registerOnSharedPreferenceChangeListener(it)
 
-            log.debug("Listener registered [${it.hashCode()}]")
+            log.debug("Listener registered: [$it]")
         }
     }
 
     fun unregisterListener(listener: OnSharedPreferenceChangeListener) {
         preferences.unregisterOnSharedPreferenceChangeListener(listener)
 
-        log.debug("Listener unregistered [${listener.hashCode()}]").verb(listener)
+        log.debug("Listener unregistered: [$listener]")
     }
 
     companion object {
-        val log = Logger("Settings")
+        private val log = Logger("Settings")
 
         var sharedPreferencesName = "com.bopr.android.smailer_preferences"
 
@@ -208,6 +208,9 @@ class Settings private constructor(context: Context) {
         const val PREF_TELEGRAM_CHAT_ID = "telegram_chat_id"
         const val PREF_TELEGRAM_MESSAGE_CONTENT = "telegram_message_content"
         const val PREF_TELEGRAM_MESSENGER_ENABLED = "telegram_messenger_enabled"
+        const val PREF_PB_BASE_URL = "pref_pocketbase_base_url"
+        const val PREF_PB_USER = "pref_pocketbase_user"
+        const val PREF_PB_PASSWORD = "pref_pocketbase_password"
 
         const val VAL_PREF_DEFAULT = "default"
         const val VAL_PREF_MESSAGE_CONTENT_BODY = "message_content_body"

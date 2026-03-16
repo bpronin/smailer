@@ -4,6 +4,7 @@ import android.content.Context
 import com.bopr.android.smailer.messenger.mail.MailMessenger
 import com.bopr.android.smailer.messenger.telegram.TelegramMessenger
 import com.bopr.android.smailer.messenger.telephony.SmsMessenger
+import com.bopr.android.smailer.messenger.pocketbase.PocketbaseMessenger
 import com.bopr.android.smailer.util.Logger
 import com.bopr.android.smailer.util.Mockable
 
@@ -18,7 +19,8 @@ class MessageDispatcher(context: Context) {
     private val messengers: Array<Messenger> = arrayOf(
         MailMessenger(context),
         TelegramMessenger(context),
-        SmsMessenger(context)
+        SmsMessenger(context),
+//        PocketbaseMessenger(context)
     )
 
     fun prepare(): Boolean {
