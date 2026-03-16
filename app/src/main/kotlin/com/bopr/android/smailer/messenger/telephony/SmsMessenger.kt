@@ -31,7 +31,7 @@ internal class SmsMessenger(private val context: Context) : Messenger {
     private val settings = context.settings
     private val notifications = context.notifications
 
-    override fun prepare(): Boolean {
+    override suspend fun prepare(): Boolean {
         if (settings.getBoolean(PREF_SMS_MESSENGER_ENABLED)) {
             log.debug("Prepared")
             return true
@@ -39,7 +39,7 @@ internal class SmsMessenger(private val context: Context) : Messenger {
         return false
     }
 
-    override fun send(
+    override suspend fun send(
         event: Event,
         onSuccess: () -> Unit,
         onError: (Throwable) -> Unit

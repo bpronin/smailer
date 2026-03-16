@@ -16,6 +16,7 @@ import android.telephony.SmsManager.RESULT_ERROR_NO_SERVICE
 import android.telephony.SmsManager.RESULT_ERROR_NULL_PDU
 import android.telephony.SmsManager.RESULT_ERROR_RADIO_OFF
 import android.text.InputType
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
@@ -84,6 +85,7 @@ import com.bopr.android.smailer.util.showToast
 import com.google.api.services.drive.DriveScopes.DRIVE_APPDATA
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
 import com.google.api.services.gmail.GmailScopes.MAIL_GOOGLE_COM
+import kotlinx.coroutines.launch
 import java.io.File
 import java.lang.System.currentTimeMillis
 
@@ -509,7 +511,9 @@ class DebugFragment : PreferenceFragmentCompat() {
     private fun onProcessPending(preference: Preference) {
         preference.runBackgroundTask(
             onPerform = {
-                requireContext().processPendingPhoneCalls()
+                lifecycleScope.launch {
+                    requireContext().processPendingPhoneCalls()
+                }
             },
             onSuccess = {
                 showInfoDialog("Event processing", "$it events processed")

@@ -1,16 +1,17 @@
 package com.bopr.android.smailer.provider
 
 import android.content.Context
+import androidx.work.CoroutineWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.bopr.android.smailer.util.Logger
 
 abstract class EventProcessorWorker(context: Context, workerParams: WorkerParameters) :
-    Worker(context, workerParams) {
+    CoroutineWorker(context, workerParams) {
 
-    abstract fun doProcessEvents()
+    abstract suspend fun doProcessEvents()
 
-    override fun doWork() = try {
+    override suspend fun doWork() = try {
         doProcessEvents()
         log.debug("Processing finished")
         Result.success()

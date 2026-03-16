@@ -29,7 +29,7 @@ class TelegramMessenger(private val context: Context) : Messenger {
     private val formatters = TelegramFormatterFactory(context)
     private var session: TelegramSession? = null
 
-    override fun prepare(): Boolean {
+    override suspend fun prepare(): Boolean {
         if (settings.getBoolean(PREF_TELEGRAM_MESSENGER_ENABLED)) {
             session = TelegramSession(context, settings.getString(PREF_TELEGRAM_BOT_TOKEN))
 
@@ -41,7 +41,7 @@ class TelegramMessenger(private val context: Context) : Messenger {
         return false
     }
 
-    override fun send(
+    override suspend fun send(
         event: Event,
         onSuccess: () -> Unit,
         onError: (Throwable) -> Unit

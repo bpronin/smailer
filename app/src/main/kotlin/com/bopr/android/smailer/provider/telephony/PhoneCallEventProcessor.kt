@@ -34,7 +34,7 @@ class PhoneCallEventProcessor private constructor(private val context: Context) 
     internal class ProcessWorker(context: Context, workerParams: WorkerParameters) :
         EventProcessorWorker(context, workerParams) {
 
-        override fun doProcessEvents() {
+        override suspend fun doProcessEvents() {
             applicationContext.processPendingPhoneCalls()
         }
     }
@@ -46,7 +46,7 @@ class PhoneCallEventProcessor private constructor(private val context: Context) 
             singleton.getInstance(this).scheduleProcess(data, ProcessWorker::class)
         }
 
-        internal fun Context.processPendingPhoneCalls() {
+        internal suspend fun Context.processPendingPhoneCalls() {
             singleton.getInstance(this).processPending()
         }
     }

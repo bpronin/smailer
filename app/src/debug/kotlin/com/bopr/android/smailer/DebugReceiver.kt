@@ -8,7 +8,7 @@ import com.bopr.android.smailer.control.mail.MailControlProcessor
 import com.bopr.android.smailer.provider.telephony.PhoneCallData
 import com.bopr.android.smailer.provider.telephony.PhoneCallEventProcessor.Companion.processPendingPhoneCalls
 import com.bopr.android.smailer.provider.telephony.PhoneCallEventProcessor.Companion.scheduleProcessPhoneCall
-import com.bopr.android.smailer.util.runInBackground
+import kotlinx.coroutines.runBlocking
 import java.lang.System.currentTimeMillis
 
 class DebugReceiver : BroadcastReceiver() {
@@ -32,7 +32,7 @@ class DebugReceiver : BroadcastReceiver() {
             }
 
             "PROCESS_PENDING_EVENTS" -> {
-                runInBackground {
+                runBlocking {
                     context.processPendingPhoneCalls()
                 }
             }

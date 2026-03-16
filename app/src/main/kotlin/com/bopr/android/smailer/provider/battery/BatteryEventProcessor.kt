@@ -29,7 +29,7 @@ class BatteryEventProcessor(private val context: Context) :
     internal class ProcessWorker(context: Context, workerParams: WorkerParameters) :
         EventProcessorWorker(context, workerParams) {
 
-        override fun doProcessEvents() {
+        override suspend fun doProcessEvents() {
             applicationContext.processPendingBatteryEvents()
         }
     }
@@ -41,7 +41,7 @@ class BatteryEventProcessor(private val context: Context) :
             singleton.getInstance(this).scheduleProcess(data, ProcessWorker::class)
         }
 
-        internal fun Context.processPendingBatteryEvents() {
+        internal suspend fun Context.processPendingBatteryEvents() {
             singleton.getInstance(this).processPending()
         }
     }

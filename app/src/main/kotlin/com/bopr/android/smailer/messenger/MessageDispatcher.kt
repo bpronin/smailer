@@ -23,7 +23,7 @@ class MessageDispatcher(context: Context) {
 //        PocketbaseMessenger(context)
     )
 
-    fun prepare(): Boolean {
+    suspend fun prepare(): Boolean {
         log.debug("Preparing")
 
         var prepared = false
@@ -33,7 +33,7 @@ class MessageDispatcher(context: Context) {
         return prepared
     }
 
-    fun dispatch(event: Event, onSuccess: () -> Unit, onError: (Throwable) -> Unit) {
+    suspend fun dispatch(event: Event, onSuccess: () -> Unit, onError: (Throwable) -> Unit) {
         log.debug("Dispatching: $event")
 
         messengers.forEach { it.send(event, onSuccess, onError) }

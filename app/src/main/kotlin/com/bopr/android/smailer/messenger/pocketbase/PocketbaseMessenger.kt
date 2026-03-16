@@ -17,7 +17,7 @@ class PocketbaseMessenger(private val context: Context, private val scope: Corou
 
     private var client: PocketbaseClient? = null
 
-    override fun prepare(): Boolean {
+    override suspend fun prepare(): Boolean {
         with(context.settings) {
             if (getBoolean(PREF_TELEGRAM_MESSENGER_ENABLED)) {
                 client = PocketbaseClient(getString(PREF_PB_BASE_URL, ""))
@@ -31,7 +31,7 @@ class PocketbaseMessenger(private val context: Context, private val scope: Corou
         }
     }
 
-    override fun send(
+    override suspend fun send(
         event: Event,
         onSuccess: () -> Unit,
         onError: (Throwable) -> Unit

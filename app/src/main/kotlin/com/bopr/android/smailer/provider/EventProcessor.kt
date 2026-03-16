@@ -37,7 +37,7 @@ abstract class EventProcessor<P : EventPayload>(private val context: Context) {
         }
     }
 
-    fun processPending(): Int {
+    suspend fun processPending(): Int {
         val events = context.database.events.drainPending()
         if (events.isEmpty()) {
             log.debug("No unprocessed events")

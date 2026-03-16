@@ -8,8 +8,8 @@ package com.bopr.android.smailer.messenger
  */
 interface Messenger {
 
-    fun prepare(): Boolean
+    suspend fun prepare(): Boolean
 
-    fun send(event: Event, onSuccess: () -> Unit, onError: (Throwable) -> Unit)
+    suspend fun send(event: Event, onSuccess: () -> Unit, onError: (Throwable) -> Unit)
 
 }
