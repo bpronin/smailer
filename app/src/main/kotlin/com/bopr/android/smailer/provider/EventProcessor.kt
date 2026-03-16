@@ -5,7 +5,7 @@ import androidx.work.OneTimeWorkRequest.Builder
 import androidx.work.WorkManager
 import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.messenger.Event
-import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_NO_CONSUMERS
+import com.bopr.android.smailer.messenger.Event.Companion.BYPASS_NO_CONSUMERS
 import com.bopr.android.smailer.messenger.EventPayload
 import com.bopr.android.smailer.messenger.MessageDispatcher
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
@@ -47,10 +47,10 @@ abstract class EventProcessor<P : EventPayload>(private val context: Context) {
 
         log.debug("Processing ${events.size} event(s)")
 
-        val canDispatch = dispatcher.prepare()
+        val hasConsumers = dispatcher.prepare()
 
         for (event in events) {
-            if (canDispatch) {
+            if (hasConsumers) {
                 event.apply {
                     processTime = currentTimeMillis()
                     location = context.getGeoLocation()
@@ -71,7 +71,7 @@ abstract class EventProcessor<P : EventPayload>(private val context: Context) {
                 )
             } else {
                 updateDatabase(event.apply {
-                    bypassFlags += FLAG_BYPASS_NO_CONSUMERS
+                    bypassFlags += BYPASS_NO_CONSUMERS
                     processState = STATE_IGNORED
                 })
             }

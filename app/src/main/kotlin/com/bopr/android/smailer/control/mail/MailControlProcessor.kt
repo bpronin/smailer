@@ -2,6 +2,7 @@ package com.bopr.android.smailer.control.mail
 
 import android.content.Context
 import com.bopr.android.smailer.AccountsHelper.Companion.accounts
+import com.bopr.android.smailer.NotificationData
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_SERVICE_ACCOUNT
 import com.bopr.android.smailer.NotificationsHelper.Companion.notifications
 import com.bopr.android.smailer.R
@@ -97,9 +98,11 @@ internal class MailControlProcessor(private val context: Context) {
 
     private fun notifyNoAccount() {
         notifications.notifyError(
-            NTF_SERVICE_ACCOUNT,
-            context.getString(R.string.service_account_not_found),
-            EmailRemoteControlActivity::class
+            NotificationData(
+                id = NTF_SERVICE_ACCOUNT,
+                text = context.getString(R.string.service_account_not_found),
+                target = EmailRemoteControlActivity::class
+            )
         )
     }
 

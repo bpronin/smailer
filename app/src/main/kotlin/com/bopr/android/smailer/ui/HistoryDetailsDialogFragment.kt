@@ -10,9 +10,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.messenger.Event
-import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_NUMBER_BLACKLISTED
-import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_TEXT_BLACKLISTED
-import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_TRIGGER_OFF
+import com.bopr.android.smailer.messenger.Event.Companion.BYPASS_NUMBER_BLACKLISTED
+import com.bopr.android.smailer.messenger.Event.Companion.BYPASS_TEXT_BLACKLISTED
+import com.bopr.android.smailer.messenger.Event.Companion.BYPASS_TRIGGER_OFF
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.provider.telephony.PhoneCallData
@@ -61,15 +61,15 @@ class HistoryDetailsDialogFragment(private val event: Event) :
 
     private fun onExplainResult() {
         val msg = buildString {
-            if (FLAG_BYPASS_NUMBER_BLACKLISTED in event.bypassFlags) {
+            if (BYPASS_NUMBER_BLACKLISTED in event.bypassFlags) {
                 append(getString(R.string.number_in_blacklist))
                 append("\n\n")
             }
-            if (FLAG_BYPASS_TEXT_BLACKLISTED in event.bypassFlags) {
+            if (BYPASS_TEXT_BLACKLISTED in event.bypassFlags) {
                 append(getString(R.string.text_in_blacklist))
                 append("\n\n")
             }
-            if (FLAG_BYPASS_TRIGGER_OFF in event.bypassFlags) {
+            if (BYPASS_TRIGGER_OFF in event.bypassFlags) {
                 append(getString(R.string.trigger_off))
                 append("\n\n")
             }

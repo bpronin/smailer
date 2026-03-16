@@ -5,9 +5,9 @@ import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_CALLS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_OUT_SMS
-import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_NUMBER_BLACKLISTED
-import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_TEXT_BLACKLISTED
-import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_TRIGGER_OFF
+import com.bopr.android.smailer.messenger.Event.Companion.BYPASS_NUMBER_BLACKLISTED
+import com.bopr.android.smailer.messenger.Event.Companion.BYPASS_TEXT_BLACKLISTED
+import com.bopr.android.smailer.messenger.Event.Companion.BYPASS_TRIGGER_OFF
 import com.bopr.android.smailer.util.Bits
 import com.bopr.android.smailer.util.phoneNumberToRegEx
 import com.bopr.android.smailer.util.stripPhoneNumber
@@ -35,9 +35,9 @@ class PhoneCallFilter(
      */
     fun test(info: PhoneCallData): Bits {
         var result = Bits()
-        if (!testTrigger(info)) result += FLAG_BYPASS_TRIGGER_OFF
-        if (!testPhone(info.phone)) result += FLAG_BYPASS_NUMBER_BLACKLISTED
-        if (!testText(info.text)) result += FLAG_BYPASS_TEXT_BLACKLISTED
+        if (!testTrigger(info)) result += BYPASS_TRIGGER_OFF
+        if (!testPhone(info.phone)) result += BYPASS_NUMBER_BLACKLISTED
+        if (!testText(info.text)) result += BYPASS_TEXT_BLACKLISTED
         return result
     }
 

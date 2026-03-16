@@ -56,7 +56,7 @@ import com.bopr.android.smailer.external.Firebase.Companion.FCM_REQUEST_DATA_SYN
 import com.bopr.android.smailer.external.Firebase.Companion.firebase
 import com.bopr.android.smailer.external.GoogleDrive
 import com.bopr.android.smailer.messenger.Event
-import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_NO_CONSUMERS
+import com.bopr.android.smailer.messenger.Event.Companion.BYPASS_NO_CONSUMERS
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.messenger.mail.GoogleMailSession
@@ -254,9 +254,11 @@ class DebugFragment : PreferenceFragmentCompat() {
         addCategory(
             screen, "Notifications",
             addPreference("Cancel errors") {
-                notifications.cancelError(NTF_GOOGLE_ACCOUNT)
-                notifications.cancelError(NTF_SERVICE_ACCOUNT)
-                notifications.cancelError(NTF_MAIL_RECIPIENTS)
+                with(requireContext().notifications) {
+                    cancel(NTF_GOOGLE_ACCOUNT)
+                    cancel(NTF_SERVICE_ACCOUNT)
+                    cancel(NTF_MAIL_RECIPIENTS)
+                }
             }
         )
 //        addCategory(
@@ -590,7 +592,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         )
                     ),
                     Event(
-                        bypassFlags = FLAG_BYPASS_NO_CONSUMERS,
+                        bypassFlags = BYPASS_NO_CONSUMERS,
                         payload = PhoneCallData(
                             startTime = 1000.let { time += it; time },
                             phone = "+79052345675",

@@ -1,7 +1,6 @@
 package com.bopr.android.smailer
 
 import android.app.Activity
-import android.app.Notification
 import android.app.Notification.CATEGORY_ERROR
 import android.app.Notification.CATEGORY_MESSAGE
 import android.app.Notification.CATEGORY_SERVICE
@@ -17,17 +16,27 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.TaskStackBuilder
-import androidx.fragment.app.Fragment
 import com.bopr.android.smailer.AccountsHelper.Companion.accounts
+import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
-import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_REMOTE_CONTROL_ACCOUNT
 import com.bopr.android.smailer.ui.MainActivity
 import com.bopr.android.smailer.util.Mockable
 import com.bopr.android.smailer.util.Singleton
 import com.bopr.android.smailer.util.isValidEmailAddressList
 import java.lang.System.currentTimeMillis
 import kotlin.reflect.KClass
+
+data class NotificationData(
+    val id: Int = nextId++,
+    val title: String? = null,
+    val text: String? = null,
+    val target: KClass<out Activity>
+) {
+    companion object {
+        var nextId = 0
+    }
+}
 
 /**
  * Produces notifications.
@@ -77,37 +86,29 @@ class NotificationsHelper private constructor(private val context: Context) :
         }
     }
 
-    fun createServiceNotification(): Notification {
-        return statusBuilder
+    val serviceNotification = statusBuilder
+        .setWhen(currentTimeMillis())
+        .setContentTitle(context.getString(R.string.service_running))
+        .build()
+
+    fun notifyInfo(notification: NotificationData) = manager.notify(
+        TAG_MESSAGE, notification.id, infoBuilder
             .setWhen(currentTimeMillis())
-            .setContentTitle(context.getString(R.string.service_running))
+            .setContentTitle(notification.title)
+            .setContentText(notification.text)
+            .setContentIntent(activityIntent(notification.target))
             .build()
-    }
+    )
 
-    fun notifyInfo(title: String, text: String? = null, target: KClass<out Activity>) {
-        manager.notify(
-            TAG_MESSAGE, nextInfoNotificationId++, infoBuilder
-                .setWhen(currentTimeMillis())
-                .setContentTitle(title)
-                .setContentText(text)
-                .setContentIntent(activityIntent(target))
-                .build()
-        )
-    }
+    fun notifyError(notification: NotificationData) = manager.notify(
+        TAG_ERROR, notification.id, errorsBuilder
+            .setWhen(currentTimeMillis())
+            .setContentText(notification.text)
+            .setContentIntent(activityIntent(notification.target))
+            .build()
+    )
 
-    fun notifyError(notificationId: Int, text: String, target: KClass<out Activity>) {
-        manager.notify(
-            TAG_ERROR, notificationId, errorsBuilder
-                .setWhen(currentTimeMillis())
-                .setContentText(text)
-                .setContentIntent(activityIntent(target))
-                .build()
-        )
-    }
-
-    internal fun cancelError(notificationId: Int) {
-        manager.cancel(TAG_ERROR, notificationId)
-    }
+    fun cancel(notificationId: Int) = manager.cancel(TAG_ERROR, notificationId)
 
     override fun onSettingsChanged(settings: Settings, key: String) {
         when (key) {
@@ -116,7 +117,7 @@ class NotificationsHelper private constructor(private val context: Context) :
                         settings.getString(PREF_MAIL_SENDER_ACCOUNT)
                     )
                 ) {
-                    cancelError(NTF_GOOGLE_ACCOUNT)
+                    cancel(NTF_GOOGLE_ACCOUNT)
                 }
 
             PREF_EMAIL_REMOTE_CONTROL_ACCOUNT ->
@@ -124,12 +125,12 @@ class NotificationsHelper private constructor(private val context: Context) :
                         settings.getString(PREF_EMAIL_REMOTE_CONTROL_ACCOUNT)
                     )
                 ) {
-                    cancelError(NTF_SERVICE_ACCOUNT)
+                    cancel(NTF_SERVICE_ACCOUNT)
                 }
 
             PREF_MAIL_MESSENGER_RECIPIENTS ->
                 if (isValidEmailAddressList(settings.getMailRecipients())) {
-                    cancelError(NTF_MAIL_RECIPIENTS)
+                    cancel(NTF_MAIL_RECIPIENTS)
                 }
         }
     }
@@ -141,9 +142,6 @@ class NotificationsHelper private constructor(private val context: Context) :
     }
 
     companion object {
-
-        private var nextInfoNotificationId = 0
-
         private const val CHANNEL_ID_STATUS = "com.bopr.android.smailer.status"
         private const val CHANNEL_ID_NOTIFICATIONS = "com.bopr.android.smailer.notifications"
 
@@ -161,7 +159,6 @@ class NotificationsHelper private constructor(private val context: Context) :
 
         private val singleton = Singleton { NotificationsHelper(it) }
         val Context.notifications get() = singleton.getInstance(this)
-        val Fragment.notifications get() = requireContext().notifications
     }
 
 }

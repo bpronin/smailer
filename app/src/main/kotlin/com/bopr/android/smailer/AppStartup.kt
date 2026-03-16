@@ -17,9 +17,9 @@ object AppStartup {
     fun Context.startAppServices() {
         enableAppService()
         enableMailRemoteControl()
-        startGoogleCloudSync()
-        startFirebaseMessaging()
-        startAndroidBackup()
+//        startGoogleCloudSync()
+//        startFirebaseMessaging()
+//        startAndroidBackup()
     }
 
 }

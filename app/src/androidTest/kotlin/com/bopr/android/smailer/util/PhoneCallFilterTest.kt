@@ -4,9 +4,9 @@ import androidx.test.filters.SmallTest
 import com.bopr.android.smailer.BaseTest
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_IN_SMS
 import com.bopr.android.smailer.Settings.Companion.VAL_PREF_TRIGGER_MISSED_CALLS
-import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_NUMBER_BLACKLISTED
-import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_TEXT_BLACKLISTED
-import com.bopr.android.smailer.messenger.Event.Companion.FLAG_BYPASS_TRIGGER_OFF
+import com.bopr.android.smailer.messenger.Event.Companion.BYPASS_NUMBER_BLACKLISTED
+import com.bopr.android.smailer.messenger.Event.Companion.BYPASS_TEXT_BLACKLISTED
+import com.bopr.android.smailer.messenger.Event.Companion.BYPASS_TRIGGER_OFF
 import com.bopr.android.smailer.provider.telephony.PhoneCallFilter
 import com.bopr.android.smailer.provider.telephony.PhoneCallData
 import org.junit.Assert.assertEquals
@@ -37,7 +37,7 @@ class PhoneCallFilterTest : BaseTest() {
         val call = createInfo("123")
         val filter = PhoneCallFilter()
 
-        assertEquals(FLAG_BYPASS_TRIGGER_OFF, filter.test(call))
+        assertEquals(BYPASS_TRIGGER_OFF, filter.test(call))
     }
 
     @Test
@@ -71,12 +71,12 @@ class PhoneCallFilterTest : BaseTest() {
         filter.phoneBlacklist = setOf("111", "333")
         call = call.copy(phone = "111")
 
-        assertEquals(FLAG_BYPASS_NUMBER_BLACKLISTED, filter.test(call))
+        assertEquals(BYPASS_NUMBER_BLACKLISTED, filter.test(call))
 
         filter.phoneBlacklist = setOf("+1(11)", "333")
         call = call.copy(phone = "1 11")
 
-        assertEquals(FLAG_BYPASS_NUMBER_BLACKLISTED, filter.test(call))
+        assertEquals(BYPASS_NUMBER_BLACKLISTED, filter.test(call))
 
         call = call.copy(phone = "222")
 
@@ -85,7 +85,7 @@ class PhoneCallFilterTest : BaseTest() {
         filter.phoneBlacklist = setOf("111", "222")
         call = call.copy(phone = "222")
 
-        assertEquals(FLAG_BYPASS_NUMBER_BLACKLISTED, filter.test(call))
+        assertEquals(BYPASS_NUMBER_BLACKLISTED, filter.test(call))
     }
 
     @Test
@@ -101,11 +101,11 @@ class PhoneCallFilterTest : BaseTest() {
             phone = "+79628810559"
         )
 
-        assertEquals(FLAG_BYPASS_NUMBER_BLACKLISTED, filter.test(call))
+        assertEquals(BYPASS_NUMBER_BLACKLISTED, filter.test(call))
 
         call = call.copy(phone = "+79628810558")
 
-        assertEquals(FLAG_BYPASS_NUMBER_BLACKLISTED, filter.test(call))
+        assertEquals(BYPASS_NUMBER_BLACKLISTED, filter.test(call))
 
         call = call.copy(phone = "+79628811111")
 
@@ -156,15 +156,15 @@ class PhoneCallFilterTest : BaseTest() {
 
         call = call.copy(text = "This is a message for Bob or Ann")
         filter.textBlacklist = setOf("Bob", "Ann")
-        assertEquals(FLAG_BYPASS_TEXT_BLACKLISTED, filter.test(call))
+        assertEquals(BYPASS_TEXT_BLACKLISTED, filter.test(call))
 
         call = call.copy(text = "This is a message for Bobson or Ann")
         filter.textBlacklist = setOf("BOB")
-        assertEquals(FLAG_BYPASS_TEXT_BLACKLISTED, filter.test(call))
+        assertEquals(BYPASS_TEXT_BLACKLISTED, filter.test(call))
 
         call = call.copy(text = "This is a message for Bob or Ann")
         filter.textBlacklist = setOf("bob")
-        assertEquals(FLAG_BYPASS_TEXT_BLACKLISTED, filter.test(call))
+        assertEquals(BYPASS_TEXT_BLACKLISTED, filter.test(call))
 
         call = call.copy(text = "This is a message")
         filter.textBlacklist = setOf("Bob", "Ann")
@@ -189,11 +189,11 @@ class PhoneCallFilterTest : BaseTest() {
 
         filter.textBlacklist = setOf("REX:(.*)John(.*)", "REGEX:.*someone.*", "REGEX:.*other*")
         call = call.copy(text = "This is a message for John or someone else")
-        assertEquals(FLAG_BYPASS_TEXT_BLACKLISTED, filter.test(call))
+        assertEquals(BYPASS_TEXT_BLACKLISTED, filter.test(call))
 
         filter.textBlacklist = setOf("REGEX:(?i:.*SOMEONE.*)")
         call = call.copy(text = "This is a message for John or someone else")
-        assertEquals(FLAG_BYPASS_TEXT_BLACKLISTED, filter.test(call))
+        assertEquals(BYPASS_TEXT_BLACKLISTED, filter.test(call))
 
         filter.textBlacklist = setOf("REGEX:?i:.*SOMEONE.*") /* invalid pattern */
         call = call.copy(text = "This is a message for John or someone else")

@@ -1,15 +1,14 @@
 package com.bopr.android.smailer.messenger.telephony
 
 import android.content.Context
+import com.bopr.android.smailer.NotificationData
 import com.bopr.android.smailer.NotificationsHelper.Companion.NTF_TELEPHONY
-import com.bopr.android.smailer.NotificationsHelper.Companion.notifications
 import com.bopr.android.smailer.R
-import com.bopr.android.smailer.Settings.Companion.PREF_NOTIFY_SEND_SUCCESS
 import com.bopr.android.smailer.Settings.Companion.PREF_SMS_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_SMS_MESSENGER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.messenger.Event
-import com.bopr.android.smailer.messenger.Event.Companion.FLAG_SENT_BY_SMS
+import com.bopr.android.smailer.messenger.Event.Companion.SENT_BY_SMS
 import com.bopr.android.smailer.messenger.Messenger
 import com.bopr.android.smailer.provider.battery.BatteryData
 import com.bopr.android.smailer.provider.telephony.PhoneCallData
@@ -26,43 +25,28 @@ import com.bopr.android.smailer.util.sendSmsMessage
  * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 @Mockable
-internal class SmsMessenger(private val context: Context) : Messenger {
-
-    private val settings = context.settings
-    private val notifications = context.notifications
+internal class SmsMessenger(private val context: Context) : Messenger(context, SENT_BY_SMS) {
 
     override suspend fun prepare(): Boolean {
-        if (settings.getBoolean(PREF_SMS_MESSENGER_ENABLED)) {
+        if (context.settings.getBoolean(PREF_SMS_MESSENGER_ENABLED)) {
             log.debug("Prepared")
             return true
         }
         return false
     }
 
-    override suspend fun send(
+    override suspend fun doSend(
         event: Event,
         onSuccess: () -> Unit,
         onError: (Throwable) -> Unit
     ) {
-        if (!settings.getBoolean(PREF_SMS_MESSENGER_ENABLED)
-            || FLAG_SENT_BY_SMS in event.processFlags
-        ) return
-
-        log.debug("Sending").verb(event)
-
-        settings.getStringList(PREF_SMS_MESSENGER_RECIPIENTS).forEach {
+        context.settings.getStringList(PREF_SMS_MESSENGER_RECIPIENTS).forEach {
             try {
-                log.debug("Sent")
-
                 context.sendSmsMessage(it, formatMessage(event))
-                event.processFlags += FLAG_SENT_BY_SMS
-                notifySendSuccess()
+                log.debug("Sent")
                 onSuccess()
             } catch (x: Exception) {
                 log.warn("Send failed", x)
-
-                event.processFlags -= FLAG_SENT_BY_SMS
-                notifySendError()
                 onError(x)
             }
         }
@@ -96,24 +80,18 @@ internal class SmsMessenger(private val context: Context) : Messenger {
         return info.level
     }
 
-    private fun notifySendSuccess() {
-        if (settings.getBoolean(PREF_NOTIFY_SEND_SUCCESS))
-            notifications.notifyInfo(
-                title = context.getString(R.string.sms_successfully_send),
-                target = MainActivity::class
-            )
-    }
+    override fun getSuccessNotification() = NotificationData(
+        title = context.getString(R.string.sms_successfully_send),
+        target = MainActivity::class
+    )
 
-    private fun notifySendError() {
-        notifications.notifyError(
-            NTF_TELEPHONY,
-            context.getString(R.string.unable_send_sms),
-            SmsSettingsActivity::class
-        )
-    }
+    override fun getErrorNotification(error: Throwable) = NotificationData(
+        id = NTF_TELEPHONY,
+        text = context.getString(R.string.unable_send_sms),
+        target = SmsSettingsActivity::class
+    )
 
     companion object {
-
         private val log = Logger("SmsMessenger")
     }
 }

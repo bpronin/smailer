@@ -36,7 +36,7 @@ class AppService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent != null) {
-            startForegroundCompat(NTF_SERVICE, notifications.createServiceNotification())
+            startForegroundCompat(NTF_SERVICE, notifications.serviceNotification)
         }
         return super.onStartCommand(intent, flags, startId)
     }

@@ -44,6 +44,7 @@ class Settings private constructor(context: Context) {
             ifNotExists(PREF_EMAIL_REMOTE_CONTROL_NOTIFICATIONS) { putBoolean(it, true) }
             ifNotExists(PREF_SMS_MESSENGER_ENABLED) { putBoolean(it, false) }
             ifNotExists(PREF_TELEGRAM_MESSENGER_ENABLED) { putBoolean(it, true) }
+            ifNotExists(PREF_POCKETBASE_MESSENGER_ENABLED) { putBoolean(it, false) }
             ifNotExists(PREF_SYNC_ENABLED) { putBoolean(it, true) }
             ifNotExists(PREF_PHONE_PROCESS_TRIGGERS) {
                 putStringSet(
@@ -208,9 +209,10 @@ class Settings private constructor(context: Context) {
         const val PREF_TELEGRAM_CHAT_ID = "telegram_chat_id"
         const val PREF_TELEGRAM_MESSAGE_CONTENT = "telegram_message_content"
         const val PREF_TELEGRAM_MESSENGER_ENABLED = "telegram_messenger_enabled"
-        const val PREF_PB_BASE_URL = "pref_pocketbase_base_url"
-        const val PREF_PB_USER = "pref_pocketbase_user"
-        const val PREF_PB_PASSWORD = "pref_pocketbase_password"
+        const val PREF_POCKETBASE_MESSENGER_ENABLED = "pref_messenger_enabled"
+        const val PREF_POCKETBASE_BASE_URL = "pref_pocketbase_base_url"
+        const val PREF_POCKETBASE_USER = "pref_pocketbase_user"
+        const val PREF_POCKETBASE_PASSWORD = "pref_pocketbase_password"
 
         const val VAL_PREF_DEFAULT = "default"
         const val VAL_PREF_MESSAGE_CONTENT_BODY = "message_content_body"

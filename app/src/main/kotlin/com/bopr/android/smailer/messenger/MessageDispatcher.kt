@@ -2,9 +2,9 @@ package com.bopr.android.smailer.messenger
 
 import android.content.Context
 import com.bopr.android.smailer.messenger.mail.MailMessenger
+import com.bopr.android.smailer.messenger.pocketbase.PocketbaseMessenger
 import com.bopr.android.smailer.messenger.telegram.TelegramMessenger
 import com.bopr.android.smailer.messenger.telephony.SmsMessenger
-import com.bopr.android.smailer.messenger.pocketbase.PocketbaseMessenger
 import com.bopr.android.smailer.util.Logger
 import com.bopr.android.smailer.util.Mockable
 
@@ -20,12 +20,10 @@ class MessageDispatcher(context: Context) {
         MailMessenger(context),
         TelegramMessenger(context),
         SmsMessenger(context),
-//        PocketbaseMessenger(context)
+        PocketbaseMessenger(context)
     )
 
     suspend fun prepare(): Boolean {
-        log.debug("Preparing")
-
         var prepared = false
         messengers.forEach {
             prepared = prepared or it.prepare()

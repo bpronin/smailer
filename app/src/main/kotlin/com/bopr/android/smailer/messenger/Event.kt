@@ -26,15 +26,16 @@ data class Event(
 
         /* Bypass flags. Explains why an event was not processed. */
 
-        val FLAG_BYPASS_NO_CONSUMERS = bit(0)
-        val FLAG_BYPASS_NUMBER_BLACKLISTED = bit(1)
-        val FLAG_BYPASS_TEXT_BLACKLISTED = bit(2)
-        val FLAG_BYPASS_TRIGGER_OFF = bit(3)
+        val BYPASS_NO_CONSUMERS = bit(0)
+        val BYPASS_NUMBER_BLACKLISTED = bit(1)
+        val BYPASS_TEXT_BLACKLISTED = bit(2)
+        val BYPASS_TRIGGER_OFF = bit(3)
 
         /* Processing lags. Explains how exactly an event was processed. */
 
-        val FLAG_SENT_BY_MAIL = bit(0)
-        val FLAG_SENT_BY_TELEGRAM = bit(1)
-        val FLAG_SENT_BY_SMS = bit(2)
+        val SENT_BY_MAIL = bit(0)
+        val SENT_BY_TELEGRAM = bit(1)
+        val SENT_BY_SMS = bit(2)
+        val SENT_BY_POCKETBASE = bit(3)
     }
 }

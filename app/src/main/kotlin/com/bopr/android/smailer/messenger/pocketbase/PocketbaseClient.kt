@@ -22,11 +22,11 @@ class PocketbaseClient(private val baseUrl: String) {
     private var authToken: String? = null
     private val client = OkHttpClient().newBuilder().addInterceptor(AuthInterceptor()).build()
 
-    suspend fun auth(identity: String, password: String, isSuperuser: Boolean = false) =
+    suspend fun auth(user: String, password: String, isSuperuser: Boolean = false) =
         withContext(Dispatchers.IO) {
             val json = """
             {
-                "identity": "$identity",
+                "identity": "$user",
                 "password": "$password"
             }
             """
@@ -34,7 +34,7 @@ class PocketbaseClient(private val baseUrl: String) {
             val collection = if (isSuperuser) "_superusers" else "users"
             val request = Request.Builder()
                 .url(collectionUrl("$collection/auth-with-password"))
-                .post(jsonBody(json))
+                .post(createBody(json))
                 .build()
 
             authToken = null
@@ -101,21 +101,20 @@ class PocketbaseClient(private val baseUrl: String) {
 
             val request = Request.Builder()
                 .url(collectionUrl("${collection}/records"))
-                .post(jsonBody(json))
+                .post(createBody(json))
                 .build()
 
             client.newCall(request).execute().use { response ->
                 if (response.isSuccessful) {
                     log.debug("Insert into '$collection' success")
-                    val json = JSONObject(response.body.string())
-                    json.getString("id")
+                    JSONObject(response.body.string()).getString("id")
                 } else {
                     throw RuntimeException("Insert into '$collection' failed: ${response.body.string()}")
                 }
             }
         }
 
-    private fun jsonBody(json: String): RequestBody =
+    private fun createBody(json: String): RequestBody =
         json.toRequestBody("application/json".toMediaType())
 
     private fun collectionUrl(path: String): String = "$baseUrl/api/collections/$path"
