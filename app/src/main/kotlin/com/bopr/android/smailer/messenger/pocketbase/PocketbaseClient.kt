@@ -5,164 +5,127 @@ import com.bopr.android.smailer.messenger.EventPayload
 import com.bopr.android.smailer.provider.battery.BatteryData
 import com.bopr.android.smailer.provider.telephony.PhoneCallData
 import com.bopr.android.smailer.util.Logger
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import okhttp3.Interceptor
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.Response
-import org.json.JSONObject
+import okhttp3.OkHttpClient.Builder
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import kotlin.time.Instant
 
-class PocketbaseClient(private val baseUrl: String) {
+class PocketbaseClient(baseUrl: String) {
 
+    private val retrofit = Retrofit.Builder()
+        .baseUrl(baseUrl.let { if (it.endsWith("/")) it else "$it/" })
+        .client(
+            Builder()
+                .addInterceptor(AuthInterceptor())
+                .build()
+        )
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    private val api: PocketbaseApi = retrofit.create(PocketbaseApi::class.java)
     private var authToken: String? = null
-    private val client = OkHttpClient().newBuilder().addInterceptor(AuthInterceptor()).build()
 
     suspend fun auth(user: String, password: String) {
-        try {
-            tryAuth(user, password, false)
-        } catch (_: Throwable) {
-            tryAuth(user, password, true)
+        log.debug("Auth as: $user")
+        val response = api.auth(AuthRequest(user, password))
+        if (response.isSuccessful) {
+            authToken = response.body()?.token
+            log.debug("Auth success")
+        } else {
+            log.debug("Auth failed")
+            throw PocketbaseRemoteError("Auth failed", parseErrorResponse(response))
         }
     }
 
-    suspend fun insertEvent(event: Event): String? =
-        insertIntoEvents(event)?.also {
-            when (event.payload) {
-                is PhoneCallData -> insertIntoTelephony(it, event.payload)
-                is BatteryData -> insertIntoBattery(it, event.payload)
-                else -> throw IllegalArgumentException("Unknown payload type: ${event.payload}")
-            }
-        }
+    suspend fun insertEvent(event: Event): String? {
+        if (authToken == null) throw IllegalStateException("Not authenticated")
 
-    suspend fun insertIntoTelephony(eventId: String, data: PhoneCallData): String? =
-        insertInto(
-            "telephony",
-            """
-            {
-                "event_id": "$eventId",
-                "start_time": "${formatDateTime(data.startTime)}",
-                "end_time": "${formatDateTime(data.startTime)}",
-                "phone": "${data.phone}",
-                "is_incoming": ${data.isIncoming},
-                "is_missed": ${data.isMissed},
-                "text": "${data.text}"
-            }
-            """
+        val eventId = insertIntoEvents(event) ?: return null
+        when (val payload = event.payload) {
+            is PhoneCallData -> insertIntoTelephony(eventId, payload)
+            is BatteryData -> insertIntoBattery(eventId, payload)
+            else -> throw IllegalArgumentException("Unknown payload type: ${event.payload}")
+        }
+        return eventId
+    }
+
+    private suspend fun insertIntoEvents(event: Event): String? {
+        log.debug("Inserting into 'events'")
+
+        val response = api.insertEvent(
+            InsertEventRequest(
+                time = formatDateTime(event.time),
+                target = event.target,
+                type = formatPayloadType(event.payload)
+            )
         )
 
-    suspend fun insertIntoBattery(eventId: String, data: BatteryData) = insertInto(
-        "battery",
-        """
-        {
-            "event_id": "$eventId",
-            "level": ${data.level},
-        }    
-        """
-    )
-
-    suspend fun insertIntoEvents(event: Event) = insertInto(
-        "events",
-        """
-        {
-            "time": "${formatDateTime(event.time)}",
-            "target": "${event.target}",
-            "type": "${formatPayloadType(event.payload)}"    
-        }
-        """
-    )
-
-    private suspend fun tryAuth(user: String, password: String, asSuperuser: Boolean) =
-        withContext(Dispatchers.IO) {
-            val json = """
-            {
-                "identity": "$user",
-                "password": "$password"
-            }
-            """
-
-            val collection = if (asSuperuser) {
-                log.debug("Auth as superuser: $user")
-                "_superusers"
-            } else {
-                log.debug("Auth as regular user: $user")
-                "users"
-            }
-
-            val request = Request.Builder()
-                .url(collectionUrl("$collection/auth-with-password"))
-                .post(createBody(json))
-                .build()
-
-            authToken = null
-            client.newCall(request).execute().use { response ->
-                if (response.isSuccessful) {
-                    val json = JSONObject(response.body.string())
-                    authToken = json.getString("token")
-                    log.debug("Auth success")
-                } else {
-                    log.debug("Auth failed")
-                    throw PocketbaseRemoteError("Auth failed", response)
-                }
-            }
-        }
-
-    private suspend fun insertInto(collection: String, json: String): String? =
-        withContext(Dispatchers.IO) {
-            if (authToken == null) throw IllegalStateException("Not authenticated")
-
-            val request = Request.Builder()
-                .url(collectionUrl("${collection}/records"))
-                .post(createBody(json))
-                .build()
-
-            client.newCall(request).execute().use { response ->
-                if (response.isSuccessful) {
-                    log.debug("Insert into '$collection' success")
-                    JSONObject(response.body.string()).getString("id")
-                } else {
-                    throw PocketbaseRemoteError("Insert into '$collection' failed", response)
-                }
-            }
-        }
-
-    private fun createBody(json: String): RequestBody =
-        json.toRequestBody("application/json".toMediaType())
-
-    private fun collectionUrl(path: String): String = "$baseUrl/api/collections/$path"
-
-    private fun formatPayloadType(payload: EventPayload): String {
-        return when (payload) {
-            is PhoneCallData -> "telephony"
-            is BatteryData -> "battery"
-            else -> throw IllegalArgumentException("Unknown payload type: $payload")
+        return if (response.isSuccessful) {
+            response.body()?.id
+        } else {
+            throw PocketbaseRemoteError("Insert failed", parseErrorResponse(response))
         }
     }
 
-    private fun formatDateTime(ms: Long): String =
-        Instant.fromEpochMilliseconds(ms).toString()
+    private suspend fun insertIntoTelephony(eventId: String, data: PhoneCallData) {
+        log.debug("Inserting into 'telephony'")
 
-    private fun parseDateTime(s: String): Long = Instant.parse(s).toEpochMilliseconds()
+        val response = api.insertTelephony(
+            InsertTelephonyRequest(
+                event_id = eventId,
+                start_time = formatDateTime(data.startTime),
+                end_time = formatDateTime(data.startTime),
+                phone = data.phone,
+                is_incoming = data.isIncoming,
+                is_missed = data.isMissed,
+                text = data.text
+            )
+        )
+
+        if (!response.isSuccessful) {
+            throw PocketbaseRemoteError("Insert failed", parseErrorResponse(response))
+        }
+    }
+
+    private suspend fun insertIntoBattery(eventId: String, data: BatteryData) {
+        log.debug("Inserting into 'battery'")
+
+        val response = api.insertBattery(
+            InsertBatteryRequest(
+                event_id = eventId,
+                level = data.level
+            )
+        )
+
+        if (!response.isSuccessful) {
+            throw PocketbaseRemoteError("Insert failed", parseErrorResponse(response))
+        }
+    }
+
+    private fun formatPayloadType(payload: EventPayload) = when (payload) {
+        is PhoneCallData -> "telephony"
+        is BatteryData -> "battery"
+        else -> throw IllegalArgumentException("Unknown payload type: $payload")
+    }
+
+    private fun formatDateTime(ms: Long) = Instant.fromEpochMilliseconds(ms).toString()
+
+    private fun parseErrorResponse(response: Response<*>) =
+        retrofit.responseBodyConverter<ErrorResponse>(ErrorResponse::class.java, arrayOf())
+            .convert(response.errorBody())!!
 
     inner class AuthInterceptor : Interceptor {
-        override fun intercept(chain: Interceptor.Chain): Response {
-
+        override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
             val request = chain.request().newBuilder().apply {
-                authToken?.let {
-                    addHeader("Authorization", "Bearer $it")
-                }
+                authToken?.let { addHeader("Authorization", "Bearer $it") }
             }.build()
-
             return chain.proceed(request)
         }
     }
 
     companion object {
-
         private val log = Logger("PocketbaseClient")
     }
 }

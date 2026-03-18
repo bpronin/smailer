@@ -49,7 +49,7 @@ class PocketbaseMessenger(private val context: Context) : Messenger(context, SEN
         log.debug("Sending")
         client?.apply {
             try {
-                insertIntoEvents(event)
+                insertEvent(event)
                 onSuccess()
             } catch (x: Exception) {
                 onError(x)

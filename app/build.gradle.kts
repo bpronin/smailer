@@ -149,8 +149,9 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.preference.ktx)
     implementation(libs.androidx.work.runtime.ktx)
-    implementation(libs.volley) //todo: replace with okhttp
-    implementation(libs.okhttp)
+    implementation(libs.volley) //todo: replace with retrofit
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
     implementation(libs.play.services.auth)
     implementation(libs.play.services.location)
     implementation(libs.material)

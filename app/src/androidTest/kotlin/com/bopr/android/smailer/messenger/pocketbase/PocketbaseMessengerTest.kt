@@ -12,8 +12,8 @@ class PocketbaseMessengerTest : BaseTest() {
 
     @Test
     fun testInsertEvent(): Unit = runBlocking {
-        val client = PocketbaseClient("http://185.225.202.228:8090")
-        client.auth("boris.i.pronin@gmail.com", "blue88cofe", true)
+        val client = PocketbaseClient("http://193.162.143.66:8090")
+        client.auth("boris.i.pronin@gmail.com", "blue88cofe")
 
         val event = Event(
             time = 0,
@@ -49,7 +49,7 @@ class PocketbaseMessengerTest : BaseTest() {
 
     @Test
     fun testSend() = runBlocking {
-        val messenger = PocketbaseMessenger(targetContext, this)
+        val messenger = PocketbaseMessenger(targetContext)
         messenger.prepare()
 
         val event = Event(
