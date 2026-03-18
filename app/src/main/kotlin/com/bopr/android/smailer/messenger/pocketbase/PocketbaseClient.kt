@@ -1,7 +1,6 @@
 package com.bopr.android.smailer.messenger.pocketbase
 
 import com.bopr.android.smailer.messenger.Event
-import com.bopr.android.smailer.messenger.EventPayload
 import com.bopr.android.smailer.provider.battery.BatteryData
 import com.bopr.android.smailer.provider.telephony.PhoneCallData
 import com.bopr.android.smailer.util.Logger
@@ -15,7 +14,7 @@ import kotlin.time.Instant
 class PocketbaseClient(baseUrl: String) {
 
     private val retrofit = Retrofit.Builder()
-        .baseUrl(baseUrl.let { if (it.endsWith("/")) it else "$it/" })
+        .baseUrl(baseUrl)
         .client(
             Builder()
                 .addInterceptor(AuthInterceptor())
@@ -34,15 +33,14 @@ class PocketbaseClient(baseUrl: String) {
             authToken = response.body()?.token
             log.debug("Auth success")
         } else {
-            log.debug("Auth failed")
-            throw PocketbaseRemoteError("Auth failed", parseErrorResponse(response))
+            throw Exception("Auth failed - ${parseErrorResponse(response)}")
         }
     }
 
-    suspend fun insertEvent(event: Event): String? {
+    suspend fun insertEvent(event: Event): String {
         if (authToken == null) throw IllegalStateException("Not authenticated")
 
-        val eventId = insertIntoEvents(event) ?: return null
+        val eventId = insertIntoEvents(event)
         when (val payload = event.payload) {
             is PhoneCallData -> insertIntoTelephony(eventId, payload)
             is BatteryData -> insertIntoBattery(eventId, payload)
@@ -51,21 +49,28 @@ class PocketbaseClient(baseUrl: String) {
         return eventId
     }
 
-    private suspend fun insertIntoEvents(event: Event): String? {
+    private suspend fun insertIntoEvents(event: Event): String {
         log.debug("Inserting into 'events'")
 
         val response = api.insertEvent(
             InsertEventRequest(
                 time = formatDateTime(event.time),
                 target = event.target,
-                type = formatPayloadType(event.payload)
+                type = when (event.payload) {
+                    is PhoneCallData -> "telephony"
+                    is BatteryData -> "battery"
+                    else -> throw IllegalArgumentException("Unknown payload type: ${event.payload}")
+                },
+                location = event.location?.let {
+                    PocketbaseLocation(it.latitude, it.longitude)
+                }
             )
         )
 
         return if (response.isSuccessful) {
-            response.body()?.id
+            response.body()!!.id
         } else {
-            throw PocketbaseRemoteError("Insert failed", parseErrorResponse(response))
+            throw Exception("Insert failed - ${parseErrorResponse(response)}")
         }
     }
 
@@ -85,7 +90,7 @@ class PocketbaseClient(baseUrl: String) {
         )
 
         if (!response.isSuccessful) {
-            throw PocketbaseRemoteError("Insert failed", parseErrorResponse(response))
+            throw Exception("Insert failed - ${parseErrorResponse(response)}")
         }
     }
 
@@ -100,14 +105,8 @@ class PocketbaseClient(baseUrl: String) {
         )
 
         if (!response.isSuccessful) {
-            throw PocketbaseRemoteError("Insert failed", parseErrorResponse(response))
+            throw Exception("Insert failed - ${parseErrorResponse(response)}")
         }
-    }
-
-    private fun formatPayloadType(payload: EventPayload) = when (payload) {
-        is PhoneCallData -> "telephony"
-        is BatteryData -> "battery"
-        else -> throw IllegalArgumentException("Unknown payload type: $payload")
     }
 
     private fun formatDateTime(ms: Long) = Instant.fromEpochMilliseconds(ms).toString()

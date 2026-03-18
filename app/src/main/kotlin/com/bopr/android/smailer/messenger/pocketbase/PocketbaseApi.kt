@@ -39,7 +39,8 @@ data class AuthResponse(val token: String)
 data class InsertEventRequest(
     val time: String,
     val target: String,
-    val type: String
+    val type: String,
+    val location: PocketbaseLocation? = null,
 )
 
 data class InsertTelephonyRequest(
@@ -58,3 +59,5 @@ data class InsertBatteryRequest(
 )
 
 data class InsertResponse(val id: String)
+
+data class PocketbaseLocation(val lat: Double, val lon: Double)
