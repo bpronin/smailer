@@ -7,6 +7,9 @@ import com.bopr.android.smailer.messenger.telegram.TelegramMessenger
 import com.bopr.android.smailer.messenger.telephony.SmsMessenger
 import com.bopr.android.smailer.util.Logger
 import com.bopr.android.smailer.util.Mockable
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 
 /**
  * Dispatch message to appropriate messenger.
@@ -23,16 +26,17 @@ class MessengerDispatcher(context: Context) {
         PocketbaseMessenger(context)
     )
 
-    suspend fun initialize(): Boolean {
-        log.debug("Initializing")
-        return messengers.fold(false) { acc, messenger ->
-            messenger.initialize() or acc
-        }
-    }
+    fun hasEnabled() = messengers.any { it.isEnabled }
 
-    suspend fun dispatch(event: Event) {
+    suspend fun dispatch(event: Event) = coroutineScope {
         log.debug("Dispatching: $event")
-        messengers.forEach { it.send(event) }
+        messengers.map {
+            async {
+                if (it.initialize()) {
+                    it.send(event)
+                }
+            }
+        }.awaitAll()
     }
 
     companion object {

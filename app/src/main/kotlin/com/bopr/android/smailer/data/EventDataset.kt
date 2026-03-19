@@ -73,7 +73,7 @@ class EventDataset(
         updateRecords(
             it, values {
                 put(COLUMN_STATE, event.processState)
-                put(COLUMN_BYPASS, event.bypassFlags.toInt())
+                put(COLUMN_BYPASS, event.bypassReason.toInt())
             },
             keyClause, keyOf(event)
         )
@@ -117,7 +117,7 @@ class EventDataset(
         Event(
             time = timestamp,
             target = target,
-            bypassFlags = Bits(getInt(COLUMN_BYPASS)),
+            bypassReason = Bits(getInt(COLUMN_BYPASS)),
             processFlags = Bits(getInt(COLUMN_PROCESS)),
             processState = getInt(COLUMN_STATE),
             processTime = getLongOrNull(COLUMN_PROCESS_TIME),
@@ -138,7 +138,7 @@ class EventDataset(
         element.apply {
             put(COLUMN_TIMESTAMP, time)
             put(COLUMN_TARGET, target)
-            put(COLUMN_BYPASS, bypassFlags.toInt())
+            put(COLUMN_BYPASS, bypassReason.toInt())
             put(COLUMN_PROCESS, processFlags.toInt())
             put(COLUMN_STATE, processState)
             put(COLUMN_PROCESS_TIME, processTime)

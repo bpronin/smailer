@@ -19,7 +19,7 @@ abstract class Messenger(
 ) {
 
     private var isInitialized: Boolean = false
-    protected abstract val isEnabled: Boolean
+    abstract val isEnabled: Boolean
 
     protected abstract suspend fun doInitialize()
 

@@ -56,7 +56,7 @@ import com.bopr.android.smailer.external.Firebase.Companion.FCM_REQUEST_DATA_SYN
 import com.bopr.android.smailer.external.Firebase.Companion.firebase
 import com.bopr.android.smailer.external.GoogleDrive
 import com.bopr.android.smailer.messenger.Event
-import com.bopr.android.smailer.messenger.Event.Companion.BYPASS_NO_CONSUMERS
+import com.bopr.android.smailer.messenger.Event.Companion.BYPASS_NO_MESSENGERS
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.messenger.mail.GoogleMailSession
@@ -592,7 +592,7 @@ class DebugFragment : PreferenceFragmentCompat() {
                         )
                     ),
                     Event(
-                        bypassFlags = BYPASS_NO_CONSUMERS,
+                        bypassReason = BYPASS_NO_MESSENGERS,
                         payload = PhoneCallData(
                             startTime = 1000.let { time += it; time },
                             phone = "+79052345675",

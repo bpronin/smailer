@@ -5,7 +5,7 @@ import androidx.work.OneTimeWorkRequest.Builder
 import androidx.work.WorkManager
 import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.messenger.Event
-import com.bopr.android.smailer.messenger.Event.Companion.BYPASS_NO_CONSUMERS
+import com.bopr.android.smailer.messenger.Event.Companion.BYPASS_NO_MESSENGERS
 import com.bopr.android.smailer.messenger.EventPayload
 import com.bopr.android.smailer.messenger.MessengerDispatcher
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
@@ -24,7 +24,7 @@ abstract class EventProcessor<P : EventPayload>(private val context: Context) {
     fun scheduleProcess(payload: P, worker: KClass<out EventProcessorWorker>) {
         val flags = getBypassReason(payload)
         val event = Event(
-            bypassFlags = flags,
+            bypassReason = flags,
             processState = if (flags.isEmpty()) STATE_PENDING else STATE_IGNORED,
             payload = payload
         )
@@ -47,10 +47,15 @@ abstract class EventProcessor<P : EventPayload>(private val context: Context) {
 
         log.debug("Processing ${events.size} event(s)")
 
-        val hasMessengers = dispatcher.initialize()
+        val hasMessengers = dispatcher.hasEnabled()
 
         for (event in events) {
-            if (hasMessengers) {
+            if (!hasMessengers) {
+                event.apply {
+                    bypassReason += BYPASS_NO_MESSENGERS
+                    processState = STATE_IGNORED
+                }
+            } else {
                 event.apply {
                     processTime = currentTimeMillis()
                     location = context.getGeoLocation()
@@ -60,13 +65,8 @@ abstract class EventProcessor<P : EventPayload>(private val context: Context) {
                     dispatcher.dispatch(event)
                     event.apply { processState = STATE_PROCESSED }
                 } catch (x: Exception) {
-                    log.warn("Dispatch filed", x)
+                    log.warn("Dispatch failed", x)
                     event.apply { processState = STATE_PENDING }
-                }
-            } else {
-                event.apply {
-                    bypassFlags += BYPASS_NO_CONSUMERS
-                    processState = STATE_IGNORED
                 }
             }
             updateDatabase(event)

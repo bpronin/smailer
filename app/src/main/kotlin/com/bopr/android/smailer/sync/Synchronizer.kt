@@ -133,7 +133,7 @@ internal class Synchronizer(
             latitude = event.location?.latitude,
             longitude = event.location?.longitude,
             processState = event.processState,
-            bypassFlags = event.bypassFlags.toInt(),
+            bypassFlags = event.bypassReason.toInt(),
             processFlags = event.processFlags.toInt(),
             processTime = event.processTime,
             isRead = event.isRead
@@ -150,7 +150,7 @@ internal class Synchronizer(
             target = data.target,
             location = fromCoordinates(data.latitude, data.longitude),
             processState = data.processState,
-            bypassFlags = Bits(data.bypassFlags),
+            bypassReason = Bits(data.bypassFlags),
             processFlags = Bits(data.processFlags),
             processTime = data.processTime,
             isRead = data.isRead,
