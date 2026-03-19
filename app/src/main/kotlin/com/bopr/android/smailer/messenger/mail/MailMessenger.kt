@@ -35,23 +35,18 @@ internal class MailMessenger(private val context: Context) : Messenger(context, 
     private val formatters = MailFormatterFactory(context)
     private var account: Account? = null
     private var session: GoogleMailSession? = null
+    override val isInitialized get() = session != null
 
-    override suspend fun prepare(): Boolean {
+    override suspend fun doInitialize() {
         if (context.settings.getBoolean(PREF_MAIL_MESSENGER_ENABLED)) {
             account = checkAccount(context.accounts.getPrimaryGoogleAccount())?.also {
                 session = GoogleMailSession(context, it, GMAIL_SEND)
-                log.debug("Session created")
-                return true
+                log.debug("Email session created")
             }
         }
-        return false
     }
 
-    override suspend fun doSend(
-        event: Event,
-        onSuccess: () -> Unit,
-        onError: (Throwable) -> Unit
-    ) {
+    override suspend fun doSend(event: Event) {
         session?.run {
             val recipients = checkRecipients(context.settings.getMailRecipients()) ?: return
             val formatter = formatters.createFormatter(event)
@@ -64,11 +59,9 @@ internal class MailMessenger(private val context: Context) : Messenger(context, 
                 ),
                 onSuccess = {
                     log.debug("Successfully sent")
-                    onSuccess()
                 },
                 onError = { error ->
                     log.error("Send failed", error)
-                    onError(error)
                 })
         }
     }

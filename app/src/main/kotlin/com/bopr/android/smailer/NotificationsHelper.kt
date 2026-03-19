@@ -21,6 +21,7 @@ import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_REMOTE_CONTROL_ACC
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_MESSENGER_RECIPIENTS
 import com.bopr.android.smailer.Settings.Companion.PREF_MAIL_SENDER_ACCOUNT
 import com.bopr.android.smailer.ui.MainActivity
+import com.bopr.android.smailer.util.Logger
 import com.bopr.android.smailer.util.Mockable
 import com.bopr.android.smailer.util.Singleton
 import com.bopr.android.smailer.util.isValidEmailAddressList
@@ -91,24 +92,33 @@ class NotificationsHelper private constructor(private val context: Context) :
         .setContentTitle(context.getString(R.string.service_running))
         .build()
 
-    fun notifyInfo(notification: NotificationData) = manager.notify(
-        TAG_MESSAGE, notification.id, infoBuilder
-            .setWhen(currentTimeMillis())
-            .setContentTitle(notification.title)
-            .setContentText(notification.text)
-            .setContentIntent(activityIntent(notification.target))
-            .build()
-    )
+    fun notifyInfo(notification: NotificationData) {
+        log.debug("Notifying info: $notification")
+        manager.notify(
+            TAG_MESSAGE, notification.id, infoBuilder
+                .setWhen(currentTimeMillis())
+                .setContentTitle(notification.title)
+                .setContentText(notification.text)
+                .setContentIntent(activityIntent(notification.target))
+                .build()
+        )
+    }
 
-    fun notifyError(notification: NotificationData) = manager.notify(
-        TAG_ERROR, notification.id, errorsBuilder
-            .setWhen(currentTimeMillis())
-            .setContentText(notification.text)
-            .setContentIntent(activityIntent(notification.target))
-            .build()
-    )
+    fun notifyError(notification: NotificationData) {
+        log.debug("Notifying error: $notification")
+        manager.notify(
+            TAG_ERROR, notification.id, errorsBuilder
+                .setWhen(currentTimeMillis())
+                .setContentText(notification.text)
+                .setContentIntent(activityIntent(notification.target))
+                .build()
+        )
+    }
 
-    fun cancel(notificationId: Int) = manager.cancel(TAG_ERROR, notificationId)
+    fun cancel(notificationId: Int) {
+        log.debug("Canceling notification $notificationId")
+        manager.cancel(TAG_ERROR, notificationId)
+    }
 
     override fun onSettingsChanged(settings: Settings, key: String) {
         when (key) {
@@ -142,6 +152,7 @@ class NotificationsHelper private constructor(private val context: Context) :
     }
 
     companion object {
+        private val log = Logger("Notifications")
         private const val CHANNEL_ID_STATUS = "com.bopr.android.smailer.status"
         private const val CHANNEL_ID_NOTIFICATIONS = "com.bopr.android.smailer.notifications"
 
@@ -156,6 +167,7 @@ class NotificationsHelper private constructor(private val context: Context) :
         const val NTF_SERVICE_ACCOUNT = 1006
         const val NTF_TELEGRAM = 1007
         const val NTF_TELEPHONY = 1008
+        const val NTF_POCKETBASE = 1009
 
         private val singleton = Singleton { NotificationsHelper(it) }
         val Context.notifications get() = singleton.getInstance(this)

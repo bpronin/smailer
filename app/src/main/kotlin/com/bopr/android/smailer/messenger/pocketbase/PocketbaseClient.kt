@@ -1,40 +1,51 @@
 package com.bopr.android.smailer.messenger.pocketbase
 
 import com.bopr.android.smailer.messenger.Event
+import com.bopr.android.smailer.messenger.pocketbase.PocketbaseException.Code.POCKETBASE_BAD_RESPONSE
+import com.bopr.android.smailer.messenger.pocketbase.PocketbaseException.Code.POCKETBASE_BAD_CREDENTIALS
 import com.bopr.android.smailer.provider.battery.BatteryData
 import com.bopr.android.smailer.provider.telephony.PhoneCallData
 import com.bopr.android.smailer.util.Logger
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient.Builder
+import okhttp3.ResponseBody
+import retrofit2.Converter
 import retrofit2.Response
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.gson.GsonConverterFactory.create
 import kotlin.time.Instant
 
 class PocketbaseClient(baseUrl: String) {
 
-    private val retrofit = Retrofit.Builder()
+    private val errorConverter: Converter<ResponseBody, ErrorResponse>
+    private val api = Retrofit.Builder()
         .baseUrl(baseUrl)
         .client(
             Builder()
                 .addInterceptor(AuthInterceptor())
                 .build()
         )
-        .addConverterFactory(GsonConverterFactory.create())
+        .addConverterFactory(create())
         .build()
+        .also {
+            errorConverter = it.responseBodyConverter(ErrorResponse::class.java, arrayOf())
+        }
+        .create(PocketbaseApi::class.java)
 
-    private val api: PocketbaseApi = retrofit.create(PocketbaseApi::class.java)
     private var authToken: String? = null
 
     suspend fun auth(user: String, password: String) {
-        log.debug("Auth as: $user")
+        log.debug("Authorizing")
+        
         val response = api.auth(AuthRequest(user, password))
-        if (response.isSuccessful) {
-            authToken = response.body()?.token
-            log.debug("Auth success")
-        } else {
-            throw Exception("Auth failed - ${parseErrorResponse(response)}")
+        if (!response.isSuccessful) {
+            val error = parseErrorResponse(response)
+            log.warn("Auth failed: $error")
+            throw PocketbaseException(POCKETBASE_BAD_CREDENTIALS)
         }
+        
+        authToken = response.body()?.token
+        log.info("Authorized")
     }
 
     suspend fun insertEvent(event: Event): String {
@@ -66,12 +77,12 @@ class PocketbaseClient(baseUrl: String) {
                 }
             )
         )
-
-        return if (response.isSuccessful) {
-            response.body()!!.id
-        } else {
-            throw Exception("Insert failed - ${parseErrorResponse(response)}")
+        if (!response.isSuccessful) {
+            val error = parseErrorResponse(response)
+            log.warn("Insert failed: $error")
+            throw PocketbaseException(POCKETBASE_BAD_RESPONSE)
         }
+        return response.body()!!.id
     }
 
     private suspend fun insertIntoTelephony(eventId: String, data: PhoneCallData) {
@@ -88,9 +99,10 @@ class PocketbaseClient(baseUrl: String) {
                 text = data.text
             )
         )
-
         if (!response.isSuccessful) {
-            throw Exception("Insert failed - ${parseErrorResponse(response)}")
+            val error = parseErrorResponse(response)
+            log.warn("Insert failed: $error")
+            throw PocketbaseException(POCKETBASE_BAD_RESPONSE)
         }
     }
 
@@ -103,17 +115,17 @@ class PocketbaseClient(baseUrl: String) {
                 level = data.level
             )
         )
-
         if (!response.isSuccessful) {
-            throw Exception("Insert failed - ${parseErrorResponse(response)}")
+            val error = parseErrorResponse(response)
+            log.warn("Insert failed: $error")
+            throw PocketbaseException(POCKETBASE_BAD_RESPONSE)
         }
     }
 
     private fun formatDateTime(ms: Long) = Instant.fromEpochMilliseconds(ms).toString()
 
-    private fun parseErrorResponse(response: Response<*>) =
-        retrofit.responseBodyConverter<ErrorResponse>(ErrorResponse::class.java, arrayOf())
-            .convert(response.errorBody())!!
+    private fun parseErrorResponse(response: Response<*>): ErrorResponse =
+        errorConverter.convert(response.errorBody()!!)!!
 
     inner class AuthInterceptor : Interceptor {
         override fun intercept(chain: Interceptor.Chain): okhttp3.Response {

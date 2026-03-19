@@ -15,42 +15,49 @@ import com.bopr.android.smailer.util.Bits
  */
 abstract class Messenger(
     private val context: Context,
-    private val processedFlag: Bits,
+    private val processFlag: Bits,
 ) {
 
-    protected abstract suspend fun doSend(
-        event: Event,
-        onSuccess: () -> Unit,
-        onError: (Throwable) -> Unit
-    )
+    protected abstract val isInitialized: Boolean
+
+    protected abstract suspend fun doInitialize()
+
+    protected abstract suspend fun doSend(event: Event)
 
     protected abstract fun getSuccessNotification(): NotificationData
 
-    protected abstract fun getErrorNotification(error: Throwable): NotificationData
+    protected abstract fun getErrorNotification(error: Throwable): NotificationData?
 
-    abstract suspend fun prepare(): Boolean
+    suspend fun initialize(): Boolean {
+        try {
+            doInitialize()
+        } catch (x: Throwable) {
+            notifyError(x)
+        }
+        return isInitialized
+    }
 
-    suspend fun send(
-        event: Event,
-        onSuccess: () -> Unit,
-        onError: (Throwable) -> Unit
-    ) {
-        if (processedFlag in event.processFlags) return
+    suspend fun send(event: Event) {
+        if (!isInitialized || processFlag in event.processFlags) return
 
-        doSend(
-            event,
-            onSuccess = {
-                event.processFlags += processedFlag
-                if (context.settings.getBoolean(PREF_NOTIFY_SEND_SUCCESS)) {
-                    context.notifications.notifyError(getSuccessNotification())
-                }
-                onSuccess()
-            },
-            onError = {
-                event.processFlags -= processedFlag
-                context.notifications.notifyError(getErrorNotification(it))
-                onError(it)
-            })
+        try {
+            doSend(event)
+        } catch (x: Throwable) {
+            event.processFlags -= processFlag
+            notifyError(x)
+            return
+        }
+
+        event.processFlags += processFlag
+        if (context.settings.getBoolean(PREF_NOTIFY_SEND_SUCCESS)) {
+            context.notifications.notifyInfo(getSuccessNotification())
+        }
+    }
+
+    private fun notifyError(error: Throwable){
+        getErrorNotification(error)?.let {
+            context.notifications.notifyError(it)
+        }
     }
 
 }

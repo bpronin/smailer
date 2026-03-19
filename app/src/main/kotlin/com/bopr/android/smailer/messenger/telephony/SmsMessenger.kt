@@ -27,29 +27,19 @@ import com.bopr.android.smailer.util.sendSmsMessage
 @Mockable
 internal class SmsMessenger(private val context: Context) : Messenger(context, SENT_BY_SMS) {
 
-    override suspend fun prepare(): Boolean {
-        if (context.settings.getBoolean(PREF_SMS_MESSENGER_ENABLED)) {
-            log.debug("Prepared")
-            return true
-        }
-        return false
-    }
+    override val isInitialized get() = context.settings.getBoolean(PREF_SMS_MESSENGER_ENABLED)
 
-    override suspend fun doSend(
-        event: Event,
-        onSuccess: () -> Unit,
-        onError: (Throwable) -> Unit
-    ) {
-        context.settings.getStringList(PREF_SMS_MESSENGER_RECIPIENTS).forEach {
-            try {
-                context.sendSmsMessage(it, formatMessage(event))
-                log.debug("Sent")
-                onSuccess()
-            } catch (x: Exception) {
-                log.warn("Send failed", x)
-                onError(x)
-            }
+    override suspend fun doInitialize() {}
+
+    override suspend fun doSend(event: Event) {
+        log.debug("Sending")
+
+        val recipients = context.settings.getStringList(PREF_SMS_MESSENGER_RECIPIENTS)
+        recipients.forEach {
+            context.sendSmsMessage(it, formatMessage(event))
         }
+
+        log.info("Sent")
     }
 
     private fun formatMessage(event: Event): String {

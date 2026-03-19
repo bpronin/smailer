@@ -17,7 +17,7 @@ import com.bopr.android.smailer.util.stringArrayOf
  * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 
-val log = Logger("Database")
+val databaseLog = Logger("Database")
 
 val COUNT_SELECTION = stringArrayOf("COUNT(*)")
 
@@ -26,18 +26,18 @@ inline fun <R> SQLiteOpenHelper.read(action: SQLiteDatabase.() -> R): R = readab
 inline fun <R> SQLiteOpenHelper.write(action: SQLiteDatabase.() -> R): R = writableDatabase.action()
 
 inline fun SQLiteDatabase.insertRecord(table: String, values: ContentValues): Boolean {
-    log.debug("Insert into '$table' [$values]")
+    databaseLog.debug("Insert into '$table' [$values]")
 
     return (insertWithOnConflict(table, null, values, CONFLICT_IGNORE) != -1L).also {
-        if (!it) log.warn("Ignored")
+        if (!it) databaseLog.warn("Ignored")
     }
 }
 
 inline fun SQLiteDatabase.replaceRecord(table: String, values: ContentValues): Boolean {
-    log.debug("Replace into '$table' [$values]")
+    databaseLog.debug("Replace into '$table' [$values]")
 
     return (insertWithOnConflict(table, null, values, CONFLICT_REPLACE) != -1L).also {
-        if (it) log.debug("Inserted") else log.debug("Replaced")
+        if (it) databaseLog.debug("Inserted") else databaseLog.debug("Replaced")
     }
 }
 
@@ -46,12 +46,12 @@ inline fun SQLiteDatabase.deleteRecords(
     where: String? = null,
     whereArgs: Array<out String>? = null
 ): Boolean {
-    log.debug(
+    databaseLog.debug(
         "Delete from '$table' " +
                 "${where?.let { "where $it" } ?: "all"} ${whereArgs?.let { "(${it.joinToString()})" } ?: ""}")
 
     return (delete(table, where, whereArgs) != 0).also {
-        if (!it) log.warn("Ignored")
+        if (!it) databaseLog.warn("Ignored")
     }
 }
 
@@ -61,13 +61,13 @@ inline fun SQLiteDatabase.updateRecords(
     where: String? = null,
     whereArgs: Array<out String>? = null
 ): Boolean {
-    log.debug(
+    databaseLog.debug(
         "Update '$table'" +
             " ${where?.let { "where $it" } ?: "all"} ${whereArgs?.let { "(${it.joinToString()})" } ?: ""}" +
             " [$values]")
 
     return (update(table, values, where, whereArgs) != 0).also {
-        if (!it) log.warn("Ignored")
+        if (!it) databaseLog.warn("Ignored")
     }
 }
 
@@ -81,7 +81,7 @@ inline fun SQLiteDatabase.queryRecords(
     order: String? = null,
     limit: String? = null
 ): Cursor {
-    log.debug(
+    databaseLog.debug(
         "Query '$table' " +
             "${where?.let { "where $it" } ?: "all"} ${whereArgs?.let { "(${it.joinToString()})" } ?: ""}")
 
@@ -132,7 +132,7 @@ inline fun SQLiteDatabase.copyTable(
 }
 
 fun SQLiteDatabase.dropTable(table: String) {
-    log.debug("Drop [$table]")
+    databaseLog.debug("Drop [$table]")
 
     execSQL("DROP TABLE IF EXISTS $table")
 }

@@ -1,0 +1,30 @@
+@token = 6736609275:AAGYlecb8G_9iJVyOG6Btau3vLrQ_ddJ7NY
+@chat_id = 1901721434
+
+### Get chat
+GET https://api.telegram.org/bot{{token}}/getChat?chat_id={{chat_id}}
+Accept: application/json
+
+### Get chat (bad params)
+GET https://api.telegram.org/bot{{token}}/getChat?chat_id=banana
+Accept: application/json
+
+### Get chat (no params)
+GET https://api.telegram.org/bot{{token}}/getChat
+Accept: application/json
+
+### Get updates
+GET https://api.telegram.org/bot{{token}}/getUpdates
+Accept: application/json
+
+### Send message
+GET https://api.telegram.org/bot{{token}}/sendMessage?chat_id={{chat_id}}&text=This%20is%20a%20test%20message&parse_mode=HTML
+Accept: application/json
+
+### Send message (bad chat_id)
+GET https://api.telegram.org/bot{{token}}/sendMessage?chat_id=banana&text=This%20is%20a%20test%20message&parse_mode=HTML
+Accept: application/json
+
+### Send message (no chat_id)
+GET https://api.telegram.org/bot{{token}}/sendMessage?text=This%20is%20a%20test%20message&parse_mode=HTML
+Accept: application/json

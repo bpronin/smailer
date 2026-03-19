@@ -61,7 +61,7 @@ import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PROCESSED
 import com.bopr.android.smailer.messenger.mail.GoogleMailSession
 import com.bopr.android.smailer.messenger.mail.MailMessage
-import com.bopr.android.smailer.messenger.telegram.TelegramSession
+import com.bopr.android.smailer.messenger.telegram.TelegramClient
 import com.bopr.android.smailer.provider.telephony.PhoneCallData
 import com.bopr.android.smailer.provider.telephony.PhoneCallEventProcessor.Companion.processPendingPhoneCalls
 import com.bopr.android.smailer.provider.telephony.PhoneCallEventProcessor.Companion.scheduleProcessPhoneCall
@@ -723,20 +723,17 @@ class DebugFragment : PreferenceFragmentCompat() {
     }
 
     private fun onSendTelegramMessage() {
-        TelegramSession(
-            context = requireContext(),
-            token = settings.getString(PREF_TELEGRAM_BOT_TOKEN)
-        ).sendMessage(
-            oldChatId = null,
-            message = "Debug message",
-            messageFormat = "HTML",
-            onSuccess = {
-                showComplete()
-            },
-            onError = { error ->
-                showError("Telegram", error)
-            }
+        val client = TelegramClient(
+            token = settings.getString(PREF_TELEGRAM_BOT_TOKEN, "")
         )
+        lifecycleScope.launch {
+            try {
+                client.send("Debug message", null)
+                showComplete()
+            } catch (x: Exception) {
+                showError("Telegram", x)
+            }
+        }
     }
 
     private fun showComplete() {

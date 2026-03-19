@@ -294,5 +294,6 @@
     <string name="test_pocketbase_connection">Проверить соединение</string>
     <string name="test_connection_success">Соединение успешно проверено</string>
     <string name="test_connection_failed">Не удалось установить соединение</string>
+    <string name="message_sent_to_pocketbase">Сообщение отправлено в базу</string>
 
 </resources>

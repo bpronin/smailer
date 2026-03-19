@@ -2,6 +2,7 @@ package com.bopr.android.smailer.ui
 
 import android.os.Bundle
 import android.text.TextUtils
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.ExtMultiSelectListPreference
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_BOT_TOKEN
@@ -10,21 +11,23 @@ import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSAGE_CONTENT
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.messenger.telegram.BaseTelegramFormatter
-import com.bopr.android.smailer.messenger.telegram.TelegramSession
+import com.bopr.android.smailer.messenger.telegram.TelegramClient
+import com.bopr.android.smailer.messenger.telegram.TelegramException
 import com.bopr.android.smailer.ui.InfoDialog.Companion.showInfoDialog
 import com.bopr.android.smailer.util.GeoLocation
 import com.bopr.android.smailer.util.GeoLocation.Companion.requestGeoLocation
 import com.bopr.android.smailer.util.PreferenceProgress
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_ACCENTED
+import com.bopr.android.smailer.util.getLocalizedText
 import com.bopr.android.smailer.util.onOffText
 import com.bopr.android.smailer.util.requirePreference
 import com.bopr.android.smailer.util.requirePreferenceAs
 import com.bopr.android.smailer.util.setOnChangeListener
 import com.bopr.android.smailer.util.setOnClickListener
-import com.bopr.android.smailer.util.telegramErrorText
 import com.bopr.android.smailer.util.titles
 import com.bopr.android.smailer.util.updateSummary
-import java.lang.System.*
+import kotlinx.coroutines.launch
+import java.lang.System.currentTimeMillis
 
 /**
  * Telegram messenger settings fragment.
@@ -74,35 +77,36 @@ class TelegramSettingsFragment : BasePreferenceFragment(R.xml.pref_telegram_sett
 
     private fun onSendTestTelegramMessage() {
         if (testSettingsProgress.running) return
-        
+
         val token = settings.getString(PREF_TELEGRAM_BOT_TOKEN)
         if (token.isNullOrEmpty()) {
-            showInfoDialog(R.string.no_telegram_bot_token, R.string.how_to_obtain_telegram_bot_token)
+            showInfoDialog(
+                R.string.no_telegram_bot_token,
+                R.string.how_to_obtain_telegram_bot_token
+            )
             return
         }
-        
+
         testSettingsProgress.start()
 
         requireContext().requestGeoLocation(
             onSuccess = { location ->
                 val formater = TestTelegramFormatter(currentTimeMillis(), location)
-                TelegramSession(
-                    context = requireContext(),
-                    token = token
-                ).sendMessage(
-                    oldChatId = settings.getString(PREF_TELEGRAM_CHAT_ID),
-                    message = formater.formatMessage(),
-                    messageFormat = "HTML",
-                    onSuccess = { chatId ->
-                        testSettingsProgress.stop()
+                val client = TelegramClient(token)
+                lifecycleScope.launch {
+                    try {
+                        val chatId = client.send(
+                            oldChatId = settings.getString(PREF_TELEGRAM_CHAT_ID),
+                            message = formater.formatMessage()
+                        )
                         settings.update { putString(PREF_TELEGRAM_CHAT_ID, chatId) }
                         showInfoDialog(R.string.test_message_sent)
-                    },
-                    onError = { error ->
+                    } catch (x: TelegramException) {
+                        showInfoDialog(R.string.test_message_failed, x.getLocalizedText())
+                    } finally {
                         testSettingsProgress.stop()
-                        showInfoDialog(R.string.test_message_failed, telegramErrorText(error))
                     }
-                )
+                }
             }
         ) {
             testSettingsProgress.stop()

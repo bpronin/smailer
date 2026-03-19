@@ -14,7 +14,7 @@ import com.bopr.android.smailer.util.Mockable
  * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 @Mockable
-class MessageDispatcher(context: Context) {
+class MessengerDispatcher(context: Context) {
 
     private val messengers: Array<Messenger> = arrayOf(
         MailMessenger(context),
@@ -23,21 +23,19 @@ class MessageDispatcher(context: Context) {
         PocketbaseMessenger(context)
     )
 
-    suspend fun prepare(): Boolean {
-        var prepared = false
-        messengers.forEach {
-            prepared = prepared or it.prepare()
+    suspend fun initialize(): Boolean {
+        log.debug("Initializing")
+        return messengers.fold(false) { acc, messenger ->
+            messenger.initialize() or acc
         }
-        return prepared
     }
 
-    suspend fun dispatch(event: Event, onSuccess: () -> Unit, onError: (Throwable) -> Unit) {
+    suspend fun dispatch(event: Event) {
         log.debug("Dispatching: $event")
-
-        messengers.forEach { it.send(event, onSuccess, onError) }
+        messengers.forEach { it.send(event) }
     }
 
     companion object {
-        private val log = Logger("MessageDispatcher")
+        private val log = Logger("MessengerDispatcher")
     }
 }

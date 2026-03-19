@@ -9,14 +9,15 @@ import com.bopr.android.smailer.messenger.ProcessState
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PENDING
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PROCESSED
+import com.bopr.android.smailer.messenger.pocketbase.PocketbaseException
+import com.bopr.android.smailer.messenger.pocketbase.PocketbaseException.Code.POCKETBASE_BAD_RESPONSE
+import com.bopr.android.smailer.messenger.pocketbase.PocketbaseException.Code.POCKETBASE_BAD_ADDRESS
+import com.bopr.android.smailer.messenger.pocketbase.PocketbaseException.Code.POCKETBASE_BAD_CREDENTIALS
 import com.bopr.android.smailer.messenger.telegram.TelegramException
 import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_BAD_RESPONSE
 import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_INVALID_TOKEN
-import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_NO_CHAT
-import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_NO_CONNECTION
 import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_NO_TOKEN
 import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_NO_UPDATES
-import com.bopr.android.smailer.messenger.telegram.TelegramException.Code.TELEGRAM_REQUEST_FAILED
 import com.bopr.android.smailer.provider.telephony.PhoneCallData
 import java.util.Locale
 
@@ -161,26 +162,21 @@ fun messageStateText(@ProcessState state: Int): Int {
 }
 
 @StringRes
-fun onOffText(value: Boolean): Int {
-    return if (value) R.string.on else R.string.off
+fun onOffText(value: Boolean) = if (value) R.string.on else R.string.off
+
+@StringRes
+fun TelegramException.getLocalizedText() = when (code) {
+    TELEGRAM_BAD_RESPONSE -> R.string.error_sending_test_message
+    TELEGRAM_NO_TOKEN -> R.string.no_telegram_bot_token
+    TELEGRAM_INVALID_TOKEN -> R.string.bad_telegram_bot_token
+    TELEGRAM_NO_UPDATES -> R.string.unable_determine_chat
 }
 
 @StringRes
-fun telegramErrorText(error: TelegramException): Int {
-    return when (error.code) {
-        TELEGRAM_REQUEST_FAILED,
-        TELEGRAM_BAD_RESPONSE -> R.string.error_sending_test_message
-
-        TELEGRAM_NO_TOKEN -> R.string.no_telegram_bot_token
-
-        TELEGRAM_INVALID_TOKEN -> R.string.bad_telegram_bot_token
-
-        TELEGRAM_NO_UPDATES -> R.string.unable_determine_chat
-
-        TELEGRAM_NO_CHAT -> R.string.require_start_chat
-
-        TELEGRAM_NO_CONNECTION -> R.string.no_telegram_network_try_later
-    }
+fun PocketbaseException.getLocalizedText() = when (code) {
+    POCKETBASE_BAD_ADDRESS -> R.string.invalid_pocketbase_url
+    POCKETBASE_BAD_RESPONSE -> R.string.error_updating_pocketbase
+    POCKETBASE_BAD_CREDENTIALS -> R.string.invalid_pocketbase_credentials
 }
 
 fun Context.localeResources(locale: Locale): Resources {

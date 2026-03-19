@@ -1,6 +1,7 @@
 package com.bopr.android.smailer.messenger
 
 import android.os.Parcelable
+import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PENDING
 import com.bopr.android.smailer.util.Bits
 import com.bopr.android.smailer.util.Bits.Companion.bit

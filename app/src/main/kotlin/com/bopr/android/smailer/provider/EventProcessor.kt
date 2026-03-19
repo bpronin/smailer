@@ -7,7 +7,7 @@ import com.bopr.android.smailer.data.Database.Companion.database
 import com.bopr.android.smailer.messenger.Event
 import com.bopr.android.smailer.messenger.Event.Companion.BYPASS_NO_CONSUMERS
 import com.bopr.android.smailer.messenger.EventPayload
-import com.bopr.android.smailer.messenger.MessageDispatcher
+import com.bopr.android.smailer.messenger.MessengerDispatcher
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_IGNORED
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PENDING
 import com.bopr.android.smailer.messenger.ProcessState.Companion.STATE_PROCESSED
@@ -19,7 +19,7 @@ import kotlin.reflect.KClass
 
 abstract class EventProcessor<P : EventPayload>(private val context: Context) {
 
-    private val dispatcher = MessageDispatcher(context)
+    private val dispatcher = MessengerDispatcher(context)
 
     fun scheduleProcess(payload: P, worker: KClass<out EventProcessorWorker>) {
         val flags = getBypassReason(payload)
@@ -47,34 +47,29 @@ abstract class EventProcessor<P : EventPayload>(private val context: Context) {
 
         log.debug("Processing ${events.size} event(s)")
 
-        val hasConsumers = dispatcher.prepare()
+        val hasMessengers = dispatcher.initialize()
 
         for (event in events) {
-            if (hasConsumers) {
+            if (hasMessengers) {
                 event.apply {
                     processTime = currentTimeMillis()
                     location = context.getGeoLocation()
                 }
 
-                dispatcher.dispatch(
-                    event,
-                    onSuccess = {
-                        updateDatabase(event.apply {
-                            processState = STATE_PROCESSED
-                        })
-                    },
-                    onError = {
-                        updateDatabase(event.apply {
-                            processState = STATE_PENDING
-                        })
-                    }
-                )
+                try {
+                    dispatcher.dispatch(event)
+                    event.apply { processState = STATE_PROCESSED }
+                } catch (x: Exception) {
+                    log.warn("Dispatch filed", x)
+                    event.apply { processState = STATE_PENDING }
+                }
             } else {
-                updateDatabase(event.apply {
+                event.apply {
                     bypassFlags += BYPASS_NO_CONSUMERS
                     processState = STATE_IGNORED
-                })
+                }
             }
+            updateDatabase(event)
         }
 
         return events.size
