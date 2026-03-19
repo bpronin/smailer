@@ -50,7 +50,7 @@ abstract class Messenger(
         } catch (x: Throwable) {
             event.processFlags -= processFlag
             notifyError(x)
-            return
+            throw x
         }
 
         event.processFlags += processFlag

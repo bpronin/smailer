@@ -41,7 +41,7 @@ class PocketbaseClient(baseUrl: String) {
         if (!response.isSuccessful) {
             val error = parseErrorResponse(response)
             log.warn("Auth failed: $error")
-            throw PocketbaseException(POCKETBASE_BAD_CREDENTIALS)
+            throw PocketbaseException(POCKETBASE_BAD_CREDENTIALS, "$response")
         }
         
         authToken = response.body()?.token
@@ -80,7 +80,7 @@ class PocketbaseClient(baseUrl: String) {
         if (!response.isSuccessful) {
             val error = parseErrorResponse(response)
             log.warn("Insert failed: $error")
-            throw PocketbaseException(POCKETBASE_BAD_RESPONSE)
+            throw PocketbaseException(POCKETBASE_BAD_RESPONSE, "$response")
         }
         return response.body()!!.id
     }
@@ -102,7 +102,7 @@ class PocketbaseClient(baseUrl: String) {
         if (!response.isSuccessful) {
             val error = parseErrorResponse(response)
             log.warn("Insert failed: $error")
-            throw PocketbaseException(POCKETBASE_BAD_RESPONSE)
+            throw PocketbaseException(POCKETBASE_BAD_RESPONSE, "$response")
         }
     }
 
@@ -118,7 +118,7 @@ class PocketbaseClient(baseUrl: String) {
         if (!response.isSuccessful) {
             val error = parseErrorResponse(response)
             log.warn("Insert failed: $error")
-            throw PocketbaseException(POCKETBASE_BAD_RESPONSE)
+            throw PocketbaseException(POCKETBASE_BAD_RESPONSE, "$response")
         }
     }
 

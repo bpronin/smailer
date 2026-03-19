@@ -34,7 +34,7 @@ class TelegramMessenger(private val context: Context) : Messenger(context, SENT_
         val token = settings.getString(PREF_TELEGRAM_BOT_TOKEN)
         if (token.isNullOrEmpty()) {
             log.warn("No token")
-            throw TelegramException(TELEGRAM_NO_TOKEN)
+            throw TelegramException(TELEGRAM_NO_TOKEN, "No token")
         }
         client = TelegramClient(token)
         log.debug("Initialized")

@@ -42,11 +42,10 @@ class TelegramClient(token: String) {
         log.debug("Getting chat id from updates")
 
         val response = api.getUpdates()
-
         detectErrorResponse(response)
 
         val result = response.body()!!.result
-        if (result.isEmpty()) throw TelegramException(TELEGRAM_NO_UPDATES)
+        if (result.isEmpty()) throw TelegramException(TELEGRAM_NO_UPDATES, "$response")
         return result.first().message.chat.id
     }
 
@@ -60,14 +59,14 @@ class TelegramClient(token: String) {
     private fun detectErrorResponse(response: Response<*>) {
         if (!response.isSuccessful) {
             val error = errorConverter.convert(response.errorBody()!!)!!
-            log.warn("Error response: $error")
+            log.warn("Error received: $error")
 
             val code = when (error.error_code) {
                 401 -> TELEGRAM_INVALID_TOKEN
                 else -> TELEGRAM_BAD_RESPONSE
             }
 
-            throw TelegramException(code)
+            throw TelegramException(code, "$response")
         }
     }
 

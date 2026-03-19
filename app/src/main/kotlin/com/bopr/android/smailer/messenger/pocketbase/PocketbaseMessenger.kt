@@ -34,7 +34,7 @@ class PocketbaseMessenger(private val context: Context) : Messenger(context, SEN
         client = try {
             PocketbaseClient(settings.getString(PREF_POCKETBASE_BASE_URL, ""))
         } catch (x: Throwable) {
-            throw PocketbaseException(POCKETBASE_BAD_ADDRESS, x)
+            throw PocketbaseException(POCKETBASE_BAD_ADDRESS, "Invalid base URL", x)
         }
 
         client.auth(
