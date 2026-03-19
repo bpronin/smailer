@@ -26,34 +26,30 @@ class TelegramMessenger(private val context: Context) : Messenger(context, SENT_
 
     private val settings = context.settings
     private val formatters = TelegramFormatterFactory(context)
-    private var client: TelegramClient? = null
+    private lateinit var client: TelegramClient
 
-    override val isInitialized get() = client != null
+    override val isEnabled get() = settings.getBoolean(PREF_TELEGRAM_MESSENGER_ENABLED)
 
     override suspend fun doInitialize() {
-        if (settings.getBoolean(PREF_TELEGRAM_MESSENGER_ENABLED)) {
-            val token = settings.getString(PREF_TELEGRAM_BOT_TOKEN)
-            if (token.isNullOrEmpty()) {
-                log.warn("No token")
-                throw TelegramException(TELEGRAM_NO_TOKEN, "No token specified")
-            }
-            client = TelegramClient(token)
-            log.debug("Initialized")
+        val token = settings.getString(PREF_TELEGRAM_BOT_TOKEN)
+        if (token.isNullOrEmpty()) {
+            log.warn("No token")
+            throw TelegramException(TELEGRAM_NO_TOKEN)
         }
+        client = TelegramClient(token)
+        log.debug("Initialized")
     }
 
     override suspend fun doSend(event: Event) {
-        client?.apply {
-            log.debug("Sending")
+        log.debug("Sending")
 
-            val chatId = send(
-                message = formatters.createFormatter(event).formatMessage(),
-                oldChatId = settings.getString(PREF_TELEGRAM_CHAT_ID)
-            )
-            settings.update { putString(PREF_TELEGRAM_CHAT_ID, chatId) }
-            
-            log.info("Sent")
-        }
+        val chatId = client.send(
+            message = formatters.createFormatter(event).formatMessage(),
+            oldChatId = settings.getString(PREF_TELEGRAM_CHAT_ID)
+        )
+        settings.update { putString(PREF_TELEGRAM_CHAT_ID, chatId) }
+
+        log.info("Sent")
     }
 
     override fun getSuccessNotification() = NotificationData(
@@ -61,16 +57,20 @@ class TelegramMessenger(private val context: Context) : Messenger(context, SENT_
         target = MainActivity::class
     )
 
-    override fun getErrorNotification(error: Throwable): NotificationData {
-        val text = (error as TelegramException).let {
-            context.getString(it.getLocalizedText())
+    override fun getErrorNotification(error: Throwable): NotificationData? {
+        when (error) {
+            is TelegramException -> {
+                return NotificationData(
+                    id = NTF_TELEGRAM,
+                    text = context.getString(error.getLocalizedText()),
+                    target = TelegramSettingsActivity::class
+                )
+            }
+            else -> {
+                log.warn("Unhandled error: $error")
+                return null
+            }
         }
-
-        return NotificationData(
-            id = NTF_TELEGRAM,
-            text = text,
-            target = TelegramSettingsActivity::class
-        )
     }
 
     companion object {

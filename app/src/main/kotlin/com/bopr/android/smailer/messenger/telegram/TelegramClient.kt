@@ -46,7 +46,7 @@ class TelegramClient(token: String) {
         detectErrorResponse(response)
 
         val result = response.body()!!.result
-        if (result.isEmpty()) throw TelegramException(TELEGRAM_NO_UPDATES, "Empty updates")
+        if (result.isEmpty()) throw TelegramException(TELEGRAM_NO_UPDATES)
         return result.first().message.chat.id
     }
 
@@ -67,7 +67,7 @@ class TelegramClient(token: String) {
                 else -> TELEGRAM_BAD_RESPONSE
             }
 
-            throw TelegramException(code, error.description)
+            throw TelegramException(code)
         }
     }
 

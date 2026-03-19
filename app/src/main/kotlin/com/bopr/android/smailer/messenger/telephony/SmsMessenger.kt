@@ -27,7 +27,7 @@ import com.bopr.android.smailer.util.sendSmsMessage
 @Mockable
 internal class SmsMessenger(private val context: Context) : Messenger(context, SENT_BY_SMS) {
 
-    override val isInitialized get() = context.settings.getBoolean(PREF_SMS_MESSENGER_ENABLED)
+    override val isEnabled get() = context.settings.getBoolean(PREF_SMS_MESSENGER_ENABLED)
 
     override suspend fun doInitialize() {}
 

@@ -18,7 +18,8 @@ abstract class Messenger(
     private val processFlag: Bits,
 ) {
 
-    protected abstract val isInitialized: Boolean
+    private var isInitialized: Boolean = false
+    protected abstract val isEnabled: Boolean
 
     protected abstract suspend fun doInitialize()
 
@@ -29,10 +30,14 @@ abstract class Messenger(
     protected abstract fun getErrorNotification(error: Throwable): NotificationData?
 
     suspend fun initialize(): Boolean {
-        try {
-            doInitialize()
-        } catch (x: Throwable) {
-            notifyError(x)
+        isInitialized = false
+        if (isEnabled) {
+            try {
+                doInitialize()
+                isInitialized = true
+            } catch (x: Throwable) {
+                notifyError(x)
+            }
         }
         return isInitialized
     }
@@ -54,7 +59,7 @@ abstract class Messenger(
         }
     }
 
-    private fun notifyError(error: Throwable){
+    private fun notifyError(error: Throwable) {
         getErrorNotification(error)?.let {
             context.notifications.notifyError(it)
         }

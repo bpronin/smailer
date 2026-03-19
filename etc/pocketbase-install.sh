@@ -4,8 +4,8 @@ INSTALL_DIR="$HOME/pocketbase"
 PB_VERSION="0.36.6"
 PORT="8090"
 USER_NAME="root"
-PB_USER="boris.i.pronin@gmail.com"
-PB_PASS="blue88cofe"
+PB_USER="<email>"
+PB_PASS="<password>"
 
 function loadPackage() {
   echo "Installing PocketBase"

@@ -14,6 +14,7 @@
 
 */
 
+import com.android.build.api.dsl.ApplicationBuildType
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Properties
@@ -36,6 +37,10 @@ val localProperties = Properties().apply {
 
 fun localProperty(name: String): String {
     return localProperties.getProperty(name) ?: ""
+}
+
+fun ApplicationBuildType.pushResource(value: String) {
+    resValue("string", value, localProperty(value))
 }
 
 android {
@@ -70,9 +75,10 @@ android {
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
-            resValue("string", "developer_email", localProperty("developer_email"))
-            resValue("string", "fcm_server_key", localProperty("fcm_server_key"))
+            pushResource("developer_email")
+            pushResource("fcm_server_key")
         }
+        
         debug {
             manifestPlaceholders += mapOf("crashlyticsEnabled" to "false")
             signingConfig = signingConfigs.getByName("debug")
@@ -80,11 +86,10 @@ android {
             isShrinkResources = false
             isMinifyEnabled = false
             isDefault = true
-            resValue(
-                "string",
-                "debug_telegram_token",
-                localProperty("debug_telegram_token")
-            )
+            pushResource("debug_telegram_token")
+            pushResource("debug_pocketbase_url")
+            pushResource("debug_pocketbase_user")
+            pushResource("debug_pocketbase_password")
         }
         release {
             manifestPlaceholders += mapOf("crashlyticsEnabled" to "false")
@@ -165,7 +170,7 @@ dependencies {
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.netty)
     implementation(libs.ktor.server.html.builder)
-    
+
     "freeImplementation"(libs.play.services.ads)
 
     testImplementation(libs.junit)

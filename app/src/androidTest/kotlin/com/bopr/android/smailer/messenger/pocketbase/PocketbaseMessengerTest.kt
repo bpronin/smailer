@@ -1,6 +1,7 @@
 package com.bopr.android.smailer.messenger.pocketbase
 
 import com.bopr.android.smailer.BaseTest
+import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_POCKETBASE_BASE_URL
 import com.bopr.android.smailer.Settings.Companion.PREF_POCKETBASE_MESSENGER_ENABLED
 import com.bopr.android.smailer.Settings.Companion.PREF_POCKETBASE_PASSWORD
@@ -16,9 +17,12 @@ import org.junit.Test
 class PocketbaseMessengerTest : BaseTest() {
 
     @Test
-    fun testInsertEvent() = runBlocking {
-        val client = PocketbaseClient("http://193.162.143.66:8090")
-        client.auth("boris.i.pronin@gmail.com", "blue88cofe")
+    fun testPocketbaseClient() = runBlocking {
+        val client = PocketbaseClient(getString(R.string.debug_pocketbase_url))
+        client.auth(
+            getString(R.string.debug_pocketbase_user),
+            getString(R.string.debug_pocketbase_password)
+        )
 
         val event = Event(
             time = 0,
@@ -42,9 +46,9 @@ class PocketbaseMessengerTest : BaseTest() {
     fun testPocketbaseMessenger(): Unit = runBlocking {
         targetContext.settings.update {
             putBoolean(PREF_POCKETBASE_MESSENGER_ENABLED, true)
-            putString(PREF_POCKETBASE_BASE_URL, "http://193.162.143.66:8090")
-            putString(PREF_POCKETBASE_USER, "boris.i.pronin@gmail.com")
-            putString(PREF_POCKETBASE_PASSWORD, "blue88cofe")
+            putString(PREF_POCKETBASE_BASE_URL, getString(R.string.debug_pocketbase_url))
+            putString(PREF_POCKETBASE_USER, getString(R.string.debug_pocketbase_user))
+            putString(PREF_POCKETBASE_PASSWORD, getString(R.string.debug_pocketbase_password))
         }
 
         val messenger = PocketbaseMessenger(targetContext)

@@ -25,29 +25,24 @@ import com.bopr.android.smailer.util.getLocalizedText
  */
 class PocketbaseMessenger(private val context: Context) : Messenger(context, SENT_BY_POCKETBASE) {
 
-    private var initialized: Boolean = false
     private lateinit var client: PocketbaseClient
-    override val isInitialized get() = initialized
+    override val isEnabled get() = context.settings.getBoolean(PREF_POCKETBASE_MESSENGER_ENABLED)
 
     override suspend fun doInitialize() {
-        initialized = false
         val settings = context.settings
-        if (settings.getBoolean(PREF_POCKETBASE_MESSENGER_ENABLED)) {
-
-            client = try {
-                PocketbaseClient(settings.getString(PREF_POCKETBASE_BASE_URL, ""))
-            } catch (x: Throwable) {
-                throw PocketbaseException(POCKETBASE_BAD_ADDRESS, x)
-            }
-
-            client.auth(
-                user = settings.getString(PREF_POCKETBASE_USER, ""),
-                password = settings.getString(PREF_POCKETBASE_PASSWORD, "")
-            )
-
-            initialized = true
-            log.debug("Initialized")
+        
+        client = try {
+            PocketbaseClient(settings.getString(PREF_POCKETBASE_BASE_URL, ""))
+        } catch (x: Throwable) {
+            throw PocketbaseException(POCKETBASE_BAD_ADDRESS, x)
         }
+
+        client.auth(
+            user = settings.getString(PREF_POCKETBASE_USER, ""),
+            password = settings.getString(PREF_POCKETBASE_PASSWORD, "")
+        )
+
+        log.debug("Initialized")
     }
 
     override suspend fun doSend(event: Event) {

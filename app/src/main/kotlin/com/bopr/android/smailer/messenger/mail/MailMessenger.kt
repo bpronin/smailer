@@ -35,14 +35,13 @@ internal class MailMessenger(private val context: Context) : Messenger(context, 
     private val formatters = MailFormatterFactory(context)
     private var account: Account? = null
     private var session: GoogleMailSession? = null
-    override val isInitialized get() = session != null
+    
+    override val isEnabled get() = context.settings.getBoolean(PREF_MAIL_MESSENGER_ENABLED)
 
     override suspend fun doInitialize() {
-        if (context.settings.getBoolean(PREF_MAIL_MESSENGER_ENABLED)) {
-            account = checkAccount(context.accounts.getPrimaryGoogleAccount())?.also {
-                session = GoogleMailSession(context, it, GMAIL_SEND)
-                log.debug("Email session created")
-            }
+        account = checkAccount(context.accounts.getPrimaryGoogleAccount())?.also {
+            session = GoogleMailSession(context, it, GMAIL_SEND)
+            log.debug("Email session created")
         }
     }
 
