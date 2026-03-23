@@ -348,6 +348,7 @@ class DebugFragment : PreferenceFragmentCompat() {
     }
 
     override fun onDestroy() {
+        authorizationHelper.dispose()
         unregisterReceiver(smsSendStatusReceiver)
         unregisterReceiver(smsDeliveryStatusReceiver)
         super.onDestroy()

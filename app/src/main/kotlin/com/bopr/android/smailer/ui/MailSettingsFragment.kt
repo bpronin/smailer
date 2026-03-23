@@ -107,6 +107,11 @@ class MailSettingsFragment : BasePreferenceFragment(R.xml.pref_email_settings) {
         )
     }
 
+    override fun onDestroy() {
+        authorizationHelper.dispose()
+        super.onDestroy()
+    }
+
     private fun onSendTestMessage() {
         val account = requireContext().accounts.getPrimaryGoogleAccount() ?: run {
             showInfoDialog(R.string.sender_account_not_found)

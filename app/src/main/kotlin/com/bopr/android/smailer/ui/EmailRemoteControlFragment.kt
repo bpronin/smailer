@@ -69,14 +69,21 @@ class EmailRemoteControlFragment : BasePreferenceFragment(R.xml.pref_remote_emai
         }
     }
 
-    private fun onProcessServiceMail(preference: Preference) = runPreferenceTask(preference) {
-        try {
-            val count = MailControlProcessor(requireContext()).checkMailbox()
-            showToast(
-                getQuantityString(R.plurals.mail_items, R.string.mail_items_zero, count)
-            )
-        } catch (x: Exception) {
-            showInfoDialog(getString(R.string.remote_control), x.message ?: x.toString())
+    override fun onDestroy() {
+        authorizationHelper.dispose()
+        super.onDestroy()
+    }
+
+    private fun onProcessServiceMail(preference: Preference) {
+        runPreferenceTask(preference) {
+            try {
+                val count = MailControlProcessor(requireContext()).checkMailbox()
+                showToast(
+                    getQuantityString(R.plurals.mail_items, R.string.mail_items_zero, count)
+                )
+            } catch (x: Exception) {
+                showInfoDialog(getString(R.string.remote_control), x.message ?: x.toString())
+            }
         }
     }
 

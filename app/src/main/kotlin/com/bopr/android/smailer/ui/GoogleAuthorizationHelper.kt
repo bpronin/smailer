@@ -7,6 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts.StartActivityFo
 import androidx.fragment.app.FragmentActivity
 import com.bopr.android.smailer.AccountsHelper.Companion.accounts
 import com.bopr.android.smailer.Settings.Companion.settings
+import com.bopr.android.smailer.util.Disposable
 import com.bopr.android.smailer.util.Logger
 import com.bopr.android.smailer.util.createPickAccountIntent
 
@@ -19,12 +20,16 @@ class GoogleAuthorizationHelper(
     private val activity: FragmentActivity,
     private val accountSettingName: String,
     vararg scopes: String?
-) {
+) : Disposable {
 
     private val scopes = setOf(*scopes)
     private val settings = activity.settings
     private val accountPickerLauncher =
         activity.registerForActivityResult(StartActivityForResult(), ::onAccountPickerResult)
+
+    override fun dispose() {
+        accountPickerLauncher.unregister()
+    }
 
     /**
      * Brings up system account selection dialog.
@@ -32,7 +37,6 @@ class GoogleAuthorizationHelper(
     fun startAccountPicker() {
         val account = activity.accounts.getGoogleAccount(settings.getString(accountSettingName))
         accountPickerLauncher.launch(createPickAccountIntent(account))
-        accountPickerLauncher.unregister()
     }
 
     private fun onAccountPickerResult(result: ActivityResult) {
