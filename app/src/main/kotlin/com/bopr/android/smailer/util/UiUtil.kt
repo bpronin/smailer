@@ -150,36 +150,3 @@ fun RecyclerView.addOnItemSwipedListener(action: (RecyclerView.ViewHolder) -> Un
         it.attachToRecyclerView(this)
     }
 }
-
-fun <T> runLater(
-    onPerform: () -> T,
-    onComplete: () -> Unit,
-    onSuccess: (T) -> Unit,
-    onError: (Throwable) -> Unit
-) {
-    val result = runCatching(onPerform)
-    Handler(Looper.getMainLooper()).post {
-        onComplete()
-        result.fold(onSuccess, onError)
-    }
-}
-
-fun <T> runInBackground(
-    onComplete: () -> Unit = {},
-    onSuccess: (T) -> Unit = {},
-    onError: (Throwable) -> Unit = {},
-    onPerform: () -> T
-) {
-    newSingleThreadExecutor().execute(onComplete, onSuccess, onError, onPerform)
-}
-
-fun <T> Executor.execute(
-    onComplete: () -> Unit = {},
-    onSuccess: (T) -> Unit = {},
-    onError: (Throwable) -> Unit = {},
-    onPerform: () -> T
-) {
-    execute {
-        runLater(onPerform, onComplete, onSuccess, onError)
-    }
-}

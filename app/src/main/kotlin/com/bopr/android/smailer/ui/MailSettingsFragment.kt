@@ -2,6 +2,7 @@ package com.bopr.android.smailer.ui
 
 import android.os.Bundle
 import android.text.TextUtils
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.ExtMultiSelectListPreference
 import androidx.preference.ListPreference
 import com.bopr.android.smailer.AccountsHelper.Companion.accounts
@@ -17,7 +18,7 @@ import com.bopr.android.smailer.messenger.mail.GoogleMailSession
 import com.bopr.android.smailer.messenger.mail.MailMessage
 import com.bopr.android.smailer.ui.InfoDialog.Companion.showInfoDialog
 import com.bopr.android.smailer.util.GeoLocation
-import com.bopr.android.smailer.util.GeoLocation.Companion.requestGeoLocation
+import com.bopr.android.smailer.util.GeoLocation.Companion.getGeoLocation
 import com.bopr.android.smailer.util.PreferenceProgress
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_ACCENTED
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_DEFAULT
@@ -32,7 +33,8 @@ import com.bopr.android.smailer.util.titles
 import com.bopr.android.smailer.util.updateSummary
 import com.google.api.services.drive.DriveScopes.DRIVE_APPDATA
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
-import java.lang.System.*
+import kotlinx.coroutines.launch
+import java.lang.System.currentTimeMillis
 
 /**
  * Email messenger settings fragment.
@@ -120,11 +122,12 @@ class MailSettingsFragment : BasePreferenceFragment(R.xml.pref_email_settings) {
             return
         }
 
-        val time = currentTimeMillis()
-
-        requireContext().requestGeoLocation(
-            onSuccess = { location ->
-                val formatter = TestMailFormatter(time, location)
+        lifecycleScope.launch {
+            val time = currentTimeMillis()
+            val location = requireContext().getGeoLocation()
+            val formatter = TestMailFormatter(time, location)
+            
+            try {
                 GoogleMailSession(requireContext(), account, GMAIL_SEND).send(
                     MailMessage(
                         from = account.name,
@@ -133,18 +136,17 @@ class MailSettingsFragment : BasePreferenceFragment(R.xml.pref_email_settings) {
                         recipients = settings.getMailRecipients()
                     ),
                     onSuccess = {
-                        testSettingsProgress.stop()
                         showInfoDialog(R.string.test_message_sent)
                     },
                     onError = {
-                        testSettingsProgress.stop()
                         showInfoDialog(R.string.test_message_failed)
                     }
                 )
+            } catch (_: Exception) {
+                showInfoDialog(R.string.test_message_failed, R.string.location_request_failed)
+            } finally {
+                testSettingsProgress.stop()
             }
-        ) {
-            testSettingsProgress.stop()
-            showInfoDialog(R.string.test_message_failed, R.string.location_request_failed)
         }
     }
 

@@ -78,7 +78,6 @@ import com.bopr.android.smailer.util.checkPermission
 import com.bopr.android.smailer.util.escapeRegex
 import com.bopr.android.smailer.util.getContactName
 import com.bopr.android.smailer.util.readLogcatLog
-import com.bopr.android.smailer.util.runBackgroundTask
 import com.bopr.android.smailer.util.sendSmsMessage
 import com.bopr.android.smailer.util.setOnClickListener
 import com.bopr.android.smailer.util.showToast
@@ -365,17 +364,10 @@ class DebugFragment : PreferenceFragmentCompat() {
     }
 
     private fun onGetGeoLocation(preference: Preference) {
-        preference.runBackgroundTask(
-            onPerform = {
-                requireContext().getGeoLocation()
-            },
-            onSuccess = {
-                showInfoDialog("Geolocation", it?.format() ?: "No geolocation received")
-            },
-            onError = { error ->
-                showError("Geolocation", error)
-            }
-        )
+        runBackgroundTask(preference) {
+            val location = requireContext().getGeoLocation()
+            showInfoDialog("Geolocation", location?.format() ?: "No geolocation received")
+        }
     }
 
     override fun onDestroy() {
@@ -511,19 +503,10 @@ class DebugFragment : PreferenceFragmentCompat() {
     }
 
     private fun onProcessPending(preference: Preference) {
-        preference.runBackgroundTask(
-            onPerform = {
-                lifecycleScope.launch {
-                    requireContext().processPendingPhoneCalls()
-                }
-            },
-            onSuccess = {
-                showInfoDialog("Event processing", "$it events processed")
-            },
-            onError = { error ->
-                showError("Event processing", error)
-            }
-        )
+        runBackgroundTask(preference) {
+            val count = requireContext().processPendingPhoneCalls()
+            showInfoDialog("Event processing", "$count events processed")
+        }
     }
 
     private fun onClearLogs() {
@@ -670,31 +653,35 @@ class DebugFragment : PreferenceFragmentCompat() {
     }
 
     private fun onGoogleDriveClear(preference: Preference) {
-        runBackgroundGoogleDriveTask(preference) {
+        runBackgroundTask(preference) {
             GoogleDrive(requireContext(), senderAccount()).clear()
+            showComplete()
         }
     }
 
     private fun onGoogleDriveSync(preference: Preference) {
         ConfirmDialog("Synchronize with drive?") {
-            runBackgroundGoogleDriveTask(preference) {
+            runBackgroundTask(preference) {
                 Synchronizer(requireContext(), senderAccount(), database).sync()
+                showComplete()
             }
         }.show(this)
     }
 
     private fun onGoogleDriveDownload(preference: Preference) {
         ConfirmDialog("Download from drive?") {
-            runBackgroundGoogleDriveTask(preference) {
+            runBackgroundTask(preference) {
                 Synchronizer(requireContext(), senderAccount(), database).sync(SYNC_FORCE_DOWNLOAD)
+                showComplete()
             }
         }.show(this)
     }
 
     private fun onGoogleDriveUpload(preference: Preference) {
         ConfirmDialog("Upload to drive?") {
-            runBackgroundGoogleDriveTask(preference) {
+            runBackgroundTask(preference) {
                 Synchronizer(requireContext(), senderAccount(), database).sync(SYNC_FORCE_UPLOAD)
+                showComplete()
             }
         }.show(this)
     }
@@ -752,19 +739,20 @@ class DebugFragment : PreferenceFragmentCompat() {
         return accounts.requireGoogleAccount(settings.getString(PREF_EMAIL_REMOTE_CONTROL_ACCOUNT))
     }
 
-    private fun runBackgroundGoogleDriveTask(
+    private fun runBackgroundTask(
         preference: Preference,
-        onPerform: () -> Unit
+        onPerform: suspend () -> Unit
     ) {
-        preference.runBackgroundTask(
-            onPerform,
-            onSuccess = {
-                showComplete()
-            },
-            onError = { error ->
-                showError("Google drive", error)
+        val progress = PreferenceProgress(preference).apply { start() }
+        lifecycleScope.launch {
+            try {
+                onPerform()
+            } catch (e: Exception) {
+                showError(preference.title.toString(), e)
+            } finally {
+                progress.stop()
             }
-        )
+        }
     }
 
     @SuppressLint("UnspecifiedRegisterReceiverFlag")

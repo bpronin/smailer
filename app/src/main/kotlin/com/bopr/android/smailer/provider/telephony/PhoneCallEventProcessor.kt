@@ -46,8 +46,8 @@ class PhoneCallEventProcessor private constructor(private val context: Context) 
             singleton.getInstance(this).scheduleProcess(data, ProcessWorker::class)
         }
 
-        internal suspend fun Context.processPendingPhoneCalls() {
-            singleton.getInstance(this).processPending()
+        internal suspend fun Context.processPendingPhoneCalls(): Int {
+            return singleton.getInstance(this).processPending()
         }
     }
 

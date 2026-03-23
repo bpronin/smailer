@@ -2,8 +2,9 @@ package com.bopr.android.smailer.messenger.mail
 
 import android.accounts.Account
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import com.bopr.android.smailer.util.Mockable
-import com.bopr.android.smailer.util.execute
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.util.StringUtils.newStringUtf8
@@ -17,7 +18,9 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.util.*
+import java.util.concurrent.Executor
 import java.util.concurrent.Executors
+import java.util.concurrent.Executors.newSingleThreadExecutor
 import javax.activation.DataHandler
 import javax.activation.FileDataSource
 import javax.mail.Message.RecipientType.TO
@@ -243,4 +246,37 @@ internal class GoogleMailSession(context: Context, account: Account, vararg scop
         private const val HTML = "html"
     }
 
+}
+
+private fun <T> runLater(
+    onPerform: () -> T,
+    onComplete: () -> Unit,
+    onSuccess: (T) -> Unit,
+    onError: (Throwable) -> Unit
+) {
+    val result = runCatching(onPerform)
+    Handler(Looper.getMainLooper()).post {
+        onComplete()
+        result.fold(onSuccess, onError)
+    }
+}
+
+private fun <T> runInBackground(
+    onComplete: () -> Unit = {},
+    onSuccess: (T) -> Unit = {},
+    onError: (Throwable) -> Unit = {},
+    onPerform: () -> T
+) {
+    newSingleThreadExecutor().execute(onComplete, onSuccess, onError, onPerform)
+}
+
+private fun <T> Executor.execute(
+    onComplete: () -> Unit = {},
+    onSuccess: (T) -> Unit = {},
+    onError: (Throwable) -> Unit = {},
+    onPerform: () -> T
+) {
+    execute {
+        runLater(onPerform, onComplete, onSuccess, onError)
+    }
 }

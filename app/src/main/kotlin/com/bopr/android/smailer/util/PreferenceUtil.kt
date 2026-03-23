@@ -3,6 +3,7 @@ package com.bopr.android.smailer.util
 import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
 import androidx.preference.MultiSelectListPreference
@@ -16,30 +17,13 @@ import com.bopr.android.smailer.R
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_ACCENTED
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_DEFAULT
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_UNDERWIVED
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 enum class SummaryStyle {
     SUMMARY_STYLE_DEFAULT,
     SUMMARY_STYLE_UNDERWIVED,
     SUMMARY_STYLE_ACCENTED
-}
-
-fun <T> Preference.runBackgroundTask(
-    onPerform: () -> T,
-    onComplete: () -> Unit = {},
-    onSuccess: (T) -> Unit = {},
-    onError: (Throwable) -> Unit = {}
-) {
-    val progress = PreferenceProgress(this).apply { start() }
-
-    runInBackground(
-        onComplete = {
-            progress.stop()
-            onComplete()
-        },
-        onSuccess = onSuccess,
-        onError = onError,
-        onPerform = onPerform
-    )
 }
 
 class PreferenceProgress(

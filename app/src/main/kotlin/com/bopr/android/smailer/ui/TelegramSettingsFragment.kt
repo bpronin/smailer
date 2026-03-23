@@ -15,7 +15,7 @@ import com.bopr.android.smailer.messenger.telegram.TelegramClient
 import com.bopr.android.smailer.messenger.telegram.TelegramException
 import com.bopr.android.smailer.ui.InfoDialog.Companion.showInfoDialog
 import com.bopr.android.smailer.util.GeoLocation
-import com.bopr.android.smailer.util.GeoLocation.Companion.requestGeoLocation
+import com.bopr.android.smailer.util.GeoLocation.Companion.getGeoLocation
 import com.bopr.android.smailer.util.PreferenceProgress
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_ACCENTED
 import com.bopr.android.smailer.util.getLocalizedText
@@ -87,30 +87,23 @@ class TelegramSettingsFragment : BasePreferenceFragment(R.xml.pref_telegram_sett
             return
         }
 
-        testSettingsProgress.start()
-
-        requireContext().requestGeoLocation(
-            onSuccess = { location ->
-                val formater = TestTelegramFormatter(currentTimeMillis(), location)
-                val client = TelegramClient(token)
-                lifecycleScope.launch {
-                    try {
-                        val chatId = client.send(
-                            oldChatId = settings.getString(PREF_TELEGRAM_CHAT_ID),
-                            message = formater.formatMessage()
-                        )
-                        settings.update { putString(PREF_TELEGRAM_CHAT_ID, chatId) }
-                        showInfoDialog(R.string.test_message_sent)
-                    } catch (x: TelegramException) {
-                        showInfoDialog(R.string.test_message_failed, x.getLocalizedText())
-                    } finally {
-                        testSettingsProgress.stop()
-                    }
-                }
+        lifecycleScope.launch {
+            testSettingsProgress.start()
+            val location = requireContext().getGeoLocation()
+            val formater = TestTelegramFormatter(currentTimeMillis(), location)
+            val client = TelegramClient(token)
+            try {
+                val chatId = client.send(
+                    oldChatId = settings.getString(PREF_TELEGRAM_CHAT_ID),
+                    message = formater.formatMessage()
+                )
+                settings.update { putString(PREF_TELEGRAM_CHAT_ID, chatId) }
+                showInfoDialog(R.string.test_message_sent)
+            } catch (x: TelegramException) {
+                showInfoDialog(R.string.test_message_failed, x.getLocalizedText())
+            } finally {
+                testSettingsProgress.stop()
             }
-        ) {
-            testSettingsProgress.stop()
-            showInfoDialog(R.string.test_message_failed, R.string.location_request_failed)
         }
     }
 
