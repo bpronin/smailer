@@ -27,8 +27,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.ui.WavyUnderlineSpan
-import java.util.concurrent.Executor
-import java.util.concurrent.Executors.*
 
 /**
  * Miscellaneous UI and resources utilities.

@@ -2,32 +2,32 @@ package com.bopr.android.smailer.messenger.mail
 
 import android.accounts.Account
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
+import com.bopr.android.smailer.util.Logger
 import com.bopr.android.smailer.util.Mockable
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.http.javanet.NetHttpTransport
+import com.google.api.client.json.gson.GsonFactory
 import com.google.api.client.util.StringUtils.newStringUtf8
 import com.google.api.services.gmail.Gmail
 import com.google.api.services.gmail.model.Message
 import com.google.api.services.gmail.model.ModifyMessageRequest
 import com.google.common.io.BaseEncoding
-import com.bopr.android.smailer.util.Logger
-import com.google.api.client.json.gson.GsonFactory
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
-import java.util.*
-import java.util.concurrent.Executor
-import java.util.concurrent.Executors
-import java.util.concurrent.Executors.newSingleThreadExecutor
+import java.util.LinkedList
+import java.util.Properties
 import javax.activation.DataHandler
 import javax.activation.FileDataSource
 import javax.mail.Message.RecipientType.TO
 import javax.mail.MessagingException
 import javax.mail.Multipart
 import javax.mail.Session
-import javax.mail.internet.*
+import javax.mail.internet.AddressException
+import javax.mail.internet.InternetAddress
+import javax.mail.internet.MimeBodyPart
+import javax.mail.internet.MimeMessage
+import javax.mail.internet.MimeMultipart
 
 /**
  * Gmail mail session.
@@ -48,76 +48,23 @@ internal class GoogleMailSession(context: Context, account: Account, vararg scop
         .setApplicationName("smailer")
         .build()
 
-    private val executor = Executors.newSingleThreadExecutor()
-
-    fun send(
-        message: MailMessage,
-        onError: (Throwable) -> Unit = {},
-        onSuccess: () -> Unit
-    ) {
-        executor.execute(
-            onPerform = { internalSend(message) },
-            onSuccess = { onSuccess() },
-            onError = onError
-        )
-    }
-
-    fun list(
-        query: String,
-        onError: (Throwable) -> Unit = {},
-        onSuccess: (List<MailMessage>) -> Unit
-    ) {
-        executor.execute(
-            onPerform = { internalList(query) },
-            onSuccess = onSuccess,
-            onError = onError
-        )
-    }
-
-    fun markAsRead(
-        message: MailMessage,
-        onError: (Throwable) -> Unit = {},
-        onSuccess: () -> Unit
-    ) {
-        executor.execute(
-            onPerform = { internalMarkAsRead(message) },
-            onSuccess = { onSuccess() },
-            onError = onError
-        )
-    }
-
-    fun trash(
-        message: MailMessage,
-        onError: (Throwable) -> Unit = {},
-        onSuccess: () -> Unit
-    ) {
-        executor.execute(
-            onPerform = { internalTrash(message) },
-            onSuccess = { onSuccess() },
-            onError = onError
-        )
-    }
-
-    @Throws(IOException::class)
-    private fun internalSend(message: MailMessage) {
+    suspend fun send(message: MailMessage) {
         service.users()
             .messages()
             .send(ME, createContent(message))
             .execute()
-
         log.debug("Message sent")
     }
 
-    @Throws(IOException::class)
-    private fun internalList(query: String): LinkedList<MailMessage> {
+    suspend fun list(query: String): List<MailMessage> {
         val response = service
             .users()
             .messages()
             .list(ME)
             .setQ(query)
             .execute()
-
         val result = LinkedList<MailMessage>()
+        
         response.messages?.let {
             for (m in it) {
                 val message = service
@@ -127,31 +74,28 @@ internal class GoogleMailSession(context: Context, account: Account, vararg scop
                 result.add(readMessage(message))
             }
         }
-
+        
         log.debug("Message list received")
-
         return result
     }
 
-    @Throws(IOException::class)
-    private fun internalMarkAsRead(message: MailMessage) {
+    suspend fun markAsRead(message: MailMessage) {
         val content = ModifyMessageRequest()
-            .setRemoveLabelIds(listOf("UNREAD")) /* case sensitive */
+            .setRemoveLabelIds(listOf("UNREAD")) /* case-sensitive */
         service.users()
             .messages()
             .modify(ME, message.id, content)
             .execute()
-
+    
         log.debug("Message marked as read: " + message.id)
     }
 
-    @Throws(IOException::class)
-    private fun internalTrash(message: MailMessage) {
+    suspend fun trash(message: MailMessage) {
         service.users()
             .messages()
             .trash(ME, message.id)
             .execute()
-
+    
         log.debug("Message moved to trash: " + message.id)
     }
 
@@ -246,37 +190,4 @@ internal class GoogleMailSession(context: Context, account: Account, vararg scop
         private const val HTML = "html"
     }
 
-}
-
-private fun <T> runLater(
-    onPerform: () -> T,
-    onComplete: () -> Unit,
-    onSuccess: (T) -> Unit,
-    onError: (Throwable) -> Unit
-) {
-    val result = runCatching(onPerform)
-    Handler(Looper.getMainLooper()).post {
-        onComplete()
-        result.fold(onSuccess, onError)
-    }
-}
-
-private fun <T> runInBackground(
-    onComplete: () -> Unit = {},
-    onSuccess: (T) -> Unit = {},
-    onError: (Throwable) -> Unit = {},
-    onPerform: () -> T
-) {
-    newSingleThreadExecutor().execute(onComplete, onSuccess, onError, onPerform)
-}
-
-private fun <T> Executor.execute(
-    onComplete: () -> Unit = {},
-    onSuccess: (T) -> Unit = {},
-    onError: (Throwable) -> Unit = {},
-    onPerform: () -> T
-) {
-    execute {
-        runLater(onPerform, onComplete, onSuccess, onError)
-    }
 }

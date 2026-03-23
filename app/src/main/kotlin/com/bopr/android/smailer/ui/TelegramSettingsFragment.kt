@@ -2,7 +2,6 @@ package com.bopr.android.smailer.ui
 
 import android.os.Bundle
 import android.text.TextUtils
-import androidx.lifecycle.lifecycleScope
 import androidx.preference.ExtMultiSelectListPreference
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_TELEGRAM_BOT_TOKEN
@@ -16,17 +15,16 @@ import com.bopr.android.smailer.messenger.telegram.TelegramException
 import com.bopr.android.smailer.ui.InfoDialog.Companion.showInfoDialog
 import com.bopr.android.smailer.util.GeoLocation
 import com.bopr.android.smailer.util.GeoLocation.Companion.getGeoLocation
-import com.bopr.android.smailer.util.PreferenceProgress
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_ACCENTED
 import com.bopr.android.smailer.util.getLocalizedText
 import com.bopr.android.smailer.util.onOffText
 import com.bopr.android.smailer.util.requirePreference
 import com.bopr.android.smailer.util.requirePreferenceAs
+import com.bopr.android.smailer.util.runPreferenceTask
 import com.bopr.android.smailer.util.setOnChangeListener
 import com.bopr.android.smailer.util.setOnClickListener
 import com.bopr.android.smailer.util.titles
 import com.bopr.android.smailer.util.updateSummary
-import kotlinx.coroutines.launch
 import java.lang.System.currentTimeMillis
 
 /**
@@ -35,10 +33,6 @@ import java.lang.System.currentTimeMillis
  * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 class TelegramSettingsFragment : BasePreferenceFragment(R.xml.pref_telegram_settings) {
-
-    private val testSettingsProgress by lazy {
-        PreferenceProgress(requirePreference(PREF_SEND_TEST_TELEGRAM_MESSAGE))
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,8 +70,6 @@ class TelegramSettingsFragment : BasePreferenceFragment(R.xml.pref_telegram_sett
     }
 
     private fun onSendTestTelegramMessage() {
-        if (testSettingsProgress.running) return
-
         val token = settings.getString(PREF_TELEGRAM_BOT_TOKEN)
         if (token.isNullOrEmpty()) {
             showInfoDialog(
@@ -87,8 +79,7 @@ class TelegramSettingsFragment : BasePreferenceFragment(R.xml.pref_telegram_sett
             return
         }
 
-        lifecycleScope.launch {
-            testSettingsProgress.start()
+        runPreferenceTask(requirePreference(PREF_SEND_TEST_TELEGRAM_MESSAGE)) {
             val location = requireContext().getGeoLocation()
             val formater = TestTelegramFormatter(currentTimeMillis(), location)
             val client = TelegramClient(token)
@@ -101,8 +92,6 @@ class TelegramSettingsFragment : BasePreferenceFragment(R.xml.pref_telegram_sett
                 showInfoDialog(R.string.test_message_sent)
             } catch (x: TelegramException) {
                 showInfoDialog(R.string.test_message_failed, x.getLocalizedText())
-            } finally {
-                testSettingsProgress.stop()
             }
         }
     }

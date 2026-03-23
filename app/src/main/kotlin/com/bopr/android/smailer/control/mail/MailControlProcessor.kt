@@ -32,28 +32,21 @@ internal class MailControlProcessor(private val context: Context) {
     private val query = "subject:Re:[${context.getString(R.string.app_name)}] label:inbox"
     private val commandExecutor = ControlCommandExecutor(context)
 
-    fun checkMailbox(onSuccess: (Int) -> Unit = {}, onError: (Throwable) -> Unit = {}) {
+    suspend fun checkMailbox(): Int {
         val accountName = settings.getString(PREF_EMAIL_REMOTE_CONTROL_ACCOUNT)
         val account = context.accounts.getGoogleAccount(accountName) ?: run {
             log.warn("Service account [$accountName] not found")
 
             notifyNoAccount()
-            onError(Exception("Service account [$accountName] not found"))
-            return
+            throw Exception("Service account [$accountName] not found")
         }
 
         val session = GoogleMailSession(context, account, MAIL_GOOGLE_COM)
-        session.list(
-            query,
-            onSuccess = { messages ->
-                readMessages(messages, session)
-                onSuccess(messages.size)
-            },
-            onError = onError
-        )
+        val messages = session.list(query)
+        return readMessages(messages, session)
     }
 
-    private fun readMessages(messages: List<MailMessage>, session: GoogleMailSession): Int {
+    private suspend fun readMessages(messages: List<MailMessage>, session: GoogleMailSession): Int {
         if (messages.isEmpty()) {
             log.debug("No service mail")
         } else {
@@ -69,10 +62,9 @@ internal class MailControlProcessor(private val context: Context) {
                                 log.debug("Not my mail")
 
                             else -> {
-                                session.markAsRead(message) {
-                                    commandExecutor.execute(command)
-                                    session.trash(message) {}
-                                }
+                                session.markAsRead(message)
+                                commandExecutor.execute(command)
+                                session.trash(message)
                             }
                         }
                     }

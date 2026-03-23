@@ -2,7 +2,6 @@ package com.bopr.android.smailer.ui
 
 import android.os.Bundle
 import android.text.TextUtils
-import androidx.lifecycle.lifecycleScope
 import androidx.preference.ExtMultiSelectListPreference
 import androidx.preference.ListPreference
 import com.bopr.android.smailer.AccountsHelper.Companion.accounts
@@ -19,7 +18,6 @@ import com.bopr.android.smailer.messenger.mail.MailMessage
 import com.bopr.android.smailer.ui.InfoDialog.Companion.showInfoDialog
 import com.bopr.android.smailer.util.GeoLocation
 import com.bopr.android.smailer.util.GeoLocation.Companion.getGeoLocation
-import com.bopr.android.smailer.util.PreferenceProgress
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_ACCENTED
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_DEFAULT
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_UNDERWIVED
@@ -27,13 +25,13 @@ import com.bopr.android.smailer.util.commaSplit
 import com.bopr.android.smailer.util.onOffText
 import com.bopr.android.smailer.util.requirePreference
 import com.bopr.android.smailer.util.requirePreferenceAs
+import com.bopr.android.smailer.util.runPreferenceTask
 import com.bopr.android.smailer.util.setOnChangeListener
 import com.bopr.android.smailer.util.setOnClickListener
 import com.bopr.android.smailer.util.titles
 import com.bopr.android.smailer.util.updateSummary
 import com.google.api.services.drive.DriveScopes.DRIVE_APPDATA
 import com.google.api.services.gmail.GmailScopes.GMAIL_SEND
-import kotlinx.coroutines.launch
 import java.lang.System.currentTimeMillis
 
 /**
@@ -44,9 +42,6 @@ import java.lang.System.currentTimeMillis
 class MailSettingsFragment : BasePreferenceFragment(R.xml.pref_email_settings) {
 
     private lateinit var authorizationHelper: GoogleAuthorizationHelper
-    private val testSettingsProgress by lazy {
-        PreferenceProgress(requirePreference(PREF_SENT_TEST_MAIL))
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -113,20 +108,14 @@ class MailSettingsFragment : BasePreferenceFragment(R.xml.pref_email_settings) {
     }
 
     private fun onSendTestMessage() {
-        if (testSettingsProgress.running) return
-
-        testSettingsProgress.start()
-
         val account = requireContext().accounts.getPrimaryGoogleAccount() ?: run {
             showInfoDialog(R.string.sender_account_not_found)
             return
         }
-
-        lifecycleScope.launch {
+        runPreferenceTask(requirePreference(PREF_SENT_TEST_MAIL)) {
             val time = currentTimeMillis()
             val location = requireContext().getGeoLocation()
             val formatter = TestMailFormatter(time, location)
-            
             try {
                 GoogleMailSession(requireContext(), account, GMAIL_SEND).send(
                     MailMessage(
@@ -134,18 +123,11 @@ class MailSettingsFragment : BasePreferenceFragment(R.xml.pref_email_settings) {
                         subject = formatter.formatSubject(),
                         body = formatter.formatBody(),
                         recipients = settings.getMailRecipients()
-                    ),
-                    onSuccess = {
-                        showInfoDialog(R.string.test_message_sent)
-                    },
-                    onError = {
-                        showInfoDialog(R.string.test_message_failed)
-                    }
+                    )
                 )
+                showInfoDialog(R.string.test_message_sent)
             } catch (_: Exception) {
-                showInfoDialog(R.string.test_message_failed, R.string.location_request_failed)
-            } finally {
-                testSettingsProgress.stop()
+                showInfoDialog(R.string.test_message_failed)
             }
         }
     }

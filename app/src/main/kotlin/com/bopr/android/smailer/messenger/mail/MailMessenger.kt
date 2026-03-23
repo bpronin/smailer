@@ -34,35 +34,26 @@ internal class MailMessenger(private val context: Context) : Messenger(context, 
 
     private val formatters = MailFormatterFactory(context)
     private var account: Account? = null
-    private var session: GoogleMailSession? = null
-    
+    private lateinit var session: GoogleMailSession
+
     override val isEnabled get() = context.settings.getBoolean(PREF_MAIL_MESSENGER_ENABLED)
 
     override suspend fun doInitialize() {
-        account = checkAccount(context.accounts.getPrimaryGoogleAccount())?.also {
-            session = GoogleMailSession(context, it, GMAIL_SEND)
-            log.debug("Email session created")
-        }
+        val account = context.accounts.getPrimaryGoogleAccount() ?: throw InvalidAccountException()
+        session = GoogleMailSession(context, account, GMAIL_SEND)
+        log.debug("Email session created")
     }
 
     override suspend fun doSend(event: Event) {
-        session?.run {
-            val recipients = checkRecipients(context.settings.getMailRecipients()) ?: return
-            val formatter = formatters.createFormatter(event)
-            send(
-                MailMessage(
-                    subject = formatter.formatSubject(),
-                    body = formatter.formatBody(),
-                    from = account?.name,
-                    recipients = recipients
-                ),
-                onSuccess = {
-                    log.debug("Successfully sent")
-                },
-                onError = { error ->
-                    log.error("Send failed", error)
-                })
-        }
+        val recipients = checkRecipients(context.settings.getMailRecipients()) ?: return
+        val formatter = formatters.createFormatter(event)
+        val message = MailMessage(
+            subject = formatter.formatSubject(),
+            body = formatter.formatBody(),
+            from = account?.name,
+            recipients = recipients
+        )
+        session.send(message)
     }
 
     fun checkRecipients(recipients: String?): String? {
@@ -95,42 +86,39 @@ internal class MailMessenger(private val context: Context) : Messenger(context, 
         return recipients
     }
 
-    fun checkAccount(account: Account?): Account? {
-        return account ?: run {
-            log.warn("Invalid account")
-
-            context.notifications.notifyError(
-                NotificationData(
-                    id = NTF_GOOGLE_ACCOUNT,
-                    text = context.getString(R.string.sender_account_not_found),
-                    target = MailSettingsActivity::class
-                )
-            )
-            null
-        }
-    }
-
     override fun getSuccessNotification() = NotificationData(
         title = context.getString(R.string.email_successfully_send),
         target = MainActivity::class
     )
 
     override fun getErrorNotification(error: Throwable) =
-        if (error is UserRecoverableAuthIOException) {
-            /* this may happen when app has no permission to access google account or
-               sender account has been removed from other place */
-            NotificationData(
-                id = NTF_GOOGLE_ACCESS,
-                text = context.getString(R.string.no_access_to_google_account),
-                target = MailSettingsActivity::class
-            )
+        when (error) {
+            is InvalidAccountException -> {
+                NotificationData(
+                    id = NTF_GOOGLE_ACCOUNT,
+                    text = context.getString(R.string.sender_account_not_found),
+                    target = MailSettingsActivity::class
+                )
+            }
 
-        } else {
-            NotificationData(
-                id = NTF_MAIL,
-                text = context.getString(R.string.unable_send_email),
-                target = MailSettingsActivity::class
-            )
+            is UserRecoverableAuthIOException -> {
+                /* this may happen when app has no permission to access google account or
+                   sender account has been removed from other place */
+                NotificationData(
+                    id = NTF_GOOGLE_ACCESS,
+                    text = context.getString(R.string.no_access_to_google_account),
+                    target = MailSettingsActivity::class
+                )
+
+            }
+
+            else -> {
+                NotificationData(
+                    id = NTF_MAIL,
+                    text = context.getString(R.string.unable_send_email),
+                    target = MailSettingsActivity::class
+                )
+            }
         }
 
     companion object {

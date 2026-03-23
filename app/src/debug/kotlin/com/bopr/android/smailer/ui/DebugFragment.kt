@@ -73,11 +73,11 @@ import com.bopr.android.smailer.util.BackgroundActivityHelper
 import com.bopr.android.smailer.util.DEVICE_NAME
 import com.bopr.android.smailer.util.GeoLocation.Companion.getGeoLocation
 import com.bopr.android.smailer.util.Logger
-import com.bopr.android.smailer.util.PreferenceProgress
 import com.bopr.android.smailer.util.checkPermission
 import com.bopr.android.smailer.util.escapeRegex
 import com.bopr.android.smailer.util.getContactName
 import com.bopr.android.smailer.util.readLogcatLog
+import com.bopr.android.smailer.util.runPreferenceTask
 import com.bopr.android.smailer.util.sendSmsMessage
 import com.bopr.android.smailer.util.setOnClickListener
 import com.bopr.android.smailer.util.showToast
@@ -302,8 +302,7 @@ class DebugFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun onSendLog(preference: Preference) {
-        val progress = PreferenceProgress(preference).apply { start() }
+    private fun onSendLog(preference: Preference) = runBackgroundTask(preference) {
         val context = requireContext()
 
         val attachments: MutableList<File> = mutableListOf()
@@ -324,50 +323,28 @@ class DebugFragment : PreferenceFragmentCompat() {
                 attachment = setOf(file),
                 recipients = developerEmail
             )
-
-            session.send(
-                message,
-                onSuccess = {
-                    progress.stop()
-                    showComplete()
-                },
-                onError = { error ->
-                    progress.stop()
-                    showError("Log", error)
-                }
-            )
+            session.send(message)
         }
+
+        showComplete()
     }
 
-    private fun onSendDebugMail(preference: Preference) {
-        val progress = PreferenceProgress(preference).apply { start() }
+    private fun onSendDebugMail(preference: Preference) = runBackgroundTask(preference) {
         val account = accounts.requirePrimaryGoogleAccount()
-
         val message = MailMessage(
             from = account.name,
             subject = "test subject",
             body = "test message from $DEVICE_NAME",
             recipients = developerEmail
         )
-
-        GoogleMailSession(requireContext(), account, GMAIL_SEND).send(
-            message,
-            onSuccess = {
-                progress.stop()
-                showComplete()
-            },
-            onError = {
-                progress.stop()
-                showError("Mail", it)
-            }
-        )
+        val session = GoogleMailSession(requireContext(), account, GMAIL_SEND)
+        session.send(message)
+        showComplete()
     }
 
-    private fun onGetGeoLocation(preference: Preference) {
-        runBackgroundTask(preference) {
-            val location = requireContext().getGeoLocation()
-            showInfoDialog("Geolocation", location?.format() ?: "No geolocation received")
-        }
+    private fun onGetGeoLocation(preference: Preference) = runBackgroundTask(preference) {
+        val location = requireContext().getGeoLocation()
+        showInfoDialog("Geolocation", location?.format() ?: "No geolocation received")
     }
 
     override fun onDestroy() {
@@ -469,16 +446,10 @@ class DebugFragment : PreferenceFragmentCompat() {
 
     private fun onProcessServiceMail(preference: Preference) {
         if (settings.getBoolean(PREF_EMAIL_REMOTE_CONTROL_ENABLED)) {
-            val progress = PreferenceProgress(preference).apply { start() }
-            MailControlProcessor(requireContext()).checkMailbox(
-                onSuccess = {
-                    progress.stop()
-                    showComplete()
-                },
-                onError = {
-                    progress.stop()
-                    showError("Remote control", it)
-                })
+            runBackgroundTask(preference) {
+                MailControlProcessor(requireContext()).checkMailbox()
+                showComplete()
+            }
         } else {
             showInfoDialog("Remote control", "Feature is disabled")
         }
@@ -739,18 +710,15 @@ class DebugFragment : PreferenceFragmentCompat() {
         return accounts.requireGoogleAccount(settings.getString(PREF_EMAIL_REMOTE_CONTROL_ACCOUNT))
     }
 
-    private fun runBackgroundTask(
+    fun runBackgroundTask(
         preference: Preference,
         onPerform: suspend () -> Unit
     ) {
-        val progress = PreferenceProgress(preference).apply { start() }
-        lifecycleScope.launch {
+        runPreferenceTask(preference) {
             try {
                 onPerform()
-            } catch (e: Exception) {
-                showError(preference.title.toString(), e)
-            } finally {
-                progress.stop()
+            } catch (x: Exception) {
+                showError(preference.title.toString(), x)
             }
         }
     }

@@ -2,7 +2,6 @@ package com.bopr.android.smailer.provider
 
 import android.content.Context
 import androidx.work.CoroutineWorker
-import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.bopr.android.smailer.util.Logger
 

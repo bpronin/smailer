@@ -38,7 +38,9 @@ class DebugReceiver : BroadcastReceiver() {
             }
 
             "PROCESS_SERVICE_MAIL" -> {
-                MailControlProcessor(context).checkMailbox {}
+                runBlocking {
+                    MailControlProcessor(context).checkMailbox()
+                }
             }
 
             "BOOT_COMPLETED" -> { /* we cannot debug BootReceiver directly */

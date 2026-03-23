@@ -11,11 +11,11 @@ import com.bopr.android.smailer.Settings.Companion.PREF_EMAIL_REMOTE_CONTROL_NOT
 import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.control.mail.MailControlProcessor
 import com.bopr.android.smailer.ui.InfoDialog.Companion.showInfoDialog
-import com.bopr.android.smailer.util.PreferenceProgress
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_ACCENTED
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_UNDERWIVED
 import com.bopr.android.smailer.util.getQuantityString
 import com.bopr.android.smailer.util.requirePreference
+import com.bopr.android.smailer.util.runPreferenceTask
 import com.bopr.android.smailer.util.setOnChangeListener
 import com.bopr.android.smailer.util.setOnClickListener
 import com.bopr.android.smailer.util.showToast
@@ -69,23 +69,15 @@ class EmailRemoteControlFragment : BasePreferenceFragment(R.xml.pref_remote_emai
         }
     }
 
-    private fun onProcessServiceMail(preference: Preference) {
-        val progress = PreferenceProgress(preference).apply { start() }
-        MailControlProcessor(requireContext()).checkMailbox(
-            onSuccess = { result ->
-                progress.stop()
-                showToast(
-                    getQuantityString(R.plurals.mail_items, R.string.mail_items_zero, result)
-                )
-            },
-            onError = { error ->
-                progress.stop()
-                showInfoDialog(
-                    getString(R.string.remote_control),
-                    error.message ?: error.toString()
-                )
-            }
-        )
+    private fun onProcessServiceMail(preference: Preference) = runPreferenceTask(preference) {
+        try {
+            val count = MailControlProcessor(requireContext()).checkMailbox()
+            showToast(
+                getQuantityString(R.plurals.mail_items, R.string.mail_items_zero, count)
+            )
+        } catch (x: Exception) {
+            showInfoDialog(getString(R.string.remote_control), x.message ?: x.toString())
+        }
     }
 
     companion object {

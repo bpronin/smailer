@@ -17,38 +17,12 @@ import com.bopr.android.smailer.R
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_ACCENTED
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_DEFAULT
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_UNDERWIVED
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 enum class SummaryStyle {
     SUMMARY_STYLE_DEFAULT,
     SUMMARY_STYLE_UNDERWIVED,
     SUMMARY_STYLE_ACCENTED
-}
-
-class PreferenceProgress(
-    private val preference: Preference,
-    @DrawableRes progressIconRes: Int = R.drawable.animated_progress
-) {
-
-    var running = false
-    private var originalIcon: Drawable? = null
-    private val progressIcon = create(preference.context, progressIconRes)!!
-
-    fun start() {
-        running = true
-        originalIcon = preference.icon
-        preference.icon = progressIcon
-        preference.isEnabled = false
-        progressIcon.start()
-    }
-
-    fun stop() {
-        running = false
-        progressIcon.stop()
-        preference.icon = originalIcon
-        preference.isEnabled = true
-    }
 }
 
 fun Preference.updateSummary(
@@ -116,14 +90,6 @@ fun Preference.refreshView() {
     }
 }
 
-fun PreferenceFragmentCompat.requirePreference(key: CharSequence): Preference {
-    return requirePreferenceAs(key)
-}
-
-fun <T : Preference> PreferenceFragmentCompat.requirePreferenceAs(key: CharSequence): T {
-    return requireNotNull(findPreference(key))
-}
-
 fun <T : Preference> T.setOnClickListener(onClick: (T) -> Unit) {
 
     setOnPreferenceClickListener { preference ->
@@ -150,4 +116,51 @@ fun MultiSelectListPreference.titles(): List<CharSequence> {
         }
     }
     return result
+}
+
+fun <T : Preference> PreferenceFragmentCompat.requirePreferenceAs(key: CharSequence): T {
+    return requireNotNull(findPreference(key))
+}
+
+fun PreferenceFragmentCompat.requirePreference(key: CharSequence): Preference {
+    return requirePreferenceAs(key)
+}
+
+fun PreferenceFragmentCompat.runPreferenceTask(
+    preference: Preference,
+    onPerform: suspend () -> Unit,
+) {
+    val progress = PreferenceProgress(preference).apply { start() }
+    lifecycleScope.launch {
+        try {
+            onPerform()
+        } finally {
+            progress.stop()
+        }
+    }
+}
+
+private class PreferenceProgress(
+    private val preference: Preference,
+    @DrawableRes progressIconRes: Int = R.drawable.animated_progress
+) {
+
+    var running = false
+    private var originalIcon: Drawable? = null
+    private val progressIcon = create(preference.context, progressIconRes)!!
+
+    fun start() {
+        running = true
+        originalIcon = preference.icon
+        preference.icon = progressIcon
+        preference.isEnabled = false
+        progressIcon.start()
+    }
+
+    fun stop() {
+        running = false
+        progressIcon.stop()
+        preference.icon = originalIcon
+        preference.isEnabled = true
+    }
 }

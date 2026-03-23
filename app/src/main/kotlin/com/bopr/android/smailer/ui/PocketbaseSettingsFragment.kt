@@ -3,7 +3,6 @@ package com.bopr.android.smailer.ui
 import android.os.Bundle
 import android.text.InputType.TYPE_CLASS_TEXT
 import android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
-import androidx.lifecycle.lifecycleScope
 import androidx.preference.EditTextPreference
 import com.bopr.android.smailer.R
 import com.bopr.android.smailer.Settings.Companion.PREF_POCKETBASE_BASE_URL
@@ -13,15 +12,14 @@ import com.bopr.android.smailer.Settings.Companion.PREF_POCKETBASE_USER
 import com.bopr.android.smailer.Settings.Companion.settings
 import com.bopr.android.smailer.messenger.pocketbase.PocketbaseClient
 import com.bopr.android.smailer.ui.InfoDialog.Companion.showInfoDialog
-import com.bopr.android.smailer.util.PreferenceProgress
 import com.bopr.android.smailer.util.SummaryStyle.SUMMARY_STYLE_ACCENTED
 import com.bopr.android.smailer.util.onOffText
 import com.bopr.android.smailer.util.requirePreference
 import com.bopr.android.smailer.util.requirePreferenceAs
+import com.bopr.android.smailer.util.runPreferenceTask
 import com.bopr.android.smailer.util.setOnChangeListener
 import com.bopr.android.smailer.util.setOnClickListener
 import com.bopr.android.smailer.util.updateSummary
-import kotlinx.coroutines.launch
 
 /**
  * Pocketbase messenger settings fragment.
@@ -29,10 +27,6 @@ import kotlinx.coroutines.launch
  * @author Boris Pronin ([boris280471@gmail.com](mailto:boris280471@gmail.com))
  */
 class PocketbaseSettingsFragment : BasePreferenceFragment(R.xml.pref_pocketbase_settings) {
-
-    private val testSettingsProgress by lazy {
-        PreferenceProgress(requirePreference(PREF_TEST_POCKETBASE_CONNECTION))
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,23 +81,15 @@ class PocketbaseSettingsFragment : BasePreferenceFragment(R.xml.pref_pocketbase_
         }
     }
 
-    fun onTestConnection() {
-        if (testSettingsProgress.running) return
-
+    fun onTestConnection() = runPreferenceTask(requirePreference(PREF_TEST_POCKETBASE_CONNECTION)) {
         val baseUrl = settings.getString(PREF_POCKETBASE_BASE_URL, "")
         val user = settings.getString(PREF_POCKETBASE_USER, "")
         val password = settings.getString(PREF_POCKETBASE_PASSWORD, "")
-
-        lifecycleScope.launch {
-            testSettingsProgress.start()
-            try {
-                PocketbaseClient(baseUrl).auth(user, password)
-                showInfoDialog(R.string.test_connection_success)
-            } catch (x: Exception) {
-                showInfoDialog(R.string.test_connection_failed)
-            } finally {
-                testSettingsProgress.stop()
-            }
+        try {
+            PocketbaseClient(baseUrl).auth(user, password)
+            showInfoDialog(R.string.test_connection_success)
+        } catch (_: Exception) {
+            showInfoDialog(R.string.test_connection_failed)
         }
     }
 
