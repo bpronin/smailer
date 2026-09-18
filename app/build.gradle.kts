@@ -45,14 +45,14 @@ fun ApplicationBuildType.pushResource(value: String) {
 
 android {
     namespace = "com.bopr.android.smailer"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 26
         //noinspection OldTargetApi
         targetSdk = 35
-        versionCode = 111
-        versionName = "1.12.2"
+        versionCode = 112
+        versionName = "1.12.3"
         applicationId = "com.bopr.android.smailer"
         base.archivesName = "smailer-$versionName"
         vectorDrawables.useSupportLibrary = true
@@ -133,6 +133,10 @@ android {
                 "META-INF/kotlinx-html.kotlin_module",
                 "META-INF/INDEX.LIST",
                 "META-INF/io.netty.versions.properties",
+                "META-INF/native-image/io.netty/netty-codec-native-quic/*.json",
+                "META-INF/native-image/io.netty/netty-codec-native-quic/*.properties",
+                "META-INF/license/LICENSE.*.txt",
+                "META-INF/license/NOTICE.*.txt",
             )
         }
     }

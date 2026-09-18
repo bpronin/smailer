@@ -43,7 +43,7 @@ internal class MailMessenger(private val context: Context) : Messenger(context, 
         session = GoogleMailSession(context, account, GMAIL_SEND)
         log.debug("Email session created")
     }
-
+    
     override suspend fun doSend(event: Event) {
         val recipients = checkRecipients(context.settings.getMailRecipients()) ?: return
         val formatter = formatters.createFormatter(event)
@@ -52,7 +52,7 @@ internal class MailMessenger(private val context: Context) : Messenger(context, 
             body = formatter.formatBody(),
             from = account?.name,
             recipients = recipients
-        )
+        )       
         session.send(message)
     }
 

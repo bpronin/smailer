@@ -22,6 +22,7 @@ allprojects {
 }
 
 tasks.register<Delete>("clean") {
+    description = "Clean project"
     delete(rootProject.layout.buildDirectory)
 }
 
